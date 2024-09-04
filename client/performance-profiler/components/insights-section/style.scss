@@ -1,6 +1,8 @@
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
+	max-width: 100%;
+
 	.title {
 		font-size: $font-title-small;
 		font-weight: 500;
@@ -44,6 +46,10 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.insight-header-container {
+				display: flex;
+			}
+
 			.counter {
 				&.fail {
 					color: var(--studio-red-50);
@@ -63,6 +69,10 @@ $blueberry-color: #3858e9;
 
 				&.warning {
 					color: var(--studio-orange-40);
+				}
+
+				&.is-mobile {
+					padding-top: 5px;
 				}
 			}
 		}
