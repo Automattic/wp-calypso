@@ -261,15 +261,11 @@ $blueberry-color: #3858e9;
 	text-transform: uppercase;
 }
 
-.hosting-overview__plan-storage-footer {
-	text-align: left;
+.hosting-overview__storage-footer-text {
+	color: var(--color-link);
 
-	.hosting-overview__storage-footer-text {
-		color: var(--color-link);
-
-		&:hover {
-			color: var(--color-link-dark);
-		}
+	&:hover {
+		color: var(--color-link-dark);
 	}
 }
 
