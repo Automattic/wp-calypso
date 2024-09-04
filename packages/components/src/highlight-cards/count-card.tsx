@@ -58,7 +58,7 @@ export default function CountCard( {
 					position="bottom right"
 					context={ textRef.current }
 				>
-					<TooltipContent heading={ heading } icon={ icon } value={ value } />
+					<TooltipContent value={ value } />
 					{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
 				</Popover>
 			) }
