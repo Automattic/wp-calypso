@@ -52,6 +52,7 @@ class MailboxForm< T extends EmailProvider > {
 	private getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
 		const domainField = this.getFormField< string >( FIELD_DOMAIN );
 		const domainName = domainField?.value ?? '';
+		const mailboxName = this.getFieldValue< string >( FIELD_MAILBOX );
 		const mailboxHasDomainError = Boolean( domainField?.error );
 		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
 		const areApostrophesSupported = this.provider === EmailProvider.Google;
@@ -71,7 +72,7 @@ class MailboxForm< T extends EmailProvider > {
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
 			],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
-			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
+			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength, domainName, mailboxName ) ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new PasswordResetEmailValidator( domainName ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],

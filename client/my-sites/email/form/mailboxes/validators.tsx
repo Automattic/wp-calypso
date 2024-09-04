@@ -247,8 +247,14 @@ class PasswordValidator extends BaseValidator< string > {
 		} );
 	}
 
-	static getValidationApiErrors( errors: FieldError ): FieldError {
-		return errors;
+	static getValidationApiErrors( errors: FieldError[] ): FieldError {
+		return (
+			<>
+				{ errors.map( ( error, index ) => (
+					<div key={ index }>{ error }</div>
+				) ) }
+			</>
+		);
 	}
 
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
