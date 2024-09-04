@@ -46,27 +46,23 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 							comment: '%(currentAgencyName)s is an agency name',
 						} ) as string
 					}
-					description={
-						<>
-							{ translate(
-								`Visit the {{a}}%(currentAgencyName)s{{/a}} dashboard and remove yourself in the Team section.`,
-								{
-									args: { currentAgencyName: currentAgency.name },
-									comment: '%(currentAgencyName)s is an agency name',
-									components: {
-										a: (
-											<a
-												className="team-accept-invite__link"
-												href={ A4A_TEAM_LINK }
-												target="_blank"
-												rel="noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</>
-					}
+					description={ translate(
+						`Visit the {{a}}%(currentAgencyName)s{{/a}} dashboard and remove yourself in the Team section.`,
+						{
+							args: { currentAgencyName: currentAgency.name },
+							comment: '%(currentAgencyName)s is an agency name',
+							components: {
+								a: (
+									<a
+										className="team-accept-invite__link"
+										href={ A4A_TEAM_LINK }
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+							},
+						}
+					) }
 				/>
 
 				<StepSectionItem
@@ -78,17 +74,13 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 							comment: '%(targetAgencyName)s is an agency name',
 						} ) as string
 					}
-					description={
-						<>
-							{ translate(
-								`Click the invite link in your email again to join %(targetAgencyName)s.`,
-								{
-									args: { targetAgencyName: targetAgency?.name },
-									comment: '%(targetAgencyName)s is an agency name',
-								}
-							) }
-						</>
-					}
+					description={ translate(
+						`Click the invite link in your email again to join %(targetAgencyName)s.`,
+						{
+							args: { targetAgencyName: targetAgency?.name },
+							comment: '%(targetAgencyName)s is an agency name',
+						}
+					) }
 				/>
 			</StepSection>
 
