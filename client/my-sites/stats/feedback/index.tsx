@@ -12,7 +12,7 @@ const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating
 
 interface FeedbackProps {
 	clickHandler: ( action: string ) => void;
-  siteId: number
+	siteId: number;
 }
 
 interface FeedbackPanelProps {
