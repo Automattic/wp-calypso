@@ -61,8 +61,9 @@
 			}
 		}
 		.site-migration-credentials__form-note {
-			margin-top: 1em;
 			color: var(--color-text-subtle);
+			font-size: 0.875rem;
+			font-style: italic;
 		}
 		.site-migration-credentials__form-error {
 			color: var(--color-error);
@@ -110,5 +111,8 @@
 		.site-migration-credentials__special-instructions-icon {
 			fill: var(--color-text) !important;
 		}
+	}
+	.site-migration-credentials__backup-note {
+		margin-top: 0.25rem;
 	}
 }

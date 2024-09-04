@@ -349,7 +349,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									{ errors.backupFileLocation?.message }
 								</div>
 							) }
-							<div className="site-migration-credentials__form-note">
+							<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
 								{ translate(
 									"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."
 								) }
@@ -393,6 +393,15 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 							{ errors?.notes && (
 								<div className="site-migration-credentials__form-error">
 									{ errors.notes.message }
+								</div>
+							) }
+							{ hasTranslation(
+								"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
+							) && (
+								<div className="site-migration-credentials__form-note">
+									{ translate(
+										"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
+									) }
 								</div>
 							) }
 						</>
