@@ -9,7 +9,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
 	site: SiteDetails;
-	checked: boolean;
+	isFullyManagedAgencySite: boolean;
 	onChange: ( value: boolean ) => void;
 	isSaving?: boolean;
 	onSaveSetting: () => void;
@@ -18,7 +18,7 @@ type Props = {
 
 export function A4AFullyManagedSiteSetting( {
 	site,
-	checked,
+	isFullyManagedAgencySite,
 	onChange,
 	isSaving,
 	onSaveSetting,
@@ -74,8 +74,8 @@ export function A4AFullyManagedSiteSetting( {
 							},
 						}
 					) }
-					checked={ checked }
-					onChange={ onChange }
+					checked={ ! isFullyManagedAgencySite }
+					onChange={ ( checked ) => onChange( ! checked ) }
 				/>
 			</CompactCard>
 		</div>

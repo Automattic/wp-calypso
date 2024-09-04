@@ -624,7 +624,7 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				<A4AFullyManagedSiteSetting
 					site={ site }
-					checked={ fields.is_fully_managed_agency_site }
+					isFullyManagedAgencySite={ fields.is_fully_managed_agency_site }
 					onChange={ this.props.handleToggle( 'is_fully_managed_agency_site' ) }
 					isSaving={ isSavingSettings }
 					onSaveSetting={ handleSubmitForm }
