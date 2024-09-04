@@ -621,7 +621,7 @@ export class SiteSettingsFormGeneral extends Component {
 				) : (
 					this.privacySettings()
 				) }
-				<A4AFullyManagedSiteSetting site={ site } isWpcomStagingSite={ isWpcomStagingSite } />
+				<A4AFullyManagedSiteSetting site={ site } />
 				{ this.enhancedOwnershipSettings() }
 				<DIFMUpsell
 					site={ site }
