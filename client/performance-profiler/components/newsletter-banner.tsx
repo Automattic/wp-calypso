@@ -27,6 +27,7 @@ const Heading = styled.div`
 
 const Body = styled.div`
 	color: var( --studio-gray-20 );
+	text-wrap: balance;
 `;
 
 const BlueberryButton = styled( Button )`
@@ -67,7 +68,9 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 				) }
 			</div>
 			<BlueberryButton variant="primary" href={ link }>
-				{ translate( 'Enable email alerts' ) }
+				{ isLoggedIn
+					? translate( 'Enable email alerts' )
+					: translate( 'Sign up for email reports' ) }
 			</BlueberryButton>
 		</Container>
 	);
