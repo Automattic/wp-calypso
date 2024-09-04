@@ -12,6 +12,10 @@ const CheckboxWrapper = styled.div`
 		background: ${ ( props ) => props.theme.colors.primary };
 		border-color: ${ ( props ) => props.theme.colors.primary };
 	}
+
+	a.inline-support-link.assign-to-all-payment-methods-checkbox__link {
+		color: ${ ( props ) => props.theme.colors.primary };
+	}
 `;
 
 export default function AssignToAllPaymentMethods( {
@@ -50,6 +54,7 @@ export default function AssignToAllPaymentMethods( {
 							components: {
 								link: (
 									<InlineSupportLink
+										className="assign-to-all-payment-methods-checkbox__link"
 										supportContext="payment_method_all_subscriptions"
 										showIcon={ false }
 									/>
