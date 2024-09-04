@@ -44,7 +44,7 @@ export const Option = styled.li< OptionProps >`
 	}
 
 	&.item-variant-option--selected {
-		background: #055d9c;
+		background: var(--studio-wordpress-blue-50);
 		color: #fff;
 	}
 `;

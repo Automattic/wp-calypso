@@ -77,7 +77,7 @@ const Option = styled.li`
 	}
 
 	&.item-variant-option--selected {
-		background: #055d9c;
+		background: var( --studio-wordpress-blue-50 );
 		color: white;
 	}
 `;
