@@ -8,10 +8,14 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useActivateMemberMutation from 'calypso/a8c-for-agencies/data/team/use-activate-member';
+import useActivateMemberMutation, {
+	APIError,
+} from 'calypso/a8c-for-agencies/data/team/use-activate-member';
+import AgencyLogo from 'calypso/assets/images/a8c-for-agencies/agency-logo.svg';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import NoMultiAgencyMessage from './no-multi-agency-message';
 
 import './style.scss';
 
@@ -20,6 +24,8 @@ type Props = {
 	inviteId?: number;
 	secret?: string;
 };
+
+const ALREADY_MEMBER_OF_AGENCY_ERROR_CODE = 'a4a_user_invite_already_member_of_agency';
 
 function PlaceHolder() {
 	return (
@@ -43,13 +49,13 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 
 	const { mutate: activateMember } = useActivateMemberMutation();
 
-	const [ error, setError ] = useState( '' );
+	const [ error, setError ] = useState< APIError | null >( null );
+
+	const hasCompleteParameters = agencyId && inviteId && secret;
 
 	useEffect( () => {
-		// FIXME: Check if current user is not member of any agency. If so, display some instructions on how to join to the new agency.
-
-		if ( agencyId && inviteId && secret ) {
-			setError( '' );
+		if ( hasCompleteParameters ) {
+			setError( null );
 
 			activateMember(
 				{
@@ -61,13 +67,13 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 					onSuccess: () => {
 						dispatch( fetchAgencies() );
 					},
-					onError: ( error ) => {
-						setError( error.message );
+					onError: ( error: APIError ) => {
+						setError( error );
 					},
 				}
 			);
 		}
-	}, [ activateMember, agencyId, dispatch, inviteId, secret ] );
+	}, [ activateMember, agencyId, dispatch, hasCompleteParameters, inviteId, secret ] );
 
 	useEffect( () => {
 		if ( agency && agency.id === Number( agencyId ) ) {
@@ -76,27 +82,41 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 		}
 	}, [ agency, agencyId ] );
 
-	const title = translate( 'Accepting team invite' );
-
-	const content = useMemo( () => {
-		if ( error ) {
-			return <ErrorMessage error={ error } />;
+	const title = useMemo( () => {
+		if ( ! error ) {
+			return <div className="team-accept-invite__title-placeholder"></div>;
 		}
 
-		return <PlaceHolder />;
+		if ( error.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE ) {
+			return <img src={ AgencyLogo } alt="" />;
+		}
+
+		return translate( 'Invalid invite link' );
+	}, [ error, translate ] );
+
+	const content = useMemo( () => {
+		if ( ! error ) {
+			return <PlaceHolder />;
+		}
+
+		if (
+			error.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE &&
+			error.data?.user_agencies?.length &&
+			error.data?.target_agency
+		) {
+			const currentAgency = error.data.user_agencies[ 0 ]; // Let's check only on the first agency.
+			const targetAgency = error.data.target_agency;
+			return <NoMultiAgencyMessage currentAgency={ currentAgency } targetAgency={ targetAgency } />;
+		}
+
+		return <ErrorMessage error={ error.message } />;
 	}, [ error ] );
 
 	return (
-		<Layout className="team-accept-invite" title={ title } wide>
+		<Layout className="team-accept-invite" title={ translate( 'Accepting team invite' ) } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>
-						{ error ? (
-							translate( 'Invalid invite link' )
-						) : (
-							<div className="team-accept-invite__title-placeholder"></div>
-						) }
-					</Title>
+					<Title>{ title }</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>{ content }</LayoutBody>
