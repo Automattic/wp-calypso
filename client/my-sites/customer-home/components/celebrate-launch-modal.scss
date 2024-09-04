@@ -16,6 +16,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
+		min-width: 640px;
 	}
 
 	&-heading {
