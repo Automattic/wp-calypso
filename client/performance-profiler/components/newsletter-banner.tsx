@@ -7,23 +7,20 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 const Container = styled.div`
 	background-color: var( --studio-gray-100, #101517 );
 	border-radius: 6px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 24px;
-	justify-content: space-between;
 	width: 100%;
 
-	& > * {
+	& > div {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 24px;
+		justify-content: space-between;
 		margin: 24px;
-	}
 
-	@media ( max-width: 600px ) {
-		flex-direction: column;
-		gap: 6px;
-
-		& > button {
-			margin-top: 0;
+		@media ( max-width: 600px ) {
+			flex-direction: column;
+			align-items: start;
+			gap: 6px;
 		}
 	}
 `;
@@ -62,23 +59,25 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 	return (
 		<Container>
 			<div>
-				<Heading>
-					{ translate( 'Get notified about changes to your site’s performance—it’s free!' ) }
-				</Heading>
-				<Body>
-					{ translate(
-						"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
-					) }
-				</Body>
-				{ ! isLoggedIn && (
+				<div>
+					<Heading>
+						{ translate( 'Get notified about changes to your site’s performance—it’s free!' ) }
+					</Heading>
 					<Body>
-						{ translate( 'All you need is a free WordPress.com account to get started.' ) }
+						{ translate(
+							"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
+						) }
 					</Body>
-				) }
+					{ ! isLoggedIn && (
+						<Body>
+							{ translate( 'All you need is a free WordPress.com account to get started.' ) }
+						</Body>
+					) }
+				</div>
+				<BlueberryButton variant="primary" href={ link }>
+					{ translate( 'Enable email alerts' ) }
+				</BlueberryButton>
 			</div>
-			<BlueberryButton variant="primary" href={ link }>
-				{ translate( 'Enable email alerts' ) }
-			</BlueberryButton>
 		</Container>
 	);
 };
