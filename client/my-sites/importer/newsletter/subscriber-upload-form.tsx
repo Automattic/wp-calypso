@@ -61,10 +61,12 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 
 	if ( importSelector?.inProgress ) {
 		return (
-			<div className="subscriber-upload-form__in-progress">
-				<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-				<p>Uploading...</p>
-				<ProgressBar />
+			<div className="subscriber-upload-form__dropzone">
+				<div className="subscriber-upload-form__in-progress">
+					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
+					<p>Uploading...</p>
+					<ProgressBar />
+				</div>
 			</div>
 		);
 	}
@@ -76,17 +78,19 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					Sorry, you can only upload CSV files. Please try again with a valid file.
 				</FormInputValidation>
 			) }
-			<DropZone onFilesDrop={ onFileSelect } fullScreen />
-			<FilePicker accept="text/csv" onPick={ onFileSelect } multiple={ false }>
-				<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-				{ ! selectedFile && <p>Drag a file, or click to upload a file.</p> }
-				{ selectedFile && (
-					<p>
-						To replace this <em className="file-name">{ selectedFile?.name }</em>
-						<br /> drag a file, or click to upload different one.
-					</p>
-				) }
-			</FilePicker>
+			<div className="subscriber-upload-form__dropzone">
+				<DropZone onFilesDrop={ onFileSelect } />
+				<FilePicker accept="text/csv" onPick={ onFileSelect } multiple={ false }>
+					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
+					{ ! selectedFile && <p>Drag a file, or click to upload a file.</p> }
+					{ selectedFile && (
+						<p>
+							To replace this <em className="file-name">{ selectedFile?.name }</em>
+							<br /> drag a file, or click to upload different one.
+						</p>
+					) }
+				</FilePicker>
+			</div>
 			{ isSelectedFileValid && selectedFile && (
 				<p>
 					By clicking "Continue," you represent that you've obtained the appropriate consent to

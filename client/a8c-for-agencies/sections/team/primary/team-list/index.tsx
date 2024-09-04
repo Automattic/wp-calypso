@@ -13,6 +13,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -106,7 +107,7 @@ export default function TeamList() {
 	);
 
 	if ( isPending ) {
-		// FIXME: Add placeholder when UI is pending
+		return <PagePlaceholder />;
 	}
 
 	if ( ! hasMembers ) {
@@ -114,7 +115,7 @@ export default function TeamList() {
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>

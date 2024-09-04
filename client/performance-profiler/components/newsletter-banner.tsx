@@ -7,22 +7,15 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 const Container = styled.div`
 	background-color: var( --studio-gray-100, #101517 );
 	border-radius: 6px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	justify-content: space-between;
 	width: 100%;
-
-	& > div {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 24px;
-		justify-content: space-between;
-		margin: 24px;
-
-		@media ( max-width: 600px ) {
-			flex-direction: column;
-			align-items: start;
-			gap: 6px;
-		}
-	}
+	box-sizing: border-box;
+	flex-wrap: wrap;
+	padding: 24px;
 `;
 
 const Heading = styled.div`
@@ -59,25 +52,23 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 	return (
 		<Container>
 			<div>
-				<div>
-					<Heading>
-						{ translate( 'Get notified about changes to your site’s performance—it’s free!' ) }
-					</Heading>
-					<Body>
-						{ translate(
-							"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
-						) }
-					</Body>
-					{ ! isLoggedIn && (
-						<Body>
-							{ translate( 'All you need is a free WordPress.com account to get started.' ) }
-						</Body>
+				<Heading>
+					{ translate( 'Get notified about changes to your site’s performance—it’s free!' ) }
+				</Heading>
+				<Body>
+					{ translate(
+						"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
 					) }
-				</div>
-				<BlueberryButton variant="primary" href={ link }>
-					{ translate( 'Enable email alerts' ) }
-				</BlueberryButton>
+				</Body>
+				{ ! isLoggedIn && (
+					<Body>
+						{ translate( 'All you need is a free WordPress.com account to get started.' ) }
+					</Body>
+				) }
 			</div>
+			<BlueberryButton variant="primary" href={ link }>
+				{ translate( 'Enable email alerts' ) }
+			</BlueberryButton>
 		</Container>
 	);
 };

@@ -1,4 +1,6 @@
-import { ProgressBar, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import { ProgressBar } from '@wordpress/components';
+import { Icon, cloudUpload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
@@ -107,9 +109,7 @@ export class UploadingPane extends PureComponent {
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
-				const progressClasses = clsx( 'importer__upload-progress', {
-					'is-complete': uploadPercent > 95,
-				} );
+
 				const uploaderPrompt =
 					importerState === appStates.UPLOADING && uploadPercent < 99
 						? this.props.translate( 'Uploading %(filename)s\u2026', {
@@ -118,14 +118,9 @@ export class UploadingPane extends PureComponent {
 						: this.props.translate( 'Processing uploaded file\u2026' );
 
 				return (
-					<div>
+					<div className="content-upload-form__in-progress">
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar
-							className={ progressClasses }
-							value={ uploadPercent }
-							total={ 100 }
-							isPulsing={ uploadPercent > 99 || importerState === appStates.UPLOAD_PROCESSING }
-						/>
+						<ProgressBar />
 					</div>
 				);
 			}
@@ -261,13 +256,7 @@ export class UploadingPane extends PureComponent {
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
 					<div className={ importerStatusClasses }>
-						<Gridicon
-							size="48"
-							className="importer__upload-icon"
-							icon={
-								this.props.optionalUrl && this.state.fileToBeUploaded ? 'checkmark' : 'cloud-upload'
-							}
-						/>
+						<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 48 } />
 						{ this.getMessage() }
 					</div>
 					{ isReadyForImport && (

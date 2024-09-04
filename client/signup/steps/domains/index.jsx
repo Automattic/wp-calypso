@@ -1337,8 +1337,17 @@ export class RenderDomainsStep extends Component {
 		let backLabelText;
 		let isExternalBackUrl = false;
 
-		// Hide "Back" button in domains step if the user has no sites.
-		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' );
+		/**
+		 * Hide "Back" button in domains step if:
+		 *   1. The user has no sites
+		 *   2. This step was rendered immediately after account creation
+		 *   3. The user is on the root domains step and not a child step section like use-your-domain
+		 */
+		const shouldHideBack =
+			! userSiteCount &&
+			previousStepName?.startsWith( 'user' ) &&
+			stepSectionName !== 'use-your-domain';
+
 		const hideBack = flowName === 'domain' || shouldHideBack;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();

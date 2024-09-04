@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import MigrationBannerImg from 'calypso/assets/images/performance-profiler/migration-banner-img.png';
@@ -8,6 +9,7 @@ import './style.scss';
 
 export const MigrationBanner = ( props: { url: string } ) => {
 	const translate = useTranslate();
+	const isDesktop = useDesktopBreakpoint();
 
 	return (
 		<div className="performance-profiler-migration-banner">
@@ -62,15 +64,17 @@ export const MigrationBanner = ( props: { url: string } ) => {
 							</Button>
 						</div>
 					</div>
-					<div className="illustration">
-						<img
-							src={ MigrationBannerImg }
-							width={ 514 }
-							alt={ translate(
-								'Image showing WordPress.com connecting sections of the web world'
-							) }
-						/>
-					</div>
+					{ isDesktop && (
+						<div className="illustration">
+							<img
+								src={ MigrationBannerImg }
+								width={ 514 }
+								alt={ translate(
+									'Image showing WordPress.com connecting sections of the web world'
+								) }
+							/>
+						</div>
+					) }
 				</div>
 				<p className="trusted-by">{ translate( 'Trusted by 160 million worldwide' ) }</p>
 			</div>

@@ -106,7 +106,9 @@ export default function Subscribers( {
 							) }
 						</ul>
 					</div>
-					<Button href={ nextStepUrl }>Continue</Button>
+					<Button variant="primary" href={ nextStepUrl }>
+						Continue
+					</Button>
 				</Modal>
 			) }
 		</>
