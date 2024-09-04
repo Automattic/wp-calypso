@@ -91,7 +91,7 @@ class SocialLoginForm extends Component {
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
 						{ this.socialLoginButtons.map( ( { service, button }, index ) =>
-							service === lastUsedAuthenticationMethod ? (
+							isSocialFirst && service === lastUsedAuthenticationMethod ? (
 								<UsernameOrEmailButton
 									key={ index + 1 }
 									onClick={ this.props.resetLastUsedAuthenticationMethod }

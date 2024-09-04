@@ -762,25 +762,20 @@ export class LoginForm extends Component {
 	}
 
 	handleSocialLogin = ( result ) => {
-		const socialLoginUsed = window.sessionStorage.getItem( 'social_login_used' );
-
-		if ( ! result || socialLoginUsed !== result.service ) {
-			return;
-		}
-
 		let redirectTo = this.props.redirectTo;
 
 		// load persisted redirect_to url from session storage, needed for redirect_to to work with google redirect flow
-		if ( ! redirectTo ) {
-			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
-		}
+		if ( typeof window !== 'undefined' ) {
+			if ( ! redirectTo ) {
+				redirectTo = window.sessionStorage?.getItem( 'login_redirect_to' );
+			}
 
-		window.sessionStorage.removeItem( 'login_redirect_to' );
-		window.sessionStorage.removeItem( 'social_login_used' );
+			window.sessionStorage?.removeItem( 'login_redirect_to' );
+		}
 
 		this.props.loginSocialUser( result, redirectTo ).then(
 			() => {
-				this.recordEvent( 'calypso_login_social_login_success', result.service );
+				this.recordSocialLoginEvent( 'calypso_login_social_login_success', result.service );
 				this.props.onSuccess();
 			},
 			( error ) => {
@@ -789,7 +784,7 @@ export class LoginForm extends Component {
 					return;
 				}
 
-				this.recordEvent( 'calypso_login_social_login_failure', result.service, {
+				this.recordSocialLoginEvent( 'calypso_login_social_login_failure', result.service, {
 					error_code: error.code,
 					error_message: error.message,
 				} );
@@ -799,18 +794,17 @@ export class LoginForm extends Component {
 
 	trackLoginAndRememberRedirect = ( event, isLastUsedAuthenticationMethod = false ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
-		this.recordEvent( 'calypso_login_social_button_click', service );
 
-		window.sessionStorage.setItem( 'social_login_used', service, {
+		this.recordSocialLoginEvent( 'calypso_login_social_button_click', service, {
 			is_last_used_authentication_method: isLastUsedAuthenticationMethod,
 		} );
 
 		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
-			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
+			window.sessionStorage?.setItem( 'login_redirect_to', this.props.redirectTo );
 		}
 	};
 
-	recordEvent = ( eventName, service, params ) =>
+	recordSocialLoginEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
 			social_account_type: service,
 			...params,
@@ -949,6 +943,7 @@ export class LoginForm extends Component {
 
 				<Card className="login__form">
 					{ this.state.lastUsedAuthenticationMethod &&
+					isSocialFirst &&
 					this.state.lastUsedAuthenticationMethod !== 'password' ? (
 						<>
 							<span className="last-used-authentication-method">
@@ -1218,6 +1213,7 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
 				getCurrentQueryArguments( state )?.email_address,
+			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery: getCurrentQueryArguments( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
