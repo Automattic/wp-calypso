@@ -1544,7 +1544,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
+			translate( 'High request capacity' ),
+			...aiAssistantIncludesInfo,
+		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: [
 			translate( '100 monthly requests (upgradeable)' ),
 			...aiAssistantIncludesInfo,
@@ -1565,7 +1568,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			translate( '1000 monthly requests (upgradeable)' ),
 			...aiAssistantIncludesInfo,
 		],
-		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: [
+			translate( 'High request capacity' ),
+			...aiAssistantIncludesInfo,
+		],
 		[ PRODUCT_JETPACK_AI_YEARLY_100 ]: [
 			translate( '100 monthly requests (upgradeable)' ),
 			...aiAssistantIncludesInfo,
@@ -1586,7 +1592,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			translate( '1000 monthly requests (upgradeable)' ),
 			...aiAssistantIncludesInfo,
 		],
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
+			translate( 'High request capacity' ),
+			...aiAssistantIncludesInfo,
+		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: [
 			translate( '100 monthly requests (upgradeable)' ),
 			...aiAssistantIncludesInfo,
