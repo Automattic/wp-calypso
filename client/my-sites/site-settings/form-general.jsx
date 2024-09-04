@@ -624,8 +624,8 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				<A4AFullyManagedSiteSetting
 					site={ site }
-					checked={ fields.wpcom_gifting_subscription }
-					onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+					checked={ fields.is_fully_managed_agency_site }
+					onChange={ this.props.handleToggle( 'is_fully_managed_agency_site' ) }
 					isSaving={ isSavingSettings }
 					onSaveSetting={ handleSubmitForm }
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -758,6 +758,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
 		admin_url: '',
+		is_fully_managed_agency_site: false,
 	};
 
 	if ( ! settings ) {
@@ -771,6 +772,8 @@ const getFormSettings = ( settings ) => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
+
+		is_fully_managed_agency_site: settings.is_fully_managed_agency_site,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
