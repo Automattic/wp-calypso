@@ -12,7 +12,6 @@ const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating
 
 interface FeedbackProps {
 	clickHandler: ( action: string ) => void;
-	siteId: number;
 }
 
 interface FeedbackPanelProps {
@@ -20,7 +19,7 @@ interface FeedbackPanelProps {
 	isOpen: boolean;
 }
 
-function FeedbackContent( { siteId, clickHandler }: FeedbackProps ) {
+function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
@@ -48,7 +47,6 @@ function FeedbackContent( { siteId, clickHandler }: FeedbackProps ) {
 					{ secondaryButtonText }
 				</Button>
 			</div>
-			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ () => setIsOpen( false ) } /> }
 		</div>
 	);
 }
@@ -88,6 +86,7 @@ function FeedbackCard( { clickHandler }: FeedbackProps ) {
 function StatsFeedbackController() {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
+	const siteId = 12345;
 
 	const handleButtonClick = ( action: string ) => {
 		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
@@ -102,7 +101,7 @@ function StatsFeedbackController() {
 		<div className="stats-feedback-container">
 			<FeedbackCard clickHandler={ handleButtonClick } />
 			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
-			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
+			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ () => setIsOpen( false ) } /> }
 		</div>
 	);
 }
