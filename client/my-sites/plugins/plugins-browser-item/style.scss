@@ -70,7 +70,7 @@
 	}
 
 	.plugins-browser-item__description {
-		margin: 24px 0;
+		margin: 12px 0 24px 0;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		font-weight: 400;
@@ -78,9 +78,9 @@
 		color: $studio-gray-80;
 
 		// limit to 2 lines
-		height: calc(20px * 2); // line height * number of lines
+		height: calc(20px * 3); // line height * number of lines
 		display: -webkit-box;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
