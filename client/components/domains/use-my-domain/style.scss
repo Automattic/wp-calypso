@@ -3,11 +3,18 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/colors";
 
+.useMyDomain {
+	.domain-transfer-or-connect__content {
+		box-shadow: none;
+	}
+}
+
 .use-my-domain {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 	padding: 36px 24px;
+	box-shadow: none;
 
 	& &__domain-illustration {
 		margin-bottom: 36px;
