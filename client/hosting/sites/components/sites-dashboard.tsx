@@ -194,6 +194,32 @@ const SitesDashboard = ( {
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
+	useEffect( () => {
+		const fields = getFieldsByBreakpoint( isDesktop );
+		const fieldsForBreakpoint = [ ...fields ].sort().toString();
+		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
+		// Compare the content of the arrays, not its referrences that will always be different.
+		// sort() sorts the array in place, so we need to clone them first.
+		if ( existingFields !== fieldsForBreakpoint ) {
+			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
+		}
+
+		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
+		if ( dataViewsState.layout.styles.site.width !== siteNameColumnWidth ) {
+			setDataViewsState( ( prevState ) => ( {
+				...prevState,
+				layout: {
+					styles: {
+						...prevState.layout.styles,
+						site: {
+							width: siteNameColumnWidth,
+						},
+					},
+				},
+			} ) );
+		}
+	}, [ isDesktop, isWide, dataViewsState?.fields, dataViewsState?.layout?.styles?.site?.width ] );
+
 	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
