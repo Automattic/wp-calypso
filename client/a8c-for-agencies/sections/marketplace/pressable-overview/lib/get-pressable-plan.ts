@@ -84,7 +84,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		slug: 'pressable-business',
 		install: 50,
 		visits: 1000000,
-		storage: 80,
+		storage: 200,
 	},
 	'pressable-business-80': {
 		slug: 'pressable-business-80',
