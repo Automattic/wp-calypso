@@ -340,7 +340,7 @@ export function CouponCostOverride( {
 
 	const label = isOnboardingAffiliateFlow
 		? getAffiliateCouponLabel()
-		: getCouponLabel( couponLabel as string, experimentAssignment?.variationName || null );
+		: getCouponLabel( couponLabel as string, experimentAssignment?.variationName );
 	return (
 		<CostOverridesListStyle>
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">

@@ -138,14 +138,14 @@ export function getAffiliateCouponLabel(): string {
 
 export function getCouponLabel(
 	originalLabel: string,
-	experimentVariationName: string | null
+	experimentVariationName: string | null | undefined
 ): string {
 	return experimentVariationName === 'treatment' ? translate( 'Offer Applied' ) : originalLabel;
 }
 
 export function isCouponBoxHidden(
 	productSlugs: string[],
-	experimentVariationName: string | null
+	experimentVariationName: string | null | undefined
 ): boolean {
 	const ignoredProductSlugs = [ 'wp_difm_lite' ];
 	const containsIgnoredProduct = productSlugs.some( ( slug ) =>

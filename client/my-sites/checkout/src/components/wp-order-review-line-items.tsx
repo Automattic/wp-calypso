@@ -102,8 +102,8 @@ export function WPOrderReviewLineItems( {
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
 			? getAffiliateCouponLabel()
-			: getCouponLabel( couponLineItem.label, experimentAssignment?.variationName || null );
-		if ( isCouponBoxHidden( productSlugs, experimentAssignment?.variationName || null ) ) {
+			: getCouponLabel( couponLineItem.label, experimentAssignment?.variationName );
+		if ( isCouponBoxHidden( productSlugs, experimentAssignment?.variationName ) ) {
 			couponLineItem.hasDeleteButton = false;
 		}
 	}

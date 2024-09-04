@@ -217,7 +217,7 @@ export function CouponFieldArea( {
 		isPurchaseFree ||
 		couponStatus === 'applied' ||
 		isOnboardingAffiliateFlow ||
-		isCouponBoxHidden( productSlugs, experimentAssignment?.variationName || null )
+		isCouponBoxHidden( productSlugs, experimentAssignment?.variationName )
 	) {
 		return null;
 	}
