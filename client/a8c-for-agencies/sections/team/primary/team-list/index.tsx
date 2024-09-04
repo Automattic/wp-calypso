@@ -115,7 +115,7 @@ export default function TeamList() {
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>

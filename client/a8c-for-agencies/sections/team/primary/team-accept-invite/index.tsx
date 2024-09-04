@@ -104,7 +104,12 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 	}
 
 	return (
-		<Layout className="team-accept-invite" title={ translate( 'Accepting team invite' ) } wide>
+		<Layout
+			className="team-accept-invite"
+			title={ translate( 'Accepting team invite' ) }
+			wide
+			compact
+		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>

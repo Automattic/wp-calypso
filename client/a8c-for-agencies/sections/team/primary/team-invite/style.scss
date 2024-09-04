@@ -5,6 +5,10 @@
 	max-width: 700px;
 }
 
+.team-invite-form {
+	padding-block-start: 16px;
+}
+
 .team-invite-form__required-information {
 	@include a4a-font-body-md;
 	color: var(--color-neutral-50);
