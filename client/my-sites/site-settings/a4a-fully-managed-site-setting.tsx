@@ -25,6 +25,7 @@ export function A4AFullyManagedSiteSetting( {
 	disabled,
 }: Props ) {
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+	const isDevSite = site.is_a4a_dev_site;
 	const isAtomicSite = site.is_wpcom_atomic;
 
 	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID } );
@@ -35,6 +36,27 @@ export function A4AFullyManagedSiteSetting( {
 		return null;
 	}
 
+	const translationComponents = {
+		HcLink: (
+			<a
+				target="_blank"
+				href={ localizeUrl(
+					'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+				) }
+				rel="noreferrer"
+			/>
+		),
+		HfLink: (
+			<a
+				target="_blank"
+				href={ localizeUrl(
+					'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+				) }
+				rel="noreferrer"
+			/>
+		),
+	};
+
 	return (
 		<div className="site-settings__a4a-fully-managed-container">
 			<SettingsSectionHeader
@@ -43,40 +65,32 @@ export function A4AFullyManagedSiteSetting( {
 				disabled={ disabled }
 				isSaving={ isSaving }
 				onButtonClick={ onSaveSetting }
-				showButton
+				showButton={ ! isDevSite }
 			/>
 			<CompactCard className="site-settings__a4a-fully-managed-content">
-				<ToggleControl
-					disabled={ disabled }
-					className="site-settings__a4a-fully-managed-toggle"
-					label={ translate(
-						'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
-						{
-							components: {
-								HcLink: (
-									<a
-										target="_blank"
-										href={ localizeUrl(
-											'https://wordpress.com/support/help-support-options/#how-to-contact-us'
-										) }
-										rel="noreferrer"
-									/>
-								),
-								HfLink: (
-									<a
-										target="_blank"
-										href={ localizeUrl(
-											'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
-										) }
-										rel="noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-					checked={ ! isFullyManagedAgencySite }
-					onChange={ ( checked ) => onChange( ! checked ) }
-				/>
+				{ isDevSite ? (
+					<p className="form-setting-explanation">
+						{ translate(
+							"Clients can't access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.",
+							{
+								components: translationComponents,
+							}
+						) }
+					</p>
+				) : (
+					<ToggleControl
+						disabled={ disabled }
+						className="site-settings__a4a-fully-managed-toggle"
+						label={ translate(
+							'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+							{
+								components: translationComponents,
+							}
+						) }
+						checked={ ! isFullyManagedAgencySite }
+						onChange={ ( checked ) => onChange( ! checked ) }
+					/>
+				) }
 			</CompactCard>
 		</div>
 	);
