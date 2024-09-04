@@ -67,7 +67,7 @@ class DateRangeExample extends Component {
 
 				<h3>With Shortcuts Menu Displayed</h3>
 				<Card>
-					<DateRange shouldRenderShortcuts />
+					<DateRange displayShortcuts />
 				</Card>
 			</Fragment>
 		);
