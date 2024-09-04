@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -7,6 +7,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const CheckboxWrapper = styled.div`
 	margin-top: 16px;
+
+	.assign-to-all-payment-methods-checkbox input[type='checkbox']:checked {
+		background: ${ ( props ) => props.theme.colors.primary };
+		border-color: ${ ( props ) => props.theme.colors.primary };
+	}
 `;
 
 export default function AssignToAllPaymentMethods( {
@@ -34,6 +39,7 @@ export default function AssignToAllPaymentMethods( {
 	return (
 		<CheckboxWrapper>
 			<CheckboxControl
+				className="assign-to-all-payment-methods-checkbox"
 				disabled={ isDisabled }
 				checked={ isChecked }
 				onChange={ handleChangeEvent }
