@@ -16,26 +16,24 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 				</tr>
 			</thead>
 			<tbody>
-				{ items
-					.sort( ( a, b ) => ( b.wastedMs as number ) - ( a.wastedMs as number ) )
-					.map( ( item, index ) => (
-						<>
-							<tr key={ `tr-${ index }` }>
-								{ headings.map( ( heading ) => (
-									<td key={ `td-${ index }-${ heading.key }` }>
-										<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
-									</td>
-								) ) }
-							</tr>
-							{ item.subItems && typeof item.subItems === 'object' && (
-								<SubRows
-									items={ item.subItems?.items }
-									headings={ headings }
-									key={ `subrows-${ index }` }
-								/>
-							) }
-						</>
-					) ) }
+				{ items.map( ( item, index ) => (
+					<>
+						<tr key={ `tr-${ index }` }>
+							{ headings.map( ( heading ) => (
+								<td key={ `td-${ index }-${ heading.key }` }>
+									<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
+								</td>
+							) ) }
+						</tr>
+						{ item.subItems && typeof item.subItems === 'object' && (
+							<SubRows
+								items={ item.subItems?.items }
+								headings={ headings }
+								key={ `subrows-${ index }` }
+							/>
+						) }
+					</>
+				) ) }
 			</tbody>
 		</table>
 	);
