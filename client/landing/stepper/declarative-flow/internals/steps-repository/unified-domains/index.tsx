@@ -40,6 +40,9 @@ const RenderDomainsStepConnect = connect(
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 		const userLoggedIn = isUserLoggedIn( state as object );
 		const currentUserSiteCount = getCurrentUserSiteCount( state as object );
+		const stepSectionName = window.location.pathname.includes( 'use-your-domain' )
+			? 'use-your-domain'
+			: undefined;
 
 		return {
 			designType: getDesignType( state ),
@@ -59,6 +62,7 @@ const RenderDomainsStepConnect = connect(
 			path: window.location.pathname,
 			positionInFlow: 1,
 			isReskinned: true,
+			stepSectionName,
 		};
 	},
 	{
