@@ -8,6 +8,8 @@ export interface SubmitJetpackStatsFeedbackParams {
 	source_url: string;
 	product_name: string;
 	feedback: string;
+	// TODO: Remove this flag once we're ready to send real feedback.
+	is_testing?: boolean;
 }
 
 export default function useSubmitProductFeedback( siteId: number ): {
