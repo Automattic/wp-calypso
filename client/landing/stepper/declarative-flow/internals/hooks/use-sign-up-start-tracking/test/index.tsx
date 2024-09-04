@@ -147,7 +147,7 @@ describe( 'useSignUpTracking', () => {
 			} );
 		} );
 
-		it( 'does not trigger the event on rerender', () => {
+		it( 'triggers the event on rerender', () => {
 			const { rerender } = render( {
 				flow: { ...signUpFlow, useSignupStartEventProps: () => ( { extra: 'props' } ) },
 				currentStepRoute: 'step-1',
@@ -156,7 +156,33 @@ describe( 'useSignUpTracking', () => {
 
 			rerender();
 
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
+
 			expect( recordTracksEvent ).toHaveBeenNthCalledWith( 1, 'calypso_signup_start', {
+				flow: 'sign-up-flow',
+				ref: 'another-flow-or-cta',
+				extra: 'props',
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenNthCalledWith( 2, 'calypso_signup_start', {
+				flow: 'sign-up-flow',
+				ref: 'another-flow-or-cta',
+				extra: 'props',
+			} );
+		} );
+
+		it( 'is we add the signup param, then we trigger it even more', () => {
+			const { rerender } = render( {
+				flow: { ...signUpFlow, useSignupStartEventProps: () => ( { extra: 'props' } ) },
+				currentStepRoute: 'step-1',
+				queryParams: { ref: 'another-flow-or-cta', signup: 1 },
+			} );
+
+			rerender();
+
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 3 );
+
+			expect( recordTracksEvent ).toHaveBeenNthCalledWith( 3, 'calypso_signup_start', {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
 				extra: 'props',
