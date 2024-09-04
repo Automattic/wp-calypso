@@ -97,4 +97,18 @@
 		margin-top: 1em;
 		text-align: center;
 	}
+	.site-migration-credentials__special-instructions {
+		.components-button {
+			padding: 0;
+			height: auto;
+			font-size: 0.875rem;
+			font-weight: 600;
+			color: var(--color-text);
+			margin-top: 1rem;
+		}
+
+		.site-migration-credentials__special-instructions-icon {
+			fill: var(--color-text) !important;
+		}
+	}
 }
