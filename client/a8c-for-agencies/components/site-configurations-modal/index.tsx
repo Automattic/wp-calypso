@@ -227,7 +227,29 @@ export default function SiteConfigurationsModal( {
 						{ isDevSite ? (
 							<label className="dev-sites-label">
 								{ translate(
-									'Clients cannot use the WordPress.com Help Center and hosting features of development sites. You can grant access to those features via Site Settings after the site is launched.'
+									'Clients can’t access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.',
+									{
+										components: {
+											HcLink: (
+												<a
+													target="_blank"
+													href={ localizeUrl(
+														'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+													) }
+													rel="noreferrer"
+												/>
+											),
+											HfLink: (
+												<a
+													target="_blank"
+													href={ localizeUrl(
+														'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+													) }
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
 								) }
 							</label>
 						) : (
