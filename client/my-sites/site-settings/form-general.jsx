@@ -565,6 +565,7 @@ export class SiteSettingsFormGeneral extends Component {
 	render() {
 		const {
 			customizerUrl,
+			fields,
 			handleSubmitForm,
 			hasNoWpcomBranding,
 			isRequestingSettings,
@@ -621,7 +622,14 @@ export class SiteSettingsFormGeneral extends Component {
 				) : (
 					this.privacySettings()
 				) }
-				<A4AFullyManagedSiteSetting site={ site } />
+				<A4AFullyManagedSiteSetting
+					site={ site }
+					checked={ fields.wpcom_gifting_subscription }
+					onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+					isSaving={ isSavingSettings }
+					onSaveSetting={ handleSubmitForm }
+					disabled={ isRequestingSettings || isSavingSettings }
+				/>
 				{ this.enhancedOwnershipSettings() }
 				<DIFMUpsell
 					site={ site }
