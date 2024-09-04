@@ -187,11 +187,15 @@
 	}
 }
 
+.plugins-browser-item__header {
+	min-height: 66px;
+}
+
 .plugins-browser-item__title {
 	color: var(--color-neutral-100);
 	font-weight: 500;
 	font-size: $font-body;
-	line-height: 24px;
+	line-height: 20px;
 }
 
 .plugins-browser-item__author {
