@@ -68,10 +68,6 @@
 			display: none;
 		}
 
-		.dataviews-view-table tr th:first-child,
-		.dataviews-view-table tr td:first-child {
-			padding-left: 64px;
-		}
 		.dataviews-view-table tr {
 			th:last-child,
 			td:last-child {
@@ -143,7 +139,6 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding: 8px 24px 8px 8px;
 			width: 70%;
 		}
 
@@ -190,10 +185,6 @@
 		.sites-dataviews__favorite-btn-wrapper,
 		.sites-overview__boost-score {
 			display: none;
-		}
-
-		tr td:first-child {
-			padding-inline-start: 8px;
 		}
 
 		tr td:last-child {
