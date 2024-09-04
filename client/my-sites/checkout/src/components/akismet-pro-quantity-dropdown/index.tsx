@@ -73,7 +73,7 @@ const Option = styled.li`
 	cursor: pointer;
 
 	&:hover {
-		background: #e9f0f5;
+		background: var( --studio-wordpress-blue-5 );
 	}
 
 	&.item-variant-option--selected {

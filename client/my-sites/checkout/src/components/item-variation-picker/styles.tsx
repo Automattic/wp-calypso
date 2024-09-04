@@ -35,16 +35,17 @@ export const Option = styled.li< OptionProps >`
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	cursor: pointer;
 	flex-direction: row;
-	justify-content: space-between; align-items: center;
+	justify-content: space-between;
+	align-items: center;
 	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 
 	&:hover {
-		var( --studio-blue-0 );
+		background: var( --studio-wordpress-blue-5 );
 	}
 
 	&.item-variant-option--selected {
-		background: var(--studio-wordpress-blue-50);
+		background: var( --studio-wordpress-blue-50 );
 		color: #fff;
 	}
 `;
