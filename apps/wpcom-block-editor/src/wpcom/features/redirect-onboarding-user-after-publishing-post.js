@@ -65,9 +65,9 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 			dispatch( 'core/edit-post' ).closePublishSidebar();
 
 			// Redirect to the post flow URL if it's provided, otherwise redirect to the launchpad.
-			window.location.href =
-				`${ siteOrigin }${ postFlowUrl }` ||
-				`${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+			window.location.href = postFlowUrl
+				? `${ siteOrigin }${ postFlowUrl }`
+				: `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
 		}
 	} );
 }
