@@ -70,6 +70,8 @@ const onboarding: Flow = {
 						return navigate( 'use-my-domain' );
 					}
 					return navigate( 'plans' );
+				case 'use-my-domain':
+					return navigate( 'plans' );
 				case 'plans':
 					return navigate( 'create-site', undefined, true );
 				case 'create-site':
