@@ -71,6 +71,13 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPanelProps ) {
 				label={ translate( 'Close' ) }
 			/>
 			<FeedbackContent clickHandler={ clickHandler } />
+			<Button
+				className="stats-feedback-panel__dismiss-button"
+				onClick={ handleCloseButtonClicked }
+				variant="link"
+			>
+				{ translate( 'Dismiss' ) }
+			</Button>
 		</div>
 	);
 }
