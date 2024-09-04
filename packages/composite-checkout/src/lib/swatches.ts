@@ -1,15 +1,4 @@
 export type Swatches = {
-	wordpressBlue5: string;
-	wordpressBlue40: string;
-	wordpressBlue50: string;
-	wordpressBlue60: string;
-	wordpressBlue80: string;
-	blue5: string;
-	blue30: string;
-	blue40: string;
-	blue50: string;
-	blue60: string;
-	blue80: string;
 	gray0: string;
 	gray5: string;
 	gray10: string;
@@ -28,17 +17,6 @@ export type Swatches = {
 };
 
 export const swatches: Swatches = {
-	wordpressBlue5: '#BEDAE6',
-	wordpressBlue40: '#187AA2',
-	wordpressBlue50: '#006088',
-	wordpressBlue60: '#004E6E',
-	wordpressBlue80: '#002C40',
-	blue5: '#BBE0FA',
-	blue30: '#399CE3',
-	blue40: '#1689DB',
-	blue50: '#0675C4',
-	blue60: '#055D9C',
-	blue80: '#02395C',
 	gray0: '#F6F7F7',
 	gray5: '#DCDCDE',
 	gray10: '#C3C4C7',
