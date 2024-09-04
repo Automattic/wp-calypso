@@ -73,6 +73,11 @@
 				margin-bottom: 0;
 			}
 		}
+		@media (max-width: $break-mobile) {
+			.components-button {
+				width: 100%;
+			}
+		}
 	}
 }
 
