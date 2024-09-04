@@ -362,8 +362,12 @@ export class RenderDomainsStep extends Component {
 	handleUseYourDomainClick = () => {
 		// Stepper doesn't support page.js
 		const navigate = this.props.page || page;
-		navigate( this.getUseYourDomainUrl() );
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		if ( this.props.useStepperWrapper ) {
+			this.props.goToNextStep( { navigateToUseMyDomain: true } );
+		} else {
+			navigate( this.getUseYourDomainUrl() );
+		}
 	};
 
 	handleDomainToDomainCart = async ( previousState ) => {

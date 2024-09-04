@@ -22,6 +22,10 @@ const onboarding: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
 			},
 			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
+			},
+			{
 				slug: 'plans',
 				asyncComponent: () => import( './internals/steps-repository/plans' ),
 			},
@@ -62,6 +66,9 @@ const onboarding: Flow = {
 				case 'domains':
 					setDomain( providedDependencies.suggestion );
 					setDomainCartItems( providedDependencies.domainCart );
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						return navigate( 'use-my-domain' );
+					}
 					return navigate( 'plans' );
 				case 'plans':
 					return navigate( 'create-site', undefined, true );
@@ -104,6 +111,8 @@ const onboarding: Flow = {
 
 		const goBack = () => {
 			switch ( currentStepSlug ) {
+				case 'use-my-domain':
+					return navigate( 'domains' );
 				case 'plans':
 					return navigate( 'domains' );
 				default:
