@@ -1557,7 +1557,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
-			translate( 'High request capacity*' ),
+			translate( 'High request capacity *' ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: [
@@ -1581,7 +1581,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY ]: [
-			translate( 'High request capacity*' ),
+			translate( 'High request capacity *' ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_100 ]: [
@@ -1605,7 +1605,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
-			translate( 'High request capacity*' ),
+			translate( 'High request capacity *' ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: [
