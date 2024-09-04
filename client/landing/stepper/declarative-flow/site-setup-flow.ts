@@ -7,7 +7,6 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
-import { LAUNCHPAD_EXPERIMENT_NAME } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useExperiment } from 'calypso/lib/explat';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -21,7 +20,10 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
-import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
+import {
+	useLaunchpadDecider,
+	LAUNCHPAD_EXPERIMENT_NAME,
+} from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
