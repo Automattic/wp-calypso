@@ -104,8 +104,8 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 	return null;
 }
 
-function getDisclaimerLink( item: Product ) {
-	if ( isJetpackAISlug( item?.product_slug ) ) {
+function getDisclaimerLink( item: Product | Plan ) {
+	if ( objectIsProduct( item ) && isJetpackAISlug( item.product_slug ) ) {
 		return 'https://jetpack.com/redirect/?source=ai-assistant-fair-usage-policy';
 	}
 
