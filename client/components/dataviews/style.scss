@@ -221,6 +221,13 @@
 	display: none !important;
 }
 
+// TODO: remove when the site connectivity notice
+// is updated to be part of a field.
+.is-section-a8c-for-agencies-sites .dataviews-view-table tr,
+.is-section-a8c-for-agencies-sites .dataviews-view-list li {
+	border-top: none;
+}
+
 // TODO: remove when updating dataviews to have this built-in.
 //
 // https://github.com/WordPress/gutenberg/issues/64927
