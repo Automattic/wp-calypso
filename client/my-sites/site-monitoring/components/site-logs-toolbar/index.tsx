@@ -237,7 +237,7 @@ export const SiteLogsToolbar = ( {
 					className="site-logs-toolbar__download"
 					disabled={ isDownloading }
 					isBusy={ isDownloading }
-					variant="primary"
+					variant="secondary"
 					onClick={ () =>
 						downloadLogs( {
 							logType,

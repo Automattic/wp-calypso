@@ -72,7 +72,7 @@ export const NewStagingSiteCardContent = ( {
 					// Not wrapped in translation to avoid request unconfirmed copy
 					<p>The staging feature will be available once the site is launched.</p>
 				) }
-				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
+				<Button disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
 				{ showQuotaError && <ExceedQuotaErrorContent /> }
