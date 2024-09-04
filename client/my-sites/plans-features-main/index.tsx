@@ -15,6 +15,7 @@ import {
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
+	isAssignedToFewerFeaturesExperimentVariant,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -790,7 +791,9 @@ const PlansFeaturesMain = ( {
 										enableLargeFeatureTitles={ isAssignedToFewerFeaturesExperimentVariant(
 											'treatment-a'
 										) }
-										enableLargeFeatureTitles={ isAssignedToFewerFeaturesExperiment }
+										enableStorageAsBadge={
+											! isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

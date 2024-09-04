@@ -199,6 +199,7 @@ export type GridContextProps = {
 	hideUnsupportedFeatures?: boolean;
 	enableCategorisedFeatures?: boolean;
 	enableLargeFeatureTitles?: boolean;
+	enableStorageAsBadge?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

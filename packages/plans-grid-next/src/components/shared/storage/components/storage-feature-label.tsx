@@ -9,12 +9,11 @@ import useStorageStringFromFeature from '../hooks/use-storage-string-from-featur
 
 interface Props {
 	planSlug: PlanSlug;
-	withDescription?: boolean;
 }
 
-const StorageFeatureLabel = ( { planSlug, withDescription = false }: Props ) => {
+const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
-	const { siteId, gridPlansIndex } = usePlansGridContext();
+	const { siteId, gridPlansIndex, enableStorageAsBadge = true } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
 		features: { storageFeature },
@@ -45,16 +44,16 @@ const StorageFeatureLabel = ( { planSlug, withDescription = false }: Props ) => 
 		'is-row': ! isLargeCurrency,
 	} );
 
-	const volumeJSX = withDescription ? (
+	const volumeJSX = enableStorageAsBadge ? (
+		<div className="plans-grid-next-storage-feature-label__volume-badge" key={ storageSlug }>
+			{ storageStringFromFeature }
+		</div>
+	) : (
 		<div className="plans-grid-next-storage-feature-label__volume">
 			{ translate( '%s storage', {
 				args: [ storageStringFromFeature ],
 				comment: '%s is the amount of storage, including the unit. For example "10 GB"',
 			} ) }
-		</div>
-	) : (
-		<div className="plans-grid-next-storage-feature-label__volume-badge" key={ storageSlug }>
-			{ storageStringFromFeature }
 		</div>
 	);
 

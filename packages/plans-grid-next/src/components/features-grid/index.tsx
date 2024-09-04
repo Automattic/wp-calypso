@@ -133,7 +133,6 @@ const MobileView = ( {
 										planSlug={ gridPlan.planSlug }
 										onStorageAddOnClick={ onStorageAddOnClick }
 										showUpgradeableStorage={ showUpgradeableStorage }
-										withDescription={ enableCategorisedFeatures }
 									/>
 								</PlanFeaturesItem>
 							</div>
@@ -338,6 +337,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableFeatureTooltips,
 		enableCategorisedFeatures,
 		enableLargeFeatureTitles,
+		enableStorageAsBadge,
 		featureGroupMap = {},
 	} = props;
 
@@ -379,6 +379,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				enableFeatureTooltips={ enableFeatureTooltips }
 				enableCategorisedFeatures={ enableCategorisedFeatures }
 				enableLargeFeatureTitles={ enableLargeFeatureTitles }
+				enableStorageAsBadge={ enableStorageAsBadge }
 				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />

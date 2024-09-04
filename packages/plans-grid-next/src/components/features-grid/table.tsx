@@ -169,7 +169,6 @@ const Table = ( {
 							featureGroupSlug={ featureGroupSlug }
 							onStorageAddOnClick={ onStorageAddOnClick }
 							showUpgradeableStorage={ showUpgradeableStorage }
-							enableCategorisedFeatures={ enableCategorisedFeatures }
 						/>
 					</tr>
 				) ) }

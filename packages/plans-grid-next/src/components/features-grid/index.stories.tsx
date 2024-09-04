@@ -157,6 +157,7 @@ export const FewerFeaturesExperimentTreatmentVariantA = {
 		isInSignup: true,
 		enableCategorisedFeatures: true,
 		enableLargeFeatureTitles: true,
+		enableStorageAsBadge: false,
 		fewerFeaturesExperimentVariant: 'treatment-a',
 	},
 } satisfies Story;
@@ -167,7 +168,6 @@ export const FewerFeaturesExperimentTreatmentVariantB = {
 		...PlansInSignup.args,
 		intent: 'plans-default-wpcom',
 		isInSignup: true,
-		enableCategorisedFeatures: true,
 		fewerFeaturesExperimentVariant: 'treatment-b',
 	},
 } satisfies Story;
