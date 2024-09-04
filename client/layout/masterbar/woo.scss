@@ -1141,6 +1141,16 @@ $breakpoint-mobile: 660px;
 		.login__lostpassword-subtitle a {
 			line-height: inherit;
 		}
+
+		.jetpack-connect__logged-in-bottom {
+			.jetpack-connect__tos-link {
+				a.jetpack-connect__sso-actions-modal-link {
+					color: var(--wp-admin-theme-color);
+					text-decoration: underline;
+					text-underline-offset: 2px;
+				}
+			}
+		}
 	}
 
 
