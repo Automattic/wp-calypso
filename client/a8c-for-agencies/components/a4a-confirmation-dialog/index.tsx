@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 
 import './style.scss';
 
-type Props = {
+export type Props = {
 	className?: string;
 	title: string;
 	children: ReactNode;

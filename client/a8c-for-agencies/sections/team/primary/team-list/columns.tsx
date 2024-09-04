@@ -2,7 +2,11 @@ import { Badge, Button, Gravatar, Gridicon } from '@automattic/components';
 import { Icon, moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useCallback, useRef, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import {
+	A4AConfirmationDialog,
+	Props as ConfirmationDialog,
+} from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -87,7 +91,7 @@ export const ActionColumn = ( {
 	canRemove = true,
 }: {
 	member: TeamMember;
-	onMenuSelected?: ( action: string ) => void;
+	onMenuSelected?: ( action: string, callback?: () => void ) => void;
 	canRemove?: boolean;
 } ): ReactNode => {
 	const translate = useTranslate();
@@ -95,6 +99,10 @@ export const ActionColumn = ( {
 	const [ showMenu, setShowMenu ] = useState( false );
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
+
+	const [ confirmationDialog, setConfirmationDialog ] = useState< ConfirmationDialog | null >(
+		null
+	);
 
 	const onToggleMenu = useCallback( () => {
 		setShowMenu( ( current ) => ! current );
@@ -104,18 +112,55 @@ export const ActionColumn = ( {
 		setShowMenu( false );
 	}, [] );
 
-	if ( member.role === OWNER_ROLE ) {
-		return null;
-	}
+	const onSelect = useCallback(
+		( {
+			name,
+			confirmation,
+		}: {
+			name: string;
+			confirmation?: { title: string; children: ReactNode; ctaLabel: string };
+		} ) => {
+			if ( confirmation ) {
+				setConfirmationDialog( {
+					...confirmation,
+					onConfirm: () => {
+						setConfirmationDialog( ( prev ) => ( prev ? { ...prev, busy: true } : null ) );
+						onMenuSelected?.( name, () => setConfirmationDialog( null ) );
+					},
+					onClose: () => {
+						setConfirmationDialog( null );
+					},
+				} );
+			} else {
+				onMenuSelected?.( name );
+			}
+		},
+		[ onMenuSelected ]
+	);
 
-	const actions =
-		member.status === 'pending'
+	const actions = useMemo( () => {
+		return member.status === 'pending'
 			? [
 					{
 						name: 'cancel-user-invite',
 						label: translate( 'Cancel invite' ),
 						className: 'is-danger',
 						isEnabled: true,
+						confirmationDialog: {
+							title: translate( 'Cancel invitation' ),
+							children: translate(
+								'Are you sure you want to cancel the invitation for {{b}}%(memberName)s{{/b}}?',
+								{
+									args: { memberName: member.displayName ?? member.email },
+									components: {
+										b: <b />,
+									},
+									comment: '%(memberName)s is the member name',
+								}
+							),
+							ctaLabel: translate( 'Cancel invitation' ),
+							scary: true,
+						},
 					},
 			  ]
 			: [
@@ -129,8 +174,25 @@ export const ActionColumn = ( {
 						label: translate( 'Delete user' ),
 						className: 'is-danger',
 						isEnabled: canRemove,
+						confirmationDialog: {
+							title: translate( 'Delete user' ),
+							children: translate( 'Are you sure you want to delete {{b}}%(memberName)s{{/b}}?', {
+								args: { memberName: member.displayName ?? member.email },
+								components: {
+									b: <b />,
+								},
+								comment: '%(memberName)s is the member name',
+							} ),
+							ctaLabel: translate( 'Delete user' ),
+							scary: true,
+						},
 					},
 			  ];
+	}, [ member, canRemove, translate ] );
+
+	if ( member.role === OWNER_ROLE ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -149,13 +211,17 @@ export const ActionColumn = ( {
 					.map( ( action ) => (
 						<PopoverMenuItem
 							key={ action.name }
-							onClick={ () => onMenuSelected?.( action.name ) }
+							onClick={ () =>
+								onSelect( { name: action.name, confirmation: action.confirmationDialog } )
+							}
 							className={ clsx( 'team-list__action-menu-item', action.className ) }
 						>
 							{ action.label }
 						</PopoverMenuItem>
 					) ) }
 			</PopoverMenu>
+
+			{ confirmationDialog && <A4AConfirmationDialog { ...confirmationDialog } /> }
 		</>
 	);
 };

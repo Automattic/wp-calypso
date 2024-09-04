@@ -19,7 +19,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 	const { mutate: removeMember } = useRemoveMemberMutation();
 
 	return useCallback(
-		( action: string, item: TeamMember ) => {
+		( action: string, item: TeamMember, callback?: () => void ) => {
 			if ( action === 'cancel-user-invite' ) {
 				cancelMemberInvite(
 					{ id: item.id },
@@ -32,6 +32,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 								} )
 							);
 							onRefetchList?.();
+							callback?.();
 						},
 
 						onError: ( error ) => {
@@ -41,6 +42,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 									duration: 5000,
 								} )
 							);
+							callback?.();
 						},
 					}
 				);
@@ -58,6 +60,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 								} )
 							);
 							onRefetchList?.();
+							callback?.();
 						},
 
 						onError: ( error ) => {
@@ -67,6 +70,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 									duration: 5000,
 								} )
 							);
+							callback?.();
 						},
 					}
 				);
