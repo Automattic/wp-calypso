@@ -21,7 +21,8 @@ export const usePaidNewsletterQuery = (
 ) => {
 	return useQuery( {
 		enabled: !! siteId,
-		queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps
+		queryKey: [ 'paid-newsletter-importer', siteId, engine ],
 		queryFn: (): Promise< PaidNewsletterData > => {
 			return wp.req.get(
 				{
