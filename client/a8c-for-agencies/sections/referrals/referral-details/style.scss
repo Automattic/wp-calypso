@@ -29,11 +29,3 @@
 		width: auto;
 	}
 }
-
-// TODO: remove when the list view declares a proper primary field.
-//
-// The issue here is that the email is not provided as a primary field,
-// hence it's displayed below the space reserved for the media+primary field in list view.
-.dataviews-view-list__media-wrapper {
-	display: none !important;
-}

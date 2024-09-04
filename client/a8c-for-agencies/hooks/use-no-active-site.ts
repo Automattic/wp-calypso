@@ -14,6 +14,10 @@ export default function useNoActiveSite() {
 			showOnlyFavorites: false,
 			showOnlyDevelopmentSites: false,
 		},
+		sort: {
+			field: '',
+			direction: '',
+		},
 		agencyId,
 	} );
 

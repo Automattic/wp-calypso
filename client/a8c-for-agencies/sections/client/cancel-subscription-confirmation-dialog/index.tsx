@@ -20,7 +20,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const [ isVisible, setIsVisible ] = useState( false );
 
-	const { data: products, isFetching: isFetchingProductInfo } = useFetchClientProducts( false );
+	const { data: products, isFetching: isFetchingProductInfo } = useFetchClientProducts();
 
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {

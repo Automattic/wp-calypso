@@ -1,13 +1,14 @@
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useContext } from 'react';
+// todo: Extract the context
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+// todo: Copy the sort icons from Jetpack Cloud
 import {
 	defaultSortIcon,
 	ascendingSortIcon,
 	descendingSortIcon,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/icons';
-import { AllowedTypes } from '../types';
 
 import './style.scss';
 
@@ -25,7 +26,7 @@ export default function SiteSort( {
 	children,
 	isSortable,
 }: {
-	columnKey: AllowedTypes;
+	columnKey: string;
 	isLargeScreen?: boolean;
 	children?: React.ReactNode;
 	isSortable?: boolean;

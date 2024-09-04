@@ -30,7 +30,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 		() => [
 			{
 				id: 'product-details',
-				label: translate( 'Product Details' ).toUpperCase(),
+				header: translate( 'Product Details' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
 					return <ProductDetails isFetching={ isFetching } purchase={ item } data={ data } />;
@@ -40,7 +40,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 			},
 			{
 				id: 'assigned-to',
-				label: translate( 'Assigned to' ).toUpperCase(),
+				header: translate( 'Assigned to' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
 					return (
@@ -57,7 +57,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 			},
 			{
 				id: 'date',
-				label: translate( 'Assigned on' ).toUpperCase(),
+				header: translate( 'Assigned on' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
 					return <DateAssigned purchase={ item } />;
@@ -67,7 +67,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 			},
 			{
 				id: 'total',
-				label: translate( 'Total' ).toUpperCase(),
+				header: translate( 'Total' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
 					return <TotalAmount isFetching={ isFetching } purchase={ item } data={ data } />;

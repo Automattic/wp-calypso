@@ -15,7 +15,6 @@
 	flex-direction: row;
 	padding-bottom: 8px;
 	padding-top: 8px;
-	overflow: hidden;
 
 	.button {
 		margin: 0;
@@ -41,10 +40,8 @@
 	white-space: nowrap;
 }
 
-.dataviews-view-list .sites-dataviews__site-url,
-.dataviews-view-list .sites-dataviews__site-wp-admin-url,
-.dataviews-view-table .sites-dataviews__site-url,
-.dataviews-view-table .sites-dataviews__site-wp-admin-url {
+.sites-dataviews__site-url,
+.sites-dataviews__site-wp-admin-url {
 	color: var(--color-neutral-70);
 	font-size: rem(14px);
 	font-weight: 400;

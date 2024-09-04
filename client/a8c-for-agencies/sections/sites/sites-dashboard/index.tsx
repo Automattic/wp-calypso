@@ -108,8 +108,8 @@ export default function SitesDashboard() {
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
-		searchQuery: dataViewsState?.search,
-		currentPage: dataViewsState.page ?? 1,
+		searchQuery: dataViewsState.search,
+		currentPage: dataViewsState.page,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
 		perPage: dataViewsState.perPage,
@@ -156,11 +156,11 @@ export default function SitesDashboard() {
 		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
-			filters: dataViewsState.filters ?? [],
+			filters: dataViewsState.filters,
 			selectedSite: dataViewsState.selectedItem,
 			selectedSiteFeature: selectedSiteFeature,
-			search: dataViewsState.search ?? '',
-			currentPage: dataViewsState.page ?? 1,
+			search: dataViewsState.search,
+			currentPage: dataViewsState.page,
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
 			showOnlyDevelopmentSites,
@@ -274,7 +274,9 @@ export default function SitesDashboard() {
 						} }
 					>
 						<JetpackSitesDataViews
-							className={ clsx( 'sites-overview__content' ) }
+							className={ clsx( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }

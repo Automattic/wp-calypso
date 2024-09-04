@@ -1,51 +1,50 @@
+// Copied from client/a8c-for-agencies/sections/sites/site-sort/index.tsx as we don't have SitesDashboardContext here.
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useContext } from 'react';
-import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import {
 	defaultSortIcon,
 	ascendingSortIcon,
 	descendingSortIcon,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/icons';
-import { AllowedTypes } from '../types';
+import { addDummyDataViewPrefix, removeDummyDataViewPrefix } from './utils';
+import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
-import './style.scss';
+import 'calypso/a8c-for-agencies/sections/sites/site-sort/style.scss';
 
 const SORT_DIRECTION_ASC = 'asc';
 const SORT_DIRECTION_DESC = 'desc';
 
-// Mapping the columns to the site data keys
-const SITE_COLUMN_KEY_MAP: { [ key: string ]: string } = {
-	site: 'url',
-};
+interface SiteSortProps {
+	columnKey: string;
+	isLargeScreen?: boolean;
+	children?: React.ReactNode;
+	isSortable?: boolean;
+	dataViewsState: DataViewsState;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+}
 
-export default function SiteSort( {
+export const SiteSort = ( {
 	columnKey,
 	isLargeScreen,
 	children,
 	isSortable,
-}: {
-	columnKey: AllowedTypes;
-	isLargeScreen?: boolean;
-	children?: React.ReactNode;
-	isSortable?: boolean;
-} ) {
-	const { dataViewsState, setDataViewsState } = useContext( SitesDashboardContext );
-
+	dataViewsState,
+	setDataViewsState,
+}: SiteSortProps ) => {
 	const { field, direction } = dataViewsState.sort;
 
-	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
+	const isDefault = removeDummyDataViewPrefix( field ) !== columnKey || ! field || ! direction;
 
 	const setSort = () => {
 		const updatedSort = { ...dataViewsState.sort };
 		if ( isDefault ) {
-			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
+			updatedSort.field = addDummyDataViewPrefix( columnKey );
 			updatedSort.direction = SORT_DIRECTION_ASC;
 		} else if ( direction === SORT_DIRECTION_ASC ) {
 			updatedSort.direction = SORT_DIRECTION_DESC;
 		} else if ( direction === SORT_DIRECTION_DESC ) {
-			updatedSort.field = '';
-			updatedSort.direction = '';
+			updatedSort.field = addDummyDataViewPrefix( 'last-interacted' );
+			updatedSort.direction = SORT_DIRECTION_DESC;
 		}
 
 		setDataViewsState( ( sitesViewState ) => ( {
@@ -97,4 +96,4 @@ export default function SiteSort( {
 			) }
 		</span>
 	);
-}
+};

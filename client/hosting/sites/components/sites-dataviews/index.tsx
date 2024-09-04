@@ -1,3 +1,5 @@
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -8,12 +10,14 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
+import { SiteInfo } from './interfaces';
+import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
-import type { Field } from '@wordpress/dataviews';
 import type {
+	DataViewsColumn,
 	DataViewsPaginationInfo,
 	DataViewsState,
 	ItemsDataViewsType,
@@ -54,6 +58,17 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
+		if ( isWide ) {
+			return '40%';
+		}
+		if ( isDesktop ) {
+			return '50%';
+		}
+		return '70%';
+	};
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
@@ -101,90 +116,128 @@ const DotcomSitesDataViews = ( {
 	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
-	const fields = useMemo< Field< SiteExcerptData >[] >(
+	const fields = useMemo< DataViewsColumn[] >(
 		() => [
 			{
 				id: 'site',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Site' ) }</span>,
-				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
-				render: ( { item }: { item: SiteExcerptData } ) => {
+				header: (
+					<SiteSort
+						isSortable
+						columnKey="site"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Site' ) }</span>
+					</SiteSort>
+				),
+				width: getSiteNameColWidth( isDesktop, isWide ),
+				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
+				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'plan',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Plan' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => (
-					<SitePlan site={ item } userId={ userId } />
-				),
+				header: <span>{ __( 'Plan' ) }</span>,
+				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '100px',
 			},
 			{
 				id: 'status',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Status' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
+				header: <span>{ __( 'Status' ) }</span>,
+				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '116px',
 			},
 			{
 				id: 'last-publish',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Last Published' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) =>
+				header: (
+					<SiteSort
+						isSortable
+						columnKey="last-publish"
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					>
+						<span>{ __( 'Last Published' ) }</span>
+					</SiteSort>
+				),
+				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
+				width: '120px',
 			},
 			{
 				id: 'stats',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: (
+				header: (
 					<>
 						<JetpackLogo size={ 16 } />
 						<span>{ __( 'Stats' ) }</span>
 					</>
 				),
-				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
+				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '80px',
 			},
 			{
 				id: 'actions',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
+				header: <span>{ __( 'Actions' ) }</span>,
+				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				width: '48px',
 			},
+			// Dummy fields to allow people to sort by them on mobile.
 			{
-				id: 'last-interacted',
-				label: __( 'Last Interacted' ),
+				id: addDummyDataViewPrefix( 'site' ),
+				header: <span>{ __( 'Site' ) }</span>,
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
-				getValue: () => null,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-publish' ),
+				header: <span>{ __( 'Last Published' ) }</span>,
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: addDummyDataViewPrefix( 'last-interacted' ),
+				header: __( 'Last Interacted' ),
+				render: () => null,
+				enableHiding: false,
+				enableSorting: true,
 			},
 			{
 				id: addDummyDataViewPrefix( 'status' ),
-				label: __( 'Status' ),
+				header: __( 'Status' ),
 				render: () => null,
+				type: 'enumeration',
 				elements: siteStatusGroups,
 				filterBy: {
-					operators: [ 'is' ],
-					isPrimary: true,
+					operators: [ 'in' ],
 				},
 				enableHiding: false,
 				enableSorting: false,
-				getValue: () => null,
 			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
+		[
+			__,
+			openSitePreviewPane,
+			userId,
+			dataViewsState,
+			setDataViewsState,
+			isWide,
+			isDesktop,
+			siteStatusGroups,
+		]
 	);
 
 	// Create the itemData packet state
@@ -197,7 +250,6 @@ const DotcomSitesDataViews = ( {
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
 		pagination: paginationInfo,
-		defaultLayouts: { table: {} },
 	} );
 
 	// Update the itemData packet

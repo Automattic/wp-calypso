@@ -24,11 +24,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 	};
 };
 
-const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
-	if ( ! sort ) {
-		return;
-	}
-
+const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
 	return {
 		...( sort?.field && { sort_field: sort.field } ),
 		...( sort?.direction && { sort_direction: sort.direction } ),
@@ -37,10 +33,10 @@ const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
 
 export interface FetchDashboardSitesArgsInterface {
 	isPartnerOAuthTokenLoaded: boolean;
-	searchQuery: string | undefined;
+	searchQuery: string;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
-	sort?: DashboardSortInterface;
+	sort: DashboardSortInterface;
 	perPage?: number;
 	agencyId?: number;
 }

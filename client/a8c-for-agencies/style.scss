@@ -136,8 +136,10 @@
 		box-sizing: border-box;
 		border-radius: 4px;
 
+		background-color: var(--color-surface);
 		border-color: var(--color-accent-5);
 		fill: var(--color-accent-100);
+		color: var(--color-accent-100);
 
 		&:hover,
 		&:focus-visible {

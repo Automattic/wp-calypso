@@ -5,7 +5,6 @@ import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholde
 import { DataViews } from 'calypso/components/dataviews';
 import SiteSort from '../site-sort';
 import PlanField, { AvailablePlans } from './plan-field';
-import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -26,11 +25,10 @@ export default function NeedSetupTable( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const fields: Field< AvailablePlans >[] = [
+	const fields = [
 		{
 			id: 'site',
-			// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-			label: (
+			header: (
 				<SiteSort isSortable={ false } columnKey="site">
 					{ translate( 'Site' ).toUpperCase() }
 				</SiteSort>
@@ -56,21 +54,26 @@ export default function NeedSetupTable( {
 	];
 
 	return (
-		<DataViews< AvailablePlans >
-			data={ isLoading ? [] : availablePlans }
+		<DataViews
+			data={ isLoading ? [ {} ] : availablePlans }
 			paginationInfo={ { totalItems: 1, totalPages: 1 } }
 			fields={ fields }
 			view={ {
+				filters: [],
+				sort: {
+					field: '',
+					direction: 'asc',
+				},
 				type: DATAVIEWS_TABLE,
 				perPage: 1,
 				page: 1,
+				hiddenFields: [],
+				layout: {},
 			} }
-			onChangeView={ () => {} }
 			search={ false }
-			defaultLayouts={ { table: {} } }
+			supportedLayouts={ [ 'table' ] }
 			actions={ [] }
 			isLoading={ false }
-			getItemId={ ( item: AvailablePlans ) => item.name }
 		/>
 	);
 }

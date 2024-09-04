@@ -1,11 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@wordpress/dataviews/build-style/style.css";
 
 .dataviews-wrapper {
-	// Maybe move upstream to the gutenberg repository
-	width: 100%;
-
 	tr.dataviews-view-table__row {
 		background: var(--studio-white);
 
@@ -13,7 +9,7 @@
 			opacity: 0;
 		}
 		.components-checkbox-control__input:checked,
-		.components-checkbox-control__input:indeterminate {
+		.components-checkbox-control__input:indeterminate, {
 			opacity: 1;
 		}
 
@@ -36,6 +32,7 @@
 		}
 
 		th {
+			padding: 13px 4px 13px 48px;
 			border-bottom: 1px solid var(--color-neutral-5);
 			font-size: rem(13px);
 			font-weight: 400;
@@ -43,10 +40,12 @@
 		}
 
 		td {
+			padding: 16px 4px 16px 48px;
 			border-bottom: 1px solid var(--color-neutral-5);
 			vertical-align: middle;
 
 			&:has(.sites-dataviews__site) {
+				padding: 8px 16px 8px 4px;
 				width: 20%;
 			}
 		}
@@ -76,11 +75,6 @@
 		}
 		.is-selected {
 			background-color: var(--color-neutral-0);
-		}
-
-		// Needs to be moved upstream to the gutenberg repository.
-		.dataviews-view-list__item {
-			box-sizing: border-box;
 		}
 	}
 
@@ -130,6 +124,7 @@
 		}
 
 		.dataviews-view-table-header-button {
+			margin: 0 -12px;
 			color: inherit;
 		}
 	}
@@ -185,6 +180,11 @@
 	.dataviews-loading p {
 		display: none;
 	}
+
+	.dataviews-view-table-wrapper {
+		height: 0 !important;
+	}
+
 	.dataviews-pagination {
 		display: none;
 	}
@@ -194,48 +194,4 @@
 	.spinner-wrapper {
 		display: none;
 	}
-}
-
-// TODO: remove when updating to dataviews@4.3.0.
-//
-// This is a hotfix to hiding the properties section in the view config menu
-// when no field is hidable.
-// This has been fixed upstream as of
-// https://github.com/WordPress/gutenberg/pull/64711
-.dataviews-settings-section:has(.dataviews-settings-section__content:empty) {
-	display: none;
-}
-
-// TODO: remove when updating to dataviews@4.3.0
-//
-// This is a hotfix for the sort direction control within the view config.
-// It shouldn't be visible when there are no sortable fields.
-// Fixed at https://github.com/WordPress/gutenberg/issues/64816
-.is-section-a8c-for-agencies-team .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-sites.modal-open .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-referrals .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-client .dataviews-settings-section__content .is-divided-in-two {
-	display: none !important;
-}
-
-// TODO: remove when the site connectivity notice
-// is updated to be part of a field.
-.is-section-a8c-for-agencies-sites .dataviews-view-table tr,
-.is-section-a8c-for-agencies-sites .dataviews-view-list li {
-	border-top: none;
-}
-
-// TODO: remove when updating dataviews to have this built-in.
-//
-// https://github.com/WordPress/gutenberg/issues/64927
-.dataviews-filters-toggle__count {
-	padding: revert !important;
-}
-
-// TODO: remove when this is fixed upstream.
-//
-// https://github.com/WordPress/gutenberg/issues/64925
-.dataviews-filters__summary-chip span,
-.dataviews-filters__summary-chip {
-	font-size: 0.875rem;
 }
