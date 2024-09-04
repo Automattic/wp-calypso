@@ -273,3 +273,42 @@
 	display: flex;
 	align-items: stretch; // Ensure children stretch to full height
 }
+
+.date-control-picker-shortcuts {
+	padding: 16px;
+	border-left: 1px solid var(--gray-gray-5, #dcdcde);
+	box-sizing: border-box;
+
+	@media (max-width: $date-control-mobile-layout-switch) {
+		border-left: 0 none;
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+	}
+}
+
+.date-control-picker-shortcuts__list {
+	list-style: none;
+	margin: 0;
+}
+
+.date-control-picker-shortcuts__shortcut {
+	border-radius: 4px;
+	min-width: $date-control-shortcut-min-width;
+
+	&:hover {
+		background-color: var(--color-primary-0);
+	}
+
+	& + & {
+		margin-top: 2px; // space for an outline for the current item and hover for the next
+	}
+
+	&.is-selected {
+		background-color: var(--color-accent-5);
+	}
+
+	.components-button {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+}
