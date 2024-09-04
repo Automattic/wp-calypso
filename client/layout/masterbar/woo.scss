@@ -1142,6 +1142,9 @@ $breakpoint-mobile: 660px;
 			line-height: inherit;
 		}
 
+		.auth-form__social-buttons-container {
+			width: 100%;
+		}
 
 		.jetpack-connect__authorize-form .jetpack-connect__logged-in-content {
 			.jetpack-connect__logged-in-bottom {
