@@ -80,15 +80,12 @@ export default function ImportSummaryModal( {
 	return (
 		<Modal title="All set!" isDismissible={ false } onRequestClose={ onRequestClose } size="medium">
 			{ getContent( postsNumber, pagesNumber, attachmentsNumber ) }
-			<p>
-				{ authorsNumber && (
-					<>
-						<br />
-						Your Substack publication has <strong>{ authorsNumber } authors</strong>. Next, you can
-						match them with existing site users.
-					</>
-				) }
-			</p>
+			{ authorsNumber && (
+				<p>
+					Your Substack publication has <strong>{ authorsNumber } authors</strong>. Next, you can
+					match them with existing site users.
+				</p>
+			) }
 			<Button variant="primary" onClick={ onRequestClose }>
 				Continue
 			</Button>
