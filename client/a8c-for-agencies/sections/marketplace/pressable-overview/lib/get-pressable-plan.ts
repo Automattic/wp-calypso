@@ -48,6 +48,68 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2000000,
 		storage: 500,
 	},
+
+	// New pressable plans
+	'pressable-build': {
+		slug: 'pressable-build',
+		install: 1,
+		visits: 30000,
+		storage: 20,
+	},
+	'pressable-growth': {
+		slug: 'pressable-growth',
+		install: 3,
+		visits: 50000,
+		storage: 30,
+	},
+	'pressable-advanced': {
+		slug: 'pressable-advanced',
+		install: 5,
+		visits: 75000,
+		storage: 35,
+	},
+	'pressable-pro': {
+		slug: 'pressable-pro',
+		install: 10,
+		visits: 150000,
+		storage: 50,
+	},
+	'pressable-premium': {
+		slug: 'pressable-premium',
+		install: 20,
+		visits: 400000,
+		storage: 80,
+	},
+	'pressable-business': {
+		slug: 'pressable-business',
+		install: 50,
+		visits: 1000000,
+		storage: 80,
+	},
+	'pressable-business-80': {
+		slug: 'pressable-business-80',
+		install: 80,
+		visits: 1600000,
+		storage: 275,
+	},
+	'pressable-business-100': {
+		slug: 'pressable-business-100',
+		install: 100,
+		visits: 2000000,
+		storage: 325,
+	},
+	'pressable-business-120': {
+		slug: 'pressable-business-120',
+		install: 120,
+		visits: 2400000,
+		storage: 375,
+	},
+	'pressable-business-150': {
+		slug: 'pressable-business-150',
+		install: 150,
+		visits: 3000000,
+		storage: 450,
+	},
 };
 
 export default function getPressablePlan( slug: string ) {
