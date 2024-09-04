@@ -73,7 +73,8 @@
 			td:last-child {
 				width: 20px;
 				white-space: nowrap;
-
+				background: linear-gradient(90deg, #0000 0, #fff 25%);
+				padding-left: 48px;
 				position: sticky;
 				right: 0;
 				z-index: 1;
