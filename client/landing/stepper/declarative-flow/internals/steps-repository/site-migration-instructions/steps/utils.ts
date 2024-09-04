@@ -5,16 +5,25 @@ const isWhiteLabeledPluginEnabled = config.isEnabled(
 	'migration-flow/enable-white-labeled-plugin'
 );
 
+const ensureProtocol = ( url: string ) => {
+	if ( ! url.startsWith( 'http://' ) && ! url.startsWith( 'https://' ) ) {
+		return `https://${ url }`;
+	}
+	return url;
+};
+
 export const getPluginInstallationPage = ( fromUrl: string ) => {
 	if ( fromUrl !== '' ) {
+		const baseUrl = ensureProtocol( fromUrl );
+
 		if ( isWhiteLabeledPluginEnabled ) {
 			return removeDuplicatedSlashes(
-				`${ fromUrl }/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term`
+				`${ baseUrl }/wp-admin/plugin-install.php?s=%2522wpcom%2520migration%2522&tab=search&type=term`
 			);
 		}
 
 		return removeDuplicatedSlashes(
-			`${ fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
+			`${ baseUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
 		);
 	}
 
@@ -24,9 +33,11 @@ export const getPluginInstallationPage = ( fromUrl: string ) => {
 };
 
 export const getMigrateGuruPageURL = ( siteURL: string ) => {
+	const baseUrl = ensureProtocol( siteURL );
+
 	if ( isWhiteLabeledPluginEnabled ) {
-		return removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=wpcom-migration` );
+		return removeDuplicatedSlashes( `${ baseUrl }/wp-admin/admin.php?page=wpcom-migration` );
 	}
 
-	return removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
+	return removeDuplicatedSlashes( `${ baseUrl }/wp-admin/admin.php?page=migrateguru` );
 };
