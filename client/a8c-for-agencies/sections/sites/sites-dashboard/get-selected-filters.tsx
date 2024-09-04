@@ -1,7 +1,7 @@
-import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { filtersMap } from '../constants';
+import type { Filter } from '@wordpress/dataviews';
 
-export function getSelectedFilters( filters: DataViewsFilter[] = [] ) {
+export function getSelectedFilters( filters: Filter[] = [] ) {
 	return (
 		filters?.map( ( filter ) => {
 			const filterType =
