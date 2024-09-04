@@ -41,7 +41,7 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( screen.queryByText( 'Site address' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'WordPress admin username' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Password' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Notes (optional)' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Special instructions' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not show any error message by default', async () => {
@@ -175,6 +175,10 @@ describe( 'SiteMigrationCredentials', () => {
 			const addressInput = screen.getByLabelText(
 				isBackupRequest ? /Backup file location/ : /Site address/
 			);
+
+			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			await userEvent.click( expandNotesButton );
+
 			const notesInput = screen.getByLabelText( /Notes \(optional\)/ );
 
 			await userEvent.type( addressInput, siteAddress );
@@ -280,6 +284,9 @@ describe( 'SiteMigrationCredentials', () => {
 
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
+
+			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			await userEvent.click( expandNotesButton );
 
 			await userEvent.type( screen.getByLabelText( /Site address/ ), 'test.com' );
 			await userEvent.type( screen.getByLabelText( /WordPress admin username/ ), 'username' );
