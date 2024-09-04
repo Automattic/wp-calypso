@@ -400,8 +400,6 @@ class Upload extends Component {
 
 		const isTrial = isTransferring || isTrialSite || hasRequestedTrial;
 
-		const shouldShowAtNotice = this.props.isTransferInProgress;
-
 		return (
 			<Main className="theme-upload" wideLayout>
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
@@ -428,12 +426,12 @@ class Upload extends Component {
 				></NavigationHeader>
 
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
-				{ ! showTrialAcknowledgeModal && shouldShowAtNotice && (
+				{ ! showTrialAcknowledgeModal && this.props.isTransferInProgress && (
 					<HostingActivateStatus
 						context="theme"
 						onTick={ this.requestUpdatedSiteData }
 						keepAlive={ hasRequestedTrial && ! isAtomic }
-						forceEnable={ shouldShowAtNotice }
+						forceEnable={ this.props.isTransferInProgress }
 					/>
 				) }
 				{ this.props.isTransferCompleted && themeId !== this.props.activeTheme && (

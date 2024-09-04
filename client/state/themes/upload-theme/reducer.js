@@ -234,6 +234,14 @@ export const inProgress = ( state = {}, action ) => {
 
 export const isTransferComplete = ( state = {}, action ) => {
 	switch ( action.type ) {
+		case THEME_UPLOAD_START: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
 		case THEME_TRANSFER_STATUS_RECEIVE: {
 			const { siteId, status } = action;
 
