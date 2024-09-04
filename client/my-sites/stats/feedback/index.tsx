@@ -83,10 +83,9 @@ function FeedbackCard( { clickHandler }: FeedbackProps ) {
 	);
 }
 
-function StatsFeedbackController() {
+function StatsFeedbackController( { siteId }: { siteId: number } ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
-	const siteId = 12345;
 
 	const handleButtonClick = ( action: string ) => {
 		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {

@@ -58,7 +58,7 @@ import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import StatsModuleVideos from './features/modules/stats-videos';
-import StatsFeedbackCard from './feedback';
+import StatsFeedbackController from './feedback';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -810,7 +810,7 @@ class StatsSite extends Component {
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
-				{ isUserFeedbackEnabled && <StatsFeedbackCard siteId={ siteId } /> }
+				{ isUserFeedbackEnabled && <StatsFeedbackController siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
