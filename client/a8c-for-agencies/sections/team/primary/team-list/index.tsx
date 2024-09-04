@@ -119,13 +119,13 @@ export default function TeamList() {
 		[ canRemove, currentUser?.email, handleAction, isDesktop, translate ]
 	);
 
-	if ( isPending ) {
-		return <PagePlaceholder />;
-	}
-
 	const { data: items, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( members, dataViewsState, fields );
 	}, [ members, dataViewsState, fields ] );
+
+	if ( isPending ) {
+		return <PagePlaceholder />;
+	}
 
 	if ( items.length === 0 ) {
 		return <GetStarted />;
