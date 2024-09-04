@@ -129,7 +129,6 @@ export const ManageStagingSiteCardContent = ( {
 		const ManageStagingSiteButton = () => {
 			return (
 				<Button
-					primary
 					onClick={ () => {
 						navigate(
 							`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
