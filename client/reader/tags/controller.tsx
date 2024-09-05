@@ -94,7 +94,7 @@ export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error )
 	}
 	performanceMark( context as PartialContext, 'fetchAlphabeticTags' );
 
-	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+	const currentUserLocale = getCurrentUserLocale( context.store.getState() ) || context.lang;
 
 	context.queryClient
 		.fetchQuery( {
@@ -102,7 +102,7 @@ export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error )
 			queryFn: () => {
 				return wpcom.req.get( '/read/tags/alphabetic', {
 					apiVersion: '1.2',
-					lang: currentUserLocale, // Note: undefined will be omitted by the query string builder.
+					locale: currentUserLocale, // Note: undefined will be omitted by the query string builder.
 				} );
 			},
 			staleTime: 86400000, // 24 hours

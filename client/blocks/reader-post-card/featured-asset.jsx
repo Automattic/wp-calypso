@@ -6,7 +6,7 @@ const FeaturedAsset = ( {
 	post,
 	canonicalMedia,
 	postUrl,
-	allowVideoPlaying,
+	allowVideoPlaying = true,
 	onVideoThumbnailClick,
 	isVideoExpanded,
 	isCompactPost,
@@ -49,10 +49,6 @@ FeaturedAsset.propTypes = {
 	onVideoThumbnailClick: PropTypes.func,
 	isVideoExpanded: PropTypes.bool,
 	hasExcerpt: PropTypes.bool,
-};
-
-FeaturedAsset.defaultProps = {
-	allowVideoPlaying: true,
 };
 
 export default FeaturedAsset;

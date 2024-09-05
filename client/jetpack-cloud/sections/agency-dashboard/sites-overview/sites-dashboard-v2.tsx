@@ -90,19 +90,28 @@ export default function SitesDashboardV2() {
 			filter?.issueTypes?.map( ( issueType ) => {
 				return {
 					field: 'status',
-					operator: 'in',
+					operator: 'is',
 					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 				};
 			} ) || [],
-		hiddenFields: [ 'status' ],
-		layout: {},
+		fields: [
+			'site',
+			'stats',
+			'boost',
+			'backup',
+			'monitor',
+			'scan',
+			'plugins',
+			'favorite',
+			'actions',
+		],
 		selectedSite: undefined,
 	} );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
 		searchQuery: search,
-		currentPage: sitesViewState.page,
+		currentPage: sitesViewState.page ?? 1,
 		filter,
 		sort,
 		perPage: sitesViewState.perPage,
@@ -148,7 +157,7 @@ export default function SitesDashboardV2() {
 		if ( path === '/sites?issue_types=all_issues' ) {
 			setSitesViewState( {
 				...sitesViewState,
-				filters: [ { field: 'status', operator: 'in', value: 1 } ],
+				filters: [ { field: 'status', operator: 'is', value: 1 } ],
 				search: '',
 				page: 1,
 			} );

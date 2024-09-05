@@ -1,5 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { SortDirection } from '@wordpress/dataviews';
 
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes =
@@ -234,7 +235,7 @@ export type ActionEventNames = {
 
 export interface DashboardSortInterface {
 	field: string;
-	direction: 'asc' | 'desc' | '';
+	direction: SortDirection;
 }
 export interface DashboardOverviewContextInterface {
 	path: string;
@@ -245,7 +246,7 @@ export interface DashboardOverviewContextInterface {
 		showOnlyFavorites: boolean;
 		showOnlyDevelopmentSites: boolean;
 	};
-	sort: DashboardSortInterface;
+	sort?: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 }
 

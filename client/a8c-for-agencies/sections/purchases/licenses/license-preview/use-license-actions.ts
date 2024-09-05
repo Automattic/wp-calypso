@@ -7,7 +7,9 @@ import {
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function useLicenseActions(
@@ -19,6 +21,10 @@ export default function useLicenseActions(
 ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const canRevoke = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_revoke_licenses' )
+	);
 
 	return useMemo( () => {
 		if ( ! siteUrl ) {
@@ -75,11 +81,22 @@ export default function useLicenseActions(
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
 				type: 'revoke',
 				isEnabled:
+					canRevoke &&
 					( isChildLicense
 						? licenseState === LicenseState.Attached
-						: licenseState !== LicenseState.Revoked ) && licenseType === LicenseType.Partner,
+						: licenseState !== LicenseState.Revoked ) &&
+					licenseType === LicenseType.Partner,
 				className: 'is-destructive',
 			},
 		];
-	}, [ attachedAt, dispatch, isChildLicense, licenseType, revokedAt, siteUrl, translate ] );
+	}, [
+		attachedAt,
+		canRevoke,
+		dispatch,
+		isChildLicense,
+		licenseType,
+		revokedAt,
+		siteUrl,
+		translate,
+	] );
 }

@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { OWNER_ROLE } from '../../constants';
 import { TeamMember } from '../../types';
 
 export const RoleStatusColumn = ( { member }: { member: TeamMember } ): ReactNode => {
@@ -12,7 +13,7 @@ export const RoleStatusColumn = ( { member }: { member: TeamMember } ): ReactNod
 
 	const getRoleLabel = ( role?: string ): string => {
 		// Currently, we only have two roles: 'owner' and 'member'. Later, we will have more roles.
-		return role === 'owner' ? translate( 'Agency owner' ) : translate( 'Team member' );
+		return role === OWNER_ROLE ? translate( 'Agency owner' ) : translate( 'Team member' );
 	};
 
 	const getStatusLabel = ( status: string ): string => {
@@ -76,11 +77,11 @@ export const DateColumn = ( { date }: { date?: string } ): ReactNode => {
 export const ActionColumn = ( {
 	member,
 	onMenuSelected,
-	asOwner = true,
+	canRemove = true,
 }: {
 	member: TeamMember;
 	onMenuSelected?: ( action: string ) => void;
-	asOwner?: boolean;
+	canRemove?: boolean;
 } ): ReactNode => {
 	const translate = useTranslate();
 
@@ -96,7 +97,7 @@ export const ActionColumn = ( {
 		setShowMenu( false );
 	}, [] );
 
-	if ( member.role === 'owner' ) {
+	if ( member.role === OWNER_ROLE ) {
 		return null;
 	}
 
@@ -114,13 +115,13 @@ export const ActionColumn = ( {
 					{
 						name: 'password-reset',
 						label: translate( 'Send password reset' ),
-						isEnabled: true,
+						isEnabled: false, // FIXME: Implement this action
 					},
 					{
 						name: 'delete-user',
 						label: translate( 'Delete user' ),
 						className: 'is-danger',
-						isEnabled: asOwner,
+						isEnabled: canRemove,
 					},
 			  ];
 

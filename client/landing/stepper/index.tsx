@@ -4,7 +4,12 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
-import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import {
+	HOSTED_SITE_MIGRATION_FLOW,
+	MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+	SITE_MIGRATION_FLOW,
+} from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -33,6 +38,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
+import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -63,7 +69,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
-	BUILD_TARGET?: string;
+	BUILD_TARGET: string;
 }
 
 const DEFAULT_FLOW = 'site-setup';
@@ -75,8 +81,15 @@ const getFlowFromURL = () => {
 	return fromPath || fromQuery;
 };
 
+const HOTJAR_ENABLED_FLOWS = [
+	MIGRATION_FLOW,
+	SITE_MIGRATION_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+];
+
 const initializeHotJar = ( flowName: string ) => {
-	if ( flowName === IMPORT_HOSTED_SITE_FLOW ) {
+	if ( HOTJAR_ENABLED_FLOWS.includes( flowName ) ) {
 		addHotJarScript();
 	}
 };
@@ -120,9 +133,11 @@ window.AppBoot = async () => {
 	setupErrorLogger( reduxStore );
 
 	const flowLoader = determineFlow();
-	const { default: flow } = await flowLoader();
+	const { default: rawFlow } = await flowLoader();
+	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
+
 	root.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>

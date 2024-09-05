@@ -48,10 +48,8 @@ export const useMapStripePlanToProductMutation = (
 		},
 		...options,
 		onSuccess( ...args ) {
-			const [ , { siteId, engine, currentStep } ] = args;
-			queryClient.invalidateQueries( {
-				queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
-			} );
+			const [ data, { siteId, engine } ] = args;
+			queryClient.setQueryData( [ 'paid-newsletter-importer', siteId, engine ], data );
 			options.onSuccess?.( ...args );
 		},
 	} );

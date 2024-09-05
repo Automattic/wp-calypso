@@ -8,6 +8,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 interface StatsButtonProps extends React.ButtonHTMLAttributes< HTMLButtonElement > {
 	children?: React.ReactNode;
 	primary?: boolean;
+	busy?: boolean;
 }
 
 const StatsButton: React.FC< StatsButtonProps > = ( { children, primary, ...rest } ) => {
@@ -23,6 +24,7 @@ const StatsButton: React.FC< StatsButtonProps > = ( { children, primary, ...rest
 				} ) }
 				variant="primary"
 				primary={ isWPCOMSite ? true : undefined }
+				isBusy={ rest.busy }
 				{ ...rest }
 			>
 				{ children }

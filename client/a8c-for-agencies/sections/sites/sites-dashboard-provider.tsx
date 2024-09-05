@@ -1,3 +1,5 @@
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { ReactNode, useEffect, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
@@ -9,8 +11,9 @@ import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
+import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
+import type { Filter } from '@wordpress/dataviews';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
@@ -28,14 +31,14 @@ interface Props {
 	featurePreview?: ReactNode | null;
 }
 
-const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
+const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
 	const issueTypesArray = issueTypes?.split( ',' );
 
 	return (
 		issueTypesArray?.map( ( issueType ) => {
 			return {
 				field: 'status',
-				operator: 'in',
+				operator: 'is',
 				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 			};
 		} ) || []
@@ -87,17 +90,42 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
-	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
-	initialDataViewsState.hiddenFields = [ 'status' ];
+	// Limit fields on breakpoints smaller than 960px wide.
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const desktopFields = [
+		'url',
+		'stats',
+		'boost',
+		'backup',
+		'monitor',
+		'scan',
+		'plugins',
+		'favorite',
+		'actions',
+	];
+	const mobileFields = [ 'url', 'actions' ];
+	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+		isDesktop ? desktopFields : mobileFields;
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: getFieldsByBreakpoint( isDesktop ),
 		page: currentPage,
 		search: searchQuery,
 		sort,
 		filters: buildFilters( { issueTypes } ),
 	} );
+
+	useEffect( () => {
+		const fields = getFieldsByBreakpoint( isDesktop );
+		const fieldsForBreakpoint = [ ...fields ].sort().toString();
+		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
+		// Compare the content of the arrays, not its referrences that will always be different.
+		// sort() sorts the array in place, so we need to clone them first.
+		if ( existingFields !== fieldsForBreakpoint ) {
+			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
+		}
+	}, [ isDesktop, dataViewsState?.fields ] );
 
 	useEffect( () => {
 		setInitialSelectedSiteUrl( siteUrlInitialState );

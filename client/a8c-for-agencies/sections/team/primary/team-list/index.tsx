@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -13,12 +14,15 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
-import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invite';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import useHandleMemberAction from '../../hooks/use-handle-member-action';
+import { useMemberList } from '../../hooks/use-member-list';
 import { TeamMember } from '../../types';
 import GetStarted from '../get-started';
 import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
@@ -31,15 +35,18 @@ export default function TeamList() {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		layout: {
+			styles: {
+				actions: {
+					width: isDesktop ? '10%' : undefined,
+				},
+			},
+		},
+	} );
 
-	const {
-		data: memberInvites,
-		isPending: isMemberInvitesPending,
-		refetch: refetchMemberInvites,
-	} = useFetchMemberInvites();
-
-	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
+	const { members, isPending, refetch } = useMemberList();
 
 	const title = translate( 'Manage team members' );
 
@@ -48,37 +55,20 @@ export default function TeamList() {
 		page( A4A_TEAM_INVITE_LINK );
 	};
 
-	const handleAction = useCallback(
-		( action: string, item: TeamMember ) => {
-			if ( action === 'cancel-user-invite' ) {
-				cancelMemberInvite(
-					{ id: item.id },
-					{
-						onSuccess: () => {
-							dispatch(
-								successNotice( 'The invitation has been successfully cancelled.', {
-									id: 'cancel-user-invite-success',
-									duration: 5000,
-								} )
-							);
-							refetchMemberInvites();
-						},
+	const handleAction = useHandleMemberAction( { onRefetchList: refetch } );
 
-						onError: ( error ) => {
-							dispatch( errorNotice( error.message ) );
-						},
-					}
-				);
-			}
-		},
-		[ cancelMemberInvite, dispatch, refetchMemberInvites ]
+	const canRemove = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_users' )
 	);
+
+	const currentUser = useSelector( getCurrentUser );
 
 	const fields = useMemo(
 		() => [
 			{
 				id: 'user',
-				header: translate( 'User' ).toUpperCase(),
+				label: translate( 'User' ).toUpperCase(),
+				getValue: ( { item }: { item: TeamMember } ) => item.displayName ?? '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return <MemberColumn member={ item } withRoleStatus={ ! isDesktop } />;
 				},
@@ -89,7 +79,8 @@ export default function TeamList() {
 				? [
 						{
 							id: 'role',
-							header: translate( 'Role' ).toUpperCase(),
+							label: translate( 'Role' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ) => item.role || '',
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <RoleStatusColumn member={ item } />;
 							},
@@ -98,7 +89,8 @@ export default function TeamList() {
 						},
 						{
 							id: 'added-date',
-							header: translate( 'Added' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ): string => item.dateAdded || '',
+							label: translate( 'Added' ).toUpperCase(),
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <DateColumn date={ item.dateAdded } />;
 							},
@@ -109,57 +101,38 @@ export default function TeamList() {
 				: [] ),
 			{
 				id: 'actions',
-				header: '',
+				getValue: () => '',
+				label: '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return (
 						<ActionColumn
 							member={ item }
 							onMenuSelected={ ( action ) => handleAction( action, item ) }
+							canRemove={ canRemove || item.email === currentUser?.email }
 						/>
 					);
 				},
-				width: isDesktop ? '40%' : undefined,
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ handleAction, isDesktop, translate ]
+		[ canRemove, currentUser?.email, handleAction, isDesktop, translate ]
 	);
 
-	const members: TeamMember[] = useMemo( () => {
-		const activeMembers: TeamMember[] = [
-			// FIXME: Fetch team members
-			{
-				id: 0,
-				displayName: 'Owner',
-				email: 'owner@automattic.com',
-				role: 'owner',
-				status: 'active',
-			},
-		];
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( members, dataViewsState, fields );
+	}, [ members, dataViewsState, fields ] );
 
-		const pendingMembers: TeamMember[] =
-			memberInvites?.map( ( invite ) => ( {
-				id: invite.id,
-				email: invite.email,
-				status: 'pending',
-			} ) ) ?? [];
-
-		return [ ...activeMembers, ...pendingMembers ];
-	}, [ memberInvites ] );
-
-	const isEmpty = members.length <= 1; // We always have one member (owner) so we exclude it from count.
-
-	if ( isMemberInvitesPending ) {
-		// FIXME: Add placeholder when UI is pending
+	if ( isPending ) {
+		return <PagePlaceholder />;
 	}
 
-	if ( isEmpty ) {
+	if ( items.length === 0 ) {
 		return <GetStarted />;
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
@@ -173,17 +146,15 @@ export default function TeamList() {
 			<LayoutBody>
 				<ItemsDataViews
 					data={ {
-						items: members,
+						items,
 						getItemId: ( user ) => `${ user.id }`,
-						pagination: {
-							totalItems: 1,
-							totalPages: 1,
-						},
+						pagination: paginationInfo,
 						enableSearch: false,
-						fields: fields,
+						fields,
 						actions: [],
 						setDataViewsState: setDataViewsState,
 						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
 					} }
 				/>
 			</LayoutBody>
