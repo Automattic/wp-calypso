@@ -26,7 +26,7 @@ const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
 				} ) }
 				size={ 20 }
 			/>
-			<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
+			<span className="social-buttons__service-name">{ __( 'Continue with email' ) }</span>
 		</Button>
 	);
 };

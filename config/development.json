@@ -131,6 +131,7 @@
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
 		"livechat_solution": true,
+		"login/last-used-method": true,
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
 		"login/social-first": true,

@@ -21,6 +21,10 @@ const LastUsedSocialButton = ( {
 	onClick,
 	socialServiceResponse,
 }: LastUsedSocialButtonProps ) => {
+	if ( ! lastUsedAuthenticationMethod ) {
+		return null;
+	}
+
 	// Render the single social button based on the last used social login method
 	switch ( lastUsedAuthenticationMethod ) {
 		case 'google':

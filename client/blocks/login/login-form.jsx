@@ -81,6 +81,7 @@ import './login-form.scss';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		shouldShowLastUsedAuthenticationMethod: PropTypes.bool,
 		accountType: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -436,21 +437,6 @@ export class LoginForm extends Component {
 		}
 
 		return translate( 'Log In' );
-	};
-
-	getLastUsedAuthenticationMethod = () => {
-		if ( typeof document !== 'undefined' ) {
-			const cookies = cookie.parse( document.cookie );
-			return cookies.last_used_authentication_method ?? '';
-		}
-
-		return '';
-	};
-
-	resetLastUsedAuthenticationMethod = () => {
-		if ( typeof document !== 'undefined' ) {
-			this.setState( { lastUsedAuthenticationMethod: 'password' } );
-		}
 	};
 
 	showJetpackConnectSiteOnly = () => {
@@ -810,8 +796,22 @@ export class LoginForm extends Component {
 			...params,
 		} );
 
+	getLastUsedAuthenticationMethod = () => {
+		if ( typeof document !== 'undefined' ) {
+			const cookies = cookie.parse( document.cookie );
+			return cookies.last_used_authentication_method ?? '';
+		}
+
+		return '';
+	};
+
+	resetLastUsedAuthenticationMethod = () => {
+		this.setState( { lastUsedAuthenticationMethod: 'password' } );
+	};
+
 	render() {
 		const {
+			shouldShowLastUsedAuthenticationMethod,
 			accountType,
 			oauth2Client,
 			requestError,
@@ -832,6 +832,8 @@ export class LoginForm extends Component {
 			isSendingEmail,
 			isSocialFirst,
 		} = this.props;
+
+		const { lastUsedAuthenticationMethod } = this.state;
 
 		let loginUrl;
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -854,9 +856,9 @@ export class LoginForm extends Component {
 
 		const signupUrl = this.getSignupUrl();
 
-		if ( this.state.lastUsedAuthenticationMethod === 'qr-code' ) {
+		if ( lastUsedAuthenticationMethod === 'qr-code' ) {
 			loginUrl = this.getQrLoginLink();
-		} else if ( this.state.lastUsedAuthenticationMethod === 'magic-login' ) {
+		} else if ( lastUsedAuthenticationMethod === 'magic-login' ) {
 			loginUrl = this.getMagicLoginPageLink();
 		}
 
@@ -884,6 +886,12 @@ export class LoginForm extends Component {
 				},
 			}
 		);
+
+		const showLastUsedAuthenticationMethod =
+			shouldShowLastUsedAuthenticationMethod &&
+			lastUsedAuthenticationMethod &&
+			lastUsedAuthenticationMethod !== 'password' &&
+			isSocialFirst;
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
@@ -942,9 +950,7 @@ export class LoginForm extends Component {
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">
-					{ this.state.lastUsedAuthenticationMethod &&
-					isSocialFirst &&
-					this.state.lastUsedAuthenticationMethod !== 'password' ? (
+					{ showLastUsedAuthenticationMethod ? (
 						<>
 							<span className="last-used-authentication-method">
 								{ this.props.translate( 'Previously used' ) }
@@ -1157,7 +1163,9 @@ export class LoginForm extends Component {
 					<Fragment>
 						<FormDivider />
 						<SocialLoginForm
-							lastUsedAuthenticationMethod={ this.state.lastUsedAuthenticationMethod }
+							lastUsedAuthenticationMethod={
+								showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
+							}
 							handleLogin={ this.handleSocialLogin }
 							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
