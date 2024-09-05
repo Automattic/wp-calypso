@@ -35,7 +35,10 @@ class EmailPlanSubscription extends Component {
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( purchase.id, 10 ) }
 				tracksProps={ { source: 'email-plan-view' } }
-				customLabel={ translate( 'Renew now' ) }
+				customLabel={ translate( 'Renew now for {{strong}}%(price)s{{/strong}}', {
+					components: { strong: <strong /> },
+					args: { price: purchase.priceText },
+				} ) }
 			/>
 		);
 	}
