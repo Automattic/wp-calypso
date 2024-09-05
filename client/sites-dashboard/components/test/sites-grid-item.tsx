@@ -40,36 +40,9 @@ describe( '<SitesGridItem>', () => {
 	test( 'Default render', () => {
 		const tree = renderer
 			.create(
-				<SitesGridItem site={ makeTestSite( { title: 'The example site' } ) as SiteExcerptData } />
-			)
-			.toJSON();
-		expect( tree ).toMatchSnapshot();
-	} );
-
-	test( 'Custom render', () => {
-		const tree = renderer
-			.create(
 				<SitesGridItem
 					site={ makeTestSite( { title: 'The example site' } ) as SiteExcerptData }
-					showLaunchNag={ false }
-					showBadgeSection={ false }
-					showThumbnailLink
-					showSiteRenewLink={ false }
-				/>
-			)
-			.toJSON();
-		expect( tree ).toMatchSnapshot();
-	} );
-
-	test( 'Custom render 2', () => {
-		const tree = renderer
-			.create(
-				<SitesGridItem
-					site={ makeTestSite( { title: 'The example site' } ) as SiteExcerptData }
-					showLaunchNag={ false }
-					showBadgeSection={ false }
-					showThumbnailLink={ false }
-					showSiteRenewLink={ false }
+					onSiteSelectBtnClick={ () => {} }
 				/>
 			)
 			.toJSON();
