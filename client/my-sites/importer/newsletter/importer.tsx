@@ -41,7 +41,7 @@ type NewsletterImporterProps = {
 
 function getTitle( urlData?: UrlData ) {
 	if ( urlData?.meta?.title ) {
-		return `Import ${ urlData?.meta?.title }`;
+		return `Import ${ urlData.meta.title }`;
 	}
 
 	return 'Import your newsletter';
