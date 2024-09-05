@@ -1051,8 +1051,43 @@ $breakpoint-mobile: 660px;
 			padding-top: 24px;
 		}
 
-		button.social-buttons__button.button {
+		.auth-form__social-buttons {
 			width: 100%;
+			.auth-form__social-buttons-container {
+				width: 100%;
+			}
+		}
+
+		.wp-login__container .is-jetpack .auth-form__social,
+		.signup-form .auth-form__social {
+			padding-left: 0;
+			padding-right: 0;
+
+			button.social-buttons__button.button {
+				width: 100%;
+				border: 1px solid var(--studio-gray-50, #646970);
+				border-radius: 2px;
+				border-color: #ccc;
+				padding: 4px 16px;
+				display: flex;
+				justify-content: stretch;
+				align-items: center;
+				align-self: center;
+				margin: 0;
+				svg {
+					margin-right: auto;
+					border: 0;
+				}
+				span {
+					text-align: center;
+					margin-left: -44px;
+					margin-right: auto;
+					font-weight: 400;
+				}
+				&:last-child {
+					margin-bottom: 16px;
+				}
+			}
 		}
 
 		// Log in link on signup page
@@ -1347,7 +1382,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.auth-form__social-buttons-tos {
-				margin: 0;
+				margin: 24px 0 0 0;
 
 				@media (max-width: $break-medium) {
 					max-width: $max-width;
