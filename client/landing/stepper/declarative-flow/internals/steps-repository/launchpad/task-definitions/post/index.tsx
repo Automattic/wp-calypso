@@ -14,7 +14,7 @@ export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task =
 			( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
 			false,
 		calypso_path: ! isBlogOnboardingFlow( flow || null )
-			? `/post/${ siteSlug }`
+			? task.calypso_path
 			: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
 					origin: window.location.origin,
 			  } ),
