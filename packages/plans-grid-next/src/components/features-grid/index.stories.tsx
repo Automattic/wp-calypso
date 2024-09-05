@@ -2,8 +2,8 @@ import {
 	getFeaturesList,
 	getPlanFeaturesGroupedForFeaturesGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
-	setFewerFeaturesExperimentVariant,
-	type FewerFeaturesExperimentVariant,
+	setSimplifiedFeaturesGridExperimentVariant,
+	type SimplifiedFeaturesGridExperimentVariant,
 } from '@automattic/calypso-products';
 import {
 	FeaturesGrid,
@@ -15,7 +15,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 const ComponentWrapper = (
 	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
-		fewerFeaturesExperimentVariant?: FewerFeaturesExperimentVariant;
+		simplifiedFeaturesGridExperimentVariant?: SimplifiedFeaturesGridExperimentVariant;
 	}
 ) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
@@ -98,8 +98,8 @@ const meta = {
 	title: 'FeaturesGrid',
 	component: ComponentWrapper,
 	decorators: [
-		( Story, { args: { fewerFeaturesExperimentVariant = 'control' } } ) => {
-			setFewerFeaturesExperimentVariant( fewerFeaturesExperimentVariant );
+		( Story, { args: { simplifiedFeaturesGridExperimentVariant = 'control' } } ) => {
+			setSimplifiedFeaturesGridExperimentVariant( simplifiedFeaturesGridExperimentVariant );
 			return <Story />;
 		},
 	],
@@ -150,7 +150,7 @@ export const CuratedPlanMixByIntent = {
 } satisfies Story;
 
 export const FewerFeaturesExperimentTreatmentVariantA = {
-	name: 'Experiment [Fewer Features]: Treatment A',
+	name: 'Experiment [Simplified features grid]: Treatment A',
 	args: {
 		...PlansInSignup.args,
 		intent: 'plans-default-wpcom',
@@ -158,16 +158,16 @@ export const FewerFeaturesExperimentTreatmentVariantA = {
 		enableCategorisedFeatures: true,
 		enableLargeFeatureTitles: true,
 		enableStorageAsBadge: false,
-		fewerFeaturesExperimentVariant: 'treatment-a',
+		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;
 
 export const FewerFeaturesExperimentTreatmentVariantB = {
-	name: 'Experiment [Fewer Features]: Treatment B',
+	name: 'Experiment [Simplified features grid]: Treatment B',
 	args: {
 		...PlansInSignup.args,
 		intent: 'plans-default-wpcom',
 		isInSignup: true,
-		fewerFeaturesExperimentVariant: 'treatment-b',
+		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
 	},
 } satisfies Story;

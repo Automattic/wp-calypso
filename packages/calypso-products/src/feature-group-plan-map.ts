@@ -129,16 +129,17 @@ import {
 	FEATURE_GROUP_SUPPORT,
 	FEATURE_GROUP_THEMES,
 	FEATURE_GROUP_WOO,
-	FEATURE_CUSTOM_PLUGINS,
 	FEATURE_CUSTOMIZE_STYLE,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
 	FEATURE_WOOCOMMERCE_HOSTING,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	FEATURE_UPLOAD_PLUGINS,
 	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
 import {
-	isAssignedToFewerFeaturesExperiment,
-	isAssignedToFewerFeaturesExperimentVariant,
+	isAssignedToSimplifiedFeaturesGridExperiment,
+	isAssignedToSimplifiedFeaturesGridExperimentVariant,
 } from './experiments';
 import { FeatureGroupMap } from './types';
 
@@ -151,7 +152,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_STORAGE ]: {
 		slug: FEATURE_GROUP_STORAGE,
 		getTitle: () =>
-			isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
+			isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' )
 				? null
 				: i18n.translate( 'Storage' ),
 		getFeatures: () => [], // Intentionally empty for now. We will include a fixed list of feature slugs in a follow-up.
@@ -200,7 +201,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_DEVELOPER_TOOLS ]: {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
 		getTitle: () =>
-			isAssignedToFewerFeaturesExperiment() ? null : i18n.translate( 'Developer tools' ),
+			isAssignedToSimplifiedFeaturesGridExperiment() ? null : i18n.translate( 'Developer tools' ),
 		getFeatures: () => [
 			FEATURE_DEV_TOOLS,
 			FEATURE_SITE_STAGING_SITES,
@@ -378,8 +379,9 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getFeatures: () => [
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_PREMIUM_THEMES,
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_THEMES_PREMIUM_AND_STORE,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		],
 	},
 	[ FEATURE_GROUP_ENTITIES ]: {
@@ -410,13 +412,13 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_CUSTOM_PLUGINS ]: {
 		slug: FEATURE_GROUP_CUSTOM_PLUGINS,
 		getTitle: () => null,
-		getFeatures: () => [ FEATURE_CUSTOM_PLUGINS ],
+		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS ],
 	},
 	/* END Feature groups for experiment calypso_pricing_grid_fewer_features */
 };
 
 export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
-	if ( isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' ) ) {
+	if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 		return {
 			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
 			[ FEATURE_GROUP_ENTITIES ]: featureGroups[ FEATURE_GROUP_ENTITIES ],

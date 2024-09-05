@@ -15,7 +15,6 @@ import {
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
-	isAssignedToFewerFeaturesExperimentVariant,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -70,12 +69,12 @@ import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
-import useFewerFeaturesExperiment from './hooks/use-fewer-features-experiment';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSimplifiedFeaturesGridExperiment from './hooks/use-simplified-features-grid-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -329,12 +328,14 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
 
-	const { isLoadingFewerFeaturesExperiment, isAssignedToFewerFeaturesExperiment } =
-		useFewerFeaturesExperiment( {
-			flowName,
-			isInSignup,
-			intent,
-		} );
+	const {
+		isLoading: isLoadingSimplifiedFeaturesGridExperiment,
+		variant: simplifiedFeaturesGridExperimentVariant,
+	} = useSimplifiedFeaturesGridExperiment( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -634,7 +635,7 @@ const PlansFeaturesMain = ( {
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
 			! gridPlansForComparisonGrid ||
-			isLoadingFewerFeaturesExperiment
+			isLoadingSimplifiedFeaturesGridExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -787,12 +788,14 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
-										enableCategorisedFeatures={ isAssignedToFewerFeaturesExperiment }
-										enableLargeFeatureTitles={ isAssignedToFewerFeaturesExperimentVariant(
-											'treatment-a'
-										) }
+										enableCategorisedFeatures={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableLargeFeatureTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 										enableStorageAsBadge={
-											! isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
+											simplifiedFeaturesGridExperimentVariant !== 'simplified'
 										}
 									/>
 								) }

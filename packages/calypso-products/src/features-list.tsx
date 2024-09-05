@@ -316,9 +316,8 @@ import {
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
 	FEATURE_CUSTOMIZE_STYLE,
-	FEATURE_CUSTOM_PLUGINS,
 } from './constants';
-import { isAssignedToFewerFeaturesExperiment } from './experiments';
+import { isAssignedToSimplifiedFeaturesGridExperiment } from './experiments';
 import type { FeatureList } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
@@ -522,7 +521,7 @@ const FEATURES_LIST: FeatureList = {
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		getTitle: () => {
-			return isAssignedToFewerFeaturesExperiment()
+			return isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'All premium themes' )
 				: i18n.translate( 'Access to all premium themes' );
 		},
@@ -532,7 +531,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-		getTitle: () => i18n.translate( 'Access to dozens of premium themes ' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Dozens of premium themes ' )
+				: i18n.translate( 'Access to dozens of premium themes ' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 	[ FEATURE_THEMES_PREMIUM_AND_STORE ]: {
@@ -1624,7 +1626,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
 		getTitle: () =>
-			isAssignedToFewerFeaturesExperiment()
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'Ad-free browsing experience for your visitors' )
 				: i18n.translate( 'Ad-free experience' ),
 		getDescription: () =>
@@ -1780,10 +1782,7 @@ const FEATURES_LIST: FeatureList = {
 	/* START: 2023 Pricing Grid Features */
 	[ FEATURE_BEAUTIFUL_THEMES ]: {
 		getSlug: () => FEATURE_BEAUTIFUL_THEMES,
-		getTitle: () =>
-			isAssignedToFewerFeaturesExperiment()
-				? i18n.translate( 'Dozens of premium themes' )
-				: i18n.translate( 'Beautiful themes and patterns' ),
+		getTitle: () => i18n.translate( 'Beautiful themes and patterns' ),
 		getDescription: () =>
 			i18n.translate( 'Transform your site design with themes and drag-and-drop layouts.' ),
 	},
@@ -1866,7 +1865,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STATS_PAID ]: {
 		getSlug: () => FEATURE_STATS_PAID,
 		getTitle: () =>
-			isAssignedToFewerFeaturesExperiment()
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' )
 				: i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
@@ -1953,7 +1952,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
 		getTitle: () =>
-			isAssignedToFewerFeaturesExperiment()
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' )
 				: i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
@@ -2309,7 +2308,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WOOCOMMERCE_HOSTING ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
 		getTitle: () =>
-			isAssignedToFewerFeaturesExperiment()
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'eCommerce tools, integrations, and optimized WooCommerce hosting' )
 				: i18n.translate( 'Optimized WooCommerce hosting' ),
 		getDescription: () =>
@@ -2435,7 +2434,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		getTitle: () =>
 			// eslint-disable-next-line no-nested-ternary
-			isAssignedToFewerFeaturesExperiment()
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'Support access to our expert team' )
 				: englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 				  i18n.hasTranslation( 'Fast support from our expert team' )
@@ -2451,7 +2450,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
 		getTitle: () =>
 			// eslint-disable-next-line no-nested-ternary
-			isAssignedToFewerFeaturesExperiment()
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'Priority 24/7 support' )
 				: englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 				  i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
@@ -2646,10 +2645,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_CUSTOMIZE_STYLE ]: {
 		getSlug: () => FEATURE_CUSTOMIZE_STYLE,
 		getTitle: () => i18n.translate( 'Customize fonts and colors' ),
-	},
-	[ FEATURE_CUSTOM_PLUGINS ]: {
-		getSlug: () => FEATURE_CUSTOM_PLUGINS,
-		getTitle: () => i18n.translate( 'Install plugins' ),
 	},
 	/* END: Features for experiment calypso_pricing_grid_fewer_features */
 };

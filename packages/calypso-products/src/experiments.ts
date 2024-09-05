@@ -25,18 +25,20 @@ export const getPlansListExperiment = ( experimentName: string ): string | undef
 
 /* START: Experiment calypso_pricing_grid_fewer_features */
 
-export const FEWER_FEATURES_EXPERIMENT_ID = 'calypso_pricing_grid_fewer_features';
+export const SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID = 'calypso_pricing_grid_fewer_features';
 
-export type FewerFeaturesExperimentVariant = 'control' | 'treatment-a' | 'treatment-b';
+export type SimplifiedFeaturesGridExperimentVariant = 'control' | 'simplified' | 'fix_inaccuracies';
 
-export const setFewerFeaturesExperimentVariant = ( variant: FewerFeaturesExperimentVariant ) =>
-	setExperiment( PLANS_LIST_NAMESPACE, FEWER_FEATURES_EXPERIMENT_ID, variant );
+export const setSimplifiedFeaturesGridExperimentVariant = (
+	variant: SimplifiedFeaturesGridExperimentVariant
+) => setExperiment( PLANS_LIST_NAMESPACE, SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID, variant );
 
-export const isAssignedToFewerFeaturesExperiment = (): boolean =>
-	getExperiment( PLANS_LIST_NAMESPACE, FEWER_FEATURES_EXPERIMENT_ID ) !== 'control';
+export const isAssignedToSimplifiedFeaturesGridExperiment = (): boolean =>
+	getExperiment( PLANS_LIST_NAMESPACE, SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID ) !== 'control';
 
-export const isAssignedToFewerFeaturesExperimentVariant = (
-	variant: FewerFeaturesExperimentVariant
-): boolean => getExperiment( PLANS_LIST_NAMESPACE, FEWER_FEATURES_EXPERIMENT_ID ) === variant;
+export const isAssignedToSimplifiedFeaturesGridExperimentVariant = (
+	variant: SimplifiedFeaturesGridExperimentVariant
+): boolean =>
+	getExperiment( PLANS_LIST_NAMESPACE, SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID ) === variant;
 
 /* END: Experiment calypso_pricing_grid_fewer_features */
