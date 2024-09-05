@@ -3,6 +3,7 @@ import { Icon, moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useRef, useState } from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { OWNER_ROLE } from '../../constants';
@@ -71,7 +72,13 @@ export const MemberColumn = ( {
 };
 
 export const DateColumn = ( { date }: { date?: string } ): ReactNode => {
-	return date ? new Date( date ).toLocaleDateString() : <Gridicon icon="minus" />;
+	const moment = useLocalizedMoment();
+	const formattedDate = Number( date );
+	return formattedDate ? (
+		moment.unix( formattedDate ).format( 'MMMM D, YYYY' )
+	) : (
+		<Gridicon icon="minus" />
+	);
 };
 
 export const ActionColumn = ( {
