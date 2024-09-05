@@ -1,7 +1,8 @@
 import { Card } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { external } from '@wordpress/icons';
-import { useEffect } from 'react';
+import { useEffect, Dispatch, SetStateAction } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -17,17 +18,27 @@ type ContentProps = {
 	siteSlug: string;
 	fromSite: string;
 	skipNextStep: () => void;
+	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 };
 
 export default function Content( {
 	nextStepUrl,
 	selectedSite,
 	siteSlug,
+	engine,
 	fromSite,
 	skipNextStep,
 }: ContentProps ) {
 	const siteTitle = selectedSite.title;
 	const siteId = selectedSite.ID;
+
+	const queryClient = useQueryClient();
+
+	const invalidateCardData = () => {
+		queryClient.invalidateQueries( {
+			queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine ],
+		} );
+	};
 
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 
@@ -91,6 +102,7 @@ export default function Content( {
 					fromSite={ fromSite }
 					nextStepUrl={ nextStepUrl }
 					skipNextStep={ skipNextStep }
+					invalidateCardData={ invalidateCardData }
 				/>
 			) }
 		</Card>

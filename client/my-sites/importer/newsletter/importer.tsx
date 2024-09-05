@@ -115,10 +115,20 @@ export default function NewsletterImporter( {
 		} else {
 			setAutoFetchData( false );
 		}
+
+		if (
+			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
+			step === 'paid-subscribers'
+		) {
+			// If we have empty content
+			setAutoFetchData( true );
+		}
 	}, [
 		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps.subscribers?.status,
+		paidNewsletterData?.steps?.subscribers?.status,
+		step,
 		setAutoFetchData,
+		paidNewsletterData?.steps,
 	] );
 
 	stepSlugs.forEach( ( stepName, index ) => {
@@ -202,6 +212,7 @@ export default function NewsletterImporter( {
 					cardData={ stepContent }
 					engine={ engine }
 					isFetchingContent={ isFetchingPaidNewsletter }
+					setAutoFetchData={ setAutoFetchData }
 				/>
 			) }
 		</div>
