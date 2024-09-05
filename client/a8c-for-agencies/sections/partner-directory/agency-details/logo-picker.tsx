@@ -4,6 +4,7 @@ import A4AImagePicker from 'calypso/a8c-for-agencies/components/a4a-image-picker
 
 const LOGO_SIZE_WIDTH = 800;
 const LOGO_SIZE_HEIGHT = 320;
+const LOGO_SIZE_TOLERANCE = 5;
 
 type Props = {
 	logo?: string | null;
@@ -37,7 +38,11 @@ const LogoPicker = ( { logo, onPick }: Props ) => {
 		setError( null );
 
 		getImage( file ).then( ( img ) => {
-			if ( img.width !== LOGO_SIZE_WIDTH || img.height !== LOGO_SIZE_HEIGHT ) {
+			// Check against the allowed deviation in pixels from the required logo dimensions
+			const isWidthValid = Math.abs( img.width - LOGO_SIZE_WIDTH ) <= LOGO_SIZE_TOLERANCE;
+			const isHeightValid = Math.abs( img.height - LOGO_SIZE_HEIGHT ) <= LOGO_SIZE_TOLERANCE;
+
+			if ( ! isWidthValid || ! isHeightValid ) {
 				setError( translate( 'Company logo must have 800px width and 320px height.' ) );
 				return;
 			}
