@@ -102,6 +102,9 @@ import {
 	getIsLivePreviewSupported,
 	getThemeType,
 	isThemeWooCommerce,
+	hasActivatedTheme,
+	isActivatingTheme,
+	isInstallingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -302,6 +305,7 @@ class ThemeSheet extends Component {
 	 */
 	state = {
 		disabledButton: true,
+		busyButton: false,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
@@ -328,6 +332,9 @@ class ThemeSheet extends Component {
 		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
 			this.setState( { isWide } );
 		} );
+
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { busyButton: this.isBusy() } );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -338,6 +345,11 @@ class ThemeSheet extends Component {
 		if ( this.state.disabledButton !== this.isLoading() ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { disabledButton: this.isLoading() } );
+		}
+
+		if ( this.state.busyButton !== this.isBusy() ) {
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( { busyButton: this.isBusy() } );
 		}
 	}
 
@@ -360,6 +372,20 @@ class ThemeSheet extends Component {
 		const { isLoading, isThemeActivationSyncStarted } = this.props;
 		const { isAtomicTransferCompleted } = this.state;
 		return isLoading || ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted );
+	};
+
+	isBusy = () => {
+		const { isActive, hasThemeActivated, isThemeActivating, isThemeInstalling } = this.props;
+
+		// May need to check for atomic install flow?
+		//const { isAtomicTransferCompleted } = this.state;
+
+		// Active theme can't be activating or installing
+		if ( isActive || hasThemeActivated ) {
+			return false;
+		}
+
+		return isThemeActivating || isThemeInstalling;
 	};
 
 	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
@@ -1112,6 +1138,7 @@ class ThemeSheet extends Component {
 					</span>
 				);
 			}
+
 			// else: activate
 			return translate( 'Activate this design' );
 		}
@@ -1201,6 +1228,7 @@ class ThemeSheet extends Component {
 				} }
 				primary
 				disabled={ this.state.disabledButton }
+				busy={ this.state.busyButton }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -1436,7 +1464,7 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ThanksModal source="details" themeId={ this.props.themeId } />
+				{ /* <ThanksModal source="details" themeId={ this.props.themeId } /> */ }
 				<ActivationModal source="details" />
 				<NavigationHeader
 					navigationItems={ navigationItems }
@@ -1663,6 +1691,9 @@ export default connect(
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
 			isLivePreviewSupported,
 			themeType: getThemeType( state, themeId ),
+			hasThemeActivated: !! hasActivatedTheme( state, siteId ),
+			isThemeActivating: !! isActivatingTheme( state, siteId ),
+			isThemeInstalling: isInstallingTheme( state, themeId, siteId ),
 		};
 	},
 	{
