@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+cimport config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -242,6 +242,7 @@ class Login extends Component {
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
 					isPartnerSignup: this.props.isPartnerSignup,
+					from: this.props.currentQuery?.from,
 				} )
 			);
 		}
@@ -612,14 +613,14 @@ class Login extends Component {
 				}
 			}
 		} else if ( isWooCoreProfilerFlow ) {
-			const isLostPasswordFlow = currentQuery.lostpassword_flow;
+			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
 
 			let subtitle = null;
 
 			switch ( true ) {
 				case isLostPasswordFlow:
-					headerText = null;
+					headerText = <h3>{ translate( "You've got mail" ) }</h3>;
 					subtitle = translate(
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 					);
@@ -628,12 +629,13 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 					break;
 				default:
-					headerText = <h3>{ translate( 'One last step' ) }</h3>;
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					subtitle = translate(
-						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+						"In order to take advantage of the benefits offered by Jetpack and WooPayments, please log in to your WordPress.com account below. {{br}}{{/br}}Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 						{
 							components: {
 								signupLink,
+								br: <br />,
 							},
 						}
 					);
@@ -1040,6 +1042,9 @@ class Login extends Component {
 							isSocialFirst={ isSocialFirst }
 							isJetpack={ isJetpack }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+							loginButtonText={
+								this.props.initialQuery?.lostpassword_flow === 'true' ? translate( 'Log in' ) : null
+							}
 						/>
 					);
 				} }

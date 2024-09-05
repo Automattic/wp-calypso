@@ -116,6 +116,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		loginButtonText: PropTypes.string,
 	};
 
 	state = {
@@ -423,7 +424,12 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless } = this.props;
+		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless, loginButtonText } =
+			this.props;
+
+		if ( loginButtonText ) {
+			return loginButtonText;
+		}
 
 		if ( this.isUsernameOrEmailView() || isWooPasswordless ) {
 			return translate( 'Continue' );
@@ -928,6 +934,10 @@ export class LoginForm extends Component {
 			isFromGravatar3rdPartyApp ||
 			isGravatarFlowWithEmail;
 
+		const shouldRenderForgotPasswordLink =
+			( ! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless ) ||
+			! isPasswordHidden;
+
 		return (
 			<form
 				className={ clsx( {
@@ -1153,6 +1163,30 @@ export class LoginForm extends Component {
 								</div>
 							) }
 						</>
+					) }
+					{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
+					{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+					<div className="login__form-action">
+						<FormsButton
+							primary
+							busy={ ! isWoo && isSendingEmail }
+							disabled={ isSubmitButtonDisabled }
+						>
+							{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
+						</FormsButton>
+					</div>
+
+					{ ! hideSignupLink && isOauthLogin && (
+						<div className={ clsx( 'login__form-signup-link' ) }>
+							{ this.props.translate(
+								'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
+								{
+									components: {
+										signupLink: <a href={ signupUrl } />,
+									},
+								}
+							) }
+						</div>
 					) }
 				</Card>
 

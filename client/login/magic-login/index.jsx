@@ -66,6 +66,7 @@ import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import { withEnhancers } from 'calypso/state/utils';
+import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginEmailForm from './request-login-email-form';
 
 import './style.scss';
@@ -1211,7 +1212,20 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 		} = this.props;
-		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
+		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
+
+		if ( query?.from === 'woocommerce-core-profiler' ) {
+			return (
+				<Main className="magic-login magic-login__request-link is-white-login">
+					{ this.renderLocaleSuggestions() }
+					<GlobalNotices id="notices" />
+					<MainContentWooCoreProfiler
+						emailAddress={ usernameOrEmail }
+						redirectTo={ this.props.redirectToSanitized }
+					/>
+				</Main>
+			);
+		}
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			let renderContent = this.renderGravPoweredMagicLogin();
