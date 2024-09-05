@@ -68,6 +68,7 @@ interface SitesDashboardProps {
 	selectedSite?: SiteDetails | null;
 	initialSiteFeature?: string;
 	selectedSiteFeaturePreview?: React.ReactNode;
+	sectionName?: string;
 }
 
 const siteSortingKeys = [
@@ -94,6 +95,7 @@ const SitesDashboard = ( {
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
+	sectionName,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -375,7 +377,7 @@ const SitesDashboard = ( {
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
-								<SitesDashboardHeader />
+								<SitesDashboardHeader isPreviewPaneOpen={ !! dataViewsState.selectedItem } />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
@@ -441,6 +443,7 @@ const SitesDashboard = ( {
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
 							changeSitePreviewPane={ changeSitePreviewPane }
+							sectionName={ sectionName }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />
