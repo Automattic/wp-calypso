@@ -15,6 +15,10 @@ export default function getIsWooPasswordless( state: AppState ): boolean {
 		return false;
 	}
 
+	if ( ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
+		return false;
+	}
+
 	// Enable Woo Passwordless if user is from WooCommerce Core Profiler.
 	if ( isWooCommerceCoreProfilerFlow( state ) ) {
 		return true;

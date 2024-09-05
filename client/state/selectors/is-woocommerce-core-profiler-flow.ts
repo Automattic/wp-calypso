@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -13,8 +14,9 @@ export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
 	return (
 		'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ) ||
 		'woocommerce-core-profiler' === get( getInitialQueryArguments( state ), 'from' ) ||
-		new URLSearchParams( state.login?.redirectTo?.original ).get( 'from' ) ===
-			'woocommerce-core-profiler'
+		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+			new URLSearchParams( state.login?.redirectTo?.original ).get( 'from' ) ===
+				'woocommerce-core-profiler' )
 	);
 };
 

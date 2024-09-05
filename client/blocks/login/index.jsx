@@ -615,12 +615,13 @@ class Login extends Component {
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
-
 			let subtitle = null;
 
 			switch ( true ) {
 				case isLostPasswordFlow:
-					headerText = <h3>{ translate( "You've got mail" ) }</h3>;
+					headerText = config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ? (
+						<h3>{ translate( "You've got mail" ) }</h3>
+					) : null;
 					subtitle = translate(
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 					);
@@ -629,16 +630,33 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 					break;
 				default:
-					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
-					subtitle = translate(
-						"In order to take advantage of the benefits offered by Jetpack and WooPayments, please log in to your WordPress.com account below. {{br}}{{/br}}Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
-						{
-							components: {
-								signupLink,
-								br: <br />,
-							},
-						}
+					headerText = (
+						<h3>
+							{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+								? translate( 'Log in to your account' )
+								: translate( 'One last step' ) }
+						</h3>
 					);
+					if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
+						subtitle = translate(
+							"In order to take advantage of the benefits offered by Jetpack and WooPayments, please log in to your WordPress.com account below. {{br}}{{/br}}Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+							{
+								components: {
+									signupLink,
+									br: <br />,
+								},
+							}
+						);
+					} else {
+						subtitle = translate(
+							"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+							{
+								components: {
+									signupLink,
+								},
+							}
+						);
+					}
 			}
 			preHeader = null;
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
@@ -1043,7 +1061,10 @@ class Login extends Component {
 							isJetpack={ isJetpack }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							loginButtonText={
-								this.props.initialQuery?.lostpassword_flow === 'true' ? translate( 'Log in' ) : null
+								config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+								this.props.initialQuery?.lostpassword_flow === 'true'
+									? translate( 'Log in' )
+									: null
 							}
 						/>
 					);

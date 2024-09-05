@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { Icon, globe } from '@wordpress/icons';
@@ -164,10 +165,16 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			const pluginNames = {
-				'jetpack-ai': translate( 'Jetpack and WooPayments' ),
-				default: translate( 'Jetpack and WooPayments' ),
-			};
+			const pluginNames = config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+				? {
+						'jetpack-ai': translate( 'Jetpack and WooPayments' ),
+						default: translate( 'Jetpack and WooPayments' ),
+				  }
+				: {
+						'jetpack-ai': 'Jetpack AI',
+						'jetpack-boost': 'Jetpack Boost',
+						default: 'Jetpack',
+				  };
 
 			const pluginName = pluginNames[ this.props.authQuery.plugin_name ] || pluginNames.default;
 			const translateParams = {
@@ -190,10 +197,15 @@ export class AuthFormHeader extends Component {
 
 			switch ( currentState ) {
 				case 'logged-out':
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-						translateParams
-					);
+					return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						? translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  )
+						: translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  );
 				default:
 					return translate(
 						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
