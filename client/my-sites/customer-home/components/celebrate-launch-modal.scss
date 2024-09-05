@@ -1,3 +1,5 @@
+$breakpoint-mobile: 782px; //Mobile size.
+
 .launched__modal {
 	max-width: 640px;
 
@@ -16,7 +18,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
-		min-width: 640px;
+
+		@media (min-width: $breakpoint-mobile) {
+			min-width: 640px;
+		}
 	}
 
 	&-heading {
@@ -34,7 +39,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		max-width: 75%;
+		max-width: 100%;
+		@media (min-width: $breakpoint-mobile) {
+			max-width: 75%;
+		}
 	}
 
 	&-body,
@@ -65,9 +73,12 @@
 		padding: 8px;
 		background: var(--studio-gray-0);
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
+		@media (min-width: $breakpoint-mobile) {
+			flex-direction: row;
+		}
 	}
 
 	.launchpad__clipboard-button {
@@ -105,7 +116,10 @@
 		align-items: center;
 		padding: 32px 48px;
 		gap: 32px;
-
+		flex-direction: column;
+		@media (min-width: $breakpoint-mobile) {
+			flex-direction: row;
+		}
 		.components-button {
 			height: 42px;
 		}
