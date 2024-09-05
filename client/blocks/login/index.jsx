@@ -991,7 +991,7 @@ class Login extends Component {
 
 		return (
 			<ProvideExperimentData
-				experimentName="wpcom_login_page_last_used_label_v1"
+				name="wpcom_login_page_last_used_label_v1"
 				options={ { isEligible: config.isEnabled( 'login/last-used-method' ) } }
 			>
 				{ ( isLoadingExperiment, experimentAssignment ) => {
