@@ -1,4 +1,5 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -28,7 +29,10 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-
+	const brand: string = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
+		[]
+	);
 	const { cardNumber: cardNumberError } = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
@@ -67,7 +71,6 @@ export default function CreditCardNumberField( {
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
-						showIcon: true,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
@@ -76,6 +79,7 @@ export default function CreditCardNumberField( {
 						handleStripeFieldChange( input );
 					} }
 				/>
+				<PaymentLogo brand={ brand } />
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>
