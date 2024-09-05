@@ -4,16 +4,60 @@ import wp from 'calypso/lib/wp';
 export type StepId = 'content' | 'subscribers' | 'paid-subscribers' | 'summary';
 export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
 
-interface Step {
+export interface ContentStepContent {}
+
+export interface SubscribersStepContent {
+	meta?: {
+		email_count: string;
+		id: number;
+		paid_subscribers_count: string;
+		platform: string;
+		scheduled_at: string;
+		status: string;
+		subscribed_count: string | null;
+		timestamp: string;
+	};
+}
+
+export interface AvailableTier {
+	currency: string;
+	id: number;
+	interval: string;
+	price: string;
+	title: string;
+}
+
+export interface Plan {
+	active_subscriptions: boolean;
+	is_active: boolean;
+	name: string;
+	plan_amount_decimal: number;
+	plan_currency: string;
+	plan_id: string;
+	plan_interval: string;
+	product_id: string;
+}
+
+export interface PaidSubscribersStepContent {
+	available_tiers: AvailableTier[];
+	connect_url?: string;
+	is_connected_stripe: boolean;
+	map_plans: [];
+	plans: Plan[];
+}
+
+export interface SummaryStepContent {}
+
+interface Step< T > {
 	status: StepStatus;
-	content?: any;
+	content?: T;
 }
 
 interface Steps {
-	content: Step;
-	subscribers: Step;
-	'paid-subscribers': Step;
-	summary: Step;
+	content: Step< ContentStepContent >;
+	subscribers: Step< SubscribersStepContent >;
+	'paid-subscribers': Step< PaidSubscribersStepContent >;
+	summary: Step< SummaryStepContent >;
 }
 
 interface PaidNewsletterData {

@@ -1,6 +1,7 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { hasQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
+import { PaidSubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
 import ConnectStripe from './paid-subscribers/connect-stripe';
@@ -11,7 +12,7 @@ type Props = {
 	skipNextStep: () => void;
 	fromSite: string;
 	engine: string;
-	cardData: any;
+	cardData: PaidSubscribersStepContent;
 	selectedSite: SiteDetails;
 	isFetchingContent: boolean;
 };
