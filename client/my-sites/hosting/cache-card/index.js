@@ -151,7 +151,7 @@ export const CacheCard = ( {
 									! isEdgeCacheEligible ||
 									isEdgeCacheMutating
 								}
-								checked={ isEdgeCacheActive }
+								checked={ isEdgeCacheActive && isEdgeCacheEligible }
 								onChange={ ( active ) => {
 									recordTracksEvent(
 										active
