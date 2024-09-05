@@ -128,9 +128,19 @@ $blueberry-color: #3858e9;
 				align-items: flex-start;
 				gap: 32px;
 				align-self: stretch;
+				flex-wrap: wrap;
+
+				.content {
+					flex: 1 1 500px;
+				}
 
 				p {
 					line-height: 24px;
+				}
+
+				.performance-profiler-tip {
+					max-width: 300px;
+					min-width: unset;
 				}
 			}
 
