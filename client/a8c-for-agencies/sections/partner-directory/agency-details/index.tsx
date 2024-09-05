@@ -232,7 +232,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						components: {
 							a: (
 								<a
-									href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings"
+									href="https://agencieshelp.automattic.com/knowledge-base/adding-a-logo-to-the-partner-directory-agency-profile/"
 									target="_blank"
 									rel="noreferrer noopener"
 								/>
