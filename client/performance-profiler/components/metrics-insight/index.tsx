@@ -16,6 +16,7 @@ interface MetricsInsightProps {
 	index: number;
 	url?: string;
 	isWpcom: boolean;
+	hash: string;
 }
 
 const Card = styled( FoldableCard )`
@@ -65,11 +66,13 @@ const Content = styled.div`
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index, isWpcom } = props;
+	const { insight, onClick, index, isWpcom, hash } = props;
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
 		insight.description ?? '',
+		hash,
+		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
 	const tip = tips[ insight.id ];

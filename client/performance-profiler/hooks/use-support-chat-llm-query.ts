@@ -5,7 +5,12 @@ function mapResult( response: WPComSupportQueryResponse ) {
 	return response.messages?.[ 0 ]?.content ?? '';
 }
 
-export const useSupportChatLLMQuery = ( description: string, enable: boolean ) => {
+export const useSupportChatLLMQuery = (
+	description: string,
+	hash: string,
+	is_wpcom: boolean,
+	enable: boolean
+) => {
 	const question = `I need to fix the following issue to improve the performance of site: ${ description }.`;
 	const howToAnswer =
 		'Answer me in two topics in bold: "Why is this important?" and "How to fix this?"';
@@ -17,10 +22,10 @@ export const useSupportChatLLMQuery = ( description: string, enable: boolean ) =
 		queryFn: () =>
 			wp.req.post(
 				{
-					path: '/odie/chat/wpcom-support-chat/',
+					path: `/odie/assistant/performance-profiler?hash=${ hash }`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ message }
+				{ message, is_wpcom }
 			),
 		meta: {
 			persist: false,

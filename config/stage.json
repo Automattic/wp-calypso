@@ -134,6 +134,7 @@
 		"page/export": true,
 		"pattern-assembler/v2": true,
 		"performance-profiler": false,
+		"performance-profiler/llm": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
