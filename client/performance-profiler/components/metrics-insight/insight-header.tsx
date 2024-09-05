@@ -38,6 +38,9 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 					<span className={ clsx( 'value', { [ type ]: true } ) }> { value }</span>
 				</span>
 			) }
+			{ type === 'fail' && (
+				<span className={ clsx( 'impact fail', { 'is-mobile': isMobile() } ) }>High Impact</span>
+			) }
 		</>
 	);
 };

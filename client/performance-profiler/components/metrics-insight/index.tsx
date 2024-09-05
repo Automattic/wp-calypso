@@ -35,6 +35,7 @@ const Header = styled.div`
 	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
+	width: 100%;
 
 	p {
 		display: inline;
@@ -46,6 +47,22 @@ const Header = styled.div`
 
 		&.is-mobile {
 			display: block;
+		}
+	}
+
+	.impact {
+		padding: 4px 10px;
+		border-radius: 14px;
+		border: 1px solid transparent;
+		float: right;
+
+		&.fail {
+			background-color: var( --studio-red-5 );
+		}
+
+		&.is-mobile {
+			float: none;
+			display: inline-block;
 		}
 	}
 
