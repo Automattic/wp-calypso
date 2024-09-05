@@ -375,7 +375,7 @@ const SitesDashboard = ( {
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
-								<SitesDashboardHeader />
+								<SitesDashboardHeader isPreviewPaneOpen={ !! dataViewsState.selectedItem } />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
