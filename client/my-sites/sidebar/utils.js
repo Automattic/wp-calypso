@@ -40,11 +40,11 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	if ( pathIncludes( currentPath, 'plugins', 1 ) ) {
-		if ( pathIncludes( currentPath, 'browse', 2 ) ) {
-			return pathIncludes( path, 'plugins', 1 ) && ! pathIncludes( path, 'scheduled-updates', 2 );
+		if ( pathIncludes( currentPath, 'scheduled-updates', 2 ) ) {
+			return pathIncludes( path, 'plugins', 1 ) && pathIncludes( path, 'scheduled-updates', 2 );
 		}
 
-		return pathIncludes( path, 'plugins', 1 ) && fragmentIsEqual( path, currentPath, 2 );
+		return pathIncludes( path, 'plugins', 1 ) && fragmentIsEqual( path, currentPath, 1 );
 	}
 
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {

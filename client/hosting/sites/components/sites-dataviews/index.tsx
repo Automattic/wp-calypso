@@ -10,7 +10,6 @@ import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Field } from '@wordpress/dataviews';
 import type {
@@ -126,11 +125,14 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'status',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Status' ) }</span>,
+				label: __( 'Status' ),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				elements: siteStatusGroups,
+				filterBy: {
+					operators: [ 'is' ],
+				},
 			},
 			{
 				id: 'last-publish',
@@ -168,19 +170,6 @@ const DotcomSitesDataViews = ( {
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
-				getValue: () => null,
-			},
-			{
-				id: addDummyDataViewPrefix( 'status' ),
-				label: __( 'Status' ),
-				render: () => null,
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'is' ],
-					isPrimary: true,
-				},
-				enableHiding: false,
-				enableSorting: false,
 				getValue: () => null,
 			},
 		],

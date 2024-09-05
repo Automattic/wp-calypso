@@ -10,6 +10,7 @@ type MemberAPIResponse = {
 	email: string;
 	avatar_url: string;
 	role: string;
+	joined_timestamp: string;
 };
 
 export default function useFetchActiveMembers(): UseQueryResult< TeamMember[], unknown > {
@@ -30,6 +31,7 @@ export default function useFetchActiveMembers(): UseQueryResult< TeamMember[], u
 				avatar: member.avatar_url,
 				role: member.role,
 				status: 'active',
+				dateAdded: member.joined_timestamp,
 			} ) );
 		},
 		enabled: !! agencyId,

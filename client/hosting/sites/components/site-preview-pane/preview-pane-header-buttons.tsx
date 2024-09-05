@@ -11,12 +11,19 @@ type Props = {
 	focusRef: React.RefObject< HTMLButtonElement >;
 	itemData: ItemData;
 	closeSitePreviewPane?: () => void;
+	sectionName?: string;
 };
 
-const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }: Props ) => {
+const PreviewPaneHeaderButtons = ( {
+	focusRef,
+	closeSitePreviewPane,
+	itemData,
+	sectionName,
+}: Props ) => {
 	const adminButtonRef = useRef< HTMLButtonElement | null >( null );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 	const { __ } = useI18n();
+	const isHostingOverview = sectionName === 'dotcom-hosting';
 
 	return (
 		<>
@@ -24,7 +31,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }:
 				{ __( 'Close' ) }
 			</Button>
 			<Button
-				primary
+				primary={ isHostingOverview }
 				className="item-preview__admin-button"
 				href={ `${ adminUrl }` }
 				ref={ useMergeRefs( [ adminButtonRef, focusRef ] ) }

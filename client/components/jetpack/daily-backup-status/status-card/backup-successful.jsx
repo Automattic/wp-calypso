@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
@@ -96,7 +97,7 @@ const BackupSuccessful = ( {
 			</div>
 			<div className="status-card__hide-mobile">
 				<div className="status-card__title">{ displayDateNoLatest }</div>
-				{ showRealTimeMessage && (
+				{ config.isEnabled( 'jetpack/backup-realtime-message' ) && showRealTimeMessage && (
 					<BackupRealtimeMessage
 						baseBackupDate={ baseBackupDate }
 						eventsCount={ backup.rewindStepCount }
