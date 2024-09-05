@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import { useRef } from 'react';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
@@ -23,6 +24,7 @@ export const PerformanceProfilerDashboardContent = ( {
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
+	const insightsRef = useRef< HTMLDivElement >( null );
 
 	return (
 		<div className="performance-profiler-content">
@@ -31,6 +33,7 @@ export const PerformanceProfilerDashboardContent = ( {
 					<PerformanceScore
 						value={ overall_score * 100 }
 						recommendationsQuantity={ Object.keys( audits ).length }
+						recommendationsRef={ insightsRef }
 					/>
 					<ScreenshotThumbnail
 						alt={ translate( 'Website thumbnail' ) }
@@ -48,7 +51,9 @@ export const PerformanceProfilerDashboardContent = ( {
 				/>
 				<NewsletterBanner link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` } />
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
-				{ audits && <InsightsSection audits={ audits } url={ url } isWpcom={ is_wpcom } /> }
+				{ audits && (
+					<InsightsSection audits={ audits } url={ url } isWpcom={ is_wpcom } ref={ insightsRef } />
+				) }
 			</div>
 
 			<Disclaimer />

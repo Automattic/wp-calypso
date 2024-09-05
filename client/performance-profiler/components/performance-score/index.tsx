@@ -7,6 +7,7 @@ import './style.scss';
 type PerformanceScoreProps = {
 	value: number;
 	recommendationsQuantity?: number;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 };
 
 const MAX_SCORE_BAR_WIDTH = 600;
@@ -16,7 +17,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 	const [ resizeObserverRef, entry ] = useResizeObserver();
 	const [ scoreBarWidth, setScoreBarWidth ] = useState( MAX_SCORE_BAR_WIDTH );
 
-	const { value, recommendationsQuantity } = props;
+	const { value, recommendationsQuantity, recommendationsRef } = props;
 	const getStatus = ( value: number ) => {
 		if ( value <= 49 ) {
 			return 'poor';
@@ -40,6 +41,10 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 		const width = entry.width ?? MAX_SCORE_BAR_WIDTH;
 		setScoreBarWidth( width >= MAX_SCORE_BAR_WIDTH ? MAX_SCORE_BAR_WIDTH : width );
 	}, [ entry ] );
+
+	const viewRecommendationsOnClick = () => {
+		recommendationsRef?.current?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+	};
 
 	return (
 		<div className="performance-profiler-performance-score">
@@ -72,7 +77,17 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 								{
 									count: recommendationsQuantity,
 									args: { quantity: recommendationsQuantity },
-									components: { a: <a href="#recommendations" /> },
+									components: {
+										a: (
+											/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
+											<a
+												onClick={ viewRecommendationsOnClick }
+												role="button"
+												tabIndex={ 0 }
+												onKeyUp={ viewRecommendationsOnClick }
+											/>
+										),
+									},
 								}
 						  )
 						: translate(

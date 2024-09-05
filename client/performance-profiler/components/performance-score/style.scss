@@ -76,6 +76,12 @@
 				background: var(--studio-green-5);
 			}
 		}
+
+		.recommendations-text {
+			a {
+				cursor: pointer;
+			}
+		}
 	}
 
 	.score-bar {
