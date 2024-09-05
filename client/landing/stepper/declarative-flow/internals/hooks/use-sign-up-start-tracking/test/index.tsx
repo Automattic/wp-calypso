@@ -86,7 +86,7 @@ describe( 'useSignUpTracking', () => {
 		} );
 
 		it( 'tracks the event when the step is not the first but the signup flag is set', () => {
-			render( {
+			const { rerender } = render( {
 				flow: signUpFlow,
 				currentStepRoute: 'step-2',
 				queryParams: { signup: 1 },
@@ -96,9 +96,12 @@ describe( 'useSignUpTracking', () => {
 				flow: 'sign-up-flow',
 				ref: '',
 			} );
+
+			rerender();
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'tracks the event with extra props from useSighupStartEventProps', () => {
+		it( 'tracks the event with extra props from useSignupStartEventProps', () => {
 			render( {
 				flow: {
 					...signUpFlow,
@@ -156,11 +159,7 @@ describe( 'useSignUpTracking', () => {
 
 			rerender();
 
-			expect( recordTracksEvent ).toHaveBeenNthCalledWith( 1, 'calypso_signup_start', {
-				flow: 'sign-up-flow',
-				ref: 'another-flow-or-cta',
-				extra: 'props',
-			} );
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

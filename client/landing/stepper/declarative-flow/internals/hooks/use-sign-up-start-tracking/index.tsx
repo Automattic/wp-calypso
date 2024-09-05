@@ -1,8 +1,9 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import { type Flow } from '../../types';
+import useDisposableEffect from '../use-disposable-effect';
 
 /**
  * Hook to track the start of a signup flow.
@@ -23,16 +24,16 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const isFirstStep = firstStepSlug === currentStepRoute;
 	const flowVariant = flow.variantSlug;
 	const signupStartEventProps = flow.useSignupStartEventProps?.();
+	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
+	const flowName = flow.name;
 
-	const extraProps = useMemo(
-		() => ( {
+	const extraProps = useMemo( () => {
+		return {
 			...signupStartEventProps,
 			...( flowVariant && { flow_variant: flowVariant } ),
-		} ),
-		[ signupStartEventProps, flowVariant ]
-	);
-	const flowName = flow.name;
-	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
+		};
+	}, [ signupStartEventProps, flowVariant ] );
+
 	const removeSignupParam = useCallback( () => {
 		if ( queryParams.has( 'signup' ) ) {
 			queryParams.delete( 'signup' );
@@ -40,11 +41,18 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 		}
 	}, [ queryParams, setQuery ] );
 
-	useEffect( () => {
-		if ( ! shouldTrack ) {
-			return;
-		}
-		recordSignupStart( flowName, ref, extraProps || {} );
+	const recordStart = useCallback( () => {
+		recordSignupStart( flowName, ref, extraProps );
 		removeSignupParam();
-	}, [ extraProps, flowName, ref, removeSignupParam, shouldTrack ] );
+	}, [ extraProps, flowName, ref, removeSignupParam ] );
+
+	useDisposableEffect(
+		( dispose ) => {
+			if ( shouldTrack ) {
+				recordStart();
+				dispose();
+			}
+		},
+		[ recordStart, shouldTrack ]
+	);
 };
