@@ -19,7 +19,7 @@ export interface SubscribersStepContent {
 	};
 }
 
-export interface AvailableTier {
+export interface Product {
 	currency: string;
 	id: number;
 	interval: string;
@@ -39,7 +39,7 @@ export interface Plan {
 }
 
 export interface PaidSubscribersStepContent {
-	available_tiers: AvailableTier[];
+	available_tiers: Product[];
 	connect_url?: string;
 	is_connected_stripe: boolean;
 	map_plans: [];

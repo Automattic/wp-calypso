@@ -4,12 +4,9 @@ import { Fragment } from '@wordpress/element';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useState, KeyboardEvent } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
-import { AvailableTier, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { Product, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 import './map-plan.scss';
-
-// TODO would be nice to get rid of it somehow
-type Product = AvailableTier;
 
 export type TierToAdd = {
 	currency: string;
