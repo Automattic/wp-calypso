@@ -232,7 +232,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 				setSelectedStyleVariation( variation );
 			} }
 			onStyleVariationMoreClick={ () => onPreview( design ) }
-			isActive={ isActive }
+			isActive={ isActive && ! isLocked }
 			{ ...conditionalProps }
 		/>
 	);
@@ -252,6 +252,7 @@ interface DesignPickerProps {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
+	showActiveThemeBadge?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -268,6 +269,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	oldHighResImageLoading,
 	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
+	showActiveThemeBadge = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -323,7 +325,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							onPreview={ onPreview }
 							getBadge={ getBadge }
 							oldHighResImageLoading={ oldHighResImageLoading }
-							isActive={ design.recipe?.stylesheet === siteActiveTheme }
+							isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
 						/>
 					);
 				} ) }
@@ -351,6 +353,7 @@ export interface UnifiedDesignPickerProps {
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 	siteActiveTheme?: string | null;
+	showActiveThemeBadge?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -369,6 +372,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	oldHighResImageLoading,
 	isSiteAssemblerEnabled,
 	siteActiveTheme = null,
+	showActiveThemeBadge = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -404,6 +408,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					oldHighResImageLoading={ oldHighResImageLoading }
 					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 					siteActiveTheme={ siteActiveTheme }
+					showActiveThemeBadge={ showActiveThemeBadge }
 				/>
 				{ bottomAnchorContent }
 			</div>
