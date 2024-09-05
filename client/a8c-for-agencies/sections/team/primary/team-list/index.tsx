@@ -46,7 +46,7 @@ export default function TeamList() {
 		},
 	} );
 
-	const { members, isPending, refetch } = useMemberList();
+	const { members, hasMembers, isPending, refetch } = useMemberList();
 
 	const title = translate( 'Manage team members' );
 
@@ -127,7 +127,7 @@ export default function TeamList() {
 		return <PagePlaceholder />;
 	}
 
-	if ( items.length === 0 ) {
+	if ( ! hasMembers ) {
 		return <GetStarted />;
 	}
 
