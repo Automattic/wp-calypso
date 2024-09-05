@@ -6,7 +6,10 @@ import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress, { ClickHandler } from 'calypso/components/step-progress';
-import { usePaidNewsletterQuery } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import {
+	StepId,
+	usePaidNewsletterQuery,
+} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -23,7 +26,7 @@ import './importer.scss';
 
 const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 
-const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+const stepSlugs: StepId[] = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -33,7 +36,7 @@ const logoChainLogos = [
 type NewsletterImporterProps = {
 	siteSlug: string;
 	engine: string;
-	step: string;
+	step: StepId;
 };
 
 function getTitle( urlData?: UrlData ) {

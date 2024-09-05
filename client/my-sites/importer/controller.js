@@ -97,6 +97,7 @@ export function importerList( context, next ) {
 	next();
 }
 
+// TODO redirect to the first step if context.params.step value is not supported
 export function importSubstackSite( context, next ) {
 	if ( ! config.isEnabled( 'importers/newsletter' ) ) {
 		page.redirect( '/import' );

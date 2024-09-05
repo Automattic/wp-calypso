@@ -1,21 +1,23 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
+export type StepId = 'content' | 'subscribers' | 'paid-subscribers' | 'summary';
+
 interface PaidNewsletterStep {
 	status: string;
 	content?: any;
 }
 
 interface PaidNewsletterData {
-	current_step: string;
-	steps: Record< string, PaidNewsletterStep >;
+	current_step: StepId;
+	steps: Record< StepId, PaidNewsletterStep >;
 }
 
 const REFRESH_INTERVAL = 2000; // every 2 seconds.
 
 export const usePaidNewsletterQuery = (
 	engine: string,
-	currentStep: string,
+	currentStep: StepId,
 	siteId?: number,
 	autoRefresh?: boolean
 ) => {
