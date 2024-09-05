@@ -47,7 +47,6 @@ import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-// import StartStepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getStepUrl,
 	isPlanSelectionAvailableLaterInFlow,
