@@ -178,6 +178,7 @@ interface DesignCardProps {
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
+	isActive: boolean;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -190,6 +191,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onPreview,
 	getBadge,
 	oldHighResImageLoading,
+	isActive,
 } ) => {
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
@@ -202,6 +204,10 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 		styleVariationSlug: selectedStyleVariation?.slug,
 		shouldLimitGlobalStyles,
 	} );
+
+	const conditionalProps = ! isActive
+		? { onImageClick: () => onPreview( design, selectedStyleVariation ) }
+		: {};
 
 	return (
 		<ThemeCard
@@ -221,12 +227,13 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 			badge={ getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
-			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
 			onStyleVariationClick={ ( variation ) => {
 				onChangeVariation( design, variation );
 				setSelectedStyleVariation( variation );
 			} }
 			onStyleVariationMoreClick={ () => onPreview( design ) }
+			isActive={ isActive }
+			{ ...conditionalProps }
 		/>
 	);
 };
@@ -244,6 +251,7 @@ interface DesignPickerProps {
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
+	siteActiveTheme?: string | null;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -259,6 +267,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	getBadge,
 	oldHighResImageLoading,
 	isSiteAssemblerEnabled,
+	siteActiveTheme = null,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -268,6 +277,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 		return designs;
 	}, [ designs, categorization?.selection ] );
+
+	// Pick design
 
 	const assemblerCtaData = usePatternAssemblerCtaData();
 
@@ -312,6 +323,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							onPreview={ onPreview }
 							getBadge={ getBadge }
 							oldHighResImageLoading={ oldHighResImageLoading }
+							isActive={ design.recipe?.stylesheet === siteActiveTheme }
 						/>
 					);
 				} ) }
@@ -338,6 +350,7 @@ export interface UnifiedDesignPickerProps {
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
 	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
+	siteActiveTheme?: string | null;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -355,6 +368,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	getBadge,
 	oldHighResImageLoading,
 	isSiteAssemblerEnabled,
+	siteActiveTheme = null,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -389,6 +403,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					getBadge={ getBadge }
 					oldHighResImageLoading={ oldHighResImageLoading }
 					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
+					siteActiveTheme={ siteActiveTheme }
 				/>
 				{ bottomAnchorContent }
 			</div>

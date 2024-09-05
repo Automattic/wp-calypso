@@ -86,7 +86,6 @@ const SitePicker = function SitePicker( props: Props ) {
 									<SitesGrid
 										isLoading={ isLoading }
 										sites={ paginatedSites }
-										siteSelectorMode
 										onSiteSelectBtnClick={ onSelectSite }
 									/>
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (

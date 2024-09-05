@@ -39,7 +39,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	);
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
-	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
+	const isLargeCurrency = useIsLargeCurrency( {
+		prices,
+		currencyCode: currencyCode || 'USD',
+		ignoreWhitespace: true,
+	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) || ! isPricedPlan ) {
 		return null;

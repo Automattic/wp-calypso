@@ -32,20 +32,24 @@ export default function SiteSort( {
 } ) {
 	const { dataViewsState, setDataViewsState } = useContext( SitesDashboardContext );
 
-	const { field, direction } = dataViewsState.sort;
+	const { field, direction } = dataViewsState.sort ?? {};
 
 	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
 
 	const setSort = () => {
-		const updatedSort = { ...dataViewsState.sort };
+		let updatedSort = dataViewsState.sort;
 		if ( isDefault ) {
-			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
-			updatedSort.direction = SORT_DIRECTION_ASC;
+			updatedSort = {
+				field: SITE_COLUMN_KEY_MAP?.[ columnKey ],
+				direction: SORT_DIRECTION_ASC,
+			};
 		} else if ( direction === SORT_DIRECTION_ASC ) {
-			updatedSort.direction = SORT_DIRECTION_DESC;
+			updatedSort = {
+				field: SITE_COLUMN_KEY_MAP?.[ columnKey ],
+				direction: SORT_DIRECTION_ASC,
+			};
 		} else if ( direction === SORT_DIRECTION_DESC ) {
-			updatedSort.field = '';
-			updatedSort.direction = '';
+			updatedSort = undefined;
 		}
 
 		setDataViewsState( ( sitesViewState ) => ( {

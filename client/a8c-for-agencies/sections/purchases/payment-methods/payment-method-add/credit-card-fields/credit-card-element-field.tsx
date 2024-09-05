@@ -1,5 +1,5 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { CardElement } from '@stripe/react-stripe-js';
+import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -26,16 +26,17 @@ export default function CreditCardElementField( {
 	return (
 		<div className="credit-card-fields__input-field">
 			<label className="credit-card-fields__label">
-				<span className="credit-card-fields__label-text">{ translate( 'Card details' ) }</span>
+				<span className="credit-card-fields__label-text">{ translate( 'Card details!' ) }</span>
 				<span
 					className={ clsx( 'credit-card-fields__stripe-element', 'number', {
 						'credit-card-fields__stripe-element--has-error': cardError,
 					} ) }
 				>
-					<CardElement
+					<CardNumberElement
 						options={ {
 							disabled: isDisabled,
 							style: stripeElementStyle,
+							showIcon: true,
 						} }
 						onReady={ () => {
 							setIsStripeFullyLoaded( true );

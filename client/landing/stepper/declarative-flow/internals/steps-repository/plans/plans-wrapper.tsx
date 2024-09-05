@@ -67,6 +67,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
 			hidePlansFeatureComparison: (
 				select( ONBOARD_STORE ) as OnboardSelect
 			 ).getHidePlansFeatureComparison(),

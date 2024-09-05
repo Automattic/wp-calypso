@@ -1,5 +1,6 @@
-import { Card, Button, Gridicon } from '@automattic/components';
-import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { external } from '@wordpress/icons';
 import { useEffect } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -12,10 +13,9 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 type ContentProps = {
 	nextStepUrl: string;
-	selectedSite?: SiteDetails;
+	selectedSite: SiteDetails;
 	siteSlug: string;
-	fromSite: QueryArgParsed;
-	cardData: any;
+	fromSite: string;
 	skipNextStep: () => void;
 };
 
@@ -26,8 +26,8 @@ export default function Content( {
 	fromSite,
 	skipNextStep,
 }: ContentProps ) {
-	const siteTitle = selectedSite?.title;
-	const siteId = selectedSite?.ID;
+	const siteTitle = selectedSite.title;
+	const siteId = selectedSite.ID;
 
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 
@@ -39,10 +39,6 @@ export default function Content( {
 
 	useEffect( fetchImporters, [ siteId, dispatch ] );
 	useEffect( startImporting, [ siteId, dispatch, siteImports ] );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
 
 	function startImporting() {
 		siteId && siteImports.length === 0 && dispatch( startImport( siteId ) );
@@ -78,8 +74,10 @@ export default function Content( {
 						href={ `https://${ fromSite }/publish/settings?search=export` }
 						target="_blank"
 						rel="noreferrer noopener"
+						icon={ external }
+						variant="secondary"
 					>
-						Export content <Gridicon icon="external" />
+						Export content
 					</Button>
 					<hr />
 					<h2>Step 2: Import your content to WordPress.com</h2>
@@ -90,7 +88,7 @@ export default function Content( {
 					site={ selectedSite }
 					importerStatus={ importerStatus }
 					importerData={ importerData }
-					fromSite={ fromSite as string }
+					fromSite={ fromSite }
 					nextStepUrl={ nextStepUrl }
 					skipNextStep={ skipNextStep }
 				/>

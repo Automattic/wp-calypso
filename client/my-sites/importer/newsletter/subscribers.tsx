@@ -15,6 +15,7 @@ type Props = {
 	fromSite: QueryArgParsed;
 	skipNextStep: () => void;
 	cardData: any;
+	siteSlug: string;
 	engine: string;
 };
 
@@ -22,6 +23,7 @@ export default function Subscribers( {
 	nextStepUrl,
 	selectedSite,
 	fromSite,
+	siteSlug,
 	skipNextStep,
 	cardData,
 	engine,
@@ -39,7 +41,7 @@ export default function Subscribers( {
 		if ( ! prevInProgress.current && importSelector?.inProgress ) {
 			setTimeout( () => {
 				queryClient.invalidateQueries( {
-					queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine, 'subscribers' ],
+					queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine ],
 				} );
 			}, 1500 ); // 1500ms = 1.5s delay so that we have enought time to propagate the changes.
 		}
@@ -62,12 +64,11 @@ export default function Subscribers( {
 					click 'Export.' Once the CSV file is downloaded, upload it in the next step.
 				</p>
 				<Button
-					variant="secondary"
 					href={ `https://${ fromSite }/publish/subscribers` }
 					target="_blank"
 					rel="noreferrer noopener"
-					iconPosition="right"
 					icon={ external }
+					variant="secondary"
 				>
 					Export subscribers
 				</Button>
@@ -76,7 +77,7 @@ export default function Subscribers( {
 				{ selectedSite.ID && (
 					<SubscriberUploadForm
 						siteId={ selectedSite.ID }
-						nextStepUrl={ nextStepUrl }
+						nextStepUrl={ `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` }
 						skipNextStep={ skipNextStep }
 						cardData={ cardData }
 					/>

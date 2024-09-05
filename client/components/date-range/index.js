@@ -8,6 +8,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangePicker from './date-range-picker';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
+import Shortcuts from './shortcuts';
 import DateRangeTrigger from './trigger';
 
 import './style.scss';
@@ -44,6 +45,7 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
+		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
 	};
 
@@ -56,6 +58,7 @@ export class DateRange extends Component {
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		displayShortcuts: false,
 		rootClass: '',
 	};
 
@@ -387,6 +390,16 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
 	}
 
+	handleDateRangeChange( startDate, endDate ) {
+		this.setState( {
+			startDate,
+			endDate,
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
+		} );
+		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
+	}
+
 	renderDateHelp() {
 		const { startDate, endDate } = this.state;
 
@@ -443,16 +456,6 @@ export class DateRange extends Component {
 			onInputFocus: this.handleInputFocus,
 		};
 
-		const onDateRangeChange = ( startDate, endDate ) => {
-			this.setState( {
-				startDate,
-				endDate,
-				textInputStartDate: this.toDateString( startDate ),
-				textInputEndDate: this.toDateString( endDate ),
-			} );
-			this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-		};
-
 		return (
 			<Popover
 				className="date-range__popover"
@@ -461,23 +464,52 @@ export class DateRange extends Component {
 				position="bottom"
 				onClose={ this.closePopoverAndCommit }
 			>
-				<div className="date-range__popover-inner">
-					<div className="date-range__controls">
-						{ this.props.renderHeader( headerProps ) }
-						{ this.renderDateHelp() }
+				<div className="date-range__popover-content">
+					<div className="date-range__popover-inner">
+						<div className="date-range__controls">
+							{ this.props.renderHeader( headerProps ) }
+							{ this.renderDateHelp() }
+						</div>
+						{ this.props.renderInputs( inputsProps ) }
+						{ this.renderDatePicker() }
 					</div>
-					{ this.props.renderInputs( inputsProps ) }
-					<DateRangePicker
-						firstSelectableDate={ this.props.firstSelectableDate }
-						lastSelectableDate={ this.props.lastSelectableDate }
-						selectedStartDate={ this.state.startDate }
-						selectedEndDate={ this.state.endDate }
-						onDateRangeChange={ onDateRangeChange }
-						focusedMonth={ this.state.focusedMonth }
-						numberOfMonths={ this.getNumberOfMonths() }
-					/>
+					{ this.props.displayShortcuts && this.renderShortcuts() }
 				</div>
 			</Popover>
+		);
+	}
+
+	/**
+	 * Renders the Shortcuts component
+	 * @returns {import('react').Element} the Shortcuts component
+	 */
+	renderShortcuts() {
+		return (
+			<div className="date-control-picker-shortcuts">
+				<Shortcuts
+					onClick={ ( startDate, endDate ) => this.handleDateRangeChange( startDate, endDate ) }
+				/>
+			</div>
+		);
+	}
+
+	/**
+	 * Renders the DatePicker component
+	 * @returns {import('react').Element} the DatePicker component
+	 */
+	renderDatePicker() {
+		return (
+			<DateRangePicker
+				firstSelectableDate={ this.props.firstSelectableDate }
+				lastSelectableDate={ this.props.lastSelectableDate }
+				selectedStartDate={ this.state.startDate }
+				selectedEndDate={ this.state.endDate }
+				onDateRangeChange={ ( startDate, endDate ) =>
+					this.handleDateRangeChange( startDate, endDate )
+				}
+				focusedMonth={ this.state.focusedMonth }
+				numberOfMonths={ this.getNumberOfMonths() }
+			/>
 		);
 	}
 
