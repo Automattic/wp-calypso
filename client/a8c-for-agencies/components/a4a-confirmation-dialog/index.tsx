@@ -38,7 +38,7 @@ export function A4AConfirmationDialog( {
 			additionalClassNames={ clsx( 'a4a-confirmation-dialog', className ) }
 			onClose={ onClose }
 			buttons={ [
-				<Button key="cancel-button" onClick={ onClose } disabled={ isLoading }>
+				<Button key="cancel-button" onClick={ onClose } disabled={ isLoading } variant="secondary">
 					{ closeLabel ?? translate( 'Cancel' ) }
 				</Button>,
 
