@@ -40,7 +40,11 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		productSearchQuery: '',
 	} );
 
-	const { existingPlan, isReady: isExistingPlanFetched } = useExistingPressablePlan( {
+	const {
+		existingPlan,
+		pressablePlan,
+		isReady: isExistingPlanFetched,
+	} = useExistingPressablePlan( {
 		plans: pressablePlans,
 	} );
 
@@ -82,6 +86,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 					plans={ pressablePlans }
 					onSelectPlan={ onSelectPlan }
 					existingPlan={ existingPlan }
+					pressablePlan={ pressablePlan }
 					isLoading={ ! isExistingPlanFetched }
 				/>
 			) }

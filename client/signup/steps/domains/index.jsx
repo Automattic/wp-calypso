@@ -6,7 +6,6 @@ import {
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
-	StepContainer as StepperStepContainer,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -17,6 +16,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -47,7 +47,6 @@ import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import StartStepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getStepUrl,
 	isPlanSelectionAvailableLaterInFlow,
@@ -362,8 +361,12 @@ export class RenderDomainsStep extends Component {
 	handleUseYourDomainClick = () => {
 		// Stepper doesn't support page.js
 		const navigate = this.props.page || page;
-		navigate( this.getUseYourDomainUrl() );
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		if ( this.props.useStepperWrapper ) {
+			this.props.goToNextStep( { navigateToUseMyDomain: true } );
+		} else {
+			navigate( this.getUseYourDomainUrl() );
+		}
 	};
 
 	handleDomainToDomainCart = async ( previousState ) => {
@@ -1341,8 +1344,17 @@ export class RenderDomainsStep extends Component {
 		let backLabelText;
 		let isExternalBackUrl = false;
 
-		// Hide "Back" button in domains step if the user has no sites.
-		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' );
+		/**
+		 * Hide "Back" button in domains step if:
+		 *   1. The user has no sites
+		 *   2. This step was rendered immediately after account creation
+		 *   3. The user is on the root domains step and not a child step section like use-your-domain
+		 */
+		const shouldHideBack =
+			! userSiteCount &&
+			previousStepName?.startsWith( 'user' ) &&
+			stepSectionName !== 'use-your-domain';
+
 		const hideBack = flowName === 'domain' || shouldHideBack;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
@@ -1405,7 +1417,8 @@ export class RenderDomainsStep extends Component {
 
 		if ( useStepperWrapper ) {
 			return (
-				<StepperStepContainer
+				<AsyncLoad
+					require="@automattic/onboarding/src/step-container"
 					hideBack={ hideBack }
 					flowName={ flowName }
 					stepName={ stepName }
@@ -1436,7 +1449,8 @@ export class RenderDomainsStep extends Component {
 		}
 
 		return (
-			<StartStepWrapper
+			<AsyncLoad
+				require="calypso/signup/step-wrapper"
 				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }

@@ -253,15 +253,6 @@ const sections = [
 		isomorphic: true,
 	},
 	{
-		name: 'start-with',
-		paths: [ '/start-with' ],
-		module: 'calypso/start-with',
-		enableLoggedOut: true,
-		group: 'start-with',
-		isomorphic: true,
-		trackLoadPerformance: true,
-	},
-	{
 		name: 'jetpack-app',
 		paths: [ '/jetpack-app' ],
 		module: 'calypso/jetpack-app',

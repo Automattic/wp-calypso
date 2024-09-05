@@ -8,6 +8,8 @@ import {
 	useSitesListSorting,
 } from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -69,12 +71,9 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	// Put the dummy data view at the beginning for searching the sort key.
-	{ dataView: addDummyDataViewPrefix( 'site' ), sortKey: 'alphabetically' },
-	{ dataView: addDummyDataViewPrefix( 'last-publish' ), sortKey: 'updatedAt' },
-	{ dataView: addDummyDataViewPrefix( 'last-interacted' ), sortKey: 'lastInteractedWith' },
 	{ dataView: 'site', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
+	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 ];
 
 const DEFAULT_PER_PAGE = 50;
@@ -97,7 +96,8 @@ const SitesDashboard = ( {
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
-
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -136,6 +136,22 @@ const SitesDashboard = ( {
 	useShowSiteTransferredNotice();
 
 	const siteStatusGroups = useSiteStatusGroups();
+	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
+		if ( isWide ) {
+			return '40%';
+		}
+		if ( isDesktop ) {
+			return '50%';
+		}
+		return '70%';
+	};
+
+	// Limit fields on breakpoints smaller than 960px wide.
+	const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats', 'actions' ];
+	const mobileFields = [ 'site', 'actions' ];
+
+	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+		isDesktop ? desktopFields : mobileFields;
 
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState = {
@@ -143,23 +159,66 @@ const SitesDashboard = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		hiddenFields: [
-			addDummyDataViewPrefix( 'site' ),
-			addDummyDataViewPrefix( 'last-publish' ),
-			addDummyDataViewPrefix( 'last-interacted' ),
-			addDummyDataViewPrefix( 'status' ),
-		],
+		fields: getFieldsByBreakpoint( isDesktop ),
 		filters: [
 			{
 				field: addDummyDataViewPrefix( 'status' ),
-				operator: 'in',
+				operator: 'is',
 				value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 			},
 		],
 		selectedItem: selectedSite,
 		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+		layout: {
+			styles: {
+				site: {
+					width: getSiteNameColWidth( isDesktop, isWide ),
+				},
+				plan: {
+					width: '100px',
+				},
+				status: {
+					width: '116px',
+				},
+				'last-publish': {
+					width: '120px',
+				},
+				stats: {
+					width: '80px',
+				},
+				actions: {
+					width: '48px',
+				},
+			},
+		},
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+
+	useEffect( () => {
+		const fields = getFieldsByBreakpoint( isDesktop );
+		const fieldsForBreakpoint = [ ...fields ].sort().toString();
+		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
+		// Compare the content of the arrays, not its referrences that will always be different.
+		// sort() sorts the array in place, so we need to clone them first.
+		if ( existingFields !== fieldsForBreakpoint ) {
+			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
+		}
+
+		const siteNameColumnWidth = getSiteNameColWidth( isDesktop, isWide );
+		if ( dataViewsState.layout.styles.site.width !== siteNameColumnWidth ) {
+			setDataViewsState( ( prevState ) => ( {
+				...prevState,
+				layout: {
+					styles: {
+						...prevState.layout.styles,
+						site: {
+							width: siteNameColumnWidth,
+						},
+					},
+				},
+			} ) );
+		}
+	}, [ isDesktop, isWide, dataViewsState?.fields, dataViewsState?.layout?.styles?.site?.width ] );
 
 	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
 
@@ -201,7 +260,7 @@ const SitesDashboard = ( {
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = dataViewsState.filters.find(
+		const statusFilter = dataViewsState.filters?.find(
 			( filter ) => filter.field === addDummyDataViewPrefix( 'status' )
 		);
 		const statusNumber = statusFilter?.value || 1;
@@ -217,9 +276,9 @@ const SitesDashboard = ( {
 
 	// Perform sorting actions
 	const sortedSites = useSitesListSorting( currentStatusGroup, {
-		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 			?.sortKey as SitesSortKey,
-		sortOrder: dataViewsState.sort.direction || undefined,
+		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
 	// Filter sites list by search query.
@@ -227,10 +286,13 @@ const SitesDashboard = ( {
 		search: dataViewsState.search,
 	} );
 
-	const paginatedSites = filteredSites.slice(
-		( dataViewsState.page - 1 ) * dataViewsState.perPage,
-		dataViewsState.page * dataViewsState.perPage
-	);
+	const paginatedSites =
+		dataViewsState.page && dataViewsState.perPage
+			? filteredSites.slice(
+					( dataViewsState.page - 1 ) * dataViewsState.perPage,
+					dataViewsState.page * dataViewsState.perPage
+			  )
+			: filteredSites;
 
 	const onboardingTours = useOnboardingTours();
 
@@ -242,7 +304,7 @@ const SitesDashboard = ( {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
 			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
-			page: dataViewsState.page > 1 ? dataViewsState.page : undefined,
+			page: dataViewsState.page && dataViewsState.page > 1 ? dataViewsState.page : undefined,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
@@ -251,9 +313,9 @@ const SitesDashboard = ( {
 
 	// Update site sorting preference on change
 	useEffect( () => {
-		if ( dataViewsState.sort.field ) {
+		if ( dataViewsState.sort?.field ) {
 			onSitesSortingChange( {
-				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 					?.sortKey as SitesSortKey,
 				sortOrder: dataViewsState.sort.direction || 'asc',
 			} );

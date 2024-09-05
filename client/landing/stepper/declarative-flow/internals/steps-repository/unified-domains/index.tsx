@@ -1,5 +1,5 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { useStepPersistedState } from '@automattic/onboarding';
+import { usePersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -40,6 +40,9 @@ const RenderDomainsStepConnect = connect(
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 		const userLoggedIn = isUserLoggedIn( state as object );
 		const currentUserSiteCount = getCurrentUserSiteCount( state as object );
+		const stepSectionName = window.location.pathname.includes( 'use-your-domain' )
+			? 'use-your-domain'
+			: undefined;
 
 		return {
 			designType: getDesignType( state ),
@@ -59,6 +62,7 @@ const RenderDomainsStepConnect = connect(
 			path: window.location.pathname,
 			positionInFlow: 1,
 			isReskinned: true,
+			stepSectionName,
 		};
 	},
 	{
@@ -76,14 +80,7 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
-	/**
-	 * The domain step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
-	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
-	 */
-	let mostRecentState: ProvidedDependencies;
-
-	const [ stepState, setStepState ] =
-		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
+	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -91,14 +88,14 @@ export default function DomainsStep( props: StepProps ) {
 				{ ...props }
 				page={ ( url: string ) => window.location.assign( url ) }
 				saveSignupStep={ ( state: ProvidedDependencies ) =>
-					setStepState( ( mostRecentState = { ...stepState, ...state } ) )
+					setStepState( { ...stepState, ...state } )
 				}
 				submitSignupStep={ ( state: ProvidedDependencies ) => {
-					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
+					setStepState( { ...stepState, ...state } );
 				} }
-				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( { ...stepState, ...state, ...mostRecentState } );
-				} }
+				goToNextStep={ ( state: ProvidedDependencies ) =>
+					props.navigation.submit?.( { ...stepState, ...state } )
+				}
 				step={ stepState }
 				flowName={ props.flow }
 				useStepperWrapper

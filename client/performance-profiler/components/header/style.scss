@@ -1,6 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
+.is-group-performance-profiler.is-logged-in {
+	.profiler-header {
+		padding-top: 72px; // 40px + 32px (masterbar height)
+	}
+}
+
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
@@ -13,6 +19,22 @@
 		gap: 14px;
 		align-self: stretch;
 		padding-bottom: 20px;
+	}
+
+	.profiler-header__badge {
+		font-size: $root-font-size;
+		text-decoration: none;
+		color: var(--studio-white);
+		padding: 0;
+		font-family: $brand-serif;
+
+		&:hover {
+			color: var(--studio-white);
+			text-decoration: none;
+		}
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	.profiler-header__site-url {
@@ -80,6 +102,18 @@
 		box-shadow: none;
 		margin: 0;
 
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav__panel {
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			overflow-wrap: normal;
+			justify-content: space-between;
+		}
+
 		.section-nav-tabs__list {
 			// Add padding to display the rounded border and remove the same distance to keep it aligned vertically
 			padding-left: 6px;
@@ -115,6 +149,7 @@
 					padding: 0 16px;
 					align-items: center;
 					gap: 10px;
+					width: auto;
 
 					span {
 						font-size: $font-body-small;
@@ -168,6 +203,7 @@
 			align-items: center;
 			gap: 16px;
 			font-size: $font-body-small;
+			margin-left: 25px;
 
 			.report-site-details {
 				display: flex;

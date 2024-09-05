@@ -35,7 +35,6 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
-import { getAdminColor } from 'calypso/state/admin-color/selectors';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -45,7 +44,6 @@ import {
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
@@ -63,6 +61,7 @@ import {
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+import { getColorScheme, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
@@ -245,70 +244,11 @@ class Layout extends Component {
 			this.setState( { isDesktop } );
 		} );
 
-		this.refreshColorScheme( undefined, this.props.colorScheme );
+		refreshColorScheme( undefined, this.props.colorScheme );
 	}
 
-	/**
-	 * Refresh the color scheme if
-	 * - the color scheme has changed
-	 * - the global sidebar is visible and the color scheme is not `global`
-	 * - the global sidebar was visible and is now hidden and the color scheme is not `global`
-	 * - the section changed to `checkout` or changes from 'checkout' to something else
-	 * @param prevProps object
-	 */
 	componentDidUpdate( prevProps ) {
-		const willTransitionFromOrToCheckout =
-			( prevProps.sectionName === 'checkout' && this.props.sectionName !== 'checkout' ) ||
-			( prevProps.sectionName !== 'checkout' && this.props.sectionName === 'checkout' );
-
-		if (
-			prevProps.colorScheme !== this.props.colorScheme ||
-			( this.props.isGlobalSidebarVisible && this.props.colorScheme !== 'global' ) ||
-			( prevProps.isGlobalSidebarVisible &&
-				! this.props.isGlobalSidebarVisible &&
-				this.props.colorScheme !== 'global' ) ||
-			willTransitionFromOrToCheckout
-		) {
-			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
-		}
-	}
-
-	refreshColorScheme( prevColorScheme, nextColorScheme ) {
-		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
-			return;
-		}
-
-		if ( typeof document !== 'undefined' ) {
-			const classList = document.querySelector( 'body' ).classList;
-			const globalColorScheme = 'global';
-
-			if ( this.props.sectionName === 'checkout' ) {
-				classList.remove( `is-${ prevColorScheme }` );
-				return;
-			}
-
-			if ( this.props.isGlobalSidebarVisible ) {
-				// Force the global color scheme when the global sidebar is visible.
-				nextColorScheme = globalColorScheme;
-			} else {
-				// Revert back to user's color scheme when the global sidebar is gone.
-				prevColorScheme = globalColorScheme;
-			}
-
-			classList.remove( `is-${ prevColorScheme }` );
-			classList.add( `is-${ nextColorScheme }` );
-
-			const themeColor = getComputedStyle( document.body )
-				.getPropertyValue( '--color-masterbar-background' )
-				.trim();
-			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
-			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
-			if ( themeColorMeta && themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
-				themeColorMeta.content = themeColor;
-			}
-		}
-
-		// intentionally don't remove these in unmount
+		refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
@@ -564,15 +504,16 @@ export default withCurrentRoute(
 			'comments',
 		].includes( sectionName );
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
+		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
+
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
 
-		const calypsoColorScheme = getPreference( state, 'colorScheme' );
-		const siteColorScheme = getAdminColor( state, siteId ) ?? calypsoColorScheme;
-		const colorScheme =
-			shouldShowUnifiedSiteSidebar || config.isEnabled( 'layout/site-level-user-profile' )
-				? siteColorScheme
-				: calypsoColorScheme;
+		const colorScheme = getColorScheme( {
+			state,
+			sectionName,
+			isGlobalSidebarVisible,
+		} );
 
 		return {
 			masterbarIsHidden,
@@ -606,7 +547,7 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
-			isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
+			isGlobalSidebarVisible,
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),

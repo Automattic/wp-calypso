@@ -22,6 +22,10 @@ const onboarding: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
 			},
 			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
+			},
+			{
 				slug: 'plans',
 				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
 			},
@@ -43,8 +47,7 @@ const onboarding: Flow = {
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
-		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
-			useDispatch( ONBOARD_STORE );
+		const { setDomain, setDomainCartItems, setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 		const { planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -58,8 +61,12 @@ const onboarding: Flow = {
 			switch ( currentStepSlug ) {
 				case 'domains':
 					setDomain( providedDependencies.suggestion );
-					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						return navigate( 'use-my-domain' );
+					}
+					return navigate( 'plans' );
+				case 'use-my-domain':
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
@@ -95,6 +102,8 @@ const onboarding: Flow = {
 
 		const goBack = () => {
 			switch ( currentStepSlug ) {
+				case 'use-my-domain':
+					return navigate( 'domains' );
 				case 'plans':
 					return navigate( 'domains' );
 				default:
