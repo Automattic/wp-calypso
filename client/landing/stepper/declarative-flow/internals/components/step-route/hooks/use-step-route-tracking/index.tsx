@@ -6,7 +6,10 @@ import { isAnyHostingFlow } from '@automattic/onboarding';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useCallback } from '@wordpress/element';
 import { useEffect } from 'react';
-import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from 'calypso/landing/stepper/constants';
+import {
+	STEPPER_TRACKS_EVENT_PAGE_VIEW,
+	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
+} from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
@@ -45,11 +48,9 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 	const { site, siteSlugOrId } = useSiteData();
 	const isRequestingSelectedSite = useIsRequestingSelectedSite( siteSlugOrId, site );
 	const hasRequestedSelectedSite = siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
-	const signupStepStartProps = useSnakeCasedKeys( {
-		input: flow.useTracksEventProps?.()?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
-	} );
+	const eventPropsFromFlow = useSnakeCasedKeys( { input: flow.useTracksEventProps?.() } );
 
-	const recordStepStart = useCallback(
+	const handleRecordStepStart = useCallback(
 		( step: string ) => {
 			recordTracksEvent( STEPPER_TRACKS_EVENT_SIGNUP_STEP_START, {
 				flow: flow.name,
@@ -59,15 +60,26 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flow.variantSlug && { flow_variant: flow.variantSlug } ),
-				...signupStepStartProps,
+				...( eventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ] ?? {} ),
 			} );
 		},
 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ flow.name, flow.variantSlug, signupStepStartProps ]
+		[ flow.name, flow.variantSlug, eventPropsFromFlow ]
 	);
+
+	const handleRecordPageView = useCallback( () => {
+		const pathname = window.location.pathname;
+		const pageTitle = `Setup > ${ flow.name } > ${ stepSlug }`;
+
+		recordPageView(
+			pathname,
+			pageTitle,
+			eventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_PAGE_VIEW ] ?? {}
+		);
+	}, [ flow.name, stepSlug, eventPropsFromFlow ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
@@ -82,17 +94,22 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 			signupCompleteFlowName === flow.name && signupCompleteStepName === stepSlug;
 
 		if ( ! isReEnteringStep ) {
-			recordStepStart( stepSlug );
+			handleRecordStepStart( stepSlug );
 
 			const stepOldSlug = getStepOldSlug( stepSlug );
 			if ( stepOldSlug ) {
-				recordStepStart( stepOldSlug );
+				handleRecordStepStart( stepOldSlug );
 			}
 		}
 
 		// Also record page view for data and analytics
-		const pathname = window.location.pathname;
-		const pageTitle = `Setup > ${ flow.name } > ${ stepSlug }`;
-		recordPageView( pathname, pageTitle );
-	}, [ flow.name, hasRequestedSelectedSite, stepSlug, skipTracking, recordStepStart ] );
+		handleRecordPageView();
+	}, [
+		flow.name,
+		hasRequestedSelectedSite,
+		stepSlug,
+		skipTracking,
+		handleRecordStepStart,
+		handleRecordPageView,
+	] );
 };
