@@ -14,11 +14,13 @@ import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Upsell from 'calypso/components/jetpack/upsell';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import ScanNavigation from '../navigation';
 
 import './style.scss';
 
@@ -99,11 +101,18 @@ function renderUpsell( reason ) {
 }
 
 export default function ScanUpsellPage( { reason } ) {
+	const translate = useTranslate();
 	return (
 		<Main className="scan-upsell" wideLayout>
 			<DocumentHead title="Scan" />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Scan' ) }
+				subtitle={ translate( 'Guard against malware and bad actors 24/7.' ) }
+			/>
+			<ScanNavigation section="scanner" />
 			<div className="scan-upsell__content">{ renderUpsell( reason ) }</div>
 		</Main>
 	);
