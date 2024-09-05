@@ -80,7 +80,8 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
-	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >();
+	const [ stepState, setStepState ] =
+		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 
 	return (
 		<CalypsoShoppingCartProvider>
