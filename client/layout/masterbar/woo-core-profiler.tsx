@@ -34,6 +34,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 
 	if (
 		currentRoute === '/log-in/jetpack/lostpassword' ||
+		currentRoute === '/log-in/jetpack/link' ||
 		currentQueryArguments?.lostpassword_flow
 	) {
 		shouldShowProgressBar = false;
