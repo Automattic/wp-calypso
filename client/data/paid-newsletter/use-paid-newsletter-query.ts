@@ -2,9 +2,10 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export type StepId = 'content' | 'subscribers' | 'paid-subscribers' | 'summary';
+export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
 
 interface PaidNewsletterStep {
-	status: string;
+	status: StepStatus;
 	content?: any;
 }
 
