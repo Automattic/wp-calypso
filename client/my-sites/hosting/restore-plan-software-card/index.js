@@ -43,9 +43,7 @@ export default function RestorePlanSoftwareCard() {
 					'If your website is missing plugins and themes that come with your plan, you may restore them here.'
 				) }
 			</HostingCardDescription>
-			<Button onClick={ requestRestore }>
-				{ translate( "Restore plugins and themes for my website's plan" ) }
-			</Button>
+			<Button onClick={ requestRestore }>{ translate( 'Restore' ) }</Button>
 		</HostingCard>
 	);
 }
