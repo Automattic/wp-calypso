@@ -1,34 +1,83 @@
+import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-
+import { useEffect, useState } from 'react';
 import './style.scss';
 
 type PerformanceScoreProps = {
 	value: number;
+	recommendationsQuantity?: number;
 };
 
-const SCORE_BAR_WIDTH = 280;
+const MAX_SCORE_BAR_WIDTH = 600;
 
 export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 	const translate = useTranslate();
-	const { value } = props;
+	const [ resizeObserverRef, entry ] = useResizeObserver();
+	const [ scoreBarWidth, setScoreBarWidth ] = useState( MAX_SCORE_BAR_WIDTH );
+
+	const { value, recommendationsQuantity } = props;
+	const getStatus = ( value: number ) => {
+		if ( value <= 49 ) {
+			return 'poor';
+		} else if ( value > 49 && value < 90 ) {
+			return 'neutral';
+		}
+		return 'good';
+	};
+	const status = getStatus( value );
+	const statusText = {
+		poor: translate( 'Poor' ),
+		neutral: translate( 'Needs improvement' ),
+		good: translate( 'Excellent' ),
+	}[ status ];
+
+	useEffect( () => {
+		if ( ! entry ) {
+			return;
+		}
+
+		const width = entry.width ?? MAX_SCORE_BAR_WIDTH;
+		setScoreBarWidth( width >= MAX_SCORE_BAR_WIDTH ? MAX_SCORE_BAR_WIDTH : width );
+	}, [ entry ] );
 
 	return (
 		<div className="performance-profiler-performance-score">
+			{ resizeObserverRef }
 			<div className="score-summary">
 				<div className="title">{ translate( 'Performance Score' ) }</div>
-				<div className="score">{ Math.floor( value ) }</div>
+				<div className="score">
+					<span className="current-score">{ Math.floor( value ) }</span>
+					<span className="max-score">/ 100</span>
+				</div>
 
 				<div className="score-bar">
-					<div className="full-bar" style={ { width: SCORE_BAR_WIDTH } } />
+					<div className="full-bar" style={ { width: scoreBarWidth } } />
 					<div
 						className={ clsx( 'current-value-bar', {
-							poor: value <= 49,
-							neutral: value > 49 && value < 90,
-							good: value >= 90,
+							[ status ]: true,
 						} ) }
-						style={ { width: ( SCORE_BAR_WIDTH / 100 ) * value } }
+						style={ { width: ( scoreBarWidth / 100 ) * value } }
 					/>
+				</div>
+			</div>
+
+			<div className="status">
+				<div className={ clsx( 'status-badge', { [ status ]: true } ) }>{ statusText }</div>
+				<div className="recommendations-text">
+					{ recommendationsQuantity
+						? translate(
+								"We found %(quantity)d way to improve your site's performance. {{a}}View recommendation{{/a}}",
+								"We found %(quantity)d ways to improve your site's performance. {{a}}View recommendations{{/a}}",
+								{
+									count: recommendationsQuantity,
+									args: { quantity: recommendationsQuantity },
+									components: { a: <a href="#recommendations" /> },
+								}
+						  )
+						: translate(
+								"We didn't find any recommendations for improving the speed of your site."
+						  ) }
 				</div>
 			</div>
 

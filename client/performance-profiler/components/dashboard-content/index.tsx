@@ -28,7 +28,10 @@ export const PerformanceProfilerDashboardContent = ( {
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
 				<div className="top-section">
-					<PerformanceScore value={ overall_score * 100 } />
+					<PerformanceScore
+						value={ overall_score * 100 }
+						recommendationsQuantity={ Object.keys( audits ).length }
+					/>
 					<ScreenshotThumbnail
 						alt={ translate( 'Website thumbnail' ) }
 						src={ screenshots?.[ screenshots.length - 1 ].data }
