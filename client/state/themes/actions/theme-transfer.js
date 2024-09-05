@@ -171,11 +171,14 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 				.then( ( { status, message, uploaded_theme_slug } ) => {
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
-						dispatch( {
-							type: THEME_UPLOAD_SUCCESS,
-							siteId,
-							themeId: uploaded_theme_slug,
-						} );
+						if ( uploaded_theme_slug ) {
+							dispatch( {
+								type: THEME_UPLOAD_SUCCESS,
+								siteId,
+								themeId: uploaded_theme_slug,
+							} );
+						}
+
 						// finished, stop polling
 						return resolve();
 					}

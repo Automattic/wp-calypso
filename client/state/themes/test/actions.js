@@ -1120,7 +1120,7 @@ describe( 'actions', () => {
 		test( 'should dispatch status update', async () => {
 			await pollThemeTransferStatus( siteId, 3, 20 )( spy );
 			// Two 'progress' then a 'complete'
-			expect( spy ).toHaveBeenCalledTimes( 4 );
+			expect( spy ).toHaveBeenCalledTimes( 3 );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: THEME_TRANSFER_STATUS_RECEIVE,
 				siteId: siteId,

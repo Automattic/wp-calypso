@@ -27,6 +27,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
 import { HostingErrorStatus } from 'calypso/my-sites/hosting/hosting-error-status';
@@ -459,7 +460,16 @@ const ConnectedUpload = connectOptions( Upload );
 
 const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
-	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
+	const { data } = useActiveThemeQuery( siteId );
+
+	return (
+		<ConnectedUpload
+			{ ...props }
+			siteId={ siteId }
+			activeTheme={ data?.[ 0 ]?.stylesheet }
+			theme={ uploadedTheme }
+		/>
+	);
 };
 
 const mapStateToProps = ( state ) => {
