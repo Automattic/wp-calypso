@@ -36,7 +36,7 @@ const logoChainLogos = [
 type NewsletterImporterProps = {
 	siteSlug: string;
 	engine: string;
-	step: StepId;
+	step?: StepId;
 };
 
 function getTitle( urlData?: UrlData ) {
@@ -47,8 +47,12 @@ function getTitle( urlData?: UrlData ) {
 	return 'Import your newsletter';
 }
 
-export default function NewsletterImporter( { siteSlug, engine, step }: NewsletterImporterProps ) {
-	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
+export default function NewsletterImporter( {
+	siteSlug,
+	engine,
+	step = 'content',
+}: NewsletterImporterProps ) {
+	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
@@ -92,11 +96,6 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	];
 
 	// Steps
-	fromSite = Array.isArray( fromSite ) ? fromSite[ 0 ] : fromSite;
-	if ( fromSite && ! step ) {
-		step = stepSlugs[ 0 ];
-	}
-
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
 
