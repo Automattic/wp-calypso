@@ -105,6 +105,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 			setIsFloatingPanelOpen( false );
 		}
 		if ( action === FEEDBACK_ACTION_LEAVE_REVIEW ) {
+			setIsFloatingPanelOpen( false );
 			window.open( FEEDBACK_LEAVE_REVIEW_URL );
 		}
 	};
