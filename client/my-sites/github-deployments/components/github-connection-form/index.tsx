@@ -218,7 +218,7 @@ export const GitHubConnectionForm = ( {
 				/>
 			</div>
 			<div className="github-deployments-connect-repository__submit">
-				<Button type="submit" busy={ isPending } disabled={ isPending || submitDisabled }>
+				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
 					{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
 				</Button>
 
