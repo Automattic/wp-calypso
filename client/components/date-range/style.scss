@@ -1,3 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$date-range-shortcut-min-width: 140px;
+$date-range-mobile-layout-switch: $break-small;
+
 .date-range {
 	position: relative;
 	display: flex;
@@ -272,12 +277,32 @@
 .date-range__popover-content { // Styling to fit optional shortcuts sidebar
 	display: flex;
 	align-items: stretch; // Ensure children stretch to full height
+
+	@media (min-width: $date-range-mobile-layout-switch) {
+		flex-direction: row; // Align items in a row on larger screens
+	}
+
+	@media (max-width: $date-range-mobile-layout-switch) {
+		flex-direction: column; // Stack items vertically on small screens
+	}
 }
 
 .date-control-picker-shortcuts {
 	padding: 16px;
 	border-left: 1px solid var(--gray-gray-5, #dcdcde);
 	box-sizing: border-box;
+
+	@media (max-width: $date-range-mobile-layout-switch) {
+		border-left: 0 none;
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+		display: block; // Ensure it takes full width on mobile
+		margin-bottom: 16px; // Space between shortcuts and calendar
+	}
+
+	@media (min-width: $date-range-mobile-layout-switch) {
+		// Adjust layout for larger screens
+		flex: 0 0 auto; // Allow it to take only necessary space
+	}
 }
 
 .date-control-picker-shortcuts__list {
@@ -287,6 +312,8 @@
 
 .date-control-picker-shortcuts__shortcut {
 	border-radius: 4px;
+	min-width: $date-range-shortcut-min-width;
+
 
 	&:hover {
 		background-color: var(--color-primary-0);

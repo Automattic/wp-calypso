@@ -473,6 +473,7 @@ export class DateRange extends Component {
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
 					</div>
+					{ /* Render shortcuts to the right of the calendar */ }
 					{ this.props.displayShortcuts && this.renderShortcuts() }
 				</div>
 			</Popover>
