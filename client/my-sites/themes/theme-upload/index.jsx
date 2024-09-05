@@ -435,9 +435,9 @@ class Upload extends Component {
 						forceEnable={ this.props.isTransferInProgress }
 					/>
 				) }
-				{ this.props.isTransferCompleted && themeId !== this.props.activeTheme && (
-					<HostingErrorStatus context="theme" />
-				) }
+				{ this.props.isTransferCompleted &&
+					themeId !== this.props.activeTheme &&
+					! this.props.activeThemeIsLoading && <HostingErrorStatus context="theme" /> }
 				{ showUpgradeBanner && ! isTrial && this.renderUpgradeBanner() }
 
 				{ showEligibility && ! isTrial && (
@@ -460,12 +460,13 @@ const ConnectedUpload = connectOptions( Upload );
 
 const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
-	const { data } = useActiveThemeQuery( siteId );
+	const { data, isFetching } = useActiveThemeQuery( siteId, true );
 
 	return (
 		<ConnectedUpload
 			{ ...props }
 			siteId={ siteId }
+			activeThemeIsLoading={ isFetching }
 			activeTheme={ data?.[ 0 ]?.stylesheet }
 			theme={ uploadedTheme }
 		/>

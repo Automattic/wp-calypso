@@ -99,7 +99,7 @@ export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '', c
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
+				dispatch( pollThemeTransferStatus( siteId, transfer_id, !! file ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
@@ -153,11 +153,18 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  * to avoid unhandled rejections in production.
  * @param {number} siteId -- the site being transferred
  * @param {number} transferId -- the specific transfer
+ * @param {boolean} hasThemeFileUpload -- has theme File Upload
  * @param {number} [interval] -- time between poll attempts
  * @param {number} [timeout] -- time to wait for 'complete' status before bailing
  * @returns {Promise} for testing purposes only
  */
-export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
+export function pollThemeTransferStatus(
+	siteId,
+	transferId,
+	hasThemeFileUpload = false,
+	interval = 3000,
+	timeout = 180000
+) {
 	const endTime = Date.now() + timeout;
 	return ( dispatch ) => {
 		const pollStatus = ( resolve, reject ) => {
@@ -171,7 +178,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 				.then( ( { status, message, uploaded_theme_slug } ) => {
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
-						if ( uploaded_theme_slug ) {
+						if ( hasThemeFileUpload ) {
 							dispatch( {
 								type: THEME_UPLOAD_SUCCESS,
 								siteId,
