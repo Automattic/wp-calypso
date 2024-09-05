@@ -264,14 +264,14 @@ const SitesDashboard = ( {
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
 		const statusFilter = dataViewsState.filters?.find( ( filter ) => filter.field === 'status' );
-		const statusNumber = statusFilter?.value || 1;
-		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
-			'all' ) as GroupableSiteLaunchStatuses;
+		const statusNumber = statusFilter?.value;
+		return siteStatusGroups.find( ( status ) => status.value === statusNumber )
+			?.slug as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
 	const { currentStatusGroup } = useSitesListGrouping( allSites, {
-		status: statusSlug,
+		status: statusSlug || 'all',
 		showHidden: true,
 	} );
 
@@ -304,7 +304,7 @@ const SitesDashboard = ( {
 	useEffect( () => {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
-			status: statusSlug === 'all' ? undefined : statusSlug,
+			status: statusSlug,
 			page: dataViewsState.page && dataViewsState.page > 1 ? dataViewsState.page : undefined,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
