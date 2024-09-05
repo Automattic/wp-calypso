@@ -7,6 +7,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useActivateMemberMutation, {
 	APIError,
@@ -26,16 +27,6 @@ type Props = {
 };
 
 const ALREADY_MEMBER_OF_AGENCY_ERROR_CODE = 'a4a_user_invite_already_member_of_agency';
-
-function PlaceHolder() {
-	return (
-		<div className="team-accept-invite__section-placeholder">
-			<div className="team-accept-invite__section-placeholder-title"></div>
-			<div className="team-accept-invite__section-placeholder-body"></div>
-			<div className="team-accept-invite__section-placeholder-footer"></div>
-		</div>
-	);
-}
 
 function ErrorMessage( { error }: { error: string } ) {
 	return <div className="team-accept-invite__error">{ error }</div>;
@@ -83,11 +74,7 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 	}, [ agency, agencyId ] );
 
 	const title = useMemo( () => {
-		if ( ! error ) {
-			return <div className="team-accept-invite__title-placeholder"></div>;
-		}
-
-		if ( error.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE ) {
+		if ( error?.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE ) {
 			return <img src={ AgencyLogo } alt="" />;
 		}
 
@@ -96,7 +83,7 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 
 	const content = useMemo( () => {
 		if ( ! error ) {
-			return <PlaceHolder />;
+			return null;
 		}
 
 		if (
@@ -112,8 +99,17 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 		return <ErrorMessage error={ error.message } />;
 	}, [ error ] );
 
+	if ( ! error ) {
+		return <PagePlaceholder />;
+	}
+
 	return (
-		<Layout className="team-accept-invite" title={ translate( 'Accepting team invite' ) } wide>
+		<Layout
+			className="team-accept-invite"
+			title={ translate( 'Accepting team invite' ) }
+			wide
+			compact
+		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>

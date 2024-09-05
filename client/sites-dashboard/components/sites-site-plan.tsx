@@ -6,6 +6,7 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 const SitePlanContainer = styled.div`
 	display: inline;
+	overflow: hidden;
 	> * {
 		vertical-align: middle;
 		line-height: normal;

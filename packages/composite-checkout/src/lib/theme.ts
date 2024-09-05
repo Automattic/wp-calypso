@@ -60,9 +60,9 @@ const theme: Theme = {
 	colors: {
 		background: swatches.gray0,
 		surface: swatches.white,
-		primary: colorStudio.colors[ 'Blue 50' ],
+		primary: colorStudio.colors[ 'WordPress Blue 50' ],
 		primaryBorder: swatches.pink80,
-		primaryOver: colorStudio.colors[ 'Blue 60' ],
+		primaryOver: colorStudio.colors[ 'WordPress Blue 60' ],
 		highlight: swatches.blue50,
 		highlightBorder: swatches.blue80,
 		highlightOver: swatches.blue60,

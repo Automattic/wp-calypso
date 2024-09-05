@@ -939,6 +939,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			skipButtonAlign="top"
 			hideFormattedHeader
 			hideSkip
+			hideNext={ ! siteActiveTheme?.[ 0 ]?.stylesheet }
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }

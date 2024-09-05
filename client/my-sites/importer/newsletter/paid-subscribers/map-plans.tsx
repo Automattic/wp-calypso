@@ -58,7 +58,7 @@ export default function MapPlans( {
 		}
 		sizeOfProductsRef.current = sizeOfProducts;
 		queryClient.invalidateQueries( {
-			queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
+			queryKey: [ 'paid-newsletter-importer', siteId, engine ],
 		} );
 	}, [ sizeOfProducts, sizeOfProductsRef, siteId, engine, currentStep, queryClient ] );
 
