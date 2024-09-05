@@ -19,7 +19,7 @@ type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
 	cardData: any;
-	siteId: string;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 };

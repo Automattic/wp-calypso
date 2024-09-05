@@ -44,7 +44,7 @@ type MapPlanProps = {
 	plan: Plan;
 	products: Array< Product >;
 	map_plans: any;
-	siteId: string;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 	onProductAdd: ( arg0: TierToAdd | null ) => void;
