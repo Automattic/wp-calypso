@@ -22,6 +22,7 @@ import {
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
 	isReadymadeFlow,
+	isOnboardingFlow,
 	setThemeOnSite,
 	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
@@ -156,6 +157,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// These flows default to "Coming Soon"
 	if (
+		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isLinkInBioFlow( flow ) ||
