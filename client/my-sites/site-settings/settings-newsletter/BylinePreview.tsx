@@ -5,7 +5,6 @@ type BylinePreviewProps = {
 	isGravatarEnabled?: boolean;
 	isAuthorEnabled?: boolean;
 	isPostDateEnabled?: boolean;
-	displayName: string;
 	dateExample: string;
 	user?: {
 		display_name?: string;

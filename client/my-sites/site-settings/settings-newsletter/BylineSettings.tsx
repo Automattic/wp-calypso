@@ -37,14 +37,13 @@ export const BylineSettings = ( {
 	const user = useSelector( getCurrentUser );
 	const siteSlug = site?.slug || '';
 
-	const localizedDate = getLocalizedDate( 'UTC', dateFormat );
+	const localizedDate = getLocalizedDate( dateFormat );
 
 	return (
 		<>
 			<FormLabel className="increase-margin-bottom-fix">
 				{ translate( 'For each new post email, include' ) }
 			</FormLabel>
-			<p></p>
 			<BylinePreview
 				isGravatarEnabled={ !! showAvatarValue }
 				isAuthorEnabled={ !! showAuthorValue }
