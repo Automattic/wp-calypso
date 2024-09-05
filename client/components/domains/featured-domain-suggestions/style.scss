@@ -114,6 +114,11 @@
 			align-items: flex-start;
 			margin-top: 12px;
 		}
+
+		body.is-section-stepper & {
+			align-items: flex-start;
+			margin-top: 12px;
+		}
 	}
 
 	.domain-registration-suggestion__badges {
@@ -166,6 +171,7 @@
 	}
 }
 
+body.is-section-stepper .step-container .featured-domain-suggestion.card,
 body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
 	border-radius: 0;
