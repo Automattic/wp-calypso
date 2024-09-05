@@ -230,11 +230,9 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					label={ translate( 'Company logo' ) }
 					description={ translate( 'Need help? {{a}}View our logo guidelines.{{/a}}', {
 						components: {
-							// @TODO: Update the link when we have it.
-							// eslint-disable-next-line jsx-a11y/anchor-is-valid
 							a: (
 								<a
-									href="https://agencieshelp.automattic.com/"
+									href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings"
 									target="_blank"
 									rel="noreferrer noopener"
 								/>
