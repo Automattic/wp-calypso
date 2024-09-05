@@ -287,14 +287,14 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
-.date-control-picker-shortcuts {
+.date-range-picker-shortcuts {
 	padding: 16px;
 	border-left: 1px solid var(--gray-gray-5, #dcdcde);
 	box-sizing: border-box;
 
 	@media (max-width: $date-range-mobile-layout-switch) {
 		border-left: 0 none;
-		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+		border-top: 1px solid var(--gray-gray-5, #dcdcde);
 		display: block; // Ensure it takes full width on mobile
 		margin-bottom: 16px; // Space between shortcuts and calendar
 	}
@@ -305,12 +305,12 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
-.date-control-picker-shortcuts__list {
+.date-range-picker-shortcuts__list {
 	list-style: none;
 	margin: 0;
 }
 
-.date-control-picker-shortcuts__shortcut {
+.date-range-picker-shortcuts__shortcut {
 	border-radius: 4px;
 	min-width: $date-range-shortcut-min-width;
 

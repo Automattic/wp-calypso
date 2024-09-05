@@ -486,7 +486,7 @@ export class DateRange extends Component {
 	 */
 	renderShortcuts() {
 		return (
-			<div className="date-control-picker-shortcuts">
+			<div className="date-range-picker-shortcuts">
 				<Shortcuts
 					onClick={ ( startDate, endDate ) => this.handleDateRangeChange( startDate, endDate ) }
 				/>
