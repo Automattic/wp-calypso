@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -18,6 +19,7 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 	const moment = useLocalizedMoment();
 
 	if (
+		! config.isEnabled( 'jetpack/backup-realtime-message' ) ||
 		! moment.isMoment( baseBackupDate ) ||
 		! moment.isMoment( selectedBackupDate ) ||
 		eventsCount < 0
