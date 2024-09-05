@@ -155,10 +155,7 @@ export const FewerFeaturesExperimentTreatmentVariantA = {
 		...PlansInSignup.args,
 		intent: 'plans-default-wpcom',
 		isInSignup: true,
-		enableCategorisedFeatures: true,
-		enableLargeFeatureTitles: true,
-		enableStorageAsBadge: false,
-		simplifiedFeaturesGridExperimentVariant: 'simplified',
+		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
 	},
 } satisfies Story;
 
@@ -168,6 +165,9 @@ export const FewerFeaturesExperimentTreatmentVariantB = {
 		...PlansInSignup.args,
 		intent: 'plans-default-wpcom',
 		isInSignup: true,
-		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
+		enableCategorisedFeatures: true,
+		enableLargeFeatureTitles: true,
+		enableStorageAsBadge: false,
+		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;

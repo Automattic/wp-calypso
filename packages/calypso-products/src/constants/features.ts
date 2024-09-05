@@ -491,4 +491,13 @@ export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 export const FEATURE_THEMES_PREMIUM_AND_STORE = 'feature-themes-premium-and-store';
 export const FEATURE_UNLIMITED_ENTITIES = 'feature-unlimited-entities';
 export const FEATURE_CUSTOMIZE_STYLE = 'feature-customize-style';
+export const FEATURE_WOO_THEMES = 'feature-woo-themes';
+export const FEATURE_WOO_EXTENSIONS = 'feature-woo-extensions';
+export const FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS = 'feature-woo-social-media-integrations';
+export const FEATURE_WOO_PAYMENTS = 'feature-woo-payments';
+export const FEATURE_WOO_SHIPPING_TRACKING = 'feature-woo-shipping-tracking';
+export const FEATURE_WOO_TAX_SOLUTIONS = 'feature-woo-tax-solutions';
+export const FEATURE_WOO_BRANDS = 'feature-woo-brands';
+export const FEATURE_WOO_AUTOMATE = 'feature-woo-automate';
+export const FEATURE_GOOGLE_LISTING_ADS = 'feature-google-listing-ads';
 /* END: Features for experiment calypso_pricing_grid_fewer_features */
