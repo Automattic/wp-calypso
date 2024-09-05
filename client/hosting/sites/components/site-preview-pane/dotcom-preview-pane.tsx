@@ -32,7 +32,7 @@ interface Props {
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
-	sectionName: string;
+	sectionName?: string;
 }
 
 const OVERLAY_MODAL_SELECTORS = [

@@ -68,7 +68,7 @@ interface SitesDashboardProps {
 	selectedSite?: SiteDetails | null;
 	initialSiteFeature?: string;
 	selectedSiteFeaturePreview?: React.ReactNode;
-	sectionName: string;
+	sectionName?: string;
 }
 
 const siteSortingKeys = [
