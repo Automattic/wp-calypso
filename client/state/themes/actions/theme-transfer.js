@@ -99,7 +99,7 @@ export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '', c
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id, !! file ) );
+				dispatch( pollThemeTransferStatus( siteId, transfer_id, 3000, 180000, !! file ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
@@ -153,17 +153,17 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  * to avoid unhandled rejections in production.
  * @param {number} siteId -- the site being transferred
  * @param {number} transferId -- the specific transfer
- * @param {boolean} hasThemeFileUpload -- has theme File Upload
  * @param {number} [interval] -- time between poll attempts
  * @param {number} [timeout] -- time to wait for 'complete' status before bailing
+ * @param {boolean} hasThemeFileUpload -- has theme File Upload
  * @returns {Promise} for testing purposes only
  */
 export function pollThemeTransferStatus(
 	siteId,
 	transferId,
-	hasThemeFileUpload = false,
 	interval = 3000,
-	timeout = 180000
+	timeout = 180000,
+	hasThemeFileUpload = false
 ) {
 	const endTime = Date.now() + timeout;
 	return ( dispatch ) => {
