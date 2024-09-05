@@ -1,4 +1,5 @@
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -13,8 +14,8 @@ export type Props = {
 	onConfirm?: () => void;
 	ctaLabel?: string;
 	closeLabel?: string;
-	busy?: boolean;
-	scary?: boolean;
+	isLoading?: boolean;
+	isDestructive?: boolean;
 };
 
 export function A4AConfirmationDialog( {
@@ -25,8 +26,8 @@ export function A4AConfirmationDialog( {
 	ctaLabel,
 	closeLabel,
 	onClose,
-	busy,
-	scary,
+	isLoading,
+	isDestructive,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -37,16 +38,16 @@ export function A4AConfirmationDialog( {
 			additionalClassNames={ clsx( 'a4a-confirmation-dialog', className ) }
 			onClose={ onClose }
 			buttons={ [
-				<Button key="cancel-button" onClick={ onClose } disabled={ busy }>
+				<Button key="cancel-button" onClick={ onClose } disabled={ isLoading }>
 					{ closeLabel ?? translate( 'Cancel' ) }
 				</Button>,
 
 				<Button
 					key="confirmation-button"
-					primary
-					scary={ scary }
-					disabled={ busy }
-					busy={ busy }
+					variant="primary"
+					isDestructive={ isDestructive }
+					isBusy={ isLoading }
+					disabled={ isLoading }
 					onClick={ onConfirm }
 				>
 					{ ctaLabel ?? translate( 'Confirm' ) }

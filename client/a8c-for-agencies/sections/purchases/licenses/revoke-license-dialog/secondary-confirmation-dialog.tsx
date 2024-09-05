@@ -24,8 +24,8 @@ export function SecondaryConfirmationDialog( {
 			ctaLabel={ translate( 'Revoke Pressable plan license' ) }
 			onClose={ onCancel }
 			onConfirm={ onConfirm }
-			busy={ isPending }
-			scary
+			isLoading={ isPending }
+			isDestructive
 		>
 			{ description }
 		</A4AConfirmationDialog>

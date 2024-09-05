@@ -19,8 +19,8 @@ export function SiteRemoveConfirmationDialog( { siteName, onConfirm, onClose, bu
 			onClose={ onClose }
 			onConfirm={ onConfirm }
 			ctaLabel={ translate( 'Remove site' ) }
-			busy={ busy }
-			scary
+			isLoading={ busy }
+			isDestructive
 		>
 			{ translate(
 				'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',

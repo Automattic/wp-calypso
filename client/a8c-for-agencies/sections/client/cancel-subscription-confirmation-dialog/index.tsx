@@ -67,8 +67,8 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 					onConfirm={ onConfirm }
 					ctaLabel={ translate( 'Cancel subscription' ) }
 					closeLabel={ translate( 'Keep the subscription' ) }
-					busy={ isPending }
-					scary
+					isLoading={ isPending }
+					isDestructive
 				>
 					{ isFetchingProductInfo ? (
 						<TextPlaceholder />

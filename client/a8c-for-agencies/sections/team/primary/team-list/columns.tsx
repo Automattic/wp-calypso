@@ -124,7 +124,7 @@ export const ActionColumn = ( {
 				setConfirmationDialog( {
 					...confirmation,
 					onConfirm: () => {
-						setConfirmationDialog( ( prev ) => ( prev ? { ...prev, busy: true } : null ) );
+						setConfirmationDialog( ( prev ) => ( prev ? { ...prev, isLoading: true } : null ) );
 						onMenuSelected?.( name, () => setConfirmationDialog( null ) );
 					},
 					onClose: () => {
@@ -159,7 +159,7 @@ export const ActionColumn = ( {
 								}
 							),
 							ctaLabel: translate( 'Cancel invitation' ),
-							scary: true,
+							isDestructive: true,
 						},
 					},
 			  ]
@@ -184,12 +184,13 @@ export const ActionColumn = ( {
 								comment: '%(memberName)s is the member name',
 							} ),
 							ctaLabel: translate( 'Delete user' ),
-							scary: true,
+							isDestructive: true,
 						},
 					},
 			  ];
 	}, [ member, canRemove, translate ] );
 
+	// We don't show the action menu when the member is the owner of the team.
 	if ( member.role === OWNER_ROLE ) {
 		return null;
 	}

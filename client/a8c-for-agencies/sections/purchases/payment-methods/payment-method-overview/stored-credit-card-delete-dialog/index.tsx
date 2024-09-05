@@ -46,8 +46,8 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 			onConfirm={ onConfirm }
 			ctaLabel={ translate( 'Delete payment method' ) }
 			closeLabel={ translate( 'Go back' ) }
-			busy={ isDeleteInProgress }
-			scary
+			isLoading={ isDeleteInProgress }
+			isDestructive
 		>
 			<p>
 				{ translate(
