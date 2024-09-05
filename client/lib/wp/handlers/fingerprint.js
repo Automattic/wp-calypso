@@ -19,16 +19,16 @@ if ( document.readyState !== 'loading' ) {
 export function injectFingerprint( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
 
-	Object.assign( wpcom, {
-		request( params, callback ) {
-			if ( fingerprint ) {
-				params = Object.assign( {}, params, {
-					headers: Object.assign( {}, params.headers || {}, {
-						'X-Fingerprint': fingerprint,
-					} ),
-				} );
-			}
-			return request( params, callback );
-		},
-	} );
+	wpcom.request = function ( params, callback ) {
+		if ( fingerprint ) {
+			params = {
+				...params,
+				headers: {
+					...( params.headers || {} ),
+					'X-Fingerprint': fingerprint,
+				},
+			};
+		}
+		return request( params, callback );
+	};
 }
