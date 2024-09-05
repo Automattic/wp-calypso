@@ -6,7 +6,6 @@ import {
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
-	StepContainer as StepperStepContainer,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -17,6 +16,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -47,7 +47,7 @@ import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import StartStepWrapper from 'calypso/signup/step-wrapper';
+// import StartStepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getStepUrl,
 	isPlanSelectionAvailableLaterInFlow,
@@ -83,6 +83,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
+
 import './style.scss';
 
 export class RenderDomainsStep extends Component {
@@ -1409,7 +1410,8 @@ export class RenderDomainsStep extends Component {
 
 		if ( useStepperWrapper ) {
 			return (
-				<StepperStepContainer
+				<AsyncLoad
+					require="@automattic/onboarding/src/step-container"
 					hideBack={ hideBack }
 					flowName={ flowName }
 					stepName={ stepName }
@@ -1440,7 +1442,8 @@ export class RenderDomainsStep extends Component {
 		}
 
 		return (
-			<StartStepWrapper
+			<AsyncLoad
+				require="calypso/signup/step-wrapper"
 				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
