@@ -517,10 +517,10 @@
 	.is-staging-site {
 		position: relative;
 
-		.item-preview__admin-button {
+		.item-preview__admin-button.is-primary {
 			background-color: var(--studio-yellow-20);
 			color: var(--studio-yellow-80);
-			border: 0;
+			border-color: var(--studio-yellow-20);
 		}
 	}
 
