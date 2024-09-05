@@ -16,6 +16,17 @@ export default function MainWrapper( { children }: Props ) {
 	const sourceQuery = currentQuery?.[ 'source' ];
 	const source = sourceQuery ? sourceQuery.toString() : undefined;
 
+	const type = keyValue?.split( '-' )[ 0 ];
+
+	let postId = '';
+	let campaignId = '';
+
+	if ( type === 'post' ) {
+		postId = selectedPostId;
+	} else if ( type === 'campaign' ) {
+		campaignId = keyValue?.split( '-' )[ 1 ];
+	}
+
 	return (
 		<Main wideLayout className="promote-post-i2">
 			{ children }
@@ -24,7 +35,8 @@ export default function MainWrapper( { children }: Props ) {
 				<BlazePressWidget
 					isVisible={ isModalOpen }
 					siteId={ selectedSiteId }
-					postId={ selectedPostId }
+					postId={ postId }
+					campaignId={ campaignId }
 					keyValue={ keyValue }
 					source={ source }
 				/>

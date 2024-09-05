@@ -31,6 +31,7 @@ export const campaignDetails = ( context, next ) => {
 export const promoteWidget = ( context, next ) => {
 	const { item } = context.params;
 
+	const { campaignId } = context.params;
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
@@ -44,6 +45,7 @@ export const promoteWidget = ( context, next ) => {
 			isVisible
 			siteId={ siteId }
 			postId={ postId }
+			campaignId={ campaignId }
 			keyValue={ item }
 			source={ source }
 		/>
