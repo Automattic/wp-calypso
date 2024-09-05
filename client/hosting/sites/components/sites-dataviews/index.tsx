@@ -7,7 +7,7 @@ import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import ActionsField from './dataviews-fields/actions-field';
+import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
@@ -171,14 +171,6 @@ const DotcomSitesDataViews = ( {
 				enableSorting: false,
 			},
 			{
-				id: 'actions',
-				label: __( 'Actions' ),
-				header: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
 				id: 'last-interacted',
 				label: __( 'Last Interacted' ),
 				render: () => null,
@@ -193,6 +185,7 @@ const DotcomSitesDataViews = ( {
 	const siteSearchLabel = hasEnTranslation( 'Search sites…' )
 		? __( 'Search sites…' )
 		: __( 'Search sites' );
+	const actions = useActions();
 
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
@@ -214,7 +207,7 @@ const DotcomSitesDataViews = ( {
 			...prevState,
 			items: sites,
 			fields,
-			// actions: actions,
+			actions,
 			setDataViewsState,
 			dataViewsState,
 			searchLabel: siteSearchLabel,
@@ -222,7 +215,15 @@ const DotcomSitesDataViews = ( {
 			selection: getSelection( dataViewsState ),
 			pagination: paginationInfo,
 		} ) );
-	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
+	}, [
+		actions,
+		fields,
+		dataViewsState,
+		paginationInfo,
+		setDataViewsState,
+		sites,
+		siteSearchLabel,
+	] ); // add actions when implemented
 
 	return (
 		<ItemsDataViews
