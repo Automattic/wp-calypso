@@ -1,6 +1,7 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -11,7 +12,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { Referral, ReferralInvoice } from '../types';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
-import type { Field } from '@wordpress/dataviews';
+import type { Field, Action } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -67,28 +68,6 @@ export default function ReferralList( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-						// Only show the actions column only on mobile
-						...( ! dataViewsState.selectedItem
-							? [
-									{
-										id: 'actions',
-										label: '',
-										render: ( { item }: { item: Referral } ) => (
-											<div>
-												<Button
-													className="view-details-button"
-													onClick={ () => openSitePreviewPane( item ) }
-													borderless
-												>
-													<Gridicon icon="chevron-right" />
-												</Button>
-											</div>
-										),
-										enableHiding: false,
-										enableSorting: false,
-									},
-							  ]
-							: [] ),
 				  ]
 				: [
 						{
@@ -154,23 +133,6 @@ export default function ReferralList( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-						{
-							id: 'actions',
-							label: translate( 'Actions' ).toUpperCase(),
-							render: ( { item }: { item: Referral } ) => (
-								<div>
-									<Button
-										className="view-details-button action-button"
-										onClick={ () => openSitePreviewPane( item ) }
-										borderless
-									>
-										<Gridicon icon="chevron-right" />
-									</Button>
-								</div>
-							),
-							enableHiding: false,
-							enableSorting: false,
-						},
 				  ],
 		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, referralInvoices, translate ]
 	);
@@ -220,7 +182,22 @@ export default function ReferralList( {
 		};
 	}, [ dataViewsState ] );
 
-	const { data: items, paginationInfo } = useMemo( () => {
+	const actions: Action< any >[] = useMemo( () => {
+		// TODO: fix TypeScript any
+		return [
+			{
+				id: 'view-details',
+				label: translate( 'View Details' ),
+				isPrimary: true,
+				icon: chevronRight, // TODO: is this how you use icons in calypso?
+				callback( items ) {
+					openSitePreviewPane( items[ 0 ] );
+				},
+			},
+		];
+	}, [ openSitePreviewPane, translate ] );
+
+	const { data: items, paginationInfo: pagination } = useMemo( () => {
 		return filterSortAndPaginate( referrals, dataViewsState, fields );
 	}, [ referrals, dataViewsState, fields ] );
 
@@ -236,12 +213,12 @@ export default function ReferralList( {
 							openSitePreviewPane( referral );
 						}
 					},
-					pagination: paginationInfo,
+					pagination,
 					enableSearch: false,
-					fields: fields,
-					actions: [],
-					setDataViewsState: setDataViewsState,
-					dataViewsState: dataViewsState,
+					fields,
+					actions,
+					setDataViewsState,
+					dataViewsState,
 					defaultLayouts: { table: {} },
 				} }
 			/>
