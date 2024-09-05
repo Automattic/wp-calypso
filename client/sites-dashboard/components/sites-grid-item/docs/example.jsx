@@ -37,8 +37,8 @@ const SitesGridItemSelectExample = () => {
 					<SitesGridItem
 						site={ site }
 						key={ site.ID }
-						onSiteSelectBtnClick={ () => {
-							// console.log( _site );
+						onSiteSelectBtnClick={ ( _site ) => {
+							console.log( _site );
 						} }
 					/>
 				</div>
