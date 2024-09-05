@@ -97,7 +97,6 @@ export function importerList( context, next ) {
 	next();
 }
 
-// TODO redirect to the first step if context.params.step value is not supported
 export function importSubstackSite( context, next ) {
 	if ( ! config.isEnabled( 'importers/newsletter' ) ) {
 		page.redirect( '/import' );
@@ -106,10 +105,22 @@ export function importSubstackSite( context, next ) {
 
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state );
+	const supportedImportSubstackSiteSteps = [
+		'content',
+		'subscribers',
+		'paid-subscribers',
+		'summary',
+	];
+	const step = context.params.step;
+
+	if ( step && ! supportedImportSubstackSiteSteps.includes( step ) ) {
+		page.redirect( '/import/' + siteSlug );
+		return;
+	}
 
 	context.primary = (
 		<BrowserRouter>
-			<NewsletterImporter siteSlug={ siteSlug } engine="substack" step={ context.params.step } />
+			<NewsletterImporter siteSlug={ siteSlug } engine="substack" step={ step } />
 		</BrowserRouter>
 	);
 	next();
