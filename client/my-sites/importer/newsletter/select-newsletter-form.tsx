@@ -28,35 +28,29 @@ export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: P
 
 	if ( isLoading ) {
 		return (
-			<Card>
-				<div className="select-newsletter-form">
-					<p className="is-loading"></p>
-				</div>
+			<Card className="select-newsletter-form">
+				<div className="is-loading" />
 			</Card>
 		);
 	}
 
 	return (
-		<Card>
-			<div className="select-newsletter-form">
-				<FormTextInputWithAction
-					onAction={ handleAction }
-					placeholder="https://example.substack.com"
-					action="Continue"
-					isError={ hasError }
-					defaultValue={ urlData?.url }
-				/>
-				{ hasError && (
-					<p className="select-newsletter-form__help is-error">
-						Please enter a valid Substack URL.
-					</p>
-				) }
-				{ ! hasError && (
-					<p className="select-newsletter-form__help">
-						Enter the URL of the Substack newsletter that you wish to import.
-					</p>
-				) }
-			</div>
+		<Card className="select-newsletter-form">
+			<FormTextInputWithAction
+				onAction={ handleAction }
+				placeholder="https://example.substack.com"
+				action="Continue"
+				isError={ hasError }
+				defaultValue={ urlData?.url }
+			/>
+			{ hasError && (
+				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>
+			) }
+			{ ! hasError && (
+				<p className="select-newsletter-form__help">
+					Enter the URL of the Substack newsletter that you wish to import.
+				</p>
+			) }
 		</Card>
 	);
 }

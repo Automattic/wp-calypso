@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
 interface MutationVariables {
-	siteId: string;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 	stripePlan: string;
@@ -58,7 +58,7 @@ export const useMapStripePlanToProductMutation = (
 
 	const mapStripePlanToProduct = useCallback(
 		(
-			siteId: string,
+			siteId: number,
 			engine: string,
 			currentStep: string,
 			stripePlan: string,
