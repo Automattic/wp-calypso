@@ -4,14 +4,21 @@ import wp from 'calypso/lib/wp';
 export type StepId = 'content' | 'subscribers' | 'paid-subscribers' | 'summary';
 export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
 
-interface PaidNewsletterStep {
+interface Step {
 	status: StepStatus;
 	content?: any;
 }
 
+interface Steps {
+	content: Step;
+	subscribers: Step;
+	'paid-subscribers': Step;
+	summary: Step;
+}
+
 interface PaidNewsletterData {
 	current_step: StepId;
-	steps: Record< StepId, PaidNewsletterStep >;
+	steps: Steps;
 }
 
 const REFRESH_INTERVAL = 2000; // every 2 seconds.
