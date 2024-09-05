@@ -14,6 +14,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 type ContentProps = {
 	nextStepUrl: string;
+	engine: string;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
@@ -23,9 +24,9 @@ type ContentProps = {
 
 export default function Content( {
 	nextStepUrl,
+	engine,
 	selectedSite,
 	siteSlug,
-	engine,
 	fromSite,
 	skipNextStep,
 }: ContentProps ) {
