@@ -42,7 +42,7 @@ export interface PaidSubscribersStepContent {
 	available_tiers: Product[];
 	connect_url?: string;
 	is_connected_stripe: boolean;
-	map_plans: [];
+	map_plans: Record< string, string >;
 	plans: Plan[];
 }
 

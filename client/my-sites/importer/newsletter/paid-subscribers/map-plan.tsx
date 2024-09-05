@@ -24,7 +24,7 @@ export type TierToAdd = {
 
 type MapPlanProps = {
 	plan: Plan;
-	products: Array< Product >;
+	products: Product[];
 	map_plans: any;
 	siteId: number;
 	engine: string;
