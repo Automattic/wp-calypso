@@ -23,7 +23,7 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
-	const primaryButtonText = translate( 'Love it? Leave a review' );
+	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
 	const handleLeaveReview = () => {
@@ -71,6 +71,13 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 				label={ translate( 'Close' ) }
 			/>
 			<FeedbackContent clickHandler={ clickHandler } />
+			<Button
+				className="stats-feedback-panel__dismiss-button"
+				onClick={ handleCloseButtonClicked }
+				variant="link"
+			>
+				{ translate( 'Dismiss' ) }
+			</Button>
 		</div>
 	);
 }
