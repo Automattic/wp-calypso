@@ -67,8 +67,6 @@ const SiteBackupCard = ( { lastGoodBackup, requestBackups, siteId, siteSlug } ) 
 						) }
 					</p>
 					<Button
-						primary
-						compact
 						href={ addQueryArgs( `/plans/${ siteSlug }`, {
 							feature: WPCOM_FEATURES_BACKUPS,
 							plan: PLAN_BUSINESS,

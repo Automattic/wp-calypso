@@ -61,9 +61,9 @@ function HelpCenterContent() {
 				onClick={ handleToggleHelpCenter }
 				icon={ <HelpIcon /> }
 				label="Help"
-				aria-pressed={ canvasMode === 'edit' && show ? true : false }
+				aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && show ? true : false }
 				aria-expanded={ show ? true : false }
-				size={ canvasMode === 'edit' ? 'compact' : undefined }
+				size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
 			/>
 		</>
 	);

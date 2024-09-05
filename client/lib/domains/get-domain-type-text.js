@@ -23,11 +23,10 @@ export function getDomainTypeText(
 ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
-			if ( context === domainInfoContext.PAGE_TITLE ) {
-				return __( 'Connected Domain' );
+			if ( domain.isSubdomain ) {
+				return __( 'Connected subdomain' );
 			}
-
-			return __( 'Registered with an external provider' );
+			return __( 'Connected domain' );
 
 		case domainTypes.REGISTERED:
 			if ( domain?.isPremium ) {

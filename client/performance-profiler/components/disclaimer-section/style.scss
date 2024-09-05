@@ -1,7 +1,7 @@
 .performance-profiler-disclaimer {
 	display: flex;
 	padding: 64px 0;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: flex-end;
 	gap: 10px;
 
@@ -9,8 +9,11 @@
 	font-size: $font-body-extra-small;
 	line-height: $font-title-small;
 
+	.content {
+		max-width: 600px;
+	}
+
 	.link {
-		width: 470px;
 		flex-shrink: 0;
 		text-align: right;
 

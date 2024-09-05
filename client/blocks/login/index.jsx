@@ -155,13 +155,26 @@ class Login extends Component {
 			this.props.requestError?.field === 'usernameOrEmail' &&
 			this.props.requestError?.code === 'email_login_not_allowed'
 		) {
-			const magicLoginUrl = login( {
+			let urlConfig = {
 				locale: this.props.locale,
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
 				redirectTo: this.props.redirectTo,
 				usernameOnly: true,
-			} );
+			};
+
+			if ( this.props.isGravPoweredClient ) {
+				urlConfig = {
+					...urlConfig,
+					gravatarFrom:
+						isGravatarOAuth2Client( this.props.oauth2Client ) &&
+						this.props.currentQuery?.gravatar_from,
+					gravatarFlow: isGravatarFlowOAuth2Client( this.props.oauth2Client ),
+					emailAddress: this.props.currentQuery?.email_address,
+				};
+			}
+
+			const magicLoginUrl = login( urlConfig );
 
 			page( magicLoginUrl );
 		}
@@ -290,6 +303,9 @@ class Login extends Component {
 						event.preventDefault();
 						this.props.redirectToLogout( signupUrl );
 					}
+
+					event.preventDefault();
+					window.location.href = signupUrl;
 				} }
 			/>
 		);
@@ -559,10 +575,13 @@ class Login extends Component {
 				if ( isGravPoweredLoginPage ) {
 					const isFromGravatar3rdPartyApp =
 						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+					const isGravatarFlowWithEmail = !! (
+						isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+					);
 
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ isFromGravatar3rdPartyApp
+							{ isFromGravatar3rdPartyApp || isGravatarFlowWithEmail
 								? translate( 'Please log in with your email and password.' )
 								: translate(
 										'If you prefer logging in with a password, or a social media account, choose below:'

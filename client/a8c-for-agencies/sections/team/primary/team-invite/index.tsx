@@ -41,7 +41,12 @@ export default function TeamInvite() {
 			{ username, message },
 			{
 				onSuccess: () => {
-					dispatch( successNotice( 'The invitation has been successfully sent.' ) );
+					dispatch(
+						successNotice( 'The invitation has been successfully sent.', {
+							id: 'submit-user-invite-success',
+							duration: 5000,
+						} )
+					);
 					page( A4A_TEAM_LINK );
 				},
 
@@ -58,7 +63,7 @@ export default function TeamInvite() {
 	}, [] );
 
 	return (
-		<Layout className="team-invite" title={ title } wide>
+		<Layout className="team-invite" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
@@ -105,7 +110,12 @@ export default function TeamInvite() {
 					</div>
 
 					<div className="team-invite-form__footer">
-						<Button variant="primary" onClick={ onSendInvite } disabled={ isSending }>
+						<Button
+							variant="primary"
+							onClick={ onSendInvite }
+							disabled={ isSending }
+							isBusy={ isSending }
+						>
 							{ translate( 'Send invite' ) }
 						</Button>
 					</div>

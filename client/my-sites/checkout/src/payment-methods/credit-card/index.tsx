@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
+	CBLogo,
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
@@ -44,7 +45,8 @@ function CreditCardSummary() {
 
 const CreditCardLabel: React.FC< {
 	hasExistingCardMethods: boolean | undefined;
-} > = ( { hasExistingCardMethods } ) => {
+	currency: string | null;
+} > = ( { hasExistingCardMethods, currency } ) => {
 	const { __ } = useI18n();
 	return (
 		<Fragment>
@@ -53,14 +55,15 @@ const CreditCardLabel: React.FC< {
 			) : (
 				<span>{ __( 'Credit or debit card' ) }</span>
 			) }
-			<CreditCardLogos />
+			<CreditCardLogos currency={ currency } />
 		</Fragment>
 	);
 };
 
-function CreditCardLogos() {
+function CreditCardLogos( { currency }: { currency: string | null } ) {
 	return (
-		<PaymentMethodLogos className="credit-card__logo payment-logos">
+		<PaymentMethodLogos className="credit-card__logo">
+			{ currency === 'EUR' && <CBLogo className="has-background" /> }
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
@@ -69,6 +72,7 @@ function CreditCardLogos() {
 }
 
 export function createCreditCardMethod( {
+	currency,
 	store,
 	shouldUseEbanx,
 	shouldShowTaxFields,
@@ -76,6 +80,7 @@ export function createCreditCardMethod( {
 	allowUseForAllSubscriptions,
 	hasExistingCardMethods,
 }: {
+	currency: string | null;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
@@ -86,7 +91,9 @@ export function createCreditCardMethod( {
 	return {
 		id: 'card',
 		paymentProcessorId: 'card',
-		label: <CreditCardLabel hasExistingCardMethods={ hasExistingCardMethods } />,
+		label: (
+			<CreditCardLabel hasExistingCardMethods={ hasExistingCardMethods } currency={ currency } />
+		),
 		hasRequiredFields: true,
 		activeContent: (
 			<CreditCardFields

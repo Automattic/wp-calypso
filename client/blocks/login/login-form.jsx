@@ -32,6 +32,7 @@ import {
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
@@ -316,22 +317,6 @@ export class LoginForm extends Component {
 		this.loginUser();
 	};
 
-	shouldUseRedirectLoginFlow() {
-		const { currentRoute, oauth2Client } = this.props;
-		// If calypso is loaded in a popup, we don't want to open a second popup for social login
-		// let's use the redirect flow instead in that case
-		let isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-
-		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social login.
-		// See p1HpG7-7nj-p2 for more information.
-		if ( isPopup && '/log-in/jetpack' === currentRoute ) {
-			isPopup = false;
-		}
-
-		// disable for oauth2 flows for now
-		return ! oauth2Client && isPopup;
-	}
-
 	savePasswordRef = ( input ) => {
 		this.password = input;
 	};
@@ -567,7 +552,6 @@ export class LoginForm extends Component {
 									onSuccess={ this.onWooCommerceSocialSuccess }
 									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
-									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 								/>
 							</div>
 						) }
@@ -793,6 +777,9 @@ export class LoginForm extends Component {
 		);
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+		);
 
 		const signupUrl = this.getSignupUrl();
 
@@ -832,7 +819,6 @@ export class LoginForm extends Component {
 						onSuccess={ this.props.onSuccess }
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						shouldRenderToS
 					/>
 				</Fragment>
@@ -854,7 +840,14 @@ export class LoginForm extends Component {
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
 			! isCoreProfilerLostPasswordFlow &&
-			! isFromGravatar3rdPartyApp;
+			! isFromGravatar3rdPartyApp &&
+			! isGravatarFlowWithEmail;
+
+		const shouldDisableEmailInput =
+			isFormDisabled ||
+			this.isPasswordView() ||
+			isFromGravatar3rdPartyApp ||
+			isGravatarFlowWithEmail;
 
 		return (
 			<form
@@ -910,7 +903,7 @@ export class LoginForm extends Component {
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
-							disabled={ isFormDisabled || this.isPasswordView() || isFromGravatar3rdPartyApp }
+							disabled={ shouldDisableEmailInput }
 						/>
 
 						{ isJetpack && (
@@ -1073,7 +1066,6 @@ export class LoginForm extends Component {
 							onSuccess={ this.props.onSuccess }
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 							shouldRenderToS={
 								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
 							}

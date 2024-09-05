@@ -22,6 +22,7 @@ export class DropZone extends Component {
 		textLabel: TranslatableString,
 		translate: PropTypes.func,
 		dropZoneName: PropTypes.string,
+		disabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -32,6 +33,7 @@ export class DropZone extends Component {
 		fullScreen: false,
 		icon: <Gridicon icon="cloud-upload" size={ 48 } />,
 		dropZoneName: null,
+		disabled: false,
 	};
 
 	state = {
@@ -211,7 +213,9 @@ export class DropZone extends Component {
 
 	render() {
 		const classes = clsx( 'drop-zone', this.props.className, {
-			'is-active': this.state.isDraggingOverDocument || this.state.isDraggingOverElement,
+			'is-active':
+				! this.props.disabled &&
+				( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ),
 			'is-dragging-over-document': this.state.isDraggingOverDocument,
 			'is-dragging-over-element': this.state.isDraggingOverElement,
 			'is-full-screen': this.props.fullScreen,

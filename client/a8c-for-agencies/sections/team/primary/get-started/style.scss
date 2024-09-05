@@ -4,8 +4,7 @@
 
 .team-list-get-started__heading {
 	@include a4a-font-heading-xl;
-
-	margin-block-start: 48px;
+	margin-block-start: 16px;
 	margin-block-end: 8px;
 }
 
@@ -16,4 +15,8 @@
 
 a.team-list-get-started__learn-more-button.is-link {
 	color: var(--color-primary-50);
+}
+
+.team-list-get-started__excluded-operation-list {
+	margin-block-end: 0;
 }

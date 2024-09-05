@@ -19,7 +19,6 @@ export type CardDataCompleteState = Record< CardElementType, boolean >;
 
 export interface CardStoreState {
 	brand: string | null | undefined;
-	cardNetworks: { brand: string }[];
 	fields: CardFieldState;
 	cardDataErrors: Record< string, string | null >;
 	cardDataComplete: CardDataCompleteState;
@@ -35,7 +34,6 @@ export type CardElementType = CardNumberElementType | CardExpiryElementType | Ca
 
 export type CardStoreAction =
 	| { type: 'BRAND_SET'; payload: string }
-	| { type: 'CARD_NETWORKS_SET'; payload: { brand: string }[] }
 	| { type: 'CARD_DATA_ERROR_SET'; payload: { type: CardElementType; message: string | null } }
 	| { type: 'CARD_DATA_COMPLETE_SET'; payload: { type: CardElementType; complete: boolean } }
 	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }

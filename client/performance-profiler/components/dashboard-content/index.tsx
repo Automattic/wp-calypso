@@ -13,13 +13,15 @@ import './style.scss';
 type PerformanceProfilerDashboardContentProps = {
 	performanceReport: PerformanceReport;
 	url: string;
+	hash: string;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
 	url,
+	hash,
 }: PerformanceProfilerDashboardContentProps ) => {
-	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history, screenshots, is_wpcom } =
+	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
 
 	return (
@@ -38,9 +40,10 @@ export const PerformanceProfilerDashboardContent = ( {
 					cls={ cls }
 					inp={ inp }
 					ttfb={ ttfb }
+					tbt={ tbt }
 					history={ history }
 				/>
-				<NewsletterBanner />
+				<NewsletterBanner link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` } />
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && <InsightsSection audits={ audits } url={ url } isWpcom={ is_wpcom } /> }
 			</div>

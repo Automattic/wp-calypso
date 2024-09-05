@@ -92,7 +92,7 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt';
 
 export type Scores = 'good' | 'needs-improvement' | 'poor';
 
@@ -110,6 +110,10 @@ export interface UrlBasicMetricsQueryResponse {
 	};
 	advanced: Record< string, string >;
 	token: string;
+}
+
+export interface LeadMutationResponse {
+	success: boolean;
 }
 
 export interface UrlSecurityMetricsQueryResponse {
@@ -140,6 +144,7 @@ export type PerformanceMetricsHistory = {
 		lcp?: number[];
 		cls?: number[];
 		inp?: number[];
+		tbt?: number[];
 	};
 };
 

@@ -16,12 +16,14 @@ import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -45,7 +47,6 @@ import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getStepUrl,
 	isPlanSelectionAvailableLaterInFlow,
@@ -359,8 +360,14 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleUseYourDomainClick = () => {
-		page( this.getUseYourDomainUrl() );
+		// Stepper doesn't support page.js
+		const navigate = this.props.page || page;
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
+		if ( this.props.useStepperWrapper ) {
+			this.props.goToNextStep( { navigateToUseMyDomain: true } );
+		} else {
+			navigate( this.getUseYourDomainUrl() );
+		}
 	};
 
 	handleDomainToDomainCart = async ( previousState ) => {
@@ -589,7 +596,7 @@ export class RenderDomainsStep extends Component {
 
 	shouldHideUseYourDomain = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
+		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
 	};
 
 	shouldDisplayDomainOnlyExplainer = () => {
@@ -1329,6 +1336,7 @@ export class RenderDomainsStep extends Component {
 			isReskinned,
 			userSiteCount,
 			previousStepName,
+			useStepperWrapper,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1337,8 +1345,17 @@ export class RenderDomainsStep extends Component {
 		let backLabelText;
 		let isExternalBackUrl = false;
 
-		// Hide "Back" button in domains step if the user has no sites.
-		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' );
+		/**
+		 * Hide "Back" button in domains step if:
+		 *   1. The user has no sites
+		 *   2. This step was rendered immediately after account creation
+		 *   3. The user is on the root domains step and not a child step section like use-your-domain
+		 */
+		const shouldHideBack =
+			! userSiteCount &&
+			previousStepName?.startsWith( 'user' ) &&
+			stepSectionName !== 'use-your-domain';
+
 		const hideBack = flowName === 'domain' || shouldHideBack;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
@@ -1399,8 +1416,42 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		if ( useStepperWrapper ) {
+			return (
+				<AsyncLoad
+					require="@automattic/onboarding/src/step-container"
+					hideBack={ hideBack }
+					flowName={ flowName }
+					stepName={ stepName }
+					backUrl={ backUrl }
+					isExternalBackUrl={ isExternalBackUrl }
+					shouldHideNavButtons={ this.shouldHideNavButtons() }
+					stepContent={
+						<div>
+							<QueryProductsList type="domains" />
+							{ this.renderContent() }
+						</div>
+					}
+					formattedHeader={
+						<FormattedHeader
+							id="domains-header"
+							align="center"
+							subHeaderAlign="center"
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+						/>
+					}
+					backLabelText={ backLabelText }
+					hideSkip
+					align="center"
+					isWideLayout
+				/>
+			);
+		}
+
 		return (
-			<StepWrapper
+			<AsyncLoad
+				require="calypso/signup/step-wrapper"
 				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
@@ -1429,7 +1480,7 @@ export class RenderDomainsStep extends Component {
 	}
 }
 
-const submitDomainStepSelection = ( suggestion, section ) => {
+export const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';
 	if ( suggestion.is_free ) {
 		domainType = 'wpcom_subdomain';
@@ -1462,7 +1513,7 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 const RenderDomainsStepConnect = connect(
-	( state, { steps, flowName, stepName } ) => {
+	( state, { steps, flowName, stepName, previousStepName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
@@ -1483,7 +1534,7 @@ const RenderDomainsStepConnect = connect(
 				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn,
 			multiDomainDefaultPlan,
-			previousStepName: getPreviousStepName( flowName, stepName, userLoggedIn ),
+			previousStepName: previousStepName || getPreviousStepName( flowName, stepName, userLoggedIn ),
 		};
 	},
 	{

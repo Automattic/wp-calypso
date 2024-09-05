@@ -29,6 +29,28 @@ interface ThemeCardProps {
 	onStyleVariationMoreClick?: () => void;
 }
 
+const ActiveBadge = () => {
+	return (
+		<div className="theme-card__info-badge-container">
+			<div className="theme-card__info-badge theme-card__info-badge-active">
+				<svg fill="none" height="14" width="14" viewBox="0 0 14 14">
+					<clipPath id="a">
+						<path d="m0 .5h14v14h-14z" />
+					</clipPath>
+					<g>
+						<path d="m11.6992 3.1001-6.29998 8.5-3.3-2.5-.9 1.2 4.5 3.4 7.19998-9.7z" fill="#fff" />
+					</g>
+				</svg>
+				<span>
+					{ translate( 'Active', {
+						context: 'singular noun, the currently active theme',
+					} ) }
+				</span>
+			</div>
+		</div>
+	);
+};
+
 const ThemeCard = forwardRef(
 	(
 		{
@@ -123,13 +145,6 @@ const ThemeCard = forwardRef(
 						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>
-						{ isActive && (
-							<span className="theme-card__info-badge theme-card__info-badge-active">
-								{ translate( 'Active', {
-									context: 'singular noun, the currently active theme',
-								} ) }
-							</span>
-						) }
 						{ ! isActive && styleVariations.length > 0 && (
 							<div className="theme-card__info-style-variations">
 								<StyleVariationBadges
@@ -141,6 +156,7 @@ const ThemeCard = forwardRef(
 							</div>
 						) }
 						{ ! isActive && <>{ badge }</> }
+						{ isActive && <ActiveBadge /> }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
 					</div>
 				</div>

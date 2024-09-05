@@ -14,11 +14,16 @@ import { Flow, ProvidedDependencies } from './internals/types';
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
+			},
+			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
 			},
 			{
 				slug: 'plans',
@@ -44,6 +49,8 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 
+		const { setDomain, setDomainCartItems } = useDispatch( ONBOARD_STORE );
+
 		const { domainCartItem, planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
@@ -57,6 +64,13 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
+					setDomain( providedDependencies.suggestion );
+					setDomainCartItems( providedDependencies.domainCart );
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						return navigate( 'use-my-domain' );
+					}
+					return navigate( 'plans' );
+				case 'use-my-domain':
 					return navigate( 'plans' );
 				case 'plans':
 					return navigate( 'create-site', undefined, true );
@@ -67,9 +81,9 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 					persistSignupDestination( destination );
-
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
+
 						if ( planCartItem && siteSlug && flowName ) {
 							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
 						}
@@ -99,6 +113,8 @@ const onboarding: Flow = {
 
 		const goBack = () => {
 			switch ( currentStepSlug ) {
+				case 'use-my-domain':
+					return navigate( 'domains' );
 				case 'plans':
 					return navigate( 'domains' );
 				default:

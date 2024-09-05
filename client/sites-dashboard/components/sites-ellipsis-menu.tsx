@@ -93,7 +93,7 @@ const PrepareForLaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	return (
 		<MenuItem
 			onClick={ () => {
-				window.location.href = `https://wordpress.com/settings/general/${ site.ID }?referer=a4a-dashboard`;
+				window.location.href = `https://wordpress.com/settings/general/${ site.ID }`;
 				recordTracks( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' );
 			} }
 		>

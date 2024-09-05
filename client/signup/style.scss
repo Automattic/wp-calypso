@@ -393,6 +393,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 /**
  * Common styles for reskinSignupFlow a/b test
  */
+body.is-section-stepper,
 body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
@@ -433,14 +434,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.navigation-link.button.is-borderless {
-		color: var(--color-accent);
-
-		svg {
-			fill: var(--color-accent);
-		}
-	}
-
 	.step-wrapper__navigation {
 		.navigation-link.button.is-borderless {
 			color: $gray-100;
@@ -460,7 +453,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout) {
+	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout),
+	// Stepper's header.
+	.step-container:not(.is-horizontal-layout) {
+		// Stepper's header.
+		.step-container__header,
 		.step-wrapper__header {
 			margin: 24px 20px;
 

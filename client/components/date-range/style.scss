@@ -268,3 +268,8 @@
 		border-radius: 200px !important;
 	}
 }
+
+.date-range__popover-content { // Styling to fit optional shortcuts sidebar
+	display: flex;
+	align-items: stretch; // Ensure children stretch to full height
+}

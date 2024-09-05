@@ -9,9 +9,10 @@ interface Props {
 	prices?: number[];
 	isAddOn?: boolean;
 	currencyCode: string;
+	ignoreWhitespace?: boolean;
 }
 
-function useDisplayPrices( currencyCode: string, prices?: number[] ) {
+function useDisplayPrices( currencyCode: string, prices?: number[], ignoreWhitespace = false ) {
 	/**
 	 * Prices are represented in smallest units for a currency, and not as prices that
 	 * are actually displayed. Ex. $20 is the integer 2000, and not 20. To determine if
@@ -20,13 +21,15 @@ function useDisplayPrices( currencyCode: string, prices?: number[] ) {
 
 	return useMemo(
 		() =>
-			prices?.map( ( price ) =>
-				formatCurrency( price, currencyCode, {
+			prices?.map( ( price ) => {
+				const displayPrice = formatCurrency( price, currencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
-				} )
-			),
-		[ currencyCode, prices ]
+				} );
+
+				return ignoreWhitespace ? displayPrice.replace( /\s/g, '' ) : displayPrice;
+			} ),
+		[ currencyCode, prices, ignoreWhitespace ]
 	);
 }
 
@@ -64,7 +67,12 @@ function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
  * 9 characters. For example, $4,000 undiscounted and $30 discounted would be 9 characters.
  * This is primarily used for lowering the font-size of "large" display prices.
  */
-export default function useIsLargeCurrency( { prices, isAddOn = false, currencyCode }: Props ) {
+export default function useIsLargeCurrency( {
+	prices,
+	isAddOn = false,
+	currencyCode,
+	ignoreWhitespace = false,
+}: Props ) {
 	/**
 	 * Because this hook is primarily used for lowering font-sizes of "large" display prices,
 	 * this implementation is non-ideal. It assumes that each character in the display price,
@@ -76,7 +84,7 @@ export default function useIsLargeCurrency( { prices, isAddOn = false, currencyC
 	 *
 	 * https://github.com/Automattic/wp-calypso/pull/81537#discussion_r1323182287
 	 */
-	const displayPrices = useDisplayPrices( currencyCode, prices );
+	const displayPrices = useDisplayPrices( currencyCode, prices, ignoreWhitespace );
 	const exceedsPriceThreshold = hasExceededPriceThreshold( displayPrices, isAddOn );
 	const exceedsCombinedPriceThreshold = hasExceededCombinedPriceThreshold( displayPrices );
 
