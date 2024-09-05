@@ -15,11 +15,14 @@
 	flex-direction: column;
 
 	.components-button {
-		margin-bottom: 6px;
 		width: fit-content;
 		font-weight: 500;
 		font-size: $font-body-small;
 		border-radius: 4px;
+
+		&:not(:last-child) {
+			margin-bottom: 8px;
+		}
 	}
 }
 
@@ -117,4 +120,8 @@
 	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 21px;
+
+	&.components-button {
+		margin-top: 16px;
+	}
 }
