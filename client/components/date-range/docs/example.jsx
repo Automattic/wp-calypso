@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { Fragment, Component } from 'react';
-import DateRange from '../index.js';
+import DateRange from '../index';
 
 /*
  * Date Range Demo
