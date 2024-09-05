@@ -1,23 +1,25 @@
 import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { LLMMessage } from 'calypso/performance-profiler/components/llm-message';
 import { InsightDetailedContent } from './insight-detailed-content';
 
 interface InsightContentProps {
 	data: PerformanceMetricsItemQueryResponse;
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
+	IAGenerated: boolean;
 }
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const translate = useTranslate();
-	const { data, isLoading } = props;
+	const { data, isLoading, IAGenerated } = props;
 	const { description = '' } = data ?? {};
 
 	return (
 		<div className="metrics-insight-content">
 			{ isLoading ? (
-				translate( 'Looking for the best solution…' )
+				<LLMMessage message={ translate( 'Finding the best solution…' ) } rotate />
 			) : (
 				<>
 					<div className="description-area">
@@ -34,6 +36,9 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 						</div>
 						{ props.secondaryArea }
 					</div>
+
+					{ IAGenerated && <LLMMessage message={ translate( 'Generated with IA' ) } /> }
+
 					{ data.details?.type && (
 						<div className="metrics-insight-detailed-content">
 							<InsightDetailedContent data={ data.details } />
