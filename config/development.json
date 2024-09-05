@@ -242,6 +242,7 @@
 		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"woocommerce/core-profiler-passwordless-auth": true
 	}
 }
