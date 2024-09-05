@@ -1,15 +1,17 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import IAIcon from 'calypso/assets/images/performance-profiler/ia-icon.svg';
 
 import './style.scss';
 
 interface LLMMessageProps {
-	message: string;
+	message: string | ReactNode;
+	secondaryArea?: ReactNode;
 	rotate?: boolean;
 }
 
-export const LLMMessage = ( { message, rotate }: LLMMessageProps ) => {
+export const LLMMessage = ( { message, rotate, secondaryArea }: LLMMessageProps ) => {
 	const translate = useTranslate();
 
 	return (
@@ -22,6 +24,7 @@ export const LLMMessage = ( { message, rotate }: LLMMessageProps ) => {
 				/>
 				<span className="message">{ message }</span>
 			</div>
+			{ secondaryArea }
 		</div>
 	);
 };

@@ -128,6 +128,35 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.generated-with-ia {
+				font-weight: 500;
+			}
+
+			.metrics-insight-content {
+				.survey {
+					display: flex;
+					align-items: center;
+					gap: 16px;
+				}
+
+				.options {
+					display: flex;
+					align-items: center;
+					gap: 4px;
+					cursor: pointer;
+
+					&.good {
+						color: var(--studio-green-50);
+						fill: var(--studio-green-50);
+					}
+
+					&.bad {
+						color: var(--studio-red-50);
+						fill: var(--studio-red-50);
+					}
+				}
+			}
+
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
 
