@@ -378,8 +378,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					) }
 					{ showNotes && (
 						<>
-							<div className="site-migration-credentials__form-field">
-								<FormLabel htmlFor="notes">{ translate( 'Notes (optional)' ) }</FormLabel>
+							<div className="site-migration-credentials__form-field site-migration-credentials__form-field--notes">
 								<Controller
 									control={ control }
 									name="notes"
