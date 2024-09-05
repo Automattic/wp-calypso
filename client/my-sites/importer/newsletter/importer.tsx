@@ -197,6 +197,9 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					skipNextStep={ () => {
 						skipNextStep( selectedSite.ID, engine, nextStep, step );
 					} }
+					// FIXME
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
 					cardData={ stepContent }
 					engine={ engine }
 					isFetchingContent={ isFetchingPaidNewsletter }
