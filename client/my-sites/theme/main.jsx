@@ -1215,18 +1215,11 @@ class ThemeSheet extends Component {
 		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
 	};
 
-	goBack = () => {
+	getBackLink = () => {
 		const { backPath, locale, isLoggedIn, themeId } = this.props;
 		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
 
-		// Use history back when coming from customize your store screen.
-		const urlParams = new URLSearchParams( window.location.search );
-		if ( urlParams.has( 'from', 'customize-store' ) && window.history.length > 1 ) {
-			window.history.back();
-			return;
-		}
-
-		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
+		return localizeThemesPath( backPath, locale, ! isLoggedIn );
 	};
 
 	getBannerUpsellTitle = () => <BannerUpsellTitle { ...this.props } />;
@@ -1377,10 +1370,7 @@ class ThemeSheet extends Component {
 			'is-removed': isRemoved,
 		} );
 
-		const navigationItems = [
-			{ label: 'Themes', href: siteSlug ? `/themes/${ siteSlug }` : '/themes' },
-			{ label: title },
-		];
+		const navigationItems = [ { label: 'Themes', href: this.getBackLink() }, { label: title } ];
 
 		return (
 			<Main className="theme__sheet">
