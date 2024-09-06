@@ -234,6 +234,13 @@ $button-border: 4px;
 			top: auto;
 			margin-right: 0 !important;
 		}
+
+		.theme__sheet-demo-button {
+			svg {
+				vertical-align: text-bottom;
+				margin-left: 4px;
+			}
+		}
 	}
 
 	.theme__sheet-main-info-title {
