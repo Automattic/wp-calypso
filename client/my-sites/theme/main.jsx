@@ -1216,10 +1216,13 @@ class ThemeSheet extends Component {
 	};
 
 	getBackLink = () => {
-		const { backPath, locale, isLoggedIn, themeId } = this.props;
-		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
-
+		const { backPath, locale, isLoggedIn } = this.props;
 		return localizeThemesPath( backPath, locale, ! isLoggedIn );
+	};
+
+	handleBackLinkClick = () => {
+		const { themeId } = this.props;
+		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
 	};
 
 	getBannerUpsellTitle = () => <BannerUpsellTitle { ...this.props } />;
@@ -1370,7 +1373,10 @@ class ThemeSheet extends Component {
 			'is-removed': isRemoved,
 		} );
 
-		const navigationItems = [ { label: 'Themes', href: this.getBackLink() }, { label: title } ];
+		const navigationItems = [
+			{ label: 'Themes', href: this.getBackLink(), onClick: this.handleBackLinkClick },
+			{ label: title },
+		];
 
 		return (
 			<Main className="theme__sheet">
