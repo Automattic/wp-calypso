@@ -97,7 +97,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="good" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Fast' ) }</div>
+							<div className="range-heading">{ translate( 'Excellent' ) }</div>
 							<div className="range-subheading">
 								{ translate( '0–%(to)s%(unit)s', {
 									args: { to: formatUnit( good ), unit: displayUnit() },
@@ -109,7 +109,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="needsImprovement" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Moderate' ) }</div>
+							<div className="range-heading">{ translate( 'Need Improvement' ) }</div>
 							<div className="range-subheading">
 								{ translate( '%(from)s–%(to)s%(unit)s', {
 									args: {
@@ -125,7 +125,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="bad" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Slow' ) }</div>
+							<div className="range-heading">{ translate( 'Poor' ) }</div>
 							<div className="range-subheading">
 								{ translate( '>%(from)s%(unit)s', {
 									args: {
