@@ -109,7 +109,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="needsImprovement" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Need Improvement' ) }</div>
+							<div className="range-heading">{ translate( 'Needs Improvement' ) }</div>
 							<div className="range-subheading">
 								{ translate( '%(from)s–%(to)s%(unit)s', {
 									args: {
