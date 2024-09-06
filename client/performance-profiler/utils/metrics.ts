@@ -35,7 +35,7 @@ export const metricValuations = {
 	lcp: {
 		good: translate( "Your site's Largest Contentful Paint is good" ),
 		needsImprovement: translate( "Your site's Largest Contentful Paint is moderate" ),
-		bad: translate( "Your site's Largest Contentful Paint load needs improvement" ),
+		bad: translate( "Your site's Largest Contentful Paint needs improvement" ),
 		heading: translate( 'What is Largest Contentful Paint load?' ),
 		aka: translate( '(LCP)' ),
 		explanation: translate(
