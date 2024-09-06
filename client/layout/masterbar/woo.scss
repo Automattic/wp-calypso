@@ -590,6 +590,10 @@ $breakpoint-mobile: 660px;
 		display: none;
 	}
 
+	.login__form-password {
+		margin-top: 8px;
+	}
+
 	.auth-form__separator::before,
 	.auth-form__separator::after {
 		border-block-start: $woo-form-divider-border;
