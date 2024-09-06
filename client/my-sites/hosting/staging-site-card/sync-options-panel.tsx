@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -208,6 +208,13 @@ export default function SyncOptionsPanel( {
 								}
 							) }
 						</WooCommerceOverwriteWarning>
+						<CheckboxControl
+							key="checkbox"
+							label={ translate( 'Confirm I want to proceed with database synchronization ' ) }
+							checked={ false }
+							disabled={ false }
+							onChange={ () => {} }
+						/>
 					</div>
 				) }
 			</DangerousItemsContainer>
