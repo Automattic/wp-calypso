@@ -1,21 +1,31 @@
+import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import type { Moment } from 'moment';
 
 type Props = {
 	baseBackupDate: Moment;
 	eventsCount: number;
 	selectedBackupDate: Moment;
+	learnMoreUrl?: string;
 };
 
 export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 	baseBackupDate,
 	eventsCount,
 	selectedBackupDate,
+	learnMoreUrl,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const dispatch = useDispatch();
+
+	const onLearnMoreClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_realtime_message_learn_more_click' ) );
+	}, [ dispatch ] );
 
 	if (
 		! moment.isMoment( baseBackupDate ) ||
@@ -76,5 +86,17 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 		);
 	}
 
-	return <>{ message }</>;
+	return (
+		<p>
+			{ message }
+			{ learnMoreUrl && (
+				<>
+					{ ' ' }
+					<a href={ learnMoreUrl } onClick={ onLearnMoreClick }>
+						{ translate( 'Learn more' ) }
+					</a>
+				</>
+			) }
+		</p>
+	);
 };
