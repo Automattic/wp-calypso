@@ -116,6 +116,28 @@ const OptionsTreeTitle = styled.p( {
 	marginBottom: '16px',
 } );
 
+const SyncWarningContainer = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	border: '1px solid #D63638',
+	borderRadius: '4px',
+	maxWidth: '807px',
+	padding: '16px',
+	marginBottom: '16px',
+} );
+
+const SyncWarningTitle = styled.p( {
+	fontWeight: 600,
+	marginTop: '0px',
+	marginBottom: '8px',
+	color: '#D63638',
+} );
+
+const SyncWarningContent = styled.p( {
+	marginTop: '0px',
+	marginBottom: '0px',
+} );
+
 interface SyncCardProps {
 	type: 'production' | 'staging';
 	onPull: ( ( items?: string[] ) => void ) | ( () => void );
@@ -139,6 +161,7 @@ const StagingToProductionSync = ( {
 	onConfirm,
 	showSyncPanel,
 	isSqlsOptionDisabled,
+	isSiteWooStore,
 }: {
 	disabled: boolean;
 	siteSlug: string;
@@ -149,6 +172,7 @@ const StagingToProductionSync = ( {
 	onConfirm: () => void;
 	showSyncPanel: boolean;
 	isSqlsOptionDisabled: boolean;
+	isSiteWooStore?: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -242,15 +266,15 @@ const StagingToProductionSync = ( {
 									return <li key={ item.name }>{ item.label }</li>;
 								} ) }
 							</ConfirmationModalList>
-							{ stagingSiteSyncWoo && (
-								<div>
-									<p>{ translate( 'Warning' ) }</p>
-									<p>
+							{ stagingSiteSyncWoo && isSiteWooStore && (
+								<SyncWarningContainer>
+									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
+									<SyncWarningContent>
 										{ translate(
 											'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
 										) }
-									</p>
-								</div>
+									</SyncWarningContent>
+								</SyncWarningContainer>
 							) }
 							<ConfirmationModalInputTitle>
 								{ translate( "Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.", {
@@ -519,6 +543,7 @@ export const SiteSyncCard = ( {
 			siteToSync={ siteToSync }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
+			isSiteWooStore={ isSiteWooStore }
 			error={ syncError }
 			siteUrls={ siteUrls }
 			onRetry={ () => {
@@ -573,6 +598,7 @@ export const SiteSyncCard = ( {
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
 					isSqlsOptionDisabled={ isSiteWooStore }
+					isSiteWooStore={ isSiteWooStore }
 				/>
 			) }
 			{ selectedOption !== actionForType && (
