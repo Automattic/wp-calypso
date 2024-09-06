@@ -51,7 +51,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return '';
 	};
 
-	// Add leading zero to date values
+	// Add leading zero to date values. Safari expects the date string to follow the ISO 8601 format (i.e., YYYY-MM-DD)
 	const addLeadingZero = ( value: number ) => {
 		if ( value < 10 ) {
 			return `0${ value }`;
