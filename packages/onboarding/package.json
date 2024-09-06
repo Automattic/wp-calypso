@@ -44,6 +44,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@automattic/viewport": "workspace:^",
 		"@testing-library/react": "^15.0.7",
 		"@wordpress/base-styles": "^5.2.0",
 		"copyfiles": "^2.3.0",

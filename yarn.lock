@@ -1595,6 +1595,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/viewport": "workspace:^"
     "@testing-library/react": "npm:^15.0.7"
     "@wordpress/base-styles": "npm:^5.2.0"
     "@wordpress/components": "npm:^28.2.0"
