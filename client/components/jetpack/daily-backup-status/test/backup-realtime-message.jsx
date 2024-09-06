@@ -90,7 +90,7 @@ describe( 'BackupRealtimeMessage', () => {
 
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
-		const learnMoreUrl = '/learn-more'; // Mock Learn more URL
+		const learnMoreUrl = '/learn-more';
 
 		const { container, getByText } = renderMessage( baseBackupDate, 3, selectedDate, learnMoreUrl );
 
@@ -99,7 +99,7 @@ describe( 'BackupRealtimeMessage', () => {
 			'We are using a full backup from this day (2024-08-26 12:00 PM) with 3 changes you have made since then until now.'
 		);
 
-		// Verify the "Learn more" link is rendered
+		// Verify the `Learn more` link is rendered
 		const learnMoreLink = getByText( 'Learn more' );
 		expect( learnMoreLink ).toBeInTheDocument();
 		expect( learnMoreLink.getAttribute( 'href' ) ).toBe( learnMoreUrl );
