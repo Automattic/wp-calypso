@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -13,9 +14,15 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import useHandleMemberAction from '../../hooks/use-handle-member-action';
+import { useMemberList } from '../../hooks/use-member-list';
 import { TeamMember } from '../../types';
 import GetStarted from '../get-started';
 import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
@@ -28,7 +35,18 @@ export default function TeamList() {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		layout: {
+			styles: {
+				actions: {
+					width: isDesktop ? '10%' : undefined,
+				},
+			},
+		},
+	} );
+
+	const { members, hasMembers, isPending, refetch } = useMemberList();
 
 	const title = translate( 'Manage team members' );
 
@@ -37,16 +55,20 @@ export default function TeamList() {
 		page( A4A_TEAM_INVITE_LINK );
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleAction = ( action: string, item: TeamMember ) => {
-		// FIXME: Implement action handling
-	};
+	const handleAction = useHandleMemberAction( { onRefetchList: refetch } );
+
+	const canRemove = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_users' )
+	);
+
+	const currentUser = useSelector( getCurrentUser );
 
 	const fields = useMemo(
 		() => [
 			{
 				id: 'user',
-				header: translate( 'User' ).toUpperCase(),
+				label: translate( 'User' ).toUpperCase(),
+				getValue: ( { item }: { item: TeamMember } ) => item.displayName ?? '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return <MemberColumn member={ item } withRoleStatus={ ! isDesktop } />;
 				},
@@ -57,7 +79,8 @@ export default function TeamList() {
 				? [
 						{
 							id: 'role',
-							header: translate( 'Role' ).toUpperCase(),
+							label: translate( 'Role' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ) => item.role || '',
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <RoleStatusColumn member={ item } />;
 							},
@@ -66,7 +89,8 @@ export default function TeamList() {
 						},
 						{
 							id: 'added-date',
-							header: translate( 'Added' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ): string => item.dateAdded || '',
+							label: translate( 'Added' ).toUpperCase(),
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <DateColumn date={ item.dateAdded } />;
 							},
@@ -77,60 +101,38 @@ export default function TeamList() {
 				: [] ),
 			{
 				id: 'actions',
-				header: '',
+				getValue: () => '',
+				label: '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return (
 						<ActionColumn
 							member={ item }
-							onMenuSelected={ ( action ) => handleAction( action, item ) }
+							onMenuSelected={ ( action, callback ) => handleAction( action, item, callback ) }
+							canRemove={ canRemove || item.email === currentUser?.email }
 						/>
 					);
 				},
-				width: isDesktop ? '40%' : undefined,
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ isDesktop, translate ]
+		[ canRemove, currentUser?.email, handleAction, isDesktop, translate ]
 	);
 
-	// FIXME: Fetch team members
-	const members: TeamMember[] = [
-		{
-			displayName: 'Owner',
-			email: 'owner@automattic.com',
-			role: 'owner',
-			status: 'active',
-		},
-		{
-			displayName: 'User 1',
-			email: 'user1@automattic.com',
-			role: 'member',
-			status: 'active',
-			dateAdded: new Date().toDateString(),
-		},
-		{
-			displayName: 'User 2',
-			email: 'user2@automattic.com',
-			role: 'member',
-			status: 'pending',
-			dateAdded: new Date().toDateString(),
-		},
-		{
-			email: 'user3@automattic.com',
-			role: 'member',
-			status: 'expired',
-		},
-	];
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( members, dataViewsState, fields );
+	}, [ members, dataViewsState, fields ] );
 
-	const isEmpty = members.length <= 1; // We always have one member (owner) so we exclude it from count.
+	if ( isPending ) {
+		return <PagePlaceholder />;
+	}
 
-	if ( isEmpty ) {
+	if ( ! hasMembers ) {
 		return <GetStarted />;
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
@@ -144,17 +146,15 @@ export default function TeamList() {
 			<LayoutBody>
 				<ItemsDataViews
 					data={ {
-						items: members,
+						items,
 						getItemId: ( user ) => `${ user.id }`,
-						pagination: {
-							totalItems: 1,
-							totalPages: 1,
-						},
+						pagination: paginationInfo,
 						enableSearch: false,
-						fields: fields,
+						fields,
 						actions: [],
 						setDataViewsState: setDataViewsState,
 						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
 					} }
 				/>
 			</LayoutBody>

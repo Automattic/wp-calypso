@@ -4,6 +4,7 @@ import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import ItemPreviewPaneContent from './item-preview-pane-content';
 import ItemPreviewPaneHeader from './item-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
@@ -79,7 +80,9 @@ export default function ItemPreviewPane( {
 		);
 	} );
 
-	const shouldHideNav = hideNavIfSingleTab && featureTabs.length <= 1;
+	const isMobileApp = isWpMobileApp();
+
+	const shouldHideNav = ( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp;
 
 	return (
 		<div className={ clsx( 'item-preview__pane', className ) }>

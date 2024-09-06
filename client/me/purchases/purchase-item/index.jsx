@@ -484,11 +484,15 @@ class PurchaseItem extends Component {
 
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
+				const paymentMethodType = purchase.payment.creditCard.displayBrand
+					? purchase.payment.creditCard.displayBrand
+					: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
+
 				return (
 					<>
 						<img
-							src={ getPaymentMethodImageURL( purchase.payment.creditCard.type ) }
-							alt={ purchase.payment.creditCard.type }
+							src={ getPaymentMethodImageURL( paymentMethodType ) }
+							alt={ paymentMethodType }
 							className="purchase-item__payment-method-card"
 						/>
 						{ purchase.payment.creditCard.number }

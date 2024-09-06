@@ -32,6 +32,17 @@ $grey-header: #151b1e;
 			}
 		}
 
+		&.has-navigation {
+			.step-container__content {
+				margin-top: -60px;
+				padding-top: 70px;
+
+				@include break-small {
+					margin-top: 0;
+				}
+			}
+		}
+
 		.step-container__content {
 			padding-top: 60px;
 			background-color: $grey-header;

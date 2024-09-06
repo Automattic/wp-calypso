@@ -1,7 +1,4 @@
-import {
-	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
-	siteLaunchStatusGroupValues,
-} from '@automattic/sites';
+import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
@@ -35,7 +32,6 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	 * in the route.
 	 */
 	if ( context.query.status === undefined ) {
-		context.query.status = DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 		return next();
 	}
 

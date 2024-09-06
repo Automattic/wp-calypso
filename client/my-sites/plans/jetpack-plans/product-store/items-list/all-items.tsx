@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	isJetpackAISlug,
 	isJetpackPlanSlug,
 	isJetpackSocialSlug,
 	isJetpackStatsPaidProductSlug,
@@ -105,7 +104,6 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const isMultiPlanSelectProduct =
 						( isJetpackSocialSlug( item.productSlug ) &&
 							! isEnabled( 'jetpack/social-plans-v1' ) ) ||
-						isJetpackAISlug( item.productSlug ) ||
 						isJetpackStatsPaidProductSlug( item.productSlug );
 
 					let ctaHref = getCheckoutURL( item );

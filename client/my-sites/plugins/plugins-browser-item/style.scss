@@ -36,6 +36,14 @@
 		margin-left: calc(47px + 16px); // icon width + margin
 	}
 
+	.plugins-browser-item__title {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		white-space: unset;
+	}
+
 	.plugins-browser-item__ratings {
 		display: flex;
 		justify-content: flex-end;
@@ -62,7 +70,7 @@
 	}
 
 	.plugins-browser-item__description {
-		margin: 24px 0;
+		margin: 12px 0 24px 0;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		font-weight: 400;
@@ -70,9 +78,9 @@
 		color: $studio-gray-80;
 
 		// limit to 2 lines
-		height: calc(20px * 2); // line height * number of lines
+		height: calc(20px * 3); // line height * number of lines
 		display: -webkit-box;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -179,11 +187,15 @@
 	}
 }
 
+.plugins-browser-item__header {
+	min-height: 66px;
+}
+
 .plugins-browser-item__title {
 	color: var(--color-neutral-100);
 	font-weight: 500;
 	font-size: $font-body;
-	line-height: 24px;
+	line-height: 20px;
 }
 
 .plugins-browser-item__author {

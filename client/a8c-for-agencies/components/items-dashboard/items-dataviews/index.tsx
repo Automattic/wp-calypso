@@ -4,7 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { DataViews } from 'calypso/components/dataviews';
-import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
+import { ItemsDataViewsType } from './interfaces';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -23,7 +24,7 @@ const getIdByPath = ( item: object, path: string ) => {
 /**
  * Create an item column for the DataViews component
  * @param id
- * @param header
+ * @param label
  * @param displayField
  * @param getValue
  * @param isSortable
@@ -31,18 +32,19 @@ const getIdByPath = ( item: object, path: string ) => {
  */
 export const createItemColumn = (
 	id: string,
-	header: ReactNode,
+	label: ReactNode,
 	displayField: () => ReactNode,
 	getValue: () => undefined,
 	isSortable: boolean = false,
 	canHide: boolean = false
-): DataViewsColumn => {
+): Field< any > => {
 	return {
 		id,
 		enableSorting: isSortable,
 		enableHiding: canHide,
 		getValue,
-		header,
+		// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+		label,
 		render: displayField,
 	};
 };
@@ -64,9 +66,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 			! scrollContainerRef.current ||
 			previousDataViewsState?.type !== data.dataViewsState.type
 		) {
-			scrollContainerRef.current = document.querySelector(
-				'.dataviews-view-list, .dataviews-view-table-wrapper'
-			) as HTMLElement;
+			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
 		}
 
 		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
@@ -85,12 +85,13 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 	return (
 		<div className={ className }>
 			<DataViews
-				data={ data.items }
-				paginationInfo={ data.pagination }
-				fields={ data.fields }
+				data={ data.items ?? [] }
 				view={ data.dataViewsState }
+				onChangeView={ ( newView ) => data.setDataViewsState( () => newView ) }
+				fields={ data.fields }
 				search={ data?.enableSearch ?? true }
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
+				actions={ data.actions }
 				getItemId={
 					data.getItemId ??
 					( ( item: any ) => {
@@ -99,11 +100,12 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 						return item.id;
 					} )
 				}
-				onSelectionChange={ data.onSelectionChange }
-				onChangeView={ data.setDataViewsState }
-				supportedLayouts={ [ 'table' ] }
-				actions={ data.actions }
 				isLoading={ isLoading }
+				paginationInfo={ data.pagination }
+				defaultLayouts={ data.defaultLayouts }
+				selection={ data.selection }
+				onChangeSelection={ data.onSelectionChange }
+				header={ data.header }
 			/>
 			{ dataviewsWrapper &&
 				ReactDOM.createPortal(

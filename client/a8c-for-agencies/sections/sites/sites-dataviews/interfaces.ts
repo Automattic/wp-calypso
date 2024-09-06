@@ -1,5 +1,5 @@
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { Site, SiteData } from '../types';
+import { Site } from '../types';
 
 export interface SitesDataResponse {
 	sites: Array< Site >;
@@ -18,8 +18,4 @@ export interface SitesDataViewsProps {
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	dataViewsState: DataViewsState;
 	onRefetchSite?: () => Promise< unknown >;
-}
-
-export interface SiteInfo extends SiteData {
-	id: number;
 }

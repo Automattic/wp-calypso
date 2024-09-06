@@ -23,6 +23,10 @@ const logCheckoutError = ( error: Error ) => {
 
 const CheckoutMainWrapperStyles = styled.div`
 	background-color: ${ colorStudio.colors[ 'White' ] };
+
+	a {
+		color: ${ colorStudio.colors[ 'WordPress Blue 50' ] };
+	}
 `;
 
 export default function CheckoutMainWrapper( {

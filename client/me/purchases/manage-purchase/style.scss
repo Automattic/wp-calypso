@@ -342,6 +342,7 @@
 
 	.payment-logo {
 		margin-right: 5px;
+		border-radius: 2px;
 	}
 
 	a {
@@ -354,7 +355,7 @@
 	}
 
 	&.is-expiring .manage-purchase__detail-date-span {
-		color: var(--studio-pink-50);
+		color: var(--studio-red);
 	}
 }
 

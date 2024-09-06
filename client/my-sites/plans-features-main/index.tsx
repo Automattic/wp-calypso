@@ -68,6 +68,7 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
+import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -288,9 +289,14 @@ const PlansFeaturesMain = ( {
 
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
+	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
-
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+	/**
+	 * Keep the `useEffect` here strictly about intent resolution.
+	 * This is fairly critical logic and may generate side effects if not handled properly.
+	 * Let's be especially deliberate about making changes.
+	 */
 	useEffect( () => {
 		if ( intentFromSiteMeta.processing ) {
 			return;
@@ -299,13 +305,13 @@ const PlansFeaturesMain = ( {
 		// TODO: plans from upsell takes precedence for setting intent right now
 		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
 		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
-		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
-			setIntent( 'plans-default-wpcom' );
+		if ( defaultWpcomPlansIntent !== intent && forceDefaultPlans ) {
+			setIntent( defaultWpcomPlansIntent );
 		} else if ( ! intent ) {
 			setIntent(
 				planFromUpsells
-					? 'plans-default-wpcom'
-					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+					? defaultWpcomPlansIntent
+					: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent
 			);
 		}
 	}, [
@@ -315,10 +321,11 @@ const PlansFeaturesMain = ( {
 		planFromUpsells,
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
+		defaultWpcomPlansIntent,
 	] );
 
 	const showEscapeHatch =
-		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -372,7 +379,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
-		intent,
+		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
@@ -383,7 +390,6 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -615,8 +621,12 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
+		! intent ||
+			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
+			! gridPlansForFeaturesGrid ||
+			! gridPlansForComparisonGrid
 	);
+
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();

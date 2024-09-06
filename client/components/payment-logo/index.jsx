@@ -17,7 +17,7 @@ import './style.scss';
 
 const LOGO_PATHS = {
 	amex: creditCardAmexImage,
-	cb: creditCardCartesBancairesImage,
+	cartes_bancaires: creditCardCartesBancairesImage,
 	diners: creditCardDinersImage,
 	discover: creditCardDiscoverImage,
 	jcb: creditCardJCBImage,
@@ -32,7 +32,7 @@ const ALT_TEXT = {
 	amex: 'American Express',
 	'apple-pay': 'Apple Pay',
 	bancontact: 'Bancontact',
-	cb: 'Cartes Bancaires',
+	cartes_bancaires: 'Cartes Bancaires',
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',

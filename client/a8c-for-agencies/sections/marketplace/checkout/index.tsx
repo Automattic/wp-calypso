@@ -45,7 +45,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { marketplaceType, setMarketplaceType } = useContext( MarketplaceTypeContext );
 	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
 	const { selectedCartItems, onRemoveCartItem, onClearCart, setSelectedCartItems } =
@@ -133,6 +133,14 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	);
 
 	useEffect( () => {
+		// On mount, set the marketplace type to referral if the referralBlogId is present.
+		if ( referralBlogId ) {
+			setMarketplaceType( MARKETPLACE_TYPE_REFERRAL );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	useEffect( () => {
 		// When the referralBlogId is present, add the referral plan to the cart.
 		if ( referralBlogId && ! isLoadingReferralDevSite ) {
 			addReferralPlanToCart();
@@ -211,12 +219,16 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 						<h1 className="checkout__main-title">{ title }</h1>
 
 						<div className="checkout__main-list">
-							{ checkoutItems.map( ( items ) => (
-								<ProductInfo
-									key={ `product-info-${ items.product_id }-${ items.quantity }` }
-									product={ items }
-								/>
-							) ) }
+							{ referralBlogId && isLoadingReferralDevSite ? (
+								<div className="product-info__placeholder"></div>
+							) : (
+								checkoutItems.map( ( items ) => (
+									<ProductInfo
+										key={ `product-info-${ items.product_id }-${ items.quantity }` }
+										product={ items }
+									/>
+								) )
+							) }
 						</div>
 					</div>
 					<div

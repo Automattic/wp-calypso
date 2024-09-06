@@ -21,10 +21,6 @@ export function getSitesPagination(
 	return { totalItems, totalPages };
 }
 
-export function addDummyDataViewPrefix( dataView: string ) {
-	return `${ DUMMY_DATA_VIEW_PREFIX }${ dataView }`;
-}
-
 export function removeDummyDataViewPrefix( dataView: string ) {
 	return dataView.replace( DUMMY_DATA_VIEW_PREFIX, '' );
 }

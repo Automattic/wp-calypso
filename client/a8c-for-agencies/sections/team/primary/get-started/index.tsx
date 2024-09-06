@@ -27,12 +27,12 @@ export default function GetStarted() {
 	};
 
 	return (
-		<Layout className="team-list-get-started" title={ title } wide>
+		<Layout className="team-list-get-started" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
-						<Button variant="primary" onClick={ onInviteClick }>
+						<Button variant="primary" onClick={ onInviteClick } href={ A4A_TEAM_INVITE_LINK }>
 							{ translate( 'Invite a team member' ) }
 						</Button>
 					</Actions>

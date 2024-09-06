@@ -78,3 +78,9 @@
 		inset-inline-start: 4px;
 	}
 }
+
+.site-no-wp-admin-access {
+	.item-preview__content {
+		display: block;
+	}
+}

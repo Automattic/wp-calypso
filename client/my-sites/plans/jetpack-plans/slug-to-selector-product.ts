@@ -32,6 +32,7 @@ import {
 	getJetpackProductRecommendedFor,
 	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
+	isJetpackAISlug,
 } from '@automattic/calypso-products';
 import { getProductPartsFromAlias } from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import {
@@ -103,7 +104,11 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 	return null;
 }
 
-function getDisclaimerLink() {
+function getDisclaimerLink( item: Product | Plan ) {
+	if ( objectIsProduct( item ) && isJetpackAISlug( item.product_slug ) ) {
+		return 'https://jetpack.com/redirect/?source=ai-assistant-fair-usage-policy';
+	}
+
 	const backupStorageFaqId = 'backup-storage-limits-lightbox-faq';
 	return `#${ backupStorageFaqId }`;
 }
@@ -190,7 +195,11 @@ function itemToSelectorProduct(
 			features: {
 				items: features,
 			},
-			disclaimer: getJetpackProductDisclaimer( item.product_slug, features, getDisclaimerLink() ),
+			disclaimer: getJetpackProductDisclaimer(
+				item.product_slug,
+				features,
+				getDisclaimerLink( item )
+			),
 			quantity,
 		};
 	}
@@ -234,7 +243,11 @@ function itemToSelectorProduct(
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
-			disclaimer: getJetpackProductDisclaimer( item.getStoreSlug(), features, getDisclaimerLink() ),
+			disclaimer: getJetpackProductDisclaimer(
+				item.getStoreSlug(),
+				features,
+				getDisclaimerLink( item )
+			),
 			legacy: ! isResetPlan,
 		};
 	}
