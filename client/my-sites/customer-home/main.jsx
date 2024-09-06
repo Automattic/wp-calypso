@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -155,6 +156,7 @@ const Home = ( {
 		<>
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 				{ translate( 'View site' ) }
+				<Icon icon={ external } size={ 16 } className="navigation-header__external-icon" />
 			</Button>
 			{ isAdmin && ! isP2 && (
 				<Button primary href={ `/overview/${ site.slug }` }>

@@ -93,6 +93,12 @@
 		display: flex;
 		align-items: center;
 		gap: 16px;
+
+		.navigation-header__external-icon {
+			align-self: center;
+			margin-left: 4px;
+			fill: currentColor;
+		}
 	}
 }
 
