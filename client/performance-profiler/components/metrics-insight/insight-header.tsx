@@ -12,13 +12,16 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const { data, index } = props;
 	const title = data.title ?? '';
 	const value = data.displayValue ?? '';
-	const {
-		type,
-		metricSavings: { FCP, LCP },
-	} = data;
+	const { type, metricSavings } = data;
 
 	const renderBadge = () => {
-		if ( ! FCP && ! LCP ) {
+		if (
+			! metricSavings ||
+			! metricSavings?.FCP ||
+			! metricSavings?.LCP ||
+			! metricSavings?.CLS ||
+			! metricSavings?.INP
+		) {
 			return null;
 		}
 
