@@ -553,6 +553,10 @@
 			margin-top: -24px;
 			box-sizing: content-box;
 
+			.is-logged-out & {
+				display: none;
+			}
+
 			.is-global-sidebar-visible & {
 				padding-top: 40px;
 				margin-top: -40px;
