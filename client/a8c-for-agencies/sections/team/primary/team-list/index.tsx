@@ -107,7 +107,7 @@ export default function TeamList() {
 					return (
 						<ActionColumn
 							member={ item }
-							onMenuSelected={ ( action ) => handleAction( action, item ) }
+							onMenuSelected={ ( action, callback ) => handleAction( action, item, callback ) }
 							canRemove={ canRemove || item.email === currentUser?.email }
 						/>
 					);

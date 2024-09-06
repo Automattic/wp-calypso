@@ -93,12 +93,14 @@ export default function PhpMyAdminCard( { disabled } ) {
 				) }
 			</p>
 			<Button
+				primary
 				onClick={ () => openPhpMyAdmin( siteId ) }
 				busy={ ! disabled && loading }
 				disabled={ disabled }
 			>
-				<span>{ translate( 'Open phpMyAdmin' ) }</span>
-				<MaterialIcon icon="launch" size={ 16 } />
+				<span>
+					{ translate( 'Open phpMyAdmin' ) } <MaterialIcon icon="launch" size={ 16 } />
+				</span>
 			</Button>
 			{ ! disabled && (
 				<div className="phpmyadmin-card__restore-password">

@@ -1,11 +1,12 @@
 import { Card } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon, people, currencyDollar, external } from '@wordpress/icons';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
-import { useEffect, useRef } from 'react';
+import { toInteger } from 'lodash';
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import SubscriberUploadForm from './subscriber-upload-form';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -14,9 +15,10 @@ type Props = {
 	selectedSite: SiteDetails;
 	fromSite: QueryArgParsed;
 	skipNextStep: () => void;
-	cardData: any;
+	cardData: SubscribersStepContent;
 	siteSlug: string;
 	engine: string;
+	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 };
 
 export default function Subscribers( {
@@ -27,8 +29,8 @@ export default function Subscribers( {
 	skipNextStep,
 	cardData,
 	engine,
+	setAutoFetchData,
 }: Props ) {
-	const queryClient = useQueryClient();
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 		return {
@@ -39,11 +41,7 @@ export default function Subscribers( {
 	const prevInProgress = useRef( importSelector?.inProgress );
 	useEffect( () => {
 		if ( ! prevInProgress.current && importSelector?.inProgress ) {
-			setTimeout( () => {
-				queryClient.invalidateQueries( {
-					queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine ],
-				} );
-			}, 1500 ); // 1500ms = 1.5s delay so that we have enought time to propagate the changes.
+			setAutoFetchData( true );
 		}
 
 		prevInProgress.current = importSelector?.inProgress;
@@ -51,8 +49,8 @@ export default function Subscribers( {
 
 	const open = cardData?.meta?.status === 'pending' || false;
 
-	const all_emails = cardData?.meta?.email_count || 0;
-	const paid_emails = cardData?.meta?.paid_subscribers_count || 0;
+	const all_emails = toInteger( cardData?.meta?.email_count ) || 0;
+	const paid_emails = toInteger( cardData?.meta?.paid_subscribers_count ) || 0;
 	const free_emails = all_emails - paid_emails;
 
 	return (

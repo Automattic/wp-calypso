@@ -145,7 +145,7 @@ const ThemeCard = forwardRef(
 						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>
-						{ ! isActive && styleVariations.length > 0 && (
+						{ ! optionsMenu && styleVariations.length > 0 && (
 							<div className="theme-card__info-style-variations">
 								<StyleVariationBadges
 									variations={ styleVariations }
@@ -156,8 +156,8 @@ const ThemeCard = forwardRef(
 							</div>
 						) }
 						{ ! isActive && <>{ badge }</> }
-						{ isActive && <ActiveBadge /> }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
+						{ isActive && <ActiveBadge /> }
 					</div>
 				</div>
 			</Card>

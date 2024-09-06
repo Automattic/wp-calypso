@@ -63,11 +63,11 @@ const DateRangePickerShortcuts = ( {
 	};
 
 	return (
-		<div className="date-control-picker-shortcuts__inner">
-			<ul className="date-control-picker-shortcuts__list">
+		<div className="date-range-picker-shortcuts__inner">
+			<ul className="date-range-picker-shortcuts__list">
 				{ shortcutList.map( ( shortcut, idx ) => (
 					<li
-						className={ clsx( 'date-control-picker-shortcuts__shortcut', {
+						className={ clsx( 'date-range-picker-shortcuts__shortcut', {
 							'is-selected': shortcut.id === selectedShortcut,
 						} ) }
 						key={ shortcut.id || idx }

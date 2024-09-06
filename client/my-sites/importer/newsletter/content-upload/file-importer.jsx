@@ -62,6 +62,7 @@ class FileImporter extends PureComponent {
 		fromSite: PropTypes.string,
 		nextStepUrl: PropTypes.string,
 		skipNextStep: PropTypes.func,
+		invalidateCardData: PropTypes.func,
 	};
 
 	handleClick = ( shouldStartImport ) => {
@@ -83,7 +84,8 @@ class FileImporter extends PureComponent {
 	render() {
 		const { title, overrideDestination, uploadDescription, optionalUrl, acceptedFileTypes } =
 			this.props.importerData;
-		const { importerStatus, site, fromSite, nextStepUrl, skipNextStep } = this.props;
+		const { importerStatus, site, fromSite, nextStepUrl, skipNextStep, invalidateCardData } =
+			this.props;
 		const { errorData, importerState, summaryModalOpen } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
@@ -145,6 +147,7 @@ class FileImporter extends PureComponent {
 						sourceType={ title }
 						site={ site }
 						nextStepUrl={ nextStepUrl }
+						invalidateCardData={ invalidateCardData }
 					/>
 				) }
 				{ showUploadingPane && (

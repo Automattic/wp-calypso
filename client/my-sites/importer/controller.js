@@ -105,10 +105,22 @@ export function importSubstackSite( context, next ) {
 
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state );
+	const supportedImportSubstackSiteSteps = [
+		'content',
+		'subscribers',
+		'paid-subscribers',
+		'summary',
+	];
+	const step = context.params.step;
+
+	if ( step && ! supportedImportSubstackSiteSteps.includes( step ) ) {
+		page.redirect( '/import/' + siteSlug );
+		return;
+	}
 
 	context.primary = (
 		<BrowserRouter>
-			<NewsletterImporter siteSlug={ siteSlug } engine="substack" step={ context.params.step } />
+			<NewsletterImporter siteSlug={ siteSlug } engine="substack" step={ step } />
 		</BrowserRouter>
 	);
 	next();

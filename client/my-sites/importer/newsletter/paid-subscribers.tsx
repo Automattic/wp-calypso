@@ -1,16 +1,19 @@
+import { SiteDetails } from '@automattic/data-stores';
 import { hasQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
+import { PaidSubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
 import ConnectStripe from './paid-subscribers/connect-stripe';
 import MapPlans from './paid-subscribers/map-plans';
+
 type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
 	fromSite: string;
 	engine: string;
-	cardData: any;
-	selectedSite: any;
+	cardData: PaidSubscribersStepContent;
+	selectedSite: SiteDetails;
 	isFetchingContent: boolean;
 };
 
@@ -54,7 +57,7 @@ export default function PaidSubscribers( {
 					cardData={ cardData }
 					skipNextStep={ skipNextStep }
 					engine={ engine }
-					siteId={ selectedSite?.ID }
+					siteId={ selectedSite.ID }
 					currentStep="paid-subscribers"
 				/>
 			) }

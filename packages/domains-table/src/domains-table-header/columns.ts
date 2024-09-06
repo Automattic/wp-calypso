@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { DomainData, PartialDomainData } from '@automattic/data-stores';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { I18N } from 'i18n-calypso';
@@ -60,6 +59,14 @@ export const allSitesViewColumns = (
 			sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
 		},
 		{
+			name: 'ssl',
+			label: __( 'SSL', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
+		},
+		{
 			name: 'expire_renew',
 			label: __( 'Expires / renews on', __i18n_text_domain__ ),
 			isSortable: true,
@@ -85,17 +92,6 @@ export const allSitesViewColumns = (
 			label: __( 'Actions', __i18n_text_domain__ ),
 		},
 	];
-
-	if ( config.isEnabled( 'hosting-overview-refinements' ) ) {
-		columns.splice( 3, 0, {
-			name: 'ssl',
-			label: __( 'SSL', __i18n_text_domain__ ),
-			isSortable: true,
-			initialSortDirection: 'asc',
-			supportsOrderSwitching: true,
-			sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
-		} );
-	}
 
 	return columns;
 };
@@ -128,6 +124,14 @@ export const siteSpecificViewColumns = (
 			isSortable: false,
 		},
 		{
+			name: 'ssl',
+			label: __( 'SSL', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
+		},
+		{
 			name: 'expire_renew',
 			label: __( 'Expires / renews on', __i18n_text_domain__ ),
 			isSortable: true,
@@ -153,17 +157,6 @@ export const siteSpecificViewColumns = (
 			label: __( 'Actions', __i18n_text_domain__ ),
 		},
 	];
-
-	if ( config.isEnabled( 'hosting-overview-refinements' ) ) {
-		columns.splice( 3, 0, {
-			name: 'ssl',
-			label: __( 'SSL', __i18n_text_domain__ ),
-			isSortable: true,
-			initialSortDirection: 'asc',
-			supportsOrderSwitching: true,
-			sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
-		} );
-	}
 
 	return columns;
 };

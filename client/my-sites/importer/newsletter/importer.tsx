@@ -6,7 +6,10 @@ import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress, { ClickHandler } from 'calypso/components/step-progress';
-import { usePaidNewsletterQuery } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import {
+	StepId,
+	usePaidNewsletterQuery,
+} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -23,7 +26,7 @@ import './importer.scss';
 
 const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 
-const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+const stepSlugs: StepId[] = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -33,19 +36,23 @@ const logoChainLogos = [
 type NewsletterImporterProps = {
 	siteSlug: string;
 	engine: string;
-	step: string;
+	step?: StepId;
 };
 
 function getTitle( urlData?: UrlData ) {
 	if ( urlData?.meta?.title ) {
-		return `Import ${ urlData?.meta?.title }`;
+		return `Import ${ urlData.meta.title }`;
 	}
 
 	return 'Import your newsletter';
 }
 
-export default function NewsletterImporter( { siteSlug, engine, step }: NewsletterImporterProps ) {
-	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
+export default function NewsletterImporter( {
+	siteSlug,
+	engine,
+	step = 'content',
+}: NewsletterImporterProps ) {
+	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
@@ -89,11 +96,6 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	];
 
 	// Steps
-	fromSite = Array.isArray( fromSite ) ? fromSite[ 0 ] : fromSite;
-	if ( fromSite && ! step ) {
-		step = stepSlugs[ 0 ];
-	}
-
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
 
@@ -113,10 +115,20 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 		} else {
 			setAutoFetchData( false );
 		}
+
+		if (
+			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
+			step === 'paid-subscribers'
+		) {
+			// If we have empty content
+			setAutoFetchData( true );
+		}
 	}, [
 		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps.subscribers?.status,
+		paidNewsletterData?.steps?.subscribers?.status,
+		step,
 		setAutoFetchData,
+		paidNewsletterData?.steps,
 	] );
 
 	stepSlugs.forEach( ( stepName, index ) => {
@@ -194,9 +206,13 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					skipNextStep={ () => {
 						skipNextStep( selectedSite.ID, engine, nextStep, step );
 					} }
+					// FIXME
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
 					cardData={ stepContent }
 					engine={ engine }
 					isFetchingContent={ isFetchingPaidNewsletter }
+					setAutoFetchData={ setAutoFetchData }
 				/>
 			) }
 		</div>

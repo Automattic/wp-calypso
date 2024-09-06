@@ -181,6 +181,7 @@
 		}
 	}
 
+	.components-button.is-destructive,
 	.button.is-scary {
 		color: var(--color-scary-50);
 		border-color: var(--color-scary-50);
@@ -193,6 +194,7 @@
 		}
 	}
 
+	.components-button.is-primary.is-destructive,
 	.button.is-primary.is-scary {
 		background-color: var(--color-scary-50);
 		color: var(--color-text-inverted);

@@ -1,6 +1,6 @@
-import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, type FunctionComponent } from 'react';
+import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import { PaymentMethodOverviewContext } from '../../context';
 import useStoredCards from '../../hooks/use-stored-cards';
@@ -34,31 +34,21 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 		isFetching,
 	} = useStoredCards( paging, true );
 
+	if ( ! isVisible ) {
+		return null;
+	}
+
 	return (
-		<Dialog
-			isVisible={ isVisible }
-			additionalClassNames="stored-credit-card-delete-dialog"
+		<A4AConfirmationDialog
+			className="stored-credit-card-delete-dialog"
+			title={ translate( 'Delete payment method' ) }
 			onClose={ onClose }
-			buttons={ [
-				<Button disabled={ false } onClick={ onClose }>
-					{ translate( 'Go back' ) }
-				</Button>,
-
-				<Button
-					busy={ isDeleteInProgress }
-					disabled={ isDeleteInProgress }
-					onClick={ onConfirm }
-					primary
-					scary
-				>
-					{ translate( 'Delete payment method' ) }
-				</Button>,
-			] }
+			onConfirm={ onConfirm }
+			ctaLabel={ translate( 'Delete payment method' ) }
+			closeLabel={ translate( 'Go back' ) }
+			isLoading={ isDeleteInProgress }
+			isDestructive
 		>
-			<h2 className="stored-credit-card-delete-dialog__heading">
-				{ translate( 'Delete payment method' ) }
-			</h2>
-
 			<p>
 				{ translate(
 					'The payment method {{paymentMethodSummary/}} will be removed from your account',
@@ -87,7 +77,7 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 					isFetching={ isFetching }
 				/>
 			) }
-		</Dialog>
+		</A4AConfirmationDialog>
 	);
 };
 

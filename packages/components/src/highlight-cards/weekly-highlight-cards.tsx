@@ -15,6 +15,7 @@ import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
 import CountComparisonCard from './count-comparison-card';
+import HighlightCardsHeading from './highlight-cards-heading';
 import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
@@ -253,7 +254,7 @@ export default function WeeklyHighlightCards( {
 
 	return (
 		<div className={ clsx( 'highlight-cards', className ?? null ) }>
-			<h3 className="highlight-cards-heading">
+			<HighlightCardsHeading>
 				<span>
 					{ currentPeriod === PAST_THIRTY_DAYS
 						? translate( '30-day highlights' )
@@ -321,7 +322,7 @@ export default function WeeklyHighlightCards( {
 						showTooltip={ showSettingsTooltip }
 					/>
 				) }
-			</h3>
+			</HighlightCardsHeading>
 
 			<ComponentSwapper
 				breakpoint="<660px"
