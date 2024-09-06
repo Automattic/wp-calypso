@@ -15,6 +15,9 @@ export const COMPACT_FORMATTING_OPTIONS = {
 export const STANDARD_FORMATTING_OPTIONS = {
 	notation: 'standard',
 } as Intl.NumberFormatOptions;
+export const PERCENTAGE_FORMATTING_OPTIONS = {
+	style: 'percent',
+} as Intl.NumberFormatOptions;
 
 // Default Options
 export const DEFAULT_OPTIONS = { ...COMPACT_FORMATTING_OPTIONS };
@@ -35,7 +38,7 @@ export default function formatNumber(
 	// This approach ensures a smooth user experience by avoiding disruption for unaffected users.
 	// Refer to https://github.com/Automattic/wp-calypso/issues/77635 for more details.
 	try {
-		new Intl.NumberFormat( locale, options ).format( number as number );
+		return new Intl.NumberFormat( locale, options ).format( number );
 	} catch ( error: unknown ) {
 		warnOnce(
 			`formatted-number numberFormat error: Intl.NumberFormat().format( ${ typeof number } )`,

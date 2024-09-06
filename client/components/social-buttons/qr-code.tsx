@@ -57,7 +57,7 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 			data-e2e-link="magic-login-link"
 			key="lost-password-link"
 		>
-			<JetpackLogo monochrome={ isDisabled } size={ 20 } />
+			<JetpackLogo monochrome={ isDisabled } size={ 20 } className="social-icons" />
 			<span className="social-buttons__service-name">{ translate( 'Login via app' ) }</span>
 		</Button>
 	);

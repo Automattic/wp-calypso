@@ -430,6 +430,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					className="button navigation-link step-container__navigation-link has-underline is-borderless"
 					disabled={ isPending }
 					onClick={ onSkip }
+					type="button"
 				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>
