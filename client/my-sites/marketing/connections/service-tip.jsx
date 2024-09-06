@@ -90,10 +90,10 @@ class SharingServiceTip extends Component {
 
 	instagram() {
 		return this.props.translate(
-			'You can also add the {{widgetLink}}Latest Instagram Posts block{/widgetLink}} to display your latest Instagram photos on your site.',
+			'You can also add the {{instagramBlockLink}}Latest Instagram Posts block{/instagramBlockLink} to display your latest Instagram photos on your site.',
 			{
 				components: {
-					widgetLink: (
+					instagramBlockLink: (
 						<a
 							href={ localizeUrl(
 								'https://wordpress.com/support/instagram/#embed-a-feed-of-instagram-posts'
