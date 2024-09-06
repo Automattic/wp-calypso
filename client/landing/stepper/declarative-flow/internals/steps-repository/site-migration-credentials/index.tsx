@@ -15,6 +15,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -172,6 +173,36 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		requestAutomatedMigration( data );
 	};
 
+	const [ siteAddress, setSiteAddress ] = useState( importSiteQueryParam );
+	const [ siteAddressWarning, setSiteAddressWarning ] = useState( '' );
+	const { data: urlData, error: analyzerError } = useAnalyzeUrlQuery( siteAddress );
+
+	const onSiteAddressBlur = async () => {
+		const newValue = watch( 'siteAddress' );
+		const isValid = isValidUrl( newValue );
+		if ( isValid && newValue !== siteAddress ) {
+			setSiteAddress( newValue );
+		}
+	};
+
+	useEffect( () => {
+		if ( analyzerError ) {
+			setSiteAddressWarning( translate( 'This does not appear to be a valid URL.' ) );
+		} else if ( urlData ) {
+			if ( urlData.platform !== 'wordpress' ) {
+				setSiteAddressWarning(
+					translate(
+						'This site does not appear to be a WordPress site. If you are sure this is a WordPress site, you can continue.'
+					)
+				);
+			} else if ( urlData.platform_data?.is_wpcom ) {
+				setSiteAddressWarning( translate( 'This site is already hosted on WordPress.com.' ) );
+			} else {
+				setSiteAddressWarning( '' );
+			}
+		}
+	}, [ translate, urlData, analyzerError ] );
+
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
 			<Card>
@@ -229,13 +260,15 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									} }
 									render={ ( { field } ) => (
 										<FormTextInput
-											readOnly={ !! importSiteQueryParam }
-											disabled={ !! importSiteQueryParam }
 											id="site-address"
 											isError={ !! errors.siteAddress }
 											placeholder={ translate( 'Enter your WordPress site address.' ) }
 											type="text"
 											{ ...field }
+											onBlur={ () => {
+												field.onBlur();
+												onSiteAddressBlur();
+											} }
 										/>
 									) }
 								/>
@@ -243,6 +276,11 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 								{ errors?.siteAddress && (
 									<div className="site-migration-credentials__form-error">
 										{ errors.siteAddress.message }
+									</div>
+								) }
+								{ siteAddressWarning && (
+									<div className="site-migration-credentials__form-warning">
+										{ siteAddressWarning }
 									</div>
 								) }
 							</div>
