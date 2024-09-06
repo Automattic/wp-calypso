@@ -20,7 +20,7 @@ export const LLMMessage = ( { message, rotate, secondaryArea }: LLMMessageProps 
 			<div className="content">
 				<img
 					src={ rotate ? IALoadingIcon : IAIcon }
-					alt={ translate( 'IA generated content icon' ) }
+					alt={ translate( 'AI generated content icon' ) }
 					className={ clsx( { rotate: !! rotate } ) }
 				/>
 				<span className="message">{ message }</span>
