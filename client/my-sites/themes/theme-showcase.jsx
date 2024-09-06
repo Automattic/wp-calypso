@@ -684,9 +684,15 @@ class ThemeShowcase extends Component {
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
 					{ ! isCollectionView && (
-						<InView rootMargin="-180px 0px 0px 0px" fallbackInView>
+						<InView rootMargin="-32px 0px 0px 0px" threshold={ 1 } fallbackInView>
 							{ ( { inView, ref } ) => (
 								<>
+									<div
+										className={ clsx( 'themes__controls-placeholder', {
+											'is-sticky': this.shouldThemeControlsSticky( inView ),
+										} ) }
+										ref={ ref }
+									/>
 									<div
 										className={ clsx( 'themes__controls', {
 											'is-sticky': this.shouldThemeControlsSticky( inView ),
@@ -744,7 +750,6 @@ class ThemeShowcase extends Component {
 											) }
 										</div>
 									</div>
-									<div className="themes__controls-placeholder" ref={ ref } />
 								</>
 							) }
 						</InView>
