@@ -124,7 +124,7 @@ export class LoginForm extends Component {
 		emailSuggestion: '',
 		emailSuggestionError: false,
 		password: '',
-		lastUsedAuthenticationMethod: '',
+		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
 	};
 
 	componentDidMount() {
@@ -134,9 +134,6 @@ export class LoginForm extends Component {
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
 			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
 		} );
-
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod() } );
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -796,14 +793,14 @@ export class LoginForm extends Component {
 			...params,
 		} );
 
-	getLastUsedAuthenticationMethod = () => {
+	getLastUsedAuthenticationMethod() {
 		if ( typeof document !== 'undefined' ) {
 			const cookies = cookie.parse( document.cookie );
 			return cookies.last_used_authentication_method ?? '';
 		}
 
 		return '';
-	};
+	}
 
 	resetLastUsedAuthenticationMethod = () => {
 		this.setState( { lastUsedAuthenticationMethod: 'password' } );
