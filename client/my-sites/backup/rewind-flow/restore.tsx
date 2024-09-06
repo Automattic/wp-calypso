@@ -249,7 +249,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					},
 				} ) }
 			</p>
-			{ showRealTimeMessage && (
+			{ config.isEnabled( 'jetpack/backup-realtime-message' ) && showRealTimeMessage && (
 				<BackupRealtimeMessage
 					baseBackupDate={ baseBackupDate }
 					eventsCount={ backup.rewindStepCount }
