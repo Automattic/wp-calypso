@@ -51,6 +51,13 @@ const DateRangePickerShortcuts = ( {
 			range: 364, // ranges are zero based!
 			period: DATERANGE_PERIOD.MONTH,
 		},
+		{
+			id: 'custom_date_range',
+			label: translate( 'Custom Range' ),
+			offset: 0,
+			range: 0,
+			period: DATERANGE_PERIOD.DAY,
+		},
 	];
 
 	const shortcutList = getShortcutList();
