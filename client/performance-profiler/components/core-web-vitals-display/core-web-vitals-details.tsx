@@ -51,6 +51,14 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return '';
 	};
 
+	// Add leading zero to date values
+	const addLeadingZero = ( value: number ) => {
+		if ( value < 10 ) {
+			return `0${ value }`;
+		}
+		return value;
+	};
+
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
@@ -69,7 +77,6 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 			formattedDate = date;
 		} else {
 			const { year, month, day } = date;
-			const addLeadingZero = ( value: number ) => ( value < 10 ? `0${ value }` : value );
 			formattedDate = `${ year }-${ addLeadingZero( month ) }-${ addLeadingZero( day ) }`;
 		}
 
