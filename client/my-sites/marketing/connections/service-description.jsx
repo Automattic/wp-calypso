@@ -154,14 +154,8 @@ class SharingServiceDescription extends Component {
 				);
 			},
 			instagram_basic_display: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Connected to your Instagram account.', {
-						comment: 'Description for Instagram when one or more accounts are connected',
-					} );
-				}
-
-				return this.props.translate( 'Connect to use the Instagram widget.', {
-					comment: 'Description for Instagram when no accounts are connected',
+				return this.props.translate( 'Connected to your Instagram account.', {
+					comment: 'Description for Instagram when one or more accounts are connected',
 				} );
 			},
 			google_photos: function () {
