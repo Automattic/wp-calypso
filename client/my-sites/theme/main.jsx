@@ -21,6 +21,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { Icon, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import photon from 'photon';
@@ -759,6 +760,7 @@ class ThemeSheet extends Component {
 			! isWPForTeamsSite &&
 			! this.shouldRenderForStaging() &&
 			( ! this.hasWpOrgThemeUpsellBanner() || ! isLoggedIn );
+		const isExternalLink = ! this.props.isWpcomTheme || this.props.isExternallyManagedTheme;
 
 		return (
 			<div className="theme__sheet-header">
@@ -785,6 +787,7 @@ class ThemeSheet extends Component {
 						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
+								className="theme__sheet-demo-button"
 								onClick={ ( e ) => {
 									this.previewAction( e, 'link', 'actions' );
 								} }
@@ -792,6 +795,7 @@ class ThemeSheet extends Component {
 								{ translate( 'Demo site', {
 									context: 'The button to open the demo site of individual theme',
 								} ) }
+								{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
 							</Button>
 						) }
 					</div>
