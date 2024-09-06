@@ -103,7 +103,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
-	const mergedDomainCartItems = domainCartItems.slice( 0 );
+	const mergedDomainCartItems = Array.isArray( domainCartItems ) ? domainCartItems.slice( 0 ) : [];
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
@@ -148,7 +148,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	}
 
 	const isPaidDomainItem = Boolean(
-		domainCartItem?.product_slug || domainCartItems?.some( ( el ) => el.product_slug )
+		domainCartItem?.product_slug ||
+			( Array.isArray( domainCartItems ) && domainCartItems.some( ( el ) => el.product_slug ) )
 	);
 
 	// Default visibility is public
@@ -241,10 +242,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		if ( domainCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
-		}
-
-		if ( productCartItems?.length && site?.siteSlug ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
