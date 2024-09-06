@@ -259,16 +259,16 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/connections-instagram.png',
-					alt: this.props.translate( 'Add an Instagram widget', { textOnly: true } ),
+					alt: this.props.translate( 'Add the Latest Instagram Posts block', { textOnly: true } ),
 				},
 				label: this.props.translate(
-					'Add an {{link}}Instagram widget{{/link}} to display your latest photos.',
+					'Add the {{link}}Latest Instagram Posts block{{/link}} to display your latest photos.',
 					{
 						components: {
 							link: (
 								<a
 									href={ localizeUrl(
-										'https://wordpress.com/support/instagram/instagram-widget/'
+										'https://wordpress.com/support/instagram/#embed-a-feed-of-instagram-posts'
 									) }
 								/>
 							),
