@@ -548,14 +548,14 @@
 	}
 
 	.themes__controls-placeholder {
+		.is-logged-out & {
+			display: none;
+		}
+
 		@include break-medium {
 			padding-top: 24px;
 			margin-top: -24px;
 			box-sizing: content-box;
-
-			.is-logged-out & {
-				display: none;
-			}
 
 			.is-global-sidebar-visible & {
 				padding-top: 40px;
