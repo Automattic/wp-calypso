@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
@@ -146,11 +148,14 @@ $blueberry-color: #3858e9;
 
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
+				width: 100%;
+				overflow-x: auto;
 
 				table {
 					table-layout: fixed;
 					width: 100%;
 					margin-bottom: 0;
+					min-width: $break-small;
 
 					th,
 					td {
