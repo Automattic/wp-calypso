@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -13,6 +14,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -33,7 +35,16 @@ export default function TeamList() {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		layout: {
+			styles: {
+				actions: {
+					width: isDesktop ? '10%' : undefined,
+				},
+			},
+		},
+	} );
 
 	const { members, hasMembers, isPending, refetch } = useMemberList();
 
@@ -56,7 +67,8 @@ export default function TeamList() {
 		() => [
 			{
 				id: 'user',
-				header: translate( 'User' ).toUpperCase(),
+				label: translate( 'User' ).toUpperCase(),
+				getValue: ( { item }: { item: TeamMember } ) => item.displayName ?? '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return <MemberColumn member={ item } withRoleStatus={ ! isDesktop } />;
 				},
@@ -67,7 +79,8 @@ export default function TeamList() {
 				? [
 						{
 							id: 'role',
-							header: translate( 'Role' ).toUpperCase(),
+							label: translate( 'Role' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ) => item.role || '',
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <RoleStatusColumn member={ item } />;
 							},
@@ -76,7 +89,8 @@ export default function TeamList() {
 						},
 						{
 							id: 'added-date',
-							header: translate( 'Added' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ): string => item.dateAdded || '',
+							label: translate( 'Added' ).toUpperCase(),
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <DateColumn date={ item.dateAdded } />;
 							},
@@ -87,17 +101,17 @@ export default function TeamList() {
 				: [] ),
 			{
 				id: 'actions',
-				header: '',
+				getValue: () => '',
+				label: '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return (
 						<ActionColumn
 							member={ item }
-							onMenuSelected={ ( action ) => handleAction( action, item ) }
+							onMenuSelected={ ( action, callback ) => handleAction( action, item, callback ) }
 							canRemove={ canRemove || item.email === currentUser?.email }
 						/>
 					);
 				},
-				width: isDesktop ? '40%' : undefined,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -105,8 +119,12 @@ export default function TeamList() {
 		[ canRemove, currentUser?.email, handleAction, isDesktop, translate ]
 	);
 
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( members, dataViewsState, fields );
+	}, [ members, dataViewsState, fields ] );
+
 	if ( isPending ) {
-		// FIXME: Add placeholder when UI is pending
+		return <PagePlaceholder />;
 	}
 
 	if ( ! hasMembers ) {
@@ -114,7 +132,7 @@ export default function TeamList() {
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
@@ -128,17 +146,15 @@ export default function TeamList() {
 			<LayoutBody>
 				<ItemsDataViews
 					data={ {
-						items: members,
+						items,
 						getItemId: ( user ) => `${ user.id }`,
-						pagination: {
-							totalItems: 1,
-							totalPages: 1,
-						},
+						pagination: paginationInfo,
 						enableSearch: false,
-						fields: fields,
+						fields,
 						actions: [],
 						setDataViewsState: setDataViewsState,
 						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
 					} }
 				/>
 			</LayoutBody>

@@ -4,27 +4,9 @@ import { Fragment } from '@wordpress/element';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useState, KeyboardEvent } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
+import { Product, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 import './map-plan.scss';
-
-type Plan = {
-	plan_id: string;
-	name: string;
-	plan_interval: string;
-	active_subscriptions: number;
-	is_active: boolean;
-	plan_currency: string;
-	plan_amount_decimal: number;
-	product_id: string;
-};
-
-type Product = {
-	id: number;
-	price: string;
-	currency: string;
-	title: string;
-	interval: string;
-};
 
 export type TierToAdd = {
 	currency: string;
@@ -42,16 +24,16 @@ export type TierToAdd = {
 
 type MapPlanProps = {
 	plan: Plan;
-	products: Array< Product >;
-	map_plans: any;
-	siteId: string;
+	products: Product[];
+	map_plans: Record< string, string >;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 	onProductAdd: ( arg0: TierToAdd | null ) => void;
 	tierToAdd: TierToAdd;
 };
 
-function displayProduct( product: Product | undefined ) {
+function displayProduct( product?: Product ) {
 	if ( ! product ) {
 		return 'Select a Newsletter Tier';
 	}
@@ -66,7 +48,7 @@ function displayProduct( product: Product | undefined ) {
 	);
 }
 
-function getProductChoices( products: Array< Product > ) {
+function getProductChoices( products: Product[] ) {
 	return products.map( ( product ) => ( {
 		info: `${ formatCurrency( parseFloat( product.price ), product.currency ) } / ${
 			product.interval

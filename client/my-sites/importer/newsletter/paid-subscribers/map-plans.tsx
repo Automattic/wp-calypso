@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, useRef } from 'react';
+import { PaidSubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -18,8 +19,8 @@ import { MapPlan, TierToAdd } from './map-plan';
 type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
-	cardData: any;
-	siteId: string;
+	cardData: PaidSubscribersStepContent;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 };
@@ -58,13 +59,17 @@ export default function MapPlans( {
 		}
 		sizeOfProductsRef.current = sizeOfProducts;
 		queryClient.invalidateQueries( {
-			queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
+			queryKey: [ 'paid-newsletter-importer', siteId, engine ],
 		} );
 	}, [ sizeOfProducts, sizeOfProductsRef, siteId, engine, currentStep, queryClient ] );
 
-	const monthyPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'month' );
+	const monthyPlan = cardData.plans.find( ( plan ) => plan.plan_interval === 'month' );
+	const annualPlan = cardData.plans.find( ( plan ) => plan.plan_interval === 'year' );
 
-	const annualPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'year' );
+	// TODO what if those plans are undefined?
+	if ( ! monthyPlan || ! annualPlan ) {
+		return;
+	}
 
 	const tierToAdd = {
 		currency: monthyPlan.plan_currency,

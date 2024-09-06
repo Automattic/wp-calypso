@@ -1,6 +1,7 @@
 export { default } from './components';
 export { default as themesIllustrationImage } from './components/assets/images/themes-illustration.png';
 export { default as assemblerIllustrationImage } from './components/assets/images/assembler-illustration.png';
+export { default as assemblerIllustrationV2Image } from './components/assets/images/assembler-illustration-v2.png';
 export { default as hiBigSky } from './components/assets/images/hi-big-sky.png';
 export { default as bigSkyModalHeader } from './components/assets/images/big-sky-interstitial-800.png';
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';

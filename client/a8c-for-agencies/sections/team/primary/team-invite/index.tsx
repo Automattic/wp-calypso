@@ -63,7 +63,7 @@ export default function TeamInvite() {
 	}, [] );
 
 	return (
-		<Layout className="team-invite" title={ title } wide>
+		<Layout className="team-invite" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
