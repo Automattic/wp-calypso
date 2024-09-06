@@ -535,6 +535,14 @@
 				top: calc(var(--masterbar-height) + 16px);
 				width: calc(100% - var(--sidebar-width-max) - 31px);
 				padding: 40px 32px 8px;
+
+
+				// Make the scroll behavior works on the top of the fixed element.
+				pointer-events: none;
+
+				> * {
+					pointer-events: auto;
+				}
 			}
 		}
 	}
