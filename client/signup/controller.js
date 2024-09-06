@@ -103,7 +103,6 @@ export default {
 			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'pressable-nux' ||
 			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
