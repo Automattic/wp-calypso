@@ -100,11 +100,9 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const handleButtonClick = ( action: string ) => {
 		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
 			setIsOpen( true );
-		}
-		if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
+		} else if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
 			setIsFloatingPanelOpen( false );
-		}
-		if ( action === FEEDBACK_ACTION_LEAVE_REVIEW ) {
+		} else if ( action === FEEDBACK_ACTION_LEAVE_REVIEW ) {
 			setIsFloatingPanelOpen( false );
 			window.open( FEEDBACK_LEAVE_REVIEW_URL );
 		}
