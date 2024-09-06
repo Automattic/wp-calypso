@@ -26,7 +26,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return null;
 	}
 
-	const { displayName } = metricsNames[ activeTab ];
+	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 	const valuation = mapThresholdsToStatus( activeTab, value );
 
