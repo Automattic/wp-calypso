@@ -10,8 +10,7 @@ const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
 const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
 const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating-panel';
 
-const FEEDBACK_LEAVE_REVIEW_URL =
-	'https://login.wordpress.org/?redirect_to=https://wordpress.org/support/plugin/jetpack/reviews/#new-post';
+const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
 
 interface FeedbackProps {
 	siteId: number;
