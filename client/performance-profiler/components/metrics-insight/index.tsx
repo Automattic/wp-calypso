@@ -38,6 +38,10 @@ const Header = styled.div`
 	font-size: 16px;
 	width: 100%;
 
+	.insight-header-container > div {
+		width: 100%;
+	}
+
 	p {
 		display: inline;
 	}
@@ -66,6 +70,7 @@ const Header = styled.div`
 		&.is-mobile {
 			float: none;
 			display: inline-block;
+			margin-top: 8px;
 		}
 	}
 
