@@ -317,7 +317,6 @@ import {
 	FEATURE_UNLIMITED_ENTITIES,
 	FEATURE_CUSTOMIZE_STYLE,
 	FEATURE_WOO_THEMES,
-	FEATURE_WOO_EXTENSIONS,
 	FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS,
 	FEATURE_GOOGLE_LISTING_ADS,
 	FEATURE_WOO_PAYMENTS,
@@ -325,6 +324,10 @@ import {
 	FEATURE_WOO_TAX_SOLUTIONS,
 	FEATURE_WOO_BRANDS,
 	FEATURE_WOO_AUTOMATE,
+	FEATURE_CONNECT_ANALYTICS,
+	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
+	FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS,
+	FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
 } from './constants';
 import {
 	isAssignedToSimplifiedFeaturesGridExperiment,
@@ -532,15 +535,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-		getTitle: () => {
-			if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
-				return i18n.translate( 'Unlimited premium themes' );
-			} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
-				return i18n.translate( 'All premium themes' );
-			}
-
-			return i18n.translate( 'Access to all premium themes' );
-		},
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'All premium themes' )
+				: i18n.translate( 'Access to all premium themes' ),
 		getDescription: () => {
 			return i18n.translate( 'Switch between all of our premium design themes.' );
 		},
@@ -1367,7 +1365,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => FEATURE_ONE_CLICK_RESTORE_V2,
 		getTitle: () =>
-			isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' )
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'One-click restores' )
 				: i18n.translate( 'One-click restore' ),
 		getDescription: () =>
@@ -1855,7 +1853,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STYLE_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Customize fonts and colors' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Customize fonts and colors sitewide' )
+				: i18n.translate( 'Customize fonts and colors' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
@@ -1883,10 +1884,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STATS_PAID ]: {
 		getSlug: () => FEATURE_STATS_PAID,
-		getTitle: () =>
-			isAssignedToSimplifiedFeaturesGridExperiment()
-				? i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' )
-				: i18n.translate( 'In-depth site analytics dashboard' ),
+		getTitle: () => i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
 			i18n.translate(
 				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
@@ -1931,7 +1929,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DATACENTRE_FAILOVER ]: {
 		getSlug: () => FEATURE_DATACENTRE_FAILOVER,
-		getTitle: () => i18n.translate( 'Automatic datacenter fail-over' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Automatic datacenter failover' )
+				: i18n.translate( 'Automatic datacenter fail-over' ),
 		getDescription: () =>
 			i18n.translate( 'Count on your site being replicated in real-time to a second data center.' ),
 	},
@@ -1961,15 +1962,25 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 		getTitle: () => i18n.translate( 'Vulnerability notifications for core and plugins' ),
 		getDescription: () =>
-			i18n.translate(
-				'Stress less knowing there’s a dedicated team identifying potential vulnerabilities for WordPress and plugins, ensuring early detection and preventing future attacks.'
-			),
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate(
+						'We have a dedicated team identifying potential vulnerabilities for WordPress and plugins, ensuring early detection and preventing future attacks.'
+				  )
+				: i18n.translate(
+						'Stress less knowing there’s a dedicated team identifying potential vulnerabilities for WordPress and plugins, ensuring early detection and preventing future attacks.'
+				  ),
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
 		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
-			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate(
+						'Breeze past DDoS attacks thanks to real-time monitoring and mitigation.'
+				  )
+				: i18n.translate(
+						'Breeze past DDoS attacks thanks to real time monitoring and mitigation.'
+				  ),
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
@@ -1988,7 +1999,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING ]: {
 		getSlug: () => FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
-		getTitle: () => i18n.translate( 'Seamless staging and production syncing' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Seamless syncing between staging and production' )
+				: i18n.translate( 'Seamless staging and production syncing' ),
 		getDescription: () =>
 			i18n.translate(
 				'Iterate faster and deploy confidently by synchronizing staging and production environments in a few short steps.'
@@ -2117,7 +2131,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
-		getTitle: () => i18n.translate( 'Min/max order quantities' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Min/max Quantities' )
+				: i18n.translate( 'Min/max order quantities' ),
 		getDescription: () =>
 			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
@@ -2320,10 +2337,13 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
 		getTitle: () =>
-			isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' )
+			isAssignedToSimplifiedFeaturesGridExperiment()
 				? i18n.translate( 'Collect payments with PayPal' )
 				: i18n.translate( 'Pay with PayPal' ),
-		getDescription: () => i18n.translate( 'Collect payments with PayPal.' ),
+		getDescription: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Collect payments or donations securely through your site via PayPal.' )
+				: i18n.translate( 'Collect payments with PayPal.' ),
 	},
 	[ FEATURE_PAYMENT_BUTTONS_JP ]: {
 		getSlug: () => FEATURE_PAYMENT_BUTTONS_JP,
@@ -2390,9 +2410,13 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Product Add-Ons' )
 				: i18n.translate( 'Product add-ons' ),
 		getDescription: () =>
-			i18n.translate(
-				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
-			),
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate(
+						'Offer extra products and services, such as gift wrapping, a special message, extended warranty, insurance, customizations, and more.'
+				  )
+				: i18n.translate(
+						'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
+				  ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ASSEMBLED_KITS ]: {
@@ -2481,6 +2505,7 @@ const FEATURES_LIST: FeatureList = {
 			return i18n.translate( 'Expert support' );
 		},
 		getDescription: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment() ||
 			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 			i18n.hasTranslation( 'Prompt support from our expert, friendly Happiness team' )
 				? i18n.translate( 'Prompt support from our expert, friendly Happiness team' )
@@ -2549,12 +2574,19 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_GIFT_CARDS ]: {
 		getSlug: () => FEATURE_GIFT_CARDS,
 		getTitle: () => i18n.translate( 'Gift cards' ),
-		getDescription: () => '',
+		getDescription: () =>
+			i18n.translate( 'Offer multi-purpose gift cards that customers can redeem online.' ),
 	},
 	[ FEATURE_PRODUCT_BUNDLES ]: {
 		getSlug: () => FEATURE_PRODUCT_BUNDLES,
-		getTitle: () => i18n.translate( 'Product bundles' ),
-		getDescription: () => '',
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Product Bundles' )
+				: i18n.translate( 'Product bundles' ),
+		getDescription: () =>
+			i18n.translate(
+				'Combine products in bundles. Offer discount packages and create product kits and curated lists of products that are bought together often.'
+			),
 	},
 	[ FEATURE_CUSTOM_PRODUCT_KITS ]: {
 		getSlug: () => FEATURE_CUSTOM_PRODUCT_KITS,
@@ -2568,8 +2600,14 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PRODUCT_RECOMMENDATIONS ]: {
 		getSlug: () => FEATURE_PRODUCT_RECOMMENDATIONS,
-		getTitle: () => i18n.translate( 'Product recommendations' ),
-		getDescription: () => '',
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Product Recommendations' )
+				: i18n.translate( 'Product recommendations' ),
+		getDescription: () =>
+			i18n.translate(
+				'Offer smart upsells, cross-sells, and “frequently bought together” recommendations and measure their impact with in-depth analytics.'
+			),
 	},
 	[ FEATURE_INTEGRATED_PAYMENTS ]: {
 		getSlug: () => FEATURE_INTEGRATED_PAYMENTS,
@@ -2696,37 +2734,81 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_WOO_THEMES,
 		getTitle: () => i18n.translate( '3 bundled premium WooCommerce themes' ),
 	},
-	[ FEATURE_WOO_EXTENSIONS ]: {
-		getSlug: () => FEATURE_WOO_EXTENSIONS,
-		getTitle: () => i18n.translate( 'Bundled extensions worth over $800/year, including:' ),
-	},
 	[ FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS ]: {
 		getSlug: () => FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS,
 		getTitle: () => i18n.translate( 'Social media integrations' ),
+		getDescription: () =>
+			i18n.translate(
+				'Be visible and let your customers connect with your brand on social media channels.'
+			),
 	},
 	[ FEATURE_WOO_PAYMENTS ]: {
 		getSlug: () => FEATURE_WOO_PAYMENTS,
 		getTitle: () => i18n.translate( 'WooCommerce Payments' ),
+		getDescription: () =>
+			i18n.translate(
+				'Accept online payments, track revenue, and handle all payment activity from your store’s dashboard.'
+			),
 	},
 	[ FEATURE_WOO_SHIPPING_TRACKING ]: {
 		getSlug: () => FEATURE_WOO_SHIPPING_TRACKING,
 		getTitle: () => i18n.translate( 'Shipping & tracking' ),
+		getDescription: () => i18n.translate( 'Integrations with top shipping carriers.' ),
 	},
 	[ FEATURE_WOO_TAX_SOLUTIONS ]: {
 		getSlug: () => FEATURE_WOO_TAX_SOLUTIONS,
 		getTitle: () => i18n.translate( 'Tax solutions - Avalara & EU Vat' ),
+		getDescription: () => i18n.translate( 'Automate your tax calculations.' ),
 	},
 	[ FEATURE_WOO_BRANDS ]: {
 		getSlug: () => FEATURE_WOO_BRANDS,
 		getTitle: () => i18n.translate( 'WooCommerce Brands' ),
+		getDescription: () =>
+			i18n.translate(
+				'Assign your products to brands and make it easier for your customers to browse your catalog by brand.'
+			),
 	},
 	[ FEATURE_WOO_AUTOMATE ]: {
 		getSlug: () => FEATURE_WOO_AUTOMATE,
 		getTitle: () => i18n.translate( 'AutomateWoo' ),
+		getDescription: () =>
+			i18n.translate(
+				'Create a near-endless range of automated workflows to help you grow your store, including different combinations of triggers, rules, and actions.'
+			),
 	},
 	[ FEATURE_GOOGLE_LISTING_ADS ]: {
 		getSlug: () => FEATURE_GOOGLE_LISTING_ADS,
 		getTitle: () => i18n.translate( 'Google Listings & Ads' ),
+		getDescription: () =>
+			i18n.translate(
+				'Create free listings and ads to showcase your products to shoppers across Google.'
+			),
+	},
+	[ FEATURE_CONNECT_ANALYTICS ]: {
+		getSlug: () => FEATURE_CONNECT_ANALYTICS,
+		getTitle: () => i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' ),
+		getDescription: () =>
+			i18n.translate(
+				'Link your accounts to gain more valuable insights in seconds. No coding required.'
+			),
+	},
+	[ FEATURE_LIMITED_SITE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_LIMITED_SITE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( 'Limited site activity log' ),
+		getDescription: () =>
+			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+	},
+	[ FEATURE_UNLIMITED_SITE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( 'Unlimited site activity log' ),
+		getDescription: () =>
+			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+	},
+	[ FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ]: {
+		getSlug: () => FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS,
+		getTitle: () => i18n.translate( 'Unlimited VideoPress videos' ),
+		getDescription: () =>
+			i18n.translate( 'Showcase your videos beautifully with the 4K VideoPress player.' ),
 	},
 	/* END: Features for experiment calypso_pricing_grid_fewer_features */
 };

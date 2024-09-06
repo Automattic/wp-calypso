@@ -438,10 +438,13 @@ import {
 	FEATURE_WOO_THEMES,
 } from './constants';
 import {
+	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_GOOGLE_LISTING_ADS,
+	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
+	FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
+	FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS,
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_BRANDS,
-	FEATURE_WOO_EXTENSIONS,
 	FEATURE_WOO_PAYMENTS,
 	FEATURE_WOO_SHIPPING_TRACKING,
 	FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS,
@@ -639,6 +642,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_PLUGIN_AUTOUPDATE_JP,
 				FEATURE_STATS_PAID,
 				FEATURE_FAST_DNS,
+				FEATURE_LIMITED_SITE_ACTIVITY_LOG,
 			];
 		}
 
@@ -836,6 +840,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_AD_FREE_EXPERIENCE,
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+				FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
 			];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 			return [
@@ -1019,7 +1024,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			return [
 				FEATURE_WOOCOMMERCE_HOSTING,
 				FEATURE_WOO_THEMES,
-				FEATURE_WOO_EXTENSIONS,
 				FEATURE_WOO_PAYMENTS,
 				FEATURE_WOO_SHIPPING_TRACKING,
 				FEATURE_WOO_TAX_SOLUTIONS,
@@ -1042,7 +1046,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_THEMES_PREMIUM_AND_STORE,
 				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_CUSTOMIZE_STYLE,
-				FEATURE_STATS_PAID,
+				FEATURE_CONNECT_ANALYTICS,
 				FEATURE_UPLOAD_PLUGINS,
 				FEATURE_DEV_TOOLS,
 				FEATURE_WOOCOMMERCE_HOSTING,
@@ -1416,6 +1420,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 				FEATURE_WORDADS,
 				FEATURE_STYLE_CUSTOMIZATION,
+				FEATURE_CONNECT_ANALYTICS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
@@ -1426,7 +1431,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 				FEATURE_CUSTOMIZE_STYLE,
-				FEATURE_STATS_PAID,
+				FEATURE_CONNECT_ANALYTICS,
 			];
 		}
 
@@ -1455,12 +1460,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupJetpackFeatures: () => {
 		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
-			return [
-				FEATURE_SITE_ACTIVITY_LOG_JP,
-				FEATURE_STATS_PAID,
-				FEATURE_PAYPAL_JP,
-				FEATURE_VIDEOPRESS_JP,
-			];
+			return [ FEATURE_PAYPAL_JP, FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 			return [];
 		}
@@ -1611,8 +1611,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_DEV_TOOLS,
 				FEATURE_SITE_STAGING_SITES,
 				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
-
-				FEATURE_MULTI_SITE,
 				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 				FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
 				FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
@@ -1625,7 +1623,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_CUSTOMIZE_STYLE,
-				FEATURE_STATS_PAID,
+				FEATURE_CONNECT_ANALYTICS,
 				FEATURE_UPLOAD_PLUGINS,
 				FEATURE_DEV_TOOLS,
 			];

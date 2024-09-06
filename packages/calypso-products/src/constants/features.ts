@@ -492,7 +492,6 @@ export const FEATURE_THEMES_PREMIUM_AND_STORE = 'feature-themes-premium-and-stor
 export const FEATURE_UNLIMITED_ENTITIES = 'feature-unlimited-entities';
 export const FEATURE_CUSTOMIZE_STYLE = 'feature-customize-style';
 export const FEATURE_WOO_THEMES = 'feature-woo-themes';
-export const FEATURE_WOO_EXTENSIONS = 'feature-woo-extensions';
 export const FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS = 'feature-woo-social-media-integrations';
 export const FEATURE_WOO_PAYMENTS = 'feature-woo-payments';
 export const FEATURE_WOO_SHIPPING_TRACKING = 'feature-woo-shipping-tracking';
@@ -500,4 +499,8 @@ export const FEATURE_WOO_TAX_SOLUTIONS = 'feature-woo-tax-solutions';
 export const FEATURE_WOO_BRANDS = 'feature-woo-brands';
 export const FEATURE_WOO_AUTOMATE = 'feature-woo-automate';
 export const FEATURE_GOOGLE_LISTING_ADS = 'feature-google-listing-ads';
+export const FEATURE_CONNECT_ANALYTICS = 'feature-connect-analytics';
+export const FEATURE_LIMITED_SITE_ACTIVITY_LOG = 'feature-limited-site-activity-log';
+export const FEATURE_UNLIMITED_SITE_ACTIVITY_LOG = 'feature-unlimited-site-activity-log';
+export const FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS = 'feature-unlimited-videopress-videos';
 /* END: Features for experiment calypso_pricing_grid_fewer_features */

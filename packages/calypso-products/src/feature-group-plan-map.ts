@@ -135,6 +135,7 @@ import {
 	FEATURE_WOOCOMMERCE_HOSTING,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_CONNECT_ANALYTICS,
 	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
 import {
@@ -402,7 +403,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_ANALYTICS ]: {
 		slug: FEATURE_GROUP_ANALYTICS,
 		getTitle: () => null,
-		getFeatures: () => [ FEATURE_STATS_PAID ],
+		getFeatures: () => [ FEATURE_CONNECT_ANALYTICS ],
 	},
 	[ FEATURE_GROUP_WOO ]: {
 		slug: FEATURE_GROUP_WOO,
