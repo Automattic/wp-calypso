@@ -157,14 +157,12 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'website_building' ) }
 				/>
@@ -173,14 +171,14 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'customization' ) }
 				/>
@@ -189,14 +187,12 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'seo' ) }
 				/>
