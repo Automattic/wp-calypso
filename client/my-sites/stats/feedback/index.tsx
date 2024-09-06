@@ -6,6 +6,9 @@ import FeedbackModal from './modal';
 
 import './style.scss';
 
+const FEEDBACK_KEY_DISMISS_DATE = 'stats-feedback-dismiss-date';
+const FEEDBACK_KEY_SUBMISSION_DATE = 'stats-feedback-submission-date';
+
 const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
 const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
 const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating-panel';
@@ -93,22 +96,95 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
+function storePanelDismissDate() {
+	localStorage.setItem( FEEDBACK_KEY_DISMISS_DATE, new Date().toISOString() );
+}
+
+function storeFeedbackSubmissionDate() {
+	localStorage.setItem( FEEDBACK_KEY_SUBMISSION_DATE, new Date().toISOString() );
+}
+
+function getDiffInMilliseconds( isoDate: string ) {
+	return new Date().getTime() - new Date( isoDate ).getTime();
+}
+
+function getDaysFromMilliseconds( milliseconds: number ) {
+	return Math.floor( milliseconds / ( 1000 * 60 * 60 * 24 ) );
+}
+
+function getMonthsFromMilliseconds( milliseconds: number ) {
+	return Math.floor( milliseconds / ( 1000 * 60 * 60 * 24 * 30 ) );
+}
+
+function getDaysFromISODate( isoDate: string ) {
+	return getDaysFromMilliseconds( getDiffInMilliseconds( isoDate ) );
+}
+
+function getMonthsFromISODate( isoDate: string ) {
+	return getMonthsFromMilliseconds( getDiffInMilliseconds( isoDate ) );
+}
+
+function didSubmitFeedbackWithinSixMonths() {
+	const submissionDate = localStorage.getItem( FEEDBACK_KEY_SUBMISSION_DATE );
+	if ( ! submissionDate ) {
+		return false;
+	}
+
+	if ( getMonthsFromISODate( submissionDate ) <= 6 ) {
+		return true;
+	}
+
+	return false;
+}
+
+function didDismissPanelWithinSevenDays() {
+	const dismissDate = localStorage.getItem( FEEDBACK_KEY_DISMISS_DATE );
+	if ( ! dismissDate ) {
+		return false;
+	}
+
+	if ( getDaysFromISODate( dismissDate ) <= 7 ) {
+		return true;
+	}
+
+	return false;
+}
+
+function shouldShowFloatingPanel() {
+	if ( didSubmitFeedbackWithinSixMonths() ) {
+		return false;
+	}
+
+	if ( didDismissPanelWithinSevenDays() ) {
+		return false;
+	}
+
+	return true;
+}
+
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
 	useEffect( () => {
-		setTimeout( () => {
-			setIsFloatingPanelOpen( true );
-		}, FEEDBACK_PANEL_PRESENTATION_DELAY );
+		if ( shouldShowFloatingPanel() ) {
+			setTimeout( () => {
+				setIsFloatingPanelOpen( true );
+			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
+		}
 	}, [] );
 
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
 			case FEEDBACK_ACTION_SEND_FEEDBACK:
+				// TODO: Should store submission date when the user actually submits the review.
+				// That means getting a status value back from the FeedbackModal component.
+				// We'll do it here for now.
+				storeFeedbackSubmissionDate();
 				setIsOpen( true );
 				break;
 			case FEEDBACK_ACTION_DISMISS_FLOATING_PANEL:
+				storePanelDismissDate();
 				setIsFloatingPanelOpen( false );
 				break;
 			case FEEDBACK_ACTION_LEAVE_REVIEW:
