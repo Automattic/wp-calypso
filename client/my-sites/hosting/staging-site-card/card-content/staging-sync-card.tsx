@@ -543,7 +543,6 @@ export const SiteSyncCard = ( {
 			siteToSync={ siteToSync }
 			progress={ progress }
 			isSyncInProgress={ isSyncInProgress }
-			isSiteWooStore={ isSiteWooStore }
 			error={ syncError }
 			siteUrls={ siteUrls }
 			onRetry={ () => {
