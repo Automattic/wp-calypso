@@ -20,9 +20,9 @@
 
 @mixin woocommerce-colors() {
 	// Override accent variables with WooCommerce colors
-	--color-accent: var(--studio-pink-50);
-	--color-accent-light: var(--studio-pink-30);
-	--color-accent-dark: var(--studio-pink-70);
+	--color-accent: var(--studio-woocommerce-purple);
+	--color-accent-light: var(--studio-woocommerce-purple-30);
+	--color-accent-dark: var(--studio-woocommerce-purple-70);
 
 	--color-woocommerce-onboarding-background: #f6f7f7;
 	--color-woocommerce-header-border: #dcdcde;

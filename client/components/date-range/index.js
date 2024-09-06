@@ -473,23 +473,18 @@ export class DateRange extends Component {
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
 					</div>
-					{ this.props.displayShortcuts && this.renderShortcuts() }
+					{ /* Render shortcuts to the right of the calendar */ }
+					{ this.props.displayShortcuts && (
+						<div className="date-range-picker-shortcuts">
+							<Shortcuts
+								onClick={ ( startDate, endDate ) =>
+									this.handleDateRangeChange( startDate, endDate )
+								}
+							/>
+						</div>
+					) }
 				</div>
 			</Popover>
-		);
-	}
-
-	/**
-	 * Renders the Shortcuts component
-	 * @returns {import('react').Element} the Shortcuts component
-	 */
-	renderShortcuts() {
-		return (
-			<div className="date-control-picker-shortcuts">
-				<Shortcuts
-					onClick={ ( startDate, endDate ) => this.handleDateRangeChange( startDate, endDate ) }
-				/>
-			</div>
 		);
 	}
 

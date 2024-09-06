@@ -123,13 +123,10 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		if (
-			window.sessionStorage.getItem( 'social_login_used' ) === 'github' &&
-			socialServiceResponse
-		) {
+		if ( service === 'github' && socialServiceResponse ) {
 			responseHandler( { ...socialServiceResponse, service: 'github' } );
 		}
-	}, [ socialServiceResponse, responseHandler ] );
+	}, [ socialServiceResponse, service, responseHandler ] );
 
 	useEffect( () => {
 		if ( code && service === 'github' && ! userHasDisconnected ) {
@@ -138,10 +135,10 @@ const GitHubLoginButton = ( {
 	}, [ code, service, userHasDisconnected, exchangeCodeForToken ] );
 
 	useEffect( () => {
-		if ( window.sessionStorage.getItem( 'social_login_used' ) === 'github' && authError ) {
+		if ( service === 'github' && authError ) {
 			handleGitHubError();
 		}
-	}, [ authError, handleGitHubError ] );
+	}, [ authError, service, handleGitHubError ] );
 
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;

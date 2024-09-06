@@ -5,7 +5,10 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const Container = styled.div`
-	background-color: var( --studio-gray-100, #101517 );
+	background:
+		linear-gradient( 90deg, var( --studio-gray-100 ) 50%, rgba( 16, 21, 23, 0 ) 100% ),
+		fixed 10px 10px /16px 16px radial-gradient( var( --studio-gray-50 ) 1px, transparent 0 ),
+		var( --studio-gray-100 );
 	border-radius: 6px;
 	display: flex;
 	flex-direction: row;
@@ -16,6 +19,13 @@ const Container = styled.div`
 	box-sizing: border-box;
 	flex-wrap: wrap;
 	padding: 24px;
+
+	@media ( max-width: 600px ) {
+		background:
+			linear-gradient( 180deg, var( --studio-gray-100 ) 50%, rgba( 16, 21, 23, 0 ) 100% ),
+			fixed 10px 10px /16px 16px radial-gradient( var( --studio-gray-50 ) 1px, transparent 0 ),
+			var( --studio-gray-100 );
+	}
 `;
 
 const Heading = styled.div`

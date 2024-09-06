@@ -10,6 +10,8 @@ const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
 const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
 const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating-panel';
 
+const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
+
 interface FeedbackProps {
 	siteId: number;
 }
@@ -95,11 +97,18 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
 
 	const handleButtonClick = ( action: string ) => {
-		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
-			setIsOpen( true );
-		}
-		if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
-			setIsFloatingPanelOpen( false );
+		switch ( action ) {
+			case FEEDBACK_ACTION_SEND_FEEDBACK:
+				setIsOpen( true );
+				break;
+			case FEEDBACK_ACTION_DISMISS_FLOATING_PANEL:
+				setIsFloatingPanelOpen( false );
+				break;
+			case FEEDBACK_ACTION_LEAVE_REVIEW:
+				setIsFloatingPanelOpen( false );
+				window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				break;
+			// Ignore other cases.
 		}
 	};
 
