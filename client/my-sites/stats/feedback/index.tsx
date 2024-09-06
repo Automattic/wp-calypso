@@ -97,13 +97,18 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
 
 	const handleButtonClick = ( action: string ) => {
-		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
-			setIsOpen( true );
-		} else if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
-			setIsFloatingPanelOpen( false );
-		} else if ( action === FEEDBACK_ACTION_LEAVE_REVIEW ) {
-			setIsFloatingPanelOpen( false );
-			window.open( FEEDBACK_LEAVE_REVIEW_URL );
+		switch ( action ) {
+			case FEEDBACK_ACTION_SEND_FEEDBACK:
+				setIsOpen( true );
+				break;
+			case FEEDBACK_ACTION_DISMISS_FLOATING_PANEL:
+				setIsFloatingPanelOpen( false );
+				break;
+			case FEEDBACK_ACTION_LEAVE_REVIEW:
+				setIsFloatingPanelOpen( false );
+				window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				break;
+			// Ignore other cases.
 		}
 	};
 
