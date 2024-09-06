@@ -1374,7 +1374,7 @@ class ThemeSheet extends Component {
 		} );
 
 		const navigationItems = [
-			{ label: 'Themes', href: this.getBackLink(), onClick: this.handleBackLinkClick },
+			{ label: translate( 'Themes' ), href: this.getBackLink(), onClick: this.handleBackLinkClick },
 			{ label: title },
 		];
 
