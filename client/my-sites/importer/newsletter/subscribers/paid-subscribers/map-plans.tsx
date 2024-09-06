@@ -1,8 +1,7 @@
-import { Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, useRef } from 'react';
-import { PaidSubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { navigate } from 'calypso/lib/navigate';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -10,20 +9,10 @@ import {
 	TYPE_TIER,
 } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import ImporterActionButton from '../../importer-action-buttons/action-button';
-import ImporterActionButtonContainer from '../../importer-action-buttons/container';
+import { StepProps } from '../../types';
+import StartImportButton from './../start-import-button';
 import { MapPlan, TierToAdd } from './map-plan';
-
-type Props = {
-	nextStepUrl: string;
-	skipNextStep: () => void;
-	cardData: PaidSubscribersStepContent;
-	siteId: number;
-	engine: string;
-	currentStep: string;
-};
 
 function formatCurrencyFloat( amount: number, currency: string ) {
 	const formattedCurrency = formatCurrency( amount, currency, {
@@ -32,14 +21,29 @@ function formatCurrencyFloat( amount: number, currency: string ) {
 	return parseFloat( formattedCurrency );
 }
 
+function shouldShowButton( cardData: any ) {
+	// Show the button if
+	if ( ! cardData?.is_connected_stripe ) {
+		return true;
+	}
+
+	// show the button if we have mapped all the
+	const plans = cardData?.plans ?? [];
+	const map_plans = cardData?.map_plans ?? {};
+
+	// Check if all items in the map array have a value for each key
+	return Object.values( plans ).every(
+		( item: any ) => map_plans[ item?.product_id ] !== undefined
+	);
+}
+
 export default function MapPlans( {
-	nextStepUrl,
-	skipNextStep,
 	cardData,
-	siteId,
+	selectedSite,
 	engine,
-	currentStep,
-}: Props ) {
+	siteSlug,
+	fromSite,
+}: StepProps ) {
 	const [ productToAdd, setProductToAdd ] = useState< TierToAdd | null >( null );
 
 	const queryClient = useQueryClient();
@@ -48,7 +52,7 @@ export default function MapPlans( {
 		setProductToAdd( null );
 	};
 
-	const products = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+	const products = useSelector( ( state ) => getProductsForSiteId( state, selectedSite.ID ) );
 	const sizeOfProductsRef = useRef( products.length );
 
 	const sizeOfProducts = products.length;
@@ -59,9 +63,9 @@ export default function MapPlans( {
 		}
 		sizeOfProductsRef.current = sizeOfProducts;
 		queryClient.invalidateQueries( {
-			queryKey: [ 'paid-newsletter-importer', siteId, engine ],
+			queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine ],
 		} );
-	}, [ sizeOfProducts, sizeOfProductsRef, siteId, engine, currentStep, queryClient ] );
+	}, [ sizeOfProducts, sizeOfProductsRef, selectedSite.ID, engine, queryClient ] );
 
 	const monthyPlan = cardData.plans.find( ( plan ) => plan.plan_interval === 'month' );
 	const annualPlan = cardData.plans.find( ( plan ) => plan.plan_interval === 'year' );
@@ -85,8 +89,10 @@ export default function MapPlans( {
 		},
 	};
 
+	const showButton = shouldShowButton( cardData );
+
 	return (
-		<Card>
+		<>
 			<h2>Paid newsletter offering</h2>
 			<p>
 				<strong>
@@ -101,9 +107,9 @@ export default function MapPlans( {
 				{ cardData.plans.map( ( plan: any ) => (
 					<MapPlan
 						key={ plan.plan_id }
-						siteId={ siteId }
+						siteId={ selectedSite.ID }
 						engine={ engine }
-						currentStep={ currentStep }
+						currentStep="subscribers"
 						plan={ plan }
 						products={ cardData.available_tiers }
 						map_plans={ cardData.map_plans }
@@ -112,26 +118,20 @@ export default function MapPlans( {
 					/>
 				) ) }
 			</div>
-			<ImporterActionButtonContainer noSpacing>
-				<ImporterActionButton
-					primary
-					href={ nextStepUrl }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_paid_importer_map_plans' );
+
+			{ showButton && (
+				<StartImportButton
+					engine={ engine }
+					siteId={ selectedSite.ID }
+					hasPaidSubscribers
+					step="subscribers"
+					navigate={ () => {
+						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
-				>
-					Continue
-				</ImporterActionButton>
-				<ImporterActionButton
-					href={ nextStepUrl }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_paid_importer_map_plans_skipped' );
-						skipNextStep();
-					} }
-				>
-					Skip for now
-				</ImporterActionButton>
-			</ImporterActionButtonContainer>
+				/>
+			) }
+			{ ! showButton && <p>Map plans on WordPress.com to continue...</p> }
+
 			{ productToAdd && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
@@ -142,6 +142,6 @@ export default function MapPlans( {
 					hideAdvancedSettings
 				/>
 			) }
-		</Card>
+		</>
 	);
 }

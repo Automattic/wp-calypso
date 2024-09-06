@@ -17,16 +17,15 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Content from './content';
 import { LogoChain } from './logo-chain';
-import PaidSubscribers from './paid-subscribers';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 
 import './importer.scss';
 
-const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
+const steps = [ Content, Subscribers, Summary ];
 
-const stepSlugs: StepId[] = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -75,17 +74,6 @@ export default function NewsletterImporter( {
 			onClick: () => {
 				page(
 					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/subscribers`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
-		{
-			message: 'Paid Subscribers',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/paid-subscribers`, {
 						from: fromSite,
 					} )
 				);
@@ -163,6 +151,8 @@ export default function NewsletterImporter( {
 		}
 	}
 
+	const stepStatus = paidNewsletterData?.steps[ step ]?.status ?? 'initial';
+
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
 			if ( selectedSite && step === stepSlugs[ 0 ] && validFromSite === false ) {
@@ -211,6 +201,7 @@ export default function NewsletterImporter( {
 					// @ts-expect-error
 					cardData={ stepContent }
 					engine={ engine }
+					status={ stepStatus }
 					isFetchingContent={ isFetchingPaidNewsletter }
 					setAutoFetchData={ setAutoFetchData }
 				/>
