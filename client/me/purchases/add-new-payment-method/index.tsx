@@ -99,7 +99,6 @@ export default function AccountLevelAddNewPaymentMethodWrapper() {
 				<QueryProducts
 					productSlugList={ [ 'value_bundle', 'personal-bundle', 'business-bundle' ] }
 				/>
-				;
 				<AddNewPaymentMethod />
 			</RazorpayHookProvider>
 		</StripeHookProvider>
