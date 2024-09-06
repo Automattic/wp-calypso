@@ -69,7 +69,8 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 			formattedDate = date;
 		} else {
 			const { year, month, day } = date;
-			formattedDate = `${ year }-${ month }-${ day }`;
+			const addLeadingZero = ( value: number ) => ( value < 10 ? `0${ value }` : value );
+			formattedDate = `${ year }-${ addLeadingZero( month ) }-${ addLeadingZero( day ) }`;
 		}
 
 		return {
