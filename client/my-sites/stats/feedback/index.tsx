@@ -108,42 +108,34 @@ function getDiffInMilliseconds( isoDate: string ) {
 	return new Date().getTime() - new Date( isoDate ).getTime();
 }
 
-function getDaysFromMilliseconds( milliseconds: number ) {
-	return Math.floor( milliseconds / ( 1000 * 60 * 60 * 24 ) );
-}
-
 function getMonthsFromMilliseconds( milliseconds: number ) {
 	return Math.floor( milliseconds / ( 1000 * 60 * 60 * 24 * 30 ) );
-}
-
-function getDaysFromISODate( isoDate: string ) {
-	return getDaysFromMilliseconds( getDiffInMilliseconds( isoDate ) );
 }
 
 function getMonthsFromISODate( isoDate: string ) {
 	return getMonthsFromMilliseconds( getDiffInMilliseconds( isoDate ) );
 }
 
-function didSubmitFeedbackWithinSixMonths() {
+function didSubmitFeedbackWithinTwelveMonths() {
 	const submissionDate = localStorage.getItem( FEEDBACK_KEY_SUBMISSION_DATE );
 	if ( ! submissionDate ) {
 		return false;
 	}
 
-	if ( getMonthsFromISODate( submissionDate ) <= 6 ) {
+	if ( getMonthsFromISODate( submissionDate ) <= 12 ) {
 		return true;
 	}
 
 	return false;
 }
 
-function didDismissPanelWithinSevenDays() {
+function didDismissPanelWithinSixMonths() {
 	const dismissDate = localStorage.getItem( FEEDBACK_KEY_DISMISS_DATE );
 	if ( ! dismissDate ) {
 		return false;
 	}
 
-	if ( getDaysFromISODate( dismissDate ) <= 7 ) {
+	if ( getMonthsFromISODate( dismissDate ) <= 6 ) {
 		return true;
 	}
 
@@ -151,11 +143,11 @@ function didDismissPanelWithinSevenDays() {
 }
 
 function shouldShowFloatingPanel() {
-	if ( didSubmitFeedbackWithinSixMonths() ) {
+	if ( didSubmitFeedbackWithinTwelveMonths() ) {
 		return false;
 	}
 
-	if ( didDismissPanelWithinSevenDays() ) {
+	if ( didDismissPanelWithinSixMonths() ) {
 		return false;
 	}
 
