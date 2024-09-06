@@ -13,6 +13,7 @@ interface Props {
 	borderless?: boolean;
 	cssClass?: string;
 	rel?: string;
+	backUrl?: string;
 	recordClick?: () => void;
 }
 
@@ -27,6 +28,7 @@ const StepNavigationLink: React.FC< Props > = ( {
 	cssClass,
 	rel,
 	recordClick,
+	backUrl,
 } ) => {
 	const translate = useTranslate();
 
@@ -59,6 +61,7 @@ const StepNavigationLink: React.FC< Props > = ( {
 			borderless={ borderless }
 			className={ buttonClasses }
 			onClick={ onClick }
+			href={ backUrl }
 			rel={ rel }
 		>
 			{ backGridicon }

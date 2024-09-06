@@ -30,8 +30,6 @@ import {
 	A4A_REFERRALS_FAQ,
 	A4A_PARTNER_DIRECTORY_LINK,
 	A4A_PURCHASES_LINK,
-	A4A_LICENSES_LINK,
-	A4A_UNASSIGNED_LICENSES_LINK,
 	A4A_BILLING_LINK,
 	A4A_INVOICES_LINK,
 	A4A_PAYMENT_METHODS_LINK,
@@ -74,8 +72,6 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PURCHASES_LINK ]: [ 'a4a_jetpack_licensing' ],
-	[ A4A_LICENSES_LINK ]: [ 'a4a_jetpack_licensing' ],
-	[ A4A_UNASSIGNED_LICENSES_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_BILLING_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_INVOICES_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_PAYMENT_METHODS_LINK ]: [ 'a4a_jetpack_licensing' ],
@@ -88,11 +84,13 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	'sites-overview': [ 'a4a_read_managed_sites' ],
 	marketplace: [ 'a4a_read_marketplace' ],
+	licenses: [ 'a4a_jetpack_licensing' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	'sites-overview': /^\/sites\/overview\/[^/]+(\/.*)?$/,
 	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
+	licenses: /^\/purchases\/licenses(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {

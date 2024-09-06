@@ -433,6 +433,11 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		padding-right: $font-body-small;
 	}
 
+	.highlight-cards-heading__update-frequency {
+		padding-left: $font-body-small;
+		padding-right: $font-body-small;
+	}
+
 	// Show count and difference on newlines.
 	.highlight-card-count {
 		align-items: flex-start;
@@ -490,5 +495,23 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 	.mobile-highlight-cards__item-trend {
 		padding-left: 8px;
+	}
+}
+
+.highlight-cards-heading__wrapper {
+	margin-bottom: $header-margin-bottom;
+
+	.highlight-cards-heading {
+		margin-bottom: 0;
+	}
+
+	.highlight-cards-heading__update-frequency {
+		line-height: 16px;
+
+		span {
+			color: var(--color-text-subtle);
+			display: inline-block;
+			font-size: $font-body-small;
+		}
 	}
 }

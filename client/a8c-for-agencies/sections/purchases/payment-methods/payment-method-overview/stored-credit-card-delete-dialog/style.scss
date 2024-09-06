@@ -10,41 +10,4 @@
 			font-size: 1rem;
 		}
 	}
-
-	.dialog__action-buttons {
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		background: var(--color-neutral-0);
-		border: 0;
-
-		a {
-			margin-right: auto;
-			font-weight: 600;
-			text-decoration: underline;
-		}
-
-		button {
-			width: 100%;
-
-			@include break-mobile {
-				width: auto;
-			}
-		}
-	}
-}
-
-.stored-credit-card-delete-dialog__heading {
-	margin: -16px -16px 16px;
-	padding: 9px 16px;
-	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-	font-weight: 600;
-	line-height: 20px;
-	border-bottom: 1px solid var(--color-neutral-5);
-
-	@include break-mobile() {
-		margin: -24px -24px 24px;
-		padding: 9px 24px;
-		line-height: 36px;
-	}
 }

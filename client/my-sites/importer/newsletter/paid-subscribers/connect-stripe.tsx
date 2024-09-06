@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
+import { PaidSubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
@@ -25,7 +26,7 @@ function updateConnectUrl( connectUrl: string, fromSite: string, engine: string 
 type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
-	cardData: any;
+	cardData: PaidSubscribersStepContent;
 	fromSite: string;
 	engine: string;
 	isFetchingContent: boolean;

@@ -46,7 +46,7 @@ export default function TeamList() {
 		},
 	} );
 
-	const { members, isPending, refetch } = useMemberList();
+	const { members, hasMembers, isPending, refetch } = useMemberList();
 
 	const title = translate( 'Manage team members' );
 
@@ -107,7 +107,7 @@ export default function TeamList() {
 					return (
 						<ActionColumn
 							member={ item }
-							onMenuSelected={ ( action ) => handleAction( action, item ) }
+							onMenuSelected={ ( action, callback ) => handleAction( action, item, callback ) }
 							canRemove={ canRemove || item.email === currentUser?.email }
 						/>
 					);
@@ -127,7 +127,7 @@ export default function TeamList() {
 		return <PagePlaceholder />;
 	}
 
-	if ( items.length === 0 ) {
+	if ( ! hasMembers ) {
 		return <GetStarted />;
 	}
 

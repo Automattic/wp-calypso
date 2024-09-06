@@ -23,7 +23,7 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 						return <p className="title-description">{ props.children }</p>;
 					},
 					code( props ) {
-						return <span className="value">{ props.children }</span>;
+						return <span className="header-code">{ props.children }</span>;
 					},
 				} }
 			>

@@ -5,7 +5,9 @@ import { Modal, Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon, people, currencyDollar, external } from '@wordpress/icons';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
+import { toInteger } from 'lodash';
 import { useEffect, useRef } from 'react';
+import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import SubscriberUploadForm from './subscriber-upload-form';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -14,7 +16,7 @@ type Props = {
 	selectedSite: SiteDetails;
 	fromSite: QueryArgParsed;
 	skipNextStep: () => void;
-	cardData: any;
+	cardData: SubscribersStepContent;
 	siteSlug: string;
 	engine: string;
 };
@@ -51,8 +53,8 @@ export default function Subscribers( {
 
 	const open = cardData?.meta?.status === 'pending' || false;
 
-	const all_emails = cardData?.meta?.email_count || 0;
-	const paid_emails = cardData?.meta?.paid_subscribers_count || 0;
+	const all_emails = toInteger( cardData?.meta?.email_count ) || 0;
+	const paid_emails = toInteger( cardData?.meta?.paid_subscribers_count ) || 0;
 	const free_emails = all_emails - paid_emails;
 
 	return (
