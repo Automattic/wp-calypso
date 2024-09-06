@@ -10,7 +10,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -30,7 +29,6 @@ import {
 	isOneTimePurchase,
 	isRefundable,
 	isSubscription,
-	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -50,6 +48,7 @@ import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
+import CancelPurchaseSupportLink from './support-link';
 
 import './style.scss';
 
@@ -364,12 +363,10 @@ class CancelPurchase extends Component {
 								<CompactCard className="cancel-purchase__footer">
 									<div className="cancel-purchase__footer-text">
 										{ hasAmountAvailableToRefund( purchase ) ? (
-											<p className="cancel-purchase__refund-amount">
-												{ this.renderFooterText( this.props ) }
-											</p>
+											<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
 										) : (
 											<p className="cancel-purchase__expiration-text">
-												{ this.renderExpirationText( this.props ) }
+												{ this.renderExpirationText() }
 											</p>
 										) }
 									</div>
@@ -378,7 +375,7 @@ class CancelPurchase extends Component {
 							</>
 						) : (
 							<>
-								<p>{ this.renderFullText( this.props ) }</p>
+								<p>{ this.renderFullText() }</p>
 								<div className="cancel-purchase__confirm-buttons">
 									{ this.renderCancelButton() }
 									<FormButton
@@ -397,25 +394,7 @@ class CancelPurchase extends Component {
 
 					<div className="cancel-purchase__right">
 						<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-						<p className="cancel-purchase__support-link">
-							{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-								? this.props.translate(
-										'Have a question or seeking a refund? {{contactLink}}Ask a Happiness Engineer{{/contactLink}}.',
-										{
-											components: {
-												contactLink: <a href={ CALYPSO_CONTACT } />,
-											},
-										}
-								  )
-								: this.props.translate(
-										'Need help with your purchase? {{link}}Ask a Happiness Engineer{{/link}}.',
-										{
-											components: {
-												link: <a href={ CALYPSO_CONTACT } />,
-											},
-										}
-								  ) }
-						</p>
+						<CancelPurchaseSupportLink purchase={ purchase } />
 					</div>
 				</div>
 			</Card>

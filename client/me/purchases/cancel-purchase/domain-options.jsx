@@ -45,6 +45,107 @@ const CancelPurchaseDomainOptions = ( {
 
 	const planCostText = purchase.totalRefundText;
 
+	const NonRefundableDomainMappingMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
+	const CancelableDomainMappingMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes mapping for the domain %(mappedDomain)s. ' +
+						"Cancelling will remove all the plan's features from your site, including the domain.",
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+							wordpressSiteUrl: purchase.domain,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
+						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
+	const NonRefundableDomainPurchaseMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainPurchase.meta,
+							domainCost: includedDomainPurchase.priceText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
+	const RefundablePurchaseWithNonRefundableDomainMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainPurchase.meta,
+							domainCost: includedDomainPurchase.priceText,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.',
+					{
+						args: {
+							domainCost: includedDomainPurchase.priceText,
+							planCost: planCostText,
+							refundAmount: purchase.refundText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
 	if (
 		! isDomainMapping( includedDomainPurchase ) &&
 		! isDomainRegistration( includedDomainPurchase )
@@ -55,115 +156,19 @@ const CancelPurchaseDomainOptions = ( {
 	// Domain mapping.
 	if ( isDomainMapping( includedDomainPurchase ) ) {
 		if ( ! isRefundable( purchase ) ) {
-			return (
-				<div>
-					<p>
-						{ translate(
-							'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
-								'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
-							{
-								args: {
-									mappedDomain: includedDomainPurchase.meta,
-									mappingCost: includedDomainPurchase.priceText,
-								},
-							}
-						) }
-					</p>
-				</div>
-			);
+			return <NonRefundableDomainMappingMessage />;
 		}
 
-		return (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes mapping for the domain %(mappedDomain)s. ' +
-							"Cancelling will remove all the plan's features from your site, including the domain.",
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-
-				<p>
-					{ translate(
-						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-								wordpressSiteUrl: purchase.domain,
-							},
-						}
-					) }
-				</p>
-
-				<p>
-					{ translate(
-						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
-							'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-			</div>
-		);
+		return <CancelableDomainMappingMessage />;
 	}
 
 	// Domain registration.
 	if ( ! isRefundable( purchase ) ) {
-		return (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
-						{
-							args: {
-								domain: includedDomainPurchase.meta,
-								domainCost: includedDomainPurchase.priceText,
-							},
-						}
-					) }
-				</p>
-			</div>
-		);
+		return <NonRefundableDomainPurchaseMessage />;
 	}
 
 	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
-		return (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
-						{
-							args: {
-								domain: includedDomainPurchase.meta,
-								domainCost: includedDomainPurchase.priceText,
-							},
-						}
-					) }
-				</p>
-				<p>
-					{ translate(
-						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-							'minus %(domainCost)s for the domain.',
-						{
-							args: {
-								domainCost: includedDomainPurchase.priceText,
-								planCost: planCostText,
-								refundAmount: purchase.refundText,
-							},
-						}
-					) }
-				</p>
-			</div>
-		);
+		return <RefundablePurchaseWithNonRefundableDomainMessage />;
 	}
 
 	return (

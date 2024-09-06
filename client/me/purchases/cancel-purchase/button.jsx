@@ -276,29 +276,27 @@ class CancelPurchaseButton extends Component {
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 
+		const isValidForRefund =
+			isDomainRegistration( purchase ) ||
+			isSubscription( purchase ) ||
+			isOneTimePurchase( purchase );
+
+		const isValidForCancel = isDomainRegistration( purchase ) && isRefundable( purchase );
+
 		const onClick = ( () => {
-			if ( hasAmountAvailableToRefund( purchase ) ) {
-				if (
-					isDomainRegistration( purchase ) ||
-					isSubscription( purchase ) ||
-					isOneTimePurchase( purchase )
-				) {
-					return this.handleCancelPurchaseClick;
-				}
-			} else {
-				if ( isDomainRegistration( purchase ) && isRefundable( purchase ) ) {
-					// Domain in AGP bought with domain credits should be canceled immediately
-					return this.handleCancelPurchaseClick;
-				}
-
-				if ( isSubscription( purchase ) ) {
-					return this.handleCancelPurchaseClick;
-				}
-
-				return () => {
-					this.cancelPurchase( purchase );
-				};
+			if ( hasAmountAvailableToRefund( purchase ) && isValidForRefund ) {
+				return this.handleCancelPurchaseClick;
 			}
+
+			if ( ! hasAmountAvailableToRefund( purchase ) && isValidForCancel ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			if ( ! hasAmountAvailableToRefund( purchase ) && isSubscription( purchase ) ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			return () => this.cancelPurchase( purchase );
 		} )();
 
 		const text = ( () => {
@@ -306,22 +304,20 @@ class CancelPurchaseButton extends Component {
 				if ( isDomainRegistration( purchase ) ) {
 					return translate( 'Cancel domain and refund' );
 				}
-
 				if ( isSubscription( purchase ) ) {
 					return translate( 'Cancel subscription' );
 				}
-
 				if ( isOneTimePurchase( purchase ) ) {
 					return translate( 'Cancel and refund' );
 				}
-			} else {
-				if ( isDomainRegistration( purchase ) ) {
-					return translate( 'Cancel domain' );
-				}
+			}
 
-				if ( isSubscription( purchase ) ) {
-					return translate( 'Cancel subscription' );
-				}
+			if ( isDomainRegistration( purchase ) ) {
+				return translate( 'Cancel domain' );
+			}
+
+			if ( isSubscription( purchase ) ) {
+				return translate( 'Cancel subscription' );
 			}
 		} )();
 
