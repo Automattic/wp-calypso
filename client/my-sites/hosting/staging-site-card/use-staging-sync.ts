@@ -53,13 +53,13 @@ export const usePullFromStagingMutation = (
 	>
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async ( options ) =>
+		mutationFn: async ( options, allowWooSync: boolean = false ) =>
 			wp.req.post(
 				{
 					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ options }
+				{ options, allow_woo_sync: allowWooSync }
 			),
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
