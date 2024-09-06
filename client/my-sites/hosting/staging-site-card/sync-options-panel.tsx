@@ -23,6 +23,11 @@ const DangerousItemsTitle = styled.p( {
 	color: '#D63638',
 } );
 
+const WooCommerceOverwriteWarning = styled.p( {
+	color: '#D63638',
+	marginTop: '1.5em',
+} );
+
 const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 	'.components-base-control__help': {
 		marginLeft: '44px',
@@ -191,7 +196,7 @@ export default function SyncOptionsPanel( {
 				} ) }
 				{ stagingSiteSyncWoo && (
 					<div>
-						<p>
+						<WooCommerceOverwriteWarning>
 							{ translate(
 								'This site has WooCommerce installed. All orders in the production database will be overwritten. {{a}}Learn more{{/a}}.',
 								{
@@ -202,8 +207,7 @@ export default function SyncOptionsPanel( {
 									},
 								}
 							) }
-						</p>
-						<p>{ translate( 'Confirm I want to proceed with database synchronization ' ) }</p>
+						</WooCommerceOverwriteWarning>
 					</div>
 				) }
 			</DangerousItemsContainer>
