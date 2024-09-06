@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
@@ -15,6 +16,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
 import useGetDisplayDate from '../use-get-display-date';
+import { BackupRealtimeMessage } from './backup-realtime-message';
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';
 
@@ -67,6 +69,8 @@ const BackupSuccessful = ( {
 	const isCloneFlow =
 		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
 
+	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
+	const showRealTimeMessage = backup.baseRewindId && baseBackupDate && backup.rewindStepCount > 0;
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -93,6 +97,13 @@ const BackupSuccessful = ( {
 			</div>
 			<div className="status-card__hide-mobile">
 				<div className="status-card__title">{ displayDateNoLatest }</div>
+				{ config.isEnabled( 'jetpack/backup-realtime-message' ) && showRealTimeMessage && (
+					<BackupRealtimeMessage
+						baseBackupDate={ baseBackupDate }
+						eventsCount={ backup.rewindStepCount }
+						selectedBackupDate={ selectedDate }
+					/>
+				) }
 			</div>
 			<div className="status-card__meta">{ meta }</div>
 			{ isMultiSite && (

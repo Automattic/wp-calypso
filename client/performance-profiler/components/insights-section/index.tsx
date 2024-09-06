@@ -7,11 +7,12 @@ type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	url: string;
 	isWpcom: boolean;
+	hash: string;
 };
 
 export const InsightsSection = ( props: InsightsSectionProps ) => {
 	const translate = useTranslate();
-	const { audits, isWpcom } = props;
+	const { audits, isWpcom, hash } = props;
 
 	return (
 		<div className="performance-profiler-insights-section">
@@ -26,6 +27,7 @@ export const InsightsSection = ( props: InsightsSectionProps ) => {
 					index={ index }
 					url={ props.url }
 					isWpcom={ isWpcom }
+					hash={ hash }
 				/>
 			) ) }
 		</div>

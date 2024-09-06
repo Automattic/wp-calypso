@@ -33,6 +33,10 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 	} );
 
+	it( 'See Home', async function () {
+		await page.waitForURL( /home/ );
+	} );
+
 	it( 'Add WordPress.com Business plan to cart', async function () {
 		await Promise.all( [
 			page.waitForURL( /.*checkout.*/ ),

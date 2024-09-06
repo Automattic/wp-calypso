@@ -26,21 +26,11 @@ interface SitesGridProps {
 	className?: string;
 	isLoading: boolean;
 	sites: SiteExcerptData[];
-	siteSelectorMode?: boolean;
-	onSiteSelectBtnClick?: ( site: SiteExcerptData ) => void;
+	onSiteSelectBtnClick: ( site: SiteExcerptData ) => void;
 }
 
 export const SitesGrid = ( props: SitesGridProps ) => {
-	const { sites, isLoading, className, siteSelectorMode = false, onSiteSelectBtnClick } = props;
-	const additionalProps = siteSelectorMode
-		? {
-				showLaunchNag: false,
-				showBadgeSection: false,
-				showThumbnailLink: false,
-				showSiteRenewLink: false,
-				onSiteSelectBtnClick,
-		  }
-		: {};
+	const { sites, isLoading, className, onSiteSelectBtnClick } = props;
 
 	return (
 		<div className={ clsx( container, className ) }>
@@ -49,7 +39,11 @@ export const SitesGrid = ( props: SitesGridProps ) => {
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
 				: sites.map( ( site ) => (
-						<SitesGridItem site={ site } key={ site.ID } { ...additionalProps } />
+						<SitesGridItem
+							site={ site }
+							key={ site.ID }
+							onSiteSelectBtnClick={ onSiteSelectBtnClick }
+						/>
 				  ) ) }
 		</div>
 	);

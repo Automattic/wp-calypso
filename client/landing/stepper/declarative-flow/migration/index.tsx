@@ -294,7 +294,7 @@ export default {
 	useStepNavigation( currentStep, navigate ) {
 		const stepHandlers = useCreateStepHandlers( navigate, this );
 
-		return stepHandlers[ currentStep ];
+		return stepHandlers[ currentStep ] || {};
 	},
 
 	useSideEffect( currentStep, navigate ) {

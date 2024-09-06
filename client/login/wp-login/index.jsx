@@ -245,13 +245,16 @@ export class Login extends Component {
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
+		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+		const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQuery?.email_address );
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
 			gravatarFrom: currentQuery?.gravatar_from,
-			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
+			gravatarFlow: isGravatarFlow,
+			emailAddress: currentQuery?.email_address,
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -286,7 +289,7 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					{ ! isFromGravatar3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
 						<div>
 							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
 								components: {

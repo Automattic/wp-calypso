@@ -69,7 +69,7 @@ export const updateFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
 	updateDashboardURLQueryArgs( { filter } );
 };
 
-export const updateSort = ( sort: DashboardSortInterface ) => () => {
+export const updateSort = ( sort?: DashboardSortInterface ) => () => {
 	updateDashboardURLQueryArgs( { sort } );
 };
 

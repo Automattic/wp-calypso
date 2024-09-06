@@ -146,7 +146,7 @@
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
-		padding-left: 16px;
+
 		@include break-large {
 			padding-left: 26px;
 		}
@@ -206,7 +206,7 @@
 	}
 
 	.sites-overview__content {
-		margin-top: 11px;
+		margin-top: 0;
 	}
 
 	@media (max-width: $break-wide) {
@@ -231,36 +231,6 @@
 	}
 }
 
-// Styles for actions (search, filters).
-.dataviews-filters__view-actions {
-	@include search-control-wpcom-styles;
-
-	.components-search-control .components-input-control__container {
-		width: 100%;
-		height: 40px;
-		flex: 1 1 auto;
-		flex-direction: row;
-		align-items: center;
-		// Places search above filters
-		z-index: 1;
-		margin-top: 2px;
-
-		.components-input-control__input {
-			padding: 0 0 0 10px;
-			font-size: $font-body-small;
-
-			&::placeholder {
-				color: var(--studio-gray-40);
-			}
-		}
-
-		// Search icon
-		.components-input-control__suffix {
-			margin-right: 4px;
-		}
-	}
-}
-
 // Style the sortable table headers.
 .wpcom-site .dataviews-view-table .components-button.is-tertiary {
 	&:active:not(:disabled),
@@ -278,6 +248,20 @@
 
 	.layout__secondary .global-sidebar {
 		border: none;
+	}
+
+	// Custom style for toggle and page number controls.
+	.item-preview__content {
+		.pagination__page-number.pagination__list-item.is-selected button,
+		.segmented-control__item.is-selected a:hover,
+		.segmented-control__item.is-selected a {
+			color: var(--studio-white);
+			background-color: var(--studio-gray-50);
+			border-color: var(--studio-gray-50);
+		}
+		.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: var(--studio-gray-50);
+		}
 	}
 }
 
@@ -419,7 +403,6 @@
 			}
 
 			li {
-				border-bottom: 1px solid #f1f1f1 !important;
 				cursor: pointer;
 			}
 
@@ -534,10 +517,10 @@
 	.is-staging-site {
 		position: relative;
 
-		.item-preview__admin-button {
+		.item-preview__admin-button.is-primary {
 			background-color: var(--studio-yellow-20);
 			color: var(--studio-yellow-80);
-			border: 0;
+			border-color: var(--studio-yellow-20);
 		}
 	}
 
@@ -572,11 +555,6 @@
 		height: 100%;
 
 		.dataviews-wrapper {
-			display: flex;
-			height: 100%;
-			overflow: hidden;
-			position: relative;
-
 			.dataviews-pagination {
 				margin: 0;
 				position: relative;
@@ -664,17 +642,18 @@
 		.dataviews-wrapper {
 			width: 100%;
 
-			> * {
-				flex-grow: 1;
-			}
-
 			.dataviews-view-list {
 				flex: 1;
 				max-height: none;
-			}
 
-			.components-base-control {
-				width: 85%;
+				// Ideally instead of reusing the site name full field
+				// We should be setting a media field and a primary field.
+				.dataviews-view-list__media-wrapper {
+					display: none;
+				}
+				.dataviews-view-list__primary-field {
+					display: none;
+				}
 			}
 		}
 
@@ -707,6 +686,14 @@
 		// Prevent the content pushed out via translateX(100%) creating a scrollbar
 		&.focus-sidebar .layout__content .layout__primary {
 			overflow-x: hidden;
+		}
+	}
+}
+
+.is-mobile-app-view {
+	.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
+		.item-preview__header {
+			padding: 0;
 		}
 	}
 }

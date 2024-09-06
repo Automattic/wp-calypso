@@ -32,6 +32,7 @@ export interface BillingTransaction {
 	cc_name: string;
 	cc_num: string;
 	cc_type: string;
+	cc_display_brand: string | null;
 	credit: string;
 	date: string;
 	desc: string;

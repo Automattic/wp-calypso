@@ -289,7 +289,7 @@ export const SftpCard = ( {
 							}
 						) }
 					</SftpEnableWarning>
-					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
+					<Button onClick={ createUser } className="sftp-card__create-credentials-button">
 						{ translate( 'Create credentials' ) }
 					</Button>
 				</>

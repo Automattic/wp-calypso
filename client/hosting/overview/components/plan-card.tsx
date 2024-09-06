@@ -127,8 +127,6 @@ const PricingSection: FC = () => {
 					<div className="hosting-overview__plan-cta">
 						{ isFreePlan && (
 							<Button
-								primary
-								compact
 								href={ `/plans/${ site?.slug }` }
 								onClick={ () =>
 									dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )

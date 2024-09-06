@@ -9,7 +9,7 @@ import {
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
-import { MARKETPLACE_TYPE_REFERRAL, MARKETPLACE_TYPE_REGULAR } from './hoc/with-marketplace-type';
+import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
 import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
@@ -98,9 +98,7 @@ export const checkoutContext: Callback = ( context, next ) => {
 			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
 			<Checkout
 				referralBlogId={ referralBlogId }
-				defaultMarketplaceType={
-					referralBlogId ? MARKETPLACE_TYPE_REFERRAL : MARKETPLACE_TYPE_REGULAR
-				}
+				defaultMarketplaceType={ referralBlogId ? MARKETPLACE_TYPE_REFERRAL : undefined }
 			/>
 		</>
 	);
