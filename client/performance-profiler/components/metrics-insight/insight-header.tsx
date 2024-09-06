@@ -17,10 +17,7 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const renderBadge = () => {
 		if (
 			! metricSavings ||
-			! metricSavings?.FCP ||
-			! metricSavings?.LCP ||
-			! metricSavings?.CLS ||
-			! metricSavings?.INP
+			! ( metricSavings?.FCP || metricSavings?.LCP || metricSavings?.CLS || metricSavings?.INP )
 		) {
 			return null;
 		}
