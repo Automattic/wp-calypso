@@ -2,6 +2,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.wp-login__container .is-social-first .login__form span.last-used-authentication-method {
+	margin-bottom: 5px;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
 .auth-form__social.is-login {
 	margin-bottom: 0;
 
@@ -28,38 +34,41 @@
 				flex-direction: column;
 				width: 100%;
 
-				.social-buttons__button {
-					align-items: center;
-					align-self: stretch;
-					background: var(--black-white-white, #fff);
-					border: 1px solid var(--studio-gray-50, #646970);
-					border-radius: 4px;
-					display: flex;
-					height: 40px;
-					justify-content: center;
-					margin-bottom: 0;
-					padding: 4px 16px;
-					border-color: #ccc;
+				@at-root .wp-login__container .is-social-first .login__form ,
+				& {
+					.social-buttons__button.button {
+						align-items: center;
+						background: var(--black-white-white, #fff);
+						border: 1px solid var(--studio-gray-50, #646970);
+						border-radius: 4px;
+						display: flex;
+						height: 40px;
+						justify-content: center;
+						margin-bottom: 0;
+						padding: 4px 16px;
+						border-color: #ccc;
 
-					& > svg {
-						border: 0;
-						border-radius: 0;
-						margin-right: auto;
-					}
+						& > svg.social-icons {
+							border: 0;
+							border-radius: 0;
+							margin-right: auto;
+						}
 
-					span {
-						font-feature-settings: "clig" off, "liga" off;
-						color: var(--studio-gray-80, #2c3338);
-						font-family: "SF Pro Text", sans-serif;
-						font-size: 0.875rem;
-						font-style: normal;
-						font-weight: 500;
-						letter-spacing: 0.32px;
-						line-height: normal;
-						margin-left: -20px;
-						margin-right: auto;
-						max-width: 240px;
-						text-align: center;
+						span.social-buttons__service-name {
+							flex: 1;
+							font-feature-settings: "clig" off, "liga" off;
+							color: var(--studio-gray-80, #2c3338);
+							font-family: "SF Pro Text", sans-serif;
+							font-size: 0.875rem;
+							font-style: normal;
+							font-weight: 500;
+							letter-spacing: 0.32px;
+							line-height: normal;
+							max-width: 240px;
+							text-align: center;
+							margin-right: auto;
+							margin-left: -20px;
+						}
 					}
 				}
 			}

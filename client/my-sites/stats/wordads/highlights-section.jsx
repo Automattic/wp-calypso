@@ -131,7 +131,7 @@ function HighlightsListing( { highlights } ) {
 				<CountCard
 					key={ highlight.id }
 					heading={ highlight.heading }
-					icon={ highlight.svgIcon }
+					icon={ <Icon icon={ highlight.svgIcon } /> }
 					value={ highlight.value }
 				/>
 			) ) }

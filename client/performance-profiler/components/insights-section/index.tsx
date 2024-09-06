@@ -8,12 +8,13 @@ type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	url: string;
 	isWpcom: boolean;
+	hash: string;
 };
 
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const { audits, isWpcom } = props;
+		const { audits, isWpcom, hash } = props;
 
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
@@ -28,6 +29,7 @@ export const InsightsSection = forwardRef(
 						index={ index }
 						url={ props.url }
 						isWpcom={ isWpcom }
+						hash={ hash }
 					/>
 				) ) }
 			</div>

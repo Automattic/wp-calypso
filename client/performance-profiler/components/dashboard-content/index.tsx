@@ -52,7 +52,13 @@ export const PerformanceProfilerDashboardContent = ( {
 				<NewsletterBanner link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` } />
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && (
-					<InsightsSection audits={ audits } url={ url } isWpcom={ is_wpcom } ref={ insightsRef } />
+					<InsightsSection
+						audits={ audits }
+						url={ url }
+						isWpcom={ is_wpcom }
+						ref={ insightsRef }
+						hash={ hash }
+					/>
 				) }
 			</div>
 
