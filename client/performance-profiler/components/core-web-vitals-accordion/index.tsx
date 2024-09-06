@@ -51,7 +51,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 
 	return (
 		<div className="core-web-vitals-accordion">
-			{ Object.entries( metricsNames ).map( ( [ key, { displayName } ] ) => {
+			{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
 				if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
 					return null;
 				}
