@@ -51,6 +51,14 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return '';
 	};
 
+	// Add leading zero to date values. Safari expects the date string to follow the ISO 8601 format (i.e., YYYY-MM-DD)
+	const addLeadingZero = ( value: number ) => {
+		if ( value < 10 ) {
+			return `0${ value }`;
+		}
+		return value;
+	};
+
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
@@ -69,7 +77,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 			formattedDate = date;
 		} else {
 			const { year, month, day } = date;
-			formattedDate = `${ year }-${ month }-${ day }`;
+			formattedDate = `${ year }-${ addLeadingZero( month ) }-${ addLeadingZero( day ) }`;
 		}
 
 		return {

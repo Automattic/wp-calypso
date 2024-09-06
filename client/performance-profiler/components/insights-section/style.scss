@@ -65,6 +65,10 @@ $blueberry-color: #3858e9;
 					color: var(--studio-orange-40);
 				}
 			}
+
+			.header-code {
+				color: #3858e9;
+			}
 		}
 
 		&.is-expanded .foldable-card__main {
@@ -121,6 +125,36 @@ $blueberry-color: #3858e9;
 
 				p {
 					line-height: 24px;
+				}
+			}
+
+			.generated-with-ia {
+				font-weight: 500;
+			}
+
+			.metrics-insight-content {
+				.survey {
+					display: flex;
+					align-items: center;
+					gap: 16px;
+					flex-wrap: wrap;
+				}
+
+				.options {
+					display: flex;
+					align-items: center;
+					gap: 4px;
+					cursor: pointer;
+
+					&.good {
+						color: var(--studio-green-50);
+						fill: var(--studio-green-50);
+					}
+
+					&.bad {
+						color: var(--studio-red-50);
+						fill: var(--studio-red-50);
+					}
 				}
 			}
 

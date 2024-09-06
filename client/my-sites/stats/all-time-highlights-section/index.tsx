@@ -2,10 +2,13 @@ import {
 	Card,
 	ComponentSwapper,
 	formattedNumber,
-	percentCalculator,
 	ShortenedNumber,
 	DotPager,
 } from '@automattic/components';
+import {
+	formatPercentage,
+	percentCalculator,
+} from '@automattic/components/src/highlight-cards/lib/numbers';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -152,8 +155,8 @@ export default function AllTimeHighlightsSection( {
 					id: 'views',
 					header: translate( 'Views' ),
 					content: <ShortenedNumber value={ viewsBestDayTotal } />,
-					footer: translate( '%(percent)d%% of views', {
-						args: { percent: bestViewsEverPercent || 0 },
+					footer: translate( '%(percent)s of views', {
+						args: { percent: formatPercentage( bestViewsEverPercent, true ) },
 						context: 'Stats: Percentage of views',
 					} ),
 				},

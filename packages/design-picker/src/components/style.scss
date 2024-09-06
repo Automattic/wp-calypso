@@ -318,14 +318,6 @@
 				}
 			}
 		}
-
-		&.theme-card--is-active {
-			order: 0;
-		}
-
-		&:not(.theme-card--is-active) {
-			order: 1;
-		}
 	}
 
 	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after,
