@@ -948,18 +948,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
-
-		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		if ( 'pressable' === partnerSlug ) {
-			const pressableTarget = `/start/pressable-nux?blogid=${ clientId }`;
-			debug(
-				'authorization-form: getRedirectionTarget -> This is a Pressable site, redirection target is: %s',
-				pressableTarget
-			);
-			return pressableTarget;
-		}
+		const { homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
 		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
