@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import IAIcon from 'calypso/assets/images/performance-profiler/ia-icon.svg';
+import IALoadingIcon from 'calypso/assets/images/performance-profiler/ia-loading-icon.svg';
 
 import './style.scss';
 
@@ -18,7 +19,7 @@ export const LLMMessage = ( { message, rotate, secondaryArea }: LLMMessageProps 
 		<div className="performance-profiler-llm-message">
 			<div className="content">
 				<img
-					src={ IAIcon }
+					src={ rotate ? IALoadingIcon : IAIcon }
 					alt={ translate( 'IA generated content icon' ) }
 					className={ clsx( { rotate: !! rotate } ) }
 				/>
