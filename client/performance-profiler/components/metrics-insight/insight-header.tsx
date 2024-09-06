@@ -12,7 +12,20 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const { data, index } = props;
 	const title = data.title ?? '';
 	const value = data.displayValue ?? '';
-	const { type } = data;
+	const { type, metricSavings } = data;
+
+	const renderBadge = () => {
+		if (
+			! metricSavings ||
+			! ( metricSavings?.FCP || metricSavings?.LCP || metricSavings?.CLS || metricSavings?.INP )
+		) {
+			return null;
+		}
+
+		return (
+			<span className={ clsx( 'impact fail', { 'is-mobile': isMobile() } ) }>High Impact</span>
+		);
+	};
 
 	return (
 		<>
@@ -38,6 +51,7 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 					<span className={ clsx( 'value', { [ type ]: true } ) }> { value }</span>
 				</span>
 			) }
+			{ renderBadge() }
 		</>
 	);
 };
