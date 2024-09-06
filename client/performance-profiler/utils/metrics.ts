@@ -39,7 +39,7 @@ export const metricValuations = {
 		heading: translate( 'What is Largest Contentful Paint?' ),
 		aka: translate( '(LCP)' ),
 		explanation: translate(
-			'Largest Contentful Paint load measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
+			'Largest Contentful Paint measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
 		),
 	},
 	cls: {
