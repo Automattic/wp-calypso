@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FeedbackModal from './modal';
 
 import './style.scss';
@@ -10,6 +10,7 @@ const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
 const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
 const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating-panel';
 
+const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
 
 interface FeedbackProps {
@@ -94,7 +95,13 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
+	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
+
+	useEffect( () => {
+		setTimeout( () => {
+			setIsFloatingPanelOpen( true );
+		}, FEEDBACK_PANEL_PRESENTATION_DELAY );
+	}, [] );
 
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
