@@ -205,9 +205,10 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 		shouldLimitGlobalStyles,
 	} );
 
-	const conditionalProps = isLocked
-		? { onImageClick: () => onPreview( design, selectedStyleVariation ) }
-		: {};
+	const conditionalProps =
+		! isLocked && isActive
+			? {}
+			: { onImageClick: () => onPreview( design, selectedStyleVariation ) };
 
 	return (
 		<ThemeCard
