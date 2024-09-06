@@ -3,8 +3,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import {
+	getAdminInterface,
 	getPluginsUrl,
 	getSettingsUrl,
+	getSiteAdminUrl,
 	getSiteMonitoringUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
@@ -33,9 +35,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				isEligible: ( site ) => {
 					const isLaunched = site.launch_status !== 'unlaunched';
 					const isA4ADevSite = site.is_a4a_dev_site;
-					const isWpcomStagingSite = false; /*useSelector( ( state: AppState ) =>
-						isSiteWpcomStaging( state, site.ID )
-					);*/
+					const isWpcomStagingSite = site.is_wpcom_staging_site;
 
 					return ! isWpcomStagingSite && ! isLaunched && ! isA4ADevSite;
 				},
@@ -53,9 +53,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				isEligible: ( site ) => {
 					const isLaunched = site.launch_status !== 'unlaunched';
 					const isA4ADevSite = site.is_a4a_dev_site;
-					const isWpcomStagingSite = false; /*useSelector( ( state: AppState ) =>
-						isSiteWpcomStaging( state, site.ID )
-					);*/
+					const isWpcomStagingSite = site.is_wpcom_staging_site;
 
 					return ! isWpcomStagingSite && ! isLaunched && !! isA4ADevSite;
 				},
@@ -109,15 +107,13 @@ export function useActions(): Action< SiteExcerptData >[] {
 				label: __( 'Plugins' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					/*
-					const wpAdminUrl = useSelector( ( state: AppState ) => getSiteAdminUrl( state, site.ID ) ?? '' );
-					const adminInterface = useSelector( ( state: AppState ) =>
-						getSiteOption( state, site.ID, 'wpcom_admin_interface' )
-					);
+					const wpAdminUrl = getSiteAdminUrl( site );
+					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
-					*/
-					window.location.href =
-						/* isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : */ getPluginsUrl( site.slug );
+
+					window.location.href = isWpAdminInterface
+						? `${ wpAdminUrl }plugins.php`
+						: getPluginsUrl( site.slug );
 
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_plugins_click' ) );
 				},
@@ -152,20 +148,20 @@ export function useActions(): Action< SiteExcerptData >[] {
 				label: __( 'Copy site' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					/* const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site ); */
 					window.location.href = addQueryArgs( `/setup/copy-site`, {
 						sourceSlug: site.slug,
 					} );
-					// startSiteCopy();
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
 				},
-				isEligible: () => {
-					/* const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
-					const isWpcomStagingSite = useSelector( ( state: AppState ) =>
-						isSiteWpcomStaging( state, site.ID );
+				isEligible: ( site ) => {
+					const isWpcomStagingSite = site.is_wpcom_staging_site;
 
+					/* const shouldShowSiteCopyItem = useSafeSiteHasFeature(
+						site?.ID,
+						WPCOM_FEATURES_COPY_SITE
+					);
 					return ! isWpcomStagingSite && shouldShowSiteCopyItem; */
-					return false;
+					return ! isWpcomStagingSite;
 				},
 			},
 
@@ -174,13 +170,20 @@ export function useActions(): Action< SiteExcerptData >[] {
 				label: __( 'Performance settings' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					window.location.href = /* isWpAdminInterface ? `${ wpAdminUrl }options-general.php?page=page-optimize` : */ `/settings/performance/${ site.slug }`;
+					const wpAdminUrl = getSiteAdminUrl( site );
+					const adminInterface = getAdminInterface( site );
+					const isWpAdminInterface = adminInterface === 'wp-admin';
+					window.location.href = isWpAdminInterface
+						? `${ wpAdminUrl }options-general.php?page=page-optimize`
+						: `/settings/performance/${ site.slug }`;
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_performance_settings_click' )
 					);
 				},
 				isEligible: ( site ) => {
-					const isClassicSimple = /* isWpAdminInterface && */ isSimpleSite( site );
+					const adminInterface = getAdminInterface( site );
+					const isWpAdminInterface = adminInterface === 'wp-admin';
+					const isClassicSimple = isWpAdminInterface && isSimpleSite( site );
 					return ! isClassicSimple;
 				},
 			},
