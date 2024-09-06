@@ -187,6 +187,7 @@ export interface PerformanceMetricsItemQueryResponse {
 	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
+	metricSavings: Record< 'FCP' | 'LCP', number > | [];
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {

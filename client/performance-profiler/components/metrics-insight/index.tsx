@@ -55,6 +55,8 @@ const Header = styled.div`
 		border-radius: 14px;
 		border: 1px solid transparent;
 		float: right;
+		font-size: 14px;
+		color: var( --studio-black );
 
 		&.fail {
 			background-color: var( --studio-red-5 );

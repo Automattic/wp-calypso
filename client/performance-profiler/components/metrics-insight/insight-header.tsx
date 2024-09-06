@@ -12,7 +12,20 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const { data, index } = props;
 	const title = data.title ?? '';
 	const value = data.displayValue ?? '';
-	const { type } = data;
+	const {
+		type,
+		metricSavings: { FCP, LCP },
+	} = data;
+
+	const renderBadge = () => {
+		if ( ! FCP && ! LCP ) {
+			return null;
+		}
+
+		return (
+			<span className={ clsx( 'impact fail', { 'is-mobile': isMobile() } ) }>High Impact</span>
+		);
+	};
 
 	return (
 		<>
@@ -38,9 +51,7 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 					<span className={ clsx( 'value', { [ type ]: true } ) }> { value }</span>
 				</span>
 			) }
-			{ type === 'fail' && (
-				<span className={ clsx( 'impact fail', { 'is-mobile': isMobile() } ) }>High Impact</span>
-			) }
+			{ renderBadge() }
 		</>
 	);
 };
