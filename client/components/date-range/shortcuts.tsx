@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -74,6 +75,7 @@ const DateRangePickerShortcuts = ( {
 					>
 						<Button onClick={ () => handleClick( shortcut ) }>
 							<span>{ shortcut.label }</span>
+							{ shortcut.id === selectedShortcut && <Icon icon={ check } /> }
 						</Button>
 					</li>
 				) ) }
