@@ -62,7 +62,7 @@ export const usePullFromStagingMutation = (
 					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ options, allow_woo_sync: isStagingSiteSyncWooEnabled }
+				{ options, allow_woo_sync: isStagingSiteSyncWooEnabled ? 1 : 0 }
 			),
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
