@@ -108,7 +108,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
 					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
-					IAGenerated={ isEnabled( 'performance-profiler/llm' ) }
+					AIGenerated={ isEnabled( 'performance-profiler/llm' ) }
 				/>
 			</Content>
 		</Card>
