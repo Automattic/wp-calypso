@@ -3,7 +3,7 @@ import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
 import { StepProps } from './types';
 
-export default function Summary( { cardData, selectedSite, engine }: StepProps ) {
+export default function Summary( { cardData }: StepProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
@@ -31,8 +31,6 @@ export default function Summary( { cardData, selectedSite, engine }: StepProps )
 			<SubscribersSummary
 				cardData={ cardData.subscribers.content }
 				status={ cardData.subscribers.status }
-				siteId={ selectedSite.ID }
-				engine={ engine }
 			/>
 		</Card>
 	);

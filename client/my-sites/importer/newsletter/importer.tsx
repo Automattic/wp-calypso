@@ -20,6 +20,7 @@ import { LogoChain } from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
+import { engineTypes } from './types';
 
 import './importer.scss';
 
@@ -34,7 +35,7 @@ const logoChainLogos = [
 
 type NewsletterImporterProps = {
 	siteSlug: string;
-	engine: string;
+	engine: engineTypes;
 	step?: StepId;
 };
 
@@ -196,9 +197,6 @@ export default function NewsletterImporter( {
 					skipNextStep={ () => {
 						skipNextStep( selectedSite.ID, engine, nextStep, step );
 					} }
-					// FIXME
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-expect-error
 					cardData={ stepContent }
 					engine={ engine }
 					status={ stepStatus }

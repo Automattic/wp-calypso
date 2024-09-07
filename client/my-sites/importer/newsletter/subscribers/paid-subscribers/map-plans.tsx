@@ -67,8 +67,8 @@ export default function MapPlans( {
 		} );
 	}, [ sizeOfProducts, sizeOfProductsRef, selectedSite.ID, engine, queryClient ] );
 
-	const monthyPlan = cardData.plans.find( ( plan ) => plan.plan_interval === 'month' );
-	const annualPlan = cardData.plans.find( ( plan ) => plan.plan_interval === 'year' );
+	const monthyPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'month' );
+	const annualPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'year' );
 
 	// TODO what if those plans are undefined?
 	if ( ! monthyPlan || ! annualPlan ) {
