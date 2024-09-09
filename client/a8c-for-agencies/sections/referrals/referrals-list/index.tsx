@@ -52,7 +52,9 @@ export default function ReferralList( {
 							id: 'client',
 							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => item.client.email,
+							render: ( { item }: { item: Referral } ): ReactNode => (
+								<span className="a4a-referrals-client">{ item.client.email }</span>
+							),
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -62,7 +64,9 @@ export default function ReferralList( {
 							id: 'client',
 							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => item.client.email,
+							render: ( { item }: { item: Referral } ): ReactNode => (
+								<span className="a4a-referrals-client">{ item.client.email }</span>
+							),
 							enableHiding: false,
 							enableSorting: false,
 						},

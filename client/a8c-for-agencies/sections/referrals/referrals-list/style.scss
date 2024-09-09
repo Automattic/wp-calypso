@@ -1,2 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+
+.a4a-referrals-client {
+	font-size: 0.875rem;
+	color: var(--color-accent-80);
+}
