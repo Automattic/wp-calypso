@@ -532,6 +532,7 @@ export function siteSelection( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
+	const isNextPathPlugins = context.path === '/plugins';
 
 	// Making sure non-connected users get redirected to user connection flow.
 	// Details: p9dueE-6Hf-p2
@@ -560,14 +561,14 @@ export function siteSelection( context, next ) {
 
 	/*
 	 * If the user has only one site, redirect to the single site context instead of
-	 * rendering the all-site views.
+	 * rendering the all-site views. Exclude plugins page from this behavior.
 	 *
 	 * If the primary site is not yet available in Redux state, initiate a fetch and postpone the
 	 * redirect until the fetch is complete. (while the primary site ID is a property of the
 	 * current user object and therefore always available, we need to fetch the site info in order
 	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
-	if ( hasOneSite && ! siteFragment ) {
+	if ( hasOneSite && ! siteFragment && ! isNextPathPlugins ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
