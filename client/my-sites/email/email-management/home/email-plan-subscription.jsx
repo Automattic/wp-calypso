@@ -20,49 +20,8 @@ class EmailPlanSubscription extends Component {
 		return todayTimestamp > expiryTimestamp;
 	}
 
-	renderRenewButton() {
-		const { purchase, selectedSite, isLoadingPurchase, translate } = this.props;
-
-		if ( ! purchase && ! isLoadingPurchase ) {
-			return null;
-		}
-
-		return (
-			<RenewButton
-				compact
-				purchase={ purchase }
-				primary={ this.hasSubscriptionExpired() }
-				selectedSite={ selectedSite }
-				subscriptionId={ parseInt( purchase.id, 10 ) }
-				tracksProps={ { source: 'email-plan-view' } }
-				customLabel={ translate( 'Renew now for {{strong}}%(price)s{{/strong}}', {
-					components: { strong: <strong /> },
-					args: { price: purchase.priceText },
-				} ) }
-			/>
-		);
-	}
-
-	renderAutoRenewToggle() {
-		const { selectedSite, purchase } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
-
-		return (
-			<AutoRenewToggle
-				planName={ selectedSite.plan.product_name_short }
-				siteDomain={ selectedSite.domain }
-				purchase={ purchase }
-				withTextStatus
-				toggleSource="email-plan-view"
-			/>
-		);
-	}
-
 	render() {
-		const { purchase, isLoadingPurchase, moment, translate } = this.props;
+		const { purchase, isLoadingPurchase, moment, translate, selectedSite } = this.props;
 
 		if ( ! purchase && isLoadingPurchase ) {
 			return (
@@ -98,8 +57,25 @@ class EmailPlanSubscription extends Component {
 				>
 					{ expiryText }
 				</div>
-				<div className="email-plan-subscription__renew">{ this.renderRenewButton() }</div>
-				<div className="email-plan-subscription__auto-renew">{ this.renderAutoRenewToggle() }</div>
+				<div className="email-plan-subscription__renew">
+					<RenewButton
+						compact
+						purchase={ purchase }
+						primary={ this.hasSubscriptionExpired() }
+						selectedSite={ selectedSite }
+						subscriptionId={ parseInt( purchase.id, 10 ) }
+						tracksProps={ { source: 'email-plan-view' } }
+					/>
+				</div>
+				<div className="email-plan-subscription__auto-renew">
+					<AutoRenewToggle
+						planName={ selectedSite.plan.product_name_short }
+						siteDomain={ selectedSite.domain }
+						purchase={ purchase }
+						withTextStatus
+						toggleSource="email-plan-view"
+					/>
+				</div>
 			</CompactCard>
 		);
 	}
