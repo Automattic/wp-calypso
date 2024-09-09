@@ -2316,7 +2316,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PLUGIN_AUTOUPDATE_JP,
 		getTitle: () =>
 			isAssignedToSimplifiedFeaturesGridExperiment()
-				? i18n.translate( 'Plugin auto-updates (bundled)' )
+				? i18n.translate( 'Bundled plugin auto-updates' )
 				: i18n.translate( 'Plugin auto-updates' ),
 		getDescription: () =>
 			i18n.translate( 'Forget about time-consuming plugin updates and update nags.' ),
@@ -2492,9 +2492,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		getTitle: () => {
-			if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
-				return i18n.translate( 'Support access to our expert team' );
-			} else if (
+			if (
 				englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 				i18n.hasTranslation( 'Fast support from our expert team' )
 			) {
@@ -2513,10 +2511,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
 		getTitle: () => {
-			if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
-				return i18n.translate( 'Priority 24/7 support' );
-			}
-
 			if (
 				englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 				i18n.hasTranslation( 'Priority 24/7 support from our expert team' )

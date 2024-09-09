@@ -449,7 +449,10 @@ import {
 	FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS,
 	FEATURE_WOO_TAX_SOLUTIONS,
 } from './constants/features';
-import { isAssignedToSimplifiedFeaturesGridExperimentVariant } from './experiments';
+import {
+	isAssignedToSimplifiedFeaturesGridExperiment,
+	isAssignedToSimplifiedFeaturesGridExperimentVariant,
+} from './experiments';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -573,23 +576,95 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FREE_THEMES_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
-		return isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' )
-			? [ FEATURE_UNLIMITED_ENTITIES ]
-			: [
-					FEATURE_CUSTOM_DOMAIN,
-					FEATURE_BEAUTIFUL_THEMES,
-					FEATURE_PAGES,
-					FEATURE_USERS,
-					FEATURE_POST_EDITS_HISTORY,
-					FEATURE_NEWSLETTERS_RSS,
-					FEATURE_SECURITY_BRUTE_FORCE,
-					FEATURE_SMART_REDIRECTS,
-					FEATURE_ALWAYS_ONLINE,
-					FEATURE_PAYMENT_TRANSACTION_FEES_10,
-			  ];
+		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
+			return [ FEATURE_UNLIMITED_ENTITIES ];
+		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
+			return [
+				FEATURE_BEAUTIFUL_THEMES,
+				FEATURE_PAGES,
+				FEATURE_USERS,
+				FEATURE_POST_EDITS_HISTORY,
+				FEATURE_NEWSLETTERS_RSS,
+				FEATURE_SECURITY_BRUTE_FORCE,
+				FEATURE_SMART_REDIRECTS,
+				FEATURE_ALWAYS_ONLINE,
+				FEATURE_PAID_SUBSCRIBERS_JP,
+				FEATURE_PREMIUM_CONTENT_JP,
+				FEATURE_DONATIONS_AND_TIPS_JP,
+				FEATURE_PAYMENT_BUTTONS_JP,
+				FEATURE_STATS_JP,
+				FEATURE_CONTACT_FORM_JP,
+				FEATURE_BANDWIDTH,
+				FEATURE_UNLIMITED_TRAFFIC,
+				FEATURE_GLOBAL_EDGE_CACHING,
+				FEATURE_BURST,
+				FEATURE_WAF_V2,
+				FEATURE_CDN,
+				FEATURE_CPUS,
+				FEATURE_DATACENTRE_FAILOVER,
+				FEATURE_SECURITY_MALWARE,
+				FEATURE_SPAM_JP,
+				FEATURE_SECURITY_DDOS,
+				FEATURE_WP_UPDATES,
+				FEATURE_MULTI_SITE,
+				FEATURE_STATS_PAID,
+				FEATURE_FAST_DNS,
+				FEATURE_LIMITED_SITE_ACTIVITY_LOG,
+				FEATURE_PAYMENT_TRANSACTION_FEES_10,
+			];
+		}
+
+		return [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_BEAUTIFUL_THEMES,
+			FEATURE_PAGES,
+			FEATURE_USERS,
+			FEATURE_POST_EDITS_HISTORY,
+			FEATURE_NEWSLETTERS_RSS,
+			FEATURE_SECURITY_BRUTE_FORCE,
+			FEATURE_SMART_REDIRECTS,
+			FEATURE_ALWAYS_ONLINE,
+			FEATURE_PAYMENT_TRANSACTION_FEES_10,
+		];
 	},
 
 	get2023PlanComparisonFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [
+				FEATURE_BEAUTIFUL_THEMES,
+				FEATURE_PAGES,
+				FEATURE_USERS,
+				FEATURE_POST_EDITS_HISTORY,
+				FEATURE_NEWSLETTERS_RSS,
+				FEATURE_SECURITY_BRUTE_FORCE,
+				FEATURE_SMART_REDIRECTS,
+				FEATURE_ALWAYS_ONLINE,
+				FEATURE_PAID_SUBSCRIBERS_JP,
+				FEATURE_PREMIUM_CONTENT_JP,
+				FEATURE_DONATIONS_AND_TIPS_JP,
+				FEATURE_PAYMENT_BUTTONS_JP,
+				FEATURE_STATS_JP,
+				FEATURE_CONTACT_FORM_JP,
+				FEATURE_BANDWIDTH,
+				FEATURE_UNLIMITED_TRAFFIC,
+				FEATURE_GLOBAL_EDGE_CACHING,
+				FEATURE_BURST,
+				FEATURE_WAF_V2,
+				FEATURE_CDN,
+				FEATURE_CPUS,
+				FEATURE_DATACENTRE_FAILOVER,
+				FEATURE_SECURITY_MALWARE,
+				FEATURE_SPAM_JP,
+				FEATURE_SECURITY_DDOS,
+				FEATURE_WP_UPDATES,
+				FEATURE_MULTI_SITE,
+				FEATURE_STATS_PAID,
+				FEATURE_FAST_DNS,
+				FEATURE_LIMITED_SITE_ACTIVITY_LOG,
+				FEATURE_PAYMENT_TRANSACTION_FEES_10,
+			];
+		}
+
 		return [
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_PAGES,
@@ -617,32 +692,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 			return [];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
-			return [
-				FEATURE_PAID_SUBSCRIBERS_JP,
-				FEATURE_PREMIUM_CONTENT_JP,
-				FEATURE_DONATIONS_AND_TIPS_JP,
-				FEATURE_PAYMENT_BUTTONS_JP,
-				FEATURE_STATS_JP,
-				FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-				FEATURE_CONTACT_FORM_JP,
-				FEATURE_BANDWIDTH,
-				FEATURE_UNLIMITED_TRAFFIC,
-				FEATURE_GLOBAL_EDGE_CACHING,
-				FEATURE_BURST,
-				FEATURE_WAF_V2,
-				FEATURE_CDN,
-				FEATURE_CPUS,
-				FEATURE_DATACENTRE_FAILOVER,
-				FEATURE_SECURITY_MALWARE,
-				FEATURE_SPAM_JP,
-				FEATURE_SECURITY_DDOS,
-				FEATURE_WP_UPDATES,
-				FEATURE_MULTI_SITE,
-				FEATURE_PLUGIN_AUTOUPDATE_JP,
-				FEATURE_STATS_PAID,
-				FEATURE_FAST_DNS,
-				FEATURE_LIMITED_SITE_ACTIVITY_LOG,
-			];
+			return [ FEATURE_UNLTD_SOCIAL_MEDIA_JP, FEATURE_PLUGIN_AUTOUPDATE_JP ];
 		}
 
 		return [
@@ -655,17 +705,23 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONTACT_FORM_JP,
 		];
 	},
-	get2023PlanComparisonJetpackFeatureOverride: () => [
-		FEATURE_PAID_SUBSCRIBERS_JP,
-		FEATURE_DONATIONS_AND_TIPS_JP,
-		FEATURE_PREMIUM_CONTENT_JP,
-		FEATURE_PAYMENT_BUTTONS_JP,
-		FEATURE_STATS_JP,
-		FEATURE_SPAM_JP,
-		FEATURE_CONTACT_FORM_JP,
-		FEATURE_SITE_ACTIVITY_LOG_JP,
-		FEATURE_SHARES_SOCIAL_MEDIA_JP,
-	],
+	get2023PlanComparisonJetpackFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [ FEATURE_UNLTD_SOCIAL_MEDIA_JP, FEATURE_PLUGIN_AUTOUPDATE_JP ];
+		}
+
+		return [
+			FEATURE_PAID_SUBSCRIBERS_JP,
+			FEATURE_DONATIONS_AND_TIPS_JP,
+			FEATURE_PREMIUM_CONTENT_JP,
+			FEATURE_PAYMENT_BUTTONS_JP,
+			FEATURE_STATS_JP,
+			FEATURE_SPAM_JP,
+			FEATURE_CONTACT_FORM_JP,
+			FEATURE_SITE_ACTIVITY_LOG_JP,
+			FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		];
+	},
 	getStorageFeature: () => FEATURE_1GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => ( {
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
@@ -837,9 +893,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CUSTOM_DOMAIN,
 				WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 				FEATURE_AD_FREE_EXPERIENCE,
-				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-				FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
+				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 			return [
@@ -859,7 +914,24 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		];
 	},
+	get2023PricingGridSignupJetpackFeatures: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
+			return [ FEATURE_UNLIMITED_SITE_ACTIVITY_LOG ];
+		}
+
+		return [];
+	},
 	get2023PlanComparisonFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [
+				FEATURE_CUSTOM_DOMAIN,
+				WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+				FEATURE_AD_FREE_EXPERIENCE,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+				FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			];
+		}
+
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1074,6 +1146,26 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [
+				FEATURE_WOOCOMMERCE_HOSTING,
+				FEATURE_WOO_THEMES,
+				FEATURE_WOO_PAYMENTS,
+				FEATURE_WOO_SHIPPING_TRACKING,
+				FEATURE_WOO_TAX_SOLUTIONS,
+				FEATURE_GIFT_CARDS,
+				FEATURE_MIN_MAX_ORDER_QUANTITY,
+				FEATURE_PRODUCT_BUNDLES,
+				FEATURE_PRODUCT_RECOMMENDATIONS,
+				FEATURE_PRODUCT_ADD_ONS,
+				FEATURE_WOO_BRANDS,
+				FEATURE_WOO_AUTOMATE,
+				FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS,
+				FEATURE_GOOGLE_LISTING_ADS,
+				FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+			];
+		}
+
 		return [];
 	},
 	getCheckoutFeatures: () => [
@@ -1419,7 +1511,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 				FEATURE_WORDADS,
 				FEATURE_STYLE_CUSTOMIZATION,
-				FEATURE_CONNECT_ANALYTICS,
+				FEATURE_PAYPAL_JP,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
@@ -1444,6 +1536,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [
+				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+				FEATURE_WORDADS,
+				FEATURE_STYLE_CUSTOMIZATION,
+				FEATURE_PAYPAL_JP,
+				FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			];
+		}
+
 		return [];
 	},
 	getCheckoutFeatures: () => [
@@ -1459,7 +1561,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupJetpackFeatures: () => {
 		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
-			return [ FEATURE_PAYPAL_JP, FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ];
+			return [ FEATURE_CONNECT_ANALYTICS, FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 			return [];
 		}
@@ -1477,11 +1579,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
 	} ),
-	get2023PlanComparisonJetpackFeatureOverride: () => [
-		FEATURE_PAYPAL_JP,
-		FEATURE_VIDEOPRESS_JP,
-		FEATURE_STATS_PAID,
-	],
+	get2023PlanComparisonJetpackFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [ FEATURE_CONNECT_ANALYTICS, FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ];
+		}
+
+		return [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP, FEATURE_STATS_PAID ];
+	},
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1601,12 +1705,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			return [
 				FEATURE_PRIORITY_24_7_SUPPORT,
 				FEATURE_PLUGINS_THEMES,
-
 				FEATURE_REAL_TIME_SECURITY_SCANS,
-				/***
-				 * Probably should be moved to Jetpack Features
-				 */
-
 				FEATURE_DEV_TOOLS,
 				FEATURE_SITE_STAGING_SITES,
 				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
@@ -1660,6 +1759,20 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [
+				FEATURE_PRIORITY_24_7_SUPPORT,
+				FEATURE_PLUGINS_THEMES,
+				FEATURE_REAL_TIME_SECURITY_SCANS,
+				FEATURE_DEV_TOOLS,
+				FEATURE_SITE_STAGING_SITES,
+				FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+				FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
+				FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+				FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+			];
+		}
+
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_PRIORITY_24_7_SUPPORT,
@@ -1722,6 +1835,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
+		];
+	},
+	get2023PlanComparisonJetpackFeatureOverride: () => {
+		return [
+			FEATURE_SEO_JP,
+			FEATURE_REALTIME_BACKUPS_JP,
+			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_UPTIME_MONITOR_JP,
+			FEATURE_ES_SEARCH_JP,
 		];
 	},
 	getPlanComparisonFeatureLabels: () => {
