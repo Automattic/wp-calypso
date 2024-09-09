@@ -39,6 +39,7 @@
 		"@automattic/domains-table": "workspace:^",
 		"@automattic/explat-client": "workspace:^",
 		"@automattic/explat-client-react-helpers": "workspace:^",
+		"@automattic/fingerprintjs": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/generate-password": "workspace:^",
 		"@automattic/global-styles": "workspace:^",
