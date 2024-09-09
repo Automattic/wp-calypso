@@ -135,8 +135,6 @@
 		"signup/social": true,
 		"signup/social-first": true,
 		"signup/email-subscription-flow": true,
-		"simplified-features-grid-a": false,
-		"simplified-features-grid-b": false,
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"ssr/prefetch-timebox": true,
