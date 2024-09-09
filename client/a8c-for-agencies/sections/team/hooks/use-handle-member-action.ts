@@ -29,7 +29,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 					{
 						onSuccess: () => {
 							dispatch(
-								successNotice( translate( 'The invitation has been resend.' ), {
+								successNotice( translate( 'The invitation has been resent.' ), {
 									id: 'resend-user-invite-success',
 									duration: 5000,
 								} )

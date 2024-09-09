@@ -22,7 +22,7 @@ function resendMemberInviteMutation(
 	agencyId?: number
 ): Promise< APIResponse > {
 	if ( ! agencyId ) {
-		throw new Error( 'Agency ID is required to assign a license' );
+		throw new Error( 'Agency ID is required to resend invite' );
 	}
 
 	return wpcom.req.post( {
