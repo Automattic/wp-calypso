@@ -25,7 +25,6 @@
 		"url": "https://github.com/fingerprintjs/fingerprintjs/issues"
 	},
 	"homepage": "https://github.com/fingerprintjs/fingerprintjs",
-	"calypso:src": "src/index.ts",
 	"main": "dist/fp.cjs.js",
 	"module": "dist/fp.esm.js",
 	"types": "dist/fp.d.ts",
