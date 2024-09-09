@@ -870,6 +870,7 @@ export class JetpackAuthorize extends Component {
 						args: { user: this.props.user.display_name },
 					} ) }
 					<br />
+					<small>{ this.props.user.email }</small>
 				</>
 			);
 		}
@@ -1045,13 +1046,7 @@ export class JetpackAuthorize extends Component {
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
-						<Card
-							className={ clsx( 'jetpack-connect__logged-in-card', {
-								'feature-flag-passwordless-auth': config.isEnabled(
-									'woocommerce/core-profiler-passwordless-auth'
-								),
-							} ) }
-						>
+						<Card className="jetpack-connect__logged-in-card">
 							<div className="jetpack-connect__logged-in-form-user">
 								<Gravatar user={ user } size={ 40 } />
 								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
@@ -1282,7 +1277,13 @@ export class JetpackAuthorize extends Component {
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
 			>
-				<div className="jetpack-connect__authorize-form">
+				<div
+					className={ clsx( 'jetpack-connect__authorize-form', {
+						'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+							'woocommerce/core-profiler-passwordless-auth'
+						),
+					} ) }
+				>
 					<div className="jetpack-connect__logged-in-form">
 						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
