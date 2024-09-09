@@ -113,8 +113,6 @@ const onboarding: Flow = {
 			switch ( currentStepSlug ) {
 				case 'use-my-domain':
 					if ( lastQuery ) {
-						// remove query params
-						// window.history.pushState( {}, document.title, window.location.pathname );
 						return navigate( 'use-my-domain' );
 					}
 					return navigate( 'domains' );
