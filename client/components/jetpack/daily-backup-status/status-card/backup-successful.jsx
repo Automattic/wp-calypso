@@ -16,6 +16,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
 import useGetDisplayDate from '../use-get-display-date';
+import { BackupLastFailed } from './backup-last-failed';
 import { BackupRealtimeMessage } from './backup-realtime-message';
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';
@@ -149,6 +150,8 @@ const BackupSuccessful = ( {
 				</div>
 			) }
 			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
+
+			{ isToday && <BackupLastFailed siteId={ siteId } /> }
 		</>
 	);
 };
