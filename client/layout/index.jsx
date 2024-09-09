@@ -361,7 +361,10 @@ class Layout extends Component {
 				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				<QuerySiteAdminColor siteId={ this.props.siteId } />
+				{ ( this.props.isUnifiedSiteSidebarVisible ||
+					config.isEnabled( 'layout/site-level-user-profile' ) ) && (
+					<QuerySiteAdminColor siteId={ this.props.siteId } />
+				) }
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
