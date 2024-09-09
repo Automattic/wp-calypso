@@ -14,11 +14,11 @@ import { TeamMember } from '../../types';
 import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
 
 type Props = {
-	data: TeamMember[];
+	members: TeamMember[];
 	onRefresh?: () => void;
 };
 
-export function TeamTable( { data, onRefresh }: Props ) {
+export function TeamMemberTable( { members, onRefresh }: Props ) {
 	const translate = useTranslate();
 
 	const isDesktop = useDesktopBreakpoint();
@@ -99,8 +99,8 @@ export function TeamTable( { data, onRefresh }: Props ) {
 	);
 
 	const { data: items, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data, dataViewsState, fields );
-	}, [ data, dataViewsState, fields ] );
+		return filterSortAndPaginate( members, dataViewsState, fields );
+	}, [ members, dataViewsState, fields ] );
 
 	return (
 		<ItemsDataViews

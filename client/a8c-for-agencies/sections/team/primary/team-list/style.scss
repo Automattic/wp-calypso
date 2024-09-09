@@ -3,8 +3,12 @@
 		padding-block-start: 32px;
 	}
 
-	.dataviews-filters__view-actions {
+	.dataviews__view-actions {
 		display: none;
+	}
+
+	.a4a-layout__navigation-wrapper {
+		max-width: 100%;
 	}
 
 	.dataviews-view-table__row td:last-child {
@@ -69,3 +73,6 @@
 	color: var(--color-error);
 }
 
+.team-list__action-button {
+	padding: 0;
+}
