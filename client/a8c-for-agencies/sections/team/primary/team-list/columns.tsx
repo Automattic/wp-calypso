@@ -142,6 +142,12 @@ export const ActionColumn = ( {
 		return member.status === 'pending'
 			? [
 					{
+						name: 'resend-user-invite',
+						label: translate( 'Resend invite' ),
+						className: 'is-danger',
+						isEnabled: true,
+					},
+					{
 						name: 'cancel-user-invite',
 						label: translate( 'Cancel invite' ),
 						className: 'is-danger',
