@@ -172,7 +172,7 @@ export default function ReferralList( {
 					id: 'view-details',
 					label: translate( 'View Details' ),
 					isPrimary: true,
-					icon: chevronRight, // TODO: is this how you use icons in calypso?
+					icon: chevronRight,
 					callback( items ) {
 						openSitePreviewPane( items[ 0 ] );
 					},
