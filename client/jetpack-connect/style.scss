@@ -1119,7 +1119,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		max-width: 615px;
 	}
 
-	.is-woo-passwordless {
+	.is-woo-passwordless,
+	.feature-flag-woocommerce-core-profiler-passwordless-auth {
 		.signup-form {
 			max-width: 327px;
 			padding-top: 48px;
