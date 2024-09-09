@@ -21,7 +21,7 @@ const CurrentUserHasCapabilitiesSwitch: FC< Props > = ( {
 	const userCapabilities = useSelector( ( state ) => getCurrentUserCapabilities( state, siteId ) );
 
 	const hasCapabilities = useCallback(
-		() => capabilities.every( ( p: string ) => userCapabilities[ p ] ),
+		() => capabilities.every( ( p: string ) => userCapabilities?.[ p ] ),
 		[ capabilities, userCapabilities ]
 	);
 

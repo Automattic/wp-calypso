@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -7,9 +8,10 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { Referral, ReferralInvoice } from '../types';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
-import type { Referral, ReferralInvoice } from '../types';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -42,14 +44,14 @@ export default function ReferralList( {
 		[ dispatch, setDataViewsState ]
 	);
 
-	const fields = useMemo(
+	const fields: Field< any >[] = useMemo(
 		() =>
 			dataViewsState.selectedItem || ! isDesktop
 				? [
 						// Show the client column as a button on mobile
 						{
 							id: 'client',
-							header: translate( 'Client' ).toUpperCase(),
+							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<Button
@@ -70,7 +72,7 @@ export default function ReferralList( {
 							? [
 									{
 										id: 'actions',
-										header: null,
+										label: '',
 										render: ( { item }: { item: Referral } ) => (
 											<div>
 												<Button
@@ -91,7 +93,7 @@ export default function ReferralList( {
 				: [
 						{
 							id: 'client',
-							header: translate( 'Client' ).toUpperCase(),
+							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<Button
@@ -108,7 +110,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'pending-orders',
-							header: translate( 'Pending Orders' ).toUpperCase(),
+							label: translate( 'Pending Orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
@@ -117,7 +119,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'completed-orders',
-							header: translate( 'Completed Orders' ).toUpperCase(),
+							label: translate( 'Completed Orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
@@ -126,7 +128,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'commissions',
-							header: translate( 'Commissions' ).toUpperCase(),
+							label: translate( 'Commissions' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
 								const clientReferralInvoices = referralInvoices.filter(
@@ -144,7 +146,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'subscription-status',
-							header: translate( 'Subscription Status' ).toUpperCase(),
+							label: translate( 'Subscription Status' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<SubscriptionStatus item={ item } />
@@ -154,7 +156,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'actions',
-							header: translate( 'Actions' ).toUpperCase(),
+							label: translate( 'Actions' ).toUpperCase(),
 							render: ( { item }: { item: Referral } ) => (
 								<div>
 									<Button
@@ -218,24 +220,29 @@ export default function ReferralList( {
 		};
 	}, [ dataViewsState ] );
 
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( referrals, dataViewsState, fields );
+	}, [ referrals, dataViewsState, fields ] );
+
 	return (
 		<div className="redesigned-a8c-table full-width">
 			<ItemsDataViews
 				data={ {
-					items: referrals,
+					items,
 					getItemId: ( item: Referral ) => `${ item.client.id }`,
 					onSelectionChange: ( data ) => {
-						openSitePreviewPane( data[ 0 ] );
+						const referral = referrals.find( ( r ) => r.client.id === +data[ 0 ] );
+						if ( referral ) {
+							openSitePreviewPane( referral );
+						}
 					},
-					pagination: {
-						totalItems: 1,
-						totalPages: 1,
-					},
+					pagination: paginationInfo,
 					enableSearch: false,
 					fields: fields,
 					actions: [],
 					setDataViewsState: setDataViewsState,
 					dataViewsState: dataViewsState,
+					defaultLayouts: { table: {} },
 				} }
 			/>
 		</div>

@@ -183,15 +183,12 @@ $theme-info-height: 54px;
 		.gridicon {
 			color: var(--color-primary);
 		}
-
-		&.is-active .gridicon {
-			color: var(--color-text-inverted);
-		}
 	}
 
 	&.is-open {
 		.gridicon {
 			transform: rotate(90deg);
+			color: var(--color-primary);
 		}
 	}
 }

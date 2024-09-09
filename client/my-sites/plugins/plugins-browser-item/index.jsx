@@ -220,16 +220,18 @@ const PluginsBrowserListElement = ( props ) => {
 				onClick={ onClickItem }
 			>
 				<div className="plugins-browser-item__info" ref={ isLastVisitedPlugin ? cardRef : null }>
-					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">{ plugin.name }</div>
-					{ variant === PluginsBrowserElementVariant.Extended && (
-						<>
-							<div className="plugins-browser-item__author">
-								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
-							</div>
-						</>
-					) }
+					<div className="plugins-browser-item__header">
+						<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+						<div className="plugins-browser-item__title">{ plugin.name }</div>
+						{ variant === PluginsBrowserElementVariant.Extended && (
+							<>
+								<div className="plugins-browser-item__author">
+									{ translate( 'by ' ) }
+									<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+								</div>
+							</>
+						) }
+					</div>
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
 				{ isUntestedVersion && (
@@ -434,9 +436,11 @@ function Placeholder( { variant } ) {
 		<li className={ clsx( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
-					<PluginIcon isPlaceholder />
-					<div className="plugins-browser-item__title">…</div>
-					<div className="plugins-browser-item__author">…</div>
+					<div className="plugins-browser-item__header">
+						<PluginIcon isPlaceholder />
+						<div className="plugins-browser-item__title">…</div>
+						<div className="plugins-browser-item__author">…</div>
+					</div>
 					<div className="plugins-browser-item__description">…</div>
 				</div>
 			</span>

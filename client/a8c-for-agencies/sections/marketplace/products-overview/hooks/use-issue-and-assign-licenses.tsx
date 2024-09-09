@@ -38,7 +38,7 @@ const useGetLicenseIssuedMessage = () => {
 				const productName =
 					products?.data?.find?.( ( p ) => p.slug === licenses[ 0 ].slug )?.name ?? '';
 
-				if ( licenses[ 0 ].slug.startsWith( 'pressable-wp' ) ) {
+				if ( licenses[ 0 ].slug.startsWith( 'pressable-' ) ) {
 					return translate(
 						'Thanks for your purchase! Below you can view and manage your new {{strong}}%(productName)s{{/strong}}',
 						{

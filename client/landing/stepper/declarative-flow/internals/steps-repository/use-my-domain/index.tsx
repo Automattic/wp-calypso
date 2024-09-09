@@ -2,6 +2,7 @@
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
+	ONBOARDING_FLOW,
 	StepContainer,
 	isStartWritingFlow,
 } from '@automattic/onboarding';
@@ -70,6 +71,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		switch ( flow ) {
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
+			case ONBOARDING_FLOW:
 				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();

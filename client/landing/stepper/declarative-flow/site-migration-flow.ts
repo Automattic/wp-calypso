@@ -311,6 +311,19 @@ const siteMigration: Flow = {
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
+							return navigate(
+								addQueryArgs(
+									{
+										siteSlug,
+										from: fromQueryParam,
+										siteId,
+									},
+									STEPS.SITE_MIGRATION_CREDENTIALS.slug
+								)
+							);
+						}
+
 						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
 							siteId,
 							siteSlug,

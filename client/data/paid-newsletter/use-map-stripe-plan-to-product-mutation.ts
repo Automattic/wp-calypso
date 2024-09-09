@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
 interface MutationVariables {
-	siteId: string;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 	stripePlan: string;
@@ -48,10 +48,8 @@ export const useMapStripePlanToProductMutation = (
 		},
 		...options,
 		onSuccess( ...args ) {
-			const [ , { siteId, engine, currentStep } ] = args;
-			queryClient.invalidateQueries( {
-				queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
-			} );
+			const [ data, { siteId, engine } ] = args;
+			queryClient.setQueryData( [ 'paid-newsletter-importer', siteId, engine ], data );
 			options.onSuccess?.( ...args );
 		},
 	} );
@@ -60,7 +58,7 @@ export const useMapStripePlanToProductMutation = (
 
 	const mapStripePlanToProduct = useCallback(
 		(
-			siteId: string,
+			siteId: number,
 			engine: string,
 			currentStep: string,
 			stripePlan: string,

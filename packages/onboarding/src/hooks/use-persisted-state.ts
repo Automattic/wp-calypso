@@ -1,4 +1,4 @@
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useMatch } from 'react-router';
 
 const TWENTY_MINUTES = 20 * 60 * 1000;
@@ -35,20 +35,21 @@ type Options = {
 };
 
 /**
- * A hook similar to useState, but persists the state. Uses `flow`, `step` and `lang`, and the component location in the tree as keys.
- * The cool thing about this is that it doesn't need any unique IDs. It uses React's useId.
+ * A hook similar to useState, but persists the state. Uses `flow`, `step` and `lang`, and the passed key in the tree as keys.
+ *
+ * @param cacheKey the cache key. It will be concatenated with the flow, step and lang.
  * @param defaultValue the initial value of the state.
+ * @param options the options for the hook.
  * @returns a tuple with the state and a function to update it.
  */
-export function usePersistedState< T >(
+export function useStepPersistedState< T >(
+	cacheKey: string,
 	defaultValue?: T,
 	options: Options = { storage: localStorage, TTL: TWENTY_MINUTES }
 ): [ T, ( newState: T ) => void ] {
 	const match = useMatch( '/:flow/:step?/:lang?' );
-	// This gives unique id for each instance of the hook in the tree.
-	const id = useId();
 	const { flow = 'flow', step = 'step', lang = 'lang' } = match?.params || {};
-	const key = [ VERSION, KEY, flow, step, lang, id ].join( '-' );
+	const key = [ VERSION, KEY, flow, step, lang, cacheKey ].join( '-' );
 
 	const [ state, _setState ] = useState< T >(
 		getPersistedState( key, options.storage, options.TTL ) || defaultValue

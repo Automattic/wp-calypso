@@ -21,8 +21,8 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
@@ -91,13 +91,15 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const dispatch = useDispatch();
 	const shoppingCartManager = useShoppingCart( cartKey );
 	const [ addingToCart, setAddingToCart ] = useState( false );
+	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_NAME,
-		FIELD_PASSWORD_RESET_EMAIL,
-	] );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+			defaultHiddenFields,
+		} );
 
-	const userEmail = useSelector( getCurrentUserEmail );
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
@@ -127,7 +129,9 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
 			hiddenFieldNames={ hiddenFieldNames }
-			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+			initialFieldValues={ {
+				[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
+			} }
 			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
 			provider={ provider }

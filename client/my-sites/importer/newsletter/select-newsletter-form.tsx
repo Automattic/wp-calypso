@@ -10,16 +10,10 @@ type Props = {
 	stepUrl: string;
 	urlData?: UrlData;
 	isLoading: boolean;
-	validFromSite: boolean;
 };
 
-export default function SelectNewsletterForm( {
-	stepUrl,
-	urlData,
-	isLoading,
-	validFromSite,
-}: Props ) {
-	const [ hasError, setHasError ] = useState( ! validFromSite );
+export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: Props ) {
+	const [ hasError, setHasError ] = useState( false );
 
 	const handleAction = ( fromSite: string ) => {
 		if ( ! isValidUrl( fromSite ) ) {
@@ -34,35 +28,29 @@ export default function SelectNewsletterForm( {
 
 	if ( isLoading ) {
 		return (
-			<Card>
-				<div className="select-newsletter-form">
-					<p className="is-loading"></p>
-				</div>
+			<Card className="select-newsletter-form">
+				<div className="is-loading" />
 			</Card>
 		);
 	}
 
 	return (
-		<Card>
-			<div className="select-newsletter-form">
-				<FormTextInputWithAction
-					onAction={ handleAction }
-					placeholder="https://example.substack.com"
-					action="Continue"
-					isError={ hasError }
-					defaultValue={ urlData?.url }
-				/>
-				{ hasError && (
-					<p className="select-newsletter-form__help is-error">
-						Please enter a valid substack URL.
-					</p>
-				) }
-				{ ! hasError && (
-					<p className="select-newsletter-form__help">
-						Enter the URL of the substack newsletter that you wish to import.
-					</p>
-				) }
-			</div>
+		<Card className="select-newsletter-form">
+			<FormTextInputWithAction
+				onAction={ handleAction }
+				placeholder="https://example.substack.com"
+				action="Continue"
+				isError={ hasError }
+				defaultValue={ urlData?.url }
+			/>
+			{ hasError && (
+				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>
+			) }
+			{ ! hasError && (
+				<p className="select-newsletter-form__help">
+					Enter the URL of the Substack newsletter that you wish to import.
+				</p>
+			) }
 		</Card>
 	);
 }
