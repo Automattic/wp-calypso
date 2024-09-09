@@ -1,4 +1,4 @@
-cimport config from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
