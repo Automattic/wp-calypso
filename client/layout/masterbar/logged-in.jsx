@@ -502,9 +502,10 @@ class MasterbarLoggedIn extends Component {
 	renderProfileMenu() {
 		const { translate, user, siteUrl, isClassicView } = this.props;
 		const editProfileLink =
-			config.isEnabled( 'layout/site-level-user-profile' ) || isClassicView
+			siteUrl && ( config.isEnabled( 'layout/site-level-user-profile' ) || isClassicView )
 				? siteUrl + '/wp-admin/profile.php'
 				: '/me';
+
 		const profileActions = [
 			{
 				label: (
