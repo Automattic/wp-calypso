@@ -112,7 +112,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		flow,
 		currentStepRoute,
 		navigate,
-		steps: flowSteps,
 	} );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
