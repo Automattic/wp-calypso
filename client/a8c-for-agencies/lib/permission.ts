@@ -81,7 +81,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	'sites-overview': [ 'a4a_read_managed_sites' ],
-	team: [ 'a4a_read_team' ],
+	team: [ 'a4a_read_users' ],
 	marketplace: [ 'a4a_read_marketplace' ],
 	licenses: [ 'a4a_jetpack_licensing' ],
 };
