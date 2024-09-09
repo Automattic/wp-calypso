@@ -32,12 +32,13 @@ export const FEATURE_GROUP_ALL_FEATURES = 'feature-group-all-freatures';
 /* START: Feature groups for experiment calypso_pricing_grid_fewer_features */
 export const FEATURE_GROUP_ADS = 'feature-group-ads';
 export const FEATURE_GROUP_ANALYTICS = 'feature-group-analytics';
+export const FEATURE_GROUP_CUSTOM_PLUGINS = 'feature-group-custom-plugins';
 export const FEATURE_GROUP_CUSTOMIZE_STYLE = 'feature-group-customize-style';
+export const FEATURE_GROUP_DEV_TOOLS = 'feature-group-dev-tools';
 export const FEATURE_GROUP_DOMAIN = 'feature-group-domain';
 export const FEATURE_GROUP_ENTITIES = 'feature-group-entities';
 export const FEATURE_GROUP_INSTALL_PLUGINS = 'feature-group-install-plugins';
 export const FEATURE_GROUP_PERFORMANCE = 'feature-group-performance';
 export const FEATURE_GROUP_THEMES = 'feature-group-themes';
 export const FEATURE_GROUP_WOO = 'feature-group-woo';
-export const FEATURE_GROUP_CUSTOM_PLUGINS = 'feature-group-custom-plugins';
 /* END: Feature groups for experiment calypso_pricing_grid_fewer_features */

@@ -55,6 +55,7 @@ import {
 	FEATURE_GROUP_WOO,
 	FEATURE_GROUP_CUSTOMIZE_STYLE,
 	FEATURE_GROUP_CUSTOM_PLUGINS,
+	FEATURE_GROUP_DEV_TOOLS,
 	/* END: Feature groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
@@ -268,7 +269,8 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_PERFORMANCE
 	| typeof FEATURE_GROUP_THEMES
 	| typeof FEATURE_GROUP_WOO
-	| typeof FEATURE_GROUP_CUSTOM_PLUGINS;
+	| typeof FEATURE_GROUP_CUSTOM_PLUGINS
+	| typeof FEATURE_GROUP_DEV_TOOLS;
 
 export interface FeatureFootnotes {
 	[ key: string ]: Feature[];

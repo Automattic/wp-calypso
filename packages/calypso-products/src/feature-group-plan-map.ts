@@ -135,12 +135,10 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_CONNECT_ANALYTICS,
+	FEATURE_GROUP_DEV_TOOLS,
 	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
-import {
-	isAssignedToSimplifiedFeaturesGridExperiment,
-	isAssignedToSimplifiedFeaturesGridExperimentVariant,
-} from './experiments';
+import { isAssignedToSimplifiedFeaturesGridExperimentVariant } from './experiments';
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
@@ -151,10 +149,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_STORAGE ]: {
 		slug: FEATURE_GROUP_STORAGE,
-		getTitle: () =>
-			isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' )
-				? null
-				: i18n.translate( 'Storage' ),
+		getTitle: () => i18n.translate( 'Storage' ),
 		getFeatures: () => [], // Intentionally empty for now. We will include a fixed list of feature slugs in a follow-up.
 	},
 	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
@@ -200,8 +195,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_DEVELOPER_TOOLS ]: {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
-		getTitle: () =>
-			isAssignedToSimplifiedFeaturesGridExperiment() ? null : i18n.translate( 'Developer tools' ),
+		getTitle: () => i18n.translate( 'Developer tools' ),
 		getFeatures: () => [
 			FEATURE_DEV_TOOLS,
 			FEATURE_SITE_STAGING_SITES,
@@ -414,6 +408,16 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => null,
 		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS ],
 	},
+	[ FEATURE_GROUP_DEV_TOOLS ]: {
+		slug: FEATURE_GROUP_DEV_TOOLS,
+		getTitle: () => null,
+		getFeatures: () => [
+			FEATURE_DEV_TOOLS,
+			FEATURE_SITE_STAGING_SITES,
+			FEATURE_MULTI_SITE,
+			FEATURE_WP_UPDATES,
+		],
+	},
 	/* END Feature groups for experiment calypso_pricing_grid_fewer_features */
 };
 
@@ -429,7 +433,7 @@ export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap 
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
-			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
+			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};
 	}
