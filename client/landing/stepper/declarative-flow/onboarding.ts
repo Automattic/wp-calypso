@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {
 	clearSignupDestinationCookie,
 	persistSignupDestination,
+	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
@@ -40,13 +41,8 @@ const onboarding: Flow = {
 		] );
 	},
 
-	useSideEffect() {
-		useEffect( () => {
-			clearSignupDestinationCookie();
-		}, [] );
-	},
-
 	useStepNavigation( currentStepSlug, navigate ) {
+		const flowName = this.name;
 		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
 			useDispatch( ONBOARD_STORE );
 
@@ -111,6 +107,8 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 					persistSignupDestination( destination );
+					setSignupCompleteFlowName( flowName );
+
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
