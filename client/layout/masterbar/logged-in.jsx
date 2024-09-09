@@ -525,7 +525,7 @@ class MasterbarLoggedIn extends Component {
 			},
 			{
 				label: translate( 'My Account' ),
-				url: '/me/account',
+				url: '/me',
 				className: 'account-link',
 			},
 			{
