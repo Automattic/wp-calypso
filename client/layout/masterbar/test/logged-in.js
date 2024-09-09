@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import commandPaletteReducer from 'calypso/state/command-palette/reducers';
 import preferencesReducer from 'calypso/state/preferences/reducer';
-import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MasterbarLoggedIn from '../logged-in';
@@ -42,7 +42,7 @@ test( 'edit profile menu link goes to /me when the user has no site', () => {
 } );
 
 test( 'edit profile menu link goes to site.com/wp-admin/profile.php when the user has a site', () => {
-	getSiteUrl.mockReturnValue( 'example.com' );
+	getSiteAdminUrl.mockReturnValue( 'example.com/wp-admin/' );
 
 	renderWithState( <MasterbarLoggedIn /> );
 
