@@ -61,7 +61,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 
 			{
 				id: 'settings',
-				label: __( 'Settings' ),
+				label: __( 'Site settings' ),
 				callback: ( sites ) => {
 					window.location.href = getSettingsUrl( sites[ 0 ].slug );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
