@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { chevronRight } from '@wordpress/icons';
@@ -49,22 +48,11 @@ export default function ReferralList( {
 		() =>
 			dataViewsState.selectedItem || ! isDesktop
 				? [
-						// Show the client column as a button on mobile
 						{
 							id: 'client',
 							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => (
-								<Button
-									className="view-details-button client-email-button"
-									data-client-id={ item.client.id }
-									onClick={ () => openSitePreviewPane( item ) }
-									borderless
-								>
-									{ item.client.email }
-								</Button>
-							),
-							width: '100%',
+							render: ( { item }: { item: Referral } ): ReactNode => item.client.email,
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -74,16 +62,7 @@ export default function ReferralList( {
 							id: 'client',
 							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => (
-								<Button
-									className="view-details-button"
-									data-client-id={ item.client.id }
-									onClick={ () => openSitePreviewPane( item ) }
-									borderless
-								>
-									{ item.client.email }
-								</Button>
-							),
+							render: ( { item }: { item: Referral } ): ReactNode => item.client.email,
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -134,7 +113,7 @@ export default function ReferralList( {
 							enableSorting: false,
 						},
 				  ],
-		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, referralInvoices, translate ]
+		[ dataViewsState.selectedItem, isDesktop, referralInvoices, translate ]
 	);
 
 	useEffect( () => {
