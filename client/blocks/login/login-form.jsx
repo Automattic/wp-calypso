@@ -1139,7 +1139,7 @@ export class LoginForm extends Component {
 							</div>
 
 							{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
-							{ isWoo && ! isPartnerSignup && ! isWooPasswordless && this.renderLostPasswordLink() }
+							{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 							<div className="login__form-action">
 								<FormsButton
 									primary
@@ -1164,32 +1164,7 @@ export class LoginForm extends Component {
 							) }
 						</>
 					) }
-					{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
-					{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
-					<div className="login__form-action">
-						<FormsButton
-							primary
-							busy={ ! isWoo && isSendingEmail }
-							disabled={ isSubmitButtonDisabled }
-						>
-							{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
-						</FormsButton>
-					</div>
-
-					{ ! hideSignupLink && isOauthLogin && (
-						<div className={ clsx( 'login__form-signup-link' ) }>
-							{ this.props.translate(
-								'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
-								{
-									components: {
-										signupLink: <a href={ signupUrl } />,
-									},
-								}
-							) }
-						</div>
-					) }
 				</Card>
-
 				{ shouldShowSocialLoginForm && (
 					<Fragment>
 						<FormDivider />
