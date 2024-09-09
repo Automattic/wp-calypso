@@ -24,6 +24,7 @@ interface PlansGridContext {
 	enableCategorisedFeatures?: boolean;
 	enableLargeFeatureTitles?: boolean;
 	enableStorageAsBadge?: boolean;
+	enableReducedFeatureGroupSpacing?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 }
@@ -44,6 +45,7 @@ const PlansGridContextProvider = ( {
 	enableCategorisedFeatures,
 	enableLargeFeatureTitles,
 	enableStorageAsBadge,
+	enableReducedFeatureGroupSpacing,
 	featureGroupMap,
 	hideUnsupportedFeatures,
 }: GridContextProps ) => {
@@ -73,6 +75,7 @@ const PlansGridContextProvider = ( {
 				enableCategorisedFeatures,
 				enableLargeFeatureTitles,
 				enableStorageAsBadge,
+				enableReducedFeatureGroupSpacing,
 				featureGroupMap,
 				hideUnsupportedFeatures,
 			} }

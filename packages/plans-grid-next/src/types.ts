@@ -208,6 +208,11 @@ export type GridContextProps = {
 	 * Display the plan storage limit as a badge like "50GB" or as plain text like "50GB storage"
 	 */
 	enableStorageAsBadge?: boolean;
+
+	/**
+	 * Reduce the vertical spacing between each feature group
+	 */
+	enableReducedFeatureGroupSpacing?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

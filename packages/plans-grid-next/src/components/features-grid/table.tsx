@@ -54,6 +54,7 @@ const Table = ( {
 }: TableProps ) => {
 	const translate = useTranslate();
 	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+		enableReducedFeatureGroupSpacing,
 	const featureGroups = useMemo(
 		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
 		[ featureGroupMap ]
@@ -154,7 +155,7 @@ const Table = ( {
 					<tr
 						className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 							'is-first-feature-group-row': featureGroupIndex === 0,
-							'is-single-feature-group-row': enableCategorisedFeatures,
+							'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
 						} ) }
 						key={ featureGroupSlug }
 					>

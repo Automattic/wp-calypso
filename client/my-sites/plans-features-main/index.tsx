@@ -797,6 +797,9 @@ const PlansFeaturesMain = ( {
 										enableStorageAsBadge={
 											simplifiedFeaturesGridExperimentVariant !== 'simplified'
 										}
+										enableReducedFeatureGroupSpacing={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

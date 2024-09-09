@@ -338,6 +338,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableCategorisedFeatures,
 		enableLargeFeatureTitles,
 		enableStorageAsBadge,
+		enableReducedFeatureGroupSpacing,
 		featureGroupMap = {},
 	} = props;
 
@@ -380,6 +381,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				enableCategorisedFeatures={ enableCategorisedFeatures }
 				enableLargeFeatureTitles={ enableLargeFeatureTitles }
 				enableStorageAsBadge={ enableStorageAsBadge }
+				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
 				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />

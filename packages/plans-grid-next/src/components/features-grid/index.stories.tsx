@@ -168,6 +168,7 @@ export const FewerFeaturesExperimentTreatmentVariantB = {
 		enableCategorisedFeatures: true,
 		enableLargeFeatureTitles: true,
 		enableStorageAsBadge: false,
+		enableReducedFeatureGroupSpacing: true,
 		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;
