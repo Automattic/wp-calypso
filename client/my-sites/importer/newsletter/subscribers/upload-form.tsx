@@ -8,8 +8,8 @@ import { useCallback, useState, FormEvent } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ImporterActionButton from '../importer-action-buttons/action-button';
-import ImporterActionButtonContainer from '../importer-action-buttons/container';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 
 type Props = {
 	nextStepUrl: string;
@@ -37,7 +37,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 			event.preventDefault();
 			selectedFile && importCsvSubscribers( siteId, selectedFile, [], true );
 		},
-		[ siteId, selectedFile ]
+		[ selectedFile, importCsvSubscribers, siteId ]
 	);
 
 	const onFileSelect = useCallback( ( files: Array< File > ) => {
