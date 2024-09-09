@@ -80,7 +80,8 @@ const MobileView = ( {
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const { enableCategorisedFeatures, featureGroupMap, enableReducedFeatureGroupSpacing } =
+		usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
 			Object.keys( featureGroupMap ).filter(
@@ -162,7 +163,9 @@ const MobileView = ( {
 						) }
 						{ featureGroups.map( ( featureGroupSlug ) => (
 							<div
-								className="plans-grid-next-features-grid__feature-group-row"
+								className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
+									'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
+								} ) }
 								key={ featureGroupSlug }
 							>
 								<PlanFeaturesList
