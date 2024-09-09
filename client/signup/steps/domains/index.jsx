@@ -373,7 +373,7 @@ export class RenderDomainsStep extends Component {
 		const { suggestion } = this.props.step;
 
 		if ( previousState ) {
-			this.removeDomain( suggestion );
+			await this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );
 			this.props.setDesignType( this.getDesignType() );
