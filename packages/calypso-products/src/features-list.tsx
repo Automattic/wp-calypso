@@ -546,13 +546,13 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		getTitle: () =>
 			isAssignedToSimplifiedFeaturesGridExperiment()
-				? i18n.translate( 'Dozens of premium themes ' )
-				: i18n.translate( 'Access to dozens of premium themes ' ),
+				? i18n.translate( 'Dozens of premium themes' )
+				: i18n.translate( 'Access to dozens of premium themes' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 	[ FEATURE_THEMES_PREMIUM_AND_STORE ]: {
 		getSlug: () => FEATURE_THEMES_PREMIUM_AND_STORE,
-		getTitle: () => i18n.translate( 'All premium and store themes ' ),
+		getTitle: () => i18n.translate( 'All premium and store themes' ),
 		getDescription: () => i18n.translate( 'Switch between all of our themes.' ),
 	},
 
@@ -2746,7 +2746,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOO_TAX_SOLUTIONS ]: {
 		getSlug: () => FEATURE_WOO_TAX_SOLUTIONS,
-		getTitle: () => i18n.translate( 'Tax solutions - Avalara & EU Vat' ),
+		getTitle: () => i18n.translate( 'Tax solutions - Avalara & EU VAT' ),
 		getDescription: () => i18n.translate( 'Automate your tax calculations.' ),
 	},
 	[ FEATURE_WOO_BRANDS ]: {
