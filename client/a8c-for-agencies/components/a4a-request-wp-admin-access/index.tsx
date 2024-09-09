@@ -2,13 +2,21 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import illustration from 'calypso/assets/images/a8c-for-agencies/request-wp-admin-access-illustration.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
 export function A4ARequestWPAdminAccess() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const kbArticleUrl = '#'; // FIXME: Add the correct URL
+	const onLearnMoreClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_click' ) );
+	};
+
+	const kbArticleUrl =
+		'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#allowing-team-members-to-access-wp-admin';
 
 	return (
 		<div className="a4a-request-wp-admin-access">
@@ -29,6 +37,7 @@ export function A4ARequestWPAdminAccess() {
 					variant="link"
 					className="a4a-request-wp-admin-access__learn-more-button"
 					href={ kbArticleUrl }
+					onClick={ onLearnMoreClick }
 					target="_blank"
 				>
 					<>
