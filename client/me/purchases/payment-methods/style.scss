@@ -115,6 +115,7 @@
 .payment-method-delete {
 	grid-area: payment-method-delete;
 	margin-top: 12px;
+	text-align: right;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		margin-top: 0;
@@ -140,6 +141,8 @@
 
 .payment-method-backup-toggle {
 	grid-area: payment-method-backup;
+	margin-inline-start: 76px;
+	margin-top: 16px;
 	width: 100%;
 
 	@include breakpoint-deprecated( ">480px" ) {
