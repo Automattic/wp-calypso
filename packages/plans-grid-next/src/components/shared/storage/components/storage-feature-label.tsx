@@ -45,7 +45,7 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	} );
 
 	const volumeJSX = enableStorageAsBadge ? (
-		<div className="plans-grid-next-storage-feature-label__volume-badge" key={ storageSlug }>
+		<div className="plans-grid-next-storage-feature-label__volume is-badge" key={ storageSlug }>
 			{ storageStringFromFeature }
 		</div>
 	) : (
