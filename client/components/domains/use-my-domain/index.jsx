@@ -80,12 +80,6 @@ function UseMyDomain( props ) {
 
 	const baseClassName = 'use-my-domain';
 
-	useEffect( () => {
-		if ( useMyDomainMode && mode !== useMyDomainMode && isStepper ) {
-			setMode( useMyDomainMode );
-		}
-	}, [ useMyDomainMode, mode, isStepper ] );
-
 	const onGoBack = () => {
 		const prevOwnershipVerificationFlowPageSlug =
 			connectADomainOwnershipVerificationStepsDefinition[ ownershipVerificationFlowPageSlug ]?.prev;
@@ -287,24 +281,6 @@ function UseMyDomain( props ) {
 		setDomainNameValidationError();
 	};
 
-	useEffect( () => {
-		if ( ! initialQuery || initialValidation.current ) {
-			return;
-		}
-
-		initialValidation.current = true;
-		initialQuery &&
-			! initialMode &&
-			! getDomainNameValidationErrorMessage( initialQuery ) &&
-			onNext();
-	}, [ initialMode, initialQuery, onNext ] );
-
-	useEffect( () => {
-		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode ) {
-			setDomainTransferData();
-		}
-	}, [ mode, setDomainTransferData, initialMode ] );
-
 	const showOwnershipVerificationFlow = () => {
 		onNextStep?.( { mode: inputMode.ownershipVerification, domain: domainName } );
 		setMode( inputMode.ownershipVerification );
@@ -454,6 +430,36 @@ function UseMyDomain( props ) {
 			</>
 		);
 	};
+
+	useEffect( () => {
+		if ( useMyDomainMode && mode !== useMyDomainMode && isStepper ) {
+			setMode( useMyDomainMode );
+		}
+	}, [ useMyDomainMode, mode, isStepper ] );
+
+	useEffect( () => {
+		if ( initialMode ) {
+			setMode( initialMode );
+		}
+	}, [ initialMode ] );
+
+	useEffect( () => {
+		if ( ! initialQuery || initialValidation.current ) {
+			return;
+		}
+
+		initialValidation.current = true;
+		initialQuery &&
+			! initialMode &&
+			! getDomainNameValidationErrorMessage( initialQuery ) &&
+			onNext();
+	}, [ initialMode, initialQuery, onNext ] );
+
+	useEffect( () => {
+		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode ) {
+			setDomainTransferData();
+		}
+	}, [ mode, setDomainTransferData, initialMode ] );
 
 	return (
 		<>
