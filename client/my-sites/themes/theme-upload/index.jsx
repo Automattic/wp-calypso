@@ -27,10 +27,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
-import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
-import { HostingErrorStatus } from 'calypso/my-sites/hosting/hosting-error-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
@@ -60,7 +58,7 @@ import {
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
 	isUploadInProgress,
@@ -302,7 +300,7 @@ class Upload extends Component {
 				<div className="theme-upload__description">{ theme.description }</div>
 				<div className="theme-upload__action-buttons">
 					<Button onClick={ this.onTryAndCustomizeClick }>{ tryandcustomize.label }</Button>
-					{ this.props.activeTheme !== theme.id && (
+					{ this.props.activeTheme !== theme.id && ! this.props.isTransferCompleted && (
 						<Button primary onClick={ this.onActivateClick }>
 							{ activate.label }
 						</Button>
@@ -435,9 +433,6 @@ class Upload extends Component {
 						forceEnable={ this.props.isTransferInProgress }
 					/>
 				) }
-				{ this.props.isTransferCompleted &&
-					themeId !== this.props.activeTheme &&
-					! this.props.activeThemeIsLoading && <HostingErrorStatus context="theme" /> }
 				{ showUpgradeBanner && ! isTrial && this.renderUpgradeBanner() }
 
 				{ showEligibility && ! isTrial && (
@@ -460,17 +455,8 @@ const ConnectedUpload = connectOptions( Upload );
 
 const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
-	const { data, isFetching } = useActiveThemeQuery( siteId, true );
 
-	return (
-		<ConnectedUpload
-			{ ...props }
-			siteId={ siteId }
-			activeThemeIsLoading={ isFetching }
-			activeTheme={ data?.[ 0 ]?.stylesheet }
-			theme={ uploadedTheme }
-		/>
-	);
+	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
 const mapStateToProps = ( state ) => {
@@ -511,6 +497,7 @@ const mapStateToProps = ( state ) => {
 		complete: isUploadComplete( state, siteId ),
 		failed: hasUploadFailed( state, siteId ),
 		themeId,
+		activeTheme: getActiveTheme( state, siteId ),
 		isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
 		error: getUploadError( state, siteId ),

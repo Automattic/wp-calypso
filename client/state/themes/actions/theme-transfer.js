@@ -162,11 +162,33 @@ export function pollThemeTransferStatus(
 	siteId,
 	transferId,
 	interval = 3000,
-	timeout = 180000,
+	timeout = 240000,
 	hasThemeFileUpload = false
 ) {
 	const endTime = Date.now() + timeout;
 	return ( dispatch ) => {
+		const tryThemeFetch = ( uploaded_theme_slug, resolve ) => {
+			wpcom.req.get( `/sites/${ siteId }/themes/mine`, { apiVersion: '1.1' } ).then( ( theme ) => {
+				if ( theme.id === uploaded_theme_slug ) {
+					dispatch( transferStatus( siteId, transferId, 'complete', '', uploaded_theme_slug ) );
+					dispatch( {
+						type: THEME_UPLOAD_SUCCESS,
+						siteId,
+						themeId: uploaded_theme_slug,
+					} );
+					// finished, stop polling
+					return resolve();
+				}
+
+				if ( Date.now() > endTime ) {
+					return setTimeout( tryThemeFetch, 1000, uploaded_theme_slug, resolve );
+				}
+
+				dispatch( transferStatusFailure( siteId, transferId, new Error() ) );
+				resolve();
+			} );
+		};
+
 		const pollStatus = ( resolve, reject ) => {
 			if ( Date.now() > endTime ) {
 				// timed-out, stop polling
@@ -176,21 +198,23 @@ export function pollThemeTransferStatus(
 			return wpcom.req
 				.get( `/sites/${ siteId }/automated-transfers/status/${ transferId }` )
 				.then( ( { status, message, uploaded_theme_slug } ) => {
-					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
-					if ( status === 'complete' ) {
-						if ( hasThemeFileUpload ) {
-							dispatch( {
-								type: THEME_UPLOAD_SUCCESS,
-								siteId,
-								themeId: uploaded_theme_slug,
-							} );
+					if ( ! hasThemeFileUpload ) {
+						dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
+
+						if ( status === 'complete' ) {
+							// finished, stop polling
+							return resolve();
 						}
 
-						// finished, stop polling
-						return resolve();
+						// poll again
+						return delay( pollStatus, interval, resolve, reject );
 					}
-					// poll again
-					return delay( pollStatus, interval, resolve, reject );
+					if ( status !== 'complete' ) {
+						dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
+						return delay( pollStatus, interval, resolve, reject );
+					}
+
+					tryThemeFetch( uploaded_theme_slug, resolve );
 				} )
 				.catch( ( error ) => {
 					dispatch( transferStatusFailure( siteId, transferId, error ) );
