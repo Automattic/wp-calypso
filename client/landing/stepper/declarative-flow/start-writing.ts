@@ -122,11 +122,6 @@ const startWriting: Flow = {
 							} ),
 						] );
 
-						initializeLaunchpadState( {
-							siteId: providedDependencies?.siteId as number,
-							siteSlug: providedDependencies?.siteSlug as string,
-						} );
-
 						const siteOrigin = window.location.origin;
 
 						return redirect(
