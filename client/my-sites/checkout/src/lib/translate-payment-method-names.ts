@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
-const StripeRedirectMigrationP24 = config.isEnabled( 'stripe-redirect-migration-p24' );
+const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -86,7 +86,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'ideal':
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
-			if ( StripeRedirectMigrationP24 ) {
+			if ( isP24RedirectEnabled ) {
 				return 'WPCOM_Billing_Stripe_P24';
 			}
 			return 'WPCOM_Billing_Stripe_Source_P24';
