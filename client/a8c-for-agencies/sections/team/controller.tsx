@@ -1,16 +1,18 @@
 import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import MainSidebar from '../../components/sidebar-menu/main';
+import { TAB_ACTIVE_MEMBERS } from './constants';
 import TeamAcceptInvite from './primary/team-accept-invite';
 import TeamInvite from './primary/team-invite';
 import TeamList from './primary/team-list';
 
 export const teamContext: Callback = ( context, next ) => {
+	const { tab } = context.params;
 	context.secondary = <MainSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Manage team" path={ context.path } />
-			<TeamList />
+			<TeamList currentTab={ tab ?? TAB_ACTIVE_MEMBERS } />
 		</>
 	);
 

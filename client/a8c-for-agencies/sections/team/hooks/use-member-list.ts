@@ -40,6 +40,15 @@ export function useMemberList() {
 		refetch,
 		isPending: isActiveMembersPending || isMemberInvitesPending,
 		members,
+		activeMembers: activeMembers ?? [],
+		invitedMembers:
+			memberInvites?.map( ( invite ) => ( {
+				id: invite.id,
+				displayName: invite.displayName,
+				email: invite.email,
+				avatar: invite.avatar,
+				status: 'pending' as const,
+			} ) ) ?? [],
 		hasMembers: members.length > 1, // We exclude the owner from the count
 	};
 }
