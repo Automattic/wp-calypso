@@ -121,20 +121,15 @@ const useCalculatedDiscounts = () => {
 				isDiscount: true,
 				isIntroductoryOffer: true,
 			} );
-
-			priceBreakdown.push( {
-				label: __( 'Multi-year discount' ),
-				priceInteger: multiYearDiscount,
-				isDiscount: true,
-			} );
-		} else {
-			// If an annual product has a free trial and the biennial does not, show the multi-year discount instead
-			priceBreakdown.push( {
-				label: __( 'Multi-year discount' ),
-				priceInteger: multiYearDiscount,
-				isDiscount: true,
-			} );
 		}
+	}
+
+	if ( multiYearDiscount > 0 ) {
+		priceBreakdown.push( {
+			label: __( 'Multi-year discount' ),
+			priceInteger: multiYearDiscount,
+			isDiscount: true,
+		} );
 	}
 
 	// Coupon discount is added on top of other discounts
@@ -152,6 +147,7 @@ const useCalculatedDiscounts = () => {
 		.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
 
 	const subtotalPrice = originalPrice - allAppliedDiscounts;
+
 	const vatPrice = ( originalPrice - allAppliedDiscounts ) * ( product.item_tax_rate ?? 0 );
 
 	priceBreakdown.push( { label: __( 'Tax' ), priceInteger: vatPrice } );
