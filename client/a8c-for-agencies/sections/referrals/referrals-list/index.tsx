@@ -161,20 +161,23 @@ export default function ReferralList( {
 		};
 	}, [ dataViewsState ] );
 
-	const actions: Action< any >[] = useMemo( () => {
-		// TODO: fix TypeScript any
-		return [
-			{
-				id: 'view-details',
-				label: translate( 'View Details' ),
-				isPrimary: true,
-				icon: chevronRight, // TODO: is this how you use icons in calypso?
-				callback( items ) {
-					openSitePreviewPane( items[ 0 ] );
+	const actions: Action< Referral >[] = useMemo( () => {
+		if ( dataViewsState.type === 'table' ) {
+			return [
+				{
+					id: 'view-details',
+					label: translate( 'View Details' ),
+					isPrimary: true,
+					icon: chevronRight, // TODO: is this how you use icons in calypso?
+					callback( items ) {
+						openSitePreviewPane( items[ 0 ] );
+					},
 				},
-			},
-		];
-	}, [ openSitePreviewPane, translate ] );
+			];
+		}
+
+		return [];
+	}, [ openSitePreviewPane, translate, dataViewsState.type ] );
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
 		return filterSortAndPaginate( referrals, dataViewsState, fields );
