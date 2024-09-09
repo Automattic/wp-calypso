@@ -70,10 +70,7 @@ $button-border: 4px;
 
 		@media screen and (min-width: 960px) {
 			padding: 24px 20px;
-		}
-
-		@media screen and (min-width: 1806px) {
-			padding: 24px 0;
+			box-sizing: initial;
 		}
 	}
 }
@@ -301,25 +298,6 @@ $button-border: 4px;
 
 .theme__sheet-column-right {
 	grid-area: preview;
-}
-
-.header-cake.card.theme__sheet-action-bar {
-	box-shadow: none;
-	box-sizing: content-box;
-	margin: 0 auto;
-	max-width: $theme-sheet-content-max-width;
-	min-height: 70px;
-	padding: 0 20px;
-	position: relative;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		margin: 0 0 32px 0;
-		min-height: 60px;
-	}
-}
-
-.is-mobile-app-view .header-cake.card.theme__sheet-action-bar {
-	display: none;
 }
 
 .theme__sheet-primary-button {
