@@ -1281,6 +1281,27 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			align-items: center;
 		}
 
+		&.feature-flag-passwordless-auth {
+			.jetpack-connect__logged-in-form-user {
+				flex-direction: column;
+			}
+
+			.jetpack-connect__logged-in-form-user-text {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin-bottom: 13.5px;
+
+				strong {
+					font-size: 1rem;
+					font-weight: 500;
+					line-height: 24px;
+					letter-spacing: -0.008px;
+					display: block;
+				}
+			}
+		}
+
 		.gravatar {
 			margin: 0;
 		}

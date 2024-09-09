@@ -7,6 +7,7 @@ import {
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -1044,7 +1045,13 @@ export class JetpackAuthorize extends Component {
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
-						<Card className="jetpack-connect__logged-in-card">
+						<Card
+							className={ clsx( 'jetpack-connect__logged-in-card', {
+								'feature-flag-passwordless-auth': config.isEnabled(
+									'woocommerce/core-profiler-passwordless-auth'
+								),
+							} ) }
+						>
 							<div className="jetpack-connect__logged-in-form-user">
 								<Gravatar user={ user } size={ 40 } />
 								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
