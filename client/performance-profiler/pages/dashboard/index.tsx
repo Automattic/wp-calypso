@@ -7,7 +7,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
-import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { PerformanceProfilerHeader, TabType } from 'calypso/performance-profiler/components/header';
 import { LoadingScreen } from '../loading-screen';
 
@@ -68,7 +67,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	return (
 		<div className="peformance-profiler-dashboard-container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
-
 			<PerformanceProfilerHeader
 				url={ url }
 				timestamp={ performanceReport?.timestamp }
@@ -77,7 +75,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				showWPcomBadge={ performanceReport?.is_wpcom }
 				showNavigationTabs
 			/>
-
 			<div
 				className={ clsx( 'loading-container', 'mobile-loading', {
 					'is-active': activeTab === TabType.mobile,
@@ -86,7 +83,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			>
 				<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
 			</div>
-
 			<div
 				className={ clsx( 'loading-container', 'desktop-loading', {
 					'is-active': activeTab === TabType.desktop,
@@ -95,15 +91,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			>
 				<LoadingScreen isSavedReport={ isSavedReport.current } key="desktop-loading" />
 			</div>
-
-			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
-				( activeTab === TabType.desktop && desktopLoaded ) ) && (
-				<PerformanceProfilerDashboardContent
-					performanceReport={ performanceReport }
-					url={ finalUrl ?? url }
-					hash={ hash }
-				/>
-			) }
 		</div>
 	);
 };

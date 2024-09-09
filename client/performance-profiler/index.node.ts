@@ -1,7 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import { makeLayout, setLocaleMiddleware } from 'calypso/controller';
+import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
-
+import { PerformanceProfilerDashboardContext } from './controller';
 /**
  * Using the server routing for this section has the sole purpose of defining
  * a named route parameter for the language, that is used to set `context.lang`
@@ -14,5 +14,10 @@ import { serverRouter } from 'calypso/server/isomorphic-routing';
 export default ( router: ReturnType< typeof serverRouter > ) => {
 	const lang = getLanguageRouteParam();
 
-	router( [ `/${ lang }/speed-test-tool(/*)?` ], setLocaleMiddleware(), makeLayout );
+	router(
+		[ `/${ lang }/speed-test-tool(/*)?` ],
+		ssrSetupLocale,
+		PerformanceProfilerDashboardContext,
+		makeLayout
+	);
 };
