@@ -41,7 +41,7 @@ test( 'edit profile menu link goes to /me when the user has no site', () => {
 	);
 } );
 
-test( 'edit profile menu link goes to /site/wp-admin/profile.php when the user has a site', () => {
+test( 'edit profile menu link goes to site.com/wp-admin/profile.php when the user has a site', () => {
 	getSiteUrl.mockReturnValue( 'example.com' );
 
 	renderWithState( <MasterbarLoggedIn /> );
