@@ -80,6 +80,16 @@ function UseMyDomain( props ) {
 
 	const baseClassName = 'use-my-domain';
 
+	const updateMode = useCallback(
+		( newMode ) => {
+			setMode( newMode );
+			if ( isStepper ) {
+				setUseMyDomainMode?.( newMode );
+			}
+		},
+		[ isStepper, setUseMyDomainMode ]
+	);
+
 	const onGoBack = () => {
 		const prevOwnershipVerificationFlowPageSlug =
 			connectADomainOwnershipVerificationStepsDefinition[ ownershipVerificationFlowPageSlug ]?.prev;
@@ -91,11 +101,7 @@ function UseMyDomain( props ) {
 				if ( prevOwnershipVerificationFlowPageSlug ) {
 					setOwnershipVerificationFlowPageSlug( prevOwnershipVerificationFlowPageSlug );
 				} else {
-					setMode( inputMode.transferOrConnect );
-
-					if ( isStepper ) {
-						setUseMyDomainMode?.( inputMode.transferOrConnect );
-					}
+					updateMode( inputMode.transferOrConnect );
 				}
 				return;
 			case inputMode.transferDomain:
@@ -105,18 +111,11 @@ function UseMyDomain( props ) {
 					if ( wasInitialModeSet ) {
 						return goBack();
 					}
-					setMode( inputMode.transferOrConnect );
-					if ( isStepper ) {
-						setUseMyDomainMode?.( inputMode.transferOrConnect );
-					}
+					updateMode( inputMode.transferOrConnect );
 				}
 				return;
 			case inputMode.transferOrConnect:
-				setMode( inputMode.domainInput );
-
-				if ( isStepper ) {
-					setUseMyDomainMode( inputMode.domainInput );
-				}
+				updateMode( inputMode.domainInput );
 				return;
 			default:
 				goBack();
@@ -243,8 +242,8 @@ function UseMyDomain( props ) {
 				setDomainNameValidationError( errorMessage );
 			} else {
 				onNextStep?.( { mode: inputMode.transferOrConnect, domain: filteredDomainName } );
-				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
+				updateMode( inputMode.transferOrConnect );
 
 				if ( isStepper ) {
 					window.history.pushState(
@@ -252,7 +251,6 @@ function UseMyDomain( props ) {
 						'',
 						`?step=${ inputMode.transferOrConnect }&initialQuery=${ filteredDomainName }`
 					);
-					setUseMyDomainMode( inputMode.transferOrConnect );
 				}
 			}
 		} catch ( error ) {
@@ -267,8 +265,8 @@ function UseMyDomain( props ) {
 		getAvailability,
 		setDomainTransferData,
 		onNextStep,
+		updateMode,
 		isStepper,
-		setUseMyDomainMode,
 	] );
 
 	const onDomainNameChange = ( event ) => {
@@ -283,20 +281,12 @@ function UseMyDomain( props ) {
 
 	const showOwnershipVerificationFlow = () => {
 		onNextStep?.( { mode: inputMode.ownershipVerification, domain: domainName } );
-		setMode( inputMode.ownershipVerification );
-
-		if ( isStepper ) {
-			setUseMyDomainMode?.( inputMode.ownershipVerification );
-		}
+		updateMode( inputMode.ownershipVerification );
 	};
 
 	const showTransferDomainFlow = () => {
 		onNextStep?.( { mode: inputMode.transferDomain, domain: domainName } );
-		setMode( inputMode.transferDomain );
-
-		if ( isStepper ) {
-			setUseMyDomainMode?.( inputMode.transferDomain );
-		}
+		updateMode( inputMode.transferDomain );
 	};
 
 	const renderDomainInput = () => {
