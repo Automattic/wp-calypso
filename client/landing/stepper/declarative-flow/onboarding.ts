@@ -1,8 +1,8 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { useEffect, useState } from 'react';
 import {
 	clearSignupDestinationCookie,
 	persistSignupDestination,
@@ -58,6 +58,8 @@ const onboarding: Flow = {
 			[]
 		);
 
+		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
+
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
@@ -69,6 +71,9 @@ const onboarding: Flow = {
 					}
 					return navigate( 'plans' );
 				case 'use-my-domain':
+					// Remove query params
+					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
+					window.history.replaceState( {}, document.title, window.location.pathname );
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
@@ -103,11 +108,23 @@ const onboarding: Flow = {
 		};
 
 		const goBack = () => {
+			const lastQuery = getQueryArg( window.location.href, 'lastQuery' );
+
 			switch ( currentStepSlug ) {
 				case 'use-my-domain':
+					if ( lastQuery ) {
+						// remove query params
+						// window.history.pushState( {}, document.title, window.location.pathname );
+						return navigate( 'use-my-domain' );
+					}
 					return navigate( 'domains' );
 				case 'plans':
-					return navigate( 'domains' );
+					if ( Object.keys( useMyDomainQueryParams ).length ) {
+						// restore query params
+						const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
+						return navigate( useMyDomainURL );
+					}
+					return navigate( 'use-my-domain' );
 				default:
 					return;
 			}

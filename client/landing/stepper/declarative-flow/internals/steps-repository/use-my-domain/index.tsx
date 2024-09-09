@@ -7,6 +7,7 @@ import {
 	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
@@ -24,9 +25,22 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
-	const handleOnTransfer = async ( domain: string, authCode: string ) => {
+	const [ useMyDomainMode, setUseMyDomainMode ] = useState( '' );
+
+	const handleGoBack = () => {
+		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
+			// Remove query params
+			window.history.replaceState( {}, document.title, window.location.pathname );
+			// Force UseMyDomainComponent component to re-render
+			setUseMyDomainMode( inputMode.domainInput );
+			return;
+		}
+		goBack?.();
+	};
+
+	const handleOnTransfer = async ( { domain, authCode }: { domain: string; authCode: string } ) => {
 		const domainCartItem = domainTransfer( {
-			domain,
+			domain: domain,
 			extra: {
 				auth_code: authCode,
 				signup: true,
@@ -47,7 +61,9 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	};
 
 	const getInitialQuery = function () {
-		return String( getQueryArg( window.location.search, 'lastQuery' ) ?? '' );
+		const lastQuery = String( getQueryArg( window.location.search, 'lastQuery' ) ?? '' );
+		const initialQuery = String( getQueryArg( window.location.search, 'initialQuery' ) ?? '' );
+		return lastQuery || initialQuery || '';
 	};
 
 	const getBlogOnboardingFlowStepContent = () => {
@@ -62,6 +78,9 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					showHeader={ false }
 					onTransfer={ handleOnTransfer }
 					onConnect={ ( { domain } ) => handleOnConnect( domain ) }
+					useMyDomainMode={ useMyDomainMode }
+					setUseMyDomainMode={ setUseMyDomainMode }
+					isStepper
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -78,13 +97,21 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		}
 	};
 
+	useEffect( () => {
+		const stepQueryParam = getQueryArg( window.location.search, 'step' );
+		if ( stepQueryParam === 'transfer-or-connect' && stepQueryParam !== useMyDomainMode ) {
+			setUseMyDomainMode( inputMode.transferOrConnect );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	return (
 		<>
 			<QueryProductsList />
 			<StepContainer
 				stepName="useMyDomain"
 				shouldHideNavButtons={ isStartWritingFlow( flow ) }
-				goBack={ goBack }
+				goBack={ handleGoBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
 				isWideLayout
