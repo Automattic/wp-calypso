@@ -4,7 +4,7 @@ import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/
 
 const isAlipayRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-alipay' );
 const isBancontactRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-bancontact' );
-const isStripeIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
+const isIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
 const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
 
 /**
@@ -95,7 +95,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
 		case 'ideal':
-			if ( isStripeIdealRedirectEnabled ) {
+			if ( isIdealRedirectEnabled ) {
 				return 'WPCOM_Billing_Stripe_Ideal';
 			}
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
