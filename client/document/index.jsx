@@ -148,9 +148,8 @@ class Document extends Component {
 					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
-					className={ clsx( {
+					className={ clsx( 'color-scheme', {
 						rtl: isRTL,
-						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
 						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
