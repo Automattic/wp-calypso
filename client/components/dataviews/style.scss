@@ -27,8 +27,6 @@
 		}
 
 		&:hover {
-			background: var(--color-neutral-0);
-
 			.site-set-favorite__favorite-icon,
 			.components-checkbox-control__input {
 				opacity: 1;
@@ -252,7 +250,7 @@
 		position: sticky;
 		right: 0;
 		z-index: 1;
-		background: linear-gradient(90deg, #0000 0, #fff 25%);
+		background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgb(255, 255, 255) 25%);
 		padding-left: 48px;
 	}
 }
