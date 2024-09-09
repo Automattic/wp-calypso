@@ -490,7 +490,6 @@ export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 /* START: Features for experiment calypso_pricing_grid_fewer_features */
 export const FEATURE_THEMES_PREMIUM_AND_STORE = 'feature-themes-premium-and-store';
 export const FEATURE_UNLIMITED_ENTITIES = 'feature-unlimited-entities';
-export const FEATURE_CUSTOMIZE_STYLE = 'feature-customize-style';
 export const FEATURE_WOO_THEMES = 'feature-woo-themes';
 export const FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS = 'feature-woo-social-media-integrations';
 export const FEATURE_WOO_PAYMENTS = 'feature-woo-payments';

@@ -315,7 +315,6 @@ import {
 	FEATURE_SOCIAL_IMAGE_GENERATOR,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
-	FEATURE_CUSTOMIZE_STYLE,
 	FEATURE_WOO_THEMES,
 	FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS,
 	FEATURE_GOOGLE_LISTING_ADS,
@@ -2725,10 +2724,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
-	},
-	[ FEATURE_CUSTOMIZE_STYLE ]: {
-		getSlug: () => FEATURE_CUSTOMIZE_STYLE,
-		getTitle: () => i18n.translate( 'Customize fonts and colors' ),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,
