@@ -304,6 +304,9 @@ class Layout extends Component {
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
+			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+				'woocommerce/core-profiler-passwordless-auth'
+			),
 		} );
 
 		const optionalBodyProps = () => {
