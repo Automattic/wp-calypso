@@ -63,7 +63,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	const getInitialQuery = function () {
 		const lastQuery = String( getQueryArg( window.location.search, 'lastQuery' ) ?? '' );
 		const initialQuery = String( getQueryArg( window.location.search, 'initialQuery' ) ?? '' );
-		return lastQuery || initialQuery || '';
+		return lastQuery || initialQuery;
 	};
 
 	const getBlogOnboardingFlowStepContent = () => {
