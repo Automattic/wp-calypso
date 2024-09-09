@@ -1,4 +1,3 @@
-import { Card } from '@automattic/components';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
