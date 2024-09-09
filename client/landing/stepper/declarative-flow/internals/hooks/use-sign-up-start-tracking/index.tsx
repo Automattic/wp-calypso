@@ -1,10 +1,8 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import { type Flow } from '../../types';
-import useDisposableEffect from '../use-disposable-effect';
-
 /**
  * Hook to track the start of a signup flow.
  */
@@ -41,18 +39,13 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 		}
 	}, [ queryParams, setQuery ] );
 
-	const recordStart = useCallback( () => {
-		recordSignupStart( flowName, ref, extraProps );
-		removeSignupParam();
-	}, [ extraProps, flowName, ref, removeSignupParam ] );
-
-	useDisposableEffect(
-		( dispose ) => {
-			if ( shouldTrack ) {
-				recordStart();
-				dispose();
-			}
-		},
-		[ recordStart, shouldTrack ]
-	);
+	useEffect( () => {
+		if ( shouldTrack ) {
+			recordSignupStart( flowName, ref, extraProps );
+			removeSignupParam();
+		}
+		// We don't want to re-record the event when the extraProps or query params change.
+		// Please don't add them to the dependency array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ flowName, ref, removeSignupParam, shouldTrack ] );
 };
