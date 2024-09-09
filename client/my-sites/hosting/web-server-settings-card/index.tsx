@@ -1,8 +1,8 @@
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import QuerySiteGeoAffinity from 'calypso/components/data/query-site-geo-affinity';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteStaticFile404 from 'calypso/components/data/query-site-static-file-404';
@@ -14,6 +14,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { useSelector } from 'calypso/state';
 import {
 	updateAtomicPhpVersion,
 	updateAtomicStaticFile404,
@@ -49,57 +50,73 @@ const InputPlaceholder = styled( LoadingPlaceholder )( {
 	marginBottom: '1em',
 } );
 
-const WebServerSettingsCard = ( {
-	disabled,
-	isGettingGeoAffinity,
-	isGettingPhpVersion,
-	isGettingStaticFile404,
-	isGettingWpVersion,
-	isUpdatingPhpVersion,
-	isUpdatingStaticFile404,
-	isUpdatingWpVersion,
-	isWpcomStagingSite,
-	siteId,
-	selectedSiteSlug,
-	geoAffinity,
-	staticFile404,
-	translate,
-	updatePhpVersion,
-	updateStaticFile404,
-	updateWpVersion,
-	phpVersion,
-	wpVersion,
-} ) => {
+type WebServerSettingsCardProps = {
+	disabled?: boolean;
+};
+
+export default function WebServerSettingsCard( { disabled }: WebServerSettingsCardProps ) {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	const siteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
+	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const geoAffinity = useSelector( ( state ) => getAtomicHostingGeoAffinity( state, siteId ) );
+	const phpVersion = useSelector( ( state ) => getAtomicHostingPhpVersion( state, siteId ) );
+	const wpVersion = useSelector( ( state ) => getAtomicHostingWpVersion( state, siteId ) );
+	const staticFile404 = useSelector( ( state ) => getAtomicHostingStaticFile404( state, siteId ) );
+
+	const isGettingGeoAffinity = useSelector( ( state ) =>
+		isFetchingAtomicHostingGeoAffinity( state, siteId )
+	);
+	const isGettingWpVersion = useSelector( ( state ) =>
+		isFetchingAtomicHostingWpVersion( state, siteId )
+	);
+	const isGettingStaticFile404 = ! disabled && ! staticFile404;
+	const isUpdatingPhpVersion = useSelector(
+		( state ) => getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false
+	);
+	const isUpdatingStaticFile404 = useSelector(
+		( state ) => getRequest( state, updateAtomicStaticFile404( siteId, null ) )?.isLoading ?? false
+	);
+	const isUpdatingWpVersion = useSelector(
+		( state ) => getRequest( state, updateAtomicWpVersion( siteId, null ) )?.isLoading ?? false
+	);
+	const isGettingPhpVersion = ! disabled && ! phpVersion;
+
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedWpVersion, setSelectedWpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
 	const { recommendedValue, phpVersions } = usePhpVersions();
 	const dataCenterOptions = useDataCenterOptions();
 
-	const wpVersionRef = useRef( null );
-	const wpVersionDropdownRef = useRef( null );
-	const phpVersionRef = useRef( null );
-	const phpVersionDropdownRef = useRef( null );
+	const wpVersionRef = useRef< HTMLLabelElement >( null );
+	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
+	const wpVersionExplainerRef = useRef< HTMLParagraphElement >( null );
+
+	const phpVersionRef = useRef< HTMLLabelElement >( null );
+	const phpVersionDropdownRef = useRef< HTMLSelectElement >( null );
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 
 	useEffect( () => {
-		function scrollTo( hash ) {
+		function scrollTo( hash: string ) {
 			let targetLabel;
-			let targetDropdown;
+			let targetControl;
 
 			if ( wpVersionRef.current && hash === '#wp' ) {
 				targetLabel = wpVersionRef.current;
-				targetDropdown = wpVersionDropdownRef.current;
+				targetControl = wpVersionDropdownRef.current || wpVersionExplainerRef.current;
 			} else if ( phpVersionRef.current && hash === '#php' ) {
 				targetLabel = phpVersionRef.current;
-				targetDropdown = phpVersionDropdownRef.current;
+				targetControl = phpVersionDropdownRef.current;
 			}
 
 			if ( targetLabel ) {
 				const animationKeyframes = [ { color: null }, { color: 'var(--theme-highlight-color)' } ];
-				const animationOptions = {
+				const animationOptions: KeyframeAnimationOptions = {
 					duration: 500,
 					direction: 'alternate',
 					easing: 'ease',
@@ -108,11 +125,11 @@ const WebServerSettingsCard = ( {
 
 				targetLabel.scrollIntoView( { behavior: 'smooth' } );
 				targetLabel.animate( animationKeyframes, animationOptions );
-				targetDropdown?.animate( animationKeyframes, animationOptions );
+				targetControl?.animate( animationKeyframes, animationOptions );
 			}
 		}
 
-		function onClick( event ) {
+		function onClick( event: MouseEvent ) {
 			const href = window.location.href.replace( window.location.hash, '' );
 
 			if ( event.target instanceof HTMLAnchorElement && event.target.href.startsWith( href ) ) {
@@ -149,7 +166,7 @@ const WebServerSettingsCard = ( {
 
 		const isWpVersionButtonDisabled =
 			disabled || ! selectedWpVersion || selectedWpVersion === wpVersion;
-		const selectedWpVersionValue = selectedWpVersion || wpVersion || ( disabled && 'latest' );
+		const selectedWpVersionValue = selectedWpVersion || wpVersion || ( disabled ? 'latest' : '' );
 
 		return (
 			<FormFieldset>
@@ -159,7 +176,7 @@ const WebServerSettingsCard = ( {
 						<FormSelect
 							disabled={ disabled || isUpdatingWpVersion }
 							className="web-server-settings-card__wp-version-select"
-							onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
+							onChange={ ( event ) => setSelectedWpVersion( event.currentTarget.value ) }
 							inputRef={ wpVersionDropdownRef }
 							value={ selectedWpVersionValue }
 						>
@@ -178,7 +195,7 @@ const WebServerSettingsCard = ( {
 						{ ! isWpVersionButtonDisabled && (
 							<Button
 								className="web-server-settings-card__wp-set-version"
-								onClick={ () => updateWpVersion( siteId, selectedWpVersion ) }
+								onClick={ () => dispatch( updateAtomicWpVersion( siteId, selectedWpVersion ) ) }
 								busy={ isUpdatingWpVersion }
 								disabled={ isUpdatingWpVersion }
 							>
@@ -190,7 +207,7 @@ const WebServerSettingsCard = ( {
 				{ ! isWpcomStagingSite && (
 					<p
 						className="web-server-settings-card__wp-version-description"
-						ref={ wpVersionDropdownRef }
+						ref={ wpVersionExplainerRef }
 					>
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
@@ -212,10 +229,9 @@ const WebServerSettingsCard = ( {
 			return;
 		}
 
-		const displayValue =
-			dataCenterOptions[ geoAffinity ] !== undefined
-				? dataCenterOptions[ geoAffinity ]
-				: geoAffinity;
+		const displayValue = dataCenterOptions.hasOwnProperty( geoAffinity )
+			? dataCenterOptions[ geoAffinity ]
+			: geoAffinity;
 
 		return (
 			<FormFieldset>
@@ -235,16 +251,6 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
-	const changePhpVersion = ( event ) => {
-		const newVersion = event.target.value;
-
-		setSelectedPhpVersion( newVersion );
-	};
-
-	const updateVersion = () => {
-		updatePhpVersion( siteId, selectedPhpVersion );
-	};
-
 	const getPhpVersionContent = () => {
 		if ( isGettingPhpVersion ) {
 			return;
@@ -253,14 +259,17 @@ const WebServerSettingsCard = ( {
 		const isPhpVersionButtonDisabled =
 			disabled || ! selectedPhpVersion || selectedPhpVersion === phpVersion;
 		const selectedPhpVersionValue =
-			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
+			selectedPhpVersion || phpVersion || ( disabled ? recommendedValue : '' );
 		return (
 			<FormFieldset>
 				<FormLabel ref={ phpVersionRef }>{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
-					onChange={ changePhpVersion }
+					onChange={ ( event ) => {
+						const newVersion = event.currentTarget.value;
+						setSelectedPhpVersion( newVersion );
+					} }
 					inputRef={ phpVersionDropdownRef }
 					value={ selectedPhpVersionValue }
 				>
@@ -274,7 +283,7 @@ const WebServerSettingsCard = ( {
 							<option
 								disabled={ option.value === phpVersion }
 								value={ option.value }
-								key={ option.label }
+								key={ option.value }
 							>
 								{ option.label }
 							</option>
@@ -284,7 +293,9 @@ const WebServerSettingsCard = ( {
 				{ ! isPhpVersionButtonDisabled && (
 					<Button
 						className="web-server-settings-card__php-set-version"
-						onClick={ updateVersion }
+						onClick={ () => {
+							dispatch( updateAtomicPhpVersion( siteId, selectedPhpVersion ) );
+						} }
 						busy={ isUpdatingPhpVersion }
 						disabled={ isUpdatingPhpVersion }
 					>
@@ -295,13 +306,9 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
-	const changeStaticFile404 = ( event ) => {
-		const newSetting = event.target.value;
-
-		setSelectedStaticFile404( newSetting );
+	const applyStaticFile404 = () => {
+		dispatch( updateAtomicStaticFile404( siteId, selectedStaticFile404 ) );
 	};
-
-	const applyStaticFile404 = () => updateStaticFile404( siteId, selectedStaticFile404 );
 
 	const getStaticFile404Settings = () => [
 		{
@@ -332,7 +339,7 @@ const WebServerSettingsCard = ( {
 		const isStaticFile404ButtonDisabled =
 			disabled || ! selectedStaticFile404 || selectedStaticFile404 === staticFile404;
 		const selectedStaticFile404Value =
-			selectedStaticFile404 || staticFile404 || ( disabled && recommendedValue );
+			selectedStaticFile404 || staticFile404 || ( disabled ? recommendedValue : '' );
 
 		return (
 			<FormFieldset>
@@ -347,7 +354,10 @@ const WebServerSettingsCard = ( {
 					id="staticFile404Select"
 					disabled={ disabled || isUpdatingStaticFile404 }
 					className="web-server-settings-card__static-file-404-select"
-					onChange={ changeStaticFile404 }
+					onChange={ ( event ) => {
+						const newSetting = event.currentTarget.value;
+						setSelectedStaticFile404( newSetting );
+					} }
 					value={ selectedStaticFile404Value }
 				>
 					{ getStaticFile404Settings().map( ( option ) => {
@@ -355,7 +365,7 @@ const WebServerSettingsCard = ( {
 							<option
 								disabled={ option.value === staticFile404 }
 								value={ option.value }
-								key={ option.label }
+								key={ option.value }
 							>
 								{ option.label }
 							</option>
@@ -422,40 +432,4 @@ const WebServerSettingsCard = ( {
 			{ isLoading && getPlaceholderContent() }
 		</HostingCard>
 	);
-};
-
-export default connect(
-	( state, props ) => {
-		const siteId = getSelectedSiteId( state );
-		const isWpcomStagingSite = isSiteWpcomStaging( state, siteId );
-		const geoAffinity = getAtomicHostingGeoAffinity( state, siteId );
-		const phpVersion = getAtomicHostingPhpVersion( state, siteId );
-		const wpVersion = getAtomicHostingWpVersion( state, siteId );
-		const staticFile404 = getAtomicHostingStaticFile404( state, siteId );
-
-		return {
-			isGettingGeoAffinity: isFetchingAtomicHostingGeoAffinity( state, siteId ),
-			isGettingPhpVersion: ! props.disabled && ! phpVersion,
-			isGettingWpVersion: isFetchingAtomicHostingWpVersion( state, siteId ),
-			isGettingStaticFile404: ! props.disabled && ! staticFile404,
-			isUpdatingPhpVersion:
-				getRequest( state, updateAtomicPhpVersion( siteId, null ) )?.isLoading ?? false,
-			isUpdatingStaticFile404:
-				getRequest( state, updateAtomicStaticFile404( siteId, null ) )?.isLoading ?? false,
-			isUpdatingWpVersion:
-				getRequest( state, updateAtomicWpVersion( siteId, null ) )?.isLoading ?? false,
-			isWpcomStagingSite,
-			siteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-			geoAffinity,
-			staticFile404,
-			phpVersion,
-			wpVersion,
-		};
-	},
-	{
-		updatePhpVersion: updateAtomicPhpVersion,
-		updateWpVersion: updateAtomicWpVersion,
-		updateStaticFile404: updateAtomicStaticFile404,
-	}
-)( localize( WebServerSettingsCard ) );
+}
