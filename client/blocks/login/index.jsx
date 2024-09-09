@@ -1062,6 +1062,7 @@ class Login extends Component {
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							loginButtonText={
 								config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+								isWooCoreProfilerFlow &&
 								this.props.initialQuery?.lostpassword_flow === 'true'
 									? translate( 'Log in' )
 									: null
