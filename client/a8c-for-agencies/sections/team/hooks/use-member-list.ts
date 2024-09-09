@@ -29,7 +29,7 @@ export function useMemberList() {
 				displayName: invite.displayName,
 				email: invite.email,
 				avatar: invite.avatar,
-				status: 'pending' as const,
+				status: invite.status as 'active' | 'pending' | 'expired',
 			} ) ) ?? [] ),
 		];
 
