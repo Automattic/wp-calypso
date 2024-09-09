@@ -510,7 +510,9 @@ export class JetpackSignup extends Component {
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-						disableSiteCard={ isWooCoreProfiler }
+						disableSiteCard={
+							isWooCoreProfiler && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						}
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
