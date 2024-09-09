@@ -156,6 +156,7 @@ export const FewerFeaturesExperimentTreatmentVariantA = {
 		intent: 'plans-default-wpcom',
 		isInSignup: true,
 		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
+		enablePreviousFeaturesIncludedTitle: true,
 	},
 } satisfies Story;
 

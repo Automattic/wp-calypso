@@ -53,8 +53,12 @@ const Table = ( {
 	stickyRowOffset,
 }: TableProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const {
+		enableCategorisedFeatures,
+		featureGroupMap,
+		enablePreviousFeaturesIncludedTitle,
 		enableReducedFeatureGroupSpacing,
+	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
 		[ featureGroupMap ]
@@ -143,7 +147,7 @@ const Table = ( {
 						options={ { isTableCell: true, isLogosOnly: enableCategorisedFeatures } }
 					/>
 				</tr>
-				{ ! enableCategorisedFeatures && (
+				{ enablePreviousFeaturesIncludedTitle && (
 					<tr>
 						<PreviousFeaturesIncludedTitle
 							renderedGridPlans={ gridPlansWithoutSpotlight }

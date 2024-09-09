@@ -210,6 +210,11 @@ export type GridContextProps = {
 	enableStorageAsBadge?: boolean;
 
 	/**
+	 * Display the "Everything in [previous-plan], plus:" title above the features list
+	 */
+	enablePreviousFeaturesIncludedTitle?: boolean;
+
+	/**
 	 * Reduce the vertical spacing between each feature group
 	 */
 	enableReducedFeatureGroupSpacing?: boolean;
