@@ -198,7 +198,15 @@ export type GridContextProps = {
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 	enableCategorisedFeatures?: boolean;
+
+	/**
+	 * Display the feature titles with a slightly larger font size
+	 */
 	enableLargeFeatureTitles?: boolean;
+
+	/**
+	 * Display the plan storage limit as a badge like "50GB" or as plain text like "50GB storage"
+	 */
 	enableStorageAsBadge?: boolean;
 };
 
