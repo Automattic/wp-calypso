@@ -26,6 +26,7 @@ interface PlansGridContext {
 	enableStorageAsBadge?: boolean;
 	enablePreviousFeaturesIncludedTitle?: boolean;
 	enableReducedFeatureGroupSpacing?: boolean;
+	enableLogosOnlyForEnterprisePlan?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 }
@@ -48,6 +49,7 @@ const PlansGridContextProvider = ( {
 	enableStorageAsBadge,
 	enablePreviousFeaturesIncludedTitle,
 	enableReducedFeatureGroupSpacing,
+	enableLogosOnlyForEnterprisePlan,
 	featureGroupMap,
 	hideUnsupportedFeatures,
 }: GridContextProps ) => {
@@ -79,6 +81,7 @@ const PlansGridContextProvider = ( {
 				enableStorageAsBadge,
 				enablePreviousFeaturesIncludedTitle,
 				enableReducedFeatureGroupSpacing,
+				enableLogosOnlyForEnterprisePlan,
 				featureGroupMap,
 				hideUnsupportedFeatures,
 			} }

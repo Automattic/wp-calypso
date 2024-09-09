@@ -170,6 +170,7 @@ export const FewerFeaturesExperimentTreatmentVariantB = {
 		enableLargeFeatureTitles: true,
 		enableStorageAsBadge: false,
 		enableReducedFeatureGroupSpacing: true,
+		enableLogosOnlyForEnterprisePlan: true,
 		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;

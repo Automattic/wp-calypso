@@ -54,10 +54,10 @@ const Table = ( {
 }: TableProps ) => {
 	const translate = useTranslate();
 	const {
-		enableCategorisedFeatures,
-		featureGroupMap,
+		enableLogosOnlyForEnterprisePlan,
 		enablePreviousFeaturesIncludedTitle,
 		enableReducedFeatureGroupSpacing,
+		featureGroupMap,
 	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
@@ -144,7 +144,7 @@ const Table = ( {
 				<tr>
 					<EnterpriseFeatures
 						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true, isLogosOnly: enableCategorisedFeatures } }
+						options={ { isTableCell: true, isLogosOnly: enableLogosOnlyForEnterprisePlan } }
 					/>
 				</tr>
 				{ enablePreviousFeaturesIncludedTitle && (

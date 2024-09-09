@@ -218,6 +218,11 @@ export type GridContextProps = {
 	 * Reduce the vertical spacing between each feature group
 	 */
 	enableReducedFeatureGroupSpacing?: boolean;
+
+	/**
+	 * Display only the client logos for the enterprise plan
+	 */
+	enableLogosOnlyForEnterprisePlan?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

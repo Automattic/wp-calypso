@@ -803,6 +803,9 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={
 											simplifiedFeaturesGridExperimentVariant === 'simplified'
 										}
+										enableLogosOnlyForEnterprisePlan={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
