@@ -165,7 +165,7 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			const pluginName = getPluginTitle( this.props.authQuery.plugin_name, translate );
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 
 			const translateParams = {
 				components: {
