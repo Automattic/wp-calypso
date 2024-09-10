@@ -11,7 +11,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BylinePreview } from './BylinePreview';
 
-const GRAVATER_OPTION = 'jetpack_gravatar_in_email';
+const GRAVATAR_OPTION = 'jetpack_gravatar_in_email';
 const AUTHOR_OPTION = 'jetpack_author_in_email';
 const POST_DATE_OPTION = 'jetpack_post_date_in_email';
 
@@ -53,7 +53,7 @@ export const BylineSettings = ( {
 			/>
 			<ToggleControl
 				checked={ !! showAvatarValue }
-				onChange={ handleToggle( GRAVATER_OPTION ) }
+				onChange={ handleToggle( GRAVATAR_OPTION ) }
 				disabled={ disabled }
 				label={ translate( 'Show author avatar on your emails' ) }
 			/>
