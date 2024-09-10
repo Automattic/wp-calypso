@@ -72,7 +72,14 @@ export const PerformanceProfilerDashboardContent = ( {
 			</div>
 
 			<Disclaimer />
-			<MigrationBanner url={ url } />
+			<MigrationBanner
+				url={ url }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
+						url,
+					} );
+				} }
+			/>
 		</div>
 	);
 };
