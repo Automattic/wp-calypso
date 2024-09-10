@@ -1,58 +1,60 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect } from 'react';
 
-const AESTHETIC_OFFSET = 20;
-const HELP_CENTER_POSITION_MASTERBAR = 11;
-const HELP_CENTER_POSITION_EDITOR = 15;
+type OpeningCoordinates = {
+	left: number;
+	top: number | 'auto';
+	transformOrigin: string;
+};
 
-const originElementOffset = ( element: HTMLElement ) => {
+const AESTHETIC_OFFSET = 60;
+const HELP_CENTER_WIDTH = 410;
+const HELP_CENTER_POSITION = {
+	MASTERBAR: 11,
+	EDITOR: 15,
+};
+
+const getOriginElementOffset = ( element: HTMLElement ) => {
 	if ( element.classList.contains( 'masterbar__item' ) ) {
-		return HELP_CENTER_POSITION_MASTERBAR;
+		return HELP_CENTER_POSITION.MASTERBAR;
 	}
 	if ( element.classList.contains( 'entry-point-button' ) ) {
-		return HELP_CENTER_POSITION_EDITOR;
+		return HELP_CENTER_POSITION.EDITOR;
 	}
-	// opening it from another location, example `my home`
 	return 0;
 };
+
+const getDefaultPosition = (): OpeningCoordinates => ( {
+	left: window?.innerWidth - HELP_CENTER_WIDTH - AESTHETIC_OFFSET,
+	top: 50,
+	transformOrigin: 'center',
+} );
 
 /**
  * This function calculates the position of the Help Center based on the last click event.
  * @param element The element that was clicked
  * @returns object with left and top properties
  */
-export const calculateOpeningPosition = ( element: HTMLElement ) => {
+const calculateOpeningPosition = ( element: HTMLElement ): OpeningCoordinates => {
 	const { innerWidth, innerHeight } = window;
 	const helpCenterHeight = Math.min( 800, innerHeight * 0.8 );
-	const helpCenterWidth = 410;
-
-	const defaultPosition = {
-		left: innerWidth - helpCenterWidth - AESTHETIC_OFFSET,
-		top: 100,
-		transformOrigin: 'center',
-	};
 
 	// To prevent Help Center from not being shown if an element is not found.
 	if ( ! element ) {
-		return defaultPosition;
-	}
-
-	// Return an empty object in mobile view.
-	if ( innerWidth <= 480 ) {
-		return {};
+		return getDefaultPosition();
 	}
 
 	const { x, y, width, height } = element.getBoundingClientRect();
-
-	const position = originElementOffset( element );
-
-	// handle RTL languages
+	const position = getOriginElementOffset( element );
 	const buttonLeftEdge = x - position;
-
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
 
-	const coords = { ...defaultPosition };
+	const coords = {
+		top: buttonBottomEdge + AESTHETIC_OFFSET,
+		left: buttonLeftEdge,
+		transformOrigin: 'top left',
+	};
 
 	if ( buttonTopEdge + helpCenterHeight + AESTHETIC_OFFSET > innerHeight ) {
 		// Align the bottom edge of the help center with the top edge of the button
@@ -64,10 +66,10 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		coords.transformOrigin = 'top';
 	}
 
-	if ( buttonLeftEdge + helpCenterWidth + AESTHETIC_OFFSET > innerWidth ) {
+	if ( buttonLeftEdge + HELP_CENTER_WIDTH + AESTHETIC_OFFSET > innerWidth ) {
 		// Align right edge of the help center with the right edge of the button
 		const buttonRightEdge = x + width + position;
-		coords.left = buttonRightEdge - helpCenterWidth;
+		coords.left = buttonRightEdge - HELP_CENTER_WIDTH;
 		coords.transformOrigin += ' right';
 	} else {
 		// Align left edge of the help center with the left edge of the button
@@ -75,53 +77,49 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		coords.transformOrigin += ' left';
 	}
 
-	// If the help center is off screen, move it to a set position
-	if (
+	const isOffScreen =
 		coords.top < 0 ||
 		coords.left < 0 ||
-		coords.left + helpCenterWidth > innerWidth ||
-		coords.top + helpCenterHeight > innerHeight
-	) {
-		return defaultPosition;
-	}
+		coords.left + HELP_CENTER_WIDTH > innerWidth ||
+		coords.top + helpCenterHeight > innerHeight;
 
-	return coords;
+	return isOffScreen ? getDefaultPosition() : coords;
 };
 
-export function useOpeningCoordinates( disabled: boolean = false, isMinimized: boolean ) {
+/**
+ * This hook determines the position of the Help Center based on the last click event.
+ * @param disabled If the Help Center is disabled
+ * @param isMinimized If the Help Center is minimized
+ * @returns object with left and top properties
+ */
+export function useOpeningCoordinates(
+	disabled = false,
+	isMinimized: boolean
+): OpeningCoordinates | undefined {
 	const isMobile = useMobileBreakpoint();
-
-	// Store the last click event to be used for the opening position
-	const [ openingCoordinates, setOpeningCoordinates ] = useState< {
-		top?: number;
-		left?: number;
-		transformOrigin?: string;
-	} >( {} );
+	const [ openingCoordinates, setOpeningCoordinates ] = useState( getDefaultPosition() );
 
 	useEffect( () => {
-		function handler( event: MouseEvent ) {
-			if ( ! disabled ) {
-				try {
-					const path = event.composedPath();
-
-					// Find the first button or anchor element in the path
-					// If none is found, use the first element in the path
-					const openingElement = ( path.find(
-						( element ) =>
-							element instanceof HTMLButtonElement || element instanceof HTMLAnchorElement
-					) || path[ 0 ] ) as HTMLElement;
-
-					setOpeningCoordinates( calculateOpeningPosition( openingElement ) );
-				} catch ( e ) {
-					// In case something weird is clicked. e.g something without `getBoundingClientRect`.
-				}
-			}
+		if ( disabled || isMobile ) {
+			return;
 		}
 
-		document.addEventListener( 'mousedown', handler );
+		const handler = ( event: MouseEvent ) => {
+			try {
+				const path = event.composedPath();
+				const openingElement = ( path.find(
+					( element ) =>
+						element instanceof HTMLButtonElement || element instanceof HTMLAnchorElement
+				) || path[ 0 ] ) as HTMLElement;
+				setOpeningCoordinates( calculateOpeningPosition( openingElement ) );
+			} catch ( e ) {
+				// Handle unexpected click targets
+			}
+		};
 
+		document.addEventListener( 'mousedown', handler );
 		return () => document.removeEventListener( 'mousedown', handler );
-	}, [ disabled ] );
+	}, [ disabled, isMobile ] );
 
 	if ( isMobile ) {
 		return undefined;
@@ -130,5 +128,6 @@ export function useOpeningCoordinates( disabled: boolean = false, isMinimized: b
 	if ( isMinimized && openingCoordinates ) {
 		return { ...openingCoordinates, top: 'auto', transformOrigin: 'bottom right' };
 	}
+
 	return openingCoordinates;
 }
