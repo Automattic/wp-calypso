@@ -38,6 +38,7 @@ export default function UserContactSupportModalForm( {
 	const [ name, setName ] = useState( user?.display_name );
 	const [ email, setEmail ] = useState( user?.email );
 	const [ product, setProduct ] = useState( DEFAULT_PRODUCT_VALUE );
+	const [ pressableContactType, setPressableContactType ] = useState( 'sales' );
 	const [ site, setSite ] = useState( '' );
 	const [ message, setMessage ] = useState( defaultMessage );
 
@@ -90,6 +91,13 @@ export default function UserContactSupportModalForm( {
 	const onProductChange: FormEventHandler = useCallback(
 		( event: ChangeEvent< HTMLSelectElement > ) => {
 			setProduct( event.currentTarget.value );
+		},
+		[]
+	);
+
+	const onPressableContactTypeChange: FormEventHandler = useCallback(
+		( event: ChangeEvent< HTMLSelectElement > ) => {
+			setPressableContactType( event.currentTarget.value );
 		},
 		[]
 	);
@@ -208,8 +216,8 @@ export default function UserContactSupportModalForm( {
 							<FormSelect
 								name="pressable_contact"
 								id="product"
-								value={ product }
-								onChange={ onProductChange }
+								value={ pressableContactType }
+								onChange={ onPressableContactTypeChange }
 							>
 								<option value="sales">{ translate( 'Sales' ) }</option>
 								<option value="support">{ translate( 'Support' ) }</option>
