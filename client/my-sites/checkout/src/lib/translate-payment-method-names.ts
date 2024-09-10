@@ -1,5 +1,8 @@
+import config from '@automattic/calypso-config';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
+
+const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -31,6 +34,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_Source_P24':
+		case 'WPCOM_Billing_Stripe_P24':
 			return 'p24';
 		case 'WPCOM_Billing_Stripe_Source_Sofort':
 			return 'sofort';
@@ -82,6 +86,9 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'ideal':
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
+			if ( isP24RedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_P24';
+			}
 			return 'WPCOM_Billing_Stripe_Source_P24';
 		case 'sofort':
 			return 'WPCOM_Billing_Stripe_Source_Sofort';
@@ -110,6 +117,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
+		case 'WPCOM_Billing_Stripe_P24':
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
