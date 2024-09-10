@@ -32,7 +32,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
 
 	// Disable feedback submission for 24 hours.
-	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
+	const { mutateAsync: disableFeedbackSubmission } = useNoticeVisibilityMutation(
 		siteId,
 		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
 		'postponed',
@@ -77,7 +77,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
-			disableFeedbackSubmissionForOneDay().then( () => {
+			disableFeedbackSubmission().then( () => {
 				refetchNotices();
 			} );
 
@@ -88,7 +88,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		isSubmissionSuccessful,
 		handleClose,
 		translate,
-		disableFeedbackSubmissionForOneDay,
+		disableFeedbackSubmission,
 		refetchNotices,
 	] );
 
