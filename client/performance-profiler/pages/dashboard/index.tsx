@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { PerformanceProfilerHeader, TabType } from 'calypso/performance-profiler/components/header';
 import {
@@ -26,13 +27,19 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const { url, tab, hash } = props;
 	const isSavedReport = useRef( !! hash );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
-	const { data: basicMetrics, isError } = useUrlBasicMetricsQuery( url, hash, true );
+	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
 	const siteUrl = new URL( url );
+
+	if ( isFetched && finalUrl ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_started', {
+			url: finalUrl,
+		} );
+	}
 
 	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
 		const queryParams = new URLSearchParams( window.location.search );
