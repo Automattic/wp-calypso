@@ -135,6 +135,7 @@ export default function NewsletterImporter( {
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
 	let stepContent = {};
+	let stepStatus = 'initial';
 	if ( paidNewsletterData?.steps ) {
 		// This is useful for the summary step.
 		if ( ! paidNewsletterData?.steps[ step ] ) {
@@ -142,9 +143,9 @@ export default function NewsletterImporter( {
 		} else {
 			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
 		}
-	}
 
-	const stepStatus = paidNewsletterData?.steps[ step ]?.status ?? 'initial';
+		stepStatus = paidNewsletterData?.steps[ step ]?.status;
+	}
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
