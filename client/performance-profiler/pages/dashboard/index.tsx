@@ -32,6 +32,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+	let testStartTime;
 
 	const siteUrl = new URL( url );
 
@@ -39,6 +40,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		recordTracksEvent( 'calypso_performance_profiler_test_started', {
 			url: finalUrl,
 		} );
+		testStartTime = Date.now();
 	}
 
 	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
@@ -77,6 +79,15 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		activeTab === TabType.mobile
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
+
+	if ( testStartTime && desktopLoaded && mobileLoaded ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
+			url: finalUrl,
+			duration: Date.now() - testStartTime,
+			mobile_score: mobileReport?.overall_score,
+			desktop_score: desktopReport?.overall_score,
+		} );
+	}
 
 	return (
 		<div className="peformance-profiler-dashboard-container">
