@@ -3,8 +3,15 @@
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
-	max-width: 100%;
+	width: 100%;
 	scroll-margin-top: 80px;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 32px;
+	}
 
 	.title {
 		font-size: $font-title-small;
@@ -14,7 +21,13 @@ $blueberry-color: #3858e9;
 	.subtitle {
 		color: var(--studio-gray-70);
 		font-size: $font-body;
-		margin-bottom: 32px;
+		margin-bottom: 0;
+	}
+
+	.filter {
+		select {
+			cursor: pointer;
+		}
 	}
 
 	.metrics-insight-item.foldable-card {
