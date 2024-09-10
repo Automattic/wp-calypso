@@ -43,7 +43,7 @@ const onboarding: Flow = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
+		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem, setSiteUrl } =
 			useDispatch( ONBOARD_STORE );
 
 		const { planCartItem } = useSelect(
@@ -71,9 +71,11 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
+					setSiteUrl( providedDependencies.siteUrl );
 					setDomain( providedDependencies.suggestion );
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
+
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = 'use-my-domain?step=domain-input';
@@ -85,6 +87,7 @@ const onboarding: Flow = {
 						}
 						return navigate( useMyDomainURL );
 					}
+
 					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
