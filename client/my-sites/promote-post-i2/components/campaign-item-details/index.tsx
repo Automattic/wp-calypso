@@ -225,7 +225,7 @@ export default function CampaignItemDetails( props: Props ) {
 		  )
 		: '';
 
-	const isLessThanOneWeek = false; //! is_evergreen && activeDays < 7;
+	const isLessThanOneWeek = ! is_evergreen && activeDays < 7;
 
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
