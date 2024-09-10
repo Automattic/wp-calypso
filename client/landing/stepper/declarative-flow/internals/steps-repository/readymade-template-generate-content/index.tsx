@@ -1,5 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -40,6 +41,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	const [ aiGeneratedRT, setAiGeneratedRT ] = useState( selectedReadymadeTemplate );
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const { setSelectedReadymadeTemplate } = useDispatch( ONBOARD_STORE );
+	const locale = useLocale();
 
 	const markContentGenerationTaskComplete = () =>
 		updateLaunchpadSettings( siteSlug, {
@@ -73,7 +75,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 
 	const generateContent = () => {
 		setIsGeneratingContent( true );
-		generateAIContentForTemplate( selectedReadymadeTemplate, aiContext )
+		generateAIContentForTemplate( selectedReadymadeTemplate, aiContext, locale )
 			.then( ( aiGeneratedRt: ReadymadeTemplate ) => {
 				setAiGeneratedRT( aiGeneratedRt );
 				return updateSiteContents( aiGeneratedRt );

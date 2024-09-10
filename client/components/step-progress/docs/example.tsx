@@ -1,4 +1,6 @@
 import { Button } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import { FunctionComponent, useState } from 'react';
 import StepProgress from 'calypso/components/step-progress';
 import type { ClickHandler } from '../index';
@@ -10,10 +12,17 @@ const StepProgressExample: FunctionComponent = () => {
 		{
 			message: 'You got this!',
 			onClick: () => setCurrentStep( 0 ),
+			indicator: <Icon icon={ check } />,
+		},
+		{
+			message: 'In Progress',
+			onClick: () => setCurrentStep( 1 ),
+			indicator: <Spinner style={ { color: 'red' } } />,
+			show: 'onComplete',
 		},
 		{
 			message: 'Host locator ( clickable once complete )',
-			onClick: () => setCurrentStep( 1 ),
+			onClick: () => setCurrentStep( 2 ),
 			show: 'onComplete',
 		},
 		'Credentials ( no click handler )',

@@ -3,36 +3,28 @@ import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 
 const generateAIContentForTemplate = async (
 	readymadeTemplate: ReadymadeTemplate,
-	context: string
+	context: string,
+	locale: string = 'en'
 ): Promise< ReadymadeTemplate > => {
-	const paths = [
-		{ content: readymadeTemplate.home.header, sectionName: 'Header' },
-		{ content: readymadeTemplate.home.content, sectionName: 'Front Page Content' },
-		{ content: readymadeTemplate.home.footer, sectionName: 'Footer' },
-	];
-
-	const requests = paths.map( ( { content, sectionName } ) =>
-		wpcom.req.post( {
+	try {
+		const response = await wpcom.req.post( {
 			path: '/ai-content/html',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			body: {
-				html: content,
+				html: readymadeTemplate.home.content,
 				context: context,
-				section_name: sectionName,
-				section_description: `This is the ${ sectionName.toLowerCase() } of the site's frontpage`,
+				section_name: 'Website Frontpage',
+				locale: locale,
+				section_description: 'This is the front page of the site',
 			},
-		} )
-	);
+		} );
 
-	try {
-		const responses = await Promise.all( requests );
 		return {
 			...readymadeTemplate,
 			home: {
-				header: responses[ 0 ],
-				content: responses[ 1 ],
-				footer: responses[ 2 ],
+				...readymadeTemplate.home,
+				content: response,
 			},
 		};
 	} catch ( error ) {

@@ -55,7 +55,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					translate( 'Plugin update manager' ),
 					translate( '24/7 expert support' ),
 					translate( 'Free staging sites with sync tools' ),
-					translate( 'SFTP/SHH, WP-CLI, Git tools' ),
+					translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 					translate( 'Resource isolation across every site' ),
 				] }
 			/>

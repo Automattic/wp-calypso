@@ -7,17 +7,16 @@ import { Site } from '../types';
 interface SiteDataFieldProps {
 	isLoading: boolean;
 	site: Site;
+	isDevSite?: boolean;
 	onSiteTitleClick: ( site: Site ) => void;
 }
 
-const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProps ) => {
+const SiteDataField = ( { isLoading, site, isDevSite, onSiteTitleClick }: SiteDataFieldProps ) => {
 	if ( isLoading ) {
 		return <TextPlaceholder />;
 	}
 
 	const migrationInProgress = site.sticker?.includes( 'migration-in-progress' );
-	// TODO: Replace with actual dev site check
-	const isDevSite = false;
 
 	return (
 		<Button
@@ -33,14 +32,14 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
-				{ ( migrationInProgress || isDevSite ) && (
-					<Badge
-						className="status-badge"
-						type={ migrationInProgress ? 'info-blue' : 'info-purple' }
-					>
-						{ migrationInProgress
-							? translate( 'Migration in progress' )
-							: translate( 'Development' ) }
+				{ migrationInProgress && (
+					<Badge className="status-badge" type="info-blue">
+						{ translate( 'Migration in progress' ) }
+					</Badge>
+				) }
+				{ isDevSite && (
+					<Badge className="status-badge" type="info-purple">
+						{ translate( 'Development' ) }
 					</Badge>
 				) }
 			</div>

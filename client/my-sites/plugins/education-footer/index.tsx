@@ -54,6 +54,7 @@ const EducationFooterContainer = styled.div`
 const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
+	margin-bottom: -32px;
 
 	.marketplace-cta {
 		min-width: 122px;
@@ -68,7 +69,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
 		`${ SectionContainer } {
-		padding-bottom: 0;
+		padding-bottom: 32px;
 	}` }
 
 	${ SectionContainer }::before {
@@ -103,30 +104,28 @@ export const MarketplaceFooter = () => {
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
 			>
-				<>
-					{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
-						<Button className="is-primary marketplace-cta" href={ startUrl }>
-							{ __( 'Get Started' ) }
-						</Button>
-					) }
-					<ThreeColumnContainer>
-						<FeatureItem header={ __( 'Fully Managed' ) }>
-							{ __(
-								'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Thousands of plugins' ) }>
-							{ __(
-								'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Flexible pricing' ) }>
-							{ __(
-								'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							) }
-						</FeatureItem>
-					</ThreeColumnContainer>
-				</>
+				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
+					<Button className="is-primary marketplace-cta" href={ startUrl }>
+						{ __( 'Get Started' ) }
+					</Button>
+				) }
+				<ThreeColumnContainer>
+					<FeatureItem header={ __( 'Fully Managed' ) }>
+						{ __(
+							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Thousands of plugins' ) }>
+						{ __(
+							'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Flexible pricing' ) }>
+						{ __(
+							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+						) }
+					</FeatureItem>
+				</ThreeColumnContainer>
 			</Section>
 		</MarketplaceContainer>
 	);
@@ -158,14 +157,12 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'website_building' ) }
 				/>
@@ -174,14 +171,14 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'customization' ) }
 				/>
@@ -190,14 +187,12 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'seo' ) }
 				/>

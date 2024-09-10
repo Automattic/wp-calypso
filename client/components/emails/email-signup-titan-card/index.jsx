@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import tip from 'calypso/components/domains/register-domain-step/tip';
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -83,6 +84,7 @@ class EmailSignupTitanCard extends Component {
 
 		return (
 			<>
+				<QueryProductsList />
 				<Card className={ classes } compact>
 					{ this.renderEmailSuggestion( domainItem ) }
 					{ wrapDivActionContainer(

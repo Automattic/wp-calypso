@@ -12,6 +12,16 @@ export const Sources = ( { message }: { message: Message } ) => {
 	const sources = useMemo( () => {
 		const messageLength = message?.context?.sources?.length ?? 0;
 		if ( messageLength > 0 ) {
+			// Record TrainTracks render events
+			message.context?.sources?.forEach( ( source: Source, index: number ) => {
+				trackEvent( 'sources_traintracks_render', {
+					fetch_algo: source?.railcar?.fetch_algo,
+					ui_algo: 'default',
+					railcar: source?.railcar?.railcar,
+					fetch_position: source?.railcar?.fetch_position,
+					ui_position: index,
+				} );
+			} );
 			return [
 				...new Map(
 					message.context?.sources?.map( ( source: Source ) => [ source.url, source ] )
@@ -19,7 +29,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 			];
 		}
 		return [];
-	}, [ message?.context?.sources ] );
+	}, [ message?.context?.sources, trackEvent ] );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	if ( ! hasSources ) {
@@ -62,11 +72,16 @@ export const Sources = ( { message }: { message: Message } ) => {
 										in_chat_view: true,
 										href: source.url,
 									} );
+									trackEvent( 'sources_traintracks_interact', {
+										railcar: source?.railcar?.railcar,
+										action: 'click',
+										href: source.url,
+									} );
 									navigateToSupportDocs(
 										String( source.blog_id ),
 										String( source.post_id ),
-										source.url,
-										source.title
+										source.title,
+										source.url
 									);
 								} }
 								title={ source.title }

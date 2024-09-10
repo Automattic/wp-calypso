@@ -96,6 +96,7 @@ export class FullPostView extends Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
+	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
 
@@ -301,6 +302,7 @@ export class FullPostView extends Component {
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
+					container: this.readerMainWrapper.current,
 					y: commentsNode.offsetTop - 48,
 					duration: 300,
 					onComplete: () => {
@@ -495,7 +497,7 @@ export class FullPostView extends Component {
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
 			<div>
-				<ReaderMain className={ clsx( classes ) }>
+				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
 					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
@@ -575,7 +577,25 @@ export class FullPostView extends Component {
 							</div>
 						</div>
 						<article className="reader-full-post__story">
-							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
+							<ReaderFullPostHeader
+								post={ post }
+								referralPost={ referralPost }
+								authorProfile={
+									<AuthorCompactProfile
+										author={ post.author }
+										siteIcon={ get( site, 'icon.img' ) }
+										feedIcon={ feedIcon }
+										siteName={ siteName }
+										siteUrl={ post.site_URL }
+										feedUrl={ get( post, 'feed_URL' ) }
+										followCount={ site && site.subscribers_count }
+										onFollowToggle={ this.openSuggestedFollowsModal }
+										feedId={ +post.feed_ID }
+										siteId={ +post.site_ID }
+										post={ post }
+									/>
+								}
+							/>
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
 								<ReaderFeaturedImage

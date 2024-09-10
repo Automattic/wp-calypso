@@ -1,5 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import wp from 'calypso/lib/wp';
@@ -8,11 +9,13 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 const NOTICE_ID = 'request-dpa-notice';
 
 const DPA = () => {
+	const [ isLoading, setLoading ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const requestDpa = async () => {
 		try {
+			setLoading( true );
 			await wp.req.post( '/me/request-dpa', { apiNamespace: 'wpcom/v2' } );
 			dispatch(
 				successNotice(
@@ -35,6 +38,8 @@ const DPA = () => {
 					{ id: NOTICE_ID }
 				)
 			);
+		} finally {
+			setLoading( false );
 		}
 	};
 
@@ -73,21 +78,16 @@ const DPA = () => {
 						) }
 					</strong>
 				</p>
-				<Button className="privacy__dpa-request-button" disabled onClick={ requestDpa }>
+				<Button
+					className="privacy__dpa-request-button"
+					disabled={ isLoading }
+					onClick={ requestDpa }
+				>
 					{ translate( 'Request a DPA', {
 						comment:
 							'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
 					} ) }
 				</Button>
-				<p>
-					<small>
-						<strong>
-							{ translate(
-								'Notice: The ability to request a DPA is temporarily on hold while updates are made to our Data Processing Addendum. We expect this feature to be restored on or before August 16.'
-							) }
-						</strong>
-					</small>
-				</p>
 			</Card>
 		</>
 	);

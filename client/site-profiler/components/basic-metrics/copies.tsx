@@ -24,7 +24,7 @@ type CopiesProps = {
 };
 
 type CopiesReturnValue = {
-	[ k in Metrics ]: CopiesProps;
+	[ k in string ]: CopiesProps;
 };
 
 export type CopiesReturnValueList = [ Metrics, CopiesProps ][];

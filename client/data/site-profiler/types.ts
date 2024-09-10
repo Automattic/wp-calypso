@@ -92,14 +92,14 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt';
 
 export type Scores = 'good' | 'needs-improvement' | 'poor';
 
 export type BasicMetrics = Record< Metrics, number >;
 export type BasicMetricsList = [ Metrics, number ][];
 
-export type BasicMetricsScored = Record< Metrics, { value: number; score: Scores } >;
+export type BasicMetricsScored = Record< string, { value: number; score: Scores } >;
 export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores } ][];
 
 export interface UrlBasicMetricsQueryResponse {
@@ -110,6 +110,10 @@ export interface UrlBasicMetricsQueryResponse {
 	};
 	advanced: Record< string, string >;
 	token: string;
+}
+
+export interface LeadMutationResponse {
+	success: boolean;
 }
 
 export interface UrlSecurityMetricsQueryResponse {
@@ -127,21 +131,46 @@ export interface UrlSecurityMetricsQueryResponse {
 	};
 }
 
-export type PerformanceReport = {
-	audits: {
-		health: PerformanceMetricsDataQueryResponse;
-		performance: PerformanceMetricsDataQueryResponse;
+export type ScreenShotsTimeLine = {
+	data: string;
+	timing: number;
+};
+
+export type PerformanceMetricsHistory = {
+	collection_period: Array< string | { year: number; month: number; day: number } >;
+	metrics: {
+		ttfb?: number[];
+		fcp?: number[];
+		lcp?: number[];
+		cls?: number[];
+		inp?: number[];
+		tbt?: number[];
 	};
+};
+
+export type PerformanceReport = {
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
 	is_wordpress: boolean;
+	screenshots?: ScreenShotsTimeLine[];
+	history: PerformanceMetricsHistory;
+	timestamp?: string;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
 		report: PerformanceReport;
 		status: string;
+	};
+}
+
+export interface UrlPerformanceInsightsQueryResponse {
+	pagespeed: {
+		status: string;
+		mobile: PerformanceReport | string;
+		desktop: PerformanceReport | string;
 	};
 }
 
@@ -155,8 +184,10 @@ export interface PerformanceMetricsItemQueryResponse {
 	id: string;
 	title?: string;
 	description?: string;
+	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
+	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {

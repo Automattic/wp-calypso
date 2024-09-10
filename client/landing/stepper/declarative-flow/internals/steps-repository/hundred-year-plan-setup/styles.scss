@@ -3,9 +3,7 @@
 @import "../hundred-year-plan-step-wrapper/mixins";
 
 .hundred-year-plan.step-route {
-	@include break-small {
-		margin-top: -60px;
-	}
+	margin-top: -60px;
 }
 
 .hundred-year-plan-setup {

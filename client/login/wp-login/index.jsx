@@ -48,7 +48,6 @@ import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
-import LoginButtons from './login-buttons';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
@@ -246,13 +245,16 @@ export class Login extends Component {
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
+		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+		const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQuery?.email_address );
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
 			gravatarFrom: currentQuery?.gravatar_from,
-			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
+			gravatarFlow: isGravatarFlow,
+			emailAddress: currentQuery?.email_address,
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -287,7 +289,7 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					{ ! isFromGravatar3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
 						<div>
 							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
 								components: {
@@ -528,7 +530,6 @@ export class Login extends Component {
 			locale,
 			signupUrl,
 			action,
-			isWooPasswordless,
 			currentRoute,
 		} = this.props;
 
@@ -536,26 +537,14 @@ export class Login extends Component {
 			return <PrivateSite />;
 		}
 
-		// It's used to toggle UIs for the login page of Gravatar powered clients only (not for F2A pages).
-		const isGravPoweredLoginPage = isGravPoweredClient && currentRoute === '/log-in';
-
-		const loginButtons = (
-			<>
-				{ ( ( isSocialFirst && isWhiteLogin ) || isWooPasswordless ) && (
-					<LoginButtons
-						locale={ locale }
-						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
-						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2Client={ this.props.oauth2Client }
-						isWooPasswordless={ isWooPasswordless }
-					/>
-				) }
-			</>
-		);
+		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
+		const isGravPoweredLoginPage =
+			isGravPoweredClient &&
+			! currentRoute.startsWith( '/log-in/push' ) &&
+			! currentRoute.startsWith( '/log-in/authenticator' ) &&
+			! currentRoute.startsWith( '/log-in/sms' ) &&
+			! currentRoute.startsWith( '/log-in/webauthn' ) &&
+			! currentRoute.startsWith( '/log-in/backup' );
 
 		return (
 			<LoginBlock
@@ -579,7 +568,6 @@ export class Login extends Component {
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
 				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
 			/>
 		);
 	}

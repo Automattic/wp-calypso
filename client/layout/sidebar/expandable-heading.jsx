@@ -4,12 +4,9 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
 import { decodeEntities } from 'calypso/lib/formatting';
 
-const noop = () => {};
-
 const ExpandableSidebarHeading = ( {
 	title,
 	count,
-	onClick,
 	icon,
 	customIcon,
 	materialIcon,
@@ -24,7 +21,6 @@ const ExpandableSidebarHeading = ( {
 		<SidebarHeading
 			aria-controls={ menuId }
 			aria-expanded={ expanded ? 'true' : 'false' }
-			onClick={ onClick }
 			{ ...props }
 		>
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
@@ -57,10 +53,6 @@ ExpandableSidebarHeading.propTypes = {
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
-};
-
-ExpandableSidebarHeading.defaultProps = {
-	onClick: noop,
 };
 
 export default ExpandableSidebarHeading;

@@ -9,7 +9,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -30,7 +29,6 @@ import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -677,24 +675,6 @@ class Account extends Component {
 					{ this.renderPrimarySite() }
 				</FormFieldset>
 
-				{ ! config.isEnabled( 'layout/site-level-user-profile' ) && (
-					<FormFieldset>
-						<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
-						<FormTextInput
-							disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
-							id="user_URL"
-							name="user_URL"
-							type="url"
-							onFocus={ this.getFocusHandler( 'Web Address Field' ) }
-							value={ this.getUserSetting( 'user_URL' ) || '' }
-							onChange={ this.updateUserSettingInput }
-						/>
-						<FormSettingExplanation>
-							{ translate( 'Shown publicly when you comment on blogs.' ) }
-						</FormSettingExplanation>
-					</FormFieldset>
-				) }
-
 				<FormButton
 					isSubmitting={ this.isSubmittingForm( ACCOUNT_FORM_NAME ) }
 					disabled={ this.shouldDisableAccountSubmitButton() }
@@ -955,32 +935,23 @@ class Account extends Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						<FormFieldset
-							className="account__settings-admin-home"
-							style={
-								config.isEnabled( 'layout/site-level-user-profile' ) ? { marginBottom: 0 } : {}
-							}
-						>
+						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Admin home' ) }
 							</FormLabel>
 							<ToggleSitesAsLandingPage />
 						</FormFieldset>
 
-						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
-							! config.isEnabled( 'layout/site-level-user-profile' ) &&
-							supportsCssCustomProperties() && (
-								<FormFieldset>
-									<FormLabel id="account__color_scheme" htmlFor="color_scheme">
-										{ translate( 'Dashboard color scheme' ) }
-									</FormLabel>
-									<ColorSchemePicker
-										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-										defaultSelection="classic-dark"
-										onSelection={ this.updateColorScheme }
-									/>
-								</FormFieldset>
-							) }
+						<FormFieldset>
+							<FormLabel id="account__color_scheme" htmlFor="color_scheme">
+								{ translate( 'Dashboard color scheme' ) }
+							</FormLabel>
+							<FormSettingExplanation>
+								{ translate(
+									'You can now set the color scheme on your individual site by visiting Users → Profile from your site dashboard.'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
 					</form>
 				</Card>
 

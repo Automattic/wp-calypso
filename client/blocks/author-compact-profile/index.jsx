@@ -65,22 +65,23 @@ class AuthorCompactProfile extends Component {
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
-				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (
-					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
-						{ author.name }
-					</ReaderAuthorLink>
-				) }
-				{ siteName && (
-					<ReaderSiteStreamLink
-						className="author-compact-profile__site-link"
-						feedId={ feedId }
-						siteId={ siteId }
-						post={ post }
-					>
-						{ siteName }
-					</ReaderSiteStreamLink>
-				) }
-
+				<div className="author-compact-profile__names">
+					{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (
+						<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
+							{ author.name }
+						</ReaderAuthorLink>
+					) }
+					{ siteName && (
+						<ReaderSiteStreamLink
+							className="author-compact-profile__site-link"
+							feedId={ feedId }
+							siteId={ siteId }
+							post={ post }
+						>
+							{ siteName }
+						</ReaderSiteStreamLink>
+					) }
+				</div>
 				<div className="author-compact-profile__follow">
 					{ followCount ? (
 						<div className="author-compact-profile__follow-count">

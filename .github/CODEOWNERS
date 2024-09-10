@@ -55,15 +55,6 @@
 /client/types.ts @Automattic/type-review
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
-# Editing Toolkit Modules
-/apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
-/apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
-/apps/editing-toolkit/editing-toolkit-plugin/block-patterns @Automattic/dotcom-view-design
-
-# Editing Toolkit Workflow Files
-/.github/workflows/editing-toolkit-plugin.yml @noahtallen
-/.github/workflows/send-calypso-app-build-trigger.sh @noahtallen
-
 # Experimentation platform legacy library and new client
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform

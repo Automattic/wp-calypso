@@ -1,34 +1,47 @@
-import { Card } from '@automattic/components';
-import { Button } from '@wordpress/components';
-import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
-import SubscriberUploadForm from './subscriber-upload-form';
-import type { SiteDetails } from '@automattic/data-stores';
+import StepDone from './subscribers/step-done';
+import StepImporting from './subscribers/step-importing';
+import StepInitial from './subscribers/step-initial';
+import StepPending from './subscribers/step-pending';
+import { StepProps } from './types';
 
-type Props = {
-	nextStepUrl: string;
-	selectedSite?: SiteDetails;
-	fromSite: QueryArgParsed;
-};
-
-export default function Subscribers( { nextStepUrl, selectedSite, fromSite }: Props ) {
-	if ( ! selectedSite ) {
-		return null;
+export default function Subscribers( {
+	nextStepUrl,
+	selectedSite,
+	fromSite,
+	status,
+	isFetchingContent,
+	siteSlug,
+	skipNextStep,
+	cardData,
+	engine,
+	setAutoFetchData,
+}: StepProps ) {
+	// The default step
+	let Step = StepInitial;
+	switch ( status ) {
+		case 'pending':
+			Step = StepPending;
+			break;
+		case 'importing':
+			Step = StepImporting;
+			break;
+		case 'done':
+			Step = StepDone;
+			break;
 	}
+
 	return (
-		<Card>
-			<h2>Step 1: Export your subscribers from Substack</h2>
-			<p>
-				To generate a CSV file of all your Substack subscribers, go to the Subscribers tab and click
-				'Export.' Once the CSV file is downloaded, upload it in the next step.
-			</p>
-			<Button variant="secondary" href={ `https://${ fromSite }/publish/subscribers` }>
-				Export subscribers
-			</Button>
-			<hr />
-			<h2>Step 2: Import your subscribers to WordPress.com</h2>
-			{ selectedSite.ID && (
-				<SubscriberUploadForm siteId={ selectedSite.ID } nextStepUrl={ nextStepUrl } />
-			) }
-		</Card>
+		<Step
+			cardData={ cardData }
+			engine={ engine }
+			fromSite={ fromSite }
+			isFetchingContent={ isFetchingContent }
+			nextStepUrl={ nextStepUrl }
+			selectedSite={ selectedSite }
+			setAutoFetchData={ setAutoFetchData }
+			siteSlug={ siteSlug }
+			skipNextStep={ skipNextStep }
+			status={ status }
+		/>
 	);
 }

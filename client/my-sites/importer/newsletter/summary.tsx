@@ -1,28 +1,37 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
-import { Icon, post, people, currencyDollar } from '@wordpress/icons';
+import ContentSummary from './summary/content';
+import SubscribersSummary from './summary/subscribers';
+import { StepProps } from './types';
 
-export default function Summary() {
+export default function Summary( { cardData }: StepProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
+	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
+		if ( contentStatus === 'done' && subscriberStatue === 'done' ) {
+			return true;
+		}
+		if ( contentStatus === 'done' && subscriberStatue === 'skipped' ) {
+			return true;
+		}
+
+		if ( contentStatus === 'skipped' && subscriberStatue === 'done' ) {
+			return true;
+		}
+
+		return false;
+	}
 	return (
 		<Card>
-			<ConfettiAnimation trigger={ ! prefersReducedMotion } />
-			<h2>Success!</h2>
-			<div className="summary__content">
-				<p>Here's an overview of what you'll migrate:</p>
-				<p>
-					<Icon icon={ post } />
-					<strong>47</strong> posts
-				</p>
-				<p>
-					<Icon icon={ people } />
-					<strong>99</strong> subscribers
-				</p>
-				<p>
-					<Icon icon={ currencyDollar } />
-					<strong>17</strong>paid subscribers
-				</p>
-			</div>
+			{ shouldRenderConfetti( cardData.content.status, cardData.subscribers.status ) && (
+				<>
+					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h2>Success! 🎉</h2>
+				</>
+			) }
+			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
+			<SubscribersSummary
+				cardData={ cardData.subscribers.content }
+				status={ cardData.subscribers.status }
+			/>
 		</Card>
 	);
 }

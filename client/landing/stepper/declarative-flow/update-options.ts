@@ -1,6 +1,9 @@
+import { Onboard } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ONBOARD_STORE } from '../stores';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
@@ -12,14 +15,19 @@ const updateOptions: Flow = {
 	useSteps() {
 		return [ STEPS.OPTIONS, STEPS.PROCESSING, STEPS.ERROR ];
 	},
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
 
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.UpdateOptions );
+		}, [] );
+	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
-			recordSubmitStep( providedDependencies, 'update-options', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'processing':
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {

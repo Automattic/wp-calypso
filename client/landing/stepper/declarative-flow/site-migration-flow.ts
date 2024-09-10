@@ -49,6 +49,7 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
+			STEPS.SITE_MIGRATION_CREDENTIALS,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -310,6 +311,19 @@ const siteMigration: Flow = {
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
+							return navigate(
+								addQueryArgs(
+									{
+										siteSlug,
+										from: fromQueryParam,
+										siteId,
+									},
+									STEPS.SITE_MIGRATION_CREDENTIALS.slug
+								)
+							);
+						}
+
 						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
 							siteId,
 							siteSlug,
@@ -342,8 +356,10 @@ const siteMigration: Flow = {
 							providedDependencies?.userAcceptedDeal ||
 							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
 						) {
-							// If the user selected "Do it for me" but has not given us a source site, we should take them to the source URL step.
-							if ( ! fromQueryParam ) {
+							if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
+								redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
+							} else if ( ! fromQueryParam ) {
+								// If the user selected "Do it for me" but has not given us a source site, we should take them to the source URL step.
 								redirectAfterCheckout = STEPS.SITE_MIGRATION_SOURCE_URL.slug;
 							} else {
 								redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
@@ -403,6 +419,26 @@ const siteMigration: Flow = {
 						siteSlug,
 					} );
 				}
+
+				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
+					const { action } = providedDependencies as {
+						action: 'skip' | 'submit';
+					};
+
+					if ( action === 'skip' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: fromQueryParam, siteSlug, credentials: 'skipped' },
+								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							)
+						);
+					}
+
+					return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
+						siteId,
+						siteSlug,
+					} );
+				}
 			}
 		}
 
@@ -455,12 +491,15 @@ const siteMigration: Flow = {
 
 					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
 				}
+
+				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
+				}
 			}
 		};
 
 		return { goBack, submit, exitFlow };
 	},
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default siteMigration;

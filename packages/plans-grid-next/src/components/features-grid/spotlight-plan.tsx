@@ -9,6 +9,7 @@ import PlanLogos from './plan-logos';
 import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import TopButtons from './top-buttons';
+import './spotlight-plan.scss';
 
 type SpotlightPlanProps = {
 	currentSitePlanSlug?: string | null;

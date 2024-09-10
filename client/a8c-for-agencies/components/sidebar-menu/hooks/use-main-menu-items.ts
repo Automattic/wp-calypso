@@ -8,10 +8,14 @@ import {
 	tag,
 	cog,
 	commentAuthorAvatar,
+	people,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_LICENSES_LINK,
@@ -24,11 +28,14 @@ import {
 	A4A_SETTINGS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
+	A4A_TEAM_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
 const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+
+	const agency = useSelector( getActiveAgency );
 
 	const menuItems = useMemo( () => {
 		const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
@@ -154,8 +161,27 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-		].map( ( item ) => createItem( item, path ) );
-	}, [ path, translate ] );
+			...( isSectionNameEnabled( 'a8c-for-agencies-team' ) &&
+			config.isEnabled( 'a4a-multi-user-support' )
+				? [
+						{
+							icon: people,
+							path: '/',
+							link: A4A_TEAM_LINK,
+							title: translate( 'Team' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Team',
+							},
+						},
+				  ]
+				: [] ),
+		]
+			.map( ( item ) => createItem( item, path ) )
+			.filter( ( item ) =>
+				// If multi-user support is enabled, we need to check if the user has access to the current path
+				config.isEnabled( 'a4a-multi-user-support' ) ? isPathAllowed( item.link, agency ) : true
+			);
+	}, [ agency, path, translate ] );
 	return menuItems;
 };
 

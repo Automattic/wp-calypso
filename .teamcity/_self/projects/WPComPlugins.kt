@@ -38,7 +38,6 @@ object WPComPlugins : Project({
 					"notifications-release-build",
 					"odyssey-stats-release-build",
 					"blaze-dashboard-release-build",
-					"editing-toolkit-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
 					"happy-blocks-release-build",
@@ -125,7 +124,6 @@ object CalypsoApps: BuildType({
 		apps/blaze-dashboard/dist => blaze-dashboard.zip
 		apps/o2-blocks/release-files => o2-blocks.zip
 		apps/happy-blocks/release-files => happy-blocks.zip
-		apps/editing-toolkit/editing-toolkit-plugin => editing-toolkit.zip
 		apps/command-palette-wp-admin/dist => command-palette-wp-admin.zip
 		apps/help-center/dist => help-center.zip
 		apps/whats-new/dist => whats-new.zip
@@ -240,11 +238,6 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 							--url-prefix "~/wp-content/plugins/gutenberg-core/%GUTENBERG_VERSION%/"
 				"""
 			}
-
-			uploadPluginSourceMaps(
-				slug = "editing-toolkit",
-				wpcomURL = "~/wp-content/plugins/editing-toolkit-plugin/prod/"
-			)
 
 			uploadPluginSourceMaps(
 				slug = "wpcom-block-editor",

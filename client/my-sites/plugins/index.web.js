@@ -27,7 +27,7 @@ import {
 	redirectStagingSites,
 	renderPluginsSidebar,
 } from './controller';
-import { plans, upload } from './controller-logged-in';
+import { maybeShowUpgradeSuccessNotice, plans, upload } from './controller-logged-in';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
@@ -89,6 +89,7 @@ export default function ( router ) {
 		redirectTrialSites,
 		upload,
 		makeLayout,
+		maybeShowUpgradeSuccessNotice,
 		clientRender
 	);
 

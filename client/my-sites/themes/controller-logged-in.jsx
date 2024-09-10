@@ -17,7 +17,7 @@ export function loggedIn( context, next ) {
 	}
 
 	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
+	if ( typeof window !== 'undefined' && context.init ) {
 		window.scrollTo( 0, 0 );
 	}
 

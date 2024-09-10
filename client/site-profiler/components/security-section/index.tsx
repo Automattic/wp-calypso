@@ -20,7 +20,7 @@ interface SecuritySectionProps {
 export const SecuritySection: React.FC< SecuritySectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { url, hash, hostingProvider, securityMetricsRef, setIsGetReportFormOpen } = props;
-	const { data } = useUrlSecurityMetricsQuery( url, hash );
+	const { data }: { data: any } = useUrlSecurityMetricsQuery( url, hash );
 	const { truncated, fail: securityData = {} } = data?.report?.audits ?? {};
 	const overallVulnerabilities = data?.report?.ovc ?? 0;
 
@@ -73,7 +73,7 @@ export const SecuritySection: React.FC< SecuritySectionProps > = ( props ) => {
 			}
 			ref={ securityMetricsRef }
 		>
-			{ Object.values( securityData ).map( ( metric ) => (
+			{ Object.values( securityData ).map( ( metric: any ) => (
 				<MetricsInsight
 					key={ `insight-${ metric.id }` }
 					insight={ {

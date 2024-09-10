@@ -6,6 +6,8 @@ import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashbo
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -18,11 +20,18 @@ import type { SiteNode, AllowedActionTypes } from '../types';
 type Props = {
 	site: SiteNode;
 	isLargeScreen: boolean;
+	isDevSite?: boolean;
 	siteError?: boolean;
 	onSelect?: ( action: AllowedActionTypes ) => void;
 };
 
-export default function useSiteActions( { site, isLargeScreen, siteError, onSelect }: Props ) {
+export default function useSiteActions( {
+	site,
+	isLargeScreen,
+	isDevSite,
+	siteError,
+	onSelect,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -35,6 +44,10 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 	const isA4AClient = useSelector( ( state ) => isA4AClientSite( state, siteValue?.blog_id ) );
 	const isWPCOMSimpleSite = ! isJetpack && ! isA4AClient;
 	const isWPCOMSite = isWPCOMSimpleSite || isWPCOMAtomicSite;
+
+	const canRemove = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_managed_sites' )
+	);
 
 	return useMemo( () => {
 		if ( ! siteValue ) {
@@ -58,6 +71,13 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 
 		return [
+			{
+				name: translate( 'Prepare for launch' ),
+				href: `https://wordpress.com/settings/general/${ blog_id }`,
+				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
+				isExternalLink: true,
+				isEnabled: isDevSite,
+			},
 			{
 				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/overview/${ blog_id }`,
@@ -148,17 +168,20 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 				onClick: () => handleClickMenuItem( 'remove_site' ),
 				icon: 'trash',
 				className: 'is-error',
-				isEnabled: true,
+				isEnabled: canRemove,
 			},
 		];
 	}, [
+		canRemove,
 		dispatch,
+		isDevSite,
 		isLargeScreen,
 		isWPCOMSimpleSite,
 		isWPCOMSite,
 		onSelect,
+		setDataViewsState,
 		setSelectedSiteFeature,
-		site?.value?.sticker,
+		site?.value,
 		siteError,
 		siteValue,
 		translate,

@@ -6,14 +6,16 @@ import {
 	isTailoredSignupFlow,
 	isOnboardingGuidedFlow,
 	ONBOARDING_GUIDED_FLOW,
+	StepContainer as StepperStepContainer,
 } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -23,7 +25,7 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import StartStepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -109,10 +111,13 @@ export class PlansStep extends Component {
 			intent,
 			flowName,
 			initialContext,
+			intervalType,
 		} = this.props;
 
-		const intervalType = getIntervalType( this.props.path );
+		const intervalTypeValue = intervalType || getIntervalType( this.props.path );
+
 		let errorDisplay;
+
 		if ( 'invalid' === this.props.step?.status ) {
 			errorDisplay = (
 				<div>
@@ -160,7 +165,7 @@ export class PlansStep extends Component {
 					isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
 					isInSignup
 					isLaunchPage={ isLaunchPage }
-					intervalType={ intervalType }
+					intervalType={ intervalTypeValue }
 					displayedIntervals={ this.props.displayedIntervals }
 					onUpgradeClick={ ( cartItems ) => this.onSelectPlan( cartItems ) }
 					customerType={ this.getCustomerType() }
@@ -178,6 +183,7 @@ export class PlansStep extends Component {
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 					coupon={ coupon }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					onPlanIntervalUpdate={ this.props.onPlanIntervalUpdate }
 				/>
 			</div>
 		);
@@ -248,8 +254,16 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
-			this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+			steps,
+			wrapperProps,
+			useStepperWrapper,
+		} = this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -291,26 +305,47 @@ export class PlansStep extends Component {
 			}
 		}
 
-		return (
-			<>
-				<StepWrapper
+		if ( useStepperWrapper ) {
+			return (
+				<StepperStepContainer
 					flowName={ flowName }
 					stepName={ stepName }
-					positionInFlow={ positionInFlow }
-					headerText={ headerText }
-					shouldHideNavButtons={ this.props.shouldHideNavButtons }
-					fallbackHeaderText={ fallbackHeaderText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ fallbackSubHeaderText }
+					formattedHeader={
+						<FormattedHeader
+							id="plans-header"
+							align="center"
+							subHeaderAlign="center"
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+						/>
+					}
 					isWideLayout={ false }
 					isExtraWideLayout
 					stepContent={ this.plansFeaturesList() }
-					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-					backUrl={ backUrl }
 					backLabelText={ backLabelText }
-					queryParams={ queryParams }
+					{ ...wrapperProps }
 				/>
-			</>
+			);
+		}
+
+		return (
+			<StartStepWrapper
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerText={ headerText }
+				shouldHideNavButtons={ this.props.shouldHideNavButtons }
+				fallbackHeaderText={ fallbackHeaderText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
+				isWideLayout={ false }
+				isExtraWideLayout
+				stepContent={ this.plansFeaturesList() }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ backUrl }
+				backLabelText={ backLabelText }
+				queryParams={ queryParams }
+			/>
 		);
 	}
 

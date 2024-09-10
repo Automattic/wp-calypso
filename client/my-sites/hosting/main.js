@@ -4,7 +4,6 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useEffect } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -138,30 +137,6 @@ const Hosting = ( props ) => {
 		isSiteAtomic,
 		transferState,
 	} = props;
-
-	useEffect( () => {
-		if ( [ '#php', '#wp' ].includes( window.location.hash ) ) {
-			let count = 0;
-			const interval = setInterval( () => {
-				let targetElement;
-				if ( window.location.hash === '#php' ) {
-					targetElement = document.querySelector( '[data-scroll-id="php-version-select"]' );
-				} else if ( window.location.hash === '#wp' ) {
-					targetElement = document.querySelector( '[data-scroll-id="wp-version-select"]' );
-				}
-
-				if ( targetElement ) {
-					targetElement.scrollIntoView( { behavior: 'smooth' } );
-					clearInterval( interval );
-				}
-
-				count++;
-				if ( count > 10 ) {
-					clearInterval( interval );
-				}
-			}, 500 );
-		}
-	}, [] );
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(

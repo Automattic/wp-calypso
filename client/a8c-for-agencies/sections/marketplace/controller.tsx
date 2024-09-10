@@ -9,6 +9,7 @@ import {
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
+import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
 import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
@@ -88,11 +89,17 @@ export const marketplaceWpcomContext: Callback = ( context, next ) => {
 };
 
 export const checkoutContext: Callback = ( context, next ) => {
+	const { referral_blog_id } = context.query;
+	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
-			<Checkout />
+			<Checkout
+				referralBlogId={ referralBlogId }
+				defaultMarketplaceType={ referralBlogId ? MARKETPLACE_TYPE_REFERRAL : undefined }
+			/>
 		</>
 	);
 	next();

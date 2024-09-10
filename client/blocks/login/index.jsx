@@ -16,6 +16,7 @@ import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
@@ -66,27 +67,6 @@ import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 
 import './style.scss';
-
-/*
- * Parses the `anchor_podcast` parameter from a given URL.
- * Returns `true` if provided URL is an anchor FM signup URL.
- */
-function getIsAnchorFmSignup( urlString ) {
-	if ( ! urlString ) {
-		return false;
-	}
-
-	// Assemble search params if there is actually a query in the string.
-	const queryParamIndex = urlString.indexOf( '?' );
-	if ( queryParamIndex === -1 ) {
-		return false;
-	}
-	const searchParams = new URLSearchParams(
-		decodeURIComponent( urlString.slice( queryParamIndex ) )
-	);
-	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
-	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
-}
 
 class Login extends Component {
 	static propTypes = {
@@ -176,13 +156,26 @@ class Login extends Component {
 			this.props.requestError?.field === 'usernameOrEmail' &&
 			this.props.requestError?.code === 'email_login_not_allowed'
 		) {
-			const magicLoginUrl = login( {
+			let urlConfig = {
 				locale: this.props.locale,
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
 				redirectTo: this.props.redirectTo,
 				usernameOnly: true,
-			} );
+			};
+
+			if ( this.props.isGravPoweredClient ) {
+				urlConfig = {
+					...urlConfig,
+					gravatarFrom:
+						isGravatarOAuth2Client( this.props.oauth2Client ) &&
+						this.props.currentQuery?.gravatar_from,
+					gravatarFlow: isGravatarFlowOAuth2Client( this.props.oauth2Client ),
+					emailAddress: this.props.currentQuery?.email_address,
+				};
+			}
+
+			const magicLoginUrl = login( urlConfig );
 
 			page( magicLoginUrl );
 		}
@@ -311,6 +304,9 @@ class Login extends Component {
 						event.preventDefault();
 						this.props.redirectToLogout( signupUrl );
 					}
+
+					event.preventDefault();
+					window.location.href = signupUrl;
 				} }
 			/>
 		);
@@ -358,7 +354,6 @@ class Login extends Component {
 			action,
 			currentQuery,
 			fromSite,
-			isAnchorFmSignup,
 			isFromMigrationPlugin,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
@@ -581,10 +576,13 @@ class Login extends Component {
 				if ( isGravPoweredLoginPage ) {
 					const isFromGravatar3rdPartyApp =
 						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+					const isGravatarFlowWithEmail = !! (
+						isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+					);
 
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ isFromGravatar3rdPartyApp
+							{ isFromGravatar3rdPartyApp || isGravatarFlowWithEmail
 								? translate( 'Please log in with your email and password.' )
 								: translate(
 										'If you prefer logging in with a password, or a social media account, choose below:'
@@ -679,14 +677,6 @@ class Login extends Component {
 						darkColorScheme
 					/>
 				</div>
-			);
-		} else if ( isAnchorFmSignup ) {
-			postHeader = (
-				<p className="login__header-subtitle">
-					{ translate(
-						'Log in to your WordPress.com account to transcribe and save your Anchor.fm podcasts.'
-					) }
-				</p>
 			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
@@ -843,7 +833,6 @@ class Login extends Component {
 			isSignupExistingAccount,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
-			loginButtons,
 			currentUser,
 			redirectTo,
 		} = this.props;
@@ -1014,28 +1003,47 @@ class Login extends Component {
 			);
 		}
 
+		let shouldShowLastUsedAuthenticationMethod = false;
+
 		return (
-			<LoginForm
-				disableAutoFocus={ disableAutoFocus }
-				onSuccess={ this.handleValidLogin }
-				privateSite={ privateSite }
-				socialService={ socialService }
-				socialServiceResponse={ socialServiceResponse }
-				domain={ domain }
-				isP2Login={ isP2Login }
-				locale={ locale }
-				userEmail={ userEmail }
-				handleUsernameChange={ handleUsernameChange }
-				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredClient || isBlazePro }
-				isSignupExistingAccount={ isSignupExistingAccount }
-				sendMagicLoginLink={ this.sendMagicLoginLink }
-				isSendingEmail={ this.props.isSendingEmail }
-				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
-				isJetpack={ isJetpack }
-				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-			/>
+			<ProvideExperimentData
+				name="wpcom_login_page_last_used_label_v1"
+				options={ { isEligible: config.isEnabled( 'login/last-used-method' ) } }
+			>
+				{ ( isLoadingExperiment, experimentAssignment ) => {
+					if ( isLoadingExperiment ) {
+						return null;
+					}
+
+					if ( experimentAssignment?.variationName === 'treatment' ) {
+						shouldShowLastUsedAuthenticationMethod = true;
+					}
+
+					return (
+						<LoginForm
+							shouldShowLastUsedAuthenticationMethod={ shouldShowLastUsedAuthenticationMethod }
+							disableAutoFocus={ disableAutoFocus }
+							onSuccess={ this.handleValidLogin }
+							privateSite={ privateSite }
+							socialService={ socialService }
+							socialServiceResponse={ socialServiceResponse }
+							domain={ domain }
+							isP2Login={ isP2Login }
+							locale={ locale }
+							userEmail={ userEmail }
+							handleUsernameChange={ handleUsernameChange }
+							signupUrl={ signupUrl }
+							hideSignupLink={ isGravPoweredClient || isBlazePro }
+							isSignupExistingAccount={ isSignupExistingAccount }
+							sendMagicLoginLink={ this.sendMagicLoginLink }
+							isSendingEmail={ this.props.isSendingEmail }
+							isSocialFirst={ isSocialFirst }
+							isJetpack={ isJetpack }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+						/>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 
@@ -1096,9 +1104,6 @@ export default connect(
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: getWccomFrom( state ),
 		isWooPasswordless: getIsWooPasswordless( state ),
-		isAnchorFmSignup: getIsAnchorFmSignup(
-			get( getCurrentQueryArguments( state ), 'redirect_to' )
-		),
 		isFromMigrationPlugin: startsWith(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'

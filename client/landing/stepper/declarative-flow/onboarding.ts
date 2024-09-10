@@ -1,5 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -9,21 +9,25 @@ import {
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
+			},
+			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
 			},
 			{
 				slug: 'plans',
-				asyncComponent: () => import( './internals/steps-repository/plans' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
 			},
 			{
 				slug: 'create-site',
@@ -43,9 +47,10 @@ const onboarding: Flow = {
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
-		const flowName = this.name;
+		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
+			useDispatch( ONBOARD_STORE );
 
-		const { domainCartItem, planCartItem } = useSelect(
+		const { planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
@@ -53,16 +58,23 @@ const onboarding: Flow = {
 			[]
 		);
 
-		const { resetStore } = useDispatch( ONBOARD_STORE );
-
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, currentStepSlug );
-
 			switch ( currentStepSlug ) {
 				case 'domains':
+					setDomain( providedDependencies.suggestion );
+					setDomainCartItem( providedDependencies.domainItem );
+					setDomainCartItems( providedDependencies.domainCart );
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						return navigate( 'use-my-domain' );
+					}
 					return navigate( 'plans' );
-				case 'plans':
+				case 'use-my-domain':
+					return navigate( 'plans' );
+				case 'plans': {
+					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
+					setPlanCartItem( cartItems?.[ 0 ] ?? null );
 					return navigate( 'create-site', undefined, true );
+				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
@@ -70,18 +82,8 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 					persistSignupDestination( destination );
-
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
-						if ( planCartItem && siteSlug && flowName ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
-						}
-
-						if ( domainCartItem && siteSlug && flowName ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
-
-						resetStore();
 
 						// replace the location to delete processing step from history.
 						window.location.replace(
@@ -102,6 +104,8 @@ const onboarding: Flow = {
 
 		const goBack = () => {
 			switch ( currentStepSlug ) {
+				case 'use-my-domain':
+					return navigate( 'domains' );
 				case 'plans':
 					return navigate( 'domains' );
 				default:

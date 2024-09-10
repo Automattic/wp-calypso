@@ -253,15 +253,6 @@ const sections = [
 		isomorphic: true,
 	},
 	{
-		name: 'start-with',
-		paths: [ '/start-with' ],
-		module: 'calypso/start-with',
-		enableLoggedOut: true,
-		group: 'start-with',
-		isomorphic: true,
-		trackLoadPerformance: true,
-	},
-	{
 		name: 'jetpack-app',
 		paths: [ '/jetpack-app' ],
 		module: 'calypso/jetpack-app',
@@ -848,6 +839,12 @@ const sections = [
 		name: 'a8c-for-agencies-partner-directory',
 		paths: [ '/partner-directory' ],
 		module: 'calypso/a8c-for-agencies/sections/partner-directory',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-team',
+		paths: [ '/team', '/team/invite' ],
+		module: 'calypso/a8c-for-agencies/sections/team',
 		group: 'a8c-for-agencies',
 	},
 	{

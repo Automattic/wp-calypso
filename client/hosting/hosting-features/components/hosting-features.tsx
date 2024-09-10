@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
@@ -10,11 +9,11 @@ import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
-import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -58,34 +57,37 @@ const HostingFeatures = () => {
 	);
 	const hasEnTranslation = useHasEnTranslation();
 
-	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
-	const isTransferInProgress = [
-		transferStates.PENDING,
-		transferStates.ACTIVE,
-		transferStates.PROVISIONED,
-	].includes( transfer.status );
+	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
+		siteId || undefined
+	);
+	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
+	// we also look at `siteTransferData.status`
+	const isTransferInProgress =
+		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&
+		! isPlanExpired;
 
 	useEffect( () => {
 		if ( ! siteId ) {
 			return;
 		}
 
-		if ( transfer.status === transferStates.COMPLETED ) {
-			window.location.href = `/overview/${ siteSlug }`;
-			return;
-		}
-
-		dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
-		// A user can keep one tab open and start transfer in the second tab
-		// se we always run interval to check the status, to avoid case with rendering "Activate" button on old tabs of a browser
 		const interval = setInterval( () => {
-			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
-		}, 10000 );
+			if ( siteTransferData?.status !== transferStates.COMPLETED ) {
+				refetchSiteTransferData();
+			} else {
+				clearInterval( interval );
+				dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+			}
+		}, 3000 );
 
-		return () => {
-			clearInterval( interval );
-		};
-	}, [ siteSlug, siteId, transfer.status, dispatch ] );
+		return () => clearInterval( interval );
+	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
+
+	useEffect( () => {
+		if ( isSiteAtomic && ! isPlanExpired ) {
+			page.replace( redirectUrl.current );
+		}
+	}, [ isSiteAtomic, isPlanExpired ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
@@ -140,10 +142,6 @@ const HostingFeatures = () => {
 		page( `/setup/transferring-hosted-site?${ params }` );
 	};
 
-	if ( isSiteAtomic && ! isPlanExpired ) {
-		page.replace( redirectUrl.current );
-		return;
-	}
 	const activateTitle = hasEnTranslation( 'Activate all hosting features' )
 		? translate( 'Activate all hosting features' )
 		: translate( 'Activate all developer tools' );
@@ -187,7 +185,7 @@ const HostingFeatures = () => {
 	let title;
 	let description;
 	let buttons;
-	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
+	if ( isTransferInProgress ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
 			"The hosting features will appear here automatically when they're ready!",

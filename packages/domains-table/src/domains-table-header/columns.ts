@@ -31,111 +31,135 @@ const domainLabel = ( count: number, isBulkSelection: boolean, showCount: boolea
 export const allSitesViewColumns = (
 	translate: I18N[ 'translate' ],
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions
-): DomainsTableColumn[] => [
-	{
-		name: 'domain',
-		label: domainLabel,
-		sortLabel: __( 'Domain', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-	},
-	{
-		name: 'owner',
-		label: __( 'Owner', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
-	},
-	{
-		name: 'site',
-		label: __( 'Site', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
-	},
-	{
-		name: 'expire_renew',
-		label: __( 'Expires / renews on', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
-	},
-	{
-		name: 'status',
-		label: __( 'Status', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'desc',
-		supportsOrderSwitching: true,
-		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
-	},
-	{
-		name: 'status_action',
-		label: null,
-		isSortable: false,
-	},
-	{
-		name: 'action',
-		label: __( 'Actions', __i18n_text_domain__ ),
-	},
-];
+): DomainsTableColumn[] => {
+	const columns: DomainsTableColumn[] = [
+		{
+			name: 'domain',
+			label: domainLabel,
+			sortLabel: __( 'Domain', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		},
+		{
+			name: 'owner',
+			label: __( 'Owner', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
+		},
+		{
+			name: 'site',
+			label: __( 'Site', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
+		},
+		{
+			name: 'ssl',
+			label: __( 'SSL', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
+		},
+		{
+			name: 'expire_renew',
+			label: __( 'Expires / renews on', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
+		},
+		{
+			name: 'status',
+			label: __( 'Status', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'desc',
+			supportsOrderSwitching: true,
+			sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
+		},
+		{
+			name: 'status_action',
+			label: null,
+			isSortable: false,
+		},
+		{
+			name: 'action',
+			label: __( 'Actions', __i18n_text_domain__ ),
+		},
+	];
+
+	return columns;
+};
 
 export const siteSpecificViewColumns = (
 	translate: I18N[ 'translate' ],
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions
-): DomainsTableColumn[] => [
-	{
-		name: 'domain',
-		label: domainLabel,
-		sortLabel: __( 'Domain', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-	},
-	{
-		name: 'owner',
-		label: __( 'Owner', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
-	},
-	{
-		name: 'email',
-		label: __( 'Email', __i18n_text_domain__ ),
-		isSortable: false,
-	},
-	{
-		name: 'expire_renew',
-		label: __( 'Expires / renews on', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'asc',
-		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
-	},
-	{
-		name: 'status',
-		label: __( 'Status', __i18n_text_domain__ ),
-		isSortable: true,
-		initialSortDirection: 'desc',
-		supportsOrderSwitching: true,
-		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
-	},
-	{
-		name: 'status_action',
-		label: null,
-		isSortable: false,
-	},
-	{
-		name: 'action',
-		label: __( 'Actions', __i18n_text_domain__ ),
-	},
-];
+): DomainsTableColumn[] => {
+	const columns: DomainsTableColumn[] = [
+		{
+			name: 'domain',
+			label: domainLabel,
+			sortLabel: __( 'Domain', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		},
+		{
+			name: 'owner',
+			label: __( 'Owner', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
+		},
+		{
+			name: 'email',
+			label: __( 'Email', __i18n_text_domain__ ),
+			isSortable: false,
+		},
+		{
+			name: 'ssl',
+			label: __( 'SSL', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
+		},
+		{
+			name: 'expire_renew',
+			label: __( 'Expires / renews on', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
+		},
+		{
+			name: 'status',
+			label: __( 'Status', __i18n_text_domain__ ),
+			isSortable: true,
+			initialSortDirection: 'desc',
+			supportsOrderSwitching: true,
+			sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
+		},
+		{
+			name: 'status_action',
+			label: null,
+			isSortable: false,
+		},
+		{
+			name: 'action',
+			label: __( 'Actions', __i18n_text_domain__ ),
+		},
+	];
+
+	return columns;
+};
 export const applyColumnSort = (
 	domains: PartialDomainData[],
 	domainData: Record< number, DomainData[] >,

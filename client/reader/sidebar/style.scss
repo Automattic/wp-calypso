@@ -66,15 +66,17 @@ body.is-section-reader {
 	background: var(--studio-gray-0);
 
 	&.rtl .layout__content {
-		padding: calc(var(--masterbar-height) + 16px) calc(var(--sidebar-width-max)) 16px 16px;
+		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;
 	}
 
 	.layout__content {
 		// Add border around everything
 		overflow: hidden;
 		min-height: 100vh;
+		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
+		padding-bottom: var(--content-padding-bottom);
 		@media only screen and (min-width: 782px) {
-			padding: calc(var(--masterbar-height) + 16px) 16px 16px calc(var(--sidebar-width-max)) !important;
+			padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) calc(var(--sidebar-width-max)) !important;
 		}
 		.layout_primary > div {
 			padding-bottom: 0;
@@ -86,7 +88,7 @@ body.is-section-reader {
 	}
 
 	.has-no-masterbar .layout__content .main {
-		padding-top: 16px;
+		padding-top: var(--content-padding-top);
 	}
 
 	@media only screen and (max-width: 600px) {
@@ -104,7 +106,7 @@ body.is-section-reader {
 			background: var(--color-surface);
 			margin: 0;
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			height: calc(100vh - 46px);
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 		}
 	}
 

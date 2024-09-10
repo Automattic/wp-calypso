@@ -1,205 +1,112 @@
+import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
-import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
-import { login } from 'calypso/lib/paths';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
+import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
-	getCreatedSocialAccountUsername,
-	getCreatedSocialAccountBearerToken,
-	getRedirectToOriginal,
-} from 'calypso/state/login/selectors';
+	GoogleSocialButton,
+	AppleLoginButton,
+	GithubSocialButton,
+	MagicLoginButton,
+	QrCodeLoginButton,
+	UsernameOrEmailButton,
+} from 'calypso/components/social-buttons';
 
 import './social.scss';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
-		recordTracksEvent: PropTypes.func.isRequired,
-		redirectTo: PropTypes.string,
-		onSuccess: PropTypes.func.isRequired,
-		loginSocialUser: PropTypes.func.isRequired,
-		uxMode: PropTypes.string.isRequired,
-		linkingSocialService: PropTypes.string,
-		socialService: PropTypes.string,
+		handleLogin: PropTypes.func.isRequired,
+		trackLoginAndRememberRedirect: PropTypes.func.isRequired,
 		socialServiceResponse: PropTypes.object,
 		shouldRenderToS: PropTypes.bool,
+		magicLoginLink: PropTypes.string,
+		qrLoginLink: PropTypes.string,
+		isSocialFirst: PropTypes.bool,
+		lastUsedAuthenticationMethod: PropTypes.string,
+		resetLastUsedAuthenticationMethod: PropTypes.func,
 	};
 
 	static defaultProps = {
-		linkingSocialService: '',
 		shouldRenderToS: false,
 	};
 
-	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
-		if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
-			this.props.createSocialUserFailed( socialInfo, error, 'login' );
-			return;
-		}
-
-		this.recordEvent( 'calypso_login_social_login_failure', service, {
-			error_code: error.code,
-			error_message: error.message,
-		} );
-	};
-
-	handleGoogleResponse = ( tokens, triggeredByUser = true ) => {
-		const { onSuccess, socialService } = this.props;
-		let redirectTo = this.props.redirectTo;
-
-		// ignore response if the user did not click on the google button
-		// and did not follow the redirect flow
-		if ( ! triggeredByUser && socialService !== 'google' ) {
-			return;
-		}
-
-		// load persisted redirect_to url from session storage, needed for redirect_to to work with google redirect flow
-		if ( ! triggeredByUser && ! redirectTo ) {
-			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
-		}
-
-		window.sessionStorage.removeItem( 'login_redirect_to' );
-
-		const socialInfo = {
+	socialLoginButtons = [
+		{
 			service: 'google',
-			access_token: tokens.access_token,
-			id_token: tokens.id_token,
-		};
-
-		this.props.loginSocialUser( socialInfo, redirectTo ).then(
-			() => {
-				this.recordEvent( 'calypso_login_social_login_success', 'google' );
-
-				onSuccess();
-			},
-			( error ) => {
-				this.reportSocialLoginFailure( { service: 'google', socialInfo, error } );
-			}
-		);
-	};
-
-	handleAppleResponse = ( response ) => {
-		const { onSuccess, socialService } = this.props;
-		let redirectTo = this.props.redirectTo;
-
-		if ( ! response.id_token ) {
-			return;
-		}
-
-		// load persisted redirect_to url from session storage, needed for redirect_to to work with apple redirect flow
-		if ( socialService === 'apple' && ! redirectTo ) {
-			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
-		}
-
-		window.sessionStorage.removeItem( 'login_redirect_to' );
-
-		const user = response.user || {};
-
-		const socialInfo = {
+			button: (
+				<GoogleSocialButton
+					responseHandler={ this.props.handleLogin }
+					onClick={ this.props.trackLoginAndRememberRedirect }
+					key={ 1 }
+					isLogin
+				/>
+			),
+		},
+		{
 			service: 'apple',
-			id_token: response.id_token,
-			user_name: user.name,
-			user_email: user.email,
-		};
-
-		this.props.loginSocialUser( socialInfo, redirectTo ).then(
-			() => {
-				this.recordEvent( 'calypso_login_social_login_success', 'apple' );
-
-				onSuccess();
-			},
-			( error ) => {
-				this.reportSocialLoginFailure( { service: 'apple', socialInfo, error } );
-			}
-		);
-	};
-
-	handleGitHubResponse = ( { access_token } ) => {
-		const { onSuccess, socialService } = this.props;
-
-		if ( socialService !== 'github' ) {
-			return;
-		}
-
-		let redirectTo = this.props.redirectTo;
-
-		// load persisted redirect_to url from session storage, needed for redirect_to to work with GitHub redirect flow
-		if ( ! redirectTo ) {
-			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
-		}
-
-		window.sessionStorage.removeItem( 'login_redirect_to' );
-
-		const socialInfo = {
+			button: (
+				<AppleLoginButton
+					responseHandler={ this.props.handleLogin }
+					onClick={ this.props.trackLoginAndRememberRedirect }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					key={ 2 }
+					isLogin
+				/>
+			),
+		},
+		{
 			service: 'github',
-			access_token: access_token,
-		};
-
-		this.props.loginSocialUser( socialInfo, redirectTo ).then(
-			() => {
-				this.recordEvent( 'calypso_login_social_login_success', 'github' );
-
-				onSuccess();
-			},
-			( error ) => {
-				this.reportSocialLoginFailure( { service: 'github', socialInfo, error } );
-			}
-		);
-	};
-
-	recordEvent = ( eventName, service, params ) =>
-		this.props.recordTracksEvent( eventName, {
-			social_account_type: service,
-			...params,
-		} );
-
-	trackLoginAndRememberRedirect = ( service ) => {
-		this.recordEvent( 'calypso_login_social_button_click', service );
-
-		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
-			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
-		}
-	};
-
-	getRedirectUri = ( service ) => {
-		const host = typeof window !== 'undefined' && window.location.host;
-		if ( typeof window !== 'undefined' && window.location.hostname === 'calypso.localhost' ) {
-			return `http://${ host }${ login( { socialService: service } ) }`;
-		}
-		return `https://${ host }${ login( { socialService: service } ) }`;
-	};
+			button: (
+				<GithubSocialButton
+					responseHandler={ this.props.handleLogin }
+					onClick={ this.props.trackLoginAndRememberRedirect }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					key={ 3 }
+					isLogin
+				/>
+			),
+		},
+		{
+			service: 'magic-login',
+			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
+				<MagicLoginButton loginUrl={ this.props.magicLoginLink } key={ 4 } />
+			),
+		},
+		{
+			service: 'qr-code',
+			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.qrLoginLink && (
+				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 5 } />
+			),
+		},
+	];
 
 	render() {
+		const { shouldRenderToS, isWoo, isSocialFirst, lastUsedAuthenticationMethod } = this.props;
+
 		return (
-			<SocialAuthenticationForm
-				compact={ this.props.compact }
-				handleGoogleResponse={ this.handleGoogleResponse }
-				handleAppleResponse={ this.handleAppleResponse }
-				handleGitHubResponse={ this.handleGitHubResponse }
-				getRedirectUri={ this.getRedirectUri }
-				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-				socialService={ this.props.socialService }
-				socialServiceResponse={ this.props.socialServiceResponse }
-				disableTosText={ ! this.props.shouldRenderToS }
-				flowName={ this.props.flowName }
-				isSocialFirst={ this.props.isSocialFirst }
-				isLogin
+			<Card
+				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
 			>
-				{ this.props.children }
-			</SocialAuthenticationForm>
+				<div className="auth-form__social-buttons">
+					<div className="auth-form__social-buttons-container">
+						{ this.socialLoginButtons.map( ( { service, button }, index ) =>
+							isSocialFirst && service === lastUsedAuthenticationMethod ? (
+								<UsernameOrEmailButton
+									key={ index + 1 }
+									onClick={ this.props.resetLastUsedAuthenticationMethod }
+								/>
+							) : (
+								button
+							)
+						) }
+					</div>
+					{ ! isWoo && shouldRenderToS && <SocialToS /> }
+				</div>
+				{ isWoo && shouldRenderToS && <SocialToS /> }
+			</Card>
 		);
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		redirectTo: getRedirectToOriginal( state ),
-		bearerToken: getCreatedSocialAccountBearerToken( state ),
-		username: getCreatedSocialAccountUsername( state ),
-	} ),
-	{
-		loginSocialUser,
-		createSocialUserFailed,
-		recordTracksEvent,
-	}
-)( SocialLoginForm );
+export default SocialLoginForm;

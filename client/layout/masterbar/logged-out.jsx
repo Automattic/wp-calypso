@@ -203,7 +203,7 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	render() {
-		const { title, isCheckout, isCheckoutPending, isCheckoutFailed } = this.props;
+		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName } = this.props;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
@@ -221,13 +221,21 @@ class MasterbarLoggedOut extends Component {
 			<Masterbar className="masterbar__loggedout">
 				{ this.renderWordPressItem() }
 				{ title && <Item className="masterbar__item-title">{ title }</Item> }
-				<div className="masterbar__login-links">
-					{ this.renderDiscoverItem() }
-					{ this.renderTagsItem() }
-					{ this.renderSearchItem() }
-					{ this.renderLoginItem() }
-					{ this.renderSignupItem() }
-				</div>
+				{ sectionName === 'reader' && (
+					<div className="masterbar__login-links">
+						{ this.renderDiscoverItem() }
+						{ this.renderTagsItem() }
+						{ this.renderSearchItem() }
+						{ this.renderLoginItem() }
+						{ this.renderSignupItem() }
+					</div>
+				) }
+				{ sectionName !== 'reader' && (
+					<div className="masterbar__login-links">
+						{ this.renderLoginItem() }
+						{ this.renderSignupItem() }
+					</div>
+				) }
 			</Masterbar>
 		);
 	}

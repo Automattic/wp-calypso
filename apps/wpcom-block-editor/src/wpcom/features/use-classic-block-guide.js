@@ -19,7 +19,7 @@ const ClassicGuide = () => {
 	};
 
 	// Make sure we don't end up with the standard wpcom nux showing as well.
-	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+	const { setWpcomNuxStatus } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	// Check that wpcom nux store is available.
 	// See p9F6qB-5Ja-p2 for more information.

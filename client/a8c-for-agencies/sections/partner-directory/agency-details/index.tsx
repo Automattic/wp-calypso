@@ -182,6 +182,20 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company bio' ) }
+					description={ translate(
+						'Basic Markdown syntax is supported. {{a}}Learn more about Markdown.{{/a}}',
+						{
+							components: {
+								a: (
+									<a
+										href="https://commonmark.org/help/"
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
+							},
+						}
+					) }
 					error={ validationError.bio }
 					checks={ [ validateNonEmpty() ] }
 					field={ formData.bioDescription }
@@ -214,6 +228,17 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
+					description={ translate( 'Need help? {{a}}View our logo guidelines.{{/a}}', {
+						components: {
+							a: (
+								<a
+									href="https://agencieshelp.automattic.com/knowledge-base/adding-a-logo-to-the-partner-directory-agency-profile/"
+									target="_blank"
+									rel="noreferrer noopener"
+								/>
+							),
+						},
+					} ) }
 					sub={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }

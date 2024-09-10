@@ -22,6 +22,8 @@ class ImporterSubstack extends PureComponent {
 			statusMessage: PropTypes.string,
 		} ),
 		fromSite: PropTypes.string,
+		hideUploadDescription: PropTypes.bool,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	render() {
@@ -30,6 +32,10 @@ class ImporterSubstack extends PureComponent {
 			siteSlug: this.props.siteSlug,
 			siteTitle: this.props.siteTitle,
 		} ).substack;
+
+		if ( this.props.hideUploadDescription ) {
+			delete importerData.uploadDescription;
+		}
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;
 	}

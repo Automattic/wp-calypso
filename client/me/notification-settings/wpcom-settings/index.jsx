@@ -37,6 +37,7 @@ const options = {
 	news: 'news',
 	digest: 'digest',
 	reports: 'reports',
+	news_developer: 'news_developer',
 	scheduled_updates: 'scheduled_updates',
 	jetpack_marketing: 'jetpack_marketing',
 	jetpack_research: 'jetpack_research',
@@ -132,6 +133,15 @@ class WPCOMNotifications extends Component {
 					title={ translate( 'Reports' ) }
 					description={ translate(
 						'Complimentary reports and updates regarding site performance and traffic.'
+					) }
+				/>
+
+				<EmailCategory
+					name={ options.news_developer }
+					isEnabled={ get( settings, options.news_developer ) }
+					title={ translate( 'Developer Newsletter' ) }
+					description={ translate(
+						'A once-monthly roundup of notable news for WordPress developers.'
 					) }
 				/>
 

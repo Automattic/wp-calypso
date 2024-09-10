@@ -261,8 +261,8 @@ $image-height: 47px;
 
 	.auth-form__social-buttons {
 		.social-buttons__button {
-			border: 1px solid var(--studio-pink-50);
-			color: var(--studio-pink-50);
+			border: 1px solid var(--studio-wordpress-blue);
+			color: var(--studio-wordpress-blue);
 			box-shadow: none;
 		}
 	}
@@ -601,6 +601,8 @@ $image-height: 47px;
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
+	background-color: #fff;
+
 	&.is-wp-job-manager {
 		background-color: #efefef;
 
