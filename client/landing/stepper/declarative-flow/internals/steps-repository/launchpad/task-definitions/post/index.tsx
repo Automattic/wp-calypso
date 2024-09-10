@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { TaskAction } from '../../types';
 
 export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task => {
-	const { siteSlug, isEmailVerified } = context;
+	const { isEmailVerified } = context;
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
 	return {
@@ -15,7 +15,7 @@ export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task =
 			false,
 		calypso_path: ! isBlogOnboardingFlow( flow || null )
 			? task.calypso_path
-			: addQueryArgs( `https://${ siteSlug }/wp-admin/post-new.php`, {
+			: addQueryArgs( task.calypso_path, {
 					origin: window.location.origin,
 			  } ),
 		useCalypsoPath: true,
