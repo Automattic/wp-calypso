@@ -250,7 +250,7 @@ class ThemeShowcase extends Component {
 		// Scroll to the top of the showcase
 		if ( this.showcaseRef.current ) {
 			this.showcaseRef.current.scrollIntoView( {
-				behavior: 'smooth',
+				behavior: 'instant',
 				block: 'start',
 			} );
 		}
