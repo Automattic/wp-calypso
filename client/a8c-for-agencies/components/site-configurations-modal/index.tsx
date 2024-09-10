@@ -83,6 +83,7 @@ export default function SiteConfigurationsModal( {
 			php_version: phpVersion,
 			primary_data_center: primaryDataCenter,
 			is_fully_managed_agency_site: ! allowClientsToUseSiteHelpCenter,
+			is_dev_site: isDevSite,
 		};
 		const params = {
 			...trackingParams,
