@@ -68,6 +68,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 
 	const getOnTabChange = ( tab: TabType ) => {
 		updateQueryParams( { tab: tab } );
+		recordTracksEvent( 'calypso_performance_profiler_tab_changed', {
+			url: finalUrl,
+			tab,
+		} );
 		setActiveTab( tab );
 	};
 
