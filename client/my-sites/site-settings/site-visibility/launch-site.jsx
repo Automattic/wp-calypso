@@ -116,8 +116,6 @@ const LaunchSite = () => {
 	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
 	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 
-	console.log( agency?.prices );
-
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
