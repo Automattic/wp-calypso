@@ -225,7 +225,7 @@ export default function CampaignItemDetails( props: Props ) {
 		  )
 		: '';
 
-	const isLessThanOneWeek = ! is_evergreen && activeDays < 7;
+	const isLessThanOneWeek = false; //! is_evergreen && activeDays < 7;
 
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
@@ -690,18 +690,20 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__secondary-stats-row">
 									{ isLessThanOneWeek ? (
 										<div>
-											<span className="campaign-item-details__label">{ __( 'Daily budget' ) }</span>
+											<span className="campaign-item-details__label">
+												{ ! isLoading ? translate( 'Daily budget' ) : <FlexibleSkeleton /> }
+											</span>
 											<span className="campaign-item-details__text wp-brand-font">
-												{ dailyAverageSpendingFormatted }
+												{ ! isLoading ? dailyAverageSpendingFormatted : <FlexibleSkeleton /> }
 											</span>
 											<span className="campaign-item-details__details">
-												{ translate( 'Daily average spend' ) }
+												{ ! isLoading ? translate( 'Daily average spend' ) : <FlexibleSkeleton /> }
 											</span>
 										</div>
 									) : (
 										<div>
 											<span className="campaign-item-details__label">
-												{ __( 'Weekly budget' ) }
+												{ ! isLoading ? translate( 'Weekly budget' ) : <FlexibleSkeleton /> }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
 												{ ! isLoading ? weeklyBudgetFormatted : <FlexibleSkeleton /> }
