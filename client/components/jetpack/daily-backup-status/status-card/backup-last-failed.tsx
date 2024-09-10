@@ -21,7 +21,7 @@ export const BackupLastFailed: FunctionComponent< Props > = () => {
 			<span className="backup-last-failed__info">
 				<Gridicon icon="notice-outline" />
 				{ translate(
-					"We encountered some issues with today's backup, but don't worry! " +
+					"We encountered some issues with the latest backup, but don't worry! " +
 						"We're using the most recent backup available. " +
 						'{{ExternalLink}}Learn more.{{/ExternalLink}}',
 					{

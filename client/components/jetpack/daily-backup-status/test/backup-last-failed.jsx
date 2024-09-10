@@ -32,7 +32,7 @@ describe( 'BackupLastFailed', () => {
 	test( 'renders message last backup failed', () => {
 		const { container } = renderMessage();
 		expect( container.textContent ).toBe(
-			`We encountered some issues with today's backup, but don't worry! We're using the most recent backup available. {{ExternalLink}}Learn more.{{/ExternalLink}}`
+			`We encountered some issues with the latest backup, but don't worry! We're using the most recent backup available. {{ExternalLink}}Learn more.{{/ExternalLink}}`
 		);
 	} );
 } );
