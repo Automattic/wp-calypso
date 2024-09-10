@@ -519,6 +519,8 @@ export function noSite( context, next ) {
 	return next();
 }
 
+const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [ '/plugins' ];
+
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
@@ -532,7 +534,8 @@ export function siteSelection( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
-	const isNextPathPlugins = context.path === '/plugins';
+	const isPathExcludedFromSingleSiteContext =
+		PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS.includes( context.path );
 
 	// Making sure non-connected users get redirected to user connection flow.
 	// Details: p9dueE-6Hf-p2
@@ -568,7 +571,7 @@ export function siteSelection( context, next ) {
 	 * current user object and therefore always available, we need to fetch the site info in order
 	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
-	if ( hasOneSite && ! siteFragment && ! isNextPathPlugins ) {
+	if ( hasOneSite && ! siteFragment && ! isPathExcludedFromSingleSiteContext ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
