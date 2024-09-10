@@ -468,6 +468,9 @@ export const SiteSyncCard = ( {
 		[] as CheckboxOptionItem[]
 	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
+	// TODO: remove the eslint ignore once setdatabaseSyncConfirmed is passed to the checkbox
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [ databaseSyncConfirmed, setdatabaseSyncConfirmed ] = useState< boolean >( false );
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
@@ -513,10 +516,18 @@ export const SiteSyncCard = ( {
 		}
 	}, [ resetSyncStatus, dispatch, type, onPull, transformSelectedItems, selectedItems ] );
 
+	const isSqlSyncOptionChecked = selectedItems.some( ( item ) => item.name === 'sqls' );
+	const disallowWooCommerceSync =
+		config.isEnabled( 'staging-site-sync-woo' ) &&
+		isSiteWooStore &&
+		isSqlSyncOptionChecked &&
+		! databaseSyncConfirmed;
+
 	const isSyncButtonDisabled =
 		disabled ||
 		( selectedItems.length === 0 && selectedOption === actionForType ) ||
-		selectedOption === null;
+		selectedOption === null ||
+		disallowWooCommerceSync;
 
 	let siteToSync: 'production' | 'staging' | null = null;
 	if ( targetSite ) {
@@ -596,7 +607,7 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
-					isSqlsOptionDisabled={ isSiteWooStore }
+					isSqlsOptionDisabled={ false }
 					isSiteWooStore={ isSiteWooStore }
 				/>
 			) }
