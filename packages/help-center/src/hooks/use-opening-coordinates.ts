@@ -7,7 +7,7 @@ type OpeningCoordinates = {
 	transformOrigin: string;
 };
 
-const AESTHETIC_OFFSET = 60;
+const AESTHETIC_OFFSET = 20;
 const HELP_CENTER_WIDTH = 410;
 const HELP_CENTER_POSITION = {
 	MASTERBAR: 11,
