@@ -64,24 +64,9 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
 
-	const metas = [
-		{ name: 'description', content: `${ url } speed test results` },
-		{ property: 'og:title', content: `${ url } speed test results` },
-		{
-			property: 'og:image',
-			content: `https://public-api.wordpress.com/wpcom/v2/site-profiler/share/image?hash=${ hash }`,
-		},
-		{ property: 'twitter:title', content: `${ url } speed test results` },
-		{ property: 'twitter:description', content: `${ url } speed test results` },
-		{
-			property: 'twitter:image',
-			content: `https://public-api.wordpress.com/wpcom/v2/site-profiler/share/image?hash=${ hash }`,
-		},
-	];
-
 	return (
 		<div className="peformance-profiler-dashboard-container">
-			<DocumentHead title={ translate( 'Speed Test' ) } meta={ metas } />
+			<DocumentHead title={ translate( 'Speed Test' ) } />
 
 			<PerformanceProfilerHeader
 				url={ url }
@@ -90,6 +75,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				onTabChange={ getOnTabChange }
 				showWPcomBadge={ performanceReport?.is_wpcom }
 				showNavigationTabs
+				shareLink={ performanceReport?.share_link }
 			/>
 
 			<div

@@ -1,11 +1,14 @@
+import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, mobile, desktop, share } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useState, useRef } from 'react';
 import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import ShareButton from 'calypso/components/share-button';
 import { Badge } from 'calypso/performance-profiler/components/badge';
 
 import './style.scss';
@@ -17,6 +20,7 @@ type HeaderProps = {
 	showNavigationTabs?: boolean;
 	timestamp?: string;
 	showWPcomBadge?: boolean;
+	shareLink: string;
 };
 
 export enum TabType {
@@ -24,9 +28,27 @@ export enum TabType {
 	desktop = 'desktop',
 }
 
+const SocialServices = [
+	{
+		service: 'twitter',
+	},
+	{
+		service: 'linkedin',
+	},
+	{
+		service: 'facebook',
+	},
+	{
+		service: 'tumblr',
+	},
+];
+
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
-	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge } = props;
+	const [ showPopoverMenu, setPopoverMenu ] = useState( false );
+	const popoverButtonRef = useRef( null );
+	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge, shareLink } =
+		props;
 	const urlParts = new URL( url );
 
 	return (
@@ -82,19 +104,33 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 								) }
 							</div>
 							<div
-								className="share-option"
-								onClick={ () =>
-									window.open(
-										`https://twitter.com/intent/tweet?text=Look%20at%20my%20site%20speed%20test%20results%20on%20WordPress.com%20Speed%20Test%20Tool&url=${ window.location.href }`
-									)
-								}
-								onKeyUp={ () => {} }
+								className="share-button"
+								ref={ popoverButtonRef }
 								role="button"
 								tabIndex={ 0 }
+								onKeyDown={ ( e ) => e.key === 'Enter' && setPopoverMenu( true ) }
+								onClick={ () => setPopoverMenu( true ) }
 							>
 								<Icon className="share-icon" icon={ share } />
 								<span>{ translate( 'Share results' ) }</span>
 							</div>
+							<Popover
+								id="share-buttons-popover"
+								isVisible={ showPopoverMenu }
+								context={ popoverButtonRef.current }
+								position="top"
+								onClose={ () => setPopoverMenu( false ) }
+							>
+								{ SocialServices.map( ( item ) => (
+									<ShareButton
+										key={ item.service }
+										size={ 36 }
+										url={ shareLink }
+										title=""
+										service={ item.service }
+									/>
+								) ) }
+							</Popover>
 						</div>
 					</SectionNav>
 				) }

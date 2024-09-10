@@ -156,7 +156,7 @@
 				}
 			}
 
-			.share-option {
+			.share-button {
 				cursor: pointer;
 				display: flex;
 				height: 40px;
@@ -169,6 +169,41 @@
 					margin-bottom: -1px;
 				}
 			}
+
+			.share-button.has-color {
+				.wordpress {
+					fill: var(--color-wordpress-com);
+				}
+
+				.facebook {
+					fill: var(--color-facebook);
+				}
+
+				.twitter {
+					fill: var(--color-twitter);
+				}
+
+				.tumblr {
+					fill: var(--color-tumblr);
+				}
+
+				.linkedin {
+					fill: var(--color-linkedin);
+				}
+
+				.pinterest {
+					fill: var(--color-pinterest);
+				}
+
+				.telegram {
+					fill: var(--color-telegram);
+				}
+
+				.whatsapp {
+					fill: var(--color-whatsapp);
+				}
+			}
+
 		}
 	}
 }
