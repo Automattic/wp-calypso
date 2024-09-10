@@ -138,6 +138,7 @@
 		"pattern-assembler/v2": true,
 		"performance-profiler": false,
 		"performance-profiler/llm": true,
+		"performance-profiler/logged-in": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
