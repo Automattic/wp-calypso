@@ -58,6 +58,7 @@ const onboarding: Flow = {
 			[]
 		);
 
+		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -67,6 +68,7 @@ const onboarding: Flow = {
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
 					if ( providedDependencies.navigateToUseMyDomain ) {
+						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = 'use-my-domain';
 						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
 							useMyDomainURL = addQueryArgs( useMyDomainURL, {
@@ -76,6 +78,7 @@ const onboarding: Flow = {
 						}
 						return navigate( useMyDomainURL );
 					}
+					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					// Remove query params
@@ -124,12 +127,15 @@ const onboarding: Flow = {
 					}
 					return navigate( 'domains' );
 				case 'plans':
-					if ( Object.keys( useMyDomainQueryParams ).length ) {
-						// restore query params
-						const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
-						return navigate( useMyDomainURL );
+					if ( redirectedToUseMyDomain ) {
+						if ( Object.keys( useMyDomainQueryParams ).length ) {
+							// restore query params
+							const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
+							return navigate( useMyDomainURL );
+						}
+						return navigate( 'use-my-domain' );
 					}
-					return navigate( 'use-my-domain' );
+					return navigate( 'domains' );
 				default:
 					return;
 			}
