@@ -4,7 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import {
+	NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
+	useNoticeVisibilityQuery,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -16,8 +19,6 @@ interface ModalProps {
 	siteId: number;
 	onClose: () => void;
 }
-
-const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
 
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
