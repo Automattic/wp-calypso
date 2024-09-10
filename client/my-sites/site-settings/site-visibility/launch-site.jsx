@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -112,6 +113,10 @@ const LaunchSite = () => {
 		isLoading: agencyLoading,
 	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
 	const agencyName = agency?.name;
+	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
+	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
+
+	console.log( agency?.prices );
 
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
@@ -159,13 +164,23 @@ const LaunchSite = () => {
 								{ agencyLoading || agencyError
 									? translate( 'After launch, we’ll bill your agency in the next billing cycle.' )
 									: translate(
-											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle.',
+											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}',
 											{
 												args: {
 													agencyName: agencyName,
+													licenseCount: existingWPCOMLicenseCount + 1,
+													price,
 												},
 												components: {
 													strong: <strong />,
+													a: (
+														<a
+															className="site-settings__general-settings-launch-site-agency-learn-more"
+															href="https://agencieshelp.automattic.com/knowledge-base/the-marketplace/"
+															target="_blank"
+															rel="noopener noreferrer"
+														/>
+													),
 												},
 												comment: 'name of the agency that will be billed for the site',
 											}
