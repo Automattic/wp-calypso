@@ -15,6 +15,7 @@ import { A4A_TEAM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/
 import useSendTeamMemberInvite from 'calypso/a8c-for-agencies/data/team/use-send-team-member-invite';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { TAB_INVITED_MEMBERS } from '../../constants';
 
 import './style.scss';
 
@@ -47,7 +48,7 @@ export default function TeamInvite() {
 							duration: 5000,
 						} )
 					);
-					page( A4A_TEAM_LINK );
+					page( `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }` );
 				},
 
 				onError: ( error ) => {

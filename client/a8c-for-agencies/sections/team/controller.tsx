@@ -12,7 +12,7 @@ export const teamContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Manage team" path={ context.path } />
-			<TeamList currentTab={ tab ?? TAB_ACTIVE_MEMBERS } />
+			<TeamList currentTab={ tab } />
 		</>
 	);
 

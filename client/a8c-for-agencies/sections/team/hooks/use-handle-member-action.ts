@@ -107,6 +107,6 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 				);
 			}
 		},
-		[ cancelMemberInvite, dispatch, onRefetchList, removeMember, translate ]
+		[ cancelMemberInvite, dispatch, onRefetchList, removeMember, resendMemberInvite, translate ]
 	);
 }

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
@@ -47,7 +48,9 @@ export default function TeamList( { currentTab }: Props ) {
 
 	const { activeMembers, invitedMembers, hasMembers, isPending, refetch } = useMemberList();
 
-	const title = translate( 'Manage team members' );
+	const isDesktop = useDesktopBreakpoint();
+
+	const title = isDesktop ? translate( 'Manage team members' ) : translate( 'Team' );
 
 	const onInviteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' ) );
