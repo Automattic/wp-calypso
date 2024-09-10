@@ -35,14 +35,45 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 		return;
 	}
 
+	const isBackupFromToday = baseBackupDate.isSame( moment(), 'day' );
+	const isBackupFromYesterday = baseBackupDate.isSame( moment().subtract( 1, 'days' ), 'day' );
 	const daysDiff = selectedBackupDate.diff( baseBackupDate, 'days' );
 	let message: string | React.ReactNode;
 
-	if ( daysDiff === 0 ) {
+	if ( daysDiff === 0 && isBackupFromToday ) {
+		// Base backup date is the same as today's date
+		message = translate(
+			'We are using a full backup from today (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
+			'We are using a full backup from today (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
+			{
+				count: eventsCount,
+				args: {
+					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					eventsCount: eventsCount,
+				},
+				comment: '%(eventsCount)d is the number of changes made since the backup.',
+			}
+		);
+	} else if ( daysDiff === 0 ) {
 		// Base backup date is the same as the selected backup date
 		message = translate(
 			'We are using a full backup from this day (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
 			'We are using a full backup from this day (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
+			{
+				count: eventsCount,
+				args: {
+					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
+					eventsCount: eventsCount,
+				},
+				comment:
+					'%(baseBackupDate)s is the date and time of the backup, and %(eventsCount)d is the number of changes made since the backup.',
+			}
+		);
+	} else if ( daysDiff === 1 && isBackupFromYesterday ) {
+		// Base backup date is the same as yesterday
+		message = translate(
+			'We are using a full backup from yesterday (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
+			'We are using a full backup from yesterday (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
 			{
 				count: eventsCount,
 				args: {
