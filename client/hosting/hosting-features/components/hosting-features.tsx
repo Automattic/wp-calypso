@@ -85,6 +85,13 @@ const HostingFeatures = () => {
 		return () => clearInterval( interval );
 	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
 
+	// Redirect for if we are updating the site to atomic on this page.
+	useEffect( () => {
+		if ( isSiteAtomic && ! isPlanExpired ) {
+			page.replace( redirectUrl );
+		}
+	}, [ isSiteAtomic, isPlanExpired, redirectUrl ] );
+
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
 		{
