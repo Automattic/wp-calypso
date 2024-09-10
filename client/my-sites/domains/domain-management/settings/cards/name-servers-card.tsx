@@ -10,7 +10,6 @@ import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/co
 import {
 	WPCOM_DEFAULT_NAMESERVERS,
 	WPCOM_DEFAULT_NAMESERVERS_REGEX,
-	CLOUDFLARE_NAMESERVERS_REGEX,
 } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import CustomNameserversForm from 'calypso/my-sites/domains/domain-management/name-servers/custom-nameservers-form';
 import FetchError from 'calypso/my-sites/domains/domain-management/name-servers/fetch-error';
@@ -75,19 +74,21 @@ const NameServersCard = ( {
 			return false;
 		}
 
-		return nameservers.every( ( nameserver ) => {
+		return nameservers.some( ( nameserver ) => {
 			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 		} );
 	};
 
-	const hasCloudflareNameservers = () => {
+	const onlyWpcomNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
 
-		return nameservers.every( ( nameserver ) => {
-			return ! nameserver || CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
-		} );
+		return (
+			nameservers.every( ( nameserver ) => {
+				return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+			} ) && nameservers.length === WPCOM_DEFAULT_NAMESERVERS.length
+		);
 	};
 
 	const isPendingTransfer = () => {
@@ -108,8 +109,7 @@ const NameServersCard = ( {
 
 	const warning = () => {
 		if (
-			hasWpcomNameservers() ||
-			hasCloudflareNameservers() ||
+			! isEditingNameServers ||
 			isPendingTransfer() ||
 			needsVerification() ||
 			! nameservers ||
@@ -126,23 +126,34 @@ const NameServersCard = ( {
 				onClick={ handleLearnMoreClick }
 			/>
 		);
-		const notice = translate(
-			'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
-			{ components: { link } }
-		);
+
+		let notice;
+		if ( isEditingNameServers && hasWpcomNameservers() ) {
+			notice = translate(
+				'Please do not set WordPress.com nameservers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
+				{ components: { link } }
+			);
+		} else {
+			notice = translate(
+				'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
+				{ components: { link } }
+			);
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div className="custom-name-servers-notice">
-				<Icon
-					icon={ info }
-					size={ 18 }
-					className="custom-name-servers-notice__icon gridicon"
-					viewBox="2 2 20 20"
-				/>
-				<div className="custom-name-servers-notice__message">{ notice }</div>
-			</div>
-		);
+		if ( notice ) {
+			return (
+				<div className="custom-name-servers-notice">
+					<Icon
+						icon={ info }
+						size={ 18 }
+						className="custom-name-servers-notice__icon gridicon"
+						viewBox="2 2 20 20"
+					/>
+					<div className="custom-name-servers-notice__message">{ notice }</div>
+				</div>
+			);
+		}
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
@@ -153,7 +164,8 @@ const NameServersCard = ( {
 	};
 
 	const handleToggle = () => {
-		if ( hasWpcomNameservers() ) {
+		setIsEditingNameServers( ! isEditingNameServers );
+		if ( onlyWpcomNameservers() ) {
 			setNameServersBeforeEditing( nameservers );
 			setNameservers( [] );
 			setIsEditingNameServers( true );
@@ -171,7 +183,7 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ hasWpcomNameservers() && ! isEditingNameServers }
+				enabled={ onlyWpcomNameservers() && ! isEditingNameServers }
 			/>
 		);
 	};
@@ -204,7 +216,11 @@ const NameServersCard = ( {
 	};
 
 	const renderCustomNameserversForm = () => {
-		if ( ! nameservers || hasWpcomNameservers() || isPendingTransfer() ) {
+		if (
+			! nameservers ||
+			isPendingTransfer() ||
+			( onlyWpcomNameservers() && ! isEditingNameServers )
+		) {
 			return null;
 		}
 
@@ -228,7 +244,7 @@ const NameServersCard = ( {
 					onCancel={ handleCancel }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
-					submitDisabled={ isLoading() }
+					submitDisabled={ isLoading() || !! hasWpcomNameservers() }
 					notice={ warning() }
 					redesign
 				/>
