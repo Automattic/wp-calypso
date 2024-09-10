@@ -184,6 +184,7 @@
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"stripe-redirect-migration-p24": false,
+		"stripe-redirect-migration-ideal": false,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
