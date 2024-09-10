@@ -1,0 +1,136 @@
+import { isBusinessPlan } from '@automattic/calypso-products';
+import { Dialog } from '@automattic/components';
+import { get } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import NpsSurvey from 'calypso/blocks/nps-survey';
+import QuerySites from 'calypso/components/data/query-sites';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} from 'calypso/state/nps-survey/actions';
+import {
+	setNpsSurveyDialogShowing,
+	setupNpsSurveyDevTrigger,
+} from 'calypso/state/nps-survey/notice/actions';
+import { isNpsSurveyDialogShowing } from 'calypso/state/nps-survey/notice/selectors';
+import {
+	getNpsSurveyScore,
+	hasAnsweredNpsSurvey,
+	hasAnsweredNpsSurveyWithNoScore,
+	isSectionAndSessionEligibleForNpsSurvey,
+	wasNpsSurveyShownThisSession,
+} from 'calypso/state/nps-survey/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import './style.scss';
+
+const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
+
+class NpsSurveyNotice extends Component {
+	state = {
+		currentForm: null,
+	};
+
+	handleDialogClose = () => {
+		const { isBusinessUser, hasAnswered, hasAnsweredWithNoScore, npsSurveyScore } = this.props;
+
+		// the dialog won't close by clicking outside if a business user has submitted a rating of 0-6.
+		if (
+			isBusinessUser &&
+			hasAnswered &&
+			npsSurveyScore < 7 &&
+			this.state.currentForm !== 'promotion'
+		) {
+			return;
+		}
+
+		if ( ! hasAnswered && ! hasAnsweredWithNoScore ) {
+			// the dialog was dismised by clicking outside it
+			// and the survey was never answered, so track it
+			this.props.submitNpsSurveyWithNoScore( SURVEY_NAME );
+		}
+
+		this.props.setNpsSurveyDialogShowing( false );
+	};
+
+	handleSurveyClose = ( afterClose ) => {
+		this.props.setNpsSurveyDialogShowing( false );
+
+		// slightly delay the showing of the thank you notice
+		setTimeout( afterClose, 500 );
+	};
+
+	handleSurveyFormChange = ( currentForm ) => {
+		this.setState( { currentForm } );
+	};
+
+	componentDidMount() {
+		this.props.setupNpsSurveyEligibility();
+		this.props.setupNpsSurveyDevTrigger();
+	}
+
+	componentDidUpdate() {
+		if ( this.props.isSectionAndSessionEligible && ! this.props.wasShownThisSession ) {
+			// wait a little bit before showing the notice, so that
+			// (1) the user gets a chance to look briefly at the uncluttered screen, and
+			// (2) the user notices the notice more, since it will cause a change to the
+			//     screen they are already looking at
+			this.props.setNpsSurveyDialogShowing( true );
+			this.props.markNpsSurveyShownThisSession();
+
+			bumpStat( 'calypso_nps_survey', 'notice_displayed' );
+			recordTracksEvent( 'calypso_nps_notice_displayed' );
+		}
+	}
+
+	render() {
+		if ( this.props.isSupportSession || ! this.props.isSectionAndSessionEligible ) {
+			return null;
+		}
+
+		return (
+			<Dialog
+				additionalClassNames="nps-survey-notice"
+				isVisible={ this.props.isNpsSurveyDialogShowing }
+				onClose={ this.handleDialogClose }
+			>
+				<QuerySites allSites />
+				<NpsSurvey
+					name={ SURVEY_NAME }
+					isBusinessUser={ this.props.isBusinessUser }
+					onClose={ this.handleSurveyClose }
+					onChangeForm={ this.handleSurveyFormChange }
+				/>
+			</Dialog>
+		);
+	}
+}
+
+function isOwnBusinessSite( site ) {
+	return isBusinessPlan( get( site, 'plan.product_slug' ) ) && get( site, 'plan.user_is_owner' );
+}
+
+const mapStateToProps = ( state ) => {
+	return {
+		isSupportSession: isSupportSession( state ),
+		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
+		hasAnswered: hasAnsweredNpsSurvey( state ),
+		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
+		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey( state ),
+		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
+		npsSurveyScore: getNpsSurveyScore( state ),
+		isBusinessUser: getSites( state ).some( isOwnBusinessSite ),
+	};
+};
+
+export default connect( mapStateToProps, {
+	setNpsSurveyDialogShowing,
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyDevTrigger,
+	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} )( NpsSurveyNotice );
