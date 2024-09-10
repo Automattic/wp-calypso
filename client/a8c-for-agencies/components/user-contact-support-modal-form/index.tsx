@@ -239,7 +239,7 @@ export default function UserContactSupportModalForm( {
 						placeholder={
 							isPressableSelected
 								? translate(
-										'Please provide the team with a detailed explanation of the issue you’re facing, including steps to reproduce the issue on our end and/or URLs (if not specified above). Providing these details will greatly help us with your support request.'
+										'Please provide the team with a detailed explanation of the issue you’re facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.'
 								  )
 								: translate( 'Add your message here' )
 						}
