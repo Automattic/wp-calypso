@@ -1,7 +1,13 @@
+import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { addQueryArgs } from 'calypso/lib/url';
 
-export const backupMainPath = ( siteName?: string | null, query = {} ) =>
-	siteName ? addQueryArgs( query, `/backup/${ siteName }` ) : '/backup';
+export const backupMainPath = ( siteName?: string | null, query = {} ) => {
+	if ( isA8CForAgencies() ) {
+		return addQueryArgs( query, `${ A4A_SITES_LINK }/overview/${ siteName }/jetpack-backup` );
+	}
+	return siteName ? addQueryArgs( query, `/backup/${ siteName }` ) : '/backup';
+};
 
 const backupSubSectionPath = (
 	siteName: string,
