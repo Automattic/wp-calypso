@@ -1,6 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
-import { InvalidEvent, useState } from 'react';
+import { debounce } from 'lodash';
+import { InvalidEvent, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -22,7 +23,7 @@ interface MailboxFormFieldProps {
 	isPasswordField?: boolean;
 	lowerCaseChangeValue?: boolean;
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
-	onRequestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
+	onRequestFieldValidation: () => Promise< void >;
 	textInputPrefix?: string;
 	textInputSuffix?: string;
 }
@@ -90,6 +91,15 @@ const MailboxField = ( {
 
 	const [ { field }, setFieldState ] = useState( { field: originalField } );
 
+	const debouncedValidation = useMemo(
+		() =>
+			debounce( async ( field: MailboxFormFieldBase< string > ) => {
+				await onRequestFieldValidation();
+				field.dispatchState();
+			}, 300 ),
+		[ onRequestFieldValidation ]
+	);
+
 	if ( ! field.isVisible ) {
 		return null;
 	}
@@ -103,9 +113,8 @@ const MailboxField = ( {
 			field.isTouched = field.value?.length > 0;
 		}
 		if ( field.isTouched ) {
-			onRequestFieldValidation( field );
+			debouncedValidation( field );
 		}
-		field.dispatchState();
 	};
 
 	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -117,7 +126,7 @@ const MailboxField = ( {
 
 		// Validate the field on the fly if there was already an error, or the field was already touched
 		if ( field.error || field.isTouched ) {
-			onRequestFieldValidation( field );
+			debouncedValidation( field );
 		}
 		field.dispatchState();
 		onFieldValueChanged( field );
@@ -125,7 +134,8 @@ const MailboxField = ( {
 
 	const onInvalid = ( event: InvalidEvent< HTMLInputElement > ) => {
 		event.preventDefault();
-		onRequestFieldValidation( field );
+
+		debouncedValidation( field );
 		field.dispatchState();
 	};
 

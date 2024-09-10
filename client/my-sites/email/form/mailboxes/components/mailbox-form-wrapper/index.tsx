@@ -26,7 +26,7 @@ interface CommonFieldProps {
 	fieldLabelText?: TranslateResult;
 	isFirstVisibleField: boolean;
 	onFieldValueChanged: FieldValueChangedHandler;
-	onRequestFieldValidation: () => void;
+	onRequestFieldValidation: () => Promise< void >;
 	isAutoFocusEnabled: boolean;
 }
 
@@ -59,7 +59,9 @@ const createCommonFieldPropsHandler = (
 			field,
 			fieldLabelText: fieldLabelTexts?.[ field.fieldName as MutableFormFieldNames ],
 			onFieldValueChanged,
-			onRequestFieldValidation: async () => await mailbox.validateField( field.fieldName ),
+			onRequestFieldValidation: async () => {
+				await mailbox.validateField( field.fieldName );
+			},
 			isAutoFocusEnabled,
 			isFirstVisibleField: formIndex === 0 && renderPosition === 1,
 		};
