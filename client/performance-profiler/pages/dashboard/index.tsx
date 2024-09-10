@@ -32,12 +32,21 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+	let testStartTime;
 
 	const siteUrl = new URL( url );
 
 	if ( isFetched && finalUrl ) {
 		recordTracksEvent( 'calypso_performance_profiler_test_started', {
 			url: finalUrl,
+		} );
+		testStartTime = Date.now();
+	}
+
+	if ( testStartTime && desktopLoaded && mobileLoaded ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
+			url: finalUrl,
+			duration: Date.now() - testStartTime,
 		} );
 	}
 
