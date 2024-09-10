@@ -29,6 +29,6 @@ const BreadcrumbExamples = () => {
 
 ## Props
 
-- `items` (`{ label: string; href?: string }[]`) - The Navigations items to be shown
+- `items` (`{ label: string; href?: string; helpBubble?: React.ReactElement; onClick?: () => void }[]`) - The Navigations items to be shown
 - `compact` (`boolean`) - Displays only the previous item URL (optional)
 - `mobileItem` (`string`) - In compact version, displays this value. If not passed defaults to "Back" (optional)

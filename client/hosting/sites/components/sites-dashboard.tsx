@@ -38,7 +38,6 @@ import {
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
-import { useInitializeDataViewsSelectedItem } from '../hooks/use-initialize-dataviews-selected-item';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
 import { useSyncSelectedSite } from '../hooks/use-sync-selected-site';
@@ -300,7 +299,6 @@ const SitesDashboard = ( {
 	const onboardingTours = useOnboardingTours();
 
 	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
-	useInitializeDataViewsSelectedItem( { selectedSite, paginatedSites } );
 
 	// Update URL with view control params on change.
 	useEffect( () => {

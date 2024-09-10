@@ -1,31 +1,23 @@
-import { SiteDetails } from '@automattic/data-stores';
 import { hasQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
-import { PaidSubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { StepProps } from '../types';
 import ConnectStripe from './paid-subscribers/connect-stripe';
 import MapPlans from './paid-subscribers/map-plans';
 
-type Props = {
-	nextStepUrl: string;
-	skipNextStep: () => void;
-	fromSite: string;
-	engine: string;
-	cardData: PaidSubscribersStepContent;
-	selectedSite: SiteDetails;
-	isFetchingContent: boolean;
-};
-
 export default function PaidSubscribers( {
 	nextStepUrl,
-	fromSite,
-	engine,
 	selectedSite,
+	fromSite,
+	isFetchingContent,
+	siteSlug,
 	skipNextStep,
 	cardData,
-	isFetchingContent,
-}: Props ) {
+	engine,
+	setAutoFetchData,
+	status,
+}: StepProps ) {
 	const dispatch = useDispatch();
 	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
 	const isSuccess = hasQueryArg( window.location.href, 'stripe_connect_success' );
@@ -43,22 +35,30 @@ export default function PaidSubscribers( {
 		<>
 			{ ! hasConnectedAccount && (
 				<ConnectStripe
-					nextStepUrl={ nextStepUrl }
-					skipNextStep={ skipNextStep }
+					status={ status }
 					cardData={ cardData }
-					fromSite={ fromSite }
 					engine={ engine }
+					fromSite={ fromSite }
 					isFetchingContent={ isFetchingContent }
+					nextStepUrl={ nextStepUrl }
+					selectedSite={ selectedSite }
+					setAutoFetchData={ setAutoFetchData }
+					siteSlug={ siteSlug }
+					skipNextStep={ skipNextStep }
 				/>
 			) }
 			{ hasConnectedAccount && (
 				<MapPlans
-					nextStepUrl={ nextStepUrl }
+					status={ status }
 					cardData={ cardData }
-					skipNextStep={ skipNextStep }
 					engine={ engine }
-					siteId={ selectedSite.ID }
-					currentStep="paid-subscribers"
+					fromSite={ fromSite }
+					isFetchingContent={ isFetchingContent }
+					nextStepUrl={ nextStepUrl }
+					selectedSite={ selectedSite }
+					setAutoFetchData={ setAutoFetchData }
+					siteSlug={ siteSlug }
+					skipNextStep={ skipNextStep }
 				/>
 			) }
 		</>

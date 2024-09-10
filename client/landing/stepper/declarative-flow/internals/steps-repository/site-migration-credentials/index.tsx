@@ -172,6 +172,13 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		requestAutomatedMigration( data );
 	};
 
+	const toggleShowNotes = () => {
+		setShowNotes( ! showNotes );
+		recordTracksEvent( 'calypso_site_migration_special_instructions_toggle', {
+			show_notes: ! showNotes,
+		} );
+	};
+
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
 			<Card>
@@ -364,10 +371,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 				<div className="site-migration-credentials__special-instructions">
 					{ ( locale === 'en' || hasTranslation( 'Special instructions' ) ) && (
-						<Button
-							onClick={ () => setShowNotes( ! showNotes ) }
-							data-testid="special-instructions"
-						>
+						<Button onClick={ () => toggleShowNotes() } data-testid="special-instructions">
 							{ translate( 'Special instructions' ) }
 							<Icon
 								icon={ showNotes ? chevronUp : chevronDown }
@@ -430,6 +434,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					className="button navigation-link step-container__navigation-link has-underline is-borderless"
 					disabled={ isPending }
 					onClick={ onSkip }
+					type="button"
 				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>

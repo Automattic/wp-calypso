@@ -26,7 +26,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return null;
 	}
 
-	const { displayName } = metricsNames[ activeTab ];
+	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 	const valuation = mapThresholdsToStatus( activeTab, value );
 
@@ -51,6 +51,14 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return '';
 	};
 
+	// Add leading zero to date values. Safari expects the date string to follow the ISO 8601 format (i.e., YYYY-MM-DD)
+	const addLeadingZero = ( value: number ) => {
+		if ( value < 10 ) {
+			return `0${ value }`;
+		}
+		return value;
+	};
+
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
@@ -69,7 +77,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 			formattedDate = date;
 		} else {
 			const { year, month, day } = date;
-			formattedDate = `${ year }-${ month }-${ day }`;
+			formattedDate = `${ year }-${ addLeadingZero( month ) }-${ addLeadingZero( day ) }`;
 		}
 
 		return {
@@ -89,7 +97,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="good" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Fast' ) }</div>
+							<div className="range-heading">{ translate( 'Excellent' ) }</div>
 							<div className="range-subheading">
 								{ translate( '0–%(to)s%(unit)s', {
 									args: { to: formatUnit( good ), unit: displayUnit() },
@@ -101,7 +109,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="needsImprovement" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Moderate' ) }</div>
+							<div className="range-heading">{ translate( 'Needs Improvement' ) }</div>
 							<div className="range-subheading">
 								{ translate( '%(from)s–%(to)s%(unit)s', {
 									args: {
@@ -117,7 +125,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<div className="range">
 						<StatusIndicator speed="bad" />
 						<div className="range-description">
-							<div className="range-heading">{ translate( 'Slow' ) }</div>
+							<div className="range-heading">{ translate( 'Poor' ) }</div>
 							<div className="range-subheading">
 								{ translate( '>%(from)s%(unit)s', {
 									args: {

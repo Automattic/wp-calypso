@@ -17,16 +17,16 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Content from './content';
 import { LogoChain } from './logo-chain';
-import PaidSubscribers from './paid-subscribers';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
+import { engineTypes } from './types';
 
 import './importer.scss';
 
-const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
+const steps = [ Content, Subscribers, Summary ];
 
-const stepSlugs: StepId[] = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -35,7 +35,7 @@ const logoChainLogos = [
 
 type NewsletterImporterProps = {
 	siteSlug: string;
-	engine: string;
+	engine: engineTypes;
 	step?: StepId;
 };
 
@@ -81,17 +81,6 @@ export default function NewsletterImporter( {
 			},
 			show: 'onComplete',
 		},
-		{
-			message: 'Paid Subscribers',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/paid-subscribers`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
 		{ message: 'Summary', onClick: () => {} },
 	];
 
@@ -115,10 +104,20 @@ export default function NewsletterImporter( {
 		} else {
 			setAutoFetchData( false );
 		}
+
+		if (
+			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
+			step === 'paid-subscribers'
+		) {
+			// If we have empty content
+			setAutoFetchData( true );
+		}
 	}, [
 		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps.subscribers?.status,
+		paidNewsletterData?.steps?.subscribers?.status,
+		step,
 		setAutoFetchData,
+		paidNewsletterData?.steps,
 	] );
 
 	stepSlugs.forEach( ( stepName, index ) => {
@@ -152,6 +151,8 @@ export default function NewsletterImporter( {
 			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
 		}
 	}
+
+	const stepStatus = paidNewsletterData?.steps[ step ]?.status ?? 'initial';
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
@@ -196,12 +197,11 @@ export default function NewsletterImporter( {
 					skipNextStep={ () => {
 						skipNextStep( selectedSite.ID, engine, nextStep, step );
 					} }
-					// FIXME
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-expect-error
 					cardData={ stepContent }
 					engine={ engine }
+					status={ stepStatus }
 					isFetchingContent={ isFetchingPaidNewsletter }
+					setAutoFetchData={ setAutoFetchData }
 				/>
 			) }
 		</div>

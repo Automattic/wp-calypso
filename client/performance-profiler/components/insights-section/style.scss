@@ -1,6 +1,11 @@
+@import "@wordpress/base-styles/breakpoints";
+
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
+	max-width: 100%;
+	scroll-margin-top: 80px;
+
 	.title {
 		font-size: $font-title-small;
 		font-weight: 500;
@@ -44,6 +49,10 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.insight-header-container {
+				display: flex;
+			}
+
 			.counter {
 				&.fail {
 					color: var(--studio-red-50);
@@ -63,6 +72,10 @@ $blueberry-color: #3858e9;
 
 				&.warning {
 					color: var(--studio-orange-40);
+				}
+
+				&.is-mobile {
+					padding-top: 5px;
 				}
 			}
 
@@ -122,13 +135,23 @@ $blueberry-color: #3858e9;
 				align-items: flex-start;
 				gap: 32px;
 				align-self: stretch;
+				flex-wrap: wrap;
+
+				.content {
+					flex: 1 1 500px;
+				}
 
 				p {
 					line-height: 24px;
 				}
+
+				.performance-profiler-tip {
+					max-width: 300px;
+					min-width: unset;
+				}
 			}
 
-			.generated-with-ia {
+			.generated-with-ai {
 				font-weight: 500;
 			}
 
@@ -160,11 +183,14 @@ $blueberry-color: #3858e9;
 
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
+				width: 100%;
+				overflow-x: auto;
 
 				table {
 					table-layout: fixed;
 					width: 100%;
 					margin-bottom: 0;
+					min-width: $break-small;
 
 					th,
 					td {

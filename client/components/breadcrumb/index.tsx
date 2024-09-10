@@ -61,7 +61,7 @@ const StyledGridicon = styled( Gridicon )`
 	color: var( --color-neutral-10 );
 `;
 
-const HelpBuble = styled( InfoPopover )`
+const HelpBubble = styled( InfoPopover )`
 	margin-left: 7px;
 	display: flex;
 	align-items: center;
@@ -79,13 +79,18 @@ const renderHelpBubble = ( item: Item ) => {
 	}
 
 	return (
-		<HelpBuble icon="help-outline" position="right">
+		<HelpBubble icon="help-outline" position="right">
 			{ item.helpBubble }
-		</HelpBuble>
+		</HelpBubble>
 	);
 };
 
-export type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
+export type Item = {
+	label: string;
+	href?: string;
+	helpBubble?: React.ReactElement;
+	onClick?: () => void;
+};
 interface Props {
 	items: Item[];
 	mobileItem?: Item;
@@ -127,11 +132,13 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<StyledUl className="breadcrumbs">
-			{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
+			{ items.map( ( item: Item, index: Key ) => (
 				<StyledLi key={ index }>
 					{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
 					{ item.href && index !== items.length - 1 ? (
-						<a href={ item.href }>{ item.label }</a>
+						<a href={ item.href } onClick={ item.onClick }>
+							{ item.label }
+						</a>
 					) : (
 						<span>{ item.label }</span>
 					) }

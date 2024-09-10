@@ -69,6 +69,7 @@ const BackupSuccessful = ( {
 	const isCloneFlow =
 		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
 
+	const selectedBackupDate = moment( backup.rewindId, 'X' );
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
 	const showRealTimeMessage = backup.baseRewindId && baseBackupDate && backup.rewindStepCount > 0;
 	return (
@@ -101,7 +102,7 @@ const BackupSuccessful = ( {
 					<BackupRealtimeMessage
 						baseBackupDate={ baseBackupDate }
 						eventsCount={ backup.rewindStepCount }
-						selectedBackupDate={ selectedDate }
+						selectedBackupDate={ selectedBackupDate }
 					/>
 				) }
 			</div>

@@ -10,7 +10,7 @@
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
-	background: linear-gradient(180deg, var(--studio-gray-100) 25.44%, rgba(16, 21, 23, 0) 100%), url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMjUiLz4KPC9zdmc+Cg==) repeat, var(--studio-gray-100);
+	background: linear-gradient(180deg, var(--studio-gray-100) 25%, rgba(16, 21, 23, 0) 100%), fixed 0 0/16px 16px radial-gradient(var(--studio-gray-60) 1px, transparent 0), var(--studio-gray-100);
 
 	.profiler-header-wrapper {
 		display: flex;
@@ -26,7 +26,6 @@
 		text-decoration: none;
 		color: var(--studio-white);
 		padding: 0;
-		font-family: $brand-serif;
 
 		&:hover {
 			color: var(--studio-white);

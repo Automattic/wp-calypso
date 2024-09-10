@@ -11,12 +11,12 @@ interface InsightContentProps {
 	data: PerformanceMetricsItemQueryResponse;
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
-	IAGenerated: boolean;
+	AIGenerated: boolean;
 }
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const translate = useTranslate();
-	const { data, isLoading, IAGenerated } = props;
+	const { data, isLoading, AIGenerated } = props;
 	const { description = '' } = data ?? {};
 	const [ feedbackSent, setFeedbackSent ] = useState( false );
 	const onSurveyClick = ( rating: string ) => {
@@ -49,10 +49,10 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 						{ props.secondaryArea }
 					</div>
 
-					{ IAGenerated && (
+					{ AIGenerated && (
 						<LLMMessage
 							message={
-								<span className="generated-with-ia">{ translate( 'Generated with IA' ) }</span>
+								<span className="generated-with-ai">{ translate( 'Generated with AI' ) }</span>
 							}
 							secondaryArea={
 								<div className="survey">

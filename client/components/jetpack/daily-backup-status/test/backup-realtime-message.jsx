@@ -4,33 +4,40 @@
 import { render } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useDispatch } from 'calypso/state';
 import { BackupRealtimeMessage } from '../status-card/backup-realtime-message';
 
-// Mock the useTranslate function
-jest.mock( 'i18n-calypso' );
+jest.mock( 'i18n-calypso' ); // Mock the useTranslate hook
+jest.mock( 'calypso/state' ); // Mock the useDispatch hook
 
 describe( 'BackupRealtimeMessage', () => {
-	const renderMessage = ( baseBackupDate, eventsCount, selectedDate ) => {
+	const renderMessage = ( baseBackupDate, eventsCount, selectedDate, learnMoreUrl ) => {
 		return render(
 			<BackupRealtimeMessage
 				baseBackupDate={ baseBackupDate }
 				eventsCount={ eventsCount }
 				selectedBackupDate={ selectedDate }
+				learnMoreUrl={ learnMoreUrl } // Optional `Learn more` link
 			/>
 		);
 	};
 
-	const translateMock = jest.fn( ( singular, plural, { count, args } ) => {
-		const translatedText = count === 1 ? singular : plural;
+	const translateMock = jest.fn( ( singular, plural, options ) => {
+		if ( options === undefined ) {
+			return singular;
+		}
+
+		const translatedText = options.count === 1 ? singular : plural;
 		return translatedText
-			.replace( '%(baseBackupDate)s', args.baseBackupDate )
-			.replace( '%(eventsCount)d', args.eventsCount )
-			.replace( '%(daysAgo)d', args.daysAgo );
+			.replace( '%(baseBackupDate)s', options.args.baseBackupDate )
+			.replace( '%(eventsCount)d', options.args.eventsCount )
+			.replace( '%(daysAgo)d', options.args.daysAgo );
 	} );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		useTranslate.mockImplementation( () => translateMock );
+		useDispatch.mockImplementation( () => jest.fn() );
 	} );
 
 	test( 'renders the correct message when the base backup date is the same as the selected backup date', () => {
@@ -76,5 +83,25 @@ describe( 'BackupRealtimeMessage', () => {
 		expect( container.textContent ).toBe(
 			`We are using a full backup from this day (2024-08-26 12:00 PM) with 2 changes you have made since then until now.`
 		);
+	} );
+
+	test( 'renders the correct message and the "Learn more" link when learnMoreUrl is provided', () => {
+		useTranslate.mockImplementation( () => translateMock );
+
+		const selectedDate = moment( '2024-08-26T12:00:00Z' );
+		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
+		const learnMoreUrl = '/learn-more';
+
+		const { container, getByText } = renderMessage( baseBackupDate, 3, selectedDate, learnMoreUrl );
+
+		// Verify the message content
+		expect( container.textContent ).toContain(
+			'We are using a full backup from this day (2024-08-26 12:00 PM) with 3 changes you have made since then until now.'
+		);
+
+		// Verify the `Learn more` link is rendered
+		const learnMoreLink = getByText( 'Learn more' );
+		expect( learnMoreLink ).toBeInTheDocument();
+		expect( learnMoreLink.getAttribute( 'href' ) ).toBe( learnMoreUrl );
 	} );
 } );
