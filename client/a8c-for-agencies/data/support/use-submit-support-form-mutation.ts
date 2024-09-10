@@ -7,6 +7,13 @@ interface APIResponse {
 }
 
 function mutationSubmitSupportForm( params: SubmitContactSupportParams ): Promise< APIResponse > {
+	// Send an email to Pressable support
+	if ( params.product === 'pressable' ) {
+		// todo: Send the data to the endpoint
+		return Promise.resolve( { success: true } );
+	}
+
+	// Create the ticket in Zendesk
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency/help/zendesk/create-ticket',
