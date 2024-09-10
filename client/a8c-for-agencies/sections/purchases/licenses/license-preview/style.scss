@@ -38,7 +38,22 @@
 }
 
 .license-preview__product-pressable-link {
-	text-decoration: underline;
+
+	&,
+	&:visited {
+		@include a4a-font-body-md($font-weight: 500);
+		display: flex;
+		flex-direction: row;
+		gap: 4px;
+		align-items: center;
+		text-decoration: underline;
+		color: var(--color-text);
+	}
+
+	.gridicon {
+		fill: var(--color-text);
+
+	}
 }
 
 .license-preview__domain {
@@ -176,5 +191,28 @@ button.button.is-borderless.license-bundle-dropdown__button {
 		background: var(--wp-components-color-accent);
 		color: var(--color-text-inverted);
 		fill: var(--color-text-inverted);
+	}
+}
+
+.license-preview__client-email {
+	font-size: 0.75rem;
+	line-height: 1.3;
+	font-weight: 400;
+	color: var(--color-neutral-50);
+	margin-block-start: 4px;
+
+	strong {
+		max-width: 120px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		display: block;
+
+		@include break-wide() {
+			max-width: 200px;
+		}
+		@include break-huge() {
+			max-width: 250px;
+		}
 	}
 }

@@ -14,7 +14,11 @@ function isExternalUrl( url ) {
 
 	try {
 		const urlObject = new URL( url );
-		const allowedHostname = [ 'wordpress.com', 'subscribe.wordpress.com' ];
+		const allowedHostname = [
+			'wordpress.com',
+			'subscribe.wordpress.com',
+			'agencies.automattic.com',
+		];
 
 		if ( allowedHostname.includes( urlObject.hostname ) && urlObject.protocol === 'https:' ) {
 			return false;

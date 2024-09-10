@@ -1,0 +1,102 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.sticky-card {
+	--margin-spacing: 40px;
+	--spring-easing: linear(0, 0.008, 0.031 1.9%, 0.127 4%, 0.669 12%, 0.879 15.8%, 0.957, 1.017, 1.062, 1.091 23.7%, 1.101, 1.106, 1.107 27.8%, 1.103 29.4%, 1.088 32.2%, 1.038 39%, 1.016 42.6%, 1 46.5%, 0.991 50.8%, 0.989 56.7%, 1.001 76.7%, 1);
+	--spring-duration: 1.32s;
+
+
+	@keyframes unveil {
+		0% {
+			opacity: 0;
+			transform: translateY(100%);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: var(--color-surface);
+	z-index: 999999999;
+	top: 0;
+	left: 0;
+	right: auto;
+	bottom: auto;
+
+	@include break-small {
+		min-width: 420px;
+		height: auto;
+		width: auto;
+		box-shadow: 0 4px 15.7px 0 #0000001a;
+		border-radius: 4px;
+		animation: var(--spring-duration) var(--spring-easing) 1s unveil forwards;
+		opacity: 0;
+
+		&.is-positioned-top-left {
+			top: var(--margin-spacing);
+			left: var(--margin-spacing);
+			right: auto;
+			bottom: auto;
+		}
+
+		&.is-positioned-top-right {
+			top: var(--margin-spacing);
+			right: var(--margin-spacing);
+			left: auto;
+			bottom: auto;
+		}
+
+		&.is-positioned-bottom-left {
+			bottom: var(--margin-spacing);
+			left: var(--margin-spacing);
+			top: auto;
+			right: auto;
+		}
+
+		&.is-positioned-bottom-right {
+			bottom: var(--margin-spacing);
+			right: var(--margin-spacing);
+			top: auto;
+			left: auto;
+		}
+	}
+}
+
+.sticky-card__heading,
+.sticky-card__body {
+	padding: 16px;
+}
+
+
+.sticky-card__body {
+	flex-grow: 1;
+}
+
+.sticky-card__heading {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.sticky-card__heading-title {
+	font-size: rem(14px);
+	font-weight: 500;
+}
+
+.sticky-card__dismiss-button {
+	cursor: pointer;
+
+	&:hover {
+		.gridicon {
+			fill: var(--color-primary);
+		}
+	}
+}

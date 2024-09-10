@@ -16,6 +16,10 @@ jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
 	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
 );
 
+jest.mock( 'calypso/state/plugins/last-visited/selectors', () => ( {
+	isLastVisitedPlugin: () => {},
+} ) );
+
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 

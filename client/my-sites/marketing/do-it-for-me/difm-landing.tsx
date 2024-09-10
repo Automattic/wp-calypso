@@ -296,7 +296,7 @@ export default function DIFMLanding( {
 	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
-	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
+	const planStorageSlug = planObject?.getStorageFeature?.();
 	const planStorageString = planStorageSlug ? getFeatureByKey( planStorageSlug )?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );

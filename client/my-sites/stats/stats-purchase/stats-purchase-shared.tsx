@@ -5,8 +5,8 @@ import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import { COMPONENT_CLASS_NAME } from './stats-purchase-consts';
 import StatsPurchasePreviewImage from './stats-purchase-preview-image';
-import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface StatsCommercialPriceDisplayProps {
 	planValue: number;

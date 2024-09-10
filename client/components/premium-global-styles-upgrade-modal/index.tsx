@@ -4,7 +4,6 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -67,7 +66,6 @@ export default function PremiumGlobalStylesUpgradeModal( {
 
 	return (
 		<>
-			<QueryPlans />
 			<QueryProductsList />
 			<Dialog
 				className={ clsx( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {

@@ -1,5 +1,4 @@
 import {
-	PLANS_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_COMPLETED,
 } from 'calypso/state/action-types';
@@ -10,37 +9,6 @@ describe( '#currencyCode()', () => {
 	test( 'should default to null', () => {
 		const state = currencyCode( undefined, {} );
 		expect( state ).toBeNull();
-	} );
-	test( 'should set currency code when plans are received', () => {
-		const state = currencyCode( undefined, {
-			type: PLANS_RECEIVE,
-			plans: [
-				{
-					product_id: 1001,
-					currency_code: 'USD',
-				},
-			],
-		} );
-		expect( state ).toBe( 'USD' );
-	} );
-	test( 'should return current state when we have empty plans', () => {
-		const state = currencyCode( 'USD', {
-			type: PLANS_RECEIVE,
-			plans: [],
-		} );
-		expect( state ).toBe( 'USD' );
-	} );
-	test( 'should update current state when we receive new plans', () => {
-		const state = currencyCode( 'USD', {
-			type: PLANS_RECEIVE,
-			plans: [
-				{
-					product_id: 1001,
-					currency_code: 'EUR',
-				},
-			],
-		} );
-		expect( state ).toBe( 'EUR' );
 	} );
 	test( 'should return current state when we have empty site plans', () => {
 		const state = currencyCode( 'USD', {

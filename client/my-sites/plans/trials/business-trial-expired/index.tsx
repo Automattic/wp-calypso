@@ -7,7 +7,6 @@ import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useMemo } from 'react';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -69,7 +68,6 @@ const BusinessTrialExpired = (): JSX.Element => {
 
 	return (
 		<>
-			<QueryPlans />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			<BodySectionCssClass bodyClass={ [ 'is-expired-business-trial-plan' ] } />
 			<Main wideLayout>

@@ -254,6 +254,10 @@
 				margin-top: 0;
 			}
 
+			.comments__comment .comments__form {
+				margin-top: 10px;
+			}
+
 			@include breakpoint-deprecated( "<660px" ) {
 				margin: 24px 0 0;
 			}

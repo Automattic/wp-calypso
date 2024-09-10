@@ -1,22 +1,36 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { Referral, ReferralInvoice } from '../types';
+import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
-import type { Referral } from '../types';
+import type { Field } from '@wordpress/dataviews';
+
+import './style.scss';
 
 interface Props {
 	referrals: Referral[];
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	referralInvoices: ReferralInvoice[];
 }
 
-export default function ReferralList( { referrals, dataViewsState, setDataViewsState }: Props ) {
+export default function ReferralList( {
+	referrals,
+	dataViewsState,
+	setDataViewsState,
+	referralInvoices,
+}: Props ) {
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const openSitePreviewPane = useCallback(
 		( referral: Referral ) => {
@@ -25,69 +39,114 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 				selectedItem: referral,
 				type: DATAVIEWS_LIST,
 			} ) );
+			dispatch( recordTracksEvent( 'calypso_a4a_referrals_list_view_details_click' ) );
 		},
-		[ setDataViewsState ]
+		[ dispatch, setDataViewsState ]
 	);
 
-	const fields = useMemo(
+	const fields: Field< any >[] = useMemo(
 		() =>
 			dataViewsState.selectedItem || ! isDesktop
 				? [
+						// Show the client column as a button on mobile
 						{
 							id: 'client',
-							header: translate( 'Client' ).toUpperCase(),
+							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								return (
-									<Button
-										className="view-details-button"
-										data-client-id={ item.client_id }
-										onClick={ () => openSitePreviewPane( item ) }
-										borderless
-									>
-										{ item.client_email }
-									</Button>
-								);
-							},
+							render: ( { item }: { item: Referral } ): ReactNode => (
+								<Button
+									className="view-details-button client-email-button"
+									data-client-id={ item.client.id }
+									onClick={ () => openSitePreviewPane( item ) }
+									borderless
+								>
+									{ item.client.email }
+								</Button>
+							),
 							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
+						// Only show the actions column only on mobile
+						...( ! dataViewsState.selectedItem
+							? [
+									{
+										id: 'actions',
+										label: '',
+										render: ( { item }: { item: Referral } ) => (
+											<div>
+												<Button
+													className="view-details-button"
+													onClick={ () => openSitePreviewPane( item ) }
+													borderless
+												>
+													<Gridicon icon="chevron-right" />
+												</Button>
+											</div>
+										),
+										enableHiding: false,
+										enableSorting: false,
+									},
+							  ]
+							: [] ),
 				  ]
 				: [
 						{
 							id: 'client',
-							header: translate( 'Client' ).toUpperCase(),
+							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								return item.client_email;
-							},
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
-							id: 'purchases',
-							header: translate( 'Purchases' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								return item.purchases.length;
-							},
+							render: ( { item }: { item: Referral } ): ReactNode => (
+								<Button
+									className="view-details-button"
+									data-client-id={ item.client.id }
+									onClick={ () => openSitePreviewPane( item ) }
+									borderless
+								>
+									{ item.client.email }
+								</Button>
+							),
 							enableHiding: false,
 							enableSorting: false,
 						},
 						{
 							id: 'pending-orders',
-							header: translate( 'Pending Orders' ).toUpperCase(),
+							label: translate( 'Pending Orders' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode =>
+								item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'completed-orders',
+							label: translate( 'Completed Orders' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode =>
+								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'commissions',
+							label: translate( 'Commissions' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
-								return item.statuses.filter( ( status ) => status === 'pending' ).length;
+								const clientReferralInvoices = referralInvoices.filter(
+									( invoice ) => invoice.clientId === item.client.id
+								);
+								return (
+									<CommissionsColumn
+										referral={ item }
+										referralInvoices={ clientReferralInvoices }
+									/>
+								);
 							},
 							enableHiding: false,
 							enableSorting: false,
 						},
 						{
 							id: 'subscription-status',
-							header: translate( 'Subscription Status' ).toUpperCase(),
+							label: translate( 'Subscription Status' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<SubscriptionStatus item={ item } />
@@ -97,25 +156,23 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 						},
 						{
 							id: 'actions',
-							header: translate( 'Actions' ).toUpperCase(),
-							render: ( { item }: { item: Referral } ) => {
-								return (
-									<div>
-										<Button
-											className="view-details-button"
-											onClick={ () => openSitePreviewPane( item ) }
-											borderless
-										>
-											<Gridicon icon="chevron-right" />
-										</Button>
-									</div>
-								);
-							},
+							label: translate( 'Actions' ).toUpperCase(),
+							render: ( { item }: { item: Referral } ) => (
+								<div>
+									<Button
+										className="view-details-button action-button"
+										onClick={ () => openSitePreviewPane( item ) }
+										borderless
+									>
+										<Gridicon icon="chevron-right" />
+									</Button>
+								</div>
+							),
 							enableHiding: false,
 							enableSorting: false,
 						},
 				  ],
-		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, translate ]
+		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, referralInvoices, translate ]
 	);
 
 	useEffect( () => {
@@ -163,24 +220,29 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 		};
 	}, [ dataViewsState ] );
 
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( referrals, dataViewsState, fields );
+	}, [ referrals, dataViewsState, fields ] );
+
 	return (
-		<div className="redesigned-a8c-table">
+		<div className="redesigned-a8c-table full-width">
 			<ItemsDataViews
 				data={ {
-					items: referrals,
-					getItemId: ( item: Referral ) => `${ item.client_id }`,
+					items,
+					getItemId: ( item: Referral ) => `${ item.client.id }`,
 					onSelectionChange: ( data ) => {
-						openSitePreviewPane( data[ 0 ] );
+						const referral = referrals.find( ( r ) => r.client.id === +data[ 0 ] );
+						if ( referral ) {
+							openSitePreviewPane( referral );
+						}
 					},
-					pagination: {
-						totalItems: 1,
-						totalPages: 1,
-					},
+					pagination: paginationInfo,
 					enableSearch: false,
 					fields: fields,
 					actions: [],
 					setDataViewsState: setDataViewsState,
 					dataViewsState: dataViewsState,
+					defaultLayouts: { table: {} },
 				} }
 			/>
 		</div>

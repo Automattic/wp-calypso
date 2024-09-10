@@ -22,6 +22,7 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 			privacyAvailable,
 			contactInfoDisclosed,
 			contactInfoDisclosureAvailable,
+			hasPendingContactUpdate,
 			isPendingIcannVerification,
 			registeredViaTrustee,
 			registeredViaTrusteeUrl,
@@ -39,6 +40,7 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 				privacyAvailable={ privacyAvailable }
 				contactInfoDisclosed={ contactInfoDisclosed }
 				contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
+				hasPendingContactUpdate={ hasPendingContactUpdate }
 				isPendingIcannVerification={ isPendingIcannVerification }
 				readOnly={ readonly }
 				registeredViaTrustee={ registeredViaTrustee }

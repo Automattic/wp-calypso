@@ -181,7 +181,7 @@
 			}
 		}
 
-		table {
+		table.is-7-column.has-checkbox {
 			@include break-huge {
 				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
 

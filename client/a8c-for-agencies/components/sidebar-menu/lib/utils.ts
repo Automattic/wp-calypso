@@ -11,6 +11,7 @@ type MenuItemProps = {
 	isExternalLink?: boolean;
 	isSelected?: boolean;
 	trackEventProps?: { [ key: string ]: string };
+	extraContent?: JSX.Element;
 };
 
 export const createItem = ( props: MenuItemProps, path: string ) => {

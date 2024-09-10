@@ -6,7 +6,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
-import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
+import { getThemeTier, prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
@@ -82,7 +82,8 @@ export function requestThemes( siteId, query = {}, locale ) {
 			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 				let themes;
 				if ( siteId === 'wporg' ) {
-					themes = map( rawThemes, normalizeWporgTheme );
+					const communityThemeTier = getThemeTier( getState(), 'community' );
+					themes = map( rawThemes, ( theme ) => normalizeWporgTheme( theme, communityThemeTier ) );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 				} else if ( isAtomic || isJetpack ) {

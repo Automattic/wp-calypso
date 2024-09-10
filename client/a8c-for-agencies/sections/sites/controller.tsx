@@ -1,5 +1,5 @@
 import { Context, type Callback } from '@automattic/calypso-router';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import SitesSidebar from '../../components/sidebar-menu/sites';
 import AddSitesFromWPCOM from './add-sites/add-sites-from-wpcom';
@@ -27,6 +27,7 @@ function configureSitesContext( context: Context ) {
 		sort_field,
 		sort_direction,
 		is_favorite,
+		is_development,
 	} = context.query;
 
 	const sort: DashboardSortInterface = {
@@ -43,6 +44,9 @@ function configureSitesContext( context: Context ) {
 			hideListingInitialState={ hideListingInitialState }
 			showOnlyFavoritesInitialState={
 				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
+			showOnlyDevelopmentInitialState={
+				is_development === '' || is_development === '1' || is_development === 'true'
 			}
 			path={ context.path }
 			searchQuery={ search }
@@ -81,6 +85,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		sort_direction,
 		issue_types,
 		is_favorite,
+		is_development,
 	} = context.query;
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
@@ -98,6 +103,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		filter: {
 			issueTypes: [ issue_types ],
 			showOnlyFavorites: !! is_favorite,
+			showOnlyDevSites: !! is_development,
 		},
 	};
 
@@ -117,10 +123,11 @@ export const addSitesContext: Callback = ( context: Context, next ) => {
 
 export const needsSetupContext: Callback = ( context: Context, next ) => {
 	context.secondary = <SitesSidebar path={ context.path } />;
+	const { license_key } = context.query;
 	context.primary = (
 		<>
 			<PageViewTracker title="Sites > Needs Setup" path={ context.path } />
-			<NeedSetup />
+			<NeedSetup licenseKey={ license_key } />
 		</>
 	);
 

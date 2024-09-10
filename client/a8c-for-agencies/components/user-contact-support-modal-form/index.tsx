@@ -3,6 +3,7 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, FormEventHandler, useCallback, useEffect, useState } from 'react';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -117,6 +118,8 @@ export default function UserContactSupportModalForm( {
 		}
 	}, [ dispatch, show ] );
 
+	const isClient = isClientView();
+
 	if ( ! show ) {
 		return null;
 	}
@@ -137,7 +140,9 @@ export default function UserContactSupportModalForm( {
 					<Icon size={ 24 } icon={ close } />
 				</Button>
 
-				<h1 className="a4a-contact-support-modal-form__title">{ translate( 'Contact sales' ) }</h1>
+				<h1 className="a4a-contact-support-modal-form__title">
+					{ isClient ? translate( 'Contact support' ) : translate( 'Contact sales & support' ) }
+				</h1>
 
 				<FormFieldset>
 					<FormLabel htmlFor="name">{ translate( 'Your name' ) }</FormLabel>
@@ -200,7 +205,7 @@ export default function UserContactSupportModalForm( {
 						<FormTextarea
 							name="message"
 							id="message"
-							placeholder="Add your message here"
+							placeholder={ translate( 'Add your message here' ) }
 							value={ message }
 							onChange={ onMessageChange }
 							onClick={ () =>

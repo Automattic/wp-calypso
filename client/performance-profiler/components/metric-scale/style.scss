@@ -1,0 +1,94 @@
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/color-studio/dist/color-variables";
+
+.metrics-scale {
+	margin: 40px 0;
+	position: relative;
+
+	.progress-bar {
+		height: 4px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+
+		.bar-section {
+			height: 100%;
+			border-radius: 4px;
+			border: 2px solid var(--studio-white);
+
+			&.active {
+				top: -2px;
+				height: 8px;
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 8px;
+			}
+		}
+
+		.bar-section.good {
+			background-color: #68de86;
+
+			&.active {
+				background-color: #00ba37;
+			}
+		}
+
+		.bar-section.needs-improvement {
+			background-color: #ffbf86;
+
+			&.active {
+				background-color: #d67709;
+			}
+		}
+
+		.bar-section.bad {
+			background-color: #ffabaf;
+
+			&.active {
+				background-color: #d63638;
+			}
+		}
+
+		.dot {
+			position: absolute;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 8px;
+			height: 8px;
+			background-color: var(--studio-black);
+			border-radius: 50%;
+			border: 2px solid var(--studio-white);
+		}
+
+		.label {
+			position: absolute;
+			bottom: 10px;
+			font-size: $font-body-small;
+			font-weight: bold;
+			transform: translateX(calc(-50% + 4px));
+		}
+	}
+
+	.progress-bar-legend {
+		top: 20px;
+		position: absolute;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		font-size: $font-body-extra-small;
+		color: var(--studio-gray-70);
+		font-family: $font-sf-pro-display;
+
+		& > div {
+			position: absolute;
+		}
+
+		.good,
+		.needs-improvement {
+			transform: translateX(-50%);
+		}
+
+		.bad {
+			transform: translateX(-100%);
+		}
+	}
+}

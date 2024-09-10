@@ -109,7 +109,7 @@ $brand-text: "SF Pro Text", $sans;
 		@include custom-scrollbars-on-hover(transparent, $gray-600);
 		flex: 1;
 		overflow-y: auto;
-		padding-top: 12px;
+		padding-top: 40px;
 
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {
@@ -121,9 +121,6 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar {
 			overflow: visible;
-			&:first-child {
-				margin-top: 4px;
-			}
 
 			.sidebar__menu.is-togglable .sidebar__heading,
 			.sidebar__expandable-content .sidebar__menu-link {
@@ -201,6 +198,7 @@ $brand-text: "SF Pro Text", $sans;
 		gap: 8px;
 		align-items: center;
 		padding: 16px 24px;
+		flex-wrap: wrap;
 
 		.sidebar__menu-icon {
 			margin-right: 0;
@@ -304,6 +302,25 @@ $brand-text: "SF Pro Text", $sans;
 				}
 			}
 		}
+
+		.sidebar__footer-write-post {
+			order: -1;
+			width: 100%;
+			display: none; //hide by default
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			gap: 4px;
+			color: var(--studio-gray-50);
+			border-radius: 2px;
+
+			&:hover,
+			&.is-active {
+				background-color: var(--color-surface);
+				border-radius: 2px;
+				color: var(--studio-gray-100);
+			}
+		}
 	}
 
 	.sidebar-notifications {
@@ -336,7 +353,6 @@ $brand-text: "SF Pro Text", $sans;
 
 	.sidebar__back-link {
 		padding-left: 12px;
-		margin-top: 4px;
 		margin-bottom: 24px;
 		display: flex;
 		align-items: center;
@@ -450,7 +466,6 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__body {
 			padding-top: 0;
-			overflow-y: hidden;
 		}
 	}
 }
@@ -487,8 +502,6 @@ $brand-text: "SF Pro Text", $sans;
 			.sidebar__body {
 				overflow-y: visible;
 				.sidebar__menu-item-parent .sidebar__menu-link {
-					margin: 0 auto;
-
 					> *:not(:first-child) {
 						display: none;
 					}
@@ -504,17 +517,6 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-body.has-global-sidebar .help-center .components-card.help-center__container.is-desktop {
-	top: auto;
-	right: auto;
-	bottom: 34px;
-	left: 116px;
-}
-
-body.has-global-sidebar.has-global-sidebar-collapsed .help-center .components-card.help-center__container.is-desktop {
-	left: 82px;
-}
-
 body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
 	&::before {
 		border: 2px solid var(--studio-orange);
@@ -526,5 +528,11 @@ body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
 		right: 0;
 		top: 0;
 		z-index: z-index("root", ".layout__secondary") + 1;
+	}
+}
+
+body.is-section-reader .global-sidebar {
+	.sidebar__footer-write-post {
+		display: flex !important;
 	}
 }

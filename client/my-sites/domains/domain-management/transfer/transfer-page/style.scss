@@ -119,6 +119,11 @@
 		.search-card {
 			padding: 0;
 		}
+
+		/* only used when there's a free Gravatar domain notice */
+		.card-heading + .info-notice {
+			margin: 8px 0;
+		}
 	}
 
 	.transfer-page__transfer-lock-placeholder {

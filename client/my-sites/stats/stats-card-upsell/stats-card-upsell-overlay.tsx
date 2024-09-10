@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { ReactNode } from 'react';
 
 interface Props {
-	className: string;
+	className?: string;
 	copyText: string | ReactNode;
 	onClick: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 	buttonLabel?: string;

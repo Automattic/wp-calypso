@@ -1,7 +1,4 @@
-import {
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
-} from '@automattic/calypso-products';
+import { AddOns } from '@automattic/data-stores';
 
 /**
  * Since 50GB and 100GB storage addons are essentially a 1GB space product with
@@ -12,9 +9,9 @@ import {
  */
 function getQuantityFromStorageType( storageAddonSlug: string ): number {
 	switch ( storageAddonSlug ) {
-		case FEATURE_50GB_STORAGE_ADD_ON:
+		case AddOns.ADD_ON_50GB_STORAGE:
 			return 50;
-		case FEATURE_100GB_STORAGE_ADD_ON:
+		case AddOns.ADD_ON_100GB_STORAGE:
 			return 100;
 	}
 

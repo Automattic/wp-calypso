@@ -457,3 +457,13 @@ body.is-section-earn.theme-default.color-scheme {
 		margin: auto;
 	}
 }
+
+.memberships__settings-sandbox-warning {
+	float: left;
+	padding: 5px 11px;
+
+	&.stripe-disconnected {
+		padding: 5px 11px;
+		margin-right: 8px;
+	}
+}

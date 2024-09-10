@@ -8,7 +8,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
@@ -39,8 +38,14 @@ const entrepreneurFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 
-		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPluginsToVerify, setPartnerBundle } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
+
+		const params = new URLSearchParams( window.location.search );
+		const partnerBundle = params.get( 'partnerBundle' );
+		if ( partnerBundle ) {
+			setPartnerBundle( partnerBundle );
+		}
 
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -72,8 +77,6 @@ const entrepreneurFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
-
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );

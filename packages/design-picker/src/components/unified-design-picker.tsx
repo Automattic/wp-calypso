@@ -28,23 +28,36 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 
 interface DesignPreviewImageProps {
 	design: Design;
+	imageOptimizationExperiment?: boolean;
 	locale?: string;
 	styleVariation?: StyleVariation;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	styleVariation,
+	oldHighResImageLoading,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	if ( design.is_externally_managed && design.screenshot ) {
+	if ( design?.design_tier === 'partner' && design.screenshot ) {
 		const fit = '479,360';
 		// We're stubbing out the high res version here as part of a size reduction experiment.
 		// See #88786 and TODO for discussion / info.
 		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
-		// const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+
+		if ( oldHighResImageLoading ) {
+			return (
+				<img
+					src={ themeImgSrc }
+					srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+					alt={ design.description }
+				/>
+			);
+		}
 
 		return (
 			<img
@@ -65,7 +78,12 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
-			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
+			options={ getMShotOptions( {
+				scrollable: false,
+				highRes: ! isMobile,
+				isMobile,
+				oldHighResImageLoading,
+			} ) }
 			scrollable={ false }
 		/>
 	);
@@ -124,13 +142,13 @@ const useTrackDesignView = ( {
 
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
-					design_type: design.design_type,
 					...( design?.design_tier && { design_tier: design.design_tier } ),
-					is_premium: design.is_premium,
+					is_premium: design?.design_tier === 'premium',
+					// TODO: Better to track whether already available on this sites plan.
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
 					is_virtual: design.is_virtual,
-					is_externally_managed: design.is_externally_managed,
+					is_externally_managed: design?.design_tier === 'partner',
 				} );
 
 				if ( category ) {
@@ -159,6 +177,8 @@ interface DesignCardProps {
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
+	isActive: boolean;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -170,6 +190,8 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	oldHighResImageLoading,
+	isActive,
 } ) => {
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
@@ -178,10 +200,15 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
 	const isLocked = isLockedStyleVariation( {
-		isPremiumTheme: design.is_premium,
+		isPremiumTheme: design?.design_tier === 'premium',
 		styleVariationSlug: selectedStyleVariation?.slug,
 		shouldLimitGlobalStyles,
 	} );
+
+	const conditionalProps =
+		! isLocked && isActive
+			? {}
+			: { onImageClick: () => onPreview( design, selectedStyleVariation ) };
 
 	return (
 		<ThemeCard
@@ -195,17 +222,19 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					design={ design }
 					locale={ locale }
 					styleVariation={ selectedStyleVariation }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
 			badge={ getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
-			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
 			onStyleVariationClick={ ( variation ) => {
 				onChangeVariation( design, variation );
 				setSelectedStyleVariation( variation );
 			} }
 			onStyleVariationMoreClick={ () => onPreview( design ) }
+			isActive={ isActive && ! isLocked }
+			{ ...conditionalProps }
 		/>
 	);
 };
@@ -221,6 +250,10 @@ interface DesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
+	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
+	siteActiveTheme?: string | null;
+	showActiveThemeBadge?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -234,6 +267,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	oldHighResImageLoading,
+	isSiteAssemblerEnabled,
+	siteActiveTheme = null,
+	showActiveThemeBadge = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -243,6 +280,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 		return designs;
 	}, [ designs, categorization?.selection ] );
+
+	// Pick design
 
 	const assemblerCtaData = usePatternAssemblerCtaData();
 
@@ -257,7 +296,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						selectedSlug={ categorization.selection }
 					/>
 				) }
-				{ assemblerCtaData.shouldGoToAssemblerStep && (
+				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
 					<Button
 						className={ clsx( 'design-picker__design-your-own-button', {
 							'design-picker__design-your-own-button-without-categories': ! hasCategories,
@@ -286,10 +325,14 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							onChangeVariation={ onChangeVariation }
 							onPreview={ onPreview }
 							getBadge={ getBadge }
+							oldHighResImageLoading={ oldHighResImageLoading }
+							isActive={ showActiveThemeBadge && design.recipe?.stylesheet === siteActiveTheme }
 						/>
 					);
 				} ) }
-				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
+				{ isSiteAssemblerEnabled && (
+					<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
+				) }
 			</div>
 		</div>
 	);
@@ -308,6 +351,10 @@ export interface UnifiedDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
+	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
+	siteActiveTheme?: string | null;
+	showActiveThemeBadge?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -323,6 +370,10 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	oldHighResImageLoading,
+	isSiteAssemblerEnabled,
+	siteActiveTheme = null,
+	showActiveThemeBadge = false,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -355,6 +406,10 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
+					oldHighResImageLoading={ oldHighResImageLoading }
+					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
+					siteActiveTheme={ siteActiveTheme }
+					showActiveThemeBadge={ showActiveThemeBadge }
 				/>
 				{ bottomAnchorContent }
 			</div>

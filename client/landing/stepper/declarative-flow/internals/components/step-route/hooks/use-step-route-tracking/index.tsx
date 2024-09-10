@@ -29,12 +29,18 @@ interface Props {
 	stepSlug: string;
 	// If true, the tracking event will not be recorded
 	skipTracking: boolean;
+	flowVariantSlug?: string;
 }
 
 /**
  * Hook to track the step route in the declarative flow.
  */
-export const useStepRouteTracking = ( { flowName, stepSlug, skipTracking }: Props ) => {
+export const useStepRouteTracking = ( {
+	flowName,
+	stepSlug,
+	skipTracking,
+	flowVariantSlug,
+}: Props ) => {
 	const intent = useIntent();
 	const design = useSelectedDesign();
 	const { site, siteSlugOrId } = useSiteData();
@@ -58,6 +64,7 @@ export const useStepRouteTracking = ( { flowName, stepSlug, skipTracking }: Prop
 				intent,
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
+				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			} );
 
 			const stepOldSlug = getStepOldSlug( stepSlug );
@@ -67,6 +74,7 @@ export const useStepRouteTracking = ( { flowName, stepSlug, skipTracking }: Prop
 					intent,
 					is_in_hosting_flow: isAnyHostingFlow( flowName ),
 					...( design && { assembler_source: getAssemblerSource( design ) } ),
+					...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				} );
 			}
 		}

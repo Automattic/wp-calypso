@@ -37,11 +37,17 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
+import {
+	THEME_TIERS,
+	THEME_TIER_PARTNER,
+	THEME_TIER_PREMIUM,
+} from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -98,6 +104,13 @@ const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
+	// imageOptimizationExperimentAssignment, exerimentAssignment
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_design_picker_image_optimization_202406'
+	);
+	const variantName = experimentAssignment?.variationName;
+	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
+
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
 
@@ -115,6 +128,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
+
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-picker' );
+
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
 
@@ -165,8 +182,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				.filter(
 					( design ) =>
 						! (
-							design.is_premium ||
-							design.is_externally_managed ||
+							design?.design_tier === THEME_TIER_PREMIUM ||
+							design?.design_tier === THEME_TIER_PARTNER ||
 							( design.software_sets && design.software_sets.length > 0 )
 						)
 				)
@@ -414,7 +431,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const isLockedTheme =
 		! canSiteActivateTheme ||
-		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
+			! isPremiumThemeAvailable &&
+			! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
 		( ! isPluginBundleEligible && isBundled );
@@ -825,7 +844,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					placeholder={ null }
 					previewUrl={ previewUrl }
 					splitDefaultVariation={
-						! selectedDesign.is_premium &&
+						! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
 						! isBundled &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
@@ -907,6 +926,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
+			oldHighResImageLoading={ oldHighResImageLoading }
+			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
+			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
+			showActiveThemeBadge={ intent !== 'build' }
 		/>
 	);
 
@@ -921,7 +944,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ handleBackClick }
+			goBack={ intent === 'update-design' ? submit : handleBackClick }
 		/>
 	);
 };

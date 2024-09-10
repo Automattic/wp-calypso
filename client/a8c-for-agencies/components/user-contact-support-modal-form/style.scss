@@ -5,12 +5,8 @@
 	width: 827px;
 	max-height: 100%;
 	margin: 0;
-	font-size: 1rem;
+	@include a4a-font-body-lg;
 	color: var(--color-neutral-100);
-
-	p {
-		font-size: 1rem;
-	}
 
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
@@ -54,9 +50,7 @@
 }
 
 .a4a-contact-support-modal-form__title {
-	font-size: 1.5rem;
-	font-weight: 700;
-	line-height: 0.8;
+	@include a4a-font-heading-xl;
 	margin: 0;
 	padding: 0;
 }

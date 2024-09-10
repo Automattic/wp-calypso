@@ -18,8 +18,6 @@ const SubscriberValidationGate: FC< Props > = ( { children, siteId } ) => {
 	return isStagingSite ? (
 		<StagingGate siteId={ siteId }>{ children }</StagingGate>
 	) : (
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
 		<EmailVerificationGate
 			noticeText={ translate( 'You must verify your email to add subscribers.' ) }
 			noticeStatus="is-warning"

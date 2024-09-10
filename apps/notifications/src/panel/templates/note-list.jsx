@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
@@ -38,8 +37,9 @@ export class NoteList extends Component {
 
 	noteElements = {};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
@@ -51,11 +51,11 @@ export class NoteList extends Component {
 	}
 
 	componentDidMount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).addEventListener( 'scroll', this.onScroll );
+		this.scrollableContainer.addEventListener( 'scroll', this.onScroll );
 	}
 
 	componentWillUnmount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
+		this.scrollableContainer.removeEventListener( 'scroll', this.onScroll );
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -68,7 +68,7 @@ export class NoteList extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( this.noteList && ! this.props.isLoading ) {
-			const element = ReactDOM.findDOMNode( this.scrollableContainer );
+			const element = this.scrollableContainer;
 			if (
 				element.clientHeight > 0 &&
 				element.scrollTop + element.clientHeight >= this.noteList.clientHeight - 300
@@ -91,7 +91,7 @@ export class NoteList extends Component {
 
 		requestAnimationFrame( () => ( this.isScrolling = false ) );
 
-		const element = ReactDOM.findDOMNode( this.scrollableContainer );
+		const element = this.scrollableContainer;
 		if ( ! this.state.scrolling || this.state.scrollY !== element.scrollTop ) {
 			// only set state and trigger render if something has changed
 			this.setState( {
@@ -204,20 +204,22 @@ export class NoteList extends Component {
 	};
 
 	render() {
+		const { translate } = this.props;
+
 		const groupTitles = [
-			this.props.translate( 'Today', {
+			translate( 'Today', {
 				comment: 'heading for a list of notifications from today',
 			} ),
-			this.props.translate( 'Yesterday', {
+			translate( 'Yesterday', {
 				comment: 'heading for a list of notifications from yesterday',
 			} ),
-			this.props.translate( 'Older than 2 days', {
+			translate( 'Older than 2 days', {
 				comment: 'heading for a list of notifications that are more than 2 days old',
 			} ),
-			this.props.translate( 'Older than a week', {
+			translate( 'Older than a week', {
 				comment: 'heading for a list of notifications that are more than a week old',
 			} ),
-			this.props.translate( 'Older than a month', {
+			translate( 'Older than a month', {
 				comment: 'heading for a list of notifications that are more than a month old',
 			} ),
 		];
@@ -288,7 +290,7 @@ export class NoteList extends Component {
 		let [ notes ] = Object.entries( noteGroups ).reduce(
 			( [ list, isFirst ], [ timeGroupKey, timeGroupNotes ] ) => {
 				const title = groupTitles[ timeGroupKey ];
-				const header = <ListHeader { ...{ key: title, title, isFirst } } />;
+				const header = <ListHeader key={ title } title={ title } isFirst={ isFirst } />;
 
 				return [ [ ...list, header, ...timeGroupNotes.map( createNoteComponent ) ], false ];
 			},
@@ -297,7 +299,7 @@ export class NoteList extends Component {
 
 		const emptyNoteList = 0 === notes.length;
 
-		const filter = Filters[ this.props.filterName ]();
+		const filter = Filters[ this.props.filterName ];
 		const loadingIndicatorVisibility = { opacity: 0 };
 		if ( this.props.isLoading ) {
 			loadingIndicatorVisibility.opacity = 1;
@@ -307,9 +309,9 @@ export class NoteList extends Component {
 		} else if ( ! this.props.initialLoad && emptyNoteList && filter.emptyMessage ) {
 			notes = (
 				<EmptyMessage
-					emptyMessage={ filter.emptyMessage }
+					emptyMessage={ filter.emptyMessage( translate ) }
 					height={ this.props.height }
-					linkMessage={ filter.emptyLinkMessage }
+					linkMessage={ filter.emptyLinkMessage( translate ) }
 					link={ filter.emptyLink }
 					name={ filter.name }
 					showing={ this.props.isPanelOpen }
@@ -332,7 +334,6 @@ export class NoteList extends Component {
 		}
 
 		const classes = clsx( 'wpnc__note-list', {
-			'disable-sticky': !! window.chrome || !! window.electron, // position: sticky doesn't work in Chrome – `window.chrome` does not exist in electron
 			'is-note-open': !! this.props.selectedNoteId,
 		} );
 
@@ -350,7 +351,6 @@ export class NoteList extends Component {
 
 		return (
 			<>
-				{ /* Keep the wpnc__note-list as the first child of the Fragment to ensure the ReactDOM.findDOMNode returns the list element */ }
 				<div className={ classes } id="wpnc__note-list" ref={ this.props.listElementRef }>
 					<FilterBar
 						controller={ this.props.filterController }
@@ -402,6 +402,7 @@ const mapStateToProps = ( state ) => ( {
 
 const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(

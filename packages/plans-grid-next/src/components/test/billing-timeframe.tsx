@@ -17,6 +17,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
 		usePricingMetaForGridPlans: jest.fn(),
 	},
+	AddOns: {
+		useStorageAddOns: jest.fn(),
+	},
 } ) );
 
 import {

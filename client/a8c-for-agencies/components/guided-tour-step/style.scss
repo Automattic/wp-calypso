@@ -12,15 +12,12 @@
 
 .guided-tour__popover-heading {
 	color: var(--color-neutral-100);
-	font-size: rem(14px);
-	line-height: 1.5;
-	font-weight: 500;
+	@include a4a-font-label-button;
 }
 
 .guided-tour__popover-description {
 	color: var(--color-neutral-80);
-	font-size: rem(12px);
-	line-height: 1.5;
+	@include a4a-font-body-sm;
 	max-width: 220px;
 	text-align: left;
 	margin-block-end: 0;
@@ -34,7 +31,7 @@
 
 	.guided-tour__popover-step-count {
 		color: var(--color-neutral-60);
-		font-size: rem(12px);
+		@include a4a-font-body-sm;
 	}
 
 	.guided-tour__popover-footer-right-content {
@@ -43,7 +40,7 @@
 
 		button {
 			padding: 4px 8px;
-			font-size: rem(12px);
+			@include a4a-font-body-sm;
 		}
 	}
 }

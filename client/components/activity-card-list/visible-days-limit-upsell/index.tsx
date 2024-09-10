@@ -50,9 +50,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 	const trackUpgradeClick = useTrackUpgradeClick( siteId );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const storageUpgradeUrl = useSelector( ( state ) =>
-		getJetpackStorageUpgradeUrl( state, siteSlug )
-	);
+	const storageUpgradeUrl = getJetpackStorageUpgradeUrl( siteSlug );
 
 	const upsellRef = useTrackUpsellView( siteId );
 

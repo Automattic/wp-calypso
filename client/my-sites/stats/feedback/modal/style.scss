@@ -1,0 +1,63 @@
+@import "@automattic/components/src/styles/typography";
+
+.stats-feedback-modal {
+	width: 685px;
+	background-color: var(--studio-white);
+	text-align: left;
+}
+
+.stats-feedback-modal__close-button {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+}
+
+.stats-feedback-modal__title {
+	font-family: $font-sf-pro-display;
+	font-size: rem(26px);
+	font-weight: 600;
+	line-height: 32px;
+	margin-bottom: 16px;
+}
+
+.stats-feedback-modal__text {
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 21px;
+	letter-spacing: -0.24px;
+}
+
+.stats-feedback-modal__form {
+	margin-top: 24px;
+
+	textarea {
+		padding: 8px 16px;
+		resize: none;
+		font-family: $font-sf-pro-text;
+		font-size: $font-body-small;
+		font-weight: 400;
+		line-height: 21px;
+		letter-spacing: -0.24px;
+
+	}
+}
+
+.stats-feedback-modal__button {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: 24px;
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 20px;
+
+	strong {
+		margin-right: 8px;
+	}
+
+	button {
+		padding: 10px 16px;
+	}
+}

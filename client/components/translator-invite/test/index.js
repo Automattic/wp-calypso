@@ -34,14 +34,14 @@ describe( 'TranslatorInvite', () => {
 
 	test( 'should not render when no locale information present', () => {
 		const { container } = renderWithProvider( <TranslatorInvite { ...defaultProps } /> );
-		expect( container.firstChild ).toBeEmptyDOMElement();
+		expect( container.firstChild ).toBeNull();
 	} );
 
 	test( 'should render when no locale information present', () => {
 		renderWithProvider( <TranslatorInvite { ...defaultProps } locale="tl" /> );
 		expect(
 			screen.getByText(
-				'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?'
+				'%(languageName)s is only %(percentTranslated)d%% translated. Help translate WordPress into your language.'
 			)
 		).toBeVisible();
 	} );

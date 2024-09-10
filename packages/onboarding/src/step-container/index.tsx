@@ -33,6 +33,7 @@ interface Props {
 	headerButton?: ReactElement;
 	customizedActionButtons?: ReactElement;
 	isWideLayout?: boolean;
+	isExtraWideLayout?: boolean;
 	isFullLayout?: boolean;
 	isHorizontalLayout?: boolean;
 	goBack?: () => void;
@@ -46,6 +47,7 @@ interface Props {
 	showFooterWooCommercePowered?: boolean;
 	showSenseiPowered?: boolean;
 	showVideoPressPowered?: boolean;
+	backUrl?: string;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -70,9 +72,11 @@ const StepContainer: React.FC< Props > = ( {
 	isHorizontalLayout,
 	isFullLayout,
 	isWideLayout,
+	isExtraWideLayout,
 	isExternalBackUrl,
 	isLargeSkipLayout,
 	customizedActionButtons,
+	backUrl,
 	goBack,
 	goNext,
 	flowName,
@@ -106,13 +110,15 @@ const StepContainer: React.FC< Props > = ( {
 	};
 
 	function BackButton() {
-		if ( shouldHideNavButtons ) {
+		// Hide back button if goBack is falsy, it won't do anything in that case.
+		if ( shouldHideNavButtons || ( ! goBack && ! backUrl ) ) {
 			return null;
 		}
 		return (
 			<StepNavigationLink
 				direction="back"
 				handleClick={ goBack }
+				backUrl={ backUrl }
 				label={ backLabelText }
 				hasBackIcon
 				rel={ isExternalBackUrl ? 'external' : '' }
@@ -168,6 +174,7 @@ const StepContainer: React.FC< Props > = ( {
 		'is-full-layout': isFullLayout,
 		'is-large-skip-layout': isLargeSkipLayout,
 		'has-navigation': ! shouldHideNavButtons,
+		'is-extra-wide-layout': isExtraWideLayout,
 	} );
 
 	return (

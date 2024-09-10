@@ -20,8 +20,8 @@ const useBlockRendererContext = (
 	useInlineStyles = false
 ) => {
 	const { data: settings } = useBlockRendererSettings( siteId, stylesheet, useInlineStyles );
-
 	const [ globalStyles ] = useSafeGlobalStylesOutput();
+
 	const context = useMemo(
 		() => ( {
 			isReady: !! settings,

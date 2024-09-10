@@ -31,6 +31,7 @@ import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -50,6 +51,7 @@ const Home = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+	const [ isPeerReferralCtaDisabled, setPeerReferralCtaDisabled ] = useState( false );
 	const site = useSelector( getSelectedSite );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
@@ -117,8 +119,14 @@ const Home = () => {
 		wp.req.post(
 			'/me/peer-referral-link-enable',
 			{ enable: true },
-			( error: string, data: string ) => {
-				setPeerReferralLink( ! error && data ? data : '' );
+			( errorResponse: { error: string; message: string }, peerReferralLink: string ) => {
+				if ( errorResponse ) {
+					setPeerReferralCtaDisabled( true );
+					dispatch( errorNotice( errorResponse.message ) );
+					return;
+				}
+
+				setPeerReferralLink( peerReferralLink );
 			}
 		);
 	};
@@ -382,6 +390,7 @@ const Home = () => {
 				trackCtaButton( 'peer-referral-wpcom' );
 				onPeerReferralCtaClick();
 			},
+			disabled: isPeerReferralCtaDisabled,
 		};
 
 		if ( peerReferralLink ) {

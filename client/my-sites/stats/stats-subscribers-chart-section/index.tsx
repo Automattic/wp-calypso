@@ -6,8 +6,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
 import { hideFractionNumber } from './chart-utils';
@@ -102,9 +100,6 @@ export default function SubscribersChartSection( {
 		queryDate
 	) as UseQueryResult< SubscribersDataResult >;
 
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId || 0 ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-
 	const handleDateChange = useCallback(
 		( newDate: Date ) => setQueryDate( new Date( newDate.getTime() ) ), // unless new Date is created, the component won't rerender
 		[ setQueryDate ]
@@ -122,6 +117,11 @@ export default function SubscribersChartSection( {
 	}, [ status, isError ] );
 
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+
+	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
+	const isPaidSubscriptionProductsLoading = ! products;
+	const isChartLoading = isLoading || isPaidSubscriptionProductsLoading;
+
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
@@ -133,23 +133,21 @@ export default function SubscribersChartSection( {
 	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
 
-	const subscribersUrl =
-		isAtomic || isJetpack
-			? `https://cloud.jetpack.com/subscribers/${ slug }`
-			: `/people/subscribers/${ slug }`;
+	const subscribersUrl = isOdysseyStats
+		? `https://cloud.jetpack.com/subscribers/${ slug }`
+		: `/subscribers/${ slug }`;
+
 	return (
 		<div className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
 			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
 					{ translate( 'Subscribers' ) }{ ' ' }
-					{ isOdysseyStats ? null : (
-						<small>
-							<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
-								{ translate( 'View all subscribers' ) }
-							</a>
-						</small>
-					) }
+					<small>
+						<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
+							{ translate( 'View all subscribers' ) }
+						</a>
+					</small>
 				</h1>
 				<div className="subscribers-section-heading__chart-controls">
 					<SubscribersNavigationArrows
@@ -166,14 +164,14 @@ export default function SubscribersChartSection( {
 					</div>
 				</div>
 			</div>
-			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isLoading && chartData.length === 0 && (
+			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
+			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
 					{ translate( 'No data available for the specified period.' ) }
 				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isLoading && chartData.length !== 0 && (
+			{ ! isChartLoading && chartData.length !== 0 && (
 				<UplotChart
 					data={ chartData }
 					legendContainer={ legendRef }

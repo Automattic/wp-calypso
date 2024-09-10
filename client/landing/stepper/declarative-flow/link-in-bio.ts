@@ -15,8 +15,7 @@ import {
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const linkInBio: Flow = {
@@ -26,8 +25,11 @@ const linkInBio: Flow = {
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		const publicSteps = [
 			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+		];
+
+		const privateSteps = stepsWithRequiredLogin( [
 			{
 				slug: 'linkInBioSetup',
 				asyncComponent: () => import( './internals/steps-repository/link-in-bio-setup' ),
@@ -50,7 +52,9 @@ const linkInBio: Flow = {
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
-		];
+		] );
+
+		return [ ...publicSteps, ...privateSteps ];
 	},
 
 	useSideEffect() {
@@ -71,15 +75,7 @@ const linkInBio: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStepSlug );
 
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: translate( 'Link in Bio' ),
-		} );
-
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'intro':
 					clearSignupDestinationCookie();
@@ -87,8 +83,6 @@ const linkInBio: Flow = {
 					if ( userIsLoggedIn ) {
 						return navigate( 'patterns' );
 					}
-					return window.location.assign( logInUrl );
-
 				case 'patterns':
 					return navigate( 'linkInBioSetup' );
 

@@ -1,11 +1,11 @@
 import { Callback, Context } from '@automattic/calypso-router';
 import debug from 'debug';
 import store from 'store';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import {
 	A4A_SIGNUP_FINISH_LINK,
 	A4A_SIGNUP_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';

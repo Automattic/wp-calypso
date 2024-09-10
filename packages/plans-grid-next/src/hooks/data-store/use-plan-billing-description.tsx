@@ -9,7 +9,7 @@ import {
 	TERM_ANNUALLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { AddOns, Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import type { GridPlan } from '../../types';
@@ -19,7 +19,7 @@ interface UsePlanBillingDescriptionProps {
 	planSlug: PlanSlug;
 	pricing: GridPlan[ 'pricing' ] | null;
 	isMonthlyPlan?: boolean;
-	storageAddOnsForPlan: GridPlan[ 'storageAddOnsForPlan' ];
+	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	coupon?: string;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 }

@@ -1,0 +1,62 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-section-wrapper {
+	margin-inline: 0;
+	background-repeat: no-repeat;
+	background-position: top right;
+	padding: 40px 0;
+
+	> * {
+		padding-inline: 16px;
+
+		@include break-medium {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding-inline: 40px;
+		}
+	}
+
+	@include break-medium {
+		padding: 80px 0;
+	}
+}
+
+.hosting-section__sub-header {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.hosting-section__sub-header-title {
+	@include a4a-font-body-md;
+}
+
+
+.hosting-section__header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-block-end: 24px;
+
+	@include break-medium {
+		margin-block-end: 32px;
+	}
+}
+
+.hosting-section__header-title {
+	@include a4a-font-heading-xl;
+
+	@include break-medium {
+		@include a4a-font-heading-xxl;
+	}
+}
+
+.hosting-section__header-description {
+	@include a4a-font-body-md;
+	margin: 0;
+
+	@include break-medium {
+		@include a4a-font-body-lg;
+	}
+}

@@ -21,7 +21,7 @@ const selectors = {
 	postStatusButton: `.editor-post-status > button`,
 
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
-		`button[role="menuitem"] span:text("${ target }")`,
+		`button[role*="menuitem"] span:text-is("${ target }")`,
 	previewPane: `.edit-post-visual-editor`,
 
 	// Publish
@@ -161,7 +161,6 @@ export class EditorToolbarComponent {
 		// be able to perform the click action.
 		// See https://github.com/Automattic/wp-calypso/pull/76987
 		await Promise.any( [
-			editorParent.locator( '.wpcom-domain-upsell-callout__dismiss-icon' ).click(),
 			editorParent.getByRole( 'button', { name: 'Save draft' } ).click( { trial: true } ),
 		] );
 
@@ -336,10 +335,13 @@ export class EditorToolbarComponent {
 		const translatedCloseSettingsName = await this.translateFromPage( 'Close Settings' );
 		const translatedCloseJetpackSettingsName = await this.translateFromPage( 'Close plugin' );
 
+		const buttonNames =
+			envVariables.VIEWPORT_NAME === 'mobile'
+				? `Settings`
+				: `${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`;
+
 		const button = editorParent.getByRole( 'button', {
-			name: new RegExp(
-				`${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`
-			),
+			name: new RegExp( buttonNames ),
 		} );
 
 		if ( ! ( await this.targetIsOpen( button ) ) ) {
@@ -349,35 +351,18 @@ export class EditorToolbarComponent {
 		await button.click();
 	}
 
-	/* Navigation sidebar */
-
 	/**
-	 * Opens the nav sidebar.
+	 * Closes the editor.
+	 *
+	 * Clicks the `W` logo in the corner to close the editor.
 	 */
-	async openNavSidebar(): Promise< void > {
+	async closeEditor(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
+		const target = editorParent.getByRole( 'link', {
+			name: 'View Posts',
 		} );
 		if ( await this.targetIsOpen( target ) ) {
-			return;
-		}
-
-		await target.click();
-	}
-
-	/**
-	 * Closes the nav sidebar.
-	 */
-	async closeNavSidebar(): Promise< void > {
-		const editorParent = await this.editor.parent();
-
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
-		} );
-
-		if ( ! ( await this.targetIsOpen( target ) ) ) {
 			return;
 		}
 

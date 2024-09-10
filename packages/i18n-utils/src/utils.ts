@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
-import i18n, { getLocaleSlug } from 'i18n-calypso';
+import { hasTranslation } from '@wordpress/i18n';
 import { find, map, pickBy, includes } from 'lodash';
+import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
  * This regex is defined as a string so that it can be combined with other regexes.
@@ -77,8 +78,8 @@ export function canBeTranslated( locale: string ) {
  * @returns {boolean} true when a user would see text they can read.
  */
 export function translationExists( phrase: string ) {
-	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( phrase );
+	const localeSlug = getWpI18nLocaleSlug() || 'en';
+	return isDefaultLocale( localeSlug ) || hasTranslation( phrase );
 }
 
 /**
@@ -235,7 +236,7 @@ export function isTranslatedIncompletely( locale: string ) {
  * @returns original path with new locale slug
  */
 export function addLocaleToPathLocaleInFront( path: string, locale?: string ) {
-	const localeOrDefault = locale || getLocaleSlug();
+	const localeOrDefault = locale || getWpI18nLocaleSlug();
 	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
 	if ( ! localeOrDefault || isDefaultLocale( localeOrDefault ) ) {

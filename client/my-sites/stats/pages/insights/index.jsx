@@ -10,21 +10,23 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import AllTimeViewsSection from 'calypso/my-sites/stats/features/modules/all-time-views-section';
+import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
+import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
+import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimeHighlightsSection from '../../all-time-highlights-section';
-import AllTimeViewsSection from '../../all-time-views-section';
 import AnnualHighlightsSection from '../../annual-highlights-section';
 import PostingActivity from '../../post-trends';
-import Comments from '../../stats-comments';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
-import StatShares from '../../stats-shares';
 import statsStrings from '../../stats-strings';
 
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
+	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 
 	const statsModuleListClass = clsx(
 		'stats__module-list--insights',
@@ -61,23 +63,40 @@ const StatsInsights = ( props ) => {
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				<div className={ statsModuleListClass }>
-					<StatsModule
-						path="tags-categories"
-						moduleStrings={ moduleStrings.tags }
-						statType="statsTags"
-						hideSummaryLink
-						className={ clsx(
-							{
-								'stats__flexible-grid-item--half': isJetpack,
-								'stats__flexible-grid-item--full--large': isJetpack,
-							},
-							{
-								'stats__flexible-grid-item--full': ! isJetpack,
-							}
-						) }
-					/>
-					<Comments
-						path="comments"
+					{ isEmptyStateV2 && (
+						<StatsModuleTags
+							moduleStrings={ moduleStrings.tags }
+							hideSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--half': isJetpack,
+									'stats__flexible-grid-item--full--large': isJetpack,
+								},
+								{
+									'stats__flexible-grid-item--full': ! isJetpack,
+								}
+							) }
+						/>
+					) }
+					{ ! isEmptyStateV2 && (
+						<StatsModule
+							path="tags-categories"
+							moduleStrings={ moduleStrings.tags }
+							statType="statsTags"
+							hideSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--half': isJetpack,
+									'stats__flexible-grid-item--full--large': isJetpack,
+								},
+								{
+									'stats__flexible-grid-item--full': ! isJetpack,
+								}
+							) }
+						/>
+					) }
+
+					<StatsModuleComments
 						className={ clsx(
 							'stats__flexible-grid-item--half',
 							'stats__flexible-grid-item--full--large'

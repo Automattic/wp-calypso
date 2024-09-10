@@ -4,6 +4,10 @@
 	grid-template-columns: 1fr 1fr;
 	row-gap: 16px;
 	column-gap: 32px;
+
+	@include breakpoint-deprecated("<960px") {
+		grid-template-columns: 1fr;
+	}
 }
 
 .partner-directory-agency-expertise__client-site,
@@ -12,6 +16,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+
+	&.is-error {
+		input {
+			border-color: var(--color-error) !important;
+		}
+	}
 }
 
 h3.partner-directory-agency-expertise__client-samples-label {
@@ -21,9 +31,14 @@ h3.partner-directory-agency-expertise__client-samples-label {
 	margin-block-end: 8px;
 }
 
-.partner-directory-agency-expertise__footer {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
-	margin-block-start: -16px;
+.partner-directory-agency-expertise__error {
+	margin-block-start: 0.25rem;
+	color: var(--color-scary-40);
+	font-style: italic;
+	font-size: 0.875rem;
+	line-height: 14px;
+
+	&.hidden {
+		display: none;
+	}
 }

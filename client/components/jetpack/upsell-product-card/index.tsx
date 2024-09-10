@@ -4,6 +4,7 @@ import {
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
+	isJetpackSocialSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
@@ -14,6 +15,7 @@ import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
 import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.png';
+import SocialImage from 'calypso/assets/images/jetpack/rna-image-social.png';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import QueryJetpackPartnerKey from 'calypso/components/data/query-jetpack-partner-portal-partner-key';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
@@ -180,6 +182,9 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		}
 		if ( isJetpackSearchSlug( nonManageProductSlug ) ) {
 			return SearchImage;
+		}
+		if ( isJetpackSocialSlug( nonManageProductSlug ) ) {
+			return SocialImage;
 		}
 		return DefaultImage;
 	}, [ nonManageProductSlug ] );

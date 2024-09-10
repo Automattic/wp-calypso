@@ -89,11 +89,14 @@ export const fetchMagicLoginAuthenticate =
 				} );
 			} )
 			.catch( ( error ) => {
-				const { status } = error;
+				const { status, response } = error;
 
 				dispatch( {
 					type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
-					error: status,
+					error: {
+						code: status,
+						type: response?.body?.data?.errors?.[ 0 ]?.code || null,
+					},
 				} );
 			} );
 	};

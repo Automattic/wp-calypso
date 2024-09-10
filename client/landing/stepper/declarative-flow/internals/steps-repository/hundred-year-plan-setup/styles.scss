@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "../hundred-year-plan-step-wrapper/mixins";
 
+.hundred-year-plan.step-route {
+	margin-top: -60px;
+}
+
 .hundred-year-plan-setup {
 	.step-container__content {
 		.components-button.setup-form__submit.is-primary {

@@ -289,9 +289,11 @@ class ActivityCardList extends Component {
 		const pageLogs = this.splitLogsByDate( visibleLogs.slice( ( actualPage - 1 ) * pageSize ) );
 		const showLimitUpsell = visibleLogs.length < logs.length && actualPage >= pageCount;
 
+		const wpcomLimitedActivityLog = isWPCOMSite && ! siteHasFullActivityLog;
+
 		return (
 			<>
-				{ showPagination && (
+				{ showPagination && ! wpcomLimitedActivityLog && (
 					<Pagination
 						compact={ isMobile }
 						className="activity-card-list__pagination-top"
@@ -304,12 +306,12 @@ class ActivityCardList extends Component {
 						total={ visibleLogs.length }
 					/>
 				) }
-				{ ! siteHasFullActivityLog && isWPCOMSite && this.renderPlanUpsell( pageLogs ) }
 				{ this.renderLogs( pageLogs ) }
+				{ wpcomLimitedActivityLog && this.renderPlanUpsell( pageLogs ) }
 				{ showLimitUpsell && (
 					<VisibleDaysLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
 				) }
-				{ showPagination && (
+				{ showPagination && ! wpcomLimitedActivityLog && (
 					<Pagination
 						compact={ isMobile }
 						className="activity-card-list__pagination-bottom"

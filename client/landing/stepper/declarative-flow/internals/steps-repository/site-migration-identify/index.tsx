@@ -9,8 +9,9 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import wpcom from 'calypso/lib/wp';
+import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
+import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
@@ -95,28 +96,28 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			title: translate( 'Unmatched Reliability and Uptime' ),
 			titleString: 'Unmatched Reliability and Uptime', // Temporary string for non-English locales. Remove once we have translations.
 			description: translate(
-				'Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!'
+				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
 			),
 			descriptionString:
-				'Our rock-solid infrastructure ensures 99.999% uptime, keeping your site always accessible to your users no matter what!', // Temporary string for non-English locales. Remove once we have translations.
+				"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure.", // Temporary string for non-English locales. Remove once we have translations.
 		},
 		'effortless-customization': {
 			title: translate( 'Effortless Customization' ),
 			titleString: 'Effortless Customization',
 			description: translate(
-				'Our intuitive tools and extensive customization options let you design a website that meets all your needs, without any hassle. Whether you’re a beginner or an expert, building your dream site has never been easier.'
+				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
 			),
 			descriptionString:
-				'Our intuitive tools and extensive customization options let you design a website that meets all your needs, without any hassle. Whether you’re a beginner or an expert, building your dream site has never been easier.',
+				'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.',
 		},
 		'blazing-fast-speed': {
 			title: translate( 'Blazing Fast Page Speed' ),
 			titleString: 'Blazing Fast Page Speed',
 			description: translate(
-				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.'
+				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
 			),
 			descriptionString:
-				'Deliver lightning-fast load times with our global CDN spanning 28+ locations, providing a seamless experience for your visitors no matter where they are.',
+				'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.',
 		},
 	};
 
@@ -125,7 +126,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	);
 
 	return (
-		<div>
+		<div className="import__capture-wrapper">
 			<div className="import__heading import__heading-center">
 				<Title>{ titleInUse }</Title>
 				<SubTitle>{ subtitleInUse }</SubTitle>
@@ -170,6 +171,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -177,6 +179,13 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 			// record the migration source domain.
 			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
+			}
+
+			// If we have a URL of the source, we send requests to the mShots API to create screenshots
+			// early in the flow to avoid long loading times in the migration instructions step.
+			// Because mShots API can often take a long time to generate screenshots.
+			if ( data?.from ) {
+				createScreenshots( data?.from );
 			}
 
 			navigation?.submit?.( { action, ...data } );
@@ -190,11 +199,10 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 		const ref = urlQueryParams.get( 'ref' ) || '';
 		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
 		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
+		const shouldNotHideBasedOnRef = [ GUIDED_ONBOARDING_FLOW_REFERRER ].includes( ref );
 
-		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
+		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideBasedOnRef;
 	};
-
-	usePresalesChat( 'wpcom' );
 
 	return (
 		<>
@@ -206,7 +214,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 				hideBack={ shouldHideBackButton() }
 				hideSkip
 				hideFormattedHeader
-				goBack={ navigation.goBack }
+				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={

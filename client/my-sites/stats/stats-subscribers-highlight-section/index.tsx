@@ -1,6 +1,6 @@
 import {
 	ComponentSwapper,
-	CountComparisonCard,
+	CountCard,
 	MobileHighlightCardListing,
 	Spinner,
 } from '@automattic/components';
@@ -87,12 +87,12 @@ function SubscriberHighlightsStandard( {
 	return (
 		<div className="highlight-cards-list">
 			{ highlights.map( ( highlight ) => (
-				<CountComparisonCard
-					key={ highlight.heading }
+				<CountCard
 					heading={ isLoading ? '-' : highlight.heading }
-					count={ isLoading ? null : highlight.count }
+					key={ highlight.heading }
 					showValueTooltip
 					note={ highlight.note }
+					value={ isLoading ? null : highlight.count }
 				/>
 			) ) }
 		</div>
@@ -117,7 +117,6 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 	// Intentionally not using getProductsForSiteId here because we want to show the loading state.
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
-	// Odyssey Stats doesn't support the membership API endpoint yet.
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
 	const isPaidSubscriptionProductsLoading = ! products;
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;

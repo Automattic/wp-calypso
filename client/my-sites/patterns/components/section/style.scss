@@ -8,10 +8,8 @@
 	color: #101517;
 	background: var(--studio-white);
 
-	&.patterns-section--full-width-body {
-		.patterns-section__body {
-			padding: 0;
-		}
+	@media (max-width: $break-wide) {
+		padding: 40px 0 48px;
 	}
 
 	&.patterns-section--dark {
@@ -24,11 +22,45 @@
 			}
 		}
 	}
+
+	&.patterns-section--gray {
+		background: var(--studio-gray-0);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+
+	&.patterns-section--blue {
+		background: var(--studio-blue-80);
+		color: var(--studio-white);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: var(--studio-gray-10);
+			}
+		}
+	}
+}
+
+.patterns-section__premium-badge {
+	@include patterns-page-width;
+	margin-bottom: 10px;
+	.premium-badge {
+		margin-left: 0;
+		background-color: #50575e;
+	}
 }
 
 .patterns-section__header {
 	@include patterns-page-width;
 	padding-bottom: 48px;
+
+	@media (max-width: $break-wide) {
+		padding-bottom: 32px;
+	}
 
 	h2 {
 		font-family: $font-recoleta;
@@ -49,15 +81,9 @@
 
 .patterns-section__body {
 	@include patterns-page-width;
-}
 
-
-@media (max-width: $break-wide) {
-	.patterns-section {
-		padding: 40px 0 48px;
-	}
-
-	.patterns-section__header {
-		padding-bottom: 32px;
+	.patterns-section--full-width-body & {
+		padding: 0;
+		max-width: none;
 	}
 }

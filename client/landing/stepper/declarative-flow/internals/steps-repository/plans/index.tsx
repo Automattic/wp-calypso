@@ -32,7 +32,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ false }
-			isFullLayout
+			isExtraWideLayout
 			hideFormattedHeader
 			isLargeSkipLayout={ false }
 			hideBack={ ! isAllowedToGoBack }

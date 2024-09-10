@@ -1,6 +1,5 @@
 /** @jest-environment jsdom */
 jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="step-wrapper" /> );
-jest.mock( 'calypso/components/data/query-plans', () => 'query-plans' );
 jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 

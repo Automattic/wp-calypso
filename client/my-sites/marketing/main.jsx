@@ -1,4 +1,4 @@
-import { PLAN_PREMIUM, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -19,7 +19,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
 	getSiteSlug,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
@@ -39,12 +39,11 @@ export const Sharing = ( {
 	isVip,
 	siteSlug,
 	translate,
-	premiumPlanName,
 } ) => {
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
 	);
-	const isJetpackClassic = isJetpack && isGlobalSiteViewEnabled;
+	const isJetpackClassic = isJetpack && adminInterfaceIsWPAdmin;
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -136,7 +135,7 @@ export const Sharing = ( {
 
 	let titleHeader = translate( 'Marketing and Integrations' );
 
-	if ( isGlobalSiteViewEnabled ) {
+	if ( adminInterfaceIsWPAdmin ) {
 		titleHeader = translate( 'Marketing' );
 	}
 
@@ -181,10 +180,11 @@ export const Sharing = ( {
 			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
+					plan={ PLAN_PERSONAL }
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No ads with WordPress.com %(premiumPlanName)s', {
-						args: { premiumPlanName },
+					title={ translate( 'No ads with WordPress.com %(upsellPlanName)s', {
+						args: { upsellPlanName: getPlan( PLAN_PERSONAL )?.getTitle() },
 					} ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
@@ -214,7 +214,6 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle();
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
@@ -226,6 +225,5 @@ export default connect( ( state ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		isJetpack: isJetpack,
-		premiumPlanName,
 	};
 } )( localize( Sharing ) );

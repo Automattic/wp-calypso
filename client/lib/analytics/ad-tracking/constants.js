@@ -66,6 +66,7 @@ export const TRACKING_IDS = {
 	akismetGoogleGA4Gtag: 'G-V8X5PZE9F8',
 	akismetGoogleTagManagerId: 'GTM-NLFBXG5',
 	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
+	a8cForAgenciesGA4Gtag: 'G-8V8PCRJ142',
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
 	wooGoogleTagManagerId: 'GTM-W64W8Q',

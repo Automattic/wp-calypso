@@ -40,19 +40,22 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 			await page.close();
 		} );
 
-		describe( 'Verify Help Center is opened and visible in Calypso', function () {
-			it( 'Verify Help Center is initially closed', async function () {
-				expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
-			} );
+		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+			'Verify Help Center is opened and visible in Calypso',
+			function () {
+				it( 'Verify Help Center is initially closed', async function () {
+					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
+				} );
 
-			it( 'Open Help Center', async function () {
-				await supportComponent.openPopover();
-			} );
+				it( 'Open Help Center', async function () {
+					await supportComponent.openPopover();
+				} );
 
-			it( 'Verify Help Center is opened', async function () {
-				expect( await page.locator( '.help-center__container' ).isVisible() ).toBeTruthy();
-			} );
-		} );
+				it( 'Verify Help Center is opened', async function () {
+					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeTruthy();
+				} );
+			}
+		);
 
 		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			'Verify Help Center is opened and visible in Editor',
@@ -65,6 +68,7 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 					await page.goto( postURL );
 				} );
 
+				// eslint-disable-next-line jest/no-identical-title
 				it( 'Verify Help Center is initially closed', async function () {
 					expect(
 						await page
@@ -74,6 +78,7 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 					).toBeFalsy();
 				} );
 
+				// eslint-disable-next-line jest/no-identical-title
 				it( 'Open Help Center', async function () {
 					try {
 						await page
@@ -87,6 +92,7 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 					}
 				} );
 
+				// eslint-disable-next-line jest/no-identical-title
 				it( 'Verify Help Center is opened', async function () {
 					const helpCenterContainerIsVisible = await page
 						.frameLocator( '.calypsoify iframe' )
@@ -158,51 +164,57 @@ describe( 'Help Center: Interact with Results', function () {
 		supportComponent = new SupportComponent( page );
 	} );
 
-	describe( 'Search for Help article', function () {
-		it( 'Open Help Center', async function () {
-			await supportComponent.openPopover();
-		} );
+	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+		'Search for Help article',
+		function () {
+			it( 'Open Help Center', async function () {
+				await supportComponent.openPopover();
+			} );
 
-		it( 'Search for posts-related help article', async function () {
-			// We use domains below, but one of the domain-adjacent articles is currently broken:
-			// https://github.com/Automattic/wp-calypso/issues/79576
-			// Until that's fixed, let's steer clear and search a different topic.
-			await supportComponent.search( 'posts' );
-		} );
+			it( 'Search for posts-related help article', async function () {
+				// We use domains below, but one of the domain-adjacent articles is currently broken:
+				// https://github.com/Automattic/wp-calypso/issues/79576
+				// Until that's fixed, let's steer clear and search a different topic.
+				await supportComponent.search( 'posts' );
+			} );
 
-		it( 'Click on the second Help Docs result', async function () {
-			await supportComponent.clickResultByIndex( 'Docs', 1 );
-		} );
+			it( 'Click on the second Help Docs result', async function () {
+				await supportComponent.clickResultByIndex( 'Docs', 1 );
+			} );
 
-		it( 'Help Doc article is shown', async function () {
-			const articleTitle = await supportComponent.getOpenArticleTitle();
-			expect( articleTitle ).not.toBe( '' );
-		} );
-	} );
+			it( 'Help Doc article is shown', async function () {
+				const articleTitle = await supportComponent.getOpenArticleTitle();
+				expect( articleTitle ).not.toBe( '' );
+			} );
+		}
+	);
 
-	describe( 'Navigate to Calypso Link', function () {
-		let popupPage: Page;
+	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+		'Navigate to Calypso Link',
+		function () {
+			let popupPage: Page;
 
-		it( 'Close article and return to search results', async function () {
-			await supportComponent.goBack();
-		} );
+			it( 'Close article and return to search results', async function () {
+				await supportComponent.goBack();
+			} );
 
-		it( 'Clear search results', async function () {
-			await supportComponent.clearSearch();
-		} );
+			it( 'Clear search results', async function () {
+				await supportComponent.clearSearch();
+			} );
 
-		it( 'Search for "domain"', async function () {
-			await supportComponent.search( 'domain' );
-		} );
+			it( 'Search for "domain"', async function () {
+				await supportComponent.search( 'domain' );
+			} );
 
-		it( 'Click on the first Calypso Link result', async function () {
-			const popupEvent = page.waitForEvent( 'popup' );
-			await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
-			popupPage = await popupEvent;
-		} );
+			it( 'Click on the first Calypso Link result', async function () {
+				const popupEvent = page.waitForEvent( 'popup' );
+				await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
+				popupPage = await popupEvent;
+			} );
 
-		it( 'Calypso Link opens in a new page', async function () {
-			expect( popupPage.url() ).not.toBe( page.url() );
-		} );
-	} );
+			it( 'Calypso Link opens in a new page', async function () {
+				expect( popupPage.url() ).not.toBe( page.url() );
+			} );
+		}
+	);
 } );

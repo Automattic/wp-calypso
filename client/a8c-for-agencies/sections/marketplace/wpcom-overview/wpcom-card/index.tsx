@@ -1,8 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, JetpackLogo } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import SimpleList from '../../common/simple-list';
+import { MarketplaceTypeContext } from '../../context';
 import useWPCOMPlanDescription from './hooks/use-wpcom-plan-description';
 
 import './style.scss';
@@ -21,8 +24,33 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect, isL
 	const originalPrice = Number( plan.amount ) * quantity;
 	const actualPrice = originalPrice - originalPrice * discount;
 
+	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const referralMode = marketplaceType === 'referral';
+
 	const { name, features1, features2, jetpackFeatures1, jetpackFeatures2 } =
 		useWPCOMPlanDescription( plan.slug );
+
+	let buttonText =
+		quantity > 1
+			? translate( 'Add %(quantity)s %(planName)s sites to cart', {
+					args: {
+						quantity,
+						planName: name,
+					},
+					comment:
+						'%(quantity)s is the quantity of plans and %(planName)s is the name of the plan.',
+			  } )
+			: translate( 'Add %(planName)s to cart', {
+					args: {
+						planName: name,
+					},
+					comment: '%(planName)s is the name of the plan.',
+			  } );
+
+	if ( isAutomatedReferrals && referralMode ) {
+		buttonText = translate( 'Add to referral' );
+	}
 
 	return (
 		<div className="wpcom-plan-card">
@@ -54,8 +82,8 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect, isL
 								</>
 							) }
 							<div className="wpcom-plan-card__price-interval">
-								{ plan.price_interval === 'day' && translate( 'USD per day' ) }
-								{ plan.price_interval === 'month' && translate( 'USD per month' ) }
+								{ plan.price_interval === 'day' && translate( 'per day' ) }
+								{ plan.price_interval === 'month' && translate( 'per month' ) }
 							</div>
 						</div>
 					) }
@@ -65,21 +93,7 @@ export default function WPCOMPlanCard( { plan, quantity, discount, onSelect, isL
 
 				{ ! isLoading && (
 					<Button primary onClick={ () => onSelect( plan, quantity ) }>
-						{ quantity > 1
-							? translate( 'Add %(quantity)s %(planName)s sites to cart', {
-									args: {
-										quantity,
-										planName: name,
-									},
-									comment:
-										'%(quantity)s is the quantity of plans and %(planName)s is the name of the plan.',
-							  } )
-							: translate( 'Add %(planName)s to cart', {
-									args: {
-										planName: name,
-									},
-									comment: '%(planName)s is the name of the plan.',
-							  } ) }
+						{ buttonText }
 					</Button>
 				) }
 

@@ -14,7 +14,6 @@ export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( 
 };
 
 const reducer = combineReducers( { currentUser } );
-
 export type State = ReturnType< typeof reducer >;
 
 export default reducer;

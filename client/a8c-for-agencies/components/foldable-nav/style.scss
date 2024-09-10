@@ -17,8 +17,7 @@
 
 		.foldable-card__main {
 			color: var(--color-accent-100);
-			font-weight: 500;
-			font-size: rem(16px);
+			@include a4a-font-heading-md;
 		}
 	}
 
@@ -29,7 +28,7 @@
 		p.no-content,
 		.components-flex-item {
 			color: var(--color-accent-80);
-			font-size: rem(14px);
+			@include a4a-font-body-md;
 			margin-bottom: 0;
 		}
 

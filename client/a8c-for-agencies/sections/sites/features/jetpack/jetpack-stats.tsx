@@ -2,6 +2,7 @@ import ItemPreviewPaneFooter from 'calypso/a8c-for-agencies/components/items-das
 import DocumentHead from 'calypso/components/data/document-head';
 import InsightsStats from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/insights-stats';
 import { Site } from '../../types';
+import UpsellStatsCard from './stats/UpsellStatsCard';
 
 type Props = {
 	site: Site;
@@ -9,6 +10,17 @@ type Props = {
 };
 
 export function JetpackStatsPreview( { site, trackEvent }: Props ) {
+	const shouldShowUpsell =
+		! site?.is_atomic && ! site?.enabled_plugin_slugs?.find( ( value ) => value === 'jetpack' );
+
+	if ( shouldShowUpsell ) {
+		return (
+			<>
+				<UpsellStatsCard site={ site } />
+			</>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title="Stats" />

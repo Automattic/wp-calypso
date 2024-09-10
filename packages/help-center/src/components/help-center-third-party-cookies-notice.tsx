@@ -4,13 +4,14 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { BackButton } from './back-button';
+
+import './help-center-third-party-cookies-notice.scss';
 
 const ThirdPartyCookiesNotice: React.FC = () => {
 	const { __ } = useI18n();
-	const sectionName = useSelector( getSectionName );
+	const { sectionName } = useHelpCenterContext();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_third_party_cookies_notice_open', {

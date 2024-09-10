@@ -227,7 +227,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		// Not checking the `Press This` button as it is not available on AT.
 		// @see: paYJgx-1lp-p2
-		it.each( [ { name: 'Twitter' }, { name: 'Facebook' } ] )(
+		it.each( [ { name: 'X' }, { name: 'Facebook' } ] )(
 			'Social sharing button for $name can be clicked',
 			async function ( { name } ) {
 				publishedPostPage = new PublishedPostPage( newPage );

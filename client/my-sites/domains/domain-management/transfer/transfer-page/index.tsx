@@ -20,6 +20,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
@@ -372,6 +373,14 @@ const TransferPage = ( props: TransferPageProps ) => {
 						? __( 'Transfer to another registrar' )
 						: __( 'Advanced Options' ) }
 				</CardHeading>
+				{ domain?.isGravatarDomain && (
+					<InfoNotice
+						redesigned
+						text={ __(
+							'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you transfer this domain to another registrar, you will have to pay the standard price to register another domain for your Gravatar profile.'
+						) }
+					/>
+				) }
 				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
 		);

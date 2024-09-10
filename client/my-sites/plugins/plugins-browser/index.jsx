@@ -16,6 +16,7 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -33,9 +34,16 @@ import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
 import PluginsNavigationHeader from '../plugins-navigation-header';
 import PluginsSearchResultPage from '../plugins-search-results-page';
+import SearchCategories from '../search-categories';
 
 import './style.scss';
 
+const THRESHOLD = 10;
+const SEARCH_CATEGORIES_HEIGHT = 36;
+const LAYOUT_PADDING = 16;
+const MASTERBAR_HEIGHT = 32;
+
+// If adding new, longer search terms, ensure that the search input field is wide enough to accommodate it.
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
@@ -59,7 +67,7 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isL
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -72,6 +80,17 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+
+	const loggedInSearchBoxRef = useRef( null );
+	const isLoggedInSearchBoxSticky =
+		useIsVisible( loggedInSearchBoxRef, {
+			rootMargin: `${
+				-1 *
+				( THRESHOLD +
+					SEARCH_CATEGORIES_HEIGHT +
+					( selectedSite ? MASTERBAR_HEIGHT : LAYOUT_PADDING ) )
+			}px 0px 0px 0px`,
+		} ) === false;
 
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
@@ -96,7 +115,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const locale = useLocale();
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.menu || __( 'Plugins' );
+	const fallbackCategoryName = category
+		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
+		: __( 'Plugins' );
+	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -159,45 +181,59 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				}
 			/>
 
-			{ ! hideHeader && (
-				<PluginsNavigationHeader
-					navigationHeaderRef={ navigationHeaderRef }
-					categoryName={ categoryName }
-					category={ category }
-					search={ search }
-				/>
-			) }
+			<PluginsNavigationHeader
+				navigationHeaderRef={ navigationHeaderRef }
+				categoryName={ categoryName }
+				category={ category }
+				search={ search }
+			/>
 			<div className="plugins-browser__content-wrapper">
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				<SearchBoxHeader
-					searchRef={ searchRef }
-					categoriesRef={ categoriesRef }
-					stickySearchBoxRef={ searchHeaderRef }
-					isSticky={ isAboveElement }
-					searchTerm={ search }
-					isSearching={ isFetchingPluginsBySearchTerm }
-					title={
-						'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
-							? __( 'Flex your site’s features with plugins' )
-							: __( 'Plugins you need to get your projects done' )
-					}
-					subtitle={
-						! isLoggedIn &&
-						( 'en' === locale ||
-							hasTranslation(
-								'Add new functionality and integrations to your site with thousands of plugins.'
-							) ) &&
-						__( 'Add new functionality and integrations to your site with thousands of plugins.' )
-					}
-					searchTerms={ searchTerms }
-					renderTitleInH1={ ! category }
-				/>
+				{ isLoggedIn ? (
+					<SearchCategories
+						category={ category }
+						isSearching={ isFetchingPluginsBySearchTerm }
+						isSticky={ isLoggedInSearchBoxSticky }
+						searchRef={ searchRef }
+						searchTerm={ search }
+						searchTerms={ searchTerms }
+					/>
+				) : (
+					<>
+						<SearchBoxHeader
+							searchRef={ searchRef }
+							categoriesRef={ categoriesRef }
+							stickySearchBoxRef={ searchHeaderRef }
+							isSticky={ isAboveElement }
+							searchTerm={ search }
+							isSearching={ isFetchingPluginsBySearchTerm }
+							title={
+								'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
+									? __( 'Flex your site’s features with plugins' )
+									: __( 'Plugins you need to get your projects done' )
+							}
+							subtitle={
+								! isLoggedIn &&
+								( 'en' === locale ||
+									hasTranslation(
+										'Add new functionality and integrations to your site with thousands of plugins.'
+									) ) &&
+								__(
+									'Add new functionality and integrations to your site with thousands of plugins.'
+								)
+							}
+							searchTerms={ searchTerms }
+							renderTitleInH1={ ! category }
+						/>
 
-				<div ref={ categoriesRef }>
-					<Categories selected={ category } noSelection={ search ? true : false } />
-				</div>
+						<div ref={ categoriesRef }>
+							<Categories selected={ category } noSelection={ search ? true : false } />
+						</div>
+					</>
+				) }
+				{ isLoggedIn && <div ref={ loggedInSearchBoxRef } /> }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">

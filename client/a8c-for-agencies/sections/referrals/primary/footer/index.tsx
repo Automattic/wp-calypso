@@ -5,15 +5,16 @@ import './style.scss';
 export default function ReferralsFooter() {
 	const translate = useTranslate();
 
-	const tosLink = 'https://automattic.com/for-agencies/platform-agreement/';
+	const link =
+		'https://agencieshelp.automattic.com/knowledge-base/about-automattic-for-agencies/#payout-calculation-and-schedule';
 
 	return (
 		<div className="referrals-footer">
 			{ translate(
-				"Every 60 days, we'll calculate and pay out your commissions based on your clients’ purchases. Read the {{a}}Terms of Service.{{/a}}",
+				'Payments are issued once a quarter with 60 day terms and are net of refunds and chargebacks. See the {{a}}payout schedule{{/a}} for more exact dates.',
 				{
 					components: {
-						a: <a href={ tosLink } target="_blank" rel="noreferrer" />,
+						a: <a href={ link } target="_blank" rel="noreferrer" />,
 					},
 				}
 			) }

@@ -22,6 +22,7 @@ export const campaignStatus = {
 	CANCELED: 'canceled',
 	FINISHED: 'finished',
 	PROCESSING: 'processing',
+	SUSPENDED: 'suspended',
 };
 
 export const getPostType = ( type: string ) => {
@@ -63,6 +64,9 @@ export const getCampaignStatusBadgeColor = ( status?: string ) => {
 		case campaignStatus.FINISHED: {
 			return 'info-blue';
 		}
+		case campaignStatus.SUSPENDED: {
+			return 'error';
+		}
 		default:
 			return 'warning';
 	}
@@ -93,6 +97,9 @@ export const getCampaignStatus = ( status?: string ) => {
 		}
 		case campaignStatus.PROCESSING: {
 			return __( 'Creating' );
+		}
+		case campaignStatus.SUSPENDED: {
+			return __( 'Suspended' );
 		}
 		default:
 			return status;
@@ -145,6 +152,16 @@ export const getCampaignDurationFormatted = (
 	// Else show start -> end
 	const dateEndFormatted = moment.utc( end_date ).format( format );
 	return `${ dateStartFormatted } - ${ dateEndFormatted }`;
+};
+
+export const getCampaignStartDateFormatted = ( start_date?: string ) => {
+	if ( ! start_date ) {
+		return '-';
+	}
+
+	// translators: Moment.js date format. LLL: June 7, 2024 9:27 AM
+	const format = _x( 'LLL', 'datetime format' );
+	return moment.utc( start_date ).format( format );
 };
 
 export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) => {

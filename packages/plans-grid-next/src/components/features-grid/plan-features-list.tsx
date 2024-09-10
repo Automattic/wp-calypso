@@ -3,9 +3,9 @@ import {
 	isWpcomEnterpriseGridPlan,
 	FEATURE_GROUP_STORAGE,
 	FEATURE_GROUP_ALL_FEATURES,
-	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
@@ -14,7 +14,7 @@ import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
-import PlanStorageOptions from './plan-storage-options';
+import { PlanStorage } from '../shared/storage';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
@@ -37,8 +37,7 @@ type PlanFeaturesListProps = {
 		isTableCell?: boolean;
 	};
 	featureGroupSlug?: FeatureGroupSlug;
-	intervalType: string;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 };
 
@@ -51,7 +50,6 @@ const PlanFeaturesList = ( {
 	renderedGridPlans,
 	selectedFeature,
 	featureGroupSlug,
-	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage = false,
 }: PlanFeaturesListProps ) => {
@@ -95,13 +93,14 @@ const PlanFeaturesList = ( {
 								{ featureGroup?.getTitle() }
 							</h2>
 						</PlanFeaturesItem>
-						<PlanStorageOptions
-							planSlug={ planSlug }
-							options={ { isTableCell: true } }
-							intervalType={ intervalType }
-							onStorageAddOnClick={ onStorageAddOnClick }
-							showUpgradeableStorage={ showUpgradeableStorage }
-						/>
+						<PlanFeaturesItem>
+							<PlanStorage
+								planSlug={ planSlug }
+								options={ { isTableCell: true } }
+								onStorageAddOnClick={ onStorageAddOnClick }
+								showUpgradeableStorage={ showUpgradeableStorage }
+							/>
+						</PlanFeaturesItem>
 					</PlanDivOrTdContainer>
 				);
 			}

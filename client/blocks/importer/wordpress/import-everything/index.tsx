@@ -243,6 +243,7 @@ export class ImportEverything extends SectionMigrate {
 					<MigrationError
 						sourceSiteUrl={ this.props.sourceSite?.URL }
 						targetSiteUrl={ this.props.targetSite.URL }
+						targetSiteID={ this.props.targetSite.ID }
 						status={ status || this.state.migrationErrorStatus }
 						resetMigration={ this.resetMigration }
 						goToImportCapturePage={ () => stepNavigator?.goToImportCapturePage?.() }

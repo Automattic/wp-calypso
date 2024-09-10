@@ -48,7 +48,10 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				// Add border around everything
 				overflow: hidden;
 				min-height: 100vh;
-				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
+				padding-top: calc( var( --masterbar-height ) + 16px );
+				padding-right: 16px;
+				padding-bottom: 16px;
+				padding-left: calc( var( --sidebar-width-max ) );
 
 				.layout_primary > main {
 					padding-bottom: 0;
@@ -82,7 +85,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 				.formatted-header__title {
 					color: var( --studio-gray-80, #2c3338 );
-					font-family: 'SF Pro Display', sans-serif;
 					font-size: 1.5rem;
 					font-style: normal;
 					font-weight: 500;
@@ -177,6 +179,20 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
 			}
 
+			div.layout.is-global-sidebar-visible {
+				.layout__content {
+					padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
+					padding-bottom: var( --content-padding-bottom );
+				}
+				.layout__primary > main {
+					height: calc(
+						100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+								--content-padding-bottom
+							)
+					);
+				}
+			}
+
 			@media only screen and ( min-width: 782px ) {
 				.is-global-sidebar-visible {
 					header.navigation-header {
@@ -188,7 +204,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						background: var( --color-surface );
 						border-radius: 8px;
 						box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
-						height: calc( 100vh - 32px );
 						overflow: hidden;
 						max-width: none;
 					}
@@ -201,7 +216,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						margin-inline: 26px;
 					}
 					table {
-						grid-template-columns: 75px 2fr 1fr 1fr auto auto auto auto;
+						grid-template-columns: 75px 2fr 1fr 1fr 1fr auto auto auto auto;
 
 						th:last-child,
 						td:last-child {
@@ -244,11 +259,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				.domains-table-toolbar {
 					margin-inline: 0 !important;
 				}
-				div.layout.is-global-sidebar-visible {
-					.layout__primary > main {
-						height: calc( 100vh - var( --masterbar-height ) );
-					}
-				}
 			}
 
 			@media only screen and ( max-width: 781px ) {
@@ -284,11 +294,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						td:first-child {
 							padding: 0 0 0 24px;
 						}
-					}
-				}
-				div.layout.is-global-sidebar-visible {
-					.layout__primary > main {
-						height: calc( 100vh - var( --masterbar-height ) - 48px );
 					}
 				}
 			}

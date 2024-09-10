@@ -1,7 +1,7 @@
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import { A4A_SETTINGS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MainSidebar from '../../components/sidebar-menu/main';
 import { SETTINGS_AGENCY_PROFILE_TAB } from './constants';
 import Settings from './settings';

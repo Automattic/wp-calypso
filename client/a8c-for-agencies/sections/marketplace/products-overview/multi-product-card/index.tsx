@@ -14,9 +14,9 @@ import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
-import ProductPriceWithDiscount from 'calypso/jetpack-cloud/sections/partner-portal/primary/product-price-with-discount-info';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
 
 import '../product-card/style.scss';
 

@@ -38,15 +38,15 @@
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^5.0.0",
-		"@wordpress/react-i18n": "^4.0.0",
+		"@wordpress/i18n": "^5.2.0",
+		"@wordpress/react-i18n": "^4.2.0",
 		"debug": "^4.3.3",
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@automattic/color-studio": "2.6.0",
+		"@automattic/color-studio": "^3.0.1",
 		"@storybook/cli": "^7.6.19",
 		"@storybook/react": "^7.6.19",
 		"@testing-library/dom": "^10.1.0",

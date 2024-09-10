@@ -32,13 +32,13 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 					id="domain-transfer-header"
 					headerText={
 						isGoogleDomainsTransferFlow
-							? __( 'Transfer your Google domains' )
+							? __( 'Transfer your Squarespace domains' )
 							: __( 'Transfer Your Domains' )
 					}
 					subHeaderText={
 						isGoogleDomainsTransferFlow
 							? __(
-									'Follow these three simple steps to transfer your Google domains to WordPress.com.'
+									'Follow these three simple steps to transfer your Squarespace domains to WordPress.com.'
 							  )
 							: __( 'Follow these three simple steps to transfer your domains to WordPress.com.' )
 					}
@@ -56,6 +56,7 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 					initialMessage="User is contacting us from the domains-transfer flow"
 					className="domains-transfer-chat-button"
 					withHelpCenter={ false }
+					section="domains-transfer"
 				>
 					<MaterialIcon icon="chat_bubble" />
 					{ hasEnTranslation( 'Need help? Contact us' )

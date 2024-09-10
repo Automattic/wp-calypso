@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 import { DEVICE_TYPES } from './constants';
 
 // Device viewport width in pixels
-const DEVICE_COMPUTER_WIDTH = 1080;
+const DEVICE_COMPUTER_WIDTH = 1220;
 const DEVICE_TABLET_WIDTH = 782;
 const DEVICE_PHONE_WIDTH = 480;
 

@@ -10,6 +10,7 @@ import './style.scss';
 
 const UniversalNavbarHeader = ( {
 	className,
+	hideGetStartedCta = false,
 	isLoggedIn = false,
 	sectionName,
 	logoColor,
@@ -345,14 +346,16 @@ const UniversalNavbarHeader = ( {
 											type="nav"
 										/>
 									) }
-									<ClickableItem
-										className="x-nav-item x-nav-item__wide"
-										titleValue=""
-										content={ __( 'Get Started', __i18n_text_domain__ ) }
-										urlValue={ startUrl }
-										type="nav"
-										typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
-									/>
+									{ ! hideGetStartedCta && (
+										<ClickableItem
+											className="x-nav-item x-nav-item__wide"
+											titleValue=""
+											content={ __( 'Get Started', __i18n_text_domain__ ) }
+											urlValue={ startUrl }
+											type="nav"
+											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
+										/>
+									) }
 									<li className="x-nav-item x-nav-item__narrow">
 										<button
 											role="menuitem"

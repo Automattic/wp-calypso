@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
@@ -9,6 +10,7 @@ import {
 	JETPACK_GET_AGENCIES_REQUEST,
 	JETPACK_GET_AGENCIES_SUCCESS,
 	JETPACK_CURRENT_AGENCY_UPDATE,
+	JETPACK_SET_AGENCY_CLIENT_USER,
 } from './action-types';
 import { getActiveAgency, isFetchingAgency } from './selectors';
 
@@ -53,7 +55,21 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 
 		if ( newAgency ) {
 			dispatch( setActiveAgency( newAgency ) );
+
+			// Enable the Partner Directory section
+			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory_allowed ) {
+				config.enable( 'a4a-partner-directory' );
+			}
 		}
+	};
+}
+
+export function setAgencyClientUser( isClientUser: boolean ): AgencyThunkAction {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_SET_AGENCY_CLIENT_USER,
+			isClientUser,
+		} );
 	};
 }
 

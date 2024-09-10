@@ -34,14 +34,16 @@ export default function PurchaseConfirmationMessage() {
 	}, [ dispatch, wpcomHostingPurchased ] );
 
 	return successNotification ? (
-		<NoticeBanner
-			level="success"
-			title={ translate( 'Congratulations on your WordPress.com purchase!' ) }
-			onClose={ () => setSuccessNotification( false ) }
-		>
-			{ translate(
-				'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.'
-			) }
-		</NoticeBanner>
+		<div className="sites-overview__banner">
+			<NoticeBanner
+				level="success"
+				title={ translate( 'Congratulations on your WordPress.com purchase!' ) }
+				onClose={ () => setSuccessNotification( false ) }
+			>
+				{ translate(
+					'Set up your sites as you need them, in the “Needs setup” tab within the sites dashboard. Once set up, you can access each site under the “All” tab.'
+				) }
+			</NoticeBanner>
+		</div>
 	) : null;
 }

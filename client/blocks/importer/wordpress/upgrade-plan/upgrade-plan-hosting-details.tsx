@@ -1,71 +1,38 @@
 import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
-import { getQueryArg } from '@wordpress/url';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
-import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
-import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import { UpgradePlanHostingTestimonials } from './constants';
 import cwvtechReportJson from './cwvtech-report.json';
-import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
-import { Skeleton } from './skeleton';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
+import type { HostingDetailsItem } from './types';
 
-export const UpgradePlanHostingDetails = () => {
+interface Props {
+	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
+}
+
+export const UpgradePlanHostingDetails: React.FC< Props > = ( {
+	upgradePlanHostingDetailsList,
+} ) => {
 	const translate = useTranslate();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
-	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
-	let importSiteHostName = '';
 
-	try {
-		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
-	} catch ( e ) {}
-
-	const { list: upgradePlanHostingDetailsList, isFetching } = useUpgradePlanHostingDetailsList();
-
-	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
-
-	const { data: hostingProviderData } = useHostingProviderQuery( importSiteHostName, true );
-	const hostingProviderName = useHostingProviderName(
-		hostingProviderData?.hosting_provider,
-		urlData
-	);
-
-	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
-	const shouldDisplayHostIdentificationMessage =
-		hostingProviderSlug &&
-		hostingProviderSlug !== 'unknown' &&
-		hostingProviderSlug !== 'automattic';
-
-	let hostingDetailsItems = null;
-
-	if ( isFetching ) {
-		hostingDetailsItems = Array.from( { length: 3 } ).map( ( _, index ) => (
-			<li key={ index } className="import__upgrade-plan-hosting-details-list-loading">
-				<Skeleton width="60%" />
-				<Skeleton height="15px" />
+	const hostingDetailsItems = upgradePlanHostingDetailsList.map(
+		( { title, description, icon }, i ) => (
+			<li key={ i }>
+				<Icon
+					className="import__upgrade-plan-hosting-details-list-icon"
+					icon={ icon }
+					size={ 24 }
+				/>
+				<div className="import__upgrade-plan-hosting-details-list-stats">
+					<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
+					<span className="import__upgrade-plan-hosting-details-list-stats-description">
+						{ description }
+					</span>
+				</div>
 			</li>
-		) );
-	} else {
-		hostingDetailsItems = upgradePlanHostingDetailsList.map(
-			( { title, description, icon }, i ) => (
-				<li key={ i }>
-					<Icon
-						className="import__upgrade-plan-hosting-details-list-icon"
-						icon={ icon }
-						size={ 24 }
-					/>
-					<div className="import__upgrade-plan-hosting-details-list-stats">
-						<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
-						<span className="import__upgrade-plan-hosting-details-list-stats-description">
-							{ description }
-						</span>
-					</div>
-				</li>
-			)
-		);
-	}
+		)
+	);
 
 	const boostPercentage = Math.round(
 		( cwvtechReportJson[ 'WordPress.com' ].goodCWM - cwvtechReportJson[ 'WordPress' ].goodCWM ) *
@@ -74,19 +41,14 @@ export const UpgradePlanHostingDetails = () => {
 
 	return (
 		<div className="import__upgrade-plan-hosting-details">
-			<div
-				className={ clsx( 'import__upgrade-plan-hosting-details-card-container', {
-					'import__upgrade-plan-hosting-details-card-container--without-identified-host':
-						! shouldDisplayHostIdentificationMessage,
-				} ) }
-			>
+			<div className="import__upgrade-plan-hosting-details-card-container">
 				<div className="import__upgrade-plan-hosting-details-header">
 					<p className="import__upgrade-plan-hosting-details-header-main">
 						{ translate( 'Why should you host with us?' ) }
 					</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
-							'Google data shows that %(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals as compared to other WordPress hosts.',
+							'%(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals when compared to any other WordPress host [Source: Google data].',
 							{
 								args: { boostPercentage },
 							}
@@ -122,13 +84,6 @@ export const UpgradePlanHostingDetails = () => {
 					</div>
 				</div>
 			</div>
-			{ shouldDisplayHostIdentificationMessage && (
-				<div className="import__upgrade-plan-hosting-details-identified-host">
-					{ translate( "We've identified %(hostingProviderName)s as your host.", {
-						args: { hostingProviderName },
-					} ) }
-				</div>
-			) }
 		</div>
 	);
 };

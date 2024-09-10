@@ -11,13 +11,15 @@ import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import { DataViews } from 'calypso/components/dataviews';
-import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { AllowedTypes, Site } from '../types';
-import { SitesDataViewsProps, SiteInfo } from './interfaces';
+import SiteActions from '../site-actions';
+import { AllowedTypes, Site, SiteData } from '../types';
+import { SitesDataViewsProps } from './interfaces';
+import type { Field } from '@wordpress/dataviews';
+
 import './style.scss';
 
 const SitesDataViews = ( {
@@ -30,9 +32,18 @@ const SitesDataViews = ( {
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
-	const { showOnlyFavorites } = useContext( SitesDashboardContext );
-	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
-	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
+	const { showOnlyFavorites, showOnlyDevelopmentSites } = useContext( SitesDashboardContext );
+	const totalSites = ( () => {
+		if ( showOnlyFavorites ) {
+			return data?.totalFavorites || 0;
+		}
+		if ( showOnlyDevelopmentSites ) {
+			return data?.totalDevelopmentSites || 0;
+		}
+		return data?.total || 0;
+	} )();
+	const sitesPerPage =
+		dataViewsState.perPage && dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
@@ -48,7 +59,7 @@ const SitesDataViews = ( {
 	);
 
 	const renderField = useCallback(
-		( column: AllowedTypes, item: SiteInfo ) => {
+		( column: AllowedTypes, item: SiteData ) => {
 			if ( isLoading ) {
 				return <TextPlaceholder />;
 			}
@@ -79,15 +90,16 @@ const SitesDataViews = ( {
 	const [ actionsRef, setActionsRef ] = useState< HTMLElement | null >();
 
 	// todo - refactor: extract fields, along actions, to the upper component
-	const fields = useMemo(
+	const fields = useMemo< Field< SiteData >[] >(
 		() => [
 			{
 				id: 'status',
-				header: translate( 'Status' ),
-				getValue: ( { item }: { item: SiteInfo } ) =>
+				label: translate( 'Status' ),
+				getValue: ( { item }: { item: SiteData } ) =>
 					item.site.error || item.scan.status === 'critical',
-				render: () => {},
-				type: 'enumeration',
+				render: () => {
+					return null;
+				},
 				elements: [
 					{ value: 1, label: translate( 'Needs Attention' ) },
 					{ value: 2, label: translate( 'Backup Failed' ) },
@@ -98,14 +110,15 @@ const SitesDataViews = ( {
 					{ value: 7, label: translate( 'Plugins Needing Updates' ) },
 				],
 				filterBy: {
-					operators: [ 'in' ],
+					operators: [ 'is' ],
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'site',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<SiteSort isSortable columnKey="site">
 							<span
@@ -122,8 +135,8 @@ const SitesDataViews = ( {
 						/>
 					</>
 				),
-				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.url,
-				render: ( { item }: { item: SiteInfo } ) => {
+				getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
+				render: ( { item }: { item: SiteData } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -141,7 +154,8 @@ const SitesDataViews = ( {
 			},
 			{
 				id: 'stats',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<div>
 						<span
 							className="sites-dataview__stats-header"
@@ -157,13 +171,14 @@ const SitesDataViews = ( {
 					</div>
 				),
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'stats', item ),
+				render: ( { item }: { item: SiteData } ) => renderField( 'stats', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'boost',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<span
 							className="sites-dataview__boost-header"
@@ -178,14 +193,15 @@ const SitesDataViews = ( {
 						/>
 					</>
 				),
-				getValue: ( { item }: { item: SiteInfo } ) => item.boost.status,
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'boost', item ),
+				getValue: ( { item }: { item: SiteData } ) => item.boost.status,
+				render: ( { item }: { item: SiteData } ) => renderField( 'boost', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'backup',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<span
 							className="sites-dataview__backup-header"
@@ -201,13 +217,14 @@ const SitesDataViews = ( {
 					</>
 				),
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'backup', item ),
+				render: ( { item }: { item: SiteData } ) => renderField( 'backup', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'monitor',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<span
 							className="sites-dataview__monitor-header"
@@ -223,13 +240,14 @@ const SitesDataViews = ( {
 					</>
 				),
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'monitor', item ),
+				render: ( { item }: { item: SiteData } ) => renderField( 'monitor', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'scan',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<span
 							className="sites-dataview__scan-header"
@@ -245,13 +263,14 @@ const SitesDataViews = ( {
 					</>
 				),
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'scan', item ),
+				render: ( { item }: { item: SiteData } ) => renderField( 'scan', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'plugins',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<span
 							className="sites-dataview__plugins-header"
@@ -267,21 +286,22 @@ const SitesDataViews = ( {
 					</>
 				),
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'plugin', item ),
+				render: ( { item }: { item: SiteData } ) => renderField( 'plugin', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'favorite',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<Icon
 						className="site-table__favorite-icon sites-dataview__favorites-header"
 						size={ 24 }
 						icon={ starFilled }
 					/>
 				),
-				getValue: ( { item }: { item: SiteInfo } ) => item.isFavorite,
-				render: ( { item }: { item: SiteInfo } ) => {
+				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
+				render: ( { item }: { item: SiteData } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -300,8 +320,8 @@ const SitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				getValue: ( { item }: { item: SiteInfo } ) => item.isFavorite,
-				render: ( { item }: { item: SiteInfo } ) => {
+				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
+				render: ( { item }: { item: SiteData } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -323,7 +343,8 @@ const SitesDataViews = ( {
 						</div>
 					);
 				},
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<GuidedTourStep
 						id="sites-walkthrough-site-preview"
 						tourId="sitesWalkthrough"
@@ -361,44 +382,44 @@ const SitesDataViews = ( {
 				id: 'pause-monitor',
 				label: translate( 'Pause Monitor' ),
 				supportsBulk: true,
-				isEligible( site: SiteInfo ) {
+				isEligible( site: SiteData ) {
 					return site.monitor.status === 'active';
 				},
 				callback() {
-					// todo: pause monitor. Param: sites: SiteInfo[]
+					// todo: pause monitor. Param: sites: SiteData[]
 				},
 			},
 			{
 				id: 'resume-monitor',
 				label: translate( 'Resume Monitor' ),
 				supportsBulk: true,
-				isEligible( site: SiteInfo ) {
+				isEligible( site: SiteData ) {
 					return site.monitor.status === 'inactive';
 				},
 				callback() {
-					// todo: resume monitor. Param: sites: SiteInfo[]
+					// todo: resume monitor. Param: sites: SiteData[]
 				},
 			},
 			{
 				id: 'custom-notification',
 				label: translate( 'Custom Notification' ),
 				supportsBulk: true,
-				isEligible( site: SiteInfo ) {
+				isEligible( site: SiteData ) {
 					return site.monitor.status === 'active';
 				},
 				callback() {
-					// todo: custom notification. Param: sites: SiteInfo[]
+					// todo: custom notification. Param: sites: SiteData[]
 				},
 			},
 			{
 				id: 'reset-notification',
 				label: translate( 'Reset Notification' ),
 				supportsBulk: true,
-				isEligible( site: SiteInfo ) {
+				isEligible( site: SiteData ) {
 					return site.monitor.status === 'active';
 				},
 				callback() {
-					// todo: reset notification. Param: sites: SiteInfo[]
+					// todo: reset notification. Param: sites: SiteData[]
 				},
 			},
 		],
@@ -443,12 +464,11 @@ const SitesDataViews = ( {
 				view={ dataViewsState }
 				search
 				searchLabel={ translate( 'Search for sites' ) }
-				getItemId={ ( item: SiteInfo ) => {
-					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
-					return item.id;
+				getItemId={ ( item: SiteData ) => {
+					return item.site.value.blog_id.toString();
 				} }
-				onChangeView={ setDataViewsState }
-				supportedLayouts={ [ 'table' ] }
+				onChangeView={ ( view ) => setDataViewsState( () => view ) }
+				defaultLayouts={ { table: {} } }
 				actions={ [] } // Replace with actions when bulk selections are implemented.
 				isLoading={ isLoading }
 			/>

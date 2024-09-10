@@ -1,7 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { getLocaleSlug } from 'i18n-calypso';
 import { useCallback, ComponentType } from 'react';
-import { useLocale } from './locale-context';
+import { useLocale, getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
@@ -20,7 +19,7 @@ import {
 const INVALID_URL = `http://__domain__.invalid`;
 
 function getDefaultLocale(): Locale {
-	return getLocaleSlug?.() ?? 'en';
+	return getWpI18nLocaleSlug() ?? 'en';
 }
 
 const setLocalizedUrlHost =

@@ -14,10 +14,10 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
@@ -115,13 +115,18 @@ const TitanSetUpMailboxForm = ( {
 	selectedDomainName,
 }: TitanSetUpMailboxFormProps ) => {
 	const translate = useTranslate();
-	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isValidating, setIsValidating ] = useState( false );
 	const handleCompleteSetup = useHandleCompleteSetup( selectedDomainName, setIsValidating );
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_NAME,
-		FIELD_PASSWORD_RESET_EMAIL,
-	] );
+
+	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
+
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+			defaultHiddenFields,
+		} );
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	if ( ! areSiteDomainsLoaded ) {
 		return <AddEmailAddressesCardPlaceholder />;
@@ -137,7 +142,9 @@ const TitanSetUpMailboxForm = ( {
 			<NewMailBoxList
 				areButtonsBusy={ isValidating }
 				hiddenFieldNames={ hiddenFieldNames }
-				initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+				initialFieldValues={ {
+					[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
+				} }
 				isAutoFocusEnabled
 				onSubmit={ handleCompleteSetup }
 				provider={ EmailProvider.Titan }

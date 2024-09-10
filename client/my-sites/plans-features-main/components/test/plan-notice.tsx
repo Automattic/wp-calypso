@@ -18,7 +18,10 @@ import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-not
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import {
+	isCurrentUserCurrentPlanOwner,
+	isRequestingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
@@ -31,6 +34,7 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isCurrentUserCurrentPlanOwner: jest.fn(),
+	isRequestingSitePlans: jest.fn(),
 	getCurrentPlan: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
@@ -64,6 +68,9 @@ const mIsCurrentPlanPaid = isCurrentPlanPaid as jest.MockedFunction< typeof isCu
 const mIsCurrentUserCurrentPlanOwner = isCurrentUserCurrentPlanOwner as jest.MockedFunction<
 	typeof isCurrentUserCurrentPlanOwner
 >;
+const mIsRequestingSitePlans = isRequestingSitePlans as jest.MockedFunction<
+	typeof isRequestingSitePlans
+>;
 const mUsePlanUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable as jest.MockedFunction<
 	typeof usePlanUpgradeCreditsApplicable
 >;
@@ -95,6 +102,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mUseMarketingMessage.mockImplementation( () => [ false, [], () => ( {} ) ] );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
+		mIsRequestingSitePlans.mockImplementation( () => true );
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
 		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );

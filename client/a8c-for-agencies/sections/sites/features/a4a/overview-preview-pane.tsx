@@ -1,10 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { A4ARequestWPAdminAccess } from 'calypso/a8c-for-agencies/components/a4a-request-wp-admin-access';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import useWPAdminAccessControl from 'calypso/a8c-for-agencies/hooks/use-wp-admin-access-control';
 import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
@@ -21,6 +24,8 @@ import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-p
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
 import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
+import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
+import useFormattedSites from '../../hooks/use-formatted-sites';
 import HostingOverviewPreview from '../hosting/overview';
 import { JetpackActivityPreview } from '../jetpack/activity';
 import { JetpackBackupPreview } from '../jetpack/backup';
@@ -29,6 +34,7 @@ import { JetpackMonitorPreview } from '../jetpack/jetpack-monitor';
 import { JetpackPluginsPreview } from '../jetpack/jetpack-plugins';
 import { JetpackStatsPreview } from '../jetpack/jetpack-stats';
 import { JetpackScanPreview } from '../jetpack/scan';
+import SiteErrorPreview from './site-error-preview';
 
 import '../jetpack/style.scss';
 import '../../site-preview-pane/a4a-style.scss';
@@ -39,9 +45,13 @@ export function OverviewPreviewPane( {
 	className,
 	isSmallScreen = false,
 	hasError = false,
+	onRefetchSite,
 }: PreviewPaneProps ) {
 	const translate = useTranslate();
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
+
+	const connectionStatus = useFetchTestConnections( true, [ site ] );
+	const formattedSite = useFormattedSites( [ site ], connectionStatus );
 
 	const trackEvent = useCallback(
 		( eventName: string ) => {
@@ -50,7 +60,14 @@ export function OverviewPreviewPane( {
 		[ recordEvent ]
 	);
 
+	// Show error pane if there is an error
+	const showErrorPane = formattedSite?.[ 0 ].site.error ?? false;
+
 	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
+
+	const isMultiUserSupportEnabled = isEnabled( 'a4a-multi-user-support' );
+	const { noWPAdminAccess } = useWPAdminAccessControl( { siteId: site.blog_id } );
+	const showNoAccess = isMultiUserSupportEnabled && noWPAdminAccess;
 
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
@@ -61,6 +78,32 @@ export function OverviewPreviewPane( {
 		};
 	}, [] );
 
+	const errorFeatures = useMemo(
+		() => [
+			createFeaturePreview(
+				'error',
+				null,
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteErrorPreview
+					site={ site }
+					trackEvent={ trackEvent }
+					onRefetchSite={ onRefetchSite }
+					closeSitePreviewPane={ closeSitePreviewPane }
+				/>
+			),
+		],
+		[
+			closeSitePreviewPane,
+			onRefetchSite,
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			site,
+			trackEvent,
+		]
+	);
+
 	// Jetpack features: Boost, Backup, Monitor, Stats
 	const features = useMemo(
 		() => [
@@ -70,7 +113,11 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				)
 			),
 			createFeaturePreview(
 				JETPACK_BACKUP_ID,
@@ -78,7 +125,7 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview site={ site } />
+				showNoAccess ? <A4ARequestWPAdminAccess /> : <JetpackBackupPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -86,7 +133,7 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview site={ site } />
+				showNoAccess ? <A4ARequestWPAdminAccess /> : <JetpackScanPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_MONITOR_ID,
@@ -94,7 +141,11 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				)
 			),
 			createFeaturePreview(
 				JETPACK_PLUGINS_ID,
@@ -102,16 +153,20 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackPluginsPreview
-					link={ site.url_with_scheme + '/wp-admin/plugins.php' }
-					linkLabel={ translate( 'Manage Plugins in wp-admin' ) }
-					featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
-						args: { siteUrl: site.url },
-					} ) }
-					captionText={ translate(
-						"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
-					) }
-				/>
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackPluginsPreview
+						link={ site.url_with_scheme + '/wp-admin/plugins.php' }
+						linkLabel={ translate( 'Manage Plugins in wp-admin' ) }
+						featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
+							args: { siteUrl: site.url },
+						} ) }
+						captionText={ translate(
+							"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
+						) }
+					/>
+				)
 			),
 			createFeaturePreview(
 				JETPACK_STATS_ID,
@@ -119,7 +174,11 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackStatsPreview site={ site } trackEvent={ trackEvent } />
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackStatsPreview site={ site } trackEvent={ trackEvent } />
+				)
 			),
 			createFeaturePreview(
 				JETPACK_ACTIVITY_ID,
@@ -127,7 +186,7 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview site={ site } />
+				showNoAccess ? <A4ARequestWPAdminAccess /> : <JetpackActivityPreview site={ site } />
 			),
 			createFeaturePreview(
 				HOSTING_OVERVIEW_ID,
@@ -150,7 +209,15 @@ export function OverviewPreviewPane( {
 				  ]
 				: [] ),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
+		[
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			showNoAccess,
+			site,
+			trackEvent,
+			hasError,
+			translate,
+		]
 	);
 
 	const itemData: ItemData = {
@@ -159,14 +226,19 @@ export function OverviewPreviewPane( {
 		url: site.url_with_scheme,
 		blogId: site.blog_id,
 		isDotcomSite: site.is_atomic,
+		hideEnvDataInHeader: true,
 	};
 
 	return (
 		<ItemPreviewPane
+			hideNavIfSingleTab
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
-			features={ features }
-			className={ className }
+			features={ showErrorPane ? errorFeatures : features }
+			className={ clsx( className, {
+				'site-error-preview': showErrorPane,
+				'site-no-wp-admin-access': showNoAccess,
+			} ) }
 			addTourDetails={ { id: 'sites-walkthrough-site-preview-tabs', tourId: 'sitesWalkthrough' } }
 		/>
 	);

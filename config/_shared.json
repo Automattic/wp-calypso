@@ -173,6 +173,7 @@
 		"a8c-for-agencies-settings": false,
 		"a8c-for-agencies-partner-directory": false,
 		"a8c-for-agencies-client": false,
+		"a8c-for-agencies-team": false,
 		"jetpack-cloud": false,
 		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": false,
@@ -255,7 +256,9 @@
 		"site-selected",
 		"guided",
 		"domain-for-gravatar",
-		"plans-first"
+		"plans-first",
+		"onboarding-affiliate",
+		"email-subscription"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

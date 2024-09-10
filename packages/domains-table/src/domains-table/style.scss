@@ -11,7 +11,6 @@
 .domains-table {
 	.domains-table-toolbar {
 		--domains-table-toolbar-height: 40px;
-		background: var(--color-surface-backdrop);
 	}
 
 	table {
@@ -35,7 +34,12 @@
 		}
 
 		// Note: The checkbox does not count for column counting purposes
-
+		&.is-8-column {
+			grid-template-columns: 20px 2fr 1fr 1fr 1fr auto auto auto auto;
+		}
+		&.is-8-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr 1fr 1fr auto auto auto auto;
+		}
 		&.is-7-column {
 			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto auto;
 		}
@@ -136,6 +140,25 @@
 		&__status-error {
 			color: var(--studio-red-50);
 		}
+	}
+
+	.domains-table-row__ssl-cell {
+		gap: 2px;
+
+		&__active {
+			fill: var(--studio-green-50);
+			color: var(--studio-green-50);
+		}
+
+		&__pending,
+		&__disabled {
+			fill: var(--studio-orange-50);
+			color: var(--studio-orange-50);
+		}
+	}
+
+	.domains-table-row__ssl-status-button {
+		color: inherit;
 	}
 
 	.domains-table-checkbox-td {

@@ -22,7 +22,6 @@ import AdsWrapper from './ads/wrapper';
 import CustomersSection from './customers';
 import Home from './home';
 import MembershipsSection from './memberships/section';
-import ReferAFriendSection from './refer-a-friend';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -159,9 +158,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 			case 'supporters':
 				return <CustomersSection query={ query } />;
-
-			case 'refer-a-friend':
-				return <ReferAFriendSection />;
 
 			default:
 				return <Home />;

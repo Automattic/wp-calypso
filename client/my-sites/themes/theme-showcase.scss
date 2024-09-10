@@ -2,9 +2,68 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+
 .is-section-themes {
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: var(--studio-white);
+	}
+
+	&.is-global-sidebar-visible {
+		background: var(--studio-gray-0);
+
+		.layout__content {
+			min-height: 100vh;
+			@media screen and (min-width: 782px) {
+				padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) var(--sidebar-width-max);
+			}
+		}
+
+		.layout__primary > * {
+			background-color: var(--color-surface);
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+			max-width: none;
+			overflow-y: auto;
+		}
+
+		.navigation-header {
+			padding-top: 24px;
+			padding-inline: 16px;
+
+			.navigation-header__main {
+				align-items: center;
+			}
+
+			@include break-medium {
+				border-block-end: 1px solid var(--color-border-secondary);
+			}
+
+			@include break-huge {
+				padding-inline: 64px;
+			}
+
+			@include break-xhuge {
+				max-width: 100%;
+
+				.navigation-header__main {
+					max-width: 1400px;
+					margin: 0 auto;
+					padding-inline: 64px;
+				}
+			}
+
+			.formatted-header__title {
+				font-size: 1.5rem;
+				line-height: 1.2;
+			}
+		}
+
+		.themes__content {
+			margin-top: 40px;
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
 	}
 
 	.main > .notice.is-error {
@@ -457,6 +516,55 @@
 	.themes__showcase {
 		@media (max-width: $break-small) {
 			padding: 0 16px;
+		}
+	}
+
+	.themes__controls.is-sticky {
+		@include break-medium {
+			position: fixed;
+			left: var(--sidebar-width-max);
+			top: var(--masterbar-height);
+			width: calc(100vw - var(--sidebar-width-max) - 16px);
+			padding: 24px 32px 8px 33px;
+			border-bottom: 1px solid var(--studio-gray-5);
+			box-sizing: border-box;
+			background: var(--studio-white);
+			z-index: 20;
+
+			.is-global-sidebar-visible & {
+				top: calc(var(--masterbar-height) + 16px);
+				width: calc(100% - var(--sidebar-width-max) - 31px);
+				padding: 40px 32px 8px;
+
+
+				// Make the scroll behavior works on the top of the fixed element.
+				pointer-events: none;
+
+				> * {
+					pointer-events: auto;
+				}
+			}
+		}
+	}
+
+	.themes__controls-placeholder {
+		.is-logged-out & {
+			display: none;
+		}
+
+		@include break-medium {
+			padding-top: 24px;
+			margin-top: -24px;
+			box-sizing: content-box;
+
+			.is-global-sidebar-visible & {
+				padding-top: 40px;
+				margin-top: -40px;
+			}
+
+			&.is-sticky {
+				height: 101px;
+			}
 		}
 	}
 }

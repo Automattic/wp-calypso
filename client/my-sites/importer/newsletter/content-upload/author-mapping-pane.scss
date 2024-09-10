@@ -1,0 +1,33 @@
+.importer__mapping-header {
+	border-bottom: 1px solid var(--color-border);
+	margin-bottom: 0;
+	padding-bottom: 0.5em;
+
+	font-size: $font-body-extra-small;
+	color: var(--color-text-subtle);
+
+	@include clear-fix;
+}
+
+.importer__mapping-description {
+	font-size: $font-body-small;
+	margin-bottom: 1.5em;
+
+	strong {
+		white-space: nowrap;
+	}
+}
+
+.importer__mapping-source-title {
+	float: left;
+	display: inline-block;
+}
+
+.importer__mapping-target-title {
+	float: right;
+	display: inline-block;
+}
+
+.importer__mapping-authors {
+	margin-bottom: 20px;
+}

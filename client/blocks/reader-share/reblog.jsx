@@ -46,7 +46,7 @@ const ReaderReblogSelection = ( props ) => {
 	return (
 		<ReaderPopoverMenu
 			{ ...props.popoverProps }
-			popoverTitle={ translate( 'Reblog on' ) }
+			popoverTitle={ translate( 'Repost on' ) }
 			onClose={ props.closeMenu }
 		>
 			<SiteSelector

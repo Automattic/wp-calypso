@@ -55,9 +55,16 @@ class RequestLoginEmailForm extends Component {
 		customFormLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
+		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
 		blogId: PropTypes.string,
+		errorMessage: PropTypes.string,
+		onErrorDismiss: PropTypes.func,
+		isEmailInputDisabled: PropTypes.bool,
+		isEmailInputError: PropTypes.bool,
+		isSubmitButtonDisabled: PropTypes.bool,
+		isSubmitButtonBusy: PropTypes.bool,
 	};
 
 	state = {
@@ -89,6 +96,10 @@ class RequestLoginEmailForm extends Component {
 
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
+		}
+
+		if ( this.props.errorMessage ) {
+			this.props.onErrorDismiss?.();
 		}
 	};
 
@@ -178,6 +189,13 @@ class RequestLoginEmailForm extends Component {
 			submitButtonLabel,
 			locale,
 			customFormLabel,
+			onSubmitEmail,
+			errorMessage,
+			onErrorDismiss,
+			isEmailInputDisabled,
+			isEmailInputError,
+			isSubmitButtonDisabled,
+			isSubmitButtonBusy,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -194,7 +212,11 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		const submitEnabled =
-			usernameOrEmail.length && ! isFetching && ! emailRequested && ! requestError;
+			usernameOrEmail.length &&
+			! isFetching &&
+			! emailRequested &&
+			! requestError &&
+			! isSubmitButtonDisabled;
 
 		const errorText =
 			typeof requestError === 'string' && requestError.length
@@ -211,6 +233,10 @@ class RequestLoginEmailForm extends Component {
 			( hasTranslation( 'Email address or username' )
 				? this.props.translate( 'Email address or username' )
 				: this.props.translate( 'Email Address or Username' ) );
+
+		const onSubmit = onSubmitEmail
+			? ( e ) => onSubmitEmail( this.getUsernameOrEmailFromState(), e )
+			: this.onSubmit;
 
 		return (
 			<div className="magic-login__form">
@@ -236,21 +262,22 @@ class RequestLoginEmailForm extends Component {
 						} ) }
 					</p>
 				) }
-				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p className="magic-login__form-sub-header">
-						{ ! hideSubHeaderText && this.getSubHeaderText() }
-					</p>
+				<LoggedOutForm onSubmit={ onSubmit }>
+					{ ! hideSubHeaderText && (
+						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
+					) }
 					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							disabled={ isFetching || emailRequested }
+							disabled={ isFetching || emailRequested || isEmailInputDisabled }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
 							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 							placeholder={ inputPlaceholder }
+							isError={ isEmailInputError }
 						/>
 						{ tosComponent }
 						{ requestError && (
@@ -263,8 +290,18 @@ class RequestLoginEmailForm extends Component {
 								status="is-transparent-info"
 							/>
 						) }
+						{ errorMessage && (
+							<Notice
+								duration={ 10000 }
+								text={ errorMessage }
+								className="magic-login__request-login-email-form-notice"
+								showDismiss={ false }
+								onDismissClick={ onErrorDismiss }
+								status="is-transparent-info"
+							/>
+						) }
 						<div className="magic-login__form-action">
-							<FormButton primary disabled={ ! submitEnabled }>
+							<FormButton primary disabled={ ! submitEnabled } busy={ isSubmitButtonBusy }>
 								{ submitButtonLabel || buttonLabel }
 							</FormButton>
 						</div>

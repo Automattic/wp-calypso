@@ -54,7 +54,8 @@ export type MetricsType =
 
 export function useSiteMetricsQuery(
 	siteId: number | null | undefined,
-	params: SiteMetricsParams
+	params: SiteMetricsParams,
+	enableQuery: boolean = true
 ) {
 	const queryResult = useQuery< SiteMetricsAPIResponse >( {
 		queryKey: buildQueryKey( siteId, params ),
@@ -74,6 +75,7 @@ export function useSiteMetricsQuery(
 			persist: false,
 		},
 		staleTime: Infinity,
+		enabled: enableQuery,
 	} );
 
 	const { refetch, ...remainingQueryResults } = queryResult;

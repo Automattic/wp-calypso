@@ -1,31 +1,35 @@
 /* eslint-disable no-restricted-imports */
-import { useTranslate } from 'i18n-calypso';
-import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
+import { Spinner } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
+import React, {
+	useCallback,
+	useMemo,
+	useState,
+	KeyboardEvent,
+	FormEvent,
+	useRef,
+	useEffect,
+	RefObject,
+} from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { useOdieAssistantContext } from '../../context';
 import { useOdieSendMessage } from '../../query';
-import { Message } from '../../types';
+import { Message } from '../../types/';
 import { JumpToRecent } from '../message/jump-to-recent';
 
 import './style.scss';
 
 export const OdieSendMessageButton = ( {
-	scrollToRecent,
-	scrollToBottom,
-	enableStickToBottom,
-	enableJumpToRecent,
+	containerReference,
 }: {
-	scrollToRecent: () => void;
-	scrollToBottom: ( force?: boolean ) => void;
-	enableStickToBottom: () => void;
-	enableJumpToRecent: boolean;
+	containerReference: RefObject< HTMLDivElement >;
 } ) => {
+	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
+	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
-	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( initialUserMessage && ! chat.chat_id ) {
@@ -33,7 +37,7 @@ export const OdieSendMessageButton = ( {
 		}
 	}, [ initialUserMessage, chat.chat_id ] );
 
-	const sendMessage = async () => {
+	const sendMessage = useCallback( async () => {
 		try {
 			trackEvent( 'chat_message_action_send' );
 
@@ -52,56 +56,82 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	};
+	}, [ messageString, sendOdieMessage, trackEvent ] );
 
-	const sendMessageIfNotEmpty = async () => {
+	const sendMessageIfNotEmpty = useCallback( async () => {
 		if ( messageString.trim() === '' ) {
 			return;
 		}
 		setMessageString( '' );
-		enableStickToBottom();
 		await sendMessage();
-		scrollToBottom( true );
-	};
+	}, [ messageString, sendMessage ] );
 
-	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-		scrollToBottom( false );
-		if ( isLoading ) {
-			return;
-		}
-		if ( event.key === 'Enter' && ! event.shiftKey ) {
+	const handleKeyPress = useCallback(
+		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			if ( isLoading ) {
+				return;
+			}
+			if ( event.key === 'Enter' && ! event.shiftKey ) {
+				event.preventDefault();
+				await sendMessageIfNotEmpty();
+			}
+		},
+		[ isLoading, sendMessageIfNotEmpty ]
+	);
+
+	const handleSubmit = useCallback(
+		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
 			await sendMessageIfNotEmpty();
-		}
-	};
-
-	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
-		event.preventDefault();
-		await sendMessageIfNotEmpty();
-	};
-
-	const userHasAskedToContactHE = chat.messages.some(
-		( message ) => message.context?.flags?.forward_to_human_support === true
+		},
+		[ sendMessageIfNotEmpty ]
 	);
-	const userHasNegativeFeedback = chat.messages.some( ( message ) => message.liked === false );
+
+	const userHasAskedToContactHE = useMemo(
+		() =>
+			chat.messages.some(
+				( message ) => message.context?.flags?.forward_to_human_support === true
+			),
+		[ chat.messages ]
+	);
+
+	const userHasNegativeFeedback = useMemo(
+		() => chat.messages.some( ( message ) => message.liked === false ),
+		[ chat.messages ]
+	);
+
+	const getPlaceholderText = useCallback( () => {
+		const placeholderText = _x(
+			'Please wait…',
+			'Placeholder text for the message input field (chat)',
+			__i18n_text_domain__
+		);
+
+		if ( ! isLoading ) {
+			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
+				return _x(
+					'Continue chatting with Wapuu',
+					'Placeholder text for the message input field (chat)',
+					__i18n_text_domain__
+				);
+			}
+			return _x(
+				'Ask your question',
+				'Placeholder text for the message input field (chat)',
+				__i18n_text_domain__
+			);
+		}
+
+		return placeholderText;
+	}, [ isLoading, userHasAskedToContactHE, userHasNegativeFeedback, _x ] );
 
 	return (
 		<>
-			<JumpToRecent scrollToBottom={ scrollToRecent } enableJumpToRecent={ enableJumpToRecent } />
+			<JumpToRecent containerReference={ containerReference } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize
-						placeholder={
-							userHasAskedToContactHE || userHasNegativeFeedback
-								? translate( 'Continue chatting with Wapuu', {
-										context: 'Placeholder text for the message input field (chat)',
-										textOnly: true,
-								  } )
-								: translate( 'Ask your question', {
-										context: 'Placeholder text for the message input field (chat)',
-										textOnly: true,
-								  } )
-						}
+						placeholder={ getPlaceholderText() }
 						className="odie-send-message-input"
 						rows={ 1 }
 						value={ messageString }
@@ -110,18 +140,13 @@ export const OdieSendMessageButton = ( {
 						}
 						onKeyPress={ handleKeyPress }
 					/>
+					{ isLoading && <Spinner className="odie-send-message-input-spinner" /> }
 					<button
 						type="submit"
 						className="odie-send-message-inner-button"
 						disabled={ messageString.trim() === '' || isLoading }
 					>
-						<img
-							src={ ArrowUp }
-							alt={ translate( 'Arrow icon', {
-								context: 'html alt tag',
-								textOnly: true,
-							} ) }
-						/>
+						<img src={ ArrowUp } alt={ _x( 'Arrow icon', 'html alt tag', __i18n_text_domain__ ) } />
 					</button>
 				</form>
 			</div>

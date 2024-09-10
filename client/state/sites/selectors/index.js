@@ -75,4 +75,3 @@ export { default as getJetpackAdminUrl } from './get-jetpack-admin-url';
 export { default as isSimpleSite } from './is-simple-site';
 export { default as getJetpackStatsAdminVersion } from './get-jetpack-stats-admin-version';
 export { default as isWooCYSEligibleSite } from './is-woo-cys-eligible-site';
-export { default as isGlobalSiteViewEnabled } from './is-global-site-view-enabled';

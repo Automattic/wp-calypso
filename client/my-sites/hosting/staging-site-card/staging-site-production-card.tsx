@@ -1,13 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import dividerPattern from 'calypso/assets/images/hosting/divider-pattern.svg';
-import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { navigate } from 'calypso/lib/navigate';
@@ -28,35 +25,10 @@ import { usePullFromStagingMutation, usePushToStagingMutation } from './use-stag
 
 const ProductionCard = styled( Card )( {
 	paddingTop: '0',
-	backgroundImage: `url(${ dividerPattern })`,
-	backgroundRepeat: 'repeat-x',
 
 	'&.is-borderless': {
 		boxShadow: 'none',
 	},
-
-	'> .gridicon': {
-		display: 'inline-block',
-		marginInlineEnd: '16px',
-		marginBottom: '16px',
-		verticalAlign: 'middle',
-	},
-
-	'> .card-heading': {
-		display: 'inline-block',
-		marginTop: 0,
-		marginBottom: '16px',
-		verticalAlign: 'middle',
-		lineHeight: '32px',
-	},
-} );
-
-const ProductionCardIcon = styled( Gridicon )( {
-	marginTop: '36px',
-} );
-
-const ProductionCardHeading = styled( CardHeading )( {
-	marginTop: '36px!important',
 } );
 
 const ActionButtons = styled.div( {
@@ -163,17 +135,13 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 					<Button
 						primary
 						onClick={ () => {
-							if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-								navigate(
-									`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
-										productionSite.url
-									) }`,
-									false,
-									true
-								);
-							} else {
-								navigate( `/hosting-config/${ urlToSlug( productionSite.url ) }` );
-							}
+							navigate(
+								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
+									productionSite.url
+								) }`,
+								false,
+								true
+							);
 						} }
 						disabled={ disabled || isSyncInProgress }
 					>
@@ -212,12 +180,12 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 	}
 
 	return (
-		<ProductionCard className={ clsx( 'staging-site-card', { 'is-borderless': isBorderless } ) }>
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<ProductionCardIcon icon="science" size={ 32 } />
-			}
-			<ProductionCardHeading id="staging-site">{ __( 'Staging site' ) }</ProductionCardHeading>
+		<ProductionCard
+			className={ clsx( 'hosting-card staging-site-card', { 'is-borderless': isBorderless } ) }
+		>
+			<h3 id="staging-site" className="hosting-card__title">
+				{ __( 'Staging site' ) }
+			</h3>
 			{ cardContent }
 		</ProductionCard>
 	);

@@ -33,9 +33,10 @@ type Props = {
 	siteId?: string;
 	suggestedProduct?: string;
 	productBrand: string;
+	searchQuery?: string;
 };
 
-function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
+function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery }: Props ) {
 	const translate = useTranslate();
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
@@ -123,6 +124,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 						selectedSite={ selectedSite }
 						suggestedProduct={ suggestedProduct }
 						productBrand={ productBrand }
+						searchQuery={ searchQuery }
 					/>
 				</ShoppingCartContext.Provider>
 			</LayoutBody>

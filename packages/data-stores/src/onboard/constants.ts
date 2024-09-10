@@ -21,5 +21,13 @@ export enum SiteIntent {
 	Import = 'import', // deprecated
 	WithThemeAssembler = 'with-theme-assembler',
 	AssemblerFirst = 'assembler-first',
+	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',
+	Newsletter = 'newsletter',
+	FreePostSetup = 'free-post-setup', // non-signup flow
+	SiteMigration = 'site-migration',
+	LinkInBioPostSetup = 'link-in-bio-post-setup', // non-signup flow
+	NewsletterPostSetup = 'newsletter-post-setup', // non-signup flow
+	UpdateDesign = 'update-design', // non-signup flow
+	UpdateOptions = 'update-options', // non-signup flow
 }

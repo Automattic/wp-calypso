@@ -119,7 +119,9 @@ export const EligibilityWarnings = ( {
 			const planSlug = PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
-				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
+				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(
+					`/plugins/upload/${ siteSlug }?showUpgradeSuccessNotice=true`
+				) }`;
 			}
 			if ( showFreeTrial ) {
 				onProceed( options );

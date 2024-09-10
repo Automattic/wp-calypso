@@ -1,6 +1,11 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
+interface DnssecRecords {
+	dnskey?: string;
+	dsData?: Array< string >;
+}
+
 export interface DomainData {
 	primary_domain: boolean;
 	blog_name: string;
@@ -25,6 +30,7 @@ export interface DomainData {
 	can_set_as_primary: boolean;
 	can_transfer_to_any_user: boolean;
 	can_transfer_to_other_site: boolean;
+	dnssec_records?: DnssecRecords;
 	domain: string;
 	domain_notice_states: unknown;
 	supports_domain_connect: unknown;
@@ -42,7 +48,10 @@ export interface DomainData {
 	private_domain: boolean;
 	partner_domain: boolean;
 	wpcom_domain: boolean;
+	has_pending_contact_update: boolean;
 	has_zone: boolean;
+	is_dnssec_enabled: boolean;
+	is_dnssec_supported: boolean;
 	is_gravatar_domain: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;
@@ -66,7 +75,7 @@ export interface DomainData {
 	};
 	pending_whois_update: boolean;
 	tld_maintenance_end_time: 0;
-	ssl_status: 'active' | 'pending' | 'disabled' | null;
+	ssl_status: 'active' | 'pending' | 'newly_registered' | 'disabled' | null;
 	gdpr_consent_status: string;
 	supports_gdpr_consent_management: boolean;
 	supports_transfer_approval: boolean;
@@ -114,6 +123,11 @@ export interface DomainData {
 	subdomain_part: string;
 	auth_code_required: boolean;
 	is_mapped_to_atomic_site: boolean;
+	is_move_to_new_site_pending: boolean;
+	pending_registration_at_registry: boolean;
+	pending_registration_at_registry_url: string;
+	registered_via_trustee: boolean;
+	registered_via_trustee_url: string;
 }
 
 export interface SiteDomainsQueryFnData {

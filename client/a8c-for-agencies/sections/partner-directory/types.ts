@@ -3,19 +3,20 @@ export type AgencyDirectoryApplicationStatus = 'pending' | 'in-progress' | 'comp
 export type DirectoryApplicationType = 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
 
 export interface AgencyDirectoryApplication {
-	status: AgencyDirectoryApplicationStatus;
 	products: string[];
 	services: string[];
 	directories: DirectoryApplication[];
 	feedbackUrl: string;
+	status?: AgencyDirectoryApplicationStatus;
+	isPublished?: boolean;
 }
 
 export interface DirectoryApplication {
 	directory: DirectoryApplicationType;
-	published: boolean;
-	status: 'pending' | 'approved' | 'rejected' | 'closed';
 	urls: string[];
-	note: string;
+	note?: string;
+	isPublished?: boolean;
+	status?: 'pending' | 'approved' | 'rejected' | 'closed';
 }
 
 export interface AgencyDetails {
@@ -26,10 +27,11 @@ export interface AgencyDetails {
 	logoUrl: string;
 	landingPageUrl: string;
 	country: string;
+	isGlobal: boolean;
 	isAvailable: boolean;
-	industry: string;
+	industries: string[];
 	services: string[];
 	products: string[];
 	languagesSpoken: string[];
-	budgetLowerRange: number;
+	budgetLowerRange: string;
 }

@@ -1,4 +1,5 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .hosting-card {
 	width: 100%;
@@ -11,6 +12,15 @@
 
 	&.is-borderless {
 		border: none;
+	}
+
+	.form-label {
+		font-weight: 500;
+	}
+
+	.form-text-input,
+	.form-select {
+		font-size: rem(14px) !important;
 	}
 }
 
@@ -35,5 +45,16 @@ p.hosting-card__description {
 	font-size: rem(14px);
 	font-weight: 400;
 	line-height: 20px;
-	color: var(--studio-gray-100);
+}
+
+a.hosting-card__link-button {
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+	color: var(--color-link);
+}
+
+@media (max-width: $break-xlarge) {
+	.hosting-card__link-button--hide-on-mobile {
+		display: none;
+	}
 }

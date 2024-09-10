@@ -32,12 +32,14 @@ interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
 	productBrand: string;
+	searchQuery?: string;
 }
 
 export default function ProductListing( {
 	selectedSite,
 	suggestedProduct,
 	productBrand,
+	searchQuery,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -46,7 +48,7 @@ export default function ProductListing( {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferingProducts = marketplaceType === 'referral';
 
-	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
+	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( searchQuery ?? '' );
 
 	const {
 		selectedSize: selectedBundleSize,
@@ -306,6 +308,7 @@ export default function ProductListing( {
 						label={ translate( 'Search products' ) }
 						onSearch={ onProductSearch }
 						onClick={ trackClickCallback( 'search' ) }
+						initialValue={ productSearchQuery }
 					/>
 
 					<ProductFilter

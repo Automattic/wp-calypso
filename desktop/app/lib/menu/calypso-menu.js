@@ -18,7 +18,7 @@ module.exports = function ( { view, window }, status ) {
 				if ( isCalypso( view ) ) {
 					ipc.showMySites( view );
 				} else {
-					view.webContents.loadURL( webBase + 'stats/day' );
+					view.webContents.loadURL( webBase + 'sites' );
 				}
 			},
 		},

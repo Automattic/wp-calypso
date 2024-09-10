@@ -145,10 +145,15 @@ Used studio-blue for the primary+accent.
 	--color-sidebar-submenu-hover-text: var(--theme-text-color);
 
 	/* Sidebar Submenu - Nav Redesign */
-	--color-navredesign-sidebar-submenu-text: #e2ecf1; /* $menu-submenu-text: */
 	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-text: #e2ecf1; /* $menu-submenu-text: */
 	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-text-color);
+
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: var(--theme-icon-color);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-highlight-color);

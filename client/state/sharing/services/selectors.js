@@ -1,8 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	FEATURE_GOOGLE_MY_BUSINESS,
-	FEATURE_SOCIAL_MASTODON_CONNECTION,
-} from '@automattic/calypso-products';
+import { FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
 import { filter } from 'lodash';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -118,11 +115,6 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		// Omit the GitHub deployment app so it doesn't appear in the list of "other" services
 		if ( 'github-deploy' === service.ID ) {
 			return false;
-		}
-
-		// Enforce feature flag behaviour for Mastodon
-		if ( 'mastodon' === service.ID ) {
-			return siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION );
 		}
 
 		return true;

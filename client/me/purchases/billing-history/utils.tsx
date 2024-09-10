@@ -229,6 +229,45 @@ function renderSpaceAddOnquantitySummary(
 	} );
 }
 
+export function renderDomainTransactionVolumeSummary(
+	{ volume, product_slug, type }: BillingTransactionItem,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( ! volume ) {
+		return null;
+	}
+
+	const isRenewal = 'recurring' === type;
+
+	volume = parseInt( String( volume ) );
+
+	if ( 'wp-domains' !== product_slug ) {
+		return null;
+	}
+
+	if ( isRenewal ) {
+		return translate(
+			'Domain renewed for %(quantity)d year',
+			'Domain renewed for %(quantity)d years',
+			{
+				args: { quantity: volume },
+				count: volume,
+				comment: '%(quantity)d is the number of years the domain has been renewed for',
+			}
+		);
+	}
+
+	return translate(
+		'Domain registered for %(quantity)d year',
+		'Domain registered for %(quantity)d years',
+		{
+			args: { quantity: volume },
+			count: volume,
+			comment: '%(quantity)d is number of years the domain has been registered for',
+		}
+	);
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]

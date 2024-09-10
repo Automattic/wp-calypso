@@ -48,6 +48,7 @@ import {
 	PlanPrice,
 	MaterialIcon,
 } from '@automattic/components';
+import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import clsx from 'clsx';
@@ -75,7 +76,7 @@ import {
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
-	getRenewalPrice,
+	getRenewalPriceInSmallestUnit,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
@@ -102,6 +103,7 @@ import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
@@ -128,7 +130,6 @@ import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
 import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
-import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
@@ -148,8 +149,7 @@ import {
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
-import type { FilteredPlan } from '@automattic/calypso-products';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { FilteredPlan, PlanSlug } from '@automattic/calypso-products';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TracksProps } from 'calypso/lib/purchases';
 import type {
@@ -455,10 +455,11 @@ class ManagePurchase extends Component<
 		if ( ! purchase ) {
 			return null;
 		}
-		const annualPrice = getRenewalPrice( purchase ) / 12;
+		const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
 		const savings = Math.floor(
 			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
 		);
+
 		return this.renderRenewalNavItem(
 			<div>
 				{ translate( 'Renew annually' ) }
@@ -1271,7 +1272,6 @@ class ManagePurchase extends Component<
 						isProductOwner={ isProductOwner }
 					/>
 				) }
-
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
@@ -1561,6 +1561,32 @@ function PurchasesQueryComponent( {
 	return <QueryUserPurchases />;
 }
 
+/**
+ * Gradually move more of the `connect` logic to this component
+ */
+const WrappedManagePurchase = (
+	props: Omit<
+		ManagePurchaseProps & ManagePurchaseConnectedProps & LocalizeProps,
+		'relatedMonthlyPlanPrice'
+	>
+) => {
+	const { siteId, relatedMonthlyPlanSlug } = props;
+	const pricing = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ relatedMonthlyPlanSlug as PlanSlug ],
+		siteId,
+		coupon: undefined,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
+	return (
+		<ManagePurchase
+			{ ...props }
+			relatedMonthlyPlanPrice={ pricing?.[ relatedMonthlyPlanSlug ]?.originalPrice.monthly ?? 0 }
+		/>
+	);
+};
+
 export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 
@@ -1581,9 +1607,6 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const hasLoadedSites = ! isRequestingSites( state );
 	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
-	const relatedMonthlyPlanPrice = siteId
-		? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
-		: 0;
 	const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 	const currentRoute = getCurrentRoute( state );
 
@@ -1612,7 +1635,6 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		purchase,
 		purchaseAttachedTo,
 		purchases,
-		relatedMonthlyPlanPrice,
 		relatedMonthlyPlanSlug,
 		renewableSitePurchases,
 		selectedSiteId,
@@ -1620,7 +1642,7 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		siteId,
 		theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
 	};
-}, mapDispatchToProps )( localize( ManagePurchase ) );
+}, mapDispatchToProps )( localize( WrappedManagePurchase ) );
 
 function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 	return {

@@ -10,7 +10,6 @@ import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -56,7 +55,6 @@ const pluginBundleFlow: Flow = {
 		return [ ...initialBundleSteps, ...bundlePluginSteps ];
 	},
 	useStepNavigation( currentStep, navigate, steps = [] ) {
-		const flowName = this.name;
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -144,9 +142,8 @@ const pluginBundleFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
-
 			let defaultExitDest = `/home/${ siteSlug }`;
+
 			if ( siteDetails?.options?.theme_slug ) {
 				const themeId = getThemeIdFromStylesheet( siteDetails?.options?.theme_slug );
 				if ( isEnabled( 'themes/display-thank-you-page-for-bundle' ) ) {

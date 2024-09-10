@@ -121,7 +121,10 @@ class TagStream extends Component {
 					<TagStreamHeader
 						title={ title }
 						imageSearchString={ imageSearchString }
-						showFollow={ false }
+						// This shouldn not be necessary as user should not have been able to
+						// subscribe to an error tag. Nevertheless, we should give them a route to
+						// unfollow if that was the case.
+						showFollow={ tag.id && this.isSubscribed() }
 						showSort={ false }
 						showBack={ this.props.showBack }
 					/>
@@ -131,7 +134,7 @@ class TagStream extends Component {
 		}
 
 		// Put the tag stream header at the top of the body, so it can be even with the sidebar in the two column layout.
-		const tagHeader = () => (
+		const tagHeader = ( showSort = true ) => (
 			<TagStreamHeader
 				title={ titleText }
 				description={ this.props.description }
@@ -140,7 +143,7 @@ class TagStream extends Component {
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }
 				showBack={ this.props.showBack }
-				showSort
+				showSort={ showSort }
 				sort={ this.props.sort }
 				recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 			/>
@@ -152,12 +155,19 @@ class TagStream extends Component {
 			sidebarTabTitle: this.props.translate( 'Related' ),
 		};
 
+		const emptyContentWithHeader = () => (
+			<>
+				{ tagHeader( false ) }
+				{ emptyContent() }
+			</>
+		);
+
 		return (
 			<Stream
 				{ ...this.props }
 				className="tag-stream__main"
 				listName={ title }
-				emptyContent={ emptyContent }
+				emptyContent={ emptyContentWithHeader }
 				showFollowInHeader
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
 				streamHeader={ tagHeader }

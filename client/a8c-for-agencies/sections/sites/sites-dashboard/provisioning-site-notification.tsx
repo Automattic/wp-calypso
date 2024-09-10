@@ -1,20 +1,36 @@
 import { Button } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
+import { addQueryArgs } from 'calypso/lib/url';
 
 type Props = {
 	siteId: number;
+	migrationIntent: boolean;
 };
 
-export default function ProvisioningSiteNotification( { siteId }: Props ) {
+export default function ProvisioningSiteNotification( { siteId, migrationIntent }: Props ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
+	useEffect( () => {
+		if ( siteId ) {
+			setShowBanner( true );
+		}
+	}, [ siteId ] );
+
 	const translate = useTranslate();
 
-	const wpHomeUrl = `https://wordpress.com/home/${ site?.url?.replace( /(^\w+:|^)\/\//, '' ) }`;
+	const siteSlug = site?.url?.replace( /(^\w+:|^)\/\//, '' );
+	const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
+	const wpMigrationUrl = addQueryArgs(
+		{
+			siteId: site?.features.wpcom_atomic.blog_id,
+			siteSlug,
+		},
+		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
+	);
 
 	return (
 		showBanner && (
@@ -30,9 +46,15 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 				actions={
 					isReady
 						? [
-								<Button href={ wpHomeUrl } target="_blank" rel="noreferrer">
-									{ translate( 'Set up your site' ) }
-								</Button>,
+								migrationIntent ? (
+									<Button href={ wpMigrationUrl } target="_blank" rel="noreferrer" primary>
+										{ translate( 'Migrate to this site' ) }
+									</Button>
+								) : (
+									<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
+										{ translate( 'Set up your site' ) }
+									</Button>
+								),
 						  ]
 						: undefined
 				}
@@ -43,7 +65,7 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 							{
 								args: { siteURL: site?.url ?? '' },
 								components: {
-									a: <a href={ wpHomeUrl } target="_blank" rel="noreferrer" />,
+									a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
 								},
 								comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
 							}

@@ -33,7 +33,7 @@ This package can be utilized in two primary ways:
 
 To deploy modifications to the package:
 1. Ensure your sandbox is in a clean git state.
-2. Run `yarn upload`. This will upload the production-built files to your sandbox.
+2. Run `yarn upload`. This will upload the production-built files as well as the translations to your sandbox.
 3. Create a patch.
 4. Deploy the patch.
 
@@ -41,4 +41,4 @@ To deploy modifications to the package:
 
 This project uses .org's GlotPress translations as a source. 
 
-To translate simply run `yarn build`. 
+To translate simply run `yarn translate`. 

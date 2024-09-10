@@ -8,6 +8,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -45,6 +47,9 @@ class PreviewToolbar extends Component {
 		onEdit: PropTypes.func,
 		// Whether or not the current user has access to the customizer
 		canUserEditThemeOptions: PropTypes.bool,
+		isUnlaunchedSite: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
+		launchSite: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -53,6 +58,11 @@ class PreviewToolbar extends Component {
 
 	handleEditorWebPreviewExternalClick = () => {
 		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_external_click' );
+	};
+
+	handleEditorWebPreviewLaunchSiteClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_launch_site__click' );
+		this.props.launchSite( this.props.selectedSiteId );
 	};
 
 	handleEditorWebPreviewClose = () => {
@@ -89,6 +99,7 @@ class PreviewToolbar extends Component {
 			showSEO,
 			showEditHeaderLink,
 			translate,
+			isUnlaunchedSite,
 		} = this.props;
 
 		const devices = {
@@ -163,16 +174,27 @@ class PreviewToolbar extends Component {
 						</Button>
 					) }
 					{ showExternal && (
-						<Button
-							primary
-							className="web-preview__external"
-							href={ externalUrl || previewUrl }
-							target={ isModalWindow ? '_blank' : null }
-							rel="noopener noreferrer"
-							onClick={ this.handleEditorWebPreviewExternalClick }
-						>
-							{ translate( 'Visit site' ) }
-						</Button>
+						<>
+							<Button
+								primary={ ! isUnlaunchedSite }
+								className="web-preview__external"
+								href={ externalUrl || previewUrl }
+								target={ isModalWindow ? '_blank' : null }
+								rel="noopener noreferrer"
+								onClick={ this.handleEditorWebPreviewExternalClick }
+							>
+								{ translate( 'Visit site' ) }
+							</Button>
+							{ isUnlaunchedSite && (
+								<Button
+									primary
+									className="web-preview__launch-site"
+									onClick={ this.handleEditorWebPreviewLaunchSiteClick }
+								>
+									{ translate( 'Launch site' ) }
+								</Button>
+							) }
+						</>
 					) }
 					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
 				</div>
@@ -192,7 +214,9 @@ export default connect(
 		return {
 			canUserEditThemeOptions,
 			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
+			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
+			selectedSiteId,
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, launchSite }
 )( localize( PreviewToolbar ) );

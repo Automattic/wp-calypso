@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { camelCase } from 'lodash';
-import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
 	getImporterUrl,
 	getWpComOnboardingUrl,
@@ -9,13 +8,15 @@ import {
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { getImporterEngines } from 'calypso/lib/importer/importer-config';
+import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { BASE_ROUTE } from './config';
 
 export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
 	platform: ImporterPlatform,
-	backToFlow?: string
+	backToFlow?: string,
+	customizedActionGoToFlow?: string
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
@@ -42,6 +43,12 @@ export function getFinalImporterUrl(
 	if ( backToFlow ) {
 		importerUrl = addQueryArgs( importerUrl, {
 			backToFlow,
+		} );
+	}
+
+	if ( customizedActionGoToFlow ) {
+		importerUrl = addQueryArgs( importerUrl, {
+			customizedActionGoToFlow,
 		} );
 	}
 

@@ -11,6 +11,7 @@ import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import getValidationMessage from './url-validation-message-helper';
 import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent, ReactNode } from 'react';
 
@@ -44,6 +45,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
+	const [ validationMessage, setValidationMessage ] = useState( '' );
 	const lastInvalidValue = useRef< string | undefined >();
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
@@ -72,10 +74,13 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );
 		setIsValid( isValid );
+		const tempValidationMessage = isValid ? '' : getValidationMessage( url, translate );
+		setValidationMessage( tempValidationMessage );
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
 		const trimmedValue = e.target.value.trim();
+		setSubmitted( false );
 		setUrlValue( trimmedValue );
 		validateUrl( trimmedValue );
 		onInputChange?.( trimmedValue );
@@ -119,7 +124,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						{ showValidationMsg && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{ translate( 'Please enter a valid website address. You can copy and paste.' ) }
+								{ validationMessage
+									? validationMessage
+									: translate( 'Please enter a valid website address. You can copy and paste.' ) }
 							</>
 						) }
 					</span>

@@ -2,7 +2,8 @@ import page from '@automattic/calypso-router';
 import { get } from 'lodash';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
-import { importSite, importerList } from 'calypso/my-sites/importer/controller';
+import { importSite, importerList, importSubstackSite } from 'calypso/my-sites/importer/controller';
+import addTracker from './tracker';
 
 export default function () {
 	page( '/import', siteSelection, navigation, sites, makeLayout, clientRender );
@@ -13,6 +14,17 @@ export default function () {
 		navigation,
 		redirectWithoutSite( '/import' ),
 		importSite,
+		addTracker,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/import/newsletter/substack/:site_id/:step?',
+		siteSelection,
+		navigation,
+		redirectWithoutSite( '/import' ),
+		importSubstackSite,
 		makeLayout,
 		clientRender
 	);
@@ -23,6 +35,7 @@ export default function () {
 		navigation,
 		redirectWithoutSite( '/import' ),
 		importerList,
+		addTracker,
 		makeLayout,
 		clientRender
 	);

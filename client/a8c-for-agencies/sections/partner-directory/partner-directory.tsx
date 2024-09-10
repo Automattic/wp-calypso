@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
@@ -9,8 +10,17 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_OVERVIEW_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
+import { useSelector } from 'calypso/state';
+import {
+	getActiveAgency,
+	isFetchingAgency,
+	hasFetchedAgency,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AgencyDetailsForm from './agency-details';
 import AgencyExpertise from './agency-expertise';
 import {
@@ -19,6 +29,12 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
+import {
+	mapAgencyDetailsFormData,
+	mapApplicationFormData,
+} from './utils/map-application-form-data';
+
+import './style.scss';
 
 type Props = {
 	selectedSection: string;
@@ -33,6 +49,13 @@ interface Section {
 export default function PartnerDirectory( { selectedSection }: Props ) {
 	const translate = useTranslate();
 	const title = translate( 'Partner Directory' );
+
+	const agency = useSelector( getActiveAgency );
+	const hasAgency = useSelector( hasFetchedAgency );
+	const isFetching = useSelector( isFetchingAgency );
+
+	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
+	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
 
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
@@ -50,7 +73,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] = {
-			content: <AgencyDetailsForm />,
+			content: <AgencyDetailsForm initialFormData={ agencyDetailsData } />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
@@ -61,7 +84,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG ] = {
-			content: <AgencyExpertise />,
+			content: <AgencyExpertise initialFormData={ applicationData } />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ].breadcrumbItems,
 				{
@@ -72,7 +95,19 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		return sections;
-	}, [ translate ] );
+	}, [ translate, agencyDetailsData, applicationData ] );
+
+	// Wait until the agency is fetched
+	if ( ! hasAgency || isFetching ) {
+		return null;
+	}
+
+	// Check if the Partner Directory is allowed for the agency
+	if ( ! agency?.partner_directory_allowed ) {
+		// Redirect user to the Overview page
+		page.redirect( A4A_OVERVIEW_LINK );
+		return;
+	}
 
 	// Set the selected section
 	const section: Section = sections[ selectedSection ];
@@ -93,7 +128,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 					) }
 				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody>{ section.content }</LayoutBody>
+			<LayoutBody className="partner-directory__body">{ section.content }</LayoutBody>
 		</Layout>
 	);
 }

@@ -21,11 +21,13 @@ const getStatsCheckoutURL = (
 	redirectUrl: string,
 	checkoutBackUrl: string,
 	from?: string,
-	adminUrl?: string
+	adminUrl?: string,
+	isUpgrade?: boolean
 ) => {
-	const isFromJetpack = from?.startsWith( 'jetpack' );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
-	const checkoutType = isFromJetpack || ! siteSlug ? 'jetpack' : siteSlug;
+	// TODO: We don't have Jetpack Stats purchase enabled for Simple sites, but if we do, we will want Simple sites to use normal checkout flow as users are always logged in.
+	const checkoutType = ( isOdysseyStats && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
@@ -35,7 +37,8 @@ const getStatsCheckoutURL = (
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
-	if ( isFromJetpack && siteSlug ) {
+	// Add more required params for siteless checkout.
+	if ( checkoutType === 'jetpack' && siteSlug ) {
 		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
 		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
 		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
@@ -64,14 +67,12 @@ const getCheckoutBackUrl = ( {
 	siteSlug: string;
 	adminUrl?: string;
 } ) => {
-	// TODO: Enumerate all possible values of `from` parameter.
-	const isFromWPAdmin = from.startsWith( 'jetpack' );
+	const isFromWPAdmin = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isFromMyJetpack = from === 'jetpack-my-jetpack';
 	const isFromPlansPage = from === 'calypso-plans';
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Use full URL even though redirecting on Calypso.
-	if ( ! isFromWPAdmin && ! isOdysseyStats ) {
+	if ( ! isFromWPAdmin ) {
 		if ( ! siteSlug ) {
 			return 'https://cloud.jetpack.com/pricing/';
 		}
@@ -87,20 +88,17 @@ const getCheckoutBackUrl = ( {
 };
 
 const getRedirectUrl = ( {
-	from,
 	type,
 	adminUrl,
 	redirectUri,
 	siteSlug,
 }: {
-	from: string;
 	type: string;
 	adminUrl?: string;
 	redirectUri?: string;
 	siteSlug: string;
 } ) => {
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isStartedFromJetpackSite = from.startsWith( 'jetpack' ) || isOdysseyStats;
+	const isFromWPAdmin = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
 
 	// If it's a siteless checkout, let it redirect to the thank you page,
@@ -109,7 +107,7 @@ const getRedirectUrl = ( {
 		return '';
 	}
 
-	if ( ! isStartedFromJetpackSite ) {
+	if ( ! isFromWPAdmin ) {
 		redirectUri = addPurchaseTypeToUri(
 			redirectUri || `/stats/day/${ siteSlug }`,
 			statsPurchaseSuccess
@@ -128,6 +126,7 @@ const gotoCheckoutPage = ( {
 	redirectUri,
 	price,
 	quantity,
+	isUpgrade = false,
 }: {
 	from: string;
 	type: 'pwyw' | 'free' | 'commercial';
@@ -136,11 +135,10 @@ const gotoCheckoutPage = ( {
 	redirectUri?: string;
 	price?: number;
 	quantity?: number;
+	isUpgrade?: boolean;
 } ) => {
 	let eventName = '';
 	let product: string;
-
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	switch ( type ) {
 		case 'pwyw':
@@ -154,15 +152,10 @@ const gotoCheckoutPage = ( {
 			product = PRODUCT_JETPACK_STATS_FREE;
 			break;
 		case 'commercial':
-			// Default to yearly/annual billing
 			eventName = 'commercial';
-			product = PRODUCT_JETPACK_STATS_YEARLY;
-
-			if ( isTierUpgradeSliderEnabled ) {
-				product = quantity
-					? `${ PRODUCT_JETPACK_STATS_YEARLY }:-q-${ quantity }`
-					: PRODUCT_JETPACK_STATS_YEARLY;
-			}
+			product = quantity
+				? `${ PRODUCT_JETPACK_STATS_YEARLY }:-q-${ quantity }`
+				: PRODUCT_JETPACK_STATS_YEARLY;
 
 			break;
 	}
@@ -175,7 +168,7 @@ const gotoCheckoutPage = ( {
 		quantity,
 	} );
 
-	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
+	const redirectUrl = getRedirectUrl( { type, adminUrl, redirectUri, siteSlug } );
 	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );
 
 	// Allow some time for the event to be recorded before redirecting.
@@ -187,7 +180,8 @@ const gotoCheckoutPage = ( {
 				redirectUrl,
 				checkoutBackUrl,
 				from,
-				adminUrl
+				adminUrl,
+				isUpgrade
 			) ),
 		250
 	);

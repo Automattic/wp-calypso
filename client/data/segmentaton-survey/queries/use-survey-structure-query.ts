@@ -16,6 +16,7 @@ type SurveyStructureResponse = {
 		label: string;
 		value: string;
 		help_text: string;
+		additional_props: Record< string, boolean >;
 	}[];
 }[];
 
@@ -29,6 +30,7 @@ const mapSurveyStructureResponse = ( response: SurveyStructureResponse ): Questi
 					label: option.label,
 					value: option.value,
 					helpText: option.help_text,
+					additionalProps: option.additional_props,
 				};
 			} ),
 			subHeaderText: question.sub_header_text,

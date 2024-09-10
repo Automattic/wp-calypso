@@ -26,7 +26,6 @@ function usePlans( {
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
 	params.append( 'locale', locale );
-	params.append( 'eligible_request_for_experiment', 'true' );
 
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),
@@ -48,6 +47,7 @@ function usePlans( {
 							planSlug: plan.product_slug,
 							productSlug: plan.product_slug,
 							productId: plan.product_id,
+							pathSlug: plan.path_slug,
 							productNameShort: plan.product_name_short,
 							pricing: {
 								billPeriod: plan.bill_period,

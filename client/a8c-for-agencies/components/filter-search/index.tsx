@@ -6,12 +6,20 @@ type Props = {
 	label: string;
 	onSearch: ( value: string ) => void;
 	onClick?: () => void;
+	initialValue?: string;
 };
 
-export default function FilterSearch( { onSearch, onClick, label }: Props ) {
+export default function FilterSearch( { onSearch, onClick, label, initialValue }: Props ) {
 	return (
 		<div className="a4a-filter-search">
-			<Search onClick={ onClick } onSearch={ onSearch } placeholder={ label } compact hideFocus />
+			<Search
+				onClick={ onClick }
+				onSearch={ onSearch }
+				placeholder={ label }
+				initialValue={ initialValue }
+				compact
+				hideFocus
+			/>
 		</div>
 	);
 }

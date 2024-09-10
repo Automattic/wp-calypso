@@ -158,9 +158,13 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 									),
 								},
 								args: {
-									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+									fullPrice: formatCurrency( planRawPrice, currencyCode, {
+										stripZeros: true,
+										isSmallestUnit: true,
+									} ),
 									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 										stripZeros: true,
+										isSmallestUnit: true,
 									} ),
 									planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 									comment: 'A monetary value at the end, e.g. $25',

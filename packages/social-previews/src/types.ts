@@ -25,6 +25,11 @@ export interface SocialPreviewBaseProps {
 	 * The array of media items to use in the preview.
 	 */
 	media?: Array< MediaItem >;
+
+	/**
+	 * The caption.
+	 */
+	caption?: string;
 }
 
 export interface SocialPreviewsBaseProps {

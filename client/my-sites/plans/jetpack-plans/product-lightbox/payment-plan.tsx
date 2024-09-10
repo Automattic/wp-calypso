@@ -78,7 +78,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 		return 1 === discountedPriceDuration
 			? translate( '%(percentOff)d%% off the first month', translateArgs )
 			: translate( '%(percentOff)d%% off the first year', translateArgs );
-	}, [ discountedPrice, product?.productSlug, originalPrice, discountedPriceDuration, translate ] );
+	}, [ discountedPrice, product?.productSlug, discountedPriceDuration, translate, originalPrice ] );
 
 	return (
 		<div className="product-lightbox__variants-plan">
@@ -108,6 +108,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 									'is-compact': isCompact,
 								} ) }
 							>
+								{ /* discountPercentage is omitted as we are showing that below the timeframe in this context */ }
 								<TimeFrame
 									billingTerm={ billingTerm }
 									discountedPriceDuration={ discountedPriceDuration }

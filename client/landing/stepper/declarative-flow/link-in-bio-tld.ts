@@ -1,6 +1,4 @@
-import { type UserSelect } from '@automattic/data-stores';
 import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
@@ -13,9 +11,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import CreateSite from './internals/steps-repository/create-site';
 import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
@@ -32,7 +28,8 @@ const linkInBio: Flow = {
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		//TODO: Use steps from steps.ts and in its async version.
+		return stepsWithRequiredLogin( [
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'patterns', component: DesignCarousel },
 			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
@@ -40,38 +37,21 @@ const linkInBio: Flow = {
 			{ slug: 'createSite', component: CreateSite },
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
 		triggerGuidesForStep( flowName, _currentStepSlug );
 
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: translate( 'Link in Bio' ),
-		} );
-
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'domains':
 					clearSignupDestinationCookie();
 
-					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
-					}
-
-					return window.location.assign( logInUrl );
+					return navigate( 'patterns' );
 
 				case 'patterns':
 					return navigate( 'linkInBioSetup' );

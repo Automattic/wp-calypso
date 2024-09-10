@@ -7,6 +7,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS,
 	MAP_EXISTING_DOMAIN,
+	PREMIUM_DOMAINS,
 } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
@@ -175,6 +176,29 @@ function getAvailabilityNotice(
 				break;
 			}
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
+			if ( errorData?.cannot_transfer_due_to_unsupported_premium_tld ) {
+				message = translate(
+					'{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com because premium domain transfers for the %(tld)s TLD are not supported. {{a}}Learn more{{/a}}.',
+					{
+						args: {
+							domain,
+							tld,
+						},
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ localizeUrl( PREMIUM_DOMAINS ) }
+								/>
+							),
+						},
+					}
+				);
+				break;
+			}
+
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com. {{a}}Learn more{{/a}}.',
 				{
@@ -308,8 +332,29 @@ function getAvailabilityNotice(
 
 		case domainAvailability.MAPPABLE:
 			if ( isForTransferOnly ) {
+				if ( errorData?.cannot_transfer_due_to_unsupported_premium_tld ) {
+					message = translate(
+						'Premium domains ending with %(tld)s cannot be transferred to WordPress.com. Please connect your domain instead. {{a}}Learn more.{{/a}}',
+						{
+							args: {
+								tld,
+							},
+							components: {
+								a: (
+									<a
+										target={ linksTarget }
+										rel="noopener noreferrer"
+										href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+									/>
+								),
+							},
+						}
+					);
+					break;
+				}
+
 				message = translate(
-					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn More.{{/a}}',
+					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: (
@@ -556,6 +601,13 @@ function getAvailabilityNotice(
 					},
 				}
 			);
+			break;
+
+		case 'gravatar_tld_restriction':
+			message = translate(
+				'Gravatar is currently offering .link domains. Additional domain extensions may become available for a fee in the future.'
+			);
+			severity = 'info';
 			break;
 
 		default:

@@ -1,10 +1,12 @@
+import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
-import type { NewSiteBlogDetails, DomainSuggestion } from '@automattic/data-stores';
+import type { NewSiteBlogDetails, DomainSuggestion, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
@@ -39,6 +41,10 @@ export const usePlanSelection = ( {
 	isLoadingPlans: boolean;
 } ) => {
 	const { createAndConfigureSite, progress } = useCreateSenseiSite();
+	const { getSelectedStyleVariation } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	);
 
 	const createCheckoutCart = useCallback(
 		async ( site?: NewSiteBlogDetails ) => {
@@ -72,8 +78,10 @@ export const usePlanSelection = ( {
 			setSignupCompleteFlowName( flow );
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
+
+			const styleVariation = getSelectedStyleVariation()?.title ?? 'Green';
 			const redirectTo = encodeURIComponent(
-				`/setup/sensei/senseiPurpose?siteSlug=${ site?.site_slug }&siteId=${ site?.blogid }`
+				`/setup/sensei/senseiPurpose?siteSlug=${ site?.site_slug }&siteId=${ site?.blogid }&variation=${ styleVariation }`
 			);
 
 			return `/checkout/${ site?.site_slug }?signup=1&redirect_to=${ redirectTo }`;

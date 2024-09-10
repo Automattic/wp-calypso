@@ -280,7 +280,6 @@ import {
 	FEATURE_ASSEMBLED_KITS,
 	FEATURE_STOCK_NOTIFS,
 	FEATURE_DYNAMIC_UPSELLS,
-	FEATURE_LOYALTY_PROG,
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	FEATURE_BULK_DISCOUNTS,
 	FEATURE_INVENTORY_MGMT,
@@ -308,36 +307,13 @@ import {
 	FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
-	FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-	FEATURE_20_PREMIUM_THEMES,
-	FEATURE_48_PREMIUM_THEMES,
-	FEATURE_AD_SUPPORTED_EXPERIENCE,
-	FEATURE_REAL_TIME_STATS,
-	FEATURE_AUTOMATED_BURST_SCALING,
-	FEATURE_DATABASE_ACCESS,
-	FEATURE_DEVELOPER_TOOLS,
-	FEATURE_DYNAMIC_PRODUCT_UPSELLS,
-	FEATURE_FREE_MIGRATIONS,
-	FEATURE_FULL_DATA_CENTER_REDUNDANCIES,
-	FEATURE_GITHUB_DEPLOYMENTS,
-	FEATURE_HELP_CENTER_SUPPORT,
-	FEATURE_LIMITED_STATS,
-	FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
-	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-	FEATURE_WEB_SERVER_SETTINGS,
-	FEATURE_1_WEBSITE,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
+	FEATURE_SOCIAL_AUTO_SHARE,
+	FEATURE_SOCIAL_SHARES_1000,
+	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+	FEATURE_SOCIAL_IMAGE_GENERATOR,
 } from './constants';
-import { getTrailMapExperiment, isTrailMapCopyVariant } from './experiments';
-import {
-	isPersonalPlan,
-	isPremiumPlan,
-	isEcommercePlan,
-	isBusinessPlan,
-	isFreePlan,
-	isWooExpressPlan,
-} from './main';
 import type { FeatureList } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
@@ -370,21 +346,13 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 			);
 
 		default:
-			return isTrailMapCopyVariant()
-				? i18n.translate(
-						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
-						{
-							components: { br: <br /> },
-							args: { commission },
-						}
-				  )
-				: i18n.translate(
-						'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
-						{
-							components: { br: <br /> },
-							args: { commission },
-						}
-				  );
+			return i18n.translate(
+				'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
+				{
+					components: { br: <br /> },
+					args: { commission },
+				}
+			);
 	}
 };
 
@@ -544,36 +512,14 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium themes' ),
 		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '';
-			}
-			if ( isPersonalPlan( planSlug ) ) {
-				return i18n.translate( 'Dozens of premium themes' );
-			}
-			if (
-				isPremiumPlan( planSlug ) ||
-				isBusinessPlan( planSlug ) ||
-				isEcommercePlan( planSlug )
-			) {
-				return i18n.translate( 'Unlimited premium themes' );
-			}
-			return '—';
-		},
 	},
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-		getTitle: ( { planSlug = undefined } = {} ) => {
-			if ( planSlug && isWooExpressPlan( planSlug ) ) {
-				return i18n.translate( 'Beautiful themes' );
-			}
+		getTitle: () => {
 			return i18n.translate( 'Access to all premium themes' );
 		},
-		getDescription: ( { planSlug = undefined } = {} ) => {
-			if ( planSlug && isWooExpressPlan( planSlug ) ) {
-				return i18n.translate( 'Switch between a collection of beautiful themes.' );
-			}
+		getDescription: () => {
 			return i18n.translate( 'Switch between all of our premium design themes.' );
 		},
 	},
@@ -640,10 +586,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'All free themes' )
-				: i18n.translate( 'Free WordPress Themes' ),
+		getTitle: () => i18n.translate( 'Free WordPress Themes' ),
 	},
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
@@ -762,10 +705,7 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () =>
-			getTrailMapExperiment()
-				? i18n.translate( 'Upload 4K video with VideoPress' )
-				: i18n.translate( 'VideoPress support' ),
+		getTitle: () => i18n.translate( 'VideoPress support' ),
 		getDescription: () =>
 			i18n.translate(
 				'The easiest way to upload videos to your website and display them ' +
@@ -865,11 +805,9 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_INSTALL_PLUGINS ]: {
 		getSlug: () => FEATURE_INSTALL_PLUGINS,
 		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( '50,000+ plugins and themes' )
-				: i18n.translate(
-						'Access to more than 50,000 WordPress plugins to extend functionality for your site'
-				  ),
+			i18n.translate(
+				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
+			),
 	},
 
 	[ FEATURE_UPLOAD_THEMES ]: {
@@ -960,10 +898,7 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Help center support' )
-				: i18n.translate( 'Community support' ),
+		getTitle: () => i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
 	},
 
@@ -1114,10 +1049,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Real time full-site backup/restore' )
-				: i18n.translate( 'Automated site backups and one-click restore' ),
+		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1135,7 +1067,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Ship physical products in a snap and show live rates from shipping carriers like UPS and other shipping options.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 
@@ -1732,31 +1663,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Commission fee for standard payment features (plus standard processing\u00A0fee)'
 			),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '—';
-			}
-
-			if ( isFreePlan( planSlug ) ) {
-				return '10%';
-			}
-			if ( isPersonalPlan( planSlug ) ) {
-				return '8%';
-			}
-
-			if ( isPremiumPlan( planSlug ) ) {
-				return '4%';
-			}
-
-			if ( isBusinessPlan( planSlug ) ) {
-				return '2%';
-			}
-
-			if ( isEcommercePlan( planSlug ) ) {
-				return '0%';
-			}
-			return '—';
-		},
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
@@ -1764,16 +1670,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
 			),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '';
-			}
-
-			if ( isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ) {
-				return '0%';
-			}
-			return '—';
-		},
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -1796,34 +1692,18 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate(
-						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce) {{br}}{{/br}}(+ standard processing fee)',
-						{
-							components: { br: <br /> },
-							args: { commission: 2, wooCommerceCommission: 0 },
-						}
-				  )
-				: i18n.translate( '%(commission)d%% transaction fee for payments', {
-						args: { commission: 2 },
-				  } ),
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 2 },
+			} ),
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate(
-						'Accept payments (%(commission)d%% fee) {{br}}{{/br}}(+ standard processing fee)',
-						{
-							components: { br: <br /> },
-							args: { commission: 0 },
-						}
-				  )
-				: i18n.translate( '%(commission)d%% transaction fee for payments', {
-						args: { commission: 0 },
-				  } ),
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 0 },
+			} ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1855,10 +1735,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Unlimited traffic' )
-				: i18n.translate( 'No limitations on site visitors' ),
+		getTitle: () => i18n.translate( 'No limitations on site visitors' ),
 		getDescription: () =>
 			i18n.translate( 'Grow your site traffic without worrying about limitations.' ),
 	},
@@ -1900,10 +1777,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Unlimited collaborators' )
-				: i18n.translate( 'Unlimited users' ),
+		getTitle: () => i18n.translate( 'Unlimited users' ),
 		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
 		getDescription: () =>
 			i18n.translate( 'Invite others to contribute to your site and assign access permissions.' ),
@@ -1916,10 +1790,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Version history and restore' )
-				: i18n.translate( 'Time machine for post edits' ),
+		getTitle: () => i18n.translate( 'Time machine for post edits' ),
 		getDescription: () =>
 			i18n.translate( 'Roll back your posts to an earlier edit with a built-in revision history.' ),
 	},
@@ -1984,10 +1855,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Unmetered bandwidth' )
-				: i18n.translate( 'Unrestricted bandwidth' ),
+		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
 		getDescription: () =>
 			i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
 	},
@@ -2001,19 +1869,13 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Web application firewall' )
-				: i18n.translate( 'Web application firewall (WAF)' ),
+		getTitle: () => i18n.translate( 'Web application firewall (WAF)' ),
 		getDescription: () =>
 			i18n.translate( 'Block out malicious activity like SQL injection and XSS attacks.' ),
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Global CDN with 28+ locations' )
-				: i18n.translate( 'Global CDN' ),
+		getTitle: () => i18n.translate( 'Global CDN' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: () =>
@@ -2063,28 +1925,19 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'DDoS protection' )
-				: i18n.translate( 'DDoS protection and mitigation' ),
+		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'SFTP/SSH, WP-CLI' )
-				: i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Staging site' )
-				: i18n.translate( 'Free staging site' ),
+		getTitle: () => i18n.translate( 'Free staging site' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 
@@ -2112,7 +1965,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SELL_SHIP,
 		getTitle: () => i18n.translate( 'Sell and ship products' ),
 		getDescription: () => i18n.translate( 'Sell and ship out physical goods from your site.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SELL_INTERNATIONALLY ]: {
@@ -2146,10 +1998,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Back-in-stock notifications' )
-				: i18n.translate( 'Back in stock emails' ),
+		getTitle: () => i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
 			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
@@ -2223,13 +2072,9 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Min/max order quantities' )
-				: i18n.translate( 'Min/max order quantity' ),
+		getTitle: () => i18n.translate( 'Min/max order quantities' ),
 		getDescription: () =>
 			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
@@ -2239,7 +2084,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Offer customers a personalized shopping experience that they cannot find anywhere else.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins and themes' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY ]: {
@@ -2247,7 +2091,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Inventory management' ),
 		getDescription: () =>
 			i18n.translate( 'Stay on top of your stock with inventory management tools.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CHECKOUT ]: {
@@ -2257,7 +2100,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Reduce cart abandonment and increase sales with a fast, low-friction checkout.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
@@ -2265,7 +2107,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
 		getDescription: () =>
 			i18n.translate( 'Accept payments for goods and services, just about anywhere.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SALES_REPORTS ]: {
@@ -2275,7 +2116,6 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Stay up to date on sales and identify trends with intuitive sales reports.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_EXTENSIONS ]: {
@@ -2283,7 +2123,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Extensions marketplace' ),
 		getDescription: () =>
 			i18n.translate( 'Find and install powerful add-ons for your site, all in one place.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
@@ -2314,22 +2153,32 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Shares on social media' ),
 		getDescription: () =>
 			i18n.translate( 'Automatically share your latest post on Facebook, Tumblr, and more.' ),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '';
-			}
-			if ( isPersonalPlan( planSlug ) || isFreePlan( planSlug ) ) {
-				return i18n.translate( '%d shares per month', { args: [ 30 ] } );
-			}
-			if (
-				isPremiumPlan( planSlug ) ||
-				isBusinessPlan( planSlug ) ||
-				isEcommercePlan( planSlug )
-			) {
-				return i18n.translate( 'Unlimited shares' );
-			}
-			return '';
-		},
+	},
+	[ FEATURE_SOCIAL_AUTO_SHARE ]: {
+		getSlug: () => FEATURE_SOCIAL_AUTO_SHARE,
+		getTitle: () => i18n.translate( 'Automatically share your posts and products on social media' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically share to Facebook, Instagram, Threads, LinkedIn, Mastodon, Tumblr, and Nextdoor.'
+			),
+	},
+	[ FEATURE_SOCIAL_SHARES_1000 ]: {
+		getSlug: () => FEATURE_SOCIAL_SHARES_1000,
+		getTitle: () => i18n.translate( 'Share an unlimited number of posts' ),
+		getDescription: () => i18n.translate( 'Share an unlimited number of posts.' ),
+	},
+	[ FEATURE_SOCIAL_ENHANCED_PUBLISHING ]: {
+		getSlug: () => FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+		getTitle: () => i18n.translate( 'Upload custom images or videos with your posts' ),
+		getDescription: () => i18n.translate( 'Upload custom images or videos with your posts.' ),
+	},
+	[ FEATURE_SOCIAL_IMAGE_GENERATOR ]: {
+		getSlug: () => FEATURE_SOCIAL_IMAGE_GENERATOR,
+		getTitle: () => i18n.translate( 'Automatically generate images for posts' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically generate custom images for posts using a template or a custom text.'
+			),
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
@@ -2446,7 +2295,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium store themes' ),
 		getDescription: () =>
 			i18n.translate( 'Jumpstart your store’s design with a professionally designed theme.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STORE_DESIGN ]: {
@@ -2456,29 +2304,24 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Fine-tune your store’s design with on-brand styles and drag and drop layout editing.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_UNLIMITED_PRODUCTS ]: {
 		getSlug: () => FEATURE_UNLIMITED_PRODUCTS,
 		getTitle: () => i18n.translate( 'Unlimited products' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Grow your store as big as you want with the ability to add unlimited products and services.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: {
 		getSlug: () => FEATURE_DISPLAY_PRODUCTS_BRAND,
 		getTitle: () => i18n.translate( 'Display products by brand' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Create, assign and list brands for products, and allow customers to view by brand.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
@@ -2488,113 +2331,77 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ASSEMBLED_KITS ]: {
 		getSlug: () => FEATURE_ASSEMBLED_KITS,
 		getTitle: () => i18n.translate( 'Assembled products and kits' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Give customers the freedom to build their own products utilizing your existing items.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STOCK_NOTIFS ]: {
 		getSlug: () => FEATURE_STOCK_NOTIFS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Stock notifications' )
-				: i18n.translate( 'Back-in-stock notifications' ),
-
+		getTitle: () => i18n.translate( 'Back-in-stock notifications' ),
 		getDescription: () =>
 			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_DYNAMIC_UPSELLS ]: {
 		getSlug: () => FEATURE_DYNAMIC_UPSELLS,
 		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Earn more revenue with automated upsell and cross-sell product recommendations.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
-		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
-	},
-	[ FEATURE_LOYALTY_PROG ]: {
-		getSlug: () => FEATURE_LOYALTY_PROG,
-		getTitle: () => i18n.translate( 'Referral and loyalty programs' ),
-
-		getDescription: () =>
-			i18n.translate(
-				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
-			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_CUSTOM_MARKETING_AUTOMATION,
 		getTitle: () => i18n.translate( 'Custom marketing automation' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Advanced email marketing functionality, including subscriber segmentation, advanced analytics, and automation.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_BULK_DISCOUNTS ]: {
 		getSlug: () => FEATURE_BULK_DISCOUNTS,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Bulk discounts' )
-				: i18n.translate( 'Offer bulk discounts' ),
-
+		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY_MGMT ]: {
 		getSlug: () => FEATURE_INVENTORY_MGMT,
 		getTitle: () => i18n.translate( 'Inventory management' ),
-
 		getDescription: () =>
 			i18n.translate( 'Keep inventory up-to-date with POS integrations and real-time tracking.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STREAMLINED_CHECKOUT ]: {
 		getSlug: () => FEATURE_STREAMLINED_CHECKOUT,
 		getTitle: () => i18n.translate( 'Streamlined, extendable checkout' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Remove the friction from checkout by giving your customers multiple ways to pay.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SELL_60_COUNTRIES ]: {
 		getSlug: () => FEATURE_SELL_60_COUNTRIES,
 		getTitle: () => i18n.translate( 'Sell in 60+ countries' ),
-
 		getDescription: () => i18n.translate( 'Grow globally by accepting 135+ currencies.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SHIPPING_INTEGRATIONS ]: {
 		getSlug: () => FEATURE_SHIPPING_INTEGRATIONS,
 		getTitle: () => i18n.translate( 'Integrations with top shipping carriers' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Get real-time shipping prices, print labels and give your customers tracking codes.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
@@ -2648,10 +2455,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
 		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
-		getTitle: () =>
-			isTrailMapCopyVariant()
-				? i18n.translate( 'Free SSL' )
-				: i18n.translate( 'Free SSL certificate' ),
+		getTitle: () => i18n.translate( 'Free SSL certificate' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {
@@ -2800,94 +2604,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Advanced Jetpack features' ),
 	},
 	/* END: Sensei Features */
-
-	/* Start: Trail Map new Features */
-	[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ]: {
-		getSlug: () => FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-		getTitle: () => i18n.translate( '25+ pre-installed ecommerce plugins ($1,500/year value)' ),
-	},
-	[ FEATURE_20_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_20_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( '20 premium themes' ),
-	},
-	[ FEATURE_48_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_48_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( '48 premium themes' ),
-	},
-	[ FEATURE_AD_SUPPORTED_EXPERIENCE ]: {
-		getSlug: () => FEATURE_AD_SUPPORTED_EXPERIENCE,
-		getTitle: () => i18n.translate( 'Ad-supported experience' ),
-	},
-	[ FEATURE_REAL_TIME_STATS ]: {
-		getSlug: () => FEATURE_REAL_TIME_STATS,
-		getTitle: () => i18n.translate( 'Advanced Real Time stats' ),
-	},
-	[ FEATURE_AUTOMATED_BURST_SCALING ]: {
-		getSlug: () => FEATURE_AUTOMATED_BURST_SCALING,
-		getTitle: () => i18n.translate( 'Automated burst scaling' ),
-	},
-	[ FEATURE_DATABASE_ACCESS ]: {
-		getSlug: () => FEATURE_DATABASE_ACCESS,
-		getTitle: () => i18n.translate( 'Database access' ),
-	},
-	[ FEATURE_DEVELOPER_TOOLS ]: {
-		getSlug: () => FEATURE_DEVELOPER_TOOLS,
-		getTitle: () => i18n.translate( 'Developer tools' ),
-	},
-	[ FEATURE_FREE_MIGRATIONS ]: {
-		getSlug: () => FEATURE_FREE_MIGRATIONS,
-		getTitle: () => i18n.translate( 'Free migrations' ),
-	},
-	[ FEATURE_FULL_DATA_CENTER_REDUNDANCIES ]: {
-		getSlug: () => FEATURE_FULL_DATA_CENTER_REDUNDANCIES,
-		getTitle: () => i18n.translate( 'Full data center redundancies' ),
-	},
-	[ FEATURE_GITHUB_DEPLOYMENTS ]: {
-		getSlug: () => FEATURE_GITHUB_DEPLOYMENTS,
-		getTitle: () => i18n.translate( 'GitHub deployments' ),
-	},
-	[ FEATURE_HELP_CENTER_SUPPORT ]: {
-		getSlug: () => FEATURE_HELP_CENTER_SUPPORT,
-		getTitle: () => i18n.translate( 'Help center support' ),
-	},
-	[ FEATURE_LIMITED_STATS ]: {
-		getSlug: () => FEATURE_LIMITED_STATS,
-		getTitle: () => i18n.translate( 'Limited stats' ),
-	},
-	[ FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT ]: {
-		getSlug: () => FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
-		getTitle: () => i18n.translate( 'Local development environment' ),
-	},
-	[ FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS ]: {
-		getSlug: () => FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-		getTitle: () =>
-			i18n.translate( 'Pre-installed plugins for security and performance ($239/year value)' ),
-	},
-	[ FEATURE_WEB_SERVER_SETTINGS ]: {
-		getSlug: () => FEATURE_WEB_SERVER_SETTINGS,
-		getTitle: () => i18n.translate( 'Web server settings' ),
-	},
-	[ FEATURE_1_WEBSITE ]: {
-		getSlug: () => FEATURE_1_WEBSITE,
-		getTitle: () => i18n.translate( '1 website' ),
-	},
-	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
-		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
-		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
-	},
-	/* END: Trail Map New Features */
-};
-
-FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ] = {
-	...FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ],
-	getSubFeatureObjects: () => [
-		FEATURES_LIST[ FEATURE_UNLIMITED_PRODUCTS ],
-		FEATURES_LIST[ FEATURE_MIN_MAX_ORDER_QUANTITY ],
-		FEATURES_LIST[ FEATURE_BULK_DISCOUNTS ],
-		FEATURES_LIST[ FEATURE_INVENTORY ],
-		FEATURES_LIST[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ],
-		FEATURES_LIST[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ],
-	],
 };
 
 export { FEATURES_LIST };

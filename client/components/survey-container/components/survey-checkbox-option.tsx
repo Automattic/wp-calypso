@@ -1,3 +1,4 @@
+import { PremiumBadge } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { Question, Option } from '../types';
@@ -68,6 +69,7 @@ const SurveyCheckboxOption = ( {
 					</span>
 				) }
 			</div>
+			{ option?.additionalProps?.is_premium && <PremiumBadge shouldHideTooltip /> }
 		</div>
 	);
 };

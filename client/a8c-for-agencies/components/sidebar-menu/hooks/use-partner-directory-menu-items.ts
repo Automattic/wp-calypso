@@ -8,6 +8,8 @@ import {
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 const isSelected = ( path: string, links: string[] ) => {
 	return links.includes( path );
@@ -15,6 +17,12 @@ const isSelected = ( path: string, links: string[] ) => {
 
 const usePartnerDirectoryMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+
+	const agency = useSelector( getActiveAgency );
+	const hasDirectoryApproval = agency?.profile?.partner_directory_application?.directories.some(
+		( { status } ) => status === 'approved'
+	);
+
 	const menuItems = useMemo( () => {
 		return [
 			createItem(
@@ -32,24 +40,29 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 				},
 				path
 			),
-			createItem(
-				{
-					icon: cog,
-					path: A4A_PARTNER_DIRECTORY_LINK,
-					link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
-					title: translate( 'Agency details' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Partner Directory / Agency details',
-					},
-					isSelected: isSelected( path, [
-						`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
-						`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
-					] ),
-				},
-				path
-			),
+			// Only show the Agency details menu item if the agency has at least one directory approved
+			...( hasDirectoryApproval
+				? [
+						createItem(
+							{
+								icon: cog,
+								path: A4A_PARTNER_DIRECTORY_LINK,
+								link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
+								title: translate( 'Agency details' ),
+								trackEventProps: {
+									menu_item: 'Automattic for Agencies / Partner Directory / Agency details',
+								},
+								isSelected: isSelected( path, [
+									`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`,
+									`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
+								] ),
+							},
+							path
+						),
+				  ]
+				: [] ),
 		];
-	}, [ path, translate ] );
+	}, [ hasDirectoryApproval, path, translate ] );
 	return menuItems;
 };
 

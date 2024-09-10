@@ -85,7 +85,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		page_on_front: page_on_front ?? '',
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
-		...( rss_use_excerpt && { rss_use_excerpt } ),
+		rss_use_excerpt: !! rss_use_excerpt,
 		...( show_on_front && { show_on_front } ),
 		...( subscription_options && { subscription_options } ),
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
@@ -121,7 +121,7 @@ type ReadingSettingsFormProps = {
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleAutosavingToggle: ( field: string ) => () => void;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	isAtomic: boolean | null;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;

@@ -45,6 +45,10 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 		isSupported,
 	} = metadata;
 
+	if ( rows.site.value.sticker?.includes( 'migration-in-progress' ) ) {
+		disabled = true;
+	}
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 

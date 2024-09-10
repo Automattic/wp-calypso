@@ -115,7 +115,7 @@ describe( 'Onboarding: Site Assembler', () => {
 
 		it( 'Select another Header pattern', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Header' );
-			await siteAssemblerFlow.selectLayoutComponent( { index: 1 } );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 4 );
 		} );

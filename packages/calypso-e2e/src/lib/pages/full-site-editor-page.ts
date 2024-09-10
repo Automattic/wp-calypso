@@ -398,7 +398,7 @@ export class FullSiteEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const openButton = editorParent.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const openButton = editorParent.locator( 'a[aria-label="Open Navigation"]' );
 
 		await openButton.click();
 	}
@@ -415,7 +415,7 @@ export class FullSiteEditorPage {
 		}
 		const editorParent = await this.editor.parent();
 		const editorCanvas = await this.editor.canvas();
-		const openButton = editorParent.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const openButton = editorParent.locator( 'a[aria-label="Open Navigation"]' );
 
 		await Promise.race( [ openButton.waitFor(), editorCanvas.locator( 'body' ).click() ] );
 	}

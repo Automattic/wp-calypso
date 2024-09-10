@@ -182,6 +182,9 @@ export function useProductDescription( productSlug: string ): {
 			case 'jetpack-social-advanced':
 				description = translate( 'Write once, post everywhere.' );
 				break;
+			case 'jetpack-social-v1':
+				description = translate( 'Write once, post everywhere.' );
+				break;
 			case 'jetpack-search':
 				description = translate( 'Help your site visitors find answers instantly.' );
 				break;

@@ -46,7 +46,8 @@ import getBootstrappedUser from 'calypso/server/user-bootstrap';
 import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
@@ -154,6 +155,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -184,6 +186,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		accountSettingsHelper,
 		authHelper,
 		preferencesHelper,
+		storeSandboxHelper,
 		featuresHelper,
 		devDocsURL: '/devdocs',
 		store: reduxStore,
@@ -602,6 +605,12 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	if ( Array.isArray( section.links ) ) {
 		section.links.forEach( ( link ) => req.context.store.dispatch( setDocumentHeadLink( link ) ) );
 	}
+
+	if ( Array.isArray( section.meta ) ) {
+		// Append section specific meta tags.
+		const meta = getDocumentHeadMeta( req.context.store.getState() ).concat( section.meta );
+		req.context.store.dispatch( setDocumentHeadMeta( meta ) );
+	}
 	next();
 };
 
@@ -705,7 +714,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
-		const locale = req.params?.locale;
+		const locale = req.params?.locale ?? config( 'i18n_default_locale_slug' );
 
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
@@ -722,7 +731,7 @@ function wpcomPages( app ) {
 				res.redirect( pricingPageUrl );
 			}
 		} else {
-			if ( locale ) {
+			if ( locale && locale !== config( 'i18n_default_locale_slug' ) ) {
 				const queryParams = new URLSearchParams( req.query );
 				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
 				res.redirect( `/plans${ queryString }` );

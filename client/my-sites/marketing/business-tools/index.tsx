@@ -2,8 +2,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
-import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg';
 import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
 import quickbooksLogo from 'calypso/assets/images/illustrations/quickbooks-logo.svg';
 import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
@@ -42,20 +40,12 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 		recordTracksEvent( 'calypso_marketing_business_quickbooks_button_click' );
 	};
 
-	const handleEvernoteClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_evernote_button_click' );
-	};
-
 	const handleMondayClick = () => {
 		recordTracksEvent( 'calypso_marketing_business_monday_button_click' );
 	};
 
 	const handleTodoistClick = () => {
 		recordTracksEvent( 'calypso_marketing_business_todoist_button_click' );
-	};
-
-	const handleBenchClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_bench_button_click' );
 	};
 
 	const handleStreakClick = () => {
@@ -84,24 +74,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						target="_blank"
 					>
 						{ translate( 'Manage your finances' ) }
-					</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					category={ translate( 'Productivity' ) }
-					title={ translate( 'Evernote' ) }
-					description={ translate(
-						'Evernote is the place to organize your work, declutter your life, and remember everything. Maintaining the important information you need to manage your work or your personal life has never been easier.'
-					) }
-					imagePath={ evernoteLogo }
-					imageAlt=""
-				>
-					<Button
-						onClick={ handleEvernoteClick }
-						href="https://evernote.grsm.io/ebcc-wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Take better notes' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -138,24 +110,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						target="_blank"
 					>
 						{ translate( 'Manage business tasks' ) }
-					</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					category={ translate( 'Finance' ) }
-					title={ translate( 'Bench' ) }
-					description={ translate(
-						'Bench gives you a professional bookkeeper at a price you can afford, and powerful financial reporting software with zero learning curve.'
-					) }
-					imagePath={ benchLogo }
-					imageAlt=""
-				>
-					<Button
-						onClick={ handleBenchClick }
-						href="https://bench.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Find a bookkeeper' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 

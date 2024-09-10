@@ -61,7 +61,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
-			title: translate( 'Learn how to add new sites' ),
+			title: translate( 'Learn how to add sites' ),
 			useCalypsoPath: true,
 		},
 		{

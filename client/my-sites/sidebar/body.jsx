@@ -1,7 +1,9 @@
 import { useSelector } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import { isP2Theme } from 'calypso/lib/site/utils';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSidebarIsCollapsed,
@@ -29,6 +31,9 @@ export const MySitesSidebarUnifiedBody = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isP2Site =
+		useSelector( ( state ) => isSiteWPForTeams( state, siteId ) ) ||
+		( site?.options?.theme_slug && isP2Theme( site?.options?.theme_slug ) );
 
 	// Jetpack self-hosted sites should open external links to WP Admin in new tabs,
 	// since WP Admin is considered a separate area from Calypso on those sites.
@@ -41,7 +46,9 @@ export const MySitesSidebarUnifiedBody = ( {
 					const isSelected =
 						( item?.url && itemLinkMatches( item.url, path ) ) ||
 						// Keep the Sites icon selected when there is a selected site.
-						( item.slug === 'sites' && site );
+						( item.slug === 'sites' && site && ! isP2Site && ! path.startsWith( '/p2s' ) ) ||
+						// Keep the P2s icon selected when there is a selected site and that site is a P2.
+						( item.slug === 'sites-p2' && site && isP2Site && ! path.startsWith( '/sites' ) );
 
 					if ( 'current-site' === item?.type ) {
 						return (

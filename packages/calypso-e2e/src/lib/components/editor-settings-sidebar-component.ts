@@ -8,7 +8,9 @@ const panel = '[aria-label="Editor settings"]';
 const selectors = {
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
-	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
+
+	// Revisions (after 18.7.0)
+	showRevisionButton: '.editor-private-post-last-revision__button',
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
@@ -18,6 +20,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
+	schedulePopoverCloseButton:
+		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
 
@@ -294,8 +298,14 @@ export class EditorSettingsSidebarComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		const buttonLocator = editorParent.locator( selectors.scheduleButton );
-		await buttonLocator.click();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const buttonLocator = editorParent.locator( selectors.schedulePopoverCloseButton );
+			await buttonLocator.click();
+		} else {
+			const buttonLocator = editorParent.locator( selectors.scheduleButton );
+			await buttonLocator.click();
+		}
 	}
 
 	/**
@@ -335,14 +345,14 @@ export class EditorSettingsSidebarComponent {
 		}
 	}
 
-	/* Revisions */
-
 	/**
-	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
+	 * Opens the Revisions modal
+	 * via summary button for Gutenberg 18.7.0
 	 */
 	async showRevisions(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selectors.showRevisionButton );
+
 		await locator.click();
 	}
 

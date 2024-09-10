@@ -2,15 +2,11 @@
 	.dot-pager__page {
 		p,
 		li {
-			font-size: rem(16px);
-			font-weight: 400;
-			line-height: 24px;
+			@include a4a-font-body-lg;
 		}
 
 		h1 {
-			font-size: rem(32px);
-			font-weight: 700;
-			line-height: 1.25;
+			@include a4a-font-heading-xxl;
 			margin-bottom: 16px;
 		}
 
@@ -26,7 +22,6 @@
 
 	.button {
 		border-radius: 4px;
-		font-weight: 500;
 	}
 
 	.dot-pager__control-prev:focus-visible,

@@ -1,11 +1,5 @@
 import page from '@automattic/calypso-router';
-import {
-	ReloadSetupIntentId,
-	StripeHookProvider,
-	StripeSetupIntentIdProvider,
-	useStripe,
-	useStripeSetupIntentId,
-} from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
 import {
 	CheckoutProvider,
@@ -26,6 +20,8 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_PAYMENT_METHODS_LINK,
+	A4A_CLIENT_PAYMENT_METHODS_LINK,
+	A4A_CLIENT_CHECKOUT,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
@@ -43,6 +39,7 @@ import usePaymentMethod from '../../hooks/use-payment-method';
 import { useReturnUrl } from '../../hooks/use-return-url';
 import useStoredCards from '../../hooks/use-stored-cards';
 import { getStripeConfiguration } from '../../lib/get-stripe-configuration';
+import { isClientView } from '../../lib/is-client-view';
 import CreditCardLoading from '../credit-card-fields/credit-card-loading';
 
 import './style.scss';
@@ -51,16 +48,13 @@ function onPaymentSelectComplete( {
 	successCallback,
 	translate,
 	showSuccessMessage,
-	reloadSetupIntentId,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
-	reloadSetupIntentId: ReloadSetupIntentId;
 } ) {
 	showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
 	// We need to regenerate the setup intent if the form was submitted.
-	reloadSetupIntentId();
 	successCallback();
 }
 
@@ -71,11 +65,6 @@ function PaymentMethodForm() {
 	const { paymentMethodRequired } = usePaymentMethod();
 
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
-	const {
-		reload: reloadSetupIntentId,
-		setupIntentId: stripeSetupIntentId,
-		error: setupIntentError,
-	} = useStripeSetupIntentId();
 
 	const stripeMethod = useCreateStoredCreditCardMethod( {
 		isStripeLoading,
@@ -102,8 +91,6 @@ function PaymentMethodForm() {
 		useAsPrimaryPaymentMethod,
 		stripe,
 		stripeConfiguration,
-		stripeSetupIntentId,
-		cardElement: elements?.getElement( CardElement ) ?? undefined,
 	} );
 
 	const sites = useSelector( getSites );
@@ -173,10 +160,8 @@ function PaymentMethodForm() {
 					{ id: 'payment-method-failure' }
 				)
 			);
-			// We need to regenerate the setup intent if the form was submitted.
-			reloadSetupIntentId();
 		},
-		[ reduxDispatch, translate, reloadSetupIntentId ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -197,8 +182,24 @@ function PaymentMethodForm() {
 		//
 		if ( returnQueryArg || products ) {
 			refetchStoredCards();
+			// If the user is in the client view, we need to redirect to the client view
+			if ( isClientView() && returnQueryArg.startsWith( A4A_CLIENT_CHECKOUT ) ) {
+				page(
+					addQueryArgs(
+						{
+							payment_method_added: true,
+						},
+						returnQueryArg
+					)
+				);
+			} else if ( returnQueryArg?.includes( 'add_new_dev_site' ) ) {
+				const params = {
+					add_new_dev_site: true,
+				};
+				page( addQueryArgs( params, returnQueryArg ) );
+			}
 		} else {
-			page( A4A_PAYMENT_METHODS_LINK );
+			page( isClientView() ? A4A_CLIENT_PAYMENT_METHODS_LINK : A4A_PAYMENT_METHODS_LINK );
 		}
 	}, [ returnQueryArg, products, refetchStoredCards ] );
 
@@ -230,13 +231,13 @@ function PaymentMethodForm() {
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
-	useEffect( () => {
-		if ( setupIntentError ) {
-			reduxDispatch( errorNotice( setupIntentError.message ) );
-		}
-	}, [ setupIntentError, reduxDispatch ] );
-
 	const getPreviousPageLink = () => {
+		// If the user is in the client view, we need to redirect to the client view
+		if ( isClientView() ) {
+			return returnQueryArg.startsWith( A4A_CLIENT_CHECKOUT )
+				? returnQueryArg
+				: A4A_CLIENT_PAYMENT_METHODS_LINK;
+		}
 		if ( products ) {
 			if ( source === 'sitesdashboard' ) {
 				const productsSlugs = products
@@ -274,7 +275,6 @@ function PaymentMethodForm() {
 					successCallback,
 					translate,
 					showSuccessMessage,
-					reloadSetupIntentId,
 				} );
 			} }
 			onPaymentError={ handleChangeError }
@@ -282,7 +282,10 @@ function PaymentMethodForm() {
 			paymentProcessors={ {
 				card: async ( data: unknown ) => {
 					reduxDispatch( removeNotice( 'payment-method-failure' ) );
-					return await assignNewCardProcessor( data );
+					return await assignNewCardProcessor(
+						data,
+						elements?.getElement( CardElement ) ?? undefined
+					);
 				},
 			} }
 			initiallySelectedPaymentMethodId="card"
@@ -343,8 +346,15 @@ function PaymentMethodFormFooter( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isClient = isClientView();
+
 	const onGoToPaymentMethods = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_payment_method_card_go_back_click' ) );
+
+		// This is a hack to fix an issue where the query params are not getting updated when the user goes back
+		if ( isClient ) {
+			page.redirect( backButtonHref );
+		}
 	};
 
 	const { formStatus } = useFormStatus();
@@ -355,7 +365,7 @@ function PaymentMethodFormFooter( {
 		<div className="payment-method-form__footer">
 			<Button
 				className="payment-method-form__back-button"
-				href={ shouldDisableBackButton ? undefined : backButtonHref }
+				href={ shouldDisableBackButton || isClient ? undefined : backButtonHref }
 				disabled={ shouldDisableBackButton }
 				onClick={ onGoToPaymentMethods }
 			>
@@ -374,11 +384,7 @@ export default function PaymentMethodFormWrapper() {
 
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider
-				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
-			>
-				<PaymentMethodForm />
-			</StripeSetupIntentIdProvider>
+			<PaymentMethodForm />
 		</StripeHookProvider>
 	);
 }

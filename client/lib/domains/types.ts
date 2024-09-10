@@ -45,6 +45,11 @@ export type TitanEmailSubscription = EmailSubscription & {
 
 export type TransferStatus = keyof typeof transferStatus | null;
 
+export type DnssecRecords = {
+	dnskey?: string;
+	dsData?: Array< string >;
+};
+
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;
 	aftermarketAuction: boolean;
@@ -74,6 +79,7 @@ export type ResponseDomain = {
 	currentUserCanManage: boolean;
 	currentUserCannotAddEmailReason: CannotAddEmailReason | null;
 	currentUserIsOwner: boolean;
+	dnssecRecords?: DnssecRecords;
 	domain: string;
 	domainLockingAvailable: boolean;
 	domainRegistrationAgreementUrl: string | null;
@@ -84,12 +90,15 @@ export type ResponseDomain = {
 	gdprConsentStatus: GDPRConsentStatus;
 	googleAppsSubscription: GoogleEmailSubscription | null;
 	hasEmailForwardsDnsRecords?: boolean | null;
+	hasPendingContactUpdate: boolean;
 	hasRegistration: boolean;
 	hasWpcomNameservers: boolean;
 	hasZone: boolean;
 	isAutoRenewing: boolean;
+	isDnssecEnabled: boolean;
+	isDnssecSupported: boolean;
 	isEligibleForInboundTransfer: boolean;
-	isIcannVerificationSuspended: boolean;
+	isIcannVerificationSuspended: boolean | null;
 	isGravatarDomain: boolean;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;
@@ -127,7 +136,7 @@ export type ResponseDomain = {
 	registrationDate: string;
 	registryExpiryDate: string;
 	renewableUntil: string;
-	sslStatus: 'active' | 'pending' | 'disabled' | null;
+	sslStatus: 'active' | 'pending' | 'disabled' | 'newly_registered' | null;
 	subdomainPart?: string;
 	subscriptionId: string | null;
 	supportsDomainConnect: boolean;

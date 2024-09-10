@@ -13,8 +13,8 @@ import StatsDateControl from 'calypso/components/stats-date-control';
 import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
 import {
 	STATS_FEATURE_DATE_CONTROL,
-	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 	STATS_FEATURE_INTERVAL_DROPDOWN,
@@ -169,6 +169,11 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	onGatedHandler = ( events, source, statType ) => {
+		// Stop the popup from showing for Jetpack sites.
+		if ( this.props.isSiteJetpackNotAtomic ) {
+			return;
+		}
+
 		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
 		this.props.toggleUpsellModal( this.props.siteId, statType );
 	};
@@ -190,8 +195,6 @@ class StatsPeriodNavigation extends PureComponent {
 			gateDateControl,
 			intervals,
 			siteId,
-			supportCommercialUse,
-			isSiteJetpackNotAtomic,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -212,8 +215,7 @@ class StatsPeriodNavigation extends PureComponent {
 							shortcutList={ shortcutList }
 							onGatedHandler={ this.onGatedHandler }
 							overlay={
-								// TODO: getDateControl is only used by WPCOM at the moment, and we should refactor to reuse it rather than having a separate supportCommercialUse here.
-								( gateDateControl || ( ! supportCommercialUse && isSiteJetpackNotAtomic ) ) && (
+								gateDateControl && (
 									<StatsCardUpsell
 										className="stats-module__upsell"
 										statType={ STATS_FEATURE_DATE_CONTROL }

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { useEffect } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { Message } from '../types';
+import { Message } from '../types/';
 
 type OdieStorageKey = 'chat_id' | 'last_chat_id';
 

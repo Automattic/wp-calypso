@@ -1,11 +1,15 @@
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
+import { useChatStatus } from '@automattic/help-center/src/hooks';
+import {
+	useCanConnectToZendeskMessaging,
+	useZendeskMessagingAvailability,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
-import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
+import type { MessagingGroup, ZendeskConfigName } from '@automattic/zendesk-client';
 import type { FC } from 'react';
 
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
@@ -19,8 +23,10 @@ type Props = {
 	onError?: () => void;
 	primary?: boolean;
 	siteUrl?: string;
+	siteId?: string | number;
 	children?: React.ReactNode;
 	withHelpCenter?: boolean;
+	section?: string;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -57,22 +63,23 @@ const ChatButton: FC< Props > = ( {
 	initialMessage,
 	onClick,
 	onError,
+	siteId = null,
 	primary = false,
 	siteUrl,
 	withHelpCenter = true,
+	section = '',
 } ) => {
 	const { __ } = useI18n();
-
+	const { hasActiveChats, isEligibleForChat, isPrecancellationChatOpen, isPresalesChatOpen } =
+		useChatStatus();
 	const messagingGroup = getMessagingGroupForIntent( chatIntent );
-	const {
-		canConnectToZendesk,
-		hasActiveChats,
-		isChatAvailable,
-		isEligibleForChat,
-		isPrecancellationChatOpen,
-		isPresalesChatOpen,
-	} = useChatStatus( messagingGroup );
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
+		messagingGroup,
+		isEligibleForChat
+	);
+	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats ) {
@@ -95,7 +102,7 @@ const ChatButton: FC< Props > = ( {
 				break;
 		}
 
-		if ( isEligibleForChat && isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
+		if ( isEligibleForChat && isMessagingAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
 			return true;
 		}
 
@@ -103,21 +110,27 @@ const ChatButton: FC< Props > = ( {
 	}
 
 	const configName = getConfigNameForIntent( chatIntent );
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
+		section,
 		configName,
 		shouldShowChatButton()
 	);
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {
-			openChatWidget( {
+			openZendeskWidget( {
 				message: initialMessage,
 				siteUrl,
+				siteId,
 				onError,
-				onSuccess: onClick,
+				onSuccess: () => {
+					onClick?.();
+					resetStore();
+					setShowHelpCenter( false );
+				},
 			} );
 		} else {
-			setInitialRoute( '/contact-form?mode=CHAT' );
+			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 			onClick?.();
 		}
@@ -130,7 +143,7 @@ const ChatButton: FC< Props > = ( {
 	}
 
 	function getChildren() {
-		if ( isOpeningChatWidget ) {
+		if ( isOpeningZendeskWidget ) {
 			return <Spinner />;
 		}
 

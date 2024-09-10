@@ -14,9 +14,9 @@ describe( 'ChecklistItem', () => {
 		} ),
 	};
 
-	const renderComponent = ( props: Partial< ComponentProps< typeof ChecklistItem > > ) => {
+	const renderComponent = ( props: Partial< ComponentProps< typeof ChecklistItem > > ) =>
 		render( <ChecklistItem { ...defaultProps } { ...props } /> );
-	};
+
 	it( 'displays a badge', () => {
 		const badge_text = 'Badge Text';
 		renderComponent( { task: buildTask( { badge_text } ) } );
@@ -29,6 +29,15 @@ describe( 'ChecklistItem', () => {
 		const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
 
 		expect( taskCompleteIcon ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a button when it has the onClick event', () => {
+		const onClick = jest.fn();
+		renderComponent( { onClick } );
+
+		const taskButton = screen.getByRole( 'button' );
+
+		expect( taskButton ).toBeInTheDocument();
 	} );
 
 	it( 'calls onClick when the task is clicked', async () => {
@@ -89,9 +98,18 @@ describe( 'ChecklistItem', () => {
 		expect( actionDispatch ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'renders a span when it does not have the click or a link', () => {
+		const title = 'Task';
+		const { container } = renderComponent( { task: buildTask( { title } ) } );
+
+		const taskButton = container.querySelector( '.components-button' )!;
+
+		expect( taskButton.tagName ).toEqual( 'DIV' );
+	} );
+
 	describe( 'when the task is disabled', () => {
 		it( 'disables the button', () => {
-			renderComponent( { task: buildTask( { disabled: true } ) } );
+			renderComponent( { task: buildTask( { disabled: true } ), onClick: () => {} } );
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton ).toBeDisabled();
@@ -120,7 +138,7 @@ describe( 'ChecklistItem', () => {
 		} );
 
 		it( 'disables the task', () => {
-			renderComponent( { task: buildTask( { completed: true } ) } );
+			renderComponent( { task: buildTask( { completed: true } ), onClick: () => {} } );
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton ).toBeDisabled();
@@ -135,7 +153,10 @@ describe( 'ChecklistItem', () => {
 			} );
 
 			it( 'enables the task', () => {
-				renderComponent( { task: buildTask( { completed: true, disabled: false } ) } );
+				renderComponent( {
+					task: buildTask( { completed: true, disabled: false } ),
+					onClick: () => {},
+				} );
 				const taskButton = screen.queryByRole( 'button' );
 
 				expect( taskButton ).toBeEnabled();
@@ -149,6 +170,63 @@ describe( 'ChecklistItem', () => {
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton?.className ).toContain( 'checklist-item__checklist-primary-button' );
+		} );
+	} );
+
+	describe( 'when it has expandable content', () => {
+		describe( 'and when it is open', () => {
+			it( 'displays the content', () => {
+				renderComponent( { expandable: { isOpen: true, content: <div>Expanded</div> } } );
+
+				expect( screen.getByText( 'Expanded' ) ).toBeVisible();
+			} );
+
+			it( 'calls the action click', async () => {
+				const onClick = jest.fn();
+				renderComponent( {
+					expandable: {
+						isOpen: true,
+						content: <div>Expanded</div>,
+						action: {
+							label: 'Action',
+							onClick,
+						},
+					},
+				} );
+
+				const actionButton = screen.queryByRole( 'button', { name: 'Action' } )!;
+				await userEvent.click( actionButton );
+
+				expect( onClick ).toHaveBeenCalled();
+			} );
+
+			it( 'has the expanded class', () => {
+				const { container } = renderComponent( {
+					expandable: { isOpen: true, content: <div>Expanded</div> },
+				} );
+
+				expect(
+					container.querySelector( '.checklist-item__task' )?.classList.contains( 'expanded' )
+				).toBeTruthy();
+			} );
+		} );
+
+		describe( 'and when it is not open', () => {
+			it( 'does not display the content', () => {
+				renderComponent( { expandable: { isOpen: false, content: <div>Expanded</div> } } );
+
+				expect( screen.queryByText( 'Expanded' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'does not have the expanded class', () => {
+				const { container } = renderComponent( {
+					expandable: { isOpen: false, content: <div>Expanded</div> },
+				} );
+
+				expect(
+					container.querySelector( '.checklist-item__task' )?.classList.contains( 'expanded' )
+				).toBeFalsy();
+			} );
 		} );
 	} );
 } );

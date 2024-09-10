@@ -9,6 +9,7 @@ import {
 	pageVisibilityStop,
 	blockingResources,
 } from './collectors';
+import type { Collector, Report, ReportData, ReportPayload } from './types';
 
 export class ReportImpl implements Report {
 	id: string;

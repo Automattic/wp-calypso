@@ -16,13 +16,45 @@
 }
 
 .import-upgrade-plan-skeleton {
-	color: $studio-gray-0;
-	background-color: $studio-gray-5;
 	width: 100%;
-	border-radius: 4px;
+	height: 14px;
+	margin-bottom: 8px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 30px;
+	background-color: $studio-gray-5;
+	color: $studio-gray-0;
 	animation: import-upgrade-plan-skeleton__animation 1.6s ease-in-out infinite;
+
+	&.import-upgrade-plan-skeleton--circles-item {
+		width: 36px;
+		height: 36px;
+		margin-bottom: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 100px;
+		border: solid 2px #fbfbfb;
+
+		&:not(:first-child) {
+			margin-left: -6px;
+		}
+	}
+
+	&.import-upgrade-plan-skeleton--dark-gray {
+		background-color: $studio-gray-10;
+	}
+
+	&.import-upgrade-plan-skeleton--light-highlight {
+		background-color: #e6d1ff;
+	}
+
+	&.import-upgrade-plan-skeleton--dark-highlight {
+		background-color: #ae8bd8;
+	}
 
 	&::after {
 		content: "";
 	}
+}
+
+.import-upgrade-plan-skeleton__flex-container {
+	display: flex;
 }

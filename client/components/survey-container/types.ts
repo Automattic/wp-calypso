@@ -12,6 +12,7 @@ export type Option = {
 	label: string;
 	helpText?: string;
 	value: string;
+	additionalProps?: Record< string, boolean >;
 };
 
 export type Question = {

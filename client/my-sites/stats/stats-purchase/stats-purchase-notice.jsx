@@ -13,7 +13,7 @@ import {
 import './styles.scss';
 
 const getStatsPurchaseURL = ( siteId, productType = 'commercial' ) =>
-	`/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
+	`/stats/purchase/${ siteId }?productType=${ productType }`;
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	event.preventDefault();

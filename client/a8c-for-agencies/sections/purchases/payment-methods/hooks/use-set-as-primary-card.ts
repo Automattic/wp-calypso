@@ -10,6 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { isClientView } from '../lib/is-client-view';
 import { getFetchStoredCardsKey } from './use-stored-cards';
 import type { SetAsPrimaryCardProps } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
@@ -23,15 +24,18 @@ function useSetAsPrimaryCardMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, Error, SetAsPrimaryCardProps, TContext >
 ): UseMutationResult< APIResponse, Error, SetAsPrimaryCardProps, TContext > {
 	const agencyId = useSelector( getActiveAgencyId );
+	const isClient = isClientView();
 
 	return useMutation< APIResponse, Error, SetAsPrimaryCardProps, TContext >( {
 		...options,
 		mutationFn: ( { paymentMethodId, useAsPrimaryPaymentMethod } ) =>
 			wpcom.req.post( {
 				apiNamespace: 'wpcom/v2',
-				path: `/jetpack-licensing/stripe/payment-method`,
+				path: isClient
+					? '/agency-client/stripe/payment-method'
+					: '/jetpack-licensing/stripe/payment-method',
 				body: {
-					...( agencyId && { agency_id: agencyId } ),
+					...( ! isClient && agencyId && { agency_id: agencyId } ),
 					payment_method_id: paymentMethodId,
 					use_as_primary_payment_method: useAsPrimaryPaymentMethod,
 				},

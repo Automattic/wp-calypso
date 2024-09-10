@@ -47,7 +47,9 @@ export default function useCreateExistingCards( {
 					id: `existingCard-${ storedDetails.stored_details_id }`,
 					cardholderName: storedDetails.name,
 					cardExpiry: storedDetails.expiry,
-					brand: storedDetails.card_type,
+					brand: storedDetails?.display_brand
+						? storedDetails.display_brand
+						: storedDetails.card_type,
 					last4: storedDetails.card_last_4,
 					storedDetailsId: storedDetails.stored_details_id,
 					paymentMethodToken: storedDetails.mp_ref,

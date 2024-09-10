@@ -15,6 +15,9 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	showOnlyFavorites: undefined,
 	setShowOnlyFavorites: () => {},
 
+	showOnlyDevelopmentSites: undefined,
+	setShowOnlyDevelopmentSites: () => {},
+
 	dataViewsState: initialDataViewsState,
 	setDataViewsState: () => {},
 
@@ -38,6 +41,9 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 
 	isPopoverOpen: false,
 	setIsPopoverOpen: () => {},
+
+	recentlyCreatedSiteId: null,
+	setRecentlyCreatedSiteId: () => {},
 } );
 
 export default SitesDashboardContext;

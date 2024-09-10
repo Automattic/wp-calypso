@@ -6,7 +6,16 @@ const GravatarDomainCard = () => {
 	return (
 		<div>
 			<div>
-				<p>{ translate( 'This domain is used as a custom domain for your Gravatar profile.' ) }</p>
+				<p>
+					{ translate(
+						'This domain is used as a custom domain for your {{a}}Gravatar profile{{/a}}.',
+						{
+							components: {
+								a: <a href="https://gravatar.com/profile" rel="noopener noreferrer" />,
+							},
+						}
+					) }
+				</p>
 			</div>
 		</div>
 	);

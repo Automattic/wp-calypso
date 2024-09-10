@@ -16,37 +16,31 @@ interface Props {
  * useGridSize returns the current grid size based on the width of the container
  * and the breakpoints passed through as props.
  */
-const useGridSize = ( { containerRef, containerBreakpoints }: Props ) => {
+export default function useGridSize( { containerRef, containerBreakpoints }: Props ) {
 	const [ gridSize, setGridSize ] = useState< string | null >( null );
 
 	useLayoutEffect( () => {
-		if ( ! containerRef?.current ) {
+		if ( ! containerRef.current ) {
 			return;
 		}
 
-		const observer = new ResizeObserver(
-			( [ entry ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
-				const width = entry.contentRect.width;
+		const observer = new ResizeObserver( ( [ entry ] ) => {
+			const { width } = entry.contentRect;
 
-				if ( width ) {
-					for ( const [ key, value ] of [ ...containerBreakpoints ].reverse() ) {
-						if ( width >= value ) {
-							if ( gridSize !== key ) {
-								setGridSize( key );
-							}
-							break;
-						}
+			if ( width ) {
+				for ( const [ key, value ] of [ ...containerBreakpoints ].reverse() ) {
+					if ( width >= value ) {
+						setGridSize( key );
+						break;
 					}
 				}
 			}
-		);
+		} );
 
 		observer.observe( containerRef.current );
 
 		return () => observer.disconnect();
-	}, [ containerBreakpoints, containerRef, gridSize ] );
+	}, [ containerRef, containerBreakpoints ] );
 
 	return gridSize;
-};
-
-export default useGridSize;
+}

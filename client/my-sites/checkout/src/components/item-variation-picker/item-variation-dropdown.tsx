@@ -4,7 +4,6 @@ import {
 	isMultiYearDomainProduct,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -27,7 +26,6 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
@@ -138,7 +136,6 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			aria-expanded={ isOpen }
 			aria-haspopup="listbox"
 			onKeyDown={ handleKeyDown }
-			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
 			<CurrentOption
 				aria-label={ translate( 'Pick a product term' ) }
@@ -146,7 +143,6 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				onClick={ () => toggle( id ) }
 				open={ isOpen }
 				role="button"
-				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 			>
 				{ selectedVariantIndex !== null ? (
 					<ItemVariantDropDownPriceWrapper variant={ variants[ selectedVariantIndex ] } />
@@ -219,7 +215,6 @@ function ItemVariantOption( {
 	selectedItem: ResponseCartProduct;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	return (
 		<Option
 			id={ productId.toString() }
@@ -229,7 +224,6 @@ function ItemVariantOption( {
 			role="option"
 			onClick={ onSelect }
 			selected={ isSelected }
-			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 		>
 			{ isJetpack( variant ) ? (
 				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />

@@ -17,7 +17,13 @@ const sections = [
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
-		module: 'calypso/sites-dashboard',
+		module: 'calypso/hosting/sites',
+		group: 'sites-dashboard',
+	},
+	{
+		name: 'sites-dashboard',
+		paths: [ '/p2s' ],
+		module: 'calypso/hosting/sites',
 		group: 'sites-dashboard',
 	},
 	{
@@ -218,13 +224,13 @@ const sections = [
 	{
 		name: 'hosting-overview',
 		paths: [ '/overview' ],
-		module: 'calypso/hosting-overview',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{
 		name: 'hosting-features',
 		paths: [ '/hosting-features' ],
-		module: 'calypso/hosting-features',
+		module: 'calypso/hosting/hosting-features',
 		group: 'sites',
 	},
 	{
@@ -302,6 +308,16 @@ const sections = [
 		group: 'site-profiler',
 		isomorphic: true,
 		title: 'Site Profiler',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'performance-profiler',
+		paths: [ '/speed-test-tool', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/speed-test-tool` ],
+		module: 'calypso/performance-profiler',
+		enableLoggedOut: true,
+		group: 'performance-profiler',
+		isomorphic: true,
+		title: 'Speed Test',
 		trackLoadPerformance: true,
 	},
 	{
@@ -554,7 +570,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/hosting-overview',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{
@@ -826,6 +842,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-team',
+		paths: [ '/team', '/team/invite' ],
+		module: 'calypso/a8c-for-agencies/sections/team',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-signup',
 		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
@@ -834,7 +856,13 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-client',
-		paths: [ '/client/landing', '/client/subscriptions', '/client/payment-methods' ],
+		paths: [
+			'/client/landing',
+			'/client/subscriptions',
+			'/client/payment-methods',
+			'/client/payment-methods/add',
+			'/client/checkout',
+		],
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',
 	},

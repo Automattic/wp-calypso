@@ -1,4 +1,4 @@
-import { CountComparisonCard } from '@automattic/components';
+import { CountCard } from '@automattic/components';
 import React from 'react';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
 
@@ -15,12 +15,11 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 				{ overviewData.map( ( { count, heading }, index ) => {
 					return (
 						// TODO: Communicate loading vs error state to the user.
-						<CountComparisonCard
+						<CountCard
 							key={ index }
 							heading={ heading }
-							count={ isLoading || isError ? null : count }
+							value={ isLoading || isError ? null : count }
 							showValueTooltip
-							icon={ false }
 						/>
 					);
 				} ) }

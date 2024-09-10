@@ -59,6 +59,7 @@ export interface TaskContext {
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	displayGlobalStylesWarning: boolean;
+	hasSkippedCheckout: boolean;
 	globalStylesMinimumPlan: string;
 	translatedPlanName?: ReactNode | string;
 	goToStep?: NavigationControls[ 'goToStep' ];

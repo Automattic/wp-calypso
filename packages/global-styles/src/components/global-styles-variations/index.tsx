@@ -54,7 +54,7 @@ const GlobalStylesVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, globalStylesVariation ),
 			inline_css: baseInlineCss + globalStylesVariationInlineCss,
 		};
-	}, [ globalStylesVariation, base ] );
+	}, [ globalStylesVariation.slug, base ] );
 	const selectOnEnter = ( event: React.KeyboardEvent ) => {
 		if ( event.keyCode === ENTER ) {
 			event.preventDefault();

@@ -7,6 +7,7 @@ import { Children, Fragment, ReactNode, isValidElement } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import DomainPromotionalPricingRestrictions from 'calypso/my-sites/checkout/src/components/domain-promotional-pricing-restrictions';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -16,6 +17,7 @@ import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-car
 import BundledDomainNotice, { showBundledDomainNotice } from './bundled-domain-notice';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationDotGay from './domain-registration-dot-gay';
+import { DomainRegistrationFreeGravatarDomain } from './domain-registration-free-gravatar-domain';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
 import { showInternationalFeeNotice, InternationalFeeNotice } from './international-fee-notice';
@@ -95,8 +97,10 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			/>
 			<>
 				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
+				{ ! isGiftPurchase && <DomainPromotionalPricingRestrictions cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+				{ ! isGiftPurchase && <DomainRegistrationFreeGravatarDomain cart={ cart } /> }
 				<EbanxTermsOfService />
 				{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
 				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }

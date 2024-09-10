@@ -28,8 +28,6 @@ const Hr = styled.hr( {
 } );
 
 const EdgeCacheNotice = styled.p( {
-	fontSize: '14px',
-	fontStyle: 'italic',
 	color: '#646970',
 	marginTop: '18px',
 } );
@@ -91,7 +89,6 @@ export const CacheCard = ( {
 		return (
 			<div>
 				<Button
-					primary
 					onClick={ clearCache }
 					busy={ isClearingCache }
 					disabled={

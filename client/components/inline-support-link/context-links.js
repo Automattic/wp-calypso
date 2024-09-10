@@ -149,8 +149,8 @@ const contextLinks = {
 		post_id: 147777,
 	},
 	'importers-wordpress': {
-		link: 'https://wordpress.com/support/export/',
-		post_id: 2087,
+		link: 'https://wordpress.com/support/import/import-a-sites-content/#step-1-obtain-an-export-file',
+		post_id: 194757,
 	},
 	'introduction-to-woocommerce': {
 		link: 'https://wordpress.com/support/introduction-to-woocommerce/',

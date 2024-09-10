@@ -5,16 +5,12 @@
 }
 
 .a4a-form__section-heading-title {
-	font-size: rem(20px);
-	line-height: 1.3;
-	font-weight: 500;
+	@include a4a-font-heading-lg($font-weight: 500);
 }
 
 .a4a-form__section-heading-description {
-	font-size: rem(13px);
-	font-weight: 400;
+	@include a4a-font-body-md;
 	color: var(--color-neutral-50);
-	line-height: 1.5;
 }
 
 .a4a-form__section-body {

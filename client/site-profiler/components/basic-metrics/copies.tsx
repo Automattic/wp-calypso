@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { type I18N, numberFormat } from 'i18n-calypso';
+import { type I18N } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { formatMsValue } from 'calypso/site-profiler/utils/format-ms-value';
 import type { BasicMetricsScored, Metrics, Scores } from 'calypso/data/site-profiler/types';
 
 type SubsetScores = Exclude< Scores, 'needs-improvement' >;
@@ -23,11 +24,10 @@ type CopiesProps = {
 };
 
 type CopiesReturnValue = {
-	[ k in Metrics ]: CopiesProps;
+	[ k in string ]: CopiesProps;
 };
 
 export type CopiesReturnValueList = [ Metrics, CopiesProps ][];
-
 export function getCopies(
 	basicMetrics: BasicMetricsScored,
 	translate: I18N[ 'translate' ],
@@ -36,30 +36,30 @@ export function getCopies(
 	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
-	const clsValue = numberFormat( basicMetrics?.cls?.value, 2 );
-	const fidValue = numberFormat( basicMetrics?.fid?.value, 2 );
-	const lcpValue = numberFormat( basicMetrics?.lcp?.value, 2 );
-	const fcpValue = numberFormat( basicMetrics?.fcp?.value, 2 );
-	const ttfbValue = numberFormat( basicMetrics?.ttfb?.value, 2 );
-	const inpValue = numberFormat( basicMetrics?.inp?.value, 2 );
+	const clsValue = basicMetrics?.cls?.value.toFixed( 2 );
+	const fidValue = formatMsValue( basicMetrics?.fid?.value );
+	const lcpValue = formatMsValue( basicMetrics?.lcp?.value );
+	const fcpValue = formatMsValue( basicMetrics?.fcp?.value );
+	const ttfbValue = formatMsValue( basicMetrics?.ttfb?.value );
+	const inpValue = formatMsValue( basicMetrics?.inp?.value );
 
 	const cls: CopiesProps = {
 		title: translate( 'Cumulative Layout Shift (CLS)' ),
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Excellent job maintaining low shifts!',
+					"Your site's CLS is %(value)s, ensuring a stable layout. Excellent job maintaining low shifts!",
 					{ args: { value: clsValue } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com to maintain this stability and further enhance your site’s layout performance.'
+					"Migrate to WordPress.com to maintain this stability and further enhance your site's layout performance."
 				),
 				cta: translate( 'Enhance stability' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
+					"Your site's CLS is %(value)s, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.",
 					{
 						args: {
 							value: clsValue,
@@ -76,18 +76,18 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.',
+					"Your site's CLS is %(value)f, ensuring a stable layout. Great job maintaining low shifts.",
 					{ args: { value: clsValue } }
 				),
 				solution: translate(
-					'Keep up the good work! Continue using best practices to maintain your site’s stability.'
+					"Keep up the good work! Continue using best practices to maintain your site's stability."
 				),
 				cta: translate( 'Explore Advanced Tips' ),
 				url: supportUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.',
+					"Your site's CLS is %(value)f, higher than average, causing noticeable shifts. Aim for 0.1 for smoother layout.",
 					{ args: { value: clsValue } }
 				),
 				solution: translate(
@@ -104,7 +104,7 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s FID is %(value)fms, offering quick response times. Excellent job maintaining fast interactions!',
+					"Your site's FID is %(value)s, offering quick response times. Excellent job maintaining fast interactions!",
 					{ args: { value: fidValue } }
 				),
 				solution: translate(
@@ -115,7 +115,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s FID is %(value)fms, slower than most. Aim for less than 100ms for better responsiveness.',
+					"Your site's FID is %(value)s, slower than most. Aim for less than 100ms for better responsiveness.",
 					{
 						args: {
 							value: fidValue,
@@ -132,7 +132,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s FID is %(value)fms, offering quick response times. Excellent job on maintaining swift interactions!',
+					"Your site's FID is %(value)s, offering quick response times. Excellent job on maintaining swift interactions!",
 					{ args: { value: fidValue } }
 				),
 				solution: translate(
@@ -143,11 +143,11 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s FID is %(value)fms, slower than most. Aim for less than 100ms for better responsiveness.',
+					"Your site's FID is %(value)s, slower than most. Aim for less than 100ms for better responsiveness.",
 					{ args: { value: fidValue } }
 				),
 				solution: translate(
-					'Connect with a Happiness Engineer to optimize FID and improve your site’s responsiveness'
+					"Connect with a Happiness Engineer to optimize FID and improve your site's responsiveness"
 				),
 				cta: translate( 'Enhance responsiveness' ),
 				url: supportUrl,
@@ -160,7 +160,7 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fms, providing a fast initial load. Great job on maintaining quick content display!',
+					"Your site's FCP is %(value)s, providing a fast initial load. Great job on maintaining quick content display!",
 					{ args: { value: fcpValue } }
 				),
 				solution: translate(
@@ -171,7 +171,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fms, slower than average. Aim for under 2s to improve user experience.',
+					"Your site's FCP is %(value)s, slower than average. Aim for under 2s to improve user experience.",
 					{
 						args: {
 							value: fcpValue,
@@ -188,7 +188,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fms, providing a fast initial load. Excellent job maintaining quick content delivery!',
+					"Your site's FCP is %(value)s, providing a fast initial load. Excellent job maintaining quick content delivery!",
 					{ args: { value: fcpValue } }
 				),
 				solution: translate(
@@ -199,7 +199,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s FCP is %(value)fms, slower than average. Aim for under 2s to improve user experience.',
+					"Your site's FCP is %(value)s, slower than average. Aim for under 2s to improve user experience.",
 					{ args: { value: fcpValue } }
 				),
 				solution: translate(
@@ -216,18 +216,18 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fms, loading main content quickly. Well done on maintaining fast load times!',
+					"Your site's LCP is %(value)s, loading main content quickly. Well done on maintaining fast load times!",
 					{ args: { value: lcpValue } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com to achieve even faster LCP and enhance your site’s overall performance.'
+					"Migrate to WordPress.com to achieve even faster LCP and enhance your site's overall performance."
 				),
 				cta: translate( 'Optimize main load' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fms, slower than typical sites. Aim for under 2.5s for better performance.',
+					"Your site's LCP is %(value)s, slower than typical sites. Aim for under 2.5s for better performance.",
 					{
 						args: {
 							value: lcpValue,
@@ -244,7 +244,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fms, loading main content quickly. Excellent job maintaining fast content display!',
+					"Your site's LCP is %(value)s, loading main content quickly. Excellent job maintaining fast content display!",
 					{ args: { value: lcpValue } }
 				),
 				solution: translate(
@@ -255,7 +255,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s LCP is %(value)fms, slower than typical sites. Aim for under 2.5s for better performance.',
+					"Your site's LCP is %(value)s, slower than typical sites. Aim for under 2.5s for better performance.",
 					{ args: { value: lcpValue } }
 				),
 				solution: translate(
@@ -272,7 +272,7 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s TTFB is %(value)fms, offering fast server response. Excellent job on maintaining quick response!',
+					"Your site's TTFB is %(value)s, offering fast server response. Excellent job on maintaining quick response!",
 					{ args: { value: ttfbValue } }
 				),
 				solution: translate(
@@ -283,7 +283,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
+					"Your site's TTFB is %(value)s, longer than most sites. Aim for less than 600ms for better performance.",
 					{
 						args: {
 							value: ttfbValue,
@@ -300,7 +300,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s TTFB is %(value)fms, offering fast server response. Excellent job on maintaining quick server performance!',
+					"Your site's TTFB is %(value)s, offering fast server response. Excellent job on maintaining quick server performance!",
 					{ args: { value: ttfbValue } }
 				),
 				solution: translate(
@@ -311,7 +311,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s TTFB is %(value)fms, longer than most sites. Aim for less than 600ms for better performance.',
+					"Your site's TTFB is %(value)s, longer than most sites. Aim for less than 600ms for better performance.",
 					{ args: { value: ttfbValue } }
 				),
 				solution: translate(
@@ -328,18 +328,18 @@ export function getCopies(
 		nonWpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s INP is %(value)fms, providing smooth interactions. Great job on maintaining quick responses!',
+					"Your site's INP is %(value)s, providing smooth interactions. Great job on maintaining quick responses!",
 					{ args: { value: inpValue } }
 				),
 				solution: translate(
-					'Migrate to WordPress.com to sustain and further enhance your site’s interaction speed.'
+					"Migrate to WordPress.com to sustain and further enhance your site's interaction speed."
 				),
 				cta: translate( 'Improve INP speed' ),
 				url: migrateUrl,
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s INP is %(value)fms, higher than average. Aim for less than 100ms for smoother interactions.',
+					"Your site's INP is %(value)s, higher than average. Aim for less than 100ms for smoother interactions.",
 					{
 						args: {
 							value: inpValue,
@@ -356,7 +356,7 @@ export function getCopies(
 		wpcom: {
 			good: {
 				diagnostic: translate(
-					'Your site’s INP is %(value)fms, providing smooth interactions. Excellent performance, keep it up!',
+					"Your site's INP is %(value)s, providing smooth interactions. Excellent performance, keep it up!",
 					{ args: { value: inpValue } }
 				),
 				solution: translate(
@@ -367,7 +367,7 @@ export function getCopies(
 			},
 			poor: {
 				diagnostic: translate(
-					'Your site’s INP is %(value)fms, higher than average. Aim for less than 100ms for smoother interactions.',
+					"Your site's INP is %(value)s, higher than average. Aim for less than 100ms for smoother interactions.",
 					{ args: { value: inpValue } }
 				),
 				solution: translate(

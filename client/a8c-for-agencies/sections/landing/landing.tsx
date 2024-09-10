@@ -2,20 +2,18 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
+	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-
-import './style.scss';
+import {
+	getActiveAgency,
+	hasFetchedAgency,
+	isAgencyClientUser,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 /**
  * Redirect with Current Query
@@ -32,10 +30,15 @@ export default function Landing() {
 
 	const hasFetched = useSelector( hasFetchedAgency );
 	const agency = useSelector( getActiveAgency );
+	const isClientUser = useSelector( isAgencyClientUser );
 
 	useEffect( () => {
 		if ( ! hasFetched ) {
 			return;
+		}
+
+		if ( isClientUser ) {
+			return page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
 		}
 
 		if ( agency ) {
@@ -50,24 +53,7 @@ export default function Landing() {
 		}
 
 		redirectWithCurrentQuery( A4A_SIGNUP_LINK );
-	}, [ agency, hasFetched ] );
+	}, [ agency, hasFetched, isClientUser ] );
 
-	return (
-		<Layout className="a4a-landing" title={ title } wide>
-			<LayoutTop>
-				<LayoutHeader>
-					<Title>
-						<div className="a4a-landing__title-placeholder"></div>
-					</Title>
-				</LayoutHeader>
-			</LayoutTop>
-			<LayoutBody>
-				<div className="a4a-landing__section-placeholder">
-					<div className="a4a-landing__section-placeholder-title"></div>
-					<div className="a4a-landing__section-placeholder-body"></div>
-					<div className="a4a-landing__section-placeholder-footer"></div>
-				</div>
-			</LayoutBody>
-		</Layout>
-	);
+	return <PagePlaceholder title={ title } />;
 }

@@ -98,8 +98,7 @@
 .a4a-slider__label,
 .a4a-slider__sub,
 .a4a-slider__marker {
-	font-size: 0.875rem;
-	font-weight: 500;
+	@include a4a-font-label-button;
 	line-height: 1.1;
 }
 

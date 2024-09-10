@@ -82,7 +82,7 @@ export const AdvancedWorkflowStyle = ( {
 					),
 					{
 						a: (
-							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-github-deployment-source-files/" />
+							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/" />
 						),
 					}
 				) }

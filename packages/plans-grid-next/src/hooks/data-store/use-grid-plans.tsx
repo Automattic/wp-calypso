@@ -196,6 +196,9 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
+		case 'plans-affiliate':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
@@ -225,7 +228,6 @@ const useGridPlans: UseGridPlansType = ( {
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
-	forceDefaultIntent,
 	highlightLabelOverrides,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -245,7 +247,7 @@ const useGridPlans: UseGridPlansType = ( {
 	} );
 	const planSlugsForIntent = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
-			intent: forceDefaultIntent ? 'plans-default-wpcom' : intent,
+			intent,
 			selectedPlan,
 			siteId,
 			hiddenPlans,
@@ -254,12 +256,17 @@ const useGridPlans: UseGridPlansType = ( {
 		term,
 		intent,
 	} );
+
+	const { planSlug: sitePlanSlug, purchaseId } = Plans.useCurrentPlan( { siteId } ) || {};
+
 	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs: availablePlanSlugs,
+		siteId,
+		shouldIgnorePlanOwnership: !! purchaseId, // Ignore plan ownership only if the site is on a paid plan
 	} );
 
 	// only fetch highlights for the plans that are available for the intent
-	const { planSlug: sitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
+
 	const highlightLabels = useHighlightLabels( {
 		intent,
 		planSlugs: planSlugsForIntent,
@@ -320,9 +327,6 @@ const useGridPlans: UseGridPlansType = ( {
 						product_slug: planSlug,
 				  };
 
-		const storageAddOnsForPlan =
-			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
-
 		const isVisible = isGridPlanVisible( {
 			planSlug,
 			planSlugsForIntent,
@@ -346,7 +350,6 @@ const useGridPlans: UseGridPlansType = ( {
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
-			storageAddOnsForPlan,
 		};
 	} );
 };

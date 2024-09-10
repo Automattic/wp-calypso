@@ -326,10 +326,11 @@ function _offset( box, doc ) {
  * @param {window.Element} el Element to be constained to viewport
  * @returns {number}    the best width
  */
-export function constrainLeft( off, el ) {
+export function constrainLeft( off, el, ignoreViewport = false ) {
 	const viewport = getViewport();
 	const ew = el.getBoundingClientRect().width;
-	off.left = Math.max( 0, Math.min( off.left, viewport.width - ew ) );
+	const offsetLeft = ignoreViewport ? off.left : Math.min( off.left, viewport.width - ew );
+	off.left = Math.max( 0, offsetLeft );
 
 	return off;
 }

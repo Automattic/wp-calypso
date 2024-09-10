@@ -1,3 +1,10 @@
+interface StatusMeta {
+	statusType: 'success' | 'warning' | 'error';
+	status: string;
+	statusReason?: string;
+	actionRequired: boolean;
+}
+
 export const getAccountStatus = (
 	data: {
 		Status: string;
@@ -5,19 +12,16 @@ export const getAccountStatus = (
 		PayableReason: string[];
 	} | null,
 	translate: ( key: string ) => string
-): {
-	statusType: 'success' | 'warning' | 'error';
-	status: string;
-	statusReason?: string;
-} | null => {
+): StatusMeta | null => {
 	if ( ! data ) {
 		return null;
 	}
 	const { Status, IsPayable, PayableReason } = data;
+	let statusMeta = null;
 	switch ( Status ) {
 		case 'Active':
 			if ( ! IsPayable ) {
-				return {
+				statusMeta = {
 					statusType: 'warning',
 					status: translate( 'Not Payable' ),
 					statusReason: PayableReason?.map( ( reason ) => {
@@ -30,29 +34,43 @@ export const getAccountStatus = (
 						return reason;
 					} ).join( ', ' ),
 				};
+				break;
 			}
-			return {
+			statusMeta = {
 				statusType: 'success',
 				status: translate( 'Confirmed' ),
 			};
+			break;
 		case 'Suspended':
-			return {
+			statusMeta = {
 				statusType: 'error',
 				status: translate( 'Suspended' ),
 			};
+			break;
 		case 'Blocked':
-			return {
+			statusMeta = {
 				statusType: 'error',
 				status: translate( 'Blocked' ),
 				statusReason: translate( 'Your account is blocked' ),
 			};
+			break;
 		case 'Closed':
-			return {
+			statusMeta = {
 				statusType: 'error',
 				status: translate( 'Closed' ),
 				statusReason: translate( 'Your account is closed' ),
 			};
+			break;
 		default:
-			return null;
+			break;
 	}
+
+	if ( ! statusMeta ) {
+		return null;
+	}
+
+	return {
+		...statusMeta,
+		actionRequired: [ 'warning', 'error' ].includes( statusMeta?.statusType ),
+	} as StatusMeta;
 };

@@ -40,7 +40,11 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	if ( pathIncludes( currentPath, 'plugins', 1 ) ) {
-		return pathIncludes( path, 'plugins', 1 ) && fragmentIsEqual( path, currentPath, 2 );
+		if ( pathIncludes( currentPath, 'scheduled-updates', 2 ) ) {
+			return pathIncludes( path, 'plugins', 1 ) && pathIncludes( path, 'scheduled-updates', 2 );
+		}
+
+		return pathIncludes( path, 'plugins', 1 ) && fragmentIsEqual( path, currentPath, 1 );
 	}
 
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
@@ -98,6 +102,11 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		currentPath.startsWith( '/google-my-business/stats/' )
 	) {
 		return path.startsWith( '/stats/' );
+	}
+
+	// For `/theme/*` paths, show Themes menu as selected.
+	if ( pathIncludes( currentPath, 'theme', 1 ) ) {
+		return pathIncludes( path, 'themes', 1 );
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );

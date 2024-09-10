@@ -5,6 +5,7 @@ import {
 	JETPACK_GET_AGENCIES_SUCCESS,
 	JETPACK_GET_AGENCIES_ERROR,
 	JETPACK_CURRENT_AGENCY_UPDATE,
+	JETPACK_SET_AGENCY_CLIENT_USER,
 } from './action-types';
 
 export const initialState = {
@@ -18,6 +19,7 @@ export const initialState = {
 export const hasFetched = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_SUCCESS:
+		case JETPACK_SET_AGENCY_CLIENT_USER:
 			return true;
 	}
 
@@ -33,6 +35,16 @@ export const agencies = ( state = initialState.isFetching, action: AnyAction ) =
 	return state;
 };
 
+export const isAgencyClientUser = ( state = initialState.isFetching, action: AnyAction ) => {
+	switch ( action.type ) {
+		case JETPACK_SET_AGENCY_CLIENT_USER: {
+			return action.isClientUser;
+		}
+	}
+
+	return state;
+};
+
 export const isFetching = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_REQUEST:
@@ -40,6 +52,7 @@ export const isFetching = ( state = initialState.isFetching, action: AnyAction )
 
 		case JETPACK_GET_AGENCIES_SUCCESS:
 		case JETPACK_GET_AGENCIES_ERROR:
+		case JETPACK_SET_AGENCY_CLIENT_USER:
 			return false;
 	}
 
@@ -70,4 +83,5 @@ export default combineReducers( {
 	activeAgency,
 	agencies,
 	error,
+	isAgencyClientUser,
 } );
