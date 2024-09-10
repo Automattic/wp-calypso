@@ -55,7 +55,7 @@ const PlanFeaturesList = ( {
 }: PlanFeaturesListProps ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { featureGroupMap } = usePlansGridContext();
+	const { featureGroupMap, hideFeatureGroupTitles } = usePlansGridContext();
 	const featureGroup = featureGroupSlug && featureGroupMap[ featureGroupSlug ];
 
 	/**
@@ -88,11 +88,13 @@ const PlanFeaturesList = ( {
 						isTableCell={ options?.isTableCell }
 						className="plan-features-2023-grid__table-item"
 					>
-						<PlanFeaturesItem>
-							<h2 className="plans-grid-next-features-grid__feature-group-title">
-								{ featureGroup?.getTitle() }
-							</h2>
-						</PlanFeaturesItem>
+						{ ! hideFeatureGroupTitles && (
+							<PlanFeaturesItem>
+								<h2 className="plans-grid-next-features-grid__feature-group-title">
+									{ featureGroup?.getTitle() }
+								</h2>
+							</PlanFeaturesItem>
+						) }
 						<PlanFeaturesItem>
 							<PlanStorage
 								planSlug={ planSlug }
@@ -132,10 +134,10 @@ const PlanFeaturesList = ( {
 					isTableCell={ options?.isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					{ featureGroup?.getTitle() && (
+					{ ! hideFeatureGroupTitles && featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
 							<h2 className="plans-grid-next-features-grid__feature-group-title">
-								{ featureGroup?.getTitle() }
+								{ featureGroup.getTitle() }
 							</h2>
 						</PlanFeaturesItem>
 					) }

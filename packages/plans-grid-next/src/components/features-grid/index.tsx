@@ -352,6 +352,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableReducedFeatureGroupSpacing,
 		enableLogosOnlyForEnterprisePlan,
 		featureGroupMap = {},
+		hideFeatureGroupTitles,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -396,6 +397,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				enablePreviousFeaturesIncludedTitle={ enablePreviousFeaturesIncludedTitle }
 				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
 				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }
+				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />

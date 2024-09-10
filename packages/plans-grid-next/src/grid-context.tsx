@@ -29,6 +29,7 @@ interface PlansGridContext {
 	enableLogosOnlyForEnterprisePlan?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
+	hideFeatureGroupTitles?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -52,6 +53,7 @@ const PlansGridContextProvider = ( {
 	enableLogosOnlyForEnterprisePlan,
 	featureGroupMap,
 	hideUnsupportedFeatures,
+	hideFeatureGroupTitles,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -84,6 +86,7 @@ const PlansGridContextProvider = ( {
 				enableLogosOnlyForEnterprisePlan,
 				featureGroupMap,
 				hideUnsupportedFeatures,
+				hideFeatureGroupTitles,
 			} }
 		>
 			{ children }

@@ -171,6 +171,7 @@ export const FewerFeaturesExperimentTreatmentVariantB = {
 		enableStorageAsBadge: false,
 		enableReducedFeatureGroupSpacing: true,
 		enableLogosOnlyForEnterprisePlan: true,
+		hideFeatureGroupTitles: true,
 		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;

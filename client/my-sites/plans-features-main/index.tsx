@@ -806,6 +806,9 @@ const PlansFeaturesMain = ( {
 										enableLogosOnlyForEnterprisePlan={
 											simplifiedFeaturesGridExperimentVariant === 'simplified'
 										}
+										hideFeatureGroupTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

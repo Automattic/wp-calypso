@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 
 interface Params {
-	flowName?: string;
+	flowName?: string | null;
 	intent?: string;
 	isInSignup: boolean;
 }

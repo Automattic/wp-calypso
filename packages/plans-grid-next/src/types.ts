@@ -223,6 +223,11 @@ export type GridContextProps = {
 	 * Display only the client logos for the enterprise plan
 	 */
 	enableLogosOnlyForEnterprisePlan?: boolean;
+
+	/**
+	 * Hide the titles for feature groups in the features grid
+	 */
+	hideFeatureGroupTitles?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<
