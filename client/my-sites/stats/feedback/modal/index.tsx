@@ -17,7 +17,7 @@ interface ModalProps {
 	onClose: () => void;
 }
 
-const NOTICE_KEY_TO_DISABLE_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
+const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
 
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
@@ -28,12 +28,12 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		data: isAbleToSubmitFeedback,
 		isFetching: isCheckingAbilityToSubmitFeedback,
 		refetch: refetchNotices,
-	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_TO_DISABLE_FEEDBACK_SUBMISSION );
+	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
 
 	// Disable feedback submission for 24 hours.
 	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
 		siteId,
-		NOTICE_KEY_TO_DISABLE_FEEDBACK_SUBMISSION,
+		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
 		'postponed',
 		24 * 3600
 	);
