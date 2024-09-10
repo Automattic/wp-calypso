@@ -127,16 +127,13 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
-<<<<<<< HEAD
+		case 'WPCOM_Billing_Stripe_Ideal':
 		case 'WPCOM_Billing_Stripe_P24':
-=======
 		case 'WPCOM_Billing_Stripe_Bancontact':
->>>>>>> 7f27e4da7ad (Handle new Bancontact payment method class in the correct environment)
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
-		case 'WPCOM_Billing_Stripe_Ideal':
 		case 'WPCOM_Billing_Stripe_Source_P24':
 		case 'WPCOM_Billing_Stripe_Source_Sofort':
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
