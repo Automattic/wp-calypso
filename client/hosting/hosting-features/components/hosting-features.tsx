@@ -51,7 +51,7 @@ const HostingFeatures = () => {
 	} ) );
 	// The ref is required to persist the value of redirect_to after renders
 	const redirectUrl = useRef(
-		searchParams.get( 'redirect_to' ) ?? hasSftpFeature
+		searchParams.get( 'redirect_to' ) ?? ( hasSftpFeature && isSiteAtomic )
 			? `/hosting-config/${ siteId }`
 			: `/overview/${ siteId }`
 	);
