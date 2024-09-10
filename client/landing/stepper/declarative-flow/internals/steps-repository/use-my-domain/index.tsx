@@ -102,8 +102,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		if ( stepQueryParam === 'transfer-or-connect' && stepQueryParam !== useMyDomainMode ) {
 			setUseMyDomainMode( inputMode.transferOrConnect );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ useMyDomainMode ] );
 
 	return (
 		<>
