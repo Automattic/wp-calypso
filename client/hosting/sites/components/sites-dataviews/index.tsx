@@ -67,6 +67,18 @@ const DotcomSitesDataViews = ( {
 		[ setDataViewsState ]
 	);
 
+	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
+	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
+	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
+	//
+	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
+	// However, when don't need to do anything in the callback, because we already maintain dataViewsState.selectedItem.
+	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
+	// (See the `getSelection()` function below.)
+	const onSelectionChange = () => {};
+	const getSelection = ( dataViewsState: DataViewsState ) =>
+		dataViewsState.selectedItem ? [ dataViewsState.selectedItem.ID ] : undefined;
+
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
 		const handleRowClick = ( event: Event ) => {
@@ -191,6 +203,7 @@ const DotcomSitesDataViews = ( {
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
+		onSelectionChange,
 		pagination: paginationInfo,
 		defaultLayouts: { table: {} },
 	} );
@@ -206,6 +219,7 @@ const DotcomSitesDataViews = ( {
 			dataViewsState,
 			searchLabel: siteSearchLabel,
 			selectedItem: dataViewsState.selectedItem,
+			selection: getSelection( dataViewsState ),
 			pagination: paginationInfo,
 		} ) );
 	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
