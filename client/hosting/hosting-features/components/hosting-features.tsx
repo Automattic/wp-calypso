@@ -55,8 +55,6 @@ const HostingFeatures = () => {
 			? `/hosting-config/${ siteId }`
 			: `/overview/${ siteId }`
 	);
-	const initialSiteId = useRef( siteId );
-	const siteSelectionChanging = initialSiteId.current !== siteId;
 	const hasEnTranslation = useHasEnTranslation();
 
 	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
@@ -84,12 +82,6 @@ const HostingFeatures = () => {
 
 		return () => clearInterval( interval );
 	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
-
-	useEffect( () => {
-		if ( isSiteAtomic && ! isPlanExpired && ! siteSelectionChanging ) {
-			page.replace( redirectUrl.current );
-		}
-	}, [ isSiteAtomic, isPlanExpired, siteSelectionChanging ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
