@@ -470,6 +470,7 @@ export class Login extends Component {
 
 		if (
 			currentQuery.lostpassword_flow === 'true' &&
+			isWooCoreProfilerFlow &&
 			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
 		) {
 			return null;
