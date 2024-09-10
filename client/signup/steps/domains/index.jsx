@@ -1178,7 +1178,10 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+		if (
+			shouldUseMultipleDomainsInCart( flowName ) &&
+			! [ 'use-your-domain' ].includes( stepSectionName )
+		) {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
