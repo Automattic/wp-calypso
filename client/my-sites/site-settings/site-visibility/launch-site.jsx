@@ -120,16 +120,21 @@ const LaunchSite = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
-	// Not wrapped in translation to avoid request unconfirmed copy
 	const billingAgencyMessage =
-		agencyLoading || agencyError ? (
-			'Once launched, your agency {agench-name} will be billed for this website in the next billing cycle.'
-		) : (
-			<>
-				Once launched, <strong>{ agencyName }</strong> will be billed for this website in the next
-				billing cycle.
-			</>
-		);
+		agencyLoading || agencyError
+			? translate( 'Once launched, your agency will be billed for it in the next billing cycle.' )
+			: translate(
+					'This means your agency, {{strong}}%(agencyName)s{{/strong}}, will be billed for it in the next billing cycle.',
+					{
+						args: {
+							agencyName: agencyName,
+						},
+						components: {
+							strong: <strong />,
+						},
+						comment: 'name of the agency that will be billed for the site',
+					}
+			  );
 
 	return (
 		<>

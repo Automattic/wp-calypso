@@ -20,19 +20,13 @@ export function LaunchConfirmationModal( {
 	billingAgencyMessage,
 	onConfirmation,
 }: LaunchConfirmationModalProps ) {
-	// Not wrapped in translation to avoid request unconfirmed copy
-	const modalTitle = 'You’re about to update your production site';
+	const modalTitle = translate( "You're about to launch this website" );
 
 	return (
 		<>
 			<Modal title={ modalTitle } onRequestClose={ closeModal }>
-				{ billingAgencyMessage && (
-					<p>
-						{ billingAgencyMessage }
-						<br />
-						Are you sure you want to proceed?
-					</p>
-				) }
+				{ billingAgencyMessage && <p>{ billingAgencyMessage }</p> }
+				<p>{ translate( 'Ready to launch?' ) }</p>
 				<ActionButtons>
 					<Button
 						onClick={ () => {
@@ -42,7 +36,7 @@ export function LaunchConfirmationModal( {
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button primary onClick={ onConfirmation }>
-						{ translate( 'Yes, launch site' ) }
+						{ translate( 'Launch site' ) }
 					</Button>
 				</ActionButtons>
 			</Modal>
