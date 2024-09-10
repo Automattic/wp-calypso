@@ -115,6 +115,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					name="content"
 					value={ content }
 					onChange={ setContent }
+					disabled={ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback }
 				/>
 				<div className="stats-feedback-modal__button">
 					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
