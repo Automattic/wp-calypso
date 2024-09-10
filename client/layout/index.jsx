@@ -27,6 +27,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -368,6 +369,9 @@ class Layout extends Component {
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'layout/nps-survey-notice' ) && ! isE2ETest() && (
+					<AsyncLoad require="calypso/layout/nps-survey-notice" placeholder={ null } />
 				) }
 				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
 				<LayoutLoader />
