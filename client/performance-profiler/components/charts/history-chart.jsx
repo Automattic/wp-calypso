@@ -1,5 +1,4 @@
 import { useResizeObserver } from '@wordpress/compose';
-import { Icon, info } from '@wordpress/icons';
 import { extent as d3Extent, max as d3Max } from 'd3-array';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import {
@@ -217,17 +216,6 @@ const HistoryChart = ( { data, range, height } ) => {
 		dataAvailable && drawDots( svg, data, xScale, yScale, colorScale, range, tooltip );
 	}, [ dataAvailable, data, range, svgRef, tooltipRef, height, entry ] );
 
-	const handleInfoToolTip = ( event ) => {
-		const tooltip = d3Select( tooltipRef.current );
-		const data2 = 'Not enough real-world speed data is available for this page.';
-		showTooltip( tooltip, data2, event );
-	};
-
-	const handleHideToolTip = () => {
-		const tooltip = d3Select( tooltipRef.current );
-		hideTooltip( tooltip );
-	};
-
 	return (
 		<div className="chart-container">
 			{ resizeObserverRef }
@@ -235,15 +223,7 @@ const HistoryChart = ( { data, range, height } ) => {
 			<div className="chart">
 				<svg ref={ svgRef }></svg>
 				{ ! dataAvailable && (
-					<div className="info">
-						History unavailable
-						<Icon
-							onMouseOver={ handleInfoToolTip }
-							onMouseOut={ handleHideToolTip }
-							icon={ info }
-							className="icon"
-						/>
-					</div>
+					<div className="info">Historical data will appear after more test runs</div>
 				) }
 			</div>
 		</div>
