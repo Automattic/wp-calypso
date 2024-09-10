@@ -534,9 +534,9 @@ export default function CheckoutMain( {
 				primaryOver: colors[ 'Jetpack Green 60' ],
 				success: colors[ 'Jetpack Green' ],
 				discount: colors[ 'Jetpack Green' ],
-				highlight: colors[ 'Blue 50' ],
-				highlightBorder: colors[ 'Blue 80' ],
-				highlightOver: colors[ 'Blue 60' ],
+				highlight: colors[ 'WordPress Blue 50' ],
+				highlightBorder: colors[ 'WordPress Blue 80' ],
+				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };

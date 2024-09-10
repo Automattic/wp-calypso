@@ -89,6 +89,7 @@ const props = {
 	selectedSite: {},
 	translate: ( x ) => x,
 	onChangeField: () => ( z ) => z,
+	handleToggle: () => ( z ) => z,
 	eventTracker: () => ( z ) => z,
 	trackEvent: () => ( z ) => z,
 	updateFields: () => ( z ) => z,

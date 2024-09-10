@@ -4,24 +4,29 @@ import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
-interface DomainsTableSSLCellProps {
+interface DomainsTableSslCellProps {
 	domainManagementLink: string;
 	sslStatus: DomainData[ 'ssl_status' ];
+	hasWpcomManagedSslCert: boolean;
 }
 
-export default function DomainsTableSSLCell( {
+export default function DomainsTableSslCell( {
 	domainManagementLink,
 	sslStatus,
-}: DomainsTableSSLCellProps ) {
+	hasWpcomManagedSslCert,
+}: DomainsTableSslCellProps ) {
 	const translate = useTranslate();
+	// WordPress.com managed subdomains (e.g. *.wordpress.com, *.wpcomstaging.com, etc.)
+	// are covered by a wildcard SSL cert, so we display them as 'Active'.
+	const isActiveSsl = sslStatus === 'active' || hasWpcomManagedSslCert;
+	const isPendingSsl = sslStatus === 'pending' || sslStatus === 'newly_registered';
+	const domainHasSsl = sslStatus !== null || hasWpcomManagedSslCert;
 
-	const isPendingSSL = sslStatus === 'pending' || sslStatus === 'newly_registered';
-
-	const getSSLStatusText = () => {
-		if ( sslStatus === 'active' ) {
+	const getSslStatusText = () => {
+		if ( isActiveSsl ) {
 			return translate( 'Active' );
 		}
-		if ( isPendingSSL ) {
+		if ( isPendingSsl ) {
 			return translate( 'Pending' );
 		}
 		if ( sslStatus === 'disabled' ) {
@@ -29,34 +34,34 @@ export default function DomainsTableSSLCell( {
 		}
 	};
 
+	let button: React.ReactElement | string;
+
+	if ( sslStatus ) {
+		button = (
+			<a
+				className="domains-table-row__ssl-status-button"
+				href={ `${ domainManagementLink }?ssl-open=true` }
+				onClick={ ( event ) => event.stopPropagation() }
+			>
+				{ getSslStatusText() }
+			</a>
+		);
+	} else if ( hasWpcomManagedSslCert ) {
+		button = <span>{ translate( 'Active' ) }</span>;
+	} else {
+		button = '-';
+	}
+
 	return (
-		<td className="domains-table-row__ssl-cell">
-			{ sslStatus && (
-				<Icon
-					className={ clsx( 'domains-table-row__ssl-icon', {
-						[ 'domains-table-row__ssl-icon__active' ]: sslStatus === 'active',
-						[ 'domains-table-row__ssl-icon__pending' ]: isPendingSSL,
-						[ 'domains-table-row__ssl-icon__disabled' ]: sslStatus === 'disabled',
-					} ) }
-					icon={ lock }
-					size={ 18 }
-				/>
-			) }
-			{ sslStatus !== null ? (
-				<a
-					className={ clsx( 'domains-table-row__ssl-status-button', {
-						[ 'domains-table-row__ssl-status-button__active' ]: sslStatus === 'active',
-						[ 'domains-table-row__ssl-status-button__pending' ]: isPendingSSL,
-						[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
-					} ) }
-					href={ `${ domainManagementLink }?ssl-open=true` }
-					onClick={ ( event ) => event.stopPropagation() }
-				>
-					{ getSSLStatusText() }
-				</a>
-			) : (
-				<>-</>
-			) }
+		<td
+			className={ clsx( `domains-table-row__ssl-cell`, {
+				[ `domains-table-row__ssl-cell__active` ]: isActiveSsl,
+				[ `domains-table-row__ssl-cell__pending` ]: isPendingSsl,
+				[ `domains-table-row__ssl-cell__disabled` ]: sslStatus === 'disabled',
+			} ) }
+		>
+			{ domainHasSsl && <Icon icon={ lock } size={ 18 } /> }
+			{ button }
 		</td>
 	);
 }

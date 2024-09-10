@@ -32,7 +32,7 @@
 .rewind-flow__title {
 	font-size: 2.25rem;
 	line-height: 36px;
-	padding-bottom: 48px;
+	padding-bottom: 12px;
 	text-align: left;
 
 	&.error {
@@ -203,8 +203,10 @@ a.rewind-flow-notice__title-warning:visited {
 
 .rewind-flow__info,
 .rewind-flow__cta,
-.rewind-flow-notice__title-warning h4 {
+.rewind-flow-notice__title-warning h4,
+.rewind-flow__content p {
 	font-size: 0.875rem;
+	margin-bottom: 1em;
 }
 
 .rewind-flow__cta {

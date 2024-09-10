@@ -86,6 +86,11 @@
 		background-color: var(--color-neutral-0);
 	}
 
+	&.disabled {
+		cursor: not-allowed;
+		background-color: var(--color-neutral-0);
+	}
+
 	@include break-large {
 		display: flex;
 		gap: 8px;
@@ -168,4 +173,8 @@
 	padding-top: 12px;
 	font-size: rem(12px);
 	font-weight: 600;
+
+	&.disabled {
+		color: var(--color-accent-20);
+	}
 }

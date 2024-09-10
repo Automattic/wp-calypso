@@ -71,6 +71,7 @@ export default function AddNewSiteButton( {
 		heading,
 		description,
 		isBanner,
+		disabled,
 		buttonProps,
 		extraContent,
 	}: {
@@ -79,13 +80,17 @@ export default function AddNewSiteButton( {
 		heading: string;
 		description: string | TranslateResult;
 		isBanner?: boolean;
+		disabled?: boolean;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
 		return (
 			<Button
 				{ ...buttonProps }
-				className={ clsx( 'site-selector-and-importer__popover-button', { banner: isBanner } ) }
+				className={ clsx( 'site-selector-and-importer__popover-button', {
+					banner: isBanner,
+					disabled,
+				} ) }
 				borderless
 			>
 				<div className={ clsx( 'site-selector-and-importer__popover-button-icon', iconClassName ) }>
@@ -211,9 +216,14 @@ export default function AddNewSiteButton( {
 								comment: 'br is a line break',
 							}
 						),
+						disabled: ! hasAvailableDevSites,
 						isBanner: true,
 						buttonProps: {
 							onClick: () => {
+								if ( ! hasAvailableDevSites ) {
+									return;
+								}
+
 								if ( paymentMethodRequired ) {
 									page(
 										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
@@ -224,7 +234,7 @@ export default function AddNewSiteButton( {
 								setMenuVisible( false );
 							},
 						},
-						extraContent: hasAvailableDevSites ? (
+						extraContent: (
 							<div>
 								<div className="site-selector-and-importer__popover-site-count">
 									{ translate(
@@ -239,11 +249,15 @@ export default function AddNewSiteButton( {
 										}
 									) }
 								</div>
-								<div className="site-selector-and-importer__popover-development-site-cta">
+								<div
+									className={ clsx( 'site-selector-and-importer__popover-development-site-cta', {
+										disabled: ! hasAvailableDevSites,
+									} ) }
+								>
 									{ translate( 'Create a site now →' ) }
 								</div>
 							</div>
-						) : undefined,
+						),
 					} ) }
 				</div>
 			) }

@@ -103,6 +103,7 @@ export class ImportingPane extends PureComponent {
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,
 		nextStepUrl: PropTypes.string.isRequired,
+		invalidateCardData: PropTypes.func,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -215,6 +216,7 @@ export class ImportingPane extends PureComponent {
 			site: { ID: siteId, name: siteName },
 			sourceType,
 			site,
+			invalidateCardData,
 		} = this.props;
 		const { customData } = importerStatus;
 		const progressClasses = clsx( 'importer__import-progress', {
@@ -252,6 +254,7 @@ export class ImportingPane extends PureComponent {
 						onMap={ this.handleOnMap }
 						onStartImport={ () => {
 							this.props.startImporting( this.props.importerStatus );
+							invalidateCardData();
 							navigate( this.props.nextStepUrl );
 						} }
 						siteId={ siteId }

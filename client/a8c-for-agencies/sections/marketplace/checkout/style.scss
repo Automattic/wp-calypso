@@ -1,6 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-sidebar-menu-selected-background);
+}
+
 .checkout .a4a-layout__body,
 .checkout .a4a-layout__body-wrapper {
 	/* stylelint-disable-next-line scales/radii */
@@ -250,6 +255,21 @@
 		margin-block: 4px 0;
 		color: var(--color-neutral-70);
 	}
+
+	.product-info__site-url {
+		@include a4a-font-body-md;
+		margin-block: 4px 0;
+		color: var(--color-neutral-40);
+	}
+}
+
+.product-info__placeholder {
+	@include loading-effect();
+
+	width: 100%;
+	height: 48px;
+	background-color: var(--color-neutral-0);
+	border-radius: 4px;
 }
 
 .checkout__client-referral-form {

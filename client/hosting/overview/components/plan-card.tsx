@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	getPlan,
 	PlanSlug,
@@ -128,8 +127,6 @@ const PricingSection: FC = () => {
 					<div className="hosting-overview__plan-cta">
 						{ isFreePlan && (
 							<Button
-								primary
-								compact
 								href={ `/plans/${ site?.slug }` }
 								onClick={ () =>
 									dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )
@@ -161,7 +158,6 @@ const PricingSection: FC = () => {
 };
 
 const PlanCard: FC = () => {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -212,9 +208,6 @@ const PlanCard: FC = () => {
 		}
 	};
 
-	const shouldRenderPlanData =
-		! isStaging || ( isStaging && config.isEnabled( 'hosting-overview-refinements' ) );
-
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -231,60 +224,51 @@ const PlanCard: FC = () => {
 						</>
 					) }
 				</div>
-				{ shouldRenderPlanData && (
-					<>
-						{ isAgencyPurchase && (
-							<div className="hosting-overview__plan-agency-purchase">
-								<p>
-									{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
-										components: {
-											a: isA4A ? (
-												<a
-													href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
-												></a>
-											) : (
-												<strong></strong>
-											),
-										},
-									} ) }
-								</p>
+
+				{ isAgencyPurchase && (
+					<div className="hosting-overview__plan-agency-purchase">
+						<p>
+							{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+								components: {
+									a: isA4A ? (
+										<a
+											href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+										></a>
+									) : (
+										<strong></strong>
+									),
+								},
+							} ) }
+						</p>
+					</div>
+				) }
+
+				{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
+
+				{ ! isLoading && (
+					<div className="hosting-overview__site-metrics">
+						<PlanStorage
+							className="hosting-overview__plan-storage"
+							hideWhenNoStorage
+							siteId={ site?.ID }
+							StorageBarComponent={ PlanStorageBar }
+						>
+							{ storageAddons.length > 0 && ! isAgencyPurchase && (
+								<div className="hosting-overview__plan-storage-footer">
+									<span className="hosting-overview__storage-footer-text">
+										{ translate( 'Need more storage?' ) }
+									</span>
+								</div>
+							) }
+						</PlanStorage>
+
+						{ site && (
+							<div className="hosting-overview__site-metrics-footer">
+								<PlanBandwidth siteId={ site.ID } />
+								<PlanSiteVisits siteId={ site.ID } />
 							</div>
 						) }
-						{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
-						{ ! isLoading && (
-							<div className="hosting-overview__site-metrics">
-								<PlanStorage
-									className="hosting-overview__plan-storage"
-									hideWhenNoStorage
-									siteId={ site?.ID }
-									StorageBarComponent={ PlanStorageBar }
-								>
-									{ storageAddons.length > 0 && ! isAgencyPurchase && (
-										<div className="hosting-overview__plan-storage-footer">
-											<Button
-												className="hosting-overview__link-button"
-												plain
-												href={ `/add-ons/${ site?.slug }` }
-												onClick={ () => {
-													dispatch(
-														recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' )
-													);
-												} }
-											>
-												{ translate( 'Need more storage?' ) }
-											</Button>
-										</div>
-									) }
-								</PlanStorage>
-								{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
-									<div className="hosting-overview__site-metrics-footer">
-										<PlanBandwidth siteId={ site.ID } />
-										<PlanSiteVisits siteId={ site.ID } />
-									</div>
-								) }
-							</div>
-						) }
-					</>
+					</div>
 				) }
 			</HostingCard>
 		</>

@@ -1,9 +1,15 @@
+import page from '@automattic/calypso-router';
+import { Spinner } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
-import StepProgress from 'calypso/components/step-progress';
-import { usePaidNewsletterQuery } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import StepProgress, { ClickHandler } from 'calypso/components/step-progress';
+import {
+	StepId,
+	usePaidNewsletterQuery,
+} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -11,16 +17,16 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Content from './content';
 import { LogoChain } from './logo-chain';
-import PaidSubscribers from './paid-subscribers';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
+import { engineTypes } from './types';
 
 import './importer.scss';
 
-const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
+const steps = [ Content, Subscribers, Summary ];
 
-const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -29,50 +35,105 @@ const logoChainLogos = [
 
 type NewsletterImporterProps = {
 	siteSlug: string;
-	engine: string;
-	step: string;
+	engine: engineTypes;
+	step?: StepId;
 };
 
 function getTitle( urlData?: UrlData ) {
 	if ( urlData?.meta?.title ) {
-		return `Import ${ urlData?.meta?.title }`;
+		return `Import ${ urlData.meta.title }`;
 	}
 
 	return 'Import your newsletter';
 }
 
-export default function NewsletterImporter( { siteSlug, engine, step }: NewsletterImporterProps ) {
+export default function NewsletterImporter( {
+	siteSlug,
+	engine,
+	step = 'content',
+}: NewsletterImporterProps ) {
+	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
+	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
-	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
-
-	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
+	const stepsProgress: ClickHandler[] = [
+		{
+			message: 'Content',
+			onClick: () => {
+				page(
+					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/content`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: 'onComplete',
+		},
+		{
+			message: 'Subscribers',
+			onClick: () => {
+				page(
+					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/subscribers`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: 'onComplete',
+		},
+		{ message: 'Summary', onClick: () => {} },
+	];
 
 	// Steps
-	fromSite = Array.isArray( fromSite ) ? fromSite[ 0 ] : fromSite;
-	if ( fromSite && ! step ) {
-		step = stepSlugs[ 0 ];
-	}
-
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
 
 	const { data: paidNewsletterData, isFetching: isFetchingPaidNewsletter } = usePaidNewsletterQuery(
 		engine,
 		step,
-		selectedSite?.ID
+		selectedSite?.ID,
+		autoFetchData
 	);
+
+	useEffect( () => {
+		if (
+			paidNewsletterData?.steps?.content?.status === 'importing' ||
+			paidNewsletterData?.steps.subscribers?.status === 'importing'
+		) {
+			setAutoFetchData( true );
+		} else {
+			setAutoFetchData( false );
+		}
+
+		if (
+			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
+			step === 'paid-subscribers'
+		) {
+			// If we have empty content
+			setAutoFetchData( true );
+		}
+	}, [
+		paidNewsletterData?.steps?.content?.status,
+		paidNewsletterData?.steps?.subscribers?.status,
+		step,
+		setAutoFetchData,
+		paidNewsletterData?.steps,
+	] );
 
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
-		if ( ! isFetchingPaidNewsletter ) {
+
+		if ( paidNewsletterData?.steps ) {
 			const status = paidNewsletterData?.steps[ stepName ]?.status ?? '';
-			stepsProgress[ index ] = stepsProgress[ index ] + ' (' + status + ')';
+			if ( status === 'done' ) {
+				stepsProgress[ index ].indicator = <Icon icon={ check } />;
+			}
+			if ( status === 'importing' ) {
+				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
+			}
 		}
 	} );
 
@@ -83,8 +144,15 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	let stepContent = {};
 	if ( paidNewsletterData?.steps ) {
-		stepContent = paidNewsletterData?.steps[ step ]?.content ?? {};
+		// This is useful for the summary step.
+		if ( ! paidNewsletterData?.steps[ step ] ) {
+			stepContent = paidNewsletterData.steps;
+		} else {
+			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
+		}
 	}
+
+	const stepStatus = paidNewsletterData?.steps[ step ]?.status ?? 'initial';
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
@@ -113,7 +181,6 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					stepUrl={ stepUrl }
 					urlData={ urlData }
 					isLoading={ isFetching || isResetPaidNewsletterPending }
-					validFromSite={ validFromSite }
 				/>
 			) }
 
@@ -132,8 +199,9 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					} }
 					cardData={ stepContent }
 					engine={ engine }
+					status={ stepStatus }
 					isFetchingContent={ isFetchingPaidNewsletter }
-					content={ stepContent }
+					setAutoFetchData={ setAutoFetchData }
 				/>
 			) }
 		</div>

@@ -2,12 +2,7 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
@@ -19,8 +14,6 @@ import {
 	hasFetchedAgency,
 	isAgencyClientUser,
 } from 'calypso/state/a8c-for-agencies/agency/selectors';
-
-import './style.scss';
 
 /**
  * Redirect with Current Query
@@ -62,22 +55,5 @@ export default function Landing() {
 		redirectWithCurrentQuery( A4A_SIGNUP_LINK );
 	}, [ agency, hasFetched, isClientUser ] );
 
-	return (
-		<Layout className="a4a-landing" title={ title } wide>
-			<LayoutTop>
-				<LayoutHeader>
-					<Title>
-						<div className="a4a-landing__title-placeholder"></div>
-					</Title>
-				</LayoutHeader>
-			</LayoutTop>
-			<LayoutBody>
-				<div className="a4a-landing__section-placeholder">
-					<div className="a4a-landing__section-placeholder-title"></div>
-					<div className="a4a-landing__section-placeholder-body"></div>
-					<div className="a4a-landing__section-placeholder-footer"></div>
-				</div>
-			</LayoutBody>
-		</Layout>
-	);
+	return <PagePlaceholder title={ title } />;
 }

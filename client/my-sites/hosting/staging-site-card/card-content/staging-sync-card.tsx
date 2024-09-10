@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
@@ -206,6 +207,9 @@ const StagingToProductionSync = ( {
 		],
 		[ translate ]
 	);
+
+	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
+
 	return (
 		<>
 			{ showSyncPanel && (
@@ -224,7 +228,6 @@ const StagingToProductionSync = ( {
 				<ConfirmationModal
 					disabled={ disabled || isSyncButtonDisabled }
 					isConfirmationDisabled={ typedSiteName !== siteSlug }
-					isPrimary
 					onConfirm={ onConfirm }
 					modalTitle={ translate( 'You’re about to update your production site' ) }
 					extraModalContent={
@@ -239,6 +242,16 @@ const StagingToProductionSync = ( {
 									return <li key={ item.name }>{ item.label }</li>;
 								} ) }
 							</ConfirmationModalList>
+							{ stagingSiteSyncWoo && (
+								<div>
+									<p>{ translate( 'Warning' ) }</p>
+									<p>
+										{ translate(
+											'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
+										) }
+									</p>
+								</div>
+							) }
 							<ConfirmationModalInputTitle>
 								{ translate( "Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.", {
 									args: {
@@ -282,7 +295,6 @@ const ProductionToStagingSync = ( {
 		<ConfirmationModalContainer>
 			<ConfirmationModal
 				disabled={ disabled || isSyncButtonDisabled }
-				isPrimary
 				onConfirm={ onConfirm }
 				modalTitle={ translate( 'You are about to update your staging site' ) }
 				modalMessage={ translate(

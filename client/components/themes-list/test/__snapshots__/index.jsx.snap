@@ -20,7 +20,7 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
         <img
           alt="Pattern Assembler"
           class="pattern-assembler-cta__image"
-          src="assembler-illustration.png"
+          src="assembler-illustration-v2.png"
         />
       </div>
       <div

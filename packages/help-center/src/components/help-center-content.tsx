@@ -10,6 +10,7 @@ import OdieAssistantProvider, {
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
+import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
 /**
@@ -29,11 +30,30 @@ import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
 
+import './help-center-content.scss';
+
 interface ProtectedRouteProps {
 	condition: boolean;
 	redirectPath?: string;
 	children: React.ReactNode;
 }
+
+// Prevent not eligible users from accessing odie/wapuu.
+const ProtectedRoute: React.FC< ProtectedRouteProps > = ( {
+	condition,
+	redirectPath = '/',
+	children,
+} ) => {
+	if ( condition ) {
+		// redirect users home if they are not eligible for chat
+		recordTracksEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
+			pathname: window.location.pathname,
+			search: window.location.search,
+		} );
+		return <Navigate to={ redirectPath } replace />;
+	}
+	return children;
+};
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -55,6 +75,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	currentRoute,
 } ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ hasBackButtonHeader, setHasBackButtonHeader ] = useState( false );
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
@@ -62,7 +83,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const { isLoading: isLoadingEmailStatus } = useShouldRenderEmailOption();
 	const { isLoading: isLoadingChatStatus } = useChatStatus();
-	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus;
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized, odieInitialPromptText, odieBotNameSlug } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -78,10 +98,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 
-	const { data } = useSupportStatus();
+	const { data, isLoading: isLoadingEligibility } = useSupportStatus();
 
 	const isUserElegible = data?.eligibility.is_user_eligible ?? false;
-	const preventOdieAccess = ! shouldUseWapuu && ! isUserElegible && ! isLoadingEnvironment;
+	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus || isLoadingEligibility;
+
+	const preventOdieAccess = ! shouldUseWapuu && ! isUserElegible;
 
 	const navigateToSupportDocs = useCallback(
 		( blogId: string, postId: string, title: string, link: string ) => {
@@ -121,12 +143,18 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
-	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
 		setSearchTerm( '' );
-		if ( containerRef.current ) {
+		if ( containerRef.current && ! location.hash && ! location.pathname.includes( '/odie' ) ) {
 			containerRef.current.scrollTo( 0, 0 );
 		}
+	}, [ location ] );
+
+	// The back button header requires extra styling to the container.
+	useEffect( () => {
+		setHasBackButtonHeader(
+			Boolean( containerRef.current?.querySelector( '.help-center-back-button__header' ) )
+		);
 	}, [ location ] );
 
 	const trackEvent = useCallback(
@@ -146,24 +174,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}
 	}, [ navigate, isUserElegible ] );
 
-	// Prevent not eligible users from accessing odie/wapuu.
-	const ProtectedRoute: React.FC< ProtectedRouteProps > = ( {
-		condition,
-		redirectPath = '/',
-		children,
-	} ) => {
-		if ( condition ) {
-			// redirect users home if they are not eligible for chat
-			recordTracksEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
-				pathname: window.location.pathname,
-				search: window.location.search,
-			} );
-			return <Navigate to={ redirectPath } replace />;
-		}
-		return children;
-	};
 	return (
-		<CardBody ref={ containerRef } className="help-center__container-content">
+		<CardBody
+			ref={ containerRef }
+			className={ clsx( 'help-center__container-content', {
+				'has-back-button-header': hasBackButtonHeader,
+			} ) }
+		>
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
 					<Route
@@ -188,7 +205,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 									botNameSlug={ odieBotNameSlug }
 									botName="Wapuu"
 									odieInitialPromptText={ odieInitialPromptText }
-									enabled={ shouldUseWapuu }
 									currentUser={ currentUser }
 									isMinimized={ isMinimized }
 									initialUserMessage={ searchTerm }

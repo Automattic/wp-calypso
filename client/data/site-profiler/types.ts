@@ -92,7 +92,7 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt';
 
 export type Scores = 'good' | 'needs-improvement' | 'poor';
 
@@ -110,6 +110,10 @@ export interface UrlBasicMetricsQueryResponse {
 	};
 	advanced: Record< string, string >;
 	token: string;
+}
+
+export interface LeadMutationResponse {
+	success: boolean;
 }
 
 export interface UrlSecurityMetricsQueryResponse {
@@ -133,13 +137,14 @@ export type ScreenShotsTimeLine = {
 };
 
 export type PerformanceMetricsHistory = {
-	collection_period: string[];
+	collection_period: Array< string | { year: number; month: number; day: number } >;
 	metrics: {
 		ttfb?: number[];
 		fcp?: number[];
 		lcp?: number[];
 		cls?: number[];
 		inp?: number[];
+		tbt?: number[];
 	};
 };
 
@@ -183,6 +188,7 @@ export interface PerformanceMetricsItemQueryResponse {
 	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
+	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {

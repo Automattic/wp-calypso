@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -180,6 +181,7 @@ describe( 'Hosted site Migration Flow', () => {
 		} );
 
 		it( 'migrate redirects from the how-to-migrate (do it for me) page to assisted migration page', () => {
+			config.disable( 'automated-migration/collect-credentials' );
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -195,6 +197,24 @@ describe( 'Hosted site Migration Flow', () => {
 				state: {
 					siteSlug: 'example.wordpress.com',
 				},
+			} );
+			config.enable( 'automated-migration/collect-credentials' );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (do it for me) page to credential collection step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'migrate',
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				state: null,
 			} );
 		} );
 

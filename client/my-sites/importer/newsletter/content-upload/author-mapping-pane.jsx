@@ -157,7 +157,7 @@ class AuthorMappingPane extends PureComponent {
 					} ) }
 				</div>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton disabled={ ! canStartImport } onClick={ onStartImport }>
+					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
 						Continue import
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>

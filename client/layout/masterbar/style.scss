@@ -43,7 +43,7 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
-	--masterbar-item-active-border-radius: 6px; /* stylelint-disable-line scales/radii */
+	--masterbar-item-active-border-radius: 4px;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -288,26 +288,32 @@ body.is-mobile-app-view {
 	justify-content: center;
 
 	&.masterbar__reader {
-		padding: 0 7px 0 4px;
-
-		.masterbar_svg-reader {
-			padding: 0 8px 0 3px;
-		}
+		padding: 0 8px;
 	}
 
+	&.masterbar__item-my-site,
 	&.masterbar__item-my-site-actions {
 		padding-left: 7px;
 	}
 
 	@media only screen and (max-width: 781px) {
-		&.masterbar__reader,
+		&.masterbar__item-my-site {
+			padding-left: inherit;
+		}
 		&.masterbar__item-my-site-actions {
 			padding: 0;
 		}
 
 		&.masterbar__reader {
+			padding: 0 8px;
+
 			.masterbar_svg-reader {
-				padding: 0;
+				padding: 0 0 0 2px;
+			}
+
+			&.is-active {
+				padding: 0 2px 0 0;
+				margin: 0 6px 0 4px;
 			}
 		}
 	}
@@ -613,7 +619,10 @@ body.is-mobile-app-view {
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		padding: 0;
-		width: 46px;
+
+		&:not(.masterbar__item--always-show-content) {
+			width: 46px;
+		}
 
 		.masterbar__item-content {
 			display: none;
@@ -654,16 +663,12 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-my-sites,
 	&.masterbar__item-no-sites {
-		padding: 0 7px 0 5px; // trying to match core's 35px width
+		padding: 0 8px;
 
 		@media only screen and (max-width: 781px) {
 			padding: 0;
-		}
 
-		.gridicon {
-			width: 24px;
-			height: 24px;
-			@media only screen and (max-width: 781px) {
+			svg {
 				width: 32px;
 				height: 32px;
 			}
@@ -1240,9 +1245,14 @@ body.is-mobile-app-view {
 .masterbar-cart-button {
 	svg {
 		overflow: visible;
+
 		@media only screen and (max-width: 781px) {
-			width: 32px;
+			width: 52px;
 			height: 32px;
+		}
+
+		@media only screen and (max-width: 481px) {
+			width: 44px;
 		}
 	}
 	.cart-circle {
@@ -1479,5 +1489,58 @@ a.masterbar__quick-language-switcher {
 
 	100% {
 		opacity: 1;
+	}
+}
+
+.popover.masterbar__reader-popover {
+	z-index: 176;
+
+	.popover__arrow::before {
+		--color-border-inverted: var(--color-neutral-100);
+	}
+
+	.popover__arrow {
+		border: 10px dashed var(--color-neutral-70) !important;
+		border-bottom-style: solid !important;
+		border-top: none !important;
+		border-left-color: transparent !important;
+		border-right-color: transparent !important;
+	}
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		border-radius: 4px !important;
+		background-color: var(--color-neutral-100) !important;
+		border: 1px solid var(--color-neutral-70) !important;
+		left: 0 !important;
+	}
+
+	.masterbar__reader-popover-heading {
+		font-size: rem(16px);
+		color: var(--color-text-inverted);
+		font-weight: 500;
+	}
+
+	.masterbar__reader-popover-description {
+		max-width: 325px;
+		margin-top: -8px;
+		margin-bottom: 0;
+		font-size: rem(13px);
+		color: var(--color-neutral-0);
+		text-align: left;
+	}
+
+	.masterbar__reader-popover-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		width: 100%;
+		button {
+			padding: 4px 8px;
+			font-size: rem(13px);
+		}
 	}
 }

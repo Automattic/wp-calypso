@@ -1,0 +1,22 @@
+.step-pending {
+	margin-bottom: 20px;
+}
+
+.step-pending ul {
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.step-pending li {
+	display: flex;
+}
+
+.step-pending strong {
+	margin-right: 8px;
+}
+
+.step-pending svg {
+	fill: var(--studio-gray-50);
+	margin-right: 8px;
+}

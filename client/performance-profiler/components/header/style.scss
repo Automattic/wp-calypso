@@ -1,7 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+.is-group-performance-profiler.is-logged-in {
+	.profiler-header {
+		padding-top: 72px; // 40px + 32px (masterbar height)
+	}
+}
+
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
-	background: linear-gradient(180deg, var(--studio-gray-100) 25.44%, rgba(16, 21, 23, 0) 100%), url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMjUiLz4KPC9zdmc+Cg==) repeat, var(--studio-gray-100);
+	background: linear-gradient(180deg, var(--studio-gray-100) 25%, rgba(16, 21, 23, 0) 100%), fixed 0 0/16px 16px radial-gradient(var(--studio-gray-60) 1px, transparent 0), var(--studio-gray-100);
 
 	.profiler-header-wrapper {
 		display: flex;
@@ -10,6 +19,21 @@
 		gap: 14px;
 		align-self: stretch;
 		padding-bottom: 20px;
+	}
+
+	.profiler-header__badge {
+		font-size: $root-font-size;
+		text-decoration: none;
+		color: var(--studio-white);
+		padding: 0;
+
+		&:hover {
+			color: var(--studio-white);
+			text-decoration: none;
+		}
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	.profiler-header__site-url {
@@ -51,10 +75,43 @@
 		}
 	}
 
+	.profiler-header__report-site-details {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		font-size: $font-body-small;
+
+		&.show-on-mobile {
+			@media (min-width: $break-large) {
+				display: none;
+			}
+		}
+
+
+	}
+
+	.wpcom-badge {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
 	.profiler-navigation-tabs.section-nav {
 		background: none;
 		box-shadow: none;
 		margin: 0;
+
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav__panel {
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			overflow-wrap: normal;
+			justify-content: space-between;
+		}
 
 		.section-nav-tabs__list {
 			// Add padding to display the rounded border and remove the same distance to keep it aligned vertically
@@ -91,6 +148,7 @@
 					padding: 0 16px;
 					align-items: center;
 					gap: 10px;
+					width: auto;
 
 					span {
 						font-size: $font-body-small;
@@ -138,21 +196,23 @@
 			}
 		}
 
+
 		.profiler-header__navbar-right {
 			display: flex;
 			align-items: center;
 			gap: 16px;
 			font-size: $font-body-small;
+			margin-left: 25px;
 
 			.report-site-details {
 				display: flex;
 				align-items: center;
 				gap: 32px;
 
-				.wpcom-badge {
-					display: flex;
-					align-items: center;
-					gap: 6px;
+				&.hide-on-mobile {
+					@media (max-width: $break-large) {
+						display: none;
+					}
 				}
 			}
 
