@@ -106,8 +106,6 @@ describe( 'BackupRealtimeMessage', () => {
 	} );
 
 	test( 'renders the correct message and the "Learn more" link when learnMoreUrl is provided', () => {
-		useTranslate.mockImplementation( () => translateMock );
-
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
 		const learnMoreUrl = '/learn-more';
