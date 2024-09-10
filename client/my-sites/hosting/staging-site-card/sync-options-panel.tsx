@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { ToggleControl, CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 
 const DangerousItemsContainer = styled.div( {
 	marginTop: '16px',
@@ -71,12 +70,20 @@ export default function SyncOptionsPanel( {
 	disabled,
 	onChange,
 	isSqlsOptionDisabled,
+	isSiteWooStore,
+	databaseSyncConfirmed,
+	setdatabaseSyncConfirmed,
+	isSqlSyncOptionChecked,
 }: {
 	items: CheckboxOptionItem[];
 	reset: boolean;
 	disabled: boolean;
 	onChange: ( items: CheckboxOptionItem[] ) => void;
 	isSqlsOptionDisabled: boolean;
+	isSiteWooStore: boolean;
+	databaseSyncConfirmed: boolean;
+	isSqlSyncOptionChecked: boolean;
+	setdatabaseSyncConfirmed: ( value: boolean ) => void;
 } ) {
 	const initialItemsMap = useMemo(
 		() =>
@@ -194,26 +201,19 @@ export default function SyncOptionsPanel( {
 						</div>
 					);
 				} ) }
-				{ stagingSiteSyncWoo && (
+				{ stagingSiteSyncWoo && isSiteWooStore && (
 					<div>
 						<WooCommerceOverwriteWarning>
 							{ translate(
-								'This site has WooCommerce installed. All orders in the production database will be overwritten. {{a}}Learn more{{/a}}.',
-								{
-									components: {
-										a: (
-											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
-										),
-									},
-								}
+								'This site has WooCommerce installed. All orders in the production database will be overwritten.'
 							) }
 						</WooCommerceOverwriteWarning>
 						<CheckboxControl
 							key="checkbox"
 							label={ translate( 'Confirm I want to proceed with database synchronization ' ) }
-							checked={ false }
-							disabled={ false }
-							onChange={ () => {} }
+							checked={ databaseSyncConfirmed }
+							disabled={ ! isSqlSyncOptionChecked }
+							onChange={ setdatabaseSyncConfirmed }
 						/>
 					</div>
 				) }

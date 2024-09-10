@@ -162,17 +162,23 @@ const StagingToProductionSync = ( {
 	showSyncPanel,
 	isSqlsOptionDisabled,
 	isSiteWooStore,
+	databaseSyncConfirmed,
+	setdatabaseSyncConfirmed,
+	isSqlSyncOptionChecked,
 }: {
 	disabled: boolean;
 	siteSlug: string;
 	isSyncInProgress: boolean;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
+	databaseSyncConfirmed: boolean;
+	setdatabaseSyncConfirmed: ( value: boolean ) => void;
 	selectedItems: CheckboxOptionItem[];
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 	showSyncPanel: boolean;
 	isSqlsOptionDisabled: boolean;
 	isSiteWooStore?: boolean;
+	isSqlSyncOptionChecked?: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -245,6 +251,10 @@ const StagingToProductionSync = ( {
 						disabled={ disabled }
 						onChange={ onSelectItems }
 						isSqlsOptionDisabled={ isSqlsOptionDisabled }
+						databaseSyncConfirmed={ databaseSyncConfirmed }
+						setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }
+						isSiteWooStore={ !! isSiteWooStore }
+						isSqlSyncOptionChecked={ !! isSqlSyncOptionChecked }
 					></SyncOptionsPanel>
 				</>
 			) }
@@ -266,7 +276,7 @@ const StagingToProductionSync = ( {
 									return <li key={ item.name }>{ item.label }</li>;
 								} ) }
 							</ConfirmationModalList>
-							{ stagingSiteSyncWoo && isSiteWooStore && (
+							{ stagingSiteSyncWoo && isSiteWooStore && isSqlSyncOptionChecked && (
 								<SyncWarningContainer>
 									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
 									<SyncWarningContent>
@@ -468,8 +478,6 @@ export const SiteSyncCard = ( {
 		[] as CheckboxOptionItem[]
 	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
-	// TODO: remove the eslint ignore once setdatabaseSyncConfirmed is passed to the checkbox
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [ databaseSyncConfirmed, setdatabaseSyncConfirmed ] = useState< boolean >( false );
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
@@ -517,6 +525,13 @@ export const SiteSyncCard = ( {
 	}, [ resetSyncStatus, dispatch, type, onPull, transformSelectedItems, selectedItems ] );
 
 	const isSqlSyncOptionChecked = selectedItems.some( ( item ) => item.name === 'sqls' );
+
+	useEffect( () => {
+		if ( ! isSqlSyncOptionChecked && databaseSyncConfirmed ) {
+			setdatabaseSyncConfirmed( false );
+		}
+	}, [ isSqlSyncOptionChecked, databaseSyncConfirmed, setdatabaseSyncConfirmed ] );
+
 	const disallowWooCommerceSync =
 		config.isEnabled( 'staging-site-sync-woo' ) &&
 		isSiteWooStore &&
@@ -547,6 +562,8 @@ export const SiteSyncCard = ( {
 			setSelectedItems( [] );
 		}
 	}, [ dispatch, selectedOption, status, syncError ] );
+
+	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
 
 	return (
 		<SyncCardContainer
@@ -607,8 +624,11 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
-					isSqlsOptionDisabled={ false }
+					isSqlsOptionDisabled={ stagingSiteSyncWoo ? false : isSiteWooStore }
 					isSiteWooStore={ isSiteWooStore }
+					databaseSyncConfirmed={ databaseSyncConfirmed }
+					setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }
+					isSqlSyncOptionChecked={ isSqlSyncOptionChecked }
 				/>
 			) }
 			{ selectedOption !== actionForType && (
