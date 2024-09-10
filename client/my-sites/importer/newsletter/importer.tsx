@@ -104,14 +104,6 @@ export default function NewsletterImporter( {
 		} else {
 			setAutoFetchData( false );
 		}
-
-		if (
-			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
-			step === 'paid-subscribers'
-		) {
-			// If we have empty content
-			setAutoFetchData( true );
-		}
 	}, [
 		paidNewsletterData?.steps?.content?.status,
 		paidNewsletterData?.steps?.subscribers?.status,
