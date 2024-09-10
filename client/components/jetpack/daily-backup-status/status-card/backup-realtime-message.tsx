@@ -2,8 +2,12 @@ import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useDispatch } from 'calypso/state';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Moment } from 'moment';
 
 type Props = {
@@ -20,8 +24,12 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 	learnMoreUrl,
 } ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+
+	const moment = useLocalizedMoment();
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 
 	const onLearnMoreClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_realtime_message_learn_more_click' ) );
@@ -35,8 +43,13 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 		return;
 	}
 
-	const isBackupFromToday = baseBackupDate.isSame( moment(), 'day' );
-	const isBackupFromYesterday = baseBackupDate.isSame( moment().subtract( 1, 'days' ), 'day' );
+	const today = applySiteOffset( moment(), {
+		timezone: timezone,
+		gmtOffset: gmtOffset,
+	} );
+
+	const isBackupFromToday = baseBackupDate.isSame( today, 'day' );
+	const isBackupFromYesterday = baseBackupDate.isSame( today.subtract( 1, 'days' ), 'day' );
 	const daysDiff = selectedBackupDate.diff( baseBackupDate, 'days' );
 	let message: string | React.ReactNode;
 
