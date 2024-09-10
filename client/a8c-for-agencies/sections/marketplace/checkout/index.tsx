@@ -3,19 +3,21 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useContext, useEffect } from 'react';
+import { useCallback, useMemo, useContext, useEffect, useRef, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import useFetchClientReferral from '../../client/hooks/use-fetch-client-referral';
@@ -28,6 +30,7 @@ import useShoppingCart from '../hooks/use-shopping-cart';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
 import NoticeSummary from './notice-summary';
+import PendingPaymentPopover from './pending-payment-popover';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
 import RequestClientPayment from './request-client-payment';
@@ -44,6 +47,11 @@ interface Props {
 function Checkout( { isClient, referralBlogId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const agency = useSelector( getActiveAgency );
+
+	const canIssueLicenses = agency?.can_issue_licenses;
+	const [ showPopover, setShowPopover ] = useState( false );
+	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
@@ -147,14 +155,20 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 			<NoticeSummary type="agency-purchase" />
 
 			<div className="checkout__aside-actions">
-				<Button
-					primary
-					onClick={ onCheckout }
-					disabled={ ! checkoutItems.length || ! isReady }
-					busy={ ! isReady }
+				<span
+					className="checkout__aside-actions-wrapper"
+					onMouseEnter={ () => setShowPopover( true ) }
 				>
-					{ translate( 'Purchase' ) }
-				</Button>
+					<Button
+						primary
+						onClick={ onCheckout }
+						disabled={ ! checkoutItems.length || ! isReady || ! canIssueLicenses }
+						busy={ ! isReady }
+						ref={ wrapperRef }
+					>
+						{ translate( 'Purchase' ) }
+					</Button>
+				</span>
 
 				{ siteId ? (
 					<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
@@ -166,6 +180,12 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 							{ translate( 'Empty cart' ) }
 						</Button>
 					</>
+				) }
+				{ showPopover && (
+					<PendingPaymentPopover
+						wrapperRef={ wrapperRef }
+						hidePopover={ () => setShowPopover( false ) }
+					/>
 				) }
 			</div>
 		</>
@@ -190,6 +210,10 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 		>
 			{ isClient ? null : (
 				<LayoutTop>
+					{
+						// Show the pending payment notification only when the user is trying to make a purchase
+						! isAutomatedReferrals && <PendingPaymentNotification />
+					}
 					<LayoutHeader>
 						<Breadcrumb
 							items={ [

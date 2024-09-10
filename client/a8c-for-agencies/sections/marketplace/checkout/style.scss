@@ -337,3 +337,19 @@
 	}
 }
 
+.checkout__aside-actions-wrapper {
+	display: grid;
+}
+
+.checkout__button-popover {
+	.a4a-popover__content {
+		.a4a-popover__title {
+			@include a4a-font-heading-md;
+			color: var(--studio-gray-80);
+		}
+
+		.checkout__button-popover-description {
+			@include a4a-font-body-md;
+		}
+	}
+}
