@@ -67,7 +67,14 @@ const onboarding: Flow = {
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
 					if ( providedDependencies.navigateToUseMyDomain ) {
-						return navigate( 'use-my-domain' );
+						let useMyDomainURL = 'use-my-domain';
+						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
+							useMyDomainURL = addQueryArgs( useMyDomainURL, {
+								initialQuery: ( providedDependencies?.domainForm as { lastQuery?: string } )
+									?.lastQuery,
+							} );
+						}
+						return navigate( useMyDomainURL );
 					}
 					return navigate( 'plans' );
 				case 'use-my-domain':
