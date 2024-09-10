@@ -179,19 +179,19 @@ const SitesDashboard = ( {
 					width: getSiteNameColWidth( isDesktop, isWide ),
 				},
 				plan: {
-					width: '100px',
+					width: '126px',
 				},
 				status: {
-					width: '116px',
+					width: '142px',
 				},
 				'last-publish': {
-					width: '120px',
+					width: '146px',
 				},
 				stats: {
-					width: '80px',
+					width: '106px',
 				},
 				actions: {
-					width: '48px',
+					width: '74px',
 				},
 			},
 		},
