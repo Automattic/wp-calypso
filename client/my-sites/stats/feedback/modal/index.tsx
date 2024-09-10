@@ -3,6 +3,8 @@ import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -15,10 +17,26 @@ interface ModalProps {
 	onClose: () => void;
 }
 
+const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
+
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ content, setContent ] = useState( '' );
+
+	const {
+		data: isAbleToSubmitFeedback,
+		isFetching: isCheckingAbilityToSubmitFeedback,
+		refetch: refetchNotices,
+	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
+
+	// Disable feedback submission for 24 hours.
+	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
+		siteId,
+		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
+		'postponed',
+		24 * 3600
+	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
@@ -58,9 +76,20 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
+			disableFeedbackSubmissionForOneDay().then( () => {
+				refetchNotices();
+			} );
+
 			handleClose();
 		}
-	}, [ dispatch, isSubmissionSuccessful, handleClose, translate ] );
+	}, [
+		dispatch,
+		isSubmissionSuccessful,
+		handleClose,
+		translate,
+		disableFeedbackSubmissionForOneDay,
+		refetchNotices,
+	] );
 
 	return (
 		<Modal className="stats-feedback-modal" onRequestClose={ handleClose } __experimentalHideHeader>
@@ -88,13 +117,27 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					name="content"
 					value={ content }
 					onChange={ setContent }
+					disabled={ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback }
 				/>
 				<div className="stats-feedback-modal__button">
+					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
+						<strong>
+							<em>
+								{ translate( 'Feedback submission is currently limited to one per 24 hours.' ) }
+							</em>
+						</strong>
+					) }
 					<StatsButton
 						primary
 						onClick={ onFormSubmit }
 						busy={ isSubmittingFeedback }
-						disabled={ isSubmittingFeedback || isSubmissionSuccessful || ! content }
+						disabled={
+							isCheckingAbilityToSubmitFeedback ||
+							! isAbleToSubmitFeedback ||
+							isSubmittingFeedback ||
+							isSubmissionSuccessful ||
+							! content
+						}
 					>
 						{ translate( 'Submit' ) }
 					</StatsButton>
