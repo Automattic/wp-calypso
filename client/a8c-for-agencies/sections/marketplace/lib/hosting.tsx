@@ -46,7 +46,7 @@ export function getHostingPageUrl( slug: string ) {
 		case 'wpcom-hosting':
 			return A4A_MARKETPLACE_HOSTING_WPCOM_LINK;
 		case 'vip':
-			return 'https://wpvip.com/contact/';
+			return 'https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a';
 	}
 
 	return A4A_MARKETPLACE_HOSTING_LINK;
