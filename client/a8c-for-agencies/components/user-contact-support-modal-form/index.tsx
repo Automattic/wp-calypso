@@ -43,7 +43,7 @@ export default function UserContactSupportModalForm( {
 	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
-	const hasCompletedForm = !! message && !! name && !! email && !! product && ! isPressableSelected;
+	const hasCompletedForm = !! message && !! name && !! email && !! product;
 
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
 
