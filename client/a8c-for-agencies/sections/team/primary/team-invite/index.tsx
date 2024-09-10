@@ -79,7 +79,7 @@ export default function TeamInvite() {
 					className="team-invite-form"
 					title={ translate( 'Invite a team member.' ) }
 					autocomplete="off"
-					description={ translate( 'Invite team members to manage client sites and purchases' ) }
+					description={ translate( 'Invite team members to manage client sites and purchases.' ) }
 				>
 					<FormSection title={ translate( 'Team member information' ) }>
 						<FormField
