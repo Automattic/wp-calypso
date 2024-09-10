@@ -53,7 +53,7 @@ const HostingFeatures = () => {
 	const redirectToRef = useRef( searchParams.get( 'redirect_to' ) );
 
 	const redirectUrl =
-		redirectToRef.current ?? ( hasSftpFeature && isSiteAtomic )
+		redirectToRef.current ?? hasSftpFeature
 			? `/hosting-config/${ siteId }`
 			: `/overview/${ siteId }`;
 
