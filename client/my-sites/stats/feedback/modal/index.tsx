@@ -36,7 +36,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		siteId,
 		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
 		'postponed',
-		24 * 3600
+		5 * 60
 	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
@@ -124,7 +124,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
 						<strong>
 							<em>
-								{ translate( 'Feedback submission is currently limited to one per 24 hours.' ) }
+								{ translate( 'Feedback submission is currently limited to one per 5 minutes.' ) }
 							</em>
 						</strong>
 					) }
