@@ -117,8 +117,18 @@ export default function UserContactSupportModalForm( {
 			} )
 		);
 
-		submit( { message, name, email, product, site } );
-	}, [ hasCompletedForm, dispatch, message, submit, name, email, product, site ] );
+		submit( { message, name, email, product, site, pressableContactType } );
+	}, [
+		hasCompletedForm,
+		dispatch,
+		message,
+		submit,
+		name,
+		email,
+		product,
+		site,
+		pressableContactType,
+	] );
 
 	useEffect( () => {
 		if ( show ) {
