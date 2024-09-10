@@ -615,7 +615,7 @@ class Login extends Component {
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
-			const pluginName = getPluginTitle( this.props.authQuery.plugin_name, translate );
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 
 			let subtitle = null;
 
