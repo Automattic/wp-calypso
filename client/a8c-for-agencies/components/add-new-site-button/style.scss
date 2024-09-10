@@ -102,6 +102,7 @@
 		flex-direction: column;
 		padding-top: 0;
 		gap: 4px;
+		background-color: var(--color-neutral-0);
 
 		@include break-large {
 			padding: 16px;
