@@ -2,12 +2,14 @@ import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import {
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
+	useNoticeVisibilityQuery,
+} from '../hooks/use-notice-visibility-query';
 import FeedbackModal from './modal';
 
 import './style.scss';
-
-const FEEDBACK_KEY_DISMISS_DATE = 'stats-feedback-dismiss-date';
-const FEEDBACK_KEY_SUBMISSION_DATE = 'stats-feedback-submission-date';
 
 const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
 const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
@@ -15,6 +17,34 @@ const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
+
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 30; // 30 seconds for now
+// Examples values:
+// 30 minutes = 60 * 30;
+// 30 days = 3600 * 24 * 30;
+
+function useNoticeVisibilityHooks( siteId: number ) {
+	const { data: shouldShowFeedbackPanel, refetch } = useNoticeVisibilityQuery(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY
+	);
+
+	const { mutateAsync } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
+	);
+
+	const updateFeedbackPanelHibernationDelay = () => {
+		mutateAsync().then( () => {
+			refetch();
+		} );
+	};
+
+	return { shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay };
+}
 
 interface FeedbackProps {
 	siteId: number;
@@ -96,88 +126,30 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
-function storePanelDismissDate() {
-	localStorage.setItem( FEEDBACK_KEY_DISMISS_DATE, new Date().toISOString() );
-}
-
-function storeFeedbackSubmissionDate() {
-	localStorage.setItem( FEEDBACK_KEY_SUBMISSION_DATE, new Date().toISOString() );
-}
-
-function getDiffInMilliseconds( isoDate: string ) {
-	return new Date().getTime() - new Date( isoDate ).getTime();
-}
-
-function getMonthsFromMilliseconds( milliseconds: number ) {
-	return Math.floor( milliseconds / ( 1000 * 60 * 60 * 24 * 30 ) );
-}
-
-function getMonthsFromISODate( isoDate: string ) {
-	return getMonthsFromMilliseconds( getDiffInMilliseconds( isoDate ) );
-}
-
-function didSubmitFeedbackWithinTwelveMonths() {
-	const submissionDate = localStorage.getItem( FEEDBACK_KEY_SUBMISSION_DATE );
-	if ( ! submissionDate ) {
-		return false;
-	}
-
-	if ( getMonthsFromISODate( submissionDate ) <= 12 ) {
-		return true;
-	}
-
-	return false;
-}
-
-function didDismissPanelWithinSixMonths() {
-	const dismissDate = localStorage.getItem( FEEDBACK_KEY_DISMISS_DATE );
-	if ( ! dismissDate ) {
-		return false;
-	}
-
-	if ( getMonthsFromISODate( dismissDate ) <= 6 ) {
-		return true;
-	}
-
-	return false;
-}
-
-function shouldShowFloatingPanel() {
-	if ( didSubmitFeedbackWithinTwelveMonths() ) {
-		return false;
-	}
-
-	if ( didDismissPanelWithinSixMonths() ) {
-		return false;
-	}
-
-	return true;
-}
-
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
+	const { shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
+		useNoticeVisibilityHooks( siteId );
+
 	useEffect( () => {
-		if ( shouldShowFloatingPanel() ) {
+		if ( shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [] );
+	}, [ shouldShowFeedbackPanel ] );
 
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
 			case FEEDBACK_ACTION_SEND_FEEDBACK:
-				// TODO: Should store submission date when the user actually submits the review.
-				// That means getting a status value back from the FeedbackModal component.
-				// We'll do it here for now.
-				storeFeedbackSubmissionDate();
+				setIsFloatingPanelOpen( false );
 				setIsOpen( true );
 				break;
 			case FEEDBACK_ACTION_DISMISS_FLOATING_PANEL:
-				storePanelDismissDate();
 				setIsFloatingPanelOpen( false );
+				updateFeedbackPanelHibernationDelay();
 				break;
 			case FEEDBACK_ACTION_LEAVE_REVIEW:
 				setIsFloatingPanelOpen( false );

@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
 
+export const NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL = 'show_floating_user_feedback_panel';
+
 const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
 	traffic_page_highlights_module_settings: false,
@@ -12,6 +14,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
+	[ NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL ]: true,
 };
 const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
 	client_paid_plan_purchase_success: true,
