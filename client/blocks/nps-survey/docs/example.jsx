@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
 	submitNpsSurvey,
