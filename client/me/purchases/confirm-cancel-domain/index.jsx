@@ -1,6 +1,6 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card, FormLabel } from '@automattic/components';
+import { Card, CompactCard, FormLabel } from '@automattic/components';
 import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { map, find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,11 +8,12 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getName as getDomainName } from 'calypso/lib/purchases';
@@ -191,12 +192,18 @@ class ConfirmCancelDomain extends Component {
 
 		return (
 			<div className="confirm-cancel-domain__help-message">
-				<p>{ selectedReason.helpMessage }</p>
-				{ selectedReason.showTextarea && (
-					<FormTextarea
-						className="confirm-cancel-domain__reason-details"
-						onChange={ this.onMessageChange }
-					/>
+				{ selectedReason.showTextarea ? (
+					<>
+						<p>{ selectedReason.helpMessage }</p>
+						<FormTextarea
+							className="confirm-cancel-domain__reason-details"
+							onChange={ this.onMessageChange }
+						/>
+					</>
+				) : (
+					<CompactCard className="confirm-cancel-domain__help-card" highlight="warning">
+						<span>{ selectedReason.helpMessage }</span>
+					</CompactCard>
 				) }
 			</div>
 		);
@@ -234,7 +241,7 @@ class ConfirmCancelDomain extends Component {
 		if ( this.state.submitting ) {
 			return (
 				<FormButton isPrimary disabled>
-					{ this.props.translate( 'Cancelling Domain…' ) }
+					{ this.props.translate( 'Cancelling domain…' ) }
 				</FormButton>
 			);
 		}
@@ -245,14 +252,14 @@ class ConfirmCancelDomain extends Component {
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
 				<FormButton isPrimary onClick={ this.onSubmit } disabled={ ! confirmed }>
-					{ this.props.translate( 'Cancel Anyway' ) }
+					{ this.props.translate( 'Cancel anyway' ) }
 				</FormButton>
 			);
 		}
 
 		return (
 			<FormButton isPrimary onClick={ this.onSubmit } disabled={ ! confirmed }>
-				{ this.props.translate( 'Cancel Domain' ) }
+				{ this.props.translate( 'Cancel domain' ) }
 			</FormButton>
 		);
 	};
@@ -262,10 +269,7 @@ class ConfirmCancelDomain extends Component {
 			return (
 				<div>
 					<QueryUserPurchases />
-					<ConfirmCancelDomainLoadingPlaceholder
-						purchaseId={ this.props.purchaseId }
-						selectedSite={ this.props.selectedSite }
-					/>
+					<ConfirmCancelDomainLoadingPlaceholder />
 				</div>
 			);
 		}
@@ -284,10 +288,22 @@ class ConfirmCancelDomain extends Component {
 					title="Purchases > Confirm Cancel Domain"
 				/>
 
-				<Card>
-					<FormSectionHeading>
-						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
-					</FormSectionHeading>
+				<Card className="confirm-cancel-domain__card">
+					<div className="confirm-cancel-domain__back">
+						<HeaderCakeBack
+							icon="chevron-left"
+							href={ this.props.getCancelPurchaseUrlFor(
+								this.props.siteSlug,
+								this.props.purchaseId
+							) }
+						/>
+					</div>
+					<FormattedHeader
+						className="confirm-cancel-domain__formatted-header"
+						brandFont
+						headerText={ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
+						align="left"
+					/>
 					<p>
 						{ this.props.translate(
 							'Since domain cancellation can cause your site to stop working, ' +

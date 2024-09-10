@@ -67,9 +67,7 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 			<span>
 				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
 					? translate( 'Have a question or seeking a refund?' )
-					: translate( 'Need help with your purchase?' ) }
-			</span>
-			<span>
+					: translate( 'Need help with your purchase?' ) }{ ' ' }
 				{ translate( '{{contactLink}}Ask a Happiness Engineer{{/contactLink}}.', {
 					components: {
 						contactLink: (

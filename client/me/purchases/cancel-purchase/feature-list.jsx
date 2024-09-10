@@ -1,7 +1,7 @@
 import { getFeatureByKey } from '@automattic/calypso-products'; // eslint-disable-line import/named
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getName } from 'calypso/lib/purchases';
+import { getName, isRefundable } from 'calypso/lib/purchases';
 
 const CancelPurchaseFeatureList = ( { purchase, cancellationFeatures } ) => {
 	const translate = useTranslate();
@@ -13,14 +13,23 @@ const CancelPurchaseFeatureList = ( { purchase, cancellationFeatures } ) => {
 	return (
 		<div className="cancel-purchase__features">
 			<p>
-				{ translate(
-					'By canceling the %(productName)s plan, these features will no longer be available on your site:',
-					{
-						args: {
-							productName: getName( purchase ),
-						},
-					}
-				) }
+				{ isRefundable( purchase )
+					? translate(
+							'By canceling the %(productName)s plan, these features will no longer be available on your site:',
+							{
+								args: {
+									productName: getName( purchase ),
+								},
+							}
+					  )
+					: translate(
+							'These features will no longer be available on your site when your %(productName)s plan expires:',
+							{
+								args: {
+									productName: getName( purchase ),
+								},
+							}
+					  ) }
 			</p>
 			<ul className="cancel-purchase__features-list">
 				{ cancellationFeatures.map( ( feature ) => {
