@@ -16,15 +16,13 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const steps = flow.useSteps();
 	const [ queryParams, setQuery ] = useSearchParams();
 	const ref = queryParams.get( 'ref' ) || '';
+	const isSignupStep = queryParams.has( 'signup' );
 
-	// TODO: Using the new start flag we can remove reference to SENSEI_FLOW
+	// TODO: Using the new signup flag we can remove reference to SENSEI_FLOW
 	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
 	const isFirstStep = firstStepSlug === currentStepRoute;
 	const flowVariant = flow.variantSlug;
 	const signupStartEventProps = flow.useSignupStartEventProps?.();
-	const isStartingFlow = isFirstStep || queryParams.has( 'start' );
-	const flowName = flow.name;
-	const shouldTrack = flow.isSignupFlow && isStartingFlow;
 
 	const extraProps = useMemo(
 		() => ( {
@@ -33,10 +31,11 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 		} ),
 		[ signupStartEventProps, flowVariant ]
 	);
-
+	const flowName = flow.name;
+	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
 	const removeSignupParam = useCallback( () => {
-		if ( queryParams.has( 'start' ) ) {
-			queryParams.delete( 'start' );
+		if ( queryParams.has( 'signup' ) ) {
+			queryParams.delete( 'signup' );
 			setQuery( queryParams );
 		}
 	}, [ queryParams, setQuery ] );
