@@ -103,6 +103,7 @@ class ThemeShowcase extends Component {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
+		this.showcaseRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -246,6 +247,14 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// Scroll to the top of the showcase
+		if ( this.showcaseRef.current ) {
+			this.showcaseRef.current.scrollIntoView( {
+				behavior: 'smooth',
+				block: 'start',
+			} );
+		}
+
 		let y = 0;
 
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
@@ -660,7 +669,7 @@ class ThemeShowcase extends Component {
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
 		return (
-			<div className={ classnames }>
+			<div className={ classnames } ref={ this.showcaseRef }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
