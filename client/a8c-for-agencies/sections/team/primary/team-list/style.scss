@@ -1,10 +1,26 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .team-list {
 	.a4a-layout__body {
-		padding-block-start: 32px;
+		margin-block-end: 16px;
+
+		@include break-medium {
+			padding-block-start: 32px;
+		}
 	}
 
-	.dataviews-filters__view-actions {
+	.dataviews__view-actions {
 		display: none;
+	}
+
+	.a4a-layout__navigation-wrapper {
+		margin-block-end: 16px;
+		max-width: 100%;
+
+		@include break-medium {
+			margin-block-end: 0;
+		}
 	}
 
 	.dataviews-view-table__row td:last-child {
@@ -12,7 +28,6 @@
 		padding: 16px 48px;
 
 	}
-
 }
 
 
@@ -69,3 +84,6 @@
 	color: var(--color-error);
 }
 
+.team-list__action-button {
+	padding: 0;
+}

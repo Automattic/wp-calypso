@@ -1,7 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import useFetchActiveMembers from 'calypso/a8c-for-agencies/data/team/use-fetch-active-members';
 import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invites';
-import { TeamMember } from '../types';
 
 export function useMemberList() {
 	const {
@@ -21,25 +20,18 @@ export function useMemberList() {
 		refetchMemberInvites();
 	}, [ refetchActiveMembers, refetchMemberInvites ] );
 
-	const members: TeamMember[] = useMemo( () => {
-		const data = [
-			...( activeMembers ?? [] ),
-			...( memberInvites?.map( ( invite ) => ( {
+	return {
+		refetch,
+		isPending: isActiveMembersPending || isMemberInvitesPending,
+		activeMembers: activeMembers ?? [],
+		invitedMembers:
+			memberInvites?.map( ( invite ) => ( {
 				id: invite.id,
 				displayName: invite.displayName,
 				email: invite.email,
 				avatar: invite.avatar,
 				status: invite.status as 'active' | 'pending' | 'expired',
-			} ) ) ?? [] ),
-		];
-
-		return data;
-	}, [ activeMembers, memberInvites ] );
-
-	return {
-		refetch,
-		isPending: isActiveMembersPending || isMemberInvitesPending,
-		members,
-		hasMembers: members.length > 1, // We exclude the owner from the count
+			} ) ) ?? [],
+		hasMembers: ( activeMembers && activeMembers.length > 1 ) || memberInvites?.length, // We exclude the owner from the count
 	};
 }
