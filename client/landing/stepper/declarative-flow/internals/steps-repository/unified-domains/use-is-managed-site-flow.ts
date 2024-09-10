@@ -17,9 +17,13 @@ export const useIsManagedSiteFlowProps = () => {
 		const isReEnteringFlow = getSignupCompleteFlowName() === 'onboarding';
 		const isManageSiteFlow =
 			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
-		clearSignupDestinationCookie();
 
-		if ( isManageSiteFlow && selectedSiteData ) {
+		if ( ! isManageSiteFlow ) {
+			clearSignupDestinationCookie();
+			return;
+		}
+
+		if ( selectedSiteData ) {
 			setProps( {
 				showExampleSuggestions: false,
 				showSkipButton: true,

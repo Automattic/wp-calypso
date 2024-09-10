@@ -2,11 +2,11 @@ import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
-	clearSignupDestinationCookie,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
+	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
@@ -98,6 +98,7 @@ const onboarding: Flow = {
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
 					setPlanCartItem( cartItems?.[ 0 ] ?? null );
+					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, true );
 				}
 				case 'create-site':
@@ -108,6 +109,7 @@ const onboarding: Flow = {
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
+					setSignupCompleteSlug( providedDependencies.siteSlug );
 
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
