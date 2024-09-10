@@ -40,6 +40,26 @@ describe( 'BackupRealtimeMessage', () => {
 		useDispatch.mockImplementation( () => jest.fn() );
 	} );
 
+	test( 'renders the correct message when backup date and selected date are today', () => {
+		const today = moment();
+		const formattedDate = today.format( 'YYYY-MM-DD hh:mm A' );
+		const { container } = renderMessage( today, 3, today );
+		expect( container.textContent ).toBe(
+			`We are using a full backup from today (${ formattedDate }) with 3 changes you have made since then until now.`
+		);
+	} );
+
+	test( 'renders the correct message when backup date is yesterday and selected date is today', () => {
+		const today = moment(); // today
+		const yesterday = moment().subtract( 1, 'days' ); // yesterday
+		const formattedDate = yesterday.format( 'YYYY-MM-DD hh:mm A' ); // formatted backup date
+
+		const { container } = renderMessage( yesterday, 5, today );
+		expect( container.textContent ).toBe(
+			`We are using a full backup from yesterday (${ formattedDate }) with 5 changes you have made since then until now.`
+		);
+	} );
+
 	test( 'renders the correct message when the base backup date is the same as the selected backup date', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = selectedDate; // same day
