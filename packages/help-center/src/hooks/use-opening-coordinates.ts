@@ -26,7 +26,7 @@ const getOriginElementOffset = ( element: HTMLElement ) => {
 
 const getDefaultPosition = (): OpeningCoordinates => ( {
 	left: window?.innerWidth - HELP_CENTER_WIDTH - AESTHETIC_OFFSET,
-	top: 60,
+	top: 50,
 	transformOrigin: 'center',
 } );
 
