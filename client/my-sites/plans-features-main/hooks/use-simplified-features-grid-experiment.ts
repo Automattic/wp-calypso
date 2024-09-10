@@ -1,41 +1,38 @@
 import config from '@automattic/calypso-config';
 import {
-	SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID,
-	SimplifiedFeaturesGridExperimentVariant,
-	setSimplifiedFeaturesGridExperimentVariant,
+	setSimplifiedFeaturesGridExperimentVariant as setExperimentVariant,
+	SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID as EXPERIMENT_ID,
+	SimplifiedFeaturesGridExperimentVariant as ExperimentVariant,
 } from '@automattic/calypso-products';
 import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 
 interface Params {
-	flowName?: string | null;
-	isInSignup: boolean;
+	flowName?: string;
 	intent?: string;
+	isInSignup: boolean;
 }
 
 function useSimplifiedFeaturesGridExperiment( { flowName, isInSignup, intent }: Params ): {
 	isLoading: boolean;
-	variant: SimplifiedFeaturesGridExperimentVariant;
+	variant: ExperimentVariant;
 } {
-	const [ isLoading, assignment ] = useExperiment( SIMPLIFIED_FEATURES_GRID_EXPERIMENT_ID, {
-		isEligible: flowName === 'onboarding' || ( ! isInSignup && intent === 'plans-default-wpcom' ),
-	} );
+	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
+	const isEligibleAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
+	const isEligible = isEligibleSignupFlow || isEligibleAdminIntent;
+	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_ID, { isEligible } );
 
-	let variant = ( assignment?.variationName ??
-		'control' ) as SimplifiedFeaturesGridExperimentVariant;
+	let variant = ( assignment?.variationName ?? 'control' ) as ExperimentVariant;
 
-	if ( config.isEnabled( 'simplified-features-grid-a' ) ) {
+	if ( isEligible && config.isEnabled( 'simplified-features-grid-a' ) ) {
 		variant = 'fix_inaccuracies';
-	} else if ( config.isEnabled( 'simplified-features-grid-b' ) ) {
+	} else if ( isEligible && config.isEnabled( 'simplified-features-grid-b' ) ) {
 		variant = 'simplified';
 	}
 
-	useEffect( () => setSimplifiedFeaturesGridExperimentVariant( variant ), [ isLoading, variant ] );
+	useEffect( () => setExperimentVariant( variant ), [ isLoading, variant ] );
 
-	return {
-		isLoading,
-		variant,
-	};
+	return { isLoading, variant };
 }
 
 export default useSimplifiedFeaturesGridExperiment;
