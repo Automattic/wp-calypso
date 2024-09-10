@@ -1,26 +1,34 @@
 import { useTranslate } from 'i18n-calypso';
-import { ForwardedRef, forwardRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback, useState } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import './style.scss';
 import { metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	url: string;
 	isWpcom: boolean;
 	hash: string;
+	filter?: string;
 };
 
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const { audits, isWpcom, hash } = props;
-		const [ selectedFilter, setSelectedFilter ] = useState( 'all' );
+		const { audits, isWpcom, hash, filter } = props;
+		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 		const filteredAudits = Object.keys( audits ).filter(
 			( key ) =>
 				selectedFilter === 'all' ||
 				audits[ key ].metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
 		);
+		const onFilter = useCallback( ( e: React.ChangeEvent< HTMLSelectElement > ) => {
+			const { value } = e?.target ?? {};
+
+			setSelectedFilter( value );
+			updateQueryParams( { filter: value } );
+		}, [] );
 
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
@@ -36,10 +44,7 @@ export const InsightsSection = forwardRef(
 						</p>
 					</div>
 					<div className="filter">
-						<select
-							value={ selectedFilter }
-							onChange={ ( e ) => setSelectedFilter( e.target.value ) }
-						>
+						<select value={ selectedFilter } onChange={ onFilter }>
 							<option value="all">{ translate( 'All recommendations' ) } </option>
 							{ Object.keys( metricsNames ).map( ( key ) => (
 								<option value={ key } key={ 'option-' + key }>

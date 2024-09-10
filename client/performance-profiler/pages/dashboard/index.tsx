@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
@@ -13,17 +12,19 @@ import {
 	MessageDisplay,
 	ErrorSecondLine,
 } from 'calypso/performance-profiler/components/message-display';
+import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import { LoadingScreen } from '../loading-screen';
 
 type PerformanceProfilerDashboardProps = {
 	url: string;
 	tab: TabType;
 	hash: string;
+	filter?: string;
 };
 
 export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
-	const { url, tab, hash } = props;
+	const { url, tab, hash, filter } = props;
 	const isSavedReport = useRef( !! hash );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const { data: basicMetrics, isError } = useUrlBasicMetricsQuery( url, hash, true );
@@ -33,22 +34,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
 	const siteUrl = new URL( url );
-
-	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
-		const queryParams = new URLSearchParams( window.location.search );
-		Object.keys( params ).forEach( ( key ) => {
-			if ( params[ key ] ) {
-				queryParams.set( key, params[ key ] );
-			}
-		} );
-
-		// If forceReload is true, we want to reload the page with the new query params instead of just updating the URL
-		if ( forceReload ) {
-			page( `/speed-test-tool?${ queryParams.toString() }` );
-		} else {
-			window.history.replaceState( {}, '', `?${ queryParams.toString() }` );
-		}
-	};
 
 	// Append hash to the URL if it's not there to avoid losing it on page reload
 	useEffect( () => {
@@ -127,6 +112,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 							performanceReport={ performanceReport }
 							url={ finalUrl ?? url }
 							hash={ hash }
+							filter={ filter }
 						/>
 					) }
 				</>

@@ -32,6 +32,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 							: TabType.mobile
 					}
 					hash={ context.query?.hash ?? '' }
+					filter={ context.query?.filter }
 				/>
 			</Main>
 
