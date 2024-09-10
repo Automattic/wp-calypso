@@ -4,217 +4,229 @@
 
 import {
 	DataHelper,
-	SupportComponent,
+	HelpCenterComponent,
+	HelpCenterTestEnvironment,
 	TestAccount,
-	TestAccountName,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, Page, Locator } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-const helpCenterContainerVisibilityErrorMessage = `This is a bug that should be urgently fixed.
-But because this test runs against ETK production, this bug was probably not introduced in this pull request.
-Please consider alerting the last person who deployed ETK to attend to this issue and fix the Help Center.
-You can view the history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit`;
-
-/** Tests to ensure the Help Center is open and visible in Calypso and the Editor */
-describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
-	'Help Center: Verify Help Center is accessible',
-	function ( { accountName } ) {
-		let page: Page;
-		let supportComponent: SupportComponent;
-		let testAccount: TestAccount;
-
-		beforeAll( async function () {
-			page = await browser.newPage();
-
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page, { waitUntilStable: true } );
-
-			supportComponent = new SupportComponent( page );
-		} );
-
-		afterAll( async function () {
-			await page.close();
-		} );
-
-		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-			'Verify Help Center is opened and visible in Calypso',
-			function () {
-				it( 'Verify Help Center is initially closed', async function () {
-					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
-				} );
-
-				it( 'Open Help Center', async function () {
-					await supportComponent.openPopover();
-				} );
-
-				it( 'Verify Help Center is opened', async function () {
-					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeTruthy();
-				} );
-			}
-		);
-
-		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-			'Verify Help Center is opened and visible in Editor',
-			function () {
-				it( 'Navigate to the Editor and verify the Help Center is initially closed', async function () {
-					const postURL = DataHelper.getCalypsoURL(
-						'/post/' + testAccount.getSiteURL( { protocol: false } )
-					);
-
-					await page.goto( postURL );
-				} );
-
-				// eslint-disable-next-line jest/no-identical-title
-				it( 'Verify Help Center is initially closed', async function () {
-					expect(
-						await page
-							.frameLocator( '.calypsoify iframe' )
-							.locator( '.help-center__container' )
-							.isVisible()
-					).toBeFalsy();
-				} );
-
-				// eslint-disable-next-line jest/no-identical-title
-				it( 'Open Help Center', async function () {
-					try {
-						await page
-							.frameLocator( '.calypsoify iframe' )
-							.getByLabel( 'Help', { exact: true } )
-							.click();
-					} catch ( error ) {
-						throw new Error(
-							`The Help Center could not be opened in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
-						);
-					}
-				} );
-
-				// eslint-disable-next-line jest/no-identical-title
-				it( 'Verify Help Center is opened', async function () {
-					const helpCenterContainerIsVisible = await page
-						.frameLocator( '.calypsoify iframe' )
-						.locator( '.help-center__container' )
-						.isVisible();
-
-					if ( ! helpCenterContainerIsVisible ) {
-						throw new Error(
-							`The Help Center is not visible in the Editor. ${ helpCenterContainerVisibilityErrorMessage }`
-						);
-					}
-
-					expect( helpCenterContainerIsVisible ).toBeTruthy();
-				} );
-			}
-		);
-
-		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-			'Verify Help Center is opened and visible in WP Admin',
-			function () {
-				it( 'Navigate to wp-admin page', async function () {
-					const postURL = `${ testAccount.getSiteURL( {
-						protocol: true,
-					} ) }wp-admin/options-general.php`;
-					await page.goto( postURL );
-				} );
-
-				it( 'Verify the Help Center is initially closed', async function () {
-					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
-				} );
-
-				it( 'Open Help Center in WP Admin', async function () {
-					await page.locator( '#wp-admin-bar-help-center' ).click();
-				} );
-
-				it( 'Verify Help Center is opened in WP Admin', async function () {
-					const helpCenterContainerIsVisible = await page
-						.locator( '.help-center__container' )
-						.isVisible();
-
-					if ( ! helpCenterContainerIsVisible ) {
-						throw new Error(
-							`The Help Center is not visible in WP Admin. ${ helpCenterContainerVisibilityErrorMessage }`
-						);
-					}
-
-					expect( helpCenterContainerIsVisible ).toBeTruthy();
-				} );
-			}
-		);
-	}
-);
-
-/**
- * Tests interaction with the Help Centre, simulating a user
- * looking for information on a specific topic, going through
- * help doccs and the Calypso links.
- */
-describe( 'Help Center: Interact with Results', function () {
+skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => {
 	let page: Page;
-	let supportComponent: SupportComponent;
+	let testAccount: TestAccount;
+	let helpCenterComponent: HelpCenterComponent;
+	let helpCenterLocator: Locator;
 
+	// Setup the page and test account
 	beforeAll( async function () {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'defaultUser' );
+		testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page, { waitUntilStable: true } );
-
-		supportComponent = new SupportComponent( page );
 	} );
 
-	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-		'Search for Help article',
-		function () {
-			it( 'Open Help Center', async function () {
-				await supportComponent.openPopover();
+	// Close the page after the tests
+	afterAll( async function () {
+		await page.close();
+	} );
+
+	/**
+	 * Run tests for both Calypso and Editor environments.
+	 *
+	 * WP-ADMIN environment is skipped because it loads the Help Center
+	 * from widgets.wp.com therefore these tests are not applicable.
+	 */
+	describe.each< { component: HelpCenterTestEnvironment } >( [
+		{ component: 'calypso' },
+		{ component: 'editor' },
+	] )( 'in $component', ( { component }: { component: HelpCenterTestEnvironment } ) => {
+		beforeAll( async () => {
+			helpCenterComponent = new HelpCenterComponent( page, component );
+			helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
+		} );
+
+		/**
+		 * General Interaction
+		 *
+		 * These tests check the general interaction with the Help Center popover.
+		 */
+		describe( 'General Interaction', () => {
+			it( 'is initially closed', async () => {
+				if ( component === 'editor' ) {
+					const postUrl = DataHelper.getCalypsoURL(
+						'/post/' + testAccount.getSiteURL( { protocol: false } )
+					);
+					await page.goto( postUrl );
+				}
+
+				expect( await helpCenterLocator.isVisible() ).toBeFalsy();
 			} );
 
-			it( 'Search for posts-related help article', async function () {
-				// We use domains below, but one of the domain-adjacent articles is currently broken:
-				// https://github.com/Automattic/wp-calypso/issues/79576
-				// Until that's fixed, let's steer clear and search a different topic.
-				await supportComponent.search( 'posts' );
+			it( 'can be opened', async () => {
+				await helpCenterComponent.openPopover();
+
+				expect( await helpCenterLocator.isVisible() ).toBeTruthy();
 			} );
 
-			it( 'Click on the second Help Docs result', async function () {
-				await supportComponent.clickResultByIndex( 'Docs', 1 );
+			it( 'is showing on the screen', async () => {
+				expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
 			} );
 
-			it( 'Help Doc article is shown', async function () {
-				const articleTitle = await supportComponent.getOpenArticleTitle();
-				expect( articleTitle ).not.toBe( '' );
-			} );
-		}
-	);
+			it( 'can be minimized', async () => {
+				await helpCenterComponent.minimizePopover();
 
-	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-		'Navigate to Calypso Link',
-		function () {
-			let popupPage: Page;
+				const containerHeight = await helpCenterLocator.evaluate(
+					( el: HTMLElement ) => el.offsetHeight
+				);
 
-			it( 'Close article and return to search results', async function () {
-				await supportComponent.goBack();
+				expect( containerHeight ).toBe( 50 );
 			} );
 
-			it( 'Clear search results', async function () {
-				await supportComponent.clearSearch();
+			it( 'the popover can be closed', async () => {
+				await helpCenterComponent.closePopover();
+
+				expect( await helpCenterLocator.isVisible() ).toBeFalsy();
+			} );
+		} );
+
+		/**
+		 * Articles
+		 *
+		 * These tests check the search function and article navigation.
+		 */
+		describe( 'Articles', () => {
+			beforeAll( async () => {
+				await helpCenterComponent.openPopover();
 			} );
 
-			it( 'Search for "domain"', async function () {
-				await supportComponent.search( 'domain' );
+			afterAll( async () => {
+				await helpCenterComponent.closePopover();
 			} );
 
-			it( 'Click on the first Calypso Link result', async function () {
-				const popupEvent = page.waitForEvent( 'popup' );
-				await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
-				popupPage = await popupEvent;
+			it( 'initial articles are shown', async () => {
+				const articles = helpCenterComponent.getArticles();
+				const articleCount = await articles.count();
+				expect( articleCount ).toBeGreaterThanOrEqual( 5 );
 			} );
 
-			it( 'Calypso Link opens in a new page', async function () {
-				expect( popupPage.url() ).not.toBe( page.url() );
+			it( 'search returns proper results', async () => {
+				await helpCenterComponent.search( 'change my domain' );
+				const searchResults = helpCenterComponent.getArticles();
+				const resultTitles = await searchResults.allTextContents();
+				expect(
+					resultTitles.some( ( title ) =>
+						title.replace( /\s+/g, ' ' ).trim().includes( 'Change a Domain Name Address' )
+					)
+				).toBeTruthy();
 			} );
-		}
-	);
+
+			it( 'post loads correctly', async () => {
+				const articles = helpCenterComponent.getArticles();
+				await articles.first().click();
+
+				const articleContent = helpCenterComponent.getArticleContent();
+
+				expect( await articleContent.isVisible() ).toBeTruthy();
+			} );
+		} );
+
+		/**
+		 * Support Flow
+		 *
+		 * These tests check the support flow. Starting with AI and then chat.
+		 */
+		describe( 'Support Flow', () => {
+			beforeAll( async () => {
+				await helpCenterComponent.openPopover();
+			} );
+
+			afterAll( async () => {
+				await helpCenterComponent.closePopover();
+			} );
+
+			it( 'AI chat starts correctly', async () => {
+				const stillNeedHelp = helpCenterLocator.locator( 'a.help-center-contact-page__button' );
+				await stillNeedHelp.click();
+
+				const firstAiChatMessage = await helpCenterLocator
+					.locator( '.odie-chatbox-introduction-message' )
+					.textContent();
+
+				expect(
+					firstAiChatMessage &&
+						firstAiChatMessage.includes( 'Tell me all about it and I’ll be happy to help' )
+				).toBeTruthy();
+			} );
+
+			it( 'AI responds and forwards to human agent', async () => {
+				await helpCenterComponent.startAIChat( 'talk to human' );
+
+				const contactSupportButton = await helpCenterComponent.getContactSupportButton();
+
+				expect( contactSupportButton.isVisible() ).toBeTruthy();
+			} );
+
+			it( 'Contact Support button opens Zendesk', async () => {
+				const contactSupportButton = helpCenterComponent.getContactSupportButton();
+				await contactSupportButton.click();
+
+				const zendeskWindow = await page.getByRole( 'dialog', { name: 'Messaging window' } );
+
+				expect( zendeskWindow.isVisible() ).toBeTruthy();
+			} );
+		} );
+	} );
+
+	/**
+	 * Action Hooks
+	 *
+	 * These tests Help Center opening on page load.
+	 */
+	describe( 'via action hooks', () => {
+		beforeAll( async () => {
+			helpCenterComponent = new HelpCenterComponent( page, 'calypso' );
+			helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
+		} );
+
+		it( 'opened on page load', async () => {
+			const postUrl = DataHelper.getCalypsoURL(
+				'/home/' + testAccount.getSiteURL( { protocol: false } ),
+				{
+					'help-center': 'home',
+				}
+			);
+
+			await page.goto( postUrl );
+
+			await helpCenterLocator.waitFor( { state: 'visible' } );
+
+			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+		} );
+
+		it( 'open Wapuu on page load', async () => {
+			const postUrl = DataHelper.getCalypsoURL(
+				'/home/' + testAccount.getSiteURL( { protocol: false } ),
+				{
+					'help-center': 'wapuu',
+				}
+			);
+
+			await page.goto( postUrl );
+			await helpCenterLocator.waitFor( { state: 'visible' } );
+
+			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+
+			const firstAiChatMessage = await helpCenterLocator
+				.locator( '.odie-chatbox-introduction-message' )
+				.textContent();
+
+			expect(
+				firstAiChatMessage &&
+					firstAiChatMessage.includes( 'Tell me all about it and I’ll be happy to help' )
+			).toBeTruthy();
+		} );
+	} );
 } );
