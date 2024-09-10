@@ -1,4 +1,4 @@
-import { getFeatureByKey } from '@automattic/calypso-products'; // eslint-disable-line import/named
+import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { getName, isRefundable } from 'calypso/lib/purchases';
