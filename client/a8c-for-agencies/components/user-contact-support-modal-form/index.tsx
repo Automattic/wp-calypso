@@ -199,6 +199,30 @@ export default function UserContactSupportModalForm( {
 					</FormSelect>
 				</FormFieldset>
 
+				{ isPressableSelected ? (
+					<>
+						<FormFieldset>
+							<FormLabel htmlFor="product">
+								{ translate( 'Would you like help with Pressable sales or support?' ) }
+							</FormLabel>
+							<FormSelect
+								name="pressable_contact"
+								id="product"
+								value={ product }
+								onChange={ onProductChange }
+							>
+								<option value="sales">{ translate( 'Sales' ) }</option>
+								<option value="support">{ translate( 'Support' ) }</option>
+							</FormSelect>
+						</FormFieldset>
+						<div className="form-field-description">
+							{ translate(
+								'Your request will be routed directly to a Pressable support specialist to chat about your needs.'
+							) }
+						</div>
+					</>
+				) : null }
+
 				<FormFieldset>
 					<FormLabel htmlFor="message">{ translate( 'How can we help?' ) }</FormLabel>
 					{ ! isPressableSelected ? (
