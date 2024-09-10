@@ -42,7 +42,10 @@ export const BylineSettings = ( {
 	return (
 		<>
 			<FormLabel className="increase-margin-bottom-fix">
-				{ translate( 'For each new post email, include' ) }
+				{
+					/* translators: Sentence explaining the byline that gets included in the newsletter emails. */
+					translate( 'For each new post email, include' )
+				}
 			</FormLabel>
 			<BylinePreview
 				isGravatarEnabled={ !! showAvatarValue }
