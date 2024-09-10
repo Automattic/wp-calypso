@@ -26,13 +26,13 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const translate = useTranslate();
 	const { url, tab, hash } = props;
 	const isSavedReport = useRef( !! hash );
+	const testStartTime = useRef( 0 );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
-	let testStartTime;
 
 	const siteUrl = new URL( url );
 
@@ -40,7 +40,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		recordTracksEvent( 'calypso_performance_profiler_test_started', {
 			url: finalUrl,
 		} );
-		testStartTime = Date.now();
+		testStartTime.current = Date.now();
 	}
 
 	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
@@ -84,10 +84,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
 
-	if ( testStartTime && desktopLoaded && mobileLoaded ) {
+	if ( testStartTime.current && desktopLoaded && mobileLoaded ) {
 		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
 			url: finalUrl,
-			duration: Date.now() - testStartTime,
+			duration: Date.now() - testStartTime.current,
 			mobile_score: mobileReport?.overall_score,
 			desktop_score: desktopReport?.overall_score,
 		} );
