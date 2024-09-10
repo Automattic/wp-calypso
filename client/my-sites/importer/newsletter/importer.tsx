@@ -119,7 +119,7 @@ export default function NewsletterImporter( {
 		}
 
 		if ( paidNewsletterData?.steps ) {
-			const status = paidNewsletterData?.steps[ stepName ]?.status ?? '';
+			const status: StatusType = paidNewsletterData?.steps[ stepName ]?.status ?? '';
 			if ( status === 'done' ) {
 				stepsProgress[ index ].indicator = <Icon icon={ check } />;
 			}
