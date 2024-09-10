@@ -322,7 +322,7 @@ class CancelPurchase extends Component {
 				</div>
 
 				<FormattedHeader
-					className="cancel-purchase__formatter-header"
+					className="cancel-purchase__formatted-header"
 					brandFont
 					headerText={ heading }
 					align="left"
