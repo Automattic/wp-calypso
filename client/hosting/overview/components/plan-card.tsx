@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
 import {
 	getPlan,
 	PlanSlug,
 	PRODUCT_1GB_SPACE,
 	PLAN_MONTHLY_PERIOD,
 } from '@automattic/calypso-products';
-import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
+import { Button, PlanPrice, LoadingPlaceholder, Badge } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
@@ -158,6 +159,7 @@ const PricingSection: FC = () => {
 };
 
 const PlanCard: FC = () => {
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -166,6 +168,7 @@ const PlanCard: FC = () => {
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
 	const isStaging = isStagingSite( site ?? undefined );
+	const isDevelopmentSite = site?.is_a4a_dev_site;
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: AppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
@@ -220,6 +223,9 @@ const PlanCard: FC = () => {
 							<h3 className="hosting-overview__plan-card-title">
 								{ isStaging ? translate( 'Staging site' ) : planName }
 							</h3>
+							{ devSitesEnabled && isDevelopmentSite && (
+								<Badge type="info-purple">{ translate( 'Development' ) }</Badge>
+							) }
 							{ renderManageButton() }
 						</>
 					) }
