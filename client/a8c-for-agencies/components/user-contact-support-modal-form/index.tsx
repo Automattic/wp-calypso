@@ -117,7 +117,7 @@ export default function UserContactSupportModalForm( {
 			} )
 		);
 
-		submit( { message, name, email, product, site, pressableContactType } );
+		submit( { message, name, email, product, site, contact_type: pressableContactType } );
 	}, [
 		hasCompletedForm,
 		dispatch,
