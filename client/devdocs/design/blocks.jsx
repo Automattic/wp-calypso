@@ -27,6 +27,7 @@ import ImageEditor from 'calypso/blocks/image-editor/docs/example';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import LikeButtons from 'calypso/blocks/like-button/docs/example';
 import Login from 'calypso/blocks/login/docs/example';
+import NpsSurvey from 'calypso/blocks/nps-survey/docs/example';
 import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
@@ -161,6 +162,7 @@ export default class AppComponents extends Component {
 					<DailyPostButton readmeFilePath="daily-post-button" />
 					<PostLikes readmeFilePath="post-likes" />
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
+					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey readmeFilePath="nps-survey" /> }
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
