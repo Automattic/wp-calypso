@@ -10,6 +10,7 @@ import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/co
 import {
 	WPCOM_DEFAULT_NAMESERVERS,
 	WPCOM_DEFAULT_NAMESERVERS_REGEX,
+	CLOUDFLARE_NAMESERVERS_REGEX,
 } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import CustomNameserversForm from 'calypso/my-sites/domains/domain-management/name-servers/custom-nameservers-form';
 import FetchError from 'calypso/my-sites/domains/domain-management/name-servers/fetch-error';
@@ -79,6 +80,16 @@ const NameServersCard = ( {
 		} );
 	};
 
+	const hasCloudflareNameservers = () => {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
+		}
+
+		return nameservers.some( ( nameserver ) => {
+			return ! nameserver || CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
 	const onlyWpcomNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
@@ -133,7 +144,7 @@ const NameServersCard = ( {
 				'Please do not set WordPress.com nameservers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
 				{ components: { link } }
 			);
-		} else {
+		} else if ( ! hasCloudflareNameservers() ) {
 			notice = translate(
 				'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
 				{ components: { link } }
