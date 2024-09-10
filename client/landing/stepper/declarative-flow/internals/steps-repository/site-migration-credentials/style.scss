@@ -118,4 +118,10 @@
 	.site-migration-credentials__backup-note {
 		margin-top: 0.25rem;
 	}
+	.site-migration-credentials__error-banner {
+		border-left-color: var(--color-error);
+		&.card {
+			padding: 1rem;
+		}
+	}
 }

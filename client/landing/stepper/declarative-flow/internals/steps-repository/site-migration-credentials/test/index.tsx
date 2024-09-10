@@ -324,4 +324,18 @@ describe( 'SiteMigrationCredentials', () => {
 			} );
 		}
 	);
+
+	it( 'shows a notice when URL contains error=ticket-creation', async () => {
+		const submit = jest.fn();
+		render( {
+			navigation: { submit },
+		} );
+
+		await waitFor( () => {
+			const errorNotice = screen.getByText(
+				'We ran into a problem submitting your details. Please try again shortly.'
+			);
+			expect( errorNotice ).toBeInTheDocument();
+		} );
+	} );
 } );
