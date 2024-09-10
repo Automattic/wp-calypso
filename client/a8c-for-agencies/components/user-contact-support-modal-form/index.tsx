@@ -225,37 +225,22 @@ export default function UserContactSupportModalForm( {
 
 				<FormFieldset>
 					<FormLabel htmlFor="message">{ translate( 'How can we help?' ) }</FormLabel>
-					{ ! isPressableSelected ? (
-						<FormTextarea
-							name="message"
-							id="message"
-							placeholder={ translate( 'Add your message here' ) }
-							value={ message }
-							onChange={ onMessageChange }
-							onClick={ () =>
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_user_contact_support_form_message_click' )
-								)
-							}
-						/>
-					) : (
-						<p>
-							{ translate(
-								'For help with Pressable, please {{a}}login to your Pressable account{{/a}} and request help using the chat widget on the bottom right of the page.',
-								{
-									components: {
-										a: (
-											<a
-												href="https://my.pressable.com/login"
-												target="_blank"
-												rel="noreferrer noopener"
-											/>
-										),
-									},
-								}
-							) }
-						</p>
-					) }
+					<FormTextarea
+						name="message"
+						id="message"
+						placeholder={
+							isPressableSelected
+								? translate(
+										'Please provide the team with a detailed explanation of the issue you’re facing, including steps to reproduce the issue on our end and/or URLs (if not specified above). Providing these details will greatly help us with your support request.'
+								  )
+								: translate( 'Add your message here' )
+						}
+						value={ message }
+						onChange={ onMessageChange }
+						onClick={ () =>
+							dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_message_click' ) )
+						}
+					/>
 				</FormFieldset>
 			</div>
 
