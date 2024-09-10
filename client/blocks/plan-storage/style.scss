@@ -1,7 +1,10 @@
 .plan-storage {
 	display: flex;
+	color: inherit;
+
+	&:hover,
 	&:visited {
-		color: var(--studio-gray-80);
+		color: inherit;
 	}
 }
 

@@ -34,6 +34,7 @@ Props are displayed as a table with Name, Type, Default, and Description as head
 | `onDateCommit(startDate, endDate)`          | `Function`                  | `undefined`         | callback function called when a date is _committed_ (ie: "Applied").                                                                                                                               |
 | `onDateSelect(startDate, endDate)`          | `Function`                  | `undefined`         | callback function called when a date is _selected_ (but not committed ie: "Applied")                                                                                                               |
 | `triggerText( startDateText, endDateText )` | `Function`                  | `undefined`         | function to generate the text displayed in the trigger button. Passed the start/end date text in `MM/DD/YYYY` format (or locale specific alternative)                                              |
+| `displayShortcuts`                          | `Boolean`                   | `false`             | determines whether to display the shortcuts menu alongside the calendar                                                                                                                            |
 
 #### Render Props
 

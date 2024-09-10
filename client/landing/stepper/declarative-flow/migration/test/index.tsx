@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { URLSearchParams } from 'url';
+import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -64,7 +65,7 @@ describe( `${ flow.name }`, () => {
 		runUseStepNavigationGoBack( {
 			currentStep: from.slug,
 			dependencies: dependencies,
-			currentURL: addQueryArgs( query, `/setup/${ from.slug }` ),
+			currentURL: addQueryArgs( query, `/${ flow.name }/${ from.slug }` ),
 		} );
 
 		const destination = getFlowLocation();
@@ -87,7 +88,7 @@ describe( `${ flow.name }`, () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: { platform: 'blogger', from: 'optional' },
+					query: { from: 'optional', platform: 'blogger' },
 				} );
 			} );
 
@@ -318,6 +319,24 @@ describe( `${ flow.name }`, () => {
 					)
 				);
 			} );
+
+			it( 'redirects user from MIGRATION_UPGRADE_PLAN using SOURCE_URL_STEP as destination when they accept the offer', () => {
+				runNavigation( {
+					from: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { goToCheckout: true, plan: 'business', userAcceptedDeal: true },
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith( {
+					destination: `/setup/migration/migration-source-url?siteId=123&siteSlug=example.wordpress.com`,
+					extraQueryParams: undefined,
+					flowName: 'migration',
+					siteSlug: 'example.wordpress.com',
+					stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
+					cancelDestination: `/setup/migration/migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
+					plan: 'business',
+				} );
+			} );
 		} );
 
 		describe( 'MIGRATION_HOW_TO_MIGRATE STEP', () => {
@@ -334,7 +353,9 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects user from How To Migrate to Capture Source URL when they selects the option "do it for me"', () => {
+			it( 'redirects user from How To Migrate to MIGRATION_SOURCE_URL when they selects the option "do it for me"', () => {
+				config.disable( 'automated-migration/collect-credentials' );
+
 				const destination = runNavigation( {
 					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -344,6 +365,56 @@ describe( `${ flow.name }`, () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.MIGRATION_SOURCE_URL,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+
+			it( 'redirects user from How To Migrate > SITE_MIGRATION_CREDENTIALS when they selects the option "do it for me"', () => {
+				config.enable( 'automated-migration/collect-credentials' );
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_CREDENTIALS STEP', () => {
+			it( 'redirects users from SITE_MIGRATION_CREDENTIALS > SITE_MIGRATION_ASSISTED_MIGRATION', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+					dependencies: { action: 'submit' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+				} );
+			} );
+
+			it( 'redirects users from SITE_MIGRATION_CREDENTIALS > SITE_MIGRATION_ASSISTED_MIGRATION passing the skipped query param', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { action: 'skip' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', credentials: 'skipped' },
 				} );
 			} );
 		} );
@@ -383,7 +454,7 @@ describe( `${ flow.name }`, () => {
 	} );
 
 	describe( 'useStepNavigation > goBack', () => {
-		it( 'redirects back user from SOURCE URL TO HOW TO MIGRATE', () => {
+		it( 'redirects back user from SOURCE URL > HOW TO MIGRATE', () => {
 			const destination = runNavigationBack( {
 				from: STEPS.MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -395,15 +466,61 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
+		it( 'retain user on the step and set the assisted migration modal query param when the modal query param is not set', () => {
 			const destination = runNavigationBack( {
 				from: STEPS.MIGRATION_UPGRADE_PLAN,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
 			} );
 
 			expect( destination ).toMatchDestination( {
+				step: STEPS.MIGRATION_UPGRADE_PLAN,
+				query: {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					plan: 'business',
+					showModal: 'true',
+				},
+			} );
+		} );
+
+		it( 'redirects back user from MIGRATION_HOW_TO_MIGRATE URL > PLATFORM_IDENTIFICATION STEP when the assisted modal query param is set', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.MIGRATION_UPGRADE_PLAN,
+				query: {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					plan: 'business',
+					showModal: 'true',
+				},
+			} );
+
+			expect( destination ).toMatchDestination( {
 				step: STEPS.PLATFORM_IDENTIFICATION,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+				query: {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					plan: 'business',
+				},
+			} );
+		} );
+
+		it( 'redirects back user from SITE_MIGRATION_CREDENTIALS  >  MIGRATION_HOW_TO_MIGRATE STEP when the assisted modal query param is set', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.SITE_MIGRATION_CREDENTIALS,
+				query: {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					from: 'http://oldsite.example.com',
+				},
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.MIGRATION_HOW_TO_MIGRATE,
+				query: {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					from: 'http://oldsite.example.com',
+				},
 			} );
 		} );
 	} );

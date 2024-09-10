@@ -15,7 +15,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins();
 
 	return (
-		<div className="empty-state empty-state__center">
+		<div className="empty-state">
 			<Text as="p">
 				{ ( () => {
 					if ( ! siteHasEligiblePlugins && canCreateSchedules ) {

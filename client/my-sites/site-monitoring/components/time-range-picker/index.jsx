@@ -67,7 +67,7 @@ export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 			<div className="site-monitoring-time-range-picker__heading">
 				{ translate( 'Time range' ) }
 			</div>
-			<SegmentedControl primary className="site-monitoring-time-range-picker__controls">
+			<SegmentedControl className="site-monitoring-time-range-picker__controls">
 				{ options.map( ( option ) => {
 					return (
 						<SegmentedControl.Item

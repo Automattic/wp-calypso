@@ -18,10 +18,16 @@ export const MetricTabBar = ( props: Props ) => {
 
 	return (
 		<div className="metric-tab-bar">
-			{ Object.entries( metricsNames ).map( ( [ key, { displayName } ] ) => {
+			{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
 				if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
 					return null;
 				}
+
+				// Only display TBT if INP is not available
+				if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
+					return null;
+				}
+
 				return (
 					<button
 						key={ key }

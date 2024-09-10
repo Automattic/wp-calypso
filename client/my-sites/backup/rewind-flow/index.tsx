@@ -99,6 +99,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 			if ( purpose === RewindFlowPurpose.RESTORE ) {
 				return (
 					<BackupRestoreFlow
+						backup={ activityQuery.data }
 						backupDisplayDate={ backupDisplayDate }
 						rewindId={ rewindId }
 						siteId={ siteId }

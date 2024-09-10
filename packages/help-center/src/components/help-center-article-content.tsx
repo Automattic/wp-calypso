@@ -6,7 +6,6 @@ import { ArticleContentProps } from '../types';
 import HelpCenterFeedbackForm from './help-center-feedback-form';
 import { SupportArticleHeader } from './help-center-support-article-header';
 import Placeholders from './placeholder-lines';
-import './help-center-article-content.scss';
 
 const ArticleContent = ( { isLoading = false, post }: ArticleContentProps ) => {
 	const [ theRef, setTheRef ] = useState< HTMLDivElement | null >( null );

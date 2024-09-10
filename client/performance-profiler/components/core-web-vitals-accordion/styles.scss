@@ -1,0 +1,42 @@
+$blueberry-color: #3858e9;
+
+.core-web-vitals-accordion {
+	.core-web-vitals-accordion__card {
+		border-top: 0;
+		.foldable-card__content {
+			border-top: 0;
+		}
+		&.foldable-card {
+			box-shadow: none;
+			border-top: 1px solid var(--studio-gray-5);
+
+			&:last-child {
+				border-bottom: 1px solid var(--studio-gray-5);
+			}
+
+			&.is-expanded .foldable-card__content {
+				border-top: 0;
+				max-height: fit-content;
+			}
+		}
+		.core-web-vitals-display__details {
+			border: 0;
+		}
+	}
+
+}
+
+.core-web-vitals-accordion__header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+}
+
+.core-web-vitals-accordion__header-text {
+	display: flex;
+	justify-content: space-between;
+	flex-basis: 100%;
+	font-weight: 500;
+}
+

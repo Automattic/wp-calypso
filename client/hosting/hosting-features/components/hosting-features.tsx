@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
@@ -64,7 +63,8 @@ const HostingFeatures = () => {
 	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
 	// we also look at `siteTransferData.status`
 	const isTransferInProgress =
-		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
+		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&
+		! isPlanExpired;
 
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -185,7 +185,7 @@ const HostingFeatures = () => {
 	let title;
 	let description;
 	let buttons;
-	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
+	if ( isTransferInProgress ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
 			"The hosting features will appear here automatically when they're ready!",

@@ -14,15 +14,24 @@ interface ThankYouV2Props {
 	footerDetails?: ThankYouFooterDetailProps[];
 	upsellProps?: ThankYouUpsellProps;
 	isGravatarDomain?: boolean;
+	showSuccessAnimation?: boolean;
 }
 
 export default function ThankYouV2( props: ThankYouV2Props ) {
-	const { title, subtitle, headerButtons, products, footerDetails, upsellProps, isGravatarDomain } =
-		props;
+	const {
+		title,
+		subtitle,
+		headerButtons,
+		products,
+		footerDetails,
+		upsellProps,
+		isGravatarDomain,
+		showSuccessAnimation = true,
+	} = props;
 
 	return (
 		<div className="thank-you">
-			<ConfettiAnimation delay={ 1000 } />
+			{ showSuccessAnimation && <ConfettiAnimation delay={ 1000 } /> }
 
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ headerButtons } />
 

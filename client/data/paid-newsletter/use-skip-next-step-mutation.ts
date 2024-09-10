@@ -20,6 +20,16 @@ export const useSkipNextStepMutation = (
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
 		mutationFn: async ( { siteId, engine, currentStep, skipStep }: MutationVariables ) => {
+			queryClient.setQueryData(
+				[ 'paid-newsletter-importer', siteId, engine ],
+				( previous: any ) => {
+					const optimisticData = previous; // { steps: [ { [ skipStep ]: { status: 'skipped' } } ] };
+
+					optimisticData.steps[ skipStep ].status = 'skipped';
+					return optimisticData;
+				}
+			);
+
 			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-importer/paid-newsletter`,
@@ -40,10 +50,8 @@ export const useSkipNextStepMutation = (
 		},
 		...options,
 		onSuccess( ...args ) {
-			const [ , { siteId, engine, currentStep } ] = args;
-			queryClient.invalidateQueries( {
-				queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
-			} );
+			const [ data, { siteId, engine } ] = args;
+			queryClient.setQueryData( [ 'paid-newsletter-importer', siteId, engine ], data );
 			options.onSuccess?.( ...args );
 		},
 	} );

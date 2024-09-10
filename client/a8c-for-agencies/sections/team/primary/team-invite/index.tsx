@@ -15,6 +15,7 @@ import { A4A_TEAM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/
 import useSendTeamMemberInvite from 'calypso/a8c-for-agencies/data/team/use-send-team-member-invite';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { TAB_INVITED_MEMBERS } from '../../constants';
 
 import './style.scss';
 
@@ -41,8 +42,13 @@ export default function TeamInvite() {
 			{ username, message },
 			{
 				onSuccess: () => {
-					dispatch( successNotice( 'The invitation has been successfully sent.' ) );
-					page( A4A_TEAM_LINK );
+					dispatch(
+						successNotice( 'The invitation has been successfully sent.', {
+							id: 'submit-user-invite-success',
+							duration: 5000,
+						} )
+					);
+					page( `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }` );
 				},
 
 				onError: ( error ) => {
@@ -58,7 +64,7 @@ export default function TeamInvite() {
 	}, [] );
 
 	return (
-		<Layout className="team-invite" title={ title } wide>
+		<Layout className="team-invite" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
@@ -74,7 +80,7 @@ export default function TeamInvite() {
 					className="team-invite-form"
 					title={ translate( 'Invite a team member.' ) }
 					autocomplete="off"
-					description={ translate( 'Invite team members to manage client sites and purchases' ) }
+					description={ translate( 'Invite team members to manage client sites and purchases.' ) }
 				>
 					<FormSection title={ translate( 'Team member information' ) }>
 						<FormField
@@ -105,7 +111,12 @@ export default function TeamInvite() {
 					</div>
 
 					<div className="team-invite-form__footer">
-						<Button variant="primary" onClick={ onSendInvite } disabled={ isSending }>
+						<Button
+							variant="primary"
+							onClick={ onSendInvite }
+							disabled={ isSending }
+							isBusy={ isSending }
+						>
 							{ translate( 'Send invite' ) }
 						</Button>
 					</div>

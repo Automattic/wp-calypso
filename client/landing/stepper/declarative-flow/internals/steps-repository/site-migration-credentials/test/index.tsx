@@ -41,7 +41,7 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( screen.queryByText( 'Site address' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'WordPress admin username' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Password' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Notes (optional)' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Special instructions' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not show any error message by default', async () => {
@@ -110,10 +110,13 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
+			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			await userEvent.click( expandNotesButton );
+
 			const addressInput = screen.getByLabelText( /Site address/ );
 			const usernameInput = screen.getByLabelText( /WordPress admin username/ );
 			const passwordInput = screen.getByLabelText( /Password/ );
-			const notesInput = screen.getByLabelText( /Notes \(optional\)/ );
+			const notesInput = screen.getByTestId( 'special-instructions-textarea' );
 
 			siteAddress && ( await userEvent.type( addressInput, siteAddress ) );
 			username && ( await userEvent.type( usernameInput, username ) );
@@ -175,7 +178,11 @@ describe( 'SiteMigrationCredentials', () => {
 			const addressInput = screen.getByLabelText(
 				isBackupRequest ? /Backup file location/ : /Site address/
 			);
-			const notesInput = screen.getByLabelText( /Notes \(optional\)/ );
+
+			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			await userEvent.click( expandNotesButton );
+
+			const notesInput = screen.getByTestId( 'special-instructions-textarea' );
 
 			await userEvent.type( addressInput, siteAddress );
 			username &&
@@ -281,10 +288,13 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
+			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			await userEvent.click( expandNotesButton );
+
 			await userEvent.type( screen.getByLabelText( /Site address/ ), 'test.com' );
 			await userEvent.type( screen.getByLabelText( /WordPress admin username/ ), 'username' );
 			await userEvent.type( screen.getByLabelText( /Password/ ), 'password' );
-			await userEvent.type( screen.getByLabelText( /Notes \(optional\)/ ), 'notes' );
+			await userEvent.type( screen.getByTestId( 'special-instructions-textarea' ), 'notes' );
 
 			( wpcomRequest as jest.Mock ).mockRejectedValue( errorResponse );
 

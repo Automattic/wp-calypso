@@ -1,0 +1,11 @@
+.a4a-confirmation-dialog__heading {
+	padding-block-end: 16px;
+	@include a4a-font-heading-lg;
+}
+
+.a4a-confirmation-dialog .dialog__action-buttons {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	justify-content: flex-end;
+}

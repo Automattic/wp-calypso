@@ -29,11 +29,31 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge } = props;
 	const urlParts = new URL( url );
 
+	const renderTimestampAndBadge = () => (
+		<>
+			{ timestamp && (
+				<span>
+					{ translate( 'Tested on %(date)s', {
+						args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
+					} ) }
+				</span>
+			) }
+			{ showWPcomBadge && (
+				<span className="wpcom-badge">
+					<img src={ WPcomBadge } alt={ translate( 'WordPress.com badge' ) } />
+					<span>{ translate( 'Hosted on WordPress.com' ) }</span>
+				</span>
+			) }
+		</>
+	);
+
 	return (
 		<div className="profiler-header">
 			<div className="l-block-wrapper">
 				<div className="profiler-header-wrapper">
-					<Badge />
+					<Button className="profiler-header__badge" href="https://wordpress.com/speed-test">
+						<Badge />
+					</Button>
 
 					<div className="profiler-header__site-url">
 						<h2>{ urlParts.hostname ?? '' }</h2>
@@ -45,10 +65,13 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							{ translate( 'Test another site' ) }
 						</Button>
 					</div>
+					<div className="profiler-header__report-site-details show-on-mobile">
+						{ renderTimestampAndBadge() }
+					</div>
 				</div>
 				{ showNavigationTabs && (
 					<SectionNav className="profiler-navigation-tabs">
-						<NavTabs>
+						<NavTabs enforceTabsView>
 							<NavItem
 								onClick={ () => onTabChange( TabType.mobile ) }
 								selected={ activeTab === TabType.mobile }
@@ -66,20 +89,8 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 						</NavTabs>
 
 						<div className="profiler-header__navbar-right">
-							<div className="report-site-details">
-								{ timestamp && (
-									<span>
-										{ translate( 'Tested on %(date)s', {
-											args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
-										} ) }
-									</span>
-								) }
-								{ showWPcomBadge && (
-									<span className="wpcom-badge">
-										<img src={ WPcomBadge } alt={ translate( 'WordPress.com badge' ) } />
-										<span>{ translate( 'Hosted on WordPress.com' ) }</span>
-									</span>
-								) }
+							<div className="report-site-details hide-on-mobile">
+								{ renderTimestampAndBadge() }
 							</div>
 							<div
 								className="share-option"

@@ -577,7 +577,25 @@ export class FullPostView extends Component {
 							</div>
 						</div>
 						<article className="reader-full-post__story">
-							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
+							<ReaderFullPostHeader
+								post={ post }
+								referralPost={ referralPost }
+								authorProfile={
+									<AuthorCompactProfile
+										author={ post.author }
+										siteIcon={ get( site, 'icon.img' ) }
+										feedIcon={ feedIcon }
+										siteName={ siteName }
+										siteUrl={ post.site_URL }
+										feedUrl={ get( post, 'feed_URL' ) }
+										followCount={ site && site.subscribers_count }
+										onFollowToggle={ this.openSuggestedFollowsModal }
+										feedId={ +post.feed_ID }
+										siteId={ +post.site_ID }
+										post={ post }
+									/>
+								}
+							/>
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
 								<ReaderFeaturedImage

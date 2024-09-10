@@ -82,7 +82,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isCommercial,
 			hasSignificantViews,
 		}: StatsNoticeProps ) => {
-			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+			const showUpgradeNoticeForWpcomSites =
+				isWpcom && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
@@ -97,9 +98,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
 				! isCommercial &&
-				! isVip &&
-				// Only show the notice if the site has a significant amount of views.
-				hasSignificantViews
+				! isVip
 			);
 		},
 		disabled: false,

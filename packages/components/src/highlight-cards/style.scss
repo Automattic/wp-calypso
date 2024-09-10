@@ -133,20 +133,19 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	.highlight-card {
 		border-color: var(--studio-gray-5);
 		border-radius: 5px; // stylelint-disable-line scales/radii
-		width: 100%;
-		min-width: 180px; // Minimum mobile width
 		padding: 16px 24px;
 		margin-bottom: 0;
+		flex-grow: 1;
+		flex-shrink: 0;
+
+		// Ensure minimum of ~1:1 aspect ratio.
+		min-width: 120px;
 
 		margin-right: 24px;
 		&:last-child {
 			margin-right: 0;
 		}
 	}
-}
-
-.highlight-card-icon {
-	margin-bottom: 24px;
 }
 
 .highlight-card-heading {
@@ -159,8 +158,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-count {
 	align-items: flex-end;
 	display: flex;
-	flex-wrap: wrap;
-	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-size: 2.25rem;
 	font-weight: 400;
 	line-height: 40px;
 
@@ -223,7 +221,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	&.highlight-card-popover { // overload tooltip's styles
 		.popover__inner {
 			padding: 16px 24px;
-			width: 244px;
 			box-sizing: border-box;
 			border-radius: 5px; // stylelint-disable-line scales/radii
 		}
@@ -385,12 +382,17 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	.highlight-card-tooltip-label {
 		display: flex;
 		align-items: center;
+		margin-right: 1.5em;
 	}
 	.highlight-card-tooltip-icon {
 		fill: var(--studio-white);
 		display: flex;
 		padding-right: 8px;
 	}
+}
+
+.highlight-card-tooltip-count-difference {
+	color: var(--studio-gray-10);
 }
 
 .highlight-card-tooltip-note {
@@ -427,6 +429,11 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 
 	.highlight-cards-list {
+		padding-left: $font-body-small;
+		padding-right: $font-body-small;
+	}
+
+	.highlight-cards-heading__update-frequency {
 		padding-left: $font-body-small;
 		padding-right: $font-body-small;
 	}
@@ -488,5 +495,23 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 	.mobile-highlight-cards__item-trend {
 		padding-left: 8px;
+	}
+}
+
+.highlight-cards-heading__wrapper {
+	margin-bottom: $header-margin-bottom;
+
+	.highlight-cards-heading {
+		margin-bottom: 0;
+	}
+
+	.highlight-cards-heading__update-frequency {
+		line-height: 16px;
+
+		span {
+			color: var(--color-text-subtle);
+			display: inline-block;
+			font-size: $font-body-small;
+		}
 	}
 }

@@ -33,6 +33,7 @@ import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/a
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	isRequestingForSites,
+	isRequestingForAllSites,
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
@@ -495,6 +496,8 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct, startFreeTri
 function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
 	const translate = useTranslate();
 	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
+	const isRequestingPlugins = useSelector( ( state ) => isRequestingForAllSites( state ) );
+
 	const toggleDisplayManageSitePluginsModal = useCallback( () => {
 		setDisplayManageSitePluginsModal( ( value ) => ! value );
 	}, [] );
@@ -525,6 +528,7 @@ function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
 			<Button
 				className="plugin-details-cta__manage-button"
 				onClick={ toggleDisplayManageSitePluginsModal }
+				busy={ isRequestingPlugins }
 			>
 				{ translate( 'Manage sites' ) }
 			</Button>

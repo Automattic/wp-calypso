@@ -3,11 +3,18 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/colors";
 
+.useMyDomain {
+	.domain-transfer-or-connect__content {
+		box-shadow: none;
+	}
+}
+
 .use-my-domain {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 	padding: 36px 24px;
+	box-shadow: none;
 
 	& &__domain-illustration {
 		margin-bottom: 36px;
@@ -55,7 +62,7 @@
 		max-width: 370px;
 
 		.form-text-input {
-			padding: 9px 28px 9px 68px;
+			padding: 9px 28px 9px 10px;
 			margin-bottom: 9px;
 
 			text-overflow: ellipsis;
@@ -95,14 +102,6 @@
 				fill: var(--color-text);
 			}
 		}
-	}
-
-	& &__domain-input-fieldset::before {
-		content: "https://";
-		color: var(--color-text);
-		position: absolute;
-		left: 16px;
-		top: 10px;
 	}
 }
 
