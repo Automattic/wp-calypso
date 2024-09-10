@@ -181,7 +181,6 @@ function SubscribeEmailStep( props ) {
 					extra: {
 						first_name,
 						...( includeLastName && { last_name: queryArguments.last_name } ),
-						generate_random_username: true,
 					},
 				},
 				flowName,
