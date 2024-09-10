@@ -457,3 +457,23 @@ button.hosting-overview__action-button {
 		font-size: 0.875rem;
 	}
 }
+
+.hosting-overview__development-site-ctas {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+
+	.hosting-overview__development-site-cta-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		p {
+			margin: 0;
+		}
+
+		.hosting-overview__development-site-cta {
+			min-width: 140px;
+		}
+	}
+}

@@ -249,6 +249,32 @@ const PlanCard: FC = () => {
 					</div>
 				) }
 
+				{ devSitesEnabled && isDevelopmentSite && (
+					<div className="hosting-overview__development-site-ctas">
+						<div className="hosting-overview__development-site-cta-wrapper">
+							<p>{ translate( 'Generate a preview link to share with your clients.' ) }</p>
+							<Button
+								compact
+								className="hosting-overview__development-site-cta"
+								href={ `/settings/general/${ site?.slug }` }
+							>
+								{ translate( 'Share site for preview' ) }
+							</Button>
+						</div>
+						<div className="hosting-overview__development-site-cta-wrapper">
+							<p>{ translate( 'Ready to go live?' ) }</p>
+							<Button
+								compact
+								primary
+								className="hosting-overview__development-site-cta"
+								href={ `/settings/general/${ site?.slug }` }
+							>
+								{ translate( 'Prepare for launch' ) }
+							</Button>
+						</div>
+					</div>
+				) }
+
 				{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
 
 				{ ! isLoading && (
