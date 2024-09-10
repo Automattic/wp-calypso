@@ -11,7 +11,7 @@ import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -23,6 +23,7 @@ import PlanStorageBar from 'calypso/hosting/overview/components/plan-storage-bar
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import SitePreviewModal from 'calypso/sites-dashboard/components/site-preview-modal';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
@@ -217,6 +218,10 @@ const PlanCard: FC = () => {
 		}
 	};
 
+	const [ isSitePreviewModalVisible, setSitePreviewModalVisible ] = useState( false );
+	const openSitePreviewModal = () => setSitePreviewModalVisible( true );
+	const closeSitePreviewModal = () => setSitePreviewModalVisible( false );
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -236,6 +241,13 @@ const PlanCard: FC = () => {
 						</>
 					) }
 				</div>
+
+				<SitePreviewModal
+					siteUrl={ site?.URL ?? '' }
+					siteId={ site?.ID ?? 0 }
+					isVisible={ isSitePreviewModalVisible }
+					closeModal={ closeSitePreviewModal }
+				></SitePreviewModal>
 
 				{ isAgencyPurchase && (
 					<div className="hosting-overview__plan-agency-purchase">
@@ -262,7 +274,7 @@ const PlanCard: FC = () => {
 							<Button
 								compact
 								className="hosting-overview__development-site-cta"
-								href={ `/settings/general/${ site?.slug }` }
+								onClick={ openSitePreviewModal }
 							>
 								{ translate( 'Share site for preview' ) }
 							</Button>
