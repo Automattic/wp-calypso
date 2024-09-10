@@ -500,6 +500,4 @@ export const FEATURE_WOO_AUTOMATE = 'feature-woo-automate';
 export const FEATURE_GOOGLE_LISTING_ADS = 'feature-google-listing-ads';
 export const FEATURE_CONNECT_ANALYTICS = 'feature-connect-analytics';
 export const FEATURE_LIMITED_SITE_ACTIVITY_LOG = 'feature-limited-site-activity-log';
-export const FEATURE_UNLIMITED_SITE_ACTIVITY_LOG = 'feature-unlimited-site-activity-log';
-export const FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS = 'feature-unlimited-videopress-videos';
 /* END: Features for experiment calypso_pricing_grid_fewer_features */

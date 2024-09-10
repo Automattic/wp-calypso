@@ -136,9 +136,13 @@ import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_GROUP_DEV_TOOLS,
+	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
-import { isAssignedToSimplifiedFeaturesGridExperimentVariant } from './experiments';
+import {
+	isAssignedToSimplifiedFeaturesGridExperiment,
+	isAssignedToSimplifiedFeaturesGridExperimentVariant,
+} from './experiments';
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
@@ -265,6 +269,9 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_DONATIONS_AND_TIPS_JP,
 			FEATURE_PAYMENT_BUTTONS_JP,
 			FEATURE_PAYPAL_JP,
+			...( isAssignedToSimplifiedFeaturesGridExperiment()
+				? [ FEATURE_UNLTD_SOCIAL_MEDIA_JP, FEATURE_CONNECT_ANALYTICS ]
+				: [] ),
 		],
 	},
 	[ FEATURE_GROUP_YOUR_STORE ]: {

@@ -325,8 +325,6 @@ import {
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
-	FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS,
-	FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
 } from './constants';
 import {
 	isAssignedToSimplifiedFeaturesGridExperiment,
@@ -2260,7 +2258,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
 		getSlug: () => FEATURE_VIDEOPRESS_JP,
-		getTitle: () => i18n.translate( 'Upload 4K videos with VideoPress' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Unlimited VideoPress videos' )
+				: i18n.translate( 'Upload 4K videos with VideoPress' ),
 		getDescription: () =>
 			i18n.translate( 'Showcase your videos beautifully with the 4K VideoPress player.' ),
 	},
@@ -2323,7 +2324,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
 		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
-		getTitle: () => i18n.translate( 'Site activity log' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Unlimited site activity log' )
+				: i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
@@ -2786,18 +2790,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Limited site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
-	},
-	[ FEATURE_UNLIMITED_SITE_ACTIVITY_LOG ]: {
-		getSlug: () => FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
-		getTitle: () => i18n.translate( 'Unlimited site activity log' ),
-		getDescription: () =>
-			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
-	},
-	[ FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ]: {
-		getSlug: () => FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS,
-		getTitle: () => i18n.translate( 'Unlimited VideoPress videos' ),
-		getDescription: () =>
-			i18n.translate( 'Showcase your videos beautifully with the 4K VideoPress player.' ),
 	},
 	/* END: Features for experiment calypso_pricing_grid_fewer_features */
 };

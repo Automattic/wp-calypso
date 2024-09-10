@@ -440,8 +440,6 @@ import {
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_GOOGLE_LISTING_ADS,
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
-	FEATURE_UNLIMITED_SITE_ACTIVITY_LOG,
-	FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS,
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_BRANDS,
 	FEATURE_WOO_PAYMENTS,
@@ -913,13 +911,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_DNS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		];
-	},
-	get2023PricingGridSignupJetpackFeatures: () => {
-		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
-			return [ FEATURE_UNLIMITED_SITE_ACTIVITY_LOG ];
-		}
-
-		return [];
 	},
 	get2023PlanComparisonFeatureOverride: () => {
 		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
@@ -1561,7 +1552,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupJetpackFeatures: () => {
 		if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'fix_inaccuracies' ) ) {
-			return [ FEATURE_CONNECT_ANALYTICS, FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ];
+			return [ FEATURE_CONNECT_ANALYTICS, FEATURE_VIDEOPRESS_JP ];
 		} else if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
 			return [];
 		}
@@ -1581,7 +1572,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
-			return [ FEATURE_CONNECT_ANALYTICS, FEATURE_UNLIMITED_VIDEOPRESS_VIDEOS ];
+			return [ FEATURE_CONNECT_ANALYTICS, FEATURE_VIDEOPRESS_JP ];
 		}
 
 		return [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP, FEATURE_STATS_PAID ];
@@ -1838,13 +1829,17 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
-		return [
-			FEATURE_SEO_JP,
-			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_ONE_CLICK_RESTORE_V2,
-			FEATURE_UPTIME_MONITOR_JP,
-			FEATURE_ES_SEARCH_JP,
-		];
+		if ( isAssignedToSimplifiedFeaturesGridExperiment() ) {
+			return [
+				FEATURE_SEO_JP,
+				FEATURE_REALTIME_BACKUPS_JP,
+				FEATURE_ONE_CLICK_RESTORE_V2,
+				FEATURE_UPTIME_MONITOR_JP,
+				FEATURE_ES_SEARCH_JP,
+			];
+		}
+
+		return [];
 	},
 	getPlanComparisonFeatureLabels: () => {
 		const featureLabels: Record< Feature, TranslateResult > = {
