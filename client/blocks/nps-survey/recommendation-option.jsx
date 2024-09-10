@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 
 class RecommendationOption extends Component {
@@ -21,7 +21,7 @@ class RecommendationOption extends Component {
 	}
 
 	render() {
-		const className = classNames( 'nps-survey__recommendation-option', {
+		const className = clsx( 'nps-survey__recommendation-option', {
 			'is-selected': this.props.selected,
 		} );
 

@@ -1,15 +1,14 @@
-import { Button, Card, ScreenReaderText } from '@automattic/components';
-import classNames from 'classnames';
+import { Button, Card, Gridicon, ScreenReaderText } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { trim } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormTextArea from 'calypso/components/forms/form-textarea';
-import Gridicon from 'calypso/components/gridicon';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
@@ -284,7 +283,7 @@ export class NpsSurvey extends PureComponent {
 
 	render() {
 		const { translate } = this.props;
-		const className = classNames( 'nps-survey', {
+		const className = clsx( 'nps-survey', {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
 		} );
