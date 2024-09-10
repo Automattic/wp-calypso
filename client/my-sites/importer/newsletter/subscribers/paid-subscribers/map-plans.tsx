@@ -41,7 +41,7 @@ function shouldShowButton( cardData: any ) {
 
 function findNewProduct( currentProducts: Array< Product >, previousProducts: Array< Product > ) {
 	if ( ! previousProducts ) {
-		return currentProducts;
+		return currentProducts[ 0 ];
 	}
 	return currentProducts.find(
 		( product ) => ! previousProducts.some( ( prevProduct ) => prevProduct.ID === product.ID )
@@ -84,18 +84,24 @@ export default function MapPlans( {
 		const newlyAddedNewsletterTier = findNewProduct( newsletterTiers, newsletterTiersRef.current );
 		newsletterTiersRef.current = newsletterTiers;
 
-		const stripePlan = cardData.plans.find(
-			( plan: any ) => plan.product_id === stripePlanRef.current
-		);
-
-		if ( newlyAddedNewsletterTier.renewal_schedule === '1 ' + stripePlan.plan_interval ) {
-			mapStripePlanToProduct(
-				selectedSite.ID,
-				engine,
-				currentStep,
-				stripePlanRef.current,
-				newlyAddedNewsletterTier.ID.toString()
+		if ( newlyAddedNewsletterTier ) {
+			const stripePlan = cardData.plans.find(
+				( plan: any ) => plan.product_id === stripePlanRef.current
 			);
+
+			if (
+				stripePlan &&
+				newlyAddedNewsletterTier?.renewal_schedule === '1 ' + stripePlan.plan_interval &&
+				newlyAddedNewsletterTier?.ID
+			) {
+				mapStripePlanToProduct(
+					selectedSite.ID,
+					engine,
+					currentStep,
+					stripePlanRef.current,
+					newlyAddedNewsletterTier.ID.toString()
+				);
+			}
 		}
 	}, [
 		newsletterTiersRef,
