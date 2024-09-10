@@ -12,7 +12,7 @@ export function A4ARequestWPAdminAccess() {
 	const dispatch = useDispatch();
 
 	const onLearnMoreClick = () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_wp_admin_access_click' ) );
 	};
 
 	const kbArticleUrl =

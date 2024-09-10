@@ -21,7 +21,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 	const dispatch = useDispatch();
 
 	const onLearnMoreClick = () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_joining_agency_click' ) );
 	};
 
 	return (

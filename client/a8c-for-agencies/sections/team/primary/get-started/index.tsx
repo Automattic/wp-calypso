@@ -27,7 +27,7 @@ export default function GetStarted() {
 	};
 
 	const onLearnMoreClick = () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_managing_members_click' ) );
 	};
 
 	return (
