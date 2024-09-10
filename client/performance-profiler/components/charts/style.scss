@@ -41,7 +41,10 @@
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 6px;
 			background: #f6f7f7;
-			white-space: nowrap;
+			width: 70%;
+			justify-content: center;
+			text-align: center;
+			text-wrap: pretty;
 
 			.icon {
 				margin-left: 10px;

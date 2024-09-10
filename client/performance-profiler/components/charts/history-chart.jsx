@@ -9,6 +9,7 @@ import {
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { timeFormat as d3TimeFormat } from 'd3-time-format';
+import { useTranslate } from 'i18n-calypso';
 import React, { createRef, useEffect } from 'react';
 import './style.scss';
 
@@ -181,6 +182,7 @@ const generateSampleData = ( range ) => {
 };
 
 const HistoryChart = ( { data, range, height } ) => {
+	const translate = useTranslate();
 	const svgRef = createRef();
 	const tooltipRef = createRef();
 	const dataAvailable = data && data.some( ( e ) => e.value !== null );
@@ -223,7 +225,9 @@ const HistoryChart = ( { data, range, height } ) => {
 			<div className="chart">
 				<svg ref={ svgRef }></svg>
 				{ ! dataAvailable && (
-					<div className="info">Historical data will appear after more test runs</div>
+					<div className="info">
+						{ translate( 'Historical data will appear after more test runs' ) }
+					</div>
 				) }
 			</div>
 		</div>
