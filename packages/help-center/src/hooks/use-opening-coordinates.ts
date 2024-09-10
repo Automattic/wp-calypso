@@ -30,6 +30,11 @@ const getDefaultPosition = (): OpeningCoordinates => ( {
 	transformOrigin: 'center',
 } );
 
+/**
+ * This function calculates the position of the Help Center based on the last click event.
+ * @param element The element that was clicked
+ * @returns object with left and top properties
+ */
 const calculateOpeningPosition = ( element: HTMLElement ): OpeningCoordinates => {
 	const { innerWidth, innerHeight } = window;
 	const helpCenterHeight = Math.min( 800, innerHeight * 0.8 );
@@ -81,6 +86,12 @@ const calculateOpeningPosition = ( element: HTMLElement ): OpeningCoordinates =>
 	return isOffScreen ? getDefaultPosition() : coords;
 };
 
+/**
+ * This hook determines the position of the Help Center based on the last click event.
+ * @param disabled If the Help Center is disabled
+ * @param isMinimized If the Help Center is minimized
+ * @returns object with left and top properties
+ */
 export function useOpeningCoordinates(
 	disabled = false,
 	isMinimized: boolean
