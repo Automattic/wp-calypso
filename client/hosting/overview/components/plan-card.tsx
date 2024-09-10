@@ -189,7 +189,13 @@ const PlanCard: FC = () => {
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 	const renderManageButton = () => {
-		if ( isJetpack || ! site || isStaging || isAgencyPurchase ) {
+		if (
+			isJetpack ||
+			! site ||
+			isStaging ||
+			isAgencyPurchase ||
+			( devSitesEnabled && isDevelopmentSite )
+		) {
 			return false;
 		}
 		if ( isFreePlan ) {
