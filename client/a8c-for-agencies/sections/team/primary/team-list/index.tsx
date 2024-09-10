@@ -13,6 +13,7 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import PagePlaceholder from 'calypso/a8c-for-agencies/components/page-placeholder';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_TEAM_INVITE_LINK,
 	A4A_TEAM_LINK,
@@ -91,10 +92,11 @@ export default function TeamList( { currentTab }: Props ) {
 
 	return (
 		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
-			<LayoutTop>
+			<LayoutTop withNavigation>
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
+						<MobileSidebarNavigation />
 						<Button variant="primary" onClick={ onInviteClick }>
 							{ translate( 'Invite a team member' ) }
 						</Button>

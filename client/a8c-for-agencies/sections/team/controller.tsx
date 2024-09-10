@@ -7,7 +7,7 @@ import TeamInvite from './primary/team-invite';
 import TeamList from './primary/team-list';
 
 export const teamContext: Callback = ( context, next ) => {
-	const { tab } = context.params;
+	const { tab = TAB_ACTIVE_MEMBERS } = context.params;
 	context.secondary = <MainSidebar path={ context.path } />;
 	context.primary = (
 		<>
