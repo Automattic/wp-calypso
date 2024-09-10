@@ -80,25 +80,26 @@ const NameServersCard = ( {
 		} );
 	};
 
-	const hasCloudflareNameservers = () => {
+	const onlyCloudflareNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
 
-		return nameservers.some( ( nameserver ) => {
+		return nameservers.every( ( nameserver ) => {
 			return ! nameserver || CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
 		} );
 	};
 
-	const onlyWpcomNameservers = () => {
+	const hasDefaultWpcomNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
 
 		return (
+			nameservers.length === WPCOM_DEFAULT_NAMESERVERS.length &&
 			nameservers.every( ( nameserver ) => {
 				return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
-			} ) && nameservers.length === WPCOM_DEFAULT_NAMESERVERS.length
+			} )
 		);
 	};
 
@@ -139,12 +140,12 @@ const NameServersCard = ( {
 		);
 
 		let notice;
-		if ( isEditingNameServers && hasWpcomNameservers() ) {
+		if ( hasWpcomNameservers() ) {
 			notice = translate(
 				'Please do not set WordPress.com nameservers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
 				{ components: { link } }
 			);
-		} else if ( ! hasCloudflareNameservers() ) {
+		} else if ( ! onlyCloudflareNameservers() ) {
 			notice = translate(
 				'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
 				{ components: { link } }
@@ -176,7 +177,7 @@ const NameServersCard = ( {
 
 	const handleToggle = () => {
 		setIsEditingNameServers( ! isEditingNameServers );
-		if ( onlyWpcomNameservers() ) {
+		if ( hasDefaultWpcomNameservers() ) {
 			setNameServersBeforeEditing( nameservers );
 			setNameservers( [] );
 			setIsEditingNameServers( true );
@@ -194,7 +195,7 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ onlyWpcomNameservers() && ! isEditingNameServers }
+				enabled={ hasDefaultWpcomNameservers() && ! isEditingNameServers }
 			/>
 		);
 	};
@@ -230,7 +231,7 @@ const NameServersCard = ( {
 		if (
 			! nameservers ||
 			isPendingTransfer() ||
-			( onlyWpcomNameservers() && ! isEditingNameServers )
+			( hasDefaultWpcomNameservers() && ! isEditingNameServers )
 		) {
 			return null;
 		}
@@ -255,7 +256,7 @@ const NameServersCard = ( {
 					onCancel={ handleCancel }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
-					submitDisabled={ isLoading() || !! hasWpcomNameservers() }
+					submitDisabled={ isLoading() || hasWpcomNameservers() }
 					notice={ warning() }
 					redesign
 				/>
