@@ -81,10 +81,10 @@ const MobileView = ( {
 }: MobileViewProps ) => {
 	const translate = useTranslate();
 	const {
-		enableLogosOnlyForEnterprisePlan,
-		enablePreviousFeaturesIncludedTitle,
-		enableReducedFeatureGroupSpacing,
 		featureGroupMap,
+		enableCategorisedFeatures,
+		enableLogosOnlyForEnterprisePlan,
+		enableReducedFeatureGroupSpacing,
 	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
@@ -165,7 +165,7 @@ const MobileView = ( {
 							renderedGridPlans={ [ gridPlan ] }
 							options={ { isLogosOnly: enableLogosOnlyForEnterprisePlan } }
 						/>
-						{ enablePreviousFeaturesIncludedTitle && (
+						{ ! enableCategorisedFeatures && (
 							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						) }
 						{ featureGroups.map( ( featureGroupSlug ) => (
@@ -348,7 +348,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableCategorisedFeatures,
 		enableLargeFeatureTitles,
 		enableStorageAsBadge,
-		enablePreviousFeaturesIncludedTitle,
 		enableReducedFeatureGroupSpacing,
 		enableLogosOnlyForEnterprisePlan,
 		featureGroupMap = {},
@@ -394,7 +393,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				enableCategorisedFeatures={ enableCategorisedFeatures }
 				enableLargeFeatureTitles={ enableLargeFeatureTitles }
 				enableStorageAsBadge={ enableStorageAsBadge }
-				enablePreviousFeaturesIncludedTitle={ enablePreviousFeaturesIncludedTitle }
 				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
 				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }
 				hideFeatureGroupTitles={ hideFeatureGroupTitles }

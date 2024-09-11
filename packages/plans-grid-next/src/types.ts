@@ -197,6 +197,11 @@ export type GridContextProps = {
 	enableFeatureTooltips?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
+
+	/**
+	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
+	 * It is only used for showing "Everything in [previous] plus".
+	 */
 	enableCategorisedFeatures?: boolean;
 
 	/**
@@ -208,11 +213,6 @@ export type GridContextProps = {
 	 * Display the plan storage limit as a badge like "50GB" or as plain text like "50GB storage"
 	 */
 	enableStorageAsBadge?: boolean;
-
-	/**
-	 * Display the "Everything in [previous-plan], plus:" title above the features list
-	 */
-	enablePreviousFeaturesIncludedTitle?: boolean;
 
 	/**
 	 * Reduce the vertical spacing between each feature group
