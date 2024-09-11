@@ -1,4 +1,5 @@
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 import { makeLayout, render as clientRender, redirectIfP2 } from 'calypso/controller';
 import { DOTCOM_HOSTING_FEATURES } from 'calypso/hosting/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/hosting/sites/controller';
@@ -10,7 +11,7 @@ const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) =>
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	if ( site && site.jetpack && ! site.plan?.expired ) {
-		return page.redirect( `/overview/${ context.params.site }` );
+		return page.redirect( addQueryArgs( `/overview/${ context.params.site }`, context.query ) );
 	}
 	return next();
 };
