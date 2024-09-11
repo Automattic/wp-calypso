@@ -68,7 +68,7 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 				</Heading>
 				<Body>
 					{ translate(
-						"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
+						'Monitor your site‘s key performance metrics with a free report delivered to your inbox each week.'
 					) }
 				</Body>
 				{ ! isLoggedIn && (

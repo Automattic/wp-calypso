@@ -19,12 +19,12 @@ export const InsightsSection = forwardRef(
 
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
-				<h2 className="title">{ translate( "Improve your site's performance" ) }</h2>
+				<h2 className="title">{ translate( 'Improve your site‘s performance' ) }</h2>
 				<p className="subtitle">
 					{ Object.keys( audits ).length
 						? translate( 'We found things you can do to speed up your site.' )
 						: translate(
-								"Great job! We didn't find any recommendations for improving the speed of your site."
+								'Great job! We didn‘t find any recommendations for improving the speed of your site.'
 						  ) }
 				</p>
 				{ Object.keys( audits ).map( ( key, index ) => (

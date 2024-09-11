@@ -70,7 +70,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 											>
 												<ThumbsUpIcon />
 
-												{ translate( "Good, it's helpful" ) }
+												{ translate( 'Good, it‘s helpful' ) }
 											</div>
 											<div
 												className="options bad"

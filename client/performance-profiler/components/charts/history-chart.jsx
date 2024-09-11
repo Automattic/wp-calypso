@@ -229,7 +229,7 @@ const HistoryChart = ( { data, range, height } ) => {
 						<p className="heading">{ translate( 'No history available' ) }</p>
 						<p>
 							{ translate(
-								"The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don't provide enough data to generate historical trends."
+								'The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don‘t provide enough data to generate historical trends.'
 							) }
 						</p>
 					</div>
