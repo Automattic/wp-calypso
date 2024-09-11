@@ -5,6 +5,7 @@ import {
 	ONBOARDING_FLOW,
 	StepContainer,
 	isStartWritingFlow,
+	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -12,6 +13,7 @@ import { getQueryArg } from '@wordpress/url';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
@@ -107,6 +109,19 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		}
 	};
 
+	const getFormattedHeader = () => {
+		if ( isOnboardingFlow( flow ) ) {
+			return (
+				<FormattedHeader
+					id="choose-a-domain-onboarding-header"
+					headerText=""
+					subHeaderText="Find and claim one or more domain names"
+					align="center"
+				/>
+			);
+		}
+	};
+
 	return (
 		<>
 			<QueryProductsList />
@@ -120,7 +135,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 				isLargeSkipLayout={ false }
 				stepContent={ getStepContent() }
 				recordTracksEvent={ recordTracksEvent }
-				formattedHeader={ undefined }
+				formattedHeader={ getFormattedHeader() }
 			/>
 		</>
 	);
