@@ -1119,6 +1119,16 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		max-width: 615px;
 	}
 
+	&.feature-flag-woocommerce-core-profiler-passwordless-auth {
+		.jetpack-connect__tos-link {
+			a.jetpack-connect__sso-actions-modal-link {
+				color: var(--wp-admin-theme-color);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+			}
+		}
+	}
+
 	.is-woo-passwordless,
 	.feature-flag-woocommerce-core-profiler-passwordless-auth {
 		.signup-form {
