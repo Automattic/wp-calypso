@@ -21,6 +21,7 @@
 			font-size: rem(14px);
 			line-height: 20px;
 			color: var(--studio-gray-50);
+			margin-bottom: 16px;
 		}
 
 		hr {
@@ -66,7 +67,19 @@
 	.importer-action-buttons__container.no-spacing {
 		margin-bottom: 16px;
 	}
+
+	img.export-content {
+		display: block;
+		width: 584px;
+		margin-bottom: 16px;
+	}
+
+	img.export-subscribers {
+		display: block;
+		margin-bottom: 16px;
+	}
 }
+
 .content-upload-form__in-progress,
 .subscriber-upload-form__in-progress,
 .subscriber-upload-form .file-picker {
