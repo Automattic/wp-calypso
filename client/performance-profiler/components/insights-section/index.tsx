@@ -35,7 +35,7 @@ export const InsightsSection = forwardRef(
 			<div className="performance-profiler-insights-section" ref={ ref }>
 				<div className="header">
 					<div>
-						<h2 className="title">{ translate( "Improve your site's performance" ) }</h2>
+						<h2 className="title">{ translate( 'Improve your site‘s performance' ) }</h2>
 						<p className="subtitle">
 							{ filteredAudits.length
 								? translate(
