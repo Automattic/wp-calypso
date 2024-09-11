@@ -35,13 +35,13 @@ export function setNpsConciergeSessionAvailaibility( isAvailableForConciergeSess
 	};
 }
 
-export function setupNpsSurveyEligibility() {
+export function setupNpsSurveyEligibility( surveyName ) {
 	return ( dispatch ) => {
 		debug( 'Checking NPS eligibility...' );
 
 		return wpcom
 			.nps()
-			.checkNPSSurveyEligibility()
+			.checkNPSSurveyEligibility( surveyName )
 			.then( ( data ) => {
 				debug( '...Eligibility returned from endpoint.', data );
 				dispatch( setNpsSurveyEligibility( data.display_survey ) );
