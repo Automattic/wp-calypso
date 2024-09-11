@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 
 const Container = styled.div`
-	height: 255px;
+	height: 280px;
 	display: flex;
 	align-items: center;
 
@@ -30,7 +30,7 @@ export const ScreenshotThumbnail = ( props: { src: string | undefined; alt: stri
 			{ src === undefined ? (
 				<UnavailableScreenshot>{ translate( 'Screenshot unavailable' ) }</UnavailableScreenshot>
 			) : (
-				<img style={ { maxHeight: '240px' } } src={ src } alt={ alt } { ...rest } />
+				<img style={ { maxHeight: '100%' } } src={ src } alt={ alt } { ...rest } />
 			) }
 		</Container>
 	);
