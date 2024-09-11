@@ -39,9 +39,18 @@ export const InsightsSection = forwardRef(
 						<p className="subtitle">
 							{ filteredAudits.length
 								? translate(
-										'We found %d thing you can do to speed up your site.',
-										'We found %d things you can do to speed up your site.',
-										{ args: [ filteredAudits.length ], count: filteredAudits.length }
+										'We found %(quantity)d thing you can do for improving %(metric)s.',
+										'We found %(quantity)d things you can do for improving %(metric)s.',
+										{
+											args: {
+												quantity: filteredAudits.length,
+												metric:
+													selectedFilter === 'all'
+														? translate( 'your site' )
+														: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+											},
+											count: filteredAudits.length,
+										}
 								  )
 								: translate( "Great job! We didn't find any recommendations for improving %s.", {
 										args: [
