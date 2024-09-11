@@ -28,7 +28,7 @@ export const DatePickerNavBar = ( {
 
 	const buttonClass = useArrowNavigation
 		? 'date-picker__arrow-button'
-		: 'date-picker__month-button';
+		: 'date-picker__month-button button';
 
 	return (
 		<div className={ classes }>
