@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Metrics,
@@ -166,40 +165,38 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					<a href={ `https://web.dev/articles/${ activeTab }` }>{ translate( 'Learn more ↗' ) }</a>
 				</p>
 
-				<div
-					className={ clsx( 'core-web-vitals-display__recommendations', {
-						invisible: ! numberOfAuditsForMetric,
-					} ) }
-				>
-					<div>
-						<div className="core-web-vitals-display__recommendations-title">
-							{ translate( 'How to improve %s?', { args: [ displayName ] } ) }
+				{ !! numberOfAuditsForMetric && (
+					<div className="core-web-vitals-display__recommendations">
+						<div>
+							<div className="core-web-vitals-display__recommendations-title">
+								{ translate( 'How to improve %s?', { args: [ displayName ] } ) }
+							</div>
+							<div className="core-web-vitals-display__recommendations-subtitle">
+								{ translate(
+									"We have found %(numberOfAudits)d ways to improve your site's %(metricName)s.",
+									{
+										args: { numberOfAudits: numberOfAuditsForMetric, metricName: displayName },
+									}
+								) }
+							</div>
 						</div>
-						<div className="core-web-vitals-display__recommendations-subtitle">
-							{ translate(
-								"We have found %(numberOfAudits)d ways to improve your site's %(metricName)s.",
-								{
-									args: { numberOfAudits: numberOfAuditsForMetric, metricName: displayName },
-								}
-							) }
+						<div>
+							<Button
+								variant="secondary"
+								onClick={ () => {
+									updateQueryParams( { filter: activeTab }, true );
+									recommendationsRef?.current?.scrollIntoView( {
+										behavior: 'smooth',
+										block: 'start',
+									} );
+								} }
+								className="recommendations-anchor"
+							>
+								{ translate( 'View recommendations' ) }
+							</Button>
 						</div>
 					</div>
-					<div>
-						<Button
-							variant="secondary"
-							onClick={ () => {
-								updateQueryParams( { filter: activeTab }, true );
-								recommendationsRef?.current?.scrollIntoView( {
-									behavior: 'smooth',
-									block: 'start',
-								} );
-							} }
-							className="recommendations-anchor"
-						>
-							{ translate( 'View recommendations' ) }
-						</Button>
-					</div>
-				</div>
+				) }
 			</div>
 			<div className="core-web-vitals-display__history-graph">
 				{ dataAvailable && (
