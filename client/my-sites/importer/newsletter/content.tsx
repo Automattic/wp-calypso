@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { external } from '@wordpress/icons';
 import { useEffect, Dispatch, SetStateAction } from 'react';
+import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -82,6 +83,11 @@ export default function Content( {
 						click 'Create a new export.' Once the ZIP file is downloaded, upload it in the next
 						step.
 					</p>
+					<img
+						src={ exportSubstackDataImg }
+						alt="Export Substack data"
+						className="export-content"
+					/>
 					<Button
 						href={ `https://${ fromSite }/publish/settings?search=export` }
 						target="_blank"

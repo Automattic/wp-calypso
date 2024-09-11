@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { external } from '@wordpress/icons';
 import { useEffect, useRef } from 'react';
+import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
 import { StepProps } from '../types';
 import SubscriberUploadForm from './upload-form';
 
@@ -38,6 +39,11 @@ export default function StepInitial( {
 				To generate a CSV file of all your Substack subscribers, go to the Subscribers tab and click
 				'Export.' Once the CSV file is downloaded, upload it in the next step.
 			</p>
+			<img
+				src={ exportSubstackSubscribersImg }
+				alt="Export Substack subscribers"
+				className="export-subscribers"
+			/>
 			<Button
 				href={ `https://${ fromSite }/publish/subscribers` }
 				target="_blank"
@@ -45,7 +51,7 @@ export default function StepInitial( {
 				icon={ external }
 				variant="primary"
 			>
-				Open Substack settings
+				Open Substack subscribers
 			</Button>
 			<hr />
 			<h2>Step 2: Import your subscribers to WordPress.com</h2>
