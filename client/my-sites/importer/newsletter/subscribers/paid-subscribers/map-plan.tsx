@@ -100,6 +100,7 @@ export function MapPlan( {
 						aria-haspopup="true"
 						tabIndex={ 0 }
 						className="map-plan__selected"
+						variant="primary"
 						onClick={ () => {
 							onProductAdd( tierToAdd, plan.product_id );
 						} }

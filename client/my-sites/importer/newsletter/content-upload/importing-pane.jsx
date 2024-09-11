@@ -14,6 +14,7 @@ import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-button
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
+import { infoNotice } from 'calypso/state/notices/actions';
 import AuthorMappingPane from './author-mapping-pane';
 
 import './importing-pane.scss';
@@ -104,6 +105,7 @@ export class ImportingPane extends PureComponent {
 		sourceType: PropTypes.string.isRequired,
 		nextStepUrl: PropTypes.string.isRequired,
 		invalidateCardData: PropTypes.func,
+		infoNotice: PropTypes.func,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -254,6 +256,10 @@ export class ImportingPane extends PureComponent {
 						onMap={ this.handleOnMap }
 						onStartImport={ () => {
 							this.props.startImporting( this.props.importerStatus );
+							this.props.infoNotice( 'We’re importing your content', {
+								displayOnNextPage: true,
+								duration: 5000,
+							} );
 							invalidateCardData();
 							navigate( this.props.nextStepUrl );
 						} }
@@ -294,4 +300,5 @@ export default connect( null, {
 	recordTracksEvent,
 	resetImport,
 	startImporting,
+	infoNotice,
 } )( localize( ImportingPane ) );

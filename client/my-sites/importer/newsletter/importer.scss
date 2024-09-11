@@ -22,6 +22,10 @@
 			line-height: 20px;
 			color: var(--studio-gray-50);
 			margin-bottom: 16px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 
 		hr {
@@ -41,12 +45,16 @@
 		box-shadow: none;
 	}
 
+	.summary__content {
+		clear: both;
+		margin-bottom: 12px;
 
-	.summary__content svg {
-		float: left;
-		margin-right: 6px;
-		margin-top: -1px;
-		fill: var(--studio-gray-50);
+		svg {
+			float: left;
+			margin-right: 6px;
+			margin-top: -1px;
+			fill: var(--studio-gray-50);
+		}
 	}
 
 	.stripe-logo {
@@ -65,7 +73,7 @@
 	}
 
 	.importer-action-buttons__container.no-spacing {
-		margin-bottom: 16px;
+		margin-top: 16px;
 	}
 
 	img.export-content {
