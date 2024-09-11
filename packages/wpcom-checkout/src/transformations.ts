@@ -300,25 +300,41 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 }
 
 function doesIntroductoryOfferCostOverrideHavePriceIncrease(
+	product: ResponseCartProduct,
 	costOverride: ResponseCartCostOverride
 ): boolean {
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ) {
 		return false;
 	}
-	if ( costOverride.old_subtotal_integer >= costOverride.new_subtotal_integer ) {
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return false;
+	}
+
+	const priceBeforeOverride = costOverride.old_subtotal_integer;
+	const priceAfterOverride = costOverride.new_subtotal_integer;
+	const monthsForProductBeforeOverride = product.months_per_bill_period ?? 1;
+	const priceBeforeOverrideMonthly = priceBeforeOverride / monthsForProductBeforeOverride;
+	const monthsForProductAfterOverride = getBillPeriodMonthsForIntroductoryOfferInterval(
+		product.introductory_offer_terms.interval_unit
+	);
+	const priceAfterOverrideMonthly = priceAfterOverride / monthsForProductAfterOverride;
+
+	// If you will pay less per month for the subscription in the cart with the
+	// offer than without the offer, this is not a price increase.
+	if ( priceBeforeOverrideMonthly >= priceAfterOverrideMonthly ) {
 		return false;
 	}
 	return true;
 }
 
 export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
-	const introOffer = product.cost_overrides?.find(
-		doesIntroductoryOfferCostOverrideHavePriceIncrease
-	);
-	if ( ! introOffer ) {
+	if ( ! product.introductory_offer_terms?.enabled ) {
 		return false;
 	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	const hasIntroOfferOverrideWithPriceIncrease = product.cost_overrides?.some( ( override ) =>
+		doesIntroductoryOfferCostOverrideHavePriceIncrease( product, override )
+	);
+	if ( ! hasIntroOfferOverrideWithPriceIncrease ) {
 		return false;
 	}
 	return true;
@@ -435,7 +451,8 @@ export function filterAndGroupCostOverridesForDisplay(
 			// Remove intro offers which increase the cost because they are not
 			// discounts and will have their terms displayed elsewhere.
 			.filter(
-				( costOverride ) => ! doesIntroductoryOfferCostOverrideHavePriceIncrease( costOverride )
+				( costOverride ) =>
+					! doesIntroductoryOfferCostOverrideHavePriceIncrease( product, costOverride )
 			)
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
