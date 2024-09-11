@@ -1,8 +1,10 @@
 import { CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getRenewalPrice } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 
@@ -38,15 +40,47 @@ class EmailPlanSubscription extends Component {
 		}
 
 		const hasSubscriptionExpired = this.hasSubscriptionExpired();
-		const translateArgs = {
-			args: {
-				expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
-			},
-			comment: 'Shows the expiry date of the email subscription',
-		};
-		const expiryText = hasSubscriptionExpired
-			? translate( 'Expired: %(expiryDate)s', translateArgs )
-			: translate( 'Expires: %(expiryDate)s', translateArgs );
+
+		const renewalPrice = getRenewalPrice( purchase );
+		const currencyCode = purchase.currencyCode;
+		const formattedRenewalPrice = formatCurrency( renewalPrice, currencyCode, {
+			stripZeros: true,
+		} );
+		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+
+		let descriptionText;
+		if ( purchase.isAutoRenewEnabled ) {
+			descriptionText = translate( 'Renews on %(expiryDate)s for %(formattedRenewalPrice)s', {
+				args: {
+					expiryDate,
+					formattedRenewalPrice,
+				},
+				comment: 'Shows the renews date and price of the email subscription',
+			} );
+		} else {
+			const translateArgs = {
+				args: {
+					expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+				},
+				comment: 'Shows the expiry date of the email subscription',
+			};
+
+			descriptionText = (
+				<>
+					{ hasSubscriptionExpired
+						? translate( 'Expired on %(expiryDate)s.', translateArgs )
+						: translate( 'Expires on %(expiryDate)s.', translateArgs ) }
+					<span>
+						{ translate( 'Renew for %(formattedRenewalPrice)s.', {
+							args: {
+								formattedRenewalPrice,
+							},
+							comment: 'Shows the renews price of the email subscription',
+						} ) }
+					</span>
+				</>
+			);
+		}
 
 		return (
 			<CompactCard className="email-plan-subscription__card">
@@ -55,7 +89,7 @@ class EmailPlanSubscription extends Component {
 						'email-plan-subscription__expired': hasSubscriptionExpired,
 					} ) }
 				>
-					{ expiryText }
+					{ descriptionText }
 				</div>
 				<div className="email-plan-subscription__renew">
 					<RenewButton
@@ -65,6 +99,7 @@ class EmailPlanSubscription extends Component {
 						selectedSite={ selectedSite }
 						subscriptionId={ parseInt( purchase.id, 10 ) }
 						tracksProps={ { source: 'email-plan-view' } }
+						customLabel={ translate( 'Renew now' ) }
 					/>
 				</div>
 				<div className="email-plan-subscription__auto-renew">
