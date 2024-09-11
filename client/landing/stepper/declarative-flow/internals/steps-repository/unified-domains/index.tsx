@@ -83,20 +83,27 @@ export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 
+	/**
+	 * The domains step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
+	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
+	 * This also happens in Plans step https://github.com/Automattic/wp-calypso/blob/trunk/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx#L68
+	 */
+	let mostRecentState: ProvidedDependencies;
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
 				{ ...props }
 				page={ ( url: string ) => window.location.assign( url ) }
 				saveSignupStep={ ( state: ProvidedDependencies ) =>
-					setStepState( { ...stepState, ...state } )
+					setStepState( ( mostRecentState = { ...stepState, ...state } ) )
 				}
 				submitSignupStep={ ( state: ProvidedDependencies ) => {
-					setStepState( { ...stepState, ...state } );
+					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 				} }
-				goToNextStep={ ( state: ProvidedDependencies ) =>
-					props.navigation.submit?.( { ...stepState, ...state } )
-				}
+				goToNextStep={ () => {
+					props.navigation.submit?.( { ...stepState, ...mostRecentState } );
+				} }
 				step={ stepState }
 				flowName={ props.flow }
 				useStepperWrapper
