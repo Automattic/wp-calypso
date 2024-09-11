@@ -20,7 +20,7 @@ import { LogoChain } from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
-import { engineTypes } from './types';
+import { EngineTypes, StatusType } from './types';
 
 import './importer.scss';
 
@@ -35,7 +35,7 @@ const logoChainLogos = [
 
 type NewsletterImporterProps = {
 	siteSlug: string;
-	engine: engineTypes;
+	engine: EngineTypes;
 	step?: StepId;
 };
 
@@ -104,14 +104,6 @@ export default function NewsletterImporter( {
 		} else {
 			setAutoFetchData( false );
 		}
-
-		if (
-			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
-			step === 'paid-subscribers'
-		) {
-			// If we have empty content
-			setAutoFetchData( true );
-		}
 	}, [
 		paidNewsletterData?.steps?.content?.status,
 		paidNewsletterData?.steps?.subscribers?.status,
@@ -143,6 +135,7 @@ export default function NewsletterImporter( {
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
 	let stepContent = {};
+	let stepStatus: StatusType = 'initial';
 	if ( paidNewsletterData?.steps ) {
 		// This is useful for the summary step.
 		if ( ! paidNewsletterData?.steps[ step ] ) {
@@ -150,9 +143,9 @@ export default function NewsletterImporter( {
 		} else {
 			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
 		}
-	}
 
-	const stepStatus = paidNewsletterData?.steps[ step ]?.status ?? 'initial';
+		stepStatus = paidNewsletterData?.steps[ step ]?.status;
+	}
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {

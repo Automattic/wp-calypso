@@ -3,12 +3,12 @@ import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wor
 import { Fragment } from '@wordpress/element';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useState, KeyboardEvent } from 'react';
-import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
 import { Product, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 import './map-plan.scss';
 
 export type TierToAdd = {
+	via: string;
 	currency: string;
 	price: number;
 	type: string;
@@ -25,12 +25,10 @@ export type TierToAdd = {
 type MapPlanProps = {
 	plan: Plan;
 	products: Product[];
-	map_plans: Record< string, string >;
-	siteId: number;
-	engine: string;
-	currentStep: string;
-	onProductAdd: ( arg0: TierToAdd | null ) => void;
+	onProductSelect: ( stripeProductId: string, productId: string ) => void;
+	onProductAdd: ( arg0: TierToAdd, stripeProductId: string ) => void;
 	tierToAdd: TierToAdd;
+	selectedProductId: string;
 };
 
 function displayProduct( product?: Product ) {
@@ -61,29 +59,17 @@ function getProductChoices( products: Product[] ) {
 export function MapPlan( {
 	plan,
 	products,
-	map_plans,
-	siteId,
-	engine,
-	currentStep,
+	onProductSelect,
 	onProductAdd,
 	tierToAdd,
+	selectedProductId,
 }: MapPlanProps ) {
-	const { mapStripePlanToProduct } = useMapStripePlanToProductMutation();
 	let active_subscriptions = '';
 	if ( plan.active_subscriptions ) {
 		active_subscriptions = ` • ${ plan.active_subscriptions } active subscribers`;
 	}
 
-	const mappedProductId =
-		( map_plans.hasOwnProperty( plan.product_id ) && map_plans[ plan.product_id ] ) ?? '';
-
-	const [ selectedProductId, setSelectedProductId ] = useState( mappedProductId );
 	const [ isOpen, setIsOpen ] = useState( false );
-
-	const handleProductChange = ( productId: string ) => {
-		setSelectedProductId( productId );
-		mapStripePlanToProduct( siteId, engine, currentStep, plan.product_id, productId );
-	};
 
 	const selectedProduct = products.find(
 		( product ) => product.id.toString() === selectedProductId
@@ -115,7 +101,7 @@ export function MapPlan( {
 						tabIndex={ 0 }
 						className="map-plan__selected"
 						onClick={ () => {
-							onProductAdd( tierToAdd );
+							onProductAdd( tierToAdd, plan.product_id );
 						} }
 					>
 						Add Newsletter Tier
@@ -153,11 +139,11 @@ export function MapPlan( {
 									<MenuItemsChoice
 										choices={ getProductChoices( sameIntervalProducts ) }
 										onSelect={ ( productId ) => {
-											handleProductChange( productId );
+											onProductSelect( plan.product_id, productId );
 											onClose();
 										} }
 										onHover={ () => {} }
-										value={ selectedProductId.toString() }
+										value={ selectedProductId }
 									/>
 								</MenuGroup>
 								<MenuGroup label="OR">
@@ -165,7 +151,7 @@ export function MapPlan( {
 										key="add-new"
 										onClick={ () => {
 											onClose();
-											onProductAdd( tierToAdd );
+											onProductAdd( tierToAdd, plan.product_id );
 										} }
 									>
 										Add Newsletter Tier
