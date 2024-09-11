@@ -99,6 +99,17 @@ const backupsStopped = (
 	return size.backupsStopped ?? false;
 };
 
+const lastBackupFailed = (
+	state: AppState = null,
+	{ type, size }: AnyAction
+): AppState | boolean | null => {
+	if ( type !== REWIND_SIZE_SET ) {
+		return state;
+	}
+
+	return size.lastBackupFailed ?? false;
+};
+
 export default combineReducers( {
 	requestStatus,
 	bytesUsed,
@@ -108,4 +119,5 @@ export default combineReducers( {
 	retentionDays,
 	lastBackupSize,
 	backupsStopped,
+	lastBackupFailed,
 } );

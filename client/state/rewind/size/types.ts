@@ -6,4 +6,5 @@ export type RewindSizeInfo = {
 	lastBackupSize: number;
 	retentionDays: number;
 	backupsStopped: boolean;
+	lastBackupFailed: boolean;
 };

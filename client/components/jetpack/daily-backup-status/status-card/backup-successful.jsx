@@ -10,12 +10,14 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getBackupLastBackupFailed from 'calypso/state/rewind/selectors/get-backup-last-backup-failed';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
 import useGetDisplayDate from '../use-get-display-date';
+import { BackupLastFailed } from './backup-last-failed';
 import { BackupRealtimeMessage } from './backup-realtime-message';
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';
@@ -38,12 +40,11 @@ const BackupSuccessful = ( {
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const lastBackupFailed = useSelector( ( state ) => getBackupLastBackupFailed( state, siteId ) );
 
 	const getDisplayDate = useGetDisplayDate();
 	const displayDate = getDisplayDate( backup.activityTs );
 	const displayDateNoLatest = getDisplayDate( backup.activityTs, false );
-	// TODO To be use in the future
-	//const displayDateBaseRewind = backup.baseRewindId ? getDisplayDate( backup.baseRewindId * 1000, false ) : null;
 
 	const today = applySiteOffset( moment(), {
 		timezone: timezone,
@@ -149,6 +150,10 @@ const BackupSuccessful = ( {
 				</div>
 			) }
 			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
+
+			{ config.isEnabled( 'jetpack/backup-realtime-message' ) && isToday && lastBackupFailed && (
+				<BackupLastFailed siteId={ siteId } />
+			) }
 		</>
 	);
 };
