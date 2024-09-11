@@ -210,7 +210,11 @@ export default function AddNewSiteButton( {
 						icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
 						heading: translate( 'Start Building for Free' ),
 						description: translate(
-							'Develop a WordPress.com site for as long as your client requires with a free development license. Only pay when you launch!'
+							'Develop a WordPress.com site for as long as your client requires with a free development license.{{br/}}Only pay when you launch!',
+							{
+								components: { br: <br /> },
+								comment: 'br is a line break',
+							}
 						),
 						disabled: ! hasAvailableDevSites,
 						isBanner: true,
