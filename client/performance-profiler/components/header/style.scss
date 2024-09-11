@@ -210,20 +210,57 @@
 				}
 			}
 
-			.share-option {
+			.share-button {
 				cursor: pointer;
 				display: flex;
 				height: 40px;
 				justify-content: center;
 				align-items: center;
 				gap: 4px;
+				color: var(--studio-gray-20);
 
 				.share-icon {
-					fill: #fff;
+					fill: var(--studio-gray-20);
 					margin-bottom: -1px;
+				}
+			}
+
+			.share-button.has-color {
+				.facebook {
+					fill: var(--color-facebook);
+				}
+
+				.x {
+					fill: var(--color-x);
+				}
+
+				.tumblr {
+					fill: var(--color-tumblr);
+				}
+
+				.linkedin {
+					fill: var(--color-linkedin);
 				}
 			}
 		}
 	}
 }
 
+#profiler-share-buttons-popover {
+	.popover__inner {
+		padding: 3px 10px 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+		border-width: 0;
+
+		button {
+			padding-right: 4px;
+			padding-left: 4px;
+		}
+	}
+	.popover__arrow {
+		border-color: #fff;
+		border-left-color: transparent;
+		border-right-color: transparent;
+	}
+}
