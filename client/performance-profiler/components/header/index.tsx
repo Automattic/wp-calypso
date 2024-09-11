@@ -30,7 +30,7 @@ export enum TabType {
 
 const SocialServices = [
 	{
-		service: 'twitter',
+		service: 'x',
 	},
 	{
 		service: 'linkedin',
@@ -126,7 +126,7 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 								<span>{ translate( 'Share results' ) }</span>
 							</div>
 							<Popover
-								id="share-buttons-popover"
+								id="profiler-share-buttons-popover"
 								isVisible={ showPopoverMenu }
 								context={ popoverButtonRef.current }
 								position="top"
@@ -135,7 +135,7 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 								{ SocialServices.map( ( item ) => (
 									<ShareButton
 										key={ item.service }
-										size={ 36 }
+										size={ 28 }
 										url={ shareLink }
 										title=""
 										service={ item.service }
