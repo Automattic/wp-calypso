@@ -1214,7 +1214,10 @@ class MagicLogin extends Component {
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
 
-		if ( query?.from === 'woocommerce-core-profiler' ) {
+		if (
+			query?.from === 'woocommerce-core-profiler' &&
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+		) {
 			return (
 				<Main className="magic-login magic-login__request-link is-white-login">
 					{ this.renderLocaleSuggestions() }

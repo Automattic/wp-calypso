@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
@@ -34,7 +35,8 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 
 	if (
 		currentRoute === '/log-in/jetpack/lostpassword' ||
-		currentRoute === '/log-in/jetpack/link' ||
+		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+			currentRoute === '/log-in/jetpack/link' ) ||
 		currentQueryArguments?.lostpassword_flow
 	) {
 		shouldShowProgressBar = false;
