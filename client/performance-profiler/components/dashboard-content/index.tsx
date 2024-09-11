@@ -51,6 +51,8 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					history={ history }
+					audits={ audits }
+					recommendationsRef={ insightsRef }
 				/>
 				<NewsletterBanner
 					link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }

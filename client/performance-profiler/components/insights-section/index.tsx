@@ -1,12 +1,12 @@
 import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ForwardedRef, forwardRef, useCallback, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
-import { metricsNames } from 'calypso/performance-profiler/utils/metrics';
-import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
+import { filterRecommendations, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 
 type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
@@ -21,15 +21,19 @@ export const InsightsSection = forwardRef(
 		const translate = useTranslate();
 		const { audits, isWpcom, hash, filter } = props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
-		const filteredAudits = Object.keys( audits ).filter(
-			( key ) =>
-				selectedFilter === 'all' ||
-				audits[ key ].metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
+		const filteredAudits = Object.keys( audits ).filter( ( key ) =>
+			filterRecommendations( selectedFilter, audits[ key ] )
 		);
 		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
 			setSelectedFilter( option.value );
-			updateQueryParams( { filter: option.value } );
+			updateQueryParams( { filter: option.value }, true );
 		}, [] );
+
+		useEffect( () => {
+			if ( filter && filter !== selectedFilter ) {
+				setSelectedFilter( filter );
+			}
+		}, [ selectedFilter, filter ] );
 
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
