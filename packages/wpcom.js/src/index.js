@@ -3,6 +3,7 @@ import Batch from './lib/batch';
 import Domain from './lib/domain';
 import Domains from './lib/domains';
 import Me from './lib/me';
+import Nps from './lib/nps';
 import Plans from './lib/plans';
 import Site from './lib/site';
 import Users from './lib/users';
@@ -136,6 +137,14 @@ WPCOM.prototype.batch = function () {
 };
 
 /**
+ * Return `Nps` object instance
+ * @returns {Nps} Nps instance
+ */
+WPCOM.prototype.nps = function () {
+	return new Nps( this );
+};
+
+/**
  * List Freshly Pressed Posts
  * @param {Object} [query] - query object
  * @param {Function} fn - callback function
@@ -173,6 +182,7 @@ WPCOM.Plans = Plans;
 WPCOM.Request = Request;
 WPCOM.Site = Site;
 WPCOM.Users = Users;
+WPCOM.Nps = Nps;
 
 if ( ! Promise.prototype.timeout ) {
 	/**
