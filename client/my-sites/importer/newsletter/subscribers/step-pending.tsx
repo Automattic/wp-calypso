@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { Icon, people, currencyDollar } from '@wordpress/icons';
+import { Notice } from '@wordpress/components';
 import { toInteger } from 'lodash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
@@ -7,8 +7,6 @@ import ImporterActionButtonContainer from '../../importer-action-buttons/contain
 import { StepProps } from '../types';
 import PaidSubscribers from './paid-subscribers';
 import StartImportButton from './start-import-button';
-
-import './step-pending.scss';
 
 export default function StepPending( {
 	nextStepUrl,
@@ -22,35 +20,15 @@ export default function StepPending( {
 	setAutoFetchData,
 	status,
 }: StepProps ) {
-	const all_emails = toInteger( cardData?.meta?.email_count ) || 0;
-	const paid_emails = toInteger( cardData?.meta?.paid_subscribers_count ) || 0;
-	const free_emails = all_emails - paid_emails;
+	const allEmailsCount = toInteger( cardData?.meta?.email_count ) || 0;
 
 	return (
 		<Card>
+			<Notice status="success" className="importer__notice" isDismissible={ false }>
+				All set! We’ve found <strong>{ allEmailsCount } subscribers</strong> to import.
+			</Notice>
 			<div className="step-pending">
 				<h2>Finished analizing the subscriber import</h2>
-				{ ! paid_emails && !! free_emails && <>We’ve found { free_emails } free subscribers.</> }
-				{ !! paid_emails && ! free_emails && <>We’ve found { paid_emails } paid subscribers.</> }
-				{ !! paid_emails && !! free_emails && (
-					<>
-						We’ve found { all_emails } subscribers.
-						<ul>
-							{ free_emails !== 0 && (
-								<li>
-									<Icon icon={ people } />
-									<strong>{ free_emails }</strong> are free subscribers
-								</li>
-							) }
-							{ paid_emails !== 0 && (
-								<li>
-									<Icon icon={ currencyDollar } />
-									<strong>{ paid_emails }</strong> are paying subscribers
-								</li>
-							) }
-						</ul>
-					</>
-				) }
 			</div>
 
 			<PaidSubscribers
