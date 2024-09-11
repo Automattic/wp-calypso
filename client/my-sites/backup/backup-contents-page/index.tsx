@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { Button, ExternalLink } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useCallback, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import ActionButtons from 'calypso/components/jetpack/daily-backup-status/action-buttons';
@@ -41,6 +41,10 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
 	}, [ dispatch ] );
 
+	const onLearnAboutClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_learn_about_click' ) );
+	}, [ dispatch ] );
+
 	return (
 		<>
 			<QuerySiteCredentials siteId={ siteId } />
@@ -61,7 +65,10 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							<div className="status-card__header-content">
 								<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
 								<div className="status-card__learn-about">
-									<ExternalLink href="https://jetpack.com/blog/introducing-backup-file-browser/">
+									<ExternalLink
+										href="https://jetpack.com/blog/introducing-backup-file-browser/"
+										onClick={ onLearnAboutClick }
+									>
 										{ translate( 'Learn about the file browser' ) }
 									</ExternalLink>
 								</div>
