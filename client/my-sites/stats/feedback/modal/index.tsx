@@ -91,6 +91,8 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		refetchNotices,
 	] );
 
+	const showSubmissionControls = ! isCheckingAbilityToSubmitFeedback && isAbleToSubmitFeedback;
+
 	return (
 		<Modal className="stats-feedback-modal" onRequestClose={ handleClose } __experimentalHideHeader>
 			<Button
@@ -104,44 +106,43 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					{ translate( 'Help us make Jetpack Stats better' ) }
 				</h1>
 
-				<div className="stats-feedback-modal__text">
+				<p className="stats-feedback-modal__text">
 					{ translate(
 						'We value your opinion and would love to hear more about your experience. Please share any specific thoughts or suggestions you have to improve Jetpack Stats.'
 					) }
-				</div>
-				<TextareaControl
-					rows={ 5 }
-					cols={ 40 }
-					className="stats-feedback-modal__form"
-					placeholder={ translate( 'Add your feedback here' ) }
-					name="content"
-					value={ content }
-					onChange={ setContent }
-					disabled={ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback }
-				/>
-				<div className="stats-feedback-modal__button">
-					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
+				</p>
+				{ ! showSubmissionControls && (
+					<p>
 						<strong>
 							<em>
 								{ translate( 'Feedback submission is currently limited to one per 24 hours.' ) }
 							</em>
 						</strong>
-					) }
-					<StatsButton
-						primary
-						onClick={ onFormSubmit }
-						busy={ isSubmittingFeedback }
-						disabled={
-							isCheckingAbilityToSubmitFeedback ||
-							! isAbleToSubmitFeedback ||
-							isSubmittingFeedback ||
-							isSubmissionSuccessful ||
-							! content
-						}
-					>
-						{ translate( 'Submit' ) }
-					</StatsButton>
-				</div>
+					</p>
+				) }
+				{ showSubmissionControls && (
+					<>
+						<TextareaControl
+							rows={ 5 }
+							cols={ 40 }
+							className="stats-feedback-modal__form"
+							placeholder={ translate( 'Add your feedback here' ) }
+							name="content"
+							value={ content }
+							onChange={ setContent }
+						/>
+						<div className="stats-feedback-modal__button">
+							<StatsButton
+								primary
+								onClick={ onFormSubmit }
+								busy={ isSubmittingFeedback }
+								disabled={ isSubmittingFeedback || isSubmissionSuccessful || ! content }
+							>
+								{ translate( 'Submit' ) }
+							</StatsButton>
+						</div>
+					</>
+				) }
 			</div>
 		</Modal>
 	);
