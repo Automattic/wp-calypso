@@ -10,7 +10,7 @@ $progress-duration: 800ms;
 	--progress: 0;
 
 	&::before {
-		background: var(--studio-blue-50);
+		background: var(--color-accent);
 		transform: translateX(calc(-100% * min(1 - var(--progress, 0), 1)));
 		position: absolute;
 		content: "";
