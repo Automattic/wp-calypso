@@ -41,37 +41,41 @@ class EmailPlanSubscription extends Component {
 
 		const hasSubscriptionExpired = this.hasSubscriptionExpired();
 
-		const renewalPrice = getRenewalPrice( purchase );
-		const currencyCode = purchase.currencyCode;
-		const formattedRenewalPrice = formatCurrency( renewalPrice, currencyCode, {
-			stripZeros: true,
-		} );
-		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
-
-		let descriptionText;
-		if ( purchase.isAutoRenewEnabled ) {
-			descriptionText = translate( 'Renews on %(expiryDate)s for %(formattedRenewalPrice)s', {
-				args: {
-					expiryDate,
-					formattedRenewalPrice,
-				},
-				comment: 'Shows the renews date and price of the email subscription',
+		const getDescription = () => {
+			const renewalPrice = getRenewalPrice( purchase );
+			const currencyCode = purchase.currencyCode;
+			const formattedRenewalPrice = formatCurrency( renewalPrice, currencyCode, {
+				stripZeros: true,
 			} );
-		} else {
-			const translateArgs = {
-				args: {
-					expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
-				},
-				comment: 'Shows the expiry date of the email subscription',
-			};
+			const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
-			descriptionText = (
+			if ( purchase.isAutoRenewEnabled && ! hasSubscriptionExpired ) {
+				return translate( 'Renews on %(expiryDate)s for %(formattedRenewalPrice)s', {
+					args: {
+						expiryDate,
+						formattedRenewalPrice,
+					},
+					comment: 'Shows the renews date and price of the email subscription',
+				} );
+			}
+
+			return (
 				<>
 					{ hasSubscriptionExpired
-						? translate( 'Expired on %(expiryDate)s.', translateArgs )
-						: translate( 'Expires on %(expiryDate)s.', translateArgs ) }
-					<span>
-						{ translate( 'Renew for %(formattedRenewalPrice)s.', {
+						? translate( 'Expired on %(expiryDate)s.', {
+								args: {
+									expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+								},
+								comment: 'Shows the expiry date of the email subscription',
+						  } )
+						: translate( 'Expires on %(expiryDate)s.', {
+								args: {
+									expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+								},
+								comment: 'Shows the expiry date of the email subscription',
+						  } ) }
+					<span className="email-plan-subscription__description-renews-date">
+						{ translate( 'Renew for %(formattedRenewalPrice)s', {
 							args: {
 								formattedRenewalPrice,
 							},
@@ -80,22 +84,22 @@ class EmailPlanSubscription extends Component {
 					</span>
 				</>
 			);
-		}
+		};
 
 		return (
 			<CompactCard className="email-plan-subscription__card">
 				<div
-					className={ clsx( {
-						'email-plan-subscription__expired': hasSubscriptionExpired,
+					className={ clsx( 'email-plan-subscription__description', {
+						'email-plan-subscription__description--expired': hasSubscriptionExpired,
 					} ) }
 				>
-					{ descriptionText }
+					{ getDescription() }
 				</div>
 				<div className="email-plan-subscription__renew">
 					<RenewButton
 						compact
 						purchase={ purchase }
-						primary={ this.hasSubscriptionExpired() }
+						primary={ hasSubscriptionExpired }
 						selectedSite={ selectedSite }
 						subscriptionId={ parseInt( purchase.id, 10 ) }
 						tracksProps={ { source: 'email-plan-view' } }
