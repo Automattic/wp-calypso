@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useEffect } from 'react';
@@ -58,7 +58,14 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 					<div className="backup-contents-page__header daily-backup-status status-card">
 						<div className="status-card__message-head">
 							<img src={ cloudIcon } alt="" role="presentation" />
-							<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
+							<div className="status-card__header-content">
+								<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
+								<div className="status-card__learn-about">
+									<ExternalLink href="https://jetpack.com/blog/introducing-backup-file-browser/">
+										{ translate( 'Learn about the file browser' ) }
+									</ExternalLink>
+								</div>
+							</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
 						{ browserCheckList.totalItems === 0 && (
