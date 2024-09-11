@@ -12,6 +12,7 @@ type Props = {
 	hasPaidSubscribers: boolean;
 	navigate?: () => void;
 };
+
 export default function StartImportButton( {
 	siteId,
 	hasPaidSubscribers,

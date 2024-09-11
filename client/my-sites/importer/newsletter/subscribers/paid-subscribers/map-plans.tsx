@@ -150,12 +150,12 @@ export default function MapPlans( {
 
 	return (
 		<>
-			<h2>Paid newsletter offering</h2>
+			<h2>Paid subscribers</h2>
 			<p>
 				<strong>
-					Review the plans retieved from Stripe and create euqivalent plans in WordPress.com
+					Review the plans retrieved from Stripe and create equivalents in WordPress.com
 				</strong>{ ' ' }
-				to prevent disruption to your current paid subscribers.
+				to prevent disruptions for your current paid subscribers.
 			</p>
 			<div className="map-plans__mapping">
 				<p>

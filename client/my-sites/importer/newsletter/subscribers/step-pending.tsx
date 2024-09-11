@@ -27,9 +27,6 @@ export default function StepPending( {
 			<Notice status="success" className="importer__notice" isDismissible={ false }>
 				All set! We’ve found <strong>{ allEmailsCount } subscribers</strong> to import.
 			</Notice>
-			<div className="step-pending">
-				<h2>Finished analizing the subscriber import</h2>
-			</div>
 
 			<PaidSubscribers
 				cardData={ cardData }
