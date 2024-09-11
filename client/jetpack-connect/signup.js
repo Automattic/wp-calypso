@@ -7,7 +7,7 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, JetpackLogo } from '@automattic/components';
 import { Button, Card, Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -510,13 +510,23 @@ export class JetpackSignup extends Component {
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-						disableSiteCard={ isWooCoreProfiler }
+						disableSiteCard={
+							isWooCoreProfiler && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						}
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
-						isPasswordless={ isWooCoreProfiler }
-						disableTosText={ isWooCoreProfiler }
-						labelText={ isWooCoreProfiler ? this.props.translate( 'Your Email' ) : null }
+						isPasswordless={
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+						}
+						disableTosText={
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+						}
+						labelText={
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+								? this.props.translate( 'Your Email' )
+								: null
+						}
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
@@ -540,6 +550,12 @@ export class JetpackSignup extends Component {
 				</div>
 				{ isWooCoreProfiler && this.props.authQuery.installedExtSuccess && (
 					<WooInstallExtSuccessNotice />
+				) }
+				{ ! isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler && (
+					<div className="jetpack-connect__jetpack-logo-wrapper">
+						<JetpackLogo monochrome size={ 18 } />{ ' ' }
+						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
+					</div>
 				) }
 			</MainWrapper>
 		);

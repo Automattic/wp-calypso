@@ -321,7 +321,10 @@ export class Login extends Component {
 
 		if (
 			isReactLostPasswordScreenEnabled() &&
-			( this.props.isWoo || this.props.isBlazePro || this.props.isWooCoreProfilerFlow )
+			( this.props.isWoo ||
+				this.props.isBlazePro ||
+				( this.props.isWooCoreProfilerFlow &&
+					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) )
 		) {
 			return (
 				<a
@@ -465,7 +468,11 @@ export class Login extends Component {
 			return this.renderGravPoweredLoginBlockFooter();
 		}
 
-		if ( currentQuery.lostpassword_flow === 'true' ) {
+		if (
+			currentQuery.lostpassword_flow === 'true' &&
+			isWooCoreProfilerFlow &&
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+		) {
 			return null;
 		}
 

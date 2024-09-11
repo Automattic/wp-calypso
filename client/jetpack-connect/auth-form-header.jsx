@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { Icon, globe } from '@wordpress/icons';
@@ -166,7 +167,6 @@ export class AuthFormHeader extends Component {
 
 		if ( isWooCoreProfiler ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
-
 			const translateParams = {
 				components: {
 					br: <br />,
@@ -187,10 +187,15 @@ export class AuthFormHeader extends Component {
 
 			switch ( currentState ) {
 				case 'logged-out':
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-						translateParams
-					);
+					return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						? translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  )
+						: translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  );
 				default:
 					return translate(
 						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
