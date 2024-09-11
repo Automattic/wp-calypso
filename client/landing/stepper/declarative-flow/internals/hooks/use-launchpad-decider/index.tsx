@@ -22,16 +22,10 @@ interface SiteProps {
 
 export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( LAUNCHPAD_EXPERIMENT_NAME );
-
-	const shouldShowCustomerHome =
-		! isLoadingExperiment &&
-		( 'treatment' === experimentAssignment?.variationName ||
-			// for testing/development purposes we can use sessionStorage to force the treatment
-			'treatment' ===
-				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' ) );
+	const showCustomerHome = shouldShowCustomerHome( isLoadingExperiment, experimentAssignment );
 
 	let launchpadStateOnSkip: null | 'skipped' = null;
-	if ( shouldShowCustomerHome ) {
+	if ( showCustomerHome ) {
 		launchpadStateOnSkip = 'skipped';
 	}
 
@@ -43,7 +37,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 
 	return {
 		getPostFlowUrl: ( { flow, siteId, siteSlug }: PostFlowUrlProps ) => {
-			if ( shouldShowCustomerHome ) {
+			if ( showCustomerHome ) {
 				return '/home/' + siteSlug;
 			}
 
@@ -54,7 +48,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 			return `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
-			if ( shouldShowCustomerHome ) {
+			if ( showCustomerHome ) {
 				setLaunchpadSkipState( siteId || siteSlug );
 
 				exitFlow( '/home/' + siteSlug );
@@ -65,7 +59,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 			return;
 		},
 		initializeLaunchpadState: ( { siteId, siteSlug }: SiteProps ) => {
-			if ( shouldShowCustomerHome ) {
+			if ( showCustomerHome ) {
 				setLaunchpadSkipState( siteId || siteSlug );
 				return;
 			}
@@ -74,16 +68,34 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 };
 
 /**
+ * Determine if the customer home should be shown
+ * @param isLoadingExperiment
+ * @param experimentAssignment
+ */
+export function shouldShowCustomerHome(
+	isLoadingExperiment: boolean,
+	experimentAssignment: ExperimentAssignment | null
+): boolean {
+	return (
+		! isLoadingExperiment &&
+		( 'treatment' === experimentAssignment?.variationName ||
+			// for testing/development purposes we can use sessionStorage to force the treatment
+			'treatment' ===
+				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' ) )
+	);
+}
+
+/**
  * Get the launchpad state based on the experiment assignment
  * @param expLoading
  * @param experimentAssigment
  * @param shouldSkip
  */
-export const getLaunchpadStateBasedOnExperiment = (
+export function getLaunchpadStateBasedOnExperiment(
 	expLoading: boolean,
 	experimentAssigment: ExperimentAssignment | null,
 	shouldSkip: boolean
-) => {
+) {
 	if (
 		expLoading ||
 		! experimentAssigment?.variationName ||
@@ -99,4 +111,4 @@ export const getLaunchpadStateBasedOnExperiment = (
 	if ( experimentAssigment.variationName === 'treatment' ) {
 		return 'skipped';
 	}
-};
+}
