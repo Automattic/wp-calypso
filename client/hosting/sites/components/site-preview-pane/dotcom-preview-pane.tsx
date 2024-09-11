@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -95,7 +96,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isActiveAtomicSite,
+				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
 				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
