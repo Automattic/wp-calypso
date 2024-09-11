@@ -30,7 +30,7 @@ function mutationSendTeamMemberInvite(
 		path: `/agency/${ agencyId }/user-invites`,
 		method: 'POST',
 		body: {
-			email: inviteDetails.username,
+			login: inviteDetails.username,
 			message: inviteDetails.message,
 		},
 	} );
