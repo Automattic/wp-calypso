@@ -7,8 +7,10 @@ import wpcom from 'calypso/lib/wp';
  * We make a separate request rather than using getSite here to
  * avoid querying the WP.com cache of a site, which returns theme
  * errors for the multisite (caused by its 'force=wpcom' param).
+ * Also, `theme_errors` is an expensive field that is not normally
+ * fetched by the common `QuerySite` or `QuerySites` helpers.
  */
-function querySiteDataWithoutForceWpcom( siteId ) {
+function fetchSiteThemeErrorsWithoutForceWpcom( siteId ) {
 	return wpcom.req.get( {
 		path: '/sites/' + encodeURIComponent( siteId ),
 		apiVersion: '1.1',
@@ -24,7 +26,7 @@ const ThemeErrors = ( { siteId } ) => {
 	const [ themeErrors, setThemeErrors ] = useState( [] );
 
 	useEffect( () => {
-		querySiteDataWithoutForceWpcom( siteId ).then( ( siteData ) => {
+		fetchSiteThemeErrorsWithoutForceWpcom( siteId ).then( ( siteData ) => {
 			const errors = siteData?.options?.theme_errors;
 			setThemeErrors( errors || [] );
 		} );
