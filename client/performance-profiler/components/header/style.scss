@@ -232,16 +232,12 @@
 			}
 
 			.share-button.has-color {
-				.wordpress {
-					fill: var(--color-wordpress-com);
-				}
-
 				.facebook {
 					fill: var(--color-facebook);
 				}
 
-				.twitter {
-					fill: var(--color-twitter);
+				.x {
+					fill: var(--color-x);
 				}
 
 				.tumblr {
@@ -251,20 +247,7 @@
 				.linkedin {
 					fill: var(--color-linkedin);
 				}
-
-				.pinterest {
-					fill: var(--color-pinterest);
-				}
-
-				.telegram {
-					fill: var(--color-telegram);
-				}
-
-				.whatsapp {
-					fill: var(--color-whatsapp);
-				}
 			}
-
 		}
 	}
 }
