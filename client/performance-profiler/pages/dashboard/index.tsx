@@ -69,7 +69,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const getOnTabChange = ( tab: TabType ) => {
 		updateQueryParams( { tab: tab } );
 		recordTracksEvent( 'calypso_performance_profiler_tab_changed', {
-			url: finalUrl,
+			url: siteUrl.href,
 			tab,
 		} );
 		setActiveTab( tab );
@@ -86,7 +86,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 
 	if ( testStartTime.current && desktopLoaded && mobileLoaded ) {
 		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
-			url: finalUrl,
+			url: siteUrl.href,
 			duration: Date.now() - testStartTime.current,
 			mobile_score: mobileReport?.overall_score,
 			desktop_score: desktopReport?.overall_score,
