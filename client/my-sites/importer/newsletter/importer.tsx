@@ -20,7 +20,7 @@ import { LogoChain } from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
-import { engineTypes } from './types';
+import { EngineTypes, StatusType } from './types';
 
 import './importer.scss';
 
@@ -35,7 +35,7 @@ const logoChainLogos = [
 
 type NewsletterImporterProps = {
 	siteSlug: string;
-	engine: engineTypes;
+	engine: EngineTypes;
 	step?: StepId;
 };
 
@@ -135,7 +135,7 @@ export default function NewsletterImporter( {
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
 	let stepContent = {};
-	let stepStatus = 'initial';
+	let stepStatus: StatusType = 'initial';
 	if ( paidNewsletterData?.steps ) {
 		// This is useful for the summary step.
 		if ( ! paidNewsletterData?.steps[ step ] ) {
