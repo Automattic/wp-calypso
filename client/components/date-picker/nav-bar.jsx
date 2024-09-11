@@ -20,7 +20,7 @@ export const DatePickerNavBar = ( {
 	localeUtils,
 	showPreviousButton = true,
 	showNextButton = true,
-	useArrowNavigation = true,
+	useArrowNavigation = false,
 } ) => {
 	const classes = clsx( 'date-picker__nav-bar', {
 		[ className ]: !! className,
