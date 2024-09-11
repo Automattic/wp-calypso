@@ -162,8 +162,10 @@ const LaunchSite = () => {
 								{ agencyLoading || agencyError
 									? translate( 'After launch, we’ll bill your agency in the next billing cycle.' )
 									: translate(
+											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}',
 											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}',
 											{
+												count: existingWPCOMLicenseCount + 1,
 												args: {
 													agencyName: agencyName,
 													licenseCount: existingWPCOMLicenseCount + 1,
@@ -180,7 +182,8 @@ const LaunchSite = () => {
 														/>
 													),
 												},
-												comment: 'name of the agency that will be billed for the site',
+												comment:
+													'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
 											}
 									  ) }
 							</i>
