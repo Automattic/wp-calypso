@@ -217,7 +217,7 @@ export default function UserContactSupportModalForm( {
 					</FormSelect>
 				</FormFieldset>
 
-				{ isPressableSelected ? (
+				{ isPressableSelected && (
 					<>
 						<FormFieldset>
 							<FormLabel htmlFor="product">
@@ -239,7 +239,7 @@ export default function UserContactSupportModalForm( {
 							) }
 						</div>
 					</>
-				) : null }
+				) }
 
 				<FormFieldset>
 					<FormLabel htmlFor="message">{ translate( 'How can we help?' ) }</FormLabel>
