@@ -324,7 +324,7 @@ class ThemeSheet extends Component {
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { disabledButton: this.isLoading() } );
 
-		// Subscribe to breakpoint changes
+		// Subscribe to breakpoint changes to switch to a compact breadcrumb on mobile.
 		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
 			this.setState( { isWide } );
 		} );
