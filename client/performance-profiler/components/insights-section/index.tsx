@@ -1,10 +1,12 @@
+import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
-import './style.scss';
 import { metricsNames } from 'calypso/performance-profiler/utils/metrics';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
+import './style.scss';
+
 type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	url: string;
@@ -23,11 +25,9 @@ export const InsightsSection = forwardRef(
 				selectedFilter === 'all' ||
 				audits[ key ].metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
 		);
-		const onFilter = useCallback( ( e: React.ChangeEvent< HTMLSelectElement > ) => {
-			const { value } = e?.target ?? {};
-
-			setSelectedFilter( value );
-			updateQueryParams( { filter: value } );
+		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
+			setSelectedFilter( option.value );
+			updateQueryParams( { filter: option.value } );
 		}, [] );
 
 		return (
@@ -38,20 +38,33 @@ export const InsightsSection = forwardRef(
 						<p className="subtitle">
 							{ filteredAudits.length
 								? translate( 'We found things you can do to speed up your site.' )
-								: translate(
-										"Great job! We didn't find any recommendations for improving the speed of your site."
-								  ) }
+								: translate( "Great job! We didn't find any recommendations for improving %s.", {
+										args: [
+											selectedFilter === 'all'
+												? translate( 'the speed of your site' )
+												: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+										],
+								  } ) }
 						</p>
 					</div>
 					<div className="filter">
-						<select value={ selectedFilter } onChange={ onFilter }>
-							<option value="all">{ translate( 'All recommendations' ) } </option>
-							{ Object.keys( metricsNames ).map( ( key ) => (
-								<option value={ key } key={ 'option-' + key }>
-									{ metricsNames[ key as keyof typeof metricsNames ]?.name }
-								</option>
-							) ) }
-						</select>
+						<SelectDropdown
+							value={ selectedFilter }
+							initialSelected={ selectedFilter }
+							onSelect={ onFilter }
+							selectedText={
+								selectedFilter === 'all'
+									? translate( 'All recommendations' )
+									: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name
+							}
+							options={ [ { label: 'All recommendations', value: 'all' } ].concat(
+								Object.keys( metricsNames ).map( ( key ) => ( {
+									label: metricsNames[ key as keyof typeof metricsNames ]?.name,
+									value: key,
+								} ) )
+							) }
+							compact
+						/>
 					</div>
 				</div>
 				{ filteredAudits.map( ( key, index ) => (
