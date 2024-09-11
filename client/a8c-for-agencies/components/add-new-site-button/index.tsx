@@ -207,14 +207,10 @@ export default function AddNewSiteButton( {
 			{ devSitesEnabled && (
 				<div className="site-selector-and-importer__popover-column">
 					{ menuItem( {
-						icon: <img src={ devSiteBanner } alt="WordPress.com Development Site" />,
-						heading: translate( 'WordPress.com Development Site' ),
+						icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
+						heading: translate( 'Start Building for Free' ),
 						description: translate(
-							'Try our hosting for free indefinitely.{{br/}}Only pay when you launch.',
-							{
-								components: { br: <br /> },
-								comment: 'br is a line break',
-							}
+							'Develop a WordPress.com site for as long as your client requires with a free development license. Only pay when you launch!'
 						),
 						disabled: ! hasAvailableDevSites,
 						isBanner: true,
@@ -238,14 +234,14 @@ export default function AddNewSiteButton( {
 							<div>
 								<div className="site-selector-and-importer__popover-site-count">
 									{ translate(
-										'%(pendingSites)d site available',
-										'%(pendingSites)d sites available',
+										'%(pendingSites)d free license available',
+										'%(pendingSites)d free licenses available',
 										{
 											args: {
 												pendingSites: availableDevSites,
 											},
 											count: availableDevSites,
-											comment: '%(pendingSites)s is the number of sites available.',
+											comment: '%(pendingSites)s is the number of free licenses available.',
 										}
 									) }
 								</div>
