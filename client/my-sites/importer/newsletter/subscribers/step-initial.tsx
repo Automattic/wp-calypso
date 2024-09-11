@@ -36,8 +36,9 @@ export default function StepInitial( {
 		<Card>
 			<h2>Step 1: Export your subscribers from Substack</h2>
 			<p>
-				To generate a CSV file of all your Substack subscribers, go to the Subscribers tab and click
-				'Export.' Once the CSV file is downloaded, upload it in the next step.
+				Generate a CSV file of all your Substack subscribers. On Substack, go to the{ ' ' }
+				<strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on
+				top of the table. Then, upload the downloaded CSV in the next step.
 			</p>
 			<img
 				src={ exportSubstackSubscribersImg }

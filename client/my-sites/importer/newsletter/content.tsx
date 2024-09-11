@@ -76,9 +76,9 @@ export default function Content( {
 				<>
 					<h2>Step 1: Export your content from Substack</h2>
 					<p>
-						To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and
-						click 'Create a new export.' Once the ZIP file is downloaded, upload it in the next
-						step.
+						Generate a ZIP file of all your Substack posts. On Substack, go to Settings &gt;
+						Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the
+						next step.
 					</p>
 					<img
 						src={ exportSubstackDataImg }
