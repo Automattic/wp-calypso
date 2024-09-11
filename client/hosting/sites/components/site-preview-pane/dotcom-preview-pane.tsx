@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,6 +13,7 @@ import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_SITE_PERFORMANCE,
 	DOTCOM_LOGS_PHP,
 	DOTCOM_LOGS_WEB,
 	DOTCOM_GITHUB_DEPLOYMENTS,
@@ -91,6 +93,11 @@ const DotcomPreviewPane = ( {
 				label: __( 'Monitoring' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_MONITORING ],
+			},
+			{
+				label: __( 'Performance' ),
+				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
+				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
