@@ -75,7 +75,8 @@ export async function maybeRedirect( context, next ) {
 		const shouldShowLaunchpad =
 			'treatment' !== experimentAssignment?.variationName &&
 			// for testing/development purposes we can use sessionStorage to force the treatment
-			'treatment' !== window.sessionStorage.getItem( 'launchpad_experiment_variation' );
+			'treatment' !==
+				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' );
 
 		if (
 			shouldShowLaunchpad &&

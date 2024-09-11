@@ -26,7 +26,8 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 		! isLoadingExperiment &&
 		( 'treatment' === experimentAssignment?.variationName ||
 			// for testing/development purposes we can use sessionStorage to force the treatment
-			'treatment' === window.sessionStorage.getItem( 'launchpad_experiment_variation' ) );
+			'treatment' ===
+				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' ) );
 
 	let launchpadStateOnSkip: null | 'skipped' = null;
 	if ( shouldShowCustomerHome ) {
