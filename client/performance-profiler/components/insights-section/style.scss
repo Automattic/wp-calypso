@@ -27,6 +27,11 @@ $blueberry-color: #3858e9;
 	.filter {
 		select {
 			cursor: pointer;
+			padding: 6px;
+
+			option {
+				height: 1.5rem;
+			}
 		}
 	}
 
