@@ -589,8 +589,8 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 	// "Subtotal before discounts" as lower than the "Subtotal". The details of
 	// the price increase will be displayed elsewhere.
 	if ( doesIntroductoryOfferHavePriceIncrease( product ) ) {
-		const introOffer = product.cost_overrides?.find(
-			( offer ) => offer.override_code === 'introductory-offer'
+		const introOffer = product.cost_overrides?.find( ( offer ) =>
+			isOverrideCodeIntroductoryOffer( offer.override_code )
 		);
 		if ( introOffer ) {
 			return introOffer.new_subtotal_integer + multiYearDiscount;
