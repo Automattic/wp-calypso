@@ -1,15 +1,18 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
 import { StepProps } from './types';
 
-export default function Summary( { cardData }: StepProps ) {
+export default function Summary( { cardData, selectedSite }: StepProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
 		if ( contentStatus === 'done' && subscriberStatue === 'done' ) {
 			return true;
 		}
+
 		if ( contentStatus === 'done' && subscriberStatue === 'skipped' ) {
 			return true;
 		}
@@ -32,6 +35,17 @@ export default function Summary( { cardData }: StepProps ) {
 				cardData={ cardData.subscribers.content }
 				status={ cardData.subscribers.status }
 			/>
+			<ImporterActionButtonContainer noSpacing>
+				<ImporterActionButton href={ '/settings/newsletter/' + selectedSite.slug } primary>
+					Customize your newsletter
+				</ImporterActionButton>
+				<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
+					View imported content
+				</ImporterActionButton>
+				<ImporterActionButton href={ '/subscribers/' + selectedSite.slug }>
+					Check subscribers
+				</ImporterActionButton>
+			</ImporterActionButtonContainer>
 		</Card>
 	);
 }

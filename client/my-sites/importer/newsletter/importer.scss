@@ -22,6 +22,10 @@
 			line-height: 20px;
 			color: var(--studio-gray-50);
 			margin-bottom: 16px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 
 		hr {
@@ -65,7 +69,7 @@
 	}
 
 	.importer-action-buttons__container.no-spacing {
-		margin-bottom: 16px;
+		margin-top: 16px;
 	}
 
 	img.export-content {
