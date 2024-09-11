@@ -23,11 +23,13 @@ export default function Summary( { cardData, selectedSite }: StepProps ) {
 
 		return false;
 	}
+
 	return (
 		<Card>
 			{ shouldRenderConfetti( cardData.content.status, cardData.subscribers.status ) && (
 				<>
-					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h2>Success! 🎉</h2>
+					<ConfettiAnimation trigger={ ! prefersReducedMotion } />
+					<h2>Success! 🎉</h2>
 				</>
 			) }
 			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
