@@ -12,6 +12,7 @@ import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_SITE_PERFORMANCE,
 	DOTCOM_LOGS_PHP,
 	DOTCOM_LOGS_WEB,
 	DOTCOM_GITHUB_DEPLOYMENTS,
@@ -91,6 +92,11 @@ const DotcomPreviewPane = ( {
 				label: __( 'Monitoring' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_MONITORING ],
+			},
+			{
+				label: __( 'Performance' ),
+				enabled: isActiveAtomicSite,
+				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
