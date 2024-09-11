@@ -114,34 +114,38 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							<div className="report-site-details hide-on-mobile">
 								{ renderTimestampAndBadge() }
 							</div>
-							<div
-								className="share-button"
-								ref={ popoverButtonRef }
-								role="button"
-								tabIndex={ 0 }
-								onKeyDown={ ( e ) => e.key === 'Enter' && setPopoverMenu( true ) }
-								onClick={ () => setPopoverMenu( true ) }
-							>
-								<Icon className="share-icon" icon={ share } />
-								<span>{ translate( 'Share results' ) }</span>
-							</div>
-							<Popover
-								id="profiler-share-buttons-popover"
-								isVisible={ showPopoverMenu }
-								context={ popoverButtonRef.current }
-								position="top"
-								onClose={ () => setPopoverMenu( false ) }
-							>
-								{ SocialServices.map( ( item ) => (
-									<ShareButton
-										key={ item.service }
-										size={ 28 }
-										url={ shareLink }
-										title=""
-										service={ item.service }
-									/>
-								) ) }
-							</Popover>
+							{ timestamp && (
+								<>
+									<div
+										className="share-button"
+										ref={ popoverButtonRef }
+										role="button"
+										tabIndex={ 0 }
+										onKeyDown={ ( e ) => e.key === 'Enter' && setPopoverMenu( true ) }
+										onClick={ () => setPopoverMenu( true ) }
+									>
+										<Icon className="share-icon" icon={ share } />
+										<span>{ translate( 'Share results' ) }</span>
+									</div>
+									<Popover
+										id="profiler-share-buttons-popover"
+										isVisible={ showPopoverMenu }
+										context={ popoverButtonRef.current }
+										position="top"
+										onClose={ () => setPopoverMenu( false ) }
+									>
+										{ SocialServices.map( ( item ) => (
+											<ShareButton
+												key={ item.service }
+												size={ 28 }
+												url={ shareLink }
+												title=""
+												service={ item.service }
+											/>
+										) ) }
+									</Popover>
+								</>
+							) }
 						</div>
 					</SectionNav>
 				) }
