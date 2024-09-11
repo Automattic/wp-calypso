@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useMutation, UseMutationOptions, useIsMutating } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
@@ -52,6 +53,8 @@ export const usePullFromStagingMutation = (
 		MutationVariables
 	>
 ) => {
+	const isStagingSiteSyncWooEnabled = config.isEnabled( 'staging-site-sync-woo' );
+
 	const mutation = useMutation( {
 		mutationFn: async ( options ) =>
 			wp.req.post(
@@ -59,7 +62,7 @@ export const usePullFromStagingMutation = (
 					path: `/sites/${ productionSiteId }/staging-site/pull-from-staging/${ stagingSiteId }`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ options }
+				{ options, allow_woo_sync: isStagingSiteSyncWooEnabled ? 1 : 0 }
 			),
 		...options,
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
