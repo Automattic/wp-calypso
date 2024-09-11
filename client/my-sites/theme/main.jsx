@@ -20,7 +20,7 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -306,6 +306,7 @@ class ThemeSheet extends Component {
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
+		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
 	scrollToTop = () => {
@@ -322,6 +323,11 @@ class ThemeSheet extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { disabledButton: this.isLoading() } );
+
+		// Subscribe to breakpoint changes
+		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
+			this.setState( { isWide } );
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -333,6 +339,10 @@ class ThemeSheet extends Component {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { disabledButton: this.isLoading() } );
 		}
+	}
+
+	componentWillUnmount() {
+		this.unsubscribeBreakpoint();
 	}
 
 	isLoaded = () => {
@@ -1378,7 +1388,6 @@ class ThemeSheet extends Component {
 			{ label: translate( 'Themes' ), href: this.getBackLink(), onClick: this.handleBackLinkClick },
 			{ label: title },
 		];
-		const isWide = isWithinBreakpoint( '>960px' );
 
 		return (
 			<Main className="theme__sheet">
@@ -1429,7 +1438,10 @@ class ThemeSheet extends Component {
 				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
-				<NavigationHeader navigationItems={ navigationItems } compactBreadcrumb={ ! isWide } />
+				<NavigationHeader
+					navigationItems={ navigationItems }
+					compactBreadcrumb={ ! this.state.isWide }
+				/>
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
