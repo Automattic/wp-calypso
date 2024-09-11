@@ -189,11 +189,7 @@ const siteSetupFlow: Flow = {
 				return 'full';
 			}
 
-			if ( launchpadExperimentAssigment.variationName === 'treatment_no_launchpad' ) {
-				return 'off';
-			}
-
-			if ( launchpadExperimentAssigment.variationName === 'treatment_skip_launchpad' ) {
+			if ( launchpadExperimentAssigment.variationName === 'treatment' ) {
 				return 'skipped';
 			}
 
