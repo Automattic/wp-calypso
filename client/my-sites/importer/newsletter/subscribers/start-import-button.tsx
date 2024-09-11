@@ -1,9 +1,9 @@
 import { FormLabel } from '@automattic/components';
-import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { ChangeEvent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useSubscriberImportMutation } from 'calypso/data/paid-newsletter/use-subscriber-import-mutation';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
 
 type Props = {
 	step: string;
@@ -43,15 +43,15 @@ export default function StartImportButton( {
 
 					<p>
 						<FormLabel>
-							<FormCheckbox checked={ isDisabled } defaultChecked={ false } onChange={ onChange } />
+							<FormCheckbox checked={ isDisabled } onChange={ onChange } />
 							I’ve disconnected other providers from the Stripe account
 						</FormLabel>
 					</p>
 				</>
 			) }
-			<Button variant="primary" disabled={ ! isDisabled } onClick={ importSubscribers }>
+			<ImporterActionButton primary disabled={ ! isDisabled } onClick={ importSubscribers }>
 				Import subscribers
-			</Button>
+			</ImporterActionButton>
 		</>
 	);
 }

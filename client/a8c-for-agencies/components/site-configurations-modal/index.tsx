@@ -83,6 +83,7 @@ export default function SiteConfigurationsModal( {
 			php_version: phpVersion,
 			primary_data_center: primaryDataCenter,
 			is_fully_managed_agency_site: ! allowClientsToUseSiteHelpCenter,
+			is_dev_site: isDevSite,
 		};
 		const params = {
 			...trackingParams,
@@ -224,43 +225,72 @@ export default function SiteConfigurationsModal( {
 				</FormField>
 				<FormField label="">
 					<div className="configure-your-site-modal-form__allow-clients-to-use-help-center">
-						<CheckboxControl
-							id="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
-							onChange={ toggleAllowClientsToUseSiteHelpCenter }
-							checked={ allowClientsToUseSiteHelpCenter }
-							name="is_fully_managed_agency_site"
-							disabled={ isDevSite || isSubmitting }
-						/>
-						<label
-							className={ isDevSite ? 'disabled-label' : '' }
-							htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
-						>
-							{ translate(
-								'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
-								{
-									components: {
-										HcLink: (
-											<a
-												target="_blank"
-												href={ localizeUrl(
-													'https://wordpress.com/support/help-support-options/#how-to-contact-us'
-												) }
-												rel="noreferrer"
-											/>
-										),
-										HfLink: (
-											<a
-												target="_blank"
-												href={ localizeUrl(
-													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
-												) }
-												rel="noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</label>
+						{ isDevSite ? (
+							<label className="dev-sites-label">
+								{ translate(
+									'Clients can’t access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.',
+									{
+										components: {
+											HcLink: (
+												<a
+													target="_blank"
+													href={ localizeUrl(
+														'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+													) }
+													rel="noreferrer"
+												/>
+											),
+											HfLink: (
+												<a
+													target="_blank"
+													href={ localizeUrl(
+														'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+													) }
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</label>
+						) : (
+							<>
+								<CheckboxControl
+									id="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
+									onChange={ toggleAllowClientsToUseSiteHelpCenter }
+									checked={ allowClientsToUseSiteHelpCenter }
+									name="is_fully_managed_agency_site"
+									disabled={ isSubmitting }
+								/>
+								<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
+									{ translate(
+										'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+										{
+											components: {
+												HcLink: (
+													<a
+														target="_blank"
+														href={ localizeUrl(
+															'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+														) }
+														rel="noreferrer"
+													/>
+												),
+												HfLink: (
+													<a
+														target="_blank"
+														href={ localizeUrl(
+															'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+														) }
+														rel="noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</label>
+							</>
+						) }
 					</div>
 				</FormField>
 				<div className="configure-your-site-modal-form__footer">
