@@ -1,6 +1,8 @@
 import page from '@automattic/calypso-router';
 import { SearchableDropdown } from '@automattic/components';
 import { useDebouncedInput } from '@wordpress/compose';
+import { useI18n } from '@wordpress/react-i18n';
+import { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { useSelector } from 'calypso/state';
 import { getPostsForQueryIgnoringPage } from 'calypso/state/posts/selectors';
@@ -16,6 +18,8 @@ interface Page {
 const PER_PAGE = 10;
 
 export const PageSelector = () => {
+	const { __ } = useI18n();
+
 	const queryParams = useSelector( getCurrentQueryArguments );
 	const site = useSelector( getSelectedSite );
 
@@ -25,17 +29,25 @@ export const PageSelector = () => {
 		getPostsForQueryIgnoringPage( state, site?.ID, query )
 	);
 
-	const options =
-		pages?.map( ( page ) => {
-			let url = page.URL.replace( site?.URL ?? '', '' );
-			url = url.length > 1 ? url.replace( /\/$/, '' ) : url;
+	const options = useMemo( () => {
+		const mappedPages =
+			pages?.map( ( page ) => {
+				let url = page.URL.replace( site?.URL ?? '', '' );
+				url = url.length > 1 ? url.replace( /\/$/, '' ) : url;
 
-			return {
-				URL: url,
-				label: page.title,
-				value: page.slug,
-			};
-		} ) ?? [];
+				return {
+					URL: url,
+					label: page.title,
+					value: url,
+				};
+			} ) ?? [];
+
+		if ( pageQuery.length > 0 ) {
+			return mappedPages;
+		}
+
+		return [ { URL: '/', label: __( 'Home' ), value: '/' }, ...mappedPages ];
+	}, [ pageQuery.length, pages, site?.URL, __ ] );
 
 	return (
 		<>
@@ -43,7 +55,7 @@ export const PageSelector = () => {
 			<SearchableDropdown
 				onFilterValueChange={ setPageQuery }
 				options={ options }
-				value={ queryParams?.page_slug?.toString() ?? null }
+				value={ queryParams?.page_slug?.toString() ?? '/' }
 				onChange={ ( slug ) => {
 					const url = new URL( window.location.href );
 
@@ -57,7 +69,7 @@ export const PageSelector = () => {
 				} }
 				css={ {
 					maxWidth: '240px',
-					'.components-form-token-field__suggestions-list': { maxHeight: 'auto !important' },
+					'.components-form-token-field__suggestions-list': { maxHeight: 'initial !important' },
 					'.components-form-token-field__suggestions-list li': { padding: '0 !important' },
 				} }
 				__experimentalRenderItem={ ( { item } ) => (
