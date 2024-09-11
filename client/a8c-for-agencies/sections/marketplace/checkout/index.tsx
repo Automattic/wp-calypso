@@ -49,7 +49,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 
-	const canIssueLicenses = agency?.can_issue_licenses;
+	const canIssueLicenses = agency?.can_issue_licenses ?? true;
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
@@ -150,14 +150,28 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
+	const handleShowPopover = () => {
+		if ( ! canIssueLicenses ) {
+			setShowPopover( true );
+		}
+	};
+
 	let actionContent = (
 		<>
 			<NoticeSummary type="agency-purchase" />
 
 			<div className="checkout__aside-actions">
 				<span
+					role="button"
+					tabIndex={ 0 }
 					className="checkout__aside-actions-wrapper"
-					onMouseEnter={ () => setShowPopover( true ) }
+					onMouseEnter={ handleShowPopover }
+					onClick={ handleShowPopover }
+					onKeyUp={ ( event ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							handleShowPopover;
+						}
+					} }
 				>
 					<Button
 						primary

@@ -20,7 +20,7 @@ export default function PendingPaymentNotification() {
 		getPreference( state, PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE )
 	);
 
-	const canIssueLicenses = agency?.can_issue_licenses;
+	const canIssueLicenses = agency?.can_issue_licenses ?? true;
 
 	const translate = useTranslate();
 

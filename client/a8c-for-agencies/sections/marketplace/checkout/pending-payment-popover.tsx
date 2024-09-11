@@ -22,10 +22,11 @@ export default function PendingPaymentPopover( { wrapperRef, hidePopover }: Prop
 		>
 			<div className="checkout__button-popover-description">
 				{ translate(
-					'Your payment for the latest invoice is now overdue. To continue purchasing products and maintain uninterrupted services,{{br/}}please make your payment as soon as possible.',
+					'Your payment for the latest invoice is now overdue. To continue purchasing products and maintain uninterrupted services,{{br/}}please make your payment as soon as{{nbsp/}}possible.',
 					{
 						components: {
 							br: <br />,
+							nbsp: <>&nbsp;</>,
 						},
 					}
 				) }
