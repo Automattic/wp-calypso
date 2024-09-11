@@ -2,6 +2,7 @@
 
 This component displays a header with a breadcrumb.
 It can also include children items which will be positioned to the far right.
+It will not show less than 2 items.
 
 ## How to use
 
@@ -20,7 +21,7 @@ function render() {
 
 ## Props
 
-- `navigationItems` (`{ label: string; href: string }[]`) - The Navigations items to be shown
+- `navigationItems` (`{ label: string; href?: string; helpBubble?: React.ReactElement; onClick?: () => void }[]`) - The Navigations items to be shown
 - `id` (`string`) - ID for the header (optional)
 - `className` (`string`) - A class name for the wrapped component (optional)
 - `children` (`nodes`) – Any children elements which are being rendered to the far right (optional)

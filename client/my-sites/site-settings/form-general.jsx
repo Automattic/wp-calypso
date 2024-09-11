@@ -758,7 +758,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
 		admin_url: '',
-		is_fully_managed_agency_site: false,
+		is_fully_managed_agency_site: true,
 	};
 
 	if ( ! settings ) {

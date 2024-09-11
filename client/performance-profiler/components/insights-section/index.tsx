@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import './style.scss';
 
@@ -20,7 +21,11 @@ export const InsightsSection = forwardRef(
 			<div className="performance-profiler-insights-section" ref={ ref }>
 				<h2 className="title">{ translate( "Improve your site's performance" ) }</h2>
 				<p className="subtitle">
-					{ translate( 'We found things you can do to speed up your site.' ) }
+					{ Object.keys( audits ).length
+						? translate( 'We found things you can do to speed up your site.' )
+						: translate(
+								"Great job! We didn't find any recommendations for improving the speed of your site."
+						  ) }
 				</p>
 				{ Object.keys( audits ).map( ( key, index ) => (
 					<MetricsInsight
@@ -30,6 +35,12 @@ export const InsightsSection = forwardRef(
 						url={ props.url }
 						isWpcom={ isWpcom }
 						hash={ hash }
+						onClick={ () =>
+							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
+								url: props.url,
+								key,
+							} )
+						}
 					/>
 				) ) }
 			</div>

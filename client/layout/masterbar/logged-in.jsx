@@ -500,11 +500,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user, siteUrl, isClassicView } = this.props;
-		const editProfileLink =
-			config.isEnabled( 'layout/site-level-user-profile' ) || isClassicView
-				? siteUrl + '/wp-admin/profile.php'
-				: '/me';
+		const { translate, user, siteAdminUrl } = this.props;
+		const editProfileLink = siteAdminUrl ? `${ siteAdminUrl }profile.php` : '/me';
 		const profileActions = [
 			{
 				label: (
@@ -525,7 +522,7 @@ class MasterbarLoggedIn extends Component {
 			},
 			{
 				label: translate( 'My Account' ),
-				url: '/me/account',
+				url: '/me',
 				className: 'account-link',
 			},
 			{

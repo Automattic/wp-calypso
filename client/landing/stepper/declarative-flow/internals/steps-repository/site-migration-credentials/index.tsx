@@ -3,7 +3,6 @@ import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { Icon, Button } from '@wordpress/components';
 import { seen, unseen, chevronDown, chevronUp } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, type FC } from 'react';
@@ -15,7 +14,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
@@ -42,13 +40,9 @@ const mapApiError = ( error: any ) => {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
-	const locale = useFlowLocale();
 
 	const [ passwordHidden, setPasswordHidden ] = useState( true );
-	const [ showNotes, setShowNotes ] = useState(
-		! ( locale === 'en' || hasTranslation( 'Special instructions' ) )
-	);
+	const [ showNotes, setShowNotes ] = useState( false );
 
 	const toggleVisibilityClasses = clsx( {
 		'site-migration-credentials__form-password__toggle': true,
@@ -172,6 +166,13 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		requestAutomatedMigration( data );
 	};
 
+	const toggleShowNotes = () => {
+		setShowNotes( ! showNotes );
+		recordTracksEvent( 'calypso_site_migration_special_instructions_toggle', {
+			show_notes: ! showNotes,
+		} );
+	};
+
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
 			<Card>
@@ -262,11 +263,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 											id="username"
 											type="text"
 											isError={ !! errors.username }
-											placeholder={
-												locale === 'en' || hasTranslation( 'Enter your Admin username' )
-													? translate( 'Enter your Admin username' )
-													: translate( 'Username' )
-											}
+											placeholder={ translate( 'Enter your Admin username' ) }
 											{ ...field }
 											onChange={ ( e: any ) => {
 												const trimmedValue = e.target.value.trim();
@@ -298,11 +295,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 												id="site-migration-credentials__password"
 												type={ passwordHidden ? 'password' : 'text' }
 												isError={ !! errors.password }
-												placeholder={
-													locale === 'en' || hasTranslation( 'Enter your Admin password' )
-														? translate( 'Enter your Admin password' )
-														: translate( 'Password' )
-												}
+												placeholder={ translate( 'Enter your Admin password' ) }
 												{ ...field }
 											/>
 											<button
@@ -363,19 +356,14 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				) }
 
 				<div className="site-migration-credentials__special-instructions">
-					{ ( locale === 'en' || hasTranslation( 'Special instructions' ) ) && (
-						<Button
-							onClick={ () => setShowNotes( ! showNotes ) }
-							data-testid="special-instructions"
-						>
-							{ translate( 'Special instructions' ) }
-							<Icon
-								icon={ showNotes ? chevronUp : chevronDown }
-								size={ 24 }
-								className="site-migration-credentials__special-instructions-icon"
-							/>
-						</Button>
-					) }
+					<Button onClick={ () => toggleShowNotes() } data-testid="special-instructions">
+						{ translate( 'Special instructions' ) }
+						<Icon
+							icon={ showNotes ? chevronUp : chevronDown }
+							size={ 24 }
+							className="site-migration-credentials__special-instructions-icon"
+						/>
+					</Button>
 					{ showNotes && (
 						<>
 							<div className="site-migration-credentials__form-field site-migration-credentials__form-field--notes">
@@ -402,16 +390,11 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									{ errors.notes.message }
 								</div>
 							) }
-							{ ( locale === 'en' ||
-								hasTranslation(
+							<div className="site-migration-credentials__form-note">
+								{ translate(
 									"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
-								) ) && (
-								<div className="site-migration-credentials__form-note">
-									{ translate(
-										"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
-									) }
-								</div>
-							) }
+								) }
+							</div>
 						</>
 					) }
 				</div>

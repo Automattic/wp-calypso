@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
@@ -49,7 +50,15 @@ export const PerformanceProfilerDashboardContent = ( {
 					tbt={ tbt }
 					history={ history }
 				/>
-				<NewsletterBanner link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` } />
+				<NewsletterBanner
+					link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_performance_profiler_weekly_report_cta_click', {
+							url,
+						} );
+					} }
+				/>
+
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && (
 					<InsightsSection
@@ -63,7 +72,14 @@ export const PerformanceProfilerDashboardContent = ( {
 			</div>
 
 			<Disclaimer />
-			<MigrationBanner url={ url } />
+			<MigrationBanner
+				url={ url }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
+						url,
+					} );
+				} }
+			/>
 		</div>
 	);
 };

@@ -7,8 +7,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { PerformanceProfilerHeader, TabType } from 'calypso/performance-profiler/components/header';
+import {
+	MessageDisplay,
+	ErrorSecondLine,
+} from 'calypso/performance-profiler/components/message-display';
 import { LoadingScreen } from '../loading-screen';
 
 type PerformanceProfilerDashboardProps = {
@@ -21,12 +26,22 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const translate = useTranslate();
 	const { url, tab, hash } = props;
 	const isSavedReport = useRef( !! hash );
+	const testStartTime = useRef( 0 );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
-	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
+	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+
+	const siteUrl = new URL( url );
+
+	if ( isFetched && finalUrl ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_started', {
+			url: finalUrl,
+		} );
+		testStartTime.current = Date.now();
+	}
 
 	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
 		const queryParams = new URLSearchParams( window.location.search );
@@ -53,6 +68,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 
 	const getOnTabChange = ( tab: TabType ) => {
 		updateQueryParams( { tab: tab } );
+		recordTracksEvent( 'calypso_performance_profiler_tab_changed', {
+			url: siteUrl.href,
+			tab,
+		} );
 		setActiveTab( tab );
 	};
 
@@ -65,44 +84,73 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
 
+	if ( testStartTime.current && desktopLoaded && mobileLoaded ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
+			url: siteUrl.href,
+			duration: Date.now() - testStartTime.current,
+			mobile_score: mobileReport?.overall_score,
+			desktop_score: desktopReport?.overall_score,
+		} );
+	}
+
 	return (
 		<div className="peformance-profiler-dashboard-container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
-
-			<PerformanceProfilerHeader
-				url={ url }
-				timestamp={ performanceReport?.timestamp }
-				activeTab={ activeTab }
-				onTabChange={ getOnTabChange }
-				showWPcomBadge={ performanceReport?.is_wpcom }
-				showNavigationTabs
-			/>
-
-			<div
-				className={ clsx( 'loading-container', 'mobile-loading', {
-					'is-active': activeTab === TabType.mobile,
-					'is-loading': ! mobileLoaded,
-				} ) }
-			>
-				<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
-			</div>
-
-			<div
-				className={ clsx( 'loading-container', 'desktop-loading', {
-					'is-active': activeTab === TabType.desktop,
-					'is-loading': ! desktopLoaded,
-				} ) }
-			>
-				<LoadingScreen isSavedReport={ isSavedReport.current } key="desktop-loading" />
-			</div>
-
-			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
-				( activeTab === TabType.desktop && desktopLoaded ) ) && (
-				<PerformanceProfilerDashboardContent
-					performanceReport={ performanceReport }
-					url={ finalUrl ?? url }
-					hash={ hash }
+			{ isError ? (
+				<MessageDisplay
+					isErrorMessage
+					displayBadge
+					message={
+						<>
+							{ translate( "We couldn't test the performance of %s", {
+								args: [ siteUrl.host ],
+							} ) }
+							<br />
+							<ErrorSecondLine>
+								{ translate( 'Please check that the domain is correct and try again.' ) }
+							</ErrorSecondLine>
+						</>
+					}
+					ctaText={ translate( '← Back to speed test' ) }
+					ctaHref="/speed-test"
+					ctaIcon="arrow-left"
 				/>
+			) : (
+				<>
+					<PerformanceProfilerHeader
+						url={ url }
+						timestamp={ performanceReport?.timestamp }
+						activeTab={ activeTab }
+						onTabChange={ getOnTabChange }
+						showWPcomBadge={ performanceReport?.is_wpcom }
+						showNavigationTabs
+						shareLink={ performanceReport?.share_link }
+					/>
+					<div
+						className={ clsx( 'loading-container', 'mobile-loading', {
+							'is-active': activeTab === TabType.mobile,
+							'is-loading': ! mobileLoaded,
+						} ) }
+					>
+						<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
+					</div>
+					<div
+						className={ clsx( 'loading-container', 'desktop-loading', {
+							'is-active': activeTab === TabType.desktop,
+							'is-loading': ! desktopLoaded,
+						} ) }
+					>
+						<LoadingScreen isSavedReport={ isSavedReport.current } key="desktop-loading" />
+					</div>
+					{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
+						( activeTab === TabType.desktop && desktopLoaded ) ) && (
+						<PerformanceProfilerDashboardContent
+							performanceReport={ performanceReport }
+							url={ finalUrl ?? url }
+							hash={ hash }
+						/>
+					) }
+				</>
 			) }
 		</div>
 	);
