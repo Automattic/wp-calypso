@@ -29,13 +29,21 @@ const EducationFooterContainer = styled.div`
 
 	> div:first-child {
 		padding: 0;
+		margin-bottom: 18px;
+
+		@media ( max-width: 660px ) {
+			padding: 0 16px;
+		}
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
 		}
+	}
 
-		> div:first-child {
-			margin-bottom: 24px;
+	.plugin-how-to-guides {
+		@media ( min-width: 1280px ) {
+			justify-content: flex-start;
+			gap: 18px;
 		}
 	}
 
@@ -43,10 +51,22 @@ const EducationFooterContainer = styled.div`
 		display: flex;
 		width: calc( 33% - 10px );
 
-		@media ( max-width: 660px ) {
-			display: block;
+		@media ( max-width: 960px ) {
 			width: 100%;
 			margin-top: 10px;
+
+			> div:first-child {
+				padding: 16px;
+			}
+		}
+
+		> div:first-child:hover {
+			border-color: var( --studio-gray-30 );
+		}
+
+		div {
+			width: 100%;
+			text-wrap: pretty;
 		}
 	}
 `;
@@ -151,7 +171,7 @@ const EducationFooter = () => {
 				title={ __( 'Get started with plugins' ) }
 				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
 			/>
-			<ThreeColumnContainer>
+			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
 					external
 					target="_blank"
