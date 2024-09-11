@@ -232,13 +232,24 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
 	const showRealTimeMessage = backup.baseRewindId && baseBackupDate && backup.rewindStepCount > 0;
 
+	const onLearnAboutClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_learn_about_click', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
 	const renderConfirm = () => (
 		<>
 			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 			<div className="rewind-flow__header">
 				<Gridicon icon="history" size={ 48 } />
 				<div className="rewind-flow__learn-about">
-					<ExternalLink href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/">
+					<ExternalLink
+						href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/"
+						onClick={ onLearnAboutClick }
+					>
 						{ translate( 'Learn about restores' ) }
 					</ExternalLink>
 				</div>
