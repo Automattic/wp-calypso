@@ -1,4 +1,5 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { ExperimentAssignment } from '@automattic/explat-client';
 import { useExperiment } from 'calypso/lib/explat';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
@@ -70,4 +71,32 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 			}
 		},
 	};
+};
+
+/**
+ * Get the launchpad state based on the experiment assignment
+ * @param expLoading
+ * @param experimentAssigment
+ * @param shouldSkip
+ */
+export const getLaunchpadStateBasedOnExperiment = (
+	expLoading: boolean,
+	experimentAssigment: ExperimentAssignment | null,
+	shouldSkip: boolean
+) => {
+	if (
+		expLoading ||
+		! experimentAssigment?.variationName ||
+		experimentAssigment.variationName === 'control'
+	) {
+		if ( shouldSkip ) {
+			return 'skipped';
+		}
+
+		return 'full';
+	}
+
+	if ( experimentAssigment.variationName === 'treatment' ) {
+		return 'skipped';
+	}
 };

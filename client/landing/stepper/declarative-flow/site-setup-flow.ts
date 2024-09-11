@@ -22,6 +22,7 @@ import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '.
 import { shouldRedirectToSiteMigration } from './helpers';
 import {
 	useLaunchpadDecider,
+	getLaunchpadStateBasedOnExperiment,
 	LAUNCHPAD_EXPERIMENT_NAME,
 } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
@@ -177,20 +178,14 @@ const siteSetupFlow: Flow = {
 				return 'off';
 			}
 
-			if (
-				isLoadingLaunchpadExperiment ||
-				! launchpadExperimentAssigment?.variationName ||
-				launchpadExperimentAssigment.variationName === 'control'
-			) {
-				if ( shouldSkip ) {
-					return 'skipped';
-				}
+			const launchpadState = getLaunchpadStateBasedOnExperiment(
+				isLoadingLaunchpadExperiment,
+				launchpadExperimentAssigment,
+				shouldSkip
+			);
 
-				return 'full';
-			}
-
-			if ( launchpadExperimentAssigment.variationName === 'treatment' ) {
-				return 'skipped';
+			if ( launchpadState ) {
+				return launchpadState;
 			}
 
 			// We shouldn't get here, but match the default/existing behaviour
