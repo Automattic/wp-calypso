@@ -226,7 +226,12 @@ const HistoryChart = ( { data, range, height } ) => {
 				<svg ref={ svgRef }></svg>
 				{ ! dataAvailable && (
 					<div className="info">
-						{ translate( 'Historical data will appear after more test runs' ) }
+						<p className="heading">{ translate( 'No history available' ) }</p>
+						<p>
+							{ translate(
+								"The Chrome User Experience Report collects speed data from real site visits. Sites with low-traffic don't provide enough data to generate historical trends."
+							) }
+						</p>
 					</div>
 				) }
 			</div>
