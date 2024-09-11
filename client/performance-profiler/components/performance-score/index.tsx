@@ -72,8 +72,8 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 				<div className="recommendations-text">
 					{ recommendationsQuantity
 						? translate(
-								"We found %(quantity)d way to improve your site's performance. {{a}}View{{nbsp/}}recommendation{{/a}}",
-								"We found %(quantity)d ways to improve your site's performance. {{a}}View{{nbsp/}}recommendations{{/a}}",
+								'We found %(quantity)d way to improve your site‘s performance. {{a}}View{{nbsp/}}recommendation{{/a}}',
+								'We found %(quantity)d ways to improve your site‘s performance. {{a}}View{{nbsp/}}recommendations{{/a}}',
 								{
 									count: recommendationsQuantity,
 									args: { quantity: recommendationsQuantity },
@@ -92,14 +92,14 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 								}
 						  )
 						: translate(
-								"We didn't find any recommendations for improving the speed of your site."
+								'We didn‘t find any recommendations for improving the speed of your site.'
 						  ) }
 				</div>
 			</div>
 
 			<div className="disclaimer">
 				{ translate(
-					"The performance score is a combined representation of your site's individual speed metrics. {{link}}See calculator ↗{{/link}}",
+					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}See calculator ↗{{/link}}',
 					{
 						components: {
 							link: (

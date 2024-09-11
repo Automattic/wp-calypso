@@ -87,7 +87,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					displayBadge
 					message={
 						<>
-							{ translate( "We couldn't test the performance of %s", {
+							{ translate( 'We couldn‘t test the performance of %s', {
 								args: [ siteUrl.host ],
 							} ) }
 							<br />

@@ -130,8 +130,8 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const [ step, setStep ] = useState( 0 );
 
 	const heading = isSavedReport
-		? translate( "Your site's results are ready" )
-		: translate( "Testing your site's speed…" );
+		? translate( 'Your site‘s results are ready' )
+		: translate( 'Testing your site‘s speed…' );
 
 	const steps = isSavedReport
 		? [ translate( 'Getting your report…' ) ]
@@ -154,7 +154,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 		{
 			heading: translate( 'Did you know?' ),
 			description: translate(
-				"WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you'll never be surprised by extra fees."
+				'WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you‘ll never be surprised by extra fees.'
 			),
 		},
 		{
