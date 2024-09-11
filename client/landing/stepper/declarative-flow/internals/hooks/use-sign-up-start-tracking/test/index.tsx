@@ -66,7 +66,7 @@ describe( 'useSignUpTracking', () => {
 	} );
 
 	it( 'does not track event when the flow is not a isSignupFlow and the signup flag is set', () => {
-		render( { flow: regularFlow, currentStepRoute: 'step-1', queryParams: { signup: 1 } } );
+		render( { flow: regularFlow, currentStepRoute: 'step-1', queryParams: { start: 1 } } );
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
@@ -85,11 +85,11 @@ describe( 'useSignUpTracking', () => {
 			} );
 		} );
 
-		it( 'tracks the event when the step is not the first but the signup flag is set', () => {
+		it( 'tracks the event when the step is not the first but the start flag is set', () => {
 			render( {
 				flow: signUpFlow,
 				currentStepRoute: 'step-2',
-				queryParams: { signup: 1 },
+				queryParams: { start: 1 },
 			} );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
