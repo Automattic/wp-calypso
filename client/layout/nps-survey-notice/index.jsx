@@ -69,7 +69,7 @@ class NpsSurveyNotice extends Component {
 	};
 
 	componentDidMount() {
-		this.props.setupNpsSurveyEligibility();
+		this.props.setupNpsSurveyEligibility( SURVEY_NAME );
 		this.props.setupNpsSurveyDevTrigger();
 	}
 
