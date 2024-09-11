@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import './style.scss';
 
@@ -34,6 +35,12 @@ export const InsightsSection = forwardRef(
 						url={ props.url }
 						isWpcom={ isWpcom }
 						hash={ hash }
+						onClick={ () =>
+							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
+								url: props.url,
+								key,
+							} )
+						}
 					/>
 				) ) }
 			</div>
