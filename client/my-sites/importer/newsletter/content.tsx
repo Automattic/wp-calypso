@@ -68,14 +68,11 @@ export default function Content( {
 		siteTitle,
 	} ).substack;
 
-	const showStepDescriptions =
-		importerStatus?.importerState !== appStates.MAP_AUTHORS || importerStatus?.summaryModalOpen;
-
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
-			{ showStepDescriptions && (
+			{ importerStatus?.importerState !== appStates.MAP_AUTHORS && (
 				<>
 					<h2>Step 1: Export your content from Substack</h2>
 					<p>
