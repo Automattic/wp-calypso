@@ -7,7 +7,7 @@ import { LogoBar } from '../logo-bar';
 
 import './style.scss';
 
-export const MigrationBanner = ( props: { url: string } ) => {
+export const MigrationBanner = ( props: { url: string; onClick: () => void } ) => {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 
@@ -51,6 +51,7 @@ export const MigrationBanner = ( props: { url: string } ) => {
 							<Button
 								variant="primary"
 								href={ `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard` }
+								onClick={ props.onClick }
 							>
 								{ translate( 'Migrate your site' ) }
 							</Button>

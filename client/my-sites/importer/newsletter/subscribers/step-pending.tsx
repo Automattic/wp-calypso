@@ -1,6 +1,9 @@
 import { Card } from '@automattic/components';
 import { Icon, people, currencyDollar } from '@wordpress/icons';
 import { toInteger } from 'lodash';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 import { StepProps } from '../types';
 import PaidSubscribers from './paid-subscribers';
 import StartImportButton from './start-import-button';
@@ -49,14 +52,7 @@ export default function StepPending( {
 					</>
 				) }
 			</div>
-			{ ! cardData?.is_connected_stripe && (
-				<StartImportButton
-					engine={ engine }
-					siteId={ selectedSite.ID }
-					hasPaidSubscribers={ !! paid_emails }
-					step="subscribers"
-				/>
-			) }
+
 			<PaidSubscribers
 				cardData={ cardData }
 				engine={ engine }
@@ -69,6 +65,26 @@ export default function StepPending( {
 				skipNextStep={ skipNextStep }
 				status={ status }
 			/>
+
+			{ ! cardData?.is_connected_stripe && (
+				<ImporterActionButtonContainer noSpacing>
+					<StartImportButton
+						engine={ engine }
+						siteId={ selectedSite.ID }
+						hasPaidSubscribers={ false }
+						step="subscribers"
+					/>
+					<ImporterActionButton
+						href={ nextStepUrl }
+						onClick={ () => {
+							skipNextStep();
+							recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
+						} }
+					>
+						Skip for now
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
+			) }
 		</Card>
 	);
 }

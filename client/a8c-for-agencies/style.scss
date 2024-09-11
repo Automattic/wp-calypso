@@ -602,21 +602,8 @@ html {
 				padding-inline-start: 16px;
 			}
 		}
-
-		th[data-field-id="actions"] {
-			text-align: right;
-			padding-inline-end: 16px;
-		}
 	}
 
-	.dataviews-view-list li {
-		cursor: pointer;
-	}
-
-	.dataviews-view-list li .components-h-stack {
-		display: block;
-		width: 100%;
-	}
 }
 
 .full-width-layout-with-table {

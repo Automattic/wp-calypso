@@ -6,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { PerformanceProfilerHeader, TabType } from 'calypso/performance-profiler/components/header';
 import {
@@ -26,14 +27,22 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const translate = useTranslate();
 	const { url, tab, hash, filter } = props;
 	const isSavedReport = useRef( !! hash );
+	const testStartTime = useRef( 0 );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
-	const { data: basicMetrics, isError } = useUrlBasicMetricsQuery( url, hash, true );
+	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
 	const siteUrl = new URL( url );
+
+	if ( isFetched && finalUrl ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_started', {
+			url: finalUrl,
+		} );
+		testStartTime.current = Date.now();
+	}
 
 	// Append hash to the URL if it's not there to avoid losing it on page reload
 	useEffect( () => {
@@ -44,6 +53,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 
 	const getOnTabChange = ( tab: TabType ) => {
 		updateQueryParams( { tab: tab } );
+		recordTracksEvent( 'calypso_performance_profiler_tab_changed', {
+			url: siteUrl.href,
+			tab,
+		} );
 		setActiveTab( tab );
 	};
 
@@ -55,6 +68,15 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		activeTab === TabType.mobile
 			? ( mobileReport as PerformanceReport )
 			: ( desktopReport as PerformanceReport );
+
+	if ( testStartTime.current && desktopLoaded && mobileLoaded ) {
+		recordTracksEvent( 'calypso_performance_profiler_test_completed', {
+			url: siteUrl.href,
+			duration: Date.now() - testStartTime.current,
+			mobile_score: mobileReport?.overall_score,
+			desktop_score: desktopReport?.overall_score,
+		} );
+	}
 
 	return (
 		<div className="peformance-profiler-dashboard-container">
@@ -87,8 +109,8 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 						onTabChange={ getOnTabChange }
 						showWPcomBadge={ performanceReport?.is_wpcom }
 						showNavigationTabs
+						shareLink={ performanceReport?.share_link }
 					/>
-
 					<div
 						className={ clsx( 'loading-container', 'mobile-loading', {
 							'is-active': activeTab === TabType.mobile,
@@ -97,7 +119,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					>
 						<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
 					</div>
-
 					<div
 						className={ clsx( 'loading-container', 'desktop-loading', {
 							'is-active': activeTab === TabType.desktop,

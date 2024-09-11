@@ -16,12 +16,12 @@ const buildContext = ( options?: Partial< TaskContext > ) => {
 describe( 'getFirstPostPublished', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
 
-	it( 'returns the plans page', () => {
+	it( 'returns the calypso_path provided by the server', () => {
 		const context = buildContext( { siteSlug: 'site.wordpress.com' } );
 
 		expect( getFirstPostPublished( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
-			calypso_path: '/post/site.wordpress.com',
+			calypso_path: 'some-path',
 		} );
 	} );
 
@@ -36,17 +36,13 @@ describe( 'getFirstPostPublished', () => {
 		} );
 	} );
 
-	it( 'returns the wp-admin post new page when is a blog onboarding flow', () => {
-		const siteSlug = 'site.wordpress.com';
+	it( 'appends an `origin` param to calypso_path when it is a blog onboarding flow', () => {
 		const context = buildContext( {
-			siteSlug,
 			isEmailVerified: false,
 		} );
 
 		expect( getFirstPostPublished( task, START_WRITING_FLOW, context ) ).toMatchObject( {
-			calypso_path: `https://${ siteSlug }/wp-admin/post-new.php?origin=${ encodeURIComponent(
-				window.location.origin
-			) }`,
+			calypso_path: `some-path?origin=${ encodeURIComponent( window.location.origin ) }`,
 		} );
 	} );
 } );

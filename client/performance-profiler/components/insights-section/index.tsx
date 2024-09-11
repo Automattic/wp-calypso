@@ -2,6 +2,7 @@ import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import { metricsNames } from 'calypso/performance-profiler/utils/metrics';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
@@ -75,6 +76,12 @@ export const InsightsSection = forwardRef(
 						url={ props.url }
 						isWpcom={ isWpcom }
 						hash={ hash }
+						onClick={ () =>
+							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
+								url: props.url,
+								key,
+							} )
+						}
 					/>
 				) ) }
 			</div>
