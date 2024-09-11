@@ -124,8 +124,8 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 						onTabChange={ getOnTabChange }
 						showWPcomBadge={ performanceReport?.is_wpcom }
 						showNavigationTabs
+						shareLink={ performanceReport?.share_link }
 					/>
-
 					<div
 						className={ clsx( 'loading-container', 'mobile-loading', {
 							'is-active': activeTab === TabType.mobile,
@@ -134,7 +134,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					>
 						<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
 					</div>
-
 					<div
 						className={ clsx( 'loading-container', 'desktop-loading', {
 							'is-active': activeTab === TabType.desktop,
