@@ -87,9 +87,9 @@ export default function Content( {
 						target="_blank"
 						rel="noreferrer noopener"
 						icon={ external }
-						variant="secondary"
+						variant="primary"
 					>
-						Export content
+						Open Substack settings
 					</Button>
 					<hr />
 					<h2>Step 2: Import your content to WordPress.com</h2>

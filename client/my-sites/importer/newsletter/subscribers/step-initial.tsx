@@ -43,9 +43,9 @@ export default function StepInitial( {
 				target="_blank"
 				rel="noreferrer noopener"
 				icon={ external }
-				variant="secondary"
+				variant="primary"
 			>
-				Export subscribers
+				Open Substack settings
 			</Button>
 			<hr />
 			<h2>Step 2: Import your subscribers to WordPress.com</h2>
