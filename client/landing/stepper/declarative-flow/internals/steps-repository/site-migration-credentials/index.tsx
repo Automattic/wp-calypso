@@ -1,8 +1,8 @@
 import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
-import { Icon } from '@wordpress/components';
-import { seen, unseen } from '@wordpress/icons';
+import { Icon, Button } from '@wordpress/components';
+import { seen, unseen, chevronDown, chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, type FC } from 'react';
@@ -42,6 +42,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	const translate = useTranslate();
 
 	const [ passwordHidden, setPasswordHidden ] = useState( true );
+	const [ showNotes, setShowNotes ] = useState( false );
 
 	const toggleVisibilityClasses = clsx( {
 		'site-migration-credentials__form-password__toggle': true,
@@ -165,6 +166,13 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		requestAutomatedMigration( data );
 	};
 
+	const toggleShowNotes = () => {
+		setShowNotes( ! showNotes );
+		recordTracksEvent( 'calypso_site_migration_special_instructions_toggle', {
+			show_notes: ! showNotes,
+		} );
+	};
+
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
 			<Card>
@@ -240,67 +248,66 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 								) }
 							</div>
 
-							<div className="site-migration-credentials__form-fields-row">
-								<div className="site-migration-credentials__form-field">
-									<FormLabel htmlFor="username">
-										{ translate( 'WordPress admin username' ) }
-									</FormLabel>
-									<Controller
-										control={ control }
-										name="username"
-										rules={ {
-											required: translate( 'Please enter your WordPress admin username.' ),
-										} }
-										render={ ( { field } ) => (
+							<div className="site-migration-credentials__form-field">
+								<FormLabel htmlFor="username">
+									{ translate( 'WordPress admin username' ) }
+								</FormLabel>
+								<Controller
+									control={ control }
+									name="username"
+									rules={ {
+										required: translate( 'Please enter your WordPress admin username.' ),
+									} }
+									render={ ( { field } ) => (
+										<FormTextInput
+											id="username"
+											type="text"
+											isError={ !! errors.username }
+											placeholder={ translate( 'Enter your Admin username' ) }
+											{ ...field }
+											onChange={ ( e: any ) => {
+												const trimmedValue = e.target.value.trim();
+												field.onChange( trimmedValue );
+											} }
+											onBlur={ ( e: any ) => {
+												field.onBlur();
+												e.target.value = e.target.value.trim();
+											} }
+										/>
+									) }
+								/>
+							</div>
+
+							<div className="site-migration-credentials__form-field">
+								<FormLabel htmlFor="site-migration-credentials__password">
+									{ translate( 'Password' ) }
+								</FormLabel>
+								<Controller
+									control={ control }
+									name="password"
+									rules={ {
+										required: translate( 'Please enter your WordPress admin password.' ),
+									} }
+									render={ ( { field } ) => (
+										<div className="site-migration-credentials__form-password">
 											<FormTextInput
-												id="username"
-												type="text"
-												isError={ !! errors.username }
-												placeholder={ translate( 'Username' ) }
+												autoComplete="off"
+												id="site-migration-credentials__password"
+												type={ passwordHidden ? 'password' : 'text' }
+												isError={ !! errors.password }
+												placeholder={ translate( 'Enter your Admin password' ) }
 												{ ...field }
-												onChange={ ( e: any ) => {
-													const trimmedValue = e.target.value.trim();
-													field.onChange( trimmedValue );
-												} }
-												onBlur={ ( e: any ) => {
-													field.onBlur();
-													e.target.value = e.target.value.trim();
-												} }
 											/>
-										) }
-									/>
-								</div>
-								<div className="site-migration-credentials__form-field">
-									<FormLabel htmlFor="site-migration-credentials__password">
-										{ translate( 'Password' ) }
-									</FormLabel>
-									<Controller
-										control={ control }
-										name="password"
-										rules={ {
-											required: translate( 'Please enter your WordPress admin password.' ),
-										} }
-										render={ ( { field } ) => (
-											<div className="site-migration-credentials__form-password">
-												<FormTextInput
-													autoComplete="off"
-													id="site-migration-credentials__password"
-													type={ passwordHidden ? 'password' : 'text' }
-													isError={ !! errors.password }
-													placeholder={ translate( 'Password' ) }
-													{ ...field }
-												/>
-												<button
-													className={ toggleVisibilityClasses }
-													onClick={ () => setPasswordHidden( ! passwordHidden ) }
-													type="button"
-												>
-													{ passwordHidden ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
-												</button>
-											</div>
-										) }
-									/>
-								</div>
+											<button
+												className={ toggleVisibilityClasses }
+												onClick={ () => setPasswordHidden( ! passwordHidden ) }
+												type="button"
+											>
+												{ passwordHidden ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
+											</button>
+										</div>
+									) }
+								/>
 							</div>
 
 							{ ( errors.username || errors.password ) && (
@@ -339,7 +346,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									{ errors.backupFileLocation?.message }
 								</div>
 							) }
-							<div className="site-migration-credentials__form-note">
+							<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
 								{ translate(
 									"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."
 								) }
@@ -348,28 +355,50 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					</div>
 				) }
 
-				<div className="site-migration-credentials__form-field">
-					<FormLabel htmlFor="notes">{ translate( 'Notes (optional)' ) }</FormLabel>
-					<Controller
-						control={ control }
-						name="notes"
-						render={ ( { field } ) => (
-							<FormTextArea
-								id="notes"
-								type="text"
-								maxLength={ 1000 }
-								placeholder={ translate(
-									'Share any other details that will help us access your site for the migration.'
+				<div className="site-migration-credentials__special-instructions">
+					<Button onClick={ () => toggleShowNotes() } data-testid="special-instructions">
+						{ translate( 'Special instructions' ) }
+						<Icon
+							icon={ showNotes ? chevronUp : chevronDown }
+							size={ 24 }
+							className="site-migration-credentials__special-instructions-icon"
+						/>
+					</Button>
+					{ showNotes && (
+						<>
+							<div className="site-migration-credentials__form-field site-migration-credentials__form-field--notes">
+								<Controller
+									control={ control }
+									name="notes"
+									render={ ( { field } ) => (
+										<FormTextArea
+											id="notes"
+											type="text"
+											data-testid="special-instructions-textarea"
+											maxLength={ 1000 }
+											placeholder={ translate(
+												'Share any other details that will help us access your site for the migration.'
+											) }
+											{ ...field }
+											ref={ null }
+										/>
+									) }
+								/>
+							</div>
+							{ errors?.notes && (
+								<div className="site-migration-credentials__form-error">
+									{ errors.notes.message }
+								</div>
+							) }
+							<div className="site-migration-credentials__form-note">
+								{ translate(
+									"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
 								) }
-								{ ...field }
-								ref={ null }
-							/>
-						) }
-					/>
+							</div>
+						</>
+					) }
 				</div>
-				{ errors?.notes && (
-					<div className="site-migration-credentials__form-error">{ errors.notes.message }</div>
-				) }
+
 				{ errors?.root && (
 					<div className="site-migration-credentials__form-error">{ errors.root.message }</div>
 				) }
@@ -384,6 +413,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					className="button navigation-link step-container__navigation-link has-underline is-borderless"
 					disabled={ isPending }
 					onClick={ onSkip }
+					type="button"
 				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>

@@ -1,14 +1,9 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
-import type { SiteDetails } from '@automattic/data-stores';
+import { StepProps } from './types';
 
-type Props = {
-	cardData: any;
-	selectedSite: SiteDetails;
-};
-
-export default function Summary( { cardData, selectedSite }: Props ) {
+export default function Summary( { cardData }: StepProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
@@ -29,15 +24,13 @@ export default function Summary( { cardData, selectedSite }: Props ) {
 		<Card>
 			{ shouldRenderConfetti( cardData.content.status, cardData.subscribers.status ) && (
 				<>
-					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h1>Success! 🎉</h1>
+					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h2>Success! 🎉</h2>
 				</>
 			) }
 			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
 			<SubscribersSummary
 				cardData={ cardData.subscribers.content }
 				status={ cardData.subscribers.status }
-				proStatus={ cardData[ 'paid-subscribers' ].status }
-				siteId={ selectedSite.ID }
 			/>
 		</Card>
 	);

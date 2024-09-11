@@ -73,9 +73,7 @@ function Cell( {
 				return (
 					<div>
 						<p>{ data?.nodeLabel }</p>
-						<pre>
-							<code>{ data?.snippet }</code>
-						</pre>
+						<code>{ data?.snippet }</code>
 					</div>
 				);
 

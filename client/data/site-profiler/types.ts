@@ -112,6 +112,10 @@ export interface UrlBasicMetricsQueryResponse {
 	token: string;
 }
 
+export interface LeadMutationResponse {
+	success: boolean;
+}
+
 export interface UrlSecurityMetricsQueryResponse {
 	wpscan: {
 		report: {
@@ -153,6 +157,7 @@ export type PerformanceReport = {
 	screenshots?: ScreenShotsTimeLine[];
 	history: PerformanceMetricsHistory;
 	timestamp?: string;
+	share_link: string | '';
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {
@@ -183,6 +188,7 @@ export interface PerformanceMetricsItemQueryResponse {
 	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
+	metricSavings?: { FCP?: number; LCP?: number; CLS?: number; INP?: number };
 }
 
 export interface PerformanceMetricsDetailsQueryResponse {

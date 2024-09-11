@@ -29,18 +29,24 @@ const itemClassName = css( {
 	minWidth: 0,
 } );
 
-const SitesGridItemExample = () => {
+const SitesGridItemSelectExample = () => {
 	return (
 		<div className={ clsx( container, className ) }>
 			{ sampleSiteData.map( ( site ) => (
 				<div className={ itemClassName } key={ site.ID }>
-					<SitesGridItem site={ site } key={ site.ID } />
+					<SitesGridItem
+						site={ site }
+						key={ site.ID }
+						onSiteSelectBtnClick={ ( _site ) => {
+							console.log( _site );
+						} }
+					/>
 				</div>
 			) ) }
 		</div>
 	);
 };
 
-SitesGridItemExample.displayName = 'SitesGridItem';
+SitesGridItemSelectExample.displayName = 'SitesGridItemSelect';
 
-export default SitesGridItemExample;
+export default SitesGridItemSelectExample;

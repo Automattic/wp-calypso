@@ -47,6 +47,7 @@ interface Props {
 	showFooterWooCommercePowered?: boolean;
 	showSenseiPowered?: boolean;
 	showVideoPressPowered?: boolean;
+	backUrl?: string;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -75,6 +76,7 @@ const StepContainer: React.FC< Props > = ( {
 	isExternalBackUrl,
 	isLargeSkipLayout,
 	customizedActionButtons,
+	backUrl,
 	goBack,
 	goNext,
 	flowName,
@@ -109,13 +111,14 @@ const StepContainer: React.FC< Props > = ( {
 
 	function BackButton() {
 		// Hide back button if goBack is falsy, it won't do anything in that case.
-		if ( shouldHideNavButtons || ! goBack ) {
+		if ( shouldHideNavButtons || ( ! goBack && ! backUrl ) ) {
 			return null;
 		}
 		return (
 			<StepNavigationLink
 				direction="back"
 				handleClick={ goBack }
+				backUrl={ backUrl }
 				label={ backLabelText }
 				hasBackIcon
 				rel={ isExternalBackUrl ? 'external' : '' }

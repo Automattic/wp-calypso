@@ -25,7 +25,15 @@ jest.mock( 'calypso/components/data/query-themes', () =>
 	require( 'calypso/components/empty-component' )
 );
 
-window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
+window.IntersectionObserver = jest.fn( () => ( {
+	observe: jest.fn(),
+	disconnect: jest.fn(),
+	root: null,
+	rootMargin: '',
+	thresholds: [],
+	takeRecords: jest.fn(),
+	unobserve: jest.fn(),
+} ) );
 
 const themes = [
 	{

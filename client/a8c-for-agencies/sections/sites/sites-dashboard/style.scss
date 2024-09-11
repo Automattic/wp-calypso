@@ -67,31 +67,6 @@
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
 			display: none;
 		}
-
-		.dataviews-view-table tr th:first-child,
-		.dataviews-view-table tr td:first-child {
-			padding-left: 64px;
-		}
-		.dataviews-view-table tr {
-			th:last-child,
-			td:last-child {
-				padding-right: 64px;
-				width: 20px;
-				white-space: nowrap;
-
-				position: sticky;
-				right: 0;
-				z-index: 1;
-				background: linear-gradient(to right, transparent 0%, #fff 25%);
-			}
-
-			&:hover {
-				th:last-child,
-				td:last-child {
-					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
-				}
-			}
-		}
 	}
 
 	@media (max-width: 660px) {
@@ -151,15 +126,11 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			padding: 8px 24px 8px 8px;
-			width: 70%;
+			width: 80%;
 		}
 
 		.dataviews-view-table tr td:first-child:has(.sites-dataview__site-error) {
 			padding: 8px 0 8px 8px;
-		}
-		.dataviews-view-table tr td:last-child {
-			padding: 8px 8px 8px 0;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -200,18 +171,6 @@
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+8) {
-			display: none;
-		}
-
-		tr td:first-child {
-			padding-inline-start: 8px;
-		}
-
-		tr td:last-child {
-			padding-inline-end: 8px;
-		}
-
 		.item-preview__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
@@ -219,26 +178,6 @@
 				/* Prevents the backup page from overriding our padding and overflow settings. */
 				padding-bottom: 88px; /* 88px matches the padding from PR #39201. */
 				overflow: hidden;
-			}
-		}
-
-		.dataviews-view-table-wrapper {
-			flex: 1;
-			overflow-y: auto;
-
-			table {
-				width: 100%;
-				max-width: 100vw;
-			}
-
-			th[data-field-id="stats"],
-			th[data-field-id="boost"],
-			th[data-field-id="backup"],
-			th[data-field-id="monitor"],
-			th[data-field-id="scan"],
-			th[data-field-id="plugins"],
-			th[data-field-id="favorite"] {
-				display: none;
 			}
 		}
 	}
@@ -265,12 +204,6 @@
 	}
 
 	@media (min-width: $break-large) {
-		&.sites-dashboard__layout {
-			.dataviews-view-table-wrapper {
-				overflow-y: auto;
-			}
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -346,7 +279,6 @@
 				overflow-y: auto;
 
 				li {
-					padding: 8px 24px;
 					border-bottom: 1px solid var(--color-accent-5);
 				}
 
@@ -355,7 +287,9 @@
 				}
 
 				li:has(.sites-dataview__site-error) {
-					padding: 0 24px 24px;
+					.dataviews-view-list__item {
+						padding: 0 24px;
+					}
 				}
 
 				.dataviews-view-list__fields {
@@ -389,9 +323,18 @@
 						.sites-dataview__site-error {
 							font-size: rem(13px);
 							border-radius: 4px;
-							padding: 4px 4px 4px 2px;
+							padding: 4px 8px;
 						}
 					}
+				}
+
+				// Ideally instead of reusing the site name full field
+				// We should be setting a media field and a primary field.
+				.dataviews-view-list__media-wrapper {
+					display: none;
+				}
+				.dataviews-view-list__primary-field {
+					display: none;
 				}
 
 				.sites-overview__stats-trend,
@@ -445,11 +388,11 @@
 	}
 
 	td:first-child:has(.sites-dataview__site-error) {
-		padding: 0 0 16px 64px;
+		padding: 0 0 0 64px;
 
 		.sites-dataview__site-error {
-			padding-left: 10px;
-			border-radius: 4px 0 0 4px;
+			padding: 5px 10px;
+			border-radius: 4px;
 		}
 	}
 
@@ -457,7 +400,7 @@
 		padding: 0 64px 16px 0;
 
 		.sites-dataview__site-error {
-			border-radius: 0 4px 4px 0;
+			border-radius: 4px;
 		}
 	}
 
@@ -499,11 +442,6 @@
 			.components-button {
 				flex-grow: 0;
 			}
-		}
-
-		.components-base-control {
-			width: 86%;
-			margin-right: 6px;
 		}
 
 		.site-preview__open {
@@ -557,7 +495,6 @@
 			flex-direction: column;
 			height: 100%;
 			width: 100%;
-			overflow: hidden;
 
 			> div[data-wp-component="VStack"] {
 				align-items: stretch;
@@ -589,7 +526,7 @@
 				display: flex;
 				flex: 1;
 				height: 100%;
-				overflow: hidden;
+				overflow: auto;
 			}
 		}
 
@@ -639,10 +576,6 @@
 
 					.sites-overview__content {
 						margin-top: 24px;
-
-						&.is-hiding-navigation {
-							margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-						}
 					}
 
 					.dataviews-filters__view-actions {

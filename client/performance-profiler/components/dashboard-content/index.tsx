@@ -1,5 +1,7 @@
 import { translate } from 'i18n-calypso';
+import { useRef } from 'react';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
@@ -13,20 +15,27 @@ import './style.scss';
 type PerformanceProfilerDashboardContentProps = {
 	performanceReport: PerformanceReport;
 	url: string;
+	hash: string;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
 	url,
+	hash,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
+	const insightsRef = useRef< HTMLDivElement >( null );
 
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
 				<div className="top-section">
-					<PerformanceScore value={ overall_score * 100 } />
+					<PerformanceScore
+						value={ overall_score * 100 }
+						recommendationsQuantity={ Object.keys( audits ).length }
+						recommendationsRef={ insightsRef }
+					/>
 					<ScreenshotThumbnail
 						alt={ translate( 'Website thumbnail' ) }
 						src={ screenshots?.[ screenshots.length - 1 ].data }
@@ -41,13 +50,36 @@ export const PerformanceProfilerDashboardContent = ( {
 					tbt={ tbt }
 					history={ history }
 				/>
-				<NewsletterBanner />
+				<NewsletterBanner
+					link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_performance_profiler_weekly_report_cta_click', {
+							url,
+						} );
+					} }
+				/>
+
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
-				{ audits && <InsightsSection audits={ audits } url={ url } isWpcom={ is_wpcom } /> }
+				{ audits && (
+					<InsightsSection
+						audits={ audits }
+						url={ url }
+						isWpcom={ is_wpcom }
+						ref={ insightsRef }
+						hash={ hash }
+					/>
+				) }
 			</div>
 
 			<Disclaimer />
-			<MigrationBanner url={ url } />
+			<MigrationBanner
+				url={ url }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
+						url,
+					} );
+				} }
+			/>
 		</div>
 	);
 };
