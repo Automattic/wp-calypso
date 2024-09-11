@@ -140,7 +140,8 @@ export class HelpCenterComponent {
 	 * Start Support Flow
 	 */
 	async startSupportFlow(): Promise< void > {
-		await this.popup.locator( 'a.help-center-contact-page__button' ).click();
+		// Using dispatchEvent because the cookie banner sometimes blocks the button.
+		await this.popup.getByRole( 'button', { name: 'Still need help?' } ).dispatchEvent( 'click' );
 	}
 
 	/**
