@@ -4,7 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import {
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
+	useNoticeVisibilityQuery,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -18,6 +21,23 @@ interface ModalProps {
 }
 
 const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
+
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 60; // 30 seconds for now
+// Examples values:
+// 30 minutes = 60 * 30;
+// 30 days = 3600 * 24 * 30;
+
+function useFeedbackHibernationMutation( siteId: number ) {
+	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
+	);
+
+	return { updateFeedbackHibernationPeriod };
+}
 
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
@@ -37,6 +57,8 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		'postponed',
 		24 * 3600
 	);
+
+	const { updateFeedbackHibernationPeriod } = useFeedbackHibernationMutation( siteId );
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
@@ -76,6 +98,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
+			updateFeedbackHibernationPeriod();
 			disableFeedbackSubmissionForOneDay().then( () => {
 				refetchNotices();
 			} );
@@ -88,6 +111,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		handleClose,
 		translate,
 		disableFeedbackSubmissionForOneDay,
+		updateFeedbackHibernationPeriod,
 		refetchNotices,
 	] );
 
