@@ -48,7 +48,12 @@ export default function ReferralsOverview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		layout: {
+			primaryField: 'client',
+		},
+	} );
 	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
