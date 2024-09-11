@@ -49,7 +49,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 			>
 				<p>
 					{ translate(
-						'Go to your {{strong}}WP Admin Jetpack Dashboard > My Plan{{/strong}} page after Jetpack is installed, and use this license key to activate your product.',
+						'After installing the plugin, in WP-Admin, go to {{strong}}Jetpack > My Jetpack{{/strong}} and click the "Activate a license" link at the bottom of the page. Then use this license key to activate your product.',
 						{
 							components: {
 								strong: <strong />,
