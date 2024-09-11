@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getPluginTitle } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -165,18 +166,7 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			const pluginNames = config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-				? {
-						'jetpack-ai': translate( 'Jetpack and WooPayments' ),
-						default: translate( 'Jetpack and WooPayments' ),
-				  }
-				: {
-						'jetpack-ai': 'Jetpack AI',
-						'jetpack-boost': 'Jetpack Boost',
-						default: 'Jetpack',
-				  };
-
-			const pluginName = pluginNames[ this.props.authQuery.plugin_name ] || pluginNames.default;
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			const translateParams = {
 				components: {
 					br: <br />,

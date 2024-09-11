@@ -19,7 +19,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
+import { getPluginTitle, getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -615,6 +615,7 @@ class Login extends Component {
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			let subtitle = null;
 
 			switch ( true ) {
@@ -630,13 +631,14 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 					break;
 				default:
+
 					headerText = (
 						<h3>
 							{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
 								? translate( 'Log in to your account' )
 								: translate( 'One last step' ) }
 						</h3>
-					);
+
 					if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
 						subtitle = translate(
 							"In order to take advantage of the benefits offered by Jetpack and WooPayments, please log in to your WordPress.com account below. {{br}}{{/br}}Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
