@@ -58,6 +58,17 @@ const onboarding: Flow = {
 			[]
 		);
 
+		const clearUseMyDomainsQueryParams = () => {
+			if (
+				currentStepSlug === 'domains' ||
+				( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
+			) {
+				window.history.replaceState( {}, document.title, window.location.pathname );
+			}
+		};
+
+		clearUseMyDomainsQueryParams();
+
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 
@@ -69,7 +80,7 @@ const onboarding: Flow = {
 					setDomainCartItems( providedDependencies.domainCart );
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						setRedirectedToUseMyDomain( true );
-						let useMyDomainURL = 'use-my-domain';
+						let useMyDomainURL = 'use-my-domain?step=domain-input';
 						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
 							useMyDomainURL = addQueryArgs( useMyDomainURL, {
 								initialQuery: ( providedDependencies?.domainForm as { lastQuery?: string } )
@@ -81,9 +92,12 @@ const onboarding: Flow = {
 					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
-					// Remove query params
+					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+						return navigate(
+							`use-my-domain?step=${ providedDependencies.mode }&initialQuery=${ providedDependencies.domain }`
+						);
+					}
 					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
-					window.history.replaceState( {}, document.title, window.location.pathname );
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
@@ -118,12 +132,18 @@ const onboarding: Flow = {
 		};
 
 		const goBack = () => {
-			const lastQuery = getQueryArg( window.location.href, 'lastQuery' );
-
 			switch ( currentStepSlug ) {
 				case 'use-my-domain':
-					if ( lastQuery ) {
-						return navigate( 'use-my-domain' );
+					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
+						const url = addQueryArgs( 'use-my-domain', {
+							step: 'domain-input',
+							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
+						} );
+						return navigate( url );
+					}
+
+					if ( window.location.search ) {
+						window.history.replaceState( {}, document.title, window.location.pathname );
 					}
 					return navigate( 'domains' );
 				case 'plans':

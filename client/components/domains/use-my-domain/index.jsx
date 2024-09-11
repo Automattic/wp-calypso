@@ -4,9 +4,11 @@ import { BackButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArgs } from '@wordpress/url';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import {
 	domainLockStatusType,
@@ -79,6 +81,8 @@ function UseMyDomain( props ) {
 	const isBusy = isFetchingAvailability || isFetchingSiteDomains || updatingPrimaryDomain;
 
 	const baseClassName = 'use-my-domain';
+
+	const location = useLocation();
 
 	const updateMode = useCallback(
 		( newMode ) => {
@@ -244,14 +248,6 @@ function UseMyDomain( props ) {
 				onNextStep?.( { mode: inputMode.transferOrConnect, domain: filteredDomainName } );
 				setDomainAvailabilityData( availabilityData );
 				updateMode( inputMode.transferOrConnect );
-
-				if ( isStepper ) {
-					window.history.pushState(
-						{},
-						'',
-						`?step=${ inputMode.transferOrConnect }&initialQuery=${ filteredDomainName }`
-					);
-				}
 			}
 		} catch ( error ) {
 			setDomainNameValidationError( error.message );
@@ -266,7 +262,6 @@ function UseMyDomain( props ) {
 		setDomainTransferData,
 		onNextStep,
 		updateMode,
-		isStepper,
 	] );
 
 	const onDomainNameChange = ( event ) => {
@@ -450,6 +445,17 @@ function UseMyDomain( props ) {
 			setDomainTransferData();
 		}
 	}, [ mode, setDomainTransferData, initialMode ] );
+
+	useEffect( () => {
+		const queryArgs = getQueryArgs( location.search );
+		if ( isStepper ) {
+			if ( queryArgs?.step === 'transfer-or-connect' ) {
+				updateMode( inputMode.transferOrConnect );
+			} else if ( ! queryArgs?.step || queryArgs?.step === 'domain-input' ) {
+				updateMode( inputMode.domainInput );
+			}
+		}
+	}, [ location, updateMode, isStepper ] );
 
 	return (
 		<>
