@@ -9,6 +9,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -34,6 +35,7 @@ export default function UserContactSupportModalForm( {
 	const dispatch = useDispatch();
 
 	const user = useSelector( getCurrentUser );
+	const agency = useSelector( getActiveAgency );
 
 	const [ name, setName ] = useState( user?.display_name );
 	const [ email, setEmail ] = useState( user?.email );
@@ -43,7 +45,7 @@ export default function UserContactSupportModalForm( {
 	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
-	const hasCompletedForm = !! message && !! name && !! email && !! product;
+	const hasCompletedForm = !! message && !! name && !! email && !! product && !! agency;
 
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
 
@@ -117,7 +119,19 @@ export default function UserContactSupportModalForm( {
 			} )
 		);
 
-		submit( { message, name, email, product, site, contact_type: pressableContactType } );
+		const pressable_id = agency?.third_party?.pressable?.pressable_id;
+
+		const formData = {
+			message,
+			name,
+			email,
+			product,
+			...( site && { site } ),
+			...( pressableContactType && { contact_type: pressableContactType } ),
+			...( pressable_id && { pressable_id } ),
+		};
+
+		submit( formData );
 	}, [
 		hasCompletedForm,
 		dispatch,
@@ -128,6 +142,7 @@ export default function UserContactSupportModalForm( {
 		product,
 		site,
 		pressableContactType,
+		agency,
 	] );
 
 	useEffect( () => {

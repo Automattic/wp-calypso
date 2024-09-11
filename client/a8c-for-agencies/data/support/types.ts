@@ -13,4 +13,5 @@ export interface SubmitContactSupportParams {
 	site?: string;
 	no_of_sites?: number;
 	contact_type?: string;
+	pressable_id?: number;
 }
