@@ -63,31 +63,32 @@ const LostPasswordForm = ( {
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
 
-		const accountType = await getAuthAccountTypeRequest( email );
 		if (
 			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-			accountType?.passwordless === true &&
 			isWooCoreProfilerFlow
 		) {
-			await dispatch(
-				sendEmailLogin( email, {
-					redirectTo: redirectToAfterLoginUrl,
-					loginFormFlow: true,
-					showGlobalNotices: true,
-					flow: 'jetpack',
-				} )
-			);
-			page(
-				login( {
-					isJetpack: true,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: 'link',
-					locale: locale,
-					from: from,
-					emailAddress: email,
-				} )
-			);
-			return;
+			const accountType = await getAuthAccountTypeRequest( email );
+			if ( accountType?.passwordless === true ) {
+				await dispatch(
+					sendEmailLogin( email, {
+						redirectTo: redirectToAfterLoginUrl,
+						loginFormFlow: true,
+						showGlobalNotices: true,
+						flow: 'jetpack',
+					} )
+				);
+				page(
+					login( {
+						isJetpack: true,
+						// If no notification is sent, the user is using the authenticator for 2FA by default
+						twoFactorAuthType: 'link',
+						locale: locale,
+						from: from,
+						emailAddress: email,
+					} )
+				);
+				return;
+			}
 		}
 
 		try {
