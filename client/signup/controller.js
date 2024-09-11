@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -224,6 +225,19 @@ export default {
 		}
 
 		store.set( 'signup-locale', localeFromParams );
+
+		const isOnboardingFlow = flowName === 'onboarding';
+		const lang = localeFromParams ?? localeFromStore;
+		if ( isOnboardingFlow && lang && lang.toLowerCase() !== 'en' ) {
+			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
+				'calypso_signup_onboarding_stepper_v1'
+			);
+			if ( stepperOnboardingExperimentAssignment.variationName === 'treatment' ) {
+				window.location.replace(
+					window.location.origin + `/setup/onboarding/${ lang }` + window.location.search
+				);
+			}
+		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';
 		// // See: 1113-gh-Automattic/experimentation-platform for details.
