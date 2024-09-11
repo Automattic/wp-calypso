@@ -99,7 +99,13 @@ let windowOpenSpy;
 // If feature flag is jetpack/magic-link-signup then false, else true
 beforeEach( () => {
 	windowOpenSpy = jest.spyOn( global.window, 'open' ).mockImplementation( jest.fn() );
-	config.isEnabled.mockImplementation( ( flag ) => flag !== 'jetpack/magic-link-signup' );
+	config.isEnabled.mockImplementation( ( flag ) => {
+		const disabledFlags = [
+			'jetpack/magic-link-signup',
+			'woocommerce/core-profiler-passwordless-auth',
+		];
+		return ! disabledFlags.includes( flag );
+	} );
 } );
 
 afterEach( () => {
