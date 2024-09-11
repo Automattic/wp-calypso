@@ -42,6 +42,7 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 
 	const sendEmail = () => {
 		dispatch(
+			// @ts-expect-error blogId is not required
 			sendEmailLogin( emailAddress, {
 				redirectTo,
 				loginFormFlow: true,
