@@ -137,6 +137,13 @@ export class HelpCenterComponent {
 	}
 
 	/**
+	 * Start Support Flow
+	 */
+	async startSupportFlow(): Promise< void > {
+		await this.popup.locator( 'a.help-center-contact-page__button' ).click();
+	}
+
+	/**
 	 * Start the AI chat.
 	 *
 	 * @param {string} query Search keyword to be entered into the message field.

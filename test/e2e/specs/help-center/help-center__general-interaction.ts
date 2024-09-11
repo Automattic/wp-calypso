@@ -108,14 +108,13 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => 
 
 			it( 'initial articles are shown', async () => {
 				const articles = helpCenterComponent.getArticles();
-				const articleCount = await articles.count();
-				expect( articleCount ).toBeGreaterThanOrEqual( 5 );
+
+				expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
 			} );
 
 			it( 'search returns proper results', async () => {
 				await helpCenterComponent.search( 'change my domain' );
-				const searchResults = helpCenterComponent.getArticles();
-				const resultTitles = await searchResults.allTextContents();
+				const resultTitles = await helpCenterComponent.getArticles().allTextContents();
 				expect(
 					resultTitles.some( ( title ) =>
 						title.replace( /\s+/g, ' ' ).trim().includes( 'Change a Domain Name Address' )
@@ -124,12 +123,9 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => 
 			} );
 
 			it( 'post loads correctly', async () => {
-				const articles = helpCenterComponent.getArticles();
-				await articles.first().click();
+				await helpCenterComponent.getArticles().first().click();
 
-				const articleContent = helpCenterComponent.getArticleContent();
-
-				expect( await articleContent.isVisible() ).toBeTruthy();
+				expect( await helpCenterComponent.getArticleContent().isVisible() ).toBeTruthy();
 			} );
 		} );
 
@@ -148,8 +144,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => 
 			} );
 
 			it( 'AI chat starts correctly', async () => {
-				const stillNeedHelp = helpCenterLocator.locator( 'a.help-center-contact-page__button' );
-				await stillNeedHelp.click();
+				await helpCenterComponent.startSupportFlow();
 
 				const firstAiChatMessage = await helpCenterLocator
 					.locator( '.odie-chatbox-introduction-message' )
