@@ -45,8 +45,6 @@ const BackupSuccessful = ( {
 	const getDisplayDate = useGetDisplayDate();
 	const displayDate = getDisplayDate( backup.activityTs );
 	const displayDateNoLatest = getDisplayDate( backup.activityTs, false );
-	// TODO To be use in the future
-	//const displayDateBaseRewind = backup.baseRewindId ? getDisplayDate( backup.baseRewindId * 1000, false ) : null;
 
 	const today = applySiteOffset( moment(), {
 		timezone: timezone,
