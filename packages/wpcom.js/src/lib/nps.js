@@ -44,11 +44,12 @@ export default class Nps {
 
 	/**
 	 * Check the eligibility status for the NPS Survey.
-	 * @param {Function}   fn             The callback function
+	 * @param {string} surveyName The name of the NPS survey
+	 * @param {Function} fn The callback function
 	 * @returns {Promise} A promise representing the request.
 	 */
-	checkNPSSurveyEligibility( fn ) {
-		return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
+	checkNPSSurveyEligibility( surveyName, fn ) {
+		return this.wpcom.req.get( '/nps', { apiVersion: '1.2', survey_name: surveyName }, fn );
 	}
 
 	/**
