@@ -20,14 +20,14 @@ export const DatePickerNavBar = ( {
 	localeUtils,
 	showPreviousButton = true,
 	showNextButton = true,
-	useChevronButtons = true, // Todo: false once finished testing
+	useArrowNavigation = true,
 } ) => {
 	const classes = clsx( 'date-picker__nav-bar', {
 		[ className ]: !! className,
 	} );
 
-	const buttonClass = useChevronButtons
-		? 'date-picker__chevron-button'
+	const buttonClass = useArrowNavigation
+		? 'date-picker__arrow-button'
 		: 'date-picker__month-button';
 
 	return (
@@ -42,7 +42,7 @@ export const DatePickerNavBar = ( {
 					} ) }
 					onClick={ handleMonthClick( onPreviousClick ) }
 				>
-					{ useChevronButtons ? (
+					{ useArrowNavigation ? (
 						<Icon icon={ chevronLeft } />
 					) : (
 						localeUtils.formatMonthShort( previousMonth )
@@ -60,7 +60,7 @@ export const DatePickerNavBar = ( {
 					} ) }
 					onClick={ handleMonthClick( onNextClick ) }
 				>
-					{ useChevronButtons ? (
+					{ useArrowNavigation ? (
 						<Icon icon={ chevronRight } />
 					) : (
 						localeUtils.formatMonthShort( nextMonth )
