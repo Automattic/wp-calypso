@@ -5,16 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import type { Moment } from 'moment';
 
-type Props = {
-	baseBackupDate: Moment;
-	eventsCount: number;
-	selectedBackupDate: Moment;
-	learnMoreUrl?: string;
-};
-
-export const BackupLastFailed: FunctionComponent< Props > = () => {
+export const BackupLastFailed: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const learnMoreLink = 'https://jetpack.com/support/backup/troubleshooting-jetpack-backup/';
