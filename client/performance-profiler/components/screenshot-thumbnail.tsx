@@ -7,7 +7,7 @@ const Container = styled.div`
 	align-items: center;
 
 	& > * {
-		border: 1px solid var( --studio-gray-0 );
+		border: 1px solid var( --studio-gray-5 );
 		border-radius: 6px;
 	}
 `;

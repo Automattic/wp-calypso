@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +17,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 	const translate = useTranslate();
 	const [ resizeObserverRef, entry ] = useResizeObserver();
 	const [ scoreBarWidth, setScoreBarWidth ] = useState( MAX_SCORE_BAR_WIDTH );
+	const isMobile = useMobileBreakpoint();
 
 	const { value, recommendationsQuantity, recommendationsRef } = props;
 	const getStatus = ( value: number ) => {
@@ -51,7 +53,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 			{ resizeObserverRef }
 			<div className="score-summary">
 				<div className="title">{ translate( 'Performance Score' ) }</div>
-				<div className="score">
+				<div className={ clsx( 'score', { mobile: isMobile } ) }>
 					<span className="current-score">{ Math.floor( value ) }</span>
 					<span className="max-score">/ 100</span>
 				</div>
