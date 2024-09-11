@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import page, { Context } from '@automattic/calypso-router';
+import { Context } from '@automattic/calypso-router';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
@@ -11,11 +10,6 @@ import { WeeklyReport } from './pages/weekly-report';
 
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-
-	if ( ! config.isEnabled( 'performance-profiler' ) ) {
-		page.redirect( '/' );
-		return;
-	}
 
 	const url = context.query?.url?.startsWith( 'http' )
 		? context.query.url
@@ -44,11 +38,6 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 
 export function WeeklyReportContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-
-	if ( ! config.isEnabled( 'performance-profiler' ) ) {
-		page.redirect( '/' );
-		return;
-	}
 
 	if ( ! isLoggedIn ) {
 		window.location.href = '/log-in?redirect_to=' + encodeURIComponent( context.path );
