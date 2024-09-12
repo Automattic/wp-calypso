@@ -23,7 +23,7 @@ describe( 'isSessionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.true;
+		expect( isEligible ).toBe( true );
 	} );
 
 	test( 'should return false if the session is not eligible for the NPS survey', () => {
@@ -33,7 +33,7 @@ describe( 'isSessionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.false;
+		expect( isEligible ).toBe( false );
 	} );
 } );
 
@@ -47,7 +47,7 @@ describe( 'isSectionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.true;
+		expect( isEligible ).toBe( true );
 	} );
 
 	test( 'should return false if the section is not eligible for the NPS survey', () => {
@@ -59,7 +59,7 @@ describe( 'isSectionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.false;
+		expect( isEligible ).toBe( false );
 	} );
 } );
 
@@ -76,7 +76,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.true;
+		expect( isEligible ).toBe( true );
 	} );
 
 	test( 'should return false if the section is eligible but the session is not for the NPS survey', () => {
@@ -91,7 +91,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.false;
+		expect( isEligible ).toBe( false );
 	} );
 
 	test( 'should return false if the section is not eligible but the session is for the NPS survey', () => {
@@ -106,7 +106,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.false;
+		expect( isEligible ).toBe( false );
 	} );
 
 	test( 'should return false if the section and the session are not eligible for the NPS survey', () => {
@@ -121,7 +121,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 			},
 		} );
 
-		expect( isEligible ).to.be.false;
+		expect( isEligible ).toBe( false );
 	} );
 } );
 
@@ -133,7 +133,7 @@ describe( 'wasNpsSurveyShownThisSession', () => {
 			},
 		} );
 
-		expect( wasShown ).to.be.true;
+		expect( wasShown ).toBe( true );
 	} );
 
 	test( 'should return false if the session is not eligible for the NPS survey', () => {
@@ -143,7 +143,7 @@ describe( 'wasNpsSurveyShownThisSession', () => {
 			},
 		} );
 
-		expect( wasShown ).to.be.false;
+		expect( wasShown ).toBe( false );
 	} );
 } );
 
@@ -155,7 +155,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 			},
 		} );
 
-		expect( isNotSubmitted ).to.be.true;
+		expect( isNotSubmitted ).toBe( true );
 	} );
 
 	test( 'should return false if the NPS survey is being submitted', () => {
@@ -165,7 +165,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 			},
 		} );
 
-		expect( isNotSubmitted ).to.be.false;
+		expect( isNotSubmitted ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey has been submitted', () => {
@@ -175,7 +175,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 			},
 		} );
 
-		expect( isNotSubmitted ).to.be.false;
+		expect( isNotSubmitted ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey failed to submit', () => {
@@ -185,7 +185,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 			},
 		} );
 
-		expect( isNotSubmitted ).to.be.false;
+		expect( isNotSubmitted ).toBe( false );
 	} );
 } );
 
@@ -197,7 +197,7 @@ describe( 'isNpsSurveySubmitting', () => {
 			},
 		} );
 
-		expect( isSubmitting ).to.be.true;
+		expect( isSubmitting ).toBe( true );
 	} );
 
 	test( 'should return false if the NPS survey has not been submitted', () => {
@@ -207,7 +207,7 @@ describe( 'isNpsSurveySubmitting', () => {
 			},
 		} );
 
-		expect( isSubmitting ).to.be.false;
+		expect( isSubmitting ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey has been submitted', () => {
@@ -217,7 +217,7 @@ describe( 'isNpsSurveySubmitting', () => {
 			},
 		} );
 
-		expect( isSubmitting ).to.be.false;
+		expect( isSubmitting ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey has failed to submit', () => {
@@ -227,7 +227,7 @@ describe( 'isNpsSurveySubmitting', () => {
 			},
 		} );
 
-		expect( isSubmitting ).to.be.false;
+		expect( isSubmitting ).toBe( false );
 	} );
 } );
 
@@ -239,7 +239,7 @@ describe( 'isNpsSurveySubmitted', () => {
 			},
 		} );
 
-		expect( isSubmitted ).to.be.true;
+		expect( isSubmitted ).toBe( true );
 	} );
 
 	test( 'should return false if the NPS survey has not been submitted', () => {
@@ -249,7 +249,7 @@ describe( 'isNpsSurveySubmitted', () => {
 			},
 		} );
 
-		expect( isSubmitted ).to.be.false;
+		expect( isSubmitted ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey is being submitted', () => {
@@ -259,7 +259,7 @@ describe( 'isNpsSurveySubmitted', () => {
 			},
 		} );
 
-		expect( isSubmitted ).to.be.false;
+		expect( isSubmitted ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey has failed to submit', () => {
@@ -269,7 +269,7 @@ describe( 'isNpsSurveySubmitted', () => {
 			},
 		} );
 
-		expect( isSubmitted ).to.be.false;
+		expect( isSubmitted ).toBe( false );
 	} );
 } );
 
@@ -281,7 +281,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 			},
 		} );
 
-		expect( isSubmitFailure ).to.be.true;
+		expect( isSubmitFailure ).toBe( true );
 	} );
 
 	test( 'should return false if the NPS survey has been submitted', () => {
@@ -291,7 +291,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 			},
 		} );
 
-		expect( isSubmitFailure ).to.be.false;
+		expect( isSubmitFailure ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey has not been submitted', () => {
@@ -301,7 +301,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 			},
 		} );
 
-		expect( isSubmitFailure ).to.be.false;
+		expect( isSubmitFailure ).toBe( false );
 	} );
 
 	test( 'should return false if the NPS survey is being submitted', () => {
@@ -311,7 +311,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 			},
 		} );
 
-		expect( isSubmitFailure ).to.be.false;
+		expect( isSubmitFailure ).toBe( false );
 	} );
 } );
 
@@ -323,7 +323,7 @@ describe( 'getNpsSurveyName', () => {
 			},
 		} );
 
-		expect( surveyName ).to.equal( 'boo' );
+		expect( surveyName ).toEqual( 'boo' );
 	} );
 
 	test( 'should return null if the survey name is not set', () => {
@@ -331,7 +331,7 @@ describe( 'getNpsSurveyName', () => {
 			npsSurvey: {},
 		} );
 
-		expect( surveyName ).to.be.null;
+		expect( surveyName ).toBe( null );
 	} );
 } );
 
@@ -343,7 +343,7 @@ describe( 'getNpsSurveyScore', () => {
 			},
 		} );
 
-		expect( surveyScore ).to.equal( 9 );
+		expect( surveyScore ).toEqual( 9 );
 	} );
 
 	test( 'should return null if the survey score is not set', () => {
@@ -351,7 +351,7 @@ describe( 'getNpsSurveyScore', () => {
 			npsSurvey: {},
 		} );
 
-		expect( surveyScore ).to.be.null;
+		expect( surveyScore ).toBe( null );
 	} );
 } );
 
@@ -363,7 +363,7 @@ describe( 'getNpsSurveyFeedback', () => {
 				feedback: 'contextual feedback',
 			},
 		} );
-		expect( feedback ).to.equal( 'contextual feedback' );
+		expect( feedback ).toEqual( 'contextual feedback' );
 	} );
 
 	test( 'should return null if the contextual feedback is not set', () => {
@@ -372,7 +372,7 @@ describe( 'getNpsSurveyFeedback', () => {
 				score: 9,
 			},
 		} );
-		expect( feedback ).to.be.null;
+		expect( feedback ).toBe( null );
 	} );
 } );
 
@@ -385,7 +385,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.true;
+		expect( hasAnswered ).toBe( true );
 	} );
 
 	test( 'should return true if the survey has been submitted with a score', () => {
@@ -396,7 +396,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.true;
+		expect( hasAnswered ).toBe( true );
 	} );
 
 	test( 'should return true if the survey has failed to submit with a score', () => {
@@ -407,7 +407,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.true;
+		expect( hasAnswered ).toBe( true );
 	} );
 
 	test( 'should return false if the survey is being submitted without a score', () => {
@@ -417,7 +417,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 
 	test( 'should return false if the survey has been submitted without a score', () => {
@@ -427,7 +427,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 
 	test( 'should return false if the survey has failed to submit without a score', () => {
@@ -437,7 +437,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 
 	test( 'should return false if the survey has not been submitted', () => {
@@ -447,7 +447,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 } );
 
@@ -459,7 +459,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.true;
+		expect( hasAnswered ).toBe( true );
 	} );
 
 	test( 'should return true if the survey has been submitted without a score', () => {
@@ -469,7 +469,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.true;
+		expect( hasAnswered ).toBe( true );
 	} );
 
 	test( 'should return true if the survey has failed to submit without a score', () => {
@@ -479,7 +479,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.true;
+		expect( hasAnswered ).toBe( true );
 	} );
 
 	test( 'should return false if the survey is being submitted with a score', () => {
@@ -490,7 +490,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 
 	test( 'should return false if the survey has been submitted with a score', () => {
@@ -501,7 +501,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 
 	test( 'should return false if the survey has failed to submit with a score', () => {
@@ -512,7 +512,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 
 	test( 'should return false if the survey has not been submitted', () => {
@@ -522,6 +522,6 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 			},
 		} );
 
-		expect( hasAnswered ).to.be.false;
+		expect( hasAnswered ).toBe( false );
 	} );
 } );
