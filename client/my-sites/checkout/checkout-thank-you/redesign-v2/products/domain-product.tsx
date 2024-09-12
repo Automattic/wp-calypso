@@ -41,6 +41,7 @@ type ThankYouDomainProductProps = {
 	siteSlug?: string | null;
 	currency?: string;
 	isGravatarDomain?: boolean;
+	isPrimary?: boolean;
 };
 
 export default function ThankYouDomainProduct( {
@@ -50,6 +51,7 @@ export default function ThankYouDomainProduct( {
 	siteSlug,
 	currency,
 	isGravatarDomain,
+	isPrimary,
 }: ThankYouDomainProductProps ) {
 	const translate = useTranslate();
 
@@ -59,6 +61,8 @@ export default function ThankYouDomainProduct( {
 	if ( ! domainName ) {
 		return null;
 	}
+
+	const defaultButtonClass = isPrimary ? 'is-primary' : 'secondary';
 
 	let actions;
 

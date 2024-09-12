@@ -34,13 +34,17 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 		return ! isDomainProduct( purchase ) || predicate( purchase );
 	} );
 
-	const products = filteredPurchases.map( ( purchase ) => {
+	const products = filteredPurchases.map( ( purchase, index ) => {
+		// Check if this is the first product to set isPrimary
+		const isPrimary = index === 0;
+
 		if ( isDomainProduct( purchase ) ) {
 			return (
 				<ThankYouDomainProduct
 					key={ `domain-${ purchase.meta }` }
 					purchase={ purchase }
 					siteSlug={ siteSlug }
+					isPrimary={ isPrimary }
 				/>
 			);
 		} else if ( isPlan( purchase ) ) {
@@ -50,6 +54,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 					purchase={ purchase }
 					siteSlug={ siteSlug }
 					siteId={ siteId }
+					isPrimary={ isPrimary }
 				/>
 			);
 		} else if ( isTitanMail( purchase ) ) {
@@ -60,6 +65,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 					siteSlug={ siteSlug }
 					emailAddress={ emailAddress }
 					numberOfMailboxesPurchased={ purchase?.newQuantity }
+					isPrimary={ isPrimary }
 				/>
 			);
 		}
