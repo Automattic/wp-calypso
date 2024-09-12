@@ -60,7 +60,7 @@ export default function Summary( { cardData, selectedSite }: StepProps< Steps > 
 					Customize your newsletter
 				</ImporterActionButton>
 				<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
-					View imported content
+					View content
 				</ImporterActionButton>
 				<ImporterActionButton href={ '/subscribers/' + selectedSite.slug }>
 					Check subscribers
