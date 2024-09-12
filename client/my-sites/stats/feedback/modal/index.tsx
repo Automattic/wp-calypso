@@ -4,7 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import {
+	NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
+	useNoticeVisibilityQuery,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -17,8 +20,6 @@ interface ModalProps {
 	onClose: () => void;
 }
 
-const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
-
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -28,14 +29,14 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		data: isAbleToSubmitFeedback,
 		isFetching: isCheckingAbilityToSubmitFeedback,
 		refetch: refetchNotices,
-	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
+	} = useNoticeVisibilityQuery( siteId, NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK );
 
 	// Disable feedback submission for 24 hours.
-	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
+	const { mutateAsync: disableFeedbackSubmission } = useNoticeVisibilityMutation(
 		siteId,
-		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
+		NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
 		'postponed',
-		24 * 3600
+		5 * 60
 	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
@@ -76,7 +77,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
-			disableFeedbackSubmissionForOneDay().then( () => {
+			disableFeedbackSubmission().then( () => {
 				refetchNotices();
 			} );
 
@@ -87,7 +88,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		isSubmissionSuccessful,
 		handleClose,
 		translate,
-		disableFeedbackSubmissionForOneDay,
+		disableFeedbackSubmission,
 		refetchNotices,
 	] );
 
@@ -123,7 +124,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
 						<strong>
 							<em>
-								{ translate( 'Feedback submission is currently limited to one per 24 hours.' ) }
+								{ translate( 'Feedback submission is currently limited to one per 5 minutes.' ) }
 							</em>
 						</strong>
 					) }
