@@ -125,7 +125,7 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 										onClick={ () => setPopoverMenu( true ) }
 									>
 										<Icon className="share-icon" icon={ share } />
-										<span>{ translate( 'Share results' ) }</span>
+										<span>{ translate( 'Share' ) }</span>
 									</div>
 									<Popover
 										id="profiler-share-buttons-popover"

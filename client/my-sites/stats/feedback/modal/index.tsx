@@ -6,6 +6,7 @@ import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import {
 	NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
@@ -20,6 +21,10 @@ interface ModalProps {
 	onClose: () => void;
 }
 
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
+const FEEDBACK_THROTTLE_SUBMISSION_DELAY = 60 * 5; // 5 minutes
+
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -31,12 +36,18 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		refetch: refetchNotices,
 	} = useNoticeVisibilityQuery( siteId, NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK );
 
-	// Disable feedback submission for 24 hours.
 	const { mutateAsync: disableFeedbackSubmission } = useNoticeVisibilityMutation(
 		siteId,
 		NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
 		'postponed',
-		5 * 60
+		FEEDBACK_THROTTLE_SUBMISSION_DELAY
+	);
+
+	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
 	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
@@ -77,6 +88,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
+			updateFeedbackHibernationPeriod();
 			disableFeedbackSubmission().then( () => {
 				refetchNotices();
 			} );
@@ -89,6 +101,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		handleClose,
 		translate,
 		disableFeedbackSubmission,
+		updateFeedbackHibernationPeriod,
 		refetchNotices,
 	] );
 
