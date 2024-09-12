@@ -3,6 +3,7 @@ import { useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import { useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
@@ -83,26 +84,24 @@ export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 
-	/**
-	 * The domains step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
-	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
-	 * This also happens in Plans step https://github.com/Automattic/wp-calypso/blob/trunk/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx#L68
-	 */
-	let mostRecentState: ProvidedDependencies;
+	const mostRecentStateRef = useRef< ProvidedDependencies | undefined >( undefined );
+
+	const updateSignupStepState = useCallback(
+		( state: ProvidedDependencies ) => {
+			setStepState( ( mostRecentStateRef.current = { ...stepState, ...state } ) );
+		},
+		[ stepState, setStepState ]
+	);
 
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
 				{ ...props }
 				page={ ( url: string ) => window.location.assign( url ) }
-				saveSignupStep={ ( state: ProvidedDependencies ) =>
-					setStepState( ( mostRecentState = { ...stepState, ...state } ) )
-				}
-				submitSignupStep={ ( state: ProvidedDependencies ) => {
-					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
-				} }
+				saveSignupStep={ updateSignupStepState }
+				submitSignupStep={ updateSignupStepState }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( { ...stepState, ...state, ...mostRecentState } );
+					props.navigation.submit?.( { ...stepState, ...state, ...mostRecentStateRef.current } );
 				} }
 				step={ stepState }
 				flowName={ props.flow }
