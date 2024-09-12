@@ -361,11 +361,8 @@
 
 	.button[disabled],
 	.button:disabled,
-	.button.disabled
-	.button.components-button[disabled],
-	.button.components-button:disabled,
-	.button.components-button.disabled {
-		opacity: 0.1;
+	.button.disabled {
+		opacity: 0.5;
 		cursor: not-allowed;
 		pointer-events: none;
 	}

@@ -178,10 +178,7 @@ export default function useSiteActions( {
 			},
 			{
 				name: translate( 'Delete site' ),
-				onClick: () => {
-					console.log( 'Called onClick for Delete site' );
-					handleClickMenuItem( 'delete_site' );
-				},
+				onClick: () => handleClickMenuItem( 'delete_site' ),
 				icon: 'trash',
 				className: 'is-error',
 				isEnabled: canDelete,
