@@ -11,6 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
+import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
@@ -28,6 +29,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
+	const location = useLocation();
 
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState( '' );
 
@@ -95,6 +97,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					setUseMyDomainMode={ setUseMyDomainMode }
 					onNextStep={ handleOnNext }
 					isStepper
+					stepLocation={ location }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

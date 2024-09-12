@@ -8,7 +8,6 @@ import { getQueryArgs } from '@wordpress/url';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import {
 	domainLockStatusType,
@@ -51,6 +50,7 @@ function UseMyDomain( props ) {
 		useMyDomainMode,
 		setUseMyDomainMode,
 		isStepper = false,
+		stepLocation,
 	} = props;
 
 	const { __ } = useI18n();
@@ -81,8 +81,6 @@ function UseMyDomain( props ) {
 	const isBusy = isFetchingAvailability || isFetchingSiteDomains || updatingPrimaryDomain;
 
 	const baseClassName = 'use-my-domain';
-
-	const location = useLocation();
 
 	const updateMode = useCallback(
 		( newMode ) => {
@@ -447,15 +445,15 @@ function UseMyDomain( props ) {
 	}, [ mode, setDomainTransferData, initialMode ] );
 
 	useEffect( () => {
-		const queryArgs = getQueryArgs( location.search );
-		if ( isStepper ) {
+		if ( isStepper && stepLocation ) {
+			const queryArgs = getQueryArgs( stepLocation.search );
 			if ( queryArgs?.step === 'transfer-or-connect' ) {
 				updateMode( inputMode.transferOrConnect );
 			} else if ( ! queryArgs?.step || queryArgs?.step === 'domain-input' ) {
 				updateMode( inputMode.domainInput );
 			}
 		}
-	}, [ location, updateMode, isStepper ] );
+	}, [ stepLocation, updateMode, isStepper ] );
 
 	return (
 		<>
@@ -482,6 +480,7 @@ UseMyDomain.propTypes = {
 	useMyDomainMode: PropTypes.string,
 	setUseMyDomainMode: PropTypes.func,
 	isStepper: PropTypes.bool,
+	stepLocation: PropTypes.object,
 };
 
 export default connect( ( state ) => ( {
