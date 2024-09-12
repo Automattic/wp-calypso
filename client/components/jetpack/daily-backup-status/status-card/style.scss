@@ -261,3 +261,22 @@
 	margin-bottom: 0;
 }
 
+.backup-last-failed__wrapper {
+	border-top: 1px solid var(--color-neutral-5);
+	padding-top: 22px;
+	padding-bottom: 22px;
+	margin-top: 1.5rem;
+}
+
+.backup-last-failed__info {
+	height: 24px;
+	a {
+		color: #101517;
+		text-decoration: underline;
+	}
+	.icon {
+		vertical-align: middle;
+		margin-right: 8px;
+		fill: #7d5600;
+	}
+}

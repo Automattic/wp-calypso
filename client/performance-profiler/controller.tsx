@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import page, { Context } from '@automattic/calypso-router';
+import { Context } from '@automattic/calypso-router';
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
@@ -30,11 +29,6 @@ export function PerformanceProfilerWrapper( {
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
-	if ( ! config.isEnabled( 'performance-profiler' ) ) {
-		page.redirect( '/' );
-		return;
-	}
-
 	const url = context.query?.url?.startsWith( 'http' )
 		? context.query.url
 		: `https://${ context.query?.url ?? '' }`;
@@ -49,6 +43,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 						: TabType.mobile
 				}
 				hash={ context.query?.hash ?? '' }
+				filter={ context.query?.filter }
 			/>
 		</PerformanceProfilerWrapper>
 	);
@@ -58,11 +53,6 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 
 export function WeeklyReportContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-
-	if ( ! config.isEnabled( 'performance-profiler' ) ) {
-		page.redirect( '/' );
-		return;
-	}
 
 	if ( ! isLoggedIn ) {
 		window.location.href = '/log-in?redirect_to=' + encodeURIComponent( context.path );
@@ -88,7 +78,7 @@ export const notFound = ( context: Context, next: () => void ) => {
 			className="content-404"
 			illustration="/calypso/images/illustrations/illustration-404.svg"
 			title={ translate( 'Uh oh. Page not found.' ) }
-			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
+			line={ translate( 'Sorry, the page you were looking for doesn‘t exist or has been moved.' ) }
 			action={ translate( 'Return Home' ) }
 			actionURL="/"
 		/>

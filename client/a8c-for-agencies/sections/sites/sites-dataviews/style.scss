@@ -21,10 +21,6 @@
 		color: var(--color-jetpack-50);
 	}
 
-	.dataviews-view-table__actions-column {
-		display: none;
-	}
-
 	thead {
 		th.sites-dataviews__site {
 			background: var(--color-light-backdrop);
@@ -56,8 +52,6 @@
 		}
 
 		&:hover {
-			background: var(--color-neutral-0);
-
 			.site-set-favorite__favorite-icon,
 			.components-checkbox-control__input {
 				opacity: 1;

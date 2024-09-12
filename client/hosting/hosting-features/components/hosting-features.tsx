@@ -50,11 +50,13 @@ const HostingFeatures = () => {
 		isPlanExpired: !! getSelectedSite( state )?.plan?.expired,
 	} ) );
 	// The ref is required to persist the value of redirect_to after renders
-	const redirectUrl = useRef(
-		searchParams.get( 'redirect_to' ) ?? hasSftpFeature
+	const redirectToRef = useRef( searchParams.get( 'redirect_to' ) );
+
+	const redirectUrl =
+		redirectToRef.current ?? hasSftpFeature
 			? `/hosting-config/${ siteId }`
-			: `/overview/${ siteId }`
-	);
+			: `/overview/${ siteId }`;
+
 	const hasEnTranslation = useHasEnTranslation();
 
 	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
@@ -85,9 +87,9 @@ const HostingFeatures = () => {
 
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
-			page.replace( redirectUrl.current );
+			page.replace( redirectUrl );
 		}
-	}, [ isSiteAtomic, isPlanExpired ] );
+	}, [ isSiteAtomic, isPlanExpired, redirectUrl ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
@@ -134,7 +136,7 @@ const HostingFeatures = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
-			redirect_to: redirectUrl.current,
+			redirect_to: redirectUrl,
 			feature: FEATURE_SFTP,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
@@ -221,7 +223,7 @@ const HostingFeatures = () => {
 					<EligibilityWarnings
 						className="hosting__activating-warnings"
 						onProceed={ handleTransfer }
-						backUrl={ redirectUrl.current }
+						backUrl={ redirectUrl }
 						showDataCenterPicker
 						standaloneProceed
 						currentContext="hosting-features"

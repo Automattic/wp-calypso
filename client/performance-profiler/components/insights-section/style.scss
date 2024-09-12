@@ -3,18 +3,47 @@
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
-	max-width: 100%;
+	width: 100%;
 	scroll-margin-top: 80px;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 32px;
+	}
 
 	.title {
 		font-size: $font-title-small;
 		font-weight: 500;
+		margin-bottom: 8px;
 	}
 
 	.subtitle {
 		color: var(--studio-gray-70);
 		font-size: $font-body;
-		margin-bottom: 32px;
+		margin-bottom: 0;
+	}
+
+	$wp-blue-50: #3858e9;
+	.filter {
+		.select-dropdown__item {
+			background-color: var(--studio-white);
+			color: $wp-blue-50;
+
+			&.is-selected {
+				background-color: $wp-blue-50;
+				color: var(--studio-white);
+
+				&:hover {
+					background-color: $wp-blue-50;
+				}
+			}
+
+			&:hover {
+				background-color: transparent;
+			}
+		}
 	}
 
 	.metrics-insight-item.foldable-card {
