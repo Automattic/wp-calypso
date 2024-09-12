@@ -1,6 +1,5 @@
 import { Locator, Page } from 'playwright';
 
-export type HelpCenterTestEnvironment = 'calypso' | 'editor';
 export type ResultsCategory = 'Docs' | 'Links';
 
 /**
@@ -9,21 +8,15 @@ export type ResultsCategory = 'Docs' | 'Links';
 export class HelpCenterComponent {
 	private page: Page;
 	private popup: Locator;
-	private environment: HelpCenterTestEnvironment;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {string} environment The environment in which the component is being used.
 	 */
-	constructor( page: Page, environment: HelpCenterTestEnvironment ) {
+	constructor( page: Page ) {
 		this.page = page;
-		this.environment = environment;
-		this.popup =
-			environment === 'editor'
-				? this.page.frameLocator( '.calypsoify iframe' ).locator( '.help-center__container' )
-				: this.page.locator( '.help-center__container' );
+		this.popup = this.page.locator( '.help-center__container' );
 	}
 
 	/**
@@ -34,18 +27,22 @@ export class HelpCenterComponent {
 	}
 
 	/**
+	 * Check if the help center is loaded.
+	 */
+	async isVisible(): Promise< boolean > {
+		return Boolean( await this.popup.count() );
+	}
+
+	/**
 	 * Opens the support popover from the closed state.
 	 */
 	async openPopover(): Promise< void > {
-		let helpButton: Locator;
-
-		if ( this.environment === 'calypso' ) {
-			helpButton = this.page.locator( 'button.masterbar__item-help' );
-		} else {
-			helpButton = this.page.frameLocator( '.calypsoify iframe' ).locator( 'button.help-center' );
+		// Return if its already open.
+		if ( await this.isVisible() ) {
+			return;
 		}
 
-		await helpButton.click();
+		await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
 		await this.popup.waitFor( { state: 'visible' } );
 	}
 
@@ -53,14 +50,15 @@ export class HelpCenterComponent {
 	 * Closes the support popover from the open state.
 	 */
 	async closePopover(): Promise< void > {
-		const closeButton = await this.popup.locator( '.help-center-header__close' );
-
-		// The `isVisible` API is deprecated because it returns immediately,
-		// so it is not recommended here.
-		if ( ! ( await this.popup.count() ) ) {
+		// Return if its already closed.
+		if ( ! ( await this.isVisible() ) ) {
 			return;
 		}
 
+		const closeButton = await this.popup.getByRole( 'button', {
+			name: 'Close Help Center',
+			exact: true,
+		} );
 		await closeButton.click();
 		await this.popup.waitFor( { state: 'detached' } );
 	}
@@ -69,17 +67,27 @@ export class HelpCenterComponent {
 	 * Minimizes the support popover from the open state.
 	 */
 	async minimizePopover(): Promise< void > {
-		const minimizeButton = await this.popup.locator( '.help-center-header__minimize' );
+		const minimizeButton = await this.popup.getByRole( 'button', {
+			name: 'Minimize Help Center',
+			exact: true,
+		} );
 
 		await minimizeButton.click();
 		await this.popup.locator( '.help-center__container-content' ).waitFor( { state: 'hidden' } );
 	}
 
 	/**
+	 * Go back to the previous page.
+	 */
+	async goBack(): Promise< void > {
+		await this.popup.locator( 'button.back-button__help-center' ).click();
+	}
+
+	/**
 	 * Check the presence of the Help Center popover.
 	 */
 	async isPopoverShown(): Promise< boolean > {
-		const isVisible = await this.popup.isVisible();
+		const isVisible = await this.isVisible();
 		const popupBoundingBox = await this.popup.boundingBox();
 		const viewport = await this.page.viewportSize();
 
@@ -102,6 +110,13 @@ export class HelpCenterComponent {
 		return this.popup
 			.getByRole( 'list', { name: 'Recommended Resources' } )
 			.getByRole( 'listitem' );
+	}
+
+	/**
+	 * Get Odie chat
+	 */
+	getOdieChat(): Locator {
+		return this.popup.locator( '#odie-messages-container' );
 	}
 
 	/**
@@ -130,34 +145,22 @@ export class HelpCenterComponent {
 	}
 
 	/**
-	 * Get the article content locator.
-	 */
-	getArticleContent(): Locator {
-		return this.popup.getByRole( 'article' );
-	}
-
-	/**
-	 * Start Support Flow
-	 */
-	async startSupportFlow(): Promise< void > {
-		// Using dispatchEvent because the cookie banner sometimes blocks the button.
-		await this.popup.getByRole( 'button', { name: 'Still need help?' } ).dispatchEvent( 'click' );
-	}
-
-	/**
 	 * Start the AI chat.
 	 *
 	 * @param {string} query Search keyword to be entered into the message field.
 	 */
 	async startAIChat( query: string ): Promise< void > {
+		const sendMessageForm = this.popup.locator( '.odie-send-message-input-container' );
+
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
 					response.url().includes( '/wpcom/v2/odie/chat/wpcom-support-chat' ) &&
 					response.status() === 200
 			),
-			this.popup.getByPlaceholder( 'Ask your question' ).fill( query ),
-			this.popup.locator( '.odie-send-message-inner-button' ).click(),
+			sendMessageForm.locator( 'textarea' ).fill( query ),
+			// Programmatically trigger the form submission to avoid issues with the cookie banner.
+			sendMessageForm.dispatchEvent( 'submit' ),
 		] );
 	}
 
@@ -165,6 +168,6 @@ export class HelpCenterComponent {
 	 * Get the Contact Support button.
 	 */
 	getContactSupportButton(): Locator {
-		return this.popup.locator( '.odie-chatbox-message-last button' ).last();
+		return this.popup.getByRole( 'button', { name: 'Contact WordPress.com Support' } ).last();
 	}
 }

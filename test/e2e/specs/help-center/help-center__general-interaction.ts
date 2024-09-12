@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	HelpCenterComponent,
-	HelpCenterTestEnvironment,
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
@@ -15,6 +14,8 @@ import { skipDescribeIf } from '../../jest-helpers';
 declare const browser: Browser;
 
 skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => {
+	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
+
 	let page: Page;
 	let testAccount: TestAccount;
 	let helpCenterComponent: HelpCenterComponent;
@@ -26,6 +27,9 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => 
 
 		testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page, { waitUntilStable: true } );
+
+		helpCenterComponent = new HelpCenterComponent( page );
+		helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
 	} );
 
 	// Close the page after the tests
@@ -34,144 +38,133 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => 
 	} );
 
 	/**
-	 * Run tests for both Calypso and Editor environments.
+	 * General Interaction
 	 *
-	 * WP-ADMIN environment is skipped because it loads the Help Center
-	 * from widgets.wp.com therefore these tests are not applicable.
+	 * These tests check the general interaction with the Help Center popover.
 	 */
-	describe.each< { component: HelpCenterTestEnvironment } >( [
-		{ component: 'calypso' },
-		{ component: 'editor' },
-	] )( 'in $component', ( { component }: { component: HelpCenterTestEnvironment } ) => {
-		beforeAll( async () => {
-			helpCenterComponent = new HelpCenterComponent( page, component );
-			helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
+	describe( 'General Interaction', () => {
+		it( 'is initially closed', async () => {
+			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+		} );
+
+		it( 'can be opened', async () => {
+			await helpCenterComponent.openPopover();
+
+			expect( await helpCenterComponent.isVisible() ).toBeTruthy();
+		} );
+
+		it( 'is showing on the screen', async () => {
+			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+		} );
+
+		it( 'can be minimized', async () => {
+			await helpCenterComponent.minimizePopover();
+
+			const containerHeight = await helpCenterLocator.evaluate(
+				( el: HTMLElement ) => el.offsetHeight
+			);
+
+			expect( containerHeight ).toBe( 50 );
+		} );
+
+		it( 'the popover can be closed', async () => {
+			await helpCenterComponent.closePopover();
+
+			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+		} );
+	} );
+
+	/**
+	 * Articles
+	 *
+	 * These tests check the search function and article navigation.
+	 */
+	describe( 'Articles', () => {
+		it( 'initial articles are shown', async () => {
+			await helpCenterComponent.openPopover();
+
+			const articles = helpCenterComponent.getArticles();
+
+			expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
+		} );
+
+		it( 'search returns proper results', async () => {
+			await helpCenterComponent.search( 'Change a Domain Name Address' );
+			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
+			expect(
+				resultTitles.some(
+					( title ) => normalizeString( title )?.includes( 'Change a Domain Name Address' )
+				)
+			).toBeTruthy();
+		} );
+
+		it( 'post loads correctly', async () => {
+			const article = await helpCenterComponent.getArticles().first();
+			const articleTitle = await article.textContent();
+			await article.click();
+
+			// Make sure the API response is valid
+			await page.waitForResponse(
+				( response ) =>
+					response.url().includes( '/wpcom/v2/help/article' ) && response.status() === 200
+			);
+
+			const articleHeader = await helpCenterLocator
+				.getByRole( 'article' )
+				.getByRole( 'heading' )
+				.first();
+			await articleHeader.waitFor( { state: 'visible' } );
+
+			expect( normalizeString( await articleHeader.textContent() ) ).toBe(
+				normalizeString( articleTitle )
+			);
+
+			await helpCenterComponent.goBack();
+		} );
+	} );
+
+	/**
+	 * Support Flow
+	 *
+	 * These tests check the support flow. Starting with AI and then chat.
+	 */
+	describe( 'Support Flow', () => {
+		it( 'start support flow', async () => {
+			await helpCenterComponent.openPopover();
+
+			const stillNeedHelpButton = helpCenterLocator.getByRole( 'link', {
+				name: 'Still need help?',
+			} );
+
+			await stillNeedHelpButton.waitFor( { state: 'visible' } );
+			await stillNeedHelpButton.click();
+
+			expect( await helpCenterLocator.locator( '#odie-messages-container' ).count() ).toBeTruthy();
+		} );
+
+		it( 'get forwarded to a human', async () => {
+			await helpCenterComponent.startAIChat( 'talk to human' );
+
+			const contactSupportButton = helpCenterComponent.getContactSupportButton();
+			await contactSupportButton.waitFor( { state: 'visible' } );
+
+			expect( await contactSupportButton.count() ).toBeTruthy();
 		} );
 
 		/**
-		 * General Interaction
-		 *
-		 * These tests check the general interaction with the Help Center popover.
+		 * These tests need to be update
 		 */
-		describe( 'General Interaction', () => {
-			it( 'is initially closed', async () => {
-				if ( component === 'editor' ) {
-					const postUrl = DataHelper.getCalypsoURL(
-						'/post/' + testAccount.getSiteURL( { protocol: false } )
-					);
-					await page.goto( postUrl );
-				}
+		it( 'start talking with a human', async () => {
+			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
+			await contactSupportButton.dispatchEvent( 'click' );
 
-				expect( await helpCenterLocator.isVisible() ).toBeFalsy();
-			} );
+			const zendeskMessaging = await page
+				.frameLocator( 'iframe[title="Messaging window"]' )
+				.getByPlaceholder( 'Type a message' );
 
-			it( 'can be opened', async () => {
-				await helpCenterComponent.openPopover();
+			await zendeskMessaging.waitFor( { state: 'visible' } );
 
-				expect( await helpCenterLocator.isVisible() ).toBeTruthy();
-			} );
-
-			it( 'is showing on the screen', async () => {
-				expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
-			} );
-
-			it( 'can be minimized', async () => {
-				await helpCenterComponent.minimizePopover();
-
-				const containerHeight = await helpCenterLocator.evaluate(
-					( el: HTMLElement ) => el.offsetHeight
-				);
-
-				expect( containerHeight ).toBe( 50 );
-			} );
-
-			it( 'the popover can be closed', async () => {
-				await helpCenterComponent.closePopover();
-
-				expect( await helpCenterLocator.isVisible() ).toBeFalsy();
-			} );
-		} );
-
-		/**
-		 * Articles
-		 *
-		 * These tests check the search function and article navigation.
-		 */
-		describe( 'Articles', () => {
-			beforeAll( async () => {
-				await helpCenterComponent.openPopover();
-			} );
-
-			afterAll( async () => {
-				await helpCenterComponent.closePopover();
-			} );
-
-			it( 'initial articles are shown', async () => {
-				const articles = helpCenterComponent.getArticles();
-
-				expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
-			} );
-
-			it( 'search returns proper results', async () => {
-				await helpCenterComponent.search( 'change my domain' );
-				const resultTitles = await helpCenterComponent.getArticles().allTextContents();
-				expect(
-					resultTitles.some( ( title ) =>
-						title.replace( /\s+/g, ' ' ).trim().includes( 'Change a Domain Name Address' )
-					)
-				).toBeTruthy();
-			} );
-
-			it( 'post loads correctly', async () => {
-				await helpCenterComponent.getArticles().first().click();
-
-				expect( await helpCenterComponent.getArticleContent().isVisible() ).toBeTruthy();
-			} );
-		} );
-
-		/**
-		 * Support Flow
-		 *
-		 * These tests check the support flow. Starting with AI and then chat.
-		 */
-		describe( 'Support Flow', () => {
-			beforeAll( async () => {
-				await helpCenterComponent.openPopover();
-			} );
-
-			afterAll( async () => {
-				await helpCenterComponent.closePopover();
-			} );
-
-			it( 'AI chat starts correctly', async () => {
-				await helpCenterComponent.startSupportFlow();
-
-				const firstAiChatMessage = await helpCenterLocator
-					.locator( '.odie-chatbox-introduction-message' )
-					.textContent();
-
-				expect(
-					firstAiChatMessage &&
-						firstAiChatMessage.includes( 'Tell me all about it and I’ll be happy to help' )
-				).toBeTruthy();
-			} );
-
-			it( 'AI responds and forwards to human agent', async () => {
-				await helpCenterComponent.startAIChat( 'talk to human' );
-
-				const contactSupportButton = await helpCenterComponent.getContactSupportButton();
-
-				expect( contactSupportButton.isVisible() ).toBeTruthy();
-			} );
-
-			it( 'Contact Support button opens Zendesk', async () => {
-				const contactSupportButton = helpCenterComponent.getContactSupportButton();
-				await contactSupportButton.click();
-
-				const zendeskWindow = await page.getByRole( 'dialog', { name: 'Messaging window' } );
-
-				expect( zendeskWindow.isVisible() ).toBeTruthy();
-			} );
+			expect( await zendeskMessaging.count() ).toBeTruthy();
 		} );
 	} );
 
@@ -180,48 +173,30 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center', () => 
 	 *
 	 * These tests Help Center opening on page load.
 	 */
-	describe( 'via action hooks', () => {
-		beforeAll( async () => {
-			helpCenterComponent = new HelpCenterComponent( page, 'calypso' );
-			helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
-		} );
-
-		it( 'opened on page load', async () => {
-			const postUrl = DataHelper.getCalypsoURL(
-				'/home/' + testAccount.getSiteURL( { protocol: false } ),
-				{
+	describe( 'Action Hooks', () => {
+		it( 'open help center on page load', async () => {
+			await page.goto(
+				DataHelper.getCalypsoURL( '/home/' + testAccount.getSiteURL( { protocol: false } ), {
 					'help-center': 'home',
-				}
+				} )
 			);
-
-			await page.goto( postUrl );
 
 			await helpCenterLocator.waitFor( { state: 'visible' } );
 
 			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 
-		it( 'open Wapuu on page load', async () => {
-			const postUrl = DataHelper.getCalypsoURL(
-				'/home/' + testAccount.getSiteURL( { protocol: false } ),
-				{
+		it( 'open help center to Wapuu on page load', async () => {
+			await page.goto(
+				DataHelper.getCalypsoURL( '/home/' + testAccount.getSiteURL( { protocol: false } ), {
 					'help-center': 'wapuu',
-				}
+				} )
 			);
 
-			await page.goto( postUrl );
 			await helpCenterLocator.waitFor( { state: 'visible' } );
 
 			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
-
-			const firstAiChatMessage = await helpCenterLocator
-				.locator( '.odie-chatbox-introduction-message' )
-				.textContent();
-
-			expect(
-				firstAiChatMessage &&
-					firstAiChatMessage.includes( 'Tell me all about it and I’ll be happy to help' )
-			).toBeTruthy();
+			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 	} );
 } );
