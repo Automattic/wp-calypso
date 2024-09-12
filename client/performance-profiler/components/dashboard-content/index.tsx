@@ -16,12 +16,14 @@ type PerformanceProfilerDashboardContentProps = {
 	performanceReport: PerformanceReport;
 	url: string;
 	hash: string;
+	filter?: string;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
 	url,
 	hash,
+	filter,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
@@ -67,6 +69,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						isWpcom={ is_wpcom }
 						ref={ insightsRef }
 						hash={ hash }
+						filter={ filter }
 					/>
 				) }
 			</div>

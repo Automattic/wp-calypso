@@ -69,6 +69,11 @@ class DateRangeExample extends Component {
 				<Card>
 					<DateRange displayShortcuts />
 				</Card>
+
+				<h3>With Arrow Navigation Enabled</h3>
+				<Card>
+					<DateRange useArrowNavigation />
+				</Card>
 			</Fragment>
 		);
 	}

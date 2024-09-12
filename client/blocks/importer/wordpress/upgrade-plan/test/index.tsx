@@ -9,6 +9,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
@@ -18,6 +19,11 @@ jest.mock( '../upgrade-plan-details', () => ( {
 	__esModule: true,
 	default: ( { children } ) => <div>{ children }</div>,
 } ) );
+
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
+	() => jest.fn()
+);
 
 jest.mock( '@automattic/calypso-analytics' );
 
@@ -165,8 +171,17 @@ describe( 'UpgradePlan', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		mockUseUpgradePlanHostingDetailsList( false );
 		mockUsePricingMetaForGridPlans();
+		useCheckPlanAvailabilityForPurchase.mockImplementation( ( { planSlugs } ) =>
+			planSlugs.reduce( ( acc, planSlug ) => {
+				return {
+					...acc,
+					[ planSlug ]: true,
+				};
+			}, {} )
+		);
 	} );
 
 	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {

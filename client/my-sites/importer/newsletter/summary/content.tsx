@@ -18,6 +18,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 
 	if ( status === 'done' ) {
 		const progress = cardData.progress;
+
 		return (
 			<div className="summary__content">
 				<p>We imported:</p>

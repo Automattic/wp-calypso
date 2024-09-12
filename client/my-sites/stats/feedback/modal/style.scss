@@ -1,9 +1,12 @@
 @import "@automattic/components/src/styles/typography";
 
+// Weight the selector for Odyssey Stats.
 .stats-feedback-modal {
-	width: 685px;
-	background-color: var(--studio-white);
-	text-align: left;
+	&.components-modal__frame {
+		width: 685px;
+		background-color: var(--studio-white);
+		text-align: left;
+	}
 }
 
 .stats-feedback-modal__close-button {
