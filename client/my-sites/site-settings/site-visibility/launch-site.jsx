@@ -120,19 +120,32 @@ const LaunchSite = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
-	const billingAgencyMessage =
+	const agencyBillingMessage =
 		agencyLoading || agencyError
-			? translate( 'Once launched, your agency will be billed for it in the next billing cycle.' )
+			? translate( "After launch, we'll bill your agency in the next billing cycle." )
 			: translate(
-					'This means your agency, {{strong}}%(agencyName)s{{/strong}}, will be billed for it in the next billing cycle.',
+					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
 					{
+						count: existingWPCOMLicenseCount + 1,
 						args: {
 							agencyName: agencyName,
+							licenseCount: existingWPCOMLicenseCount + 1,
+							price,
 						},
 						components: {
 							strong: <strong />,
+							a: (
+								<a
+									className="site-settings__general-settings-launch-site-agency-learn-more"
+									href="https://agencieshelp.automattic.com/knowledge-base/the-marketplace/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 						},
-						comment: 'name of the agency that will be billed for the site',
+						comment:
+							'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
 					}
 			  );
 
@@ -140,7 +153,7 @@ const LaunchSite = () => {
 		<>
 			{ isLaunchConfirmationModalOpen && (
 				<LaunchConfirmationModal
-					billingAgencyMessage={ billingAgencyMessage }
+					message={ agencyBillingMessage }
 					closeModal={ closeLaunchConfirmationModal }
 					onConfirmation={ () => {
 						dispatchSiteLaunch();
@@ -162,37 +175,7 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ isDevelopmentSite && (
-							<i>
-								{ agencyLoading || agencyError
-									? translate( 'After launch, we’ll bill your agency in the next billing cycle.' )
-									: translate(
-											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}',
-											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}',
-											{
-												count: existingWPCOMLicenseCount + 1,
-												args: {
-													agencyName: agencyName,
-													licenseCount: existingWPCOMLicenseCount + 1,
-													price,
-												},
-												components: {
-													strong: <strong />,
-													a: (
-														<a
-															className="site-settings__general-settings-launch-site-agency-learn-more"
-															href="https://agencieshelp.automattic.com/knowledge-base/the-marketplace/"
-															target="_blank"
-															rel="noopener noreferrer"
-														/>
-													),
-												},
-												comment:
-													'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
-											}
-									  ) }
-							</i>
-						) }
+						{ isDevelopmentSite && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{ isDevelopmentSite && (
