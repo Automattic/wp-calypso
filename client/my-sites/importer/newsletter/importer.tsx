@@ -1,11 +1,9 @@
-import page from '@automattic/calypso-router';
-import { Spinner } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
-import StepProgress, { ClickHandler } from 'calypso/components/step-progress';
+import StepProgress from 'calypso/components/step-progress';
 import {
 	StepId,
 	usePaidNewsletterQuery,
@@ -16,11 +14,12 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Content from './content';
-import { LogoChain } from './logo-chain';
+import LogoChain from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes, StatusType } from './types';
+import { getSetpProgressSteps } from './utils';
 
 import './importer.scss';
 
@@ -58,32 +57,6 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
-	const stepsProgress: ClickHandler[] = [
-		{
-			message: 'Content',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/content`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
-		{
-			message: 'Subscribers',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/subscribers`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
-		{ message: 'Summary', onClick: () => {} },
-	];
-
 	// Steps
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
@@ -117,16 +90,6 @@ export default function NewsletterImporter( {
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
-
-		if ( paidNewsletterData?.steps ) {
-			const status: StatusType = paidNewsletterData?.steps[ stepName ]?.status ?? '';
-			if ( status === 'done' ) {
-				stepsProgress[ index ].indicator = <Icon icon={ check } />;
-			}
-			if ( status === 'importing' ) {
-				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
-			}
-		}
 	} );
 
 	const { skipNextStep } = useSkipNextStepMutation();
@@ -157,15 +120,24 @@ export default function NewsletterImporter( {
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
-	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ stepSlugs[ stepIndex ] }`;
+	const currentStepSlug = stepSlugs[ stepIndex ];
+	const stepsProgress = getSetpProgressSteps(
+		engine,
+		selectedSite?.slug || '',
+		fromSite,
+		paidNewsletterData
+	);
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ currentStepSlug }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
 		from: fromSite,
 	} );
 
-	const Step = steps[ stepIndex ] || steps[ 0 ];
+	const Step = steps[ stepIndex ];
 
 	return (
-		<div className="newsletter-importer">
+		<div
+			className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + currentStepSlug ) }
+		>
 			<LogoChain logos={ logoChainLogos } />
 
 			<FormattedHeader headerText={ getTitle( urlData ) } />
