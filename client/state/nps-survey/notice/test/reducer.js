@@ -1,17 +1,18 @@
-import { expect } from 'chai';
 import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'calypso/state/action-types';
 import reducer, { isNpsSurveyDialogShowing } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'isNpsSurveyDialogShowing' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'isNpsSurveyDialogShowing' ] )
+		);
 	} );
 
 	describe( '#isNpsSurveyDialogShowing()', () => {
 		test( 'should default to false', () => {
 			const state = isNpsSurveyDialogShowing( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should track if the dialog is showing', () => {
@@ -20,7 +21,7 @@ describe( 'reducer', () => {
 				isShowing: true,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should track if the dialog is not showing', () => {
@@ -29,7 +30,7 @@ describe( 'reducer', () => {
 				isShowing: false,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 } );

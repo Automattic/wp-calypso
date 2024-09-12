@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { isNpsSurveyDialogShowing } from '../selectors';
 
 describe( 'isNpsSurveyDialogShowing', () => {
@@ -11,7 +10,7 @@ describe( 'isNpsSurveyDialogShowing', () => {
 			},
 		} );
 
-		expect( isShowing ).to.be.true;
+		expect( isShowing ).toBe( true );
 	} );
 
 	test( 'should return false if the NPS survey dialog is not showing', () => {
@@ -23,6 +22,6 @@ describe( 'isNpsSurveyDialogShowing', () => {
 			},
 		} );
 
-		expect( isShowing ).to.be.false;
+		expect( isShowing ).toBe( false );
 	} );
 } );
