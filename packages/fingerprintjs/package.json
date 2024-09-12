@@ -18,7 +18,7 @@
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/fingerprintjs/fingerprintjs.git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/fingerprintjs"
 	},
 	"bugs": {
