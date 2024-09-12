@@ -26,22 +26,6 @@
 				padding-top: 46px;
 			}
 		}
-
-		.lp-footer-language {
-			display: none;
-		}
-
-		.lpc-footer-nav,
-		.lpc-footer-automattic-nav {
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		.lpc-footer-nav-wrapper,
-		.lpc-footer-automattic-nav-wrapper,
-		.lp-link-work-m {
-			@include patterns-page-width;
-		}
 	}
 
 	.has-no-sidebar {
