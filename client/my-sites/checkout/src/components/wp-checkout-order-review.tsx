@@ -52,11 +52,12 @@ const CouponLinkWrapper = styled.div`
 `;
 
 const CouponAreaWrapper = styled.div`
-	padding-bottom: 12px;
-	padding-top: 28px;
+	padding: 24px;
 	align-self: stretch;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-top: 50px;
+		padding-bottom: 0;
 		padding-inline-start: 40px;
 		padding-inline-end: 0;
 	}
