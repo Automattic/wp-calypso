@@ -6,6 +6,7 @@ import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import {
 	NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
@@ -18,6 +19,20 @@ import './style.scss';
 interface ModalProps {
 	siteId: number;
 	onClose: () => void;
+}
+
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
+
+function useFeedbackHibernationMutation( siteId: number ) {
+	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
+	);
+
+	return { updateFeedbackHibernationPeriod };
 }
 
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
@@ -38,6 +53,8 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		'postponed',
 		5 * 60
 	);
+
+	const { updateFeedbackHibernationPeriod } = useFeedbackHibernationMutation( siteId );
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
@@ -77,6 +94,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
+			updateFeedbackHibernationPeriod();
 			disableFeedbackSubmission().then( () => {
 				refetchNotices();
 			} );
@@ -89,6 +107,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		handleClose,
 		translate,
 		disableFeedbackSubmission,
+		updateFeedbackHibernationPeriod,
 		refetchNotices,
 	] );
 
