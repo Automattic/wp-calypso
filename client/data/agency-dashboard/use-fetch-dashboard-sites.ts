@@ -35,14 +35,36 @@ const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
 	};
 };
 
-export interface FetchDashboardSitesArgsInterface {
+export interface FetchDashboardSitesArgsInterface extends FetchSitesQueryKeyParams {
 	isPartnerOAuthTokenLoaded: boolean;
+}
+
+export interface FetchSitesQueryKeyParams {
 	searchQuery: string | undefined;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
 	sort?: DashboardSortInterface;
 	perPage?: number;
 	agencyId?: number;
+}
+
+/**
+ * Query key generator to preserving the right order of the query key and to ensure the data type.
+ * @param queryParams The query object to generate the key from
+ */
+export function getQueryKey( queryParams: FetchSitesQueryKeyParams ) {
+	const { agencyId, searchQuery, currentPage, perPage, filter, sort } = queryParams;
+
+	// Generate the key always in the same order
+	return [
+		'jetpack-agency-dashboard-sites',
+		searchQuery,
+		currentPage,
+		filter,
+		sort,
+		perPage,
+		...( agencyId ? [ agencyId ] : [] ),
+	];
 }
 
 const useFetchDashboardSites = ( {
@@ -54,27 +76,14 @@ const useFetchDashboardSites = ( {
 	perPage,
 	agencyId,
 }: FetchDashboardSitesArgsInterface ) => {
-	let queryKey = [
-		'jetpack-agency-dashboard-sites',
+	const queryKey = getQueryKey( {
 		searchQuery,
 		currentPage,
 		filter,
 		sort,
 		perPage,
-		...( agencyId ? [ agencyId ] : [] ),
-	];
-
-	// If perPage is not provided, we want to remove perPage from the query_key as existing tests don't pass otherwise.
-	if ( ! perPage ) {
-		queryKey = [
-			'jetpack-agency-dashboard-sites',
-			searchQuery,
-			currentPage,
-			filter,
-			sort,
-			...( agencyId ? [ agencyId ] : [] ),
-		];
-	}
+		agencyId,
+	} );
 
 	const isAgencyOrPartnerAuthEnabled = isPartnerOAuthTokenLoaded || !! agencyId;
 

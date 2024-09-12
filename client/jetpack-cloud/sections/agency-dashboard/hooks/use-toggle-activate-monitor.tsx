@@ -1,8 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import { getQueryKey } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -24,32 +25,43 @@ export default function useToggleActivateMonitor(
 
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
-
-	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites, showOnlyDevelopmentSites } =
+		useContext( SitesDashboardContext );
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const queryKey = isA8CForAgencies()
-		? [
-				'jetpack-agency-dashboard-sites',
-				dataViewsState.search,
-				dataViewsState.page,
-				{
-					issueTypes: getSelectedFilters( dataViewsState.filters ),
-					showOnlyFavorites: showOnlyFavorites || false,
-				},
-				dataViewsState.sort,
-				dataViewsState.perPage,
-				...( agencyId ? [ agencyId ] : [] ),
-		  ]
-		: [
-				'jetpack-agency-dashboard-sites',
-				search,
-				currentPage,
-				filter,
-				sort,
-				...( agencyId ? [ agencyId ] : [] ),
-		  ];
+	const queryKey = useMemo(
+		() =>
+			isA8CForAgencies()
+				? getQueryKey( {
+						searchQuery: dataViewsState.search,
+						currentPage: dataViewsState.page,
+						filter: {
+							...filter,
+							issueTypes: getSelectedFilters( dataViewsState.filters ),
+						},
+						sort: dataViewsState.sort,
+						perPage: dataViewsState.perPage,
+						agencyId,
+				  } )
+				: getQueryKey( {
+						searchQuery: search,
+						currentPage,
+						filter,
+						sort,
+						agencyId,
+				  } ),
+		[
+			filter,
+			search,
+			sort,
+			agencyId,
+			currentPage,
+			dataViewsState,
+			showOnlyFavorites,
+			showOnlyDevelopmentSites,
+		]
+	);
 
 	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {
