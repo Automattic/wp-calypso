@@ -227,7 +227,7 @@ $blueberry-color: #3858e9;
 				overflow-x: auto;
 
 				table {
-					table-layout: fixed;
+					table-layout: auto;
 					width: 100%;
 					margin-bottom: 0;
 					min-width: $break-small;
@@ -238,6 +238,7 @@ $blueberry-color: #3858e9;
 						word-break: break-word;
 						font-size: $font-body-small;
 						border-bottom: 1px solid var(--studio-gray-5);
+						min-width: 100px;
 					}
 
 					tr.sub {
