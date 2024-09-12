@@ -188,12 +188,19 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
+	const shouldGoToCheckout = Boolean( planCartItem || mergedDomainCartItems.length );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
+			const slug = getSignupCompleteSlug();
+
+			if ( planCartItem && slug ) {
+				await addPlanToCart( slug, flow, true, theme, planCartItem );
+			}
+
 			return {
 				siteSlug: getSignupCompleteSlug(),
-				goToCheckout: true,
+				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
 			};
 		}
@@ -253,7 +260,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		return {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
-			goToCheckout: Boolean( planCartItem || mergedDomainCartItems.length ),
+			goToCheckout: shouldGoToCheckout,
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
 		};
