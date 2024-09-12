@@ -151,7 +151,15 @@ const MailboxField = ( {
 				/>
 				{ children }
 			</FormLabel>
-			{ field.error && <FormInputValidation text={ field.error } isError /> }
+			{ field.error && (
+				<FormInputValidation
+					// NTS: Passing markup as a 'text' prop feels odd.
+					text={ field.error.map( ( error, index ) => (
+						<div key={ index }>{ error }</div>
+					) ) }
+					isError
+				/>
+			) }
 		</FormFieldset>
 	);
 };

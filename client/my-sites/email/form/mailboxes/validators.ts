@@ -4,7 +4,6 @@ import { createElement } from 'react';
 import wp from 'calypso/lib/wp';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import type {
-	FieldError,
 	SingleFieldError,
 	MailboxFormFieldBase,
 } from 'calypso/my-sites/email/form/mailboxes/types';
@@ -15,7 +14,7 @@ interface Validator< T > {
 
 abstract class BaseValidator< T > implements Validator< T > {
 	async validate( field?: MailboxFormFieldBase< T > ): Promise< void > {
-		if ( ! field || field.hasError() ) {
+		if ( ! field ) {
 			return;
 		}
 
@@ -23,10 +22,20 @@ abstract class BaseValidator< T > implements Validator< T > {
 	}
 
 	abstract validateField( field: MailboxFormFieldBase< T > ): Promise< void >;
+
+	protected addError( field: MailboxFormFieldBase< T >, error: SingleFieldError ): void {
+		if ( field.error === null ) {
+			field.error = [ error ];
+		} else if ( Array.isArray( field.error ) ) {
+			field.error.push( error );
+		} else {
+			field.error = [ field.error, error ];
+		}
+	}
 }
 
 class RequiredValidator< T > extends BaseValidator< T > {
-	static getRequiredFieldError(): FieldError {
+	static getRequiredFieldError(): SingleFieldError {
 		return i18n.translate( 'This field is required.' );
 	}
 
@@ -38,13 +47,12 @@ class RequiredValidator< T > extends BaseValidator< T > {
 		const requiredFieldError = RequiredValidator.getRequiredFieldError();
 
 		if ( ! field.value ) {
-			field.error = requiredFieldError;
-
+			this.addError( field, requiredFieldError );
 			return;
 		}
 
 		if ( typeof field.value === 'string' && field.value.trim() === '' ) {
-			field.error = requiredFieldError;
+			this.addError( field, requiredFieldError );
 		}
 	}
 }
@@ -67,7 +75,7 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 		this.maximumStringLength = maximumStringLength;
 	}
 
-	static getFieldTooLongError( maximumStringLength: number ): FieldError {
+	static getFieldTooLongError( maximumStringLength: number ): SingleFieldError {
 		return i18n.translate( "This field can't be longer than %s characters.", {
 			args: maximumStringLength,
 		} );
@@ -75,7 +83,10 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( this.maximumStringLength < ( field.value?.length ?? 0 ) ) {
-			field.error = MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength );
+			this.addError(
+				field,
+				MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength )
+			);
 		}
 	}
 }
@@ -110,14 +121,14 @@ class MailboxNameValidator extends BaseValidator< string > {
 
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		const value = field.value;
-		const validationErrors: FieldError = [];
 
 		const regex = this.areApostrophesSupported
 			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
 			: /^[\da-z_-](\.?[\da-z_-])*$/i;
 
 		if ( ! regex.test( value ) ) {
-			validationErrors.push(
+			this.addError(
+				field,
 				MailboxNameValidator.getUnsupportedCharacterError( this.areApostrophesSupported )
 			);
 		}
@@ -127,13 +138,8 @@ class MailboxNameValidator extends BaseValidator< string > {
 			! this.mailboxHasDomainError &&
 			! emailValidator.validate( `${ value }@${ this.domainName }` )
 		) {
-			validationErrors.push( MailboxNameValidator.getInvalidEmailError() );
+			this.addError( field, MailboxNameValidator.getInvalidEmailError() );
 		}
-
-		field.error =
-			validationErrors.length === 0
-				? null
-				: validationErrors.map( ( error, index ) => <div key={ index }>{ error }</div> );
 	}
 }
 
@@ -169,10 +175,9 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 		}
 
 		const value = field.value;
-		const validationErrors: FieldError = [];
 
 		if ( ! emailValidator.validate( value ) ) {
-			validationErrors.push( PasswordResetEmailValidator.getInvalidEmailError() );
+			this.addError( field, PasswordResetEmailValidator.getInvalidEmailError() );
 		}
 
 		const parts = value.split( '@' );
@@ -181,13 +186,8 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 			parts.length > 1 &&
 			parts[ 1 ].toLowerCase() === this.domainName?.toLowerCase()
 		) {
-			validationErrors.push( PasswordResetEmailValidator.getSameDomainError( this.domainName ) );
+			this.addError( field, PasswordResetEmailValidator.getSameDomainError( this.domainName ) );
 		}
-
-		field.error =
-			validationErrors.length === 0
-				? null
-				: validationErrors.map( ( error, index ) => <div key={ index }>{ error }</div> );
 	}
 }
 
@@ -247,32 +247,22 @@ class PasswordValidator extends BaseValidator< string > {
 		} );
 	}
 
-	static getValidationApiErrors( errors: FieldError[] ): FieldError {
-		return (
-			<>
-				{ errors.map( ( error, index ) => (
-					<div key={ index }>{ error }</div>
-				) ) }
-			</>
-		);
-	}
-
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		const value = field.value;
-		const validationErrors: FieldError = [];
 
 		if ( this.minimumPasswordLength > value.length ) {
-			validationErrors.push(
+			this.addError(
+				field,
 				PasswordValidator.getPasswordTooShortError( this.minimumPasswordLength )
 			);
 		}
 
 		if ( PasswordValidator.maximumPasswordLength < value.length ) {
-			validationErrors.push( PasswordValidator.getPasswordTooLongError() );
+			this.addError( field, PasswordValidator.getPasswordTooLongError() );
 		}
 
 		if ( value.startsWith( ' ' ) ) {
-			validationErrors.push( PasswordValidator.getPasswordStartsWithSpaceError() );
+			this.addError( field, PasswordValidator.getPasswordStartsWithSpaceError() );
 		}
 
 		// Checks that passwords only have ASCII characters (see https://en.wikipedia.org/wiki/ASCII#Character_set)
@@ -283,23 +273,25 @@ class PasswordValidator extends BaseValidator< string > {
 				regexp.test( character )
 			);
 
-			validationErrors.push(
+			this.addError(
+				field,
 				PasswordValidator.getPasswordContainsForbiddenCharacterError( firstForbiddenCharacter )
 			);
 		}
 
 		if ( value.endsWith( ' ' ) ) {
-			validationErrors.push( PasswordValidator.getPasswordEndsWithSpaceError() );
+			this.addError( field, PasswordValidator.getPasswordEndsWithSpaceError() );
 		}
 
 		const domainParts = `${ this.domain }`.split( '.' );
 
 		if ( value.toLowerCase().includes( domainParts[ 0 ].toLowerCase() ) ) {
-			validationErrors.push( PasswordValidator.getPasswordContainsDomainError( domainParts[ 0 ] ) );
+			this.addError( field, PasswordValidator.getPasswordContainsDomainError( domainParts[ 0 ] ) );
 		}
 
 		if ( this.mailboxName && value.toLowerCase().includes( this.mailboxName.toLowerCase() ) ) {
-			validationErrors.push(
+			this.addError(
+				field,
 				PasswordValidator.getPasswordContainsMailboxNameError( this.mailboxName )
 			);
 		}
@@ -307,22 +299,12 @@ class PasswordValidator extends BaseValidator< string > {
 		try {
 			const apiResponse = await this.mockApiCall( value );
 			if ( ! apiResponse.success && apiResponse.errors ) {
-				// NTS: This is sufficient if we want to display the exact error we get from the back end. If we want to customize or need to translate, we should implement a `getValidationApiError` method.
-				validationErrors.push( ...apiResponse.errors );
+				//NTS: This is sufficient if we want to directly pass errors from the API response. If we want to perform any translations, we'll need a getApiValidationErrors method.
+				apiResponse.errors.forEach( ( error ) => this.addError( field, error ) );
 			}
 		} catch ( error ) {
-			field.error = PasswordValidator.getApiCallError();
-			return;
+			this.addError( field, PasswordValidator.getApiCallError() );
 		}
-
-		field.error =
-			validationErrors.length === 0
-				? null
-				: validationErrors.map( ( error, index ) => (
-						<>
-							<div key={ index }>{ error }</div>
-						</>
-				  ) );
 	}
 
 	private async mockApiCall(
@@ -357,7 +339,7 @@ class PasswordValidator extends BaseValidator< string > {
 		} );
 	}
 
-	static getApiCallError(): FieldError {
+	static getApiCallError(): SingleFieldError {
 		return i18n.translate( 'An error occurred while validating the password. Please try again.' );
 	}
 }
@@ -372,7 +354,10 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError( domainName: string, existingMailboxName: string ): FieldError {
+	static getExistingMailboxError(
+		domainName: string,
+		existingMailboxName: string
+	): SingleFieldError {
 		return i18n.translate(
 			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
 			{
@@ -382,7 +367,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		);
 	}
 
-	getMailboxError( fieldValue: string ) {
+	getMailboxError( fieldValue: string ): SingleFieldError {
 		return ExistingMailboxNamesValidator.getExistingMailboxError( this.domainName, fieldValue );
 	}
 
@@ -400,7 +385,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 				return;
 			}
 
-			field.error = this.getMailboxError( fieldValueLowerCased );
+			this.addError( field, this.getMailboxError( fieldValueLowerCased ) );
 		} );
 	}
 }
@@ -413,7 +398,10 @@ class PreviouslySpecifiedMailboxNamesValidator extends ExistingMailboxNamesValid
 		);
 	}
 
-	static getExistingMailboxError( domainName: string, existingMailboxName: string ): FieldError {
+	static getExistingMailboxError(
+		domainName: string,
+		existingMailboxName: string
+	): SingleFieldError {
 		return i18n.translate(
 			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} has already been specified before.',
 			{
@@ -434,7 +422,7 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 		this.provider = provider;
 	}
 
-	static getUnavailableMailboxError( mailboxName: string, message: string ): FieldError {
+	static getUnavailableMailboxError( mailboxName: string, message: string ): SingleFieldError {
 		return i18n.translate( '{{strong}}%(mailbox)s{{/strong}} is not available: %(message)s', {
 			comment:
 				'%(mailbox)s is the local part of an email address. %(message)s is a translated message that gives context to why the mailbox is not available',
@@ -486,9 +474,9 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 
 		// If mailbox name is not available ...
 		if ( status !== 200 ) {
-			field.error = MailboxNameAvailabilityValidator.getUnavailableMailboxError(
-				field.value,
-				message
+			this.addError(
+				field,
+				MailboxNameAvailabilityValidator.getUnavailableMailboxError( field.value, message )
 			);
 		}
 	}

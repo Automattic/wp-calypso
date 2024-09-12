@@ -12,8 +12,8 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
-type SingleFieldError = TranslateResult | null;
-type FieldError = SingleFieldError | SingleFieldError[];
+type SingleFieldError = TranslateResult;
+type FieldError = SingleFieldError[] | null;
 
 enum EmailProvider {
 	Google = 'Google',
@@ -38,7 +38,7 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	}
 
 	public set error( error: FieldError ) {
-		if ( ! error || ( typeof error === 'string' && error.trim() === '' ) ) {
+		if ( ! error || ( Array.isArray( error ) && error.length === 0 ) ) {
 			error = null;
 		}
 		this.fieldError = error;
