@@ -201,7 +201,7 @@ const HistoryChart = ( { data, range, height } ) => {
 		d3Select( svgRef.current ).selectAll( '*' ).remove();
 
 		const width = entry.width;
-		const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+		const margin = { top: 20, right: 0, bottom: 40, left: 50 };
 
 		const { xScale, yScale, colorScale } = createScales( data, range, margin, width, height );
 
