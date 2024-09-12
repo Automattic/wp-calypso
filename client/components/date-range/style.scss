@@ -55,6 +55,26 @@ $date-range-mobile-layout-switch: $break-small;
 	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 300px;
 	}
+
+	&.date-range__popover-inner__hasoverlay {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.date-range__controls,
+		.date-range__date-inputs,
+		.date-range__picker {
+			filter: blur(10px);
+			z-index: 0;
+		}
+
+		.date-range__popover-inner-overlay {
+			position: absolute;
+			z-index: 1;
+			height: 100%;
+		}
+
+	}
 }
 
 .date-range__controls {
