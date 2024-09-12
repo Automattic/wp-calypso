@@ -82,6 +82,11 @@
 		margin: 24px 0;
 	}
 
+	.subscriber-upload-form__progress-bar,
+	.content-upload-form__in-progress-bar {
+		height: 5px;
+	}
+
 	/* Step specific */
 	&.newsletter-importer__step-summary {
 		.importer-action-buttons__container {
