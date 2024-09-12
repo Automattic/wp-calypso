@@ -53,7 +53,7 @@ interface Step< T > {
 	content?: T;
 }
 
-interface Steps {
+export interface Steps {
 	content: Step< ContentStepContent >;
 	subscribers: Step< SubscribersStepContent >;
 	'paid-subscribers': Step< PaidSubscribersStepContent >;
