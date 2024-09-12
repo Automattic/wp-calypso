@@ -54,7 +54,9 @@ export class MailboxOperations {
 		try {
 			await this.validateForExtraItemsPurchase();
 		} catch ( e ) {
-			this.mailboxes[ 0 ].formFields.mailbox.error = i18n.translate( 'An unknown error occurred' );
+			this.mailboxes[ 0 ].formFields.mailbox.error = [
+				i18n.translate( 'An unknown error occurred' ),
+			];
 		}
 
 		this.persistMailboxesToState();
