@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { SearchableDropdown } from '@automattic/components';
 import { useDebouncedInput } from '@wordpress/compose';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { useSitePages } from '../hooks/useSitePages';
@@ -11,7 +12,16 @@ export const PageSelector = () => {
 	const pages = useSitePages( { query } );
 
 	return (
-		<>
+		<div
+			css={ {
+				display: 'flex',
+				alignItems: 'center',
+				flexGrow: 1,
+				justifyContent: 'flex-end',
+				gap: '10px',
+			} }
+		>
+			<div>{ translate( 'Page' ) }</div>
 			<SearchableDropdown
 				onFilterValueChange={ setQuery }
 				options={ pages }
@@ -29,6 +39,7 @@ export const PageSelector = () => {
 				} }
 				css={ {
 					maxWidth: '240px',
+					minWidth: '240px',
 					'.components-form-token-field__suggestions-list': { maxHeight: 'initial !important' },
 					'.components-form-token-field__suggestions-list li': { padding: '0 !important' },
 				} }
@@ -47,6 +58,6 @@ export const PageSelector = () => {
 					</div>
 				) }
 			/>
-		</>
+		</div>
 	);
 };
