@@ -3,18 +3,16 @@ import { Button, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { Controller, Control } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CredentialsFormData } from '../types';
+import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
 
-interface Props {
-	control: Control< CredentialsFormData >;
-	errors: any;
-}
-
-export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) => {
+export const SpecialInstructions: React.FC< CredentialsFormFieldProps > = ( {
+	control,
+	errors,
+} ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const [ showNotes, setShowNotes ] = useState( false );
@@ -61,7 +59,7 @@ export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) =>
 							) }
 						/>
 					</div>
-					<ErrorMessage error={ errors.notes } />
+					<ErrorMessage error={ errors?.notes } />
 					<div className="site-migration-credentials__form-note">
 						{ translate(
 							"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
