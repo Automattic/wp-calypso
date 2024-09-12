@@ -56,7 +56,10 @@ const PlanNoticeCreditUpgrade = ( {
 							args: {
 								amountInCurrency: formatCurrency(
 									planUpgradeCreditsApplicable,
-									currencyCode ?? ''
+									currencyCode ?? '',
+									{
+										isSmallestUnit: true,
+									}
 								),
 							},
 							components: {

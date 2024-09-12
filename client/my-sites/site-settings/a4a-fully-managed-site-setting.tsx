@@ -60,7 +60,7 @@ export function A4AFullyManagedSiteSetting( {
 	return (
 		<div className="site-settings__a4a-fully-managed-container">
 			<SettingsSectionHeader
-				title={ translate( 'Help Center and hosting features visibility' ) }
+				title={ translate( 'Agency settings' ) }
 				id="site-settings__a4a-fully-managed-header"
 				disabled={ disabled }
 				isSaving={ isSaving }
@@ -71,7 +71,7 @@ export function A4AFullyManagedSiteSetting( {
 				{ isDevSite ? (
 					<p className="form-setting-explanation">
 						{ translate(
-							"Clients can't access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.",
+							"Clients can't access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. You may configure access after the site is launched.",
 							{
 								components: translationComponents,
 							}

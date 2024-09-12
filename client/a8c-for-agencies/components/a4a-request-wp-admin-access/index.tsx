@@ -29,10 +29,6 @@ export function A4ARequestWPAdminAccess() {
 						'Ask the Agency owner to provide you WP-Admin access to this site in order to manage its plugins and features.'
 					) }
 				</div>
-				<div className="a4a-request-wp-admin-access__learn-more">
-					{ translate( 'Learn more about team member permissions' ) }
-				</div>
-
 				<Button
 					variant="link"
 					className="a4a-request-wp-admin-access__learn-more-button"
@@ -41,7 +37,7 @@ export function A4ARequestWPAdminAccess() {
 					target="_blank"
 				>
 					<>
-						{ translate( 'Team members Knowledge Base article' ) }
+						{ translate( 'Learn more about team member permissions' ) }
 						<Icon icon={ external } size={ 18 } />
 					</>
 				</Button>

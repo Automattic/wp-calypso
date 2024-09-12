@@ -47,6 +47,7 @@ export class DateRange extends Component {
 		renderInputs: PropTypes.func,
 		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
+		useArrowNavigation: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -60,6 +61,7 @@ export class DateRange extends Component {
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
 		displayShortcuts: false,
 		rootClass: '',
+		useArrowNavigation: false,
 	};
 
 	constructor( props ) {
@@ -508,6 +510,7 @@ export class DateRange extends Component {
 				onDateRangeChange={ this.handleCalendarChange }
 				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
+				useArrowNavigation={ this.props.useArrowNavigation }
 			/>
 		);
 	}

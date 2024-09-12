@@ -1,9 +1,8 @@
-import { Button, Gridicon, FormLabel } from '@automattic/components';
+import { Button, Gridicon, FormLabel, SearchableDropdown } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
-import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';

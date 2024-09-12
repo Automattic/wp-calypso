@@ -119,12 +119,14 @@
 
 	@include breakpoint-deprecated( ">480px" ) {
 		margin-top: 0;
+		justify-self: flex-end;
 	}
 }
 
 .payment-method-delete__button {
 	text-decoration: underline;
 	padding: 0;
+	text-align: right;
 }
 
 .payment-method-delete-dialog {
@@ -143,19 +145,11 @@
 	margin-top: 16px;
 	width: 100%;
 
-	& .components-checkbox-control [data-wp-component="HStack"] {
-		justify-content: start;
-	}
-
 	@include breakpoint-deprecated( ">480px" ) {
 		margin-left: 0;
 		margin-top: 0;
-		text-align: right;
 		width: auto;
-
-		& .components-checkbox-control [data-wp-component="HStack"] {
-			justify-content: end;
-		}
+		justify-self: flex-end;
 	}
 }
 

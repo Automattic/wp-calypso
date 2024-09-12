@@ -10,7 +10,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ post } /> Content importing was <strong>skipped!</strong>
+					<Icon icon={ post } /> Content importing was <strong>skipped</strong>
 				</p>
 			</div>
 		);
@@ -18,6 +18,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 
 	if ( status === 'done' ) {
 		const progress = cardData.progress;
+
 		return (
 			<div className="summary__content">
 				<p>We imported:</p>
