@@ -47,12 +47,16 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug, par
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
 	const locale = localeSlug ? `/${ localeSlug }` : '';
+	const framework =
+		typeof window !== 'undefined' && window.location.pathname.startsWith( '/setup' )
+			? '/setup'
+			: '/start';
 
 	const url =
-		flowName === defaultFlowName
-			? // we don't include the default flow name in the route
-			  '/start' + step + section + locale
-			: '/start' + flow + step + section + locale;
+		flowName === defaultFlowName && framework === '/start'
+			? // we don't include the default flow name in the route in /start
+			  framework + step + section + locale
+			: framework + flow + step + section + locale;
 	return addQueryArgs( params, url );
 }
 

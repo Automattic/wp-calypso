@@ -8,6 +8,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangePicker from './date-range-picker';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
+import Shortcuts from './shortcuts';
 import DateRangeTrigger from './trigger';
 
 import './style.scss';
@@ -44,7 +45,9 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
+		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
+		useArrowNavigation: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -56,7 +59,9 @@ export class DateRange extends Component {
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		displayShortcuts: false,
 		rootClass: '',
+		useArrowNavigation: false,
 	};
 
 	constructor( props ) {
@@ -106,6 +111,7 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
+			currentShortcut: '',
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -387,6 +393,22 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
 	}
 
+	handleDateRangeChange = ( startDate, endDate, shortcutId = '' ) => {
+		this.setState( {
+			startDate,
+			endDate,
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
+			currentShortcut: shortcutId,
+		} );
+		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
+	};
+
+	handleCalendarChange = ( startDate, endDate ) => {
+		// When the calendar or inputs change directly, set to custom range
+		this.handleDateRangeChange( startDate, endDate, 'custom_date_range' );
+	};
+
 	renderDateHelp() {
 		const { startDate, endDate } = this.state;
 
@@ -443,16 +465,6 @@ export class DateRange extends Component {
 			onInputFocus: this.handleInputFocus,
 		};
 
-		const onDateRangeChange = ( startDate, endDate ) => {
-			this.setState( {
-				startDate,
-				endDate,
-				textInputStartDate: this.toDateString( startDate ),
-				textInputEndDate: this.toDateString( endDate ),
-			} );
-			this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-		};
-
 		return (
 			<Popover
 				className="date-range__popover"
@@ -461,23 +473,45 @@ export class DateRange extends Component {
 				position="bottom"
 				onClose={ this.closePopoverAndCommit }
 			>
-				<div className="date-range__popover-inner">
-					<div className="date-range__controls">
-						{ this.props.renderHeader( headerProps ) }
-						{ this.renderDateHelp() }
+				<div className="date-range__popover-content">
+					<div className="date-range__popover-inner">
+						<div className="date-range__controls">
+							{ this.props.renderHeader( headerProps ) }
+							{ this.renderDateHelp() }
+						</div>
+						{ this.props.renderInputs( inputsProps ) }
+						{ this.renderDatePicker() }
 					</div>
-					{ this.props.renderInputs( inputsProps ) }
-					<DateRangePicker
-						firstSelectableDate={ this.props.firstSelectableDate }
-						lastSelectableDate={ this.props.lastSelectableDate }
-						selectedStartDate={ this.state.startDate }
-						selectedEndDate={ this.state.endDate }
-						onDateRangeChange={ onDateRangeChange }
-						focusedMonth={ this.state.focusedMonth }
-						numberOfMonths={ this.getNumberOfMonths() }
-					/>
+					{ /* Render shortcuts to the right of the calendar */ }
+					{ this.props.displayShortcuts && (
+						<div className="date-range-picker-shortcuts">
+							<Shortcuts
+								currentShortcut={ this.state.currentShortcut }
+								onClick={ this.handleDateRangeChange }
+							/>
+						</div>
+					) }
 				</div>
 			</Popover>
+		);
+	}
+
+	/**
+	 * Renders the DatePicker component
+	 * @returns {import('react').Element} the DatePicker component
+	 */
+	renderDatePicker() {
+		return (
+			<DateRangePicker
+				firstSelectableDate={ this.props.firstSelectableDate }
+				lastSelectableDate={ this.props.lastSelectableDate }
+				selectedStartDate={ this.state.startDate }
+				selectedEndDate={ this.state.endDate }
+				onDateRangeChange={ this.handleCalendarChange }
+				focusedMonth={ this.state.focusedMonth }
+				numberOfMonths={ this.getNumberOfMonths() }
+				useArrowNavigation={ this.props.useArrowNavigation }
+			/>
 		);
 	}
 

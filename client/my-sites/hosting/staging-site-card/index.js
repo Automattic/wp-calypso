@@ -503,6 +503,7 @@ export const StagingSiteCard = ( {
 	} else if ( showAddStagingSiteCard ) {
 		stagingSiteCardContent = (
 			<NewStagingSiteCardContent
+				siteId={ siteId }
 				onAddClick={ onAddClick }
 				isDevelopmentSite={ isDevelopmentSite }
 				isButtonDisabled={

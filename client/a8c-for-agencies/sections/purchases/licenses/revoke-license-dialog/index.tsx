@@ -59,7 +59,7 @@ export default function RevokeLicenseDialog( {
 
 	const revoke = useCallback(
 		( force?: boolean ) => {
-			if ( ! force && licenseKey.startsWith( 'pressable-wp' ) ) {
+			if ( ! force && licenseKey.startsWith( 'pressable-' ) ) {
 				setShowPressableConfirmationDialog( true );
 				return;
 			}

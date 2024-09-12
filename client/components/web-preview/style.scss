@@ -103,8 +103,9 @@
 	}
 }
 
-a.web-preview__external.button {
-	margin: 3px 8px;
+.web-preview__external,
+.web-preview__launch-site {
+	margin: 3px 0;
 	min-width: 120px;
 	text-align: center;
 }
@@ -119,6 +120,7 @@ a.web-preview__external.button {
 	margin-left: auto;
 	display: flex;
 	justify-content: flex-end;
+	gap: 8px;
 
 	@include break-large {
 		// Matches __device-switcher width + margin

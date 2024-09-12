@@ -16,6 +16,16 @@ const StyledLoadingScreen = styled.div`
 		font-size: 20px;
 		font-weight: 500;
 		line-height: 26px;
+		margin-bottom: 5px;
+
+		&.saved-report {
+			margin-bottom: 30px;
+		}
+	}
+
+	p {
+		font-size: 14px;
+		color: var( --studio-gray-70 );
 		margin-bottom: 30px;
 	}
 
@@ -120,8 +130,8 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const [ step, setStep ] = useState( 0 );
 
 	const heading = isSavedReport
-		? translate( "Your site's results are ready" )
-		: translate( "Testing your site's speed…" );
+		? translate( 'Your site‘s results are ready' )
+		: translate( 'Testing your site‘s speed…' );
 
 	const steps = isSavedReport
 		? [ translate( 'Getting your report…' ) ]
@@ -144,7 +154,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 		{
 			heading: translate( 'Did you know?' ),
 			description: translate(
-				"WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you'll never be surprised by extra fees."
+				'WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you‘ll never be surprised by extra fees.'
 			),
 		},
 		{
@@ -207,7 +217,8 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	return (
 		<LayoutBlock className="landing-page-header-block">
 			<StyledLoadingScreen>
-				<h2>{ heading }</h2>
+				<h2 className={ isSavedReport ? 'saved-report' : '' }>{ heading }</h2>
+				{ ! isSavedReport && <p>{ translate( 'This may take around 30 seconds.' ) }</p> }
 				{ steps.map( ( heading, index ) => (
 					<span key={ index } className={ stepStatus( index, step ) }>
 						<Gridicon icon="checkmark" size={ 18 } />

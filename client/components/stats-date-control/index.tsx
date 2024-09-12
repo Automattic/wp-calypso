@@ -146,6 +146,8 @@ const StatsDateControl = ( {
 						);
 					} }
 					rootClass="stats-date-control-picker"
+					displayShortcuts
+					useArrowNavigation
 				/>
 			) : (
 				<DateControlPicker

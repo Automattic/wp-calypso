@@ -89,7 +89,6 @@ export const CacheCard = ( {
 		return (
 			<div>
 				<Button
-					primary
 					onClick={ clearCache }
 					busy={ isClearingCache }
 					disabled={

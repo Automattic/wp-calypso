@@ -64,6 +64,16 @@ class DateRangeExample extends Component {
 
 				<h3>Custom Inputs Component</h3>
 				<Card>{ this.withCustomInputs() }</Card>
+
+				<h3>With Shortcuts Menu Displayed</h3>
+				<Card>
+					<DateRange displayShortcuts />
+				</Card>
+
+				<h3>With Arrow Navigation Enabled</h3>
+				<Card>
+					<DateRange useArrowNavigation />
+				</Card>
 			</Fragment>
 		);
 	}

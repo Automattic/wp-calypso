@@ -929,6 +929,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			oldHighResImageLoading={ oldHighResImageLoading }
 			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
+			showActiveThemeBadge={ intent !== 'build' }
 		/>
 	);
 
@@ -943,7 +944,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ handleBackClick }
+			goBack={ intent === 'update-design' ? submit : handleBackClick }
 		/>
 	);
 };

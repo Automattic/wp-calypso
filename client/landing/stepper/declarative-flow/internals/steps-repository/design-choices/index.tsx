@@ -1,7 +1,7 @@
 import {
 	getAssemblerDesign,
 	themesIllustrationImage,
-	assemblerIllustrationImage,
+	assemblerIllustrationV2Image,
 	hiBigSky,
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
@@ -89,8 +89,10 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								<DesignChoice
 									className="design-choices__design-your-own"
 									title={ translate( 'Design your own' ) }
-									description={ translate( 'Design your site with patterns, pages, styles.' ) }
-									imageSrc={ assemblerIllustrationImage }
+									description={ translate(
+										'Start from scratch, designing your site with patterns, pages, and styles.'
+									) }
+									imageSrc={ assemblerIllustrationV2Image }
 									destination="pattern-assembler"
 									onSelect={ handleSubmit }
 								/>

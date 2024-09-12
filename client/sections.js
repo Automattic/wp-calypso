@@ -253,15 +253,6 @@ const sections = [
 		isomorphic: true,
 	},
 	{
-		name: 'start-with',
-		paths: [ '/start-with' ],
-		module: 'calypso/start-with',
-		enableLoggedOut: true,
-		group: 'start-with',
-		isomorphic: true,
-		trackLoadPerformance: true,
-	},
-	{
 		name: 'jetpack-app',
 		paths: [ '/jetpack-app' ],
 		module: 'calypso/jetpack-app',
@@ -732,6 +723,12 @@ const sections = [
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring' ],
 		module: 'calypso/site-monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'site-performance',
+		paths: [ '/site-performance' ],
+		module: 'calypso/site-performance',
 		group: 'sites',
 	},
 	{
