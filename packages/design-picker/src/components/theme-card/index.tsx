@@ -2,7 +2,6 @@ import { Card, Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { forwardRef, useMemo, useRef, useState } from 'react';
-import StyleVariationBadges from '../style-variation-badges';
 import type { StyleVariation } from '../../types';
 import type { Ref } from 'react';
 import './style.scss';
@@ -63,7 +62,6 @@ const ThemeCard = forwardRef(
 			banner,
 			badge,
 			styleVariations = [],
-			selectedStyleVariation,
 			optionsMenu,
 			isActive,
 			isLoading,
@@ -71,8 +69,6 @@ const ThemeCard = forwardRef(
 			isSoftLaunched,
 			onClick,
 			onImageClick,
-			onStyleVariationClick,
-			onStyleVariationMoreClick,
 		}: ThemeCardProps,
 		forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => {
@@ -88,6 +84,7 @@ const ThemeCard = forwardRef(
 		const themeInfoClasses = clsx( 'theme-card__info', {
 			'theme-card__info--has-style-variations': styleVariations.length > 0,
 		} );
+		const shouldDisplayBadge = ! isActive && ! optionsMenu;
 
 		return (
 			<Card
@@ -145,17 +142,7 @@ const ThemeCard = forwardRef(
 						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>
-						{ ! optionsMenu && styleVariations.length > 0 && (
-							<div className="theme-card__info-style-variations">
-								<StyleVariationBadges
-									variations={ styleVariations }
-									selectedVariation={ selectedStyleVariation }
-									onMoreClick={ onStyleVariationMoreClick }
-									onClick={ onStyleVariationClick }
-								/>
-							</div>
-						) }
-						{ ! isActive && <>{ badge }</> }
+						{ shouldDisplayBadge && <div className="theme-card__info-tier-badge">{ badge }</div> }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
 						{ isActive && <ActiveBadge /> }
 					</div>

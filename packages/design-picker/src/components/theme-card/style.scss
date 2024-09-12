@@ -276,19 +276,11 @@ $theme-card-info-margin-top: 16px;
 	width: 0;
 }
 
-.theme-card__info-style-variations {
+.theme-card__info-tier-badge {
 	align-items: center;
 	display: flex;
 	font-size: 0;
-	gap: 4px;
 	height: 24px;
-
-	.style-variation__badge-wrapper,
-	.style-variation__badge-more-wrapper {
-		&:focus-visible span {
-			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2), 0 0 0 2px var(--color-primary-light);
-		}
-	}
 }
 
 .theme-card__info-options,
