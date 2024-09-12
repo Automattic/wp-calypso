@@ -252,6 +252,14 @@ export interface License {
 	quantity: number | null;
 	parentLicenseId: number | null;
 	referral: ReferralAPIResponse | null;
+	meta: LicenseMeta;
+}
+
+export interface LicenseMeta {
+	isDevSite?: boolean;
+	wasDevSite?: boolean;
+	devSitePeriodStart?: string;
+	devSitePeriodEnd?: string;
 }
 
 export interface LicenseCounts {

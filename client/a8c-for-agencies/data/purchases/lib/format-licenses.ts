@@ -1,5 +1,5 @@
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
-import type { License } from 'calypso/state/partner-portal/types';
+import type { License, LicenseMeta } from 'calypso/state/partner-portal/types';
 
 interface APILicense {
 	license_id: number;
@@ -18,6 +18,14 @@ interface APILicense {
 	quantity: number | null;
 	parent_license_id: number | null;
 	referral: ReferralAPIResponse;
+	meta: APILicenseMeta;
+}
+
+interface APILicenseMeta {
+	a4a_is_dev_site?: string;
+	a4a_was_dev_site?: string;
+	a4a_dev_site_period_end?: string;
+	a4a_dev_site_period_start?: string;
 }
 
 export default function formatLicenses( items: APILicense[] ): License[] {
@@ -38,5 +46,20 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
 		referral: item.referral,
+		meta: formatLicenseMeta( item.meta ),
 	} ) );
+}
+
+export function formatLicenseMeta( meta: APILicenseMeta = {} ): LicenseMeta {
+	const isDevSite = meta?.a4a_is_dev_site === '1' ? true : false;
+	const wasDevSite = meta?.a4a_was_dev_site === '1' ? true : false;
+	const devSitePeriodEnd = meta?.a4a_dev_site_period_end;
+	const devSitePeriodStart = meta?.a4a_dev_site_period_start;
+
+	return {
+		isDevSite,
+		wasDevSite,
+		devSitePeriodEnd, // unix timestamp
+		devSitePeriodStart, // unix timestamp
+	};
 }

@@ -33,6 +33,7 @@ import LicensesOverviewContext from '../licenses-overview/context';
 import LicenseActions from './license-actions';
 import LicenseBundleDropDown from './license-bundle-dropdown';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
+import type { LicenseMeta } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -50,6 +51,7 @@ interface Props {
 	quantity?: number | null;
 	isChildLicense?: boolean;
 	referral?: ReferralAPIResponse | null;
+	meta?: LicenseMeta;
 }
 
 export default function LicensePreview( {
@@ -66,6 +68,7 @@ export default function LicensePreview( {
 	quantity,
 	isChildLicense,
 	referral,
+	meta = {},
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -155,6 +158,9 @@ export default function LicensePreview( {
 		? translate( 'WordPress.com Site' )
 		: product;
 
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+	const isDevelopmentSite = devSitesEnabled && meta.isDevSite;
+
 	return (
 		<div
 			className={ clsx( {
@@ -176,6 +182,11 @@ export default function LicensePreview( {
 						{ isAutomatedReferralsEnabled && referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
+							</div>
+						) }
+						{ isDevelopmentSite && (
+							<div className="license-preview__badge-container">
+								<Badge type="info-purple">{ translate( 'Development' ) }</Badge>
 							</div>
 						) }
 					</span>
