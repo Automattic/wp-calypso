@@ -128,9 +128,7 @@ class MailboxNameValidator extends BaseValidator< string > {
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		const value = field.value;
 
-		const regex = this.areApostrophesSupported
-			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
-			: /^[\da-z_-](\.?[\da-z_-])*$/i;
+		const regex = this.areApostrophesSupported ? /^[\da-z._'-]*$/i : /^[\da-z._-]*$/i;
 
 		if ( ! regex.test( value ) ) {
 			this.addError(
@@ -142,7 +140,7 @@ class MailboxNameValidator extends BaseValidator< string > {
 		if (
 			this.domainName &&
 			! this.mailboxHasDomainError &&
-			! emailValidator.validate( `${ value }@${ this.domainName }` )
+			( ! emailValidator.validate( `${ value }@${ this.domainName }` ) || value.startsWith( '-' ) )
 		) {
 			this.addError( field, MailboxNameValidator.getInvalidEmailError() );
 		}
