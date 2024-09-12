@@ -146,7 +146,8 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
-		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
+		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp', 'wordpress-hosting-dev-lp' ];
+		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
 
 		return {
 			recordTracksEvent: recordTracks,
