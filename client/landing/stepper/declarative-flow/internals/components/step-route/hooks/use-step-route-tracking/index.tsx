@@ -82,7 +82,10 @@ export const useStepRouteTracking = ( {
 		// Also record page view for data and analytics
 		const pathname = window.location.pathname;
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
-		recordPageView( pathname, pageTitle );
+		const params = {
+			flow: flowName,
+		};
+		recordPageView( pathname, pageTitle, params );
 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
