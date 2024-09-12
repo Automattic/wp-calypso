@@ -106,7 +106,7 @@ const drawAxes = ( svg, xScale, yScale, data, margin, width, height ) => {
 		.call(
 			d3AxisBottom( xScale )
 				.tickValues( dates )
-				.tickFormat( d3TimeFormat( '%-m/%d' ) )
+				.tickFormat( d3TimeFormat( '%b %d' ) )
 				.tickPadding( 10 )
 		)
 		.call( ( g ) => g.select( '.domain' ).remove() );
@@ -210,7 +210,7 @@ const HistoryChart = ( { data, range, height } ) => {
 		d3Select( svgRef.current ).selectAll( '*' ).remove();
 
 		const width = entry.width;
-		const margin = { top: 20, right: 0, bottom: 40, left: 50 };
+		const margin = { top: 20, right: 20, bottom: 40, left: 50 };
 
 		const { xScale, yScale, colorScale } = createScales( data, range, margin, width, height );
 
