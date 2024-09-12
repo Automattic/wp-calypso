@@ -16,7 +16,7 @@ import {
 
 // mock modules
 jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
+	nps: () => ( {
 		// TODO: use mockResolvedValue instead when we update jest to 22.2 or later
 		submitNPSSurvey: jest.fn().mockReturnValue( Promise.resolve() ),
 		dismissNPSSurvey: jest.fn().mockReturnValue( Promise.resolve() ),
