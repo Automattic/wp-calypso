@@ -42,7 +42,7 @@ function getStepTitle( importerStatus: StepStatus ) {
 	return 'Nothing to import';
 }
 
-export default function Summary( { cardData, selectedSite }: StepProps< Steps > ) {
+export default function Summary( { cardData, selectedSite }: StepProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 	const importerStatus = getImporterStatus( cardData );
 
