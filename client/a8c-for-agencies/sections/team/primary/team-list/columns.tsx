@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { Badge, Button, Gravatar, Gridicon } from '@automattic/components';
 import { Icon, moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -10,6 +11,8 @@ import {
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { OWNER_ROLE } from '../../constants';
 import { TeamMember } from '../../types';
 
@@ -138,6 +141,12 @@ export const ActionColumn = ( {
 		[ onMenuSelected ]
 	);
 
+	const currentUser = useSelector( getCurrentUser );
+
+	const agency = useSelector( getActiveAgency );
+
+	const isSelfAction = currentUser.email === member.email;
+
 	const actions = useMemo( () => {
 		return member.status === 'pending' || member.status === 'expired'
 			? [
@@ -180,20 +189,42 @@ export const ActionColumn = ( {
 						className: 'is-danger',
 						isEnabled: canRemove,
 						confirmationDialog: {
-							title: translate( 'Delete user' ),
-							children: translate( 'Are you sure you want to delete {{b}}%(memberName)s{{/b}}?', {
-								args: { memberName: member.displayName ?? member.email },
-								components: {
-									b: <b />,
-								},
-								comment: '%(memberName)s is the member name',
-							} ),
-							ctaLabel: translate( 'Delete user' ),
+							title: isSelfAction
+								? ( translate( 'Are you sure you want to leave %(agencyName)s?', {
+										args: { agencyName: agency?.name ?? '' },
+										comment: '%(agencyName)s is the agency name',
+								  } ) as string )
+								: translate( 'Delete user' ),
+							children: isSelfAction
+								? translate(
+										"By proceeding, you'll lose management access of all sites that belong to this agency and you will be removed from this dashboard. {{br/}}The agency owner will need to re-invite you if you wish to gain access again.",
+										{
+											components: {
+												br: <br />,
+											},
+										}
+								  )
+								: translate( 'Are you sure you want to delete {{b}}%(memberName)s{{/b}}?', {
+										args: { memberName: member.displayName ?? member.email },
+										components: {
+											b: <b />,
+										},
+										comment: '%(memberName)s is the member name',
+								  } ),
+							ctaLabel: isSelfAction ? translate( 'Leave agency' ) : translate( 'Delete user' ),
 							isDestructive: true,
 						},
 					},
 			  ];
-	}, [ member, canRemove, translate ] );
+	}, [
+		member.status,
+		member.displayName,
+		member.email,
+		translate,
+		canRemove,
+		isSelfAction,
+		agency?.name,
+	] );
 
 	// We don't show the action menu when the member is the owner of the team.
 	if ( member.role === OWNER_ROLE ) {

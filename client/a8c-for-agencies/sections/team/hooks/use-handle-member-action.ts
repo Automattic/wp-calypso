@@ -1,9 +1,11 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
 import useRemoveMemberMutation from 'calypso/a8c-for-agencies/data/team/use-remove-member';
 import useResendMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-resend-member-invite';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { TeamMember } from '../types';
 
@@ -20,6 +22,8 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
 	const { mutate: removeMember } = useRemoveMemberMutation();
+
+	const currentUser = useSelector( getCurrentUser );
 
 	return useCallback(
 		( action: string, item: TeamMember, callback?: () => void ) => {
@@ -84,6 +88,11 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 					{ id: item.id },
 					{
 						onSuccess: () => {
+							if ( item.email === currentUser?.email ) {
+								page( 'https://automattic.com/for/agencies' );
+								return;
+							}
+
 							dispatch(
 								successNotice( translate( 'The member has been successfully removed.' ), {
 									id: 'remove-user-success',
