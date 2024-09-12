@@ -1,5 +1,3 @@
-
-
 .card.nps-survey {
 	margin: 0;
 	padding: 0;
@@ -13,7 +11,7 @@
 	padding: 16px;
 	padding-right: 36px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 24px;
 		padding-right: 48px;
 	}
@@ -21,7 +19,7 @@
 
 .nps-survey__buttons {
 	padding: 16px 16px 7px;
-	transform: translateY( -25px );
+	transform: translateY(-25px);
 	transition: transform 0.1s ease-in;
 }
 
@@ -45,25 +43,23 @@
 
 .nps-survey.is-recommendation-selected {
 	.nps-survey__buttons {
-		//height: 75px;
-		transform: translateY( 0 );
+		transform: translateY(0);
 	}
 
 	.button.nps-survey__finish-button {
 		opacity: 1;
-		//transform: translateY(0);
 		visibility: visible;
 	}
 }
 
 .nps-survey__recommendation-select-wrapper {
-	background-color: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-10 );
-	border-bottom: 1px solid var( --color-neutral-10 );
+	background-color: var(--color-neutral-0);
+	border-top: 1px solid var(--color-neutral-10);
+	border-bottom: 1px solid var(--color-neutral-10);
 	padding: 16px 0;
 	text-align: center;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 16px;
 	}
 }
@@ -78,13 +74,13 @@
 	padding: 0 3px;
 	margin-bottom: 8px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0 6px;
 	}
 }
 
 .nps-survey__scale-labels {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	text-align: left;
 }
 
@@ -97,15 +93,15 @@
 }
 
 .nps-survey__recommendation-option.is-selected {
-	color: var( --color-primary-40 );
+	color: var(--color-primary-40);
 	font-weight: 600;
 }
 
-.nps-survey__recommendation-option input[type='radio'] {
+.nps-survey__recommendation-option input[type="radio"] {
 	margin: 0 2px;
 }
 
-.nps-survey__recommendation-option input[type='radio'] + span {
+.nps-survey__recommendation-option input[type="radio"] + span {
 	clear: both;
 	margin-left: 0;
 	text-align: center;
@@ -117,7 +113,7 @@
 	top: 0;
 }
 .nps-survey__close-button.button.is-borderless {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .nps-survey__promotion {
