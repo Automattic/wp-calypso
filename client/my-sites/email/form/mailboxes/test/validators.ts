@@ -34,7 +34,6 @@ type VisibleOrRequired = Partial<
 	Pick< MailboxFormFieldBase< unknown >, 'isVisible' | 'isRequired' >
 >;
 type FieldValue = string | boolean | VisibleOrRequired | null;
-type NonNullFieldError = Exclude< FieldError, null >;
 type GoogleTestDataType = Partial< Record< GoogleFormFieldNames, FieldValue > >;
 type TitanTestDataType = Partial< Record< TitanFormFieldNames, FieldValue > >;
 
@@ -43,7 +42,7 @@ const provideEmailProviderTestData = (
 	title: string,
 	existingMailboxNames: string[],
 	fieldValueMap: Partial< Record< FormFieldNames, FieldValue > >,
-	expectedFieldErrorMap: Partial< Record< FormFieldNames, NonNullFieldError > >
+	expectedFieldErrorMap: Partial< Record< FormFieldNames, FieldError > >
 ) => {
 	return {
 		provider,
@@ -57,7 +56,7 @@ const provideEmailProviderTestData = (
 const provideGoogleTestData = (
 	title: string,
 	fieldValueMap: GoogleTestDataType,
-	expectedFieldErrorMap: Partial< Record< GoogleFormFieldNames, NonNullFieldError > > = {},
+	expectedFieldErrorMap: Partial< Record< GoogleFormFieldNames, FieldError > > = {},
 	existingMailboxNames: string[] = []
 ) =>
 	provideEmailProviderTestData(
@@ -71,7 +70,7 @@ const provideGoogleTestData = (
 const provideTitanTestData = (
 	title: string,
 	fieldValueMap: TitanTestDataType,
-	expectedFieldErrorMap: Partial< Record< TitanFormFieldNames, NonNullFieldError > > = {},
+	expectedFieldErrorMap: Partial< Record< TitanFormFieldNames, FieldError > > = {},
 	existingMailboxNames: string[] = []
 ) =>
 	provideEmailProviderTestData(
@@ -113,30 +112,31 @@ const finalTestDataForAllCases = [
 	provideGoogleTestData(
 		'Empty value for the password field should fail validation',
 		createTestDataForGoogle( { [ FIELD_PASSWORD ]: null } ),
-		{ [ FIELD_PASSWORD ]: RequiredValidator.getRequiredFieldError() }
+		{ [ FIELD_PASSWORD ]: [ RequiredValidator.getRequiredFieldError() ] }
 	),
 	provideGoogleTestData(
 		'Empty value for the recovery email field should fail validation',
 		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: null } ),
-		{ [ FIELD_PASSWORD_RESET_EMAIL ]: RequiredValidator.getRequiredFieldError() }
+		{ [ FIELD_PASSWORD_RESET_EMAIL ]: [ RequiredValidator.getRequiredFieldError() ] }
 	),
 	provideGoogleTestData(
 		'Alternative email on the same domain should fail validation',
 		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]:
+			[ FIELD_PASSWORD_RESET_EMAIL ]: [
 				PasswordResetEmailValidator.getSameDomainError( 'example.com' ),
+			],
 		}
 	),
 	provideTitanTestData(
 		'Empty value for the mailbox field should fail validation',
 		createTestDataForTitan( { [ FIELD_MAILBOX ]: null } ),
-		{ [ FIELD_MAILBOX ]: RequiredValidator.getRequiredFieldError() }
+		{ [ FIELD_MAILBOX ]: [ RequiredValidator.getRequiredFieldError() ] }
 	),
 	provideTitanTestData(
 		'Empty value for the name field should fail validation',
 		createTestDataForTitan( { [ FIELD_NAME ]: null } ),
-		{ [ FIELD_NAME ]: RequiredValidator.getRequiredFieldError() }
+		{ [ FIELD_NAME ]: [ RequiredValidator.getRequiredFieldError() ] }
 	),
 	provideTitanTestData(
 		'Empty value for required but invisible fields (i.e. optional at provider, or generated later ) should pass',
@@ -147,16 +147,15 @@ const finalTestDataForAllCases = [
 		createTestDataForGoogle( {
 			[ FIELD_FIRSTNAME ]: 'j1gDpIBK7AQMiBqKFTQimlBakiGOKh23xkQyaDRxVuVEZCZLe1a0T4uVXXHCD',
 		} ),
-		{ [ FIELD_FIRSTNAME ]: MaximumStringLengthValidator.getFieldTooLongError( 60 ) }
+		{ [ FIELD_FIRSTNAME ]: [ MaximumStringLengthValidator.getFieldTooLongError( 60 ) ] }
 	),
 	provideGoogleTestData(
 		'Existing mailboxes should fail validation',
 		createTestDataForGoogle(),
 		{
-			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(
-				'example.com',
-				'info'
-			),
+			[ FIELD_MAILBOX ]: [
+				ExistingMailboxNamesValidator.getExistingMailboxError( 'example.com', 'info' ),
+			],
 		},
 		[ 'info' ]
 	),
@@ -164,44 +163,44 @@ const finalTestDataForAllCases = [
 		'Existing mailboxes should fail validation',
 		createTestDataForTitan(),
 		{
-			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(
-				'example.com',
-				'info'
-			),
+			[ FIELD_MAILBOX ]: [
+				ExistingMailboxNamesValidator.getExistingMailboxError( 'example.com', 'info' ),
+			],
 		},
 		[ 'info' ]
 	),
 	provideGoogleTestData(
-		'Mailbox names with invalid characters should fail validation',
+		'Mailbox names with invalid characters should fail validation (1). Always unsupported characters',
 		createTestDataForGoogle( {
-			[ FIELD_MAILBOX ]: 'user @',
+			[ FIELD_MAILBOX ]: 'user`',
 		} ),
 		{
-			[ FIELD_MAILBOX ]: MailboxNameValidator.getUnsupportedCharacterError( true ),
+			[ FIELD_MAILBOX ]: [ MailboxNameValidator.getUnsupportedCharacterError( true ) ],
 		}
 	),
 	provideTitanTestData(
-		'Mailbox names with invalid characters should fail validation',
+		'Mailbox names with invalid characters should fail validation (2). Apostrophes (when not supported)',
 		createTestDataForTitan( {
-			[ FIELD_MAILBOX ]: 'user¨" +',
+			[ FIELD_MAILBOX ]: "user'",
 		} ),
 		{
-			[ FIELD_MAILBOX ]: MailboxNameValidator.getUnsupportedCharacterError( false ),
+			[ FIELD_MAILBOX ]: [ MailboxNameValidator.getUnsupportedCharacterError( false ) ],
 		}
 	),
 	provideTitanTestData(
 		'Invalid Alternative email should fail validation',
 		createTestDataForTitan( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@me-again@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]: PasswordResetEmailValidator.getInvalidEmailError(),
+			[ FIELD_PASSWORD_RESET_EMAIL ]: [ PasswordResetEmailValidator.getInvalidEmailError() ],
 		}
 	),
 	provideTitanTestData(
 		'Alternative email on the same domain should fail validation',
 		createTestDataForTitan( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]:
+			[ FIELD_PASSWORD_RESET_EMAIL ]: [
 				PasswordResetEmailValidator.getSameDomainError( 'example.com' ),
+			],
 		}
 	),
 	provideGoogleTestData(
@@ -210,7 +209,7 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: 'some-passwo', // a character short
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordTooShortError( 12 ),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordTooShortError( 12 ) ],
 		}
 	),
 	provideTitanTestData(
@@ -219,7 +218,7 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: 'my-passw', // 2 characters short
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordTooShortError( 10 ),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordTooShortError( 10 ) ],
 		}
 	),
 	provideGoogleTestData(
@@ -229,7 +228,7 @@ const finalTestDataForAllCases = [
 				'aqCmVMCbN8ECyK3MO0WPtnEM20B54utnpmzWIsZkz6THGpxy6nWMYqnVNrWcg1jKFNSh7RhUweBIcRlSGmyr9JIE6Di8rCcT9UJX4', // a character too long
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordTooLongError(),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordTooLongError() ],
 		}
 	),
 	provideTitanTestData(
@@ -239,7 +238,7 @@ const finalTestDataForAllCases = [
 				'aqCmVMCbN8ECyK3MO0WPtnEM20B54utnpmzWIsZkz6THGpxy6nWMYqnVNrWcg1jKFNSh7RhUweBIcRlSGmyr9JIE6Di8rCcT9UJX4.', // 2 characters too long
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordTooLongError(),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordTooLongError() ],
 		}
 	),
 	provideGoogleTestData(
@@ -248,7 +247,7 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: ' some-password',
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordStartsWithSpaceError(),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordStartsWithSpaceError() ],
 		}
 	),
 	provideTitanTestData(
@@ -257,7 +256,7 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: '  my-password',
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordStartsWithSpaceError(),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordStartsWithSpaceError() ],
 		}
 	),
 	provideGoogleTestData(
@@ -266,7 +265,7 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: 'some-password ',
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordEndsWithSpaceError(),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordEndsWithSpaceError() ],
 		}
 	),
 	provideTitanTestData(
@@ -275,7 +274,7 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: 'my-password  ',
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordEndsWithSpaceError(),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordEndsWithSpaceError() ],
 		}
 	),
 	provideGoogleTestData(
@@ -284,16 +283,16 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: 'some-passwor₦d',
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordContainsForbiddenCharacterError( '₦' ),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordContainsForbiddenCharacterError( '₦' ) ],
 		}
 	),
 	provideTitanTestData(
 		'Passwords must follow the approved pattern or fail validation (5). Invalid character.',
 		createTestDataForTitan( {
-			[ FIELD_PASSWORD ]: 'my-₧assword  ',
+			[ FIELD_PASSWORD ]: 'my-₧assword',
 		} ),
 		{
-			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordContainsForbiddenCharacterError( '₧' ),
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordContainsForbiddenCharacterError( '₧' ) ],
 		}
 	),
 ];
@@ -387,10 +386,12 @@ describe( 'Mailbox on demand form validation', () => {
 				[ FIELD_MAILBOX ]: 'existing',
 			} ),
 			{
-				[ FIELD_MAILBOX ]: MailboxNameAvailabilityValidator.getUnavailableMailboxError(
-					'existing',
-					'existing exists as email account'
-				),
+				[ FIELD_MAILBOX ]: [
+					MailboxNameAvailabilityValidator.getUnavailableMailboxError(
+						'existing',
+						'existing exists as email account'
+					),
+				],
 			}
 		),
 	];
