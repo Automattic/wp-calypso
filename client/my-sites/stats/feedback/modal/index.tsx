@@ -25,17 +25,6 @@ const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBA
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
 const FEEDBACK_THROTTLE_SUBMISSION_DELAY = 60 * 5; // 5 minutes
 
-function useFeedbackHibernationMutation( siteId: number ) {
-	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
-		siteId,
-		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
-		'postponed',
-		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
-	);
-
-	return { updateFeedbackHibernationPeriod };
-}
-
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -54,7 +43,12 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		FEEDBACK_THROTTLE_SUBMISSION_DELAY
 	);
 
-	const { updateFeedbackHibernationPeriod } = useFeedbackHibernationMutation( siteId );
+	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
+	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
