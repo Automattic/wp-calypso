@@ -726,6 +726,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'site-performance',
+		paths: [ '/site-performance' ],
+		module: 'calypso/site-performance',
+		group: 'sites',
+	},
+	{
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
 		module: 'calypso/site-logs',

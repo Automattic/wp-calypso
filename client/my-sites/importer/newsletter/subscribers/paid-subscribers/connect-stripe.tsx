@@ -37,6 +37,11 @@ export default function ConnectStripe( {
 
 	return (
 		<>
+			<h2>Do you have paid subscribers?</h2>
+			<p>
+				To your migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
+				connecting <strong>the same Stripe account</strong> you use with Substack.
+			</p>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
 					primary
