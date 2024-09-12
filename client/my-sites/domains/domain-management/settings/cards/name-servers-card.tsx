@@ -142,7 +142,7 @@ const NameServersCard = ( {
 		let notice;
 		if ( hasWpcomNameservers() ) {
 			notice = translate(
-				'Please do not set WordPress.com nameservers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
+				'Please do not set WordPress.com name servers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
 				{ components: { link } }
 			);
 		} else if ( ! onlyCloudflareNameservers() ) {
