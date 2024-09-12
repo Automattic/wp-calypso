@@ -259,7 +259,9 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
 			FEATURE_STATS_PAID,
-			FEATURE_SHARES_SOCIAL_MEDIA_JP,
+			...( isAssignedToSimplifiedFeaturesGridExperiment()
+				? [ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]
+				: [ FEATURE_SHARES_SOCIAL_MEDIA_JP ] ),
 			FEATURE_SEO_JP,
 			FEATURE_VIDEOPRESS_JP,
 			FEATURE_PREMIUM_CONTENT_JP,
@@ -269,9 +271,6 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_DONATIONS_AND_TIPS_JP,
 			FEATURE_PAYMENT_BUTTONS_JP,
 			FEATURE_PAYPAL_JP,
-			...( isAssignedToSimplifiedFeaturesGridExperiment()
-				? [ FEATURE_UNLTD_SOCIAL_MEDIA_JP, FEATURE_CONNECT_ANALYTICS ]
-				: [] ),
 		],
 	},
 	[ FEATURE_GROUP_YOUR_STORE ]: {
