@@ -12,6 +12,7 @@ import {
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getThemeType, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -39,7 +40,11 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	if ( type === DOT_ORG_THEME ) {
-		return siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
+		return (
+			siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ) ||
+			// Atomic sites are tested above through the features system
+			isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+		);
 	}
 
 	if ( type === BUNDLED_THEME ) {
