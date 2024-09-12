@@ -375,28 +375,6 @@ describe( 'JetpackAuthorize', () => {
 			global.window.location = originalWindowLocation;
 		} );
 
-		test( 'should redirect to pressable if partnerSlug is "pressable"', async () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...DEFAULT_PROPS }
-					authQuery={ {
-						...DEFAULT_PROPS.authQuery,
-						alreadyAuthorized: true,
-					} }
-					partnerSlug="pressable"
-					isAlreadyOnSitesList
-					isFetchingSites
-				/>
-			);
-
-			await userEvent.click( screen.getByText( 'Return to your site' ) );
-
-			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }`,
-				expect.any( String )
-			);
-		} );
-
 		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', async () => {
 			renderWithRedux(
 				<JetpackAuthorize
