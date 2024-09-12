@@ -1,3 +1,4 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
 import {
@@ -21,6 +22,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	...metrics
 } ) => {
 	const translate = useTranslate();
+	const isMobile = ! useDesktopBreakpoint();
 
 	if ( ! activeTab ) {
 		return null;
@@ -62,9 +64,9 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
-	// last 8 weeks only
-	metricsData = metricsData.slice( -8 );
-	dates = dates.slice( -8 );
+	const weeksToShow = isMobile ? 6 : 8;
+	metricsData = metricsData.slice( -weeksToShow );
+	dates = dates.slice( -weeksToShow );
 
 	// the comparison is inverse here because the last value is the most recent
 	const positiveTendency = metricsData[ metricsData.length - 1 ] < metricsData[ 0 ];
