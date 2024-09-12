@@ -108,6 +108,15 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.md-code {
+				border: 1px solid var(--studio-gray-5);
+				background: var(--studio-gray-0);
+				padding: 2px 4px;
+				border-radius: 4px;
+				font-family: monospace;
+				font-size: $font-body-small;
+			}
+
 			.header-code {
 				color: #3858e9;
 			}
