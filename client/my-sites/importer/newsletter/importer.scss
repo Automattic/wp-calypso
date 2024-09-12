@@ -85,6 +85,7 @@
 	.subscriber-upload-form__progress-bar,
 	.content-upload-form__in-progress-bar {
 		height: 5px;
+		border-radius: 3px;
 	}
 
 	/* Step specific */
@@ -113,6 +114,10 @@
 		border-color: var(--color-neutral-70);
 		transform: translate3d(0, -1px, 0);
 		box-shadow: 0 2px 4px var(--color-neutral-10);
+	}
+
+	p {
+		margin-bottom: 12px;
 	}
 }
 
