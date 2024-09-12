@@ -125,12 +125,21 @@ const createShapePath = ( item, xScale, yScale, range ) => {
 	const y = yScale( item.value );
 	const size = 7;
 
+	const cornerRadius = 3;
 	if ( item.value < range[ 0 ] ) {
 		return `M${ x },${ y }m-${ size },0a${ size },${ size } 0 1,0 ${
 			2 * size
 		},0a${ size },${ size } 0 1,0 ${ -2 * size },0Z`; // Circle
 	} else if ( item.value >= range[ 1 ] ) {
-		return `M${ x - size },${ y - size }h${ 2 * size }v${ 2 * size }h${ -2 * size }Z`; // Square
+		return `M${ x - size + cornerRadius },${ y - size }
+            h${ size * 2 - cornerRadius * 2 }
+            a${ cornerRadius },${ cornerRadius } 0 0 1 ${ cornerRadius },${ cornerRadius }
+            v${ size * 2 - cornerRadius * 2 }
+            a${ cornerRadius },${ cornerRadius } 0 0 1 -${ cornerRadius },${ cornerRadius }
+            h-${ size * 2 - cornerRadius * 2 }
+            a${ cornerRadius },${ cornerRadius } 0 0 1 -${ cornerRadius },-${ cornerRadius }
+            v-${ size * 2 - cornerRadius * 2 }
+            a${ cornerRadius },${ cornerRadius } 0 0 1 ${ cornerRadius },-${ cornerRadius }Z`; // Square
 	}
 	return `M${ x - 2 - size },${ y + size }L${ x + 2 + size },${ y + size }L${ x },${ y - size }Z`; // Triangle
 };
