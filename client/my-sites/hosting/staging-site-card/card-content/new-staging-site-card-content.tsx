@@ -83,7 +83,10 @@ export const NewStagingSiteCardContent = ( {
 								{
 									components: {
 										a: (
-											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
+											<InlineSupportLink
+												supportContext="staging-to-production-sync"
+												showIcon={ false }
+											/>
 										),
 									},
 								}
