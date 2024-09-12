@@ -1,4 +1,4 @@
-import ImporterLogo from '../importer-logo';
+import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 
 import './logo-chain.scss';
 
