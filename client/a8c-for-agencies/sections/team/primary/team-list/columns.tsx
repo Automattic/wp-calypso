@@ -228,8 +228,10 @@ export const ActionColumn = ( {
 		agency?.name,
 	] );
 
+	const activeActions = actions.filter( ( { isEnabled } ) => isEnabled );
+
 	// We don't show the action menu when the member is the owner of the team.
-	if ( member.role === OWNER_ROLE || actions.length === 0 ) {
+	if ( member.role === OWNER_ROLE || activeActions.length === 0 ) {
 		return null;
 	}
 
@@ -245,19 +247,17 @@ export const ActionColumn = ( {
 				onClose={ onCloseMenu }
 				position="bottom left"
 			>
-				{ actions
-					.filter( ( { isEnabled } ) => isEnabled )
-					.map( ( action ) => (
-						<PopoverMenuItem
-							key={ action.name }
-							onClick={ () =>
-								onSelect( { name: action.name, confirmation: action.confirmationDialog } )
-							}
-							className={ clsx( 'team-list__action-menu-item', action.className ) }
-						>
-							{ action.label }
-						</PopoverMenuItem>
-					) ) }
+				{ activeActions.map( ( action ) => (
+					<PopoverMenuItem
+						key={ action.name }
+						onClick={ () =>
+							onSelect( { name: action.name, confirmation: action.confirmationDialog } )
+						}
+						className={ clsx( 'team-list__action-menu-item', action.className ) }
+					>
+						{ action.label }
+					</PopoverMenuItem>
+				) ) }
 			</PopoverMenu>
 
 			{ confirmationDialog && <A4AConfirmationDialog { ...confirmationDialog } /> }
