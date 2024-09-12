@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -155,15 +156,27 @@ const EducationFooter = () => {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
 	const dispatch = useDispatch();
+	const { openArticleInHelpCenter } = useOpenArticleInHelpCenter();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const onClickLinkCard = useCallback(
-		( content_type: string ) => {
+		( content_type: string, url: string ) => ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_educational_content_click', { content_type } )
 			);
+			if ( isLoggedIn ) {
+				e.preventDefault();
+				openArticleInHelpCenter( url );
+			}
 		},
-		[ dispatch ]
+		[ dispatch, openArticleInHelpCenter ]
 	);
+
+	const websiteBuildingLink = localizeUrl( 'https://wordpress.com/support/plugins/' );
+	const customizationLink = localizeUrl(
+		'https://wordpress.com/support/plugins/install-a-plugin/'
+	);
+	const seoLink = localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' );
 
 	return (
 		<EducationFooterContainer>
@@ -173,8 +186,6 @@ const EducationFooter = () => {
 			/>
 			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
-					external
-					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
 							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
@@ -182,13 +193,11 @@ const EducationFooter = () => {
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
+					url={ websiteBuildingLink }
 					border="var(--studio-gray-5)"
-					onClick={ () => onClickLinkCard( 'website_building' ) }
+					onClick={ onClickLinkCard( 'website_building', websiteBuildingLink ) }
 				/>
 				<LinkCard
-					external
-					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
 							{ __(
@@ -198,13 +207,11 @@ const EducationFooter = () => {
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ) }
+					url={ customizationLink }
 					border="var(--studio-gray-5)"
-					onClick={ () => onClickLinkCard( 'customization' ) }
+					onClick={ onClickLinkCard( 'customization', customizationLink ) }
 				/>
 				<LinkCard
-					external
-					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
 							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
@@ -212,9 +219,9 @@ const EducationFooter = () => {
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ) }
+					url={ seoLink }
 					border="var(--studio-gray-5)"
-					onClick={ () => onClickLinkCard( 'seo' ) }
+					onClick={ onClickLinkCard( 'seo', seoLink ) }
 				/>
 			</ThreeColumnContainer>
 		</EducationFooterContainer>
@@ -224,12 +231,7 @@ const EducationFooter = () => {
 function ReadMoreLink() {
 	const { __ } = useI18n();
 
-	return (
-		<CardText color="var(--studio-blue-50)">
-			{ __( 'Read More' ) }
-			<Gridicon icon="external" size={ 12 } />
-		</CardText>
-	);
+	return <CardText color="var(--studio-blue-50)">{ __( 'Learn more' ) }</CardText>;
 }
 
 export default EducationFooter;
