@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-import wpcom from 'calypso/lib/wp';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
