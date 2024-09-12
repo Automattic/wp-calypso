@@ -1,8 +1,10 @@
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
@@ -11,11 +13,6 @@ import {
 	sendNpsSurveyFeedbackSuccess,
 	sendNpsSurveyFeedbackFailure,
 } from '../actions';
-import {
-	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
-	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
-	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
 
 // mock modules
 jest.mock( 'calypso/lib/wp', () => ( {
