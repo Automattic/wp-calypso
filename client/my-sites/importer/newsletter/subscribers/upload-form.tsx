@@ -82,7 +82,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 				<DropZone onFilesDrop={ onFileSelect } />
 				<FilePicker accept="text/csv" onPick={ onFileSelect } multiple={ false }>
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-					{ ! selectedFile && <p>Drag a file, or click to upload a file.</p> }
+					{ ! selectedFile && <p>Drag a file here, or click to upload a file</p> }
 					{ selectedFile && (
 						<p>
 							To replace this <em className="file-name">{ selectedFile?.name }</em>
