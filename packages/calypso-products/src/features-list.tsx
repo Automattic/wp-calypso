@@ -2130,7 +2130,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
 		getTitle: () =>
 			isAssignedToSimplifiedFeaturesGridExperiment()
-				? i18n.translate( 'Min/max Quantities' )
+				? i18n.translate( 'Min/Max Quantities' )
 				: i18n.translate( 'Min/max order quantities' ),
 		getDescription: () =>
 			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
@@ -2570,7 +2570,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_GIFT_CARDS ]: {
 		getSlug: () => FEATURE_GIFT_CARDS,
-		getTitle: () => i18n.translate( 'Gift cards' ),
+		getTitle: () =>
+			isAssignedToSimplifiedFeaturesGridExperiment()
+				? i18n.translate( 'Gift Cards' )
+				: i18n.translate( 'Gift cards' ),
 		getDescription: () =>
 			i18n.translate( 'Offer multi-purpose gift cards that customers can redeem online.' ),
 	},
