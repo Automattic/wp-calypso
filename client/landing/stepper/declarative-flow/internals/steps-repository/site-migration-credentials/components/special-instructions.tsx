@@ -32,7 +32,7 @@ export const SpecialInstructions: React.FC< CredentialsFormFieldProps > = ( {
 
 	return (
 		<div className="site-migration-credentials__special-instructions">
-			<Button onClick={ () => toggleShowNotes() } data-testid="special-instructions">
+			<Button onClick={ () => toggleShowNotes() }>
 				{ translate( 'Special instructions' ) }
 				<Icon
 					icon={ showNotes ? chevronUp : chevronDown }

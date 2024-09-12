@@ -110,7 +110,7 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
-			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			const expandNotesButton = screen.getByRole( 'button', { name: 'Special instructions' } );
 			await userEvent.click( expandNotesButton );
 
 			const addressInput = screen.getByLabelText( /Site address/ );
@@ -179,7 +179,7 @@ describe( 'SiteMigrationCredentials', () => {
 				isBackupRequest ? /Backup file location/ : /Site address/
 			);
 
-			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			const expandNotesButton = screen.getByRole( 'button', { name: 'Special instructions' } );
 			await userEvent.click( expandNotesButton );
 
 			const notesInput = screen.getByTestId( 'special-instructions-textarea' );
@@ -288,7 +288,7 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
-			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			const expandNotesButton = screen.getByRole( 'button', { name: 'Special instructions' } );
 			await userEvent.click( expandNotesButton );
 
 			await userEvent.type( screen.getByLabelText( /Site address/ ), 'test.com' );
