@@ -3,7 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useLeadMutation } from 'calypso/data/site-profiler/use-lead-query';
-import { MessageDisplay } from 'calypso/performance-profiler/components/message-display';
+import {
+	MessageDisplay,
+	ErrorSecondLine,
+} from 'calypso/performance-profiler/components/message-display';
 
 type WeeklyReportProps = {
 	url: string;
@@ -59,12 +62,6 @@ const LoaderText = styled.span`
 			-webkit-transform: rotate( 360deg );
 		}
 	}
-`;
-
-const ErrorSecondLine = styled.span`
-	color: var( --studio-red-5 );
-	font-weight: 400;
-	line-height: 20px;
 `;
 
 export const WeeklyReport = ( props: WeeklyReportProps ) => {
@@ -127,7 +124,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 					displayBadge
 					title={ translate( 'You’re all set!' ) }
 					message={ translate(
-						"We'll send you a weekly performance report for {{strong}}%s{{/strong}} so you can keep an eye on your site's speed. The first email is on it's way now.",
+						'We‘ll send you a weekly performance report for {{strong}}%s{{/strong}} so you can keep an eye on your site‘s speed. The first email is on it‘s way now.',
 						{ args: [ siteUrl.host ], components: { strong: <strong /> } }
 					) }
 					ctaText={ translate( '← Back to speed test' ) }

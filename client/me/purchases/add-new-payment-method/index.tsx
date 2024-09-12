@@ -5,6 +5,7 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
@@ -28,7 +29,6 @@ function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
 	const addPaymentMethodTitle = String( titles.addPaymentMethod );
 	const currency = useSelector( getCurrentUserCurrencyCode );
-
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
@@ -87,9 +87,18 @@ function AddNewPaymentMethod() {
 
 export default function AccountLevelAddNewPaymentMethodWrapper() {
 	const locale = useSelector( getCurrentUserLocale );
+
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
 			<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+				{
+					// QueryProducts added to ensure currency-code state gets populated for usage of getCurrentUserCurrencyCode
+					// Returning a couple of standard products to speed up the render time and ensure redundancy
+					// We only need one to get the currency code into state
+				 }
+				<QueryProducts
+					productSlugList={ [ 'value_bundle', 'personal-bundle', 'business-bundle' ] }
+				/>
 				<AddNewPaymentMethod />
 			</RazorpayHookProvider>
 		</StripeHookProvider>

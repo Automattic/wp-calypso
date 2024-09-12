@@ -1,20 +1,18 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
-import type { SiteDetails } from '@automattic/data-stores';
+import { StepProps } from './types';
 
-type Props = {
-	cardData: any;
-	selectedSite: SiteDetails;
-};
-
-export default function Summary( { cardData, selectedSite }: Props ) {
+export default function Summary( { cardData, selectedSite }: StepProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
 		if ( contentStatus === 'done' && subscriberStatue === 'done' ) {
 			return true;
 		}
+
 		if ( contentStatus === 'done' && subscriberStatue === 'skipped' ) {
 			return true;
 		}
@@ -25,20 +23,31 @@ export default function Summary( { cardData, selectedSite }: Props ) {
 
 		return false;
 	}
+
 	return (
 		<Card>
 			{ shouldRenderConfetti( cardData.content.status, cardData.subscribers.status ) && (
 				<>
-					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h2>Success! 🎉</h2>
+					<ConfettiAnimation trigger={ ! prefersReducedMotion } />
+					<h2>Success! 🎉</h2>
 				</>
 			) }
 			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
 			<SubscribersSummary
 				cardData={ cardData.subscribers.content }
 				status={ cardData.subscribers.status }
-				proStatus={ cardData[ 'paid-subscribers' ].status }
-				siteId={ selectedSite.ID }
 			/>
+			<ImporterActionButtonContainer noSpacing>
+				<ImporterActionButton href={ '/settings/newsletter/' + selectedSite.slug } primary>
+					Customize your newsletter
+				</ImporterActionButton>
+				<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
+					View imported content
+				</ImporterActionButton>
+				<ImporterActionButton href={ '/subscribers/' + selectedSite.slug }>
+					Check subscribers
+				</ImporterActionButton>
+			</ImporterActionButtonContainer>
 		</Card>
 	);
 }

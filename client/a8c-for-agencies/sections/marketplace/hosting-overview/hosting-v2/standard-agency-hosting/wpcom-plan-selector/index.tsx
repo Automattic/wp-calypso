@@ -111,10 +111,11 @@ function PlanDetails( {
 			</div>
 
 			<div className="wpcom-plan-selector__cta">
-				<div className="wpcom-plan-selector__cta-label">
-					{ translate( 'How many sites would you like to buy?' ) }
-				</div>
-
+				{ ! referralMode && (
+					<div className="wpcom-plan-selector__cta-label">
+						{ translate( 'How many sites would you like to buy?' ) }
+					</div>
+				) }
 				<div className="wpcom-plan-selector__cta-component">
 					<Button
 						className="wpcom-plan-selector__cta-button"
@@ -179,6 +180,8 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 	// Show the WPCOM slider if the user has less than 10 plans and is not in referral mode.
 	const showWPCOMSlider = ! referralMode && ownedPlans < MAX_PLANS_FOR_SLIDER;
 
+	const displayQuantity = referralMode ? 1 : quantity;
+
 	return (
 		<div
 			className={ clsx( 'wpcom-plan-selector', {
@@ -188,7 +191,7 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 			<div className="wpcom-plan-selector__slider-container">
 				{ showWPCOMSlider && (
 					<WPCOMPlanSlider
-						quantity={ quantity }
+						quantity={ displayQuantity }
 						onChange={ setQuantity }
 						ownedPlans={ ownedPlans }
 					/>
@@ -202,7 +205,7 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 						onSelect={ onSelect }
 						ownedPlans={ ownedPlans }
 						referralMode={ referralMode }
-						quantity={ quantity }
+						quantity={ displayQuantity }
 						setQuantity={ setQuantity }
 					/>
 				) : (

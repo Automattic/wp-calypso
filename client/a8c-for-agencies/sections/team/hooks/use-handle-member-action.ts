@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
 import useRemoveMemberMutation from 'calypso/a8c-for-agencies/data/team/use-remove-member';
+import useResendMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-resend-member-invite';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { TeamMember } from '../types';
@@ -14,12 +15,42 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const { mutate: resendMemberInvite } = useResendMemberInviteMutation();
+
 	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
 	const { mutate: removeMember } = useRemoveMemberMutation();
 
 	return useCallback(
 		( action: string, item: TeamMember, callback?: () => void ) => {
+			if ( action === 'resend-user-invite' ) {
+				resendMemberInvite(
+					{ id: item.id },
+					{
+						onSuccess: () => {
+							dispatch(
+								successNotice( translate( 'The invitation has been resent.' ), {
+									id: 'resend-user-invite-success',
+									duration: 5000,
+								} )
+							);
+							onRefetchList?.();
+							callback?.();
+						},
+
+						onError: ( error ) => {
+							dispatch(
+								errorNotice( error.message, {
+									id: 'resend-user-invite-error',
+									duration: 5000,
+								} )
+							);
+							callback?.();
+						},
+					}
+				);
+			}
+
 			if ( action === 'cancel-user-invite' ) {
 				cancelMemberInvite(
 					{ id: item.id },
@@ -76,6 +107,6 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 				);
 			}
 		},
-		[ cancelMemberInvite, dispatch, onRefetchList, removeMember, translate ]
+		[ cancelMemberInvite, dispatch, onRefetchList, removeMember, resendMemberInvite, translate ]
 	);
 }

@@ -30,6 +30,11 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	featureId,
 } );
 
+export const setSiteUrl = ( siteUrl: string ) => ( {
+	type: 'SET_SITE_URL' as const,
+	siteUrl,
+} );
+
 export interface CreateSiteBaseActionParameters {
 	username: string;
 	languageSlug: string;
@@ -465,6 +470,7 @@ export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
 	type: 'SET_PARTNER_BUNDLE' as const,
 	partnerBundle,
 } );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -511,6 +517,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainCartItems
 	| typeof setSiteDescription
 	| typeof setSiteLogo
+	| typeof setSiteUrl
 	| typeof setSiteAccentColor
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode

@@ -15,6 +15,7 @@ interface DateRangePickerProps {
 	onDateRangeChange?: ( startDate: MomentOrNull, endDate: MomentOrNull ) => void;
 	focusedMonth?: Date;
 	numberOfMonths?: number;
+	useArrowNavigation?: boolean;
 }
 
 /**
@@ -32,6 +33,7 @@ const DateRangePicker = ( {
 	focusedMonth,
 	onDateRangeChange = noop,
 	numberOfMonths = 2,
+	useArrowNavigation = false,
 }: DateRangePickerProps ) => {
 	/**
 	 * Converts a moment date to a native JS Date object
@@ -211,6 +213,7 @@ const DateRangePicker = ( {
 			selectedDays={ selected }
 			numberOfMonths={ numberOfMonths }
 			disabledDays={ getDisabledDaysConfig() }
+			useArrowNavigation={ useArrowNavigation }
 		/>
 	);
 };

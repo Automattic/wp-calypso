@@ -10,6 +10,8 @@ import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { BackupRealtimeMessage } from 'calypso/components/jetpack/daily-backup-status/status-card/backup-realtime-message';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { backupPath, settingsPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -48,6 +50,7 @@ import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-lo
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 
 interface Props {
+	backup: any;
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
@@ -55,6 +58,7 @@ interface Props {
 }
 
 const BackupRestoreFlow: FunctionComponent< Props > = ( {
+	backup,
 	backupDisplayDate,
 	rewindId,
 	siteId,
@@ -62,6 +66,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 
@@ -223,11 +228,31 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		( ! isAtomic && areCredentialsInvalid ) ||
 		Object.values( rewindConfig ).every( ( setting ) => ! setting );
 
+	const selectedDate = moment( rewindId, 'X' );
+	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
+	const showRealTimeMessage = backup.baseRewindId && baseBackupDate && backup.rewindStepCount > 0;
+
+	const onLearnAboutClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_learn_about_click', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
 	const renderConfirm = () => (
 		<>
 			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 			<div className="rewind-flow__header">
 				<Gridicon icon="history" size={ 48 } />
+				<div className="rewind-flow__learn-about">
+					<ExternalLink
+						href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/"
+						onClick={ onLearnAboutClick }
+					>
+						{ translate( 'Learn about restores' ) }
+					</ExternalLink>
+				</div>
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Restore your site' ) }</h3>
 			<p className="rewind-flow__info">
@@ -240,6 +265,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					},
 				} ) }
 			</p>
+			{ config.isEnabled( 'jetpack/backup-realtime-message' ) && showRealTimeMessage && (
+				<BackupRealtimeMessage
+					baseBackupDate={ baseBackupDate }
+					eventsCount={ backup.rewindStepCount }
+					selectedBackupDate={ selectedDate }
+				/>
+			) }
 			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice

@@ -139,8 +139,13 @@ export const ActionColumn = ( {
 	);
 
 	const actions = useMemo( () => {
-		return member.status === 'pending'
+		return member.status === 'pending' || member.status === 'expired'
 			? [
+					{
+						name: 'resend-user-invite',
+						label: translate( 'Resend invite' ),
+						isEnabled: true,
+					},
 					{
 						name: 'cancel-user-invite',
 						label: translate( 'Cancel invite' ),

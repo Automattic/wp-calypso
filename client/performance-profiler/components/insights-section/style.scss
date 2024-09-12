@@ -1,15 +1,49 @@
+@import "@wordpress/base-styles/breakpoints";
+
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
+	width: 100%;
+	scroll-margin-top: 80px;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 32px;
+	}
+
 	.title {
 		font-size: $font-title-small;
 		font-weight: 500;
+		margin-bottom: 8px;
 	}
 
 	.subtitle {
 		color: var(--studio-gray-70);
 		font-size: $font-body;
-		margin-bottom: 32px;
+		margin-bottom: 0;
+	}
+
+	$wp-blue-50: #3858e9;
+	.filter {
+		.select-dropdown__item {
+			background-color: var(--studio-white);
+			color: $wp-blue-50;
+
+			&.is-selected {
+				background-color: $wp-blue-50;
+				color: var(--studio-white);
+
+				&:hover {
+					background-color: $wp-blue-50;
+				}
+			}
+
+			&:hover {
+				background-color: transparent;
+			}
+		}
 	}
 
 	.metrics-insight-item.foldable-card {
@@ -44,6 +78,10 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.insight-header-container {
+				display: flex;
+			}
+
 			.counter {
 				&.fail {
 					color: var(--studio-red-50);
@@ -63,6 +101,10 @@ $blueberry-color: #3858e9;
 
 				&.warning {
 					color: var(--studio-orange-40);
+				}
+
+				&.is-mobile {
+					padding-top: 5px;
 				}
 			}
 
@@ -122,13 +164,23 @@ $blueberry-color: #3858e9;
 				align-items: flex-start;
 				gap: 32px;
 				align-self: stretch;
+				flex-wrap: wrap;
+
+				.content {
+					flex: 1 1 500px;
+				}
 
 				p {
 					line-height: 24px;
 				}
+
+				.performance-profiler-tip {
+					max-width: 300px;
+					min-width: unset;
+				}
 			}
 
-			.generated-with-ia {
+			.generated-with-ai {
 				font-weight: 500;
 			}
 
@@ -160,11 +212,14 @@ $blueberry-color: #3858e9;
 
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
+				width: 100%;
+				overflow-x: auto;
 
 				table {
 					table-layout: fixed;
 					width: 100%;
 					margin-bottom: 0;
+					min-width: $break-small;
 
 					th,
 					td {

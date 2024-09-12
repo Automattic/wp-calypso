@@ -29,13 +29,21 @@ const EducationFooterContainer = styled.div`
 
 	> div:first-child {
 		padding: 0;
+		margin-bottom: 18px;
+
+		@media ( max-width: 660px ) {
+			padding: 0 16px;
+		}
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
 		}
+	}
 
-		> div:first-child {
-			margin-bottom: 24px;
+	.plugin-how-to-guides {
+		@media ( min-width: 1280px ) {
+			justify-content: flex-start;
+			gap: 18px;
 		}
 	}
 
@@ -43,10 +51,22 @@ const EducationFooterContainer = styled.div`
 		display: flex;
 		width: calc( 33% - 10px );
 
-		@media ( max-width: 660px ) {
-			display: block;
+		@media ( max-width: 960px ) {
 			width: 100%;
 			margin-top: 10px;
+
+			> div:first-child {
+				padding: 16px;
+			}
+		}
+
+		> div:first-child:hover {
+			border-color: var( --studio-gray-30 );
+		}
+
+		div {
+			width: 100%;
+			text-wrap: pretty;
 		}
 	}
 `;
@@ -151,20 +171,18 @@ const EducationFooter = () => {
 				title={ __( 'Get started with plugins' ) }
 				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
 			/>
-			<ThreeColumnContainer>
+			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
 					external
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'website_building' ) }
 				/>
@@ -173,14 +191,14 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'customization' ) }
 				/>
@@ -189,14 +207,12 @@ const EducationFooter = () => {
 					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
-					) }
+					url={ localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ) }
 					border="var(--studio-gray-5)"
 					onClick={ () => onClickLinkCard( 'seo' ) }
 				/>

@@ -32,6 +32,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 							: TabType.mobile
 					}
 					hash={ context.query?.hash ?? '' }
+					filter={ context.query?.filter }
 				/>
 			</Main>
 
@@ -78,7 +79,7 @@ export const notFound = ( context: Context, next: () => void ) => {
 			className="content-404"
 			illustration="/calypso/images/illustrations/illustration-404.svg"
 			title={ translate( 'Uh oh. Page not found.' ) }
-			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
+			line={ translate( 'Sorry, the page you were looking for doesn‘t exist or has been moved.' ) }
 			action={ translate( 'Return Home' ) }
 			actionURL="/"
 		/>

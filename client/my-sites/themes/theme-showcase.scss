@@ -518,6 +518,55 @@
 			padding: 0 16px;
 		}
 	}
+
+	.themes__controls.is-sticky {
+		@include break-medium {
+			position: fixed;
+			left: var(--sidebar-width-max);
+			top: var(--masterbar-height);
+			width: calc(100vw - var(--sidebar-width-max) - 16px);
+			padding: 24px 32px 8px 33px;
+			border-bottom: 1px solid var(--studio-gray-5);
+			box-sizing: border-box;
+			background: var(--studio-white);
+			z-index: 20;
+
+			.is-global-sidebar-visible & {
+				top: calc(var(--masterbar-height) + 16px);
+				width: calc(100% - var(--sidebar-width-max) - 31px);
+				padding: 40px 32px 8px;
+
+
+				// Make the scroll behavior works on the top of the fixed element.
+				pointer-events: none;
+
+				> * {
+					pointer-events: auto;
+				}
+			}
+		}
+	}
+
+	.themes__controls-placeholder {
+		.is-logged-out & {
+			display: none;
+		}
+
+		@include break-medium {
+			padding-top: 24px;
+			margin-top: -24px;
+			box-sizing: content-box;
+
+			.is-global-sidebar-visible & {
+				padding-top: 40px;
+				margin-top: -40px;
+			}
+
+			&.is-sticky {
+				height: 101px;
+			}
+		}
+	}
 }
 
 .theme-showcase__open-showcase-button-holder {

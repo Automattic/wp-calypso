@@ -100,10 +100,10 @@ describe( 'SiteMigrationCredentials', () => {
 			'backup-url.com',
 			'',
 			'',
-			[ messages.usernameError ],
-			[ messages.urlError, messages.passwordError ],
+			[ messages.usernameError, messages.passwordError ],
+			[ messages.urlError ],
 		],
-		[ '', '', '', [ messages.usernameError, messages.urlError ], [ messages.passwordError ] ],
+		[ '', '', '', [ messages.usernameError, messages.urlError, messages.passwordError ], [] ],
 	] )(
 		'shows correct error messages for url:%s--username:%s--pass:%s--',
 		async ( siteAddress, username, password, expectedErrors, notExpectedErrors ) => {
