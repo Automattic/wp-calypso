@@ -60,7 +60,7 @@ export interface Steps {
 	summary: Step< SummaryStepContent >;
 }
 
-interface PaidNewsletterData {
+export interface PaidNewsletterData {
 	current_step: StepId;
 	steps: Steps;
 }
