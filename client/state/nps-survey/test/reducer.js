@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
@@ -26,23 +25,25 @@ import reducer, {
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'isSessionEligible',
-			'isAvailableForConciergeSession',
-			'wasShownThisSession',
-			'surveyState',
-			'surveyName',
-			'score',
-			'feedback',
-			'notice',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'isSessionEligible',
+				'isAvailableForConciergeSession',
+				'wasShownThisSession',
+				'surveyState',
+				'surveyName',
+				'score',
+				'feedback',
+				'notice',
+			] )
+		);
 	} );
 
 	describe( '#isSessionEligible()', () => {
 		test( 'should default to not eligible', () => {
 			const state = isSessionEligible( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should track if session is eligible', () => {
@@ -51,7 +52,7 @@ describe( 'reducer', () => {
 				isSessionPicked: true,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should track if session is not eligible', () => {
@@ -60,7 +61,7 @@ describe( 'reducer', () => {
 				isSessionPicked: false,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 
@@ -68,7 +69,7 @@ describe( 'reducer', () => {
 		test( 'should default to not available', () => {
 			const state = isAvailableForConciergeSession( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should track if user is available for concierge session', () => {
@@ -77,7 +78,7 @@ describe( 'reducer', () => {
 				isAvailableForConciergeSession: true,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should track if user is not available for concierge session', () => {
@@ -86,7 +87,7 @@ describe( 'reducer', () => {
 				isAvailableForConciergeSession: false,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 
@@ -94,7 +95,7 @@ describe( 'reducer', () => {
 		test( 'should default to not shown', () => {
 			const state = wasShownThisSession( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should track if survey was shown', () => {
@@ -102,7 +103,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 	} );
 
@@ -110,7 +111,7 @@ describe( 'reducer', () => {
 		test( 'should default to not submitted', () => {
 			const state = surveyState( undefined, {} );
 
-			expect( state ).to.equal( NOT_SUBMITTED );
+			expect( state ).toEqual( NOT_SUBMITTED );
 		} );
 
 		test( 'should track if submitting', () => {
@@ -120,7 +121,7 @@ describe( 'reducer', () => {
 				score: 7,
 			} );
 
-			expect( state ).to.equal( SUBMITTING );
+			expect( state ).toEqual( SUBMITTING );
 		} );
 
 		test( 'should track if submitted', () => {
@@ -128,7 +129,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
 			} );
 
-			expect( state ).to.equal( SUBMITTED );
+			expect( state ).toEqual( SUBMITTED );
 		} );
 
 		test( 'should track if failed to submit', () => {
@@ -136,7 +137,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 			} );
 
-			expect( state ).to.equal( SUBMIT_FAILURE );
+			expect( state ).toEqual( SUBMIT_FAILURE );
 		} );
 
 		test( 'should track if submitting with no score', () => {
@@ -145,7 +146,7 @@ describe( 'reducer', () => {
 				surveyName: 'boo',
 			} );
 
-			expect( state ).to.equal( SUBMITTING );
+			expect( state ).toEqual( SUBMITTING );
 		} );
 
 		test( 'should track if submitted with no score', () => {
@@ -153,7 +154,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 			} );
 
-			expect( state ).to.equal( SUBMITTED );
+			expect( state ).toEqual( SUBMITTED );
 		} );
 
 		test( 'should track if failed to submit with no score', () => {
@@ -161,7 +162,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 			} );
 
-			expect( state ).to.equal( SUBMIT_FAILURE );
+			expect( state ).toEqual( SUBMIT_FAILURE );
 		} );
 	} );
 
@@ -169,7 +170,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = surveyName( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBe( null );
 		} );
 
 		test( 'should track if submitting', () => {
@@ -179,7 +180,7 @@ describe( 'reducer', () => {
 				score: 7,
 			} );
 
-			expect( state ).to.equal( 'boo' );
+			expect( state ).toEqual( 'boo' );
 		} );
 
 		test( 'should track if submitting with no score', () => {
@@ -188,7 +189,7 @@ describe( 'reducer', () => {
 				surveyName: 'boo',
 			} );
 
-			expect( state ).to.equal( 'boo' );
+			expect( state ).toEqual( 'boo' );
 		} );
 	} );
 
@@ -196,7 +197,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = score( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBe( null );
 		} );
 
 		test( 'should track if submitting', () => {
@@ -206,7 +207,7 @@ describe( 'reducer', () => {
 				score: 7,
 			} );
 
-			expect( state ).to.equal( 7 );
+			expect( state ).toEqual( 7 );
 		} );
 
 		test( 'should track if submitting with no score', () => {
@@ -215,7 +216,7 @@ describe( 'reducer', () => {
 				surveyName: 'boo',
 			} );
 
-			expect( state ).to.equal( null );
+			expect( state ).toEqual( null );
 		} );
 	} );
 
@@ -223,7 +224,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = feedback( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBe( null );
 		} );
 
 		test( 'should track the feedback if submitting', () => {
@@ -233,7 +234,7 @@ describe( 'reducer', () => {
 				feedback: 'feedback for testing',
 			} );
 
-			expect( state ).to.equal( 'feedback for testing' );
+			expect( state ).toEqual( 'feedback for testing' );
 		} );
 
 		test( 'should track if submitting', () => {
@@ -243,7 +244,7 @@ describe( 'reducer', () => {
 				feedback: 'feedback for testing',
 			} );
 
-			expect( state ).to.equal( SUBMITTING );
+			expect( state ).toEqual( SUBMITTING );
 		} );
 
 		test( 'should track if submitted', () => {
@@ -251,7 +252,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
 			} );
 
-			expect( state ).to.equal( SUBMITTED );
+			expect( state ).toEqual( SUBMITTED );
 		} );
 
 		test( 'should track if failed to submit', () => {
@@ -259,7 +260,7 @@ describe( 'reducer', () => {
 				type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 			} );
 
-			expect( state ).to.equal( SUBMIT_FAILURE );
+			expect( state ).toEqual( SUBMIT_FAILURE );
 		} );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from '../constants';
 import {
 	isSessionEligibleForNpsSurvey,
