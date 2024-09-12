@@ -11,6 +11,8 @@ $blueberry-color: #3858e9;
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 32px;
+		flex-wrap: wrap;
+		row-gap: 32px;
 	}
 
 	.title {
