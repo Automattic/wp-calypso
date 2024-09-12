@@ -23,6 +23,7 @@ interface ModalProps {
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
+const FEEDBACK_THROTTLE_SUBMISSION_DELAY = 60 * 5; // 5 minutes
 
 function useFeedbackHibernationMutation( siteId: number ) {
 	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
@@ -51,7 +52,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		siteId,
 		NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
 		'postponed',
-		5 * 60
+		FEEDBACK_THROTTLE_SUBMISSION_DELAY
 	);
 
 	const { updateFeedbackHibernationPeriod } = useFeedbackHibernationMutation( siteId );
