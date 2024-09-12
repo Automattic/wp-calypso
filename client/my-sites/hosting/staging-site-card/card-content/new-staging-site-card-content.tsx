@@ -1,12 +1,33 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useSelector } from 'calypso/state';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { ExceedQuotaErrorContent } from './exceed-quota-error-content';
 
+const WarningContainer = styled.div( {
+	marginTop: '16px',
+	padding: '16px',
+	marginBottom: '24px',
+	border: '1px solid #f0c930',
+	borderRadius: '4px',
+} );
+
+const WarningTitle = styled.p( {
+	fontWeight: 500,
+	marginBottom: '8px',
+} );
+
+const WarningDescription = styled.p( {
+	marginBottom: '8px',
+} );
+
 type CardContentProps = {
+	siteId: number;
 	onAddClick: () => void;
 	isButtonDisabled: boolean;
 	showQuotaError: boolean;
@@ -14,6 +35,7 @@ type CardContentProps = {
 };
 
 export const NewStagingSiteCardContent = ( {
+	siteId,
 	onAddClick,
 	isButtonDisabled,
 	showQuotaError,
@@ -23,6 +45,7 @@ export const NewStagingSiteCardContent = ( {
 		const translate = useTranslate();
 		const hasEnTranslation = useHasEnTranslation();
 		const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
+		const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, siteId ) );
 
 		return (
 			<>
@@ -51,10 +74,10 @@ export const NewStagingSiteCardContent = ( {
 								}
 						  ) }
 				</HostingCardDescription>
-				{ stagingSiteSyncWoo && (
-					<div>
-						<p>{ translate( 'WooCommerce Site' ) }</p>
-						<p>
+				{ stagingSiteSyncWoo && isSiteWooStore && (
+					<WarningContainer>
+						<WarningTitle>{ translate( 'WooCommerce Site' ) }</WarningTitle>
+						<WarningDescription>
 							{ translate(
 								'Syncing staging database to production overwrites posts, pages, products and orders. {{a}}Learn more{{/a}}.',
 								{
@@ -65,8 +88,8 @@ export const NewStagingSiteCardContent = ( {
 									},
 								}
 							) }
-						</p>
-					</div>
+						</WarningDescription>
+					</WarningContainer>
 				) }
 				{ isDevelopmentSite && (
 					// Not wrapped in translation to avoid request unconfirmed copy

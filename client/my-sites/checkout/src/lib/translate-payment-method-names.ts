@@ -3,6 +3,8 @@ import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
 const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
+const isStripeIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
+const isBancontactRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-bancontact' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -28,10 +30,12 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 			return 'alipay';
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
+		case 'WPCOM_Billing_Stripe_Bancontact':
 			return 'bancontact';
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 			return 'eps';
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
+		case 'WPCOM_Billing_Stripe_Ideal':
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_Source_P24':
 		case 'WPCOM_Billing_Stripe_P24':
@@ -80,10 +84,16 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'alipay':
 			return 'WPCOM_Billing_Stripe_Source_Alipay';
 		case 'bancontact':
+			if ( isBancontactRedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_Bancontact';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
 		case 'ideal':
+			if ( isStripeIdealRedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_Ideal';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
 			if ( isP24RedirectEnabled ) {
@@ -117,7 +127,9 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
+		case 'WPCOM_Billing_Stripe_Ideal':
 		case 'WPCOM_Billing_Stripe_P24':
+		case 'WPCOM_Billing_Stripe_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
