@@ -9,7 +9,6 @@ import type { PostObject } from '../types';
 export function usePostByUrl( url: string ) {
 	const { sectionName } = useHelpCenterContext();
 	const postUrl = encodeURIComponent( localizeUrl( url ) );
-	console.log( postUrl );
 
 	return useQuery< PostObject >( {
 		queryKey: [ 'support-status', url ],
