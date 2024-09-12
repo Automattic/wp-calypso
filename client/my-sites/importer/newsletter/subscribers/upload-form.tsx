@@ -10,6 +10,7 @@ import FilePicker from 'calypso/components/file-picker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
+import ImportSubscribersError from './import-subscribers-error';
 
 type Props = {
 	nextStepUrl: string;
@@ -91,12 +92,16 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					) }
 				</FilePicker>
 			</div>
-			{ isSelectedFileValid && selectedFile && (
+
+			{ isSelectedFileValid && selectedFile && ! importSelector?.error && (
 				<p>
 					By clicking "Continue," you represent that you've obtained the appropriate consent to
 					email each person. <a href={ localizeUrl( importSubscribersUrl ) }>Learn more</a>.
 				</p>
 			) }
+
+			{ importSelector?.error && <ImportSubscribersError error={ importSelector?.error } /> }
+
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
 					type="submit"
@@ -104,7 +109,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					onClick={ () => {
 						recordTracksEvent( 'calypso_paid_importer_add_subscriber' );
 					} }
-					disabled={ ! ( isSelectedFileValid && selectedFile ) }
+					disabled={ ! ( ( isSelectedFileValid && selectedFile ) || importSelector?.error ) }
 				>
 					Continue
 				</ImporterActionButton>
