@@ -25,7 +25,20 @@ const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
 
-function useFeedbackHibernationMutation( siteId: number ) {
+function useNoticeVisibilityHooks( siteId: number ) {
+	const {
+		data: isAbleToSubmitFeedback,
+		isFetching: isCheckingAbilityToSubmitFeedback,
+		refetch: refetchNotices,
+	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
+
+	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
+		siteId,
+		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
+		'postponed',
+		24 * 3600
+	);
+
 	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
 		siteId,
 		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
@@ -33,7 +46,18 @@ function useFeedbackHibernationMutation( siteId: number ) {
 		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
 	);
 
-	return { updateFeedbackHibernationPeriod };
+	const updateFeedbackAfterSuccessfulSubmission = () => {
+		updateFeedbackHibernationPeriod();
+		disableFeedbackSubmissionForOneDay().then( () => {
+			refetchNotices();
+		} );
+	};
+
+	return {
+		isAbleToSubmitFeedback,
+		isCheckingAbilityToSubmitFeedback,
+		updateFeedbackAfterSuccessfulSubmission,
+	};
 }
 
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
@@ -42,20 +66,10 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const [ content, setContent ] = useState( '' );
 
 	const {
-		data: isAbleToSubmitFeedback,
-		isFetching: isCheckingAbilityToSubmitFeedback,
-		refetch: refetchNotices,
-	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
-
-	// Disable feedback submission for 24 hours.
-	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
-		siteId,
-		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
-		'postponed',
-		24 * 3600
-	);
-
-	const { updateFeedbackHibernationPeriod } = useFeedbackHibernationMutation( siteId );
+		isAbleToSubmitFeedback,
+		isCheckingAbilityToSubmitFeedback,
+		updateFeedbackAfterSuccessfulSubmission,
+	} = useNoticeVisibilityHooks( siteId );
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
@@ -95,21 +109,15 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
-			updateFeedbackHibernationPeriod();
-			disableFeedbackSubmissionForOneDay().then( () => {
-				refetchNotices();
-			} );
-
+			updateFeedbackAfterSuccessfulSubmission();
 			handleClose();
 		}
 	}, [
 		dispatch,
 		isSubmissionSuccessful,
+		updateFeedbackAfterSuccessfulSubmission,
 		handleClose,
 		translate,
-		disableFeedbackSubmissionForOneDay,
-		updateFeedbackHibernationPeriod,
-		refetchNotices,
 	] );
 
 	return (
