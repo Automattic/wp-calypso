@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Spinner } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -157,15 +158,18 @@ export default function NewsletterImporter( {
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
-	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ stepSlugs[ stepIndex ] }`;
+	const currentStepSlug = stepSlugs[ stepIndex ];
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ currentStepSlug }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
 		from: fromSite,
 	} );
 
-	const Step = steps[ stepIndex ] || steps[ 0 ];
+	const Step = steps[ stepIndex ];
 
 	return (
-		<div className="newsletter-importer">
+		<div
+			className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + currentStepSlug ) }
+		>
 			<LogoChain logos={ logoChainLogos } />
 
 			<FormattedHeader headerText={ getTitle( urlData ) } />

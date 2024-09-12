@@ -86,6 +86,13 @@
 		display: block;
 		margin-bottom: 16px;
 	}
+
+	/* Steps specific */
+	&.newsletter-importer__step-summary {
+		.importer-action-buttons__container {
+			margin-top: 30px;
+		}
+	}
 }
 
 .content-upload-form__in-progress,
