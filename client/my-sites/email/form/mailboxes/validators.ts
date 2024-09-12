@@ -12,9 +12,10 @@ interface Validator< T > {
 	validate( field?: MailboxFormFieldBase< T > ): Promise< void >;
 }
 
+const REQUIRED_FIELD_ERROR_MESSAGE = i18n.translate( 'This field is required.' );
 abstract class BaseValidator< T > implements Validator< T > {
 	async validate( field?: MailboxFormFieldBase< T > ): Promise< void > {
-		if ( ! field ) {
+		if ( ! field || field.error?.includes( REQUIRED_FIELD_ERROR_MESSAGE ) ) {
 			return;
 		}
 
@@ -36,7 +37,7 @@ abstract class BaseValidator< T > implements Validator< T > {
 
 class RequiredValidator< T > extends BaseValidator< T > {
 	static getRequiredFieldError(): SingleFieldError {
-		return i18n.translate( 'This field is required.' );
+		return REQUIRED_FIELD_ERROR_MESSAGE;
 	}
 
 	async validateField( field: MailboxFormFieldBase< T > ): Promise< void > {
@@ -53,6 +54,11 @@ class RequiredValidator< T > extends BaseValidator< T > {
 
 		if ( typeof field.value === 'string' && field.value.trim() === '' ) {
 			this.addError( field, requiredFieldError );
+		}
+
+		if ( field.error?.includes( requiredFieldError ) ) {
+			// If RequiredValidator error is present, make it the only error
+			field.error = [ RequiredValidator.getRequiredFieldError() ];
 		}
 	}
 }
