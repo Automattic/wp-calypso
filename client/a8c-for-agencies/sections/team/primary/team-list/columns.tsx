@@ -185,7 +185,7 @@ export const ActionColumn = ( {
 					},
 					{
 						name: 'delete-user',
-						label: translate( 'Delete user' ),
+						label: isSelfAction ? translate( 'Leave agency' ) : translate( 'Remove team member' ),
 						className: 'is-danger',
 						isEnabled: canRemove,
 						confirmationDialog: {
@@ -194,7 +194,7 @@ export const ActionColumn = ( {
 										args: { agencyName: agency?.name ?? '' },
 										comment: '%(agencyName)s is the agency name',
 								  } ) as string )
-								: translate( 'Delete user' ),
+								: translate( 'Remove team member' ),
 							children: isSelfAction
 								? translate(
 										"By proceeding, you'll lose management access of all sites that belong to this agency and you will be removed from this dashboard. {{br/}}The agency owner will need to re-invite you if you wish to gain access again.",
@@ -204,14 +204,16 @@ export const ActionColumn = ( {
 											},
 										}
 								  )
-								: translate( 'Are you sure you want to delete {{b}}%(memberName)s{{/b}}?', {
+								: translate( 'Are you sure you want to remove {{b}}%(memberName)s{{/b}}?', {
 										args: { memberName: member.displayName ?? member.email },
 										components: {
 											b: <b />,
 										},
 										comment: '%(memberName)s is the member name',
 								  } ),
-							ctaLabel: isSelfAction ? translate( 'Leave agency' ) : translate( 'Delete user' ),
+							ctaLabel: isSelfAction
+								? translate( 'Leave agency' )
+								: translate( 'Remove team member' ),
 							isDestructive: true,
 						},
 					},
@@ -227,7 +229,7 @@ export const ActionColumn = ( {
 	] );
 
 	// We don't show the action menu when the member is the owner of the team.
-	if ( member.role === OWNER_ROLE ) {
+	if ( member.role === OWNER_ROLE || actions.length === 0 ) {
 		return null;
 	}
 
