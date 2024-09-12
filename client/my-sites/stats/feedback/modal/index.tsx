@@ -23,10 +23,7 @@ interface ModalProps {
 const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
-const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 60; // 30 seconds for now
-// Examples values:
-// 30 minutes = 60 * 30;
-// 30 days = 3600 * 24 * 30;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
 
 function useFeedbackHibernationMutation( siteId: number ) {
 	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
