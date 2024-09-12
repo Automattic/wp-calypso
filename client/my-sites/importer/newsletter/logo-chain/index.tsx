@@ -1,6 +1,6 @@
-import ImporterLogo from '../importer-logo';
+import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 
-import './logo-chain.scss';
+import './styles.scss';
 
 type Logo = {
 	name: string;
@@ -11,7 +11,7 @@ type LogoChainProps = {
 	logos: Logo[];
 };
 
-export function LogoChain( { logos }: LogoChainProps ) {
+export default function LogoChain( { logos }: LogoChainProps ) {
 	return (
 		<div className="logo-chain">
 			{ logos.map( ( logo ) => (
