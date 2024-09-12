@@ -47,7 +47,6 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		refetch: refetchNotices,
 	} = useNoticeVisibilityQuery( siteId, NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK );
 
-	// Disable feedback submission for 24 hours.
 	const { mutateAsync: disableFeedbackSubmission } = useNoticeVisibilityMutation(
 		siteId,
 		NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
