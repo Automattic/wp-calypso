@@ -203,6 +203,41 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isPremiumThemeAvailable( state, themeId, siteId ),
 	};
 
+	// WPCOM-specific plan upgrade for community themes.
+	const upgradePlanForDotOrgThemes = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) => {
+			const { origin = 'https://wordpress.com' } =
+				typeof window !== 'undefined' ? window.location : {};
+			const slug = getSiteSlug( state, siteId );
+
+			const redirectTo = encodeURIComponent(
+				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
+			);
+
+			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, PLAN_BUSINESS );
+
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! siteId ||
+			isExternallyManagedTheme( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
 	const upgradePlanForExternallyManagedThemes = {
 		label: translate( 'Upgrade to subscribe', {
 			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
@@ -376,6 +411,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		upgradePlan,
 		upgradePlanForBundledThemes,
 		upgradePlanForExternallyManagedThemes,
+		upgradePlanForDotOrgThemes,
 		activate,
 		tryandcustomize,
 		deleteTheme,
