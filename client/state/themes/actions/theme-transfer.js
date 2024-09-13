@@ -180,7 +180,7 @@ export function pollThemeTransferStatus(
 					return resolve();
 				}
 
-				if ( Date.now() > endTime ) {
+				if ( Date.now() < endTime ) {
 					return setTimeout( tryThemeFetch, 1000, uploaded_theme_slug, resolve );
 				}
 
