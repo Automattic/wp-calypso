@@ -1,8 +1,10 @@
 //* This hook is used to track the step route in the declarative flow.
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SiteDetails } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { useEffect } from 'react';
+import { useEffect } from '@wordpress/element';
+import { STEPPER_TRACKS_EVENT_STEP_COMPLETE } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
@@ -32,6 +34,22 @@ interface Props {
 	flowVariantSlug?: string;
 }
 
+const handleRecordStepComplete = ( {
+	flowName,
+	stepSlug,
+	intent,
+}: {
+	flowName: Props[ 'flowName' ];
+	stepSlug: Props[ 'stepSlug' ];
+	intent: string;
+} ) => {
+	recordTracksEvent( STEPPER_TRACKS_EVENT_STEP_COMPLETE, {
+		flow: flowName,
+		step: stepSlug,
+		intent,
+	} );
+};
+
 /**
  * Hook to track the step route in the declarative flow.
  */
@@ -50,7 +68,7 @@ export const useStepRouteTracking = ( {
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( ! hasRequestedSelectedSite || skipTracking ) {
-			return;
+			return () => handleRecordStepComplete( { flowName, stepSlug, intent } );
 		}
 
 		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
@@ -84,8 +102,10 @@ export const useStepRouteTracking = ( {
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
 		recordPageView( pathname, pageTitle );
 
+		return () => handleRecordStepComplete( { flowName, stepSlug, intent } );
+
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking, handleRecordStepComplete ] );
 };

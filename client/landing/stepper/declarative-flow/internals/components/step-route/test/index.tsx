@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
@@ -17,6 +18,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
+import { STEPPER_TRACKS_EVENT_STEP_COMPLETE } from '../../../../../constants';
 import type { NavigationControls } from '../../../types';
 import type {
 	Flow,
@@ -30,6 +32,10 @@ jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 
 const regularStep: StepperStep = {
 	slug: 'some-step-slug',
@@ -188,6 +194,24 @@ describe( 'StepRoute', () => {
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
+		} );
+
+		it( 'records STEPPER_TRACKS_EVENT_STEP_COMPLETE when the step is unmounted', () => {
+			const { unmount } = render( { step: regularStep } );
+
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_STEP_COMPLETE, {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				intent: 'build',
+			} );
+
+			unmount();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_STEP_COMPLETE, {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				intent: 'build',
+			} );
 		} );
 	} );
 } );
