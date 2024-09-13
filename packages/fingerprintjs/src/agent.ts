@@ -1,4 +1,3 @@
-import { version } from '../package.json';
 import { requestIdleCallbackIfAvailable } from './utils/async';
 import { UnknownComponents } from './utils/entropy_source';
 import { x64hash128 } from './utils/hashing';
@@ -128,7 +127,7 @@ function makeLazyGetResult( components: BuiltinComponents ): GetResult {
 		},
 		confidence,
 		components,
-		version,
+		version: window.fingerprintJsVersion,
 	};
 }
 
@@ -190,7 +189,7 @@ function monitor() {
 		const request = new XMLHttpRequest();
 		request.open(
 			'get',
-			`https://m1.openfpcdn.io/fingerprintjs/v${ version }/npm-monitoring`,
+			`https://m1.openfpcdn.io/fingerprintjs/v${ window.fingerprintJsVersion }/npm-monitoring`,
 			true
 		);
 		request.send();

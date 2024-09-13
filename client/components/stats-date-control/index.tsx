@@ -146,8 +146,10 @@ const StatsDateControl = ( {
 						);
 					} }
 					rootClass="stats-date-control-picker"
+					overlay={ overlay }
 					displayShortcuts
 					useArrowNavigation
+					customTitle="testing custom title prop"
 				/>
 			) : (
 				<DateControlPicker

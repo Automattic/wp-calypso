@@ -235,3 +235,14 @@ export const getLoginLinkPageUrl = ( {
 
 	return login( loginParameters );
 };
+
+export const getPluginTitle = ( pluginName, translate ) => {
+	const pluginNames = {
+		'jetpack-ai': translate( 'Jetpack' ),
+		'woocommerce-payments': translate( 'Jetpack and WooPayments' ),
+		'order-attribution': translate( 'Jetpack and Order Attribution' ),
+		default: translate( 'Jetpack' ),
+	};
+
+	return pluginNames[ pluginName ] || pluginNames.default;
+};
