@@ -25,6 +25,10 @@ abstract class BaseValidator< T > implements Validator< T > {
 	abstract validateField( field: MailboxFormFieldBase< T > ): Promise< void >;
 
 	protected addError( field: MailboxFormFieldBase< T >, error: SingleFieldError ): void {
+		if ( field.error?.includes( error ) ) {
+			return;
+		}
+
 		if ( field.error === null ) {
 			field.error = [ error ];
 		} else if ( Array.isArray( field.error ) ) {
