@@ -80,11 +80,7 @@ class DateRangeExample extends Component {
 					<DateRange
 						useArrowNavigation
 						displayShortcuts
-						overlay={
-							<div style={ { width: '100%', height: '100%' } }>
-								🔒 Please upgrade to use the date range picker.
-							</div>
-						}
+						overlay={ <div>🔒 Please upgrade to use the date range picker.</div> }
 					/>
 				</Card>
 			</Fragment>
