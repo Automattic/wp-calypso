@@ -1,8 +1,6 @@
-import { Spinner } from '@automattic/components';
 import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useRef, useLayoutEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType } from './interfaces';
 import type { Field } from '@wordpress/dataviews';
@@ -59,7 +57,6 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 	const translate = useTranslate();
 	const scrollContainerRef = useRef< HTMLElement >();
 	const previousDataViewsState = usePrevious( data.dataViewsState );
-	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
 
 	useLayoutEffect( () => {
 		if (
@@ -107,17 +104,6 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				onChangeSelection={ data.onSelectionChange }
 				header={ data.header }
 			/>
-			{ dataviewsWrapper &&
-				ReactDOM.createPortal(
-					/**
-					 * Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
-					 * todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
-					 */
-					<div className="spinner-wrapper">
-						<Spinner />
-					</div>,
-					dataviewsWrapper
-				) }
 		</div>
 	);
 };

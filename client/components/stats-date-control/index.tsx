@@ -149,6 +149,7 @@ const StatsDateControl = ( {
 					overlay={ overlay }
 					displayShortcuts
 					useArrowNavigation
+					customTitle="testing custom title prop"
 				/>
 			) : (
 				<DateControlPicker
