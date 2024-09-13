@@ -746,7 +746,7 @@ const sections = [
 	{
 		name: 'staging-site',
 		paths: [ '/staging-site' ],
-		module: 'calypso/staging-site',
+		module: 'calypso/hosting/staging-site',
 		group: 'sites',
 	},
 	{

@@ -16,9 +16,9 @@ import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useCheckSyncStatus } from '../../../hooks/use-site-sync-status';
 import { ConfirmationModal } from '../confirmation-modal';
 import SyncOptionsPanel, { CheckboxOptionItem } from '../sync-options-panel';
-import { useCheckSyncStatus } from '../use-site-sync-status';
 import { StagingSiteSyncLoadingBarCardContent } from './staging-site-sync-loading-bar-card-content';
 const stagingSiteSyncSuccess = 'staging-site-sync-success';
 

@@ -1,16 +1,19 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'calypso/my-sites/hosting/staging-site-card', () => () => (
+jest.mock( 'calypso/hosting/staging-site/components/staging-site-card', () => () => (
 	<div data-testid="staging-site-card">
 		<span>Staging site</span>
 	</div>
 ) );
-jest.mock( 'calypso/my-sites/hosting/staging-site-card/staging-site-production-card', () => () => (
-	<div data-testid="staging-site-production-card">
-		<span>Staging site</span>
-	</div>
-) );
+jest.mock(
+	'calypso/hosting/staging-site/components/staging-site-card/staging-site-production-card',
+	() => () => (
+		<div data-testid="staging-site-production-card">
+			<span>Staging site</span>
+		</div>
+	)
+);
 
 import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
