@@ -36,6 +36,7 @@ Props are displayed as a table with Name, Type, Default, and Description as head
 | `triggerText( startDateText, endDateText )` | `Function`                  | `undefined`         | function to generate the text displayed in the trigger button. Passed the start/end date text in `MM/DD/YYYY` format (or locale-specific alternative)                                                |
 | `displayShortcuts`                          | `Boolean`                   | `false`             | determines whether to display the shortcuts menu alongside the calendar                                                                                                                              |
 | `useArrowNavigation`                        | `Boolean`                   | `false`             | determines whether to display the arrow navigation instead of the month labelled buttons as navigation between calendar months                                                                       |
+| `overlay`                        | `node`                   | `null`             | renders the overlay above the calendar and date inputs if passed |
 
 #### Render Props
 

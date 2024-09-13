@@ -14,9 +14,11 @@ const DATERANGE_PERIOD = {
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
+	locked = false,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
+	locked?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -82,7 +84,7 @@ const DateRangePickerShortcuts = ( {
 						} ) }
 						key={ shortcut.id || idx }
 					>
-						<Button onClick={ () => handleClick( shortcut ) }>
+						<Button onClick={ () => ! locked && handleClick( shortcut ) }>
 							<span>{ shortcut.label }</span>
 							{ shortcut.id === currentShortcut && <Icon icon={ check } /> }
 						</Button>
