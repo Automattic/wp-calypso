@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +17,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 	const translate = useTranslate();
 	const [ resizeObserverRef, entry ] = useResizeObserver();
 	const [ scoreBarWidth, setScoreBarWidth ] = useState( MAX_SCORE_BAR_WIDTH );
+	const isMobile = useMobileBreakpoint();
 
 	const { value, recommendationsQuantity, recommendationsRef } = props;
 	const getStatus = ( value: number ) => {
@@ -51,7 +53,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 			{ resizeObserverRef }
 			<div className="score-summary">
 				<div className="title">{ translate( 'Performance Score' ) }</div>
-				<div className="score">
+				<div className={ clsx( 'score', { mobile: isMobile } ) }>
 					<span className="current-score">{ Math.floor( value ) }</span>
 					<span className="max-score">/ 100</span>
 				</div>
@@ -72,8 +74,8 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 				<div className="recommendations-text">
 					{ recommendationsQuantity
 						? translate(
-								"We found %(quantity)d way to improve your site's performance. {{a}}View{{nbsp/}}recommendation{{/a}}",
-								"We found %(quantity)d ways to improve your site's performance. {{a}}View{{nbsp/}}recommendations{{/a}}",
+								'We found %(quantity)d way to improve your site‘s performance. {{a}}View{{nbsp/}}recommendation{{/a}}',
+								'We found %(quantity)d ways to improve your site‘s performance. {{a}}View{{nbsp/}}recommendations{{/a}}',
 								{
 									count: recommendationsQuantity,
 									args: { quantity: recommendationsQuantity },
@@ -92,14 +94,14 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 								}
 						  )
 						: translate(
-								"We didn't find any recommendations for improving the speed of your site."
+								'We didn‘t find any recommendations for improving the speed of your site.'
 						  ) }
 				</div>
 			</div>
 
 			<div className="disclaimer">
 				{ translate(
-					"The performance score is a combined representation of your site's individual speed metrics. {{link}}See calculator ↗{{/link}}",
+					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}See calculator ↗{{/link}}',
 					{
 						components: {
 							link: (

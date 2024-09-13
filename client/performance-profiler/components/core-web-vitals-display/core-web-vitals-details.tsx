@@ -1,3 +1,4 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -32,6 +33,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	...metrics
 } ) => {
 	const translate = useTranslate();
+	const isMobile = ! useDesktopBreakpoint();
 
 	if ( ! activeTab ) {
 		return null;
@@ -73,9 +75,9 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
-	// last 8 weeks only
-	metricsData = metricsData.slice( -8 );
-	dates = dates.slice( -8 );
+	const weeksToShow = isMobile ? 6 : 8;
+	metricsData = metricsData.slice( -weeksToShow );
+	dates = dates.slice( -weeksToShow );
 
 	// the comparison is inverse here because the last value is the most recent
 	const positiveTendency = metricsData[ metricsData.length - 1 ] < metricsData[ 0 ];
@@ -202,11 +204,11 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 				{ dataAvailable && (
 					<span className="core-web-vitals-display__description-subheading">
 						{ positiveTendency
-							? translate( '%s has improved over the past eight weeks', {
-									args: [ displayName ],
+							? translate( '%(displayName)s has improved over the past %(weeksToShow)d weeks', {
+									args: { displayName, weeksToShow },
 							  } )
-							: translate( '%s has declined over the past eight weeks', {
-									args: [ displayName ],
+							: translate( '%(displayName)s has declined over the past %(weeksToShow)d weeks', {
+									args: { displayName, weeksToShow },
 							  } ) }
 					</span>
 				) }
@@ -217,6 +219,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
 					] }
 					height={ 300 }
+					d3Format="%b %d"
 				/>
 			</div>
 		</div>

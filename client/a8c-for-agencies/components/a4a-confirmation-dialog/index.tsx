@@ -14,6 +14,7 @@ export type Props = {
 	onConfirm?: () => void;
 	ctaLabel?: string;
 	closeLabel?: string;
+	isDisabled?: boolean;
 	isLoading?: boolean;
 	isDestructive?: boolean;
 };
@@ -26,6 +27,7 @@ export function A4AConfirmationDialog( {
 	ctaLabel,
 	closeLabel,
 	onClose,
+	isDisabled,
 	isLoading,
 	isDestructive,
 }: Props ) {
@@ -47,7 +49,7 @@ export function A4AConfirmationDialog( {
 					variant="primary"
 					isDestructive={ isDestructive }
 					isBusy={ isLoading }
-					disabled={ isLoading }
+					disabled={ isDisabled || isLoading }
 					onClick={ onConfirm }
 				>
 					{ ctaLabel ?? translate( 'Confirm' ) }

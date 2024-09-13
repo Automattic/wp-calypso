@@ -104,14 +104,14 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsRequestingSitePlans.mockImplementation( () => true );
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
 		mGetDiscountByName.mockImplementation( () => discount );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => false );
 
@@ -132,7 +132,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => discount );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -149,7 +149,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => false );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 10000 );
 
 		renderWithProvider(
 			<PlanNotice
