@@ -3,6 +3,7 @@ import { useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import { useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
@@ -83,20 +84,25 @@ export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 
+	const mostRecentStateRef = useRef< ProvidedDependencies | undefined >( undefined );
+
+	const updateSignupStepState = useCallback(
+		( state: ProvidedDependencies ) => {
+			setStepState( ( mostRecentStateRef.current = { ...stepState, ...state } ) );
+		},
+		[ stepState, setStepState ]
+	);
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
 				{ ...props }
 				page={ ( url: string ) => window.location.assign( url ) }
-				saveSignupStep={ ( state: ProvidedDependencies ) =>
-					setStepState( { ...stepState, ...state } )
-				}
-				submitSignupStep={ ( state: ProvidedDependencies ) => {
-					setStepState( { ...stepState, ...state } );
+				saveSignupStep={ updateSignupStepState }
+				submitSignupStep={ updateSignupStepState }
+				goToNextStep={ ( state: ProvidedDependencies ) => {
+					props.navigation.submit?.( { ...mostRecentStateRef.current, ...state } );
 				} }
-				goToNextStep={ ( state: ProvidedDependencies ) =>
-					props.navigation.submit?.( { ...stepState, ...state } )
-				}
 				step={ stepState }
 				flowName={ props.flow }
 				useStepperWrapper

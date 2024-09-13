@@ -1,8 +1,8 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { useEffect, useState } from 'react';
 import {
 	clearSignupDestinationCookie,
 	persistSignupDestination,
@@ -58,6 +58,20 @@ const onboarding: Flow = {
 			[]
 		);
 
+		const clearUseMyDomainsQueryParams = () => {
+			if (
+				currentStepSlug === 'domains' ||
+				( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
+			) {
+				window.history.replaceState( {}, document.title, window.location.pathname );
+			}
+		};
+
+		clearUseMyDomainsQueryParams();
+
+		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
+		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
+
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
@@ -65,10 +79,25 @@ const onboarding: Flow = {
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
 					if ( providedDependencies.navigateToUseMyDomain ) {
-						return navigate( 'use-my-domain' );
+						setRedirectedToUseMyDomain( true );
+						let useMyDomainURL = 'use-my-domain?step=domain-input';
+						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
+							useMyDomainURL = addQueryArgs( useMyDomainURL, {
+								initialQuery: ( providedDependencies?.domainForm as { lastQuery?: string } )
+									?.lastQuery,
+							} );
+						}
+						return navigate( useMyDomainURL );
 					}
+					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
+					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+						return navigate(
+							`use-my-domain?step=${ providedDependencies.mode }&initialQuery=${ providedDependencies.domain }`
+						);
+					}
+					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
@@ -105,8 +134,27 @@ const onboarding: Flow = {
 		const goBack = () => {
 			switch ( currentStepSlug ) {
 				case 'use-my-domain':
+					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
+						const url = addQueryArgs( 'use-my-domain', {
+							step: 'domain-input',
+							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
+						} );
+						return navigate( url );
+					}
+
+					if ( window.location.search ) {
+						window.history.replaceState( {}, document.title, window.location.pathname );
+					}
 					return navigate( 'domains' );
 				case 'plans':
+					if ( redirectedToUseMyDomain ) {
+						if ( Object.keys( useMyDomainQueryParams ).length ) {
+							// restore query params
+							const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
+							return navigate( useMyDomainURL );
+						}
+						return navigate( 'use-my-domain' );
+					}
 					return navigate( 'domains' );
 				default:
 					return;

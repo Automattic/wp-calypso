@@ -24,6 +24,8 @@ export function useFormSelectors() {
 		accessibility_consulting: translate( 'Accessibility Consulting' ),
 		security_consulting: translate( 'Security Consulting' ),
 		international_multilingual_consulting: translate( 'International and Multilingual Consulting' ),
+		ai_powered_web_applications: translate( 'AI-powered Web Applications' ),
+		headless_wordpress_and_woo: translate( 'Headless WordPress & Woo' ),
 	};
 
 	const availableIndustries: Record< string, string > = {

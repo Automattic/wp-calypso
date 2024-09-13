@@ -3,18 +3,49 @@
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
-	max-width: 100%;
+	width: 100%;
 	scroll-margin-top: 80px;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 32px;
+		flex-wrap: wrap;
+		row-gap: 32px;
+	}
 
 	.title {
 		font-size: $font-title-small;
 		font-weight: 500;
+		margin-bottom: 8px;
 	}
 
 	.subtitle {
 		color: var(--studio-gray-70);
 		font-size: $font-body;
-		margin-bottom: 32px;
+		margin-bottom: 0;
+	}
+
+	$wp-blue-50: #3858e9;
+	.filter {
+		.select-dropdown__item {
+			background-color: var(--studio-white);
+			color: $wp-blue-50;
+
+			&.is-selected {
+				background-color: $wp-blue-50;
+				color: var(--studio-white);
+
+				&:hover {
+					background-color: $wp-blue-50;
+				}
+			}
+
+			&:hover {
+				background-color: transparent;
+			}
+		}
 	}
 
 	.metrics-insight-item.foldable-card {
@@ -79,6 +110,15 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.md-code {
+				border: 1px solid var(--studio-gray-5);
+				background: var(--studio-gray-0);
+				padding: 2px 4px;
+				border-radius: 4px;
+				font-family: monospace;
+				font-size: $font-body-small;
+			}
+
 			.header-code {
 				color: #3858e9;
 			}
@@ -139,6 +179,10 @@ $blueberry-color: #3858e9;
 
 				.content {
 					flex: 1 1 500px;
+
+					&:only-child {
+						flex: 0 1 700px;
+					}
 				}
 
 				p {
@@ -187,7 +231,7 @@ $blueberry-color: #3858e9;
 				overflow-x: auto;
 
 				table {
-					table-layout: fixed;
+					table-layout: auto;
 					width: 100%;
 					margin-bottom: 0;
 					min-width: $break-small;
@@ -198,6 +242,7 @@ $blueberry-color: #3858e9;
 						word-break: break-word;
 						font-size: $font-body-small;
 						border-bottom: 1px solid var(--studio-gray-5);
+						min-width: 100px;
 					}
 
 					tr.sub {

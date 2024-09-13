@@ -33,6 +33,7 @@ const Heading = styled.div`
 	line-height: 24px;
 	text-align: left;
 	color: var( --studio-white );
+	margin-bottom: 6px;
 `;
 
 const Body = styled.div`
@@ -56,7 +57,7 @@ const BlueberryButton = styled( Button )`
 	}
 `;
 
-export const NewsletterBanner = ( { link }: { link: string } ) => {
+export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -68,7 +69,7 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 				</Heading>
 				<Body>
 					{ translate(
-						"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
+						'Monitor your site‘s key performance metrics with a free report delivered to your inbox each week.'
 					) }
 				</Body>
 				{ ! isLoggedIn && (
@@ -77,7 +78,7 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 					</Body>
 				) }
 			</div>
-			<BlueberryButton variant="primary" href={ link }>
+			<BlueberryButton variant="primary" href={ link } onClick={ onClick }>
 				{ isLoggedIn
 					? translate( 'Enable email alerts' )
 					: translate( 'Sign up for email reports' ) }

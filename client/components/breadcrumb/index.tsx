@@ -121,9 +121,10 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 
 	if ( compact ) {
 		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
+		const onClick = mobileItem?.onClick ?? items[ items.length - 2 ].onClick;
 		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
-			<StyledBackLink className="breadcrumbs-back" href={ urlBack }>
+			<StyledBackLink className="breadcrumbs-back" href={ urlBack } onClick={ onClick }>
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ label }
 			</StyledBackLink>

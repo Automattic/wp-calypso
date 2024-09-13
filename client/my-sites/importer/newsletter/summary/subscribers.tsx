@@ -13,7 +13,7 @@ export default function SubscriberSummary( { cardData, status }: Props ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ atSymbol } /> Subscriber importing was <strong>skipped!</strong>
+					<Icon icon={ atSymbol } /> Subscriber importing was <strong>skipped</strong>
 				</p>
 			</div>
 		);
@@ -32,6 +32,7 @@ export default function SubscriberSummary( { cardData, status }: Props ) {
 	if ( status === 'done' ) {
 		const paid_subscribers = cardData?.meta?.paid_subscribers_count ?? 0;
 		const free_subscribers = cardData?.meta?.subscribed_count - paid_subscribers;
+
 		return (
 			<div className="summary__content">
 				<p>We migrated { cardData.meta.subscribed_count } subscribers</p>
