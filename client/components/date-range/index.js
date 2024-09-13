@@ -496,8 +496,8 @@ export class DateRange extends Component {
 						</div>
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
+						{ this.props.renderHeader( headerProps ) }
 					</div>
-					<div className="date-range__controls">{ this.props.renderHeader( headerProps ) }</div>
 					{ /* Render shortcuts to the right of the calendar */ }
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">

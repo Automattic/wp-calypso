@@ -60,7 +60,8 @@ $date-range-mobile-layout-switch: $break-small;
 		position: relative;
 		.date-range__controls,
 		.date-range__date-inputs,
-		.date-range__picker {
+		.date-range__picker,
+		.date-range__popover-header { // Add this line
 			filter: blur(10px);
 			z-index: 0;
 		}
@@ -78,6 +79,7 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range__controls {
+	order: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -94,11 +96,18 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range__popover-header {
-	order: 2;
+	order: 4;
+	display: flex;
+	justify-content: flex-end; // This will align the content to the right
+	padding: 10px 0 0; // Add some top padding if needed
 
 	.button {
-		margin: 0 0.5em;
+		margin-left: 0.5em; // Change right margin to left
+		margin-right: 0; // Remove right margin
 	}
+
+	// If you want to add some space between the header and the content above it
+	margin-top: 10px;
 }
 
 .date-range__info {
