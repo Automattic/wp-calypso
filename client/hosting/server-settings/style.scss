@@ -117,7 +117,7 @@ $areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-softw
 		}
 
 		&__main-layout-col {
-			.card:not(.github-deployments-card) {
+			.card {
 				padding-left: 72px;
 
 				> .card-icon,
@@ -143,16 +143,6 @@ $areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-softw
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	.github-deployments-card {
-		.banner__icons .banner__icon-no-circle {
-			margin-right: 13px;
-		}
-
-		.banner__action {
-			margin-right: 0;
-		}
 	}
 
 	.happiness-engineers-tray {
