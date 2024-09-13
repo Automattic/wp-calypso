@@ -48,6 +48,7 @@ export class DateRange extends Component {
 		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
 		useArrowNavigation: PropTypes.bool,
+		overlay: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -62,6 +63,7 @@ export class DateRange extends Component {
 		displayShortcuts: false,
 		rootClass: '',
 		useArrowNavigation: false,
+		overlay: null,
 	};
 
 	constructor( props ) {
@@ -474,7 +476,14 @@ export class DateRange extends Component {
 				onClose={ this.closePopoverAndCommit }
 			>
 				<div className="date-range__popover-content">
-					<div className="date-range__popover-inner">
+					<div
+						className={ clsx( 'date-range__popover-inner', {
+							'date-range__popover-inner__hasoverlay': !! this.props.overlay,
+						} ) }
+					>
+						{ this.props.overlay && (
+							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
+						) }
 						<div className="date-range__controls">
 							{ this.props.renderHeader( headerProps ) }
 							{ this.renderDateHelp() }
@@ -488,6 +497,7 @@ export class DateRange extends Component {
 							<Shortcuts
 								currentShortcut={ this.state.currentShortcut }
 								onClick={ this.handleDateRangeChange }
+								locked={ !! this.props.overlay }
 							/>
 						</div>
 					) }

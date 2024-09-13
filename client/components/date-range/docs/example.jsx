@@ -74,6 +74,15 @@ class DateRangeExample extends Component {
 				<Card>
 					<DateRange useArrowNavigation />
 				</Card>
+
+				<h3>With Overlay Enabled</h3>
+				<Card>
+					<DateRange
+						useArrowNavigation
+						displayShortcuts
+						overlay={ <div>🔒 Please upgrade to use the date range picker.</div> }
+					/>
+				</Card>
 			</Fragment>
 		);
 	}
