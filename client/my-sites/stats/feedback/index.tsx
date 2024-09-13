@@ -7,6 +7,7 @@ import {
 	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
 } from '../hooks/use-notice-visibility-query';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 
 import './style.scss';
@@ -129,6 +130,8 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
+	const { supportCommercialUse } = useStatsPurchases( siteId );
+
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
 
@@ -157,6 +160,10 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 			// Ignore other cases.
 		}
 	};
+
+	if ( ! supportCommercialUse ) {
+		return null;
+	}
 
 	return (
 		<div className="stats-feedback-container">
