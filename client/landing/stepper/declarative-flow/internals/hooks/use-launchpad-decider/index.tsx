@@ -56,12 +56,10 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 			}
 
 			navigate( `launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }` );
-			return;
 		},
 		initializeLaunchpadState: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {
 				setLaunchpadSkipState( siteId || siteSlug );
-				return;
 			}
 		},
 	};
