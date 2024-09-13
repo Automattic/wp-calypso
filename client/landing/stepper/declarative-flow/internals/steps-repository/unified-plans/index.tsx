@@ -58,16 +58,43 @@ export default function PlansStepAdaptor( props: StepProps ) {
 
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
-	const onPlanIntervalUpdate = ( path: string ) => {
-		const intervalType = getIntervalType( path );
-		setPlanInterval( intervalType );
-	};
-
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
 	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
 	 */
 	let mostRecentState: ProvidedDependencies;
+
+	const onPlanIntervalUpdate = ( path: string ) => {
+		const intervalType = getIntervalType( path );
+		setPlanInterval( intervalType );
+	};
+
+	const handleSubmitSignupStep = (
+		step: Record< string, unknown >,
+		providedDependencies: Record< string, unknown >,
+		optionalProps: Record< string, unknown >
+	) => {
+		if ( step.stepName === 'domains' ) {
+			if ( step.isPurchasingItem === false ) {
+				setDomainCartItem( undefined );
+				setDomainCartItems( undefined );
+			} else if ( step.siteUrl ) {
+				setSiteUrl( step.siteUrl );
+			}
+		} else {
+			setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+			dispatch(
+				submitSignupStep(
+					mostRecentState,
+					providedDependencies,
+					optionalProps
+				) as unknown as AnyAction
+			);
+			props.navigation.submit?.(
+				( mostRecentState = { ...stepState, ...step, ...mostRecentState } )
+			);
+		}
+	};
 
 	return (
 		<LocalizedPlanStep
@@ -75,32 +102,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			saveSignupStep={ ( state: ProvidedDependencies ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 			} }
-			submitSignupStep={ (
-				step: Record< string, unknown >,
-				providedDependencies: Record< string, unknown >,
-				optionalProps: Record< string, unknown >
-			) => {
-				if ( step.stepName === 'domains' ) {
-					if ( step.isPurchasingItem === false ) {
-						setDomainCartItem( undefined );
-						setDomainCartItems( undefined );
-					} else if ( step.siteUrl ) {
-						setSiteUrl( step.siteUrl );
-					}
-				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
-					dispatch(
-						submitSignupStep(
-							mostRecentState,
-							providedDependencies,
-							optionalProps
-						) as unknown as AnyAction
-					);
-					props.navigation.submit?.(
-						( mostRecentState = { ...stepState, ...step, ...mostRecentState } )
-					);
-				}
-			} }
+			submitSignupStep={ handleSubmitSignupStep }
 			goToNextStep={ () => props.navigation.submit?.( { ...stepState, ...mostRecentState } ) }
 			step={ stepState }
 			customerType={ customerType }
