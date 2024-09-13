@@ -20,12 +20,14 @@ export type ThankYouPlanProductProps = {
 	purchase: ReceiptPurchase;
 	siteSlug: string | null;
 	siteId: number | null;
+	isSecondary?: boolean;
 };
 
 export default function ThankYouPlanProduct( {
 	purchase,
 	siteSlug,
 	siteId,
+	isSecondary,
 }: ThankYouPlanProductProps ) {
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
@@ -113,7 +115,7 @@ export default function ThankYouPlanProduct( {
 					{ ! isWpComEcommercePlan( purchase.productSlug ) && (
 						<Button
 							isBusy={ letsWorkButtonBusy }
-							variant="primary"
+							variant={ isSecondary ? 'secondary' : 'primary' }
 							href={ letsWorkHref }
 							onClick={ letsWorkButtonOnClick }
 						>

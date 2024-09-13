@@ -16,6 +16,7 @@ export type ThankYouEmailProductProps = {
 	siteSlug: string | null;
 	emailAddress?: string;
 	numberOfMailboxesPurchased?: number;
+	isSecondary?: boolean;
 };
 
 export function ThankYouTitanProduct( {
@@ -23,6 +24,7 @@ export function ThankYouTitanProduct( {
 	siteSlug,
 	emailAddress,
 	numberOfMailboxesPurchased,
+	isSecondary,
 }: ThankYouEmailProductProps ) {
 	const translate = useTranslate();
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
@@ -44,7 +46,7 @@ export function ThankYouTitanProduct( {
 		actions.push(
 			<Button
 				key="inbox"
-				variant="primary"
+				variant={ isSecondary ? 'secondary' : 'primary' }
 				href={ inboxPath }
 				onClick={ () => {
 					recordEmailAppLaunchEvent( {
@@ -68,7 +70,7 @@ export function ThankYouTitanProduct( {
 			<Button
 				key="set-up-mailbox"
 				href={ getTitanSetUpMailboxPath( siteSlug, domainName ) }
-				variant="primary"
+				variant={ isSecondary ? 'secondary' : 'primary' }
 			>
 				{ translate( 'Set up mailbox' ) }
 			</Button>
