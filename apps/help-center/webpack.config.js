@@ -19,6 +19,9 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @returns {Object}                                webpack config
  */
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
+	console.log( 'env', env );
+	console.log( 'process.env', process.env );
+
 	env.WP = true;
 	const outputPath = path.join( __dirname, 'dist' );
 
