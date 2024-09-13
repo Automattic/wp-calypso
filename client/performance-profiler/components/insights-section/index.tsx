@@ -75,10 +75,16 @@ export const InsightsSection = forwardRef(
 									? translate( 'All recommendations' )
 									: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name
 							}
-							options={ [ { label: 'All recommendations', value: 'all' } ].concat(
+							selectedCount={ filteredAudits.length }
+							options={ [
+								{ label: 'All recommendations', value: 'all', count: Object.keys( audits ).length },
+							].concat(
 								Object.keys( metricsNames ).map( ( key ) => ( {
 									label: metricsNames[ key as keyof typeof metricsNames ]?.name,
 									value: key,
+									count: Object.keys( audits ).filter( ( auditKey ) =>
+										filterRecommendations( key, audits[ auditKey ] )
+									).length,
 								} ) )
 							) }
 							compact
