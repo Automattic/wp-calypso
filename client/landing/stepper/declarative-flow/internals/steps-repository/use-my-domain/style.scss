@@ -2,21 +2,33 @@ $videopress-mobile-layout-width: 1200px;
 $videopress-link-color: #c377ff;
 $videopress-background: #010101;
 
-#choose-a-domain-writer-header {
-	p {
-		text-align: center;
+.use-my-domain {
+	padding: 36px 0;
+
+	#choose-a-domain-writer-header {
+		p {
+			text-align: center;
+		}
+
+		button {
+			margin-left: 5px;
+		}
 	}
 
-	button {
-		margin-left: 5px;
+	.start-writing .register-domain-step {
+		box-shadow: none;
+		background: none;
 	}
-}
 
-.start-writing .register-domain-step {
-	box-shadow: none;
-	background: none;
-}
+	.start-writing .register-domain-step__next-page-button {
+		padding-bottom: 8px !important;
+	}
 
-.start-writing .register-domain-step__next-page-button {
-	padding-bottom: 8px !important;
+	#choose-a-domain-onboarding-header {
+		p {
+			text-align: center;
+			font-size: 1rem;
+		}
+	}
+
 }
