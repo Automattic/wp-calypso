@@ -17,6 +17,8 @@ type PerformanceProfilerDashboardContentProps = {
 	url: string;
 	hash: string;
 	filter?: string;
+	displayScreenshots?: boolean;
+	displayMigrationBanner?: boolean;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -24,6 +26,8 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
+	displayScreenshots = true,
+	displayMigrationBanner = true,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
@@ -38,10 +42,12 @@ export const PerformanceProfilerDashboardContent = ( {
 						recommendationsQuantity={ Object.keys( audits ).length }
 						recommendationsRef={ insightsRef }
 					/>
-					<ScreenshotThumbnail
-						alt={ translate( 'Website thumbnail' ) }
-						src={ screenshots?.[ screenshots.length - 1 ].data }
-					/>
+					{ displayScreenshots && (
+						<ScreenshotThumbnail
+							alt={ translate( 'Website thumbnail' ) }
+							src={ screenshots?.[ screenshots.length - 1 ].data }
+						/>
+					) }
 				</div>
 				<CoreWebVitalsDisplay
 					fcp={ fcp }
@@ -75,14 +81,16 @@ export const PerformanceProfilerDashboardContent = ( {
 			</div>
 
 			<Disclaimer />
-			<MigrationBanner
-				url={ url }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
-						url,
-					} );
-				} }
-			/>
+			{ displayMigrationBanner && (
+				<MigrationBanner
+					url={ url }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
+							url,
+						} );
+					} }
+				/>
+			) }
 		</div>
 	);
 };
