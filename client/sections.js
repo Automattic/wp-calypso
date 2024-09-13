@@ -740,7 +740,7 @@ const sections = [
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/github-deployments',
+		module: 'calypso/hosting/deployments',
 		group: 'sites',
 	},
 	{
