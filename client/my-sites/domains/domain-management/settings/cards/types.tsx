@@ -22,7 +22,7 @@ export type NameServersCardProps = {
 	nameservers: string[] | null;
 	selectedDomainName: string;
 	selectedSite: SiteDetails;
-	updateNameservers: ( nameServers: string[] ) => void;
+	updateNameservers: ( nameServers: string[] ) => Promise< any >;
 };
 
 export type NameServersToggleProps = {

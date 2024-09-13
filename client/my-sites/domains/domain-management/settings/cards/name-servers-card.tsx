@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { CHANGE_NAME_SERVERS } from '@automattic/urls';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
@@ -55,8 +55,24 @@ const NameServersCard = ( {
 	const [ nameservers, setNameservers ] = useState( nameserversProps || null );
 	const [ shouldPersistNameServers, setShouldPersistNameServers ] = useState( false );
 	const [ isEditingNameServers, setIsEditingNameServers ] = useState( false );
+	const [ isSavingNameServers, setSavingNameServers ] = useState( false );
 	const [ nameServersBeforeEditing, setNameServersBeforeEditing ] = useState< string[] | null >(
 		null
+	);
+
+	const handleUpdateNameservers = useCallback(
+		async ( nameservers: string[] ) => {
+			setSavingNameServers( true );
+			setShouldPersistNameServers( false );
+			try {
+				await updateNameservers( nameservers );
+			} catch ( error ) {
+				setNameservers( nameserversProps || null );
+			} finally {
+				setSavingNameServers( false );
+			}
+		},
+		[ updateNameservers, nameserversProps ]
 	);
 
 	useEffect( () => {
@@ -65,10 +81,9 @@ const NameServersCard = ( {
 
 	useEffect( () => {
 		if ( shouldPersistNameServers ) {
-			updateNameservers( nameservers || [] );
-			setShouldPersistNameServers( false );
+			handleUpdateNameservers( nameservers || [] );
 		}
-	}, [ shouldPersistNameServers, nameservers ] );
+	}, [ shouldPersistNameServers, nameservers, handleUpdateNameservers ] );
 
 	const hasWpcomNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
