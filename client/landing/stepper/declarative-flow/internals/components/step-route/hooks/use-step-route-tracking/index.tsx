@@ -107,5 +107,5 @@ export const useStepRouteTracking = ( {
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking, handleRecordStepComplete ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking ] );
 };
