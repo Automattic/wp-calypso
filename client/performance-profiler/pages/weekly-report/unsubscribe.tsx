@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useUnsubscribeMutation } from 'calypso/data/site-profiler/use-unsubscribe-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	MessageDisplay,
 	ErrorSecondLine,
@@ -20,6 +21,15 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 	useEffect( () => {
 		mutate();
 	}, [ mutate ] );
+
+	useEffect( () => {
+		if ( isSuccess ) {
+			recordTracksEvent( 'calypso_performance_profiler_emails_unsubscribe', {
+				url,
+				hash,
+			} );
+		}
+	}, [ isSuccess, url, hash ] );
 
 	const secondaryMessage = translate(
 		'You can opt in again for weekly reports to receive performance change emails.'
