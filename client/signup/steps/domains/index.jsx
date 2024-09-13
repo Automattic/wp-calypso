@@ -697,7 +697,8 @@ export class RenderDomainsStep extends Component {
 								} ) );
 							}
 						} )
-						.catch( () => {
+						.catch( ( error ) => {
+							console.log( error );
 							this.handleReplaceProductsInCartError(
 								this.props.translate(
 									'Sorry, there was a problem adding that domain. Please try again later.'
