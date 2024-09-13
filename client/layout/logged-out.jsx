@@ -146,6 +146,9 @@ const LayoutLoggedOut = ( {
 		'is-woo-passwordless': isWooPasswordless,
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
+		'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+			'woocommerce/core-profiler-passwordless-auth'
+		),
 	};
 
 	let masterbar = null;

@@ -16,7 +16,7 @@ const outputDirectory = 'dist';
 
 const commonInput = {
 	input: 'src/index.ts',
-	plugins: [ nodeResolvePlugin(), jsonPlugin(), typescriptPlugin() ],
+	plugins: [ nodeResolvePlugin(), jsonPlugin(), typescriptPlugin( { module: 'esnext' } ) ],
 };
 
 const commonOutput = {

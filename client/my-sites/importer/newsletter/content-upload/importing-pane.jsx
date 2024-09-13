@@ -203,7 +203,14 @@ export class ImportingPane extends PureComponent {
 		// Other importers nudge to view the site
 		return (
 			<ImporterActionButtonContainer noSpacing>
-				{ isImporting && <BusyImportingButton /> }
+				{ isImporting && (
+					<>
+						<BusyImportingButton />
+						<ImporterActionButton href={ nextStepUrl }>
+							{ this.props.translate( 'Continue' ) }
+						</ImporterActionButton>
+					</>
+				) }
 				{ isFinished && <ImporterDoneButton importerStatus={ importerStatus } site={ site } /> }
 				{ showFallbackButton && (
 					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />

@@ -167,7 +167,6 @@
 		"p2-enabled": false,
 		"page/export": true,
 		"pattern-assembler/v2": true,
-		"performance-profiler": true,
 		"performance-profiler/llm": true,
 		"performance-profiler/logged-in": true,
 		"plans/hosting-trial": true,
@@ -246,6 +245,7 @@
 		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"woocommerce/core-profiler-passwordless-auth": false
 	}
 }
