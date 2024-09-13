@@ -676,6 +676,7 @@ class ManagePurchase extends Component<
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
+				skipSurvey
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }

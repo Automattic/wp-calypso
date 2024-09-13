@@ -286,7 +286,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { activeSubscriptions, purchase } = this.props;
+		const { activeSubscriptions, purchase, skipSurvey } = this.props;
 
 		return (
 			<CancelPurchaseForm
@@ -297,6 +297,7 @@ class RemovePurchase extends Component {
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+				skipSurvey={ skipSurvey }
 			/>
 		);
 	}
