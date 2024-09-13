@@ -7,6 +7,8 @@ import {
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect, layout, activationLayout } from './controller';
 
+// TODO: remove this old unused code
+// Details - https://a8c.slack.com/archives/C06DN6QQVAQ/p1726157495064039
 export default function () {
 	page( '/hosting-config', siteSelection, sites, makeLayout, clientRender );
 	page(

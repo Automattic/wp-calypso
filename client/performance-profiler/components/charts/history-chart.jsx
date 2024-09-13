@@ -97,10 +97,10 @@ const drawLine = ( svg, data, xScale, yScale ) => {
 };
 
 // Draw axes
-const drawAxes = ( svg, xScale, yScale, data, margin, width, height, d3Format ) => {
+const drawAxes = ( svg, xScale, yScale, data, margin, width, height, d3Format, isMobile ) => {
 	const dates = data.map( ( item ) => new Date( item.date ) );
 
-	svg
+	const axis = svg
 		.append( 'g' )
 		.attr( 'transform', `translate(0,${ height - margin.bottom })` )
 		.call(
@@ -110,6 +110,10 @@ const drawAxes = ( svg, xScale, yScale, data, margin, width, height, d3Format ) 
 				.tickPadding( 10 )
 		)
 		.call( ( g ) => g.select( '.domain' ).remove() );
+
+	if ( isMobile ) {
+		axis.selectAll( 'text' ).attr( 'transform', 'rotate(-45)' ).style( 'text-anchor', 'end' );
+	}
 
 	svg
 		.append( 'g' )
@@ -190,7 +194,7 @@ const generateSampleData = ( range ) => {
 	return data;
 };
 
-const HistoryChart = ( { data, range, height, d3Format = '%-m/%d' } ) => {
+const HistoryChart = ( { data, range, height, d3Format = '%-m/%d', isMobile } ) => {
 	const translate = useTranslate();
 	const svgRef = createRef();
 	const tooltipRef = createRef();
@@ -210,7 +214,7 @@ const HistoryChart = ( { data, range, height, d3Format = '%-m/%d' } ) => {
 		d3Select( svgRef.current ).selectAll( '*' ).remove();
 
 		const width = entry.width;
-		const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+		const margin = { top: 20, right: 20, bottom: isMobile ? 60 : 40, left: 50 };
 
 		const { xScale, yScale, colorScale } = createScales( data, range, margin, width, height );
 
@@ -221,7 +225,7 @@ const HistoryChart = ( { data, range, height, d3Format = '%-m/%d' } ) => {
 		drawGrid( svg, yScale, width, margin );
 
 		dataAvailable && drawLine( svg, data, xScale, yScale );
-		drawAxes( svg, xScale, yScale, data, margin, width, height, d3Format );
+		drawAxes( svg, xScale, yScale, data, margin, width, height, d3Format, isMobile );
 
 		const tooltip = d3Select( tooltipRef.current ).attr( 'class', 'tooltip' );
 		dataAvailable && drawDots( svg, data, xScale, yScale, colorScale, range, tooltip );

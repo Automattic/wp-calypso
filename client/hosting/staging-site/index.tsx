@@ -5,10 +5,10 @@ import {
 	redirectIfCurrentUserCannot,
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
+import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
 import { DOTCOM_STAGING_SITE } from 'calypso/hosting/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
 import { renderStagingSite } from './controller';
 
 export default function () {
