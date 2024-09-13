@@ -172,6 +172,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					] }
 					height={ 300 }
 					d3Format="%b %d"
+					isMobile={ isMobile }
 				/>
 			</div>
 		</div>
