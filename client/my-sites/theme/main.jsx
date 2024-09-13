@@ -1502,6 +1502,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isPremium,
 		isThemePurchased,
 		isStandaloneJetpack,
+		isWporg,
 		demoUrl,
 		showTryAndCustomize,
 		isThemeInstalled,
@@ -1513,7 +1514,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isThemeBundleWooCommerce,
 	} = props;
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, props.themeId );
-	const themeTier = useThemeTierForTheme( props.themeId );
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -1547,11 +1547,13 @@ const ThemeSheetWithOptions = ( props ) => {
 		! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce )
 	) {
 		defaultOption = 'upgradePlanForBundledThemes';
-	} else if ( themeTier?.slug === 'community' && ! canInstallThemes ) {
+	} else if ( isWporg && ! canInstallThemes ) {
 		defaultOption = 'upgradePlanForDotOrgThemes';
 	} else {
 		defaultOption = 'activate';
 	}
+
+	const themeTier = useThemeTierForTheme( props.themeId );
 
 	return (
 		<ConnectedThemeSheet

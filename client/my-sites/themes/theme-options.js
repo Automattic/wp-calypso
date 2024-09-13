@@ -51,6 +51,7 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 	getIsLivePreviewSupported,
+	isWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -235,7 +236,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! siteId ||
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
-			isPremiumThemeAvailable( state, themeId, siteId ),
+			! isWporgTheme( state, themeId ),
 	};
 
 	const upgradePlanForExternallyManagedThemes = {
