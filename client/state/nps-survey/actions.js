@@ -40,7 +40,7 @@ export function setupNpsSurveyEligibility() {
 		debug( 'Checking NPS eligibility...' );
 
 		return wpcom
-			.undocumented()
+			.nps()
 			.checkNPSSurveyEligibility()
 			.then( ( data ) => {
 				debug( '...Eligibility returned from endpoint.', data );
@@ -70,7 +70,7 @@ export function submitNpsSurvey( surveyName, score ) {
 		recordTracksEvent( 'calypso_nps_survey_submitted' );
 
 		return wpcom
-			.undocumented()
+			.nps()
 			.submitNPSSurvey( surveyName, score )
 			.then( () => {
 				debug( '...Successfully submitted NPS survey.' );
@@ -92,7 +92,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		recordTracksEvent( 'calypso_nps_survey_dismissed' );
 
 		return wpcom
-			.undocumented()
+			.nps()
 			.dismissNPSSurvey( surveyName )
 			.then( () => {
 				debug( '...Successfully submitted NPS survey with no score.' );
@@ -114,7 +114,7 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 		recordTracksEvent( 'calypso_nps_survey_feedback_submitted' );
 
 		return wpcom
-			.undocumented()
+			.nps()
 			.sendNPSSurveyFeedback( surveyName, feedback )
 			.then( () => {
 				debug( '...Successfully sent NPS survey feedback.' );
