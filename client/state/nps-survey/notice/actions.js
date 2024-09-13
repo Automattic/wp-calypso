@@ -19,7 +19,7 @@ export function setNpsSurveyDialogShowing( isShowing ) {
 
 export function setupNpsSurveyDevTrigger() {
 	return ( dispatch ) => {
-		if ( config.isEnabled( 'marketing/nps-survey' ) && process.env.NODE_ENV === 'development' ) {
+		if ( config.isEnabled( 'marketing/nps-survey-dev-trigger' ) ) {
 			window.npsSurvey = function ( isAvailableForSupportSession = false ) {
 				dispatch( setNpsSurveyEligibility( true ) );
 				dispatch( setNpsConciergeSessionAvailaibility( isAvailableForSupportSession ) );
