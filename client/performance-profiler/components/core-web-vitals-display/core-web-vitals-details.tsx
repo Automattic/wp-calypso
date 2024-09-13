@@ -156,11 +156,11 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 				{ dataAvailable && (
 					<span className="core-web-vitals-display__description-subheading">
 						{ positiveTendency
-							? translate( '%s has improved over the past eight weeks', {
-									args: [ displayName ],
+							? translate( '%(displayName)s has improved over the past %(weeksToShow)d weeks', {
+									args: { displayName, weeksToShow },
 							  } )
-							: translate( '%s has declined over the past eight weeks', {
-									args: [ displayName ],
+							: translate( '%(displayName)s has declined over the past %(weeksToShow)d weeks', {
+									args: { displayName, weeksToShow },
 							  } ) }
 					</span>
 				) }
