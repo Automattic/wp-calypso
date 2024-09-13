@@ -20,7 +20,10 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
+import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
+import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -39,9 +42,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
-import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
-import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
 import HostingActivateStatus from './hosting-activate-status';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
@@ -119,7 +119,7 @@ const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, 
 	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
-const Hosting = ( props ) => {
+const ServerSettings = ( props ) => {
 	const {
 		clickActivate,
 		isECommerceTrial,
@@ -222,7 +222,7 @@ const Hosting = ( props ) => {
 				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
-					<Layout className="hosting__layout">
+					<Layout className="page-server-settings__layout">
 						<AllCards
 							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
@@ -246,7 +246,7 @@ const Hosting = ( props ) => {
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
-		<Main wideLayout className="hosting hosting--is-two-columns">
+		<Main wideLayout className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
@@ -287,8 +287,7 @@ const Hosting = ( props ) => {
 	);
 };
 
-export const clickActivate = () =>
-	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
+const clickActivate = () => recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
 
 export default connect(
 	( state ) => {
@@ -321,4 +320,4 @@ export default connect(
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 	}
-)( localize( WithOnclickTrialRequest( Hosting ) ) );
+)( localize( WithOnclickTrialRequest( ServerSettings ) ) );
