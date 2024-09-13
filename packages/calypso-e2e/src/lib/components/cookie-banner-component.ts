@@ -42,7 +42,7 @@ export class CookieBannerComponent {
 		}
 
 		if ( await locator.isVisible() ) {
-			await locator.click();
+			await locator.dispatchEvent( 'click' );
 		}
 	}
 }
