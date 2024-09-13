@@ -1,22 +1,17 @@
 import { SegmentedControl } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 
 import './style.scss';
 
+export type Tab = 'mobile' | 'desktop';
+
 type DeviceTabControlsProps = {
-	onDeviceTabChange: ( tab: string ) => void;
+	onDeviceTabChange: ( tab: Tab ) => void;
+	value: Tab;
 };
 
-export const DeviceTabControls = ( { onDeviceTabChange }: DeviceTabControlsProps ) => {
+export const DeviceTabControls = ( { onDeviceTabChange, value }: DeviceTabControlsProps ) => {
 	const translate = useTranslate();
-	const [ selectedOption, setSelectedOption ] = useState( 'mobile' );
-
-	const handleOptionClick = ( newSelectedOption: string ) => {
-		setSelectedOption( newSelectedOption );
-
-		onDeviceTabChange( newSelectedOption );
-	};
 
 	const options = [
 		{
@@ -38,8 +33,8 @@ export const DeviceTabControls = ( { onDeviceTabChange }: DeviceTabControlsProps
 						<SegmentedControl.Item
 							key={ option.value }
 							value={ option.value }
-							selected={ selectedOption === option.value }
-							onClick={ () => handleOptionClick( option.value ) }
+							selected={ value === option.value }
+							onClick={ () => onDeviceTabChange( option.value as Tab ) }
 						>
 							{ option.label }
 						</SegmentedControl.Item>
