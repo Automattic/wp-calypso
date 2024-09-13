@@ -221,7 +221,7 @@ $date-picker_nav_button_size: 20px;
 // `today` day
 .DayPicker-Day--today .date-picker__day {
 	color: var(--color-text-inverted);
-	background-color: var(--color-neutral-70);
+	background-color: var(--color-neutral-light);
 
 	&:hover {
 		background-color: var(--color-neutral-50);
