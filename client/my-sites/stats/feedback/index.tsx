@@ -1,7 +1,12 @@
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import {
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
+	useNoticeVisibilityQuery,
+} from '../hooks/use-notice-visibility-query';
 import FeedbackModal from './modal';
 
 import './style.scss';
@@ -9,6 +14,36 @@ import './style.scss';
 const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
 const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
 const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating-panel';
+
+const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
+const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
+
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months
+
+function useNoticeVisibilityHooks( siteId: number ) {
+	const {
+		isPending,
+		isError,
+		data: shouldShowFeedbackPanel,
+		refetch,
+	} = useNoticeVisibilityQuery( siteId, FEEDBACK_SHOULD_SHOW_PANEL_API_KEY );
+
+	const { mutateAsync } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
+	);
+
+	const updateFeedbackPanelHibernationDelay = () => {
+		mutateAsync().then( () => {
+			refetch();
+		} );
+	};
+
+	return { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay };
+}
 
 interface FeedbackProps {
 	siteId: number;
@@ -92,14 +127,34 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
+	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
+
+	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
+		useNoticeVisibilityHooks( siteId );
+
+	useEffect( () => {
+		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
+			setTimeout( () => {
+				setIsFloatingPanelOpen( true );
+			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
+		}
+	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
 	const handleButtonClick = ( action: string ) => {
-		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
-			setIsOpen( true );
-		}
-		if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
-			setIsFloatingPanelOpen( false );
+		switch ( action ) {
+			case FEEDBACK_ACTION_SEND_FEEDBACK:
+				setIsFloatingPanelOpen( false );
+				setIsOpen( true );
+				break;
+			case FEEDBACK_ACTION_DISMISS_FLOATING_PANEL:
+				setIsFloatingPanelOpen( false );
+				updateFeedbackPanelHibernationDelay();
+				break;
+			case FEEDBACK_ACTION_LEAVE_REVIEW:
+				setIsFloatingPanelOpen( false );
+				window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				break;
+			// Ignore other cases.
 		}
 	};
 

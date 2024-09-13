@@ -38,7 +38,6 @@ import {
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
-import { useInitializeDataViewsSelectedItem } from '../hooks/use-initialize-dataviews-selected-item';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
 import { useSyncSelectedSite } from '../hooks/use-sync-selected-site';
@@ -52,7 +51,7 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/const
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
-import { getSitesPagination, addDummyDataViewPrefix } from './sites-dataviews/utils';
+import { getSitesPagination } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -68,6 +67,7 @@ interface SitesDashboardProps {
 	selectedSite?: SiteDetails | null;
 	initialSiteFeature?: string;
 	selectedSiteFeaturePreview?: React.ReactNode;
+	sectionName?: string;
 }
 
 const siteSortingKeys = [
@@ -77,7 +77,6 @@ const siteSortingKeys = [
 ];
 
 const DEFAULT_PER_PAGE = 50;
-const DEFAULT_STATUS_GROUP = 'all';
 const DEFAULT_SITE_TYPE = 'non-p2';
 
 const SitesDashboard = ( {
@@ -88,12 +87,13 @@ const SitesDashboard = ( {
 		perPage = DEFAULT_PER_PAGE,
 		search,
 		newSiteID,
-		status = DEFAULT_STATUS_GROUP,
+		status,
 		siteType = DEFAULT_SITE_TYPE,
 	},
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
+	sectionName,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -160,13 +160,17 @@ const SitesDashboard = ( {
 		perPage,
 		search: search ?? '',
 		fields: getFieldsByBreakpoint( isDesktop ),
-		filters: [
-			{
-				field: addDummyDataViewPrefix( 'status' ),
-				operator: 'is',
-				value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
-			},
-		],
+		...( status
+			? {
+					filters: [
+						{
+							field: 'status',
+							operator: 'is',
+							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
+						},
+					],
+			  }
+			: {} ),
 		selectedItem: selectedSite,
 		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 		layout: {
@@ -175,19 +179,19 @@ const SitesDashboard = ( {
 					width: getSiteNameColWidth( isDesktop, isWide ),
 				},
 				plan: {
-					width: '100px',
+					width: '126px',
 				},
 				status: {
-					width: '116px',
+					width: '142px',
 				},
 				'last-publish': {
-					width: '120px',
+					width: '146px',
 				},
 				stats: {
-					width: '80px',
+					width: '106px',
 				},
 				actions: {
-					width: '48px',
+					width: '74px',
 				},
 			},
 		},
@@ -260,17 +264,15 @@ const SitesDashboard = ( {
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = dataViewsState.filters?.find(
-			( filter ) => filter.field === addDummyDataViewPrefix( 'status' )
-		);
-		const statusNumber = statusFilter?.value || 1;
-		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
-			'all' ) as GroupableSiteLaunchStatuses;
+		const statusFilter = dataViewsState.filters?.find( ( filter ) => filter.field === 'status' );
+		const statusNumber = statusFilter?.value;
+		return siteStatusGroups.find( ( status ) => status.value === statusNumber )
+			?.slug as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
 	const { currentStatusGroup } = useSitesListGrouping( allSites, {
-		status: statusSlug,
+		status: statusSlug || 'all',
 		showHidden: true,
 	} );
 
@@ -297,13 +299,12 @@ const SitesDashboard = ( {
 	const onboardingTours = useOnboardingTours();
 
 	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
-	useInitializeDataViewsSelectedItem( { selectedSite, paginatedSites } );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
-			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
+			status: statusSlug,
 			page: dataViewsState.page && dataViewsState.page > 1 ? dataViewsState.page : undefined,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
@@ -375,7 +376,7 @@ const SitesDashboard = ( {
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
-								<SitesDashboardHeader />
+								<SitesDashboardHeader isPreviewPaneOpen={ !! dataViewsState.selectedItem } />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
@@ -441,6 +442,7 @@ const SitesDashboard = ( {
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
 							changeSitePreviewPane={ changeSitePreviewPane }
+							sectionName={ sectionName }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />

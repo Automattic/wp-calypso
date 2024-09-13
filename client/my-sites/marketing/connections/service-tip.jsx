@@ -46,13 +46,13 @@ class SharingServiceTip extends Component {
 
 	facebook() {
 		return this.props.translate(
-			'You can also add a {{likeBoxLink}}Like Box{{/likeBoxLink}}, a {{shareButtonLink}}share button{{/shareButtonLink}}, or {{embedLink}}embed{{/embedLink}} your page or profile on your site.',
+			'You can also add a {{pagePluginWidgetLink}}Page Plugin Widget{{/pagePluginWidgetLink}}, a {{shareButtonLink}}share button{{/shareButtonLink}}, or {{embedLink}}embed{{/embedLink}} your page or profile on your site.',
 			{
 				components: {
-					likeBoxLink: (
+					pagePluginWidgetLink: (
 						<a
 							href={ localizeUrl(
-								'https://wordpress.com/support/facebook-integration/#facebook-like-box'
+								'https://wordpress.com/support/facebook-embeds/#facebook-page-plugin-widget'
 							) }
 						/>
 					),

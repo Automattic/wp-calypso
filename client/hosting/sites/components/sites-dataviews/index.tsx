@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -10,7 +11,6 @@ import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Field } from '@wordpress/dataviews';
 import type {
@@ -53,6 +53,7 @@ const DotcomSitesDataViews = ( {
 	setDataViewsState,
 }: Props ) => {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const userId = useSelector( getCurrentUserId );
 
 	const openSitePreviewPane = useCallback(
@@ -65,6 +66,18 @@ const DotcomSitesDataViews = ( {
 		},
 		[ setDataViewsState ]
 	);
+
+	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
+	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
+	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
+	//
+	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
+	// However, when don't need to do anything in the callback, because we already maintain dataViewsState.selectedItem.
+	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
+	// (See the `getSelection()` function below.)
+	const onSelectionChange = () => {};
+	const getSelection = ( dataViewsState: DataViewsState ) =>
+		dataViewsState.selectedItem ? [ dataViewsState.selectedItem.ID ] : undefined;
 
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
@@ -126,11 +139,14 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'status',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Status' ) }</span>,
+				label: __( 'Status' ),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+				elements: siteStatusGroups,
+				filterBy: {
+					operators: [ 'is' ],
+				},
 			},
 			{
 				id: 'last-publish',
@@ -170,32 +186,24 @@ const DotcomSitesDataViews = ( {
 				enableSorting: true,
 				getValue: () => null,
 			},
-			{
-				id: addDummyDataViewPrefix( 'status' ),
-				label: __( 'Status' ),
-				render: () => null,
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'is' ],
-					isPrimary: true,
-				},
-				enableHiding: false,
-				enableSorting: false,
-				getValue: () => null,
-			},
 		],
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
 	);
+
+	const siteSearchLabel = hasEnTranslation( 'Search sites…' )
+		? __( 'Search sites…' )
+		: __( 'Search sites' );
 
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
 		items: sites,
 		itemFieldId: 'ID',
-		searchLabel: __( 'Search by name or domain…' ),
+		searchLabel: siteSearchLabel,
 		fields,
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
+		onSelectionChange,
 		pagination: paginationInfo,
 		defaultLayouts: { table: {} },
 	} );
@@ -209,10 +217,12 @@ const DotcomSitesDataViews = ( {
 			// actions: actions,
 			setDataViewsState,
 			dataViewsState,
+			searchLabel: siteSearchLabel,
 			selectedItem: dataViewsState.selectedItem,
+			selection: getSelection( dataViewsState ),
 			pagination: paginationInfo,
 		} ) );
-	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites ] ); // add actions when implemented
+	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
 
 	return (
 		<ItemsDataViews

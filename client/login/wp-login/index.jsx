@@ -319,7 +319,13 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isReactLostPasswordScreenEnabled() && ( this.props.isWoo || this.props.isBlazePro ) ) {
+		if (
+			isReactLostPasswordScreenEnabled() &&
+			( this.props.isWoo ||
+				this.props.isBlazePro ||
+				( this.props.isWooCoreProfilerFlow &&
+					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) )
+		) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -455,10 +461,19 @@ export class Login extends Component {
 			isPartnerSignup,
 			isWoo,
 			isBlazePro,
+			currentQuery,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
 			return this.renderGravPoweredLoginBlockFooter();
+		}
+
+		if (
+			currentQuery.lostpassword_flow === 'true' &&
+			isWooCoreProfilerFlow &&
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+		) {
+			return null;
 		}
 
 		if ( ( isWooPasswordless || isBlazePro ) && isLoginView ) {

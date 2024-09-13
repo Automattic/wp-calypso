@@ -45,6 +45,16 @@ const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, ac
 	return state;
 };
 
+const siteUrl: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_URL' ) {
+		return action.siteUrl;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const hasUsedDomainsStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_HAS_USED_DOMAINS_STEP' ) {
 		return action.hasUsedDomainsStep;
@@ -455,6 +465,20 @@ const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAct
 	return state;
 };
 
+const domainCartItems: Reducer< MinimalRequestCartProduct[] | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_DOMAIN_CART_ITEMS' ) {
+		return action.domainCartItems;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_IS_MIGRATE_FROM_WP' ) {
 		return action.isMigrateFromWp;
@@ -580,6 +604,7 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	domainForm,
+	siteUrl,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
@@ -617,6 +642,7 @@ const reducer = combineReducers( {
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,
+	domainCartItems,
 	pluginsToVerify,
 	profilerData,
 	paidSubscribers,

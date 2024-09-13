@@ -4,12 +4,6 @@
 
 $brand-display: "SF Pro Display", sans-serif;
 
-.plugins-update-manager:not(.plugins-update-manager-multisite) {
-	.empty-state {
-		max-width: 80%;
-	}
-}
-
 .plugins-update-manager,
 .plugins-update-manager-multisite {
 	// Table cells style based on the screen size
@@ -81,7 +75,6 @@ $brand-display: "SF Pro Display", sans-serif;
 	}
 
 	.empty-state {
-		max-width: 50%;
 		text-align: left;
 		padding: 0;
 

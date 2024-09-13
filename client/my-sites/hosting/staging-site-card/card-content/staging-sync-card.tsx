@@ -116,6 +116,28 @@ const OptionsTreeTitle = styled.p( {
 	marginBottom: '16px',
 } );
 
+const SyncWarningContainer = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	border: '1px solid #D63638',
+	borderRadius: '4px',
+	maxWidth: '807px',
+	padding: '16px',
+	marginBottom: '16px',
+} );
+
+const SyncWarningTitle = styled.p( {
+	fontWeight: 600,
+	marginTop: '0px',
+	marginBottom: '8px',
+	color: '#D63638',
+} );
+
+const SyncWarningContent = styled.p( {
+	marginTop: '0px',
+	marginBottom: '0px',
+} );
+
 interface SyncCardProps {
 	type: 'production' | 'staging';
 	onPull: ( ( items?: string[] ) => void ) | ( () => void );
@@ -139,16 +161,24 @@ const StagingToProductionSync = ( {
 	onConfirm,
 	showSyncPanel,
 	isSqlsOptionDisabled,
+	isSiteWooStore,
+	databaseSyncConfirmed,
+	setdatabaseSyncConfirmed,
+	isSqlSyncOptionChecked,
 }: {
 	disabled: boolean;
 	siteSlug: string;
 	isSyncInProgress: boolean;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
+	databaseSyncConfirmed: boolean;
+	setdatabaseSyncConfirmed: ( value: boolean ) => void;
 	selectedItems: CheckboxOptionItem[];
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
 	showSyncPanel: boolean;
 	isSqlsOptionDisabled: boolean;
+	isSiteWooStore?: boolean;
+	isSqlSyncOptionChecked?: boolean;
 } ) => {
 	const [ typedSiteName, setTypedSiteName ] = useState( '' );
 	const translate = useTranslate();
@@ -221,6 +251,10 @@ const StagingToProductionSync = ( {
 						disabled={ disabled }
 						onChange={ onSelectItems }
 						isSqlsOptionDisabled={ isSqlsOptionDisabled }
+						databaseSyncConfirmed={ databaseSyncConfirmed }
+						setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }
+						isSiteWooStore={ !! isSiteWooStore }
+						isSqlSyncOptionChecked={ !! isSqlSyncOptionChecked }
 					></SyncOptionsPanel>
 				</>
 			) }
@@ -228,7 +262,6 @@ const StagingToProductionSync = ( {
 				<ConfirmationModal
 					disabled={ disabled || isSyncButtonDisabled }
 					isConfirmationDisabled={ typedSiteName !== siteSlug }
-					isPrimary
 					onConfirm={ onConfirm }
 					modalTitle={ translate( 'You’re about to update your production site' ) }
 					extraModalContent={
@@ -243,15 +276,15 @@ const StagingToProductionSync = ( {
 									return <li key={ item.name }>{ item.label }</li>;
 								} ) }
 							</ConfirmationModalList>
-							{ stagingSiteSyncWoo && (
-								<div>
-									<p>{ translate( 'Warning' ) }</p>
-									<p>
+							{ stagingSiteSyncWoo && isSiteWooStore && isSqlSyncOptionChecked && (
+								<SyncWarningContainer>
+									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
+									<SyncWarningContent>
 										{ translate(
 											'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
 										) }
-									</p>
-								</div>
+									</SyncWarningContent>
+								</SyncWarningContainer>
 							) }
 							<ConfirmationModalInputTitle>
 								{ translate( "Enter your site's name {{span}}%(siteSlug)s{{/span}} to confirm.", {
@@ -296,7 +329,6 @@ const ProductionToStagingSync = ( {
 		<ConfirmationModalContainer>
 			<ConfirmationModal
 				disabled={ disabled || isSyncButtonDisabled }
-				isPrimary
 				onConfirm={ onConfirm }
 				modalTitle={ translate( 'You are about to update your staging site' ) }
 				modalMessage={ translate(
@@ -446,9 +478,11 @@ export const SiteSyncCard = ( {
 		[] as CheckboxOptionItem[]
 	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
+	const [ databaseSyncConfirmed, setdatabaseSyncConfirmed ] = useState< boolean >( false );
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
+
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, productionSiteId ) );
 	const {
 		progress,
@@ -490,10 +524,25 @@ export const SiteSyncCard = ( {
 		}
 	}, [ resetSyncStatus, dispatch, type, onPull, transformSelectedItems, selectedItems ] );
 
+	const isSqlSyncOptionChecked = selectedItems.some( ( item ) => item.name === 'sqls' );
+
+	useEffect( () => {
+		if ( ! isSqlSyncOptionChecked && databaseSyncConfirmed ) {
+			setdatabaseSyncConfirmed( false );
+		}
+	}, [ isSqlSyncOptionChecked, databaseSyncConfirmed, setdatabaseSyncConfirmed ] );
+
+	const disallowWooCommerceSync =
+		config.isEnabled( 'staging-site-sync-woo' ) &&
+		isSiteWooStore &&
+		isSqlSyncOptionChecked &&
+		! databaseSyncConfirmed;
+
 	const isSyncButtonDisabled =
 		disabled ||
 		( selectedItems.length === 0 && selectedOption === actionForType ) ||
-		selectedOption === null;
+		selectedOption === null ||
+		disallowWooCommerceSync;
 
 	let siteToSync: 'production' | 'staging' | null = null;
 	if ( targetSite ) {
@@ -513,6 +562,8 @@ export const SiteSyncCard = ( {
 			setSelectedItems( [] );
 		}
 	}, [ dispatch, selectedOption, status, syncError ] );
+
+	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
 
 	return (
 		<SyncCardContainer
@@ -573,7 +624,11 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
-					isSqlsOptionDisabled={ isSiteWooStore }
+					isSqlsOptionDisabled={ stagingSiteSyncWoo ? false : isSiteWooStore }
+					isSiteWooStore={ isSiteWooStore }
+					databaseSyncConfirmed={ databaseSyncConfirmed }
+					setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }
+					isSqlSyncOptionChecked={ isSqlSyncOptionChecked }
 				/>
 			) }
 			{ selectedOption !== actionForType && (

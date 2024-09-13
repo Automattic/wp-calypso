@@ -12,40 +12,36 @@ const ActionButtons = styled.div( {
 type LaunchConfirmationModalProps = {
 	onConfirmation: () => void;
 	closeModal: () => void;
-	billingAgencyMessage: string;
+	message: string;
 };
 
 export function LaunchConfirmationModal( {
 	closeModal,
-	billingAgencyMessage,
+	message,
 	onConfirmation,
 }: LaunchConfirmationModalProps ) {
-	// Not wrapped in translation to avoid request unconfirmed copy
-	const modalTitle = 'You’re about to update your production site';
+	const modalTitle = translate( "You're about to launch this website" );
 
 	return (
-		<>
-			<Modal title={ modalTitle } onRequestClose={ closeModal }>
-				{ billingAgencyMessage && (
-					<p>
-						{ billingAgencyMessage }
-						<br />
-						Are you sure you want to proceed?
-					</p>
-				) }
-				<ActionButtons>
-					<Button
-						onClick={ () => {
-							closeModal();
-						} }
-					>
-						{ translate( 'Cancel' ) }
-					</Button>
-					<Button primary onClick={ onConfirmation }>
-						{ translate( 'Yes, launch site' ) }
-					</Button>
-				</ActionButtons>
-			</Modal>
-		</>
+		<Modal
+			className="site-settings__launch-confirmation-modal"
+			title={ modalTitle }
+			onRequestClose={ closeModal }
+		>
+			{ message && <p>{ message }</p> }
+			<p>{ translate( 'Ready to launch?' ) }</p>
+			<ActionButtons>
+				<Button
+					onClick={ () => {
+						closeModal();
+					} }
+				>
+					{ translate( 'Cancel' ) }
+				</Button>
+				<Button primary onClick={ onConfirmation }>
+					{ translate( 'Launch site' ) }
+				</Button>
+			</ActionButtons>
+		</Modal>
 	);
 }

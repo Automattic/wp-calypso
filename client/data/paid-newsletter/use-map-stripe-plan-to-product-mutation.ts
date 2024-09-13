@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
 interface MutationVariables {
-	siteId: string;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 	stripePlan: string;
@@ -27,6 +27,17 @@ export const useMapStripePlanToProductMutation = (
 			stripePlan,
 			productId,
 		}: MutationVariables ) => {
+			// Optimistically set the value.
+			queryClient.setQueryData(
+				[ 'paid-newsletter-importer', siteId, engine ],
+				( previous: any ) => {
+					const optimisticData = previous; // { steps: [ { [ skipStep ]: { status: 'skipped' } } ] };
+
+					optimisticData.steps[ 'subscribers' ].content.map_plans[ stripePlan ] = productId;
+					return optimisticData;
+				}
+			);
+
 			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-importer/paid-newsletter/map-stripe-plan-to-product`,
@@ -58,7 +69,7 @@ export const useMapStripePlanToProductMutation = (
 
 	const mapStripePlanToProduct = useCallback(
 		(
-			siteId: string,
+			siteId: number,
 			engine: string,
 			currentStep: string,
 			stripePlan: string,

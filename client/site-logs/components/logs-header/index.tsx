@@ -37,7 +37,7 @@ export function LogsHeader( { logType }: { logType: string } ) {
 			/>
 			<div className="logs-header__selector-container">
 				<div className="logs-header__selector-heading">{ translate( 'Log type' ) }</div>
-				<SegmentedControl primary className="logs-header__selector-controls">
+				<SegmentedControl className="logs-header__selector-controls">
 					{ options.map( ( option ) => {
 						return (
 							<SegmentedControl.Item

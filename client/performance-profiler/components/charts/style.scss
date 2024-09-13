@@ -32,19 +32,31 @@
 		padding: 0;
 
 		.info {
-			display: flex;
 			position: absolute;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			padding: 15px 25px;
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 32px;
+			padding: 12px 14px;
+			border-radius: 4px;
 			background: #f6f7f7;
+			width: 70%;
+			text-wrap: pretty;
+			font-family: $font-sf-pro-text;
+			line-height: $font-size-header-small;
 
-			.icon {
-				margin-left: 10px;
+			p {
+				font-size: $font-body-extra-small;
+				color: var(--studio-gray-50);
+				margin: 0;
 			}
+
+			.heading {
+				font-size: $font-body-small;
+				color: var(--studio-gray-70);
+				font-weight: 500;
+				margin-bottom: 4px;
+			}
+
 		}
 	}
 }
