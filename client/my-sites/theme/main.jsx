@@ -54,7 +54,6 @@ import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -347,6 +346,11 @@ class ThemeSheet extends Component {
 			this.setState( { disabledButton: this.isLoading() } );
 		}
 
+		if ( this.state.busyButton === true && this.isBusy() === false ) {
+			this.props.successNotice( 'Theme activated successfully', {
+				isPersistent: true,
+			} );
+		}
 		if ( this.state.busyButton !== this.isBusy() ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { busyButton: this.isBusy() } );
