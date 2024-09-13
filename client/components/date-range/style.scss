@@ -57,10 +57,6 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	&.date-range__popover-inner__hasoverlay {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
 		.date-range__controls,
 		.date-range__date-inputs,
 		.date-range__picker {
@@ -72,6 +68,11 @@ $date-range-mobile-layout-switch: $break-small;
 			position: absolute;
 			z-index: 1;
 			height: 100%;
+			width: 70%;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 
 	}
