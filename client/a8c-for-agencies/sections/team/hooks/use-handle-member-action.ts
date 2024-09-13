@@ -1,5 +1,4 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
@@ -89,7 +88,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 					{
 						onSuccess: () => {
 							if ( item.email === currentUser?.email ) {
-								page( 'https://automattic.com/for/agencies' );
+								window.location.href = 'https://automattic.com/for/agencies';
 								return;
 							}
 
@@ -116,6 +115,14 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 				);
 			}
 		},
-		[ cancelMemberInvite, dispatch, onRefetchList, removeMember, resendMemberInvite, translate ]
+		[
+			cancelMemberInvite,
+			currentUser?.email,
+			dispatch,
+			onRefetchList,
+			removeMember,
+			resendMemberInvite,
+			translate,
+		]
 	);
 }
