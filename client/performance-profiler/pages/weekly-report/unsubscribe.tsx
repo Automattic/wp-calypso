@@ -22,7 +22,7 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 	}, [ mutate ] );
 
 	const secondaryMessage = translate(
-		'You can always resubscribe to receive performance change emails by opting in again for weekly reports at any time.'
+		'You can opt in again for weekly reports to receive performance change emails.'
 	);
 
 	return (
