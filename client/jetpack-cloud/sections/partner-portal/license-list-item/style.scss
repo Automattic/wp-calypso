@@ -146,7 +146,8 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 		font-size: 0.65rem; /* stylelint-disable-line */
 		padding: 0 10px;
 		font-weight: 400;
-		border-radius: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 12px;
 	}
 
 	.badge--success {
