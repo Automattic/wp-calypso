@@ -88,6 +88,11 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
+.date-range__custom-title {
+	font-weight: 500;
+	font-size: $font-body;
+}
+
 .date-range__popover-header {
 	order: 2;
 
@@ -95,7 +100,6 @@ $date-range-mobile-layout-switch: $break-small;
 		margin: 0 0.5em;
 	}
 }
-
 
 .date-range__info {
 	order: 1;

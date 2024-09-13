@@ -49,6 +49,7 @@ export class DateRange extends Component {
 		rootClass: PropTypes.string,
 		useArrowNavigation: PropTypes.bool,
 		overlay: PropTypes.node,
+		customTitle: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -64,6 +65,7 @@ export class DateRange extends Component {
 		rootClass: '',
 		useArrowNavigation: false,
 		overlay: null,
+		customTitle: '',
 	};
 
 	constructor( props ) {
@@ -486,7 +488,11 @@ export class DateRange extends Component {
 						) }
 						<div className="date-range__controls">
 							{ this.props.renderHeader( headerProps ) }
-							{ this.renderDateHelp() }
+							{ this.props.customTitle ? (
+								<div className="date-range__custom-title">{ this.props.customTitle }</div>
+							) : (
+								this.renderDateHelp()
+							) }
 						</div>
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
