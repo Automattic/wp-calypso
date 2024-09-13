@@ -71,7 +71,7 @@ export const useSitePages = ( { query = '' } ) => {
 				{
 					url: '/',
 					label: __( 'Home' ),
-					value: 'home',
+					value: '0',
 					wpcom_performance_url: homePagePerformanceUrl,
 				},
 				...( data ?? [] ),
