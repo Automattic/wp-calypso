@@ -23,19 +23,12 @@ export const useActiveThemeQuery = (
 
 	return useQuery< ActiveTheme[] >( {
 		queryKey,
-		queryFn: async () => {
-			const data = await wpcom.req.get( {
+		queryFn: () => {
+			return wpcom.req.get( {
 				path: `/sites/${ siteId }/themes?status=active`,
 				apiNamespace: 'wp/v2',
 			} );
-
-			if ( ! Array.isArray( data ) || data.length === 0 ) {
-				throw new Error( 'Data is empty or not an array' );
-			}
-
-			return data;
 		},
-		retry: 10,
 		enabled: isEnabled && !! siteId,
 	} );
 };
