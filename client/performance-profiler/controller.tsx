@@ -3,6 +3,7 @@ import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { TabType } from './components/header';
 import { PerformanceProfilerDashboard } from './pages/dashboard';
@@ -66,6 +67,22 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 	context.primary = (
 		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
 			<WeeklyReport url={ url } hash={ context.query?.hash ?? '' } />
+		</PerformanceProfilerWrapper>
+	);
+
+	next();
+}
+
+export function WeeklyReportUnsubscribeContext( context: Context, next: () => void ): void {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
+	const url = context.query?.url?.startsWith( 'http' )
+		? context.query.url
+		: `https://${ context.query?.url ?? '' }`;
+
+	context.primary = (
+		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
+			<WeeklyReportUnsubscribe url={ url } hash={ context.query?.hash ?? '' } />
 		</PerformanceProfilerWrapper>
 	);
 
