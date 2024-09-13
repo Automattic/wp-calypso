@@ -1,4 +1,6 @@
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
@@ -15,7 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
-import { useSitePages } from './hooks/useSitePages';
+import { getSitePagesQueryKey, useSitePages } from './hooks/useSitePages';
 
 import './style.scss';
 
@@ -93,6 +95,17 @@ export const SitePerformance = () => {
 		[ pages, currentPageId ]
 	);
 
+	const queryClient = useQueryClient();
+
+	const retestPage = () => {
+		// TODO: Trigger new test
+
+		queryClient.invalidateQueries( {
+			queryKey: getSitePagesQueryKey( { siteId, query } ),
+			exact: true,
+		} );
+	};
+
 	const performanceReport = usePerformanceReport( currentPage?.wpcom_performance_url, activeTab );
 
 	return (
@@ -101,14 +114,42 @@ export const SitePerformance = () => {
 				<NavigationHeader
 					className="site-performance__navigation-header"
 					title={ translate( 'Performance' ) }
-					subtitle={ translate(
-						'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-						{
-							components: {
-								link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
-							},
-						}
-					) }
+					subtitle={
+						performanceReport.performanceReport
+							? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
+									args: {
+										testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+											'MMMM Do, YYYY h:mm:ss A'
+										),
+									},
+									components: {
+										button: (
+											<Button
+												css={ {
+													textDecoration: 'none !important',
+													':hover': {
+														textDecoration: 'underline !important',
+													},
+													fontSize: 'inherit',
+													whiteSpace: 'nowrap',
+												} }
+												variant="link"
+												onClick={ retestPage }
+											/>
+										),
+									},
+							  } )
+							: translate(
+									'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+									{
+										components: {
+											link: (
+												<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
+											),
+										},
+									}
+							  )
+					}
 				/>
 				<PageSelector
 					onFilterValueChange={ setQuery }

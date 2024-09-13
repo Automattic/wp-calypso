@@ -31,6 +31,14 @@ const getPages = ( siteId: number, query = '' ) => {
 	} );
 };
 
+export const getSitePagesQueryKey = ( {
+	siteId,
+	query,
+}: {
+	siteId?: number | null;
+	query: string;
+} ) => [ 'useSitePages', siteId, query ];
+
 export const useSitePages = ( { query = '' } ) => {
 	const { __ } = useI18n();
 
@@ -38,7 +46,7 @@ export const useSitePages = ( { query = '' } ) => {
 	const siteId = site?.ID;
 
 	const { data } = useQuery( {
-		queryKey: [ 'useSitePages', siteId, query ],
+		queryKey: getSitePagesQueryKey( { siteId, query } ),
 		queryFn: () => getPages( siteId!, query ),
 		refetchOnWindowFocus: false,
 		enabled: !! siteId,
