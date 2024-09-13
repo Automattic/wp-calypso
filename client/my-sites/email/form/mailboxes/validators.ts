@@ -307,7 +307,6 @@ class PasswordValidator extends BaseValidator< string > {
 		try {
 			const apiResponse = await this.mockApiCall( value );
 			if ( ! apiResponse.success && apiResponse.errors ) {
-				//NTS: This is sufficient if we want to directly pass errors from the API response. If we want to perform any translations, we'll need a getApiValidationErrors method.
 				apiResponse.errors.forEach( ( error ) => this.addError( field, error ) );
 			}
 		} catch ( error ) {

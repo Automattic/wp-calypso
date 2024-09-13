@@ -153,7 +153,6 @@ const MailboxField = ( {
 			</FormLabel>
 			{ field.error && (
 				<FormInputValidation
-					// NTS: Passing markup as a 'text' prop feels odd.
 					text={ field.error.map( ( error, index ) => (
 						<div key={ index }>{ error }</div>
 					) ) }
