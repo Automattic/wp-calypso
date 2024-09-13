@@ -215,32 +215,3 @@
 		}
 	}
 }
-
-
-.dataviews-wrapper {
-	.dataviews-no-results,
-	.dataviews-loading {
-		padding-top: 1rem;
-		text-align: center;
-	}
-
-	.spinner-wrapper {
-		display: none;
-	}
-
-}
-
-.dataviews-wrapper:has(.dataviews-loading) {
-	.spinner-wrapper {
-		display: block;
-	}
-	.dataviews-loading p {
-		display: none;
-	}
-}
-
-.dataviews-wrapper:has(.dataviews-no-results) {
-	.spinner-wrapper {
-		display: none;
-	}
-}

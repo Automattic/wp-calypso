@@ -3,7 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useContext, useEffect, useCallback, useState } from 'react';
+import { useContext, useEffect, useCallback, useState, useRef } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import {
 	DATAVIEWS_LIST,
@@ -105,6 +105,30 @@ export default function SitesDashboard() {
 		showOnlyFavorites,
 		showOnlyDevelopmentSites,
 	] );
+
+	// Reset back to page one when entering Needs Attention, Favourites, or Development page.
+	const selectedFilters = getSelectedFilters( dataViewsState.filters );
+	const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
+	const prevIsOnFavouritesPageRef = useRef( showOnlyFavorites );
+	const prevIsOnDevelopmentPageRef = useRef( showOnlyDevelopmentSites );
+	const prevIsOnNeedsAttentionPageRef = useRef( isOnNeedsAttentionPage );
+
+	useEffect( () => {
+		const selectedFilters = getSelectedFilters( dataViewsState.filters );
+		const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
+
+		if (
+			prevIsOnFavouritesPageRef.current !== showOnlyFavorites ||
+			prevIsOnDevelopmentPageRef.current !== showOnlyDevelopmentSites ||
+			prevIsOnNeedsAttentionPageRef.current !== isOnNeedsAttentionPage
+		) {
+			setDataViewsState( { ...dataViewsState, page: 1 } );
+		}
+
+		prevIsOnFavouritesPageRef.current = showOnlyFavorites;
+		prevIsOnDevelopmentPageRef.current = showOnlyDevelopmentSites;
+		prevIsOnNeedsAttentionPageRef.current = isOnNeedsAttentionPage;
+	}, [ dataViewsState, setDataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ] );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
