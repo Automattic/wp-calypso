@@ -180,13 +180,8 @@
 	flex-wrap: nowrap;
 	align-items: flex-start;
 
-	@include break-mobile {
-		flex-direction: row;
-	}
-
 	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( ">480px" ) {
-			max-width: 55%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
@@ -433,7 +428,7 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
-			white-space: nowrap;
+			white-space: normal;
 		}
 
 		&:not(.featured-domain-suggestion) {
