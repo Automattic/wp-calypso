@@ -26,58 +26,75 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { removeStep } from 'calypso/state/signup/progress/actions';
+import {
+	removeStep,
+	saveSignupStep,
+	submitSignupStep,
+} from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
 
-const RenderDomainsStepConnect = connect(
-	( state, { flow }: StepProps ) => {
-		const productsList = getAvailableProductsList( state );
-		const productsLoaded = ! isEmpty( productsList );
-		const selectedSite = getSelectedSite( state );
-		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
-		const userLoggedIn = isUserLoggedIn( state as object );
-		const currentUserSiteCount = getCurrentUserSiteCount( state as object );
-		const stepSectionName = window.location.pathname.includes( 'use-your-domain' )
-			? 'use-your-domain'
-			: undefined;
-
-		return {
-			designType: getDesignType( state ),
-			currentUser: getCurrentUser( state as object ),
-			productsList,
-			productsLoaded,
-			selectedSite,
-			isDomainOnly: false,
-			sites: getSitesItems( state ),
-			userSiteCount: currentUserSiteCount,
-			previousStepName: 'user',
-			isPlanSelectionAvailableLaterInFlow: true,
-			userLoggedIn,
-			multiDomainDefaultPlan,
-			domainsWithPlansOnly: currentUserHasFlag( state as object, DOMAINS_WITH_PLANS_ONLY ),
-			flowName: flow,
-			path: window.location.pathname,
-			positionInFlow: 1,
-			isReskinned: true,
-			stepSectionName,
-		};
-	},
-	{
+const mapDispatchToProps = ( dispatch: any, props: any ) => {
+	return {
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
 		recordAddDomainButtonClickInUseYourDomain,
 		recordUseYourDomainButtonClick,
 		removeStep,
+		saveSignupStep: ( step: Record< string, unknown > ) => {
+			props.saveSignupStep?.( step );
+			dispatch( saveSignupStep( step ) );
+		},
+		submitSignupStep: (
+			step: Record< string, unknown >,
+			providedDependencies: Record< string, unknown >,
+			optionalProps: Record< string, unknown >
+		) => {
+			props.submitSignupStep?.( step );
+			dispatch( submitSignupStep( step, providedDependencies, optionalProps ) );
+		},
 		submitDomainStepSelection,
 		setDesignType,
 		recordTracksEvent,
 		fetchUsernameSuggestion,
-	}
-)( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
+	};
+};
+
+const RenderDomainsStepConnect = connect( ( state, { flow }: StepProps ) => {
+	const productsList = getAvailableProductsList( state );
+	const productsLoaded = ! isEmpty( productsList );
+	const selectedSite = getSelectedSite( state );
+	const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
+	const userLoggedIn = isUserLoggedIn( state as object );
+	const currentUserSiteCount = getCurrentUserSiteCount( state as object );
+	const stepSectionName = window.location.pathname.includes( 'use-your-domain' )
+		? 'use-your-domain'
+		: undefined;
+
+	return {
+		designType: getDesignType( state ),
+		currentUser: getCurrentUser( state as object ),
+		productsList,
+		productsLoaded,
+		selectedSite,
+		isDomainOnly: false,
+		sites: getSitesItems( state ),
+		userSiteCount: currentUserSiteCount,
+		previousStepName: 'user',
+		isPlanSelectionAvailableLaterInFlow: true,
+		userLoggedIn,
+		multiDomainDefaultPlan,
+		domainsWithPlansOnly: currentUserHasFlag( state as object, DOMAINS_WITH_PLANS_ONLY ),
+		flowName: flow,
+		path: window.location.pathname,
+		positionInFlow: 1,
+		isReskinned: true,
+		stepSectionName,
+	};
+}, mapDispatchToProps )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
