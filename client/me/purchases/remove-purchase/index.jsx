@@ -64,6 +64,7 @@ class RemovePurchase extends Component {
 		activeSubscriptions: PropTypes.array,
 		linkIcon: PropTypes.string,
 		primaryDomain: PropTypes.object,
+		skipSurvey: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -285,7 +286,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase, activeSubscriptions } = this.props;
+		const { activeSubscriptions, purchase } = this.props;
 
 		return (
 			<CancelPurchaseForm
