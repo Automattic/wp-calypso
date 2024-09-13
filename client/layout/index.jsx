@@ -370,7 +370,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/nps-survey-notice' ) && ! isE2ETest() && (
+				{ config.isEnabled( 'marketing/nps-survey' ) && ! isE2ETest() && (
 					<AsyncLoad require="calypso/layout/nps-survey-notice" placeholder={ null } />
 				) }
 				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
