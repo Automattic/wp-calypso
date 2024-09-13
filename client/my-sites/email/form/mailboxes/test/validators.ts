@@ -295,6 +295,24 @@ const finalTestDataForAllCases = [
 			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordContainsForbiddenCharacterError( '₧' ) ],
 		}
 	),
+	provideTitanTestData(
+		"Passwords must not contain the mailbox's domain name",
+		createTestDataForTitan( {
+			[ FIELD_PASSWORD ]: 'somethingsomethingexampledomainpassword',
+		} ),
+		{
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordContainsDomainError( 'example' ) ],
+		}
+	),
+	provideGoogleTestData(
+		'Passwords must not contain the mailbox name',
+		createTestDataForGoogle( {
+			[ FIELD_PASSWORD ]: 'info_topsecret',
+		} ),
+		{
+			[ FIELD_PASSWORD ]: [ PasswordValidator.getPasswordContainsMailboxNameError( 'info' ) ],
+		}
+	),
 ];
 
 describe( 'Mailbox form validation', () => {
