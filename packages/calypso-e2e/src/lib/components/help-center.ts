@@ -2,6 +2,8 @@ import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';
 
+declare const configData: Record< string, unknown >;
+
 /**
  * Represents the Help Center popover.
  */
@@ -23,6 +25,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Get the help center container locator.
+	 *
+	 * @returns {Locator} The help center container locator.
 	 */
 	getHelpCenterLocator(): Locator {
 		return this.popup;
@@ -37,6 +41,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Opens the support popover from the closed state.
+	 *
+	 * @returns {Promise<void>}
 	 */
 	async openPopover(): Promise< void > {
 		// Return if its already open.
@@ -55,6 +61,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Closes the support popover from the open state.
+	 *
+	 * @returns {Promise<void>}
 	 */
 	async closePopover(): Promise< void > {
 		// Return if its already closed.
@@ -72,6 +80,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Minimizes the support popover from the open state.
+	 *
+	 * @returns {Promise<void>}
 	 */
 	async minimizePopover(): Promise< void > {
 		const minimizeButton = await this.popup.getByRole( 'button', {
@@ -92,6 +102,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Check the presence of the Help Center popover.
+	 *
+	 * @returns {boolean} Whether the popover is shown.
 	 */
 	async isPopoverShown(): Promise< boolean > {
 		const isVisible = await this.isVisible();
@@ -112,6 +124,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Get the articles locator.
+	 *
+	 * @returns {Locator} The articles locator.
 	 */
 	getArticles(): Locator {
 		return this.popup
@@ -121,6 +135,8 @@ export class HelpCenterComponent {
 
 	/**
 	 * Get Odie chat
+	 *
+	 * @returns {Locator} The Odie chat locator.
 	 */
 	getOdieChat(): Locator {
 		return this.popup.locator( '#odie-messages-container' );
@@ -172,7 +188,23 @@ export class HelpCenterComponent {
 	}
 
 	/**
+	 * Set Zendesk to staging environment.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async setZendeskStaging(): Promise< void > {
+		await this.page.evaluate( () => {
+			if ( typeof configData !== 'undefined' ) {
+				configData.env_id = 'development';
+				configData.zendesk_support_chat_key = '715f17a8-4a28-4a7f-8447-0ef8f06c70d7';
+			}
+		} );
+	}
+
+	/**
 	 * Get the Contact Support button.
+	 *
+	 * @returns {Locator} The Contact Support button locator.
 	 */
 	getContactSupportButton(): Locator {
 		return this.popup.getByRole( 'button', { name: 'Contact WordPress.com Support' } ).last();
