@@ -84,7 +84,9 @@ const Header = styled( FormattedHeader )`
 	.formatted-header__title {
 		font-size: 2.75rem;
 		line-height: 3rem;
-		text-wrap: nowrap;
+		@media ( min-width: 400px ) {
+			text-wrap: nowrap;
+		}
 	}
 	.formatted-header__subtitle {
 		font-size: 1rem;
