@@ -168,6 +168,10 @@ $blueberry-color: #3858e9;
 
 				.content {
 					flex: 1 1 500px;
+
+					&:only-child {
+						flex: 0 1 700px;
+					}
 				}
 
 				p {
