@@ -22,10 +22,12 @@ const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBA
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months
 
 function useNoticeVisibilityHooks( siteId: number ) {
-	const { data: shouldShowFeedbackPanel, refetch } = useNoticeVisibilityQuery(
-		siteId,
-		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY
-	);
+	const {
+		isPending,
+		isError,
+		data: shouldShowFeedbackPanel,
+		refetch,
+	} = useNoticeVisibilityQuery( siteId, FEEDBACK_SHOULD_SHOW_PANEL_API_KEY );
 
 	const { mutateAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -40,7 +42,7 @@ function useNoticeVisibilityHooks( siteId: number ) {
 		} );
 	};
 
-	return { shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay };
+	return { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay };
 }
 
 interface FeedbackProps {
@@ -127,16 +129,16 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
-	const { shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
+	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
 
 	useEffect( () => {
-		if ( shouldShowFeedbackPanel ) {
+		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ shouldShowFeedbackPanel ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
