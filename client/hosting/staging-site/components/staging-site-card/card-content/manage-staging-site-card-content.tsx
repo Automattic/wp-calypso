@@ -6,11 +6,11 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
-import { ConfirmationModal } from 'calypso/my-sites/hosting/staging-site-card/confirmation-modal';
-import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { useSelector } from 'calypso/state';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { StagingSite } from '../../../hooks/use-staging-site';
+import { ConfirmationModal } from '../confirmation-modal';
 import { SiteSyncCard } from './staging-sync-card';
 
 const SiteRow = styled.div( {

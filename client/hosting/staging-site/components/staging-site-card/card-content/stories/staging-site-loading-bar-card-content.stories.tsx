@@ -1,9 +1,8 @@
-import { action } from '@storybook/addon-actions';
 import { Story, Meta } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
-import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
-import { NewStagingSiteCardContent } from '../new-staging-site-card-content';
+import { CardContentWrapper } from '../card-content-wrapper';
+import { StagingSiteLoadingBarCardContent } from '../staging-site-loading-bar-card-content';
 
 /**
  * Ideally, this component should depend only on local `./style.scss`. However, currently, some card styles are defined
@@ -13,7 +12,7 @@ import '../../../style.scss';
 
 export default {
 	title: 'client/my-sites/hosting/StagingSiteCard',
-	component: NewStagingSiteCardContent,
+	component: StagingSiteLoadingBarCardContent,
 	decorators: [
 		( Story ) => {
 			return (
@@ -39,25 +38,32 @@ export default {
 	],
 } as Meta;
 
-type NewStagingSiteCardContentStory = Story< ComponentProps< typeof NewStagingSiteCardContent > >;
-const Template: NewStagingSiteCardContentStory = ( args ) => {
-	return <NewStagingSiteCardContent { ...args } />;
+type StagingSiteLoadingBarCardContentStory = Story<
+	ComponentProps< typeof StagingSiteLoadingBarCardContent >
+>;
+const Template: StagingSiteLoadingBarCardContentStory = ( args ) => {
+	return <StagingSiteLoadingBarCardContent { ...args } />;
 };
 
 const defaultArgs = {
-	onAddClick: action( 'onClick' ),
-	isButtonDisabled: false,
-	showQuotaError: false,
+	isReverting: false,
+	progress: 10,
+	isOwner: false,
 };
 
-export const NewStagingSite = Template.bind( {} );
-NewStagingSite.args = {
+export const StagingSiteLoadingBar = Template.bind( {} );
+StagingSiteLoadingBar.args = {
 	...defaultArgs,
 };
 
-export const NewStagingSiteWithQuotaError = Template.bind( {} );
-NewStagingSiteWithQuotaError.args = {
+export const StagingSiteLoadingBarForOwner = Template.bind( {} );
+StagingSiteLoadingBarForOwner.args = {
 	...defaultArgs,
-	isButtonDisabled: true,
-	showQuotaError: true,
+	isOwner: true,
+};
+
+export const StagingSiteLoadingBarDeleting = Template.bind( {} );
+StagingSiteLoadingBarDeleting.args = {
+	...defaultArgs,
+	isReverting: true,
 };

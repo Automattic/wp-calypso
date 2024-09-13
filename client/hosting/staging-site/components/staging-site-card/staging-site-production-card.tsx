@@ -9,19 +9,16 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
-import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
-import {
-	useProductionSiteDetail,
-	ProductionSite,
-} from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
+import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
+import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
 import { SiteSyncCard } from './card-content/staging-sync-card';
-import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
+import { LoadingPlaceholder } from './loading-placeholder';
 
 const ProductionCard = styled( Card )( {
 	paddingTop: '0',
