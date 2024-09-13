@@ -33,6 +33,9 @@ skipDescribeIf(
 
 		helpCenterComponent = new HelpCenterComponent( page );
 		helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
+
+		// Set Zendesk to staging environment to prevent calling Zendesk API in test environment.
+		await helpCenterComponent.setZendeskStaging();
 	} );
 
 	// Close the page after the tests
