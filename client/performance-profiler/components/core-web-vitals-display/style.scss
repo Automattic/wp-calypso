@@ -85,3 +85,31 @@ $blueberry-color: #3858e9;
 .core-web-vitals-display__description a {
 	color: $blueberry-color;
 }
+
+//v2
+.core-web-vitals-display__metric {
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header;
+	margin-bottom: 24px;
+
+
+	&.good {
+		color: #00ba37;
+	}
+
+	&.needs-improvement {
+		color: #d67709;
+	}
+
+	&.poor {
+		color: #d63638;
+	}
+}
+
+.core-web-vitals-display__history-graph-container {
+
+	.chart-container {
+		width: 100%;
+		max-width: 100%;
+	}
+}

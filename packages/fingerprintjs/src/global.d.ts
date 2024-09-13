@@ -4,6 +4,7 @@ interface Window {
 	webkitOfflineAudioContext?: OfflineAudioContext;
 	openDatabase?( ...args: unknown[] ): void;
 	__fpjs_d_m?: unknown;
+	fingerprintJsVersion: string;
 }
 
 interface Navigator {

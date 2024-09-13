@@ -83,7 +83,10 @@ export const NewStagingSiteCardContent = ( {
 								{
 									components: {
 										a: (
-											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
+											<InlineSupportLink
+												supportContext="staging-to-production-sync"
+												showIcon={ false }
+											/>
 										),
 									},
 								}
@@ -92,8 +95,9 @@ export const NewStagingSiteCardContent = ( {
 					</WarningContainer>
 				) }
 				{ isDevelopmentSite && (
-					// Not wrapped in translation to avoid request unconfirmed copy
-					<p>The staging feature will be available once the site is launched.</p>
+					<p>
+						{ translate( 'Staging sites are only available to sites launched in production.' ) }
+					</p>
 				) }
 				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>

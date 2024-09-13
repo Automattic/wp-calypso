@@ -97,7 +97,7 @@ const drawLine = ( svg, data, xScale, yScale ) => {
 };
 
 // Draw axes
-const drawAxes = ( svg, xScale, yScale, data, margin, width, height ) => {
+const drawAxes = ( svg, xScale, yScale, data, margin, width, height, d3Format ) => {
 	const dates = data.map( ( item ) => new Date( item.date ) );
 
 	svg
@@ -106,7 +106,7 @@ const drawAxes = ( svg, xScale, yScale, data, margin, width, height ) => {
 		.call(
 			d3AxisBottom( xScale )
 				.tickValues( dates )
-				.tickFormat( d3TimeFormat( '%b %d' ) )
+				.tickFormat( d3TimeFormat( d3Format ) )
 				.tickPadding( 10 )
 		)
 		.call( ( g ) => g.select( '.domain' ).remove() );
@@ -190,7 +190,7 @@ const generateSampleData = ( range ) => {
 	return data;
 };
 
-const HistoryChart = ( { data, range, height } ) => {
+const HistoryChart = ( { data, range, height, d3Format = '%-m/%d' } ) => {
 	const translate = useTranslate();
 	const svgRef = createRef();
 	const tooltipRef = createRef();
@@ -221,11 +221,11 @@ const HistoryChart = ( { data, range, height } ) => {
 		drawGrid( svg, yScale, width, margin );
 
 		dataAvailable && drawLine( svg, data, xScale, yScale );
-		drawAxes( svg, xScale, yScale, data, margin, width, height );
+		drawAxes( svg, xScale, yScale, data, margin, width, height, d3Format );
 
 		const tooltip = d3Select( tooltipRef.current ).attr( 'class', 'tooltip' );
 		dataAvailable && drawDots( svg, data, xScale, yScale, colorScale, range, tooltip );
-	}, [ dataAvailable, data, range, svgRef, tooltipRef, height, entry ] );
+	}, [ dataAvailable, data, range, svgRef, tooltipRef, height, entry, d3Format ] );
 
 	return (
 		<div className="chart-container">

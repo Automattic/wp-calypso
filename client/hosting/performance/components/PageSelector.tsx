@@ -1,16 +1,8 @@
-import page from '@automattic/calypso-router';
 import { SearchableDropdown } from '@automattic/components';
-import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { useSitePages } from '../hooks/useSitePages';
+import { ComponentProps } from 'react';
 
-export const PageSelector = () => {
-	const queryParams = useSelector( getCurrentQueryArguments );
-	const [ , setQuery, query ] = useDebouncedInput();
-	const pages = useSitePages( { query } );
-
+export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown > ) => {
 	return (
 		<div
 			css={ {
@@ -23,20 +15,7 @@ export const PageSelector = () => {
 		>
 			<div>{ translate( 'Page' ) }</div>
 			<SearchableDropdown
-				onFilterValueChange={ setQuery }
-				options={ pages }
-				value={ queryParams?.page_id?.toString() }
-				onChange={ ( page_id ) => {
-					const url = new URL( window.location.href );
-
-					if ( page_id ) {
-						url.searchParams.set( 'page_id', page_id );
-					} else {
-						url.searchParams.delete( 'page_id' );
-					}
-
-					page.replace( url.pathname + url.search );
-				} }
+				{ ...props }
 				css={ {
 					maxWidth: '240px',
 					minWidth: '240px',

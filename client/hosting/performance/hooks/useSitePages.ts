@@ -11,7 +11,10 @@ interface SitePage {
 	id: number;
 	link: string;
 	title: { rendered: string };
-	wpcom_performance_url?: string;
+	wpcom_performance_url?: {
+		url: string;
+		hash: string;
+	};
 }
 
 const getPages = ( siteId: number, query = '' ) => {
@@ -59,7 +62,8 @@ export const useSitePages = ( { query = '' } ) => {
 	} );
 
 	const { getSiteSetting } = useSiteSettings( site?.slug );
-	const homePagePerformanceUrl = getSiteSetting( 'wpcom_performance_url' );
+	const homePagePerformanceUrl: SitePage[ 'wpcom_performance_url' ] =
+		getSiteSetting( 'wpcom_performance_url' ) || undefined;
 
 	const pages = useMemo( () => {
 		if ( ! query ) {
@@ -68,7 +72,7 @@ export const useSitePages = ( { query = '' } ) => {
 					url: '/',
 					label: __( 'Home' ),
 					value: 'home',
-					wpcom_performance_url: homePagePerformanceUrl || undefined,
+					wpcom_performance_url: homePagePerformanceUrl,
 				},
 				...( data ?? [] ),
 			];

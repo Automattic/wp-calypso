@@ -49,3 +49,4 @@ export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHOD
 export const A4A_CLIENT_CHECKOUT = '/client/checkout';
 export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
 	'https://agencieshelp.automattic.com/knowledge-base/client-billing/';
+export const EXTERNAL_WPCOM_ACCOUNT_URL = 'https://wordpress.com/me/';
