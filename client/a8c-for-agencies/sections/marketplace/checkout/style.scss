@@ -274,6 +274,11 @@
 
 .checkout__client-referral-form {
 	padding-block-start: 48px;
+
+	input[type="text"].form-text-input:disabled,
+	.form-textarea:disabled {
+		border-color: var(--color-neutral-10);
+	}
 }
 
 .checkout__aside--client {
