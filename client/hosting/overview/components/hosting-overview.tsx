@@ -5,7 +5,7 @@ import ActiveDomainsCard from 'calypso/hosting/overview/components/active-domain
 import PlanCard from 'calypso/hosting/overview/components/plan-card';
 import QuickActionsCard from 'calypso/hosting/overview/components/quick-actions-card';
 import SiteBackupCard from 'calypso/hosting/overview/components/site-backup-card';
-import SupportCard from 'calypso/hosting/server-settings/support-card';
+import SupportCard from 'calypso/hosting/server-settings/components/support-card';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

@@ -9,7 +9,7 @@ import {
 	useSetEdgeCacheMutation,
 	purgeEdgeCache,
 } from 'calypso/data/hosting/use-cache';
-import { useOpenPhpMyAdmin } from 'calypso/hosting/server-settings/phpmyadmin-card';
+import { useOpenPhpMyAdmin } from 'calypso/hosting/server-settings/components/phpmyadmin-card';
 import { navigate } from 'calypso/lib/navigate';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';

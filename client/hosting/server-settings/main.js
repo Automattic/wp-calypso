@@ -42,13 +42,13 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import CacheCard from './cache-card';
+import CacheCard from './components/cache-card';
+import { HostingUpsellNudge } from './components/hosting-upsell-nudge';
+import PhpMyAdminCard from './components/phpmyadmin-card';
+import RestorePlanSoftwareCard from './components/restore-plan-software-card';
+import SFTPCard from './components/sftp-card';
+import WebServerSettingsCard from './components/web-server-settings-card';
 import HostingActivateStatus from './hosting-activate-status';
-import { HostingUpsellNudge } from './hosting-upsell-nudge';
-import PhpMyAdminCard from './phpmyadmin-card';
-import RestorePlanSoftwareCard from './restore-plan-software-card';
-import SFTPCard from './sftp-card';
-import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
 const HEADING_OFFSET = 30;
