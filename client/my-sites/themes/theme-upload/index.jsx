@@ -142,7 +142,7 @@ class Upload extends Component {
 		} );
 	};
 
-	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
+	requestUpdatedSiteData = ( isTransferring, wasTransferring, isThemeTransferCompleted ) => {
 		if ( isTransferring && ! this.state.isTransferring ) {
 			this.setState( {
 				isTransferring: true,
@@ -151,7 +151,7 @@ class Upload extends Component {
 				isTrialSite: true,
 			} );
 		}
-		if ( wasTransferring && isTransferCompleted ) {
+		if ( wasTransferring && isThemeTransferCompleted ) {
 			this.props.fetchUpdatedData();
 			this.setState( { isTransferring: false, showEligibility: false } );
 		}
@@ -300,7 +300,7 @@ class Upload extends Component {
 				<div className="theme-upload__description">{ theme.description }</div>
 				<div className="theme-upload__action-buttons">
 					<Button onClick={ this.onTryAndCustomizeClick }>{ tryandcustomize.label }</Button>
-					{ this.props.activeTheme !== theme.id && ! this.props.isTransferCompleted && (
+					{ this.props.activeTheme !== theme.id && ! this.props.isThemeTransferCompleted && (
 						<Button primary onClick={ this.onActivateClick }>
 							{ activate.label }
 						</Button>
@@ -425,12 +425,12 @@ class Upload extends Component {
 				></NavigationHeader>
 
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
-				{ ! showTrialAcknowledgeModal && this.props.isTransferInProgress && (
+				{ ! showTrialAcknowledgeModal && this.props.isThemeTransferInProgress && (
 					<HostingActivateStatus
 						context="theme"
 						onTick={ this.requestUpdatedSiteData }
 						keepAlive={ hasRequestedTrial && ! isAtomic }
-						forceEnable={ this.props.isTransferInProgress }
+						forceEnable={ this.props.isThemeTransferInProgress }
 					/>
 				) }
 				{ showUpgradeBanner && ! isTrial && this.renderUpgradeBanner() }
@@ -505,8 +505,8 @@ const mapStateToProps = ( state ) => {
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
-		isTransferInProgress: isTransferInProgress( state, siteId ),
-		isTransferCompleted: isTransferComplete( state, siteId ),
+		isThemeTransferInProgress: isTransferInProgress( state, siteId ),
+		isThemeTransferCompleted: isTransferComplete( state, siteId ),
 		showEligibility,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteThemeInstallUrl: getSiteThemeInstallUrl( state, siteId ),
