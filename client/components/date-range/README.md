@@ -24,6 +24,7 @@ Props are displayed as a table with Name, Type, Default, and Description as head
 
 **Required props are marked with `*`.**
 
+<<<<<<< HEAD
 | Name                                        | Type                        | Default             | Description                                                                                                                                                                                          |
 | ------------------------------------------- | --------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `selectedStartDate`                         | `Date` or `Moment` instance | today minus 1 month | the first day of the range you wish to be _pre-selected_ by _default_ in the date picker UI                                                                                                          |
@@ -37,6 +38,7 @@ Props are displayed as a table with Name, Type, Default, and Description as head
 | `displayShortcuts`                          | `Boolean`                   | `false`             | determines whether to display the shortcuts menu alongside the calendar                                                                                                                              |
 | `useArrowNavigation`                        | `Boolean`                   | `false`             | determines whether to display the arrow navigation instead of the month labelled buttons as navigation between calendar months                                                                       |
 | `overlay`                        | `node`                   | `null`             | renders the overlay above the calendar and date inputs if passed |
+| `customTitle`                          | `String`                   | ``             | provides the option to pass a custom alternative title to the popover                     |
 
 #### Render Props
 

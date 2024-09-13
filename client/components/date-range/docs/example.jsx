@@ -83,6 +83,11 @@ class DateRangeExample extends Component {
 						overlay={ <div>🔒 Please upgrade to use the date range picker.</div> }
 					/>
 				</Card>
+
+				<h3>With Custom Title</h3>
+				<Card>
+					<DateRange customTitle="Custom Title" />
+				</Card>
 			</Fragment>
 		);
 	}
