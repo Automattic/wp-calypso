@@ -8,6 +8,7 @@ export type ResultsCategory = 'Docs' | 'Links';
 export class HelpCenterComponent {
 	private page: Page;
 	private popup: Locator;
+	private isWpAdmin: boolean;
 
 	/**
 	 * Constructs an instance of the component.
@@ -17,6 +18,7 @@ export class HelpCenterComponent {
 	constructor( page: Page ) {
 		this.page = page;
 		this.popup = this.page.locator( '.help-center__container' );
+		this.isWpAdmin = page.url().includes( 'wp-admin' );
 	}
 
 	/**
@@ -42,7 +44,12 @@ export class HelpCenterComponent {
 			return;
 		}
 
-		await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
+		if ( this.isWpAdmin ) {
+			await this.page.locator( '#wp-admin-bar-help-center' ).click();
+		} else {
+			await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
+		}
+
 		await this.popup.waitFor( { state: 'visible' } );
 	}
 

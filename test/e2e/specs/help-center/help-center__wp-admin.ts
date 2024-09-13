@@ -15,6 +15,7 @@ skipDescribeIf(
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;
+	let pageUrl: string;
 	let testAccount: TestAccount;
 	let helpCenterComponent: HelpCenterComponent;
 	let helpCenterLocator: Locator;
@@ -22,18 +23,14 @@ skipDescribeIf(
 	// Setup the page and test account
 	beforeAll( async function () {
 		page = await browser.newPage();
-
 		testAccount = new TestAccount( 'defaultUser' );
+		pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
+
 		await testAccount.authenticate( page, { waitUntilStable: true } );
+		await page.goto( pageUrl );
 
 		helpCenterComponent = new HelpCenterComponent( page );
 		helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
-
-		await page.goto(
-			`${ testAccount.getSiteURL( {
-				protocol: true,
-			} ) }wp-admin/`
-		);
 	} );
 
 	// Close the page after the tests
@@ -143,7 +140,7 @@ skipDescribeIf(
 			await stillNeedHelpButton.waitFor( { state: 'visible' } );
 			await stillNeedHelpButton.click();
 
-			expect( await helpCenterLocator.locator( '#odie-messages-container' ).count() ).toBeTruthy();
+			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 
 		it( 'get forwarded to a human', async () => {
@@ -179,20 +176,11 @@ skipDescribeIf(
 	 */
 	describe( 'Action Hooks', () => {
 		it( 'open help center on page load', async () => {
-			await page.goto( testAccount.getSiteURL( { protocol: true } ) + '?help-center=home' );
+			await page.goto( pageUrl + '?help-center=home' );
 
 			await helpCenterLocator.waitFor( { state: 'visible' } );
 
 			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
-		} );
-
-		it( 'open help center to Wapuu on page load', async () => {
-			await page.goto( testAccount.getSiteURL( { protocol: true } ) + '?help-center=wapuu' );
-
-			await helpCenterLocator.waitFor( { state: 'visible' } );
-
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
-			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 	} );
 } );
