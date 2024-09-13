@@ -178,8 +178,7 @@ export class HelpCenterComponent {
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/wpcom/v2/odie/chat/wpcom-support-chat' ) &&
-					response.status() === 200
+					response.url().includes( '/odie/chat/wpcom-support-chat' ) && response.status() === 200
 			),
 			sendMessageForm.locator( 'textarea' ).fill( query ),
 			// Programmatically trigger the form submission to avoid issues with the cookie banner.
@@ -193,9 +192,19 @@ export class HelpCenterComponent {
 	 * @returns {Promise<void>}
 	 */
 	async setZendeskStaging(): Promise< void > {
+		// Rewrite the authentication request to avoid calling Zendesk API in test environment.
+		await this.page.route( '**/authenticate/chat?*', ( route, request ) => {
+			const url = new URL( request.url() );
+
+			if ( url.searchParams.get( 'type' ) === 'zendesk' ) {
+				url.searchParams.set( 'test_mode', 'true' );
+			}
+
+			route.continue( { url: url.toString() } );
+		} );
+
 		await this.page.evaluate( () => {
 			if ( typeof configData !== 'undefined' ) {
-				configData.env_id = 'development';
 				configData.zendesk_support_chat_key = '715f17a8-4a28-4a7f-8447-0ef8f06c70d7';
 			}
 		} );
