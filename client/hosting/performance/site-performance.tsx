@@ -5,6 +5,8 @@ import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
+import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
@@ -25,6 +27,34 @@ const statsQuery = {
 	period: 'day',
 	date: moment().format( 'YYYY-MM-DD' ),
 	max: 0,
+};
+
+const usePerformanceReport = (
+	wpcom_performance_url: { url: string; hash: string } | undefined,
+	activeTab: Tab
+) => {
+	const { url = '', hash = '' } = wpcom_performance_url || {};
+
+	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
+	const { final_url: finalUrl } = basicMetrics || {};
+	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
+
+	const mobileReport =
+		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
+	const desktopReport =
+		typeof performanceInsights?.desktop === 'string' ? undefined : performanceInsights?.desktop;
+
+	const performanceReport = activeTab === 'mobile' ? mobileReport : desktopReport;
+
+	const desktopLoaded = 'completed' === performanceInsights?.status;
+	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+
+	return {
+		performanceReport,
+		url: finalUrl ?? url,
+		hash,
+		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
+	};
 };
 
 export const SitePerformance = () => {
@@ -57,11 +87,13 @@ export const SitePerformance = () => {
 		} );
 	}, [ pages, stats ] );
 
-	const currentPageId = queryParams?.page_id?.toString();
+	const currentPageId = queryParams?.page_id?.toString() ?? '0';
+	const currentPage = useMemo(
+		() => pages.find( ( page ) => page.value === currentPageId ),
+		[ pages, currentPageId ]
+	);
 
-	const wpcom_performance_url = useMemo( () => {
-		return pages.find( ( page ) => page.value === currentPageId )?.wpcom_performance_url;
-	}, [ pages, currentPageId ] );
+	const performanceReport = usePerformanceReport( currentPage?.wpcom_performance_url, activeTab );
 
 	return (
 		<div className="site-performance">
@@ -96,7 +128,9 @@ export const SitePerformance = () => {
 				/>
 				<DeviceTabControls onDeviceTabChange={ setActiveTab } value={ activeTab } />
 			</div>
-			<PerformanceReport wpcom_performance_url={ wpcom_performance_url } activeTab={ activeTab } />
+			{ currentPage && (
+				<PerformanceReport { ...performanceReport } pageTitle={ currentPage.label } />
+			) }
 		</div>
 	);
 };
