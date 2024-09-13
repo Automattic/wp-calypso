@@ -1,23 +1,20 @@
 import page from '@automattic/calypso-router';
 import type { Moment } from 'moment';
 
-export type SiteMonitoringTab = 'metrics' | 'php' | 'web';
+export type SiteLogsTab = 'php' | 'web';
 
-interface SiteMonitoringTabParamsType {
+interface SiteLogsTabParamsType {
 	[ key: string ]: string[];
 }
 
-const SiteMonitoringTabParams: SiteMonitoringTabParamsType = {
-	metrics: [],
+const SiteLogsTabParams: SiteLogsTabParamsType = {
 	php: [ 'from', 'to', 'severity' ],
 	web: [ 'from', 'to', 'request_type', 'request_status' ],
 };
 
-export function getPageQueryParam(): SiteMonitoringTab | null {
+export function getPageQueryParam(): SiteLogsTab | null {
 	const param = new URL( window.location.href ).searchParams.get( 'page' );
-	return param && [ 'metrics', 'php', 'web' ].includes( param )
-		? ( param as SiteMonitoringTab )
-		: null;
+	return param && [ 'php', 'web' ].includes( param ) ? ( param as SiteLogsTab ) : null;
 }
 
 export function getDateRangeQueryParam( moment: typeof import('moment') ): {
@@ -74,7 +71,7 @@ export function updateFilterQueryParam( filter: string, value: string | null ) {
 }
 
 export function getQuerySearchForTab( tabName: string ): string {
-	if ( ! SiteMonitoringTabParams[ tabName ].length ) {
+	if ( ! SiteLogsTabParams[ tabName ].length ) {
 		return '';
 	}
 
@@ -83,7 +80,7 @@ export function getQuerySearchForTab( tabName: string ): string {
 	const keysToDelete: string[] = [];
 
 	url.searchParams.forEach( ( value, key ) => {
-		if ( ! SiteMonitoringTabParams[ tabName ].includes( key ) ) {
+		if ( ! SiteLogsTabParams[ tabName ].includes( key ) ) {
 			keysToDelete.push( key );
 		}
 	} );

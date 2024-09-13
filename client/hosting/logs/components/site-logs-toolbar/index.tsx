@@ -7,7 +7,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
-import { buildFilterParam } from '../../logs-tab';
+import { buildFilterParam } from '../site-logs';
 import { DateTimePicker } from './date-time-picker';
 import type { Moment } from 'moment';
 

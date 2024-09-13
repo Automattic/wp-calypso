@@ -9,14 +9,14 @@ import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteLogsTable } from './components/site-logs-table';
-import { SiteLogsToolbar } from './components/site-logs-toolbar';
 import {
 	getDateRangeQueryParam,
 	updateDateRangeQueryParam,
 	getFilterQueryParam,
 	updateFilterQueryParam,
-} from './site-monitoring-filter-params';
+} from './filter-params';
+import { SiteLogsTable } from './site-logs-table';
+import { SiteLogsToolbar } from './site-logs-toolbar';
 import type { Moment } from 'moment';
 
 export type LogType = 'php' | 'web';
@@ -49,7 +49,7 @@ export function buildFilterParam(
 	return filters;
 }
 
-export const LogsTab = ( {
+export const SiteLogs = ( {
 	logType,
 	pageSize = DEFAULT_PAGE_SIZE,
 }: {

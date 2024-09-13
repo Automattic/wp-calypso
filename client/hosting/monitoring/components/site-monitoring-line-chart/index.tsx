@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
-import { TimeRange } from '../../metrics-tab';
+import { TimeRange } from '../site-monitoring';
 import { TIME_RANGE_OPTIONS } from '../time-range-picker';
 
 const DEFAULT_DIMENSIONS = {

@@ -9,7 +9,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { LogType } from '../../logs-tab';
+import { LogType } from '../site-logs';
 import SiteLogsExpandedContent from './site-logs-expanded-content';
 import './style.scss';
 

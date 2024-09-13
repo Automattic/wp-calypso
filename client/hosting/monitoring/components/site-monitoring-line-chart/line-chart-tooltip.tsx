@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { HTTPCodeSerie } from '../../metrics-tab';
+import { HTTPCodeSerie } from '../site-monitoring';
 import { UplotTooltipProps } from './uplot-tooltip-plugin';
 
 const PopoverStyled = styled.div( {

@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGroupByTime } from '../../hooks/use-group-by-time';
-import { TimeRange } from '../../metrics-tab';
-import { DimensionParams, MetricsType, useSiteMetricsQuery } from '../../use-metrics-query';
+import { DimensionParams, MetricsType, useSiteMetricsQuery } from '../../hooks/use-metrics-query';
+import { TimeRange } from '../site-monitoring';
 
 export function useSiteMetricsStatusCodesData(
 	timeRange: TimeRange,
