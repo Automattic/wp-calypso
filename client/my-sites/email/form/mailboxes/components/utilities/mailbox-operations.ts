@@ -12,20 +12,22 @@ export class MailboxOperations {
 		this.setMailboxesState = setMailboxesState;
 	}
 
-	validateLocal() {
-		this.mailboxes.forEach( ( mailbox ) => {
-			const otherMailboxNames = this.mailboxes
-				.filter(
-					( currentMailbox ) =>
-						currentMailbox.getFieldValue( FIELD_UUID ) !== mailbox.getFieldValue( FIELD_UUID )
-				)
-				.map( ( mailbox ) => mailbox.getFieldValue< string >( FIELD_MAILBOX ) ?? '' );
+	async validateLocal() {
+		await Promise.all(
+			this.mailboxes.map( async ( mailbox ) => {
+				const otherMailboxNames = this.mailboxes
+					.filter(
+						( currentMailbox ) =>
+							currentMailbox.getFieldValue( FIELD_UUID ) !== mailbox.getFieldValue( FIELD_UUID )
+					)
+					.map( ( mailbox ) => mailbox.getFieldValue< string >( FIELD_MAILBOX ) ?? '' );
 
-			mailbox.validate(
-				true,
-				mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames )
-			);
-		} );
+				await mailbox.validate(
+					true,
+					mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames )
+				);
+			} )
+		);
 	}
 
 	async validateForExtraItemsPurchase() {
@@ -41,7 +43,7 @@ export class MailboxOperations {
 	}
 
 	public async validateAndCheck( isExtraItemPurchase: boolean ) {
-		this.validateLocal();
+		await this.validateLocal();
 
 		if ( ! this.areAllValuesValid() ) {
 			return false;

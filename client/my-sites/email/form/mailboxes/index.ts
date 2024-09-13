@@ -206,7 +206,7 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
-	private validateFieldByName(
+	private async validateFieldByName(
 		fieldName: ValidatorFieldNames,
 		validator: Validator< unknown >,
 		skipInvisibleFields: boolean
@@ -224,19 +224,20 @@ class MailboxForm< T extends EmailProvider > {
 			return;
 		}
 
-		validator.validate( field );
+		await validator.validate( field );
 	}
 
-	validate(
+	async validate(
 		skipInvisibleFields = false,
 		additionalValidators?: [ ValidatorFieldNames, Validator< unknown > ][]
 	) {
 		this.clearErrors();
-
-		[ ...this.getValidators(), ...( additionalValidators ?? [] ) ].forEach(
-			( [ fieldName, validator ] ) =>
-				this.validateFieldByName( fieldName, validator, skipInvisibleFields )
+		const validators = [ ...this.getValidators(), ...( additionalValidators ?? [] ) ];
+		const validationPromises = validators.map( ( [ fieldName, validator ] ) =>
+			this.validateFieldByName( fieldName, validator, skipInvisibleFields )
 		);
+
+		await Promise.all( validationPromises );
 	}
 
 	async validateField( fieldName: FormFieldNames ) {
