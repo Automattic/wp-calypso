@@ -81,7 +81,7 @@ $blueberry-color: #3858e9;
 .core-web-vitals-display__description p {
 	margin-top: 15px;
 	line-height: 24px;
-	min-height: calc(24px * 4);  // 4 lines of text
+	margin-bottom: 32px;
 }
 
 .core-web-vitals-display__description a {
@@ -92,11 +92,10 @@ $blueberry-color: #3858e9;
 .core-web-vitals-display__recommendations {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
 
 	.core-web-vitals-display__recommendations-subtitle {
 		line-height: 24px;
-		min-height: calc(24px * 2);  // 2 lines of text
+		margin-bottom: 16px;
 	}
 
 	.recommendations-anchor.components-button.is-secondary {
