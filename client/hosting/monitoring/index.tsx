@@ -4,11 +4,10 @@ import {
 	render as clientRender,
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
-import { DOTCOM_MONITORING } from 'calypso/hosting/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
-import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
-import { siteMonitoring } from './controller';
+import { DOTCOM_MONITORING } from '../sites/components/site-preview-pane/constants';
+import { siteDashboard } from '../sites/controller';
+import { redirectHomeIfIneligible, siteMonitoring } from './controller';
 
 export default function () {
 	page( '/site-monitoring', siteSelection, sites, makeLayout, clientRender );

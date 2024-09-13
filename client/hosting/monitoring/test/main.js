@@ -7,11 +7,11 @@ import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { useSiteMetricsData } from '../components/site-monitoring';
 import { calculateTimeRange } from '../components/time-range-picker';
-import { useSiteMetricsData } from '../metrics-tab';
-import { useSiteMetricsQuery } from '../use-metrics-query';
+import { useSiteMetricsQuery } from '../hooks/use-metrics-query';
 
-jest.mock( 'calypso/my-sites/site-monitoring/use-metrics-query.ts', () => ( {
+jest.mock( 'calypso/hosting/monitoring/hooks/use-metrics-query.ts', () => ( {
 	__esModule: true,
 	useSiteMetricsQuery: jest.fn( () => {
 		return {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { SiteMetricsAPIResponse } from '../use-metrics-query';
+import { SiteMetricsAPIResponse } from './use-metrics-query';
 
 const STATUS_CODES_TO_GROUP = [ 400, 500 ];
 

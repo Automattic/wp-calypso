@@ -10,8 +10,8 @@ import {
 } from 'calypso/hosting/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
-import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
-import { httpRequestLogs, phpErrorLogs } from './controller';
+import { redirectHomeIfIneligible } from '../monitoring/controller';
+import { phpErrorLogs, webServerLogs } from './controller';
 
 export default function () {
 	page( '/site-logs', siteSelection, sites, makeLayout, clientRender );
@@ -38,7 +38,7 @@ export default function () {
 		redirectToHostingPromoIfNotAtomic,
 		redirectHomeIfIneligible,
 		navigation,
-		httpRequestLogs,
+		webServerLogs,
 		siteDashboard( DOTCOM_LOGS_WEB ),
 		makeLayout,
 		clientRender

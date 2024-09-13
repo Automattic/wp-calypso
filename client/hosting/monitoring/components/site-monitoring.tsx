@@ -6,18 +6,23 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
+import {
+	MetricsType,
+	DimensionParams,
+	PeriodData,
+	useSiteMetricsQuery,
+} from '../hooks/use-metrics-query';
+import { SiteMonitoringLineChart } from './site-monitoring-line-chart';
 import {
 	FirstChartTooltip,
 	HttpChartTooltip,
 	withSeries,
-} from './components/site-monitoring-line-chart/line-chart-tooltip';
-import { timeHighlightPlugin } from './components/site-monitoring-line-chart/time-highlight-plugin';
-import { tooltipsPlugin } from './components/site-monitoring-line-chart/uplot-tooltip-plugin';
-import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
-import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
-import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
-import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
+} from './site-monitoring-line-chart/line-chart-tooltip';
+import { timeHighlightPlugin } from './site-monitoring-line-chart/time-highlight-plugin';
+import { tooltipsPlugin } from './site-monitoring-line-chart/uplot-tooltip-plugin';
+import { useSiteMetricsStatusCodesData } from './site-monitoring-line-chart/use-site-metrics-status-codes-data';
+import { SiteMonitoringPieChart } from './site-monitoring-pie-chart';
+import { calculateTimeRange, TimeDateChartControls } from './time-range-picker';
 
 import './style.scss';
 
@@ -490,7 +495,7 @@ const useErrorHttpCodeSeries = () => {
 	return { series, statusCodes };
 };
 
-export const MetricsTab = () => {
+export const SiteMonitoring = () => {
 	const { __, _x } = useI18n();
 	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();

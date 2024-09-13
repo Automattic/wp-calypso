@@ -3,7 +3,7 @@
  */
 import { renderHook } from '@testing-library/react';
 import { useGroupByTime } from '../hooks/use-group-by-time';
-import { PeriodData } from '../use-metrics-query';
+import { PeriodData } from '../hooks/use-metrics-query';
 
 const periods: PeriodData[] = [
 	{

@@ -6,7 +6,7 @@ import { navigate } from 'calypso/lib/navigate';
 
 import './style.scss';
 
-export function LogsHeader( { logType }: { logType: string } ) {
+export function SiteLogsHeader( { logType }: { logType: string } ) {
 	const options = [
 		{
 			value: 'php',

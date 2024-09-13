@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
-import { LogType } from '../../logs-tab';
+import { LogType } from '../site-logs';
 import SiteLogsTableRow from './site-logs-table-row';
 import { Skeleton } from './skeleton';
 import './style.scss';
