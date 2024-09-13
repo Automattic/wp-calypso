@@ -33,6 +33,7 @@ const Heading = styled.div`
 	line-height: 24px;
 	text-align: left;
 	color: var( --studio-white );
+	margin-bottom: 6px;
 `;
 
 const Body = styled.div`

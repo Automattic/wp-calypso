@@ -7,7 +7,6 @@ const stepNameToModuleName = {
 	'clone-cloning': 'clone-cloning',
 	courses: 'courses',
 	'creds-confirm': 'creds-confirm',
-	'creds-complete': 'creds-complete',
 	'creds-permission': 'creds-permission',
 	domains: 'domains',
 	'domain-only': 'domains',

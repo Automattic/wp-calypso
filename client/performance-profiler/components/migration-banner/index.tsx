@@ -21,16 +21,18 @@ export const MigrationBanner = ( props: { url: string; onClick: () => void } ) =
 							<div className="title">
 								{ translate( 'Scale without Limits, Perform without Compromise' ) }
 							</div>
-							<div className="subtitle">
-								{ translate(
-									'Managed WordPress hosting designed for scalable, lightning-fast speed anywhere in the world, whatever you throw at it.'
-								) }
-							</div>
-							<div className="subtitle">
-								{ translate(
-									'Get {{span}}50% off our Business plan{{/span}} for an entire year when you migrate your site.',
-									{ components: { span: <span className="highlight" /> } }
-								) }
+							<div className="subtitles">
+								<div className="subtitle">
+									{ translate(
+										'Managed WordPress hosting designed for scalable, lightning-fast speed anywhere in the world, whatever you throw at it.'
+									) }
+								</div>
+								<div className="subtitle">
+									{ translate(
+										'Get {{span}}50% off our Business plan{{/span}} for an entire year when you migrate your site.',
+										{ components: { span: <span className="highlight" /> } }
+									) }
+								</div>
 							</div>
 						</div>
 						<div className="features">

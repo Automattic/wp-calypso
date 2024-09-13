@@ -5,6 +5,11 @@ import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LostPasswordForm from 'calypso/blocks/login/lost-password-form';
 
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useDispatch: jest.fn().mockImplementation( () => {} ),
+} ) );
+
 describe( 'LostPasswordForm', () => {
 	test( 'displays a lost password form without errors', () => {
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
