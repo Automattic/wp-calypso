@@ -59,6 +59,8 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					history={ history }
+					audits={ audits }
+					recommendationsRef={ insightsRef }
 				/>
 
 				{ displayNewsletterBanner && (

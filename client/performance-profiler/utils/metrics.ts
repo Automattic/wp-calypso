@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { Metrics } from 'calypso/data/site-profiler/types';
+import { Metrics, PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
@@ -148,4 +148,13 @@ export const displayValue = ( metric: Metrics, value: number ): string => {
 	}
 
 	return `${ max2Decimals( value ) }`;
+};
+
+export const filterRecommendations = (
+	selectedFilter: string,
+	audit?: PerformanceMetricsItemQueryResponse
+) => {
+	return (
+		selectedFilter === 'all' || audit?.metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
+	);
 };

@@ -2,15 +2,10 @@
 
 $areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-software, cache, web-server-settings, admin-interface-style;
 
-.hosting {
+.page-server-settings {
 	/* Rely on the standard spacing for the underlying elements. */
 	.feature-example {
 		margin-top: 0;
-	}
-
-	.hosting__layout .layout__column,
-	.hosting__layout .layout__column fieldset {
-		min-width: 0;
 	}
 
 	.hosting-card {
@@ -23,57 +18,40 @@ $areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-softw
 		margin-bottom: 32px;
 	}
 
-	&--is-two-columns {
-		.hosting__layout {
-			.card {
-				width: 100%;
+	.page-server-settings__layout {
+		.layout__column,
+		.layout__column fieldset {
+			min-width: 0;
+		}
 
-				@include breakpoint-deprecated( ">1280px" ) {
-					margin-bottom: 0;
-					min-width: 0;
-
-					fieldset {
-						min-width: 0;
-					}
-				}
-			}
+		.card {
+			width: 100%;
 
 			@include breakpoint-deprecated( ">1280px" ) {
-				@each $area in $areas {
-					.#{$area}-card {
-						grid-area: $area;
-					}
-				}
+				margin-bottom: 0;
+				min-width: 0;
 
-				box-sizing: border-box;
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				grid-template-areas:
-					"sftp phpmyadmin"
-					"sftp cache"
-					"restore-plan-software web-server-settings"
-					"admin-interface-style web-server-settings";
+				fieldset {
+					min-width: 0;
+				}
 			}
 		}
-	}
 
-	&:not(.hosting--is-two-columns) {
 		@include breakpoint-deprecated( ">1280px" ) {
-			.hosting__layout {
-				gap: 0;
-
-				.layout__column {
-					box-sizing: border-box;
-					flex-basis: 30%;
-					padding-left: 8px;
-
-					&.hosting__main-layout-col {
-						flex-basis: 70%;
-						padding-left: 0;
-						padding-right: 8px;
-					}
+			@each $area in $areas {
+				.#{$area}-card {
+					grid-area: $area;
 				}
 			}
+
+			box-sizing: border-box;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-template-areas:
+				"sftp phpmyadmin"
+				"sftp cache"
+				"restore-plan-software web-server-settings"
+				"admin-interface-style web-server-settings";
 		}
 	}
 
@@ -139,7 +117,7 @@ $areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-softw
 		}
 
 		&__main-layout-col {
-			.card:not(.github-deployments-card) {
+			.card {
 				padding-left: 72px;
 
 				> .card-icon,
@@ -165,16 +143,6 @@ $areas: sftp, site-backup, support, phpmyadmin, staging-site, restore-plan-softw
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	.github-deployments-card {
-		.banner__icons .banner__icon-no-circle {
-			margin-right: 13px;
-		}
-
-		.banner__action {
-			margin-right: 0;
-		}
 	}
 
 	.happiness-engineers-tray {

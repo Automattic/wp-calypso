@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useLeadMutation } from 'calypso/data/site-profiler/use-lead-query';
+import { useUnsubscribeMutation } from 'calypso/data/site-profiler/use-unsubscribe-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	MessageDisplay,
@@ -10,13 +10,13 @@ import {
 import LoaderText from 'calypso/performance-profiler/components/weekly-report/loader-text';
 import { WeeklyReportProps } from 'calypso/performance-profiler/types/weekly-report';
 
-export const WeeklyReport = ( props: WeeklyReportProps ) => {
+export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 	const translate = useTranslate();
 	const { url, hash } = props;
 
 	const siteUrl = new URL( url );
 
-	const { mutate, isPending, isError, isSuccess } = useLeadMutation( url, hash );
+	const { mutate, isPending, isError, isSuccess } = useUnsubscribeMutation( url, hash );
 
 	useEffect( () => {
 		mutate();
@@ -24,7 +24,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			recordTracksEvent( 'calypso_performance_profiler_emails_subscribe', {
+			recordTracksEvent( 'calypso_performance_profiler_emails_unsubscribe', {
 				url,
 				hash,
 			} );
@@ -32,7 +32,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 	}, [ isSuccess, url, hash ] );
 
 	const secondaryMessage = translate(
-		'You can stop receiving performance reports at any time by clicking the Unsubscribe link in the email footer.'
+		'You can opt in again for weekly reports to receive performance change emails.'
 	);
 
 	return (
@@ -44,7 +44,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 					displayBadge
 					message={
 						<LoaderText>
-							{ translate( 'Enabling email reports for %s', {
+							{ translate( 'Unsubscribing email alerts for %s', {
 								args: [ siteUrl.host ],
 							} ) }
 						</LoaderText>
@@ -58,7 +58,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 					displayBadge
 					message={
 						<>
-							{ translate( 'Email reports could not be enabled for %s', {
+							{ translate( 'Failed to unsubscribe from email alerts for %s', {
 								args: [ siteUrl.host ],
 							} ) }
 							<br />
@@ -69,17 +69,15 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 							</ErrorSecondLine>
 						</>
 					}
-					ctaText={ translate( 'Enable email reports' ) }
-					ctaHref={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
 					secondaryMessage={ secondaryMessage }
 				/>
 			) }
 			{ isSuccess && (
 				<MessageDisplay
 					displayBadge
-					title={ translate( 'You’re all set!' ) }
+					title={ translate( 'Unsubscribed!' ) }
 					message={ translate(
-						'We‘ll send you a weekly performance report for {{strong}}%s{{/strong}} so you can keep an eye on your site‘s speed. The first email is on it‘s way now.',
+						'You‘ll no longer receive weekly performance reports for {{strong}}%s{{/strong}}',
 						{ args: [ siteUrl.host ], components: { strong: <strong /> } }
 					) }
 					ctaText={ translate( '← Back to speed test' ) }
