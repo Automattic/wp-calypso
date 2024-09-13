@@ -47,7 +47,7 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
-				campaignId: string;
+				campaignId?: string;
 				origin: string;
 				originProps?: DSPOriginProps;
 				onLoaded?: () => void;
