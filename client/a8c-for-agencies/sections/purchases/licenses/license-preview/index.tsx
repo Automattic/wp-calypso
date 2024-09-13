@@ -184,11 +184,6 @@ export default function LicensePreview( {
 								<ClientSite referral={ referral } />
 							</div>
 						) }
-						{ isDevelopmentSite && (
-							<div className="license-preview__badge-container">
-								<Badge type="info-purple">{ translate( 'Development' ) }</Badge>
-							</div>
-						) }
 					</span>
 				</div>
 
@@ -278,6 +273,7 @@ export default function LicensePreview( {
 
 				<div className="license-preview__badge-container">
 					{ !! isParentLicense && bundleCountContent }
+					{ isDevelopmentSite && <Badge type="info-purple">{ translate( 'Development' ) }</Badge> }
 				</div>
 
 				<div>
