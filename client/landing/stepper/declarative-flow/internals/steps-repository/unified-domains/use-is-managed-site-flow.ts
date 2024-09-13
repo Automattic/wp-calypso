@@ -4,13 +4,12 @@ import {
 	retrieveSignupDestination,
 	wasSignupCheckoutPageUnloaded,
 	clearSignupDestinationCookie,
+	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const useIsManagedSiteFlowProps = () => {
 	const [ props, setProps ] = useState( {} );
-	const selectedSiteData = useSelector( getSelectedSite );
+	const signupSlug = getSignupCompleteSlug();
 
 	useEffect( () => {
 		const signupDestinationCookieExists = retrieveSignupDestination();
@@ -23,14 +22,15 @@ export const useIsManagedSiteFlowProps = () => {
 			return;
 		}
 
-		if ( selectedSiteData ) {
-			setProps( {
+		if ( signupSlug ) {
+			return setProps( {
+				selectedSite: { slug: signupSlug },
 				showExampleSuggestions: false,
 				showSkipButton: true,
 				includeWordPressDotCom: false,
 			} );
 		}
-	}, [ selectedSiteData ] );
+	}, [ signupSlug ] );
 
 	return props;
 };
