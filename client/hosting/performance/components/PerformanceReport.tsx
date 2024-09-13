@@ -34,6 +34,9 @@ export const PerformanceReport = ( {
 			performanceReport={ performanceReport }
 			url={ finalUrl ?? url }
 			hash={ hash }
+			displayThumbnail={ false }
+			displayNewsletterBanner={ false }
+			displayMigrationBanner={ false }
 		/>
 	);
 };
