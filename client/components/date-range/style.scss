@@ -57,24 +57,23 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	&.date-range__popover-inner__hasoverlay {
+		position: relative;
 		.date-range__controls,
 		.date-range__date-inputs,
 		.date-range__picker {
 			filter: blur(10px);
 			z-index: 0;
 		}
-
 		.date-range__popover-inner-overlay {
 			position: absolute;
 			z-index: 1;
-			height: 100%;
-			width: 70%;
+			height: calc(100% - 30px);
+			width: calc(100% - 30px);
 
 			display: flex;
 			justify-content: center;
 			align-items: center;
 		}
-
 	}
 }
 
