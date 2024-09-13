@@ -669,7 +669,7 @@ class ThemeShowcase extends Component {
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
 		return (
-			<div className={ classnames } ref={ this.showcaseRef }>
+			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
@@ -699,15 +699,18 @@ class ThemeShowcase extends Component {
 						<>
 							{ isLoggedIn && (
 								<InView
-									as="div"
-									className={ clsx( 'themes__controls-placeholder', {
-										'is-sticky': this.state.shouldThemeControlsSticky,
-									} ) }
 									rootMargin="-32px 0px 0px 0px"
 									threshold={ 1 }
 									fallbackInView
 									onChange={ this.onShouldThemeControlsStickyChange }
-								/>
+								>
+									<div
+										className={ clsx( 'themes__controls-placeholder', {
+											'is-sticky': this.state.shouldThemeControlsSticky,
+										} ) }
+										ref={ this.showcaseRef }
+									/>
+								</InView>
 							) }
 							<div
 								className={ clsx( 'themes__controls', {
