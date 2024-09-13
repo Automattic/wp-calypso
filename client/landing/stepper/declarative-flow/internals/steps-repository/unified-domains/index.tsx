@@ -26,11 +26,7 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import {
-	removeStep,
-	saveSignupStep,
-	submitSignupStep,
-} from 'calypso/state/signup/progress/actions';
+import { removeStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -44,10 +40,6 @@ const mapDispatchToProps = ( dispatch: any, props: any ) => {
 		recordAddDomainButtonClickInUseYourDomain,
 		recordUseYourDomainButtonClick,
 		removeStep,
-		saveSignupStep: ( step: Record< string, unknown > ) => {
-			props.saveSignupStep?.( step );
-			dispatch( saveSignupStep( step ) );
-		},
 		submitSignupStep: (
 			step: Record< string, unknown >,
 			providedDependencies: Record< string, unknown >,
