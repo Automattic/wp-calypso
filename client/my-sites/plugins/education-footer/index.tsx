@@ -172,11 +172,11 @@ const EducationFooter = () => {
 		[ dispatch, openArticleInHelpCenter ]
 	);
 
-	const websiteBuildingLink = localizeUrl( 'https://wordpress.com/support/plugins/' );
-	const customizationLink = localizeUrl(
-		'https://wordpress.com/support/plugins/install-a-plugin/'
-	);
-	const seoLink = localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' );
+	const links = {
+		websiteBuilding: localizeUrl( 'https://wordpress.com/support/plugins/' ),
+		customization: localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ),
+		seo: localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ),
+	};
 
 	return (
 		<EducationFooterContainer>
@@ -193,9 +193,9 @@ const EducationFooter = () => {
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ websiteBuildingLink }
+					url={ links.websiteBuilding }
 					border="var(--studio-gray-5)"
-					onClick={ onClickLinkCard( 'website_building', websiteBuildingLink ) }
+					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
 				/>
 				<LinkCard
 					title={
@@ -207,9 +207,9 @@ const EducationFooter = () => {
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ customizationLink }
+					url={ links.customization }
 					border="var(--studio-gray-5)"
-					onClick={ onClickLinkCard( 'customization', customizationLink ) }
+					onClick={ onClickLinkCard( 'customization', links.customization ) }
 				/>
 				<LinkCard
 					title={
@@ -219,9 +219,9 @@ const EducationFooter = () => {
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ seoLink }
+					url={ links.seo }
 					border="var(--studio-gray-5)"
-					onClick={ onClickLinkCard( 'seo', seoLink ) }
+					onClick={ onClickLinkCard( 'seo', links.seo ) }
 				/>
 			</ThreeColumnContainer>
 		</EducationFooterContainer>
