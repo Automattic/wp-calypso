@@ -64,6 +64,7 @@ class CancelPurchaseForm extends Component {
 		cancelBundledDomain: PropTypes.bool,
 		includedDomainPurchase: PropTypes.object,
 		linkedPurchases: PropTypes.array,
+		skipSurvey: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -71,10 +72,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { willAtomicSiteRevert, purchase } = this.props;
+		const { purchase, skipSurvey, willAtomicSiteRevert } = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
-		if ( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) ) {
+		if (
+			skipSurvey ||
+			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) )
+		) {
 			/**
 			 * We don't want to display the cancellation survey for sites purchased
 			 * through partners (e.g., A4A.)
