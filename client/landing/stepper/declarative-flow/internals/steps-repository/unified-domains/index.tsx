@@ -106,7 +106,6 @@ export default function DomainsStep( props: StepProps ) {
 				goToNextStep={ ( state: ProvidedDependencies ) => {
 					props.navigation.submit?.( { ...mostRecentStateRef.current, ...state } );
 				} }
-				goToNextStep={ () => {} }
 				step={ stepState }
 				flowName={ props.flow }
 				useStepperWrapper
