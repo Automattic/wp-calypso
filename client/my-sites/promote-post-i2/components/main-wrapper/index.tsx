@@ -10,33 +10,23 @@ interface Props {
 }
 
 export default function MainWrapper( { children }: Props ) {
-	const { isModalOpen, selectedSiteId, selectedPostId, keyValue } = usePromoteParams();
+	const { isModalOpen, selectedSiteId, selectedPostId, selectedCampaignId, keyValue } =
+		usePromoteParams();
 
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const sourceQuery = currentQuery?.[ 'source' ];
 	const source = sourceQuery ? sourceQuery.toString() : undefined;
 
-	const type = keyValue?.split( '-' )[ 0 ];
-
-	let postId = '';
-	let campaignId = '';
-
-	if ( type === 'post' ) {
-		postId = selectedPostId;
-	} else if ( type === 'campaign' ) {
-		campaignId = keyValue?.split( '-' )[ 1 ];
-	}
-
 	return (
 		<Main wideLayout className="promote-post-i2">
 			{ children }
 
-			{ selectedSiteId && selectedPostId && keyValue && (
+			{ selectedSiteId && keyValue && ( selectedPostId || selectedCampaignId ) && (
 				<BlazePressWidget
 					isVisible={ isModalOpen }
 					siteId={ selectedSiteId }
-					postId={ postId }
-					campaignId={ campaignId }
+					postId={ selectedPostId }
+					campaignId={ selectedCampaignId }
 					keyValue={ keyValue }
 					source={ source }
 				/>
