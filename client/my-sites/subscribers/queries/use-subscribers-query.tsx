@@ -41,7 +41,7 @@ const useSubscribersQuery = ( {
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.
 			const pathRoute = hasManySubscribers ? 'subscribers_by_user_type' : 'subscribers';
-			const userTypeField = hasManySubscribers ? 'user_type' : 'filter';
+			const userTypeField = hasManySubscribers ? 'user_type' : 'type';
 
 			const validatedFilterOption =
 				hasManySubscribers && filterOption === SubscribersFilterBy.All
