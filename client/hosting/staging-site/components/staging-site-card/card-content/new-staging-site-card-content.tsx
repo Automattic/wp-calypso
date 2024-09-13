@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
@@ -44,7 +43,6 @@ export const NewStagingSiteCardContent = ( {
 	{
 		const translate = useTranslate();
 		const hasEnTranslation = useHasEnTranslation();
-		const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
 		const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, siteId ) );
 
 		return (
@@ -74,7 +72,7 @@ export const NewStagingSiteCardContent = ( {
 								}
 						  ) }
 				</HostingCardDescription>
-				{ stagingSiteSyncWoo && isSiteWooStore && (
+				{ isSiteWooStore && (
 					<WarningContainer>
 						<WarningTitle>{ translate( 'WooCommerce Site' ) }</WarningTitle>
 						<WarningDescription>
