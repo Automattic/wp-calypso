@@ -286,15 +286,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'pressable-nux',
-			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
-			destination: '/stats',
-			description: 'Allow new Pressable users to grant permission to server credentials',
-			lastModified: '2017-11-20',
-			disallowResume: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'rewind-setup',
 			steps: [ 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: '/activity-log',
