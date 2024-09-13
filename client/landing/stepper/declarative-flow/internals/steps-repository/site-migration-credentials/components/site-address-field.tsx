@@ -40,7 +40,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 				control={ control }
 				name="siteAddress"
 				rules={ {
-					required: translate( 'Please enter your WordPress site address' ),
+					required: translate( 'Please enter your WordPress site address.' ),
 					validate: validateSiteAddress,
 				} }
 				render={ ( { field } ) => (
