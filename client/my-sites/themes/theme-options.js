@@ -63,7 +63,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @param {string} minimumPlan
  * @returns
  */
-function getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan ) {
+function getPlanSlugForThemes( state, siteId, minimumPlan ) {
 	const currentPlanSlug = getSitePlanSlug( state, siteId );
 	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
 	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
@@ -101,7 +101,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 					? PLAN_PREMIUM
 					: tierMinimumUpsellPlan;
 
-			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan );
+			const planPathSlug = getPlanSlugForThemes( state, siteId, minimumPlan );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -189,7 +189,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, PLAN_BUSINESS );
+			const planPathSlug = getPlanSlugForThemes( state, siteId, PLAN_BUSINESS );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -225,7 +225,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
 			);
 
-			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, PLAN_BUSINESS );
+			const planPathSlug = getPlanSlugForThemes( state, siteId, PLAN_BUSINESS );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
