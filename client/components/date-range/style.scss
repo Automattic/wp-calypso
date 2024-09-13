@@ -249,7 +249,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 	.DayPicker-Day--range .date-picker__day {
 		color: var(--color-text);
-		background-color: var(--color-neutral-20);
+		background-color: var(--theme-highlight-color-0);
 	}
 
 	.DayPicker-Day--start,
@@ -265,7 +265,7 @@ $date-range-mobile-layout-switch: $break-small;
 				.date-picker__day {
 					&:hover,
 					&:focus {
-						background-color: var(--color-neutral-20);
+						background-color: var(--theme-highlight-color-0);
 					}
 				}
 			}
@@ -273,7 +273,7 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
-		background-color: var(--color-neutral-20);
+		background-color: var(--theme-highlight-color-0);
 		.date-picker__day {
 			&:hover,
 			&:focus {
