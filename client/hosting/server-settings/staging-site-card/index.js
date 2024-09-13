@@ -7,20 +7,20 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
-import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
-import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/manage-staging-site-card-content';
-import { NewStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/new-staging-site-card-content';
-import { StagingSiteLoadingBarCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/staging-site-loading-bar-card-content';
-import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/staging-site-loading-error-card-content';
-import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
-import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
-import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import { CardContentWrapper } from 'calypso/hosting/server-settings/staging-site-card/card-content/card-content-wrapper';
+import { ManageStagingSiteCardContent } from 'calypso/hosting/server-settings/staging-site-card/card-content/manage-staging-site-card-content';
+import { NewStagingSiteCardContent } from 'calypso/hosting/server-settings/staging-site-card/card-content/new-staging-site-card-content';
+import { StagingSiteLoadingBarCardContent } from 'calypso/hosting/server-settings/staging-site-card/card-content/staging-site-loading-bar-card-content';
+import { StagingSiteLoadingErrorCardContent } from 'calypso/hosting/server-settings/staging-site-card/card-content/staging-site-loading-error-card-content';
+import { LoadingPlaceholder } from 'calypso/hosting/server-settings/staging-site-card/loading-placeholder';
+import { useAddStagingSiteMutation } from 'calypso/hosting/server-settings/staging-site-card/use-add-staging-site';
+import { useCheckStagingSiteStatus } from 'calypso/hosting/server-settings/staging-site-card/use-check-staging-site-status';
 import {
 	useGetLockQuery,
 	USE_STAGING_SITE_LOCK_QUERY_KEY,
-} from 'calypso/my-sites/hosting/staging-site-card/use-get-lock-query';
-import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
-import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+} from 'calypso/hosting/server-settings/staging-site-card/use-get-lock-query';
+import { useHasValidQuotaQuery } from 'calypso/hosting/server-settings/staging-site-card/use-has-valid-quota';
+import { useStagingSite } from 'calypso/hosting/server-settings/staging-site-card/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';

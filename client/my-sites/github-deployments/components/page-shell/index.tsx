@@ -7,7 +7,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
+import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import { useDispatch, useSelector } from 'calypso/state';
 import { transferInProgress } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';

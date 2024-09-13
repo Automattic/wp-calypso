@@ -1,6 +1,6 @@
 import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
-import StagingSiteCard from 'calypso/my-sites/hosting/staging-site-card';
-import StagingSiteProductionCard from 'calypso/my-sites/hosting/staging-site-card/staging-site-production-card';
+import StagingSiteCard from 'calypso/hosting/server-settings/staging-site-card';
+import StagingSiteProductionCard from 'calypso/hosting/server-settings/staging-site-card/staging-site-production-card';
 import { useSelector } from 'calypso/state';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';

@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { Story, Meta } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
-import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
+import { CardContentWrapper } from 'calypso/hosting/server-settings/staging-site-card/card-content/card-content-wrapper';
 import { NewStagingSiteCardContent } from '../new-staging-site-card-content';
 
 /**

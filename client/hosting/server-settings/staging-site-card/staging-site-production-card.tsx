@@ -7,13 +7,13 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
-import { navigate } from 'calypso/lib/navigate';
-import { urlToSlug } from 'calypso/lib/url';
-import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
+import { LoadingPlaceholder } from 'calypso/hosting/server-settings/staging-site-card/loading-placeholder';
 import {
 	useProductionSiteDetail,
 	ProductionSite,
-} from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
+} from 'calypso/hosting/server-settings/staging-site-card/use-production-site-detail';
+import { navigate } from 'calypso/lib/navigate';
+import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

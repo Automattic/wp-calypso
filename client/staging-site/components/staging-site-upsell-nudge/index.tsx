@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
+import { CardContentWrapper } from 'calypso/hosting/server-settings/staging-site-card/card-content/card-content-wrapper';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
