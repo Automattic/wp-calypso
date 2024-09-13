@@ -42,6 +42,7 @@ class CustomNameserversForm extends PureComponent {
 		onSubmit: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		submitDisabled: PropTypes.bool.isRequired,
+		isSaving: PropTypes.bool,
 		notice: PropTypes.element,
 		redesign: PropTypes.bool,
 	};
@@ -167,17 +168,29 @@ class CustomNameserversForm extends PureComponent {
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }
-							disabled={ this.props.submitDisabled }
+							disabled={ this.props.submitDisabled || this.props.isSaving }
 						>
 							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
 						{ ! redesign ? (
-							<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
+							<FormButton
+								type="button"
+								isPrimary={ false }
+								onClick={ this.handleReset }
+								busy={ this.props.isSaving }
+								disabled={ this.props.isSaving }
+							>
 								{ translate( 'Reset to defaults' ) }
 							</FormButton>
 						) : (
-							<FormButton type="button" isPrimary={ false } onClick={ this.handleCancel }>
+							<FormButton
+								type="button"
+								isPrimary={ false }
+								onClick={ this.handleCancel }
+								busy={ this.props.isSaving }
+								disabled={ this.props.isSaving }
+							>
 								{ translate( 'Cancel' ) }
 							</FormButton>
 						) }

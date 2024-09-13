@@ -27,6 +27,7 @@ export type NameServersCardProps = {
 
 export type NameServersToggleProps = {
 	enabled: boolean;
+	isSaving: boolean;
 	onToggle: () => void;
 	selectedDomainName: string;
 };

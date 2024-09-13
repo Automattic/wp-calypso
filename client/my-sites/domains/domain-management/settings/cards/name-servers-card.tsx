@@ -211,6 +211,7 @@ const NameServersCard = ( {
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
 				enabled={ hasDefaultWpcomNameservers() && ! isEditingNameServers }
+				isSaving={ isSavingNameServers }
 			/>
 		);
 	};
@@ -228,8 +229,7 @@ const NameServersCard = ( {
 	};
 
 	const handleSubmit = () => {
-		updateNameservers( nameservers || [] );
-		setIsEditingNameServers( false );
+		handleUpdateNameservers( nameservers || [] );
 	};
 
 	const editCustomNameServers = () => {
@@ -271,6 +271,7 @@ const NameServersCard = ( {
 					onCancel={ handleCancel }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
+					isSaving={ isSavingNameServers }
 					submitDisabled={ isLoading() || hasWpcomNameservers() }
 					notice={ warning() }
 					redesign
