@@ -5,6 +5,7 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { AnyAction } from 'redux';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -15,6 +16,7 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { ProvidedDependencies, StepProps } from '../../types';
 
 import './style.scss';
@@ -73,20 +75,29 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			saveSignupStep={ ( state: ProvidedDependencies ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 			} }
-			submitSignupStep={ ( state: ProvidedDependencies ) => {
-				/* The plans step removes paid domains when the user picks a free plan
-				   after picking a paid domain */
-				if ( state.stepName === 'domains' ) {
-					if ( state.isPurchasingItem === false ) {
+			submitSignupStep={ (
+				step: Record< string, unknown >,
+				providedDependencies: Record< string, unknown >,
+				optionalProps: Record< string, unknown >
+			) => {
+				if ( step.stepName === 'domains' ) {
+					if ( step.isPurchasingItem === false ) {
 						setDomainCartItem( undefined );
 						setDomainCartItems( undefined );
-					} else if ( state.siteUrl ) {
-						setSiteUrl( state.siteUrl );
+					} else if ( step.siteUrl ) {
+						setSiteUrl( step.siteUrl );
 					}
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
+					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+					dispatch(
+						submitSignupStep(
+							mostRecentState,
+							providedDependencies,
+							optionalProps
+						) as unknown as AnyAction
+					);
 					props.navigation.submit?.(
-						( mostRecentState = { ...stepState, ...state, ...mostRecentState } )
+						( mostRecentState = { ...stepState, ...step, ...mostRecentState } )
 					);
 				}
 			} }
@@ -97,13 +108,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
+			recordTracksEvent={ ( name: string, props: unknown ) => {
+				dispatch( recordTracksEvent( name, props ) );
+			} }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
 				hideBack: isMobile,
 				goBack: props.navigation.goBack,
-				recordTracksEvent: ( event: unknown ) => dispatch( recordTracksEvent( event ) ),
+				recordTracksEvent: ( name: string, props: unknown ) =>
+					dispatch( recordTracksEvent( name, props ) ),
 				isFullLayout: true,
 				isExtraWideLayout: false,
 			} }
