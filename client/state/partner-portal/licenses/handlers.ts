@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { AnyAction } from 'redux';
+import { formatLicenseMeta } from 'calypso/a8c-for-agencies/data/purchases/lib/format-licenses';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
@@ -19,6 +20,7 @@ import {
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
+import type { APILicenseMeta } from 'calypso/a8c-for-agencies/data/purchases/lib/format-licenses';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 // Required for modular state.
@@ -41,6 +43,7 @@ interface APILicense {
 	quantity: number | null;
 	parent_license_id: number | null;
 	referral: ReferralAPIResponse | null;
+	meta: APILicenseMeta;
 }
 
 interface APIPaginatedItems< T > {
@@ -118,6 +121,7 @@ export function formatLicenses( items: APILicense[] ): License[] {
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
 		referral: item.referral,
+		meta: formatLicenseMeta( item.meta ),
 	} ) );
 }
 

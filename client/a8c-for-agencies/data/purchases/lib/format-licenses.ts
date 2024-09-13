@@ -21,7 +21,7 @@ interface APILicense {
 	meta: APILicenseMeta;
 }
 
-interface APILicenseMeta {
+export interface APILicenseMeta {
 	a4a_is_dev_site?: string;
 	a4a_was_dev_site?: string;
 	a4a_dev_site_period_end?: string;
