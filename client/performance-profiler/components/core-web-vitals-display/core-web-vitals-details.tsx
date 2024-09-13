@@ -171,6 +171,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
 					] }
 					height={ 300 }
+					d3Format="%b %d"
 				/>
 			</div>
 		</div>
