@@ -249,12 +249,12 @@ $date-range-mobile-layout-switch: $break-small;
 
 	.DayPicker-Day--range .date-picker__day {
 		color: var(--color-text);
-		background-color: var(--theme-highlight-color-0);
+		background-color: rgba(var(--color-primary-light-rgb), 0.7);
 	}
 
-	.DayPicker-Day--start,
-	.DayPicker-Day--end {
-		&.DayPicker-Day--range .date-picker__day {
+	.DayPicker-Day--start.DayPicker-Day--range-start,
+	.DayPicker-Day--end.DayPicker-Day--range-end {
+		& .date-picker__day {
 			color: var(--color-text-inverted);
 			background-color: var(--color-primary);
 		}
@@ -265,7 +265,7 @@ $date-range-mobile-layout-switch: $break-small;
 				.date-picker__day {
 					&:hover,
 					&:focus {
-						background-color: var(--theme-highlight-color-0);
+						background-color: rgba(var(--color-primary-light-rgb), 0.7);
 					}
 				}
 			}
@@ -273,8 +273,9 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
-		background-color: var(--theme-highlight-color-0);
+		background-color: rgba(var(--color-primary-light-rgb), 0.7);
 		.date-picker__day {
+			background-color: transparent;
 			&:hover,
 			&:focus {
 				background-color: var(--color-primary-light);
