@@ -197,6 +197,7 @@ export type GridContextProps = {
 	enableFeatureTooltips?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
+	enterpriseFeaturesList?: string[];
 
 	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.

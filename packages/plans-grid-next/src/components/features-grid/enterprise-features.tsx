@@ -2,7 +2,6 @@ import { getPlanClass, isWpcomEnterpriseGridPlan } from '@automattic/calypso-pro
 import { ClientLogoList, FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
@@ -17,36 +16,10 @@ type EnterpriseFeaturesProps = {
 };
 
 const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesProps ) => {
-	const { featureGroupMap, enableCategorisedFeatures } = usePlansGridContext();
+	const { featureGroupMap, enableCategorisedFeatures, enterpriseFeaturesList } =
+		usePlansGridContext();
 	const translate = useTranslate();
 	const isTableCell = options?.isTableCell;
-	const enterpriseFeaturesList = useMemo(
-		() => [
-			translate( 'Multifaceted security' ),
-			translate( 'Generative AI' ),
-			translate( 'Integrated content analytics' ),
-			translate( '24/7 support' ),
-			translate( 'Professional services' ),
-			translate( 'API mesh and node hosting' ),
-			translate( 'Containerized environment' ),
-			translate( 'Global infrastructure' ),
-			translate( 'Dynamic autoscaling' ),
-			translate( 'Integrated CDN' ),
-			translate( 'Integrated code repository' ),
-			translate( 'Staging environments' ),
-			translate( 'Management dashboard' ),
-			translate( 'Command line interface (CLI)' ),
-			translate( 'Efficient multi-site management' ),
-			translate( 'Advanced access controls' ),
-			translate( 'Single sign-on (SSO)' ),
-			translate( 'DDoS protection and mitigation' ),
-			translate( 'Plugin and theme vulnerability scanning' ),
-			translate( 'Automated plugin upgrade' ),
-			translate( 'Integrated enterprise search' ),
-			translate( 'Integrated APM' ),
-		],
-		[ translate ]
-	);
 
 	const CardContainer = ( props: React.ComponentProps< typeof FoldableCard > ) => {
 		const { children, className, ...otherProps } = props;
@@ -108,7 +81,7 @@ const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesP
 								<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
 									{ translate( 'High performance platform, with:' ) }
 								</div>
-								{ enterpriseFeaturesList.map( ( title, index ) => (
+								{ enterpriseFeaturesList?.map( ( title, index ) => (
 									<PlanFeaturesItem key={ index }>
 										<span className="plan-features-2023-grid__item-info is-available">
 											<span className="plan-features-2023-grid__item-title">{ title }</span>

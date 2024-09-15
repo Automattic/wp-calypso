@@ -352,6 +352,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableLogosOnlyForEnterprisePlan,
 		featureGroupMap = {},
 		hideFeatureGroupTitles,
+		enterpriseFeaturesList,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -397,6 +398,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }
 				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
+				enterpriseFeaturesList={ enterpriseFeaturesList }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

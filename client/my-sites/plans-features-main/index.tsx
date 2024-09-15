@@ -685,6 +685,38 @@ const PlansFeaturesMain = ( {
 		return translate( 'Compare plans' );
 	};
 
+	const enterpriseFeaturesList = useMemo(
+		() => [
+			translate( 'Multifaceted security' ),
+			translate( 'Generative AI' ),
+			translate( 'Integrated content analytics' ),
+			translate( '24/7 support' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Professional services' ) ]
+				: [ translate( 'FedRAMP certification' ) ] ),
+			translate( 'API mesh and node hosting' ),
+			translate( 'Containerized environment' ),
+			translate( 'Global infrastructure' ),
+			translate( 'Dynamic autoscaling' ),
+			translate( 'Integrated CDN' ),
+			translate( 'Integrated code repository' ),
+			translate( 'Staging environments' ),
+			translate( 'Management dashboard' ),
+			translate( 'Command line interface (CLI)' ),
+			translate( 'Efficient multi-site management' ),
+			translate( 'Advanced access controls' ),
+			translate( 'Single sign-on (SSO)' ),
+			translate( 'DDoS protection and mitigation' ),
+			translate( 'Plugin and theme vulnerability scanning' ),
+			translate( 'Automated plugin upgrade' ),
+			translate( 'Integrated enterprise search' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Integrated APM' ) ]
+				: [] ),
+		],
+		[ simplifiedFeaturesGridExperimentVariant, translate ]
+	);
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -788,6 +820,7 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
+										enterpriseFeaturesList={ enterpriseFeaturesList }
 										enableCategorisedFeatures={
 											simplifiedFeaturesGridExperimentVariant === 'simplified'
 										}
