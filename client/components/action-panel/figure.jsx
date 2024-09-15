@@ -1,9 +1,8 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
-const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
-	const figureClasses = clsx( {
-		'action-panel__figure': true,
+const ActionPanelFigure = ( { inlineBodyText = false, align = 'left', children } ) => {
+	const figureClasses = clsx( 'action-panel__figure', {
 		[ `align-${ 'left' === align ? 'left' : 'right' }` ]: true,
 		'is-inline-body-text': inlineBodyText,
 	} );
@@ -13,10 +12,7 @@ const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 
 ActionPanelFigure.propTypes = {
 	inlineBodyText: PropTypes.bool, // above `480px` does figure align with body text (below title)
-};
-
-ActionPanelFigure.defaultProps = {
-	inlineBodyText: false,
+	align: PropTypes.string,
 };
 
 export default ActionPanelFigure;
