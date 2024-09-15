@@ -3,6 +3,10 @@
 $date-range-shortcut-min-width: 140px;
 $date-range-mobile-layout-switch: $break-small;
 
+:root {
+	--date-range-picker-highlight-color: rgba(var(--color-primary-light-rgb), 0.7);
+}
+
 .date-range {
 	position: relative;
 	display: flex;
@@ -240,14 +244,14 @@ $date-range-mobile-layout-switch: $break-small;
 			&:hover,
 			&:focus {
 				color: var(--color-text-inverted);
-				background-color: var(--color-primary);
+				background-color: var(--date-range-picker-highlight-color);
 			}
 		}
 	}
 
 	.DayPicker-Day--range .date-picker__day {
 		color: var(--color-text);
-		background-color: rgba(var(--color-primary-light-rgb), 0.7);
+		background-color: var(--date-range-picker-highlight-color);
 	}
 
 	.DayPicker-Day--start.DayPicker-Day--range-start,
@@ -263,7 +267,7 @@ $date-range-mobile-layout-switch: $break-small;
 				.date-picker__day {
 					&:hover,
 					&:focus {
-						background-color: rgba(var(--color-primary-light-rgb), 0.7);
+						background-color: var(--date-range-picker-highlight-color);
 					}
 				}
 			}
@@ -271,13 +275,9 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
-		background-color: rgba(var(--color-primary-light-rgb), 0.7);
+		background-color: var(--date-range-picker-highlight-color);
 		.date-picker__day {
 			background-color: transparent;
-			&:hover,
-			&:focus {
-				background-color: var(--color-primary-light);
-			}
 		}
 	}
 
