@@ -19,16 +19,11 @@ const usePromoteParams = (): UsePromoteParams => {
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const keyValue = ( currentQuery && ( currentQuery[ blazePressWidgetKey ] as string ) ) || '';
 
-	const type = keyValue?.split( '-' )[ 0 ];
+	const postPartial = keyValue?.split( '_' )[ 0 ];
+	const campaignPartial = keyValue?.split( '_' )[ 1 ];
 
-	let selectedPostId = '';
-	let selectedCampaignId = '';
-
-	if ( type === 'post' ) {
-		selectedPostId = keyValue?.split( '-' )[ 1 ];
-	} else if ( type === 'campaign' ) {
-		selectedCampaignId = keyValue?.split( '-' )[ 1 ];
-	}
+	const selectedPostId = postPartial?.split( '-' )[ 1 ];
+	const selectedCampaignId = campaignPartial?.split( '-' )[ 1 ];
 
 	const { isModalOpen } = useRouteModal( blazePressWidgetKey, keyValue );
 

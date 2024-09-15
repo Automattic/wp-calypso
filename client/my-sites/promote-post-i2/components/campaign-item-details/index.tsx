@@ -52,6 +52,17 @@ const FlexibleSkeleton = () => {
 	return <div className="campaign-item-details__flexible-skeleton" />;
 };
 
+const getPostIdFromURN = ( targetUrn: string ) => {
+	if ( ! targetUrn.includes( ':' ) ) {
+		return;
+	}
+
+	const splitted = targetUrn.split( ':' );
+	if ( splitted.length >= 4 ) {
+		return splitted[ 4 ];
+	}
+};
+
 const getExternalLinkIcon = ( fillColor?: string ) => (
 	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
@@ -104,6 +115,7 @@ export default function CampaignItemDetails( props: Props ) {
 		campaign_stats,
 		billing_data,
 		display_delivery_estimate = '',
+		target_urn,
 		campaign_id,
 		created_at,
 		format,
@@ -131,7 +143,7 @@ export default function CampaignItemDetails( props: Props ) {
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
-		keyValue: `campaign-${ campaign_id }`,
+		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
 		entrypoint: 'promoted_posts-campaign-details-header',
 	} );
 
