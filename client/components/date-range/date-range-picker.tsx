@@ -1,6 +1,5 @@
 import moment, { Moment } from 'moment';
 import React, { useEffect } from 'react';
-import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
@@ -23,6 +22,38 @@ interface DateRangePickerProps {
  */
 const NO_DATE_SELECTED_VALUE = null;
 const noop = () => {};
+
+function addDayToRange( day: Moment, { from, to }: { from: MomentOrNull; to: MomentOrNull } ) {
+	let newStartDate = from;
+	let newEndDate = to;
+	let daysFromStartDate;
+	let daysFromEndDate;
+
+	if ( newStartDate && newEndDate ) {
+		daysFromStartDate = Math.abs( newStartDate.diff( day, 'days' ) );
+		daysFromEndDate = Math.abs( newEndDate.diff( day, 'days' ) );
+	}
+
+	if ( newStartDate && newStartDate.isSame( day ) ) {
+		newStartDate = null;
+	} else if ( newEndDate && newEndDate.isSame( day ) ) {
+		newEndDate = null;
+	} else if ( ! newStartDate ) {
+		newStartDate = day;
+	} else if ( ! newEndDate ) {
+		newEndDate = day;
+	} else if ( day.isBefore( newStartDate ) ) {
+		newStartDate = day;
+	} else if ( day.isAfter( newEndDate ) ) {
+		newEndDate = day;
+	} else if ( daysFromStartDate && daysFromEndDate && daysFromStartDate < daysFromEndDate ) {
+		newStartDate = day;
+	} else {
+		newEndDate = day;
+	}
+
+	return { from: newStartDate, to: newEndDate };
+}
 
 const DateRangePicker = ( {
 	firstSelectableDate,
@@ -78,29 +109,6 @@ const DateRangePicker = ( {
 	};
 
 	/**
-	 * Converts moment dates to a DateRange
-	 * as required by Day Picker DateUtils
-	 * @param  {import('moment').Moment} startDate the start date for the range
-	 * @param  {import('moment').Moment} endDate   the end date for the range
-	 * @returns {Object}           the date range object
-	 */
-	const toDateRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
-		return {
-			from: momentDateToJsDate( startDate ),
-			to: momentDateToJsDate( endDate ),
-		};
-	};
-
-	/**
-	 * Converts a native JS Date object to a MomentJS Date object
-	 * @param  {Date} nativeDate date to be converted
-	 * @returns {import('moment').Moment}            the converted Date
-	 */
-	const nativeDateToMoment = ( nativeDate: Date ) => {
-		return moment( nativeDate );
-	};
-
-	/**
 	 * Handles selection (only) of new dates persisting
 	 * the values to state. Note that if the user does not
 	 * commit the dates (eg: clicking "Apply") then the `revertDates`
@@ -114,22 +122,12 @@ const DateRangePicker = ( {
 			return;
 		}
 
-		// DateUtils requires a range object with this shape
-		const range = toDateRange( selectedStartDate, selectedEndDate );
-
-		const rawDay = momentDateToJsDate( date );
-		if ( ! rawDay ) {
-			return;
-		}
-
 		// Calculate the new Date range
-		const newRange = DateUtils.addDayToRange( rawDay, range );
+		const newRange = addDayToRange( date, { from: selectedStartDate, to: selectedEndDate } );
 
 		// Update to date or `null` which means "not date"
-		const newStartDate = ! newRange.from
-			? NO_DATE_SELECTED_VALUE
-			: nativeDateToMoment( newRange.from );
-		const newEndDate = ! newRange.to ? NO_DATE_SELECTED_VALUE : nativeDateToMoment( newRange.to );
+		const newStartDate = ! newRange.from ? NO_DATE_SELECTED_VALUE : newRange.from;
+		const newEndDate = ! newRange.to ? NO_DATE_SELECTED_VALUE : newRange.to;
 
 		onDateRangeChange( newStartDate, newEndDate );
 	};
