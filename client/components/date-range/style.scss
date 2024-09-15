@@ -143,8 +143,6 @@ $date-range-mobile-layout-switch: $break-small;
 .date-range__popover {
 	.DayPicker {
 		order: 3;
-		margin-top: 12px;
-		border-top: 1px solid var(--color-neutral-5);
 	}
 
 	.DayPicker-wrapper,
