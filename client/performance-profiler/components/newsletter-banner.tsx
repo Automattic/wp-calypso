@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -14,7 +15,7 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 10px;
+	gap: 24px;
 	justify-content: space-between;
 	width: 100%;
 	box-sizing: border-box;
@@ -65,6 +66,7 @@ const EmailReportImage = styled.img`
 export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isMobile = useMobileBreakpoint();
 
 	return (
 		<Container>
@@ -88,7 +90,12 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 						: translate( 'Sign up for email reports' ) }
 				</BlueberryButton>
 			</div>
-			<EmailReportImage src={ EmailReportScreenshot } alt={ translate( 'Email report example' ) } />
+			{ ! isMobile && (
+				<EmailReportImage
+					src={ EmailReportScreenshot }
+					alt={ translate( 'Email report example' ) }
+				/>
+			) }
 		</Container>
 	);
 };
