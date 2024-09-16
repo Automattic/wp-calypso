@@ -31,7 +31,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 			{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
-						{ context !== 'plugin-details' && (
+						{ context !== 'plugin-details' && context !== 'hosting-features' && (
 							<Fragment>
 								<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
 							</Fragment>
@@ -121,20 +121,18 @@ function getWarningDescription(
 			);
 
 		case 'hosting-features':
-			return hasTranslation(
-				'By activating all hosting features the following change will be made to the site:'
-			)
+			return hasTranslation( 'By proceeding the following change will be made to the site:' )
 				? translate(
-						'By activating all hosting features the following change will be made to the site:',
-						'By activating all hosting features the following changes will be made to the site:',
+						'By proceeding the following change will be made to the site:',
+						'By proceeding the following changes will be made to the site:',
 						{
 							count: warningCount,
 							args: warningCount,
 						}
 				  )
 				: translate(
-						'By activating all developer tools the following change will be made to the site:',
-						'By activating all developer tools the following changes will be made to the site:',
+						'By activating all hosting features the following change will be made to the site:',
+						'By activating all hosting features the following changes will be made to the site:',
 						{
 							count: warningCount,
 							args: warningCount,

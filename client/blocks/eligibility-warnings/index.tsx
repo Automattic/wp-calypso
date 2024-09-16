@@ -98,7 +98,8 @@ export const EligibilityWarnings = ( {
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
-			'eligibility-warnings--without-title': context !== 'plugin-details',
+			'eligibility-warnings--without-title':
+				context !== 'plugin-details' && context !== 'hosting-features',
 		},
 		className
 	);
@@ -192,6 +193,16 @@ export const EligibilityWarnings = ( {
 										}
 								  )
 								: '' }
+						</div>
+					</div>
+				</CompactCard>
+			) }
+
+			{ context === 'hosting-features' && (
+				<CompactCard>
+					<div className="eligibility-warnings__header">
+						<div className="eligibility-warnings__title">
+							{ translate( 'Activate hosting features' ) }
 						</div>
 					</div>
 				</CompactCard>
@@ -302,6 +313,9 @@ function getProceedButtonText(
 	}
 	if ( siteRequiresGoingPublic( holds ) ) {
 		return translate( 'Make your site public and continue' );
+	}
+	if ( context === 'hosting-features' ) {
+		return translate( 'Activate hosting features' );
 	}
 
 	return translate( 'Continue' );
