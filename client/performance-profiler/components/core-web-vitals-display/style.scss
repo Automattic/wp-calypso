@@ -113,6 +113,13 @@ $blueberry-color: #3858e9;
 }
 
 //v2
+.core-web-vitals-display-v2 {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	gap: 16px;
+}
+
 .core-web-vitals-display__metric {
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header;
@@ -127,7 +134,7 @@ $blueberry-color: #3858e9;
 		color: #d67709;
 	}
 
-	&.poor {
+	&.bad {
 		color: #d63638;
 	}
 }

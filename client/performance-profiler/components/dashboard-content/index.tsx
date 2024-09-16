@@ -20,6 +20,7 @@ type PerformanceProfilerDashboardContentProps = {
 	displayThumbnail?: boolean;
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
+	showV2?: boolean;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -30,6 +31,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayThumbnail = true,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
+	showV2 = false,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
@@ -38,19 +40,21 @@ export const PerformanceProfilerDashboardContent = ( {
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
-				<div className="top-section">
-					<PerformanceScore
-						value={ overall_score * 100 }
-						recommendationsQuantity={ Object.keys( audits ).length }
-						recommendationsRef={ insightsRef }
-					/>
-					{ displayThumbnail && (
-						<ScreenshotThumbnail
-							alt={ translate( 'Website thumbnail' ) }
-							src={ screenshots?.[ screenshots.length - 1 ].data }
+				{ ! showV2 && (
+					<div className="top-section">
+						<PerformanceScore
+							value={ overall_score * 100 }
+							recommendationsQuantity={ Object.keys( audits ).length }
+							recommendationsRef={ insightsRef }
 						/>
-					) }
-				</div>
+						{ displayThumbnail && (
+							<ScreenshotThumbnail
+								alt={ translate( 'Website thumbnail' ) }
+								src={ screenshots?.[ screenshots.length - 1 ].data }
+							/>
+						) }
+					</div>
+				) }
 				<CoreWebVitalsDisplay
 					fcp={ fcp }
 					lcp={ lcp }
@@ -58,6 +62,8 @@ export const PerformanceProfilerDashboardContent = ( {
 					inp={ inp }
 					ttfb={ ttfb }
 					tbt={ tbt }
+					overall={ overall_score * 100 }
+					showV2={ showV2 }
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }
