@@ -577,8 +577,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		bottom: 0;
 		right: 0;
 		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-		border-radius: 5px;
-		/* stylelint-disable-line scales/radii */
+		border-radius: 4px;
 	}
 
 	img {
@@ -725,7 +724,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				position: relative;
 				top: 2px;
 
-				@include breakpoint-deprecated( "<480px" ) {
+				@include breakpoint-deprecated("<480px") {
 					position: relative;
 					top: 5px;
 				}
@@ -769,7 +768,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				}
 
 				.reader-author-link {
-					@include breakpoint-deprecated( "<480px" ) {
+					@include breakpoint-deprecated("<480px") {
 						display: none;
 					}
 
