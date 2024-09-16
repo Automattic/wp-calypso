@@ -1,4 +1,5 @@
 import { ProgressBar, Spinner } from '@automattic/components';
+import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
@@ -193,7 +194,7 @@ export class ImportingPane extends PureComponent {
 		if ( sourceType === 'Substack' && isFinished ) {
 			return (
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton href={ nextStepUrl } primary>
+					<ImporterActionButton href={ nextStepUrl }>
 						{ this.props.translate( 'Continue' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
@@ -246,7 +247,6 @@ export class ImportingPane extends PureComponent {
 
 		if ( this.isFinished() ) {
 			percentComplete = 100;
-			statusMessage = this.getSuccessText();
 		}
 
 		if ( this.isImporting() && hasProgressInfo( progress ) ) {
@@ -295,6 +295,14 @@ export class ImportingPane extends PureComponent {
 					<div>
 						<p className="importer__status-message">{ statusMessage }</p>
 					</div>
+				) }
+				{ this.isFinished() && ! this.isError() && (
+					<>
+						<h2>Import your content to WordPress.com</h2>
+						<Notice status="success" className="importer__notice" isDismissible={ false }>
+							Success! Your content has been imported!
+						</Notice>
+					</>
 				) }
 				{ this.renderActionButtons( sourceType ) }
 			</div>
