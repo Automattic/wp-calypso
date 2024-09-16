@@ -60,7 +60,8 @@ export function activate(
 		 * Check if its a dotcom theme, if so, dispatch the activate action
 		 * and redirect to the Marketplace Thank You Page.
 		 */
-		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		const dotComTheme = getTheme( getState(), 'wpcom', themeId );
+		const isDotComTheme = !! dotComTheme;
 		const siteSlug = getSiteSlug( getState(), siteId );
 		const dispatchActivateAction = activateOrInstallThenActivate(
 			themeId,
@@ -71,18 +72,27 @@ export function activate(
 
 		if ( isDotComTheme ) {
 			dispatchActivateAction( dispatch, getState );
-
 			const continueWithPluginBundle =
 				isWooTheme && skipActivationModal ? `&continueWithPluginBundle=true` : '';
 
+			// redirect to theme page
+			// /theme/<slug>/<site>
+			// return page( `/theme/${ dotComTheme.id }/${ siteSlug }` );
+			return; // May not need this ^?
 			return page(
 				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }${ continueWithPluginBundle }`
 			);
 		}
 
-		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		const dotOrgTheme = getTheme( getState(), 'wporg', themeId );
+		const isDotOrgTheme = !! dotOrgTheme;
 		if ( isDotOrgTheme ) {
 			dispatch( productToBeInstalled( themeId, siteSlug ) );
+
+			// this redirect to install is probably fine
+			// redirect to theme page
+			// /theme/<slug>/<site>
+			// makes sure we kick off activation that I think is happening during thank you
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
