@@ -173,7 +173,6 @@ describe( 'Step 3 - Add your migration key', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
 		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
-		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
 		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
 		expect( queryByRole( 'button', { name: /Done/ } ) ).not.toBeInTheDocument();
 	} );
@@ -188,25 +187,11 @@ describe( 'Step 3 - Add your migration key', () => {
 		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should render the "Enter key" and "Done" buttons if the migration key is set', () => {
+	it( 'Should render the "Done" button if the migration key is set', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
-		expect( getByRole( 'button', { name: /Enter key/ } ) ).toBeInTheDocument();
 		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
-	} );
-
-	it( 'Should open the Migrate Guru plugin page on the source site when the "Enter key" button is clicked', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
-
-		window.open = jest.fn();
-		fireEvent.click( getByRole( 'button', { name: /Enter key/ } ) );
-
-		expect( window.open ).toHaveBeenCalledWith(
-			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=migrateguru`,
-			'_blank'
-		);
 	} );
 
 	it( 'Should open the Migrate Guru plugin page on the new site when the "Get key" button is clicked', () => {
@@ -265,14 +250,6 @@ describe( 'Unknown source site', () => {
 		expect( queryByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should not render the "Enter key" button', () => {
-		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
-		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
-
-		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
-		expect( queryByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
-	} );
-
 	it( 'Should not render the "Get key" button', () => {
 		const { result } = renderHook( () =>
 			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
@@ -287,7 +264,6 @@ describe( 'Unknown source site', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
 		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
-		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
 		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
 		expect( queryByRole( 'button', { name: /Done/ } ) ).not.toBeInTheDocument();
 	} );
