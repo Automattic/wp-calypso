@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangePicker from './date-range-picker';
+import DateRangeFooter from './footer';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
 import Shortcuts from './shortcuts';
@@ -44,6 +45,7 @@ export class DateRange extends Component {
 		showTriggerClear: PropTypes.bool,
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
+		renderFooter: PropTypes.func,
 		renderInputs: PropTypes.func,
 		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
@@ -60,6 +62,7 @@ export class DateRange extends Component {
 		showTriggerClear: true,
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
+		renderFooter: ( props ) => <DateRangeFooter { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
 		displayShortcuts: false,
 		rootClass: '',
@@ -461,6 +464,11 @@ export class DateRange extends Component {
 			onCancelClick: this.closePopoverAndRevert,
 		};
 
+		const footerProps = {
+			onApplyClick: this.commitDates,
+			onCancelClick: this.closePopoverAndRevert,
+		};
+
 		const inputsProps = {
 			startDateValue: this.state.textInputStartDate,
 			endDateValue: this.state.textInputEndDate,
@@ -493,9 +501,10 @@ export class DateRange extends Component {
 								this.renderDateHelp()
 							) }
 						</div>
+						{ this.props.renderHeader( headerProps ) }
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
-						{ this.props.renderHeader( headerProps ) }
+						{ this.props.renderFooter( footerProps ) }
 					</div>
 					{ /* Render shortcuts to the right of the calendar */ }
 					{ this.props.displayShortcuts && (
