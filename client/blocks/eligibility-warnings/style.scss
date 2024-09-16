@@ -8,12 +8,18 @@
 	margin: 0;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
+	@media (max-width: 660px) {
+		padding: 8px;
+	}
+
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
 		justify-content: space-between;
 
 		@media (max-width: 660px) {
-			display: block;
+			flex-direction: column-reverse;
+			flex-wrap: wrap;
+			gap: 20px;
 
 			.button {
 				width: 100%;
@@ -31,6 +37,10 @@
 
 		a {
 			text-decoration: underline;
+		}
+
+		@media (max-width: 660px) {
+			justify-content: center;
 		}
 	}
 
