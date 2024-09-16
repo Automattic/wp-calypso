@@ -129,6 +129,22 @@ export function saveSignupStep( step ) {
 	};
 }
 
+export function dispatchRecordSubmitStep( step, providedDependencies, optionalProps ) {
+	assertValidDependencies( step.stepName, providedDependencies );
+	return ( dispatch, getState ) => {
+		const lastKnownFlow = getCurrentFlowName( getState() );
+		const { intent } = getSignupDependencyStore( getState() );
+
+		dispatch(
+			recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
+				intent,
+				...optionalProps,
+				...( step.wasSkipped && { was_skipped: step.wasSkipped } ),
+			} )
+		);
+	};
+}
+
 export function submitSignupStep( step, providedDependencies, optionalProps ) {
 	assertValidDependencies( step.stepName, providedDependencies );
 	return ( dispatch, getState ) => {

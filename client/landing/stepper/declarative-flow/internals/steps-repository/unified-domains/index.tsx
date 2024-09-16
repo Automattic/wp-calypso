@@ -26,7 +26,7 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { removeStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { removeStep, dispatchRecordSubmitStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -45,8 +45,8 @@ const mapDispatchToProps = ( dispatch: any, props: any ) => {
 			providedDependencies: Record< string, unknown >,
 			optionalProps: Record< string, unknown >
 		) => {
+			dispatch( dispatchRecordSubmitStep( step, providedDependencies, optionalProps ) );
 			props.submitSignupStep?.( step );
-			dispatch( submitSignupStep( step, providedDependencies, optionalProps ) );
 		},
 		submitDomainStepSelection,
 		setDesignType,

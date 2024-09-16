@@ -16,7 +16,7 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { dispatchRecordSubmitStep } from 'calypso/state/signup/progress/actions';
 import { ProvidedDependencies, StepProps } from '../../types';
 
 import './style.scss';
@@ -84,8 +84,8 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		} else {
 			setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 			dispatch(
-				submitSignupStep(
-					mostRecentState,
+				dispatchRecordSubmitStep(
+					{ ...stepState, ...step },
 					providedDependencies,
 					optionalProps
 				) as unknown as AnyAction
