@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -41,6 +42,8 @@ export default function PlanSelectionDetails( {
 
 	const userProducts = useSelector( getProductsList );
 	const { getProductPricingInfo } = useGetProductPricingInfo();
+
+	const isOwner = useSelector( isAgencyOwner );
 
 	const { discountedCost } = selectedPlan
 		? getProductPricingInfo( userProducts, selectedPlan, 1 )
@@ -176,9 +179,12 @@ export default function PlanSelectionDetails( {
 										target="_blank"
 										rel="norefferer nooppener"
 										href="https://my.pressable.com/agency/auth"
+										disabled={ ! isOwner }
 									>
-										{ translate( 'Manage in Pressable' ) }
-										<Icon icon={ external } size={ 18 } />
+										{ isOwner
+											? translate( 'Manage in Pressable' )
+											: translate( 'Managed by Agency owner' ) }
+										{ isOwner && <Icon icon={ external } size={ 18 } /> }
 									</Button>
 								) : (
 									<Button

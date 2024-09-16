@@ -23,6 +23,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -76,6 +77,8 @@ export default function LicensePreview( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
+
+	const isOwner = useSelector( isAgencyOwner );
 
 	const { filter } = useContext( LicensesOverviewContext );
 
@@ -192,17 +195,21 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ product }</div>
 							{ domain }
-							{ isPressableLicense && ! revokedAt && (
-								<a
-									className="license-preview__product-pressable-link"
-									target="_blank"
-									rel="norefferer noopener noreferrer"
-									href={ pressableManageUrl }
-								>
-									{ translate( 'Manage in Pressable' ) }
-									<Icon className="gridicon" icon={ external } size={ 18 } />
-								</a>
-							) }
+							{ isPressableLicense &&
+								! revokedAt &&
+								( isOwner ? (
+									<a
+										className="license-preview__product-pressable-link"
+										target="_blank"
+										rel="norefferer noopener noreferrer"
+										href={ pressableManageUrl }
+									>
+										{ translate( 'Manage in Pressable' ) }
+										<Icon className="gridicon" icon={ external } size={ 18 } />
+									</a>
+								) : (
+									translate( 'Managed by Agency owner' )
+								) ) }
 							{ ! domain && licenseState === LicenseState.Detached && (
 								<span className="license-preview__unassigned">
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
@@ -286,9 +293,15 @@ export default function LicensePreview( {
 							isChildLicense={ isChildLicense }
 						/>
 					) : (
-						<Button onClick={ open } className="license-preview__toggle" borderless>
-							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
-						</Button>
+						/*
+						 * For all pressable licenses, only the owner has access to the action,
+						 * so only show the actions if you are the owner or if this is not a pressable license.
+						 */
+						( isOwner || ! isPressableLicense ) && (
+							<Button onClick={ open } className="license-preview__toggle" borderless>
+								<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
+							</Button>
+						)
 					) }
 				</div>
 			</LicenseListItem>
