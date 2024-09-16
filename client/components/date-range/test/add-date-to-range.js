@@ -8,7 +8,7 @@ jest.mock( 'moment', () => {
 		isBefore: jest.fn(),
 		isAfter: jest.fn(),
 		diff: jest.fn(),
-		locale: jest.fn(),
+		default: { locale: jest.fn() },
 	};
 	return jest.fn( () => mMoment );
 } );
