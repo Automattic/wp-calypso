@@ -6,19 +6,20 @@ function mapResult( response: WPComSupportQueryResponse ) {
 }
 
 export const useSupportChatLLMQuery = (
-	description: string,
+	title: string,
+	context: string,
 	hash: string,
 	is_wpcom: boolean,
 	enable: boolean
 ) => {
-	const question = `I need to fix the following issue to improve the performance of site: ${ description }.`;
+	const question = `I need to fix the following issue to improve the performance of my WordPress site: ${ title }.`;
 	const howToAnswer =
 		'Answer me in two topics in bold: "Why is this important?" and "How to fix this?"';
-	const message = `${ question } ${ howToAnswer }`;
+	const message = `${ question } ${ howToAnswer } by using each of the following context: ${ context }`;
 
 	return useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: [ 'support', 'chat', description, is_wpcom ],
+		queryKey: [ 'support', 'chat', context, is_wpcom ],
 		queryFn: () =>
 			wp.req.post(
 				{
@@ -31,7 +32,7 @@ export const useSupportChatLLMQuery = (
 			persist: false,
 		},
 		select: mapResult,
-		enabled: !! description && enable,
+		enabled: !! context && enable,
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );
