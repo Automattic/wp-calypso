@@ -60,7 +60,8 @@ $date-range-mobile-layout-switch: $break-small;
 		position: relative;
 		.date-range__controls,
 		.date-range__date-inputs,
-		.date-range__picker {
+		.date-range__picker,
+		.date-range__popover-header {
 			filter: blur(10px);
 			z-index: 0;
 		}
@@ -78,6 +79,7 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range__controls {
+	order: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -94,11 +96,16 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range__popover-header {
-	order: 2;
+	order: 4;
+	display: flex;
+	justify-content: flex-end;
+	padding: 10px 0 0;
 
 	.button {
-		margin: 0 0.5em;
+		margin-left: 0.5em;
+		margin-right: 0;
 	}
+	margin-top: 10px;
 }
 
 .date-range__info {
