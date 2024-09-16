@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import EmailReportScreenshot from 'calypso/assets/images/performance-profiler/email-report-example.svg';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
@@ -44,6 +45,7 @@ const Body = styled.div`
 const BlueberryButton = styled( Button )`
 	// && is needed for specificity
 	&& {
+		margin-top: 24px;
 		background: #3858e9;
 		border-color: #3858e9;
 
@@ -55,6 +57,9 @@ const BlueberryButton = styled( Button )`
 			box-shadow: none;
 		}
 	}
+`;
+const EmailReportImage = styled.img`
+	margin-bottom: -24px;
 `;
 
 export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
@@ -77,12 +82,13 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 						{ translate( 'All you need is a free WordPress.com account to get started.' ) }
 					</Body>
 				) }
+				<BlueberryButton variant="primary" href={ link } onClick={ onClick }>
+					{ isLoggedIn
+						? translate( 'Enable email alerts' )
+						: translate( 'Sign up for email reports' ) }
+				</BlueberryButton>
 			</div>
-			<BlueberryButton variant="primary" href={ link } onClick={ onClick }>
-				{ isLoggedIn
-					? translate( 'Enable email alerts' )
-					: translate( 'Sign up for email reports' ) }
-			</BlueberryButton>
+			<EmailReportImage src={ EmailReportScreenshot } alt={ translate( 'Email report example' ) } />
 		</Container>
 	);
 };
