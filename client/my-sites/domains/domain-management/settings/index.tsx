@@ -80,6 +80,7 @@ const Settings = ( {
 	currentRoute,
 	domain,
 	domains,
+	isFetchingNameservers,
 	isLoadingPurchase,
 	isLoadingNameservers,
 	isUpdatingNameservers,
@@ -713,6 +714,7 @@ const Settings = ( {
 				domain={ domain }
 				nameservers={ nameservers }
 				isUpdatingNameservers={ isUpdatingNameservers }
+				isLoadingNameservers={ isLoadingNameservers || isFetchingNameservers }
 			/>
 		);
 	};

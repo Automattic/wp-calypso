@@ -40,6 +40,7 @@ export type SettingsPageConnectedProps = {
 
 export type SettingsPageNameServerHocProps = {
 	isLoadingNameservers: boolean;
+	isFetchingNameservers: boolean;
 	loadingNameserversError: boolean;
 	isUpdatingNameservers: boolean;
 	nameservers: string[] | null;

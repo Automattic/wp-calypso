@@ -23,9 +23,15 @@ interface Props {
 	domain: ResponseDomain;
 	nameservers: string[] | null;
 	isUpdatingNameservers: boolean;
+	isLoadingNameservers: boolean;
 }
 
-export default function DnssecCard( { domain, nameservers, isUpdatingNameservers }: Props ) {
+export default function DnssecCard( {
+	domain,
+	nameservers,
+	isUpdatingNameservers,
+	isLoadingNameservers,
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -47,6 +53,8 @@ export default function DnssecCard( { domain, nameservers, isUpdatingNameservers
 			dispatch( errorNotice( error.message, noticeOptions ) );
 		},
 	} );
+
+	const domainHasDefaultWpcomNameservers = hasDefaultWpcomNameservers( nameservers );
 
 	const { enableDnssec } = useEnableDnssecMutation( domain.name, {
 		onSuccess( success ) {
@@ -129,10 +137,8 @@ export default function DnssecCard( { domain, nameservers, isUpdatingNameservers
 		return isEnabled ? translate( 'DNSSEC enabled' ) : translate( 'DNSSEC disabled' );
 	};
 
-	const domainHasDefaultWpcomNameservers = hasDefaultWpcomNameservers( nameservers );
-
 	const renderDnssecCard = () => {
-		if ( ! domainHasDefaultWpcomNameservers ) {
+		if ( ! nameservers || ! domainHasDefaultWpcomNameservers || isLoadingNameservers ) {
 			return null;
 		}
 
@@ -172,7 +178,9 @@ export default function DnssecCard( { domain, nameservers, isUpdatingNameservers
 			expanded={ expanded }
 			onOpen={ () => setIsExpanded( true ) }
 			onClose={ () => setIsExpanded( false ) }
-			isDisabled={ ! domainHasDefaultWpcomNameservers || isUpdatingNameservers }
+			isDisabled={
+				! domainHasDefaultWpcomNameservers || isUpdatingNameservers || isLoadingNameservers
+			}
 		>
 			{ renderDnssecCard() }
 		</Accordion>
