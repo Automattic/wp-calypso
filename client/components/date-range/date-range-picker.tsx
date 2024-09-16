@@ -17,45 +17,49 @@ interface DateRangePickerProps {
 	useArrowNavigation?: boolean;
 }
 
+interface DateRange {
+	from: MomentOrNull;
+	to: MomentOrNull;
+}
+
 /**
  * Module variables
  */
 const NO_DATE_SELECTED_VALUE = null;
 const noop = () => {};
 
-export function addDayToRange(
-	day: Moment,
-	{ from, to }: { from: MomentOrNull; to: MomentOrNull }
-) {
-	let newStartDate = from;
-	let newEndDate = to;
-	let daysFromStartDate;
-	let daysFromEndDate;
-
-	if ( newStartDate && newEndDate ) {
-		daysFromStartDate = Math.abs( newStartDate.diff( day, 'days' ) );
-		daysFromEndDate = Math.abs( newEndDate.diff( day, 'days' ) );
+export function addDayToRange( day: Moment, range: DateRange ): DateRange {
+	if ( ! day || ! day.isValid() ) {
+		return range;
 	}
 
-	if ( newStartDate && newStartDate.isSame( day ) ) {
-		newStartDate = null;
-	} else if ( newEndDate && newEndDate.isSame( day ) ) {
-		newEndDate = null;
-	} else if ( ! newStartDate ) {
-		newStartDate = day;
-	} else if ( ! newEndDate ) {
-		newEndDate = day;
-	} else if ( day.isBefore( newStartDate ) ) {
-		newStartDate = day;
-	} else if ( day.isAfter( newEndDate ) ) {
-		newEndDate = day;
-	} else if ( daysFromStartDate && daysFromEndDate && daysFromStartDate < daysFromEndDate ) {
-		newStartDate = day;
-	} else {
-		newEndDate = day;
+	const { from, to } = range;
+
+	if ( from?.isSame( day ) ) {
+		return { ...range, from: null };
+	}
+	if ( to?.isSame( day ) ) {
+		return { ...range, to: null };
 	}
 
-	return { from: newStartDate, to: newEndDate };
+	if ( ! from ) {
+		return { ...range, from: day };
+	}
+	if ( ! to ) {
+		return { ...range, to: day };
+	}
+
+	if ( day.isBefore( from ) ) {
+		return { ...range, from: day };
+	}
+	if ( day.isAfter( to ) ) {
+		return { ...range, to: day };
+	}
+
+	const daysFromStart = Math.abs( from.diff( day, 'days' ) );
+	const daysFromEnd = Math.abs( to.diff( day, 'days' ) );
+
+	return daysFromStart < daysFromEnd ? { ...range, from: day } : { ...range, to: day };
 }
 
 const DateRangePicker = ( {
