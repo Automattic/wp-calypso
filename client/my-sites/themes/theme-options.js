@@ -51,6 +51,7 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 	getIsLivePreviewSupported,
+	isWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -62,7 +63,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @param {string} minimumPlan
  * @returns
  */
-function getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan ) {
+function getPlanPathSlugForThemes( state, siteId, minimumPlan ) {
 	const currentPlanSlug = getSitePlanSlug( state, siteId );
 	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
 	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
@@ -100,7 +101,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 					? PLAN_PREMIUM
 					: tierMinimumUpsellPlan;
 
-			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan );
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, minimumPlan );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -188,7 +189,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, PLAN_BUSINESS );
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -201,6 +202,41 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
+	// WPCOM-specific plan upgrade for community themes.
+	const upgradePlanForDotOrgThemes = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) => {
+			const { origin = 'https://wordpress.com' } =
+				typeof window !== 'undefined' ? window.location : {};
+			const slug = getSiteSlug( state, siteId );
+
+			const redirectTo = encodeURIComponent(
+				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
+			);
+
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
+
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! siteId ||
+			isExternallyManagedTheme( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			! isWporgTheme( state, themeId ),
 	};
 
 	const upgradePlanForExternallyManagedThemes = {
@@ -376,6 +412,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		upgradePlan,
 		upgradePlanForBundledThemes,
 		upgradePlanForExternallyManagedThemes,
+		upgradePlanForDotOrgThemes,
 		activate,
 		tryandcustomize,
 		deleteTheme,

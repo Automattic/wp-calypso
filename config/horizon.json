@@ -142,7 +142,7 @@
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,
-		"stats/user-feedback": false,
+		"stats/user-feedback": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"stripe-redirect-migration-p24": false,
@@ -167,9 +167,11 @@
 		"videomaker-trial": true,
 		"videopress-tv": true,
 		"woop": false,
+		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"woocommerce/core-profiler-passwordless-auth": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

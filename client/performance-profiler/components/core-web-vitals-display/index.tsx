@@ -1,6 +1,10 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useState } from 'react';
-import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
+import {
+	Metrics,
+	PerformanceMetricsHistory,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsAccordion } from '../core-web-vitals-accordion';
 import { MetricTabBar } from '../metric-tab-bar';
 import { CoreWebVitalsDetails } from './core-web-vitals-details';
@@ -9,6 +13,8 @@ import './style.scss';
 
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {

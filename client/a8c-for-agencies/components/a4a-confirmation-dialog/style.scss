@@ -1,11 +1,21 @@
-.a4a-confirmation-dialog__heading {
-	padding-block-end: 16px;
-	@include a4a-font-heading-lg;
-}
 
-.a4a-confirmation-dialog .dialog__action-buttons {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
-	justify-content: flex-end;
+.a4a-confirmation-dialog {
+	&__heading {
+		padding-bottom: 16px;
+		@include a4a-font-heading-lg;
+	}
+
+	& .dialog__action-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+		justify-content: flex-end;
+
+		// Something is overriding the opacity of a disabled button, so we need to override it back here
+		// Feel free to remove the .is-destructive class if you want to apply this to all buttons,
+		// or to remove the styles entirely if the root issue was fixed
+		button.components-button.is-destructive:disabled {
+			opacity: 0.3;
+		}
+	}
 }
