@@ -184,7 +184,7 @@
 		"stats/user-feedback": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
-		"stripe-redirect-migration-alipay": false,
+		"stripe-redirect-migration-alipay": true,
 		"stripe-redirect-migration-bancontact": true,
 		"stripe-redirect-migration-ideal": true,
 		"stripe-redirect-migration-p24": true,
