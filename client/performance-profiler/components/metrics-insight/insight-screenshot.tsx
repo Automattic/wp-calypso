@@ -9,7 +9,29 @@
 
 import { useState } from 'react';
 
-const computeZoomFactor = ( elementRectSC, renderContainerSizeDC ) => {
+type Rect = {
+	width: number;
+	height: number;
+};
+
+type Node = Rect & {
+	left: number;
+	top: number;
+};
+
+type InsightScreenshotProps = {
+	nodeId: string;
+	screenshot: {
+		data: string;
+		width: number;
+		height: number;
+	};
+	elementRectSC: Node;
+	maxRenderSizeDC: Rect;
+	onClick?: () => void;
+};
+
+const computeZoomFactor = ( elementRectSC: Rect, renderContainerSizeDC: Rect ) => {
 	const targetClipToViewportRatio = 0.75;
 	const zoomRatioXY = {
 		x: renderContainerSizeDC.width / elementRectSC.width,
@@ -19,7 +41,7 @@ const computeZoomFactor = ( elementRectSC, renderContainerSizeDC ) => {
 	return Math.min( 1, zoomFactor );
 };
 
-const clamp = ( value, min, max ) => {
+const clamp = ( value: number, min: number, max: number ) => {
 	if ( value < min ) {
 		return min;
 	}
@@ -29,14 +51,18 @@ const clamp = ( value, min, max ) => {
 	return value;
 };
 
-function getElementRectCenterPoint( rect ) {
+function getElementRectCenterPoint( rect: Node ) {
 	return {
 		x: rect.left + rect.width / 2,
 		y: rect.top + rect.height / 2,
 	};
 }
 
-const getScreenshotPositions = ( elementRectSC, elementPreviewSizeSC, screenshotSize ) => {
+const getScreenshotPositions = (
+	elementRectSC: Node,
+	elementPreviewSizeSC: Rect,
+	screenshotSize: Rect
+) => {
 	const elementRectCenter = getElementRectCenterPoint( elementRectSC );
 
 	// Try to center clipped region.
@@ -63,7 +89,12 @@ const getScreenshotPositions = ( elementRectSC, elementPreviewSizeSC, screenshot
 	};
 };
 
-const renderClipPathInScreenshot = ( clipId, positionClip, elementRect, elementPreviewSize ) => {
+const renderClipPathInScreenshot = (
+	clipId: string,
+	positionClip: { top: number; left: number },
+	elementRect: Rect,
+	elementPreviewSize: Rect
+) => {
 	// Normalize values between 0-1.
 	const top = positionClip.top / elementPreviewSize.height;
 	const bottom = top + elementRect.height / elementPreviewSize.height;
@@ -96,7 +127,7 @@ export const InsightScreenshot = ( {
 	elementRectSC,
 	maxRenderSizeDC,
 	onClick = () => {},
-} ) => {
+}: InsightScreenshotProps ) => {
 	const zoomFactor = computeZoomFactor( elementRectSC, maxRenderSizeDC );
 
 	const elementPreviewSizeSC = {
@@ -169,7 +200,7 @@ export const InsightScreenshotWithOverlay = ( {
 	screenshot,
 	elementRectSC,
 	maxRenderSizeDC,
-} ) => {
+}: InsightScreenshotProps ) => {
 	const [ overlayOpen, setOverlayOpen ] = useState( false );
 
 	const maxLightboxSize = {
