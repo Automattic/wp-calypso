@@ -1,7 +1,6 @@
-import { usePrevious } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { SITE_STORE } from '../stores';
@@ -14,11 +13,6 @@ export function useSite() {
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
 	const siteIdOrSlug = siteIdParam ?? siteSlug ?? '';
-	const selectedSite = useSelector( ( state ) => getSite( state, siteIdOrSlug ) );
-	const isRequestingSelectedSite = useSelector( ( state ) =>
-		isRequestingSite( state, siteIdOrSlug )
-	);
-	const lastRequestedSiteIdOrSlug = usePrevious( siteIdOrSlug );
 
 	const site = useSelect(
 		( select ) => {
@@ -31,15 +25,14 @@ export function useSite() {
 
 	// Request the site for the redux store
 	useEffect( () => {
-		if (
-			siteIdOrSlug &&
-			siteIdOrSlug !== lastRequestedSiteIdOrSlug &&
-			! selectedSite &&
-			! isRequestingSelectedSite
-		) {
-			dispatch( requestSite( siteIdOrSlug ) );
-		}
-	}, [ siteIdOrSlug, selectedSite, isRequestingSelectedSite ] );
+		dispatch( ( d, getState ) => {
+			const state = getState();
+			if ( getSite( state, siteIdOrSlug ) || isRequestingSite( state, siteIdOrSlug ) ) {
+				return;
+			}
+			d( requestSite( siteIdOrSlug ) );
+		} );
+	}, [ dispatch, siteIdOrSlug ] );
 
 	if ( siteIdOrSlug && site ) {
 		return site;
