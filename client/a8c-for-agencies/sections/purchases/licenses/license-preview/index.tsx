@@ -208,7 +208,7 @@ export default function LicensePreview( {
 										<Icon className="gridicon" icon={ external } size={ 18 } />
 									</a>
 								) : (
-									translate( 'Managed by Agency owner' )
+									translate( 'Managed by agency owner' )
 								) ) }
 							{ ! domain && licenseState === LicenseState.Detached && (
 								<span className="license-preview__unassigned">

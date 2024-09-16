@@ -273,3 +273,14 @@
 		}
 	}
 }
+
+.pressable-overview-plan-selection__manage-account-button-container {
+	&,
+	a.button {
+		width: 100%;
+	}
+}
+
+.pressable-overview-plan-selection__tooltip {
+	max-width: 500px;
+}

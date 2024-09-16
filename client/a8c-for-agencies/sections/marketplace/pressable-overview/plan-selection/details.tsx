@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Tooltip } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -44,6 +44,10 @@ export default function PlanSelectionDetails( {
 	const { getProductPricingInfo } = useGetProductPricingInfo();
 
 	const isOwner = useSelector( isAgencyOwner );
+
+	const managedButtonRef = useRef< HTMLDivElement | null >( null );
+
+	const [ showManagedTooltip, setShowManagedTooltip ] = useState( false );
 
 	const { discountedCost } = selectedPlan
 		? getProductPricingInfo( userProducts, selectedPlan, 1 )
@@ -175,17 +179,27 @@ export default function PlanSelectionDetails( {
 						{ selectedPlan && (
 							<>
 								{ isRegularOwnership ? (
-									<Button
-										target="_blank"
-										rel="norefferer nooppener"
-										href="https://my.pressable.com/agency/auth"
-										disabled={ ! isOwner }
+									<div
+										className="pressable-overview-plan-selection__manage-account-button-container"
+										ref={ managedButtonRef }
+										role="button"
+										tabIndex={ 0 }
+										onMouseEnter={ () => setShowManagedTooltip( true ) }
+										onMouseLeave={ () => setShowManagedTooltip( false ) }
+										onMouseDown={ () => setShowManagedTooltip( false ) }
 									>
-										{ isOwner
-											? translate( 'Manage in Pressable' )
-											: translate( 'Managed by Agency owner' ) }
-										{ isOwner && <Icon icon={ external } size={ 18 } /> }
-									</Button>
+										<Button
+											target="_blank"
+											rel="norefferer nooppener"
+											href="https://my.pressable.com/agency/auth"
+											disabled={ ! isOwner }
+										>
+											{ isOwner
+												? translate( 'Manage in Pressable' )
+												: translate( 'Managed by agency owner' ) }
+											{ isOwner && <Icon icon={ external } size={ 18 } /> }
+										</Button>
+									</div>
 								) : (
 									<Button
 										className="pressable-overview-plan-selection__details-card-cta-button"
@@ -204,6 +218,17 @@ export default function PlanSelectionDetails( {
 											  } ) }
 									</Button>
 								) }
+
+								<Tooltip
+									context={ managedButtonRef.current }
+									isVisible={ ! isOwner && showManagedTooltip }
+									position="bottom"
+									className="pressable-overview-plan-selection__tooltip"
+								>
+									{ translate(
+										"This Pressable account is managed by the Agency Owner user on your account. If you'd like access to this Pressalbe account, you can just request they add you as a user in Pressable."
+									) }
+								</Tooltip>
 							</>
 						) }
 
