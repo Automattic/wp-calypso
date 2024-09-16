@@ -439,6 +439,21 @@ const siteMigration: Flow = {
 						siteSlug,
 					} );
 				}
+
+				case STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug: {
+					const { hasError } = providedDependencies as {
+						hasError?: 'ticket-creation';
+					};
+
+					if ( hasError === 'ticket-creation' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, siteSlug, from: fromQueryParam, error: hasError },
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
+					}
+				}
 			}
 		}
 

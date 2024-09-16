@@ -502,6 +502,13 @@ export interface ResponseCartProduct {
 	 */
 	is_included_for_100yearplan: boolean;
 
+	/**
+	 * If set, this is the ID of the payment method attached to the existing
+	 * subscription for this product. This will only be set for renewals and
+	 * only if the renewal has a payment method attached.
+	 */
+	stored_details_id?: string;
+
 	product_variants: ResponseCartProductVariant[];
 }
 

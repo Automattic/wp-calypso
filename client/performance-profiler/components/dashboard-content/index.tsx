@@ -17,6 +17,9 @@ type PerformanceProfilerDashboardContentProps = {
 	url: string;
 	hash: string;
 	filter?: string;
+	displayThumbnail?: boolean;
+	displayNewsletterBanner?: boolean;
+	displayMigrationBanner?: boolean;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -24,6 +27,9 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
+	displayThumbnail = true,
+	displayNewsletterBanner = true,
+	displayMigrationBanner = true,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
@@ -38,10 +44,12 @@ export const PerformanceProfilerDashboardContent = ( {
 						recommendationsQuantity={ Object.keys( audits ).length }
 						recommendationsRef={ insightsRef }
 					/>
-					<ScreenshotThumbnail
-						alt={ translate( 'Website thumbnail' ) }
-						src={ screenshots?.[ screenshots.length - 1 ].data }
-					/>
+					{ displayThumbnail && (
+						<ScreenshotThumbnail
+							alt={ translate( 'Website thumbnail' ) }
+							src={ screenshots?.[ screenshots.length - 1 ].data }
+						/>
+					) }
 				</div>
 				<CoreWebVitalsDisplay
 					fcp={ fcp }
@@ -51,15 +59,20 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					history={ history }
+					audits={ audits }
+					recommendationsRef={ insightsRef }
 				/>
-				<NewsletterBanner
-					link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_performance_profiler_weekly_report_cta_click', {
-							url,
-						} );
-					} }
-				/>
+
+				{ displayNewsletterBanner && (
+					<NewsletterBanner
+						link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_performance_profiler_weekly_report_cta_click', {
+								url,
+							} );
+						} }
+					/>
+				) }
 
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && (
@@ -75,14 +88,16 @@ export const PerformanceProfilerDashboardContent = ( {
 			</div>
 
 			<Disclaimer />
-			<MigrationBanner
-				url={ url }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
-						url,
-					} );
-				} }
-			/>
+			{ displayMigrationBanner && (
+				<MigrationBanner
+					url={ url }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
+							url,
+						} );
+					} }
+				/>
+			) }
 		</div>
 	);
 };

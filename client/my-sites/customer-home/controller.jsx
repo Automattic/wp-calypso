@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -67,7 +68,18 @@ export async function maybeRedirect( context, next ) {
 			checklist: launchpadChecklist,
 		} = await fetchLaunchpad( slug );
 
+		const experimentAssignment = await loadExperimentAssignment(
+			'calypso_onboarding_launchpad_removal_test_2024_08'
+		);
+
+		const shouldShowLaunchpad =
+			'treatment' !== experimentAssignment?.variationName &&
+			// for testing/development purposes we can use sessionStorage to force the treatment
+			'treatment' !==
+				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' );
+
 		if (
+			shouldShowLaunchpad &&
 			launchpadScreenOption === 'full' &&
 			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )
 		) {

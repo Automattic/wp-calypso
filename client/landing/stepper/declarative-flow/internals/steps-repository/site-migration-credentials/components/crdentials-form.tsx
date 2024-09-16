@@ -2,6 +2,8 @@ import { Card } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
+import Banner from 'calypso/components/banner';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useCredentialsForm } from '../use-credentials-form';
 import { AccessMethodPicker } from './access-method-picker';
 import { BackupFileField } from './backup-file-field';
@@ -28,8 +30,20 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		importSiteQueryParam,
 	} = useCredentialsForm( onSubmit );
 
+	const queryError = useQuery().get( 'error' ) || null;
+
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
+			{ queryError === 'ticket-creation' && (
+				<Banner
+					className="site-migration-credentials__error-banner"
+					showIcon={ false }
+					title=""
+					description={ translate(
+						'We ran into a problem submitting your details. Please try again shortly.'
+					) }
+				></Banner>
+			) }
 			<Card>
 				<AccessMethodPicker control={ control } />
 
