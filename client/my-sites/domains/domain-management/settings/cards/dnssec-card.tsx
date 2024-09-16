@@ -168,7 +168,7 @@ export default function DnssecCard( {
 		? dnssecStatus
 		: translate( 'DNSSEC is only available for domains using WordPress.com nameservers' );
 
-	const expanded = domainHasDefaultWpcomNameservers ? false : isExpanded;
+	const expanded = ! domainHasDefaultWpcomNameservers ? false : isExpanded;
 
 	return (
 		<Accordion
