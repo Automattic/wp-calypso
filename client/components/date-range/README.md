@@ -47,6 +47,7 @@ These props utilise the [Render Props](https://reactjs.org/docs/render-props.htm
 | ---------------------- | ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `renderTrigger(props)` | `Function` | undefined | render prop `Function` which will overide the default `DateRangeTrigger` component. Recieves same `props` object passed to `DateRangeTrigger` |
 | `renderHeader(props)`  | `Function` | undefined | render prop `Function` which will overide the default `DateRangeHeader` component. Recieves same `props` object passed to `DateRangeHeader`   |
+| `renderFooter(props)`  | `Function` | undefined | render prop `Function` which will overide the default `DateRangeFooter` component. Recieves same `props` object passed to `DateRangeFooter`   |
 | `renderInputs(props)`  | `Function` | undefined | render prop `Function` which will overide the default `DateRangeInputs` component. Recieves same `props` object passed to `DateRangeInputs`   |
 
 ### General guidelines
