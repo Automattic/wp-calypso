@@ -140,7 +140,7 @@
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
 		"email-validator": "^2.0.4",
 		"emoji-text": "^0.2.6",
-		"express": "^4.17.1",
+		"express": "^4.21.0",
 		"express-async-handler": "^1.1.4",
 		"express-useragent": "^1.0.15",
 		"fake-indexeddb": "^3.1.7",
