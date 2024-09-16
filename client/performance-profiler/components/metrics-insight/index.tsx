@@ -92,7 +92,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 
 	const { insight, onClick, index, isWpcom, hash } = props;
 	const insightDetailsContext = insight?.details?.items?.reduce( ( context, item ) => {
-		context += `- ${ item.url } `;
+		context += `* '${ item.url }' `;
 		return context;
 	}, '' );
 
