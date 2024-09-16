@@ -10,6 +10,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { isSiteNew } from 'calypso/my-sites/stats/hooks/use-site-compulsory-plan-selection-qualified-check';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
@@ -149,6 +150,7 @@ class StatsNavigation extends Component {
 			statsAdminVersion,
 			showLock,
 			hideModuleSettings,
+			isNewSite,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -222,7 +224,9 @@ class StatsNavigation extends Component {
 							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
-							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+							isTooltipShown={
+								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! isNewSite
+							}
 							onTooltipDismiss={ this.onTooltipDismiss }
 						/>
 					) }
@@ -246,6 +250,7 @@ export default connect(
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
+			isNewSite: isSiteNew( state, siteId ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
