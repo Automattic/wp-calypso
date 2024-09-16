@@ -82,6 +82,7 @@ const Settings = ( {
 	domains,
 	isLoadingPurchase,
 	isLoadingNameservers,
+	isUpdatingNameservers,
 	loadingNameserversError,
 	nameservers,
 	dns,
@@ -707,7 +708,13 @@ const Settings = ( {
 			return null;
 		}
 
-		return <DnssecCard domain={ domain } nameservers={ nameservers } />;
+		return (
+			<DnssecCard
+				domain={ domain }
+				nameservers={ nameservers }
+				isUpdatingNameservers={ isUpdatingNameservers }
+			/>
+		);
 	};
 
 	const renderMainContent = () => {

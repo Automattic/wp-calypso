@@ -22,9 +22,10 @@ const noticeOptions = {
 interface Props {
 	domain: ResponseDomain;
 	nameservers: string[] | null;
+	isUpdatingNameservers: boolean;
 }
 
-export default function DnssecCard( { domain, nameservers }: Props ) {
+export default function DnssecCard( { domain, nameservers, isUpdatingNameservers }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -135,7 +136,7 @@ export default function DnssecCard( { domain, nameservers }: Props ) {
 			<div className="domain-dnssec-card">
 				<ToggleControl
 					checked={ isEnabled }
-					disabled={ isUpdating || ! domainHasDefaultWpcomNameservers }
+					disabled={ isUpdating || ! domainHasDefaultWpcomNameservers || isUpdatingNameservers }
 					label={ getToggleLabel() }
 					onChange={ onToggle }
 				/>
@@ -167,7 +168,7 @@ export default function DnssecCard( { domain, nameservers }: Props ) {
 			expanded={ expanded }
 			onOpen={ () => setIsExpanded( true ) }
 			onClose={ () => setIsExpanded( false ) }
-			isDisabled={ ! domainHasDefaultWpcomNameservers }
+			isDisabled={ ! domainHasDefaultWpcomNameservers || isUpdatingNameservers }
 		>
 			{ renderDnssecCard() }
 		</Accordion>

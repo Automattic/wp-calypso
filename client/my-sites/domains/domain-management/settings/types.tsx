@@ -41,6 +41,7 @@ export type SettingsPageConnectedProps = {
 export type SettingsPageNameServerHocProps = {
 	isLoadingNameservers: boolean;
 	loadingNameserversError: boolean;
+	isUpdatingNameservers: boolean;
 	nameservers: string[] | null;
 	updateNameservers: ( nameServers: string[] ) => Promise< UpdateNameServersReponse >;
 };

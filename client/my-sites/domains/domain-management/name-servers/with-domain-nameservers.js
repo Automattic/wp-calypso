@@ -17,7 +17,7 @@ const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 		const dispatch = useDispatch();
 		const translate = useTranslate();
 		const { data, isLoading, isError, error } = useDomainNameserversQuery( selectedDomainName );
-		const { updateNameservers } = useUpdateNameserversMutation( selectedDomainName, {
+		const { updateNameservers, isPending } = useUpdateNameserversMutation( selectedDomainName, {
 			onSuccess() {
 				dispatch(
 					successNotice(
@@ -41,6 +41,7 @@ const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 				{ ...props }
 				nameservers={ data }
 				isLoadingNameservers={ isLoading }
+				isUpdatingNameservers={ isPending }
 				loadingNameserversError={ isError && error }
 				updateNameservers={ updateNameservers }
 			/>
