@@ -11,7 +11,6 @@ import ImporterActionButton from 'calypso/my-sites/importer/importer-action-butt
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -176,7 +175,7 @@ export class ImportingPane extends PureComponent {
 		this.props.resetImport( this.props.site.ID, this.props.importerStatus.importerId );
 	};
 
-	renderActionButtons = ( sourceType ) => {
+	renderActionButtons = () => {
 		if ( this.isProcessing() || this.isMapping() ) {
 			// We either don't want to show buttons while processing
 			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
@@ -190,18 +189,6 @@ export class ImportingPane extends PureComponent {
 		const isError = this.isError();
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
 
-		// After Substack importer we nudge to view posts or
-		if ( sourceType === 'Substack' && isFinished ) {
-			return (
-				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton href={ nextStepUrl }>
-						{ this.props.translate( 'Continue' ) }
-					</ImporterActionButton>
-				</ImporterActionButtonContainer>
-			);
-		}
-
-		// Other importers nudge to view the site
 		return (
 			<ImporterActionButtonContainer noSpacing>
 				{ isImporting && (
@@ -212,7 +199,13 @@ export class ImportingPane extends PureComponent {
 						</ImporterActionButton>
 					</>
 				) }
-				{ isFinished && <ImporterDoneButton importerStatus={ importerStatus } site={ site } /> }
+				{ isFinished && (
+					<ImporterActionButtonContainer noSpacing>
+						<ImporterActionButton href={ nextStepUrl }>
+							{ this.props.translate( 'Continue' ) }
+						</ImporterActionButton>
+					</ImporterActionButtonContainer>
+				) }
 				{ showFallbackButton && (
 					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				) }
@@ -304,7 +297,7 @@ export class ImportingPane extends PureComponent {
 						</Notice>
 					</>
 				) }
-				{ this.renderActionButtons( sourceType ) }
+				{ this.renderActionButtons() }
 			</div>
 		);
 	}
