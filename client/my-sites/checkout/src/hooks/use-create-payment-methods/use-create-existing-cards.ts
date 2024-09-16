@@ -8,6 +8,8 @@ import type {
 	StoredPaymentMethodCard,
 } from 'calypso/lib/checkout/payment-methods';
 
+export const existingCardPrefix = `existingCard-`;
+
 export default function useCreateExistingCards( {
 	isStripeLoading,
 	stripeLoadingError,
@@ -44,10 +46,12 @@ export default function useCreateExistingCards( {
 		return (
 			memoizedStoredCards.map( ( storedDetails ) =>
 				createExistingCardMethod( {
-					id: `existingCard-${ storedDetails.stored_details_id }`,
+					id: `${ existingCardPrefix }${ storedDetails.stored_details_id }`,
 					cardholderName: storedDetails.name,
 					cardExpiry: storedDetails.expiry,
-					brand: storedDetails.card_type,
+					brand: storedDetails?.display_brand
+						? storedDetails.display_brand
+						: storedDetails.card_type,
 					last4: storedDetails.card_last_4,
 					storedDetailsId: storedDetails.stored_details_id,
 					paymentMethodToken: storedDetails.mp_ref,

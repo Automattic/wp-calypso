@@ -80,7 +80,12 @@ const MobileView = ( {
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const {
+		featureGroupMap,
+		enableCategorisedFeatures,
+		enableLogosOnlyForEnterprisePlan,
+		enableReducedFeatureGroupSpacing,
+	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
 			Object.keys( featureGroupMap ).filter(
@@ -156,13 +161,18 @@ const MobileView = ( {
 							)
 						}
 					>
-						<EnterpriseFeatures renderedGridPlans={ [ gridPlan ] } />
+						<EnterpriseFeatures
+							renderedGridPlans={ [ gridPlan ] }
+							options={ { isLogosOnly: enableLogosOnlyForEnterprisePlan } }
+						/>
 						{ ! enableCategorisedFeatures && (
 							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						) }
 						{ featureGroups.map( ( featureGroupSlug ) => (
 							<div
-								className="plans-grid-next-features-grid__feature-group-row"
+								className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
+									'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
+								} ) }
 								key={ featureGroupSlug }
 							>
 								<PlanFeaturesList
@@ -336,19 +346,31 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		className,
 		enableFeatureTooltips,
 		enableCategorisedFeatures,
+		enableLargeFeatureTitles,
+		enableStorageAsBadge,
+		enableReducedFeatureGroupSpacing,
+		enableLogosOnlyForEnterprisePlan,
 		featureGroupMap = {},
+		hideFeatureGroupTitles,
+		enterpriseFeaturesList,
 	} = props;
 
-	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+	const gridContainerRef = useRef< HTMLDivElement >( null );
+
+	const gridBreakpoints = useMemo(
+		() =>
+			new Map( [
+				[ 'small', 0 ],
+				[ 'medium', 740 ],
+				[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+			] ),
+		[ isInAdmin ]
+	);
 
 	// TODO: this will be deprecated along side removing the wrapper component
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
-		containerBreakpoints: new Map( [
-			[ 'small', 0 ],
-			[ 'medium', 740 ],
-			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
-		] ),
+		containerBreakpoints: gridBreakpoints,
 	} );
 
 	const classNames = clsx( 'plans-grid-next', className, {
@@ -370,7 +392,13 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				allFeaturesList={ allFeaturesList }
 				enableFeatureTooltips={ enableFeatureTooltips }
 				enableCategorisedFeatures={ enableCategorisedFeatures }
+				enableLargeFeatureTitles={ enableLargeFeatureTitles }
+				enableStorageAsBadge={ enableStorageAsBadge }
+				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
+				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }
+				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
+				enterpriseFeaturesList={ enterpriseFeaturesList }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

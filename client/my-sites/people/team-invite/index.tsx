@@ -84,8 +84,6 @@ function TeamInvite( props: Props ) {
 				if ( ! site || ! isJetpack || needsVerification ) {
 					return (
 						<Card>
-							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
-							{ /* @ts-ignore */ }
 							<EmailVerificationGate>
 								<InviteForm onInviteSuccess={ goBack } />
 							</EmailVerificationGate>

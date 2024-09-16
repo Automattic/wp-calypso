@@ -5,13 +5,13 @@ import {
 	PRODUCT_1GB_SPACE,
 	PLAN_MONTHLY_PERIOD,
 } from '@automattic/calypso-products';
-import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
+import { Button, PlanPrice, LoadingPlaceholder, Badge } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -23,6 +23,7 @@ import PlanStorageBar from 'calypso/hosting/overview/components/plan-storage-bar
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import SitePreviewModal from 'calypso/sites-dashboard/components/site-preview-modal';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
@@ -128,8 +129,6 @@ const PricingSection: FC = () => {
 					<div className="hosting-overview__plan-cta">
 						{ isFreePlan && (
 							<Button
-								primary
-								compact
 								href={ `/plans/${ site?.slug }` }
 								onClick={ () =>
 									dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )
@@ -161,7 +160,7 @@ const PricingSection: FC = () => {
 };
 
 const PlanCard: FC = () => {
-	const dispatch = useDispatch();
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -170,6 +169,7 @@ const PlanCard: FC = () => {
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
 	const isStaging = isStagingSite( site ?? undefined );
+	const isDevelopmentSite = site?.is_a4a_dev_site;
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: AppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
@@ -190,7 +190,13 @@ const PlanCard: FC = () => {
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
 	const renderManageButton = () => {
-		if ( isJetpack || ! site || isStaging || isAgencyPurchase ) {
+		if (
+			isJetpack ||
+			! site ||
+			isStaging ||
+			isAgencyPurchase ||
+			( devSitesEnabled && isDevelopmentSite )
+		) {
 			return false;
 		}
 		if ( isFreePlan ) {
@@ -212,8 +218,9 @@ const PlanCard: FC = () => {
 		}
 	};
 
-	const shouldRenderPlanData =
-		! isStaging || ( isStaging && config.isEnabled( 'hosting-overview-refinements' ) );
+	const [ isSitePreviewModalVisible, setSitePreviewModalVisible ] = useState( false );
+	const openSitePreviewModal = () => setSitePreviewModalVisible( true );
+	const closeSitePreviewModal = () => setSitePreviewModalVisible( false );
 
 	return (
 		<>
@@ -227,64 +234,91 @@ const PlanCard: FC = () => {
 							<h3 className="hosting-overview__plan-card-title">
 								{ isStaging ? translate( 'Staging site' ) : planName }
 							</h3>
+							{ devSitesEnabled && isDevelopmentSite && (
+								<Badge type="info-purple">{ translate( 'Development' ) }</Badge>
+							) }
 							{ renderManageButton() }
 						</>
 					) }
 				</div>
-				{ shouldRenderPlanData && (
-					<>
-						{ isAgencyPurchase && (
-							<div className="hosting-overview__plan-agency-purchase">
-								<p>
-									{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
-										components: {
-											a: isA4A ? (
-												<a
-													href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
-												></a>
-											) : (
-												<strong></strong>
-											),
-										},
-									} ) }
-								</p>
+
+				<SitePreviewModal
+					siteUrl={ site?.URL ?? '' }
+					siteId={ site?.ID ?? 0 }
+					isVisible={ isSitePreviewModalVisible }
+					closeModal={ closeSitePreviewModal }
+				></SitePreviewModal>
+
+				{ isAgencyPurchase && (
+					<div className="hosting-overview__plan-agency-purchase">
+						<p>
+							{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+								components: {
+									a: isA4A ? (
+										<a
+											href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+										></a>
+									) : (
+										<strong></strong>
+									),
+								},
+							} ) }
+						</p>
+					</div>
+				) }
+
+				{ devSitesEnabled && isDevelopmentSite && (
+					<div className="hosting-overview__development-site-ctas">
+						<div className="hosting-overview__development-site-cta-wrapper">
+							<p>{ translate( 'Generate a preview link to share with your clients.' ) }</p>
+							<Button
+								compact
+								className="hosting-overview__development-site-cta"
+								onClick={ openSitePreviewModal }
+							>
+								{ translate( 'Share site for preview' ) }
+							</Button>
+						</div>
+						<div className="hosting-overview__development-site-cta-wrapper">
+							<p>{ translate( 'Ready to go live?' ) }</p>
+							<Button
+								compact
+								primary
+								className="hosting-overview__development-site-cta"
+								href={ `/settings/general/${ site?.slug }` }
+							>
+								{ translate( 'Prepare for launch' ) }
+							</Button>
+						</div>
+					</div>
+				) }
+
+				{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
+
+				{ ! isLoading && (
+					<div className="hosting-overview__site-metrics">
+						<PlanStorage
+							className="hosting-overview__plan-storage"
+							hideWhenNoStorage
+							siteId={ site?.ID }
+							StorageBarComponent={ PlanStorageBar }
+						>
+							{ storageAddons.length > 0 && ! isAgencyPurchase && (
+								<div className="hosting-overview__plan-storage-footer">
+									<span className="hosting-overview__storage-footer-text">
+										{ translate( 'Need more storage?' ) }
+									</span>
+								</div>
+							) }
+						</PlanStorage>
+
+						{ site && (
+							<div className="hosting-overview__site-metrics-footer">
+								<PlanBandwidth siteId={ site.ID } />
+								<PlanSiteVisits siteId={ site.ID } />
 							</div>
 						) }
-						{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
-						{ ! isLoading && (
-							<div className="hosting-overview__site-metrics">
-								<PlanStorage
-									className="hosting-overview__plan-storage"
-									hideWhenNoStorage
-									siteId={ site?.ID }
-									StorageBarComponent={ PlanStorageBar }
-								>
-									{ storageAddons.length > 0 && ! isAgencyPurchase && (
-										<div className="hosting-overview__plan-storage-footer">
-											<Button
-												className="hosting-overview__link-button"
-												plain
-												href={ `/add-ons/${ site?.slug }` }
-												onClick={ () => {
-													dispatch(
-														recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' )
-													);
-												} }
-											>
-												{ translate( 'Need more storage?' ) }
-											</Button>
-										</div>
-									) }
-								</PlanStorage>
-								{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
-									<div className="hosting-overview__site-metrics-footer">
-										<PlanBandwidth siteId={ site.ID } />
-										<PlanSiteVisits siteId={ site.ID } />
-									</div>
-								) }
-							</div>
-						) }
-					</>
+					</div>
 				) }
 			</HostingCard>
 		</>

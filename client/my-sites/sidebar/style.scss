@@ -525,11 +525,18 @@ $font-size: rem(14px);
 			border-radius: 4px;
 
 			&:hover {
-				background-color: var(--color-sidebar-menu-hover-background);
-				color: var(--color-sidebar-menu-hover-text);
-
 				.sidebar__expandable-arrow {
 					fill: var(--color-sidebar-menu-hover-text);
+				}
+			}
+		}
+
+		.sidebar__menu.is-togglable {
+			.sidebar__heading,
+			.sidebar__menu-link {
+				&:hover {
+					background-color: var(--color-sidebar-menu-hover-background);
+					color: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
@@ -555,6 +562,7 @@ $font-size: rem(14px);
 		.sidebar__expandable-content {
 			border-radius: 4px;
 			margin: 0 12px;
+			padding: 0;
 		}
 
 		.sidebar__expandable-title {
@@ -571,6 +579,7 @@ $font-size: rem(14px);
 
 		.selected .sidebar__menu-link {
 			color: var(--color-sidebar-menu-selected-text);
+			font-weight: normal;
 		}
 
 		.selected .sidebar__menu-link::after {
@@ -1012,11 +1021,6 @@ $font-size: rem(14px);
 				.sidebar,
 				.layout__secondary {
 					overflow: initial;
-				}
-			}
-			.is-section-theme {
-				.layout__secondary {
-					transform: translateX(-100%);
 				}
 			}
 		}

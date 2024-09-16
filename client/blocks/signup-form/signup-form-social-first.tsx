@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
@@ -18,12 +19,11 @@ interface QueryArgs {
 }
 
 interface SignupFormSocialFirst {
-	goToNextStep: () => void;
+	goToNextStep: ( data: AccountCreateReturn ) => void;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
-	socialService: string;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -35,11 +35,11 @@ interface SignupFormSocialFirst {
 			extra: { first_name: string; last_name: string; username_hint: string };
 		} | null
 	) => void;
-	isReskinned: boolean;
 	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
+	passDataToNextStep?: boolean;
 }
 
 const options = {
@@ -67,14 +67,13 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
-	socialService,
 	socialServiceResponse,
 	handleSocialResponse,
-	isReskinned,
 	queryArgs,
 	userEmail,
 	notice,
 	isSocialFirst,
+	passDataToNextStep,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
@@ -133,9 +132,7 @@ const SignupFormSocialFirst = ( {
 					<SocialSignupForm
 						handleResponse={ handleSocialResponse }
 						setCurrentStep={ setCurrentStep }
-						socialService={ socialService }
 						socialServiceResponse={ socialServiceResponse }
-						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						disableTosText
 						compact
@@ -163,6 +160,7 @@ const SignupFormSocialFirst = ( {
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						passDataToNextStep={ passDataToNextStep }
 						onCreateAccountError={ ( error: { error: string }, email: string ) => {
 							if ( isExistingAccountError( error.error ) ) {
 								window.location.assign(

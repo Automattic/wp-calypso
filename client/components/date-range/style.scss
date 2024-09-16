@@ -1,3 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$date-range-shortcut-min-width: 140px;
+$date-range-mobile-layout-switch: $break-small;
+
 .date-range {
 	position: relative;
 	display: flex;
@@ -50,9 +55,31 @@
 	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 300px;
 	}
+
+	&.date-range__popover-inner__hasoverlay {
+		position: relative;
+		.date-range__controls,
+		.date-range__date-inputs,
+		.date-range__picker,
+		.date-range__popover-header {
+			filter: blur(10px);
+			z-index: 0;
+		}
+		.date-range__popover-inner-overlay {
+			position: absolute;
+			z-index: 1;
+			height: calc(100% - 30px);
+			width: calc(100% - 30px);
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
 }
 
 .date-range__controls {
+	order: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -63,14 +90,23 @@
 	}
 }
 
-.date-range__popover-header {
-	order: 2;
-
-	.button {
-		margin: 0 0.5em;
-	}
+.date-range__custom-title {
+	font-weight: 500;
+	font-size: $font-body;
 }
 
+.date-range__popover-header {
+	order: 4;
+	display: flex;
+	justify-content: flex-end;
+	padding: 10px 0 0;
+
+	.button {
+		margin-left: 0.5em;
+		margin-right: 0;
+	}
+	margin-top: 10px;
+}
 
 .date-range__info {
 	order: 1;
@@ -114,8 +150,6 @@
 .date-range__popover {
 	.DayPicker {
 		order: 3;
-		margin-top: 12px;
-		border-top: 1px solid var(--color-neutral-5);
 	}
 
 	.DayPicker-wrapper,
@@ -198,6 +232,7 @@
 
 
 .date-range__picker {
+	--date-range-picker-highlight-color: rgba(var(--color-primary-light-rgb), 0.4);
 
 	.DayPicker-Day,
 	.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
@@ -213,36 +248,40 @@
 			&:hover,
 			&:focus {
 				color: var(--color-text-inverted);
-				background-color: var(--color-primary);
+				background-color: var(--date-range-picker-highlight-color);
 			}
 		}
 	}
 
-	.DayPicker-Day--range,
-	.DayPicker-Day--start,
-	.DayPicker-Day--end {
-		.date-picker__day {
+	.DayPicker-Day--range .date-picker__day {
+		color: var(--color-text);
+		background-color: var(--date-range-picker-highlight-color);
+	}
+
+	.DayPicker-Day--start.DayPicker-Day--range-start,
+	.DayPicker-Day--end.DayPicker-Day--range-end {
+		& .date-picker__day {
 			color: var(--color-text-inverted);
 			background-color: var(--color-primary);
 		}
-	}
-
-	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
-	.DayPicker-Day--start:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
-	.DayPicker-Day--end:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
-		background-color: var(--color-primary);
-		.date-picker__day {
-			&:hover,
-			&:focus {
-				background-color: var(--color-primary-light);
+		&:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+			border-radius: 200px; /* stylelint-disable-line scales/radii */
+			&.DayPicker-Day--range {
+				background-color: var(--color-primary);
+				.date-picker__day {
+					&:hover,
+					&:focus {
+						background-color: var(--date-range-picker-highlight-color);
+					}
+				}
 			}
 		}
 	}
 
-	.DayPicker-Day--start,
-	.DayPicker-Day--end {
-		&:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
-			border-radius: 200px; /* stylelint-disable-line scales/radii */
+	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+		background-color: var(--date-range-picker-highlight-color);
+		.date-picker__day {
+			background-color: transparent;
 		}
 	}
 
@@ -266,5 +305,65 @@
 	.DayPicker-Day--start.DayPicker-Day--end {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 200px !important;
+	}
+}
+
+.date-range__popover-content { // Styling to fit optional shortcuts sidebar
+	display: flex;
+	align-items: stretch; // Ensure children stretch to full height
+
+	@media (min-width: $date-range-mobile-layout-switch) {
+		flex-direction: row; // Align items in a row on larger screens
+	}
+
+	@media (max-width: $date-range-mobile-layout-switch) {
+		flex-direction: column; // Stack items vertically on small screens
+	}
+}
+
+.date-range-picker-shortcuts {
+	padding: 16px;
+	border-left: 1px solid var(--gray-gray-5, #dcdcde);
+	box-sizing: border-box;
+
+	@media (max-width: $date-range-mobile-layout-switch) {
+		border-left: 0 none;
+		border-top: 1px solid var(--gray-gray-5, #dcdcde);
+		display: block; // Ensure it takes full width on mobile
+		margin-bottom: 16px; // Space between shortcuts and calendar
+	}
+
+	@media (min-width: $date-range-mobile-layout-switch) {
+		// Adjust layout for larger screens
+		flex: 0 0 auto; // Allow it to take only necessary space
+	}
+}
+
+.date-range-picker-shortcuts__list {
+	list-style: none;
+	margin: 0;
+}
+
+.date-range-picker-shortcuts__shortcut {
+	border-radius: 4px;
+	min-width: $date-range-shortcut-min-width;
+
+
+	&:hover {
+		background-color: var(--color-primary-0);
+	}
+
+	& + & {
+		margin-top: 2px; // space for an outline for the current item and hover for the next
+	}
+
+	&.is-selected {
+		background-color: var(--color-accent-5);
+	}
+
+	.components-button {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
 	}
 }

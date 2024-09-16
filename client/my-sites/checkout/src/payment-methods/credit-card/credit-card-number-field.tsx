@@ -1,5 +1,4 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,7 +11,6 @@ import type { StripeElementStyle } from '@stripe/stripe-js';
 export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
-	changeCardNetworks,
 	stripeElementStyle,
 	shouldUseEbanx = false,
 	getErrorMessagesForField,
@@ -21,7 +19,6 @@ export default function CreditCardNumberField( {
 }: {
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
 	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
-	changeCardNetworks: ( networks: [] ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
 	getErrorMessagesForField: ( key: string ) => string[];
@@ -31,10 +28,6 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const brand: string = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
-		[]
-	);
 
 	const { cardNumber: cardNumberError } = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
@@ -74,6 +67,7 @@ export default function CreditCardNumberField( {
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
+						showIcon: true,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
@@ -81,24 +75,7 @@ export default function CreditCardNumberField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
-					/* Note, the onNetworksChange event is deprecated and will be removed at some point
-					 * This will need to be updated before we upgrade Stripe beyond v3
-					 */
-					onNetworksChange={ ( event ) => {
-						// @ts-expect-error: The onNetworksChange method is deprecated, but is necessary for cobrand compliance
-						switch ( event.networks ) {
-							case null:
-							case undefined:
-								break;
-							default: {
-								// @ts-expect-error: The onNetworksChange method is deprecated, but is necessary for cobrand compliance
-								changeCardNetworks( event.networks );
-								break;
-							}
-						}
-					} }
 				/>
-				<PaymentLogo brand={ brand } />
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>

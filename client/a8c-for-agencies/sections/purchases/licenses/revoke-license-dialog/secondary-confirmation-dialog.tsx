@@ -1,5 +1,5 @@
-import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 
 type Props = {
 	title: string;
@@ -19,29 +19,15 @@ export function SecondaryConfirmationDialog( {
 	const translate = useTranslate();
 
 	return (
-		<Dialog
-			isVisible
-			additionalClassNames="revoke-license-dialog"
-			onClose={ close }
-			buttons={ [
-				<Button disabled={ false } onClick={ onCancel } key="cancel-secondary-confirmation">
-					{ translate( 'Cancel' ) }
-				</Button>,
-
-				<Button
-					primary
-					scary
-					busy={ isPending }
-					onClick={ onConfirm }
-					key="confirm-secondary-confirmation"
-				>
-					{ translate( 'Continue revoke' ) }
-				</Button>,
-			] }
+		<A4AConfirmationDialog
+			title={ title }
+			ctaLabel={ translate( 'Revoke Pressable plan license' ) }
+			onClose={ onCancel }
+			onConfirm={ onConfirm }
+			isLoading={ isPending }
+			isDestructive
 		>
-			<h2 className="revoke-license-dialog__heading">{ title }</h2>
-
 			{ description }
-		</Dialog>
+		</A4AConfirmationDialog>
 	);
 }

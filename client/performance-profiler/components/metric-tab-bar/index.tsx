@@ -18,10 +18,19 @@ export const MetricTabBar = ( props: Props ) => {
 
 	return (
 		<div className="metric-tab-bar">
-			{ Object.entries( metricsNames ).map( ( [ key, { displayName } ] ) => {
+			{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
 				if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
 					return null;
 				}
+
+				// Only display TBT if INP is not available
+				if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
+					return null;
+				}
+
+				const status = mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] );
+				const statusClassName = status === 'needsImprovement' ? 'needs-improvement' : status;
+
 				return (
 					<button
 						key={ key }
@@ -35,7 +44,7 @@ export const MetricTabBar = ( props: Props ) => {
 						</div>
 						<div className="metric-tab-bar__tab-text">
 							<div className="metric-tab-bar__tab-header">{ displayName }</div>
-							<div className="metric-tab-bar__tab-metric">
+							<div className={ `metric-tab-bar__tab-metric ${ statusClassName }` }>
 								{ displayValue( key as Metrics, props[ key as Metrics ] ) }
 							</div>
 						</div>

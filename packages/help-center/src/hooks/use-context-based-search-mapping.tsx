@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import urlMapping from '../route-to-query-mapping.json';
+import { useQueryForRoute } from '../route-to-query-mapping';
 
 interface CoreBlockEditor {
 	getSelectedBlock: () => object;
@@ -25,15 +25,7 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined )
 		return '';
 	}, [] );
 
-	// Fuzzier matches
-	const urlMatchKey = Object.keys( urlMapping ).find( ( key ) => currentRoute?.startsWith( key ) );
-	const urlSearchQuery = urlMatchKey ? urlMapping[ urlMatchKey as keyof typeof urlMapping ] : '';
-
-	// Find exact URL matches
-	const exactMatch = urlMapping[ currentRoute as keyof typeof urlMapping ];
-	if ( exactMatch ) {
-		return { contextSearch: exactMatch };
-	}
+	const urlSearchQuery = useQueryForRoute( currentRoute ?? '' );
 
 	return {
 		contextSearch: blockSearchQuery || urlSearchQuery || '',

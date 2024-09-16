@@ -155,6 +155,12 @@
 	.plan-features-2023-grid__highlighted-feature .plan-features-2023-grid__item {
 		padding-bottom: 24px;
 	}
+
+	.plans-grid-next-features-grid__feature-group-row {
+		&.is-reduced-feature-group-spacing > .plan-features-2023-grid__table-item {
+			padding-top: 0;
+		}
+	}
 }
 
 .plan-features-2023-grid__table {
@@ -320,6 +326,10 @@
 			padding-top: 14px;
 		}
 	}
+
+	&.is-reduced-feature-group-spacing > .plan-features-2023-grid__table-item {
+		padding-top: 16px;
+	}
 }
 
 .plan-features-2023-grid__item-info {
@@ -345,6 +355,10 @@
 		@include plans-grid-medium-large {
 			font-size: $font-body-extra-small;
 			line-height: 16px;
+
+			&.is-large {
+				font-size: $font-body-small;
+			}
 		}
 	}
 

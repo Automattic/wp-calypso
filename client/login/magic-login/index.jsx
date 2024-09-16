@@ -66,6 +66,7 @@ import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import { withEnhancers } from 'calypso/state/utils';
+import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginEmailForm from './request-login-email-form';
 
 import './style.scss';
@@ -97,7 +98,7 @@ class MagicLogin extends Component {
 		localeSuggestions: PropTypes.array,
 		isValidatingCode: PropTypes.bool,
 		isCodeValidated: PropTypes.bool,
-		codeValidationError: PropTypes.number,
+		codeValidationError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 		redirectToSanitized: PropTypes.string,
@@ -612,6 +613,9 @@ class MagicLogin extends Component {
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+		);
 
 		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
 			this.setState( { hashedEmail: email } )
@@ -713,7 +717,7 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					{ ! isFromGravatar3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
 						<button onClick={ this.handleGravPoweredEmailSwitch }>
 							{ translate( 'Switch email' ) }
 						</button>
@@ -746,14 +750,21 @@ class MagicLogin extends Component {
 		} = this.state;
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+		);
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
-		if ( codeValidationError === 403 ) {
+		if ( codeValidationError?.type === 'sms_code_throttled' ) {
+			errorText = translate(
+				'Your two-factor code via SMS can only be requested once per minute. Please wait, then request a new code via email to proceed.'
+			);
+		} else if ( codeValidationError?.code === 403 ) {
 			errorText = translate(
 				'Invalid code. If the error persists, please request a new code and try again.'
 			);
-		} else if ( codeValidationError === 429 ) {
+		} else if ( codeValidationError?.code === 429 ) {
 			errorText = translate( 'Please wait a minute before trying again.' );
 		}
 
@@ -840,7 +851,7 @@ class MagicLogin extends Component {
 									args: { countdown: resendEmailCountdown },
 							  } ) }
 					</button>
-					{ ! isFromGravatar3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
 						<button
 							onClick={ () => {
 								this.resetResendEmailCountdown();
@@ -943,11 +954,13 @@ class MagicLogin extends Component {
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+		const isGravatarFlowWithEmail = !! ( isGravatarFlow && query?.email_address );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
 		const isFromGravatar3rdPartyApp = isGravatar && query?.gravatar_from === '3rd-party';
-		const isEmailInputDisabled = isFromGravatar3rdPartyApp || isRequestingEmail;
+		const isEmailInputDisabled =
+			isFromGravatar3rdPartyApp || isRequestingEmail || isGravatarFlowWithEmail;
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -957,6 +970,7 @@ class MagicLogin extends Component {
 			oauth2ClientId: query?.client_id,
 			gravatarFrom: query?.gravatar_from,
 			gravatarFlow: isGravatarFlow,
+			emailAddress: query?.email_address,
 		} );
 		let headerText = isFromGravatarSignup
 			? translate( 'Create your Profile' )
@@ -1198,7 +1212,23 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 		} = this.props;
-		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
+		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
+
+		if (
+			query?.from === 'woocommerce-core-profiler' &&
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+		) {
+			return (
+				<Main className="magic-login magic-login__request-link is-white-login">
+					{ this.renderLocaleSuggestions() }
+					<GlobalNotices id="notices" />
+					<MainContentWooCoreProfiler
+						emailAddress={ usernameOrEmail }
+						redirectTo={ this.props.redirectToSanitized }
+					/>
+				</Main>
+			);
+		}
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			let renderContent = this.renderGravPoweredMagicLogin();

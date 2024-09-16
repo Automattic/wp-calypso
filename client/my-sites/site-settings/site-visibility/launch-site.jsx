@@ -1,7 +1,10 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
+import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -22,10 +25,15 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from '../settings-section-header';
+import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
 
 const LaunchSite = () => {
+	const [ isLaunchConfirmationModalOpen, setLaunchConfirmationModalOpen ] = useState( false );
+	const openLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( true );
+	const closeLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( false );
+
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -48,18 +56,33 @@ const LaunchSite = () => {
 		'site-settings__disable-privacy-settings': ! siteDomains.length,
 	} );
 	const btnText = translate( 'Launch site' );
-	const handleLaunchSite = () => {
+
+	const isDevelopmentSite = site?.is_a4a_dev_site || false;
+
+	const dispatchSiteLaunch = () => {
 		dispatch( launchSite( site.ID ) );
 	};
+
+	const handleLaunchSiteClick = () => {
+		if ( isDevelopmentSite ) {
+			openLaunchConfirmationModal();
+		} else {
+			dispatchSiteLaunch();
+		}
+	};
+
 	let querySiteDomainsComponent;
 	let btnComponent;
-
 	if ( 0 === siteDomains.length ) {
 		querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 		btnComponent = <Button>{ btnText }</Button>;
 	} else if ( isPaidPlan && siteDomains.length > 1 ) {
 		btnComponent = (
-			<Button onClick={ handleLaunchSite } disabled={ ! isLaunchable }>
+			<Button
+				onClick={ handleLaunchSiteClick }
+				disabled={ ! isLaunchable }
+				primary={ isDevelopmentSite }
+			>
 				{ btnText }
 			</Button>
 		);
@@ -84,19 +107,60 @@ const LaunchSite = () => {
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
 
-	// TODO: replace with actual value whether the site is a development site
-	const urlParams = new URLSearchParams( window.location.search );
-	const isDevelopmentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
-
-	// TODO: retrieve the actual agency name
-	const agencyName = 'MyCoolAgency';
+	const {
+		data: agency,
+		error: agencyError,
+		isLoading: agencyLoading,
+	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
+	const agencyName = agency?.name;
+	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
+	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
+	const agencyBillingMessage =
+		agencyLoading || agencyError
+			? translate( "After launch, we'll bill your agency in the next billing cycle." )
+			: translate(
+					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+					{
+						count: existingWPCOMLicenseCount + 1,
+						args: {
+							agencyName: agencyName,
+							licenseCount: existingWPCOMLicenseCount + 1,
+							price,
+						},
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									className="site-settings__general-settings-launch-site-agency-learn-more"
+									href="https://agencieshelp.automattic.com/knowledge-base/the-marketplace/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+						comment:
+							'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
+					}
+			  );
+
 	return (
 		<>
+			{ isLaunchConfirmationModalOpen && (
+				<LaunchConfirmationModal
+					message={ agencyBillingMessage }
+					closeModal={ closeLaunchConfirmationModal }
+					onConfirmation={ () => {
+						dispatchSiteLaunch();
+						closeLaunchConfirmationModal();
+					} }
+				/>
+			) }
 			<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 			<LaunchCard>
 				<LaunchSiteTrialUpsellNotice />
@@ -111,31 +175,16 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ isDevelopmentSite && (
-							<p>
-								{ translate(
-									'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
-									{
-										args: {
-											agencyName: agencyName,
-										},
-										comment: 'name of the agency that will be billed for the site',
-									}
-								) }
-							</p>
-						) }
+						{ isDevelopmentSite && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
-					{
-						// TODO: add onClick handler
-						isDevelopmentSite && (
-							<div className={ launchSiteClasses }>
-								<Button onClick={ handleReferToClient } disabled={ false }>
-									{ translate( 'Refer to client' ) }
-								</Button>
-							</div>
-						)
-					}
+					{ isDevelopmentSite && (
+						<div className={ launchSiteClasses }>
+							<Button onClick={ handleReferToClient } disabled={ false }>
+								{ translate( 'Refer to client' ) }
+							</Button>
+						</div>
+					) }
 				</div>
 			</LaunchCard>
 			{ showPreviewLink && (

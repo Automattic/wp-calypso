@@ -26,13 +26,17 @@ export default function GetStarted() {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' ) );
 	};
 
+	const onLearnMoreClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_managing_members_click' ) );
+	};
+
 	return (
-		<Layout className="team-list-get-started" title={ title } wide>
+		<Layout className="team-list-get-started" title={ title } wide compact>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
-						<Button variant="primary" onClick={ onInviteClick }>
+						<Button variant="primary" onClick={ onInviteClick } href={ A4A_TEAM_INVITE_LINK }>
 							{ translate( 'Invite a team member' ) }
 						</Button>
 					</Actions>
@@ -83,7 +87,8 @@ export default function GetStarted() {
 						className="team-list-get-started__learn-more-button"
 						variant="link"
 						target="_blank"
-						href="#" // FIXME: Add link to the KB article
+						href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members"
+						onClick={ onLearnMoreClick }
 					>
 						{ translate( 'Team members Knowledge Base article' ) }
 						<Icon icon={ external } size={ 18 } />

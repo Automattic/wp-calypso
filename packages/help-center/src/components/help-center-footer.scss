@@ -1,0 +1,42 @@
+.help-center__container-footer {
+	height: auto;
+	padding: 16px;
+
+	// hide when empty
+	&:empty {
+		display: none;
+	}
+
+	.button.help-center-contact-page__button {
+		background-color: transparent;
+		border: 1px solid var(--studio-gray-10);
+		padding: 5px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 0;
+		line-height: 2.15;
+
+		&:hover {
+			border-color: var(--color-neutral-20);
+			box-shadow: none;
+			outline: none;
+		}
+
+		&:focus {
+			border-color: transparent;
+			box-shadow: none;
+			outline: var(--color-primary-light) solid 2px;
+		}
+
+		svg {
+			margin-right: 10px;
+			vertical-align: middle;
+		}
+
+		span {
+			color: var(--studio-gray-100);
+		}
+	}
+}

@@ -20,7 +20,6 @@
 		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 		&:hover {
-			box-shadow: 0 0 0 1px var(--color-neutral-light);
 			z-index: z-index("root", ".domain-suggestion.is-clickable:hover");
 		}
 	}
@@ -62,6 +61,13 @@
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( ">480px" ) {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	.is-section-stepper & {
+		@include breakpoint-deprecated(">480px") {
 			flex-direction: row;
 			align-items: center;
 		}
@@ -331,6 +337,8 @@
 	}
 }
 
+
+body.is-section-stepper,
 body.is-section-signup.is-white-signup {
 	svg {
 		padding-top: 0;

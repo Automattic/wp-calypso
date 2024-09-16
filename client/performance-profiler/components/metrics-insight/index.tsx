@@ -15,6 +15,8 @@ interface MetricsInsightProps {
 	onClick?: () => void;
 	index: number;
 	url?: string;
+	isWpcom: boolean;
+	hash: string;
 }
 
 const Card = styled( FoldableCard )`
@@ -34,6 +36,11 @@ const Header = styled.div`
 	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
+	width: 100%;
+
+	.insight-header-container > div {
+		width: 100%;
+	}
 
 	p {
 		display: inline;
@@ -48,31 +55,58 @@ const Header = styled.div`
 		}
 	}
 
+	.impact {
+		padding: 4px 10px;
+		border-radius: 14px;
+		border: 1px solid transparent;
+		float: right;
+		font-size: 14px;
+		color: var( --studio-black );
+
+		&.fail {
+			background-color: var( --studio-red-5 );
+		}
+
+		&.is-mobile {
+			float: none;
+			display: inline-block;
+			margin-top: 8px;
+		}
+	}
+
 	.counter {
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
+		width: 15px;
+		text-align: right;
 	}
 `;
 
 const Content = styled.div`
-	padding: 24px;
+	padding: 15px 22px;
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index } = props;
+	const { insight, onClick, index, isWpcom, hash } = props;
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
 		insight.description ?? '',
+		hash,
+		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
 	const tip = tips[ insight.id ];
 
 	if ( props.url && tip ) {
 		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+	}
+
+	if ( tip && isWpcom ) {
+		tip.link = '';
 	}
 
 	return (
@@ -98,6 +132,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
 					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
+					AIGenerated={ isEnabled( 'performance-profiler/llm' ) }
 				/>
 			</Content>
 		</Card>

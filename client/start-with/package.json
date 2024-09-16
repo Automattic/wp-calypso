@@ -1,4 +1,0 @@
-{
-	"main": "index.node.ts",
-	"browser": "index.web.ts"
-}

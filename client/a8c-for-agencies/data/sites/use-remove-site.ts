@@ -27,6 +27,10 @@ function mutationRemoveSite( { siteId, agencyId }: Props ): Promise< APIResponse
 	} );
 }
 
+/**
+ * Hook to remove a site from the agency dashboard.
+ * Note: This mutation will remove the site from the agency dashboard but the site and its license will still exist.
+ */
 export default function useRemoveSiteMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIError, Error, Props, TContext >
 ): UseMutationResult< APIError, Error, Props, TContext > {

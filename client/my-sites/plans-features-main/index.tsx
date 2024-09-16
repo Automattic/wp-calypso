@@ -68,11 +68,13 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
+import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSimplifiedFeaturesGridExperiment from './hooks/use-simplified-features-grid-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -288,9 +290,14 @@ const PlansFeaturesMain = ( {
 
 	const intentFromSiteMeta = usePlanIntentFromSiteMeta();
 	const planFromUpsells = usePlanFromUpsells();
+	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
-
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+	/**
+	 * Keep the `useEffect` here strictly about intent resolution.
+	 * This is fairly critical logic and may generate side effects if not handled properly.
+	 * Let's be especially deliberate about making changes.
+	 */
 	useEffect( () => {
 		if ( intentFromSiteMeta.processing ) {
 			return;
@@ -299,13 +306,13 @@ const PlansFeaturesMain = ( {
 		// TODO: plans from upsell takes precedence for setting intent right now
 		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
 		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
-		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
-			setIntent( 'plans-default-wpcom' );
+		if ( defaultWpcomPlansIntent !== intent && forceDefaultPlans ) {
+			setIntent( defaultWpcomPlansIntent );
 		} else if ( ! intent ) {
 			setIntent(
 				planFromUpsells
-					? 'plans-default-wpcom'
-					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+					? defaultWpcomPlansIntent
+					: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent
 			);
 		}
 	}, [
@@ -315,10 +322,20 @@ const PlansFeaturesMain = ( {
 		planFromUpsells,
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
+		defaultWpcomPlansIntent,
 	] );
 
 	const showEscapeHatch =
-		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
+
+	const {
+		isLoading: isLoadingSimplifiedFeaturesGridExperiment,
+		variant: simplifiedFeaturesGridExperimentVariant,
+	} = useSimplifiedFeaturesGridExperiment( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -372,7 +389,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
-		intent,
+		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
@@ -383,7 +400,6 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -615,8 +631,13 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
+		! intent ||
+			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
+			! gridPlansForFeaturesGrid ||
+			! gridPlansForComparisonGrid ||
+			isLoadingSimplifiedFeaturesGridExperiment
 	);
+
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
@@ -663,6 +684,38 @@ const PlansFeaturesMain = ( {
 		}
 		return translate( 'Compare plans' );
 	};
+
+	const enterpriseFeaturesList = useMemo(
+		() => [
+			translate( 'Multifaceted security' ),
+			translate( 'Generative AI' ),
+			translate( 'Integrated content analytics' ),
+			translate( '24/7 support' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Professional services' ) ]
+				: [ translate( 'FedRAMP certification' ) ] ),
+			translate( 'API mesh and node hosting' ),
+			translate( 'Containerized environment' ),
+			translate( 'Global infrastructure' ),
+			translate( 'Dynamic autoscaling' ),
+			translate( 'Integrated CDN' ),
+			translate( 'Integrated code repository' ),
+			translate( 'Staging environments' ),
+			translate( 'Management dashboard' ),
+			translate( 'Command line interface (CLI)' ),
+			translate( 'Efficient multi-site management' ),
+			translate( 'Advanced access controls' ),
+			translate( 'Single sign-on (SSO)' ),
+			translate( 'DDoS protection and mitigation' ),
+			translate( 'Plugin and theme vulnerability scanning' ),
+			translate( 'Automated plugin upgrade' ),
+			translate( 'Integrated enterprise search' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Integrated APM' ) ]
+				: [] ),
+		],
+		[ simplifiedFeaturesGridExperimentVariant, translate ]
+	);
 
 	return (
 		<>
@@ -767,6 +820,25 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
+										enterpriseFeaturesList={ enterpriseFeaturesList }
+										enableCategorisedFeatures={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableLargeFeatureTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableStorageAsBadge={
+											simplifiedFeaturesGridExperimentVariant !== 'simplified'
+										}
+										enableReducedFeatureGroupSpacing={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableLogosOnlyForEnterprisePlan={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										hideFeatureGroupTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

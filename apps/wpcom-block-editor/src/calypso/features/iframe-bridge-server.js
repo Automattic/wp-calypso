@@ -48,6 +48,21 @@ function addCommandsInputListener( selector, cb ) {
 	} );
 }
 
+/**
+ * Returns the Popover fallback container if exists or creates a new node
+ */
+const fallbackContainerClassname = 'components-popover__fallback-container';
+const getPopoverFallbackContainer = () => {
+	let container = document.body.querySelector( '.' + fallbackContainerClassname );
+	if ( ! container ) {
+		container = document.createElement( 'div' );
+		container.className = fallbackContainerClassname;
+		document.body.append( container );
+	}
+
+	return container;
+};
+
 // Calls a callback if the event occured on an element or parent thereof matching
 // the callback's selector. This is needed because elements are added and removed
 // from the DOM dynamically after the listeners are created. We need to handle
@@ -700,13 +715,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				const popoverSlot = node.querySelector( '.components-popover' );
-
-				if ( popoverSlot ) {
-					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
+				if ( node?.classList?.contains( 'components-popover' ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
-					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
+
+					const manageNavigationMenusAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
 
@@ -730,8 +744,10 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotElem = document.querySelector( 'body' );
-	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+
+	// Observe children of the Popover Container
+	const popoverContainer = getPopoverFallbackContainer();
+	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -1059,16 +1075,16 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
-function handlePatterns( calypsoPort ) {
-	const selector = `[data-value="${ __( 'Patterns' ) }"]`;
+function handleWpAdminRedirect( { calypsoPort, path, title } ) {
+	const selector = `[data-value="${ title }"]`;
 
 	const callback = ( e ) => {
 		e.preventDefault();
 
 		calypsoPort.postMessage( {
-			action: 'goToPatterns',
+			action: 'wpAdminRedirect',
 			payload: {
-				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
+				destinationUrl: `/wp-admin/${ path }`,
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
 		} );
@@ -1076,6 +1092,26 @@ function handlePatterns( calypsoPort ) {
 
 	addEditorListener( selector, callback );
 	addCommandsInputListener( selector, callback );
+}
+
+function handlePatterns( calypsoPort ) {
+	handleWpAdminRedirect( {
+		calypsoPort,
+		path: 'site-editor.php?postType=wp_block',
+		title: __( 'Patterns' ),
+	} );
+}
+
+function handleAddPage( calypsoPort ) {
+	handleWpAdminRedirect( {
+		calypsoPort,
+		path: 'post-new.php?post_type=page',
+		title: __( 'Add new page' ),
+	} );
+}
+
+function handleAddPost( calypsoPort ) {
+	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
 function initPort( message ) {
@@ -1180,6 +1216,10 @@ function initPort( message ) {
 		handleAppBannerShowing( calypsoPort );
 
 		handlePatterns( calypsoPort );
+
+		handleAddPage( calypsoPort );
+
+		handleAddPost( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

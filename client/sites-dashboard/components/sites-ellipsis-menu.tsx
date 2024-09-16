@@ -15,13 +15,12 @@ import {
 } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
-import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
-import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
@@ -41,6 +40,7 @@ import {
 	isSimpleSite,
 	isP2Site,
 } from '../utils';
+import SitePreviewModal from './site-preview-modal';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { AppState } from 'calypso/types';
 
@@ -93,7 +93,7 @@ const PrepareForLaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	return (
 		<MenuItem
 			onClick={ () => {
-				window.location.href = `https://wordpress.com/settings/general/${ site.ID }?referer=a4a-dashboard`;
+				window.location.href = `https://wordpress.com/settings/general/${ site.ID }`;
 				recordTracks( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' );
 			} }
 		>
@@ -169,19 +169,6 @@ const ManagePluginsItem = ( {
 	);
 };
 
-const ModalContent = styled.div( {
-	width: '80vw',
-	maxWidth: '480px',
-	minHeight: '100px',
-	display: 'flex',
-	flexDirection: 'column',
-} );
-
-const modalOverlayClassName = css( {
-	// global-notices has z-index: 179
-	zIndex: 178,
-} );
-
 function useSafeSiteHasFeature( siteId: number, feature: string ) {
 	const dispatch = useReduxDispatch();
 	useEffect( () => {
@@ -216,17 +203,12 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	return (
 		<>
 			<MenuItemLink onClick={ onSitePreviewClick }>{ __( 'Share site for preview' ) }</MenuItemLink>
-			{ isVisible && (
-				<Modal
-					title={ __( 'Share site for preview' ) }
-					onRequestClose={ closeModal }
-					overlayClassName={ modalOverlayClassName }
-				>
-					<ModalContent>
-						<SitePreviewLink siteUrl={ site.URL } siteId={ site.ID } source="smp-modal" />
-					</ModalContent>
-				</Modal>
-			) }
+			<SitePreviewModal
+				siteUrl={ site.URL }
+				siteId={ site.ID }
+				isVisible={ isVisible }
+				closeModal={ closeModal }
+			/>
 		</>
 	);
 };

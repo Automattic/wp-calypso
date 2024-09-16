@@ -3,7 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useContext, useEffect, useCallback, useState } from 'react';
+import { useContext, useEffect, useCallback, useState, useRef } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import {
 	DATAVIEWS_LIST,
@@ -106,10 +106,34 @@ export default function SitesDashboard() {
 		showOnlyDevelopmentSites,
 	] );
 
+	// Reset back to page one when entering Needs Attention, Favourites, or Development page.
+	const selectedFilters = getSelectedFilters( dataViewsState.filters );
+	const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
+	const prevIsOnFavouritesPageRef = useRef( showOnlyFavorites );
+	const prevIsOnDevelopmentPageRef = useRef( showOnlyDevelopmentSites );
+	const prevIsOnNeedsAttentionPageRef = useRef( isOnNeedsAttentionPage );
+
+	useEffect( () => {
+		const selectedFilters = getSelectedFilters( dataViewsState.filters );
+		const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
+
+		if (
+			prevIsOnFavouritesPageRef.current !== showOnlyFavorites ||
+			prevIsOnDevelopmentPageRef.current !== showOnlyDevelopmentSites ||
+			prevIsOnNeedsAttentionPageRef.current !== isOnNeedsAttentionPage
+		) {
+			setDataViewsState( { ...dataViewsState, page: 1 } );
+		}
+
+		prevIsOnFavouritesPageRef.current = showOnlyFavorites;
+		prevIsOnDevelopmentPageRef.current = showOnlyDevelopmentSites;
+		prevIsOnNeedsAttentionPageRef.current = isOnNeedsAttentionPage;
+	}, [ dataViewsState, setDataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ] );
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
-		searchQuery: dataViewsState.search,
-		currentPage: dataViewsState.page,
+		searchQuery: dataViewsState?.search,
+		currentPage: dataViewsState.page ?? 1,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
 		perPage: dataViewsState.perPage,
@@ -156,11 +180,11 @@ export default function SitesDashboard() {
 		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
-			filters: dataViewsState.filters,
+			filters: dataViewsState.filters ?? [],
 			selectedSite: dataViewsState.selectedItem,
 			selectedSiteFeature: selectedSiteFeature,
-			search: dataViewsState.search,
-			currentPage: dataViewsState.page,
+			search: dataViewsState.search ?? '',
+			currentPage: dataViewsState.page ?? 1,
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
 			showOnlyDevelopmentSites,
@@ -274,9 +298,7 @@ export default function SitesDashboard() {
 						} }
 					>
 						<JetpackSitesDataViews
-							className={ clsx( 'sites-overview__content', {
-								'is-hiding-navigation': navItems.length <= 1,
-							} ) }
+							className={ clsx( 'sites-overview__content' ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }

@@ -1,8 +1,8 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { useEffect, useState } from 'react';
 import {
 	clearSignupDestinationCookie,
 	persistSignupDestination,
@@ -14,15 +14,20 @@ import { Flow, ProvidedDependencies } from './internals/types';
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
+			},
+			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
 			},
 			{
 				slug: 'plans',
-				asyncComponent: () => import( './internals/steps-repository/plans' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
 			},
 			{
 				slug: 'create-site',
@@ -42,9 +47,10 @@ const onboarding: Flow = {
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
-		const flowName = this.name;
+		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
+			useDispatch( ONBOARD_STORE );
 
-		const { domainCartItem, planCartItem } = useSelect(
+		const { planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
@@ -52,14 +58,52 @@ const onboarding: Flow = {
 			[]
 		);
 
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const clearUseMyDomainsQueryParams = () => {
+			if (
+				currentStepSlug === 'domains' ||
+				( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
+			) {
+				window.history.replaceState( {}, document.title, window.location.pathname );
+			}
+		};
+
+		clearUseMyDomainsQueryParams();
+
+		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
+		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
+					setDomain( providedDependencies.suggestion );
+					setDomainCartItem( providedDependencies.domainItem );
+					setDomainCartItems( providedDependencies.domainCart );
+					if ( providedDependencies.navigateToUseMyDomain ) {
+						setRedirectedToUseMyDomain( true );
+						let useMyDomainURL = 'use-my-domain?step=domain-input';
+						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
+							useMyDomainURL = addQueryArgs( useMyDomainURL, {
+								initialQuery: ( providedDependencies?.domainForm as { lastQuery?: string } )
+									?.lastQuery,
+							} );
+						}
+						return navigate( useMyDomainURL );
+					}
+					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
-				case 'plans':
+				case 'use-my-domain':
+					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+						return navigate(
+							`use-my-domain?step=${ providedDependencies.mode }&initialQuery=${ providedDependencies.domain }`
+						);
+					}
+					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
+					return navigate( 'plans' );
+				case 'plans': {
+					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
+					setPlanCartItem( cartItems?.[ 0 ] ?? null );
 					return navigate( 'create-site', undefined, true );
+				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
@@ -67,18 +111,8 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 					persistSignupDestination( destination );
-
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
-						if ( planCartItem && siteSlug && flowName ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
-						}
-
-						if ( domainCartItem && siteSlug && flowName ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
-
-						resetOnboardStore();
 
 						// replace the location to delete processing step from history.
 						window.location.replace(
@@ -99,7 +133,28 @@ const onboarding: Flow = {
 
 		const goBack = () => {
 			switch ( currentStepSlug ) {
+				case 'use-my-domain':
+					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
+						const url = addQueryArgs( 'use-my-domain', {
+							step: 'domain-input',
+							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
+						} );
+						return navigate( url );
+					}
+
+					if ( window.location.search ) {
+						window.history.replaceState( {}, document.title, window.location.pathname );
+					}
+					return navigate( 'domains' );
 				case 'plans':
+					if ( redirectedToUseMyDomain ) {
+						if ( Object.keys( useMyDomainQueryParams ).length ) {
+							// restore query params
+							const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
+							return navigate( useMyDomainURL );
+						}
+						return navigate( 'use-my-domain' );
+					}
 					return navigate( 'domains' );
 				default:
 					return;

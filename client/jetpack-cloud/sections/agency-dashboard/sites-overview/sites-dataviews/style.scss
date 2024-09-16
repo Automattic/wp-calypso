@@ -21,10 +21,6 @@
 		color: var(--studio-jetpack-green-50);
 	}
 
-	.dataviews-view-table__actions-column {
-		display: none;
-	}
-
 	thead {
 		th.sites-dataviews__site {
 			background: var(--studio-white);
@@ -248,10 +244,6 @@
 	}
 	.dataviews-loading p {
 		display: none;
-	}
-
-	.dataviews-view-table-wrapper {
-		height: 0 !important;
 	}
 }
 

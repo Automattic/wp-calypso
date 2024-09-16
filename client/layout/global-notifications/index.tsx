@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
@@ -15,6 +16,7 @@ const GlobalNotifications = () => {
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const unseenCount = useSelector( ( state: AppState ) => getUnseenCount( state ) );
 	const containerRef = useRef< HTMLDivElement >( null );
+	const currentRoute = useSelector( getCurrentRoute );
 	const dispatch = useDispatch();
 	const toggleNotesFrame = useCallback( ( event: MouseEvent | null ) => {
 		if ( event ) {
@@ -67,6 +69,12 @@ const GlobalNotifications = () => {
 			);
 		}
 	}, [ prevIsNotificationsOpen, isNotificationsOpen, unseenCount, dispatch ] );
+
+	// Get URL and if it matches "/read/notifications", don't render the global notifications panel.
+	// As it will cause duplicate notification store listeners to be registered.
+	if ( currentRoute === '/read/notifications' ) {
+		return null;
+	}
 
 	return (
 		<div className="global-notifications" ref={ containerRef }>

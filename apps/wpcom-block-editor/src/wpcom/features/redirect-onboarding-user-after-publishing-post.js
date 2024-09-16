@@ -1,6 +1,7 @@
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe, useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
+import useLaunchpadScreen from './use-launchpad-screen';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
@@ -8,23 +9,34 @@ const DESIGN_FIRST_FLOW = 'design-first';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
+	const { launchpad_screen: launchpadScreen } = useLaunchpadScreen();
+
+	const currentPostType = useSelect(
+		( localSelect ) => localSelect( 'core/editor' ).getCurrentPostType(),
+		[]
+	);
+
+	// Check the URL parameter first so we can skip later processing ASAP and avoid flashing.
+	const hasStartWritingFlowQueryArg =
+		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+
+	const shouldShowMinimalUIAndRedirectToFullscreenLaunchpad =
+		( intent === START_WRITING_FLOW || intent === DESIGN_FIRST_FLOW ) &&
+		hasStartWritingFlowQueryArg &&
+		'full' === launchpadScreen &&
+		currentPostType === 'post';
+	const postFlowUrl = getQueryArg( window.location.search, 'postFlowUrl' );
 
 	useEffect( () => {
-		// We check the URL param along with site intent because the param loads faster and prevents element flashing.
-		const hasStartWritingFlowQueryArg =
-			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
-
-		if (
-			intent === START_WRITING_FLOW ||
-			intent === DESIGN_FIRST_FLOW ||
-			hasStartWritingFlowQueryArg
-		) {
+		if ( shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ) {
 			dispatch( 'core/edit-post' ).closeGeneralSidebar();
 			document.documentElement.classList.add( 'blog-onboarding-hide' );
+		} else {
+			document.documentElement.classList.remove( 'blog-onboarding-hide' );
 		}
-	}, [ intent ] );
+	}, [ shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ] );
 
-	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
+	if ( ! shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ) {
 		return false;
 	}
 
@@ -52,7 +64,10 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
 
-			window.location.href = `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+			// Redirect to the post flow URL if it's provided, otherwise redirect to the launchpad.
+			window.location.href = postFlowUrl
+				? `${ siteOrigin }${ postFlowUrl }`
+				: `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
 		}
 	} );
 }

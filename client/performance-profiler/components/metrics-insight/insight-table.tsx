@@ -43,13 +43,13 @@ function SubRows( { items, headings }: { items: any[]; headings: any[] } ) {
 	return items.map( ( subItem, subIndex ) => (
 		<tr key={ `sub-${ subIndex }` } className="sub">
 			{ headings.map( ( heading, index ) => {
-				const { subItemsHeading } = heading;
+				const { subItemsHeading, valueType } = heading;
 
 				return (
 					<td key={ `subrow-${ index }` }>
 						<Cell
 							data={ subItem[ subItemsHeading?.key ] }
-							headingValueType={ subItemsHeading?.valueType }
+							headingValueType={ subItemsHeading?.valueType ?? valueType }
 						/>
 					</td>
 				);
@@ -73,9 +73,7 @@ function Cell( {
 				return (
 					<div>
 						<p>{ data?.nodeLabel }</p>
-						<pre>
-							<code>{ data?.snippet }</code>
-						</pre>
+						<code>{ data?.snippet }</code>
 					</div>
 				);
 

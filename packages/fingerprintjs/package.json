@@ -18,13 +18,14 @@
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/fingerprintjs/fingerprintjs.git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/fingerprintjs"
 	},
 	"bugs": {
 		"url": "https://github.com/fingerprintjs/fingerprintjs/issues"
 	},
 	"homepage": "https://github.com/fingerprintjs/fingerprintjs",
+	"calypso:src": "src/index.ts",
 	"main": "dist/fp.cjs.js",
 	"module": "dist/fp.esm.js",
 	"types": "dist/fp.d.ts",

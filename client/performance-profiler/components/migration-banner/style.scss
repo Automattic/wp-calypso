@@ -24,6 +24,7 @@ $blueberry-20: #adbaf3;
 		}
 
 		.section-name {
+			font-family: Inter, $sans;
 			color: $blueberry-20;
 			font-size: $font-body-small;
 			line-height: $font-title-small;
@@ -35,6 +36,12 @@ $blueberry-20: #adbaf3;
 			font-size: $font-title-large;
 			line-height: $font-headline-small;
 			color: #fff;
+		}
+
+		.subtitles {
+			display: flex;
+			flex-direction: column;
+			gap: 24px;
 		}
 
 		.subtitle {
@@ -73,6 +80,13 @@ $blueberry-20: #adbaf3;
 			display: flex;
 			align-items: center;
 			gap: 16px;
+
+			a {
+				font-size: $font-body-small;
+				padding: 8px 14px;
+				border-radius: 2px;
+				height: 40px;
+			}
 
 			.outlined-button {
 				background: transparent;

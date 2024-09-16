@@ -14,6 +14,5 @@ export const initialDataViewsState: DataViewsState = {
 	perPage: 50,
 	page: 1,
 	search: '',
-	hiddenFields: [],
 	layout: {},
 };

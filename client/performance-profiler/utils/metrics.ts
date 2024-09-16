@@ -1,76 +1,85 @@
 import { translate } from 'i18n-calypso';
-import { Metrics } from 'calypso/data/site-profiler/types';
+import { Metrics, PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
-	fcp: { displayName: translate( 'Loading speed' ), name: translate( 'First Contentful Paint' ) },
+	fcp: { name: translate( 'First Contentful Paint' ) },
 	lcp: {
-		displayName: translate( 'Largest content load' ),
 		name: translate( 'Largest Contentful Paint' ),
 	},
 	cls: {
-		displayName: translate( 'Visual stability' ),
 		name: translate( 'Cumulative Layout Shift' ),
 	},
 	inp: {
-		displayName: translate( 'Interactivity' ),
 		name: translate( 'Interaction to Next Paint' ),
 	},
 	ttfb: {
-		displayName: translate( 'Server responsiveness' ),
 		name: translate( 'Time to First Byte' ),
+	},
+	tbt: {
+		name: translate( 'Total Blocking Time' ),
 	},
 };
 
 export const metricValuations = {
 	fcp: {
-		good: translate( "Your site's loading speed is good" ),
-		needsImprovement: translate( "Your site's loading speed is moderate" ),
-		bad: translate( "Your site's loading speed needs improvement" ),
-		heading: translate( 'What is loading speed?' ),
-		aka: translate( '(aka First Contentful Paint)' ),
+		good: translate( 'Your site‘s First Contentful Paint is good' ),
+		needsImprovement: translate( 'Your site‘s First Contentful Paint is moderate' ),
+		bad: translate( 'Your site‘s First Contentful Paint needs improvement' ),
+		heading: translate( 'What is First Contentful Paint?' ),
+		aka: translate( '(FCP)' ),
 		explanation: translate(
-			'Loading speed reflects the time it takes to display the first text or image to visitors. The best sites load in under 1.8 seconds.'
+			'First Contentful Paint reflects the time it takes to display the first text or image to visitors. The best sites load in under 1.8 seconds.'
 		),
 	},
 	lcp: {
-		good: translate( "Your site's largest content load is good" ),
-		needsImprovement: translate( "Your site's largest content load is moderate" ),
-		bad: translate( "Your site's largest content load needs improvement" ),
-		heading: translate( 'What is largest content load?' ),
-		aka: translate( '(aka Largest Contentful Paint)' ),
+		good: translate( 'Your site‘s Largest Contentful Paint is good' ),
+		needsImprovement: translate( 'Your site‘s Largest Contentful Paint is moderate' ),
+		bad: translate( 'Your site‘s Largest Contentful Paint needs improvement' ),
+		heading: translate( 'What is Largest Contentful Paint?' ),
+		aka: translate( '(LCP)' ),
 		explanation: translate(
-			'Largest content load measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
+			'Largest Contentful Paint measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
 		),
 	},
 	cls: {
-		good: translate( "Your site's visual stability is good" ),
-		needsImprovement: translate( "Your site's visual stability is moderate" ),
-		bad: translate( "Your site's visual stability needs improvement" ),
-		heading: translate( 'What is visual stability?' ),
-		aka: translate( '(aka Cumulative Layout Shift)' ),
+		good: translate( 'Your site‘s Cumulative Layout Shift is good' ),
+		needsImprovement: translate( 'Your site‘s Cumulative Layout Shift is moderate' ),
+		bad: translate( 'Your site‘s Cumulative Layout Shift needs improvement' ),
+		heading: translate( 'What is Cumulative Layout Shift?' ),
+		aka: translate( '(CLS)' ),
 		explanation: translate(
-			'Visual stability is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
+			'Cumulative Layout Shift is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
 		),
 	},
 	inp: {
-		good: translate( "Your site's interactivity is good" ),
-		needsImprovement: translate( "Your site's interactivity is moderate" ),
-		bad: translate( "Your site's interactivity needs improvement" ),
-		heading: translate( 'What is interactivity?' ),
-		aka: translate( '(aka Interaction to Next Paint)' ),
+		good: translate( 'Your site‘s Interaction to Next Paint is good' ),
+		needsImprovement: translate( 'Your site‘s Interaction to Next Paint is moderate' ),
+		bad: translate( 'Your site‘s Interaction to Next Paint needs improvement' ),
+		heading: translate( 'What is Interaction to Next Paint?' ),
+		aka: translate( '(INP)' ),
 		explanation: translate(
-			'Interactivity measures the overall responsiveness of a webpage by evaluating how quickly it reacts to user interactions. A good score is 200 milliseconds or less, indicating that the page responds swiftly to user inputs.'
+			'Interaction to Next Paint measures the overall responsiveness of a webpage by evaluating how quickly it reacts to user interactions. A good score is 200 milliseconds or less, indicating that the page responds swiftly to user inputs.'
 		),
 	},
 	ttfb: {
-		good: translate( "Your site's server responsiveness is good" ),
-		needsImprovement: translate( "Your site's server responsiveness is moderate" ),
-		bad: translate( "Your site's server responsiveness needs improvement" ),
-		heading: translate( 'What is server responsiveness?' ),
-		aka: translate( '(aka Time To First Byte)' ),
+		good: translate( 'Your site‘s Time to First Byte is good' ),
+		needsImprovement: translate( 'Your site‘s Time to First Byte is moderate' ),
+		bad: translate( 'Your site‘s Time to First Byte needs improvement' ),
+		heading: translate( 'What is Time to First Byte?' ),
+		aka: translate( '(TTFB)' ),
 		explanation: translate(
-			'Server responsiveness reflects the time taken for a user’s browser to receive the first byte of data from the server after making a request. The best sites load around 800 milliseconds or less.'
+			'Time to First Byte reflects the time taken for a user‘s browser to receive the first byte of data from the server after making a request. The best sites load around 800 milliseconds or less.'
+		),
+	},
+	tbt: {
+		good: translate( 'Your site‘s Total Blocking Time is good' ),
+		needsImprovement: translate( 'Your site‘s Total Blocking Time is moderate' ),
+		bad: translate( 'Your site‘s Total Blocking Time needs improvement' ),
+		heading: translate( 'What is Total Blocking Time?' ),
+		aka: translate( '(TBT)' ),
+		explanation: translate(
+			'Total Blocking Time measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks, screen taps, or keyboard presses. The best sites have a wait time of less than 200 milliseconds.'
 		),
 	},
 };
@@ -102,6 +111,11 @@ export const metricsTresholds = {
 		needsImprovement: 500,
 		bad: 1000,
 	},
+	tbt: {
+		good: 200,
+		needsImprovement: 600,
+		bad: 1000,
+	},
 };
 
 export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
@@ -129,9 +143,18 @@ export const displayValue = ( metric: Metrics, value: number ): string => {
 		return `${ max2Decimals( value / 1000 ) }s`;
 	}
 
-	if ( [ 'inp', 'fid' ].includes( metric ) ) {
+	if ( [ 'inp', 'fid', 'tbt' ].includes( metric ) ) {
 		return `${ max2Decimals( value ) }ms`;
 	}
 
 	return `${ max2Decimals( value ) }`;
+};
+
+export const filterRecommendations = (
+	selectedFilter: string,
+	audit?: PerformanceMetricsItemQueryResponse
+) => {
+	return (
+		selectedFilter === 'all' || audit?.metricSavings?.hasOwnProperty( selectedFilter.toUpperCase() )
+	);
 };
