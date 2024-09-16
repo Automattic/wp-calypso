@@ -276,7 +276,7 @@ class DomainRegistrationSuggestion extends Component {
 		} );
 
 		return (
-			<div class="domain-registration-suggestion__title_info">
+			<div className="domain-registration-suggestion__title-info">
 				{ this.renderBadges() }
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
