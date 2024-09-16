@@ -16,32 +16,42 @@ const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 		const { selectedDomainName } = props;
 		const dispatch = useDispatch();
 		const translate = useTranslate();
-		const { data, isLoading, isError, error } = useDomainNameserversQuery( selectedDomainName );
-		const { updateNameservers, isPending } = useUpdateNameserversMutation( selectedDomainName, {
-			onSuccess() {
-				dispatch(
-					successNotice(
-						translate( 'Yay, the name servers have been successfully updated!' ),
-						noticeOptions
-					)
-				);
-			},
-			onError( err ) {
-				dispatch(
-					errorNotice(
-						err.message ?? translate( 'An error occurred while updating the nameservers.' ),
-						noticeOptions
-					)
-				);
-			},
-		} );
+		const {
+			data,
+			isLoading: isLoadingNameservers,
+			isFetching: isFetchingNameservers,
+			isError,
+			error,
+		} = useDomainNameserversQuery( selectedDomainName );
+		const { updateNameservers, isPending: isUpdatingNameservers } = useUpdateNameserversMutation(
+			selectedDomainName,
+			{
+				onSuccess() {
+					dispatch(
+						successNotice(
+							translate( 'Yay, the name servers have been successfully updated!' ),
+							noticeOptions
+						)
+					);
+				},
+				onError( err ) {
+					dispatch(
+						errorNotice(
+							err.message ?? translate( 'An error occurred while updating the nameservers.' ),
+							noticeOptions
+						)
+					);
+				},
+			}
+		);
 
 		return (
 			<Wrapped
 				{ ...props }
 				nameservers={ data }
-				isLoadingNameservers={ isLoading }
-				isUpdatingNameservers={ isPending }
+				isLoadingNameservers={ isLoadingNameservers }
+				isFetchingNameservers={ isFetchingNameservers }
+				isUpdatingNameservers={ isUpdatingNameservers }
 				loadingNameserversError={ isError && error }
 				updateNameservers={ updateNameservers }
 			/>
