@@ -132,11 +132,15 @@ export default function DnssecCard( { domain, nameservers, isUpdatingNameservers
 	const domainHasDefaultWpcomNameservers = hasDefaultWpcomNameservers( nameservers );
 
 	const renderDnssecCard = () => {
+		if ( ! domainHasDefaultWpcomNameservers ) {
+			return null;
+		}
+
 		return (
 			<div className="domain-dnssec-card">
 				<ToggleControl
 					checked={ isEnabled }
-					disabled={ isUpdating || ! domainHasDefaultWpcomNameservers || isUpdatingNameservers }
+					disabled={ isUpdating || isUpdatingNameservers }
 					label={ getToggleLabel() }
 					onChange={ onToggle }
 				/>
