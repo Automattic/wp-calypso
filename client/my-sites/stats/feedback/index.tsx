@@ -13,8 +13,8 @@ import FeedbackModal from './modal';
 
 import './style.scss';
 
-const ACTION_LEAVE_REVIEW = 'action_leave_review';
-const ACTION_SEND_FEEDBACK = 'action_send_feedback';
+const ACTION_LEAVE_REVIEW = 'action_redirect_to_plugin_review_page';
+const ACTION_SEND_FEEDBACK = 'action_open_form_modal';
 const ACTION_DISMISS_FLOATING_PANEL = 'action_dismiss_floating_panel';
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
@@ -96,9 +96,9 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	};
 
 	const clickHandlerWithAnalytics = ( action: string ) => {
-		// stats_feedback_floating_panel_action_leave_review
-		// stats_feedback_floating_panel_action_send_feedback
-		trackStatsAnalyticsEvent( `stats_feedback_floating_panel_${ action }` );
+		// stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel
+		// stats_feedback_action_open_form_modal_from_floating_panel
+		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_floating_panel` );
 
 		clickHandler( action );
 	};
@@ -129,9 +129,9 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 
 function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 	const clickHandlerWithAnalytics = ( action: string ) => {
-		// stats_feedback_persistent_section_action_leave_review
-		// stats_feedback_persistent_section_action_send_feedback
-		trackStatsAnalyticsEvent( `stats_feedback_persistent_section_${ action }` );
+		// stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section
+		// stats_feedback_action_open_form_modal_from_persistent_section
+		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_persistent_section` );
 
 		clickHandler( action );
 	};
@@ -181,6 +181,12 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	};
 
+	const onModalClose = () => {
+		setIsOpen( false );
+
+		trackStatsAnalyticsEvent( 'stats_feedback_action_close_form_modal' );
+	};
+
 	if ( ! supportCommercialUse ) {
 		return null;
 	}
@@ -189,7 +195,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		<div className="stats-feedback-container">
 			<FeedbackCard clickHandler={ handleButtonClick } />
 			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
-			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ () => setIsOpen( false ) } /> }
+			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
 		</div>
 	);
 }
