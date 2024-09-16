@@ -3,10 +3,6 @@
 $date-range-shortcut-min-width: 140px;
 $date-range-mobile-layout-switch: $break-small;
 
-:root {
-	--date-range-picker-highlight-color: rgba(var(--color-primary-light-rgb), 0.7);
-}
-
 .date-range {
 	position: relative;
 	display: flex;
@@ -229,6 +225,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 
 .date-range__picker {
+	--date-range-picker-highlight-color: rgba(var(--color-primary-light-rgb), 0.4);
 
 	.DayPicker-Day,
 	.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
