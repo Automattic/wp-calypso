@@ -169,7 +169,7 @@ const EducationFooter = () => {
 				openArticleInHelpCenter( url );
 			}
 		},
-		[ dispatch, openArticleInHelpCenter ]
+		[ dispatch, openArticleInHelpCenter, isLoggedIn ]
 	);
 
 	const links = {
