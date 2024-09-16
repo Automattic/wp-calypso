@@ -231,9 +231,25 @@ $blueberry-color: #3858e9;
 				width: 100%;
 				overflow-x: auto;
 
+				.element-screenshot__overlay {
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					z-index: 2000;
+					background: rgba(0, 0, 0, 0.3);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					cursor: zoom-out;
+				}
+
 				.element-screenshot {
+
 					.element-screenshot__image {
 						position: relative;
+						cursor: zoom-in;
 					}
 
 					.element-screenshot__mask {

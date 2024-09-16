@@ -5,7 +5,7 @@ import {
 	PerformanceMetricsDetailsQueryResponse,
 } from 'calypso/data/site-profiler/types';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
-import { NodeScreenshot } from './insight-screenshot';
+import { InsightScreenshotWithOverlay } from './insight-screenshot';
 
 export function InsightTable( {
 	data,
@@ -89,7 +89,7 @@ function Cell( {
 		if ( fullPageScreenshot && rect && rect.width !== 0 && rect.height !== 0 ) {
 			const maxThumbnailSize = { width: 147, height: 100 };
 			return (
-				<NodeScreenshot
+				<InsightScreenshotWithOverlay
 					nodeId={ data.lhId }
 					screenshot={ fullPageScreenshot.screenshot }
 					elementRectSC={ rect }

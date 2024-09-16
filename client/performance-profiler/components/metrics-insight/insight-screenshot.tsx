@@ -7,6 +7,8 @@
  *   2. Display coords (DC suffix): that match the CSS pixel coordinate space of the LH report's page.
  */
 
+import { useState } from 'react';
+
 const computeZoomFactor = ( elementRectSC, renderContainerSizeDC ) => {
 	const targetClipToViewportRatio = 0.75;
 	const zoomRatioXY = {
@@ -88,7 +90,13 @@ const renderClipPathInScreenshot = ( clipId, positionClip, elementRect, elementP
 	);
 };
 
-export const NodeScreenshot = ( { nodeId, screenshot, elementRectSC, maxRenderSizeDC } ) => {
+export const InsightScreenshot = ( {
+	nodeId,
+	screenshot,
+	elementRectSC,
+	maxRenderSizeDC,
+	onClick = () => {},
+} ) => {
 	const zoomFactor = computeZoomFactor( elementRectSC, maxRenderSizeDC );
 
 	const elementPreviewSizeSC = {
@@ -111,47 +119,87 @@ export const NodeScreenshot = ( { nodeId, screenshot, elementRectSC, maxRenderSi
 	} );
 
 	return (
-		<>
-			<div className="element-screenshot">
+		<div className="element-screenshot">
+			<div
+				className="element-screenshot__image"
+				onClick={ () => onClick() }
+				aria-hidden="true"
+				style={ {
+					backgroundImage: `url(${ screenshot.data })`,
+					width: elementPreviewSizeDC.width + 'px',
+					height: elementPreviewSizeDC.height + 'px',
+					backgroundPositionY: -( positions.screenshot.top * zoomFactor ) + 'px',
+					backgroundPositionX: -( positions.screenshot.left * zoomFactor ) + 'px',
+					backgroundSize: `${ screenshot.width * zoomFactor }px ${
+						screenshot.height * zoomFactor
+					}px`,
+				} }
+			>
 				<div
-					className="element-screenshot__image"
+					className="element-screenshot__mask"
 					style={ {
-						backgroundImage: `url(${ screenshot.data })`,
 						width: elementPreviewSizeDC.width + 'px',
 						height: elementPreviewSizeDC.height + 'px',
-						backgroundPositionY: -( positions.screenshot.top * zoomFactor ) + 'px',
-						backgroundPositionX: -( positions.screenshot.left * zoomFactor ) + 'px',
-						backgroundSize: `${ screenshot.width * zoomFactor }px ${
-							screenshot.height * zoomFactor
-						}px`,
+						clipPath: `url(#${ nodeId })`,
 					} }
 				>
-					<div
-						className="element-screenshot__mask"
-						style={ {
-							width: elementPreviewSizeDC.width + 'px',
-							height: elementPreviewSizeDC.height + 'px',
-							clipPath: `url(#${ nodeId })`,
-						} }
-					>
-						{ renderClipPathInScreenshot(
-							nodeId,
-							positions.clip,
-							elementRectSC,
-							elementPreviewSizeSC
-						) }
-					</div>
-					<div
-						className="element-screenshot__element-marker"
-						style={ {
-							width: elementRectSC.width * zoomFactor + 'px',
-							height: elementRectSC.height * zoomFactor + 'px',
-							left: positions.clip.left * zoomFactor + 'px',
-							top: positions.clip.top * zoomFactor + 'px',
-						} }
-					></div>
+					{ renderClipPathInScreenshot(
+						nodeId,
+						positions.clip,
+						elementRectSC,
+						elementPreviewSizeSC
+					) }
 				</div>
+				<div
+					className="element-screenshot__element-marker"
+					style={ {
+						width: elementRectSC.width * zoomFactor + 'px',
+						height: elementRectSC.height * zoomFactor + 'px',
+						left: positions.clip.left * zoomFactor + 'px',
+						top: positions.clip.top * zoomFactor + 'px',
+					} }
+				></div>
 			</div>
+		</div>
+	);
+};
+
+export const InsightScreenshotWithOverlay = ( {
+	nodeId,
+	screenshot,
+	elementRectSC,
+	maxRenderSizeDC,
+} ) => {
+	const [ overlayOpen, setOverlayOpen ] = useState( false );
+
+	const maxLightboxSize = {
+		width: window.innerWidth * 0.95,
+		height: window.innerHeight * 0.8,
+	};
+
+	return (
+		<>
+			{ overlayOpen && (
+				<div
+					className="element-screenshot__overlay"
+					onClick={ () => setOverlayOpen( false ) }
+					aria-hidden="true"
+				>
+					<InsightScreenshot
+						nodeId={ nodeId + '-overlay' }
+						screenshot={ screenshot }
+						elementRectSC={ elementRectSC }
+						maxRenderSizeDC={ maxLightboxSize }
+					/>
+				</div>
+			) }
+			<InsightScreenshot
+				onClick={ () => setOverlayOpen( true ) }
+				nodeId={ nodeId }
+				screenshot={ screenshot }
+				elementRectSC={ elementRectSC }
+				maxRenderSizeDC={ maxRenderSizeDC }
+			/>
 		</>
 	);
 };
