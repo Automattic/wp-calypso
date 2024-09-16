@@ -1,4 +1,4 @@
-import { Button, Popover, Gridicon } from '@automattic/components';
+import { Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -416,52 +416,16 @@ export class DateRange extends Component {
 		this.handleDateRangeChange( startDate, endDate, 'custom_date_range' );
 	};
 
-	renderDateHelp() {
-		const { startDate, endDate } = this.state;
-
-		return (
-			<div className="date-range__info" role="status" aria-live="polite">
-				{ ! startDate &&
-					! endDate &&
-					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
-						components: {
-							icon: <Gridicon aria-hidden="true" icon="info" />,
-							em: <em />,
-						},
-					} ) }
-				{ startDate &&
-					! endDate &&
-					this.props.translate( '{{icon/}} Please select the {{em}}last{{/em}} day.', {
-						components: {
-							icon: <Gridicon aria-hidden="true" icon="info" />,
-							em: <em />,
-						},
-					} ) }
-				{ startDate && endDate && (
-					<Button
-						className="date-range__info-btn"
-						borderless
-						compact
-						onClick={ this.resetDates }
-						aria-label={ this.props.translate( 'Reset selected dates' ) }
-					>
-						{ this.props.translate( '{{icon/}} reset selected dates', {
-							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },
-						} ) }
-					</Button>
-				) }
-			</div>
-		);
-	}
-
 	/**
 	 * Renders the Popover component
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
 		const headerProps = {
-			onApplyClick: this.commitDates,
-			onCancelClick: this.closePopoverAndRevert,
+			customTitle: this.props.customTitle,
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
+			resetDates: this.resetDates,
 		};
 
 		const footerProps = {
@@ -494,13 +458,6 @@ export class DateRange extends Component {
 						{ this.props.overlay && (
 							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
 						) }
-						<div className="date-range__controls">
-							{ this.props.customTitle ? (
-								<div className="date-range__custom-title">{ this.props.customTitle }</div>
-							) : (
-								this.renderDateHelp()
-							) }
-						</div>
 						{ this.props.renderHeader( headerProps ) }
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
