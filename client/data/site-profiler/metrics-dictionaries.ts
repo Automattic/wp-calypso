@@ -92,6 +92,7 @@ export function getBasicMetricsFromPerfReport( metrics?: any ): BasicMetricsScor
 		ttfb: metrics.ttfb,
 		inp: metrics.inp,
 		tbt: metrics.tbt,
+		overall: metrics.overall,
 	};
 	return getBasicMetricsScored( basicMetrics );
 }
