@@ -89,13 +89,7 @@ const useStepsData = ( {
 			) : (
 				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
-			action: fromUrl ? (
-				<MigrationKeyCta
-					fromUrl={ fromUrl }
-					hasMigrationKey={ !! migrationKey }
-					showMigrationKeyFallback={ showMigrationKeyFallback }
-				/>
-			) : undefined,
+			action: fromUrl && showMigrationKeyFallback ? <MigrationKeyCta /> : undefined,
 		},
 	];
 };
