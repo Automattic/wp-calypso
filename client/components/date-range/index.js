@@ -487,7 +487,6 @@ export class DateRange extends Component {
 							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
 						) }
 						<div className="date-range__controls">
-							{ this.props.renderHeader( headerProps ) }
 							{ this.props.customTitle ? (
 								<div className="date-range__custom-title">{ this.props.customTitle }</div>
 							) : (
