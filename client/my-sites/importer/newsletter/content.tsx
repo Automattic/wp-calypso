@@ -71,7 +71,6 @@ export default function Content( {
 	const showExportDataHint =
 		importerStatus?.importerState !== appStates.MAP_AUTHORS &&
 		importerStatus?.importerState !== appStates.IMPORTING &&
-		importerStatus?.importerState !== appStates.UPLOAD_PROCESSING &&
 		importerStatus?.importerState !== appStates.IMPORT_SUCCESS;
 
 	return (

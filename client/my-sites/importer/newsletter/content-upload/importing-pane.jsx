@@ -1,5 +1,4 @@
-import { ProgressBar } from '@automattic/components';
-import { Notice } from '@wordpress/components';
+import { ProgressBar, Notice } from '@wordpress/components';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -269,7 +268,7 @@ export class ImportingPane extends PureComponent {
 						<h2>Import your content to WordPress.com</h2>
 						<p>Please, wait while we import your content…</p>
 						<div className="importer__import-progress">
-							<ProgressBar value={ percentComplete || undefined } />
+							<ProgressBar className="importer__import-progress-bar" value={ percentComplete } />
 							{ blockingMessage && <p>{ blockingMessage }</p> }
 						</div>
 					</>
