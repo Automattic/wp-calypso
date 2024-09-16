@@ -905,10 +905,14 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	padding: 32px 20px 0 24px;
+	padding: 24px;
 	width: 100%;
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 12px 20px 0 40px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-top: 50px;
+		padding-bottom: 0;
+		padding-inline-start: 40px;
+		padding-inline-end: 0;
 	}
 `;
 

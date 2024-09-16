@@ -12,7 +12,7 @@ $blueberry-color: #3858e9;
 		align-items: center;
 		margin-bottom: 32px;
 		flex-wrap: wrap;
-		row-gap: 32px;
+		gap: 16px;
 	}
 
 	.title {
@@ -44,6 +44,7 @@ $blueberry-color: #3858e9;
 
 			&:hover {
 				background-color: transparent;
+				color: initial;
 			}
 		}
 	}

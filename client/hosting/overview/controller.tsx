@@ -1,7 +1,7 @@
 import { Context as PageJSContext } from '@automattic/calypso-router';
 import HostingOverview from 'calypso/hosting/overview/components/hosting-overview';
-import HostingActivate from 'calypso/my-sites/hosting/hosting-activate';
-import Hosting from 'calypso/my-sites/hosting/main';
+import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
+import Hosting from 'calypso/hosting/server-settings/main';
 
 export function hostingOverview( context: PageJSContext, next: () => void ) {
 	context.primary = <HostingOverview />;

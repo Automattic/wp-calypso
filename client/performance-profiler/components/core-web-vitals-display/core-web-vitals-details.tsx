@@ -1,12 +1,19 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
+import {
+	Metrics,
+	PerformanceMetricsHistory,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import {
 	metricsNames,
 	metricsTresholds,
 	mapThresholdsToStatus,
 	metricValuations,
+	filterRecommendations,
 } from 'calypso/performance-profiler/utils/metrics';
+import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import HistoryChart from '../charts/history-chart';
 import { MetricScale } from '../metric-scale';
 import { StatusIndicator } from '../status-indicator';
@@ -14,11 +21,15 @@ import { StatusIndicator } from '../status-indicator';
 type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	activeTab: Metrics | null;
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 };
 
 export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	activeTab,
 	history,
+	audits,
+	recommendationsRef,
 	...metrics
 } ) => {
 	const translate = useTranslate();
@@ -88,6 +99,10 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		};
 	} );
 
+	const numberOfAuditsForMetric = Object.keys( audits ).filter( ( key ) =>
+		filterRecommendations( activeTab, audits[ key ] )
+	).length;
+
 	return (
 		<div className="core-web-vitals-display__details">
 			<div className="core-web-vitals-display__description">
@@ -101,7 +116,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						<div className="range-description">
 							<div className="range-heading">{ translate( 'Excellent' ) }</div>
 							<div className="range-subheading">
-								{ translate( '0–%(to)s%(unit)s', {
+								{ translate( '0-%(to)s%(unit)s', {
 									args: { to: formatUnit( good ), unit: displayUnit() },
 									comment: 'Displaying a time range, eg. 0-1s',
 								} ) }
@@ -113,7 +128,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						<div className="range-description">
 							<div className="range-heading">{ translate( 'Needs Improvement' ) }</div>
 							<div className="range-subheading">
-								{ translate( '%(from)s–%(to)s%(unit)s', {
+								{ translate( '%(from)s-%(to)s%(unit)s', {
 									args: {
 										from: formatUnit( good ),
 										to: formatUnit( needsImprovement ),
@@ -151,6 +166,39 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					&nbsp;
 					<a href={ `https://web.dev/articles/${ activeTab }` }>{ translate( 'Learn more ↗' ) }</a>
 				</p>
+
+				{ !! numberOfAuditsForMetric && (
+					<div className="core-web-vitals-display__recommendations">
+						<div>
+							<div className="core-web-vitals-display__recommendations-title">
+								{ translate( 'How to improve %s?', { args: [ displayName ] } ) }
+							</div>
+							<div className="core-web-vitals-display__recommendations-subtitle">
+								{ translate(
+									"We have found %(numberOfAudits)d ways to improve your site's %(metricName)s.",
+									{
+										args: { numberOfAudits: numberOfAuditsForMetric, metricName: displayName },
+									}
+								) }
+							</div>
+						</div>
+						<div>
+							<Button
+								variant="secondary"
+								onClick={ () => {
+									updateQueryParams( { filter: activeTab }, true );
+									recommendationsRef?.current?.scrollIntoView( {
+										behavior: 'smooth',
+										block: 'start',
+									} );
+								} }
+								className="recommendations-anchor"
+							>
+								{ translate( 'View recommendations' ) }
+							</Button>
+						</div>
+					</div>
+				) }
 			</div>
 			<div className="core-web-vitals-display__history-graph">
 				{ dataAvailable && (
@@ -172,6 +220,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					] }
 					height={ 300 }
 					d3Format="%b %d"
+					isMobile={ isMobile }
 				/>
 			</div>
 		</div>
