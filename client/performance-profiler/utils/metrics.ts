@@ -86,6 +86,11 @@ export const metricValuations = {
 		),
 	},
 	overall: {
+		good: translate( 'Your site‘s Performance Score is good' ),
+		needsImprovement: translate( 'Your site‘s Performance Score is moderate' ),
+		bad: translate( 'Your site‘s Performance Score needs improvement' ),
+		heading: translate( 'What is Performance Score?' ),
+		aka: translate( '(PS)' ),
 		explanation: translate(
 			'The performance score is a combined representation of your site‘s individual speed metrics.'
 		),
