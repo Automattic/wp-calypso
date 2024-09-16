@@ -60,6 +60,19 @@ const NameServersCard = ( {
 		null
 	);
 
+	const hasDefaultWpcomNameservers = ( nameserversToCheck: string[] | null = nameservers ) => {
+		if ( ! nameserversToCheck || nameserversToCheck.length === 0 ) {
+			return false;
+		}
+
+		return (
+			nameserversToCheck.length === WPCOM_DEFAULT_NAMESERVERS.length &&
+			nameserversToCheck.every( ( nameserver ) => {
+				return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+			} )
+		);
+	};
+
 	const handleUpdateNameservers = useCallback(
 		async ( nameservers: string[] ) => {
 			setSavingNameServers( true );
@@ -103,19 +116,6 @@ const NameServersCard = ( {
 		return nameservers.every( ( nameserver ) => {
 			return ! nameserver || CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
 		} );
-	};
-
-	const hasDefaultWpcomNameservers = () => {
-		if ( ! nameservers || nameservers.length === 0 ) {
-			return false;
-		}
-
-		return (
-			nameservers.length === WPCOM_DEFAULT_NAMESERVERS.length &&
-			nameservers.every( ( nameserver ) => {
-				return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
-			} )
-		);
 	};
 
 	const isPendingTransfer = () => {
@@ -186,7 +186,12 @@ const NameServersCard = ( {
 
 	const resetToWpcomNameservers = () => {
 		setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-		setShouldPersistNameServers( true );
+		// Only persist the changes if we had custom nameservers previously.
+		// Otherwise, we'd be switching from default nameservers to default nameservers
+		// a no-op probably coming from toggling the switch on and off.
+		if ( ! hasDefaultWpcomNameservers( nameserversProps ) ) {
+			setShouldPersistNameServers( true );
+		}
 		setIsEditingNameServers( false );
 	};
 
