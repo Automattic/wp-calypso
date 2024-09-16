@@ -18,7 +18,7 @@ import './style.scss';
 
 interface ModalProps {
 	siteId: number;
-	onClose: () => void;
+	onClose: ( isAfterSubmission: boolean ) => void;
 }
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
@@ -53,11 +53,14 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
 
-	const handleClose = useCallback( () => {
-		setTimeout( () => {
-			onClose();
-		}, 200 );
-	}, [ onClose ] );
+	const handleClose = useCallback(
+		( isAfterSubmission: boolean ) => {
+			setTimeout( () => {
+				onClose( isAfterSubmission );
+			}, 200 );
+		},
+		[ onClose ]
+	);
 
 	const onFormSubmit = useCallback( () => {
 		if ( ! content ) {
@@ -75,7 +78,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			feedback: content,
 			is_testing: false,
 		} );
-	}, [ dispatch, content, submitFeedback ] );
+	}, [ content, submitFeedback ] );
 
 	useEffect( () => {
 		if ( isSubmissionSuccessful ) {
@@ -91,7 +94,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				refetchNotices();
 			} );
 
-			handleClose();
+			handleClose( true );
 		}
 	}, [
 		dispatch,
@@ -104,10 +107,18 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	] );
 
 	return (
-		<Modal className="stats-feedback-modal" onRequestClose={ handleClose } __experimentalHideHeader>
+		<Modal
+			className="stats-feedback-modal"
+			onRequestClose={ () => {
+				handleClose( false );
+			} }
+			__experimentalHideHeader
+		>
 			<Button
 				className="stats-feedback-modal__close-button"
-				onClick={ handleClose }
+				onClick={ () => {
+					handleClose( false );
+				} }
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
