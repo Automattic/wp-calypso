@@ -64,7 +64,15 @@ const PlanNoticeCreditUpgrade = ( {
 							},
 							components: {
 								b: <strong />,
-								a: <a href={ upgradeCreditDocsUrl } target={ linkTarget } />,
+								a: (
+									<a
+										href={ upgradeCreditDocsUrl }
+										target={ linkTarget }
+										onClick={ ( event ) => {
+											event.stopPropagation();
+										} }
+									/>
+								),
 							},
 						}
 					) }
