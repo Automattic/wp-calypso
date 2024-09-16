@@ -226,7 +226,7 @@ export default function PlanSelectionDetails( {
 									className="pressable-overview-plan-selection__tooltip"
 								>
 									{ translate(
-										"This Pressable account is managed by the Agency Owner user on your account. If you'd like access to this Pressalbe account, you can just request they add you as a user in Pressable."
+										"This Pressable account is managed by the Agency Owner user on your account. If you'd like access to this Pressable account, you can just request they add you as a user in Pressable."
 									) }
 								</Tooltip>
 							</>
