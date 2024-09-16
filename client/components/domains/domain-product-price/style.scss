@@ -6,7 +6,7 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-	justify-content: center;
+	justify-content: end;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-end;
@@ -30,6 +30,10 @@
 		}
 	}
 
+	&.domain-product-single-price {
+		justify-content: start;
+		margin-top: 6px;
+	}
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
 			padding-left: 1em;
@@ -79,11 +83,6 @@
 		small {
 			font-size: $font-body-small;
 		}
-	}
-
-	.domain-product-price__price,
-	.domain-product-price__regular-price {
-		margin: auto 0;
 	}
 
 	.domain-product-price__renewal-price {

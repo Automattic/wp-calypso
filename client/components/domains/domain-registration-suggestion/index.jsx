@@ -276,15 +276,17 @@ class DomainRegistrationSuggestion extends Component {
 		} );
 
 		return (
-			<div className={ titleWrapperClassName }>
-				<h3 className="domain-registration-suggestion__title">
-					<div className="domain-registration-suggestion__domain-title">
-						<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
-						<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
-						{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
-					</div>
-				</h3>
+			<div class="domain-registration-suggestion__title_info">
 				{ this.renderBadges() }
+				<div className={ titleWrapperClassName }>
+					<h3 className="domain-registration-suggestion__title">
+						<div className="domain-registration-suggestion__domain-title">
+							<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+							<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+						</div>
+					</h3>
+				</div>
 			</div>
 		);
 	}
