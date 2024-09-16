@@ -147,15 +147,6 @@
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
 
-		@include break-large {
-			padding-left: 26px;
-		}
-		@include break-huge {
-			&:first-child {
-				padding-left: 64px;
-			}
-		}
-
 		&:nth-child(4) {
 			.site-sort {
 				display: inline-block;
@@ -184,14 +175,6 @@
 
 	table.dataviews-view-table .dataviews-view-table__row td {
 		border-bottom-color: var(--color-border-secondary);
-		@include break-large {
-			padding-left: 26px;
-		}
-		@include break-huge {
-			&:first-child {
-				padding-left: 64px;
-			}
-		}
 		&:nth-child(2) {
 			white-space: wrap;
 			overflow-wrap: anywhere;
@@ -248,6 +231,20 @@
 
 	.layout__secondary .global-sidebar {
 		border: none;
+	}
+
+	// Custom style for toggle and page number controls.
+	.item-preview__content {
+		.pagination__page-number.pagination__list-item.is-selected button,
+		.segmented-control__item.is-selected a:hover,
+		.segmented-control__item.is-selected a {
+			color: var(--studio-white);
+			background-color: var(--studio-gray-50);
+			border-color: var(--studio-gray-50);
+		}
+		.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: var(--studio-gray-50);
+		}
 	}
 }
 
@@ -503,10 +500,10 @@
 	.is-staging-site {
 		position: relative;
 
-		.item-preview__admin-button {
+		.item-preview__admin-button.is-primary {
 			background-color: var(--studio-yellow-20);
 			color: var(--studio-yellow-80);
-			border: 0;
+			border-color: var(--studio-yellow-20);
 		}
 	}
 

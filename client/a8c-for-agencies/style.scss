@@ -181,6 +181,7 @@
 		}
 	}
 
+	.components-button.is-destructive,
 	.button.is-scary {
 		color: var(--color-scary-50);
 		border-color: var(--color-scary-50);
@@ -193,6 +194,7 @@
 		}
 	}
 
+	.components-button.is-primary.is-destructive,
 	.button.is-primary.is-scary {
 		background-color: var(--color-scary-50);
 		color: var(--color-text-inverted);
@@ -600,21 +602,8 @@ html {
 				padding-inline-start: 16px;
 			}
 		}
-
-		th[data-field-id="actions"] {
-			text-align: right;
-			padding-inline-end: 16px;
-		}
 	}
 
-	.dataviews-view-list li {
-		cursor: pointer;
-	}
-
-	.dataviews-view-list li .components-h-stack {
-		display: block;
-		width: 100%;
-	}
 }
 
 .full-width-layout-with-table {

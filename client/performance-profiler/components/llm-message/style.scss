@@ -1,0 +1,37 @@
+.performance-profiler-llm-message {
+	box-sizing: border-box;
+	display: flex;
+	padding: 16px;
+	align-items: center;
+	align-self: stretch;
+	justify-content: space-between;
+	background: linear-gradient(0deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%), linear-gradient(90deg, #4458e4 0%, #069e08 100%);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+
+	color: #000;
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-small;
+	line-height: 20px;
+	flex-wrap: wrap;
+	gap: 10px;
+
+	.content {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.rotate {
+		animation: rotation 3s infinite linear;
+	}
+
+	@keyframes rotation {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+}

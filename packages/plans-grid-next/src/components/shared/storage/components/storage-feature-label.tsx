@@ -13,7 +13,7 @@ interface Props {
 
 const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
-	const { siteId, gridPlansIndex } = usePlansGridContext();
+	const { siteId, gridPlansIndex, enableStorageAsBadge = true } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
 		features: { storageFeature },
@@ -44,9 +44,16 @@ const StorageFeatureLabel = ( { planSlug }: Props ) => {
 		'is-row': ! isLargeCurrency,
 	} );
 
-	const volumeJSX = (
-		<div className="plans-grid-next-storage-feature-label__volume-badge" key={ storageSlug }>
+	const volumeJSX = enableStorageAsBadge ? (
+		<div className="plans-grid-next-storage-feature-label__volume is-badge" key={ storageSlug }>
 			{ storageStringFromFeature }
+		</div>
+	) : (
+		<div className="plans-grid-next-storage-feature-label__volume">
+			{ translate( '%s storage', {
+				args: [ storageStringFromFeature ],
+				comment: '%s is the amount of storage, including the unit. For example "10 GB"',
+			} ) }
 		</div>
 	);
 

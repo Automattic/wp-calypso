@@ -234,7 +234,7 @@ const JetpackComFooter: React.FC = () => {
 					},
 					{
 						label: translate( 'Press' ),
-						href: addQueryArgs( utmParams, 'https://automattic.com/press/' ),
+						href: 'https://jetpack.com/newsroom/',
 						trackId: 'press',
 					},
 				],

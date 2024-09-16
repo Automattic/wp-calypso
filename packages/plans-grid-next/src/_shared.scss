@@ -75,26 +75,30 @@ $mobile-card-max-width: 440px;
 	margin-left: 4px;
 }
 
-.plans-grid-next-storage-feature-label__volume-badge {
-	background: #f2f2f2;
+.plans-grid-next-storage-feature-label__volume {
 	color: var(--studio-gray-90);
-	/* stylelint-disable-next-line */
-	border-radius: 5px;
 	padding: 4px 0;
-	text-align: center;
-	font-size: $font-body-extra-small;
 	font-weight: 400;
 	line-height: 20px;
-	width: fit-content;
-	min-width: 64px;
+	font-size: $font-body-small;
 
-	.plans-grid-next-comparison-grid & {
-		margin-top: 10px;
-		margin-left: auto;
-		margin-right: auto;
+	&.is-badge {
+		background: #f2f2f2;
+		/* stylelint-disable-next-line */
+		border-radius: 5px;
+		text-align: center;
+		font-size: $font-body-extra-small;
+		width: fit-content;
+		min-width: 64px;
 
-		@include plans-grid-medium-large {
-			margin-top: 0;
+		.plans-grid-next-comparison-grid & {
+			margin-top: 10px;
+			margin-left: auto;
+			margin-right: auto;
+
+			@include plans-grid-medium-large {
+				margin-top: 0;
+			}
 		}
 	}
 }

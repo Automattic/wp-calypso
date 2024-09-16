@@ -4,6 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
+import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_FLOW,
@@ -143,6 +144,8 @@ window.AppBoot = async () => {
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	// Reset the selected site ID when the stepper is loaded.
 	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as AnyAction );
+
+	await geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 

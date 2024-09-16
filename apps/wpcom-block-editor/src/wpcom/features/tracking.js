@@ -1,3 +1,4 @@
+import { debounce } from '@wordpress/compose';
 import { use, select } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -56,6 +57,13 @@ const SELECTORS = {
 	 * Legacy block inserter
 	 */
 	LEGACY_BLOCK_INSERTER: '.block-editor-inserter__block-list',
+
+	/**
+	 * Command Palette
+	 */
+	COMMAND_PALETTE_ROOT: '.commands-command-menu__container div[cmdk-root]',
+	COMMAND_PALETTE_INPUT: '.commands-command-menu__container input[cmdk-input]',
+	COMMAND_PALETTE_LIST: '.commands-command-menu__container div[cmdk-list]',
 };
 
 // Debugger.
@@ -799,6 +807,72 @@ const trackInstallBlockType = ( block ) => {
 };
 
 /**
+ * Command Palette
+ */
+const trackCommandPaletteSearch = debounce( ( event ) => {
+	tracksRecordEvent( 'wpcom_editor_command_palette_search', {
+		keyword: event.target.value,
+	} );
+}, 500 );
+
+const trackCommandPaletteSelected = ( event ) => {
+	let selectedCommandElement;
+	if ( event.type === 'keydown' && event.code === 'Enter' ) {
+		selectedCommandElement = event.currentTarget.querySelector(
+			'div[cmdk-item][aria-selected="true"]'
+		);
+	} else if ( event.type === 'click' ) {
+		selectedCommandElement = event.target.closest( 'div[cmdk-item][aria-selected="true"]' );
+	}
+
+	if ( selectedCommandElement ) {
+		tracksRecordEvent( 'wpcom_editor_command_palette_selected', {
+			value: selectedCommandElement.dataset.value,
+		} );
+	}
+};
+
+const trackCommandPaletteOpen = () => {
+	tracksRecordEvent( 'wpcom_editor_command_palette_open' );
+
+	window.setTimeout( () => {
+		const commandPaletteInputElement = document.querySelector( SELECTORS.COMMAND_PALETTE_INPUT );
+		if ( commandPaletteInputElement ) {
+			commandPaletteInputElement.addEventListener( 'input', trackCommandPaletteSearch );
+		}
+
+		const commandPaletteListElement = document.querySelector( SELECTORS.COMMAND_PALETTE_LIST );
+		if ( commandPaletteListElement ) {
+			commandPaletteListElement.addEventListener( 'click', trackCommandPaletteSelected );
+		}
+
+		const commandPaletteRootElement = document.querySelector( SELECTORS.COMMAND_PALETTE_ROOT );
+		if ( commandPaletteRootElement ) {
+			commandPaletteRootElement.addEventListener( 'keydown', trackCommandPaletteSelected );
+		}
+	} );
+};
+
+const trackCommandPaletteClose = () => {
+	tracksRecordEvent( 'wpcom_editor_command_palette_close' );
+
+	const commandPaletteInputElement = document.querySelector( SELECTORS.COMMAND_PALETTE_INPUT );
+	if ( commandPaletteInputElement ) {
+		commandPaletteInputElement.removeEventListener( 'input', trackCommandPaletteSearch );
+	}
+
+	const commandPaletteListElement = document.querySelector( SELECTORS.COMMAND_PALETTE_LIST );
+	if ( commandPaletteListElement ) {
+		commandPaletteListElement.removeEventListener( 'click', trackCommandPaletteSelected );
+	}
+
+	const commandPaletteRootElement = document.querySelector( SELECTORS.COMMAND_PALETTE_ROOT );
+	if ( commandPaletteRootElement ) {
+		commandPaletteRootElement.removeEventListener( 'keydown', trackCommandPaletteSelected );
+	}
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -856,6 +930,10 @@ const REDUX_TRACKING = {
 	'core/interface': {
 		enableComplementaryArea: trackEnableComplementaryArea,
 		disableComplementaryArea: trackDisableComplementaryArea,
+	},
+	'core/commands': {
+		open: trackCommandPaletteOpen,
+		close: trackCommandPaletteClose,
 	},
 };
 

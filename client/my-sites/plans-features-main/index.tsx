@@ -74,6 +74,7 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSimplifiedFeaturesGridExperiment from './hooks/use-simplified-features-grid-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -326,6 +327,15 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
+
+	const {
+		isLoading: isLoadingSimplifiedFeaturesGridExperiment,
+		variant: simplifiedFeaturesGridExperimentVariant,
+	} = useSimplifiedFeaturesGridExperiment( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -624,8 +634,10 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+			! gridPlansForComparisonGrid ||
+			isLoadingSimplifiedFeaturesGridExperiment
 	);
+
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
@@ -672,6 +684,38 @@ const PlansFeaturesMain = ( {
 		}
 		return translate( 'Compare plans' );
 	};
+
+	const enterpriseFeaturesList = useMemo(
+		() => [
+			translate( 'Multifaceted security' ),
+			translate( 'Generative AI' ),
+			translate( 'Integrated content analytics' ),
+			translate( '24/7 support' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Professional services' ) ]
+				: [ translate( 'FedRAMP certification' ) ] ),
+			translate( 'API mesh and node hosting' ),
+			translate( 'Containerized environment' ),
+			translate( 'Global infrastructure' ),
+			translate( 'Dynamic autoscaling' ),
+			translate( 'Integrated CDN' ),
+			translate( 'Integrated code repository' ),
+			translate( 'Staging environments' ),
+			translate( 'Management dashboard' ),
+			translate( 'Command line interface (CLI)' ),
+			translate( 'Efficient multi-site management' ),
+			translate( 'Advanced access controls' ),
+			translate( 'Single sign-on (SSO)' ),
+			translate( 'DDoS protection and mitigation' ),
+			translate( 'Plugin and theme vulnerability scanning' ),
+			translate( 'Automated plugin upgrade' ),
+			translate( 'Integrated enterprise search' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Integrated APM' ) ]
+				: [] ),
+		],
+		[ simplifiedFeaturesGridExperimentVariant, translate ]
+	);
 
 	return (
 		<>
@@ -776,6 +820,25 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
+										enterpriseFeaturesList={ enterpriseFeaturesList }
+										enableCategorisedFeatures={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableLargeFeatureTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableStorageAsBadge={
+											simplifiedFeaturesGridExperimentVariant !== 'simplified'
+										}
+										enableReducedFeatureGroupSpacing={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableLogosOnlyForEnterprisePlan={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										hideFeatureGroupTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

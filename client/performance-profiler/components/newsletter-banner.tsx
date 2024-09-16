@@ -5,7 +5,10 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const Container = styled.div`
-	background-color: var( --studio-gray-100, #101517 );
+	background:
+		linear-gradient( 90deg, var( --studio-gray-100 ) 50%, rgba( 16, 21, 23, 0 ) 100% ),
+		fixed 10px 10px /16px 16px radial-gradient( var( --studio-gray-50 ) 1px, transparent 0 ),
+		var( --studio-gray-100 );
 	border-radius: 6px;
 	display: flex;
 	flex-direction: row;
@@ -16,6 +19,13 @@ const Container = styled.div`
 	box-sizing: border-box;
 	flex-wrap: wrap;
 	padding: 24px;
+
+	@media ( max-width: 600px ) {
+		background:
+			linear-gradient( 180deg, var( --studio-gray-100 ) 50%, rgba( 16, 21, 23, 0 ) 100% ),
+			fixed 10px 10px /16px 16px radial-gradient( var( --studio-gray-50 ) 1px, transparent 0 ),
+			var( --studio-gray-100 );
+	}
 `;
 
 const Heading = styled.div`
@@ -23,6 +33,7 @@ const Heading = styled.div`
 	line-height: 24px;
 	text-align: left;
 	color: var( --studio-white );
+	margin-bottom: 6px;
 `;
 
 const Body = styled.div`
@@ -46,7 +57,7 @@ const BlueberryButton = styled( Button )`
 	}
 `;
 
-export const NewsletterBanner = ( { link }: { link: string } ) => {
+export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -58,7 +69,7 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 				</Heading>
 				<Body>
 					{ translate(
-						"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
+						'Monitor your site‘s key performance metrics with a free report delivered to your inbox each week.'
 					) }
 				</Body>
 				{ ! isLoggedIn && (
@@ -67,7 +78,7 @@ export const NewsletterBanner = ( { link }: { link: string } ) => {
 					</Body>
 				) }
 			</div>
-			<BlueberryButton variant="primary" href={ link }>
+			<BlueberryButton variant="primary" href={ link } onClick={ onClick }>
 				{ isLoggedIn
 					? translate( 'Enable email alerts' )
 					: translate( 'Sign up for email reports' ) }

@@ -27,8 +27,6 @@
 		}
 
 		&:hover {
-			background: var(--color-neutral-0);
-
 			.site-set-favorite__favorite-icon,
 			.components-checkbox-control__input {
 				opacity: 1;
@@ -108,10 +106,6 @@
 		color: var(--studio-jetpack-green-50);
 	}
 
-	.dataviews-view-table__actions-column {
-		display: none;
-	}
-
 	thead .dataviews-view-table__row th {
 		span,
 		button {
@@ -166,34 +160,6 @@
 			}
 		}
 	}
-
-	.dataviews-no-results,
-	.dataviews-loading {
-		padding-top: 1rem;
-		text-align: center;
-	}
-
-	.spinner-wrapper {
-		display: none;
-	}
-}
-
-.dataviews-wrapper:has(.dataviews-loading) {
-	.spinner-wrapper {
-		display: block;
-	}
-	.dataviews-loading p {
-		display: none;
-	}
-	.dataviews-pagination {
-		display: none;
-	}
-}
-
-.dataviews-wrapper:has(.dataviews-no-results) {
-	.spinner-wrapper {
-		display: none;
-	}
 }
 
 // TODO: remove when updating to dataviews@4.3.0.
@@ -238,4 +204,21 @@
 .dataviews-filters__summary-chip span,
 .dataviews-filters__summary-chip {
 	font-size: 0.875rem;
+}
+
+// TODO: remove when this is implemented upstream.
+//
+// https://github.com/WordPress/gutenberg/pull/65086
+.is-section-a8c-for-agencies-referrals .dataviews-view-table tr,
+.is-section-a8c-for-agencies-sites .dataviews-view-table tr {
+	th:last-child,
+	td:last-child {
+		width: 20px;
+		white-space: nowrap;
+		position: sticky;
+		right: 0;
+		z-index: 1;
+		background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgb(255, 255, 255) 25%);
+		padding-left: 48px;
+	}
 }

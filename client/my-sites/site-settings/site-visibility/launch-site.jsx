@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -112,27 +113,47 @@ const LaunchSite = () => {
 		isLoading: agencyLoading,
 	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
 	const agencyName = agency?.name;
+	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
+	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
-	// Not wrapped in translation to avoid request unconfirmed copy
-	const billingAgencyMessage =
-		agencyLoading || agencyError ? (
-			'Once launched, your agency {agench-name} will be billed for this website in the next billing cycle.'
-		) : (
-			<>
-				Once launched, <strong>{ agencyName }</strong> will be billed for this website in the next
-				billing cycle.
-			</>
-		);
+	const agencyBillingMessage =
+		agencyLoading || agencyError
+			? translate( "After launch, we'll bill your agency in the next billing cycle." )
+			: translate(
+					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+					{
+						count: existingWPCOMLicenseCount + 1,
+						args: {
+							agencyName: agencyName,
+							licenseCount: existingWPCOMLicenseCount + 1,
+							price,
+						},
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									className="site-settings__general-settings-launch-site-agency-learn-more"
+									href="https://agencieshelp.automattic.com/knowledge-base/the-marketplace/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+						comment:
+							'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
+					}
+			  );
 
 	return (
 		<>
 			{ isLaunchConfirmationModalOpen && (
 				<LaunchConfirmationModal
-					billingAgencyMessage={ billingAgencyMessage }
+					message={ agencyBillingMessage }
 					closeModal={ closeLaunchConfirmationModal }
 					onConfirmation={ () => {
 						dispatchSiteLaunch();
@@ -154,24 +175,7 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ isDevelopmentSite && (
-							<i>
-								{ agencyLoading || agencyError
-									? translate( 'After launch, we’ll bill your agency in the next billing cycle.' )
-									: translate(
-											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle.',
-											{
-												args: {
-													agencyName: agencyName,
-												},
-												components: {
-													strong: <strong />,
-												},
-												comment: 'name of the agency that will be billed for the site',
-											}
-									  ) }
-							</i>
-						) }
+						{ isDevelopmentSite && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{ isDevelopmentSite && (

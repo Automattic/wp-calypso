@@ -47,6 +47,9 @@ export class DateRange extends Component {
 		renderInputs: PropTypes.func,
 		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
+		useArrowNavigation: PropTypes.bool,
+		overlay: PropTypes.node,
+		customTitle: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -60,6 +63,9 @@ export class DateRange extends Component {
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
 		displayShortcuts: false,
 		rootClass: '',
+		useArrowNavigation: false,
+		overlay: null,
+		customTitle: '',
 	};
 
 	constructor( props ) {
@@ -109,6 +115,7 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
+			currentShortcut: '',
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -390,15 +397,21 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
 	}
 
-	handleDateRangeChange( startDate, endDate ) {
+	handleDateRangeChange = ( startDate, endDate, shortcutId = '' ) => {
 		this.setState( {
 			startDate,
 			endDate,
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
+			currentShortcut: shortcutId,
 		} );
 		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-	}
+	};
+
+	handleCalendarChange = ( startDate, endDate ) => {
+		// When the calendar or inputs change directly, set to custom range
+		this.handleDateRangeChange( startDate, endDate, 'custom_date_range' );
+	};
 
 	renderDateHelp() {
 		const { startDate, endDate } = this.state;
@@ -465,31 +478,37 @@ export class DateRange extends Component {
 				onClose={ this.closePopoverAndCommit }
 			>
 				<div className="date-range__popover-content">
-					<div className="date-range__popover-inner">
+					<div
+						className={ clsx( 'date-range__popover-inner', {
+							'date-range__popover-inner__hasoverlay': !! this.props.overlay,
+						} ) }
+					>
+						{ this.props.overlay && (
+							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
+						) }
 						<div className="date-range__controls">
-							{ this.props.renderHeader( headerProps ) }
-							{ this.renderDateHelp() }
+							{ this.props.customTitle ? (
+								<div className="date-range__custom-title">{ this.props.customTitle }</div>
+							) : (
+								this.renderDateHelp()
+							) }
 						</div>
 						{ this.props.renderInputs( inputsProps ) }
 						{ this.renderDatePicker() }
+						{ this.props.renderHeader( headerProps ) }
 					</div>
-					{ this.props.displayShortcuts && this.renderShortcuts() }
+					{ /* Render shortcuts to the right of the calendar */ }
+					{ this.props.displayShortcuts && (
+						<div className="date-range-picker-shortcuts">
+							<Shortcuts
+								currentShortcut={ this.state.currentShortcut }
+								onClick={ this.handleDateRangeChange }
+								locked={ !! this.props.overlay }
+							/>
+						</div>
+					) }
 				</div>
 			</Popover>
-		);
-	}
-
-	/**
-	 * Renders the Shortcuts component
-	 * @returns {import('react').Element} the Shortcuts component
-	 */
-	renderShortcuts() {
-		return (
-			<div className="date-control-picker-shortcuts">
-				<Shortcuts
-					onClick={ ( startDate, endDate ) => this.handleDateRangeChange( startDate, endDate ) }
-				/>
-			</div>
 		);
 	}
 
@@ -504,11 +523,10 @@ export class DateRange extends Component {
 				lastSelectableDate={ this.props.lastSelectableDate }
 				selectedStartDate={ this.state.startDate }
 				selectedEndDate={ this.state.endDate }
-				onDateRangeChange={ ( startDate, endDate ) =>
-					this.handleDateRangeChange( startDate, endDate )
-				}
+				onDateRangeChange={ this.handleCalendarChange }
 				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
+				useArrowNavigation={ this.props.useArrowNavigation }
 			/>
 		);
 	}

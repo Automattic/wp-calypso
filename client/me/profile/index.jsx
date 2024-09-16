@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -101,33 +100,29 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
 								value={ this.props.getSetting( 'display_name' ) }
 							/>
-							{ isEnabled( 'layout/site-level-user-profile' ) && (
-								<FormSettingExplanation>
-									{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
-								</FormSettingExplanation>
-							) }
+							<FormSettingExplanation>
+								{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
+							</FormSettingExplanation>
 						</FormFieldset>
 
-						{ isEnabled( 'layout/site-level-user-profile' ) && (
-							<FormFieldset>
-								<FormLabel htmlFor="user_URL">
-									{ this.props.translate( 'Public web address' ) }
-								</FormLabel>
-								<FormTextInput
-									disabled={ this.props.getDisabledState() }
-									id="user_URL"
-									name="user_URL"
-									type="url"
-									onChange={ this.props.updateSetting }
-									onFocus={ this.getFocusHandler( 'Web Address Field' ) }
-									placeholder="https://example.com"
-									value={ this.props.getSetting( 'user_URL' ) }
-								/>
-								<FormSettingExplanation>
-									{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
-								</FormSettingExplanation>
-							</FormFieldset>
-						) }
+						<FormFieldset>
+							<FormLabel htmlFor="user_URL">
+								{ this.props.translate( 'Public web address' ) }
+							</FormLabel>
+							<FormTextInput
+								disabled={ this.props.getDisabledState() }
+								id="user_URL"
+								name="user_URL"
+								type="url"
+								onChange={ this.props.updateSetting }
+								onFocus={ this.getFocusHandler( 'Web Address Field' ) }
+								placeholder="https://example.com"
+								value={ this.props.getSetting( 'user_URL' ) }
+							/>
+							<FormSettingExplanation>
+								{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>

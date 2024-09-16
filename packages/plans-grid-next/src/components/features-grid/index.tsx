@@ -80,7 +80,12 @@ const MobileView = ( {
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const {
+		featureGroupMap,
+		enableCategorisedFeatures,
+		enableLogosOnlyForEnterprisePlan,
+		enableReducedFeatureGroupSpacing,
+	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
 			Object.keys( featureGroupMap ).filter(
@@ -156,13 +161,18 @@ const MobileView = ( {
 							)
 						}
 					>
-						<EnterpriseFeatures renderedGridPlans={ [ gridPlan ] } />
+						<EnterpriseFeatures
+							renderedGridPlans={ [ gridPlan ] }
+							options={ { isLogosOnly: enableLogosOnlyForEnterprisePlan } }
+						/>
 						{ ! enableCategorisedFeatures && (
 							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						) }
 						{ featureGroups.map( ( featureGroupSlug ) => (
 							<div
-								className="plans-grid-next-features-grid__feature-group-row"
+								className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
+									'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
+								} ) }
 								key={ featureGroupSlug }
 							>
 								<PlanFeaturesList
@@ -336,7 +346,13 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		className,
 		enableFeatureTooltips,
 		enableCategorisedFeatures,
+		enableLargeFeatureTitles,
+		enableStorageAsBadge,
+		enableReducedFeatureGroupSpacing,
+		enableLogosOnlyForEnterprisePlan,
 		featureGroupMap = {},
+		hideFeatureGroupTitles,
+		enterpriseFeaturesList,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -376,7 +392,13 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				allFeaturesList={ allFeaturesList }
 				enableFeatureTooltips={ enableFeatureTooltips }
 				enableCategorisedFeatures={ enableCategorisedFeatures }
+				enableLargeFeatureTitles={ enableLargeFeatureTitles }
+				enableStorageAsBadge={ enableStorageAsBadge }
+				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
+				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }
+				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
+				enterpriseFeaturesList={ enterpriseFeaturesList }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

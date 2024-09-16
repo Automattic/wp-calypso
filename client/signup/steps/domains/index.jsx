@@ -82,7 +82,6 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
-
 import './style.scss';
 
 export class RenderDomainsStep extends Component {
@@ -374,7 +373,7 @@ export class RenderDomainsStep extends Component {
 		const { suggestion } = this.props.step;
 
 		if ( previousState ) {
-			this.removeDomain( suggestion );
+			await this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );
 			this.props.setDesignType( this.getDesignType() );
