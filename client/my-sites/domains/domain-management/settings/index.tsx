@@ -707,7 +707,7 @@ const Settings = ( {
 			return null;
 		}
 
-		return <DnssecCard domain={ domain } />;
+		return <DnssecCard domain={ domain } nameservers={ nameservers } />;
 	};
 
 	const renderMainContent = () => {
