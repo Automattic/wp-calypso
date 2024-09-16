@@ -70,7 +70,7 @@ class CustomNameserversForm extends PureComponent {
 	};
 
 	rows() {
-		const { translate } = this.props;
+		const { translate, isSaving } = this.props;
 
 		// Remove the empty values from the end, and add one empty one
 		const nameservers = dropRightWhileEmpty( this.props.nameservers );
@@ -103,6 +103,7 @@ class CustomNameserversForm extends PureComponent {
 					selectedDomainName={ this.props.selectedDomainName }
 					onChange={ this.handleChange }
 					onRemove={ this.handleRemove }
+					isSaving={ isSaving }
 				/>
 			);
 		} );
