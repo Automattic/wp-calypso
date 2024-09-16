@@ -23,7 +23,10 @@ interface DateRangePickerProps {
 const NO_DATE_SELECTED_VALUE = null;
 const noop = () => {};
 
-function addDayToRange( day: Moment, { from, to }: { from: MomentOrNull; to: MomentOrNull } ) {
+export function addDayToRange(
+	day: Moment,
+	{ from, to }: { from: MomentOrNull; to: MomentOrNull }
+) {
 	let newStartDate = from;
 	let newEndDate = to;
 	let daysFromStartDate;
