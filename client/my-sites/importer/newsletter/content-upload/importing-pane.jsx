@@ -1,6 +1,5 @@
-import { ProgressBar, Spinner } from '@automattic/components';
+import { ProgressBar } from '@automattic/components';
 import { Notice } from '@wordpress/components';
-import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,7 +7,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
-import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -116,10 +114,6 @@ export class ImportingPane extends PureComponent {
 		return description;
 	};
 
-	getHeadingTextProcessing = () => {
-		return this.props.translate( 'Processing your file. Please wait a few moments.' );
-	};
-
 	getSuccessText = () => {
 		return this.props.translate( 'Success! Your content has been imported.' );
 	};
@@ -193,7 +187,9 @@ export class ImportingPane extends PureComponent {
 			<ImporterActionButtonContainer noSpacing>
 				{ isImporting && (
 					<>
-						<BusyImportingButton />
+						<ImporterActionButton primary busy disabled>
+							Importing
+						</ImporterActionButton>
 						<ImporterActionButton href={ nextStepUrl }>
 							{ this.props.translate( 'Continue' ) }
 						</ImporterActionButton>
@@ -222,9 +218,6 @@ export class ImportingPane extends PureComponent {
 			invalidateCardData,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = clsx( 'importer__import-progress', {
-			'is-complete': this.isFinished(),
-		} );
 
 		let { percentComplete, statusMessage } = this.props.importerStatus;
 		const { progress } = this.props.importerStatus;
@@ -250,7 +243,6 @@ export class ImportingPane extends PureComponent {
 
 		return (
 			<div className="importer__importing-pane">
-				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						onMap={ this.handleOnMap }
@@ -272,17 +264,15 @@ export class ImportingPane extends PureComponent {
 						site={ site }
 					/>
 				) }
-				{ ( this.isImporting() || this.isProcessing() ) &&
-					( percentComplete >= 0 ? (
-						<ProgressBar className={ progressClasses } value={ percentComplete } />
-					) : (
-						<div>
-							<Spinner className="importer__import-spinner" />
-							<br />
+				{ ( this.isImporting() || this.isProcessing() ) && (
+					<>
+						<h2>Import your content to WordPress.com</h2>
+						<p>Please, wait while we import your content…</p>
+						<div className="importer__import-progress">
+							<ProgressBar value={ percentComplete || undefined } />
+							{ blockingMessage && <p>{ blockingMessage }</p> }
 						</div>
-					) ) }
-				{ blockingMessage && (
-					<div className="importer__import-progress-message">{ blockingMessage }</div>
+					</>
 				) }
 				{ statusMessage && (
 					<div>
