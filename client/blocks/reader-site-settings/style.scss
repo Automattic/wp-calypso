@@ -1,0 +1,48 @@
+.post-edit-button {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	color: var(--color-text-subtle);
+	cursor: pointer;
+	list-style-type: none;
+	position: relative;
+
+	& svg {
+		fill: var(--color-text-subtle);
+	}
+
+	&:hover,
+	&:focus,
+	&:active {
+
+		svg {
+			fill: var(--color-accent);
+		}
+
+		.post-edit-button__label {
+			color: var(--color-accent);
+		}
+	}
+
+	.post-edit-button__label {
+		color: var(--color-text-subtle);
+
+		@include breakpoint-deprecated("<480px") {
+			display: none;
+		}
+	}
+}
+
+.post-edit-button__label {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 13px;
+	margin-left: 4px;
+
+	@include breakpoint-deprecated("<480px") {
+		display: none;
+	}
+}
+
+.post-edit-button__icon {
+	position: relative;
+}
