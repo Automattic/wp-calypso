@@ -79,8 +79,13 @@ const NameServersCard = ( {
 			setShouldPersistNameServers( false );
 			try {
 				await updateNameservers( nameservers );
+				setIsEditingNameServers( false );
 			} catch ( error ) {
-				setNameservers( nameserversProps || null );
+				// Assume we shouldn't default to the previous nameservers if
+				// there was an error when editing the custom nameservers.
+				if ( ! hasDefaultWpcomNameservers( nameserversProps || null ) ) {
+					setNameservers( nameserversProps || null );
+				}
 			} finally {
 				setSavingNameServers( false );
 			}
