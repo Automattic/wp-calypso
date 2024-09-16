@@ -57,9 +57,13 @@ const Placeholder = styled.span`
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
-	padding: 12px;
+	padding: 32px;
 	max-width: 1040px;
 	margin: 0 auto;
+
+	.difmStartingPoint & {
+		padding: 12px;
+	}
 `;
 
 const ContentSection = styled.div`
@@ -84,9 +88,9 @@ const ImageSection = styled.div`
 const Header = styled( FormattedHeader )`
 	margin: 0 0 24px 0 !important;
 	.formatted-header__title {
-		font-size: 2.75rem;
+		font-size: 2.75rem !important;
+		margin-bottom: 16px !important;
 		line-height: 3rem;
-		text-wrap: pretty;
 	}
 	.formatted-header__subtitle {
 		font-size: 1rem;
