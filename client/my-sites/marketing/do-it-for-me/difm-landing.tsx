@@ -65,10 +65,12 @@ const Wrapper = styled.div`
 const ContentSection = styled.div`
 	flex: 1;
 	padding-right: 10px;
+	width: 50%;
 `;
 
 const ImageSection = styled.div`
-	width: 540px;
+	min-width: 540px;
+	width: 50%;
 	height: 562px;
 	padding-top: 75px;
 	display: flex;
@@ -84,9 +86,7 @@ const Header = styled( FormattedHeader )`
 	.formatted-header__title {
 		font-size: 2.75rem;
 		line-height: 3rem;
-		@media ( min-width: 400px ) {
-			text-wrap: nowrap;
-		}
+		text-wrap: pretty;
 	}
 	.formatted-header__subtitle {
 		font-size: 1rem;
@@ -361,7 +361,6 @@ export default function DIFMLanding( {
 		components: {
 			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
 			sup: <sup />,
-			br: <br />,
 		},
 		args: {
 			displayCost,
@@ -370,11 +369,11 @@ export default function DIFMLanding( {
 	};
 	const headerText = isStoreFlow
 		? translate(
-				'Let us build your store{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 				headerTextTranslateArgs
 		  )
 		: translate(
-				'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 				headerTextTranslateArgs
 		  );
 
