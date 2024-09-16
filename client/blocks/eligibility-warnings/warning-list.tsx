@@ -21,7 +21,12 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 			{ getWarningDescription( context, warnings.length, translate, hasEnTranslation ) && (
 				<div className="eligibility-warnings__warning">
 					<div className="eligibility-warnings__message">
-						<span className="eligibility-warnings__message-description">
+						<span
+							className={ `eligibility-warnings__message-description ${
+								context === 'hosting-features' &&
+								'eligibility-warnings__message-description--hosting-features'
+							}` }
+						>
 							{ getWarningDescription( context, warnings.length, translate, hasEnTranslation ) }
 						</span>
 					</div>

@@ -170,6 +170,10 @@
 	.eligibility-warnings__message-description {
 		color: var(--color-text-subtle);
 		font-size: $font-body;
+
+		&--hosting-features {
+			font-weight: 500;
+		}
 	}
 }
 
@@ -232,10 +236,12 @@
 		position: absolute;
 		right: 20px;
 		border-radius: 4px;
+		font-weight: 500;
+		font-size: $font-body-extra-small;
 
 		&.badge--success {
 			background: var(--studio-green-5);
-			color: var(--color-neutral-70);
+			color: var(--studio-green-80);
 		}
 	}
 }
