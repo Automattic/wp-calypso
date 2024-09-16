@@ -75,7 +75,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			source_url: sourceUrl,
 			product_name: 'Jetpack Stats',
 			feedback: content,
-			is_testing: true,
+			is_testing: false,
 		} );
 	}, [ dispatch, content, submitFeedback ] );
 

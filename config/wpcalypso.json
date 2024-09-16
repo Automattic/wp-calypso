@@ -180,7 +180,7 @@
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,
-		"stats/user-feedback": false,
+		"stats/user-feedback": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"stripe-redirect-migration-p24": false,
