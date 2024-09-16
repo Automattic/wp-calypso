@@ -209,7 +209,7 @@
 				padding: 0;
 
 				.a4a-layout__viewport {
-					padding-inline: 16px;
+					padding-inline: 24px;
 				}
 
 				.a4a-layout__header-title {
@@ -454,6 +454,13 @@
 	}
 
 	&.sites-dashboard__layout {
+		.a4a-layout__viewport {
+			padding-inline: 24px;
+
+			@media (min-width: 720px) {
+				padding-inline: 48px;
+			}
+		}
 
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
