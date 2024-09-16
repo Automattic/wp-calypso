@@ -10,7 +10,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { isSiteNew } from 'calypso/my-sites/stats/hooks/use-site-compulsory-plan-selection-qualified-check';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
@@ -237,6 +236,13 @@ class StatsNavigation extends Component {
 
 export default connect(
 	( state, { siteId, selectedItem } ) => {
+		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
+		const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+		// Check if the site is created within a week.
+		const isNewSite =
+			siteCreatedTimeStamp &&
+			new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
+
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 				state,
@@ -250,7 +256,7 @@ export default connect(
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
-			isNewSite: isSiteNew( state, siteId ),
+			isNewSite,
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
