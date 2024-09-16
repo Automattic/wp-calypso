@@ -56,6 +56,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'existingCard';
 		case 'WPCOM_Billing_Razorpay':
 			return 'razorpay';
+		default:
+			throw new Error( `Unknown payment method '${ paymentMethod }'` );
 	}
 }
 
