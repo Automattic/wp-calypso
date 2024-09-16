@@ -3,7 +3,10 @@ import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import {
+	FullPageScreenshot,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
 import { tips } from 'calypso/performance-profiler/utils/tips';
@@ -12,6 +15,7 @@ import { InsightHeader } from './insight-header';
 
 interface MetricsInsightProps {
 	insight: PerformanceMetricsItemQueryResponse;
+	fullPageScreenshot: FullPageScreenshot;
 	onClick?: () => void;
 	index: number;
 	url?: string;
@@ -90,7 +94,7 @@ const Content = styled.div`
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index, isWpcom, hash } = props;
+	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash } = props;
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
@@ -126,6 +130,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		>
 			<Content>
 				<InsightContent
+					fullPageScreenshot={ fullPageScreenshot }
 					data={ {
 						...insight,
 						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),

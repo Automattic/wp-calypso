@@ -231,6 +231,23 @@ $blueberry-color: #3858e9;
 				width: 100%;
 				overflow-x: auto;
 
+				.element-screenshot {
+					.element-screenshot__image {
+						position: relative;
+					}
+
+					.element-screenshot__mask {
+						position: absolute;
+						background-color: var(--studio-gray-60);
+						opacity: 0.8;
+					}
+
+					.element-screenshot__element-marker {
+						position: absolute;
+						outline: 2px solid var(--studio-yellow-20);
+					}
+				}
+
 				table {
 					table-layout: auto;
 					width: 100%;
@@ -244,6 +261,7 @@ $blueberry-color: #3858e9;
 						font-size: $font-body-small;
 						border-bottom: 1px solid var(--studio-gray-5);
 						min-width: 100px;
+						vertical-align: middle;
 					}
 
 					tr.sub {
