@@ -2,6 +2,7 @@ import moment, { Moment } from 'moment';
 import React, { useEffect } from 'react';
 import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { addDayToRange } from './utils';
 
 type MomentOrNull = Moment | null;
 
@@ -17,50 +18,11 @@ interface DateRangePickerProps {
 	useArrowNavigation?: boolean;
 }
 
-interface DateRange {
-	from: MomentOrNull;
-	to: MomentOrNull;
-}
-
 /**
  * Module variables
  */
 const NO_DATE_SELECTED_VALUE = null;
 const noop = () => {};
-
-export function addDayToRange( day: Moment, range: DateRange ): DateRange {
-	if ( ! day || ! day.isValid() ) {
-		return range;
-	}
-
-	const { from, to } = range;
-
-	if ( from?.isSame( day ) ) {
-		return { ...range, from: null };
-	}
-	if ( to?.isSame( day ) ) {
-		return { ...range, to: null };
-	}
-
-	if ( ! from ) {
-		return { ...range, from: day };
-	}
-	if ( ! to ) {
-		return { ...range, to: day };
-	}
-
-	if ( day.isBefore( from ) ) {
-		return { ...range, from: day };
-	}
-	if ( day.isAfter( to ) ) {
-		return { ...range, to: day };
-	}
-
-	const daysFromStart = Math.abs( from.diff( day, 'days' ) );
-	const daysFromEnd = Math.abs( to.diff( day, 'days' ) );
-
-	return daysFromStart < daysFromEnd ? { ...range, from: day } : { ...range, to: day };
-}
 
 const DateRangePicker = ( {
 	firstSelectableDate,
