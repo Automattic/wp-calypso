@@ -74,8 +74,8 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 				<div className="recommendations-text">
 					{ recommendationsQuantity
 						? translate(
-								'We found %(quantity)d way to improve your site‘s performance. {{a}}View{{nbsp/}}recommendation{{/a}}',
-								'We found %(quantity)d ways to improve your site‘s performance. {{a}}View{{nbsp/}}recommendations{{/a}}',
+								'We found %(quantity)d way to improve your site‘s performance. {{a}}View your personalized recommendation{{/a}}',
+								'We found %(quantity)d ways to improve your site‘s performance. {{a}}View your personalized recommendations{{/a}}',
 								{
 									count: recommendationsQuantity,
 									args: { quantity: recommendationsQuantity },
@@ -89,7 +89,6 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 												onKeyUp={ viewRecommendationsOnClick }
 											/>
 										),
-										nbsp: <span>&nbsp;</span>,
 									},
 								}
 						  )
