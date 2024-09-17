@@ -193,11 +193,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 				</div>
 			) }
 
-			<PlanNoticeCreditUpgrade
-				linkTarget="_blank"
-				siteId={ site.ID }
-				visiblePlans={ [ visiblePlan ] }
-			/>
+			<PlanNoticeCreditUpgrade siteId={ site.ID } visiblePlans={ [ visiblePlan ] } />
 
 			<UpgradePlanDetails
 				pricing={ pricing }

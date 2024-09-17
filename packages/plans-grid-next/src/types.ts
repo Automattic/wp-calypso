@@ -127,6 +127,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
 	showLegacyStorageFeature: boolean;
+	enableShowAllFeaturesButton?: boolean;
 }
 
 export interface ComparisonGridProps extends CommonGridProps {

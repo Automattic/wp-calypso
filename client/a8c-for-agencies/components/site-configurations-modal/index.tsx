@@ -18,7 +18,7 @@ import './style.scss';
 
 type SiteConfigurationsModalProps = {
 	closeModal: () => void;
-	onCreateSiteSuccess: ( id: number ) => void;
+	onCreateSiteSuccess: ( id: number, isDevSite?: boolean ) => void;
 	randomSiteName: string;
 	isRandomSiteNameLoading: boolean;
 	siteId?: number;
@@ -96,7 +96,7 @@ export default function SiteConfigurationsModal( {
 		if ( isDevSite ) {
 			createWPCOMDevSite( params, {
 				onSuccess: ( response ) => {
-					onCreateSiteSuccess( response.site.id );
+					onCreateSiteSuccess( response.site.id, true );
 					closeModal();
 				},
 				onError: async ( error ) => {

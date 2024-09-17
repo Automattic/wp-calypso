@@ -4,7 +4,7 @@ import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campai
 import PromotedPostsRedesignI2, { TAB_OPTIONS } from 'calypso/my-sites/promote-post-i2/main';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getAdvertisingDashboardPath } from './utils';
+import { getAdvertisingDashboardPath, getWidgetParams } from './utils';
 
 // Compatibility: Checks that the order of the tab and site are correct, redirects the user if they are switched
 export const checkValidTabInNavigation = ( context, next ) => {
@@ -34,7 +34,9 @@ export const promoteWidget = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	const postId = item?.split( '-' )[ 1 ];
+	const widgetParams = getWidgetParams( item );
+	const postId = widgetParams.selectedPostId;
+	const campaignId = widgetParams.selectedCampaignId;
 
 	const currentQuery = getCurrentQueryArguments( state );
 	const source = currentQuery?.source?.toString();
@@ -44,6 +46,7 @@ export const promoteWidget = ( context, next ) => {
 			isVisible
 			siteId={ siteId }
 			postId={ postId }
+			campaignId={ campaignId }
 			keyValue={ item }
 			source={ source }
 		/>

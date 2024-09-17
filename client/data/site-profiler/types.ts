@@ -153,6 +153,7 @@ export type PerformanceReport = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	performance: number;
 	overall_score: number;
+	fullPageScreenshot: FullPageScreenshot;
 	is_wpcom: boolean;
 	is_wordpress: boolean;
 	screenshots?: ScreenShotsTimeLine[];
@@ -160,6 +161,24 @@ export type PerformanceReport = {
 	timestamp?: string;
 	share_link: string | '';
 } & BasicMetrics;
+
+export type ScreenshotNode = {
+	width: number;
+	right: number;
+	bottom: number;
+	top: number;
+	height: number;
+	left: number;
+};
+
+export interface FullPageScreenshot {
+	screenshot: {
+		data: string;
+		height: number;
+		width: number;
+	};
+	nodes: Record< string, ScreenshotNode >;
+}
 
 export interface UrlPerformanceMetricsQueryResponse {
 	webtestpage_org: {
