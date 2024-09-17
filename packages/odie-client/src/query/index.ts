@@ -7,6 +7,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, useSetOdieStorage } from '../data';
+import { useNewHumanConversation } from '../use-new-human-conversation';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -86,6 +87,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 		selectedSiteId,
 		version,
 	} = useOdieAssistantContext();
+	const { newConversation } = useNewHumanConversation();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 	const storeChatId = useSetOdieStorage( 'chat_id' );
@@ -105,7 +107,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
-		{ data: { status: number; messages: Message[] } },
+		unknown,
 		{ message: Message },
 		{ internal_message_id: string }
 	>( {
@@ -143,6 +145,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 				// Append new messages at the end
 				return {
 					chat_id: prevChat.chat_id,
+					type: prevChat.type,
 					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );
@@ -185,6 +188,10 @@ export const useOdieSendMessage = (): UseMutationResult<
 			storeChatId( data.chat_id );
 			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
 
+			if ( message.context?.flags?.forward_to_human_support && chat.type !== 'human' ) {
+				newConversation();
+			}
+
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return {
@@ -211,8 +218,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 				throw new Error( 'Context is undefined' );
 			}
 
-			const isRateLimitError =
-				response && response.data && response.data.status === 429 ? true : false;
+			const { data } = response as { data: { status: number } };
+			const isRateLimitError = data.status === 429;
 
 			const { internal_message_id } = context;
 			const message = {
@@ -277,8 +284,6 @@ export const useOdieGetChat = (
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
-		// 4 hours (we update the messages when a new message is sent, so cache is not stale while we are chatting)
-		staleTime: 4 * 60 * 60 * 1000,
 	} );
 };
 
@@ -324,6 +329,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 		},
 		onSuccess: ( _, { rating_value, message } ) => {
 			const queryKey = [ 'chat', botNameSlug, chat.chat_id, 1, 30, true ];
+
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return;
@@ -332,7 +338,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 				return {
 					...currentChatCache,
 					messages: currentChatCache.messages.map( ( m ) =>
-						m.message_id === message.message_id ? { ...m, rating_value } : m
+						m.internal_message_id === message.internal_message_id ? { ...m, rating_value } : m
 					),
 				};
 			} );

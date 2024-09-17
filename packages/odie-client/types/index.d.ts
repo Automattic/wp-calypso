@@ -3,6 +3,16 @@ declare module '*.svg' {
 	export default content;
 }
 
+interface Window {
+	zE?: (
+		action: string,
+		value: string,
+		handler?:
+			| ( ( callback: ( data: string | number ) => void ) => void )
+			| { id: number; value: string }[]
+	) => void;
+}
+
 declare module 'calypso/components/ellipsis-menu' {
 	const EllipsisMenu: FC< {
 		popoverClassName?: string;

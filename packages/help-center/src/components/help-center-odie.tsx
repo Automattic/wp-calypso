@@ -22,7 +22,6 @@ import { HELP_CENTER_STORE } from '../stores';
  * Internal Dependencies
  */
 import { BackButtonHeader } from './back-button';
-import { ExtraContactOptions } from './help-center-extra-contact-option';
 import './help-center-odie.scss';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
@@ -108,12 +107,8 @@ export function HelpCenterOdie( {
 	);
 
 	const navigateToContactOptions = useCallback( () => {
-		if ( isUserEligible ) {
-			navigate( '/contact-options' );
-		} else {
-			navigate( '/contact-form?mode=FORUM' );
-		}
-	}, [ navigate, isUserEligible ] );
+		navigate( '/contact-options' );
+	}, [ navigate ] );
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
@@ -135,10 +130,11 @@ export function HelpCenterOdie( {
 				logger={ trackEvent }
 				loggerEventNamePrefix="calypso_odie"
 				selectedSiteId={ site?.ID as number }
-				extraContactOptions={ <ExtraContactOptions isUserEligible={ isUserEligible } /> }
 				navigateToContactOptions={ navigateToContactOptions }
 				navigateToSupportDocs={ navigateToSupportDocs }
 				isUserEligible={ isUserEligible }
+				selectedSiteUrl={ site?.URL as string }
+				sectionName=""
 			>
 				<div className="help-center__container-content-odie">
 					<div className="help-center__container-odie-header">

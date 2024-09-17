@@ -21,6 +21,7 @@ export const UserMessage = ( {
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isUser = message.role === 'user';
+	const isAgent = message.role === 'agent';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
@@ -48,14 +49,14 @@ export const UserMessage = ( {
 				{ isRequestingHumanSupport ? forwardMessage : message.content }
 			</Markdown>
 			{ showExtraContactOptions && extraContactOptions }
-			{ ! hasFeedback && ! isUser && (
+			{ ! hasFeedback && ! ( isUser || isAgent ) && (
 				<WasThisHelpfulButtons
 					message={ message }
 					onDislike={ onDislike }
 					isDisliked={ isDisliked }
 				/>
 			) }
-			{ ! isUser && (
+			{ ! isUser && ! isAgent && (
 				<>
 					{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
 					<div className="disclaimer">
