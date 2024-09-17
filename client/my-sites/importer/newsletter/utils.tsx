@@ -25,7 +25,7 @@ export function getSetpProgressSteps(
 	engine: string,
 	selectedSiteSlug: string,
 	fromSite: string,
-	paidNewsletterData: PaidNewsletterData
+	paidNewsletterData?: PaidNewsletterData
 ) {
 	const result: ClickHandler[] = [
 		{
