@@ -1,7 +1,11 @@
+import { SiteSelect } from '@automattic/data-stores';
+import { SITE_STORE } from '@automattic/launchpad/src/launchpad';
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { ONBOARD_STORE } from '../stores';
 import ErrorStep from './internals/steps-repository/error-step';
@@ -27,10 +31,28 @@ const transferringHostedSite: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const siteId = useSiteIdParam();
-		const dispatch = useReduxDispatch();
-
+		const site = useSelect(
+			( select ) => ( siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ) ) || null,
+			[ siteId ]
+		);
+		const wpcomAdminInterface = useSelector( ( state ) =>
+			getSiteOption( state, parseInt( siteId! ), 'wpcom_admin_interface' )
+		);
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
+		};
+		const dispatch = useReduxDispatch();
+
+		const getRedirectTo = ( providedDependencies: ProvidedDependencies ) => {
+			if ( providedDependencies?.redirectTo ) {
+				return providedDependencies.redirectTo as string;
+			}
+
+			if ( wpcomAdminInterface === 'wp-admin' ) {
+				return site?.options?.admin_url as string;
+			}
+
+			return `/home/${ siteId }`;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -44,10 +66,7 @@ const transferringHostedSite: Flow = {
 
 					dispatch( requestAdminMenu( siteId ) );
 
-					const redirectTo = providedDependencies?.redirectTo
-						? providedDependencies?.redirectTo
-						: `/home/${ siteId }`;
-					return exitFlow( redirectTo as string );
+					return exitFlow( getRedirectTo( providedDependencies ) );
 				}
 
 				case 'waitForAtomic': {
