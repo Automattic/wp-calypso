@@ -1,10 +1,8 @@
 .email-verification-dialog__confirmation-dialog.is-narrow {
 	max-width: 100%;
-	border-radius: 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		max-width: 550px;
-		border-radius: 2px;
 	}
 }
 
