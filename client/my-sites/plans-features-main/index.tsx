@@ -840,6 +840,9 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
+										enableShowAllFeaturesButton={
+											simplifiedFeaturesGridExperimentVariant !== 'simplified'
+										}
 										enableCategorisedFeatures={
 											simplifiedFeaturesGridExperimentVariant === 'simplified'
 										}
