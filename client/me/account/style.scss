@@ -1,6 +1,4 @@
-.account .notice {
-	margin: 5px 0 0;
-}
+@import "@automattic/typography/styles/variables";
 
 .account__username-form-toggle-enter {
 	opacity: 0.01;
@@ -26,6 +24,15 @@
 
 fieldset.account__settings-admin-home {
 	margin: 30px 0 20px 0;
+}
+
+.account .form-input-validation {
+	padding-bottom: 0;
+}
+
+.account__change-username-text {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
 }
 
 .account__link-destination {
