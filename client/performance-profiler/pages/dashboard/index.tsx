@@ -131,6 +131,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 						( activeTab === TabType.desktop && desktopLoaded ) ) && (
 						<PerformanceProfilerDashboardContent
 							performanceReport={ performanceReport }
+							activeTab={ activeTab }
 							url={ finalUrl ?? url }
 							hash={ hash }
 							filter={ filter }
