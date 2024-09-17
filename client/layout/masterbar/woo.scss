@@ -1895,10 +1895,20 @@ $breakpoint-mobile: 660px;
 
 	}
 
+	// Core Profiler + Passwordless
 	&.is-woocommerce-core-profiler-flow.is-woo-passwordless {
-		h3 {
-			font-family: inherit;
+		* {
+			font-family: "SF Pro Text", -apple-system, system-ui, sans-serif;
+			font-weight: 400;
 		}
+
+		h3,
+		h1.formatted-header__title {
+			font-family: "SF Pro Display", -apple-system, system-ui, sans-serif;
+			font-weight: 500;
+			margin-bottom: 15px;
+		}
+
 		.login__lost-password-link {
 			color: var(--wp-admin-theme-color);
 		}
