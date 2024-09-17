@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
@@ -27,13 +27,30 @@ export interface AlphabeticTagsResult {
 	[ key: string ]: Tag[];
 }
 
+const TagsPageDocumentHead = () => {
+	const translate = useTranslate();
+
+	const title = translate( 'Popular Tags and Posts ‹ Reader' );
+	const meta = [
+		{
+			name: 'description',
+			content: translate(
+				"Discover the most popular tags and posts on WordPress.com. For every one of your interests, there's a tag on WordPress.com."
+			),
+		},
+	];
+
+	return <DocumentHead title={ title } meta={ meta } />;
+};
+
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
+
 	context.primary = (
 		<>
-			<DocumentHead title={ translate( 'Popular Tags and Posts ‹ Reader' ) } />
+			<TagsPageDocumentHead />
 			<TagsPage
 				trendingTags={ context.params.trendingTags }
 				alphabeticTags={ context.params.alphabeticTags }
@@ -43,7 +60,9 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	next();
 };
 
-function renderHeaderSection() {
+const TagsPageHeaderSection = () => {
+	const translate = useTranslate();
+
 	return (
 		<>
 			<h1>
@@ -55,6 +74,10 @@ function renderHeaderSection() {
 			<p>{ translate( "For every one of your interests, there's a tag on WordPress.com." ) }</p>
 		</>
 	);
+};
+
+function renderHeaderSection() {
+	return <TagsPageHeaderSection />;
 }
 
 export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) => void ) => {
