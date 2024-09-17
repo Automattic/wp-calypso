@@ -3,17 +3,19 @@ import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import {
 	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
 } from '../hooks/use-notice-visibility-query';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 
 import './style.scss';
 
-const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
-const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
-const FEEDBACK_ACTION_DISMISS_FLOATING_PANEL = 'feedback-action-dismiss-floating-panel';
+const ACTION_LEAVE_REVIEW = 'action_redirect_to_plugin_review_page';
+const ACTION_SEND_FEEDBACK = 'action_open_form_modal';
+const ACTION_DISMISS_FLOATING_PANEL = 'action_dismiss_floating_panel';
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
@@ -62,11 +64,11 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
 	const handleLeaveReview = () => {
-		clickHandler( FEEDBACK_ACTION_LEAVE_REVIEW );
+		clickHandler( ACTION_LEAVE_REVIEW );
 	};
 
 	const handleSendFeedback = () => {
-		clickHandler( FEEDBACK_ACTION_SEND_FEEDBACK );
+		clickHandler( ACTION_SEND_FEEDBACK );
 	};
 
 	return (
@@ -90,7 +92,15 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	const translate = useTranslate();
 
 	const handleCloseButtonClicked = () => {
-		clickHandler( FEEDBACK_ACTION_DISMISS_FLOATING_PANEL );
+		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
+	};
+
+	const clickHandlerWithAnalytics = ( action: string ) => {
+		// stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel
+		// stats_feedback_action_open_form_modal_from_floating_panel
+		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_floating_panel` );
+
+		clickHandler( action );
 	};
 
 	if ( ! isOpen ) {
@@ -105,7 +115,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
-			<FeedbackContent clickHandler={ clickHandler } />
+			<FeedbackContent clickHandler={ clickHandlerWithAnalytics } />
 			<Button
 				className="stats-feedback-panel__dismiss-button"
 				onClick={ handleCloseButtonClicked }
@@ -118,9 +128,17 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 }
 
 function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
+	const clickHandlerWithAnalytics = ( action: string ) => {
+		// stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section
+		// stats_feedback_action_open_form_modal_from_persistent_section
+		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_persistent_section` );
+
+		clickHandler( action );
+	};
+
 	return (
 		<div className="stats-feedback-card">
-			<FeedbackContent clickHandler={ clickHandler } />
+			<FeedbackContent clickHandler={ clickHandlerWithAnalytics } />
 		</div>
 	);
 }
@@ -128,6 +146,8 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
+
+	const { supportCommercialUse } = useStatsPurchases( siteId );
 
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
@@ -142,15 +162,18 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
-			case FEEDBACK_ACTION_SEND_FEEDBACK:
+			case ACTION_SEND_FEEDBACK:
 				setIsFloatingPanelOpen( false );
 				setIsOpen( true );
 				break;
-			case FEEDBACK_ACTION_DISMISS_FLOATING_PANEL:
+			case ACTION_DISMISS_FLOATING_PANEL:
 				setIsFloatingPanelOpen( false );
 				updateFeedbackPanelHibernationDelay();
+
+				// stats_feedback_action_dismiss_floating_panel
+				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
-			case FEEDBACK_ACTION_LEAVE_REVIEW:
+			case ACTION_LEAVE_REVIEW:
 				setIsFloatingPanelOpen( false );
 				window.open( FEEDBACK_LEAVE_REVIEW_URL );
 				break;
@@ -158,11 +181,21 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	};
 
+	const onModalClose = () => {
+		setIsOpen( false );
+
+		trackStatsAnalyticsEvent( 'stats_feedback_action_close_form_modal' );
+	};
+
+	if ( ! supportCommercialUse ) {
+		return null;
+	}
+
 	return (
 		<div className="stats-feedback-container">
 			<FeedbackCard clickHandler={ handleButtonClick } />
 			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
-			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ () => setIsOpen( false ) } /> }
+			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
 		</div>
 	);
 }

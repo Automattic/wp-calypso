@@ -251,6 +251,7 @@ export interface License {
 	ownerType: string | null;
 	quantity: number | null;
 	parentLicenseId: number | null;
+	meta: LicenseMeta | null;
 	referral: ReferralAPIResponse | null;
 	meta: LicenseMeta;
 }
@@ -269,6 +270,15 @@ export interface LicenseCounts {
 	not_revoked: number;
 	all: number;
 	standard: number;
+}
+
+export interface LicenseMeta {
+	a4a_is_dev_site?: boolean;
+	a4a_was_dev_site?: boolean;
+	a4a_dev_site_period_start?: string;
+	a4a_dev_site_period_end?: string;
+	a4a_transferred_subscription_id?: string;
+	a4a_transferred_subscription_expiration?: string;
 }
 
 export interface LicensesStore {

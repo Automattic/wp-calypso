@@ -17,6 +17,7 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
+	meta: LicenseMeta | null;
 	referral: ReferralAPIResponse;
 	meta: APILicenseMeta;
 }
@@ -45,6 +46,7 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 		ownerType: item.owner_type,
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
+		meta: item.meta,
 		referral: item.referral,
 		meta: formatLicenseMeta( item.meta ),
 	} ) );

@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Controller, Control } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
@@ -19,6 +20,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 	importSiteQueryParam,
 } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const validateSiteAddress = ( siteAddress: string ) => {
 		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
@@ -26,6 +28,10 @@ export const SiteAddressField: React.FC< Props > = ( {
 			return getValidationMessage( siteAddress, translate );
 		}
 	};
+
+	const placeholder = hasEnTranslation( 'Enter your WordPress site address' )
+		? translate( 'Enter your WordPress site address' )
+		: translate( 'Enter your WordPress site address.' );
 
 	return (
 		<div className="site-migration-credentials__form-field">
@@ -41,7 +47,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 					<FormTextInput
 						id="site-address"
 						isError={ !! errors.siteAddress }
-						placeholder={ translate( 'Enter your WordPress site address.' ) }
+						placeholder={ placeholder }
 						readOnly={ !! importSiteQueryParam }
 						disabled={ !! importSiteQueryParam }
 						type="text"

@@ -18,7 +18,7 @@ interface LinkCardProps {
 	url: string;
 	target?: string;
 	external?: boolean;
-	onClick?: () => void;
+	onClick?: ( ( event: React.MouseEvent< HTMLAnchorElement > ) => void ) | ( () => void );
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`

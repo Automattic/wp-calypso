@@ -160,7 +160,7 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'You have $100.00 in upgrade credits available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
+			'You have $100.00 in upgrade credits(opens in a new tab) available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
 		);
 	} );
 

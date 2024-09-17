@@ -34,10 +34,10 @@ Props are displayed as a table with Name, Type, Default, and Description as head
 | `onDateCommit(startDate, endDate)`          | `Function`                  | `undefined`         | callback function called when a date is _committed_ (ie: "Applied").                                                                                                                               |
 | `onDateSelect(startDate, endDate)`          | `Function`                  | `undefined`         | callback function called when a date is _selected_ (but not committed ie: "Applied")                                                                                                               |
 | `triggerText( startDateText, endDateText )` | `Function`                  | `undefined`         | function to generate the text displayed in the trigger button. Passed the start/end date text in `MM/DD/YYYY` format (or locale specific alternative)                                              |
-| `displayShortcuts`                          | `Boolean`                   | `false`             | determines whether to display the shortcuts menu alongside the calendar                                                                                                        
-| `useArrowNavigation`                          | `Boolean`                   | `false`             | determines whether to display the arrow navigation instead of the month labelled buttons as navigation between calendar months                      |
-| `overlay`                        | `node`                   | `null`             | renders the overlay above the calendar and date inputs if passed |
-| `customTitle`                          | `String`                   | ``             | provides the option to pass a custom alternative title to the popover                     |
+| `displayShortcuts`                          | `Boolean`                   | `false`             | determines whether to display the shortcuts menu alongside the calendar                                                                                                                            |
+| `useArrowNavigation`                        | `Boolean`                   | `false`             | determines whether to display the arrow navigation instead of the month labelled buttons as navigation between calendar months                                                                     |
+| `overlay`                                   | `node`                      | `null`              | renders the overlay above the calendar and date inputs if passed                                                                                                                                   |
+| `customTitle`                               | `String`                    | ``                  | provides the option to pass a custom alternative title to the popover                                                                                                                              |
 
 #### Render Props
 
@@ -47,6 +47,7 @@ These props utilise the [Render Props](https://reactjs.org/docs/render-props.htm
 | ---------------------- | ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `renderTrigger(props)` | `Function` | undefined | render prop `Function` which will overide the default `DateRangeTrigger` component. Recieves same `props` object passed to `DateRangeTrigger` |
 | `renderHeader(props)`  | `Function` | undefined | render prop `Function` which will overide the default `DateRangeHeader` component. Recieves same `props` object passed to `DateRangeHeader`   |
+| `renderFooter(props)`  | `Function` | undefined | render prop `Function` which will overide the default `DateRangeFooter` component. Recieves same `props` object passed to `DateRangeFooter`   |
 | `renderInputs(props)`  | `Function` | undefined | render prop `Function` which will overide the default `DateRangeInputs` component. Recieves same `props` object passed to `DateRangeInputs`   |
 
 ### General guidelines

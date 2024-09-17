@@ -11,6 +11,8 @@ $blueberry-color: #3858e9;
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 32px;
+		flex-wrap: wrap;
+		gap: 16px;
 	}
 
 	.title {
@@ -42,6 +44,7 @@ $blueberry-color: #3858e9;
 
 			&:hover {
 				background-color: transparent;
+				color: initial;
 			}
 		}
 	}
@@ -108,6 +111,15 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.md-code {
+				border: 1px solid var(--studio-gray-5);
+				background: var(--studio-gray-0);
+				padding: 2px 4px;
+				border-radius: 4px;
+				font-family: monospace;
+				font-size: $font-body-small;
+			}
+
 			.header-code {
 				color: #3858e9;
 			}
@@ -168,10 +180,18 @@ $blueberry-color: #3858e9;
 
 				.content {
 					flex: 1 1 500px;
+
+					&:only-child {
+						flex: 0 1 700px;
+					}
 				}
 
 				p {
 					line-height: 24px;
+				}
+
+				ul {
+					margin: 0 0 1.5em 3em;
 				}
 
 				.performance-profiler-tip {
@@ -215,8 +235,48 @@ $blueberry-color: #3858e9;
 				width: 100%;
 				overflow-x: auto;
 
+				.element-screenshot__overlay {
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					z-index: 2000;
+					background: rgba(0, 0, 0, 0.3);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					cursor: zoom-out;
+				}
+
+				.element-screenshot {
+
+					.element-screenshot__image {
+						position: relative;
+						cursor: zoom-in;
+						overflow: hidden;
+					}
+
+					.element-screenshot__mask {
+						position: absolute;
+						background-color: var(--studio-gray-60);
+						opacity: 0.8;
+
+						svg {
+							width: 0;
+							height: 0;
+						}
+					}
+
+					.element-screenshot__element-marker {
+						position: absolute;
+						border: 2px solid var(--studio-yellow-20);
+						box-sizing: border-box;
+					}
+				}
+
 				table {
-					table-layout: fixed;
+					table-layout: auto;
 					width: 100%;
 					margin-bottom: 0;
 					min-width: $break-small;
@@ -227,6 +287,8 @@ $blueberry-color: #3858e9;
 						word-break: break-word;
 						font-size: $font-body-small;
 						border-bottom: 1px solid var(--studio-gray-5);
+						min-width: 100px;
+						vertical-align: middle;
 					}
 
 					tr.sub {

@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -15,6 +16,7 @@ interface Props {
 
 export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const [ showNotes, setShowNotes ] = useState( false );
 
 	const toggleShowNotes = () => {
@@ -23,6 +25,12 @@ export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) =>
 			show_notes: ! showNotes,
 		} );
 	};
+
+	const placeholder = hasEnTranslation(
+		'Share any other details that will help us access your site for the migration'
+	)
+		? translate( 'Share any other details that will help us access your site for the migration' )
+		: translate( 'Share any other details that will help us access your site for the migration.' );
 
 	return (
 		<div className="site-migration-credentials__special-instructions">
@@ -46,9 +54,7 @@ export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) =>
 									type="text"
 									data-testid="special-instructions-textarea"
 									maxLength={ 1000 }
-									placeholder={ translate(
-										'Share any other details that will help us access your site for the migration.'
-									) }
+									placeholder={ placeholder }
 									{ ...field }
 									ref={ null }
 								/>

@@ -50,6 +50,7 @@ export {
 	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from './highlight-cards/weekly-highlight-cards';
+export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
 export { default as ShortenedNumber } from './number-formatters';
