@@ -1,0 +1,53 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
+
+.is-section-performance-profiler {
+	.layout__content {
+		padding: 0;
+		overflow: visible; // necessary for sticky CategoryPillNavigation
+
+		.masterbar {
+			// Makes sure the navigation bar header appears below the masterbar and notices
+			z-index: z-index("root", ".main") - 1;
+		}
+	}
+
+	.layout__primary {
+		.main {
+			padding-bottom: 0;
+		}
+	}
+
+	.is-logged-in {
+		.lpc-header-nav-wrapper {
+			padding-top: 32px;
+
+			@media (max-width: $break-medium) {
+				padding-top: 46px;
+			}
+		}
+	}
+
+	.has-no-sidebar {
+		.masterbar-menu {
+			.masterbar {
+				background: var(--studio-gray-100);
+				border-bottom: 1px solid var(--studio-gray-100);
+			}
+		}
+	}
+
+	.x-nav-link__logo svg path {
+		fill: var(--studio-white);
+	}
+
+	.x-nav-item,
+	.x-nav-link-chevron::before {
+		color: var(--studio-white);
+	}
+
+	.x-nav-item .cta-btn-nav {
+		background: var(--studio-white) !important;
+		color: var(--studio-black) !important;
+	}
+}

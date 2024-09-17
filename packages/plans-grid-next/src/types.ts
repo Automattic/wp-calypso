@@ -127,6 +127,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
 	showLegacyStorageFeature: boolean;
+	enableShowAllFeaturesButton?: boolean;
 }
 
 export interface ComparisonGridProps extends CommonGridProps {
@@ -197,11 +198,38 @@ export type GridContextProps = {
 	enableFeatureTooltips?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
+	enterpriseFeaturesList?: string[];
+
 	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
 	 * It is only used for showing "Everything in [previous] plus".
 	 */
 	enableCategorisedFeatures?: boolean;
+
+	/**
+	 * Display the feature titles with a slightly larger font size
+	 */
+	enableLargeFeatureTitles?: boolean;
+
+	/**
+	 * Display the plan storage limit as a badge like "50GB" or as plain text like "50GB storage"
+	 */
+	enableStorageAsBadge?: boolean;
+
+	/**
+	 * Reduce the vertical spacing between each feature group
+	 */
+	enableReducedFeatureGroupSpacing?: boolean;
+
+	/**
+	 * Display only the client logos for the enterprise plan
+	 */
+	enableLogosOnlyForEnterprisePlan?: boolean;
+
+	/**
+	 * Hide the titles for feature groups in the features grid
+	 */
+	hideFeatureGroupTitles?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

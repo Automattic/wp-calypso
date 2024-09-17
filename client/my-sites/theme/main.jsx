@@ -8,6 +8,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlan,
 	PLAN_PERSONAL,
+	FEATURE_INSTALL_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
@@ -20,6 +21,7 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -305,6 +307,7 @@ class ThemeSheet extends Component {
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
+		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
 	scrollToTop = () => {
@@ -321,6 +324,11 @@ class ThemeSheet extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { disabledButton: this.isLoading() } );
+
+		// Subscribe to breakpoint changes to switch to a compact breadcrumb on mobile.
+		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
+			this.setState( { isWide } );
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -332,6 +340,10 @@ class ThemeSheet extends Component {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { disabledButton: this.isLoading() } );
 		}
+	}
+
+	componentWillUnmount() {
+		this.unsubscribeBreakpoint();
 	}
 
 	isLoaded = () => {
@@ -580,13 +592,6 @@ class ThemeSheet extends Component {
 		);
 	}
 
-	hasWpOrgThemeUpsellBanner() {
-		const { canUserUploadThemes, isAtomic, isJetpack, isWpcomTheme, siteId } = this.props;
-
-		// Show theme upsell banner on Jetpack sites.
-		return ! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
-	}
-
 	hasThemeUpsellBannerAtomic() {
 		const { canUserUploadThemes, isAtomic, isPremium, hasUnlimitedPremiumThemes } = this.props;
 
@@ -742,7 +747,6 @@ class ThemeSheet extends Component {
 	renderHeader = () => {
 		const {
 			author,
-			isLoggedIn,
 			isLivePreviewSupported,
 			isWPForTeamsSite,
 			name,
@@ -755,11 +759,7 @@ class ThemeSheet extends Component {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton =
-			! retired &&
-			! isWPForTeamsSite &&
-			! this.shouldRenderForStaging() &&
-			( ! this.hasWpOrgThemeUpsellBanner() || ! isLoggedIn );
+		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 		const isExternalLink = ! this.props.isWpcomTheme || this.props.isExternallyManagedTheme;
 
 		return (
@@ -1100,9 +1100,10 @@ class ThemeSheet extends Component {
 						{ translate( 'Activate this design' ) }
 					</span>
 				);
+			} else if ( defaultOption.label === translate( 'Activate' ) ) {
+				return translate( 'Activate this design' );
 			}
-			// else: activate
-			return translate( 'Activate this design' );
+			// else: fall back to default label
 		}
 		return defaultOption.label;
 	};
@@ -1427,7 +1428,10 @@ class ThemeSheet extends Component {
 				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
-				<NavigationHeader navigationItems={ navigationItems } />
+				<NavigationHeader
+					navigationItems={ navigationItems }
+					compactBreadcrumb={ ! this.state.isWide }
+				/>
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
@@ -1492,11 +1496,13 @@ const ThemeSheetWithOptions = ( props ) => {
 	const {
 		siteId,
 		canInstallPlugins,
+		canInstallThemes,
 		isActive,
 		isLoggedIn,
 		isPremium,
 		isThemePurchased,
 		isStandaloneJetpack,
+		isWporg,
 		demoUrl,
 		showTryAndCustomize,
 		isThemeInstalled,
@@ -1541,6 +1547,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce )
 	) {
 		defaultOption = 'upgradePlanForBundledThemes';
+	} else if ( isWporg && ! canInstallThemes ) {
+		defaultOption = 'upgradePlanForDotOrgThemes';
 	} else {
 		defaultOption = 'activate';
 	}
@@ -1631,6 +1639,7 @@ export default connect(
 			),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
+			canInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

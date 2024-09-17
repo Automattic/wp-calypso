@@ -37,6 +37,17 @@
 			font-size: 26px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			line-height: 26px;
 		}
+
+		&.mobile {
+			.current-score {
+				font-size: 64px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				line-height: 64px;
+			}
+
+			.max-score {
+				font-size: $font-title-small;
+			}
+		}
 	}
 
 	.disclaimer {
@@ -80,6 +91,8 @@
 		.recommendations-text {
 			a {
 				cursor: pointer;
+				font-weight: 500;
+				white-space: nowrap;
 			}
 		}
 	}

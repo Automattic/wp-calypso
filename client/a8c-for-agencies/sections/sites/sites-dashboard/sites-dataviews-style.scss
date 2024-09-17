@@ -61,6 +61,10 @@
 			border-radius: 4px;
 		}
 	}
+
+	.dataviews-filters__search-widget-listbox {
+		max-height: 195px;
+	}
 }
 
 .sites-dashboard__layout:not(.preview-hidden) {

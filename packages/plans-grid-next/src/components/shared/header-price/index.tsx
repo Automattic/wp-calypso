@@ -28,9 +28,9 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	 * then we do not show any discount messaging as per Automattic/martech#1927
 	 * We currently only support the `One time discount` in some currencies
 	 */
-	const isGridPlanOneTimeDiscounted = Boolean( discountedPrice.monthly );
-	const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some(
-		( { pricing } ) => pricing.discountedPrice.monthly
+	const isGridPlanOneTimeDiscounted = Number.isFinite( discountedPrice.monthly );
+	const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some( ( { pricing } ) =>
+		Number.isFinite( pricing.discountedPrice.monthly )
 	);
 
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;

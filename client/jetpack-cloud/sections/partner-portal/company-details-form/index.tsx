@@ -1,4 +1,4 @@
-import { Button, Gridicon, FormLabel } from '@automattic/components';
+import { Button, Gridicon, FormLabel, SearchableDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -8,7 +8,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import PartnerProgramOptInFieldSet from '../partner-program-opt-in-fieldset/partner-program-opt-in-fieldset';
-import SearchableDropdown from '../searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import type { FormEventHandler } from 'react';
 

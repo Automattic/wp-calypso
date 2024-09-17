@@ -4,9 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import {
+	NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
+	useNoticeVisibilityQuery,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useSubmitProductFeedback from './use-submit-product-feedback';
 
@@ -17,7 +21,9 @@ interface ModalProps {
 	onClose: () => void;
 }
 
-const NOTICE_KEY_FOR_FEEDBACK_SUBMISSION = 'able_to_submit_user_feedback';
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
+const FEEDBACK_THROTTLE_SUBMISSION_DELAY = 60 * 5; // 5 minutes
 
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
@@ -28,14 +34,20 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		data: isAbleToSubmitFeedback,
 		isFetching: isCheckingAbilityToSubmitFeedback,
 		refetch: refetchNotices,
-	} = useNoticeVisibilityQuery( siteId, NOTICE_KEY_FOR_FEEDBACK_SUBMISSION );
+	} = useNoticeVisibilityQuery( siteId, NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK );
 
-	// Disable feedback submission for 24 hours.
-	const { mutateAsync: disableFeedbackSubmissionForOneDay } = useNoticeVisibilityMutation(
+	const { mutateAsync: disableFeedbackSubmission } = useNoticeVisibilityMutation(
 		siteId,
-		NOTICE_KEY_FOR_FEEDBACK_SUBMISSION,
+		NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
 		'postponed',
-		24 * 3600
+		FEEDBACK_THROTTLE_SUBMISSION_DELAY
+	);
+
+	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
 	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
@@ -52,18 +64,16 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_stats_user_feedback_form_submit', {
-				feedback: content,
-			} )
-		);
+		trackStatsAnalyticsEvent( 'stats_feedback_action_submit_form', {
+			feedback: content,
+		} );
 
 		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
 		submitFeedback( {
 			source_url: sourceUrl,
 			product_name: 'Jetpack Stats',
 			feedback: content,
-			is_testing: true,
+			is_testing: false,
 		} );
 	}, [ dispatch, content, submitFeedback ] );
 
@@ -76,7 +86,8 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
-			disableFeedbackSubmissionForOneDay().then( () => {
+			updateFeedbackHibernationPeriod();
+			disableFeedbackSubmission().then( () => {
 				refetchNotices();
 			} );
 
@@ -87,7 +98,8 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		isSubmissionSuccessful,
 		handleClose,
 		translate,
-		disableFeedbackSubmissionForOneDay,
+		disableFeedbackSubmission,
+		updateFeedbackHibernationPeriod,
 		refetchNotices,
 	] );
 
@@ -123,7 +135,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
 						<strong>
 							<em>
-								{ translate( 'Feedback submission is currently limited to one per 24 hours.' ) }
+								{ translate( 'Feedback submission is currently limited to one per 5 minutes.' ) }
 							</em>
 						</strong>
 					) }
