@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, FormLabel } from '@automattic/components';
+import { Button, Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
@@ -16,7 +16,6 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -29,6 +28,7 @@ import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -493,27 +493,11 @@ class Account extends Component {
 			return null;
 		}
 
-		if ( this.isUsernameValid() ) {
-			return (
-				<Notice
-					showDismiss={ false }
-					status="is-success"
-					text={ translate( '%(username)s is a valid username.', {
-						args: {
-							username: this.getValidatedUsername(),
-						},
-					} ) }
-				/>
-			);
-		} else if ( null !== this.getUsernameValidationFailureMessage() ) {
-			return (
-				<Notice
-					showDismiss={ false }
-					status="is-error"
-					text={ this.getUsernameValidationFailureMessage() }
-				/>
-			);
-		}
+		return this.isUsernameValid()
+			? translate( '%(username)s is a valid username.', {
+					args: { username: this.getValidatedUsername() },
+			  } )
+			: this.getUsernameValidationFailureMessage();
 	}
 
 	renderUsernameConfirmNotice() {
@@ -732,15 +716,12 @@ class Account extends Component {
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
 			! this.isUsernameValid() ||
 			this.state.submittingForm;
+		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
-					<FormLabel htmlFor="username_confirm">
-						{ translate( 'Confirm Username', {
-							context: 'User is being prompted to re-enter a string for verification.',
-						} ) }
-					</FormLabel>
+					<FormLabel htmlFor="username_confirm">{ translate( 'Confirm new username' ) }</FormLabel>
 					<FormTextInput
 						autoCapitalize="off"
 						autoComplete="off"
@@ -750,16 +731,19 @@ class Account extends Component {
 						onFocus={ this.getFocusHandler( 'Username Confirm Field' ) }
 						value={ this.state.userLoginConfirm ?? '' }
 						onChange={ this.updateUserLoginConfirm }
+						isValid={ usernameMatch }
+						isError={ ! usernameMatch }
 					/>
-					{ this.renderUsernameConfirmNotice() }
-					<FormSettingExplanation>{ translate( 'Confirm new username' ) }</FormSettingExplanation>
+					<FormInputValidation isError={ ! usernameMatch }>
+						{ usernameMatch
+							? translate( 'Thanks for confirming your new username!' )
+							: translate( 'Please re-enter your new username to confirm it.' ) }
+					</FormInputValidation>
 				</FormFieldset>
 
 				{ this.renderBlogActionFields() }
 
-				<FormSectionHeading>{ translate( 'Please Read Carefully' ) }</FormSectionHeading>
-
-				<p>
+				<Notice status="is-warning" showDismiss={ false }>
 					{ translate(
 						'You are about to change your username, which is currently {{strong}}%(username)s{{/strong}}. ' +
 							'You will not be able to change your username back.',
@@ -772,9 +756,9 @@ class Account extends Component {
 							},
 						}
 					) }
-				</p>
+				</Notice>
 
-				<p>
+				<p className="account__change-username-text">
 					{ translate(
 						'If you just want to change your display name, which is currently {{strong}}%(displayName)s{{/strong}}, ' +
 							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
@@ -795,18 +779,9 @@ class Account extends Component {
 								strong: <strong />,
 							},
 						}
-					) }
-				</p>
-
-				<p>
+					) }{ ' ' }
 					{ translate(
 						'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
-					) }
-				</p>
-
-				<p>
-					{ translate(
-						'If you would still like to change your username, please save your changes. Otherwise, hit the cancel button below.'
 					) }
 				</p>
 
@@ -885,8 +860,22 @@ class Account extends Component {
 								onFocus={ this.getFocusHandler( 'Username Field' ) }
 								onChange={ this.handleUsernameChange }
 								value={ this.getUserSetting( 'user_login' ) || '' }
+								isValid={ renderUsernameForm && this.isUsernameValid() }
+								isError={
+									renderUsernameForm && null !== this.getUsernameValidationFailureMessage()
+								}
 							/>
-							{ this.renderUsernameValidation() }
+							{ renderUsernameForm &&
+								( this.isUsernameValid() ||
+									null !== this.getUsernameValidationFailureMessage() ) && (
+									<FormInputValidation isError={ ! this.isUsernameValid() }>
+										{ this.isUsernameValid()
+											? translate( '%(username)s is a valid username.', {
+													args: { username: this.getValidatedUsername() },
+											  } )
+											: this.getUsernameValidationFailureMessage() }
+									</FormInputValidation>
+								) }
 							<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
 						</FormFieldset>
 
