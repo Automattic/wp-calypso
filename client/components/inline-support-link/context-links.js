@@ -357,6 +357,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/hosting-configuration/',
 		post_id: 160841,
 	},
+	'site-icons': {
+		link: 'https://wordpress.com/support/site-icons/',
+		post_id: 1327,
+	},
 };
 
 export default contextLinks;
