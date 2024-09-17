@@ -91,6 +91,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
 	const { insight, onClick, index, isWpcom, hash } = props;
+	// Creates a list of URLs from the insight details to be used as context for the LLM query.
 	const insightDetailsContext = insight?.details?.items?.reduce( ( context, item ) => {
 		context += `* '${ item.url }' `;
 		return context;
