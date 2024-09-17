@@ -53,8 +53,8 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 }
 
 export function formatLicenseMeta( meta: APILicenseMeta = {} ): LicenseMeta {
-	const isDevSite = meta?.a4a_is_dev_site === '1' ? true : false;
-	const wasDevSite = meta?.a4a_was_dev_site === '1' ? true : false;
+	const isDevSite = meta?.a4a_is_dev_site === '1';
+	const wasDevSite = meta?.a4a_was_dev_site === '1';
 	const devSitePeriodEnd = meta?.a4a_dev_site_period_end;
 	const devSitePeriodStart = meta?.a4a_dev_site_period_start;
 
