@@ -7,8 +7,6 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	min-width: 250px;
-	align-self: self-start;
 
 	button {
 		color: inherit;
@@ -26,7 +24,7 @@ $blueberry-color: #3858e9;
 
 	&:not(.active) {
 		border-bottom: 1px solid var(--studio-gray-5);
-		&:not(:nth-child(-n+2)) {
+		&:not(:first-child) {
 			border-top: none;
 		}
 	}
@@ -56,7 +54,7 @@ $blueberry-color: #3858e9;
 		border-bottom-left-radius: 6px;
 	}
 
-	&:nth-child(2) {
+	&:first-child {
 		/* stylelint-disable-next-line scales/radii */
 		border-top-left-radius: 6px;
 		/* stylelint-disable-next-line scales/radii */
@@ -102,10 +100,4 @@ $blueberry-color: #3858e9;
 	&.bad {
 		color: #d63638;
 	}
-}
-
-.metric-tab-bar__performance {
-	margin-bottom: 16px;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
 }

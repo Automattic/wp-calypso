@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
-import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	metricsNames,
 	metricsTresholds,
@@ -31,7 +30,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 
-	const { good, needsImprovement, bad } = metricsTresholds[ activeTab ];
+	const { good, needsImprovement } = metricsTresholds[ activeTab ];
 
 	const formatUnit = ( value: number ) => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
@@ -86,14 +85,12 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 
 	const status = mapThresholdsToStatus( activeTab as Metrics, value );
 	const statusClass = status === 'needsImprovement' ? 'needs-improvement' : status;
-	const isPerformanceScoreSelected = activeTab === 'overall';
 
 	return (
 		<div
 			className="core-web-vitals-display__details"
 			style={ {
 				flexDirection: 'column',
-				borderRadius: '6px',
 			} }
 		>
 			<div className="core-web-vitals-display__description">
@@ -109,37 +106,15 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 						} }
 					>
 						<span className="core-web-vitals-display__description-subheading">{ displayName }</span>
-
 						<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
-							{ isPerformanceScoreSelected ? (
-								<div
-									className="metric-tab-bar__tab-metric"
-									css={ {
-										marginTop: '16px',
-									} }
-								>
-									<CircularPerformanceScore score={ value } size={ 76 } />
-								</div>
-							) : (
-								displayValue( activeTab as Metrics, value )
-							) }
+							{ displayValue( activeTab as Metrics, value ) }
 						</div>
 						<p>
 							{ metricValuations[ activeTab ].explanation }
 							&nbsp;
-							{ isPerformanceScoreSelected ? (
-								<a
-									href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-									target="_blank"
-									rel="noreferrer"
-								>
-									{ translate( 'See calculator ↗' ) }
-								</a>
-							) : (
-								<a href={ `https://web.dev/articles/${ activeTab }` }>
-									{ translate( 'Learn more ↗' ) }
-								</a>
-							) }
+							<a href={ `https://web.dev/articles/${ activeTab }` }>
+								{ translate( 'Learn more ↗' ) }
+							</a>
 						</p>
 					</div>
 					<StatusSection value={ status } recommendationsQuantity={ 3 } />
@@ -149,15 +124,10 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 						<StatusIndicator speed="good" />
 						<div className="range-heading">{ translate( 'Excellent' ) }</div>
 						<div className="range-subheading">
-							{ isPerformanceScoreSelected
-								? translate( '(90–%(to)s)', {
-										args: { to: formatUnit( good ) },
-										comment: 'Displaying a percentage range, eg. 90-100',
-								  } )
-								: translate( '(0–%(to)s%(unit)s)', {
-										args: { to: formatUnit( good ), unit: displayUnit() },
-										comment: 'Displaying a time range, eg. 0-1s',
-								  } ) }
+							{ translate( '(0–%(to)s%(unit)s)', {
+								args: { to: formatUnit( good ), unit: displayUnit() },
+								comment: 'Displaying a time range, eg. 0-1s',
+							} ) }
 						</div>
 					</div>
 					<div className="range">
@@ -165,22 +135,14 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 
 						<div className="range-heading">{ translate( 'Needs Improvement' ) }</div>
 						<div className="range-subheading">
-							{ isPerformanceScoreSelected
-								? translate( '(%(from)s–%(to)s)', {
-										args: {
-											from: 50,
-											to: formatUnit( needsImprovement ),
-										},
-										comment: 'Displaying a percentage range, eg. 50-89',
-								  } )
-								: translate( '(%(from)s–%(to)s%(unit)s)', {
-										args: {
-											from: formatUnit( good ),
-											to: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										},
-										comment: 'Displaying a time range, eg. 2-3s',
-								  } ) }
+							{ translate( '(%(from)s–%(to)s%(unit)s)', {
+								args: {
+									from: formatUnit( good ),
+									to: formatUnit( needsImprovement ),
+									unit: displayUnit(),
+								},
+								comment: 'Displaying a time range, eg. 2-3s',
+							} ) }
 						</div>
 					</div>
 					<div className="range">
@@ -188,21 +150,13 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 
 						<div className="range-heading">{ translate( 'Poor' ) }</div>
 						<div className="range-subheading">
-							{ isPerformanceScoreSelected
-								? translate( '(%(from)s-%(to)s) ', {
-										args: {
-											from: 0,
-											to: formatUnit( bad ),
-										},
-										comment: 'Displaying a percentage range, eg. 0-49',
-								  } )
-								: translate( '(Over %(from)s%(unit)s) ', {
-										args: {
-											from: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										},
-										comment: 'Displaying a time range, eg. >2s',
-								  } ) }
+							{ translate( '(Over %(from)s%(unit)s) ', {
+								args: {
+									from: formatUnit( needsImprovement ),
+									unit: displayUnit(),
+								},
+								comment: 'Displaying a time range, eg. >2s',
+							} ) }
 						</div>
 					</div>
 				</div>
