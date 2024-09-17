@@ -69,9 +69,8 @@ export default function LicensePreview( {
 	parentLicenseId,
 	quantity,
 	isChildLicense,
-	meta,
-	referral,
 	meta = {},
+	referral,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -238,7 +237,7 @@ export default function LicensePreview( {
 		: product;
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-	const isDevelopmentSite = devSitesEnabled && meta.isDevSite;
+	const isDevelopmentSite = devSitesEnabled && Boolean( meta?.isDevSite );
 
 	return (
 		<div
