@@ -58,11 +58,16 @@ export default function Summary( { steps, selectedSite }: SummaryProps ) {
 		<Card>
 			{ importerStatus === 'done' && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
 			<h2>{ getStepTitle( importerStatus ) }</h2>
-			<ContentSummary cardData={ steps.content.content } status={ steps.content.status } />
-			<SubscribersSummary
-				cardData={ steps.subscribers.content }
-				status={ steps.subscribers.status }
-			/>
+			{ steps.content.content && (
+				<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
+			) }
+			{ steps.subscribers.content && (
+				<SubscribersSummary
+					stepContent={ steps.subscribers.content }
+					status={ steps.subscribers.status }
+				/>
+			) }
+
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton href={ '/settings/newsletter/' + selectedSite.slug } primary>
 					Customize your newsletter

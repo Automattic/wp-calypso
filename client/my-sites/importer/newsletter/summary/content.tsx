@@ -1,4 +1,5 @@
 import { Icon, post } from '@wordpress/icons';
+import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
 	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
@@ -63,12 +64,12 @@ function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNu
 	}
 }
 
-type Props = {
-	cardData: any;
+interface ContentSummaryProps {
+	stepContent: ContentStepContent;
 	status: string;
-};
+}
 
-export default function ContentSummary( { status, cardData }: Props ) {
+export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
@@ -93,7 +94,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 	}
 
 	if ( status === 'done' ) {
-		const progress = cardData.progress;
+		const progress = stepContent.progress;
 
 		return (
 			<div className="summary__content">
