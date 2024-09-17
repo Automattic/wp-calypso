@@ -1,5 +1,4 @@
 import { Button, FormLabel } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEqual, flow, compact, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -212,11 +211,7 @@ class SiteIconSetting extends Component {
 							{
 								args: [ 512 ],
 								components: {
-									a: (
-										<InlineSupportLink
-											supportLink={ localizeUrl( 'https://wordpress.com/support/site-icons/' ) }
-										/>
-									),
+									a: <InlineSupportLink supportContext="site-icons" />,
 								},
 							}
 						) }
