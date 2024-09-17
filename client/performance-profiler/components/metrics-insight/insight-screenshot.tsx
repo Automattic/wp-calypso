@@ -9,12 +9,12 @@
 
 import { useState } from 'react';
 
-type Rect = {
+type Size = {
 	width: number;
 	height: number;
 };
 
-type Node = Rect & {
+type Rect = Size & {
 	left: number;
 	top: number;
 };
@@ -26,12 +26,12 @@ type InsightScreenshotProps = {
 		width: number;
 		height: number;
 	};
-	elementRectSC: Node;
-	maxRenderSizeDC: Rect;
+	elementRectSC: Rect;
+	maxRenderSizeDC: Size;
 	onClick?: () => void;
 };
 
-const computeZoomFactor = ( elementRectSC: Rect, renderContainerSizeDC: Rect ) => {
+const computeZoomFactor = ( elementRectSC: Size, renderContainerSizeDC: Size ) => {
 	const targetClipToViewportRatio = 0.75;
 	const zoomRatioXY = {
 		x: renderContainerSizeDC.width / elementRectSC.width,
@@ -51,7 +51,7 @@ const clamp = ( value: number, min: number, max: number ) => {
 	return value;
 };
 
-function getElementRectCenterPoint( rect: Node ) {
+function getElementRectCenterPoint( rect: Rect ) {
 	return {
 		x: rect.left + rect.width / 2,
 		y: rect.top + rect.height / 2,
@@ -59,9 +59,9 @@ function getElementRectCenterPoint( rect: Node ) {
 }
 
 const getScreenshotPositions = (
-	elementRectSC: Node,
-	elementPreviewSizeSC: Rect,
-	screenshotSize: Rect
+	elementRectSC: Rect,
+	elementPreviewSizeSC: Size,
+	screenshotSize: Size
 ) => {
 	const elementRectCenter = getElementRectCenterPoint( elementRectSC );
 
@@ -92,8 +92,8 @@ const getScreenshotPositions = (
 const renderClipPathInScreenshot = (
 	clipId: string,
 	positionClip: { top: number; left: number },
-	elementRect: Rect,
-	elementPreviewSize: Rect
+	elementRect: Size,
+	elementPreviewSize: Size
 ) => {
 	// Normalize values between 0-1.
 	const top = positionClip.top / elementPreviewSize.height;
