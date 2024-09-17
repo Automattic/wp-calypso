@@ -23,8 +23,6 @@ import { getSetpProgressSteps } from './utils';
 
 import './importer.scss';
 
-const steps = [ Content, Subscribers, Summary ];
-
 const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
 const logoChainLogos = [
@@ -107,18 +105,9 @@ export default function NewsletterImporter( {
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
-	let stepContent = {};
-	let stepStatus: StatusType = 'initial';
-
-	if ( paidNewsletterData?.steps ) {
-		if ( step === 'summary' ) {
-			stepContent = paidNewsletterData.steps;
-		} else {
-			stepContent = paidNewsletterData.steps[ step ]?.content || {};
-		}
-
-		stepStatus = paidNewsletterData?.steps[ step ]?.status;
-	}
+	const stepContent =
+		step === 'summary' ? paidNewsletterData?.steps : paidNewsletterData?.steps[ step ]?.content;
+	const stepStatus: StatusType = paidNewsletterData?.steps[ step ]?.status || 'initial';
 
 	const stepsProgress = getSetpProgressSteps(
 		engine,
@@ -130,8 +119,6 @@ export default function NewsletterImporter( {
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
 		from: fromSite,
 	} );
-
-	const Step = steps[ stepIndex ];
 
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
@@ -150,21 +137,40 @@ export default function NewsletterImporter( {
 				<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
 			) }
 
-			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && (
-				<Step
-					siteSlug={ siteSlug }
-					nextStepUrl={ nextStepUrl }
-					selectedSite={ selectedSite }
-					fromSite={ fromSite }
-					skipNextStep={ () => {
-						skipNextStep( selectedSite.ID, engine, nextStep, step );
-					} }
-					cardData={ stepContent }
-					engine={ engine }
-					status={ stepStatus }
-					isFetchingContent={ isFetchingPaidNewsletter }
-					setAutoFetchData={ setAutoFetchData }
-				/>
+			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
+				<>
+					{ step === 'content' && (
+						<Content
+							nextStepUrl={ nextStepUrl }
+							engine={ engine }
+							selectedSite={ selectedSite }
+							fromSite={ fromSite }
+							siteSlug={ siteSlug }
+							skipNextStep={ () => {
+								skipNextStep( selectedSite.ID, engine, nextStep, step );
+							} }
+						/>
+					) }
+					{ step === 'subscribers' && (
+						<Subscribers
+							siteSlug={ siteSlug }
+							nextStepUrl={ nextStepUrl }
+							selectedSite={ selectedSite }
+							fromSite={ fromSite }
+							skipNextStep={ () => {
+								skipNextStep( selectedSite.ID, engine, nextStep, step );
+							} }
+							cardData={ stepContent }
+							engine={ engine }
+							status={ stepStatus }
+							isFetchingContent={ isFetchingPaidNewsletter }
+							setAutoFetchData={ setAutoFetchData }
+						/>
+					) }
+					{ step === 'summary' && (
+						<Summary selectedSite={ selectedSite } steps={ paidNewsletterData.steps } />
+					) }
+				</>
 			) }
 		</div>
 	);

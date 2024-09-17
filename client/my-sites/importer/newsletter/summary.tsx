@@ -1,29 +1,32 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
-import { StepProps } from './types';
 
-function getImporterStatus( steps: Steps ): StepStatus {
-	if ( steps.content.status === 'done' && steps.subscribers.status === 'done' ) {
+function getImporterStatus(
+	contentStepStatus: StepStatus,
+	subscribersStepStatus: StepStatus
+): StepStatus {
+	if ( contentStepStatus === 'done' && subscribersStepStatus === 'done' ) {
 		return 'done';
 	}
 
-	if ( steps.content.status === 'done' && steps.subscribers.status === 'skipped' ) {
+	if ( contentStepStatus === 'done' && subscribersStepStatus === 'skipped' ) {
 		return 'done';
 	}
 
-	if ( steps.content.status === 'skipped' && steps.subscribers.status === 'done' ) {
+	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'done' ) {
 		return 'done';
 	}
 
-	if ( steps.content.status === 'skipped' && steps.subscribers.status === 'skipped' ) {
+	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'skipped' ) {
 		return 'skipped';
 	}
 
-	if ( steps.content.status === 'importing' || steps.subscribers.status === 'importing' ) {
+	if ( contentStepStatus === 'importing' || subscribersStepStatus === 'importing' ) {
 		return 'importing';
 	}
 
@@ -42,18 +45,23 @@ function getStepTitle( importerStatus: StepStatus ) {
 	return 'Summary';
 }
 
-export default function Summary( { cardData, selectedSite }: StepProps ) {
+interface SummaryProps {
+	selectedSite: SiteDetails;
+	steps: Steps;
+}
+
+export default function Summary( { steps, selectedSite }: SummaryProps ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-	const importerStatus = getImporterStatus( cardData );
+	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
 
 	return (
 		<Card>
 			{ importerStatus === 'done' && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
 			<h2>{ getStepTitle( importerStatus ) }</h2>
-			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
+			<ContentSummary cardData={ steps.content.content } status={ steps.content.status } />
 			<SubscribersSummary
-				cardData={ cardData.subscribers.content }
-				status={ cardData.subscribers.status }
+				cardData={ steps.subscribers.content }
+				status={ steps.subscribers.status }
 			/>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton href={ '/settings/newsletter/' + selectedSite.slug } primary>

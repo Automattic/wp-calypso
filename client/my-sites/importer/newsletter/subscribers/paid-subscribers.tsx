@@ -2,7 +2,7 @@ import { hasQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { StepProps } from '../types';
+import { SubscribersStepProps } from '../types';
 import ConnectStripe from './paid-subscribers/connect-stripe';
 import MapPlans from './paid-subscribers/map-plans';
 
@@ -17,7 +17,7 @@ export default function PaidSubscribers( {
 	engine,
 	setAutoFetchData,
 	status,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	const dispatch = useDispatch();
 	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
 	const isSuccess = hasQueryArg( window.location.href, 'stripe_connect_success' );

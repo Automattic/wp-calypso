@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { external } from '@wordpress/icons';
 import { useEffect, useRef } from 'react';
 import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
-import { StepProps } from '../types';
+import { SubscribersStepProps } from '../types';
 import SubscriberUploadForm from './upload-form';
 
 export default function StepInitial( {
@@ -16,7 +16,7 @@ export default function StepInitial( {
 	cardData,
 	engine,
 	setAutoFetchData,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 		return {
