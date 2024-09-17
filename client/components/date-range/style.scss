@@ -96,6 +96,12 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range__popover-header {
+	order: 1;
+	display: flex;
+	justify-content: left;
+}
+
+.date-range__popover-footer {
 	order: 4;
 	display: flex;
 	justify-content: flex-end;
@@ -277,7 +283,6 @@ $date-range-mobile-layout-switch: $break-small;
 			}
 		}
 	}
-
 	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 		background-color: var(--date-range-picker-highlight-color);
 		.date-picker__day {
@@ -307,7 +312,6 @@ $date-range-mobile-layout-switch: $break-small;
 		border-radius: 200px !important;
 	}
 }
-
 .date-range__popover-content { // Styling to fit optional shortcuts sidebar
 	display: flex;
 	align-items: stretch; // Ensure children stretch to full height
