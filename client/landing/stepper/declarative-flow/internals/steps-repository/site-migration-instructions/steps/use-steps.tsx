@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -54,7 +55,13 @@ const useStepsData = ( {
 	return [
 		{
 			key: 'install-the-migrate-guru-plugin',
-			title: translate( 'Install the Migrate Guru plugin' ),
+			title: translate( 'Install the %(pluginName)s plugin', {
+				args: {
+					pluginName: config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
+						? 'Migrate to WordPress.com'
+						: 'Migrate Guru',
+				},
+			} ),
 			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
 		},
 		{
