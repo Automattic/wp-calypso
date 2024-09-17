@@ -40,7 +40,7 @@ export const useSupportChatLLMQuery = (
 			persist: false,
 		},
 		select: mapResult,
-		enabled: !! context && enable,
+		enabled: !! title && enable,
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );
