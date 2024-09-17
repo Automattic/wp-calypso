@@ -27,7 +27,7 @@ export const useSupportChatLLMQuery = (
 
 	return useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: [ 'support', 'chat', context, is_wpcom ],
+		queryKey: [ 'support', 'chat', title, is_wpcom ],
 		queryFn: () =>
 			wp.req.post(
 				{
