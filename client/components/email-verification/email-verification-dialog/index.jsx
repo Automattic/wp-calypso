@@ -35,9 +35,12 @@ class VerifyEmailDialog extends Component {
 
 	getDialogButtons() {
 		return [
+			<Button key="close" onClick={ this.handleClose }>
+				{ this.props.translate( 'Cancel' ) }
+			</Button>,
 			<Button
 				key="resend"
-				primary={ false }
+				primary
 				disabled={ includes(
 					[ 'requesting', 'sent', 'error' ],
 					this.props.emailVerificationStatus
@@ -46,37 +49,31 @@ class VerifyEmailDialog extends Component {
 			>
 				{ this.getResendButtonLabel() }
 			</Button>,
-			<Button key="close" primary onClick={ this.handleClose }>
-				{ this.props.translate( 'OK' ) }
-			</Button>,
 		];
 	}
 
 	render() {
 		const strings = {
-			confirmHeading: this.props.translate( 'Please verify your email address:' ),
+			confirmHeading: this.props.translate( 'Verify your email' ),
 
 			confirmExplanation: this.props.translate(
-				'When you first signed up for a WordPress.com account we sent you an email. ' +
-					'Please open it and click on the blue button to verify your email address.'
+				"Check your inbox at %(email)s for the confirmation email, or click 'Resend Email' to get a new one.",
+				{
+					args: {
+						email: this.props.email,
+					},
+				}
 			),
 
 			confirmReasoning: this.props.translate(
-				'Verifying your email allows us to assist you if you ' +
-					'ever lose access to your account in the future.'
+				'Verify your email to secure your account and access more features.'
 			),
 
 			confirmEmail: this.props.translate(
-				'{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}',
+				"Can't access that email? {{emailPreferences}}Click here to update it.{{/emailPreferences}}",
 				{
 					components: {
-						wrapper: (
-							<span className="email-verification-dialog__confirmation-dialog-email-wrapper" />
-						),
 						emailPreferences: <a href="/me/account" />,
-					},
-					args: {
-						email: this.props.email,
 					},
 				}
 			),
@@ -92,14 +89,14 @@ class VerifyEmailDialog extends Component {
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
 					{ strings.confirmHeading }
 				</h1>
-				<p className="email-verification-dialog__confirmation-dialog-email">
-					{ strings.confirmEmail }
+				<p className="email-verification-dialog__confirmation-dialog-reasoning">
+					{ strings.confirmReasoning }
 				</p>
 				<p className="email-verification-dialog__confirmation-dialog-explanation">
 					{ strings.confirmExplanation }
 				</p>
-				<p className="email-verification-dialog__confirmation-dialog-reasoning">
-					{ strings.confirmReasoning }
+				<p className="email-verification-dialog__confirmation-dialog-email">
+					{ strings.confirmEmail }
 				</p>
 			</Dialog>
 		);
