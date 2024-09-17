@@ -172,7 +172,7 @@ export default function LicensePreview( {
 				} }
 			>
 				<Badge className="license-preview__migration-badge" type="info-green">
-					{ translate( 'Migration' ) }
+					{ translate( 'Transferred' ) }
 				</Badge>
 				{ showPopover && (
 					<A4APopover
@@ -190,7 +190,7 @@ export default function LicensePreview( {
 										br: <br />,
 										a: (
 											<a
-												href="https://agencieshelp.automattic.com/"
+												href="https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/"
 												target="_blank"
 												rel="noreferrer noopener"
 											/>
