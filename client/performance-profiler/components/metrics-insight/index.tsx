@@ -3,7 +3,10 @@ import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import {
+	FullPageScreenshot,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
 import { tips } from 'calypso/performance-profiler/utils/tips';
@@ -12,6 +15,7 @@ import { InsightHeader } from './insight-header';
 
 interface MetricsInsightProps {
 	insight: PerformanceMetricsItemQueryResponse;
+	fullPageScreenshot: FullPageScreenshot;
 	onClick?: () => void;
 	index: number;
 	url?: string;
@@ -90,11 +94,17 @@ const Content = styled.div`
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index, isWpcom, hash } = props;
+	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash } = props;
+	// Creates a list of URLs from the insight details to be used as context for the LLM query.
+	const insightDetailsContext = insight?.details?.items?.reduce( ( context, item ) => {
+		context += `* '${ item.url }' `;
+		return context;
+	}, '' );
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
-		insight.description ?? '',
+		insight.title ?? '',
+		insightDetailsContext ?? '',
 		hash,
 		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
@@ -126,6 +136,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		>
 			<Content>
 				<InsightContent
+					fullPageScreenshot={ fullPageScreenshot }
 					data={ {
 						...insight,
 						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),

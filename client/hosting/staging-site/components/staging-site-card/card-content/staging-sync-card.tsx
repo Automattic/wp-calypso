@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
@@ -238,8 +237,6 @@ const StagingToProductionSync = ( {
 		[ translate ]
 	);
 
-	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
-
 	return (
 		<>
 			{ showSyncPanel && (
@@ -276,7 +273,7 @@ const StagingToProductionSync = ( {
 									return <li key={ item.name }>{ item.label }</li>;
 								} ) }
 							</ConfirmationModalList>
-							{ stagingSiteSyncWoo && isSiteWooStore && isSqlSyncOptionChecked && (
+							{ isSiteWooStore && isSqlSyncOptionChecked && (
 								<SyncWarningContainer>
 									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
 									<SyncWarningContent>
@@ -533,10 +530,7 @@ export const SiteSyncCard = ( {
 	}, [ isSqlSyncOptionChecked, databaseSyncConfirmed, setdatabaseSyncConfirmed ] );
 
 	const disallowWooCommerceSync =
-		config.isEnabled( 'staging-site-sync-woo' ) &&
-		isSiteWooStore &&
-		isSqlSyncOptionChecked &&
-		! databaseSyncConfirmed;
+		isSiteWooStore && isSqlSyncOptionChecked && ! databaseSyncConfirmed;
 
 	const isSyncButtonDisabled =
 		disabled ||
@@ -562,8 +556,6 @@ export const SiteSyncCard = ( {
 			setSelectedItems( [] );
 		}
 	}, [ dispatch, selectedOption, status, syncError ] );
-
-	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
 
 	return (
 		<SyncCardContainer
@@ -624,7 +616,7 @@ export const SiteSyncCard = ( {
 					selectedItems={ selectedItems }
 					isSyncButtonDisabled={ isSyncButtonDisabled }
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
-					isSqlsOptionDisabled={ stagingSiteSyncWoo ? false : isSiteWooStore }
+					isSqlsOptionDisabled={ false }
 					isSiteWooStore={ isSiteWooStore }
 					databaseSyncConfirmed={ databaseSyncConfirmed }
 					setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }

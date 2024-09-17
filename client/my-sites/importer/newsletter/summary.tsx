@@ -36,10 +36,10 @@ function getStepTitle( importerStatus: StepStatus ) {
 	}
 
 	if ( importerStatus === 'importing' ) {
-		return 'Still working!';
+		return 'Almost there…';
 	}
 
-	return 'Nothing to import';
+	return 'Summary';
 }
 
 export default function Summary( { cardData, selectedSite }: StepProps ) {

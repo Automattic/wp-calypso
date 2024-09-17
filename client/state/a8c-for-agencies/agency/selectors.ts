@@ -32,6 +32,10 @@ export function hasAgency( state: A4AStore ): boolean {
 	return Array.isArray( agencies ) && agencies.length > 0;
 }
 
+export function isAgencyOwner( state: A4AStore ): boolean {
+	return getActiveAgency( state )?.user?.role === 'a4a_administrator';
+}
+
 export function isAgencyClientUser( state: A4AStore ): boolean {
 	return state.a8cForAgencies.agencies.isAgencyClientUser;
 }

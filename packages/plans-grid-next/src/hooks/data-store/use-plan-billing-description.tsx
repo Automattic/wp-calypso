@@ -64,8 +64,11 @@ export default function usePlanBillingDescription( {
 		yearlyVariantPricing &&
 		( ! introOffer || introOffer.isOfferComplete )
 	) {
-		const yearlyVariantMaybeDiscountedPrice =
-			yearlyVariantPricing.discountedPrice?.monthly || yearlyVariantPricing.originalPrice?.monthly;
+		const yearlyVariantMaybeDiscountedPrice = Number.isFinite(
+			yearlyVariantPricing.discountedPrice?.monthly
+		)
+			? yearlyVariantPricing.discountedPrice?.monthly
+			: yearlyVariantPricing.originalPrice?.monthly;
 
 		if (
 			yearlyVariantMaybeDiscountedPrice &&
@@ -85,7 +88,7 @@ export default function usePlanBillingDescription( {
 	}
 
 	const discountedPriceFullTermText =
-		currencyCode && discountedPrice?.full
+		currencyCode && typeof discountedPrice?.full === 'number'
 			? formatCurrency( discountedPrice.full, currencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
