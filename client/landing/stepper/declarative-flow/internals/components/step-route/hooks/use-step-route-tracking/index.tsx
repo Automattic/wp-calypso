@@ -68,7 +68,7 @@ export const useStepRouteTracking = ( {
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( ! hasRequestedSelectedSite || skipTracking ) {
-			return () => handleRecordStepComplete( { flowName, stepSlug, intent } );
+			return;
 		}
 
 		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
