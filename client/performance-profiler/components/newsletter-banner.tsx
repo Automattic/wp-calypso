@@ -30,12 +30,17 @@ const Container = styled.div`
 	}
 `;
 
+const HeadingContainer = styled.div`
+	flex: 1;
+`;
+
 const Heading = styled.div`
 	font-weight: 500;
 	line-height: 24px;
 	text-align: left;
 	color: var( --studio-white );
 	margin-bottom: 6px;
+	text-wrap: balance;
 `;
 
 const Body = styled.div`
@@ -61,6 +66,7 @@ const BlueberryButton = styled( Button )`
 `;
 const EmailReportImage = styled.img`
 	margin-bottom: -24px;
+	align-self: flex-end;
 `;
 
 export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
@@ -70,7 +76,7 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 
 	return (
 		<Container>
-			<div>
+			<HeadingContainer>
 				<Heading>
 					{ translate( 'Get notified about changes to your site’s performance—it’s free!' ) }
 				</Heading>
@@ -89,7 +95,7 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 						? translate( 'Enable email alerts' )
 						: translate( 'Sign up for email reports' ) }
 				</BlueberryButton>
-			</div>
+			</HeadingContainer>
 			{ ! isMobile && (
 				<EmailReportImage
 					src={ EmailReportScreenshot }
