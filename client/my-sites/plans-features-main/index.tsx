@@ -330,7 +330,9 @@ const PlansFeaturesMain = ( {
 
 	const {
 		isLoading: isLoadingSimplifiedFeaturesGridExperiment,
+		isTargetedView: isTargetedViewForSimplifiedFeaturesGridExperiment,
 		variant: simplifiedFeaturesGridExperimentVariant,
+		setVariantOverride: setSimplifiedFeaturesGridExperimentVariantOverride,
 	} = useSimplifiedFeaturesGridExperiment( {
 		flowName,
 		isInSignup,
@@ -717,6 +719,23 @@ const PlansFeaturesMain = ( {
 		[ simplifiedFeaturesGridExperimentVariant, translate ]
 	);
 
+	const viewAllPlansButton = (
+		<div className="plans-features-main__escape-hatch">
+			<Button
+				borderless
+				onClick={ () => {
+					if ( ! isTargetedViewForSimplifiedFeaturesGridExperiment ) {
+						setSimplifiedFeaturesGridExperimentVariantOverride( 'control' );
+					}
+
+					setForceDefaultPlans( true );
+				} }
+			>
+				{ translate( 'View all plans' ) }
+			</Button>
+		</div>
+	);
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -841,26 +860,14 @@ const PlansFeaturesMain = ( {
 										}
 									/>
 								) }
-								{ showEscapeHatch && hidePlansFeatureComparison && (
-									<div className="plans-features-main__escape-hatch">
-										<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
-											{ translate( 'View all plans' ) }
-										</Button>
-									</div>
-								) }
+								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
 								{ ! hidePlansFeatureComparison && (
 									<>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
 											label={ getComparisonGridToggleLabel() }
 										/>
-										{ showEscapeHatch && (
-											<div className="plans-features-main__escape-hatch">
-												<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
-													{ translate( 'View all plans' ) }
-												</Button>
-											</div>
-										) }
+										{ showEscapeHatch && viewAllPlansButton }
 										<div
 											ref={ plansComparisonGridRef }
 											className={ comparisonGridContainerClasses }
@@ -916,13 +923,7 @@ const PlansFeaturesMain = ( {
 												onClick={ toggleShowPlansComparisonGrid }
 												label={ translate( 'Hide comparison' ) }
 											/>
-											{ showEscapeHatch && (
-												<div className="plans-features-main__escape-hatch">
-													<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
-														{ translate( 'View all plans' ) }
-													</Button>
-												</div>
-											) }
+											{ showEscapeHatch && viewAllPlansButton }
 										</div>
 									</>
 								) }
