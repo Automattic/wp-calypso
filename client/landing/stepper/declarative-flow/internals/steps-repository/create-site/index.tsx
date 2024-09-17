@@ -205,6 +205,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
+		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
 			flow,
@@ -222,7 +224,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			mergedDomainCartItems,
 			siteUrl,
 			domainItem,
-			sourceSlug
+			sourceSlug,
+			siteIntent
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
