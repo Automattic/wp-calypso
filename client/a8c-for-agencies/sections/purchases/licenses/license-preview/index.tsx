@@ -52,7 +52,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
-	meta?: LicenseMeta | null;
+	meta?: LicenseMeta;
 	referral?: ReferralAPIResponse | null;
 }
 
@@ -157,7 +157,7 @@ export default function LicensePreview( {
 	);
 
 	const shouldShowTransferredBadge = () => {
-		const transferredDate = meta?.a4a_transferred_subscription_expiration;
+		const transferredDate = meta?.transferredSubscriptionExpiration;
 
 		if ( ! transferredDate ) {
 			return false;

@@ -253,7 +253,6 @@ export interface License {
 	parentLicenseId: number | null;
 	meta: LicenseMeta | null;
 	referral: ReferralAPIResponse | null;
-	meta: LicenseMeta;
 }
 
 export interface LicenseMeta {
@@ -261,6 +260,7 @@ export interface LicenseMeta {
 	wasDevSite?: boolean;
 	devSitePeriodStart?: string;
 	devSitePeriodEnd?: string;
+	transferredSubscriptionExpiration?: string;
 }
 
 export interface LicenseCounts {

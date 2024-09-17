@@ -17,9 +17,8 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
-	meta: LicenseMeta | null;
+	meta: APILicenseMeta | []; // The API returns an empty array if no meta is present, otherwise it's an object
 	referral: ReferralAPIResponse;
-	meta: APILicenseMeta;
 }
 
 export interface APILicenseMeta {
@@ -27,6 +26,7 @@ export interface APILicenseMeta {
 	a4a_was_dev_site?: string;
 	a4a_dev_site_period_end?: string;
 	a4a_dev_site_period_start?: string;
+	a4a_transferred_subscription_expiration?: string;
 }
 
 export default function formatLicenses( items: APILicense[] ): License[] {
@@ -46,9 +46,8 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 		ownerType: item.owner_type,
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
-		meta: item.meta,
-		referral: item.referral,
 		meta: formatLicenseMeta( item.meta ),
+		referral: item.referral,
 	} ) );
 }
 
@@ -57,11 +56,13 @@ export function formatLicenseMeta( meta: APILicenseMeta = {} ): LicenseMeta {
 	const wasDevSite = meta?.a4a_was_dev_site === '1';
 	const devSitePeriodEnd = meta?.a4a_dev_site_period_end;
 	const devSitePeriodStart = meta?.a4a_dev_site_period_start;
+	const transferredSubscriptionExpiration = meta?.a4a_transferred_subscription_expiration;
 
 	return {
 		isDevSite,
 		wasDevSite,
 		devSitePeriodEnd, // unix timestamp
 		devSitePeriodStart, // unix timestamp
+		transferredSubscriptionExpiration, // e.g.: "2025-09-15"
 	};
 }
