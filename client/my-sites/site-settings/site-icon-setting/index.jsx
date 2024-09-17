@@ -211,7 +211,7 @@ class SiteIconSetting extends Component {
 							{
 								args: [ 512 ],
 								components: {
-									a: <InlineSupportLink supportContext="site-icons" />,
+									a: <InlineSupportLink supportContext="site-icons" showIcon={ false } />,
 								},
 							}
 						) }
