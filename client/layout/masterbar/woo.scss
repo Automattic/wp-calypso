@@ -1903,7 +1903,8 @@ $breakpoint-mobile: 660px;
 		}
 
 		h3,
-		h1.formatted-header__title {
+		h1.formatted-header__title,
+		h1.magic-login__form-header {
 			font-family: "SF Pro Display", -apple-system, system-ui, sans-serif;
 			font-weight: 500;
 			margin-bottom: 15px;
