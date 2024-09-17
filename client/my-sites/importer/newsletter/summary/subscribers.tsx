@@ -13,7 +13,7 @@ export default function SubscriberSummary( { cardData, status }: Props ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ atSymbol } /> Subscriber importing was <strong>skipped</strong>
+					<Icon icon={ atSymbol } /> You <strong>skipped</strong> subscriber importing.
 				</p>
 			</div>
 		);
