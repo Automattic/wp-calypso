@@ -116,9 +116,12 @@ export default function NewsletterImporter( {
 		paidNewsletterData
 	);
 	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
-	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
-		from: fromSite,
-	} );
+	const nextStepUrl = addQueryArgs(
+		`/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`,
+		{
+			from: fromSite,
+		}
+	);
 
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
