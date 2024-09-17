@@ -17,7 +17,7 @@ export const useSupportChatLLMQuery = (
 		'Answer me in two topics in bold: "Why is this important?" and "How to fix this?".';
 	const contextToInclude = `Use each of the following context: ${ context }. Visit any links provided for more information.`;
 	const suggestionsToInclude =
-		'Add if the issue can be fixed automatically with a WordPress setting, an editor block setting, or a plugin. Prefer Automattic owned plugins. Add relevant links. Provide code snippets as a last resort.';
+		"Add if the issue can be fixed automatically with a core WordPress setting, a WordPress Block Editor setting, or a plugin. Provide code snippets as a last resort. Prefer Automattic owned plugins. Add relevant links and format them in hyperlinks. Don't suggest changing theme.";
 	const wpcomOrSelfHostedSuggestions = ! is_wpcom
 		? 'Do not show suggestions that work only in WordPress.com. Do not show any references to documentation or support forums related to WordPress.com.'
 		: 'Provide suggestions that work only in WordPress.com. Use WordPress.com documentation if availabble.';
