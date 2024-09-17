@@ -1,5 +1,4 @@
 import { Card, Badge } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
@@ -15,10 +14,9 @@ interface ExternalProps {
 type Props = ExternalProps & LocalizeProps;
 
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
-	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<div>
-			{ getWarningDescription( context, warnings.length, translate, hasEnTranslation ) && (
+			{ getWarningDescription( context, warnings.length, translate ) && (
 				<div className="eligibility-warnings__warning">
 					<div className="eligibility-warnings__message">
 						<span
@@ -27,7 +25,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 								'eligibility-warnings__message-description--hosting-features'
 							}` }
 						>
-							{ getWarningDescription( context, warnings.length, translate, hasEnTranslation ) }
+							{ getWarningDescription( context, warnings.length, translate ) }
 						</span>
 					</div>
 				</div>
@@ -89,8 +87,7 @@ function displayDomainNames( domainNames: DomainNames ) {
 function getWarningDescription(
 	context: string | null,
 	warningCount: number,
-	translate: LocalizeProps[ 'translate' ],
-	hasTranslation: ( arg: string ) => boolean
+	translate: LocalizeProps[ 'translate' ]
 ) {
 	const defaultCopy = translate(
 		'By proceeding the following change will be made to the site:',
@@ -126,23 +123,14 @@ function getWarningDescription(
 			);
 
 		case 'hosting-features':
-			return hasTranslation( 'By proceeding the following change will be made to the site:' )
-				? translate(
-						'By proceeding the following change will be made to the site:',
-						'By proceeding the following changes will be made to the site:',
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: translate(
-						'By activating all hosting features the following change will be made to the site:',
-						'By activating all hosting features the following changes will be made to the site:',
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  );
+			return translate(
+				'By proceeding the following change will be made to the site:',
+				'By proceeding the following changes will be made to the site:',
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		default:
 			return defaultCopy;
