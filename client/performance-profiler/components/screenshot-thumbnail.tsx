@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { TabType } from './header';
 
 const Container = styled.div< { activeTab: TabType } >`
-	flex: ${ ( props ) => ( props.activeTab === TabType.desktop ? '1 1 300px' : null ) };
+	flex: ${ ( props ) => ( props.activeTab === TabType.desktop ? '0 300px' : null ) };
 	height: 280px;
 	display: flex;
 	align-items: center;
