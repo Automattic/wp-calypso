@@ -219,7 +219,7 @@ export default function LicensePreview( {
 										),
 									},
 									args: {
-										date: meta?.a4a_transferred_subscription_expiration ?? '',
+										date: meta?.transferredSubscriptionExpiration ?? '',
 									},
 								}
 							) }

@@ -17,7 +17,6 @@ import {
 	DispatchRequest,
 	HttpAction,
 	License,
-	LicenseMeta,
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
@@ -43,9 +42,8 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
-	meta: LicenseMeta | null;
-	referral: ReferralAPIResponse | null;
 	meta: APILicenseMeta;
+	referral: ReferralAPIResponse | null;
 }
 
 interface APIPaginatedItems< T > {
@@ -122,9 +120,8 @@ export function formatLicenses( items: APILicense[] ): License[] {
 		ownerType: item.owner_type,
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
-		meta: item.meta,
-		referral: item.referral,
 		meta: formatLicenseMeta( item.meta ),
+		referral: item.referral,
 	} ) );
 }
 

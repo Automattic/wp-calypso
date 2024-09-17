@@ -26,6 +26,7 @@ export interface APILicenseMeta {
 	a4a_was_dev_site?: string;
 	a4a_dev_site_period_end?: string;
 	a4a_dev_site_period_start?: string;
+	a4a_transferred_subscription_id?: string;
 	a4a_transferred_subscription_expiration?: string;
 }
 
@@ -51,11 +52,17 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 	} ) );
 }
 
-export function formatLicenseMeta( meta: APILicenseMeta = {} ): LicenseMeta {
+export function formatLicenseMeta( meta: APILicenseMeta | [] ): LicenseMeta {
+	// The API returns an empty array if no meta is present, otherwise it's an object
+	if ( Array.isArray( meta ) ) {
+		return {};
+	}
+
 	const isDevSite = meta?.a4a_is_dev_site === '1';
 	const wasDevSite = meta?.a4a_was_dev_site === '1';
 	const devSitePeriodEnd = meta?.a4a_dev_site_period_end;
 	const devSitePeriodStart = meta?.a4a_dev_site_period_start;
+	const transferredSubscriptionId = meta?.a4a_transferred_subscription_id;
 	const transferredSubscriptionExpiration = meta?.a4a_transferred_subscription_expiration;
 
 	return {
@@ -63,6 +70,7 @@ export function formatLicenseMeta( meta: APILicenseMeta = {} ): LicenseMeta {
 		wasDevSite,
 		devSitePeriodEnd, // unix timestamp
 		devSitePeriodStart, // unix timestamp
+		transferredSubscriptionId,
 		transferredSubscriptionExpiration, // e.g.: "2025-09-15"
 	};
 }
