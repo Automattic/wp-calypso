@@ -254,6 +254,22 @@
 			color: var(--studio-green-80);
 		}
 	}
+
+	@media (max-width: 660px) {
+		.card {
+			display: flex;
+			flex-direction: column-reverse;
+			flex-wrap: wrap;
+			gap: 10px;
+
+			.badge {
+				position: relative;
+				right: unset;
+				width: fit-content;
+				align-self: flex-start;
+			}
+		}
+	}
 }
 
 .eligibility-warnings__warnings-card {
