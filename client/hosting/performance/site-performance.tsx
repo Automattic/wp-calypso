@@ -11,11 +11,14 @@ import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basi
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getRequest from 'calypso/state/selectors/get-request';
+import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
+import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
 import { getSitePagesQueryKey, useSitePages } from './hooks/useSitePages';
 
@@ -77,7 +80,8 @@ const usePerformanceReport = (
 export const SitePerformance = () => {
 	const [ activeTab, setActiveTab ] = useState< Tab >( 'mobile' );
 	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
+	const site = useSelector( getSelectedSite );
+	const siteId = site?.ID;
 
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
@@ -126,6 +130,17 @@ export const SitePerformance = () => {
 	};
 
 	const performanceReport = usePerformanceReport( wpcom_performance_url, activeTab );
+
+	const isSitePublic =
+		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+
+	const siteIsLaunching = useSelector(
+		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
+	);
+
+	const onLaunchSiteClick = () => {
+		dispatch( launchSite( siteId! ) );
+	};
 
 	return (
 		<div className="site-performance">
@@ -188,12 +203,19 @@ export const SitePerformance = () => {
 				/>
 				<DeviceTabControls onDeviceTabChange={ setActiveTab } value={ activeTab } />
 			</div>
-			{ currentPage && (
-				<PerformanceReport
-					{ ...performanceReport }
-					pageTitle={ currentPage.label }
-					onRetestClick={ retestPage }
+			{ ! isSitePublic ? (
+				<ReportUnavailable
+					isLaunching={ siteIsLaunching }
+					onLaunchSiteClick={ onLaunchSiteClick }
 				/>
+			) : (
+				currentPage && (
+					<PerformanceReport
+						{ ...performanceReport }
+						pageTitle={ currentPage.label }
+						onRetestClick={ retestPage }
+					/>
+				)
 			) }
 		</div>
 	);
