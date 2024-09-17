@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -205,7 +206,11 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+		const siteIntent =
+			config.isEnabled( 'migration-flow/enable-white-labeled-plugin' ) &&
+			isMigrationSignupFlow( flow )
+				? 'migration'
+				: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
