@@ -153,8 +153,20 @@ export default function LicensePreview( {
 		</Badge>
 	);
 
-	const isMigratedSubscription = !! meta?.a4a_transferred_subscription_expiration;
-	const MigratedBadge = () => {
+	const shouldShowTransferredBadge = () => {
+		const transferredDate = meta?.a4a_transferred_subscription_expiration;
+
+		if ( ! transferredDate ) {
+			return false;
+		}
+
+		// Only show the badge from now until 60 days after the transferred date.
+		const sixtyDaysAfter = new Date( transferredDate );
+		sixtyDaysAfter.setDate( sixtyDaysAfter.getDate() + 60 );
+		return new Date() < sixtyDaysAfter;
+	};
+
+	const TransferredBadge = () => {
 		const [ showPopover, setShowPopover ] = useState( false );
 		const wrapperRef = useRef< HTMLSpanElement | null >( null );
 
@@ -333,7 +345,7 @@ export default function LicensePreview( {
 
 				<div className="license-preview__badge-container">
 					{ !! isParentLicense && bundleCountContent }
-					{ !! isMigratedSubscription && <MigratedBadge /> }
+					{ shouldShowTransferredBadge() && <TransferredBadge /> }
 				</div>
 
 				<div>
