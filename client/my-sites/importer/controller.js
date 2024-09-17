@@ -27,6 +27,14 @@ export function importSite( context, next ) {
 		if ( fromSite ) {
 			path += '?from-site=' + fromSite;
 		}
+		if ( engine === 'substack' && config.isEnabled( 'importers/newsletter' ) ) {
+			if ( fromSite ) {
+				page.redirect( `/import/newsletter/substack/${ siteSlug }?from=${ fromSite }` );
+				return;
+			}
+			page.redirect( `/import/newsletter/substack/${ siteSlug }` );
+			return;
+		}
 		page.replace( path );
 	};
 
