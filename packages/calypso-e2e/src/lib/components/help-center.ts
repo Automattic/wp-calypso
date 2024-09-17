@@ -180,9 +180,11 @@ export class HelpCenterComponent {
 				( response ) =>
 					response.url().includes( '/odie/chat/wpcom-support-chat' ) && response.status() === 200
 			),
-			sendMessageForm.locator( 'textarea' ).fill( query ),
-			// Programmatically trigger the form submission to avoid issues with the cookie banner.
-			sendMessageForm.dispatchEvent( 'submit' ),
+			sendMessageForm
+				.locator( 'textarea' )
+				.fill( query )
+				// Programmatically trigger the form submission to avoid issues with the cookie banner.
+				.then( () => sendMessageForm.dispatchEvent( 'submit' ) ),
 		] );
 	}
 

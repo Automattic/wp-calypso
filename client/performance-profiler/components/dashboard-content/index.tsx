@@ -34,8 +34,20 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayMigrationBanner = true,
 	activeTab = TabType.mobile,
 }: PerformanceProfilerDashboardContentProps ) => {
-	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
-		performanceReport;
+	const {
+		overall_score,
+		fcp,
+		lcp,
+		cls,
+		inp,
+		ttfb,
+		tbt,
+		audits,
+		history,
+		screenshots,
+		is_wpcom,
+		fullPageScreenshot,
+	} = performanceReport;
 	const insightsRef = useRef< HTMLDivElement >( null );
 
 	return (
@@ -81,6 +93,7 @@ export const PerformanceProfilerDashboardContent = ( {
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && (
 					<InsightsSection
+						fullPageScreenshot={ fullPageScreenshot }
 						audits={ audits }
 						url={ url }
 						isWpcom={ is_wpcom }

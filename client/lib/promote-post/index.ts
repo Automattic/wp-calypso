@@ -47,6 +47,7 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
+				campaignId?: string;
 				origin: string;
 				originProps?: DSPOriginProps;
 				onLoaded?: () => void;
@@ -162,7 +163,8 @@ export async function showDSP(
 	jetpackVersion?: string,
 	blazeAdsVersion?: string,
 	dispatch?: Dispatch,
-	dspOriginProps?: DSPOriginProps
+	dspOriginProps?: DSPOriginProps,
+	campaignId?: string
 ): Promise< boolean > {
 	const origin = getDSPOrigin( dspOriginProps ?? {} );
 
@@ -207,6 +209,7 @@ export async function showDSP(
 				localizeUrlFn: localizeUrlFn,
 				locale,
 				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
+				campaignId: campaignId && campaignId !== '0' ? campaignId : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isMobileApp ? __( 'Tap to add image' ) : undefined,

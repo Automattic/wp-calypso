@@ -13,17 +13,17 @@ import { HelpCenterContactPage } from './help-center-contact-page';
 
 import './help-center-extra-contact-option.scss';
 
-export const ExtraContactOptions = ( { isUserElegible }: { isUserElegible: boolean } ) => {
+export const ExtraContactOptions = ( { isUserEligible }: { isUserEligible: boolean } ) => {
 	const navigate = useNavigate();
 	const data = useContactFormTitle( 'FORUM' );
 	const handleOnClick = () => {
 		recordTracksEvent( 'calypso_odie_extra_contact_option', {
 			contact_option: 'forum',
-			is_user_elegible: false,
+			is_user_eligible: false,
 		} );
 		navigate( '/contact-form?mode=FORUM' );
 	};
-	if ( ! isUserElegible ) {
+	if ( ! isUserEligible ) {
 		return (
 			<div className="help-center-contact-support">
 				<button onClick={ handleOnClick }>
@@ -46,7 +46,7 @@ export const ExtraContactOptions = ( { isUserElegible }: { isUserElegible: boole
 			<HelpCenterContactPage
 				hideHeaders
 				trackEventName="calypso_odie_extra_contact_option"
-				isUserElegible
+				isUserEligible
 			/>
 		</div>
 	);

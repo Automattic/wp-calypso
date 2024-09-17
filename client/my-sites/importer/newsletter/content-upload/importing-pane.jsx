@@ -31,7 +31,7 @@ const sum = ( a, b ) => a + b;
  *     …
  * }
  */
-export const calculateProgress = ( progress ) => {
+const calculateProgress = ( progress ) => {
 	// The backend does not output the 'progress' field for all the enqueued not running imports.
 	if ( ! progress ) {
 		return 0;
@@ -55,13 +55,13 @@ export const calculateProgress = ( progress ) => {
 	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
-export const resourcesRemaining = ( progress ) =>
+const resourcesRemaining = ( progress ) =>
 	Object.keys( progress )
 		.map( ( k ) => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
-export const hasProgressInfo = ( progress ) => {
+const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
 	}

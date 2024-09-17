@@ -44,6 +44,9 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 
 	recentlyCreatedSiteId: null,
 	setRecentlyCreatedSiteId: () => {},
+
+	isRecentlyCreatedSiteDevelopment: false,
+	setIsRecentlyCreatedSiteDevelopment: () => {},
 } );
 
 export default SitesDashboardContext;

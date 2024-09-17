@@ -1,9 +1,19 @@
 import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsDetailsQueryResponse } from 'calypso/data/site-profiler/types';
+import {
+	FullPageScreenshot,
+	PerformanceMetricsDetailsQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { getFormattedNumber, getFormattedSize } from 'calypso/site-profiler/utils/formatting-data';
+import { InsightScreenshotWithOverlay } from './insight-screenshot';
 
-export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryResponse } ) {
+export function InsightTable( {
+	data,
+	fullPageScreenshot,
+}: {
+	data: PerformanceMetricsDetailsQueryResponse;
+	fullPageScreenshot: FullPageScreenshot;
+} ) {
 	const { headings = [], items = [] } = data ?? {};
 
 	return (
@@ -21,7 +31,11 @@ export function InsightTable( { data }: { data: PerformanceMetricsDetailsQueryRe
 						<tr key={ `tr-${ index }` }>
 							{ headings.map( ( heading ) => (
 								<td key={ `td-${ index }-${ heading.key }` }>
-									<Cell data={ item[ heading.key ] } headingValueType={ heading.valueType } />
+									<Cell
+										data={ item[ heading.key ] }
+										fullPageScreenshot={ fullPageScreenshot }
+										headingValueType={ heading.valueType }
+									/>
 								</td>
 							) ) }
 						</tr>
@@ -61,21 +75,40 @@ function SubRows( { items, headings }: { items: any[]; headings: any[] } ) {
 function Cell( {
 	data,
 	headingValueType,
+	fullPageScreenshot,
 }: {
 	data: string | number | { [ key: string ]: any };
 	headingValueType: string;
+	fullPageScreenshot?: FullPageScreenshot;
 } ) {
 	const translate = useTranslate();
+
+	const renderNode = ( data: { [ key: string ]: any } ) => {
+		const rect = data.boundingRect;
+
+		if ( fullPageScreenshot && rect && rect.width !== 0 && rect.height !== 0 ) {
+			const maxThumbnailSize = { width: 147, height: 100 };
+			return (
+				<InsightScreenshotWithOverlay
+					nodeId={ data.lhId }
+					screenshot={ fullPageScreenshot.screenshot }
+					elementRectSC={ rect }
+					maxRenderSizeDC={ maxThumbnailSize }
+				/>
+			);
+		}
+		return (
+			<div>
+				<p>{ data?.nodeLabel }</p>
+				<code>{ data?.snippet }</code>
+			</div>
+		);
+	};
 
 	if ( typeof data === 'object' ) {
 		switch ( data?.type ) {
 			case 'node':
-				return (
-					<div>
-						<p>{ data?.nodeLabel }</p>
-						<code>{ data?.snippet }</code>
-					</div>
-				);
+				return renderNode( data );
 
 			case 'code':
 				return (
