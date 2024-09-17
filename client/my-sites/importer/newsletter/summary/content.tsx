@@ -1,41 +1,75 @@
 import { Icon, post } from '@wordpress/icons';
+import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
 	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return `We imported ${ postsNumber } posts, ${ pagesNumber } pages and ${ attachmentsNumber } media.`;
+		return (
+			<>
+				We imported <strong>{ postsNumber } posts</strong>, <strong>{ pagesNumber } pages</strong>{ ' ' }
+				and
+				<strong>{ attachmentsNumber } media</strong>.
+			</>
+		);
 	}
 
 	if ( postsNumber > 0 && pagesNumber > 0 ) {
-		return `We imported ${ postsNumber } posts and ${ pagesNumber } pages`;
+		return (
+			<>
+				We imported <strong>{ postsNumber } posts</strong> and{ ' ' }
+				<strong>{ pagesNumber } pages</strong>.
+			</>
+		);
 	}
 
 	if ( postsNumber > 0 && attachmentsNumber > 0 ) {
-		return `We imported ${ postsNumber } posts and ${ attachmentsNumber } media`;
+		return (
+			<>
+				We imported <strong>{ postsNumber } posts</strong> and{ ' ' }
+				<strong>{ attachmentsNumber } media</strong>.
+			</>
+		);
 	}
 
 	if ( pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return `We imported ${ postsNumber } pages and ${ attachmentsNumber } media`;
+		return (
+			<>
+				We imported <strong>{ postsNumber }</strong> pages and{ ' ' }
+				<strong>{ attachmentsNumber } media</strong>.
+			</>
+		);
 	}
 
 	if ( postsNumber > 0 ) {
-		return `We imported ${ postsNumber } posts.`;
+		return (
+			<>
+				We imported <strong>{ postsNumber } posts</strong>.
+			</>
+		);
 	}
 
 	if ( pagesNumber > 0 ) {
-		return `We imported ${ postsNumber } pages.`;
+		return (
+			<>
+				We imported <strong>{ postsNumber } pages</strong>.
+			</>
+		);
 	}
 
 	if ( attachmentsNumber > 0 ) {
-		return `We imported ${ postsNumber } media.`;
+		return (
+			<>
+				We imported <strong>{ postsNumber } media</strong>.
+			</>
+		);
 	}
 }
 
-type Props = {
-	cardData: any;
+interface ContentSummaryProps {
+	stepContent: ContentStepContent;
 	status: string;
-};
+}
 
-export default function ContentSummary( { status, cardData }: Props ) {
+export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
@@ -60,7 +94,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 	}
 
 	if ( status === 'done' ) {
-		const progress = cardData.progress;
+		const progress = stepContent.progress;
 
 		return (
 			<div className="summary__content">

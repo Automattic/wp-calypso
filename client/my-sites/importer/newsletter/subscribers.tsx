@@ -2,7 +2,7 @@ import StepDone from './subscribers/step-done';
 import StepImporting from './subscribers/step-importing';
 import StepInitial from './subscribers/step-initial';
 import StepPending from './subscribers/step-pending';
-import { StepProps } from './types';
+import { SubscribersStepProps } from './types';
 
 export default function Subscribers( {
 	nextStepUrl,
@@ -15,7 +15,7 @@ export default function Subscribers( {
 	cardData,
 	engine,
 	setAutoFetchData,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	// The default step
 	let Step = StepInitial;
 	switch ( status ) {

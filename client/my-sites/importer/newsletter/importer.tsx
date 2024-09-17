@@ -18,12 +18,10 @@ import LogoChain from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
-import { EngineTypes, StatusType } from './types';
+import { EngineTypes } from './types';
 import { getSetpProgressSteps } from './utils';
 
 import './importer.scss';
-
-const steps = [ Content, Subscribers, Summary ];
 
 const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
@@ -57,10 +55,6 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
-	// Steps
-	let stepIndex = 0;
-	let nextStep = stepSlugs[ 0 ];
-
 	const { data: paidNewsletterData, isFetching: isFetchingPaidNewsletter } = usePaidNewsletterQuery(
 		engine,
 		step,
@@ -85,30 +79,25 @@ export default function NewsletterImporter( {
 		paidNewsletterData?.steps,
 	] );
 
-	stepSlugs.forEach( ( stepName, index ) => {
-		if ( stepName === step ) {
-			stepIndex = index;
-			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
+	const { currentStepNumber, nextStepSlug } = stepSlugs.reduce(
+		function ( result, curr, index ) {
+			if ( curr === step ) {
+				result.currentStepNumber = index;
+				result.nextStepSlug = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
+			}
+
+			return result;
+		},
+		{
+			currentStepNumber: 0,
+			nextStepSlug: stepSlugs[ 1 ],
 		}
-	} );
+	);
 
 	const { skipNextStep } = useSkipNextStepMutation();
 	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
 
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
-
-	let stepContent = {};
-	let stepStatus: StatusType = 'initial';
-	if ( paidNewsletterData?.steps ) {
-		// This is useful for the summary step.
-		if ( ! paidNewsletterData?.steps[ step ] ) {
-			stepContent = paidNewsletterData.steps;
-		} else {
-			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
-		}
-
-		stepStatus = paidNewsletterData?.steps[ step ]?.status;
-	}
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
@@ -120,27 +109,25 @@ export default function NewsletterImporter( {
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
-	const currentStepSlug = stepSlugs[ stepIndex ];
 	const stepsProgress = getSetpProgressSteps(
 		engine,
 		selectedSite?.slug || '',
 		fromSite,
 		paidNewsletterData
 	);
-	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ currentStepSlug }`;
-	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
-		from: fromSite,
-	} );
-
-	const Step = steps[ stepIndex ];
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
+	const nextStepUrl = addQueryArgs(
+		`/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`,
+		{
+			from: fromSite,
+		}
+	);
 
 	return (
-		<div
-			className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + currentStepSlug ) }
-		>
+		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
-
 			<FormattedHeader headerText={ getTitle( urlData ) } />
+
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
 					stepUrl={ stepUrl }
@@ -150,24 +137,43 @@ export default function NewsletterImporter( {
 			) }
 
 			{ validFromSite && ! isResetPaidNewsletterPending && (
-				<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
+				<StepProgress steps={ stepsProgress } currentStep={ currentStepNumber } />
 			) }
 
-			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && (
-				<Step
-					siteSlug={ siteSlug }
-					nextStepUrl={ nextStepUrl }
-					selectedSite={ selectedSite }
-					fromSite={ fromSite }
-					skipNextStep={ () => {
-						skipNextStep( selectedSite.ID, engine, nextStep, step );
-					} }
-					cardData={ stepContent }
-					engine={ engine }
-					status={ stepStatus }
-					isFetchingContent={ isFetchingPaidNewsletter }
-					setAutoFetchData={ setAutoFetchData }
-				/>
+			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
+				<>
+					{ step === 'content' && (
+						<Content
+							nextStepUrl={ nextStepUrl }
+							engine={ engine }
+							selectedSite={ selectedSite }
+							fromSite={ fromSite }
+							siteSlug={ siteSlug }
+							skipNextStep={ () => {
+								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
+							} }
+						/>
+					) }
+					{ step === 'subscribers' && (
+						<Subscribers
+							siteSlug={ siteSlug }
+							nextStepUrl={ nextStepUrl }
+							selectedSite={ selectedSite }
+							fromSite={ fromSite }
+							skipNextStep={ () => {
+								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
+							} }
+							cardData={ paidNewsletterData.steps[ step ]?.content }
+							engine={ engine }
+							status={ paidNewsletterData.steps[ step ]?.status || 'initial' }
+							isFetchingContent={ isFetchingPaidNewsletter }
+							setAutoFetchData={ setAutoFetchData }
+						/>
+					) }
+					{ step === 'summary' && (
+						<Summary selectedSite={ selectedSite } steps={ paidNewsletterData.steps } />
+					) }
+				</>
 			) }
 		</div>
 	);
