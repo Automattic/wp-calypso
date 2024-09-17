@@ -97,19 +97,6 @@ export default function NewsletterImporter( {
 
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
-	let stepContent = {};
-	let stepStatus: StatusType = 'initial';
-	if ( paidNewsletterData?.steps ) {
-		// This is useful for the summary step.
-		if ( ! paidNewsletterData?.steps[ step ] ) {
-			stepContent = paidNewsletterData.steps;
-		} else {
-			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
-		}
-
-		stepStatus = paidNewsletterData?.steps[ step ]?.status;
-	}
-
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
 			if ( selectedSite && step === stepSlugs[ 0 ] && validFromSite === false ) {
@@ -120,14 +107,26 @@ export default function NewsletterImporter( {
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
-	const currentStepSlug = stepSlugs[ stepIndex ];
+	let stepContent = {};
+	let stepStatus: StatusType = 'initial';
+
+	if ( paidNewsletterData?.steps ) {
+		if ( step === 'summary' ) {
+			stepContent = paidNewsletterData.steps;
+		} else {
+			stepContent = paidNewsletterData.steps[ step ]?.content || {};
+		}
+
+		stepStatus = paidNewsletterData?.steps[ step ]?.status;
+	}
+
 	const stepsProgress = getSetpProgressSteps(
 		engine,
 		selectedSite?.slug || '',
 		fromSite,
 		paidNewsletterData
 	);
-	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ currentStepSlug }`;
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
 		from: fromSite,
 	} );
@@ -135,12 +134,10 @@ export default function NewsletterImporter( {
 	const Step = steps[ stepIndex ];
 
 	return (
-		<div
-			className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + currentStepSlug ) }
-		>
+		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
-
 			<FormattedHeader headerText={ getTitle( urlData ) } />
+
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
 					stepUrl={ stepUrl }
