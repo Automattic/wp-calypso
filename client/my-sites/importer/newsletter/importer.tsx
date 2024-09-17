@@ -18,7 +18,7 @@ import LogoChain from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
-import { EngineTypes, StatusType } from './types';
+import { EngineTypes } from './types';
 import { getSetpProgressSteps } from './utils';
 
 import './importer.scss';
@@ -55,10 +55,6 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
-	// Steps
-	let stepIndex = 0;
-	let nextStep = stepSlugs[ 0 ];
-
 	const { data: paidNewsletterData, isFetching: isFetchingPaidNewsletter } = usePaidNewsletterQuery(
 		engine,
 		step,
@@ -83,10 +79,13 @@ export default function NewsletterImporter( {
 		paidNewsletterData?.steps,
 	] );
 
+	let currentStepNumber = 0;
+	let nextStepSlug = stepSlugs[ 0 ];
+
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
-			stepIndex = index;
-			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
+			currentStepNumber = index;
+			nextStepSlug = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 	} );
 
@@ -104,10 +103,6 @@ export default function NewsletterImporter( {
 			setValidFromSite( true );
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
-
-	const stepContent =
-		step === 'summary' ? paidNewsletterData?.steps : paidNewsletterData?.steps[ step ]?.content;
-	const stepStatus: StatusType = paidNewsletterData?.steps[ step ]?.status || 'initial';
 
 	const stepsProgress = getSetpProgressSteps(
 		engine,
@@ -134,7 +129,7 @@ export default function NewsletterImporter( {
 			) }
 
 			{ validFromSite && ! isResetPaidNewsletterPending && (
-				<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
+				<StepProgress steps={ stepsProgress } currentStep={ currentStepNumber } />
 			) }
 
 			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
@@ -147,7 +142,7 @@ export default function NewsletterImporter( {
 							fromSite={ fromSite }
 							siteSlug={ siteSlug }
 							skipNextStep={ () => {
-								skipNextStep( selectedSite.ID, engine, nextStep, step );
+								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
 							} }
 						/>
 					) }
@@ -158,11 +153,11 @@ export default function NewsletterImporter( {
 							selectedSite={ selectedSite }
 							fromSite={ fromSite }
 							skipNextStep={ () => {
-								skipNextStep( selectedSite.ID, engine, nextStep, step );
+								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
 							} }
-							cardData={ stepContent }
+							cardData={ paidNewsletterData.steps[ step ]?.content }
 							engine={ engine }
-							status={ stepStatus }
+							status={ paidNewsletterData.steps[ step ]?.status || 'initial' }
 							isFetchingContent={ isFetchingPaidNewsletter }
 							setAutoFetchData={ setAutoFetchData }
 						/>
