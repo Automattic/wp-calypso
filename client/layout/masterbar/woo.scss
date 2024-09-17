@@ -24,6 +24,8 @@ $breakpoint-mobile: 660px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
 	$gray-60: #50575e;
 	$gray-50: #646970;
+	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
+	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
 
 	background: #fff;
 	min-height: 100%;
@@ -1898,14 +1900,14 @@ $breakpoint-mobile: 660px;
 	// Core Profiler + Passwordless
 	&.is-woocommerce-core-profiler-flow.is-woo-passwordless {
 		* {
-			font-family: "SF Pro Text", -apple-system, system-ui, sans-serif;
+			font-family: $woo-sfpro-text-font;
 			font-weight: 400;
 		}
 
 		h3,
 		h1.formatted-header__title,
 		h1.magic-login__form-header {
-			font-family: "SF Pro Display", -apple-system, system-ui, sans-serif;
+			font-family: $woo-sfpro-display-font;
 			font-weight: 500;
 			margin-bottom: 15px;
 		}
@@ -2048,6 +2050,9 @@ $breakpoint-mobile: 660px;
 					span {
 						font-size: 0.875rem;
 						letter-spacing: 0.32px;
+						font-family: $woo-sfpro-display-font;
+						font-weight: 500;
+						margin-left: 0;
 					}
 				}
 			}
