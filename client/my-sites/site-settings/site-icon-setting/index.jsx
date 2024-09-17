@@ -207,7 +207,7 @@ class SiteIconSetting extends Component {
 						{ translate(
 							'The Site Icon is used as a browser and app icon for your site.' +
 								' Icons must be square, and at least %s pixels wide and tall.' +
-								' {{a}}Learn more{{/a}}',
+								' {{a}}Learn more{{/a}}.',
 							{
 								args: [ 512 ],
 								components: {
