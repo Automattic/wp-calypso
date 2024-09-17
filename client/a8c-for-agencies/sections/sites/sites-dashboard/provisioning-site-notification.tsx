@@ -11,9 +11,10 @@ type BannerProps = {
 	siteId: number;
 	migration?: boolean;
 	development?: boolean;
+	onDismiss?: () => void;
 };
 
-function Banner( { siteId, migration, development }: BannerProps ) {
+function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
@@ -52,12 +53,17 @@ function Banner( { siteId, migration, development }: BannerProps ) {
 				}
 		  );
 
+	const onClose = () => {
+		setShowBanner( false );
+		onDismiss?.();
+	};
+
 	return (
 		showBanner && (
 			<NoticeBanner
 				level={ isReady ? 'success' : 'warning' }
 				hideCloseButton={ ! isReady }
-				onClose={ () => setShowBanner( false ) }
+				onClose={ onClose }
 				title={
 					isReady
 						? translate( 'Your WordPress.com site is ready!' )
@@ -90,7 +96,7 @@ function Banner( { siteId, migration, development }: BannerProps ) {
 }
 
 export default function ProvisioningSiteNotification() {
-	const { provisioningSites } = useTrackProvisioningSites();
+	const { provisioningSites, untrackSiteId } = useTrackProvisioningSites();
 
 	return provisioningSites.map( ( { id, migration, development } ) => {
 		return (
@@ -99,6 +105,7 @@ export default function ProvisioningSiteNotification() {
 				siteId={ id }
 				migration={ migration }
 				development={ development }
+				onDismiss={ () => untrackSiteId( id ) }
 			/>
 		);
 	} );

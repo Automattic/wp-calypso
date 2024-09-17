@@ -12,10 +12,15 @@ type ProvisioningSite = {
 export default function useTrackProvisioningSites() {
 	const [ provisioningSites, setProvisioningSites ] = useState< ProvisioningSite[] >( [] );
 
-	useEffect( () => {
+	const reload = useCallback( () => {
 		const storedSites = localStorage.getItem( 'provisioningSites' );
 		if ( storedSites ) {
-			setProvisioningSites( JSON.parse( storedSites ) );
+			const sites: ProvisioningSite[] = JSON.parse( storedSites );
+			// We remove the site from tracking if it is more than 5 minutes.
+			const activeSites = sites.filter( ( { ttl } ) => ttl >= new Date().getTime() );
+
+			setProvisioningSites( activeSites );
+			localStorage.setItem( 'provisioningSites', JSON.stringify( activeSites ) );
 		}
 	}, [] );
 
@@ -24,21 +29,39 @@ export default function useTrackProvisioningSites() {
 			siteId: number,
 			{ migration, development }: { migration?: boolean; development?: boolean } = {}
 		) => {
-			setProvisioningSites( ( prevSites ) => {
-				const updatedSites = [
-					...prevSites,
-					{ id: siteId, migration, development, ttl: new Date().getTime() + TTL_DURATION },
-				];
+			const updatedSites = [
+				...provisioningSites,
+				{ id: siteId, migration, development, ttl: new Date().getTime() + TTL_DURATION },
+			];
 
-				localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
-				return updatedSites;
-			} );
+			localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
+			window.dispatchEvent( new Event( 'storage' ) );
 		},
-		[]
+		[ provisioningSites ]
 	);
+
+	const untrackSiteId = useCallback(
+		( siteId: number ) => {
+			const updatedSites = provisioningSites.filter( ( { id } ) => id !== siteId );
+
+			localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
+			window.dispatchEvent( new Event( 'storage' ) );
+		},
+		[ provisioningSites ]
+	);
+
+	useEffect( () => {
+		window.addEventListener( 'storage', reload );
+		reload();
+
+		return () => {
+			window.removeEventListener( 'storage', reload );
+		};
+	}, [ reload ] );
 
 	return {
 		trackSiteId,
+		untrackSiteId,
 		provisioningSites,
 	};
 }
