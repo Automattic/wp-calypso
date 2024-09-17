@@ -1,11 +1,9 @@
-import page from '@automattic/calypso-router';
-import { Spinner } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
-import StepProgress, { ClickHandler } from 'calypso/components/step-progress';
+import StepProgress from 'calypso/components/step-progress';
 import {
 	StepId,
 	usePaidNewsletterQuery,
@@ -16,17 +14,18 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Content from './content';
-import { LogoChain } from './logo-chain';
-import PaidSubscribers from './paid-subscribers';
+import LogoChain from './logo-chain';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
+import { EngineTypes, StatusType } from './types';
+import { getSetpProgressSteps } from './utils';
 
 import './importer.scss';
 
-const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
+const steps = [ Content, Subscribers, Summary ];
 
-const stepSlugs: StepId[] = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -35,7 +34,7 @@ const logoChainLogos = [
 
 type NewsletterImporterProps = {
 	siteSlug: string;
-	engine: string;
+	engine: EngineTypes;
 	step?: StepId;
 };
 
@@ -58,43 +57,6 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
-	const stepsProgress: ClickHandler[] = [
-		{
-			message: 'Content',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/content`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
-		{
-			message: 'Subscribers',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/subscribers`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
-		{
-			message: 'Paid Subscribers',
-			onClick: () => {
-				page(
-					addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/paid-subscribers`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-		},
-		{ message: 'Summary', onClick: () => {} },
-	];
-
 	// Steps
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
@@ -115,14 +77,6 @@ export default function NewsletterImporter( {
 		} else {
 			setAutoFetchData( false );
 		}
-
-		if (
-			! paidNewsletterData?.steps?.[ 'paid-subscribers' ]?.content &&
-			step === 'paid-subscribers'
-		) {
-			// If we have empty content
-			setAutoFetchData( true );
-		}
 	}, [
 		paidNewsletterData?.steps?.content?.status,
 		paidNewsletterData?.steps?.subscribers?.status,
@@ -136,16 +90,6 @@ export default function NewsletterImporter( {
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
-
-		if ( paidNewsletterData?.steps ) {
-			const status = paidNewsletterData?.steps[ stepName ]?.status ?? '';
-			if ( status === 'done' ) {
-				stepsProgress[ index ].indicator = <Icon icon={ check } />;
-			}
-			if ( status === 'importing' ) {
-				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
-			}
-		}
 	} );
 
 	const { skipNextStep } = useSkipNextStepMutation();
@@ -154,6 +98,7 @@ export default function NewsletterImporter( {
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
 	let stepContent = {};
+	let stepStatus: StatusType = 'initial';
 	if ( paidNewsletterData?.steps ) {
 		// This is useful for the summary step.
 		if ( ! paidNewsletterData?.steps[ step ] ) {
@@ -161,6 +106,8 @@ export default function NewsletterImporter( {
 		} else {
 			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
 		}
+
+		stepStatus = paidNewsletterData?.steps[ step ]?.status;
 	}
 
 	useEffect( () => {
@@ -173,15 +120,24 @@ export default function NewsletterImporter( {
 		}
 	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
-	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ stepSlugs[ stepIndex ] }`;
+	const currentStepSlug = stepSlugs[ stepIndex ];
+	const stepsProgress = getSetpProgressSteps(
+		engine,
+		selectedSite?.slug || '',
+		fromSite,
+		paidNewsletterData
+	);
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ currentStepSlug }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
 		from: fromSite,
 	} );
 
-	const Step = steps[ stepIndex ] || steps[ 0 ];
+	const Step = steps[ stepIndex ];
 
 	return (
-		<div className="newsletter-importer">
+		<div
+			className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + currentStepSlug ) }
+		>
 			<LogoChain logos={ logoChainLogos } />
 
 			<FormattedHeader headerText={ getTitle( urlData ) } />
@@ -206,11 +162,9 @@ export default function NewsletterImporter( {
 					skipNextStep={ () => {
 						skipNextStep( selectedSite.ID, engine, nextStep, step );
 					} }
-					// FIXME
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-expect-error
 					cardData={ stepContent }
 					engine={ engine }
+					status={ stepStatus }
 					isFetchingContent={ isFetchingPaidNewsletter }
 					setAutoFetchData={ setAutoFetchData }
 				/>

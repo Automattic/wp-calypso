@@ -31,11 +31,6 @@
 		@include a4a-font-body-lg;
 		padding-block-end: 24px;
 	}
-
-	.a4a-request-wp-admin-access__learn-more {
-		@include a4a-font-body-md($font-weight: 600);
-		padding-block-end: 8px;
-	}
 }
 
 .a4a-request-wp-admin-access__illustration {

@@ -145,7 +145,7 @@ window.AppBoot = async () => {
 	// Reset the selected site ID when the stepper is loaded.
 	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as AnyAction );
 
-	geolocateCurrencySymbol();
+	await geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 

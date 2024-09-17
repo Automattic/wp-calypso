@@ -33,6 +33,13 @@
 		border-radius: 4px;
 	}
 
+	.form-field-description {
+		margin-top: -20px;
+		font-size: rem(14px);
+		font-weight: 400;
+		color: var(--color-neutral-50);
+	}
+
 	@include break-medium {
 		margin: auto;
 	}

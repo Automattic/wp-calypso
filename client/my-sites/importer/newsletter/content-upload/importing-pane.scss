@@ -1,39 +1,30 @@
-.importer__import-progress {
-	&.progress-bar {
-		display: block;
-		margin-bottom: 0.25em;
-		margin-left: auto;
-		margin-right: auto;
-		width: 80%;
+.importer__importing-pane {
+	h2 + p {
+		margin-top: -10px;
 	}
 
-	.progress-bar__progress {
-		background-color: var(--color-accent);
+	.importer__import-progress {
+		margin: 60px;
+
+		.importer__import-progress-bar {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 10px;
+			width: 160px;
+			height: 5px;
+			border-radius: 3px;
+		}
+
+		p {
+			text-align: center;
+		}
 	}
 
-	&.is-complete .progress-bar__progress {
-		background-color: var(--color-success);
+	.importer__status-message {
+		font-size: $font-body-small;
+		color: var(--color-text-subtle);
+		text-align: center;
+		margin: 3em 0;
 	}
-}
-
-.importer__import-progress-message {
-	text-align: center;
-	color: var(--color-text-subtle);
-}
-
-.importer__start {
-	float: none !important;
-}
-
-.importer__import-spinner {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.importer__status-message {
-	font-size: $font-body-small;
-	color: var(--color-text-subtle);
-	text-align: center;
-	margin: 3em 0;
 }

@@ -1,8 +1,10 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
 import useRemoveMemberMutation from 'calypso/a8c-for-agencies/data/team/use-remove-member';
-import { useDispatch } from 'calypso/state';
+import useResendMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-resend-member-invite';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { TeamMember } from '../types';
 
@@ -14,12 +16,44 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const { mutate: resendMemberInvite } = useResendMemberInviteMutation();
+
 	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
 	const { mutate: removeMember } = useRemoveMemberMutation();
 
+	const currentUser = useSelector( getCurrentUser );
+
 	return useCallback(
 		( action: string, item: TeamMember, callback?: () => void ) => {
+			if ( action === 'resend-user-invite' ) {
+				resendMemberInvite(
+					{ id: item.id },
+					{
+						onSuccess: () => {
+							dispatch(
+								successNotice( translate( 'The invitation has been resent.' ), {
+									id: 'resend-user-invite-success',
+									duration: 5000,
+								} )
+							);
+							onRefetchList?.();
+							callback?.();
+						},
+
+						onError: ( error ) => {
+							dispatch(
+								errorNotice( error.message, {
+									id: 'resend-user-invite-error',
+									duration: 5000,
+								} )
+							);
+							callback?.();
+						},
+					}
+				);
+			}
+
 			if ( action === 'cancel-user-invite' ) {
 				cancelMemberInvite(
 					{ id: item.id },
@@ -53,6 +87,11 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 					{ id: item.id },
 					{
 						onSuccess: () => {
+							if ( item.email === currentUser?.email ) {
+								window.location.href = 'https://automattic.com/for/agencies';
+								return;
+							}
+
 							dispatch(
 								successNotice( translate( 'The member has been successfully removed.' ), {
 									id: 'remove-user-success',
@@ -76,6 +115,14 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 				);
 			}
 		},
-		[ cancelMemberInvite, dispatch, onRefetchList, removeMember, translate ]
+		[
+			cancelMemberInvite,
+			currentUser?.email,
+			dispatch,
+			onRefetchList,
+			removeMember,
+			resendMemberInvite,
+			translate,
+		]
 	);
 }

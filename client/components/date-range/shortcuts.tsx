@@ -1,9 +1,9 @@
 import { Button } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 
 const DATERANGE_PERIOD = {
 	DAY: 'day',
@@ -14,12 +14,13 @@ const DATERANGE_PERIOD = {
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
+	locked = false,
 }: {
 	currentShortcut?: string;
-	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment ) => void;
+	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
+	locked?: boolean;
 } ) => {
 	const translate = useTranslate();
-	const [ selectedShortcut, setSelectedShortcut ] = useState( currentShortcut );
 
 	const getShortcutList = () => [
 		{
@@ -28,6 +29,7 @@ const DateRangePickerShortcuts = ( {
 			offset: 0,
 			range: 6,
 			period: DATERANGE_PERIOD.DAY,
+			shortcutId: 'last_7_days',
 		},
 		{
 			id: 'last_30_days',
@@ -35,6 +37,7 @@ const DateRangePickerShortcuts = ( {
 			offset: 0,
 			range: 29,
 			period: DATERANGE_PERIOD.DAY,
+			shortcutId: 'last_30_days',
 		},
 		{
 			id: 'last_3_months',
@@ -42,6 +45,7 @@ const DateRangePickerShortcuts = ( {
 			offset: 0,
 			range: 89,
 			period: DATERANGE_PERIOD.WEEK,
+			shortcutId: 'last_3_months',
 		},
 		{
 			id: 'last_year',
@@ -49,17 +53,25 @@ const DateRangePickerShortcuts = ( {
 			offset: 0,
 			range: 364, // ranges are zero based!
 			period: DATERANGE_PERIOD.MONTH,
+			shortcutId: 'last_year',
+		},
+		{
+			id: 'custom_date_range',
+			label: translate( 'Custom Range' ),
+			offset: 0,
+			range: 0,
+			period: DATERANGE_PERIOD.DAY,
+			shortcutId: 'custom_date_range',
 		},
 	];
 
 	const shortcutList = getShortcutList();
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
-		setSelectedShortcut( id );
 		const newToDate = moment().subtract( offset, 'days' );
 		const newFromDate = moment().subtract( offset + range, 'days' );
 
-		onClick( newFromDate, newToDate );
+		onClick( newFromDate, newToDate, id || '' );
 	};
 
 	return (
@@ -68,12 +80,13 @@ const DateRangePickerShortcuts = ( {
 				{ shortcutList.map( ( shortcut, idx ) => (
 					<li
 						className={ clsx( 'date-range-picker-shortcuts__shortcut', {
-							'is-selected': shortcut.id === selectedShortcut,
+							'is-selected': shortcut.id === currentShortcut,
 						} ) }
 						key={ shortcut.id || idx }
 					>
-						<Button onClick={ () => handleClick( shortcut ) }>
+						<Button onClick={ () => ! locked && handleClick( shortcut ) }>
 							<span>{ shortcut.label }</span>
+							{ shortcut.id === currentShortcut && <Icon icon={ check } /> }
 						</Button>
 					</li>
 				) ) }

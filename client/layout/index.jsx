@@ -304,6 +304,9 @@ class Layout extends Component {
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
+			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+				'woocommerce/core-profiler-passwordless-auth'
+			),
 		} );
 
 		const optionalBodyProps = () => {
@@ -361,10 +364,7 @@ class Layout extends Component {
 				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ ( this.props.isUnifiedSiteSidebarVisible ||
-					config.isEnabled( 'layout/site-level-user-profile' ) ) && (
-					<QuerySiteAdminColor siteId={ this.props.siteId } />
-				) }
+				<QuerySiteAdminColor siteId={ this.props.siteId } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }

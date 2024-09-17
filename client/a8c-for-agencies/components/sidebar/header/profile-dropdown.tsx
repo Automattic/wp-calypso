@@ -13,6 +13,7 @@ import { CONTACT_URL_HASH_FRAGMENT } from '../../a4a-contact-support-widget';
 import {
 	EXTERNAL_A4A_KNOWLEDGE_BASE,
 	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
+	EXTERNAL_WPCOM_ACCOUNT_URL,
 } from '../../sidebar-menu/lib/constants';
 
 import './style.scss';
@@ -56,6 +57,16 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 					rel="noopener noreferrer"
 				>
 					{ translate( 'View Knowledge Base' ) } <Gridicon icon="external" size={ 18 } />
+				</Button>
+			</li>
+			<li className="a4a-sidebar__profile-dropdown-menu-item">
+				<Button
+					borderless
+					href={ EXTERNAL_WPCOM_ACCOUNT_URL }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Manage your profile' ) } <Gridicon icon="external" size={ 18 } />
 				</Button>
 			</li>
 			<li className="a4a-sidebar__profile-dropdown-menu-item">

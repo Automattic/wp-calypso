@@ -1,12 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
-.is-group-performance-profiler.is-logged-in {
-	.profiler-header {
-		padding-top: 72px; // 40px + 32px (masterbar height)
-	}
-}
-
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
@@ -216,7 +210,7 @@
 				}
 			}
 
-			.share-option {
+			.share-button {
 				cursor: pointer;
 				display: flex;
 				height: 40px;
@@ -229,7 +223,43 @@
 					margin-bottom: -1px;
 				}
 			}
+
+			.share-button.has-color {
+				.facebook {
+					fill: var(--color-facebook);
+				}
+
+				.x {
+					fill: var(--color-x);
+				}
+
+				.tumblr {
+					fill: var(--color-tumblr);
+				}
+
+				.linkedin {
+					fill: var(--color-linkedin);
+				}
+			}
 		}
 	}
 }
 
+#profiler-share-buttons-popover {
+	.popover__inner {
+		padding: 3px 10px 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+		border-width: 0;
+
+		button {
+			padding-right: 4px;
+			padding-left: 4px;
+		}
+	}
+	.popover__arrow {
+		border-color: #fff;
+		border-left-color: transparent;
+		border-right-color: transparent;
+	}
+}

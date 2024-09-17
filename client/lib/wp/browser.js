@@ -5,6 +5,7 @@ import wpcomProxyRequest from 'wpcom-proxy-request';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import wpcomSupport from 'calypso/lib/wp/support';
 import wpcomXhrWrapper, { jetpack_site_xhr_wrapper } from 'calypso/lib/wpcom-xhr-wrapper';
+import { injectFingerprint } from './handlers/fingerprint';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
 import { injectLocalization } from './localization';
 
@@ -46,6 +47,8 @@ if ( 'development' === process.env.NODE_ENV ) {
 injectLocalization( wpcom );
 
 injectGuestSandboxTicketHandler( wpcom );
+
+injectFingerprint( wpcom );
 
 /**
  * Expose `wpcom`

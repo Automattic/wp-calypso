@@ -1,5 +1,11 @@
+import config from '@automattic/calypso-config';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
+
+const isAlipayRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-alipay' );
+const isBancontactRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-bancontact' );
+const isIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
+const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -23,14 +29,18 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Stripe_Payment_Method':
 			return 'card';
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
+		case 'WPCOM_Billing_Stripe_Alipay':
 			return 'alipay';
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
+		case 'WPCOM_Billing_Stripe_Bancontact':
 			return 'bancontact';
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 			return 'eps';
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
+		case 'WPCOM_Billing_Stripe_Ideal':
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_Source_P24':
+		case 'WPCOM_Billing_Stripe_P24':
 			return 'p24';
 		case 'WPCOM_Billing_Stripe_Source_Sofort':
 			return 'sofort';
@@ -46,8 +56,9 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'existingCard';
 		case 'WPCOM_Billing_Razorpay':
 			return 'razorpay';
+		default:
+			throw new Error( `Unknown payment method '${ paymentMethod }'` );
 	}
-	throw new Error( `Unknown payment method '${ paymentMethod }'` );
 }
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
@@ -74,14 +85,26 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'card':
 			return 'WPCOM_Billing_Stripe_Payment_Method';
 		case 'alipay':
+			if ( isAlipayRedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_Alipay';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Alipay';
 		case 'bancontact':
+			if ( isBancontactRedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_Bancontact';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
 		case 'ideal':
+			if ( isIdealRedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_Ideal';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
+			if ( isP24RedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_P24';
+			}
 			return 'WPCOM_Billing_Stripe_Source_P24';
 		case 'sofort':
 			return 'WPCOM_Billing_Stripe_Source_Sofort';
@@ -110,6 +133,10 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
+		case 'WPCOM_Billing_Stripe_Alipay':
+		case 'WPCOM_Billing_Stripe_Bancontact':
+		case 'WPCOM_Billing_Stripe_Ideal':
+		case 'WPCOM_Billing_Stripe_P24':
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
