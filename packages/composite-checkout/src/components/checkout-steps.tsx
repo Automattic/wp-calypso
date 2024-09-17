@@ -535,6 +535,8 @@ export const CheckoutStepAreaWrapper = styled.div`
 export const SubmitButtonWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	padding: 24px;
+	bottom: 0;
+	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;

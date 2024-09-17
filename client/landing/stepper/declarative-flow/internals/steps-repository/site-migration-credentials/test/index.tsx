@@ -324,4 +324,24 @@ describe( 'SiteMigrationCredentials', () => {
 			} );
 		}
 	);
+
+	it( 'shows a notice when URL contains error=ticket-creation', async () => {
+		const submit = jest.fn();
+		render(
+			{
+				navigation: { submit },
+			},
+			{
+				initialEntry:
+					'/site-migration-credentials?siteId=123&siteSlug=test.wordpress.com&error=ticket-creation',
+			}
+		);
+
+		await waitFor( () => {
+			const errorNotice = screen.getByText(
+				'We ran into a problem submitting your details. Please try again shortly.'
+			);
+			expect( errorNotice ).toBeInTheDocument();
+		} );
+	} );
 } );

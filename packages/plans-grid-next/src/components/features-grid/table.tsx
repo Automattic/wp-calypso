@@ -1,3 +1,4 @@
+import { type FeatureGroupSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import clsx from 'clsx';
@@ -14,7 +15,6 @@ import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import TopButtons from './top-buttons';
-import type { FeatureGroupSlug } from '@automattic/calypso-products';
 
 type TableProps = {
 	currentSitePlanSlug?: string | null;
@@ -53,11 +53,17 @@ const Table = ( {
 	stickyRowOffset,
 }: TableProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const {
+		featureGroupMap,
+		enableCategorisedFeatures,
+		enableLogosOnlyForEnterprisePlan,
+		enableReducedFeatureGroupSpacing,
+	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
 		[ featureGroupMap ]
 	);
+
 	// Do not render the spotlight plan if it exists
 	const gridPlansWithoutSpotlight = useMemo(
 		() =>
@@ -138,7 +144,7 @@ const Table = ( {
 				<tr>
 					<EnterpriseFeatures
 						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
+						options={ { isTableCell: true, isLogosOnly: enableLogosOnlyForEnterprisePlan } }
 					/>
 				</tr>
 				{ ! enableCategorisedFeatures && (
@@ -153,6 +159,7 @@ const Table = ( {
 					<tr
 						className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 							'is-first-feature-group-row': featureGroupIndex === 0,
+							'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
 						} ) }
 						key={ featureGroupSlug }
 					>

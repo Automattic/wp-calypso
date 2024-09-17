@@ -103,6 +103,7 @@ class ThemeShowcase extends Component {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
+		this.showcaseRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -246,6 +247,14 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// Scroll to the top of the showcase
+		if ( this.showcaseRef.current ) {
+			this.showcaseRef.current.scrollIntoView( {
+				behavior: 'instant',
+				block: 'start',
+			} );
+		}
+
 		let y = 0;
 
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
@@ -690,15 +699,18 @@ class ThemeShowcase extends Component {
 						<>
 							{ isLoggedIn && (
 								<InView
-									as="div"
-									className={ clsx( 'themes__controls-placeholder', {
-										'is-sticky': this.state.shouldThemeControlsSticky,
-									} ) }
 									rootMargin="-32px 0px 0px 0px"
 									threshold={ 1 }
 									fallbackInView
 									onChange={ this.onShouldThemeControlsStickyChange }
-								/>
+								>
+									<div
+										className={ clsx( 'themes__controls-placeholder', {
+											'is-sticky': this.state.shouldThemeControlsSticky,
+										} ) }
+										ref={ this.showcaseRef }
+									/>
+								</InView>
 							) }
 							<div
 								className={ clsx( 'themes__controls', {

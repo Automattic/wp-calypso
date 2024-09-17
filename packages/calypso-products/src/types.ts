@@ -45,6 +45,18 @@ import {
 	FEATURE_200GB_STORAGE,
 	FEATURE_P2_13GB_STORAGE,
 	FEATURE_P2_3GB_STORAGE,
+	/* START: Feature groups for experiment calypso_pricing_grid_fewer_features */
+	FEATURE_GROUP_DOMAIN,
+	FEATURE_GROUP_THEMES,
+	FEATURE_GROUP_PERFORMANCE,
+	FEATURE_GROUP_ENTITIES,
+	FEATURE_GROUP_ADS,
+	FEATURE_GROUP_ANALYTICS,
+	FEATURE_GROUP_WOO,
+	FEATURE_GROUP_CUSTOMIZE_STYLE,
+	FEATURE_GROUP_CUSTOM_PLUGINS,
+	FEATURE_GROUP_DEV_TOOLS,
+	/* END: Feature groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -247,7 +259,18 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_MARKETING_EMAIL
 	| typeof FEATURE_GROUP_SHIPPING
 	| typeof FEATURE_GROUP_STORAGE
-	| typeof FEATURE_GROUP_ALL_FEATURES;
+	| typeof FEATURE_GROUP_ALL_FEATURES
+	// Feature groups for experiment: calypso_pricing_grid_fewer_features
+	| typeof FEATURE_GROUP_ADS
+	| typeof FEATURE_GROUP_ANALYTICS
+	| typeof FEATURE_GROUP_CUSTOMIZE_STYLE
+	| typeof FEATURE_GROUP_DOMAIN
+	| typeof FEATURE_GROUP_ENTITIES
+	| typeof FEATURE_GROUP_PERFORMANCE
+	| typeof FEATURE_GROUP_THEMES
+	| typeof FEATURE_GROUP_WOO
+	| typeof FEATURE_GROUP_CUSTOM_PLUGINS
+	| typeof FEATURE_GROUP_DEV_TOOLS;
 
 export interface FeatureFootnotes {
 	[ key: string ]: Feature[];
