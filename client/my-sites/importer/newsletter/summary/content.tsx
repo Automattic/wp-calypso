@@ -1,5 +1,35 @@
 import { Icon, post } from '@wordpress/icons';
 
+function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
+	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
+		return `We imported ${ postsNumber } posts, ${ pagesNumber } pages and ${ attachmentsNumber } media.`;
+	}
+
+	if ( postsNumber > 0 && pagesNumber > 0 ) {
+		return `We imported ${ postsNumber } posts and ${ pagesNumber } pages`;
+	}
+
+	if ( postsNumber > 0 && attachmentsNumber > 0 ) {
+		return `We imported ${ postsNumber } posts and ${ attachmentsNumber } media`;
+	}
+
+	if ( pagesNumber > 0 && attachmentsNumber > 0 ) {
+		return `We imported ${ postsNumber } pages and ${ attachmentsNumber } media`;
+	}
+
+	if ( postsNumber > 0 ) {
+		return `We imported ${ postsNumber } posts.`;
+	}
+
+	if ( pagesNumber > 0 ) {
+		return `We imported ${ postsNumber } pages.`;
+	}
+
+	if ( attachmentsNumber > 0 ) {
+		return `We imported ${ postsNumber } media.`;
+	}
+}
+
 type Props = {
 	cardData: any;
 	status: string;
@@ -32,20 +62,15 @@ export default function ContentSummary( { status, cardData }: Props ) {
 	if ( status === 'done' ) {
 		const progress = cardData.progress;
 
-		// TODO Let's fix this copy when applying translations
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ post } /> We imported&nbsp;
-					{ progress.post.completed !== 0 && <strong>{ progress.post.completed } posts</strong> }
-					{ progress.page.completed !== 0 && <strong>{ progress.page.completed } pages</strong> }
-					{ progress.attachment.completed !== 0 && (
-						<strong>{ progress.attachment.completed } media</strong>
+					<Icon icon={ post } />
+					{ getSummaryCopy(
+						progress.post.completed,
+						progress.page.completed,
+						progress.attachment.completed
 					) }
-					{ progress.comment.completed !== 0 && (
-						<strong>{ progress.comment.completed } comments</strong>
-					) }
-					.
 				</p>
 			</div>
 		);
