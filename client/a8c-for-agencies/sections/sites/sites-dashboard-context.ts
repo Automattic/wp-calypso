@@ -41,12 +41,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 
 	isPopoverOpen: false,
 	setIsPopoverOpen: () => {},
-
-	recentlyCreatedSiteId: null,
-	setRecentlyCreatedSiteId: () => {},
-
-	isRecentlyCreatedSiteDevelopment: false,
-	setIsRecentlyCreatedSiteDevelopment: () => {},
 } );
 
 export default SitesDashboardContext;
