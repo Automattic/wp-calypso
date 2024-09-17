@@ -16,7 +16,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 		);
 	}
 
-	if ( status === 'importing' || status === 'processing' || status === 'done' ) {
+	if ( status === 'importing' || status === 'processing' ) {
 		return (
 			<div className="summary__content">
 				<p>
@@ -29,7 +29,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 		);
 	}
 
-	if ( status === 'donee' ) {
+	if ( status === 'done' ) {
 		const progress = cardData.progress;
 
 		// TODO Let's fix this copy when applying translations
