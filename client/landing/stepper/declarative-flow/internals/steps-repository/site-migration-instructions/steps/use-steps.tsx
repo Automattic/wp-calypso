@@ -61,7 +61,7 @@ const useStepsData = ( {
 						? 'Migrate to WordPress.com'
 						: 'Migrate Guru',
 				},
-			} ),
+			} ) as string,
 			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
 		},
 		{
