@@ -35,12 +35,7 @@
 }
 
 .email-verification-dialog__confirmation-dialog-email-wrapper {
-	display: inline-block;
-	max-width: 70%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	margin-right: 5px;
-	vertical-align: bottom;
+	font-weight: bold;
 }
 
 .email-verification-dialog__confirmation-dialog-spinner {

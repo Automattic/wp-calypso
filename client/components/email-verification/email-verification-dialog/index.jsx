@@ -57,8 +57,13 @@ class VerifyEmailDialog extends Component {
 			confirmHeading: this.props.translate( 'Verify your email' ),
 
 			confirmExplanation: this.props.translate(
-				"Check your inbox at %(email)s for the confirmation email, or click 'Resend Email' to get a new one.",
+				"Check your inbox at {{wrapper}}%(email)s{{/wrapper}} for the confirmation email, or click 'Resend Email' to get a new one.",
 				{
+					components: {
+						wrapper: (
+							<span className="email-verification-dialog__confirmation-dialog-email-wrapper" />
+						),
+					},
 					args: {
 						email: this.props.email,
 					},
