@@ -6,7 +6,8 @@ import { Icon, external } from '@wordpress/icons';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState, useContext } from 'react';
+import { useCallback, useEffect, useState, useContext, useRef } from 'react';
+import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
@@ -34,6 +35,7 @@ import LicensesOverviewContext from '../licenses-overview/context';
 import LicenseActions from './license-actions';
 import LicenseBundleDropDown from './license-bundle-dropdown';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
+import type { LicenseMeta } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -50,6 +52,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
+	meta?: LicenseMeta | null;
 	referral?: ReferralAPIResponse | null;
 }
 
@@ -66,6 +69,7 @@ export default function LicensePreview( {
 	parentLicenseId,
 	quantity,
 	isChildLicense,
+	meta,
 	referral,
 }: Props ) {
 	const translate = useTranslate();
@@ -151,6 +155,80 @@ export default function LicensePreview( {
 			} ) }
 		</Badge>
 	);
+
+	const shouldShowTransferredBadge = () => {
+		const transferredDate = meta?.a4a_transferred_subscription_expiration;
+
+		if ( ! transferredDate ) {
+			return false;
+		}
+
+		// Only show the badge from now until 60 days after the transferred date.
+		const sixtyDaysAfter = new Date( transferredDate );
+		sixtyDaysAfter.setDate( sixtyDaysAfter.getDate() + 60 );
+		return new Date() < sixtyDaysAfter;
+	};
+
+	const TransferredBadge = () => {
+		const [ showPopover, setShowPopover ] = useState( false );
+		const wrapperRef = useRef< HTMLSpanElement | null >( null );
+
+		return (
+			<span
+				className="license-preview__migration-wrapper"
+				onClick={ () => setShowPopover( true ) }
+				role="button"
+				tabIndex={ 0 }
+				ref={ wrapperRef }
+				onKeyDown={ ( event ) => {
+					if ( event.key === 'Enter' ) {
+						setShowPopover( true );
+					}
+				} }
+			>
+				<Badge className="license-preview__migration-badge" type="info-green">
+					{ translate( 'Transferred' ) }
+				</Badge>
+				{ showPopover && (
+					<A4APopover
+						title=""
+						offset={ 12 }
+						wrapperRef={ wrapperRef }
+						onFocusOutside={ () => setShowPopover( false ) }
+					>
+						<div className="license-preview__migration-content">
+							{ translate(
+								"Your site is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for migrated sites{{icon/}}{{/a}}",
+								{
+									components: {
+										bold: <strong />,
+										br: <br />,
+										a: (
+											<a
+												href="https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/"
+												target="_blank"
+												rel="noreferrer noopener"
+											/>
+										),
+										icon: (
+											<Gridicon
+												icon="external"
+												size={ 16 }
+												className="license-preview__migration-external-icon"
+											/>
+										),
+									},
+									args: {
+										date: meta?.a4a_transferred_subscription_expiration ?? '',
+									},
+								}
+							) }
+						</div>
+					</A4APopover>
+				) }
+			</span>
+		);
+	};
 
 	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
@@ -274,6 +352,7 @@ export default function LicensePreview( {
 
 				<div className="license-preview__badge-container">
 					{ !! isParentLicense && bundleCountContent }
+					{ shouldShowTransferredBadge() && <TransferredBadge /> }
 				</div>
 
 				<div>
