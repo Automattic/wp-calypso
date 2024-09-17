@@ -1546,7 +1546,9 @@ const ThemeSheetWithOptions = ( props ) => {
 		! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce )
 	) {
 		defaultOption = 'upgradePlanForBundledThemes';
-	} else if ( themeTier === 'community' && ! canInstallThemes ) {
+	}
+	// isWporgTheme is true for some free themes we offer, so we need to check the tier instead.
+	else if ( themeTier === 'community' && ! canInstallThemes ) {
 		defaultOption = 'upgradePlanForDotOrgThemes';
 	} else {
 		defaultOption = 'activate';
