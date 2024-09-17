@@ -31,7 +31,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	return (
 		<div className="metrics-insight-content">
 			{ isLoading ? (
-				<LLMMessage message={ translate( 'Finding the best solution…' ) } rotate />
+				<LLMMessage message={ translate( 'Finding the best solution for your site…' ) } rotate />
 			) : (
 				<>
 					<div className="description-area">
