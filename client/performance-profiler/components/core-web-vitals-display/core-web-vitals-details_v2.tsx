@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
+import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	metricsNames,
 	metricsTresholds,
@@ -108,8 +109,20 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 						} }
 					>
 						<span className="core-web-vitals-display__description-subheading">{ displayName }</span>
+
 						<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
-							{ displayValue( activeTab as Metrics, value ) }
+							{ isPerformanceScoreSelected ? (
+								<div
+									className="metric-tab-bar__tab-metric"
+									css={ {
+										marginTop: '16px',
+									} }
+								>
+									<CircularPerformanceScore score={ value } size={ 76 } />
+								</div>
+							) : (
+								displayValue( activeTab as Metrics, value )
+							) }
 						</div>
 						<p>
 							{ metricValuations[ activeTab ].explanation }
