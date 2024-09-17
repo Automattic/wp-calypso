@@ -12,7 +12,6 @@ import type { PlanSlug } from '@automattic/calypso-products';
 type Props = {
 	className?: string;
 	onDismissClick?: () => void;
-	linkTarget?: string;
 	siteId: number;
 	visiblePlans?: PlanSlug[];
 };
