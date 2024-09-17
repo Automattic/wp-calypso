@@ -22,7 +22,7 @@ export const useSupportChatLLMQuery = (
 		? 'Do not show suggestions that work only in WordPress.com. Do not show any references to documentation or support forums related to WordPress.com.'
 		: 'Provide suggestions that work only in WordPress.com. Use WordPress.com documentation if availabble.';
 	const otherDirectives =
-		'Do not suggest doing additional tests to identify the issue. Do not suggest any other tool/website/service for doing another test except WordPress Speed Test. Do not mention Lighthouse reports or any other tool. Rarely suggest subscribing to weekly emails feature of the Performance Profiler tool to monitor changes. Always provide links to the relevant plugin/theme or services. Do not ask follow-up questions or offer further assistance or ask for any feedback.';
+		'Do not suggest doing additional tests to identify the issue. Do not suggest any other tool/website/service for doing another test except WordPress Speed Test (https://wordpress.com/speed-test). Do not mention Lighthouse reports or any other tool. Rarely suggest subscribing to weekly emails feature of the Performance Profiler tool to monitor changes. Always provide links to the relevant plugin/theme or services. Do not ask follow-up questions or offer further assistance or ask for any feedback.';
 	const message = `${ question } ${ howToAnswer } ${ contextToInclude } ${ suggestionsToInclude } ${ wpcomOrSelfHostedSuggestions } ${ otherDirectives }`;
 
 	return useQuery( {
