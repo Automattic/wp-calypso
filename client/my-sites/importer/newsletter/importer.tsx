@@ -79,15 +79,20 @@ export default function NewsletterImporter( {
 		paidNewsletterData?.steps,
 	] );
 
-	let currentStepNumber = 0;
-	let nextStepSlug = stepSlugs[ 0 ];
+	const { currentStepNumber, nextStepSlug } = stepSlugs.reduce(
+		function ( result, curr, index ) {
+			if ( curr === step ) {
+				result.currentStepNumber = index;
+				result.nextStepSlug = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
+			}
 
-	stepSlugs.forEach( ( stepName, index ) => {
-		if ( stepName === step ) {
-			currentStepNumber = index;
-			nextStepSlug = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
+			return result;
+		},
+		{
+			currentStepNumber: 0,
+			nextStepSlug: stepSlugs[ 1 ],
 		}
-	} );
+	);
 
 	const { skipNextStep } = useSkipNextStepMutation();
 	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
