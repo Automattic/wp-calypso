@@ -2,15 +2,21 @@ import { Button } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { A4A_SITES_LINK_DEVELOPMENT } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
 import { addQueryArgs } from 'calypso/lib/url';
 
 type Props = {
 	siteId: number;
 	migrationIntent: boolean;
+	isDevelopmentSite?: boolean;
 };
 
-export default function ProvisioningSiteNotification( { siteId, migrationIntent }: Props ) {
+export default function ProvisioningSiteNotification( {
+	siteId,
+	migrationIntent,
+	isDevelopmentSite,
+}: Props ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
@@ -31,6 +37,29 @@ export default function ProvisioningSiteNotification( { siteId, migrationIntent 
 		},
 		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
 	);
+
+	const readySiteMessage = isDevelopmentSite
+		? translate(
+				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below. Before the site launches, you will be able to find it under {{developmentTabLink}}Development{{/developmentTabLink}}.',
+				{
+					args: { siteURL: site?.url ?? '' },
+					components: {
+						a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
+						developmentTabLink: <a href={ A4A_SITES_LINK_DEVELOPMENT } rel="noreferrer" />,
+					},
+					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
+				}
+		  )
+		: translate(
+				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below.',
+				{
+					args: { siteURL: site?.url ?? '' },
+					components: {
+						a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
+					},
+					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
+				}
+		  );
 
 	return (
 		showBanner && (
@@ -60,16 +89,7 @@ export default function ProvisioningSiteNotification( { siteId, migrationIntent 
 				}
 			>
 				{ isReady
-					? translate(
-							'{{a}}%(siteURL)s{{/a}} is now ready. Get started by configuring your new site. It may take a few minutes for it to show up in the site list below.',
-							{
-								args: { siteURL: site?.url ?? '' },
-								components: {
-									a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
-								},
-								comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
-							}
-					  )
+					? readySiteMessage
 					: translate(
 							"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 					  ) }

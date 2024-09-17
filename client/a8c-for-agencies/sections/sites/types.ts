@@ -47,4 +47,7 @@ export interface SitesDashboardContextInterface {
 
 	recentlyCreatedSiteId: number | null;
 	setRecentlyCreatedSiteId: ( value: number ) => void;
+
+	isRecentlyCreatedSiteDevelopment: boolean;
+	setIsRecentlyCreatedSiteDevelopment: ( value: boolean ) => void;
 }
