@@ -250,12 +250,18 @@ $blueberry-color: #3858e9;
 					.element-screenshot__image {
 						position: relative;
 						cursor: zoom-in;
+						overflow: hidden;
 					}
 
 					.element-screenshot__mask {
 						position: absolute;
 						background-color: var(--studio-gray-60);
 						opacity: 0.8;
+
+						svg {
+							width: 0;
+							height: 0;
+						}
 					}
 
 					.element-screenshot__element-marker {
