@@ -2,6 +2,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useSelector } from 'calypso/state';
@@ -16,13 +17,7 @@ type Props = {
 	visiblePlans?: PlanSlug[];
 };
 
-const PlanNoticeCreditUpgrade = ( {
-	className,
-	onDismissClick,
-	linkTarget,
-	siteId,
-	visiblePlans,
-}: Props ) => {
+const PlanNoticeCreditUpgrade = ( { className, onDismissClick, siteId, visiblePlans }: Props ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
@@ -64,15 +59,7 @@ const PlanNoticeCreditUpgrade = ( {
 							},
 							components: {
 								b: <strong />,
-								a: (
-									<a
-										href={ upgradeCreditDocsUrl }
-										target={ linkTarget }
-										onClick={ ( event ) => {
-											event.stopPropagation();
-										} }
-									/>
-								),
+								a: <InlineSupportLink supportLink={ upgradeCreditDocsUrl } />,
 							},
 						}
 					) }
