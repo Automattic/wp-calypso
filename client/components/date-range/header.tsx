@@ -1,5 +1,4 @@
-import { Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 
