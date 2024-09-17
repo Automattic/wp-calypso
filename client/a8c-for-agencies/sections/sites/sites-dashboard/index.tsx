@@ -51,7 +51,6 @@ export default function SitesDashboard() {
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
 	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
 
 	const {
@@ -66,14 +65,8 @@ export default function SitesDashboard() {
 		hideListing,
 		setHideListing,
 		recentlyCreatedSiteId,
-		setRecentlyCreatedSiteId,
+		isRecentlyCreatedSiteDevelopment,
 	} = useContext( SitesDashboardContext );
-
-	useEffect( () => {
-		if ( recentlyCreatedSite ) {
-			setRecentlyCreatedSiteId( Number( recentlyCreatedSite ) );
-		}
-	}, [ recentlyCreatedSite, setRecentlyCreatedSiteId ] );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
@@ -261,6 +254,7 @@ export default function SitesDashboard() {
 							<ProvisioningSiteNotification
 								siteId={ Number( recentlyCreatedSiteId ) }
 								migrationIntent={ !! migrationIntent }
+								isDevelopmentSite={ !! isRecentlyCreatedSiteDevelopment }
 							/>
 						) }
 
