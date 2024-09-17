@@ -1,6 +1,6 @@
 # MasonryGrid
 
-`<MasonryGrid />` is a React component for rendering a Masonry layout.<br />
+`<MasonryGrid />` is a React component for rendering a Masonry-like layout.<br />
 It's not a real Masonry, since it's based on HTML Grid and all items just moved to the items above of them. So it's simple solution which doesn't take a lot of code, unlike existing heavy npm-libraries. And also it's cross-browsers solution, unlike CSS multi-column, which is still notoriously buggy.
 
 ## Usage

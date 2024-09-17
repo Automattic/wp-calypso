@@ -7,8 +7,7 @@ import './style.scss';
 const calculateMasonryGrid = ( wrapper: HTMLElement ) => {
 	const wrapperStyle = getComputedStyle( wrapper );
 	const columnCount = wrapperStyle.gridTemplateColumns.split( ' ' ).length;
-	const parsedRowGap = /(\d+(\.\d+)?)px/.exec( wrapperStyle.rowGap );
-	const rowGap = parseFloat( parsedRowGap?.[ 1 ] ?? '0' );
+	const rowGap = parseFloat( wrapperStyle.rowGap ) || 0;
 
 	const items = Array.from( wrapper.children ) as HTMLElement[];
 
@@ -44,16 +43,14 @@ const calculateMasonryGrid = ( wrapper: HTMLElement ) => {
 	} );
 };
 
+const debouncedCalculateMasonryGrid = debounce( calculateMasonryGrid, 100, { leading: true } );
+
 type MasonryGridProps = PropsWithChildren< {
 	className?: string;
 } >;
 
 export const MasonryGrid: FC< MasonryGridProps > = ( { children, className } ) => {
 	const ref = useRef< HTMLDivElement >( null );
-
-	const debouncedCalculateMasonryGrid = debounce( ( element: HTMLElement ) => {
-		calculateMasonryGrid( element );
-	}, 100 );
 
 	useLayoutEffect( () => {
 		if ( ! ref.current ) {
@@ -63,9 +60,7 @@ export const MasonryGrid: FC< MasonryGridProps > = ( { children, className } ) =
 		const element = ref.current;
 		debouncedCalculateMasonryGrid( element );
 
-		const resizeObserver = new ResizeObserver( ( entries ) => {
-			entries.forEach( () => debouncedCalculateMasonryGrid( element ) );
-		} );
+		const resizeObserver = new ResizeObserver( () => debouncedCalculateMasonryGrid( element ) );
 		// Is used in 3 cases:
 		// 1) Resizing browser window
 		// 2) When items are initially rendered as a skeleton and then appears actual data
