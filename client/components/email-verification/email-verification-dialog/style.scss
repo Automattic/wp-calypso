@@ -19,15 +19,19 @@
 }
 
 .email-verification-dialog__confirmation-dialog-email,
-.email-verification-dialog__confirmation-dialog-explanation,
-.email-verification-dialog__confirmation-dialog-reasoning {
+.email-verification-dialog__confirmation-dialog-explanation {
 	color: var(--color-neutral-60);
-	margin: 0 0 8px;
+	margin: 24px 0;
 }
 
 .email-verification-dialog__confirmation-dialog-email {
 	margin-bottom: 16px;
 	color: var(--color-neutral-40);
+	font-size: $font-body-small;
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
 }
 
 .email-verification-dialog__confirmation-dialog-email-wrapper {
@@ -37,12 +41,6 @@
 	text-overflow: ellipsis;
 	margin-right: 5px;
 	vertical-align: bottom;
-}
-
-.email-verification-dialog__confirmation-dialog-reasoning {
-	color: var(--color-neutral-40);
-	font-size: $font-body-small;
-	margin-bottom: 24px;
 }
 
 .email-verification-dialog__confirmation-dialog-spinner {

@@ -70,7 +70,7 @@ class VerifyEmailDialog extends Component {
 			),
 
 			confirmEmail: this.props.translate(
-				"Can't access that email? {{emailPreferences}}Click here to update it.{{/emailPreferences}}",
+				"Can't access that email? {{emailPreferences}}Click here to update it{{/emailPreferences}}.",
 				{
 					components: {
 						emailPreferences: <a href="/me/account" />,
@@ -89,7 +89,7 @@ class VerifyEmailDialog extends Component {
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
 					{ strings.confirmHeading }
 				</h1>
-				<p className="email-verification-dialog__confirmation-dialog-reasoning">
+				<p className="email-verification-dialog__confirmation-dialog-explanation">
 					{ strings.confirmReasoning }
 				</p>
 				<p className="email-verification-dialog__confirmation-dialog-explanation">
