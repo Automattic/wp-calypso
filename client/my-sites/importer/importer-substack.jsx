@@ -53,6 +53,7 @@ class ImporterSubstack extends PureComponent {
 						importerStatus={ this.props.importerStatus }
 						icon={ importerData.icon }
 						title={ importerData.title }
+						description={ importerData.description }
 					/>
 				</CompactCard>
 			);
