@@ -5,33 +5,7 @@ import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
-
-function getImporterStatus(
-	contentStepStatus: StepStatus,
-	subscribersStepStatus: StepStatus
-): StepStatus {
-	if ( contentStepStatus === 'done' && subscribersStepStatus === 'done' ) {
-		return 'done';
-	}
-
-	if ( contentStepStatus === 'done' && subscribersStepStatus === 'skipped' ) {
-		return 'done';
-	}
-
-	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'done' ) {
-		return 'done';
-	}
-
-	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'skipped' ) {
-		return 'skipped';
-	}
-
-	if ( contentStepStatus === 'importing' || subscribersStepStatus === 'importing' ) {
-		return 'importing';
-	}
-
-	return 'initial';
-}
+import { getImporterStatus } from './utils';
 
 function getStepTitle( importerStatus: StepStatus ) {
 	if ( importerStatus === 'done' ) {
