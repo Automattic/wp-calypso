@@ -1,4 +1,6 @@
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
@@ -15,7 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
-import { useSitePages } from './hooks/useSitePages';
+import { getSitePagesQueryKey, useSitePages } from './hooks/useSitePages';
 
 import './style.scss';
 
@@ -36,8 +38,8 @@ const usePerformanceReport = (
 	const { url = '', hash = '' } = wpcom_performance_url || {};
 
 	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
-	const { final_url: finalUrl } = basicMetrics || {};
-	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
+	const { final_url: finalUrl, token } = basicMetrics || {};
+	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, token ?? hash );
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
@@ -49,17 +51,29 @@ const usePerformanceReport = (
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
+	const getHashOrToken = (
+		hash: string | undefined,
+		token: string | undefined,
+		isReportLoaded: boolean
+	) => {
+		if ( hash ) {
+			return hash;
+		} else if ( token && isReportLoaded ) {
+			return token;
+		}
+		return '';
+	};
+
 	return {
 		performanceReport,
 		url: finalUrl ?? url,
-		hash,
+		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
 		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
 	};
 };
 
 export const SitePerformance = () => {
 	const [ activeTab, setActiveTab ] = useState< Tab >( 'mobile' );
-
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -92,8 +106,24 @@ export const SitePerformance = () => {
 		() => pages.find( ( page ) => page.value === currentPageId ),
 		[ pages, currentPageId ]
 	);
+	const [ wpcom_performance_url, setWpcom_performance_url ] = useState(
+		currentPage?.wpcom_performance_url
+	);
+	const queryClient = useQueryClient();
 
-	const performanceReport = usePerformanceReport( currentPage?.wpcom_performance_url, activeTab );
+	const retestPage = () => {
+		setWpcom_performance_url( {
+			url: currentPage?.url ?? '',
+			hash: '',
+		} );
+
+		queryClient.invalidateQueries( {
+			queryKey: getSitePagesQueryKey( { siteId, query } ),
+			exact: true,
+		} );
+	};
+
+	const performanceReport = usePerformanceReport( wpcom_performance_url, activeTab );
 
 	return (
 		<div className="site-performance">
@@ -101,14 +131,42 @@ export const SitePerformance = () => {
 				<NavigationHeader
 					className="site-performance__navigation-header"
 					title={ translate( 'Performance' ) }
-					subtitle={ translate(
-						'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-						{
-							components: {
-								link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
-							},
-						}
-					) }
+					subtitle={
+						performanceReport.performanceReport
+							? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
+									args: {
+										testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+											'MMMM Do, YYYY h:mm:ss A'
+										),
+									},
+									components: {
+										button: (
+											<Button
+												css={ {
+													textDecoration: 'none !important',
+													':hover': {
+														textDecoration: 'underline !important',
+													},
+													fontSize: 'inherit',
+													whiteSpace: 'nowrap',
+												} }
+												variant="link"
+												onClick={ retestPage }
+											/>
+										),
+									},
+							  } )
+							: translate(
+									'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+									{
+										components: {
+											link: (
+												<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
+											),
+										},
+									}
+							  )
+					}
 				/>
 				<PageSelector
 					onFilterValueChange={ setQuery }
