@@ -91,10 +91,16 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
 	const { insight, onClick, index, isWpcom, hash } = props;
+	// Creates a list of URLs from the insight details to be used as context for the LLM query.
+	const insightDetailsContext = insight?.details?.items?.reduce( ( context, item ) => {
+		context += `* '${ item.url }' `;
+		return context;
+	}, '' );
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
-		insight.description ?? '',
+		insight.title ?? '',
+		insightDetailsContext ?? '',
 		hash,
 		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
