@@ -270,7 +270,8 @@ $blueberry-color: #3858e9;
 
 					.element-screenshot__element-marker {
 						position: absolute;
-						outline: 2px solid var(--studio-yellow-20);
+						border: 2px solid var(--studio-yellow-20);
+						box-sizing: border-box;
 					}
 				}
 

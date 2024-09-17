@@ -184,10 +184,11 @@ export const InsightScreenshot = ( {
 				<div
 					className="element-screenshot__element-marker"
 					style={ {
-						width: elementRectSC.width * zoomFactor + 'px',
-						height: elementRectSC.height * zoomFactor + 'px',
-						left: positions.clip.left * zoomFactor + 'px',
-						top: positions.clip.top * zoomFactor + 'px',
+						width: clamp( elementRectSC.width * zoomFactor, 0, elementPreviewSizeDC.width ) + 'px',
+						height:
+							clamp( elementRectSC.height * zoomFactor, 0, elementPreviewSizeDC.height ) + 'px',
+						left: clamp( positions.clip.left * zoomFactor, 0, elementPreviewSizeDC.width ) + 'px',
+						top: clamp( positions.clip.top * zoomFactor, 0, elementPreviewSizeDC.height ) + 'px',
 					} }
 				></div>
 			</div>
