@@ -33,7 +33,7 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 						} }
 					>
 						<span>{ item.label }</span>
-						<span>{ item.url }</span>
+						<span>{ item.path }</span>
 					</div>
 				) }
 			/>
