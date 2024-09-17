@@ -1,4 +1,5 @@
 import { Button, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEqual, flow, compact, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,6 +9,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InfoPopover from 'calypso/components/info-popover';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withUploadSiteIcon } from 'calypso/data/media/with-upload-site-icon';
 import accept from 'calypso/lib/accept';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
@@ -205,8 +207,18 @@ class SiteIconSetting extends Component {
 					<InfoPopover position="bottom right">
 						{ translate(
 							'The Site Icon is used as a browser and app icon for your site.' +
-								' Icons must be square, and at least %s pixels wide and tall.',
-							{ args: [ 512 ] }
+								' Icons must be square, and at least %s pixels wide and tall.' +
+								' {{a}}Learn more{{/a}}',
+							{
+								args: [ 512 ],
+								components: {
+									a: (
+										<InlineSupportLink
+											supportLink={ localizeUrl( 'https://wordpress.com/support/site-icons/' ) }
+										/>
+									),
+								},
+							}
 						) }
 					</InfoPopover>
 				</FormLabel>
