@@ -196,7 +196,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
-	useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
+	useSignUpStartTracking( { flow } );
 
 	return (
 		<Boot fallback={ <StepperLoader /> }>
