@@ -84,8 +84,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		return null;
 	}
 
-	return null;
-
 	return (
 		<MemoryRouter>
 			<FeatureFlagProvider>
