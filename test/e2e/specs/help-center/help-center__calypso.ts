@@ -13,10 +13,7 @@ import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-// Only run on desktop when merging to wp-calypso/trunk
-skipDescribeIf(
-	envVariables.VIEWPORT_NAME === 'mobile' || envVariables.JETPACK_TARGET !== 'wpcom-production'
-)( 'Help Center in Calypso', () => {
+skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calypso', () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;

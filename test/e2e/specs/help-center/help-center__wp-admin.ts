@@ -1,18 +1,20 @@
 /**
- * @group jetpack-wpcom-integration
+ * @group calypso-pr
  */
 
+import { readFileSync } from 'fs';
 import { HelpCenterComponent, TestAccount, envVariables } from '@automattic/calypso-e2e';
 import { Browser, Page, Locator } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-// Only run on desktop when deploying to WPCOM
-skipDescribeIf(
-	envVariables.VIEWPORT_NAME === 'mobile' || envVariables.JETPACK_TARGET !== 'wpcom-deployment'
-)( 'Help Center in WP Admin', () => {
+skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in WP Admin', () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
+	const helpCenterAppPath = require.resolve(
+		'@automattic/help-center-app/dist/help-center-wp-admin.min.js'
+	);
+	const localHelpCenterJs = readFileSync( helpCenterAppPath, 'utf8' );
 
 	let page: Page;
 	let pageUrl: string;
@@ -27,6 +29,15 @@ skipDescribeIf(
 		pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
 
 		await testAccount.authenticate( page, { waitUntilStable: true } );
+
+		// Intercept the request to widgets.wp.com to serve the local help center JS
+		await page.route( '**/help-center/help-center-wp-admin.min.js*', async ( route ) => {
+			await route.fulfill( {
+				status: 200,
+				contentType: 'application/javascript',
+				body: localHelpCenterJs,
+			} );
+		} );
 		await page.goto( pageUrl );
 
 		helpCenterComponent = new HelpCenterComponent( page );
