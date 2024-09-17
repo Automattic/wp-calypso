@@ -202,7 +202,7 @@ __metadata:
     react-redux: "npm:^8.1.3"
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -270,7 +270,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.0"
     npm-run-all: "npm:^4.1.5"
     tree-kill: "npm:^1.2.2"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     yargs: "npm:^17.0.1"
   bin:
     calypso-apps-builder: ./index.js
@@ -340,7 +340,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   peerDependencies:
     postcss: ^8.4.5
-    webpack: ^5.91.0
+    webpack: ^5.94.0
   bin:
     build-app-languages: ./bin/build-app-languages.js
     calypso-build: ./bin/calypso-build.js
@@ -542,7 +542,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     sass-loader: "npm:^12.1.0"
     style-loader: "npm:^1.3.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@storybook/react": ^7.6.19
   languageName: unknown
@@ -612,7 +612,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
@@ -692,7 +692,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
     uuid: "npm:^9.0.1"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@wordpress/data": ^10.2.0
     react: ^18.2.0
@@ -805,7 +805,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.2.0
@@ -847,7 +847,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@wordpress/data": ^10.2.0
     "@wordpress/element": ^6.2.0
@@ -953,7 +953,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.2.0
@@ -1061,7 +1061,7 @@ __metadata:
     tslib: "npm:^2.4.1"
     typescript: "npm:^5.3.3"
     ua-parser-js: "npm:^0.7.32"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-cli: "npm:^5.0.1"
     webpack-dev-server: "npm:^4.11.1"
   languageName: unknown
@@ -1145,7 +1145,7 @@ __metadata:
     copy-webpack-plugin: "npm:^10.2.4"
     postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.2.0
@@ -1257,7 +1257,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@babel/runtime": ^7.24.5
     "@wordpress/data": ^10.2.0
@@ -1313,7 +1313,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   languageName: unknown
   linkType: soft
 
@@ -1346,7 +1346,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.2.0
@@ -1383,7 +1383,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.2.0
@@ -1470,7 +1470,7 @@ __metadata:
     react-redux: "npm:^8.1.3"
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -1506,7 +1506,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   languageName: unknown
   linkType: soft
 
@@ -1580,7 +1580,7 @@ __metadata:
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
     size-limit: "npm:^8.2.6"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
   languageName: unknown
@@ -1613,7 +1613,7 @@ __metadata:
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.5.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/i18n": ^5.2.0
@@ -1690,7 +1690,7 @@ __metadata:
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@wordpress/i18n": ^5.2.0
     postcss: ^8.4.5
@@ -1753,7 +1753,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     require-from-string: "npm:^2.0.2"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1814,7 +1814,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1873,7 +1873,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
     "@babel/runtime": ^7.24.5
     react: ^18.2.0
@@ -2035,7 +2035,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
   peerDependencies:
-    webpack: ^5.91.0
+    webpack: ^5.94.0
   languageName: unknown
   linkType: soft
 
@@ -2046,7 +2046,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     semver: "npm:^7.0.0"
   peerDependencies:
-    webpack: ^5.91.0
+    webpack: ^5.94.0
   languageName: unknown
   linkType: soft
 
@@ -2057,9 +2057,9 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
-    webpack: ^5.91.0
+    webpack: ^5.94.0
   languageName: unknown
   linkType: soft
 
@@ -2071,9 +2071,9 @@ __metadata:
     css-loader: "npm:^6.11.0"
     mini-css-extract-plugin: "npm:^1.6.2"
     rtlcss: "npm:^3.1.2"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   peerDependencies:
-    webpack: ^5.91.0
+    webpack: ^5.94.0
   languageName: unknown
   linkType: soft
 
@@ -2107,7 +2107,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
@@ -2206,7 +2206,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     tinymce: "npm:^5.0.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
@@ -7774,26 +7774,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint-scope@npm:^3.7.3":
-  version: 3.7.4
-  resolution: "@types/eslint-scope@npm:3.7.4"
-  dependencies:
-    "@types/eslint": "npm:*"
-    "@types/estree": "npm:*"
-  checksum: f8a19cddf9d402f079bcc261958fff5ff2616465e4fb4cd423aa966a6a32bf5d3c65ca3ca0fbe824776b48c5cd525efbaf927b98b8eeef093aa68a1a2ba19359
-  languageName: node
-  linkType: hard
-
-"@types/eslint@npm:*":
-  version: 7.2.8
-  resolution: "@types/eslint@npm:7.2.8"
-  dependencies:
-    "@types/estree": "npm:*"
-    "@types/json-schema": "npm:*"
-  checksum: 0cd8644e94e8f1f539a9ce006ae18e2958eeece44680d7ee4ef168fbe689d3328a9e2c36ae3558de203b4224f07b4466c1110c5d3c36f40f12331b2fb52ec5e0
-  languageName: node
-  linkType: hard
-
 "@types/estree-jsx@npm:^1.0.0":
   version: 1.0.5
   resolution: "@types/estree-jsx@npm:1.0.5"
@@ -8055,7 +8035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
+"@types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.13
   resolution: "@types/json-schema@npm:7.0.13"
   checksum: 446fe6722899333ff647b5853fdcc9f039156d56abe517166154d3578d641841cc869f61e8b7822c24a1daeb7dfbd4fdcea84bf07c0858e2f9cca415e2ca8dd4
@@ -10627,7 +10607,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     semver: "npm:^7.3.2"
     superagent: "npm:^3.8.3"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-cli: "npm:^4.10.0"
     winston: "npm:^3.3.3"
     wpcom-xhr-request: "workspace:^"
@@ -12028,9 +12008,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.2, body-parser@npm:^1.19.0":
-  version: 1.20.2
-  resolution: "body-parser@npm:1.20.2"
+"body-parser@npm:1.20.3, body-parser@npm:^1.19.0":
+  version: 1.20.3
+  resolution: "body-parser@npm:1.20.3"
   dependencies:
     bytes: "npm:3.1.2"
     content-type: "npm:~1.0.5"
@@ -12040,11 +12020,11 @@ __metadata:
     http-errors: "npm:2.0.0"
     iconv-lite: "npm:0.4.24"
     on-finished: "npm:2.4.1"
-    qs: "npm:6.11.0"
+    qs: "npm:6.13.0"
     raw-body: "npm:2.5.2"
     type-is: "npm:~1.6.18"
     unpipe: "npm:1.0.0"
-  checksum: 06f1438fff388a2e2354c96aa3ea8147b79bfcb1262dfcc2aae68ec13723d01d5781680657b74e9f83c808266d5baf52804032fbde2b7382b89bd8cdb273ace9
+  checksum: 0a9a93b7518f222885498dcecaad528cf010dd109b071bf471c93def4bfe30958b83e03496eb9c1ad4896db543d999bb62be1a3087294162a88cfa1b42c16310
   languageName: node
   linkType: hard
 
@@ -12793,12 +12773,12 @@ __metadata:
     deepmerge: "npm:^4.3.0"
     diff: "npm:^4.0.2"
     dom-helpers: "npm:^5.1.3"
-    dompurify: "npm:^2.2.9"
+    dompurify: "npm:^2.5.4"
     draft-js: "npm:^0.11.7"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     email-validator: "npm:^2.0.4"
     emoji-text: "npm:^0.2.6"
-    express: "npm:^4.17.1"
+    express: "npm:^4.21.0"
     express-async-handler: "npm:^1.1.4"
     express-useragent: "npm:^1.0.15"
     fake-indexeddb: "npm:^3.1.7"
@@ -12880,7 +12860,7 @@ __metadata:
     utility-types: "npm:^3.10.0"
     uuid: "npm:^9.0.1"
     valid-url: "npm:^1.0.9"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-dev-middleware: "npm:^5.3.4"
     webpack-hot-middleware: "npm:^2.26.1"
@@ -15848,10 +15828,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^2.2.9":
-  version: 2.2.9
-  resolution: "dompurify@npm:2.2.9"
-  checksum: c6d3be6a408f7a3e933f4cea3549ab230f4d21fe671ddce30c63ecf8fae22286bd842cee189b27e3829c50baa8c9f70cb5ca2fcbcebaaf0d3162c0ff93a04597
+"dompurify@npm:^2.5.4":
+  version: 2.5.6
+  resolution: "dompurify@npm:2.5.6"
+  checksum: ee7e7d17982b1017a20982a2d57a0463d7fbb67f7b92a13ecf772e5e6acf0a529a19e3e31d725b05d5a2524d40e0aeb7ebc4be0aff396a6345bd6f2749fe560d
   languageName: node
   linkType: hard
 
@@ -16302,6 +16282,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"encodeurl@npm:~2.0.0":
+  version: 2.0.0
+  resolution: "encodeurl@npm:2.0.0"
+  checksum: 5d317306acb13e6590e28e27924c754163946a2480de11865c991a3a7eed4315cd3fba378b543ca145829569eefe9b899f3d84bb09870f675ae60bc924b01ceb
+  languageName: node
+  linkType: hard
+
 "encoding@npm:^0.1.12, encoding@npm:^0.1.13":
   version: 0.1.13
   resolution: "encoding@npm:0.1.13"
@@ -16366,7 +16353,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.0.0, enhanced-resolve@npm:^5.17.0, enhanced-resolve@npm:^5.8.3":
+"enhanced-resolve@npm:^5.0.0, enhanced-resolve@npm:^5.17.1, enhanced-resolve@npm:^5.8.3":
   version: 5.17.1
   resolution: "enhanced-resolve@npm:5.17.1"
   dependencies:
@@ -17650,42 +17637,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^4.17.1, express@npm:^4.17.3":
-  version: 4.19.2
-  resolution: "express@npm:4.19.2"
+"express@npm:^4.17.3, express@npm:^4.21.0":
+  version: 4.21.0
+  resolution: "express@npm:4.21.0"
   dependencies:
     accepts: "npm:~1.3.8"
     array-flatten: "npm:1.1.1"
-    body-parser: "npm:1.20.2"
+    body-parser: "npm:1.20.3"
     content-disposition: "npm:0.5.4"
     content-type: "npm:~1.0.4"
     cookie: "npm:0.6.0"
     cookie-signature: "npm:1.0.6"
     debug: "npm:2.6.9"
     depd: "npm:2.0.0"
-    encodeurl: "npm:~1.0.2"
+    encodeurl: "npm:~2.0.0"
     escape-html: "npm:~1.0.3"
     etag: "npm:~1.8.1"
-    finalhandler: "npm:1.2.0"
+    finalhandler: "npm:1.3.1"
     fresh: "npm:0.5.2"
     http-errors: "npm:2.0.0"
-    merge-descriptors: "npm:1.0.1"
+    merge-descriptors: "npm:1.0.3"
     methods: "npm:~1.1.2"
     on-finished: "npm:2.4.1"
     parseurl: "npm:~1.3.3"
-    path-to-regexp: "npm:0.1.7"
+    path-to-regexp: "npm:0.1.10"
     proxy-addr: "npm:~2.0.7"
-    qs: "npm:6.11.0"
+    qs: "npm:6.13.0"
     range-parser: "npm:~1.2.1"
     safe-buffer: "npm:5.2.1"
-    send: "npm:0.18.0"
-    serve-static: "npm:1.15.0"
+    send: "npm:0.19.0"
+    serve-static: "npm:1.16.2"
     setprototypeof: "npm:1.2.0"
     statuses: "npm:2.0.1"
     type-is: "npm:~1.6.18"
     utils-merge: "npm:1.0.1"
     vary: "npm:~1.1.2"
-  checksum: e82e2662ea9971c1407aea9fc3c16d6b963e55e3830cd0ef5e00b533feda8b770af4e3be630488ef8a752d7c75c4fcefb15892868eeaafe7353cb9e3e269fdcb
+  checksum: 4cf7ca328f3fdeb720f30ccb2ea7708bfa7d345f9cc460b64a82bf1b2c91e5b5852ba15a9a11b2a165d6089acf83457fc477dc904d59cd71ed34c7a91762c6cc
   languageName: node
   linkType: hard
 
@@ -18074,18 +18061,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"finalhandler@npm:1.2.0":
-  version: 1.2.0
-  resolution: "finalhandler@npm:1.2.0"
+"finalhandler@npm:1.3.1":
+  version: 1.3.1
+  resolution: "finalhandler@npm:1.3.1"
   dependencies:
     debug: "npm:2.6.9"
-    encodeurl: "npm:~1.0.2"
+    encodeurl: "npm:~2.0.0"
     escape-html: "npm:~1.0.3"
     on-finished: "npm:2.4.1"
     parseurl: "npm:~1.3.3"
     statuses: "npm:2.0.1"
     unpipe: "npm:~1.0.0"
-  checksum: 64b7e5ff2ad1fcb14931cd012651631b721ce657da24aedb5650ddde9378bf8e95daa451da43398123f5de161a81e79ff5affe4f9f2a6d2df4a813d6d3e254b7
+  checksum: d38035831865a49b5610206a3a9a9aae4e8523cbbcd01175d0480ffbf1278c47f11d89be3ca7f617ae6d94f29cf797546a4619cd84dd109009ef33f12f69019f
   languageName: node
   linkType: hard
 
@@ -19317,7 +19304,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
   languageName: unknown
   linkType: soft
 
@@ -23923,10 +23910,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"merge-descriptors@npm:1.0.1":
-  version: 1.0.1
-  resolution: "merge-descriptors@npm:1.0.1"
-  checksum: b67d07bd44cfc45cebdec349bb6e1f7b077ee2fd5beb15d1f7af073849208cb6f144fe403e29a36571baf3f4e86469ac39acf13c318381e958e186b2766f54ec
+"merge-descriptors@npm:1.0.3":
+  version: 1.0.3
+  resolution: "merge-descriptors@npm:1.0.3"
+  checksum: 866b7094afd9293b5ea5dcd82d71f80e51514bed33b4c4e9f516795dc366612a4cbb4dc94356e943a8a6914889a914530badff27f397191b9b75cda20b6bae93
   languageName: node
   linkType: hard
 
@@ -26349,10 +26336,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:0.1.7":
-  version: 0.1.7
-  resolution: "path-to-regexp@npm:0.1.7"
-  checksum: 50a1ddb1af41a9e68bd67ca8e331a705899d16fb720a1ea3a41e310480948387daf603abb14d7b0826c58f10146d49050a1291ba6a82b78a382d1c02c0b8f905
+"path-to-regexp@npm:0.1.10":
+  version: 0.1.10
+  resolution: "path-to-regexp@npm:0.1.10"
+  checksum: 34196775b9113ca6df88e94c8d83ba82c0e1a2063dd33bfe2803a980da8d49b91db8104f49d5191b44ea780d46b8670ce2b7f4a5e349b0c48c6779b653f1afe4
   languageName: node
   linkType: hard
 
@@ -27670,21 +27657,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.11.0":
-  version: 6.11.0
-  resolution: "qs@npm:6.11.0"
+"qs@npm:6.13.0, qs@npm:^6.10.0, qs@npm:^6.11.0, qs@npm:^6.11.2, qs@npm:^6.5.1, qs@npm:^6.5.2, qs@npm:^6.9.1":
+  version: 6.13.0
+  resolution: "qs@npm:6.13.0"
   dependencies:
-    side-channel: "npm:^1.0.4"
-  checksum: 4e4875e4d7c7c31c233d07a448e7e4650f456178b9dd3766b7cfa13158fdb24ecb8c4f059fa91e820dc6ab9f2d243721d071c9c0378892dcdad86e9e9a27c68f
-  languageName: node
-  linkType: hard
-
-"qs@npm:^6.10.0, qs@npm:^6.11.0, qs@npm:^6.11.2, qs@npm:^6.5.1, qs@npm:^6.5.2, qs@npm:^6.9.1":
-  version: 6.11.2
-  resolution: "qs@npm:6.11.2"
-  dependencies:
-    side-channel: "npm:^1.0.4"
-  checksum: 4f95d4ff18ed480befcafa3390022817ffd3087fc65f146cceb40fc5edb9fa96cb31f648cae2fa96ca23818f0798bd63ad4ca369a0e22702fcd41379b3ab6571
+    side-channel: "npm:^1.0.6"
+  checksum: 62372cdeec24dc83a9fb240b7533c0fdcf0c5f7e0b83343edd7310f0ab4c8205a5e7c56406531f2e47e1b4878a3821d652be4192c841de5b032ca83619d8f860
   languageName: node
   linkType: hard
 
@@ -30272,9 +30250,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"send@npm:0.18.0":
-  version: 0.18.0
-  resolution: "send@npm:0.18.0"
+"send@npm:0.19.0":
+  version: 0.19.0
+  resolution: "send@npm:0.19.0"
   dependencies:
     debug: "npm:2.6.9"
     depd: "npm:2.0.0"
@@ -30289,7 +30267,7 @@ __metadata:
     on-finished: "npm:2.4.1"
     range-parser: "npm:~1.2.1"
     statuses: "npm:2.0.1"
-  checksum: 0eb134d6a51fc13bbcb976a1f4214ea1e33f242fae046efc311e80aff66c7a43603e26a79d9d06670283a13000e51be6e0a2cb80ff0942eaf9f1cd30b7ae736a
+  checksum: ea3f8a67a8f0be3d6bf9080f0baed6d2c51d11d4f7b4470de96a5029c598a7011c497511ccc28968b70ef05508675cebff27da9151dd2ceadd60be4e6cf845e3
   languageName: node
   linkType: hard
 
@@ -30337,15 +30315,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve-static@npm:1.15.0":
-  version: 1.15.0
-  resolution: "serve-static@npm:1.15.0"
+"serve-static@npm:1.16.2":
+  version: 1.16.2
+  resolution: "serve-static@npm:1.16.2"
   dependencies:
-    encodeurl: "npm:~1.0.2"
+    encodeurl: "npm:~2.0.0"
     escape-html: "npm:~1.0.3"
     parseurl: "npm:~1.3.3"
-    send: "npm:0.18.0"
-  checksum: fa9f0e21a540a28f301258dfe1e57bb4f81cd460d28f0e973860477dd4acef946a1f41748b5bd41c73b621bea2029569c935faa38578fd34cd42a9b4947088ba
+    send: "npm:0.19.0"
+  checksum: 528fff6f5e12d0c5a391229ad893910709bc51b5705962b09404a1d813857578149b8815f35d3ee5752f44cd378d0f31669d4b1d7e2d11f41e08283d5134bd1f
   languageName: node
   linkType: hard
 
@@ -34188,11 +34166,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.91.0":
-  version: 5.93.0
-  resolution: "webpack@npm:5.93.0"
+"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.94.0":
+  version: 5.94.0
+  resolution: "webpack@npm:5.94.0"
   dependencies:
-    "@types/eslint-scope": "npm:^3.7.3"
     "@types/estree": "npm:^1.0.5"
     "@webassemblyjs/ast": "npm:^1.12.1"
     "@webassemblyjs/wasm-edit": "npm:^1.12.1"
@@ -34201,7 +34178,7 @@ __metadata:
     acorn-import-attributes: "npm:^1.9.5"
     browserslist: "npm:^4.21.10"
     chrome-trace-event: "npm:^1.0.2"
-    enhanced-resolve: "npm:^5.17.0"
+    enhanced-resolve: "npm:^5.17.1"
     es-module-lexer: "npm:^1.2.1"
     eslint-scope: "npm:5.1.1"
     events: "npm:^3.2.0"
@@ -34221,7 +34198,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: f0c72f1325ff57a4cc461bb978e6e1296f2a7d45c9765965271aa686ccdd448512956f4d7fdcf8c164d073af046c5a0aba17ce85ea98e33e5e2bfbfe13aa5808
+  checksum: b4d1b751f634079bd177a89eef84d80fa5bb8d6fc15d72ab40fc2b9ca5167a79b56585e1a849e9e27e259803ee5c4365cb719e54af70a43c06358ec268ff4ebf
   languageName: node
   linkType: hard
 
@@ -34661,7 +34638,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     v8-profiler-next: "npm:^1.10.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^4.10.0"
     webpack-dev-middleware: "npm:^5.3.4"
@@ -34742,7 +34719,7 @@ __metadata:
     debug: "npm:^4.3.3"
     postcss: "npm:^8.4.5"
     uuid: "npm:^9.0.1"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     wp-error: "npm:^1.3.0"
   languageName: unknown
   linkType: soft
@@ -34771,7 +34748,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     qs: "npm:^6.5.2"
     tus-js-client: "npm:2.3.0"
-    webpack: "npm:^5.91.0"
+    webpack: "npm:^5.94.0"
     webpack-cli: "npm:^4.10.0"
     wpcom-oauth-cors: "npm:^1.0.2-beta"
     wpcom-proxy-request: "workspace:^"

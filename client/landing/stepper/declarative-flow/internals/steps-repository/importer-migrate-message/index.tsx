@@ -30,7 +30,7 @@ interface WhatToExpectProps {
 	text: string;
 }
 
-const ImporterMigrateMessage: Step = () => {
+const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
 	const user = useSelector( getCurrentUser ) as UserData;
@@ -38,7 +38,24 @@ const ImporterMigrateMessage: Step = () => {
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
 	const isCredentialsSkipped = useQuery().get( 'credentials' ) === 'skipped';
-	const { isPending, sendTicket } = useSubmitMigrationTicket();
+	const { isPending, sendTicket } = useSubmitMigrationTicket( {
+		onSuccess: () => {
+			recordTracksEvent( 'calypso_importer_migration_ticket_submit_success', {
+				blog_url: siteSlug,
+				from_url: fromUrl,
+			} );
+		},
+		onError: ( error ) => {
+			recordTracksEvent( 'calypso_importer_migration_ticket_submit_error', {
+				blog_url: siteSlug,
+				from_url: fromUrl,
+				error: error.message,
+			} );
+			navigation.submit?.( {
+				hasError: 'ticket-creation',
+			} );
+		},
+	} );
 
 	useEffect( () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {

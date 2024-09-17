@@ -11,6 +11,7 @@ interface SitePage {
 	id: number;
 	link: string;
 	title: { rendered: string };
+	wpcom_performance_report_url: string;
 	wpcom_performance_url?: {
 		url: string;
 		hash: string;
@@ -24,12 +25,20 @@ const getPages = ( siteId: number, query = '' ) => {
 			search: query,
 			page: 1,
 			status: 'publish',
-			_fields: [ 'id', 'link', 'title', 'wpcom_performance_url' ],
+			_fields: [ 'id', 'link', 'title', 'wpcom_performance_report_url' ],
 		} ),
 		method: 'GET',
 		apiNamespace: 'wp/v2',
 	} );
 };
+
+export const getSitePagesQueryKey = ( {
+	siteId,
+	query,
+}: {
+	siteId?: number | null;
+	query: string;
+} ) => [ 'useSitePages', siteId, query ];
 
 export const useSitePages = ( { query = '' } ) => {
 	const { __ } = useI18n();
@@ -38,21 +47,23 @@ export const useSitePages = ( { query = '' } ) => {
 	const siteId = site?.ID;
 
 	const { data } = useQuery( {
-		queryKey: [ 'useSitePages', siteId, query ],
+		queryKey: getSitePagesQueryKey( { siteId, query } ),
 		queryFn: () => getPages( siteId!, query ),
 		refetchOnWindowFocus: false,
 		enabled: !! siteId,
 		placeholderData: keepPreviousData,
 		select: ( data ) => {
 			return data.map( ( page ) => {
-				let url = page.link.replace( site?.URL ?? '', '' );
-				url = url.length > 1 ? url.replace( /\/$/, '' ) : url;
+				let path = page.link.replace( site?.URL ?? '', '' );
+				path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
+				const [ url, hash ] = page.wpcom_performance_report_url?.split( '&hash=' ) ?? [];
 
 				return {
-					url,
+					url: page.link,
+					path,
 					label: page.title.rendered,
 					value: page.id.toString(),
-					wpcom_performance_url: page.wpcom_performance_url,
+					wpcom_performance_url: { url, hash },
 				};
 			} );
 		},
@@ -62,24 +73,27 @@ export const useSitePages = ( { query = '' } ) => {
 	} );
 
 	const { getSiteSetting } = useSiteSettings( site?.slug );
-	const homePagePerformanceUrl: SitePage[ 'wpcom_performance_url' ] =
-		getSiteSetting( 'wpcom_performance_url' ) || undefined;
+	const homePagePerformanceUrl: SitePage[ 'wpcom_performance_report_url' ] =
+		getSiteSetting( 'wpcom_performance_report_url' ) || undefined;
+
+	const [ url, hash ] = homePagePerformanceUrl?.split( '&hash=' ) ?? [];
 
 	const pages = useMemo( () => {
 		if ( ! query ) {
 			return [
 				{
-					url: '/',
+					url: site?.URL,
+					path: '/',
 					label: __( 'Home' ),
 					value: '0',
-					wpcom_performance_url: homePagePerformanceUrl,
+					wpcom_performance_url: { url, hash },
 				},
 				...( data ?? [] ),
 			];
 		}
 
 		return data ?? [];
-	}, [ query, data, __, homePagePerformanceUrl ] );
+	}, [ query, data, site?.URL, __, url, hash ] );
 
 	return pages;
 };

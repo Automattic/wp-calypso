@@ -57,6 +57,6 @@
 		"copy-webpack-plugin": "^10.2.4",
 		"glob": "^7.1.6",
 		"postcss": "^8.4.5",
-		"webpack": "^5.91.0"
+		"webpack": "^5.94.0"
 	}
 }

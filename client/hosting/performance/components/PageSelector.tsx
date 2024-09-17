@@ -1,24 +1,34 @@
 import { SearchableDropdown } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ComponentProps } from 'react';
 
 export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown > ) => {
+	const translate = useTranslate();
+
 	return (
 		<div
 			css={ {
 				display: 'flex',
-				alignItems: 'center',
+				alignItems: 'flex-start',
 				flexGrow: 1,
 				justifyContent: 'flex-end',
 				gap: '10px',
+				maxHeight: '40px',
 			} }
 		>
-			<div>{ translate( 'Page' ) }</div>
+			<div css={ { alignSelf: 'stretch', display: 'flex', alignItems: 'center' } }>
+				{ translate( 'Page' ) }
+			</div>
 			<SearchableDropdown
 				{ ...props }
 				css={ {
 					maxWidth: '240px',
 					minWidth: '240px',
+					'.components-combobox-control__suggestions-container': {
+						position: 'relative',
+						zIndex: 1,
+						background: 'var(--color-surface)',
+					},
 					'.components-form-token-field__suggestions-list': { maxHeight: 'initial !important' },
 					'.components-form-token-field__suggestions-list li': { padding: '0 !important' },
 				} }
@@ -33,7 +43,7 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 						} }
 					>
 						<span>{ item.label }</span>
-						<span>{ item.url }</span>
+						<span>{ item.path }</span>
 					</div>
 				) }
 			/>

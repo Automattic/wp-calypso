@@ -281,6 +281,22 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
 			},
 		},
+
+		[ SITE_MIGRATION_ASSISTED_MIGRATION.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const hasError = getFromPropsOrUrl( 'hasError', props );
+				const extraPrams = {
+					...( hasError === 'ticket-creation' ? { error: hasError } : {} ),
+				};
+
+				return navigateWithQueryParams(
+					SITE_MIGRATION_CREDENTIALS,
+					[ 'error' ],
+					{ ...props, ...extraPrams },
+					{ replaceHistory: true }
+				);
+			},
+		},
 	};
 };
 

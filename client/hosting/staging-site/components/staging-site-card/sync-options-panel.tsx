@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { ToggleControl, CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
@@ -152,8 +151,6 @@ export default function SyncOptionsPanel( {
 		onChange( selectedItems );
 	}, [ optionItemsMap, onChange ] );
 
-	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
-
 	return (
 		<>
 			{ nonDangerousItems.map( ( item ) => {
@@ -201,7 +198,7 @@ export default function SyncOptionsPanel( {
 						</div>
 					);
 				} ) }
-				{ stagingSiteSyncWoo && isSiteWooStore && (
+				{ isSiteWooStore && (
 					<div>
 						<WooCommerceOverwriteWarning>
 							{ translate(

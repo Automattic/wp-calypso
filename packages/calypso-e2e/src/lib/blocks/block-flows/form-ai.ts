@@ -36,7 +36,7 @@ export class FormAiFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const aiInputParentLocator = context.addedBlockLocator;
+		const aiInputParentLocator = await context.editorPage.getEditorCanvas();
 		const aiInputReadyLocator =
 			await aiInputParentLocator.getByPlaceholder( 'Ask Jetpack AI to edit…' );
 		const aiInputBusyLocator = await aiInputParentLocator.getByRole( 'button', {

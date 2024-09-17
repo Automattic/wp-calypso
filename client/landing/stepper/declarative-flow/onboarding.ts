@@ -2,10 +2,11 @@ import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
-	clearSignupDestinationCookie,
 	persistSignupDestination,
+	setSignupCompleteFlowName,
+	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
@@ -40,14 +41,9 @@ const onboarding: Flow = {
 		] );
 	},
 
-	useSideEffect() {
-		useEffect( () => {
-			clearSignupDestinationCookie();
-		}, [] );
-	},
-
 	useStepNavigation( currentStepSlug, navigate ) {
-		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
+		const flowName = this.name;
+		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem, setSiteUrl } =
 			useDispatch( ONBOARD_STORE );
 
 		const { planCartItem } = useSelect(
@@ -75,9 +71,11 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
+					setSiteUrl( providedDependencies.siteUrl );
 					setDomain( providedDependencies.suggestion );
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
+
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = 'use-my-domain?step=domain-input';
@@ -89,6 +87,7 @@ const onboarding: Flow = {
 						}
 						return navigate( useMyDomainURL );
 					}
+
 					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
@@ -102,6 +101,7 @@ const onboarding: Flow = {
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
 					setPlanCartItem( cartItems?.[ 0 ] ?? null );
+					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, true );
 				}
 				case 'create-site':
@@ -111,6 +111,9 @@ const onboarding: Flow = {
 						siteSlug: providedDependencies.siteSlug,
 					} );
 					persistSignupDestination( destination );
+					setSignupCompleteFlowName( flowName );
+					setSignupCompleteSlug( providedDependencies.siteSlug );
+
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
