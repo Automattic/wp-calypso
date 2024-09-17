@@ -1,4 +1,4 @@
-import { Icon, post, media, comment, page } from '@wordpress/icons';
+import { Icon, post } from '@wordpress/icons';
 
 type Props = {
 	cardData: any;
@@ -16,49 +16,36 @@ export default function ContentSummary( { status, cardData }: Props ) {
 		);
 	}
 
-	if ( status === 'done' ) {
-		const progress = cardData.progress;
-
+	if ( status === 'importing' || status === 'processing' || status === 'done' ) {
 		return (
 			<div className="summary__content">
-				<p>We imported:</p>
-
-				{ progress.post.completed !== 0 && (
-					<p>
-						<Icon icon={ post } />
-						<strong>{ progress.post.completed }</strong> posts
-					</p>
-				) }
-
-				{ progress.page.completed !== 0 && (
-					<p>
-						<Icon icon={ page } />
-						<strong>{ progress.page.completed }</strong> pages
-					</p>
-				) }
-
-				{ progress.attachment.completed !== 0 && (
-					<p>
-						<Icon icon={ media } />
-						<strong>{ progress.attachment.completed }</strong> media
-					</p>
-				) }
-
-				{ progress.comment.completed !== 0 && (
-					<p>
-						<Icon icon={ comment } />
-						<strong>{ progress.comment.completed }</strong> comments
-					</p>
-				) }
+				<p>
+					<Icon icon={ post } /> <strong>We're importing your content.</strong>
+					<br />
+					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
+					done.
+				</p>
 			</div>
 		);
 	}
 
-	if ( status === 'importing' || status === 'processing' ) {
+	if ( status === 'donee' ) {
+		const progress = cardData.progress;
+
+		// TODO Let's fix this copy when applying translations
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ post } /> Content is importing...
+					<Icon icon={ post } /> We imported&nbsp;
+					{ progress.post.completed !== 0 && <strong>{ progress.post.completed } posts</strong> }
+					{ progress.page.completed !== 0 && <strong>{ progress.page.completed } pages</strong> }
+					{ progress.attachment.completed !== 0 && (
+						<strong>{ progress.attachment.completed } media</strong>
+					) }
+					{ progress.comment.completed !== 0 && (
+						<strong>{ progress.comment.completed } comments</strong>
+					) }
+					.
 				</p>
 			</div>
 		);

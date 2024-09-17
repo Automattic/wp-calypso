@@ -23,7 +23,10 @@ export default function SubscriberSummary( { cardData, status }: Props ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ people } /> Importing subscribers...
+					<Icon icon={ people } /> <strong>We're importing your subscribers.</strong>
+					<br />
+					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
+					done.
 				</p>
 			</div>
 		);
