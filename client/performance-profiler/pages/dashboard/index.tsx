@@ -29,9 +29,19 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const isSavedReport = useRef( !! hash );
 	const testStartTime = useRef( 0 );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
-	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
+	const {
+		data: basicMetrics,
+		isError: isBasicMetricsError,
+		isFetched,
+	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
-	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
+	const { data: performanceInsights, isError: isPerformanceInsightsError } =
+		useUrlPerformanceInsightsQuery( url, hash );
+	const isError =
+		isBasicMetricsError ||
+		isPerformanceInsightsError ||
+		'failed' === performanceInsights?.mobile ||
+		'failed' === performanceInsights?.desktop;
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
@@ -92,7 +102,9 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 							} ) }
 							<br />
 							<ErrorSecondLine>
-								{ translate( 'Please check that the domain is correct and try again.' ) }
+								{ translate(
+									'We were unable to reliably load the page you requested. Make sure you are testing the correct URL and that the server is properly responding to all requests. '
+								) }
 							</ErrorSecondLine>
 						</>
 					}
