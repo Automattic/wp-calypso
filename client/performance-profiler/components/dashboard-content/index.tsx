@@ -21,7 +21,6 @@ type PerformanceProfilerDashboardContentProps = {
 	displayThumbnail?: boolean;
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
-	showV2?: boolean;
 	activeTab?: TabType;
 	showV2?: boolean;
 };
@@ -34,7 +33,6 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayThumbnail = true,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
-	showV2 = false,
 	activeTab = TabType.mobile,
 	showV2 = false,
 }: PerformanceProfilerDashboardContentProps ) => {
