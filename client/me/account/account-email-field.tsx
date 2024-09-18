@@ -177,6 +177,7 @@ const AccountEmailField = ( {
 	const isEmailVerifified = useSelector( isCurrentUserEmailVerified );
 	const inputRef = useRef< FormTextInput >( null );
 
+	// TODO - likely move this to redux state so we can set it from the dialog modal.
 	const [ isLockedInput, setIsLockedInput ] = useState( true );
 
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
