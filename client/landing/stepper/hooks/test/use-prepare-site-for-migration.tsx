@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { usePrepareSiteForMigration } from '../use-prepare-site-for-migration';
+import { usePrepareSiteForMigrationWithMigrateGuru } from '../use-prepare-site-for-migration';
 import { replyWithError, replyWithSuccess } from './helpers/nock';
 
 const TRANSFER_ACTIVE = ( siteId: number ) => ( {
@@ -40,7 +40,7 @@ describe( 'usePrepareSiteForMigration', () => {
 	const render = ( { siteId } ) => {
 		const queryClient = new QueryClient();
 
-		const renderResult = renderHook( () => usePrepareSiteForMigration( siteId ), {
+		const renderResult = renderHook( () => usePrepareSiteForMigrationWithMigrateGuru( siteId ), {
 			wrapper: Wrapper( queryClient ),
 		} );
 

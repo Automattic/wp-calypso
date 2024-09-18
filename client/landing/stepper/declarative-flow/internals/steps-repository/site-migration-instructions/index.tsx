@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
@@ -5,7 +6,10 @@ import { StepContainer } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
-import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
+import {
+	usePrepareSiteForMigrationWithMigrateGuru,
+	usePrepareSiteForMigrationWithMoveToWPCOM,
+} from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -95,7 +99,9 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		completed: preparationCompleted,
 		error: preparationError,
 		migrationKey,
-	} = usePrepareSiteForMigration( siteId );
+	} = config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
+		? usePrepareSiteForMigrationWithMoveToWPCOM( siteId ) // eslint-disable-line react-hooks/rules-of-hooks -- Temporary workaround until we completely replace the migrate guru hook.
+		: usePrepareSiteForMigrationWithMigrateGuru( siteId ); // eslint-disable-line react-hooks/rules-of-hooks
 	const migrationKeyStatus = detailedStatus.migrationKey;
 
 	// Register events and logs.
@@ -117,7 +123,8 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
 
-	const showMigrationKeyFallback = migrationKeyStatus === 'error' && preparationCompleted;
+	const showMigrationKeyFallback =
+		( ! migrationKeyStatus || migrationKeyStatus === 'error' ) && preparationCompleted;
 
 	const { steps, completedSteps } = useSteps( {
 		fromUrl,
