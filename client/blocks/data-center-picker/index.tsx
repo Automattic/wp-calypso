@@ -52,6 +52,10 @@ const Form = styled.div( {
 	maxWidth: '564px',
 } );
 
+const FormHidden = styled.div( {
+	fontSize: '0.75rem',
+} );
+
 const CustomizeLink = styled.a`
 	color: var( --color-link );
 	text-decoration: underline;
@@ -69,25 +73,23 @@ const DataCenterPicker = ( {
 	return (
 		<div>
 			{ ! isFormShowing && (
-				<div>
-					<span>
-						{ translate(
-							'Your site will be placed in the optimal data center, but you can {{customizeLink}}customize it{{/customizeLink}}.',
-							{
-								components: {
-									customizeLink: (
-										<CustomizeLink
-											onClick={ () => {
-												onClickShowPicker();
-												setIsFormShowing( ! isFormShowing );
-											} }
-										/>
-									),
-								},
-							}
-						) }
-					</span>
-				</div>
+				<FormHidden>
+					{ translate(
+						'Your site will be placed in the optimal data center, but you can {{customizeLink}}customize it{{/customizeLink}}.',
+						{
+							components: {
+								customizeLink: (
+									<CustomizeLink
+										onClick={ () => {
+											onClickShowPicker();
+											setIsFormShowing( ! isFormShowing );
+										} }
+									/>
+								),
+							},
+						}
+					) }
+				</FormHidden>
 			) }
 
 			{ isFormShowing && (
