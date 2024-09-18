@@ -11,4 +11,19 @@
 	.dataviews-view-table__row {
 		cursor: pointer;
 	}
+
+	.dataviews-wrapper ul.dataviews-view-list .is-selected,
+	.dataviews-wrapper ul.dataviews-view-list li:has(.is-site-selected) {
+		border-block-start: 0;
+		background-color: var(--color-neutral-0);
+
+		.dataviews-view-list__item-wrapper {
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		}
+	}
+
+	.dataviews-view-list li.is-selected.is-selected + li {
+		border-block-start: 0;
+		/* border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12); */
+	}
 }
