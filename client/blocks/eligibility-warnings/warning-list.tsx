@@ -40,7 +40,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 							</Fragment>
 						) }
 						<span className="eligibility-warnings__message-description">
-							<span>{ description } </span>
+							<span>{ boldDomainText( description, translate ) }</span>
 							{ domainNames && displayDomainNames( domainNames ) }
 							{ supportUrl && (
 								<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
@@ -135,6 +135,22 @@ function getWarningDescription(
 		default:
 			return defaultCopy;
 	}
+}
+
+// Bold the text "your domain will change" in the description.
+function boldDomainText( text: string, translate: LocalizeProps[ 'translate' ] ) {
+	const match = translate( 'your domain will change' );
+	const parts = text.split( match );
+	return (
+		<>
+			{ parts.map( ( part, index ) => (
+				<Fragment key={ index }>
+					{ part }
+					{ index < parts.length - 1 && <strong>{ match }</strong> }
+				</Fragment>
+			) ) }
+		</>
+	);
 }
 
 export default localize( WarningList );
