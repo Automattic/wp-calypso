@@ -267,12 +267,12 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			submit: ( props?: ProvidedDependencies ) => {
 				const action = getFromPropsOrUrl( 'action', props ) as 'skip' | 'submit';
 				const extraPrams = {
-					...( action === 'skip' ? { credentials: 'skipped' } : {} ),
+					...( action !== 'skip' ? { preventTicketCreation: true } : {} ),
 				};
 
 				return navigateWithQueryParams(
 					SITE_MIGRATION_ASSISTED_MIGRATION,
-					[ 'credentials' ],
+					[ 'preventTicketCreation' ],
 					{ ...props, ...extraPrams },
 					{ replaceHistory: true }
 				);
