@@ -12,12 +12,12 @@ button.follow-button {
 		pointer-events: auto;
 
 		path {
-			fill: var(--color-text-subtle);
+			fill: var(--color-neutral-70);
 		}
 	}
 
 	.follow-button__label {
-		color: var(--color-text-subtle);
+		color: var(--color-neutral-70);
 		margin-left: 5px;
 		white-space: nowrap;
 	}
@@ -28,8 +28,9 @@ button.follow-button {
 		.follow-button__label {
 			color: var(--color-success);
 		}
+
 		svg.reader-follow-feed path {
-			fill: var(--color-success);
+			fill: var(--color-text-inverted);
 		}
 	}
 
@@ -51,6 +52,7 @@ button.follow-button {
 			path.following-icon-background {
 				fill: var(--color-success);
 			}
+
 			path.following-icon-tick {
 				stroke: var(--color-success);
 			}
@@ -68,10 +70,12 @@ button.follow-button {
 
 		&:hover {
 			color: var(--color-success);
+
 			svg.reader-following-feed {
 				path.following-icon-background {
 					fill: var(--color-success);
 				}
+
 				path.following-icon-tick {
 					stroke: var(--color-success);
 				}
@@ -140,7 +144,7 @@ button.follow-button {
 			color: var(--color-text-inverted);
 			margin-left: 8px;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				display: unset;
 			}
 		}
@@ -158,7 +162,7 @@ button.follow-button {
 }
 
 .follow-button__label {
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		display: none;
 	}
 }

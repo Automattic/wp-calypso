@@ -3,6 +3,7 @@
 @import "@wordpress/base-styles/variables";
 
 .is-section-reader .search-stream__fixed-area {
+
 	// Main layout already has mx
 	.navigation-header {
 		margin: 0 auto;
@@ -35,21 +36,23 @@
 }
 
 .search-stream__intro {
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		margin-left: 16px;
 	}
 }
 
 .search-stream .search {
 	margin-bottom: 0;
-	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	border-radius: 4px;
+
 	.search__icon-navigation {
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 6px;
-		@include breakpoint-deprecated( "<660px" ) {
+		border-radius: 4px;
+
+		@include breakpoint-deprecated("<660px") {
 			border-radius: 0;
 		}
 	}
+
 	.search__input.form-text-input[type="search"],
 	.search__close-icon {
 		/* stylelint-disable-next-line scales/radii */
@@ -58,8 +61,10 @@
 		border-top-right-radius: 6px;
 		padding: 6px 0;
 	}
+
 	&.is-open.has-focus {
 		box-shadow: none;
+
 		&:hover {
 			box-shadow: none;
 		}
@@ -97,7 +102,8 @@
 .search-stream .search-stream__input-card.card {
 	margin-bottom: 0;
 	border-radius: 4px;
-	@include breakpoint-deprecated( "<660px" ) {
+
+	@include breakpoint-deprecated("<660px") {
 
 		.search__icon-navigation {
 			border-radius: 4px;
@@ -113,7 +119,7 @@
 
 // Top margin for site results
 .main.search-stream {
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
 	}
 }
@@ -123,28 +129,22 @@
 	display: flex;
 	flex-flow: row wrap;
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated("<960px") {
 		flex-flow: column wrap;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		flex-flow: row wrap;
 		padding-top: 30px;
 	}
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@include breakpoint-deprecated("<480px") {
 		flex-flow: column wrap;
 	}
 }
 
-.is-reader-page
-.search-stream.search-stream__with-sites
-.search-stream__results.is-two-columns
-.reader__content,
-.is-reader-page
-.search-stream.search-stream__with-sites
-.search-stream__single-column-results.is-post-results
-.reader__content {
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__results.is-two-columns .reader__content,
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__single-column-results.is-post-results .reader__content {
 	flex-flow: inherit;
 	flex-direction: column; // So post results are stacked
 }
@@ -164,7 +164,7 @@
 
 		.reader-related-card.is-placeholder {
 			padding: 16px;
-			border-radius: 6px; /* stylelint-disable-line scales/radii */
+			border-radius: 4px;
 		}
 	}
 
@@ -172,7 +172,7 @@
 	.reader-related-card__post {
 		max-height: 16px * 1.6 * 11;
 
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated("<960px") {
 			max-height: 16px * 1.6 * 8;
 		}
 	}
@@ -206,7 +206,7 @@
 			top: -2px;
 			left: 50px;
 
-			@include breakpoint-deprecated( "<480px" ) {
+			@include breakpoint-deprecated("<480px") {
 				margin-right: 0;
 			}
 		}
@@ -285,7 +285,7 @@
 	margin-bottom: 0;
 	padding-bottom: 0;
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@include breakpoint-deprecated(">480px") {
 		height: 58px;
 	}
 }
@@ -365,7 +365,7 @@
 .search-stream__single-column-results .reader-infinite-stream__row-wrapper {
 	margin-top: 20px;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		margin: 20px 16px 0;
 		width: calc(100% - 32px) !important;
 	}
@@ -378,7 +378,7 @@
 	min-width: 0;
 	max-width: 25px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		align-items: flex-start;
 		min-width: 90px;
 	}
@@ -398,13 +398,13 @@
 	width: calc(100% - 304px);
 
 	.reader-post-card__post {
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated("<960px") {
 			flex-direction: column;
 		}
 	}
 
 	.reader-post-card.card.has-thumbnail .reader-featured-image {
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated("<960px") {
 			height: 80px;
 			margin: 0 0 20px;
 			max-width: 100%;
@@ -433,7 +433,7 @@
 }
 
 .card.reader-search-card.is-photo {
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		z-index: z-index("root", ".reader-search-card");
 	}
 }
@@ -471,7 +471,7 @@
 			color: var(--color-link);
 			text-decoration: underline;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				display: inline;
 			}
 		}
@@ -480,6 +480,7 @@
 			svg.reader-follow-feed path {
 				fill: var(--color-link);
 			}
+
 			.follow-button__label {
 				color: var(--color-link);
 			}
@@ -502,7 +503,7 @@
 	margin-top: 1em;
 	text-align: center;
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated("<960px") {
 		margin-top: 2em;
 	}
 }

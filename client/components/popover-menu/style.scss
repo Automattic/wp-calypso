@@ -50,8 +50,8 @@
 
 		svg.reader-follow-conversation path,
 		svg.reader-following-conversation path {
-			fill: none;
-			stroke: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
+			// stroke: var(--color-text-inverted);
 
 			&.status {
 				fill: var(--color-primary);
@@ -62,6 +62,7 @@
 
 	&[disabled] {
 		color: var(--color-neutral-20);
+
 		.gridicon {
 			color: var(--color-neutral-0);
 		}
@@ -88,6 +89,7 @@
 		margin-right: 8px;
 		position: static;
 	}
+
 	.gridicons-cloud-download {
 		position: relative;
 		top: 2px;
