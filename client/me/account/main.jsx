@@ -598,6 +598,8 @@ class Account extends Component {
 	}
 
 	async handleSubmitSuccess( response, formName = '' ) {
+		const isEmailUpdate = this.hasUnsavedUserSetting( 'user_email' );
+
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
 		}
@@ -625,6 +627,15 @@ class Account extends Component {
 					this.props.translate( 'Settings saved successfully!' ),
 					noticeOptions
 				);
+				isEmailUpdate &&
+					this.props.translate(
+						'We sent an email to %(email)s. Please check your inbox to verify your email.',
+						{
+							args: {
+								email: this.props.userSettings?.new_user_email,
+							},
+						}
+					);
 			}
 		);
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
