@@ -20,7 +20,6 @@ import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -203,7 +202,7 @@ export const EligibilityWarnings = ( {
 				<CompactCard>
 					<div className="eligibility-warnings__header">
 						<div className="eligibility-warnings__title">
-							{ preventWidows( translate( 'Activate hosting features' ) ) }
+							{ translate( 'Activate hosting features' ) }
 						</div>
 					</div>
 				</CompactCard>

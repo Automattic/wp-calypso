@@ -3,7 +3,6 @@ import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import ExternalLink from 'calypso/components/external-link';
-import { preventWidows } from 'calypso/lib/formatting';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
@@ -124,15 +123,13 @@ function getWarningDescription(
 			);
 
 		case 'hosting-features':
-			return preventWidows(
-				translate(
-					'By proceeding the following change will be made to the site:',
-					'By proceeding the following changes will be made to the site:',
-					{
-						count: warningCount,
-						args: warningCount,
-					}
-				)
+			return translate(
+				'By proceeding the following change will be made to the site:',
+				'By proceeding the following changes will be made to the site:',
+				{
+					count: warningCount,
+					args: warningCount,
+				}
 			);
 
 		default:
