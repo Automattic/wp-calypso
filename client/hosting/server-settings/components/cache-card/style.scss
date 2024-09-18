@@ -1,0 +1,37 @@
+.performance-optimization__button.button {
+	margin-bottom: 12px;
+}
+
+.performance-optimization__nb {
+	color: #646970;
+	margin-bottom: 18px;
+	font-style: italic;
+	letter-spacing: -0.15px;
+}
+
+.performance-optimization__hr {
+	margin: 0 0 24px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.performance-optimization__subtitle {
+	margin-bottom: 6px;
+	font-weight: 500;
+	letter-spacing: -0.15px;
+}
+
+.performance-optimization__all-cache-block {
+	margin-bottom: 6px;
+}
+
+.performance-optimization__global-edge-cache-block {
+	margin-bottom: 12px;
+}
+
+.performance-optimization__global-object-cache-block {
+	margin-bottom: 12px;
+
+	.hosting-card__description {
+		margin-bottom: 16px;
+	}
+}

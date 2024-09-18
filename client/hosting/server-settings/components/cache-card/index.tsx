@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -19,36 +19,21 @@ import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
+import type { IAppState } from 'calypso/state/types';
 
-const Hr = styled.hr( {
-	marginBottom: '16px',
-	marginTop: '16px',
-	width: '100%',
-	color: '#e0e0e0',
-} );
+import './style.scss';
 
-const EdgeCacheNotice = styled.p( {
-	color: '#646970',
-	marginTop: '18px',
-} );
-
-const CardBody = styled.div( {
-	display: 'flex',
-	flexDirection: 'column',
-} );
-
-const ToggleContainer = styled.div( {
-	fontSize: '14px',
-	label: {
-		fontSize: '14px',
-	},
-} );
-
-const ToggleLabel = styled.p( {
-	marginBottom: '9px',
-	fontWeight: 600,
-	fontSize: '14px',
-} );
+type CacheCardProps = {
+	disabled: boolean;
+	shouldRateLimitCacheClear: boolean;
+	clearAtomicWordPressCache: ( siteId: number, reason: string ) => void;
+	isClearingWordpressCache: boolean;
+	isPrivate: boolean | null;
+	isComingSoon: boolean;
+	siteId: number;
+	siteSlug: string | null;
+	translate: LocalizeProps[ 'translate' ];
+};
 
 export const CacheCard = ( {
 	disabled,
@@ -60,7 +45,7 @@ export const CacheCard = ( {
 	siteId,
 	siteSlug,
 	translate,
-} ) => {
+}: CacheCardProps ) => {
 	const {
 		isLoading: getEdgeCacheLoading,
 		data: isEdgeCacheActive,
@@ -75,44 +60,15 @@ export const CacheCard = ( {
 
 	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
 
-	const clearCache = () => {
+	const handleClearCache = () => {
 		if ( isEdgeCacheActive ) {
 			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
 				site_id: siteId,
 			} );
+			// @ts-expect-error TODO: Fix this
 			clearEdgeCache();
 		}
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
-	};
-
-	const getClearCacheContent = () => {
-		return (
-			<div>
-				<Button
-					onClick={ clearCache }
-					busy={ isClearingCache }
-					disabled={
-						disabled ||
-						isClearingCache ||
-						shouldRateLimitCacheClear ||
-						getEdgeCacheLoading ||
-						isEdgeCacheMutating
-					}
-				>
-					<span>{ translate( 'Clear cache' ) }</span>
-				</Button>
-				<EdgeCacheNotice>
-					{ translate(
-						'Clearing the cache may temporarily make your site less responsive while the cache refreshes.'
-					) }
-				</EdgeCacheNotice>
-				{ shouldRateLimitCacheClear && (
-					<p className="form-setting-explanation">
-						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
-					</p>
-				) }
-			</div>
-		);
 	};
 
 	const edgeCacheToggleDescription = isEdgeCacheEligible
@@ -126,23 +82,55 @@ export const CacheCard = ( {
 				}
 		  );
 
-	//autorenew
 	return (
-		<HostingCard className="cache-card" headingId="cache" title={ translate( 'Cache' ) }>
-			<CardBody>
-				<HostingCardDescription>
-					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
-						components: {
-							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
-						},
-					} ) }
-				</HostingCardDescription>
-				<ToggleContainer>
+		<HostingCard
+			className="cache-card"
+			headingId="cache"
+			title={ translate( 'Performance optimization' ) }
+		>
+			<div>
+				<div className="performance-optimization__all-cache-block">
+					<HostingCardDescription>
+						{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
+							components: {
+								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
+							},
+						} ) }
+					</HostingCardDescription>
+					<Button
+						onClick={ handleClearCache }
+						busy={ isClearingCache }
+						disabled={
+							disabled ||
+							isClearingCache ||
+							shouldRateLimitCacheClear ||
+							getEdgeCacheLoading ||
+							isEdgeCacheMutating
+						}
+						className="performance-optimization__button"
+					>
+						<span>{ translate( 'Clear all caches' ) }</span>
+					</Button>
+					<div className="performance-optimization__nb">
+						{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
+					</div>
+					{ shouldRateLimitCacheClear && (
+						<div className="performance-optimization__nb">
+							{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
+						</div>
+					) }
+				</div>
+
+				<div className="performance-optimization__hr"></div>
+
+				<div className="performance-optimization__global-edge-cache-block">
 					{ getEdgeCacheInitialLoading ? (
 						<EdgeCacheLoadingPlaceholder />
 					) : (
 						<>
-							<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
+							<div className="performance-optimization__subtitle">
+								{ translate( 'Global edge cache' ) }
+							</div>
 							<ToggleControl
 								disabled={
 									clearEdgeCacheLoading ||
@@ -164,19 +152,45 @@ export const CacheCard = ( {
 								} }
 								label={ edgeCacheToggleDescription }
 							/>
-							<Hr />
+							{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
+								<Button onClick={ () => {} } className="performance-optimization__button">
+									<span>{ translate( 'Clear edge cache' ) }</span>
+								</Button>
+							) }
 						</>
 					) }
-				</ToggleContainer>
-				{ getClearCacheContent() }
-			</CardBody>
+				</div>
+
+				{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
+					<div className="performance-optimization__global-object-cache-block">
+						<div className="performance-optimization__subtitle">
+							{ translate( 'Object cache' ) }
+						</div>
+						<HostingCardDescription>
+							{ translate(
+								'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
+								{
+									components: {
+										a: (
+											<InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />
+										),
+									},
+								}
+							) }
+						</HostingCardDescription>
+						<Button onClick={ () => {} } className="performance-optimization__button">
+							<span>{ translate( 'Clear object cache' ) }</span>
+						</Button>
+					</div>
+				) }
+			</div>
 		</HostingCard>
 	);
 };
 
 export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state: IAppState ) => {
+		const siteId = getSelectedSiteId( state ) as number;
 		const siteSlug = getSelectedSiteSlug( state );
 		const isPrivate = isPrivateSite( state, siteId );
 		const isComingSoon = isSiteComingSoon( state, siteId );
