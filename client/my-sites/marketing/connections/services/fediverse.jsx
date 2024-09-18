@@ -20,7 +20,7 @@ function FediverseHeader() {
 					{ translate( 'Fediverse' ) }
 					<Badge className="service__new-badge">{ translate( 'New' ) }</Badge>
 				</h2>
-				<p class="sharing-service__description">
+				<p className="sharing-service__description">
 					{ translate( 'Mastodon today, Threads tomorrow. Enter the Fediverse with ActivityPub.' ) }
 				</p>
 			</div>
