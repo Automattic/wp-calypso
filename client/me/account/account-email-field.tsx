@@ -1,4 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
@@ -226,7 +227,9 @@ const AccountEmailField = ( {
 	}, [ isLockedInput ] );
 
 	const unlockWrapper = (
-		<button
+		<Button
+			className="account-email-field__enable-input"
+			variant="link"
 			onClick={ ( ev: React.MouseEvent< HTMLButtonElement > ) => {
 				ev.preventDefault();
 				setIsLockedInput( false );
@@ -235,7 +238,6 @@ const AccountEmailField = ( {
 				// locked or not.
 				focusInput();
 			} }
-			className="account-email-field__enable-input"
 		/>
 	);
 
