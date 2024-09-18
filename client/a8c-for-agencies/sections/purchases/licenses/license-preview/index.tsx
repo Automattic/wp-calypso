@@ -69,7 +69,7 @@ export default function LicensePreview( {
 	parentLicenseId,
 	quantity,
 	isChildLicense,
-	meta = {},
+	meta,
 	referral,
 }: Props ) {
 	const translate = useTranslate();
