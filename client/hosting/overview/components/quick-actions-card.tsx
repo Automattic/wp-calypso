@@ -17,14 +17,22 @@ import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
+	onClick?: () => void;
 	icon: ReactNode;
-	href: string;
+	href?: string;
 	text: string;
 }
-const Action: FC< ActionProps > = ( { icon, href, text } ) => {
+export const Action: FC< ActionProps > = ( { icon, href, text, onClick } ) => {
+	const isDisabled = ! href && ! onClick;
 	return (
 		<li className="hosting-overview__action">
-			<Button className="hosting-overview__action-button" plain href={ href } disabled={ ! href }>
+			<Button
+				className="hosting-overview__action-button"
+				onClick={ onClick }
+				plain
+				href={ href }
+				disabled={ isDisabled }
+			>
 				<span className="hosting-overview__action-text">
 					{ icon }
 					{ text }
