@@ -5,7 +5,7 @@ import {
 	AKISMET_PRO_500_PRODUCTS,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { isCopySiteFlow } from '@automattic/onboarding';
+import { isCopySiteFlow, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
 import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
@@ -308,6 +308,11 @@ function LineItemWrapper( {
 		}
 
 		if ( has100YearPlanProduct ) {
+			return false;
+		}
+
+		// TODO: Also include condition to check if utm is wordcamp
+		if ( isNewHostedSiteCreationFlow( signupFlowName ) ) {
 			return false;
 		}
 
