@@ -249,7 +249,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( 'Manage post categories', __i18n_text_domain__ ),
-			link: `/settings/writing/${ siteSlug }`,
+			link: `/settings/taxonomies/category/${ siteSlug }`,
 			synonyms: [ 'post', 'category' ],
 			icon: 'cog',
 		},
@@ -261,7 +261,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( 'Set up a podcast', __i18n_text_domain__ ),
-			link: `/settings/writing/${ siteSlug }#podcasting-details__link-header`,
+			link: `/settings/podcasting/${ siteSlug }`,
 			synonyms: [ 'podcast', 'radio', 'audio' ],
 			icon: 'cog',
 		},

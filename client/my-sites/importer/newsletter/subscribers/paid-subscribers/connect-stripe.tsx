@@ -4,7 +4,7 @@ import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
-import { StepProps } from '../../types';
+import { SubscribersStepProps } from '../../types';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
@@ -28,7 +28,7 @@ export default function ConnectStripe( {
 	fromSite,
 	engine,
 	isFetchingContent,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	if ( isFetchingContent || cardData?.connect_url === undefined ) {
 		return null;
 	}

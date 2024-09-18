@@ -1,30 +1,22 @@
 import { Button } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { A4A_SITES_LINK_DEVELOPMENT } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
+import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
 import { addQueryArgs } from 'calypso/lib/url';
 
-type Props = {
+type BannerProps = {
 	siteId: number;
-	migrationIntent: boolean;
-	isDevelopmentSite?: boolean;
+	migration?: boolean;
+	development?: boolean;
+	onDismiss?: () => void;
 };
 
-export default function ProvisioningSiteNotification( {
-	siteId,
-	migrationIntent,
-	isDevelopmentSite,
-}: Props ) {
+function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
-
-	useEffect( () => {
-		if ( siteId ) {
-			setShowBanner( true );
-		}
-	}, [ siteId ] );
 
 	const translate = useTranslate();
 
@@ -38,7 +30,7 @@ export default function ProvisioningSiteNotification( {
 		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
 	);
 
-	const readySiteMessage = isDevelopmentSite
+	const readySiteMessage = development
 		? translate(
 				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below. Before the site launches, you will be able to find it under {{developmentTabLink}}Development{{/developmentTabLink}}.',
 				{
@@ -61,12 +53,17 @@ export default function ProvisioningSiteNotification( {
 				}
 		  );
 
+	const onClose = () => {
+		setShowBanner( false );
+		onDismiss?.();
+	};
+
 	return (
 		showBanner && (
 			<NoticeBanner
 				level={ isReady ? 'success' : 'warning' }
 				hideCloseButton={ ! isReady }
-				onClose={ () => setShowBanner( false ) }
+				onClose={ onClose }
 				title={
 					isReady
 						? translate( 'Your WordPress.com site is ready!' )
@@ -75,7 +72,7 @@ export default function ProvisioningSiteNotification( {
 				actions={
 					isReady
 						? [
-								migrationIntent ? (
+								migration ? (
 									<Button href={ wpMigrationUrl } target="_blank" rel="noreferrer" primary>
 										{ translate( 'Migrate to this site' ) }
 									</Button>
@@ -96,4 +93,20 @@ export default function ProvisioningSiteNotification( {
 			</NoticeBanner>
 		)
 	);
+}
+
+export default function ProvisioningSiteNotification() {
+	const { provisioningSites, untrackSiteId } = useTrackProvisioningSites();
+
+	return provisioningSites.map( ( { id, migration, development } ) => {
+		return (
+			<Banner
+				key={ `provisioning_site_banner_${ id }` }
+				siteId={ id }
+				migration={ migration }
+				development={ development }
+				onDismiss={ () => untrackSiteId( id ) }
+			/>
+		);
+	} );
 }

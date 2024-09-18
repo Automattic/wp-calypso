@@ -83,6 +83,17 @@ $blueberry-color: #3858e9;
 
 			.insight-header-container {
 				display: flex;
+				align-items: baseline;
+
+				p {
+					margin: 0;
+					line-height: 26px;
+				}
+
+				div {
+					width: 100%;
+				}
+
 			}
 
 			.counter {

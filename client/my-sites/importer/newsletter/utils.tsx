@@ -55,8 +55,41 @@ export function getSetpProgressSteps(
 		{
 			message: 'Summary',
 			onClick: noop,
+			indicator: getStepProgressIndicator(
+				getImporterStatus(
+					paidNewsletterData?.steps.content.status,
+					paidNewsletterData?.steps.subscribers.status
+				)
+			),
 		},
 	];
 
 	return result;
+}
+
+export function getImporterStatus(
+	contentStepStatus?: StepStatus,
+	subscribersStepStatus?: StepStatus
+): StepStatus {
+	if ( contentStepStatus === 'done' && subscribersStepStatus === 'done' ) {
+		return 'done';
+	}
+
+	if ( contentStepStatus === 'done' && subscribersStepStatus === 'skipped' ) {
+		return 'done';
+	}
+
+	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'done' ) {
+		return 'done';
+	}
+
+	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'skipped' ) {
+		return 'skipped';
+	}
+
+	if ( contentStepStatus === 'importing' || subscribersStepStatus === 'importing' ) {
+		return 'importing';
+	}
+
+	return 'initial';
 }
