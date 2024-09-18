@@ -5,7 +5,6 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AnyAction } from 'redux';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -16,7 +15,6 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { dispatchRecordSubmitStep } from 'calypso/state/signup/progress/actions';
 import { ProvidedDependencies, StepProps } from '../../types';
 
 import './style.scss';
@@ -69,40 +67,29 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		setPlanInterval( intervalType );
 	};
 
-	const handleSubmitSignupStep = (
-		step: Record< string, unknown >,
-		providedDependencies: Record< string, unknown >,
-		optionalProps: Record< string, unknown >
-	) => {
-		if ( step.stepName === 'domains' ) {
-			if ( step.isPurchasingItem === false ) {
-				setDomainCartItem( undefined );
-				setDomainCartItems( undefined );
-			} else if ( step.siteUrl ) {
-				setSiteUrl( step.siteUrl );
-			}
-		} else {
-			setStepState( ( mostRecentState = { ...stepState, ...step } ) );
-			dispatch(
-				dispatchRecordSubmitStep(
-					{ ...stepState, ...step },
-					providedDependencies,
-					optionalProps
-				) as unknown as AnyAction
-			);
-			props.navigation.submit?.(
-				( mostRecentState = { ...stepState, ...step, ...mostRecentState } )
-			);
-		}
-	};
-
 	return (
 		<LocalizedPlanStep
 			selectedSite={ site }
 			saveSignupStep={ ( state: ProvidedDependencies ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 			} }
-			submitSignupStep={ handleSubmitSignupStep }
+			submitSignupStep={ ( state: ProvidedDependencies ) => {
+				/* The plans step removes paid domains when the user picks a free plan
+				   after picking a paid domain */
+				if ( state.stepName === 'domains' ) {
+					if ( state.isPurchasingItem === false ) {
+						setDomainCartItem( undefined );
+						setDomainCartItems( undefined );
+					} else if ( state.siteUrl ) {
+						setSiteUrl( state.siteUrl );
+					}
+				} else {
+					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
+					props.navigation.submit?.(
+						( mostRecentState = { ...stepState, ...state, ...mostRecentState } )
+					);
+				}
+			} }
 			goToNextStep={ () => props.navigation.submit?.( { ...stepState, ...mostRecentState } ) }
 			step={ stepState }
 			customerType={ customerType }
