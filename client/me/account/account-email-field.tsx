@@ -1,7 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -174,6 +174,8 @@ const AccountEmailField = ( {
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const isEmailVerifified = useSelector( isCurrentUserEmailVerified );
+	const inputRef = useRef< FormTextInput >( null );
+
 	const [ isLockedInput, setIsLockedInput ] = useState( true );
 
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
@@ -212,6 +214,31 @@ const AccountEmailField = ( {
 		dispatch( setUserSetting( 'user_email', value ) );
 	};
 
+	const focusInput = () => {
+		inputRef.current?.focus();
+	};
+
+	// Ensure input is focused when user selects to unlock it.
+	useEffect( () => {
+		if ( ! isLockedInput ) {
+			focusInput();
+		}
+	}, [ isLockedInput ] );
+
+	const unlockWrapper = (
+		<button
+			onClick={ ( ev: React.MouseEvent< HTMLButtonElement > ) => {
+				ev.preventDefault();
+				setIsLockedInput( false );
+				// Ensure input is focused when the user clicks
+				// this, regardless of if it was previously
+				// locked or not.
+				focusInput();
+			} }
+			className="account-email-field__enable-input"
+		/>
+	);
+
 	return (
 		<>
 			<QueryAllDomains />
@@ -225,6 +252,7 @@ const AccountEmailField = ( {
 					onFocus={ onFocus }
 					value={ emailAddress }
 					onChange={ onEmailAddressChange }
+					ref={ inputRef }
 				/>
 
 				<AccountEmailValidationNotice
@@ -239,15 +267,7 @@ const AccountEmailField = ( {
 								'Not publicly displayed, except to owners of sites you subscribe to. {{wrapper}}Click here to update it{{/wrapper}}.',
 								{
 									components: {
-										wrapper: (
-											<button
-												onClick={ ( ev ) => {
-													ev.preventDefault();
-													setIsLockedInput( false );
-												} }
-												className="account-email-field__enable-input"
-											/>
-										),
+										wrapper: unlockWrapper,
 									},
 								}
 						  )
@@ -255,15 +275,7 @@ const AccountEmailField = ( {
 								'Your email has not been verified yet. Need to update your address? {{wrapper}}Click here to update it{{/wrapper}}.',
 								{
 									components: {
-										wrapper: (
-											<button
-												onClick={ ( ev ) => {
-													ev.preventDefault();
-													setIsLockedInput( false );
-												} }
-												className="account-email-field__enable-input"
-											/>
-										),
+										wrapper: unlockWrapper,
 									},
 								}
 						  ) }
