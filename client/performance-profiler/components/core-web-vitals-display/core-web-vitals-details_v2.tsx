@@ -94,6 +94,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 			style={ {
 				flexDirection: 'column',
 				borderRadius: '6px',
+				flex: 1,
 			} }
 		>
 			<div className="core-web-vitals-display__description">
