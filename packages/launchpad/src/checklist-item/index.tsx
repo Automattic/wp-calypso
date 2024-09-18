@@ -105,17 +105,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 				</ButtonElement>
 			) }
 			{ expandable && expandable.isOpen && (
-				<div className="checklist-item__expanded-content">
-					{ expandable.content }
-					{ expandable.action && (
-						<Button
-							className="checklist-item__checklist-expanded-action-button"
-							onClick={ expandable.action.onClick }
-						>
-							{ expandable.action.label }
-						</Button>
-					) }
-				</div>
+				<div className="checklist-item__expanded-content">{ expandable.content }</div>
 			) }
 		</li>
 	);
