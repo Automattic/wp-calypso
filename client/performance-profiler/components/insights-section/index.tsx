@@ -25,9 +25,16 @@ export const InsightsSection = forwardRef(
 		const translate = useTranslate();
 		const { audits, fullPageScreenshot, isWpcom, hash, filter } = props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
-		const filteredAudits = Object.keys( audits ).filter( ( key ) =>
-			filterRecommendations( selectedFilter, audits[ key ] )
-		);
+
+		const sumMetricSavings = ( key: string ) =>
+			Object.values( audits[ key ].metricSavings ?? {} ).reduce( ( acc, val ) => acc + val, 0 );
+
+		const sortInsightKeys = ( a: string, b: string ) =>
+			sumMetricSavings( b ) - sumMetricSavings( a );
+
+		const filteredAudits = Object.keys( audits )
+			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
+			.sort( sortInsightKeys );
 		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
 			setSelectedFilter( option.value );
 			updateQueryParams( { filter: option.value }, true );
