@@ -10,7 +10,7 @@ const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
 	editorYouTubeIframe: 'iframe[title="Embedded content from www.youtube.com"]',
-	publishedYouTubeIframe: `iframe.youtube-player`,
+	publishedYouTubeIframe: 'iframe[title="Getting started on @wordpressdotcom"]',
 };
 
 /**
