@@ -5,9 +5,11 @@
 @import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
 
 @mixin hover-color {
+
 	&:hover,
 	&:focus {
-		color: var(--color-text-inverted);
+		fill: var(--color-text-inverted);
+		// color: var(--color-text-inverted);
 		background: var(--color-primary);
 
 		.reader-import-button__label,
@@ -51,6 +53,7 @@
 		margin: 0 0 26px;
 
 		& .formatted-header {
+
 			&.is-left-align,
 			&.is-right-align {
 				margin: 0;

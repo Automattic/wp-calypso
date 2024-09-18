@@ -6,9 +6,8 @@ import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import SVGIcon from 'calypso/components/svg-icon';
+import ReaderSettingsIcon from 'calypso/reader/components/icons/reader-settings-icon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -128,13 +127,8 @@ class ReaderSiteNotificationSettings extends Component {
 					ref={ this.spanRef }
 					aria-label={ translate( 'Notification settings' ) }
 				>
-					<SVGIcon
-						classes="reader-following-feed"
-						name="settings"
-						size={ this.props.iconSize }
-						icon={ Settings }
-						ref={ this.iconRef }
-					/>
+					<ReaderSettingsIcon />
+
 					{ this.props.showLabel && (
 						<span
 							className="reader-site-notification-settings__button-label"
@@ -148,7 +142,7 @@ class ReaderSiteNotificationSettings extends Component {
 				<ReaderPopover
 					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
-					context={ this.iconRef.current }
+					context={ this.spanRef.current }
 					ignoreContext={ this.spanRef.current }
 					position="bottom left"
 					className="reader-site-notification-settings__popout"

@@ -8,6 +8,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import ReaderEditIcon from 'calypso/reader/components/icons/edit-icon';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
@@ -347,7 +348,7 @@ class ReaderPostEllipsisMenu extends Component {
 				) }
 
 				{ this.props.showEditPost && isEditPossible && (
-					<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+					<PopoverMenuItem onClick={ this.visitPost } icon={ ReaderEditIcon( { iconSize: 20 } ) }>
 						{ translate( 'Edit post' ) }
 					</PopoverMenuItem>
 				) }

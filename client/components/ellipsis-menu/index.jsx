@@ -1,9 +1,10 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
+import EllipsisIcon from 'calypso/reader/components/icons/ellipsis-icon';
 
 import './style.scss';
 
@@ -84,7 +85,7 @@ class EllipsisMenu extends Component {
 					disabled={ disabled }
 					className="ellipsis-menu__toggle"
 				>
-					{ icon ? icon : <Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" /> }
+					{ icon ? icon : <EllipsisIcon iconSize={ 20 } className="ellipsis-menu__toggle-icon" /> }
 				</Button>
 				{ isMenuVisible && (
 					<PopoverMenu

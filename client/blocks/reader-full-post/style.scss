@@ -7,11 +7,11 @@ $reader-full-post-story-padding: 24px;
 $reader-full-post-story-max-width: 720px;
 // 295 for sidebar and 16 for the right frame padding.
 $global-sidebar-and-frame-width: 295px + 16px;
-$reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-post-story-max-width + ( $reader-full-post-story-padding * 2 ) + $global-sidebar-and-frame-width;
+$reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-post-story-max-width + ($reader-full-post-story-padding * 2) + $global-sidebar-and-frame-width;
 
 .is-group-reader.has-no-sidebar {
 	.masterbar {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated("<660px") {
 			display: none; // Hides masterbar in fullpost mobile
 		}
 	}
@@ -35,6 +35,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		justify-content: space-around;
 		flex-wrap: wrap;
 	}
+
 	max-width: 1200px;
 	margin: 0 auto;
 
@@ -60,7 +61,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	width: 46px;
 	z-index: z-index(".reader-full-post__sidebar-comment-like", ".reader-full-post__visit-site-container");
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		display: none;
 	}
 
@@ -87,7 +88,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 
 	.reader-full-post__visit-site-label {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated("<660px") {
 			display: none;
 		}
 	}
@@ -114,7 +115,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	margin-left: -4px;
 	user-select: none;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		top: 12px;
 	}
 }
@@ -123,11 +124,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	max-width: var(--reader-full-post-story-max-width);
 	padding: 32px var(--reader-full-post-story-padding);
 	margin: 0 auto;
+
 	@media (min-width: $reader-full-post-desktop-min) {
 		margin: 0;
 	}
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@include breakpoint-deprecated("<480px") {
 		font-size: $font-body;
 		line-height: 24px;
 	}
@@ -136,6 +138,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		position: relative;
 		top: -1px;
 	}
+
 	.like-button__label {
 		position: relative;
 		top: -1px;
@@ -150,12 +153,15 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	figure.wp-block-table {
 		overflow: auto;
 	}
+
 	.has-text-align-center {
 		text-align: center;
 	}
+
 	.has-text-align-right {
 		text-align: right;
 	}
+
 	.wp-block-group p:last-child {
 		margin-bottom: 24px;
 	}
@@ -181,13 +187,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	button.is-compact.is-borderless {
 		margin: 2px;
+
 		@media (max-width: 781px) {
 			padding-top: 12px;
 			padding-bottom: 12px;
 		}
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		left: 14px;
 	}
 }
@@ -196,7 +203,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	display: inline-flex;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		margin-bottom: 35px;
 		padding-right: 10px;
 		position: relative;
@@ -208,7 +215,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 
 		&:not(.is-placeholder)::after {
-			@include long-content-fade( $size: 15% );
+			@include long-content-fade($size: 15%);
 		}
 	}
 
@@ -216,7 +223,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		margin-top: 0;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		flex-direction: row;
 		margin-top: 20px;
 
@@ -259,7 +266,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				font-size: rem(32px) !important;
 
 				.gridicon {
-					@include breakpoint-deprecated( "<660px" ) {
+					@include breakpoint-deprecated("<660px") {
 						height: 32px !important;
 						width: 32px !important;
 						line-height: 32px !important;
@@ -284,7 +291,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			flex: 1 0 0;
 			display: inline;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				margin-top: 0;
 			}
 		}
@@ -299,7 +306,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			left: calc(100% - 270px);
 			top: 5px;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				background: transparent;
 				position: fixed;
 				z-index: z-index(".reader-full-post__sidebar-comment-like", ".author-compact-profile__follow .follow-button");
@@ -317,7 +324,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 
 		.author-compact-profile__follow .follow-button__label {
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				display: none;
 			}
 		}
@@ -357,7 +364,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	justify-content: center;
 	margin-top: 10px;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		align-items: flex-start;
 		background: var(--studio-white);
 		display: flex;
@@ -371,24 +378,28 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		width: 100%;
 		z-index: z-index("root", ".reader-full-post__sidebar-comment-like");
 	}
+
 	.comment-button.is-active,
 	.comment-button:hover {
-		svg.reader-comment path {
-			stroke: var(--color-link);
+		svg {
+			fill: var(--color-link);
 		}
 	}
+
 	.like-button:hover,
 	.like-button.is-active,
-	.like-button.is-liked {
-		svg.reader-star path {
-			stroke: var(--color-link);
-		}
-	}
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var(--color-link);
 		}
 	}
+
+	.like-button.is-liked {
+		svg.reader-star path {
+			fill: var(--color-link);
+		}
+	}
+
 	.like-button__like-icons {
 		position: relative;
 		top: 2px;
@@ -401,7 +412,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	gap: 5px;
 	justify-content: center;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		top: 9px;
 	}
 
@@ -421,7 +432,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	gap: 5px;
 	justify-content: center;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		top: 9px;
 	}
 
@@ -438,7 +449,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post .has-author-link.has-author-icon {
 	margin-top: 25px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		margin-top: 5px;
 	}
 
@@ -456,7 +467,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post .has-author-link .reader-author-link {
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		margin-top: 4px;
 	}
 }
@@ -482,12 +493,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	max-width: 750px;
 
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated(">960px") {
 		font-size: $font-headline-small;
 		line-height: 46px;
 	}
 
-	@include breakpoint-deprecated( "480px-960px" ) {
+	@include breakpoint-deprecated("480px-960px") {
 		font-size: $font-title-large;
 		line-height: 40px;
 	}
@@ -513,7 +524,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__header-date {
 	line-height: 1.6;
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@include breakpoint-deprecated("<480px") {
 		line-height: 1.4;
 	}
 }
@@ -556,6 +567,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	display: inline-flex;
 	margin: 28px 0 26px;
 	position: relative;
+
 	&::after {
 		content: "";
 		position: absolute;
@@ -565,8 +577,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		bottom: 0;
 		right: 0;
 		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
+		border-radius: 4px;
 	}
+
 	img {
 		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 		border-radius: 4px;
@@ -576,16 +589,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post__unavailable {
 	.back-button__label {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated("<660px") {
 			display: inherit;
 		}
 	}
+
 	.reader-full-post__content {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated("<660px") {
 			margin-top: 2em;
 		}
 	}
 }
+
 .reader-full-post__unavailable-body {
 	margin-top: 2em;
 }
@@ -609,6 +624,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .post-edit-button {
+
 	&:hover,
 	&:focus,
 	&:active {
@@ -635,6 +651,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-post-actions__item {
+
 	&:hover,
 	button.is-active,
 	.like-button.is-liked {
@@ -646,6 +663,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		svg.reader-share path {
 			stroke: var(--color-link);
 		}
+
 		svg.reader-star path {
 			stroke: var(--color-link);
 		}
@@ -706,7 +724,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				position: relative;
 				top: 2px;
 
-				@include breakpoint-deprecated( "<480px" ) {
+				@include breakpoint-deprecated("<480px") {
 					position: relative;
 					top: 5px;
 				}
@@ -750,7 +768,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				}
 
 				.reader-author-link {
-					@include breakpoint-deprecated( "<480px" ) {
+					@include breakpoint-deprecated("<480px") {
 						display: none;
 					}
 

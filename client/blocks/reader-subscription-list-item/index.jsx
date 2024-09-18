@@ -9,7 +9,7 @@ import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscri
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ExternalLink from 'calypso/components/external-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import FollowButton from 'calypso/reader/follow-button';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -198,7 +198,7 @@ function ReaderSubscriptionListItem( {
 				) }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton
+				<ReaderFollowButton
 					siteUrl={ feedUrl }
 					followSource={ followSource }
 					feedId={ feedId }

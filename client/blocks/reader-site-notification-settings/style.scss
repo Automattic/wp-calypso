@@ -5,13 +5,14 @@
 	margin: 4px 0;
 
 	svg * {
-		stroke: var(--color-text-subtle);
+		fill: var(--color-text-subtle);
 	}
 
 	&:focus {
 		box-shadow: none;
 		outline: none;
 	}
+
 	&:hover {
 		cursor: pointer;
 	}
@@ -27,7 +28,7 @@
 .reader-site-notification-settings__button-label {
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		display: none;
 	}
 }
@@ -91,6 +92,7 @@
 		border-top: 0;
 		padding-top: 15px;
 	}
+
 	&:last-child {
 		padding-bottom: 15px;
 	}
