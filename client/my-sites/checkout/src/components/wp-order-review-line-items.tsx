@@ -5,7 +5,7 @@ import {
 	AKISMET_PRO_500_PRODUCTS,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { isCopySiteFlow, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
+import { isCopySiteFlow } from '@automattic/onboarding';
 import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
@@ -310,7 +310,7 @@ function LineItemWrapper( {
 		if ( has100YearPlanProduct ) {
 			return false;
 		}
-		if ( isNewHostedSiteCreationFlow( signupFlowName ) && product.extra?.hideProductVariants ) {
+		if ( product.extra?.hideProductVariants ) {
 			return false;
 		}
 
