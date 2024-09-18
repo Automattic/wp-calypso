@@ -10,15 +10,11 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	errors: any;
+	error?: string;
 	importSiteQueryParam?: string | undefined | null;
 }
 
-export const SiteAddressField: React.FC< Props > = ( {
-	control,
-	errors,
-	importSiteQueryParam,
-} ) => {
+export const SiteAddressField: React.FC< Props > = ( { control, error, importSiteQueryParam } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -46,7 +42,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 				render={ ( { field } ) => (
 					<FormTextInput
 						id="site-address"
-						isError={ !! errors.siteAddress }
+						isError={ !! error }
 						placeholder={ placeholder }
 						readOnly={ !! importSiteQueryParam }
 						disabled={ !! importSiteQueryParam }
@@ -55,7 +51,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 					/>
 				) }
 			/>
-			<ErrorMessage error={ errors.siteAddress } />
+			<ErrorMessage error={ error } />
 		</div>
 	);
 };

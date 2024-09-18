@@ -26,7 +26,7 @@ export const useSiteMigrationCredentialsMutation = <
 ) => {
 	const siteSlug = useSiteSlugParam();
 
-	const { mutate, ...rest } = useMutation( {
+	return useMutation( {
 		mutationFn: ( {
 			siteAddress,
 			username,
@@ -66,9 +66,4 @@ export const useSiteMigrationCredentialsMutation = <
 		},
 		...options,
 	} );
-
-	return {
-		requestAutomatedMigration: mutate,
-		...rest,
-	};
 };

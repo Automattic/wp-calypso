@@ -8,10 +8,10 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	errors: any;
+	error?: string;
 }
 
-export const BackupFileField: React.FC< Props > = ( { control, errors } ) => {
+export const BackupFileField: React.FC< Props > = ( { control, error } ) => {
 	const translate = useTranslate();
 
 	const isBackupFileLocationValid = ( fileLocation: string ) => {
@@ -34,14 +34,14 @@ export const BackupFileField: React.FC< Props > = ( { control, errors } ) => {
 							<FormTextInput
 								id="backup-file"
 								type="text"
-								isError={ !! errors.backupFileLocation }
+								isError={ !! error }
 								placeholder={ translate( 'Enter your backup file location' ) }
 								{ ...field }
 							/>
 						) }
 					/>
 				</div>
-				<ErrorMessage error={ errors.backupFileLocation } />
+				<ErrorMessage error={ error } />
 				<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
 					{ translate(
 						"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."

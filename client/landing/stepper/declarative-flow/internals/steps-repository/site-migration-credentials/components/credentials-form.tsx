@@ -54,20 +54,22 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						<div className="site-migration-credentials__form">
 							<SiteAddressField
 								control={ control }
-								errors={ errors }
+								error={ errors.siteAddress?.message }
 								importSiteQueryParam={ importSiteQueryParam }
 							/>
-							<UsernameField control={ control } errors={ errors } />
-							<PasswordField control={ control } errors={ errors } />
+							<UsernameField control={ control } error={ errors.username?.message } />
+							<PasswordField control={ control } error={ errors.password?.message } />
 						</div>
 					</div>
 				) }
 
-				{ accessMethod === 'backup' && <BackupFileField control={ control } errors={ errors } /> }
+				{ accessMethod === 'backup' && (
+					<BackupFileField control={ control } error={ errors.backupFileLocation?.message } />
+				) }
 
-				<SpecialInstructions control={ control } errors={ errors } />
+				<SpecialInstructions control={ control } error={ errors.root?.message } />
 
-				<ErrorMessage error={ errors.root } />
+				<ErrorMessage error={ errors.root?.message } />
 
 				<div className="site-migration-credentials__submit">
 					<NextButton disabled={ isPending } type="submit">
