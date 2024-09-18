@@ -11,10 +11,10 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	error?: string;
+	errors: any;
 }
 
-export const PasswordField: React.FC< Props > = ( { control, error } ) => {
+export const PasswordField: React.FC< Props > = ( { control, errors } ) => {
 	const translate = useTranslate();
 	const [ passwordHidden, setPasswordHidden ] = useState( true );
 	const toggleVisibilityClasses = clsx( {
@@ -38,7 +38,7 @@ export const PasswordField: React.FC< Props > = ( { control, error } ) => {
 							autoComplete="off"
 							id="site-migration-credentials__password"
 							type={ passwordHidden ? 'password' : 'text' }
-							isError={ !! error }
+							isError={ !! errors.password }
 							placeholder={ translate( 'Enter your Admin password' ) }
 							{ ...field }
 						/>
@@ -52,7 +52,7 @@ export const PasswordField: React.FC< Props > = ( { control, error } ) => {
 					</div>
 				) }
 			/>
-			<ErrorMessage error={ error } />
+			<ErrorMessage error={ errors.password } />
 		</div>
 	);
 };

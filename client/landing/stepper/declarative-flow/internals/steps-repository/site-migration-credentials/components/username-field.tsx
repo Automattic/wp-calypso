@@ -7,10 +7,10 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	error?: string;
+	errors?: any;
 }
 
-export const UsernameField: React.FC< Props > = ( { control, error } ) => {
+export const UsernameField: React.FC< Props > = ( { control, errors } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -26,7 +26,7 @@ export const UsernameField: React.FC< Props > = ( { control, error } ) => {
 					<FormTextInput
 						id="username"
 						type="text"
-						isError={ !! error }
+						isError={ !! errors.username }
 						placeholder={ translate( 'Enter your Admin username' ) }
 						{ ...field }
 						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => {
@@ -40,7 +40,7 @@ export const UsernameField: React.FC< Props > = ( { control, error } ) => {
 					/>
 				) }
 			/>
-			<ErrorMessage error={ error } />
+			<ErrorMessage error={ errors.username } />
 		</div>
 	);
 };

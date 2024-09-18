@@ -1,6 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Controller, Control } from 'react-hook-form';
+import { Controller, Control, FieldErrors } from 'react-hook-form';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
 import { CredentialsFormData } from '../types';
@@ -8,10 +8,10 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	error?: string;
+	errors?: FieldErrors< CredentialsFormData >;
 }
 
-export const BackupFileField: React.FC< Props > = ( { control, error } ) => {
+export const BackupFileField: React.FC< Props > = ( { control, errors } ) => {
 	const translate = useTranslate();
 
 	const isBackupFileLocationValid = ( fileLocation: string ) => {
@@ -34,14 +34,14 @@ export const BackupFileField: React.FC< Props > = ( { control, error } ) => {
 							<FormTextInput
 								id="backup-file"
 								type="text"
-								isError={ !! error }
+								isError={ !! errors?.backupFileLocation?.message }
 								placeholder={ translate( 'Enter your backup file location' ) }
 								{ ...field }
 							/>
 						) }
 					/>
 				</div>
-				<ErrorMessage error={ error } />
+				<ErrorMessage error={ errors?.backupFileLocation } />
 				<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
 					{ translate(
 						"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."

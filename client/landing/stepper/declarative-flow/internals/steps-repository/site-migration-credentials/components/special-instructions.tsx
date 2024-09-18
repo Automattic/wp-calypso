@@ -11,10 +11,10 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	error?: string;
+	errors?: any;
 }
 
-export const SpecialInstructions: React.FC< Props > = ( { control, error } ) => {
+export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const [ showNotes, setShowNotes ] = useState( false );
@@ -61,7 +61,7 @@ export const SpecialInstructions: React.FC< Props > = ( { control, error } ) => 
 							) }
 						/>
 					</div>
-					<ErrorMessage error={ error } />
+					<ErrorMessage error={ errors.notes } />
 					<div className="site-migration-credentials__form-note">
 						{ translate(
 							"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
