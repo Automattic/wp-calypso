@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import { FC, PropsWithChildren, useRef, useLayoutEffect } from 'react';
 
 import './style.scss';
@@ -43,7 +43,7 @@ const calculateMasonryGrid = ( wrapper: HTMLElement ) => {
 	} );
 };
 
-const debouncedCalculateMasonryGrid = debounce( calculateMasonryGrid, 100, { leading: true } );
+const throttleCalculateMasonryGrid = throttle( calculateMasonryGrid, 100, { leading: true } );
 
 type MasonryGridProps = PropsWithChildren< {
 	className?: string;
@@ -58,20 +58,19 @@ export const MasonryGrid: FC< MasonryGridProps > = ( { children, className } ) =
 		}
 
 		const element = ref.current;
-		debouncedCalculateMasonryGrid( element );
+		throttleCalculateMasonryGrid( element );
 
-		const resizeObserver = new ResizeObserver( () => debouncedCalculateMasonryGrid( element ) );
-		// Is used in 3 cases:
+		const resizeObserver = new ResizeObserver( () => throttleCalculateMasonryGrid( element ) );
+		// Is used in 2 cases:
 		// 1) Resizing browser window
-		// 2) When items are initially rendered as a skeleton and then appears actual data
-		// 3) When items' content are changed dynamically (2-nd point is actually part of it, but decided to mention separately cases with loaders and dynamic changes after users' interaction)
+		// 2) When items' content are changed dynamically
 		Array.from( ref.current.children ).forEach( ( el ) => resizeObserver.observe( el ) );
 
 		return () => {
 			resizeObserver.disconnect();
-			debouncedCalculateMasonryGrid.cancel();
+			throttleCalculateMasonryGrid.cancel();
 		};
-	}, [ ref.current?.children.length ] );
+	} );
 
 	return (
 		<div className={ clsx( 'masonry-grid__wrapper', className ) } ref={ ref }>
