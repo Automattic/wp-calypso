@@ -178,6 +178,8 @@ describe( 'Hosting Configuration', () => {
 				dispatchEvent: jest.fn(),
 			} ) ),
 		} );
+
+		global.ResizeObserver = require( 'resize-observer-polyfill' );
 	} );
 
 	afterAll( () => {

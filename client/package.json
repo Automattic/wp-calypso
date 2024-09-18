@@ -244,6 +244,7 @@
 		"react-router": "^6.23.1",
 		"react-test-renderer": "^18.2.0",
 		"redux-mock-store": "^1.5.4",
+		"resize-observer-polyfill": "^1.5.1",
 		"stream-browserify": "^3.0.0"
 	}
 }
