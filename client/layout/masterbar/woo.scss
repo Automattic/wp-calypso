@@ -2058,7 +2058,8 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.login__form-action {
+		.login__form-action,
+		.logged-out-form {
 			button.is-primary {
 				font-size: rem(14px);
 			}
