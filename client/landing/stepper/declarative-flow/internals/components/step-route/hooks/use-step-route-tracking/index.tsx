@@ -62,7 +62,7 @@ export const useStepRouteTracking = ( {
 				recordStepComplete( stepCompleteEventPropsRef.current );
 			}
 		};
-		// IMPORTANT: Do not add dependencies to this effect, as it should only run when the component unmounts.
+		// IMPORTANT: Do not add dependencies to this effect, as it should only record when the component unmounts.
 	}, [] );
 
 	useEffect( () => {
