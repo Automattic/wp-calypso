@@ -41,7 +41,7 @@ interface Props {
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 }
 
-function getPlansIntent( flowName: string | null ): PlansIntent | null {
+function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
@@ -51,6 +51,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case LINK_IN_BIO_FLOW:
 			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
+			if ( isWordCampPromo ) {
+				return 'plans-new-hosted-site-business-only';
+			}
 			return 'plans-new-hosted-site';
 		default:
 			return null;
@@ -90,11 +93,17 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isDesktop = useDesktopBreakpoint();
 	const navigate = useNavigate();
 	const location = useLocation();
+
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
-	const plansIntent = getPlansIntent( flowName );
+	/**
+	 * isWordCampPromo is temporary
+	 */
+	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
+	const plansIntent = getPlansIntent( flowName, isWordCampPromo );
+
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
@@ -179,6 +188,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					hidePlanTypeSelector={ isWordCampPromo }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 					coupon={ couponCode }
 				/>
