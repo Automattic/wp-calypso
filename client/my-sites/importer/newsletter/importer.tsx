@@ -135,11 +135,9 @@ export default function NewsletterImporter( {
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
 					redirectUrl={ stepUrl }
-					urlData={ urlData }
-					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
-					engine={ engine }
 					value={ fromSite }
-					urlError={ isUrlError }
+					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
+					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }
 

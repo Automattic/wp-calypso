@@ -2,27 +2,21 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { UrlData } from 'calypso/blocks/import/types';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
-import { EngineTypes } from './types';
 
 interface SelectNewsletterFormProps {
 	redirectUrl: string;
-	urlData?: UrlData;
-	isLoading: boolean;
-	engine: EngineTypes;
 	value: string;
-	urlError: boolean;
+	isLoading: boolean;
+	isError: boolean;
 }
 
 export default function SelectNewsletterForm( {
 	redirectUrl,
-	urlData,
-	isLoading,
-	engine,
 	value,
-	urlError,
+	isLoading,
+	isError,
 }: SelectNewsletterFormProps ) {
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
 
@@ -32,8 +26,10 @@ export default function SelectNewsletterForm( {
 			return;
 		}
 
-		const { hostname } = parseUrl( fromSite );
-		page( addQueryArgs( redirectUrl, { from: hostname } ) );
+		const { hostname, pathname } = parseUrl( fromSite );
+		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
+
+		page( addQueryArgs( redirectUrl, { from } ) );
 	};
 
 	if ( isLoading ) {
@@ -44,7 +40,7 @@ export default function SelectNewsletterForm( {
 		);
 	}
 
-	const isError = isUrlInvalid || urlError || ( urlData?.platform && urlData.platform !== engine );
+	const hasError = isUrlInvalid || isError;
 
 	return (
 		<Card className="select-newsletter-form">
@@ -52,13 +48,13 @@ export default function SelectNewsletterForm( {
 				onAction={ handleAction }
 				placeholder="https://example.substack.com"
 				action="Continue"
-				isError={ isError }
+				isError={ hasError }
 				defaultValue={ value }
 			/>
-			{ isError && (
+			{ hasError && (
 				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>
 			) }
-			{ ! isError && (
+			{ ! hasError && (
 				<p className="select-newsletter-form__help">
 					Enter the URL of the Substack newsletter that you wish to import.
 				</p>
