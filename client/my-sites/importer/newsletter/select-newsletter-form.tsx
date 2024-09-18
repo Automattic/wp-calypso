@@ -7,23 +7,23 @@ import FormTextInputWithAction from 'calypso/components/forms/form-text-input-wi
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { EngineTypes } from './types';
 
-type Props = {
-	stepUrl: string;
+interface SelectNewsletterFormProps {
+	redirectUrl: string;
 	urlData?: UrlData;
 	isLoading: boolean;
 	engine: EngineTypes;
 	value: string;
 	urlError: boolean;
-};
+}
 
 export default function SelectNewsletterForm( {
-	stepUrl,
+	redirectUrl,
 	urlData,
 	isLoading,
 	engine,
 	value,
 	urlError,
-}: Props ) {
+}: SelectNewsletterFormProps ) {
 	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
 
 	const handleAction = ( fromSite: string ) => {
@@ -33,8 +33,7 @@ export default function SelectNewsletterForm( {
 		}
 
 		const { hostname } = parseUrl( fromSite );
-		page( addQueryArgs( stepUrl, { from: hostname } ) );
-		return;
+		page( addQueryArgs( redirectUrl, { from: hostname } ) );
 	};
 
 	if ( isLoading ) {
@@ -45,7 +44,7 @@ export default function SelectNewsletterForm( {
 		);
 	}
 
-	const hasError = isUrlInvalid || urlError || ( urlData?.platform && urlData.platform !== engine );
+	const isError = isUrlInvalid || urlError || ( urlData?.platform && urlData.platform !== engine );
 
 	return (
 		<Card className="select-newsletter-form">
@@ -53,13 +52,13 @@ export default function SelectNewsletterForm( {
 				onAction={ handleAction }
 				placeholder="https://example.substack.com"
 				action="Continue"
-				isError={ hasError }
+				isError={ isError }
 				defaultValue={ value }
 			/>
-			{ hasError && (
+			{ isError && (
 				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>
 			) }
-			{ ! hasError && (
+			{ ! isError && (
 				<p className="select-newsletter-form__help">
 					Enter the URL of the Substack newsletter that you wish to import.
 				</p>
