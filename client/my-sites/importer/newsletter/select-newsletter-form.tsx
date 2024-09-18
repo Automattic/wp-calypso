@@ -5,19 +5,30 @@ import { useState } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
+import { EngineTypes } from './types';
 
 type Props = {
 	stepUrl: string;
 	urlData?: UrlData;
 	isLoading: boolean;
+	engine: EngineTypes;
+	value: string;
+	urlError: boolean;
 };
 
-export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: Props ) {
-	const [ hasError, setHasError ] = useState( false );
+export default function SelectNewsletterForm( {
+	stepUrl,
+	urlData,
+	isLoading,
+	engine,
+	value,
+	urlError,
+}: Props ) {
+	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
 
 	const handleAction = ( fromSite: string ) => {
 		if ( ! isValidUrl( fromSite ) ) {
-			setHasError( true );
+			setIsUrlInvalid( true );
 			return;
 		}
 
@@ -34,6 +45,8 @@ export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: P
 		);
 	}
 
+	const hasError = isUrlInvalid || urlError || ( urlData?.platform && urlData.platform !== engine );
+
 	return (
 		<Card className="select-newsletter-form">
 			<FormTextInputWithAction
@@ -41,7 +54,7 @@ export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: P
 				placeholder="https://example.substack.com"
 				action="Continue"
 				isError={ hasError }
-				defaultValue={ urlData?.url }
+				defaultValue={ value }
 			/>
 			{ hasError && (
 				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>

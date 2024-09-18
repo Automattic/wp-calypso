@@ -97,7 +97,11 @@ export default function NewsletterImporter( {
 	const { skipNextStep } = useSkipNextStepMutation();
 	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
 
-	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
+	const {
+		data: urlData,
+		isFetching: isUrlFetching,
+		isError: urlError,
+	} = useAnalyzeUrlQuery( fromSite );
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
@@ -132,7 +136,10 @@ export default function NewsletterImporter( {
 				<SelectNewsletterForm
 					stepUrl={ stepUrl }
 					urlData={ urlData }
-					isLoading={ isFetching || isResetPaidNewsletterPending }
+					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
+					engine={ engine }
+					value={ fromSite }
+					urlError={ urlError }
 				/>
 			) }
 
