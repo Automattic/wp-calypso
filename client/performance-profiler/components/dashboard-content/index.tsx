@@ -23,6 +23,7 @@ type PerformanceProfilerDashboardContentProps = {
 	displayMigrationBanner?: boolean;
 	showV2?: boolean;
 	activeTab?: TabType;
+	showV2?: boolean;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -35,6 +36,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayMigrationBanner = true,
 	showV2 = false,
 	activeTab = TabType.mobile,
+	showV2 = false,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
 		overall_score,
