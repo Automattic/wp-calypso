@@ -11,6 +11,9 @@ import {
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'animate.css';
+
 import './style.scss';
 
 const ACTION_LEAVE_REVIEW = 'action_redirect_to_plugin_review_page';
@@ -108,7 +111,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	}
 
 	return (
-		<div className="stats-feedback-panel">
+		<div className="stats-feedback-panel animate__animated animate__bounceInUp">
 			<Button
 				className="stats-feedback-panel__close-button"
 				onClick={ handleCloseButtonClicked }
