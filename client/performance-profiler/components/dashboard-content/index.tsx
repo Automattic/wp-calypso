@@ -4,6 +4,7 @@ import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
+import { TabType } from 'calypso/performance-profiler/components/header';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
 import { NewsletterBanner } from 'calypso/performance-profiler/components/newsletter-banner';
@@ -20,6 +21,7 @@ type PerformanceProfilerDashboardContentProps = {
 	displayThumbnail?: boolean;
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
+	activeTab?: TabType;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -30,6 +32,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayThumbnail = true,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
+	activeTab = TabType.mobile,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
 		overall_score,
@@ -60,6 +63,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						<ScreenshotThumbnail
 							alt={ translate( 'Website thumbnail' ) }
 							src={ screenshots?.[ screenshots.length - 1 ].data }
+							activeTab={ activeTab }
 						/>
 					) }
 				</div>
