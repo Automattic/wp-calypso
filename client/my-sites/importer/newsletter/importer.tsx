@@ -37,7 +37,7 @@ type NewsletterImporterProps = {
 };
 
 function getTitle( urlData?: UrlData ) {
-	if ( urlData?.meta?.title ) {
+	if ( urlData?.platform === 'substack' && urlData?.meta?.title ) {
 		return `Import ${ urlData.meta.title }`;
 	}
 
