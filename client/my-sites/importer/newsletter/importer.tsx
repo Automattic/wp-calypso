@@ -36,8 +36,8 @@ type NewsletterImporterProps = {
 	step?: StepId;
 };
 
-function getTitle( urlData?: UrlData ) {
-	if ( urlData?.platform === 'substack' && urlData?.meta?.title ) {
+function getTitle( engine: EngineTypes, urlData?: UrlData ) {
+	if ( urlData?.platform === engine && urlData?.meta?.title ) {
 		return `Import ${ urlData.meta.title }`;
 	}
 
@@ -130,7 +130,7 @@ export default function NewsletterImporter( {
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
-			<FormattedHeader headerText={ getTitle( urlData ) } />
+			<FormattedHeader headerText={ getTitle( engine, urlData ) } />
 
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
