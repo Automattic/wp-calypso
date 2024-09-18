@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const TTL_DURATION = 300000; // 5 minutes in miliseconds
+const PROVISIONING_SITE_CHANGE_EVENT = 'a4a-provisioning-site-change';
+const PROVISIONING_TIMEOUT = 300000; // 5 minutes in miliseconds
 
 type ProvisioningSite = {
 	id: number;
@@ -31,11 +32,11 @@ export default function useTrackProvisioningSites() {
 		) => {
 			const updatedSites = [
 				...provisioningSites,
-				{ id: siteId, migration, development, ttl: new Date().getTime() + TTL_DURATION },
+				{ id: siteId, migration, development, ttl: new Date().getTime() + PROVISIONING_TIMEOUT },
 			];
 
 			localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
-			window.dispatchEvent( new CustomEvent( 'a4a-provisioning-site-change' ) );
+			window.dispatchEvent( new CustomEvent( PROVISIONING_SITE_CHANGE_EVENT ) );
 		},
 		[ provisioningSites ]
 	);
@@ -45,17 +46,17 @@ export default function useTrackProvisioningSites() {
 			const updatedSites = provisioningSites.filter( ( { id } ) => id !== siteId );
 
 			localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
-			window.dispatchEvent( new CustomEvent( 'a4a-provisioning-site-change' ) );
+			window.dispatchEvent( new CustomEvent( PROVISIONING_SITE_CHANGE_EVENT ) );
 		},
 		[ provisioningSites ]
 	);
 
 	useEffect( () => {
-		window.addEventListener( 'a4a-provisioning-site-change', reload );
+		window.addEventListener( PROVISIONING_SITE_CHANGE_EVENT, reload );
 		reload();
 
 		return () => {
-			window.removeEventListener( 'a4a-provisioning-site-change', reload );
+			window.removeEventListener( PROVISIONING_SITE_CHANGE_EVENT, reload );
 		};
 	}, [ reload ] );
 
