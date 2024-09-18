@@ -198,7 +198,7 @@ export default function LicensePreview( {
 					>
 						<div className="license-preview__migration-content">
 							{ translate(
-								"Your site is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for migrated sites{{icon/}}{{/a}}",
+								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for transferred sites{{icon/}}{{/a}}",
 								{
 									components: {
 										bold: <strong />,
