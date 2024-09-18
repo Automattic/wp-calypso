@@ -53,7 +53,8 @@ export default function useSiteActions( {
 	const canRemove = ! isDevSite && hasRemoveManagedSitesCapability;
 
 	// Whether to enable the Delete site action. The action will remove the site from the A4A dashboard and delete the site and its license.
-	const canDelete = isDevSite && hasRemoveManagedSitesCapability;
+	// We are temporarily forcing canDelete to false to hide the option while the feature is not working as expected.
+	const canDelete = isDevSite && hasRemoveManagedSitesCapability && false;
 
 	return useMemo( () => {
 		if ( ! siteValue ) {
