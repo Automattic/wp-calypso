@@ -59,6 +59,7 @@ export type PlansIntent =
 	| 'plans-newsletter'
 	| 'plans-link-in-bio'
 	| 'plans-new-hosted-site'
+	| 'plans-new-hosted-site-business-only'
 	| 'plans-plugins'
 	| 'plans-jetpack-app'
 	| 'plans-jetpack-app-site-creation'
