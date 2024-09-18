@@ -42,10 +42,6 @@ const Header = styled.div`
 	font-size: 16px;
 	width: 100%;
 
-	.insight-header-container > div {
-		width: 100%;
-	}
-
 	p {
 		display: inline;
 	}
