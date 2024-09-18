@@ -1,6 +1,8 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import EmailReportScreenshot from 'calypso/assets/images/performance-profiler/email-report-example.svg';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
@@ -13,7 +15,7 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 10px;
+	gap: 24px;
 	justify-content: space-between;
 	width: 100%;
 	box-sizing: border-box;
@@ -28,12 +30,17 @@ const Container = styled.div`
 	}
 `;
 
+const HeadingContainer = styled.div`
+	flex: 1;
+`;
+
 const Heading = styled.div`
 	font-weight: 500;
 	line-height: 24px;
 	text-align: left;
 	color: var( --studio-white );
 	margin-bottom: 6px;
+	text-wrap: balance;
 `;
 
 const Body = styled.div`
@@ -44,6 +51,7 @@ const Body = styled.div`
 const BlueberryButton = styled( Button )`
 	// && is needed for specificity
 	&& {
+		margin-top: 24px;
 		background: #3858e9;
 		border-color: #3858e9;
 
@@ -56,14 +64,19 @@ const BlueberryButton = styled( Button )`
 		}
 	}
 `;
+const EmailReportImage = styled.img`
+	margin-bottom: -24px;
+	align-self: flex-end;
+`;
 
 export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isMobile = useMobileBreakpoint();
 
 	return (
 		<Container>
-			<div>
+			<HeadingContainer>
 				<Heading>
 					{ translate( 'Get notified about changes to your site’s performance—it’s free!' ) }
 				</Heading>
@@ -77,12 +90,18 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 						{ translate( 'All you need is a free WordPress.com account to get started.' ) }
 					</Body>
 				) }
-			</div>
-			<BlueberryButton variant="primary" href={ link } onClick={ onClick }>
-				{ isLoggedIn
-					? translate( 'Enable email alerts' )
-					: translate( 'Sign up for email reports' ) }
-			</BlueberryButton>
+				<BlueberryButton variant="primary" href={ link } onClick={ onClick }>
+					{ isLoggedIn
+						? translate( 'Enable email alerts' )
+						: translate( 'Sign up for email reports' ) }
+				</BlueberryButton>
+			</HeadingContainer>
+			{ ! isMobile && (
+				<EmailReportImage
+					src={ EmailReportScreenshot }
+					alt={ translate( 'Email report example' ) }
+				/>
+			) }
 		</Container>
 	);
 };
