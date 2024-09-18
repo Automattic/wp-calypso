@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 
-import './style.scss';
-
 type Props = {
 	actions?: React.ReactNode[];
 	className?: string;
