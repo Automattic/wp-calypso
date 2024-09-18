@@ -179,7 +179,15 @@ describe( 'Hosting Configuration', () => {
 			} ) ),
 		} );
 
-		global.ResizeObserver = require( 'resize-observer-polyfill' );
+		// Mock `ResizeObserver`, which isn't currently supported in JSDOM
+		Object.defineProperty( global, 'ResizeObserver', {
+			writable: false,
+			value: jest.fn().mockImplementation( () => ( {
+				observe: jest.fn(),
+				unobserve: jest.fn(),
+				disconnect: jest.fn(),
+			} ) ),
+		} );
 	} );
 
 	afterAll( () => {

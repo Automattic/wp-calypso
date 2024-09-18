@@ -12861,7 +12861,6 @@ __metadata:
     redux-mock-store: "npm:^1.5.4"
     redux-thunk: "npm:^2.4.2"
     regenerator-runtime: "npm:^0.13.9"
-    resize-observer-polyfill: "npm:^1.5.1"
     social-logos: "npm:^2.5.9"
     source-map-support: "npm:^0.5.19"
     store: "npm:^2.0.12"
