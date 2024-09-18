@@ -171,11 +171,35 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await fillAllFields();
 		await userEvent.click( continueButton() );
+		await waitFor( () => {
+			expect( screen.getByText( /Enter a valid URL/ ) ).toBeVisible();
+			expect( screen.getByText( /Enter a valid username/ ) ).toBeVisible();
+			expect( screen.getByText( /Enter a valid password/ ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+	} );
 
-		expect( screen.getByText( /Enter a valid URL/ ) ).toBeVisible();
-		expect( screen.getByText( /Enter a valid username/ ) ).toBeVisible();
-		expect( screen.getByText( /Enter a valid password/ ) ).toBeVisible();
-		expect( submit ).not.toHaveBeenCalled();
+	it( 'shows error message when there is an error on the with the backup file', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'rest_invalid_param',
+			data: {
+				params: {
+					from_url: 'Invalid Param',
+				},
+			},
+		} );
+
+		await userEvent.click( backupOption() );
+		await userEvent.type( backupFileInput(), 'backup-file.zip' );
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( screen.getByText( /Enter a valid URL/ ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'shows an error message when the server returns a generic error', async () => {
