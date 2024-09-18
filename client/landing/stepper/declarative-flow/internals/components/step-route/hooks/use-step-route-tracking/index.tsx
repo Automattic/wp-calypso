@@ -1,12 +1,13 @@
 //* This hook is used to track the step route in the declarative flow.
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SiteDetails } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { useEffect } from '@wordpress/element';
-import { STEPPER_TRACKS_EVENT_STEP_COMPLETE } from 'calypso/landing/stepper/constants';
+import { useEffect, useRef } from '@wordpress/element';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
+import recordStepComplete, {
+	type RecordStepCompleteProps,
+} from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
@@ -34,22 +35,6 @@ interface Props {
 	flowVariantSlug?: string;
 }
 
-const handleRecordStepComplete = ( {
-	flowName,
-	stepSlug,
-	intent,
-}: {
-	flowName: Props[ 'flowName' ];
-	stepSlug: Props[ 'stepSlug' ];
-	intent: string;
-} ) => {
-	recordTracksEvent( STEPPER_TRACKS_EVENT_STEP_COMPLETE, {
-		flow: flowName,
-		step: stepSlug,
-		intent,
-	} );
-};
-
 /**
  * Hook to track the step route in the declarative flow.
  */
@@ -64,6 +49,20 @@ export const useStepRouteTracking = ( {
 	const { site, siteSlugOrId } = useSiteData();
 	const isRequestingSelectedSite = useIsRequestingSelectedSite( siteSlugOrId, site );
 	const hasRequestedSelectedSite = siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
+	const stepCompleteEventProps = useRef< RecordStepCompleteProps | null >( null );
+
+	/**
+	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
+	 * This is to ensure that the event is recorded when the user navigates away from the step.
+	 * Only records if `stepCompleteEventProps.current` is populated when the step-start event fires.
+	 */
+	useEffect( () => {
+		return () => {
+			if ( stepCompleteEventProps.current ) {
+				recordStepComplete( stepCompleteEventProps.current );
+			}
+		};
+	}, [] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
@@ -85,6 +84,13 @@ export const useStepRouteTracking = ( {
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			} );
 
+			// Apply the props to record in the exit/complete event. We only record this if start event gets recorded.
+			stepCompleteEventProps.current = {
+				flow: flowName,
+				step: stepSlug,
+				optionalProps: { intent },
+			};
+
 			const stepOldSlug = getStepOldSlug( stepSlug );
 
 			if ( stepOldSlug ) {
@@ -101,8 +107,6 @@ export const useStepRouteTracking = ( {
 		const pathname = window.location.pathname;
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
 		recordPageView( pathname, pageTitle );
-
-		return () => handleRecordStepComplete( { flowName, stepSlug, intent } );
 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.

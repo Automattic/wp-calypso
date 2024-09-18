@@ -2,12 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
-import { STEPPER_TRACKS_EVENT_STEP_COMPLETE } from 'calypso/landing/stepper/constants';
+import recordStepComplete from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
@@ -29,13 +28,10 @@ import type {
 jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete' );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
-} ) );
 
 const regularStep: StepperStep = {
 	slug: 'some-step-slug',
@@ -196,21 +192,22 @@ describe( 'StepRoute', () => {
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 
-		it( 'records STEPPER_TRACKS_EVENT_STEP_COMPLETE when the step is unmounted', () => {
+		it( 'records step-complete event when the step is unmounted and step-start was previously recorded', () => {
+			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep } );
 
-			expect( recordTracksEvent ).not.toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_STEP_COMPLETE, {
-				step: 'some-step-slug',
-				flow: 'some-flow',
-				intent: 'build',
-			} );
+			expect( recordStepComplete ).not.toHaveBeenCalled();
 
 			unmount();
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_STEP_COMPLETE, {
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
 				step: 'some-step-slug',
 				flow: 'some-flow',
-				intent: 'build',
+				optionalProps: {
+					intent: 'build',
+				},
 			} );
 		} );
 	} );
