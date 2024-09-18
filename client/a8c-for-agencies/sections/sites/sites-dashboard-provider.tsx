@@ -18,7 +18,6 @@ import type { Filter } from '@wordpress/dataviews';
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
 	showOnlyDevelopmentInitialState?: boolean;
-	hideListingInitialState?: boolean;
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
@@ -46,7 +45,6 @@ const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
 };
 
 export const SitesDashboardProvider = ( {
-	hideListingInitialState = false,
 	showOnlyFavoritesInitialState = false,
 	showOnlyDevelopmentInitialState = false,
 	categoryInitialState,
@@ -60,7 +58,6 @@ export const SitesDashboardProvider = ( {
 	sort,
 	featurePreview,
 }: Props ) => {
-	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
 	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
@@ -131,7 +128,6 @@ export const SitesDashboardProvider = ( {
 		if ( ! siteUrlInitialState ) {
 			setShowOnlyFavorites( showOnlyFavoritesInitialState );
 			setShowOnlyDevelopmentSites( showOnlyDevelopmentInitialState );
-			setHideListing( false );
 		}
 
 		setDataViewsState( ( previousState ) => ( {
@@ -162,8 +158,6 @@ export const SitesDashboardProvider = ( {
 		setSelectedCategory: setSelectedCategory,
 		selectedSiteFeature: selectedSiteFeature,
 		setSelectedSiteFeature: setSelectedSiteFeature,
-		hideListing: hideListing,
-		setHideListing: setHideListing,
 		showOnlyFavorites: showOnlyFavorites,
 		setShowOnlyFavorites: setShowOnlyFavorites,
 		showOnlyDevelopmentSites: showOnlyDevelopmentSites,
