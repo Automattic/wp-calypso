@@ -73,9 +73,6 @@ export const SitesDashboardProvider = ( {
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
-	const [ recentlyCreatedSiteId, setRecentlyCreatedSiteId ] = useState< number | null >( null );
-	const [ isRecentlyCreatedSiteDevelopment, setIsRecentlyCreatedSiteDevelopment ] =
-		useState< boolean >( false );
 
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
@@ -188,10 +185,6 @@ export const SitesDashboardProvider = ( {
 		dataViewsState,
 		setDataViewsState,
 		featurePreview,
-		recentlyCreatedSiteId,
-		setRecentlyCreatedSiteId,
-		isRecentlyCreatedSiteDevelopment,
-		setIsRecentlyCreatedSiteDevelopment,
 	};
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>
