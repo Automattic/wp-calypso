@@ -6,6 +6,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import './email-not-verified-notice.scss';
 
+// TODO REMOVE THIS FILE.
 const EmailNotVerifiedNotice = () => {
 	const translate = useTranslate();
 	const resendEmailVerification = useResendEmailVerification();

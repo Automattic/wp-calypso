@@ -10,6 +10,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
@@ -18,7 +19,6 @@ import {
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
-import EmailNotVerifiedNotice from './email-not-verified-notice';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
@@ -95,6 +95,7 @@ const AccountEmailValidationNotice = ( {
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
+// TODO - remove this component
 const AccountEmailPendingEmailChangeNotice = ( {
 	unsavedUserSettings,
 	userSettings,
@@ -172,6 +173,8 @@ const AccountEmailField = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
+	const isEmailVerifified = useSelector( isCurrentUserEmailVerified );
+	const [ isLockedInput, setIsLockedInput ] = useState( true );
 
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
@@ -215,7 +218,7 @@ const AccountEmailField = ( {
 			<FormFieldset>
 				<FormLabel htmlFor={ emailInputId }>{ translate( 'Email address' ) }</FormLabel>
 				<FormTextInput
-					disabled={ isEmailControlDisabled || isEmailChangePending }
+					disabled={ isEmailControlDisabled || isLockedInput }
 					id={ emailInputId }
 					name={ emailInputName }
 					isError={ emailInvalidReason !== EMAIL_VALIDATION_REASON_IS_VALID }
@@ -231,15 +234,40 @@ const AccountEmailField = ( {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Not publicly displayed, except to owners of sites you subscribe to.' ) }
+					{ isEmailVerifified && ! isEmailChangePending
+						? translate(
+								'Not publicly displayed, except to owners of sites you subscribe to. {{wrapper}}Click here to update it{{/wrapper}}.',
+								{
+									components: {
+										wrapper: (
+											<button
+												onClick={ ( ev ) => {
+													ev.preventDefault();
+													setIsLockedInput( false );
+												} }
+												className="account-email-field__enable-input"
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								'Your email has not been verified yet. Need to update your address? {{wrapper}}Click here to update it{{/wrapper}}.',
+								{
+									components: {
+										wrapper: (
+											<button
+												onClick={ ( ev ) => {
+													ev.preventDefault();
+													setIsLockedInput( false );
+												} }
+												className="account-email-field__enable-input"
+											/>
+										),
+									},
+								}
+						  ) }
 				</FormSettingExplanation>
-
-				<EmailNotVerifiedNotice />
-
-				<AccountEmailPendingEmailChangeNotice
-					unsavedUserSettings={ unsavedUserSettings }
-					userSettings={ userSettings }
-				/>
 			</FormFieldset>
 		</>
 	);
