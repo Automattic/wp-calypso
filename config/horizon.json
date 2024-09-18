@@ -128,7 +128,7 @@
 		"server-side-rendering": true,
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
-		"sign-in-with-apple": false,
+		"sign-in-with-apple": true,
 		"signup/design-picker-preview-colors": true,
 		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
@@ -173,7 +173,8 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true
+		"woocommerce/core-profiler-passwordless-auth": true,
+		"login/magic-login": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
