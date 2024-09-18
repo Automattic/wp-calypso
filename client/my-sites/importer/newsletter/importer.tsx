@@ -36,8 +36,8 @@ type NewsletterImporterProps = {
 	step?: StepId;
 };
 
-function getTitle( urlData?: UrlData ) {
-	if ( urlData?.meta?.title ) {
+function getTitle( engine: EngineTypes, urlData?: UrlData ) {
+	if ( urlData?.meta?.title && urlData?.platform === engine ) {
 		return `Import ${ urlData.meta.title }`;
 	}
 
@@ -97,7 +97,11 @@ export default function NewsletterImporter( {
 	const { skipNextStep } = useSkipNextStepMutation();
 	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
 
-	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
+	const {
+		data: urlData,
+		isFetching: isUrlFetching,
+		isError: isUrlError,
+	} = useAnalyzeUrlQuery( fromSite );
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
@@ -126,13 +130,14 @@ export default function NewsletterImporter( {
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
-			<FormattedHeader headerText={ getTitle( urlData ) } />
+			<FormattedHeader headerText={ getTitle( engine, urlData ) } />
 
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
-					stepUrl={ stepUrl }
-					urlData={ urlData }
-					isLoading={ isFetching || isResetPaidNewsletterPending }
+					redirectUrl={ stepUrl }
+					value={ fromSite }
+					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
+					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }
 
