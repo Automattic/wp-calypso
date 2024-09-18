@@ -632,7 +632,7 @@ class Account extends Component {
 						'We sent an email to %(email)s. Please check your inbox to verify your email.',
 						{
 							args: {
-								email: this.props.userSettings?.new_user_email,
+								email: this.props.userSettings?.new_user_email || '',
 							},
 						}
 					);
