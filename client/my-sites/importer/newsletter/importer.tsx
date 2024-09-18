@@ -37,7 +37,7 @@ type NewsletterImporterProps = {
 };
 
 function getTitle( engine: EngineTypes, urlData?: UrlData ) {
-	if ( urlData?.platform === engine && urlData?.meta?.title ) {
+	if ( urlData?.meta?.title && urlData?.platform === engine ) {
 		return `Import ${ urlData.meta.title }`;
 	}
 
