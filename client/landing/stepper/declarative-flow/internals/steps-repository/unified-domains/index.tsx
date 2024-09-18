@@ -27,13 +27,13 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { removeStep, dispatchRecordSubmitStep } from 'calypso/state/signup/progress/actions';
+import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
-const mapDispatchToProps = ( dispatch: any, props: any ) => {
+const mapDispatchToProps = () => {
 	return {
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
@@ -41,14 +41,6 @@ const mapDispatchToProps = ( dispatch: any, props: any ) => {
 		recordAddDomainButtonClickInUseYourDomain,
 		recordUseYourDomainButtonClick,
 		removeStep,
-		submitSignupStep: (
-			step: Record< string, unknown >,
-			providedDependencies: Record< string, unknown >,
-			optionalProps: Record< string, unknown >
-		) => {
-			dispatch( dispatchRecordSubmitStep( step, providedDependencies, optionalProps ) );
-			props.submitSignupStep?.( step );
-		},
 		submitDomainStepSelection,
 		setDesignType,
 		recordTracksEvent,
@@ -95,8 +87,10 @@ export default function DomainsStep( props: StepProps ) {
 	const mostRecentStateRef = useRef< ProvidedDependencies | undefined >( undefined );
 
 	const updateSignupStepState = useCallback(
-		( state: ProvidedDependencies ) => {
-			setStepState( ( mostRecentStateRef.current = { ...stepState, ...state } ) );
+		( state: ProvidedDependencies, providedDependencies: ProvidedDependencies ) => {
+			setStepState(
+				( mostRecentStateRef.current = { ...stepState, ...providedDependencies, ...state } )
+			);
 		},
 		[ stepState, setStepState ]
 	);
@@ -110,7 +104,8 @@ export default function DomainsStep( props: StepProps ) {
 				saveSignupStep={ updateSignupStepState }
 				submitSignupStep={ updateSignupStepState }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( { ...mostRecentStateRef.current, ...state } );
+					const { domainForm, suggestion, ...rest } = mostRecentStateRef.current ?? {};
+					props.navigation.submit?.( { ...rest, ...state } );
 				} }
 				step={ stepState }
 				flowName={ props.flow }
