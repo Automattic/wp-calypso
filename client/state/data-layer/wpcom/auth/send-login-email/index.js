@@ -72,6 +72,7 @@ export const sendLoginEmail = ( action ) => {
 					...( flow && { flow } ),
 					create_account: createAccount,
 					tos: getToSAcceptancePayload(),
+					calypso_env: config( 'env_id' ),
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }
