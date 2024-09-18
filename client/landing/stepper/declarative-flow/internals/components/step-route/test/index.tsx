@@ -192,16 +192,14 @@ describe( 'StepRoute', () => {
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 
-		it( 'records step-complete event when the step is unmounted and step-start was previously recorded', () => {
+		it( 'tracks step-complete when the step is unmounted and step-start was previously recorded', () => {
 			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep } );
 
 			expect( recordStepComplete ).not.toHaveBeenCalled();
-
 			unmount();
-
 			expect( recordStepComplete ).toHaveBeenCalledWith( {
 				step: 'some-step-slug',
 				flow: 'some-flow',
@@ -209,6 +207,16 @@ describe( 'StepRoute', () => {
 					intent: 'build',
 				},
 			} );
+		} );
+
+		it( 'skips tracking step-complete when the step is unmounted and step-start was not recorded', () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
+			const { unmount } = render( { step: regularStep } );
+
+			expect( recordStepStart ).not.toHaveBeenCalled();
+			unmount();
+			expect( recordStepComplete ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
