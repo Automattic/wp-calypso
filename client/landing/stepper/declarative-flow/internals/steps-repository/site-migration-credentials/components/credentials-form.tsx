@@ -54,7 +54,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						<div className="site-migration-credentials__form">
 							<SiteAddressField
 								control={ control }
-								error={ errors.siteAddress?.message }
+								error={ errors.from_url?.message }
 								importSiteQueryParam={ importSiteQueryParam }
 							/>
 							<UsernameField control={ control } error={ errors.username?.message } />

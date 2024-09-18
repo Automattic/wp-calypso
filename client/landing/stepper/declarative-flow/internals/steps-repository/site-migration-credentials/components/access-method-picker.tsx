@@ -18,7 +18,7 @@ export const AccessMethodPicker: FC< Props > = ( { control } ) => {
 			<div className="site-migration-credentials__radio">
 				<Controller
 					control={ control }
-					name="howToAccessSite"
+					name="migrationType"
 					defaultValue="credentials"
 					render={ ( { field: { value, ...props } } ) => (
 						<FormRadio
@@ -36,7 +36,7 @@ export const AccessMethodPicker: FC< Props > = ( { control } ) => {
 			<div className="site-migration-credentials__radio">
 				<Controller
 					control={ control }
-					name="howToAccessSite"
+					name="migrationType"
 					defaultValue="backup"
 					render={ ( { field: { value, onBlur, ...props } } ) => (
 						<FormRadio

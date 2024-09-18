@@ -1,4 +1,12 @@
 export interface CredentialsFormData {
+	from_url: string;
+	username: string;
+	password: string;
+	backupFileLocation: string;
+	migrationType: 'credentials' | 'backup';
+	notes: string;
+}
+export interface ApiFormData {
 	siteAddress: string;
 	username: string;
 	password: string;
@@ -7,14 +15,10 @@ export interface CredentialsFormData {
 	howToAccessSite: 'credentials' | 'backup';
 }
 
-export interface MigrationError {
-	body: {
-		code: string;
-		message: string;
-		data: {
-			status: number;
-			params?: Record< string, string >;
-		};
+export interface ApiError {
+	code: string;
+	message: string;
+	data: {
+		params?: Record< string, string >;
 	};
-	status: number;
 }

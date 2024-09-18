@@ -31,17 +31,17 @@ export const SiteAddressField: React.FC< Props > = ( { control, error, importSit
 
 	return (
 		<div className="site-migration-credentials__form-field">
-			<FormLabel htmlFor="site-address">{ translate( 'Site address' ) }</FormLabel>
+			<FormLabel htmlFor="from_url">{ translate( 'Site address' ) }</FormLabel>
 			<Controller
 				control={ control }
-				name="siteAddress"
+				name="from_url"
 				rules={ {
 					required: translate( 'Please enter your WordPress site address.' ),
 					validate: validateSiteAddress,
 				} }
 				render={ ( { field } ) => (
 					<FormTextInput
-						id="site-address"
+						id="from_url"
 						isError={ !! error }
 						placeholder={ placeholder }
 						readOnly={ !! importSiteQueryParam }
