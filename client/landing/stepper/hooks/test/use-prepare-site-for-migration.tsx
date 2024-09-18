@@ -5,7 +5,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { usePrepareSiteForMigrationWithMigrateGuru } from '../use-prepare-site-for-migration';
+import {
+	usePrepareSiteForMigrationWithMigrateGuru,
+	usePrepareSiteForMigrationWithMoveToWPCOM,
+} from '../use-prepare-site-for-migration';
 import { replyWithError, replyWithSuccess } from './helpers/nock';
 
 const TRANSFER_ACTIVE = ( siteId: number ) => ( {
@@ -27,7 +30,7 @@ const errorCaptureMigrationKey = replyWithError( {
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( 'calypso/lib/logstash' );
 
-describe( 'usePrepareSiteForMigration', () => {
+describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => nock.cleanAll() );
 
@@ -176,5 +179,61 @@ describe( 'usePrepareSiteForMigration', () => {
 			},
 			{ timeout: 3000 }
 		);
+	} );
+} );
+
+describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
+	beforeAll( () => nock.disableNetConnect() );
+	beforeEach( () => nock.cleanAll() );
+
+	const Wrapper =
+		( queryClient: QueryClient ) =>
+		( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+	const render = ( { siteId } ) => {
+		const queryClient = new QueryClient();
+
+		const renderResult = renderHook( () => usePrepareSiteForMigrationWithMoveToWPCOM( siteId ), {
+			wrapper: Wrapper( queryClient ),
+		} );
+
+		return {
+			...renderResult,
+			queryClient,
+		};
+	};
+
+	it( 'returns idle states when site id is not available', () => {
+		const { result } = render( { siteId: undefined } );
+
+		expect( result.current ).toEqual( {
+			completed: false,
+			error: null,
+			detailedStatus: {
+				siteTransfer: 'idle',
+			},
+			migrationKey: null,
+		} );
+	} );
+
+	it( 'returns siteTransfer status as "pending" when siteTransfer is still happening', () => {
+		const siteId = 123;
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.once()
+			.reply( 200, TRANSFER_ACTIVE( siteId ) );
+
+		const { result } = render( { siteId: 123 } );
+
+		expect( result.current ).toEqual( {
+			completed: false,
+			error: null,
+			detailedStatus: {
+				siteTransfer: 'pending',
+			},
+			migrationKey: null,
+		} );
 	} );
 } );
