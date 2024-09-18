@@ -1,5 +1,5 @@
 .performance-profiler-performance-score {
-	flex: 99999; // This component will grow and shrink instead of the sibling
+	flex: 1; // This component will grow and shrink instead of the sibling
 	display: flex;
 	padding: 24px 0;
 	flex-direction: column;
@@ -56,6 +56,7 @@
 		color: var(--studio-gray-70);
 		font-size: $font-body-extra-small;
 		line-height: $font-title-small;
+		text-wrap: balance;
 		a {
 			text-wrap: nowrap;
 		}
@@ -95,7 +96,9 @@
 
 		.recommendations-text {
 			flex: 1;
-			min-width: 353px;
+			display: flex;
+			flex-wrap: wrap;
+			white-space: nowrap;
 			a {
 				cursor: pointer;
 				font-weight: 500;
