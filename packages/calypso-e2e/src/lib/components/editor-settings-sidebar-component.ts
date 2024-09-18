@@ -23,7 +23,7 @@ const selectors = {
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
-	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
+	scheduleMeridianButton: ( meridian: 'AM' | 'PM' ) => `role=radio[value="${ meridian }"i]`,
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
