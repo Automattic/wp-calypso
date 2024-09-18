@@ -35,7 +35,7 @@ export default function useTrackProvisioningSites() {
 			];
 
 			localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
-			window.dispatchEvent( new Event( 'storage' ) );
+			window.dispatchEvent( new CustomEvent( 'a4a-provisioning-site-change' ) );
 		},
 		[ provisioningSites ]
 	);
@@ -45,17 +45,17 @@ export default function useTrackProvisioningSites() {
 			const updatedSites = provisioningSites.filter( ( { id } ) => id !== siteId );
 
 			localStorage.setItem( 'provisioningSites', JSON.stringify( updatedSites ) );
-			window.dispatchEvent( new Event( 'storage' ) );
+			window.dispatchEvent( new CustomEvent( 'a4a-provisioning-site-change' ) );
 		},
 		[ provisioningSites ]
 	);
 
 	useEffect( () => {
-		window.addEventListener( 'storage', reload );
+		window.addEventListener( 'a4a-provisioning-site-change', reload );
 		reload();
 
 		return () => {
-			window.removeEventListener( 'storage', reload );
+			window.removeEventListener( 'a4a-provisioning-site-change', reload );
 		};
 	}, [ reload ] );
 
