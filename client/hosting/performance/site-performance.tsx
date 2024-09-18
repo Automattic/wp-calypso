@@ -40,12 +40,10 @@ const usePerformanceReport = (
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_url || {};
 
-	const { data: basicMetrics, isError } = useUrlBasicMetricsQuery( url, hash, true );
+	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
-	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
-		url,
-		token ?? hash
-	);
+	const { data: performanceInsights, isLoading: isLoadingInsights } =
+		useUrlPerformanceInsightsQuery( url, token ?? hash );
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
@@ -75,7 +73,7 @@ const usePerformanceReport = (
 		url: finalUrl ?? url,
 		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
 		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
-		isError: isError || isErrorInsights,
+		isError: ! isLoadingInsights && ! basicMetrics,
 	};
 };
 

@@ -19,9 +19,6 @@ export const metricsNames = {
 	tbt: {
 		name: translate( 'Total Blocking Time' ),
 	},
-	overall: {
-		name: translate( 'Performance Score' ),
-	},
 };
 
 export const metricValuations = {
@@ -85,16 +82,6 @@ export const metricValuations = {
 			'Total Blocking Time measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks, screen taps, or keyboard presses. The best sites have a wait time of less than 200 milliseconds.'
 		),
 	},
-	overall: {
-		good: translate( 'Your site‘s Performance Score is good' ),
-		needsImprovement: translate( 'Your site‘s Performance Score is moderate' ),
-		bad: translate( 'Your site‘s Performance Score needs improvement' ),
-		heading: translate( 'What is Performance Score?' ),
-		aka: translate( '(PS)' ),
-		explanation: translate(
-			'The performance score is a combined representation of your site‘s individual speed metrics.'
-		),
-	},
 };
 
 // bad values are only needed as a maximum value on the scales
@@ -129,28 +116,11 @@ export const metricsTresholds = {
 		needsImprovement: 600,
 		bad: 1000,
 	},
-	overall: {
-		good: 100,
-		needsImprovement: 89,
-		bad: 49,
-	},
-};
-
-export const getPerformanceStatus = ( value: number ) => {
-	if ( value <= 49 ) {
-		return 'bad';
-	} else if ( value > 49 && value < 90 ) {
-		return 'needsImprovement';
-	}
-	return 'good';
 };
 
 export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
 
-	if ( metric === 'overall' ) {
-		return getPerformanceStatus( value );
-	}
 	if ( value <= good ) {
 		return 'good';
 	}
