@@ -72,7 +72,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, enableLargeFeatureTitles } = usePlansGridContext();
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<>
@@ -106,7 +106,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				} );
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
-					'is-large': enableLargeFeatureTitles,
 				} );
 
 				return (
