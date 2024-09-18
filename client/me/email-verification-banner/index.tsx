@@ -28,6 +28,7 @@ const EmailVerificationBanner: React.FC = () => {
 				onClick={ () => {
 					setIsDialogOpen( true );
 				} }
+				icon="notice"
 			/>
 		</>
 	);
