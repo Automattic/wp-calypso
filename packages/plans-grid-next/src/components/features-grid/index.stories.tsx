@@ -166,7 +166,6 @@ export const FewerFeaturesExperimentTreatmentVariantB = {
 		intent: 'plans-default-wpcom',
 		isInSignup: true,
 		enableCategorisedFeatures: true,
-		enableLargeFeatureTitles: true,
 		enableStorageAsBadge: false,
 		enableReducedFeatureGroupSpacing: true,
 		enableLogosOnlyForEnterprisePlan: true,

@@ -846,9 +846,6 @@ const PlansFeaturesMain = ( {
 										enableCategorisedFeatures={
 											simplifiedFeaturesGridExperimentVariant === 'simplified'
 										}
-										enableLargeFeatureTitles={
-											simplifiedFeaturesGridExperimentVariant === 'simplified'
-										}
 										enableStorageAsBadge={
 											simplifiedFeaturesGridExperimentVariant !== 'simplified'
 										}
