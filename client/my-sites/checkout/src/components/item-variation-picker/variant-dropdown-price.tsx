@@ -78,10 +78,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		};
 
 		//generic introductory offer to catch unexpected offer terms
-		if (
-			( introTerm !== 'month' && introTerm !== 'year' ) ||
-			( introCount > 2 && introTerm === 'year' )
-		) {
+		if ( introTerm !== 'month' && introTerm !== 'year' ) {
 			return translate( '%(formattedCurrentPrice)s introductory offer', { args } );
 			// translation example: $1 introductory offer
 		}
