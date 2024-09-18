@@ -5,7 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { ONBOARD_STORE } from '../stores';
 import ErrorStep from './internals/steps-repository/error-step';
@@ -35,8 +35,8 @@ const transferringHostedSite: Flow = {
 			( select ) => ( siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ) ) || null,
 			[ siteId ]
 		);
-		const wpcomAdminInterface = useSelector( ( state ) =>
-			getSiteOption( state, parseInt( siteId! ), 'wpcom_admin_interface' )
+		const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+			isAdminInterfaceWPAdmin( state, parseInt( siteId! ) )
 		);
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -48,7 +48,7 @@ const transferringHostedSite: Flow = {
 				return providedDependencies.redirectTo as string;
 			}
 
-			if ( wpcomAdminInterface === 'wp-admin' ) {
+			if ( adminInterfaceIsWPAdmin ) {
 				return site?.options?.admin_url as string;
 			}
 
