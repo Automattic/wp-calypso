@@ -310,9 +310,7 @@ function LineItemWrapper( {
 		if ( has100YearPlanProduct ) {
 			return false;
 		}
-
-		// TODO: Also include condition to check if utm is wordcamp
-		if ( isNewHostedSiteCreationFlow( signupFlowName ) ) {
+		if ( isNewHostedSiteCreationFlow( signupFlowName ) && product.extra?.hideProductVariants ) {
 			return false;
 		}
 

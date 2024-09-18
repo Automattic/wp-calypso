@@ -645,6 +645,7 @@ export interface ResponseCartProductExtra {
 	is_marketplace_product?: boolean;
 	product_slug?: string;
 	product_type?: 'marketplace_plugin' | 'marketplace_theme' | 'saas_plugin';
+	hideProductVariants?: boolean;
 }
 
 export interface ResponseCartGiftDetails {
