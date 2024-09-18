@@ -2,11 +2,13 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import EmailReportScreenshot from 'calypso/assets/images/performance-profiler/email-report-example.svg';
+import EmailReportScreenshot from 'calypso/assets/images/performance-profiler/email-report-example-full.png';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const Container = styled.div`
+	position: relative;
+	overflow: hidden;
 	background:
 		linear-gradient( 90deg, var( --studio-gray-100 ) 50%, rgba( 16, 21, 23, 0 ) 100% ),
 		fixed 10px 10px /16px 16px radial-gradient( var( --studio-gray-50 ) 1px, transparent 0 ),
@@ -15,12 +17,11 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 24px;
 	justify-content: space-between;
 	width: 100%;
 	box-sizing: border-box;
 	flex-wrap: wrap;
-	padding: 24px;
+	padding: 48px 24px;
 
 	@media ( max-width: 600px ) {
 		background:
@@ -64,9 +65,16 @@ const BlueberryButton = styled( Button )`
 		}
 	}
 `;
+const ImageWrapper = styled.div`
+	/* min-width: 290px; */
+	flex-basis: 230px;
+`;
 const EmailReportImage = styled.img`
-	margin-bottom: -24px;
-	align-self: flex-end;
+	position: absolute;
+	top: 24px;
+	right: 24px;
+	max-width: 200px;
+	height: auto;
 `;
 
 export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: () => void } ) => {
@@ -97,10 +105,12 @@ export const NewsletterBanner = ( { link, onClick }: { link: string; onClick: ()
 				</BlueberryButton>
 			</HeadingContainer>
 			{ ! isMobile && (
-				<EmailReportImage
-					src={ EmailReportScreenshot }
-					alt={ translate( 'Email report example' ) }
-				/>
+				<ImageWrapper>
+					<EmailReportImage
+						src={ EmailReportScreenshot }
+						alt={ translate( 'Email report example' ) }
+					/>
+				</ImageWrapper>
 			) }
 		</Container>
 	);
