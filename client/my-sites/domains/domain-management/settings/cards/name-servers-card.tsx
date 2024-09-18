@@ -75,12 +75,12 @@ const NameServersCard = ( {
 			return false;
 		}
 
-		return nameservers.every( ( nameserver ) => {
+		return nameservers.some( ( nameserver ) => {
 			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 		} );
 	};
 
-	const hasCloudflareNameservers = () => {
+	const onlyCloudflareNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
@@ -88,6 +88,19 @@ const NameServersCard = ( {
 		return nameservers.every( ( nameserver ) => {
 			return ! nameserver || CLOUDFLARE_NAMESERVERS_REGEX.test( nameserver );
 		} );
+	};
+
+	const hasDefaultWpcomNameservers = () => {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
+		}
+
+		return (
+			nameservers.length === WPCOM_DEFAULT_NAMESERVERS.length &&
+			nameservers.every( ( nameserver ) => {
+				return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+			} )
+		);
 	};
 
 	const isPendingTransfer = () => {
@@ -108,8 +121,7 @@ const NameServersCard = ( {
 
 	const warning = () => {
 		if (
-			hasWpcomNameservers() ||
-			hasCloudflareNameservers() ||
+			! isEditingNameServers ||
 			isPendingTransfer() ||
 			needsVerification() ||
 			! nameservers ||
@@ -126,23 +138,34 @@ const NameServersCard = ( {
 				onClick={ handleLearnMoreClick }
 			/>
 		);
-		const notice = translate(
-			'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
-			{ components: { link } }
-		);
+
+		let notice;
+		if ( hasWpcomNameservers() ) {
+			notice = translate(
+				'Please do not set WordPress.com name servers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
+				{ components: { link } }
+			);
+		} else if ( ! onlyCloudflareNameservers() ) {
+			notice = translate(
+				'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
+				{ components: { link } }
+			);
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div className="custom-name-servers-notice">
-				<Icon
-					icon={ info }
-					size={ 18 }
-					className="custom-name-servers-notice__icon gridicon"
-					viewBox="2 2 20 20"
-				/>
-				<div className="custom-name-servers-notice__message">{ notice }</div>
-			</div>
-		);
+		if ( notice ) {
+			return (
+				<div className="custom-name-servers-notice">
+					<Icon
+						icon={ info }
+						size={ 18 }
+						className="custom-name-servers-notice__icon gridicon"
+						viewBox="2 2 20 20"
+					/>
+					<div className="custom-name-servers-notice__message">{ notice }</div>
+				</div>
+			);
+		}
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
@@ -153,7 +176,8 @@ const NameServersCard = ( {
 	};
 
 	const handleToggle = () => {
-		if ( hasWpcomNameservers() ) {
+		setIsEditingNameServers( ! isEditingNameServers );
+		if ( hasDefaultWpcomNameservers() ) {
 			setNameServersBeforeEditing( nameservers );
 			setNameservers( [] );
 			setIsEditingNameServers( true );
@@ -171,7 +195,7 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ hasWpcomNameservers() && ! isEditingNameServers }
+				enabled={ hasDefaultWpcomNameservers() && ! isEditingNameServers }
 			/>
 		);
 	};
@@ -204,7 +228,11 @@ const NameServersCard = ( {
 	};
 
 	const renderCustomNameserversForm = () => {
-		if ( ! nameservers || hasWpcomNameservers() || isPendingTransfer() ) {
+		if (
+			! nameservers ||
+			isPendingTransfer() ||
+			( hasDefaultWpcomNameservers() && ! isEditingNameServers )
+		) {
 			return null;
 		}
 
@@ -228,7 +256,7 @@ const NameServersCard = ( {
 					onCancel={ handleCancel }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
-					submitDisabled={ isLoading() }
+					submitDisabled={ isLoading() || hasWpcomNameservers() }
 					notice={ warning() }
 					redesign
 				/>
