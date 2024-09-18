@@ -3,16 +3,25 @@ import { Primitive } from 'utility-types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { Navigate, ProvidedDependencies, StepperStep } from '../../internals/types';
 
+/**
+ * Interface defining the options for the useFlowNavigator hook.
+ */
 interface Options {
+	/**
+	 * A function to navigate between steps in the flow.
+	 * It accepts an array of StepperStep objects.
+	 */
 	navigate: Navigate< StepperStep[] >;
+
+	/**
+	 * An array of URL parameter names that should be persisted
+	 * across navigation within the flow.
+	 */
 	persistedUrlParams: string[];
 }
 
 /**
  * Custom hook for managing navigation within a flow, handling query parameters and step transitions.
- * @param {Object} options - Configuration options for the hook.
- * @param {Navigate<StepperStep[]>} options.navigate - Function to navigate between steps.
- * @param {string[]} options.persistedUrlParams - Array of URL parameter keys to persist across navigation.
  * @returns {Object} An object containing utility functions for flow navigation.
  * @returns {Function} .getFromPropsOrUrl - Retrieves a value from props or URL query parameters.
  * @returns {Function} .navigateWithQueryParams - Navigates to a step while managing query parameters.
