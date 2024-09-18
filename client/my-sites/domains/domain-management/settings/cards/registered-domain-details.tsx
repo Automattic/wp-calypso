@@ -52,6 +52,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			! domain.currentUserIsOwner ||
 			( ! isLoadingPurchase && ! purchase ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			domain.aftermarketAuction
 		);
 	};
