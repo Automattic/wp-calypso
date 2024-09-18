@@ -20,6 +20,7 @@ const EmailVerificationBanner: React.FC = () => {
 		<>
 			{ isDialogOpen && <EmailVerificationDialog onClose={ () => setIsDialogOpen( false ) } /> }
 			<Banner
+				className="email-verification-banner"
 				title={ translate( 'Please, verify your email address.' ) }
 				description={ translate(
 					'Verifying your email helps you secure your WordPress.com account and enables key features.'
