@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { SelectControl } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 
 interface ExternalProps {
 	value: string;
@@ -50,6 +49,9 @@ const DataCenterOptions = [
 
 const Form = styled.div( {
 	maxWidth: '564px',
+	border: '1px solid var( --color-border-subtle )',
+	borderRadius: '4px',
+	padding: '24px',
 } );
 
 const FormHidden = styled.div( {
@@ -57,9 +59,13 @@ const FormHidden = styled.div( {
 } );
 
 const CustomizeLink = styled.a`
-	color: var( --color-link );
 	text-decoration: underline;
 	cursor: pointer;
+`;
+
+const SupportLink = styled.a`
+	text-decoration: underline;
+	color: var( --color-text-subtle ) !important;
 `;
 
 const DataCenterPicker = ( {
@@ -101,8 +107,7 @@ const DataCenterPicker = ( {
 							{
 								components: {
 									supportLink: (
-										<ExternalLink
-											icon
+										<SupportLink
 											target="_blank"
 											href={ localizeUrl(
 												'https://wordpress.com/support/choose-your-sites-primary-data-center/'
