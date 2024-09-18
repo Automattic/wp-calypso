@@ -85,12 +85,11 @@ export default function PlansStepAdaptor( props: StepProps ) {
 					}
 				} else {
 					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
-					props.navigation.submit?.(
-						( mostRecentState = { ...stepState, ...state, ...mostRecentState } )
-					);
 				}
 			} }
-			goToNextStep={ () => props.navigation.submit?.( { ...stepState, ...mostRecentState } ) }
+			goToNextStep={ () => {
+				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
+			} }
 			step={ stepState }
 			customerType={ customerType }
 			errorNotice={ ( message: string ) => dispatch( errorNotice( message ) ) }
