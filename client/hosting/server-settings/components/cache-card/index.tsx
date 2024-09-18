@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, JetpackLogo } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -209,6 +209,33 @@ export const CacheCard = ( {
 						<span>{ translate( 'Clear object cache' ) }</span>
 					</Button>
 				</div>
+			) }
+
+			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
+				<>
+					<div className="performance-optimization__hr"></div>
+
+					<div className="performance-optimization__jetpack-block">
+						<HostingCardDescription>
+							<JetpackLogo size={ 16 } />
+							<div>
+								{ translate(
+									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
+									{
+										components: {
+											a: (
+												<InlineSupportLink
+													supportContext="hosting-clear-cache"
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+								) }
+							</div>
+						</HostingCardDescription>
+					</div>
+				</>
 			) }
 		</HostingCard>
 	);

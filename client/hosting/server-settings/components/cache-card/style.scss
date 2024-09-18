@@ -35,3 +35,17 @@
 		margin-bottom: 16px;
 	}
 }
+
+.performance-optimization__jetpack-block {
+	margin-bottom: 2px;
+
+	.hosting-card__description {
+		margin-bottom: 0;
+		display: flex;
+		align-items: center;
+
+		svg {
+			margin-right: 6px;
+		}
+	}
+}
