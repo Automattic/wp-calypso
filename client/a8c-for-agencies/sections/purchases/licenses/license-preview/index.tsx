@@ -52,7 +52,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
-	meta?: LicenseMeta | null;
+	meta?: LicenseMeta;
 	referral?: ReferralAPIResponse | null;
 }
 
@@ -157,7 +157,7 @@ export default function LicensePreview( {
 	);
 
 	const shouldShowTransferredBadge = () => {
-		const transferredDate = meta?.a4a_transferred_subscription_expiration;
+		const transferredDate = meta?.transferredSubscriptionExpiration;
 
 		if ( ! transferredDate ) {
 			return false;
@@ -219,7 +219,7 @@ export default function LicensePreview( {
 										),
 									},
 									args: {
-										date: meta?.a4a_transferred_subscription_expiration ?? '',
+										date: meta?.transferredSubscriptionExpiration ?? '',
 									},
 								}
 							) }
@@ -235,6 +235,9 @@ export default function LicensePreview( {
 	const productTitle = licenseKey.startsWith( 'wpcom-hosting-business' )
 		? translate( 'WordPress.com Site' )
 		: product;
+
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+	const isDevelopmentSite = devSitesEnabled && Boolean( meta?.isDevSite );
 
 	return (
 		<div
@@ -352,6 +355,7 @@ export default function LicensePreview( {
 
 				<div className="license-preview__badge-container">
 					{ !! isParentLicense && bundleCountContent }
+					{ isDevelopmentSite && <Badge type="info-purple">{ translate( 'Development' ) }</Badge> }
 					{ shouldShowTransferredBadge() && <TransferredBadge /> }
 				</div>
 
