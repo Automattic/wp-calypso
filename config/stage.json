@@ -188,7 +188,7 @@
 		"stripe-redirect-migration-bancontact": true,
 		"stripe-redirect-migration-ideal": true,
 		"stripe-redirect-migration-p24": true,
-		"stripe-redirect-migration-wechat": false,
+		"stripe-redirect-migration-wechat": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
