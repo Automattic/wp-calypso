@@ -3,19 +3,14 @@ import styled from '@emotion/styled';
 export const PaymentMethodLogos = styled.span`
 	display: flex;
 	flex: 1;
-	text-align: right;
+	flex-wrap: wrap;
+	gap: 5px;
 	align-items: center;
 	justify-content: flex-end;
 
-	.rtl & {
-		text-align: left;
-	}
-
 	svg {
 		display: inline-block;
-
-		&.has-background {
-			padding-inline-end: 5px;
-		}
+		height: 26px;
+		width: 42px;
 	}
 `;
