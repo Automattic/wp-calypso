@@ -2,7 +2,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import EmailReportScreenshot from 'calypso/assets/images/performance-profiler/email-report-example.svg';
+import EmailReportScreenshot from 'calypso/assets/images/performance-profiler/email-report-example.png';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
