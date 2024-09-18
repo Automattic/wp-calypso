@@ -20,12 +20,12 @@ class VerifyEmailDialog extends Component {
 			'sent' === this.props.emailVerificationStatus ||
 			'error' === this.props.emailVerificationStatus
 		) {
-			return this.props.translate( 'Email Sent' );
+			return this.props.translate( 'Email sent' );
 		}
 		if ( 'requesting' === this.props.emailVerificationStatus ) {
 			return <Spinner className="email-verification-dialog__confirmation-dialog-spinner" />;
 		}
-		return this.props.translate( 'Resend Email' );
+		return this.props.translate( 'Resend email' );
 	}
 
 	handleClose = () => {
