@@ -49,19 +49,20 @@ export const useStepRouteTracking = ( {
 	const { site, siteSlugOrId } = useSiteData();
 	const isRequestingSelectedSite = useIsRequestingSelectedSite( siteSlugOrId, site );
 	const hasRequestedSelectedSite = siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
-	const stepCompleteEventProps = useRef< RecordStepCompleteProps | null >( null );
+	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 
 	/**
 	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
 	 * This is to ensure that the event is recorded when the user navigates away from the step.
-	 * Only records if `stepCompleteEventProps.current` is populated when the step-start event fires.
+	 * We only record this if step-start event gets recorded and `stepCompleteEventPropsRef.current` is populated (as a result).
 	 */
 	useEffect( () => {
 		return () => {
-			if ( stepCompleteEventProps.current ) {
-				recordStepComplete( stepCompleteEventProps.current );
+			if ( stepCompleteEventPropsRef.current ) {
+				recordStepComplete( stepCompleteEventPropsRef.current );
 			}
 		};
+		// IMPORTANT: Do not add dependencies to this effect, as it should only run when the component unmounts.
 	}, [] );
 
 	useEffect( () => {
@@ -84,8 +85,8 @@ export const useStepRouteTracking = ( {
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			} );
 
-			// Apply the props to record in the exit/complete event. We only record this if start event gets recorded.
-			stepCompleteEventProps.current = {
+			// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
+			stepCompleteEventPropsRef.current = {
 				flow: flowName,
 				step: stepSlug,
 				optionalProps: { intent },
