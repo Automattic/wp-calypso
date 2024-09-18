@@ -100,7 +100,7 @@ export default function NewsletterImporter( {
 	const {
 		data: urlData,
 		isFetching: isUrlFetching,
-		isError: urlError,
+		isError: isUrlError,
 	} = useAnalyzeUrlQuery( fromSite );
 
 	useEffect( () => {
@@ -139,7 +139,7 @@ export default function NewsletterImporter( {
 					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
 					engine={ engine }
 					value={ fromSite }
-					urlError={ urlError }
+					urlError={ isUrlError }
 				/>
 			) }
 
