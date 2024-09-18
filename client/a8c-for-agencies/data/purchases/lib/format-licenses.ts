@@ -17,7 +17,7 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
-	meta: APILicenseMeta | []; // The API returns an empty array if no meta is present, otherwise it's an object
+	meta: APILicenseMeta | null;
 	referral: ReferralAPIResponse;
 }
 
@@ -52,9 +52,9 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 	} ) );
 }
 
-export function formatLicenseMeta( meta: APILicenseMeta | [] ): LicenseMeta {
+export function formatLicenseMeta( meta: APILicenseMeta | null ): LicenseMeta {
 	// The API returns an empty array if no meta is present, otherwise it's an object
-	if ( Array.isArray( meta ) ) {
+	if ( meta === null ) {
 		return {};
 	}
 

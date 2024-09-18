@@ -42,7 +42,7 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
-	meta: APILicenseMeta;
+	meta: APILicenseMeta | null;
 	referral: ReferralAPIResponse | null;
 }
 
