@@ -8,7 +8,7 @@ import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-mig
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import {
 	usePrepareSiteForMigrationWithMigrateGuru,
-	usePrepareSiteForMigrationWithMoveToWPCOM,
+	usePrepareSiteForMigrationWithMigrateToWPCOM,
 } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -100,7 +100,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		error: preparationError,
 		migrationKey,
 	} = config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
-		? usePrepareSiteForMigrationWithMoveToWPCOM( siteId ) // eslint-disable-line react-hooks/rules-of-hooks -- Temporary workaround until we completely replace the migrate guru hook.
+		? usePrepareSiteForMigrationWithMigrateToWPCOM( siteId ) // eslint-disable-line react-hooks/rules-of-hooks -- Temporary workaround until we completely replace the migrate guru hook.
 		: usePrepareSiteForMigrationWithMigrateGuru( siteId ); // eslint-disable-line react-hooks/rules-of-hooks
 	const migrationKeyStatus = detailedStatus.migrationKey;
 

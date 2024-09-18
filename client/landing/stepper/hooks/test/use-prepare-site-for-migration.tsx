@@ -7,7 +7,7 @@ import nock from 'nock';
 import React from 'react';
 import {
 	usePrepareSiteForMigrationWithMigrateGuru,
-	usePrepareSiteForMigrationWithMoveToWPCOM,
+	usePrepareSiteForMigrationWithMigrateToWPCOM,
 } from '../use-prepare-site-for-migration';
 import { replyWithError, replyWithSuccess } from './helpers/nock';
 
@@ -195,7 +195,7 @@ describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 	const render = ( { siteId } ) => {
 		const queryClient = new QueryClient();
 
-		const renderResult = renderHook( () => usePrepareSiteForMigrationWithMoveToWPCOM( siteId ), {
+		const renderResult = renderHook( () => usePrepareSiteForMigrationWithMigrateToWPCOM( siteId ), {
 			wrapper: Wrapper( queryClient ),
 		} );
 

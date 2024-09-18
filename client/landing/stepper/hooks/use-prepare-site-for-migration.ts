@@ -200,10 +200,10 @@ export const usePrepareSiteForMigrationWithMigrateGuru = ( siteId?: number ) => 
 };
 
 /**
- *  Hook to manage the site to prepare a site for migration using the Move to WordPress.com plugin.
+ *  Hook to manage the site to prepare a site for migration using the Migrate to WordPress.com plugin.
  *  This hook manages the site transfer.
  */
-export const usePrepareSiteForMigrationWithMoveToWPCOM = ( siteId?: number ) => {
+export const usePrepareSiteForMigrationWithMigrateToWPCOM = ( siteId?: number ) => {
 	const siteTransferState = useSiteTransfer( siteId );
 	const transferTimingTracked = useRef( false );
 
