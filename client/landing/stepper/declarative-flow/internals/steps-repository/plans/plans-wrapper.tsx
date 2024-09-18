@@ -182,7 +182,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
-					hidePlansFeatureComparison={ hidePlansFeatureComparison }
+					hidePlansFeatureComparison={ hidePlansFeatureComparison || isWordCampPromo }
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
