@@ -10,7 +10,7 @@ import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -69,7 +69,7 @@ const DevelopmentSiteActions = () => {
 	);
 };
 
-const PricingSection: FC = () => {
+const PricingSection = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
@@ -195,7 +195,7 @@ const PricingSection: FC = () => {
 	);
 };
 
-function PlanStorageFooter( { children }: PropsWithChildren< unknown > ) {
+function PlanStorageFooter( { children }: PropsWithChildren ) {
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
 	const wrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
@@ -219,7 +219,7 @@ function PlanStorageFooter( { children }: PropsWithChildren< unknown > ) {
 	);
 }
 
-const PlanCard: FC = () => {
+const PlanCard = () => {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
