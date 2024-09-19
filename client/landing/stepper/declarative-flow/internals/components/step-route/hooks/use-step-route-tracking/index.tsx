@@ -52,9 +52,9 @@ export const useStepRouteTracking = ( {
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 
 	/**
-	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
-	 * This is to ensure that the event is recorded when the user navigates away from the step.
-	 * We only record this if step-start event gets recorded and `stepCompleteEventPropsRef.current` is populated (as a result).
+	 * Cleanup effect to record step-complete event when:
+	 * - a rendered step is navigated away
+	 * - a step-start event was recorded and `stepCompleteEventPropsRef.current` populated (as a result)
 	 */
 	useEffect( () => {
 		return () => {
@@ -62,8 +62,8 @@ export const useStepRouteTracking = ( {
 				recordStepComplete( stepCompleteEventPropsRef.current );
 			}
 		};
-		// IMPORTANT: Do not add dependencies to this effect, as it should only record when the component unmounts.
-	}, [] );
+		// IMPORTANT: Do not add dependencies to this effect, as it should only record when the component unmounts or step changes.
+	}, [ stepSlug ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
