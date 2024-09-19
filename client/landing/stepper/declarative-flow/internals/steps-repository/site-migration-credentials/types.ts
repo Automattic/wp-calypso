@@ -1,3 +1,5 @@
+import { Control, FieldErrors } from 'react-hook-form';
+
 export interface CredentialsFormData {
 	siteAddress: string;
 	username: string;
@@ -5,6 +7,11 @@ export interface CredentialsFormData {
 	backupFileLocation: string;
 	notes: string;
 	howToAccessSite: 'credentials' | 'backup';
+}
+
+export interface CredentialsFormFieldProps {
+	control: Control< CredentialsFormData >;
+	errors?: FieldErrors< CredentialsFormData >;
 }
 
 export interface MigrationError {
