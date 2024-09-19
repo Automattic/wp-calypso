@@ -34,6 +34,7 @@ import {
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
+import { createPayPal } from '../../payment-methods/paypal-js';
 import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
@@ -56,11 +57,12 @@ export function useCreatePayPal( {
 	labelText?: string | null;
 	shouldShowTaxFields?: boolean;
 } ): PaymentMethod {
-	const store = useMemo( () => createPayPalStore(), [] );
-	const paypalMethod = useMemo(
-		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
-		[ labelText, shouldShowTaxFields, store ]
-	);
+	// const store = useMemo( () => createPayPalStore(), [] );
+	// const paypalMethod = useMemo(
+	// 	() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+	// 	[ labelText, shouldShowTaxFields, store ]
+	// );
+	const paypalMethod = useMemo( () => createPayPal(), [] );
 	return paypalMethod;
 }
 

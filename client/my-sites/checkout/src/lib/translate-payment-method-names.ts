@@ -19,7 +19,10 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_PayPal_Direct':
 			return 'paypal-direct';
 		case 'WPCOM_Billing_PayPal_Express':
-			return 'paypal';
+			// NOTE: we cannot use the key `paypal` because composite-checkout
+			// ends up using this as an `id`, which overwrites `window.paypal`
+			// which is the namespace used by the PayPal JS SDK.
+			return 'paypal-js';
 		case 'WPCOM_Billing_Stripe_Payment_Method':
 			return 'card';
 		case 'WPCOM_Billing_Stripe_Alipay':
@@ -63,7 +66,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
 		case 'paypal-direct':
 			return 'WPCOM_Billing_PayPal_Direct';
-		case 'paypal':
+		case 'paypal-js':
 			return 'WPCOM_Billing_PayPal_Express';
 		case 'stripe':
 		case 'card':
@@ -123,7 +126,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'pix':
 		case 'netbanking':
 		case 'paypal-direct':
-		case 'paypal':
+		case 'paypal-js':
 		case 'card':
 		case 'stripe':
 		case 'existingCard':
@@ -167,7 +170,7 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'bancontact',
 		'ideal',
 		'netbanking',
-		'paypal',
+		'paypal-js',
 		'p24',
 		'wechat',
 	];
