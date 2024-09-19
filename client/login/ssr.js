@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { ssrSetupLocale } from 'calypso/controller';
 
 const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
 
@@ -12,10 +14,14 @@ const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
  * @param {Function} next     Next middleware in the running sequence
  */
 export function setShouldServerSideRenderLogin( context, next ) {
+	const isLocaleValidForSSR =
+		isDefaultLocale( context.lang ) ||
+		config( 'magnificent_non_en_locales' ).includes( context.lang );
+
 	context.serverSideRender =
 		// if there are any parameters, they must be ONLY the ones in the list of valid query keys
 		Object.keys( context.query ).every( ( key ) => VALID_QUERY_KEYS.includes( key ) ) &&
-		isDefaultLocale( context.lang ) &&
+		isLocaleValidForSSR &&
 		isRedirectToValidForSsr( context.query.redirect_to );
 
 	next();
@@ -37,4 +43,19 @@ function isRedirectToValidForSsr( redirectToQueryValue ) {
 		// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 		redirectToDecoded.startsWith( 'https://wordpress.com/go' )
 	);
+}
+
+/**
+ * Setup the locale data  when server side rendering is enabled for the request.
+ * @param   {Object}   context  The entire request context
+ * @param   {Function} next     Next middleware in the running sequence
+ * @returns {void}
+ */
+export function ssrSetupLocaleLogin( context, next ) {
+	if ( context.serverSideRender ) {
+		ssrSetupLocale( context, next );
+		return;
+	}
+
+	next();
 }
