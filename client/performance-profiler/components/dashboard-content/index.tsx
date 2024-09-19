@@ -23,6 +23,7 @@ type PerformanceProfilerDashboardContentProps = {
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
 	showV2?: boolean;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -35,6 +36,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayMigrationBanner = true,
 	activeTab = TabType.mobile,
 	showV2 = false,
+	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
 		overall_score,
@@ -83,6 +85,7 @@ export const PerformanceProfilerDashboardContent = ( {
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }
+					onRecommendationsFilterChange={ onRecommendationsFilterChange }
 				/>
 
 				{ displayNewsletterBanner && (
@@ -106,6 +109,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						ref={ insightsRef }
 						hash={ hash }
 						filter={ filter }
+						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				) }
 			</div>

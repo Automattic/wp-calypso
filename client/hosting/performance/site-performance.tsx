@@ -110,6 +110,8 @@ export const SitePerformance = () => {
 	}, [ pages, stats ] );
 
 	const currentPageId = queryParams?.page_id?.toString() ?? '0';
+	const filter = queryParams?.filter?.toString();
+	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 	const currentPage = useMemo(
 		() => pages.find( ( page ) => page.value === currentPageId ),
 		[ pages, currentPageId ]
@@ -129,6 +131,19 @@ export const SitePerformance = () => {
 			queryKey: getSitePagesQueryKey( { siteId, query } ),
 			exact: true,
 		} );
+	};
+
+	const handleRecommendationsFilterChange = ( filter?: string ) => {
+		setRecommendationsFilter( filter );
+		const url = new URL( window.location.href );
+
+		if ( filter ) {
+			url.searchParams.set( 'filter', filter );
+		} else {
+			url.searchParams.delete( 'filter' );
+		}
+
+		window.history.replaceState( {}, '', url.toString() );
 	};
 
 	const performanceReport = usePerformanceReport( wpcom_performance_url, activeTab );
@@ -216,6 +231,8 @@ export const SitePerformance = () => {
 						{ ...performanceReport }
 						pageTitle={ currentPage.label }
 						onRetestClick={ retestPage }
+						onFilterChange={ handleRecommendationsFilterChange }
+						filter={ recommendationsFilter }
 					/>
 				)
 			) }

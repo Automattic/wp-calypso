@@ -18,6 +18,7 @@ type InsightsSectionProps = {
 	isWpcom: boolean;
 	hash: string;
 	filter?: string;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const InsightsSection = forwardRef(
@@ -37,7 +38,11 @@ export const InsightsSection = forwardRef(
 			.sort( sortInsightKeys );
 		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
 			setSelectedFilter( option.value );
-			updateQueryParams( { filter: option.value }, true );
+			if ( props.onRecommendationsFilterChange ) {
+				props.onRecommendationsFilterChange( option.value );
+			} else {
+				updateQueryParams( { filter: option.value }, true );
+			}
 		}, [] );
 
 		useEffect( () => {
