@@ -12,8 +12,8 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
-import Layout from 'calypso/components/layout';
 import Main from 'calypso/components/main';
+import { MasonryGrid } from 'calypso/components/masonry-grid';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -90,11 +90,6 @@ const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, 
 			type: 'advanced',
 		},
 		{
-			feature: 'web-server-settings',
-			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-			type: 'advanced',
-		},
-		{
 			feature: 'restore-plan-software',
 			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
@@ -108,6 +103,11 @@ const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, 
 			feature: 'wp-admin',
 			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
+		},
+		{
+			feature: 'web-server-settings',
+			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
 		},
 	].filter( ( card ) => card !== null );
 
@@ -222,7 +222,7 @@ const ServerSettings = ( props ) => {
 				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
-					<Layout className="page-server-settings__layout">
+					<MasonryGrid>
 						<AllCards
 							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
@@ -230,7 +230,7 @@ const ServerSettings = ( props ) => {
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 						/>
-					</Layout>
+					</MasonryGrid>
 				</WrapperComponent>
 			</>
 		);
