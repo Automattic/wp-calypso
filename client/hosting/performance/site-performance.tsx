@@ -17,6 +17,7 @@ import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
+import { PerformanceReportLoading } from './components/PerformanceReportLoading';
 import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
@@ -226,7 +227,7 @@ export const SitePerformance = () => {
 				<DeviceTabControls onDeviceTabChange={ setActiveTab } value={ activeTab } />
 			</div>
 			{ isInitialLoading ? (
-				<p>{ translate( 'Loading pages…' ) }</p>
+				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
 				<>
 					{ ! isSitePublic ? (
