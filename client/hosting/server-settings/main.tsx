@@ -188,7 +188,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
-		transferState &&
+		!! transferState &&
 			transferState !== transferStates.NONE &&
 			transferState !== transferStates.INQUIRING &&
 			transferState !== transferStates.ERROR &&
@@ -303,7 +303,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				<HostingActivateStatus
 					context="hosting"
 					onTick={ requestUpdatedSiteData }
-					keepAlive={ Boolean( ! isSiteAtomic && hasTransfer ) }
+					keepAlive={ ! isSiteAtomic && hasTransfer }
 				/>
 			) }
 			{ ! isBusinessTrial && banner }
