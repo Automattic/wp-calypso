@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Controller, Control } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
@@ -20,6 +20,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 	importSiteQueryParam,
 } ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const hasEnTranslation = useHasEnTranslation();
 
 	const validateSiteAddress = ( siteAddress: string ) => {
@@ -35,7 +36,9 @@ export const SiteAddressField: React.FC< Props > = ( {
 
 	return (
 		<div className="site-migration-credentials__form-field">
-			<FormLabel htmlFor="site-address">{ translate( 'Site address' ) }</FormLabel>
+			<FormLabel htmlFor="site-address">
+				{ isEnglishLocale ? translate( 'Current site address' ) : translate( 'Site address' ) }
+			</FormLabel>
 			<Controller
 				control={ control }
 				name="siteAddress"
