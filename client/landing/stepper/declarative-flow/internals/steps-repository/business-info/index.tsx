@@ -277,7 +277,7 @@ const BusinessInfo: Step = function ( props ) {
 					skipButtonAlign="top"
 					goBack={ goBack }
 					goNext={ goNext }
-					isHorizontalLayout={ true }
+					isHorizontalLayout
 					formattedHeader={
 						<FormattedHeader
 							id="business-info-header"

@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import './style.scss';
@@ -113,7 +113,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 
 	return (
 		<DeviceSwitcher
-			className={ classnames( 'theme-preview__container', {
+			className={ clsx( 'theme-preview__container', {
 				'theme-preview__container--loading': ! isLoaded && ! isFullyLoaded,
 			} ) }
 			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }

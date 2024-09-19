@@ -71,8 +71,8 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	return (
 		<StepContainer
 			stepName="link-in-bio-setup"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="linkInBioPostSetup"
 			formattedHeader={
 				<FormattedHeader

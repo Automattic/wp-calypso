@@ -11,7 +11,6 @@ interface FetchExperimentAssignmentResponse {
 
 /**
  * Exported for testing only.
- *
  * @param response The response data
  */
 export function isFetchExperimentAssignmentResponse(
@@ -50,7 +49,6 @@ const lastAnonIdExpiryTimeMs = 24 * 60 * 60 * 1000; // 24 hours
  * - Otherwise, within the expiry time, returns the cached anonId
  *
  * Exported for testing.
- *
  * @param getAnonId The getAnonId function
  */
 export const localStorageCachedGetAnonId = async ( getAnonId: Config[ 'getAnonId' ] ) => {
@@ -76,7 +74,6 @@ export const localStorageCachedGetAnonId = async ( getAnonId: Config[ 'getAnonId
 
 /**
  * Fetch an ExperimentAssignment
- *
  * @param config The config object providing dependecy injection.
  * @param experimentName The experiment name to fetch
  */

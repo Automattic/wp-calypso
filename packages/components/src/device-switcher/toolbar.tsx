@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { DEVICES_SUPPORTED, DEVICE_TYPES } from './constants';
@@ -36,7 +36,7 @@ const DeviceSwitcherToolbar = ( {
 					<Button
 						key={ device }
 						aria-label={ devices.current[ device ].title }
-						className={ classnames( {
+						className={ clsx( {
 							[ device ]: true,
 							'is-selected': device === currentDevice,
 						} ) }
@@ -51,7 +51,7 @@ const DeviceSwitcherToolbar = ( {
 				{ isZoomable && (
 					<Button
 						aria-label={ translate( 'Zoom out 50%' ) }
-						className={ classnames( { zoom: true, 'is-selected': isZoomActive } ) }
+						className={ clsx( { zoom: true, 'is-selected': isZoomActive } ) }
 						onClick={ () => onZoomClick() }
 					>
 						<Icon icon={ isZoomActive ? zoomIn : zoomOut } size={ 24 } />

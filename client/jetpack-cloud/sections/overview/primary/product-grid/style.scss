@@ -22,6 +22,9 @@
 
 	.more-info-link {
 		font-size: rem(13px);
+		text-decoration: underline;
+		cursor: pointer;
+		color: var(--color-neutral-100);
 	}
 
 	.simple-item-card__title {

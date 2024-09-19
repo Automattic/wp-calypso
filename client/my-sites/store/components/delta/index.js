@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -19,7 +19,7 @@ export default class Delta extends Component {
 
 	render() {
 		const { className, icon, iconSize, suffix, value } = this.props;
-		const deltaClasses = classnames( 'delta', className );
+		const deltaClasses = clsx( 'delta', className );
 		const undefinedIncrease = includes( className, 'is-undefined-increase' );
 
 		let deltaIcon;

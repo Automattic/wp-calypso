@@ -1,8 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { HelpCenter } from '@automattic/data-stores';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -12,7 +15,10 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE } from '../constants';
+import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const getStatsPurchaseURL = (
 	siteId: number | null,
@@ -20,7 +26,7 @@ const getStatsPurchaseURL = (
 	hasFreeStats = false
 ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-wpcom-stats&from=${ from }-stats-upgrade-notice${
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice${
 		hasFreeStats ? '&productType=personal' : ''
 	}`;
 	return purchasePath;
@@ -32,6 +38,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	isOdysseyStats,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isWPCOMPaidStatsFlow =
 		isEnabled( 'stats/paid-wpcom-v2' ) && isWPCOMSite && ! isOdysseyStats;
@@ -43,6 +50,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 		'postponed',
 		30 * 24 * 3600
 	);
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const dismissNotice = () => {
 		isOdysseyStats
@@ -66,6 +74,11 @@ const DoYouLoveJetpackStatsNotice = ( {
 			: recordTracksEvent(
 					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
 			  );
+
+		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+			type: 'notice-love-stats',
+		} );
+
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
 	};
@@ -98,13 +111,33 @@ const DoYouLoveJetpackStatsNotice = ( {
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
-	const description = isWPCOMPaidStatsFlow
+	const paidStatsRemoveHardcoding = hasEnTranslation(
+		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.'
+	)
 		? translate(
-				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.',
+				{
+					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+				}
 		  )
-		: translate( 'Upgrade to get priority support and access to upcoming advanced features.' );
+		: translate(
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
+				{
+					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+				}
+		  );
+
+	const description = isWPCOMPaidStatsFlow
+		? paidStatsRemoveHardcoding
+		: translate( 'Upgrade to support future development and stop the upgrade banners.' );
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
+
+	const localizedLearnMoreLink = localizeUrl( learnMoreLink );
+	const openHelpCenter = () => {
+		setShowHelpCenter( true );
+		setShowSupportDoc( localizedLearnMoreLink );
+	};
 
 	return (
 		<div
@@ -117,16 +150,22 @@ const DoYouLoveJetpackStatsNotice = ( {
 				title={ hasFreeStats ? freeTitle : noPurchaseTitle }
 				onClose={ dismissNotice }
 			>
-				<p>{ description }</p>
-				<p>
+				<p key="desc">{ description }</p>
+				<p key="cta">
 					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
 						{ CTAText }
 					</button>
 					<a
 						className="notice-banner__action-link"
-						href={ localizeUrl( learnMoreLink ) }
+						href={ localizedLearnMoreLink }
 						target="_blank"
 						rel="noreferrer"
+						onClick={ ( event ) => {
+							if ( ! isOdysseyStats && isWPCOMSite ) {
+								event.preventDefault();
+								openHelpCenter();
+							}
+						} }
 					>
 						{ translate( 'Learn more' ) }
 						<Icon className="stats-icon" icon={ external } size={ 24 } />

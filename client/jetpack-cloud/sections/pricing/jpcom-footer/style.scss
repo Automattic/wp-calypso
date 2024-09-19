@@ -51,7 +51,7 @@
 	margin: 0 auto;
 }
 
-@media ( min-width: 531px ) {
+@media (min-width: 531px) {
 	.jetpack-footer__head,
 	.sitemap__list,
 	.a8c-footer__link-list {
@@ -60,21 +60,21 @@
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
-@media ( min-width: 901px ) {
+@media (min-width: 901px) {
 	.jetpack-footer__head,
 	.sitemap__list,
 	.a8c-footer__link-list {
 		grid-template-columns: repeat(3, 1fr);
 	}
 }
-@media ( min-width: 1101px ) {
+@media (min-width: 1101px) {
 	.jetpack-footer__head,
 	.sitemap__list,
 	.a8c-footer__link-list {
 		grid-template-columns: repeat(4, 1fr);
 	}
 }
-@media ( min-width: 1301px ) {
+@media (min-width: 1301px) {
 	.jetpack-footer__head,
 	.sitemap__list,
 	.a8c-footer__link-list {
@@ -82,7 +82,7 @@
 	}
 }
 
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.jetpack-footer {
 		padding-block-start: 3rem;
 	}
@@ -91,7 +91,7 @@
 .jetpack-footer__head {
 	margin-block-end: 2.5rem;
 }
-@media ( max-width: 530px ) {
+@media (max-width: 530px) {
 	.jetpack-footer__head {
 		display: flex;
 		justify-content: space-between;
@@ -99,13 +99,13 @@
 	}
 }
 
-@media ( min-width: 531px ) {
+@media (min-width: 531px) {
 	.jetpack-footer__language {
 		grid-column-start: -2;
 	}
 }
 
-@media ( min-width: 531px ) {
+@media (min-width: 531px) {
 	.jetpack-footer__language-toggle {
 		margin-inline-start: -1rem;
 	}
@@ -129,7 +129,7 @@
 .sitemap__category {
 	margin: 5rem 0;
 }
-@media ( min-width: 531px ) {
+@media (min-width: 531px) {
 	.sitemap__category {
 		margin: 2.5rem 0;
 	}
@@ -144,7 +144,7 @@
 	color: #2c3338;
 	font-weight: 600;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.sitemap__category-label {
 		margin-block-end: 0.75rem;
 		font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
@@ -159,7 +159,7 @@
 	list-style-type: none;
 	line-height: 1.2;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.sitemap__link-list {
 		font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 	}
@@ -167,7 +167,7 @@
 .sitemap__link-list > li {
 	margin: 0.75rem 0;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.sitemap__link-list > li {
 		margin: 1rem 0;
 	}
@@ -196,20 +196,20 @@
 	display: block;
 }
 
-@media ( min-width: 531px ) {
+@media (min-width: 531px) {
 	.sitemap__category-social,
 	.sitemap__category-mobile {
 		grid-column: 1 / -1;
 	}
 }
 
-@media ( min-width: 901px ) {
+@media (min-width: 901px) {
 	.sitemap__category-social {
 		grid-column-end: auto;
 	}
 }
 
-@media ( min-width: 901px ) {
+@media (min-width: 901px) {
 	.sitemap__category-mobile {
 		grid-column-start: 2;
 	}
@@ -219,7 +219,7 @@
 	padding: 1.5rem 7.5%;
 	background-color: #101517;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.a8c-footer {
 		padding-block-start: 1rem;
 		padding-block-end: 1rem;
@@ -233,13 +233,13 @@
 	padding-inline-end: 0;
 	list-style-type: none;
 }
-@media ( min-width: 531px ) {
+@media (min-width: 531px) {
 	.a8c-footer__link-list {
 		display: flex;
 		justify-content: space-between;
 	}
 }
-@media ( min-width: 901px ) {
+@media (min-width: 901px) {
 	.a8c-footer__link-list {
 		display: grid;
 	}
@@ -247,7 +247,7 @@
 .a8c-footer__link-list > li {
 	margin: 1rem 0;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.a8c-footer__link-list > li {
 		font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 	}
@@ -263,13 +263,13 @@
 .a8c-footer__link-list .a8c-footer__home-link {
 	text-decoration: none;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.a8c-footer__link-list .a8c-footer__home-link {
 		font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
 	}
 }
 
-@media ( min-width: 901px ) {
+@media (min-width: 901px) {
 	.a8c-footer__home {
 		grid-column: 1 / 3;
 	}
@@ -286,7 +286,7 @@
 	height: 0.75rem;
 	margin: 0 0.5rem;
 }
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.a8c-footer__a8c-logo {
 		top: 0;
 		height: 0.5rem;
@@ -294,7 +294,7 @@
 	}
 }
 
-@media ( min-width: 901px ) {
+@media (min-width: 901px) {
 	.a8c-footer__work {
 		grid-column-start: -2;
 	}

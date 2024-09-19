@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { getBackupErrorCode } from 'calypso/lib/jetpack/backup-utils';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
@@ -11,7 +14,6 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useGetDisplayDate from '../use-get-display-date';
 import BackupSupportLinks from './backup-support-links';
 import cloudErrorIcon from './icons/cloud-error.svg';
-
 import './style.scss';
 
 const BackupFailed = ( { backup } ) => {
@@ -29,6 +31,19 @@ const BackupFailed = ( { backup } ) => {
 	const displayTime = backupDate.format( 'LT' );
 
 	const mayBeBlockedByHost = getBackupErrorCode( backup ) === 'NOT_ACCESSIBLE';
+
+	const dispatch = useDispatch();
+	const onContactSupportClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_failed_contact_support_click', {
+				reason: mayBeBlockedByHost ? 'blocked_by_host' : 'other',
+			} )
+		);
+	}, [ dispatch, mayBeBlockedByHost ] );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_failed_view' ) );
+	}, [ dispatch ] );
 
 	return (
 		<>
@@ -93,6 +108,7 @@ const BackupFailed = ( { backup } ) => {
 					target="_blank"
 					rel="noopener noreferrer"
 					isPrimary={ false }
+					onClick={ onContactSupportClick }
 				>
 					{ translate( 'Contact support' ) }
 				</Button>

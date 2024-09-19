@@ -1,5 +1,7 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestDeleteProduct } from 'calypso/state/memberships/product-list/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -17,8 +19,9 @@ const RecurringPaymentsPlanDeleteModal = ( {
 	annualProduct,
 }: RecurringPaymentsPlanDeleteModalProps ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
+	const [ cancelSubscriptions, setCancelSubscriptions ] = useState( false );
 
 	const onClose = ( action?: string ) => {
 		if ( action === 'delete' ) {
@@ -27,16 +30,18 @@ const RecurringPaymentsPlanDeleteModal = ( {
 					siteId,
 					product,
 					annualProduct,
-					translate( '"%s" was deleted.', { args: product.title } )
+					translate( '"%s" was deleted.', { args: product.title } ),
+					cancelSubscriptions
 				)
 			);
 		}
 		closeDialog();
 	};
 
+	// Cancel the subscription for existing subscribers
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			className="memberships__delete-plan-modal"
 			buttons={ [
 				{
@@ -55,7 +60,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 			<h1>{ translate( 'Delete offering?' ) }</h1>
 			<p>
 				{ translate(
-					'Deleting this offering ({{strong}}%s{{/strong}}) will not affect existing subscribers, which means they will continue to be charged. You can cancel existing subscriptions on the Supporters screen.',
+					"Deleting this offering ({{strong}}%s{{/strong}}) won't affect existing subscribers, which means they'll continue to be charged. If you want to cancel existing subscriptions altogether, please check the box below.",
 					{
 						args: product?.title,
 						components: {
@@ -63,6 +68,15 @@ const RecurringPaymentsPlanDeleteModal = ( {
 						},
 					}
 				) }
+			</p>
+			<p>
+				<FormLabel htmlFor="toggle">
+					<FormInputCheckbox
+						id="toggle"
+						onClick={ () => setCancelSubscriptions( ! cancelSubscriptions ) }
+					/>
+					<span>{ translate( 'Cancel the subscription for existing subscribers' ) }</span>
+				</FormLabel>
 			</p>
 		</Dialog>
 	);

@@ -1,15 +1,22 @@
-import { Button, Count, Gridicon } from '@automattic/components';
+import {
+	Button,
+	Count,
+	Gridicon,
+	Popover,
+	SegmentedControl,
+	FormLabel,
+} from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
-import { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SegmentedControl from 'calypso/components/segmented-control';
 import UrlSearch from 'calypso/lib/url-search';
 import {
 	bumpStat,
@@ -46,7 +53,12 @@ export class CommentNavigation extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
+	state = {
+		showPopover: false,
+	};
+
+	shouldComponentUpdate = ( nextProps, nextState ) =>
+		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
 	componentDidUpdate = ( prevProps ) => {
 		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
@@ -188,9 +200,20 @@ export class CommentNavigation extends Component {
 		return this.props.toggleSelectAll( this.props.visibleComments );
 	};
 
+	popoverButtonRef = createRef();
+
+	showPopover = () => {
+		this.setState( { showPopover: true } );
+	};
+
+	closePopover = () => {
+		this.setState( { showPopover: false } );
+	};
+
 	render() {
 		const {
 			doSearch,
+			filterUnreplied,
 			hasSearch,
 			hasComments,
 			isBulkMode,
@@ -198,6 +221,7 @@ export class CommentNavigation extends Component {
 			isSelectedAll,
 			query,
 			selectedComments,
+			setFilterUnreplied,
 			setOrder,
 			order,
 			status: queryStatus,
@@ -285,7 +309,7 @@ export class CommentNavigation extends Component {
 						<NavItem
 							key={ status }
 							count={ count }
-							compactCount={ true }
+							compactCount
 							onClick={ this.changeFilter( status ) }
 							path={ this.getStatusPath( status ) }
 							selected={ queryStatus === status }
@@ -335,6 +359,37 @@ export class CommentNavigation extends Component {
 										: translate( 'Empty trash' ) }
 								</Button>
 							) }
+						</>
+					) }
+
+					{ hasComments && (
+						<>
+							<Button
+								title={ translate( 'Settings' ) }
+								compact
+								borderless
+								onClick={ this.showPopover }
+								ref={ this.popoverButtonRef }
+								aria-haspopup
+							>
+								<Gridicon icon="cog" />
+							</Button>
+							<Popover
+								onClose={ this.closePopover }
+								context={ this.popoverButtonRef.current }
+								isVisible={ this.state.showPopover }
+								position="top left"
+							>
+								<FormFieldset className="comment-navigation__unreplied-comments">
+									<FormLabel>
+										<FormCheckbox
+											checked={ filterUnreplied }
+											onChange={ setFilterUnreplied( ! filterUnreplied ) }
+										/>
+										<span>{ translate( 'Collapse replied comments' ) }</span>
+									</FormLabel>
+								</FormFieldset>
+							</Popover>
 						</>
 					) }
 				</CommentNavigationTab>

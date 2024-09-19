@@ -1,6 +1,5 @@
-import { PLAN_100_YEARS } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, isValidFeatureKey } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';

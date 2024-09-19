@@ -36,11 +36,11 @@ export const TwitterPostPreview: React.FC< TwitterPreviewProps > = ( {
 						{ text ? <Text text={ text } url={ url || '' } retainUrl={ hasMedia } /> : null }
 						{ hasMedia ? <Media media={ media } /> : null }
 						{ tweet ? <QuoteTweet tweet={ tweet } /> : null }
-						{ ! hasMedia && title && url && (
+						{ ! hasMedia && url && (
 							<Card
 								description={ description || '' }
 								image={ image }
-								title={ title }
+								title={ title || '' }
 								cardType={ cardType || '' }
 								url={ url }
 							/>

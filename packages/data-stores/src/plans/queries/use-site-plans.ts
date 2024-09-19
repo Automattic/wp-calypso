@@ -1,5 +1,7 @@
+import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import unpackCostOverrides from './lib/unpack-cost-overrides';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPISitePlan, SitePlan } from '../types';
@@ -12,7 +14,7 @@ interface PricedAPISitePlansIndex {
 }
 
 interface Props {
-	siteId?: string | number | null;
+	siteId: string | number | null | undefined;
 }
 
 /**
@@ -25,7 +27,7 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( siteId ),
-		queryFn: async () => {
+		queryFn: async (): Promise< SitePlansIndex > => {
 			const data: PricedAPISitePlansIndex = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
 				apiVersion: '1.3',
@@ -34,6 +36,10 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 			return Object.fromEntries(
 				Object.keys( data ).map( ( productId ) => {
 					const plan = data[ Number( productId ) ];
+					const originalPriceFull = plan.raw_discount_integer
+						? plan.raw_price_integer + plan.raw_discount_integer
+						: plan.raw_price_integer;
+					const discountedPriceFull = plan.raw_discount_integer ? plan.raw_price_integer : null;
 
 					return [
 						plan.product_slug,
@@ -41,10 +47,29 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 							planSlug: plan.product_slug,
 							productSlug: plan.product_slug,
 							productId: Number( productId ),
-							introOffer: unpackIntroOffer( plan ),
 							expiry: plan.expiry,
 							currentPlan: plan.current_plan,
+							hasRedeemedDomainCredit: plan?.has_redeemed_domain_credit,
 							purchaseId: plan.id ? Number( plan.id ) : undefined,
+							pricing: {
+								currencyCode: plan.currency_code,
+								introOffer: unpackIntroOffer( plan ),
+								costOverrides: unpackCostOverrides( plan ),
+								originalPrice: {
+									monthly:
+										typeof originalPriceFull === 'number'
+											? calculateMonthlyPriceForPlan( plan.product_slug, originalPriceFull )
+											: null,
+									full: originalPriceFull,
+								},
+								discountedPrice: {
+									monthly:
+										typeof discountedPriceFull === 'number'
+											? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
+											: null,
+									full: discountedPriceFull,
+								},
+							},
 						},
 					];
 				} )

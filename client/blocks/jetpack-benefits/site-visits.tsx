@@ -45,7 +45,7 @@ const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query
 				headline={ translate( 'Jetpack Stats' ) }
 				stat={ translate( 'Loading' ) }
 				description={ translate( 'Getting visitors stat' ) }
-				placeholder={ true }
+				placeholder
 			/>
 		);
 	}

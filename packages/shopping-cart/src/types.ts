@@ -84,6 +84,10 @@ export type RemoveProductFromCart = ( uuidToRemove: string ) => Promise< Respons
 
 export type UpdateTaxLocationInCart = ( location: CartLocation ) => Promise< ResponseCart >;
 
+export type SetCouponFieldVisible = ( couponFieldVisible: boolean ) => void;
+
+export type RemoveCouponAndClearField = () => Promise< ResponseCart< ResponseCartProduct > >;
+
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
  * cache status.
@@ -255,8 +259,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_cost_integer: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price for all
-	 * products in the currency's smallest unit.
+	 * The difference between the cost before any coupon and the actual price
+	 * for all products in the currency's smallest unit.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
@@ -298,6 +302,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
+	has_auto_renew_coupon_been_automatically_applied: boolean;
 	locale: string;
 	is_signup: boolean;
 	messages?: ResponseCartMessages;
@@ -359,12 +364,6 @@ export interface ResponseCartProduct {
 	product_name_en: string;
 
 	/**
-	 * The cart item's original price in the currency's smallest unit.
-	 * @deprecated Use item_original_cost_integer or item_original_subtotal_integer.
-	 */
-	product_cost_integer: number;
-
-	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
 	 * Discounts and volume are not included, but quantity is included.
@@ -372,9 +371,9 @@ export interface ResponseCartProduct {
 	item_original_cost_integer: number;
 
 	/**
-	 * The monthly term subtotal of a cart item in the currency's smallest unit.
+	 * The monthly term original price of a cart item in the currency's smallest unit.
 	 */
-	item_subtotal_monthly_cost_integer: number;
+	item_original_monthly_cost_integer: number;
 
 	/**
 	 * The cart item's original price with volume in the currency's smallest unit.
@@ -405,28 +404,6 @@ export interface ResponseCartProduct {
 	cost: number;
 
 	/**
-	 * The cart item's price before a coupon (if any) was applied.
-	 *
-	 * This is slightly misleading because although this is the product's cost
-	 * before a coupon was applied, it already includes sale coupons (which are
-	 * actually discounts), and other discounts and does not include certain
-	 * other price changes (eg: domain discounts). It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use
-	 * item_original_subtotal_integer if you
-	 * can, although those have slightly different meanings.
-	 */
-	cost_before_coupon?: number;
-
-	/**
-	 * The difference between `cost_before_coupon` and the actual price.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
-	 */
-	coupon_savings?: number;
-
-	/**
 	 * The amount of the local currency deducted by an applied coupon, if any.
 	 * This is in the currency's smallest unit.
 	 */
@@ -441,7 +418,7 @@ export interface ResponseCartProduct {
 	 * The override_code is a string that identifies the reason for the override.
 	 * When displaying the reason to the customer, use the human_readable_reason.
 	 */
-	cost_overrides?: ResponseCartCostOverride[];
+	cost_overrides: ResponseCartCostOverride[];
 
 	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
@@ -487,6 +464,7 @@ export interface ResponseCartProduct {
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	item_tax: number;
+	item_tax_rate?: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 
@@ -524,6 +502,13 @@ export interface ResponseCartProduct {
 	 */
 	is_included_for_100yearplan: boolean;
 
+	/**
+	 * If set, this is the ID of the payment method attached to the existing
+	 * subscription for this product. This will only be set for renewals and
+	 * only if the renewal has a payment method attached.
+	 */
+	stored_details_id?: string;
+
 	product_variants: ResponseCartProductVariant[];
 }
 
@@ -534,6 +519,7 @@ export interface ResponseCartProductVariant {
 	currency: string;
 	price_integer: number;
 	price_before_discounts_integer: number;
+	introductory_offer_discount_integer: number;
 	introductory_offer_terms:
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
@@ -546,14 +532,62 @@ export interface ResponseCartCostOverride {
 	old_subtotal_integer: number;
 	override_code: string;
 	does_override_original_cost: boolean;
+	percentage: number;
+	first_unit_only: boolean;
 }
 
+export type IntroductoryOfferUnit = 'day' | 'week' | 'month' | 'year' | 'indefinite';
+
 export interface IntroductoryOfferTerms {
+	/**
+	 * True if the introductory offer is active on this product.
+	 */
 	enabled: boolean;
-	interval_unit: string;
+
+	/**
+	 * The unit that, when combined with `interval_count`, determines how long
+	 * the introductory offer disount should be applied.
+	 */
+	interval_unit: IntroductoryOfferUnit;
+
+	/**
+	 * The count that, when combined with `interval_unit`, determines how long
+	 * the introductory offer lasts. eg: if `interval_count` is 3 and
+	 * `interval_unit` is 'month', the discount lasts for 3 months (but always
+	 * ends before the next renewal unless `transition_after_renewal_count` is
+	 * set). If the `interval_unit` is 'month' and the product normally renews
+	 * yearly, then the first renewal will be based on `interval_count` (eg:
+	 * after 3 months) instead.
+	 *
+	 * Note that we sometimes renew products a 30 days before their expiry
+	 * date, so in the above example, we would likely renew at the 2 month mark
+	 * instead.
+	 */
 	interval_count: number;
+
+	/**
+	 * If the introductory offer is not active (if `enabled` is false), the
+	 * reason will probably be a human-readable reason why (although it may not
+	 * exist even then).
+	 */
 	reason?: string;
+
+	/**
+	 * The number of times the introductory offer cost and period will be used
+	 * during renewals before using the regular cost and period. If this is 0,
+	 * the discount will last just for the initial purchase; otherwise it will
+	 * last for additional renewals also.
+	 */
 	transition_after_renewal_count: number;
+
+	/**
+	 * True if the last discounted renewal will subtract the introductory offer
+	 * period from the full period when calculating the price. For example: if
+	 * you provide a 3 month free trial on a yearly plan, the first renewal
+	 * would only cover 9 months (12 – 3 months). This reduced period is also
+	 * reflected in the renewal price, as the user will only pay for the 9
+	 * months instead of the full year.
+	 */
 	should_prorate_when_offer_ends: boolean;
 }
 
@@ -567,6 +601,10 @@ export interface CartLocation {
 	city?: string;
 }
 
+export type DomainLegalAgreementUrl = string;
+export type DomainLegalAgreementTitle = string;
+export type DomainLegalAgreements = Record< DomainLegalAgreementUrl, DomainLegalAgreementTitle >;
+
 export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
@@ -577,6 +615,9 @@ export interface ResponseCartProductExtra {
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	receipt_for_domain?: number;
+	domain_registration_agreement_url?: string;
+	legal_agreements?: never[] | DomainLegalAgreements;
+	is_gravatar_domain?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -593,6 +634,7 @@ export interface ResponseCartProductExtra {
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
+	isMarketplaceSitelessCheckout?: boolean;
 
 	/**
 	 * Marketplace properties
@@ -603,6 +645,16 @@ export interface ResponseCartProductExtra {
 	is_marketplace_product?: boolean;
 	product_slug?: string;
 	product_type?: 'marketplace_plugin' | 'marketplace_theme' | 'saas_plugin';
+
+	/**
+	 * True when:
+	 * - the product has variants ( e.g. annual plan vs. monthly plan vs. multi-year plan )
+	 * - we only want to show the single product selected by the user
+	 * - we want to prevent the user from switching to a variant
+	 *
+	 * This will hide product variant UI elements in checkout ( line item variant dropdown or variant upsells )
+	 */
+	hideProductVariants?: boolean;
 }
 
 export interface ResponseCartGiftDetails {
@@ -615,6 +667,8 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
+	isMarketplaceSitelessCheckout?: boolean;
+	intentId?: number;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -627,6 +681,18 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	signup?: boolean;
 	headstart_theme?: string;
 	feature_slug?: string;
+	/**
+	 * A way to signal intent to the back end when included as an extra with
+	 * certain products.
+	 *
+	 * The only current usage is on Creator plan products that are bought
+	 * on flow `/setup/site-migration`. If value `'migrate` is passed the
+	 * Atomic DB will be created with UTF-8 encoding, which is a requirement
+	 * for Migration Guru, our new tool for handling migrations. This extra
+	 * can be removed once all migration flows are using Migration Guru.
+	 *
+	 */
+	hosting_intent?: string;
 }
 
 export interface GSuiteProductUser {
@@ -695,24 +761,186 @@ export interface TermsOfServiceRecord {
 }
 
 export interface TermsOfServiceRecordArgsBase {
+	/**
+	 * The date that the subscription will begin, formatted as a ISO 8601 date
+	 * (eg: `2004-02-12T15:19:21+00:00`).
+	 */
 	subscription_start_date: string;
-	subscription_expiry_date?: string;
-	subscription_auto_renew_date?: string;
-	subscription_pre_renew_reminder_days?: string;
-	subscription_pre_renew_reminders_count?: number;
+
+	/**
+	 * The `meta` value of the product (eg: its domain name). May be an empty
+	 * string if there is no meta.
+	 */
 	product_meta: string;
+
+	/**
+	 * The human readable name of the product.
+	 */
 	product_name: string;
+
+	/**
+	 * The store product ID.
+	 */
+	product_id: number;
+
+	/**
+	 * The price of the next renewal of this product. This may be based on the
+	 * product's billing term (eg: in two years for a biennial plan) or the
+	 * billing term of the introductory offer, if it differs (eg: in 3 months for
+	 * a 3 month free trial of an annual plan).
+	 *
+	 * If an introductory offer applies for more than one renewal, this will be
+	 * the price of the next renewal only, NOT the price of the renewal after the
+	 * offer ends!
+	 *
+	 * This price is locale-formatted with a currency symbol.
+	 * @deprecated use renewal_price_integer and format manually
+	 */
 	renewal_price: string;
-	is_renewal_price_prorated: boolean;
+
+	/**
+	 * The price of the next renewal of this product. This may be based on the
+	 * product's billing term (eg: in two years for a biennial plan) or the
+	 * billing term of the introductory offer, if it differs (eg: in 3 months for
+	 * a 3 month free trial of an annual plan).
+	 *
+	 * If an introductory offer applies for more than one renewal, this will be
+	 * the price of the next renewal only, NOT the price of the renewal after the
+	 * offer ends!
+	 *
+	 * This price is an integer in the currency's smallest unit.
+	 */
+	renewal_price_integer: number;
+
+	/**
+	 * The price of the product after the promotional pricing expires. If the
+	 * next auto-renewal after the price expires would prorate the renewal price,
+	 * this DOES NOT include that proration. See
+	 * `maybe_prorated_regular_renewal_price_integer` for the price with that proration
+	 * included.
+	 *
+	 * This price is locale-formatted with a currency symbol.
+	 * @deprecated use regular_renewal_price_integer and format manually
+	 */
 	regular_renewal_price: string;
-	email?: string;
-	card_type?: string;
-	card_last_4?: string;
+
+	/**
+	 * The price of the product after the promotional pricing expires. If the
+	 * next auto-renewal after the price expires would prorate the renewal price,
+	 * this DOES NOT include that proration. See
+	 * `maybe_prorated_regular_renewal_price_integer` for the price with that proration
+	 * included.
+	 *
+	 * This price is an integer in the currency's smallest unit.
+	 */
+	regular_renewal_price_integer: number;
+
+	/**
+	 * The price of the product for the renewal immediately after the promotional
+	 * pricing expires. If the next auto-renewal after the price expires would
+	 * prorate the renewal price, this DOES include that proration. See
+	 * `regular_renewal_price_integer` for the price without that proration
+	 * included.
+	 *
+	 * This is the price that we will attempt to charge on
+	 * `subscription_maybe_prorated_regular_auto_renew_date`.
+	 *
+	 * This price is an integer in the currency's smallest unit.
+	 */
+	maybe_prorated_regular_renewal_price_integer: number;
+
+	/**
+	 * True if the product in the cart which has these terms is a manual renewal
+	 * (as opposed to a new purchase or a quantity upgrade).
+	 */
+	is_renewal: boolean;
+
+	/**
+	 * The number of auto-renewals after the current purchase completes which
+	 * will be affected by the promotional pricing. If the product is affected by
+	 * a prorated introductory offer, then the auto-renewal where the user will
+	 * be charged the prorated price is not counted by this number.
+	 */
+	remaining_promotional_auto_renewals: number;
 }
 
 export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArgsBase {
+	/**
+	 * The date that the promotional pricing will end, formatted as a ISO 8601
+	 * date (eg: `2004-02-12T15:19:21+00:00`). This may be the date that an
+	 * auto-renew will be attempted with the non-promotional price, but if the
+	 * subscription renews earlier than the expiry date, the renewal may happen
+	 * earlier than this date. See `subscription_regular_auto_renew_date` for
+	 * the actual date of the non-promotional renewal.
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_end_of_promotion_date: string;
+
+	/**
+	 * This date that an auto-renew will be attempted with the non-promotional
+	 * possibly prorated price (`maybe_prorated_regular_renewal_price_integer`).
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_maybe_prorated_regular_auto_renew_date: string;
+
+	/**
+	 * This date that an auto-renew will be attempted with the non-promotional
+	 * regular recurring price (`regular_renewal_price_integer`).
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_regular_auto_renew_date: string;
+
+	/**
+	 * The date when the product's subscription will expire if not renewed. This
+	 * might be its renewal date, but it might not be since we often renew
+	 * products earlier than their expiry date.
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
 	subscription_expiry_date: string;
+
+	/**
+	 * The date when the product's subscription will next automatically attempt a
+	 * renewal. Note that this may not be the end of the promotional price, since
+	 * some promotions apply to renewals also.
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
 	subscription_auto_renew_date: string;
-	subscription_pre_renew_reminder_days: string;
+
+	/**
+	 * The number of days before the renewal attempt when the user will receive a
+	 * pre-renewal reminder email.
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_pre_renew_reminder_days: number;
+
+	/**
+	 * The number of pre-renewal emails the user will receive.
+	 *
+	 * Typically this is 1 or 0. For example, monthly subscriptions don't usually
+	 * get a pre-renewal email.
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
 	subscription_pre_renew_reminders_count: number;
 }

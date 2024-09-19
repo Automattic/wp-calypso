@@ -1,18 +1,13 @@
-import { type UserSelect } from '@automattic/data-stores';
 import { REBLOGGING_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import { AssertConditionResult, AssertConditionState } from './internals/types';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const reblogging: Flow = {
@@ -20,47 +15,36 @@ const reblogging: Flow = {
 	get title() {
 		return translate( 'Reblogging' );
 	},
+	isSignupFlow: true,
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'domains':
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -100,28 +84,6 @@ const reblogging: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
-	},
-
-	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-		const logInUrl = useLoginUrl( {
-			variationName: this.name,
-			redirectTo: window.location.href.replace( window.location.origin, '' ),
-		} );
-
-		if ( ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'reblogging requires a logged in user',
-			};
-		}
-
-		return result;
 	},
 };
 

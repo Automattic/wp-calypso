@@ -1,5 +1,5 @@
-import { FormInputValidation } from '@automattic/components';
-import classNames from 'classnames';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,7 +7,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import QueryCountryStates from 'calypso/components/data/query-country-states';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -49,7 +48,7 @@ class StateSelect extends PureComponent {
 	}
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, 'state' );
+		const classes = clsx( this.props.additionalClasses, 'state' );
 		const {
 			countryCode,
 			countryStates,

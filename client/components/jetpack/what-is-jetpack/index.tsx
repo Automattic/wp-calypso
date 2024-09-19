@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -11,7 +11,7 @@ interface Props {
 
 const WhatIsJetpack: React.FC< Props > = ( { className } ) => {
 	return (
-		<div className={ classnames( 'what-is-jetpack', className ) }>
+		<div className={ clsx( 'what-is-jetpack', className ) }>
 			<div className="what-is-jetpack__jetpack-logo">
 				<JetpackLogo size={ 36 } full />
 			</div>

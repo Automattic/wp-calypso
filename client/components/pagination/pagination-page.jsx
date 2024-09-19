@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -13,6 +13,8 @@ class PaginationPage extends Component {
 		pageNumber: PropTypes.node.isRequired,
 		prevLabel: PropTypes.string,
 		totalPages: PropTypes.number.isRequired,
+		paginationLeftIcon: PropTypes.string,
+		paginationRightIcon: PropTypes.string,
 	};
 
 	clickHandler = ( event ) => {
@@ -51,6 +53,8 @@ class PaginationPage extends Component {
 			prevLabel,
 			totalPages,
 			compact,
+			paginationLeftIcon,
+			paginationRightIcon,
 		} = this.props;
 
 		switch ( pageNumber ) {
@@ -61,7 +65,7 @@ class PaginationPage extends Component {
 					</li>
 				);
 			case 'previous': {
-				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-left', {
+				const listClass = clsx( 'pagination__list-item pagination__arrow', 'is-left', {
 					'is-active': currentPage > 1,
 				} );
 				return (
@@ -72,14 +76,14 @@ class PaginationPage extends Component {
 							onClick={ this.clickHandler }
 							disabled={ currentPage <= 1 }
 						>
-							<Gridicon icon="arrow-left" size={ 18 } />
+							<Gridicon icon={ paginationLeftIcon } size={ 18 } />
 							{ ! compact && ( prevLabel || translate( 'Previous' ) ) }
 						</Button>
 					</li>
 				);
 			}
 			case 'next': {
-				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-right', {
+				const listClass = clsx( 'pagination__list-item pagination__arrow', 'is-right', {
 					'is-active': currentPage < totalPages,
 				} );
 				return (
@@ -91,13 +95,13 @@ class PaginationPage extends Component {
 							disabled={ currentPage >= totalPages }
 						>
 							{ ! compact && ( nextLabel || translate( 'Next' ) ) }
-							<Gridicon icon="arrow-right" size={ 18 } />
+							<Gridicon icon={ paginationRightIcon } size={ 18 } />
 						</Button>
 					</li>
 				);
 			}
 			default: {
-				const listClass = classNames( 'pagination__list-item pagination__page-number', {
+				const listClass = clsx( 'pagination__list-item pagination__page-number', {
 					'is-selected': currentPage === pageNumber,
 				} );
 				return (

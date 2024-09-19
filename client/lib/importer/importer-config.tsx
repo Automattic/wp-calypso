@@ -1,8 +1,10 @@
 import config from '@automattic/calypso-config';
 import { TranslateResult, translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
+import { type ImporterOption } from 'calypso/blocks/import/list';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { appStates } from 'calypso/state/imports/constants';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 export interface ImporterOptionalURL {
 	title: TranslateResult;
@@ -10,10 +12,12 @@ export interface ImporterOptionalURL {
 	invalidDescription: TranslateResult;
 }
 
+export type ImporterConfigPriority = 'primary' | 'secondary';
 export interface ImporterConfig {
 	engine: string;
 	key: string;
 	type: 'file' | 'url';
+	priority: ImporterConfigPriority;
 	title: string;
 	icon: string;
 	description: TranslateResult;
@@ -21,6 +25,7 @@ export interface ImporterConfig {
 	weight: number;
 	overrideDestination?: string;
 	optionalUrl?: ImporterOptionalURL;
+	acceptedFileTypes?: string[];
 }
 
 interface ImporterConfigMap {
@@ -50,6 +55,7 @@ function getConfig( {
 		engine: 'wordpress',
 		key: 'importer-type-wordpress',
 		type: 'file',
+		priority: 'primary',
 		title: 'WordPress',
 		icon: 'wordpress',
 		description: (
@@ -80,7 +86,8 @@ function getConfig( {
 				},
 			}
 		),
-		overrideDestination: '/migrate/%SITE_SLUG%',
+		overrideDestination:
+			'/setup/site-migration/site-migration-import-or-migrate?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer',
 		weight: 1,
 	};
 
@@ -88,6 +95,7 @@ function getConfig( {
 		engine: 'blogger',
 		key: 'importer-type-blogger',
 		type: 'file',
+		priority: 'primary',
 		title: 'Blogger',
 		icon: 'blogger-alt',
 		description: (
@@ -123,6 +131,7 @@ function getConfig( {
 				},
 			}
 		),
+		acceptedFileTypes: [ '.xml' ],
 		weight: 0,
 	};
 
@@ -130,6 +139,7 @@ function getConfig( {
 		engine: 'medium',
 		key: 'importer-type-medium',
 		type: 'file',
+		priority: 'primary',
 		title: 'Medium',
 		icon: 'medium',
 		description: (
@@ -163,6 +173,7 @@ function getConfig( {
 				},
 			}
 		),
+		acceptedFileTypes: [ '.zip' ],
 		weight: 0,
 	};
 
@@ -170,13 +181,14 @@ function getConfig( {
 		engine: 'substack',
 		key: 'importer-type-substack',
 		type: 'file',
+		priority: 'primary',
 		title: 'Substack',
 		icon: 'substack',
 		description: (
 			<>
 				<p>
 					{ translate(
-						'Import posts and images, podcasts and public comments from a Substack export file to {{b}}%(siteTitle)s{{/b}}.',
+						'Import posts and images, podcasts and public comments from Substack to {{b}}%(siteTitle)s{{/b}}.',
 						{
 							args: {
 								siteTitle,
@@ -201,22 +213,28 @@ function getConfig( {
 		uploadDescription: (
 			<>
 				{ translate(
-					'A Substack export file is a ZIP file containing a CSV file with all posts.'
+					"To generate a ZIP file of all your Substack posts, go to your Substack {{b}}Settings > Exports{{/b}} and click 'Create a new export.' Once the ZIP file is downloaded, upload it below.",
+					{
+						components: {
+							b: <strong />,
+						},
+					}
 				) }{ ' ' }
 				<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
-					{ translate( 'See how to get your export file.' ) }
+					{ translate( 'Need help?' ) }
 				</InlineSupportLink>
 			</>
 		),
 		optionalUrl: {
-			title: translate( 'Substack Newsletter URL' ),
+			title: translate( 'Substack URL' ),
 			description: translate(
-				'Recommended: A Substack Newsletter URL to import comments and author information.'
+				'Recommended: Include the Substack URL to import comments and author information.'
 			),
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
 				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
 		},
+		acceptedFileTypes: [ '.zip' ],
 		weight: 0,
 	};
 
@@ -224,6 +242,7 @@ function getConfig( {
 		engine: 'squarespace',
 		key: 'importer-type-squarespace',
 		type: 'file',
+		priority: 'primary',
 		title: 'Squarespace',
 		icon: 'squarespace',
 		description: (
@@ -259,6 +278,7 @@ function getConfig( {
 				},
 			}
 		),
+		acceptedFileTypes: [ '.xml' ],
 		weight: 0,
 	};
 
@@ -266,6 +286,7 @@ function getConfig( {
 		engine: 'wix',
 		key: 'importer-type-wix',
 		type: 'url',
+		priority: 'primary',
 		title: 'Wix',
 		icon: 'wix',
 		description: (
@@ -293,6 +314,66 @@ function getConfig( {
 		weight: 0,
 	};
 
+	importerConfig.blogroll = {
+		engine: 'blogroll',
+		key: 'importer-type-blogroll',
+		type: 'url',
+		priority: 'secondary',
+		title: 'Blogroll',
+		icon: 'blogroll',
+		description: '',
+		uploadDescription: '',
+		weight: 0,
+	};
+
+	importerConfig.livejournal = {
+		engine: 'livejournal',
+		key: 'importer-type-livejournal',
+		type: 'url',
+		priority: 'secondary',
+		title: 'LiveJournal',
+		icon: 'livejournal',
+		description: '',
+		uploadDescription: '',
+		weight: 0,
+	};
+
+	importerConfig.movabletype = {
+		engine: 'movabletype',
+		key: 'importer-type-movabletype',
+		type: 'url',
+		priority: 'secondary',
+		title: 'Movable Type & TypePad',
+		icon: 'movabletype',
+		description: '',
+		uploadDescription: '',
+		weight: 0,
+	};
+
+	importerConfig.tumblr = {
+		engine: 'tumblr',
+		key: 'importer-type-tumblr',
+		type: 'url',
+		priority: 'secondary',
+		title: 'Tumblr',
+		icon: 'tumblr',
+		description: '',
+		uploadDescription: '',
+		weight: 0,
+	};
+
+	importerConfig.xanga = {
+		engine: 'xanga',
+		key: 'importer-type-xanga',
+		type: 'url',
+		priority: 'secondary',
+		title: 'Xanga',
+		icon: 'xanga',
+		description: '',
+		uploadDescription: '',
+		weight: 0,
+	};
+
 	const hasUnifiedImporter = config.isEnabled( 'importer/unified' );
 
 	// For Jetpack sites, we don't support migration as destination, so we remove the override here.
@@ -306,6 +387,37 @@ function getConfig( {
 	}
 
 	return importerConfig;
+}
+
+export function getImporterEngines(): string[] {
+	const importerConfig = getConfig( {} );
+	const engines = [];
+
+	for ( const config in importerConfig ) {
+		engines.push( importerConfig[ config ].engine );
+	}
+
+	return engines;
+}
+
+export function getImportersAsImporterOption( priority: ImporterConfigPriority ): ImporterOption[] {
+	const importerConfig = getConfig( {} );
+	const importerOptions: ImporterOption[] = [];
+
+	for ( const config in importerConfig ) {
+		if ( importerConfig[ config ].priority !== priority ) {
+			continue;
+		}
+
+		importerOptions.push( {
+			value: importerConfig[ config ].engine as ImporterPlatform,
+			label: importerConfig[ config ].title,
+			icon: importerConfig[ config ].icon,
+			priority: priority,
+		} );
+	}
+
+	return importerOptions;
 }
 
 export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' } ) {
@@ -325,6 +437,12 @@ export function getImporterByKey(
 	args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' }
 ) {
 	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
+}
+
+export function isSupportedImporterEngine( engine: string ): boolean {
+	const allImporters = getImporters();
+
+	return allImporters.some( ( importer ) => importer.engine === engine );
 }
 
 export default getConfig;

@@ -1,8 +1,10 @@
+import { FormLabel } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,13 +14,11 @@ import QueryDomainCountries from 'calypso/components/data/query-countries/domain
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
@@ -472,15 +472,12 @@ export class ContactDetailsFormFields extends Component {
 
 		return (
 			<div
-				className={ classNames(
-					'contact-details-form-fields__field',
-					'email-text-input-with-checkbox'
-				) }
+				className={ clsx( 'contact-details-form-fields__field', 'email-text-input-with-checkbox' ) }
 			>
 				<Input label={ this.props.translate( 'Email' ) } { ...emailInputFieldProps } />
 				{ ! this.props.updateWpcomEmailCheckboxHidden && (
 					<FormLabel
-						className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
+						className={ clsx( 'email-text-input-with-checkbox__checkbox-label', {
 							'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
 						} ) }
 					>

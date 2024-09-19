@@ -5,5 +5,5 @@ import type { Product } from './types';
  */
 export function getJetpackProductWhatIsIncluded( product: Product ) {
 	const jetpackProductsIncludesInfo = getJetpackProductsWhatIsIncluded();
-	return jetpackProductsIncludesInfo[ product.product_slug ];
+	return jetpackProductsIncludesInfo[ product.product_alias ?? product.product_slug ];
 }

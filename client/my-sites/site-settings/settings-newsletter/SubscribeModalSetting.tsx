@@ -2,12 +2,13 @@ import { ExternalLink, ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
+
+const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 type SubscribeModalSettingProps = {
 	value?: boolean;
@@ -26,7 +27,7 @@ export const SubscribeModalSetting = ( {
 	// Construct a link to edit the modal
 	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
 	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
-	const themeSlug = activeThemeData?.[ 0 ]?.template;
+	const themeSlug = activeThemeData?.[ 0 ]?.stylesheet;
 	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
 	const subscribeModalEditorUrl = isFSEActive
 		? addQueryArgs( siteEditorUrl, {
@@ -42,25 +43,30 @@ export const SubscribeModalSetting = ( {
 
 	return (
 		<>
+			<SupportInfo
+				text={ translate(
+					'Automatically add a subscribe form pop-up to every post and turn visitors into subscribers. It will appear as readers scroll through your posts.'
+				) }
+				privacyLink={ false }
+			/>
 			<ToggleControl
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable subscriber pop-up' ) }
-			/>
-			<FormSettingExplanation>
-				{ translate(
-					'Grow your subscriber list by enabling a pop-up modal with a subscribe form. This will show as readers scroll.'
-				) }
-				{ subscribeModalEditorUrl && (
+				label={
 					<>
-						{ ' ' }
-						<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
-							{ translate( 'Preview and edit the popup' ) }
-						</ExternalLink>
+						{ translate( 'Show subscription pop-up when scrolling a post.' ) }
+						{ subscribeModalEditorUrl && (
+							<>
+								{ ' ' }
+								<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
+									{ translate( 'Preview and edit' ) }
+								</ExternalLink>
+							</>
+						) }
 					</>
-				) }
-			</FormSettingExplanation>
+				}
+			/>
 		</>
 	);
 };

@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { times } from 'lodash';
 import './style.scss';
 
@@ -18,7 +18,7 @@ const PaginationControl: React.FunctionComponent< Props > = ( {
 	classNames,
 	children,
 } ) => {
-	const classes = classnames( 'pagination-control', classNames );
+	const classes = clsx( 'pagination-control', classNames );
 
 	return (
 		<ul className={ classes } aria-label={ __( 'Pagination control' ) }>
@@ -28,7 +28,7 @@ const PaginationControl: React.FunctionComponent< Props > = ( {
 					aria-current={ index === activePageIndex ? 'page' : undefined }
 				>
 					<button
-						className={ classnames( 'pagination-control__page', {
+						className={ clsx( 'pagination-control__page', {
 							'is-current': index === activePageIndex,
 						} ) }
 						disabled={ index === activePageIndex }

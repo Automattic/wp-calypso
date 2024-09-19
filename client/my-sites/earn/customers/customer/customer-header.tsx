@@ -3,6 +3,7 @@ import { Item } from 'calypso/components/breadcrumb';
 import Gravatar from 'calypso/components/gravatar';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { decodeEntities } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Subscriber } from '../../types';
@@ -12,6 +13,7 @@ import './style.scss';
 type CustomerHeaderProps = {
 	customer: Subscriber;
 };
+const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
 const CustomerHeader = ( { customer }: CustomerHeaderProps ) => {
 	const translate = useTranslate();
@@ -20,11 +22,11 @@ const CustomerHeader = ( { customer }: CustomerHeaderProps ) => {
 	const breadcrumbs: Item[] = [
 		{
 			label: translate( 'Monetize' ),
-			href: `/earn/${ siteSlug }`,
+			href: `${ earnPath }/${ siteSlug }`,
 		},
 		{
 			label: translate( 'Supporters' ),
-			href: `/earn/supporters/${ siteSlug }`,
+			href: `${ earnPath }/supporters/${ siteSlug }`,
 		},
 		{
 			label: translate( 'Details' ),

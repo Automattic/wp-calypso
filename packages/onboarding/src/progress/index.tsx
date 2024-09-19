@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 import './style.scss';
@@ -12,10 +12,7 @@ interface Props {
 const Progress = ( { className, align = 'center', children, ...additionalProps }: Props ) => {
 	return (
 		<div
-			className={ classnames(
-				`onboarding-progress onboarding-progress__align-${ align }`,
-				className
-			) }
+			className={ clsx( `onboarding-progress onboarding-progress__align-${ align }`, className ) }
 			{ ...additionalProps }
 		>
 			{ children }

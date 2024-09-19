@@ -1,7 +1,7 @@
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, type FunctionComponent } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
@@ -54,9 +54,11 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly' );
 	const annualLabel = translate( 'Annually' );
-	const saveLabel = translate( 'Save' );
+	const saveLabel = translate( 'Save', { context: 'save money' } );
 
-	const searchParams = new URLSearchParams( document.location.search );
+	const searchParams = new URLSearchParams(
+		typeof document !== 'undefined' ? document.location.search : ''
+	);
 	const billingIntervalParam = searchParams.get( 'interval' );
 
 	/**
@@ -90,15 +92,16 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 					label={
 						<>
 							{ annualLabel }
-							<PluginAnnualSaving plugin={ plugin }>
-								{ ( annualSaving: { saving: string | null } ) =>
+							<PluginAnnualSaving
+								plugin={ plugin }
+								renderContent={ ( annualSaving ) =>
 									annualSaving.saving && (
 										<PluginAnnualSavingLabelMobile isSelected={ false }>
 											&nbsp;({ saveLabel } { annualSaving.saving })
 										</PluginAnnualSavingLabelMobile>
 									)
 								}
-							</PluginAnnualSaving>
+							/>
 						</>
 					}
 				/>

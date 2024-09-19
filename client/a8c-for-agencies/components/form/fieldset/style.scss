@@ -1,0 +1,28 @@
+.a4a-form-fieldset__header {
+	display: flex;
+
+	.a4a-form-fieldset__header-required {
+		margin-inline-start: 4px;
+		font-weight: 400;
+	}
+}
+
+.a4a-form-fieldset__error {
+	margin-block-start: 0.25rem;
+	color: var(--color-scary-40);
+	font-style: italic;
+	font-size: 0.875rem;
+	line-height: 14px;
+
+	&.hidden {
+		display: none;
+	}
+}
+
+.a4a-form-fieldset__description {
+	margin-block-start: 4px;
+	font-size: rem(14px);
+	line-height: 1.5;
+	font-weight: 400;
+	color: var(--color-neutral-50);
+}

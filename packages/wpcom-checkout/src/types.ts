@@ -10,11 +10,13 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	receipt_id: number;
 	order_id: number | '';
 	redirect_url?: string;
+	qr_code?: string;
 	is_gift_purchase: boolean;
 	display_price: string;
 	price_integer: number;
 	price_float: number;
 	currency: string;
+	is_gravatar_domain: boolean;
 };
 
 export type WPCOMTransactionEndpointResponseFailed = {
@@ -24,17 +26,23 @@ export type WPCOMTransactionEndpointResponseFailed = {
 	receipt_id: number;
 	order_id: number | '';
 	redirect_url?: string;
+	qr_code?: string;
 	is_gift_purchase: boolean;
 	display_price: string;
 	price_integer: number;
 	price_float: number;
 	currency: string;
+	is_gravatar_domain: boolean;
 };
 
 export type WPCOMTransactionEndpointResponseRedirect = {
 	message: { payment_intent_client_secret: string } | '';
 	order_id: number | '';
 	redirect_url: string;
+	qr_code?: string;
+	razorpay_order_id?: string;
+	razorpay_customer_id?: string;
+	razorpay_option_recurring?: boolean;
 };
 
 export type WPCOMTransactionEndpointResponse =
@@ -185,9 +193,30 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	eventSource?: string;
 };
 
-// The data model used in ContactDetailsFormFields and related components.
-// This is the data returned by the redux state, where the fields could have a
-// null value.
+/**
+ * The data returned by the /me/domain-contact-information endpoint
+ */
+export interface RawCachedDomainContactDetails {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	phone?: string;
+	phone_number_country?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+}
+
+/**
+ * The data model used in ContactDetailsFormFields and related components.
+ */
 export type PossiblyCompleteDomainContactDetails = {
 	firstName: string | null;
 	lastName: string | null;
@@ -201,6 +230,7 @@ export type PossiblyCompleteDomainContactDetails = {
 	postalCode: string | null;
 	countryCode: string | null;
 	fax: string | null;
+	extra?: ManagedContactDetailsTldExtraFieldsShape< string | null >;
 };
 
 export type DomainContactDetailsErrors = {
@@ -267,6 +297,7 @@ export interface LineItemType {
 	type: string;
 	label: string;
 	formattedAmount: string;
+	hasDeleteButton?: boolean;
 }
 
 export interface WPCOMCart {
@@ -277,6 +308,7 @@ export interface WPCOMCart {
 // translateCheckoutPaymentMethodToWpcomPaymentMethod and
 // translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
+	| 'pix'
 	| 'alipay'
 	| 'web-pay'
 	| 'bancontact'
@@ -284,7 +316,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'ebanx'
 	| 'netbanking'
 	| 'eps'
-	| 'giropay'
 	| 'ideal'
 	| 'p24'
 	| 'paypal'
@@ -297,7 +328,8 @@ export type CheckoutPaymentMethodSlug =
 	| `existingCard${ string }` // specific saved cards have unique slugs
 	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
-	| 'google-pay'; // a synonym for 'web-pay'
+	| 'google-pay' // a synonym for 'web-pay'
+	| 'razorpay';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -312,16 +344,22 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
+	| 'WPCOM_Billing_Stripe_Alipay'
+	| 'WPCOM_Billing_Stripe_Bancontact'
+	| 'WPCOM_Billing_Stripe_Ideal'
+	| 'WPCOM_Billing_Stripe_P24'
 	| 'WPCOM_Billing_Stripe_Source_Alipay'
 	| 'WPCOM_Billing_Stripe_Source_Bancontact'
 	| 'WPCOM_Billing_Stripe_Source_Eps'
-	| 'WPCOM_Billing_Stripe_Source_Giropay'
 	| 'WPCOM_Billing_Stripe_Source_Ideal'
 	| 'WPCOM_Billing_Stripe_Source_P24'
 	| 'WPCOM_Billing_Stripe_Source_Sofort'
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
-	| 'WPCOM_Billing_Web_Payment';
+	| 'WPCOM_Billing_Stripe_Wechat_Pay'
+	| 'WPCOM_Billing_Web_Payment'
+	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
+	| 'WPCOM_Billing_Razorpay';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
 
@@ -356,6 +394,7 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	};
 	fr?: {
 		registrantType?: T;
+		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
 	};
@@ -607,4 +646,4 @@ export interface CountryListItemWithVat extends CountryListItemBase {
 }
 export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
 
-export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;
+export type SitelessCheckoutType = 'jetpack' | 'akismet' | 'marketplace' | undefined;

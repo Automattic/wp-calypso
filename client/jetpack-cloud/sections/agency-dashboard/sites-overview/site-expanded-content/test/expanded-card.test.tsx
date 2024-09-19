@@ -15,7 +15,7 @@ describe( 'ExpandedCard', () => {
 
 	test( 'should render header and children when enabled', () => {
 		render(
-			<ExpandedCard header={ header } isEnabled={ true }>
+			<ExpandedCard header={ header } isEnabled>
 				{ children }
 			</ExpandedCard>
 		);
@@ -42,7 +42,7 @@ describe( 'ExpandedCard', () => {
 	} );
 
 	test( 'should not be clickable when isLoading is true', () => {
-		render( <ExpandedCard onClick={ onClick } isLoading={ true } /> );
+		render( <ExpandedCard onClick={ onClick } isLoading /> );
 		expect( screen.getByTestId( 'expanded-card' ) ).not.toHaveAttribute( 'tabIndex' );
 		expect( screen.getByTestId( 'expanded-card' ) ).not.toHaveAttribute( 'onClick' );
 	} );

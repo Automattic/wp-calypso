@@ -52,7 +52,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should render "Install Jetpack" screen', async () => {
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await startImportFlow.clickButton( 'Get the plan and migrate' );
 			await startImportFlow.validateInstallJetpackPage();
 		} );
 	} );
@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should redirect to "Checkout" page', async () => {
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await startImportFlow.clickButton( 'Get the plan and migrate' );
 			await startImportFlow.validateCheckoutPage();
 		} );
 	} );
@@ -107,9 +107,9 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 			await startImportFlow.validateSitePickerPage();
 		} );
 
-		it( 'Should select the second site and press `Continue` on modal prompt', async () => {
+		it( 'Should select the second site and press `Get the plan and migrate` on modal prompt', async () => {
 			await page.getByRole( 'button', { name: 'Select this site' } ).nth( 1 ).click();
-			await startImportFlow.clickButton( 'Continue' );
+			await page.getByRole( 'button', { name: 'Continue' } ).click();
 		} );
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
@@ -117,7 +117,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should redirect to "Checkout" page', async () => {
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await startImportFlow.clickButton( 'Get the plan and migrate' );
 			await startImportFlow.validateCheckoutPage();
 		} );
 	} );
@@ -133,9 +133,9 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 			await startImportFlow.validateSitePickerPage();
 		} );
 
-		it( 'Should select the first site and press `Continue` on modal prompt', async () => {
+		it( 'Should select the first site and press `Upgrade and migrate` on modal prompt', async () => {
 			await page.getByRole( 'button', { name: 'Select this site' } ).first().click();
-			await startImportFlow.clickButton( 'Continue' );
+			await page.getByRole( 'button', { name: 'Continue' } ).click();
 		} );
 
 		it( 'Should render "Migration Ready" screen', async () => {

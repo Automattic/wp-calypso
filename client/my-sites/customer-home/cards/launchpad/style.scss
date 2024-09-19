@@ -16,8 +16,17 @@
 		display: flex;
 		align-items: center;
 
+		&.is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var(--color-neutral-light);
+			color: transparent;
+			min-height: 52px;
+		}
+
 		.customer-home-launchpad__progress-bar-container {
-			margin: 5px;
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
 		}
 
 		.customer-home-launchpad__title {

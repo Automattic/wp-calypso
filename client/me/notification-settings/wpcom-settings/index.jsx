@@ -37,6 +37,8 @@ const options = {
 	news: 'news',
 	digest: 'digest',
 	reports: 'reports',
+	news_developer: 'news_developer',
+	scheduled_updates: 'scheduled_updates',
 	jetpack_marketing: 'jetpack_marketing',
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
@@ -132,6 +134,22 @@ class WPCOMNotifications extends Component {
 					description={ translate(
 						'Complimentary reports and updates regarding site performance and traffic.'
 					) }
+				/>
+
+				<EmailCategory
+					name={ options.news_developer }
+					isEnabled={ get( settings, options.news_developer ) }
+					title={ translate( 'Developer Newsletter' ) }
+					description={ translate(
+						'A once-monthly roundup of notable news for WordPress developers.'
+					) }
+				/>
+
+				<EmailCategory
+					name={ options.scheduled_updates }
+					isEnabled={ get( settings, options.scheduled_updates ) }
+					title={ translate( 'Scheduled updates' ) }
+					description={ translate( 'Complimentary reports regarding scheduled plugin updates.' ) }
 				/>
 
 				{ this.props.hasJetpackSites ? (

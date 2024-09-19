@@ -5,7 +5,7 @@
 	&.task__google-domain-owners {
 		margin-bottom: 0 !important;
 
-		@media (min-width: ( $break-large + 1 ) ) {
+		@media (min-width: ($break-large + 1)) {
 			margin-top: 0 !important;
 		}
 
@@ -22,12 +22,12 @@
 			margin-top: 32px;
 			min-width: 360px;
 
-			@media (min-width: ( $break-wide + 1 ) ) {
+			@media (min-width: ($break-wide + 1)) {
 				width: 60%;
 				gap: 10px !important;
 			}
 
-			@media ( max-width: $break-wide ) {
+			@media (max-width: $break-wide) {
 				gap: 16px !important;
 				margin-bottom: 16px;
 				margin-top: 16px;
@@ -57,7 +57,7 @@
 				width: 100%;
 				padding: 0;
 
-				@media (min-width: ( $break-large + 1 )) {
+				@media (min-width: ($break-large + 1)) {
 					display: none;
 				}
 
@@ -74,7 +74,7 @@
 		.task__illustration {
 			display: none;
 
-			@media (min-width: ( $break-large + 1 )) {
+			@media (min-width: ($break-large + 1)) {
 				display: block;
 				width: 40%;
 			}

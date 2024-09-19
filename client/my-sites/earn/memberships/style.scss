@@ -28,7 +28,7 @@ body.is-section-earn.theme-default.color-scheme {
 
 .memberships__module-content {
 	max-height: 520px;
-	overflow-y: scroll;
+	overflow-y: auto;
 	margin-top: -24px;
 	border-bottom: 1px solid var(--color-neutral-5);
 }
@@ -292,7 +292,7 @@ body.is-section-earn.theme-default.color-scheme {
 	}
 }
 
-@media ( max-width: $break-large ) {
+@media (max-width: $break-large) {
 	.supporters-list {
 		padding-left: 16px;
 		padding-right: 16px;
@@ -303,7 +303,7 @@ body.is-section-earn.theme-default.color-scheme {
 	}
 }
 
-@media ( max-width: $break-medium ) {
+@media (max-width: $break-medium) {
 	.supporters-list {
 		padding-left: 16px;
 		padding-right: 16px;
@@ -315,7 +315,14 @@ body.is-section-earn.theme-default.color-scheme {
 }
 
 .memberships__module-footer {
+	display: none;
 	margin-top: 20px;
+}
+
+@media (max-width: $break-small) {
+	.memberships__module-footer {
+		display: block;
+	}
 }
 
 .memberships__module-plans-title,
@@ -448,5 +455,15 @@ body.is-section-earn.theme-default.color-scheme {
 	.wpcom__loading-ellipsis {
 		display: block;
 		margin: auto;
+	}
+}
+
+.memberships__settings-sandbox-warning {
+	float: left;
+	padding: 5px 11px;
+
+	&.stripe-disconnected {
+		padding: 5px 11px;
+		margin-right: 8px;
 	}
 }

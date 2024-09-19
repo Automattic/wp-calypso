@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -12,7 +12,12 @@ import ExternalLink from 'calypso/components/external-link';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isJetpackCloudOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
+	isGravPoweredOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,6 +26,7 @@ import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/acti
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 
 export class LoginLinks extends Component {
 	static propTypes = {
@@ -116,6 +122,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client ) ||
 			this.props.isWhiteLogin ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
@@ -170,15 +177,19 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
+		const isGravPoweredClient = isGravPoweredOAuth2Client( this.props.oauth2Client );
+
 		return (
 			<ExternalLink
 				key="help-link"
-				icon={ true }
+				icon={ ! isGravPoweredClient }
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/security/two-step-authentication/' ) }
 			>
-				{ this.props.translate( 'Get help' ) }
+				{ isGravPoweredClient
+					? this.props.translate( 'Need help logging in?' )
+					: this.props.translate( 'Get help' ) }
 			</ExternalLink>
 		);
 	}
@@ -215,12 +226,12 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
-		const loginLink = getLoginLinkPageUrl(
-			this.props.locale,
-			this.props.currentRoute,
-			this.props.query?.signup_url,
-			this.props.oauth2Client?.id
-		);
+		const loginLink = getLoginLinkPageUrl( {
+			locale: this.props.locale,
+			currentRoute: this.props.currentRoute,
+			signupUrl: this.props.query?.signup_url,
+			oauth2ClientId: this.props.oauth2Client?.id,
+		} );
 
 		return (
 			<a
@@ -269,7 +280,7 @@ export class LoginLinks extends Component {
 	render() {
 		return (
 			<div
-				className={ classnames( 'wp-login__links', {
+				className={ clsx( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
 				} ) }
 			>
@@ -291,7 +302,7 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
-		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
+		wccomFrom: getWccomFrom( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{

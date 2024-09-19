@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import PluginCommonCard from '../plugin-common-card';
 import PluginCommonTable from '../plugin-common-table';
@@ -28,7 +28,7 @@ export default function PluginCommonList( {
 }: Props ) {
 	return (
 		<>
-			<div className={ classNames( { 'plugin-common-multi-site-table': ! selectedSite } ) }>
+			<div className={ clsx( { 'plugin-common-multi-site-table': ! selectedSite } ) }>
 				<PluginCommonTable
 					{ ...rest }
 					items={ items }

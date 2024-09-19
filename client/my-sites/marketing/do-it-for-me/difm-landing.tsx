@@ -8,21 +8,21 @@ import {
 	getDIFMTieredPriceDetails,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import i18n, { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useSelector } from 'calypso/state';
 import {
@@ -32,6 +32,8 @@ import {
 } from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
+
+import './difm-landing.scss';
 
 const Placeholder = styled.span`
 	padding: 0 60px;
@@ -55,12 +57,14 @@ const Placeholder = styled.span`
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
-	gap: 96px;
 	padding: 12px;
+	max-width: 1040px;
+	margin: 0 auto;
 `;
 
 const ContentSection = styled.div`
 	flex: 1;
+	padding-right: 10px;
 `;
 
 const ImageSection = styled.div`
@@ -75,11 +79,17 @@ const ImageSection = styled.div`
 	}
 `;
 
-// @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component
 const Header = styled( FormattedHeader )`
+	margin: 0 0 24px 0 !important;
 	.formatted-header__title {
-		font-size: 2.25rem;
+		font-size: 2.75rem;
 		line-height: 3rem;
+		@media ( min-width: 400px ) {
+			text-wrap: nowrap;
+		}
+	}
+	.formatted-header__subtitle {
+		font-size: 1rem;
 	}
 `;
 
@@ -190,6 +200,7 @@ const CTASectionWrapper = styled.div`
 const StepContainer = styled.div`
 	display: flex;
 	gap: 20px;
+	margin-top: 0;
 `;
 
 const ProgressLine = styled.div`
@@ -286,7 +297,9 @@ export default function DIFMLanding( {
 	siteId?: number | null;
 	isStoreFlow: boolean;
 } ) {
+	const requiredProductSlugs = [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ];
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
@@ -295,14 +308,20 @@ export default function DIFMLanding( {
 	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
-	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
-	const planStorageString = planStorageSlug ? FEATURES_LIST[ planStorageSlug ]?.getTitle() : '';
+	const planStorageSlug = planObject?.getStorageFeature?.();
+	const planStorageString = planStorageSlug ? getFeatureByKey( planStorageSlug )?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
 	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
 
+	// This is used in a FAQ item.
+	const businessPlanCostInteger = useSelector( ( state ) =>
+		getProductCost( state, PLAN_BUSINESS )
+	);
+
 	const currencyCode = useSelector( ( state ) => getProductCurrencyCode( state, WPCOM_DIFM_LITE ) );
-	const hasPriceDataLoaded = productCost && extraPageCost && planCostInteger && currencyCode;
+	const hasPriceDataLoaded =
+		productCost && extraPageCost && planCostInteger && businessPlanCostInteger && currencyCode;
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
@@ -317,6 +336,10 @@ export default function DIFMLanding( {
 				stripZeros: true,
 				isSmallestUnit: true,
 		  } )
+		: '';
+
+	const businessPlanCost = hasPriceDataLoaded
+		? formatCurrency( businessPlanCostInteger, currencyCode, { stripZeros: true } )
 		: '';
 
 	const faqHeader = useRef( null );
@@ -334,39 +357,26 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
-	const isEnglishLocale = useIsEnglishLocale();
-
-	const headerText =
-		isEnglishLocale ||
-		i18n.hasTranslation(
-			'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}'
-		)
-			? translate(
-					'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
-					{
-						components: {
-							PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-							sup: <sup />,
-							br: <br />,
-						},
-						args: {
-							displayCost,
-							days: 4,
-						},
-					}
-			  )
-			: translate(
-					'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
-					{
-						components: {
-							PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-							sup: <sup />,
-						},
-						args: {
-							displayCost,
-						},
-					}
-			  );
+	const headerTextTranslateArgs = {
+		components: {
+			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
+			sup: <sup />,
+			br: <br />,
+		},
+		args: {
+			displayCost,
+			days: 4,
+		},
+	};
+	const headerText = isStoreFlow
+		? translate(
+				'Let us build your store{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				headerTextTranslateArgs
+		  )
+		: translate(
+				'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				headerTextTranslateArgs
+		  );
 
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
 	const hasCurrentPlanOrHigherPlan = currentPlan?.product_slug
@@ -398,12 +408,74 @@ export default function DIFMLanding( {
 				}
 		  );
 
+	const faqPlanCostOldCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+	const faqPlanCostNewCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and expert support from our team.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+
+	let faqRevisionsAnswer = translate(
+		'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+			'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
+		{
+			args: [ planTitle || '' ],
+		}
+	);
+	if ( planSlug === PLAN_BUSINESS ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+	if ( planSlug === PLAN_PREMIUM ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers fast support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers fast support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
+			{ ! hasPriceDataLoaded && (
+				<QueryProductsList productSlugList={ requiredProductSlugs } type="partial" />
+			) }
 			<Wrapper>
 				<ContentSection>
-					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
 					<Header
 						brandFont
 						align="left"
@@ -437,7 +509,11 @@ export default function DIFMLanding( {
 						<Step
 							index={ translate( '4' ) }
 							title={ translate( 'Submit content for your new website' ) }
-							description={ translate( 'Content can be edited later with the WordPress editor.' ) }
+							description={
+								isStoreFlow
+									? translate( 'Products can be added later with the WordPress editor.' )
+									: translate( 'Content can be edited later with the WordPress editor.' )
+							}
 						/>
 					</VerticalStepProgress>
 					<p>
@@ -493,8 +569,10 @@ export default function DIFMLanding( {
 						</FAQHeader>
 						<FoldableFAQ
 							id="faq-1"
-							expanded={ true }
-							question={ translate( 'What is Built By WordPress.com Express, and who is it for?' ) }
+							expanded
+							question={ translate(
+								'What is the Express Website Design Service, and who is it for?'
+							) }
 						>
 							<p>
 								{ translate(
@@ -506,19 +584,27 @@ export default function DIFMLanding( {
 						</FoldableFAQ>
 						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
-								{ translate(
-									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
-									{
-										args: {
-											displayCost,
-											planTitle: planTitle ?? '',
-											planCost,
-											storage: planStorageString,
-										},
-									}
-								) }
+								{ hasEnTranslation(
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and fast support from our expert team.'
+								)
+									? faqPlanCostNewCopy
+									: faqPlanCostOldCopy }
 							</p>
 						</FoldableFAQ>
+						{ isStoreFlow && (
+							<FoldableFAQ
+								id="faq-2-1"
+								question={ translate( 'What does my store setup include?' ) }
+							>
+								<p>
+									{ translate(
+										'Your purchase includes the setup of the WooCommerce shop landing page, cart, checkout, and my account pages, along with additional pages you choose while signing up. ' +
+											'Please note, individual product setup, payments, taxes, shipping, and other WooCommerce extensions or settings are not included. ' +
+											'You can set these up later, support is happy to help if you have questions.'
+									) }
+								</p>
+							</FoldableFAQ>
+						) }
 						<FoldableFAQ
 							id="faq-3"
 							question={ translate( 'Can I purchase additional pages if I need more than five?' ) }
@@ -568,15 +654,7 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ id="faq-7" question={ translate( 'How many revisions are included?' ) }>
-							<p>
-								{ translate(
-									'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
-										'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
-									{
-										args: [ planTitle || '' ],
-									}
-								) }
-							</p>
+							<p>{ faqRevisionsAnswer }</p>
 						</FoldableFAQ>
 						<FoldableFAQ
 							id="faq-8"
@@ -596,6 +674,31 @@ export default function DIFMLanding( {
 								) }
 							</p>
 						</FoldableFAQ>
+						{ ! isStoreFlow && (
+							<FoldableFAQ id="faq-10" question={ translate( 'Can I have a store set up?' ) }>
+								<>
+									<p>
+										{ translate(
+											'We offer an ecommerce store setup option which includes setup of the WooCommerce shop landing page, cart, checkout, and my account pages, along with additional pages you choose while signing up. ' +
+												'Please note, individual product setup, payments, taxes, shipping, and other WooCommerce extensions or settings are not included. You can set these up later, support is happy to help if you have questions. ' +
+												'An additional purchase of the %(businessPlanName)s plan, costing %(businessPlanCost)s, is required for a store site.',
+											{
+												args: {
+													businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
+													businessPlanCost,
+												},
+											}
+										) }
+									</p>
+									<Button
+										variant="primary"
+										onClick={ () => ( window.location.href = '/start/do-it-for-me-store' ) }
+									>
+										{ translate( 'Get started' ) }
+									</Button>
+								</>
+							</FoldableFAQ>
+						) }
 					</>
 				) }
 			</FAQSection>

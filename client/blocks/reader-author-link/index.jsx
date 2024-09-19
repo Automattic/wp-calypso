@@ -1,12 +1,10 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
 
 import './style.scss';
-
-const noop = () => {};
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = () => {
@@ -15,7 +13,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 		if ( post ) {
 			stats.recordTrackForPost( 'calypso_reader_author_link_clicked', post );
 		}
-		onClick();
+		onClick?.();
 	};
 
 	if ( ! siteUrl ) {
@@ -29,7 +27,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 		return null;
 	}
 
-	const classes = classnames( 'reader-author-link', className );
+	const classes = clsx( 'reader-author-link', className );
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
 	if ( ! siteUrl ) {
@@ -47,10 +45,6 @@ ReaderAuthorLink.propTypes = {
 	author: PropTypes.object.isRequired,
 	post: PropTypes.object, // for stats only,
 	siteUrl: PropTypes.string, // used instead of author.URL if present
-};
-
-ReaderAuthorLink.defaultProps = {
-	onClick: noop,
 };
 
 export default ReaderAuthorLink;

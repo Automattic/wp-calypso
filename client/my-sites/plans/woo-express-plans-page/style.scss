@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/breakpoints";
 
 body.is-section-plans.is-woo-express-plan {
+	.layout__primary .main {
+		box-sizing: content-box;
+	}
+
 	&.color-scheme {
 		--color-surface-backdrop: var(--color-surface);
 	}

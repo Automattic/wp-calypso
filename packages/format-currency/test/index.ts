@@ -117,6 +117,37 @@ describe( 'formatCurrency', () => {
 		expect( money3 ).toBe( '9.800.900,32 €' );
 	} );
 
+	test( 'returns a plus sign for positive numbers if signForPositive is true (USD)', () => {
+		const money = formatter.formatCurrency( 9800900, 'USD', {} );
+		expect( money ).toBe( '$9,800,900.00' );
+
+		const money2 = formatter.formatCurrency( 9800900, 'USD', {
+			signForPositive: true,
+		} );
+		expect( money2 ).toBe( '+$9,800,900.00' );
+	} );
+
+	test( 'returns a negative sign for negative numbers if signForPositive is true (USD)', () => {
+		const money = formatter.formatCurrency( -9800900, 'USD', {} );
+		expect( money ).toBe( '-$9,800,900.00' );
+
+		const money2 = formatter.formatCurrency( -9800900, 'USD', {
+			signForPositive: true,
+		} );
+		expect( money2 ).toBe( '-$9,800,900.00' );
+	} );
+
+	test( 'returns a plus sign for positive numbers if signForPositive is true (EUR)', () => {
+		const money = formatter.formatCurrency( 9800900, 'EUR', { locale: 'de-DE' } );
+		expect( money ).toBe( '9.800.900,00 €' );
+
+		const money2 = formatter.formatCurrency( 9800900, 'EUR', {
+			locale: 'de-DE',
+			signForPositive: true,
+		} );
+		expect( money2 ).toBe( '+9.800.900,00 €' );
+	} );
+
 	test( 'returns a number in latin numbers even for locales which default to other character sets', () => {
 		const money = formatter.formatCurrency( 9800900, 'INR', { locale: 'mr-IN' } );
 		expect( money ).toBe( '₹9,800,900.00' );
@@ -387,6 +418,30 @@ describe( 'getCurrencyObject()', () => {
 				integer: '9,800,900',
 				fraction: '.32',
 				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'USD with signForPositive set', () => {
+			const money = formatter.getCurrencyObject( 9800900.32, 'USD', { signForPositive: true } );
+			expect( money ).toEqual( {
+				symbol: '$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '+',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'USD with signForPositive set and negative number', () => {
+			const money = formatter.getCurrencyObject( -9800900.32, 'USD', { signForPositive: true } );
+			expect( money ).toEqual( {
+				symbol: '$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '-',
 				hasNonZeroFraction: true,
 			} );
 		} );

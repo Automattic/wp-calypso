@@ -87,7 +87,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 		dispatch( updateCredentials( sourceSite.ID, credentials, true, false ) );
 	};
 
-	const { migrateProvision, isLoading, isError, error } =
+	const { migrateProvision, isPending, isError, error } =
 		useMigrateProvisionMutation( handleUpdateCredentials );
 
 	const submitCredentials = useCallback(
@@ -187,9 +187,10 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 			) }
 			<form onSubmit={ submitCredentials }>
 				<CredentialsFormAdvanced
-					disabled={ isFormSubmissionPending || isLoading }
+					disabled={ isFormSubmissionPending || isPending }
 					formErrors={ formErrors }
 					formMode={ formMode }
+					formModeSwitcher="simple"
 					formState={ formState }
 					host={ props.selectedHost }
 					role="main"
@@ -219,33 +220,37 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 					</div>
 				) }
 
-				<div className="pre-migration__content pre-migration__proceed import__footer-button-container">
-					<NextButton type="submit" isBusy={ isFormSubmissionPending || isLoading }>
-						{ isFormSubmissionPending || isLoading
+				<div className="credentials-form__actions">
+					<NextButton type="submit" isBusy={ isFormSubmissionPending || isPending }>
+						{ isFormSubmissionPending || isPending
 							? translate( 'Testing credentials' )
 							: translate( 'Start migration' ) }
 					</NextButton>
-					<Button
-						borderless={ true }
-						className="action-buttons__borderless"
-						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-							e.preventDefault();
+					<div>
+						<Button
+							borderless
+							className="action-buttons__borderless"
+							onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+								e.preventDefault();
 
-							if ( ! migrationConfirmed ) {
-								setShowConfirmModal( true );
-								setConfirmCallback( () =>
-									startImportCallback.bind( null, {
-										type: 'skip-credentials',
-										...migrationTrackingProps,
-									} )
-								);
-							} else {
-								startImportCallback( { type: 'skip-credentials', ...migrationTrackingProps } );
-							}
-						} }
-					>
-						{ translate( 'Skip credentials (slower setup)' ) }
-					</Button>
+								if ( ! migrationConfirmed ) {
+									setShowConfirmModal( true );
+									setConfirmCallback( () =>
+										startImportCallback.bind( null, {
+											type: 'skip-credentials',
+											...migrationTrackingProps,
+										} )
+									);
+								} else {
+									startImportCallback( { type: 'skip-credentials', ...migrationTrackingProps } );
+								}
+							} }
+						>
+							{ translate( 'Skip credentials' ) }
+						</Button>
+						&nbsp;
+						{ translate( 'for a slower setup' ) }
+					</div>
 				</div>
 			</form>
 		</>

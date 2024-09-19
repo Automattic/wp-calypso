@@ -18,6 +18,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	onClickCta,
 	price,
 	title,
+	variant,
 } ) => {
 	return (
 		<div className="featured-item-card">
@@ -26,6 +27,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 			<div className="featured-item-card--body">
 				<div>
 					<h3 className="featured-item-card--title">{ title }</h3>
+					{ variant }
 					<div className="featured-item-card--price">{ price }</div>
 					{ amountSaved ? (
 						<div className="featured-item-card--amount-saved">{ amountSaved }</div>

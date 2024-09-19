@@ -1,10 +1,10 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -75,7 +75,7 @@ function ThemeEnhancements( {
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/support/infinite-scroll/'
+								? localizeUrl( 'https://wordpress.com/support/infinite-scroll/' )
 								: 'https://jetpack.com/support/infinite-scroll/'
 						}
 						privacyLink={ ! isAtomic }
@@ -95,7 +95,7 @@ function ThemeEnhancements( {
 								) }
 								link={
 									isAtomic
-										? 'https://wordpress.com/support/editing-css/'
+										? localizeUrl( 'https://wordpress.com/support/editing-css/' )
 										: 'https://jetpack.com/support/custom-css/'
 								}
 								privacyLink={ ! isAtomic }
@@ -114,7 +114,7 @@ function ThemeEnhancements( {
 					<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
 					<SupportInfo
 						text={ translate( 'Control how additional posts are loaded.' ) }
-						link="https://wordpress.com/support/infinite-scroll/"
+						link={ localizeUrl( 'https://wordpress.com/support/infinite-scroll/' ) }
 						privacyLink={ false }
 					/>
 					<ToggleControl

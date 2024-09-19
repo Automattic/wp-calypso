@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import findSuccessPrompt from 'calypso/assets/images/customer-home/illustration--secondary-find-success.svg';
 import { EDUCATION_FIND_SUCCESS } from 'calypso/my-sites/customer-home/cards/constants';
@@ -16,7 +17,9 @@ const FindSuccess = () => {
 				{
 					externalLink: true,
 					// Not using localizeUrl() because this page doesn't exist on translated versions of the /go site
-					url: 'https://wordpress.com/go/tips-and-tricks/10-ways-to-find-success-with-your-new-small-business-website/',
+					url: localizeUrl(
+						'https://wordpress.com/go/tips-and-tricks/10-ways-to-find-success-with-your-new-small-business-website/'
+					),
 					text: translate( 'Learn more' ),
 				},
 			] }

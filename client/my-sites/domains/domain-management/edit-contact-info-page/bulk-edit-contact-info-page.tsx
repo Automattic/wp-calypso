@@ -280,7 +280,7 @@ export default function BulkEditContactInfoPage( {
 				showContactInfoNote={ false }
 				backUrl={ domainsListPath }
 				bulkUpdateContactInfo={ bulkUpdateContactInfo }
-				bulkEdit={ true }
+				bulkEdit
 				wwdDomains={ wwdDomains }
 			/>
 		);

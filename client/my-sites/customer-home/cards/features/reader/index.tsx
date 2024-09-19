@@ -73,9 +73,9 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 				<Stream
 					streamKey={ streamKey }
 					trackScrollPage={ trackScrollPage.bind( null ) }
-					useCompactCards={ true }
-					isDiscoverStream={ true }
-					suppressSiteNameLink={ true }
+					useCompactCards
+					isDiscoverStream
+					suppressSiteNameLink
 				/>
 			</div>
 		</>

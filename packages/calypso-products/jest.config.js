@@ -4,4 +4,5 @@ module.exports = {
 	globals: {
 		configData: {},
 	},
+	transformIgnorePatterns: [ 'node_modules/(?!components)(?!.*\\.svg)' ],
 };

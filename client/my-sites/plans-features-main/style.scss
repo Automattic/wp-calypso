@@ -1,7 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
-@import "calypso/my-sites/plans-grid/media-queries";
+@import "@automattic/plans-grid-next/src/media-queries";
+@import "./media-queries";
+
+$plan-features-header-banner-height: 20px;
 
 :root {
 	--scss-font-body-small: #{$font-body-small};
@@ -21,24 +24,16 @@
 	}
 }
 
+.is-plan-type-selector-visible .plans-features-main__features-grid,
+.is-plan-type-selector-visible .plans-features-main__comparison-grid {
+	margin-top: 50px;
+}
+
 .is-2023-pricing-grid {
 	margin: 0 auto;
 
 	.signup__steps & {
 		width: auto;
-	}
-
-	.is-section-stepper &,
-	.is-section-signup & {
-		@include plan-features-layout-switcher;
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@include plan-features-layout-switcher-with-sidebar;
-	}
-
-	.is-section-plans.is-sidebar-collapsed & {
-		@include plan-features-layout-switcher;
 	}
 
 	.signup__steps .plans-features-main__group.is-scrollable & {
@@ -49,44 +44,21 @@
 		margin: 0 20px;
 		padding: 0 0 10px;
 		overflow-x: visible;
-
-		@include plans-2023-break-small {
-			padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
-			margin: 0;
-		}
-
-		@include plans-2023-break-medium {
-			margin: 0 20px;
-		}
-
-		@include plans-section-break-medium {
-			margin: 0;
-		}
-
-		@include plans-2023-break-medium {
-			margin: 0 20px;
-		}
-
-		@include plans-section-break-medium {
-			margin: 0;
-		}
 	}
 }
 
 .plans-features-main__comparison-grid-container {
+	width: 100%;
+
 	&.is-hidden {
 		display: none;
 	}
-}
 
-// Content group
-.plans-features-main__group {
-	& + & {
-		padding-top: 19px; // popular banner height adjustment
-	}
-
-	+ .faq {
-		margin-top: 20px;
+	.plans-features-main__plan-type-selector-layout {
+		@include plan-type-selector-custom-mobile-breakpoint {
+			// Overrides the plans-wrapper parent container margins
+			margin: 0 -20px;
+		}
 	}
 }
 
@@ -110,7 +82,7 @@
 		width: calc(100vw - var(--approximate-viewport-scrollbar-width));
 		margin-left: calc(50% - 50vw + var(--approximate-viewport-scrollbar-width) / 2);
 
-		@media ( min-width: 1600px ) {
+		@media (min-width: 1600px) {
 			max-width: 1600px;
 			margin-left: -280px;
 		}
@@ -130,7 +102,7 @@
 			width: 100%;
 		}
 
-		@media ( min-width: 1800px ) {
+		@media (min-width: 1800px) {
 			max-width: 1520px;
 			margin-left: -240px;
 		}
@@ -145,114 +117,19 @@
 .is-section-plans .plans-features-main__comparison-grid-container {
 	scroll-margin-top: $plan-features-header-banner-height + 24px;
 	margin: auto;
-	@include plan-comparison-grid-breakpoints-with-sidebar;
 }
 
 .is-section-signup .plans-features-main__comparison-grid-container {
 	margin: auto;
-	@include plan-comparison-grid-breakpoints;
 }
 
 .is-section-stepper .plans-features-main__comparison-grid-container {
 	margin: auto;
-	@include plan-comparison-grid-breakpoints;
 }
 
 .is-2023-pricing-grid .plan-features-2023-grid__content {
 	position: relative;
 	margin: auto;
-
-	.is-section-stepper &,
-	.is-section-signup & {
-		@include pricing-grid-breakpoints;
-	}
-
-	.is-section-plans:not(.is-sidebar-collapsed) & {
-		@include pricing-grid-breakpoints-with-sidebar;
-
-	}
-
-	.is-section-plans.is-sidebar-collapsed.is-domain-plan-package-flow & {
-		@include pricing-grid-breakpoints-with-sidebar;
-
-	}
-
-	.is-section-plans.is-sidebar-collapsed:not(.is-domain-plan-package-flow) & {
-		@include pricing-grid-breakpoints;
-	}
-
-}
-
-.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
-	padding-top: 19px;
-	margin-top: 24px;
-}
-
-.plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
-	padding-top: 26px;
-
-	@media ( min-width: 880px ) {
-		padding-top: 19px;
-	}
-}
-
-// Required additional specificity
-.plans-features-main__banner {
-	text-align: center;
-	padding: 5px 0;
-}
-
-.plans-features-main__banner-content {
-	display: inline-block;
-	background: var(--color-surface);
-	border-radius: 2px;
-	padding: 2px 12px;
-	@include elevation( 2dp );
-
-	button.is-borderless {
-		color: var(--color-accent);
-		text-decoration: underline;
-		vertical-align: baseline;
-		margin-left: 0.5em;
-	}
-}
-
-// Header sub-component
-.plans-features-main__header {
-	margin: 0 0 16px;
-	padding: 0 16px;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		margin-bottom: 28px;
-		padding: 0 24px;
-	}
-
-	@include breakpoint-deprecated( ">660px" ) {
-		margin-left: auto;
-		margin-right: auto;
-		padding: 0;
-		text-align: center;
-	}
-}
-
-.plans-features-main__heading {
-	margin: 0 0 12px;
-	font-size: 17px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	line-height: 1;
-	font-weight: 600;
-	color: var(--color-text);
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-title-medium;
-		font-weight: 400;
-	}
-}
-
-.plans-features-main__subhead {
-	margin: 0;
-	font-size: $font-body-small;
-	line-height: 1.35;
-	color: var(--color-text-subtle);
 }
 
 /**
@@ -267,133 +144,49 @@ body.is-section-signup.is-white-signup {
 				margin-bottom: 30px;
 			}
 		}
-		.plans-features-main__banner-content {
-			box-shadow: none;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-			.is-free-plan {
-				padding: 12px 32px;
-				margin-left: 12px;
-				border-radius: 2px;
-				font-weight: 400;
-			}
-		}
-
-		.plan-features__header {
-			border-top: 1px solid #e2e4e7;
-			border-bottom: none;
-			border-radius: 0;
-			padding: 20px;
-
-			.plan-features__header-title {
-				font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			}
-
-			.plan-features__audience {
-				color: #646970;
-				font-weight: normal;
-			}
-
-			.plans-grid__plan-pill {
-				background: var(--color-text);
-				color: var(--color-text-inverted);
-				font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				top: unset;
-				bottom: -10px;
-				left: 20px;
-				right: unset;
-				padding: 2px 8px 3px;
-			}
-		}
-
-		.plan-features__scroller-container {
-			.plan-features__scroll-button {
-				background: var(--color-text);
-				color: var(--color-text-inverted);
-				&[disabled] {
-					display: none;
-				}
-			}
-			.plan-features__scroll-indicator-dot {
-				background: var(--color-neutral-5);
-				&.is-highlighted {
-					background: var(--color-neutral-100);
-				}
-			}
-
-			.plan-features__table {
-				@include break-mobile {
-					border-spacing: 0;
-					border-collapse: collapse;
-				}
-
-				tbody:first-child tr {
-					border-top-left-radius: 2px;
-					border-top-right-radius: 2px;
-				}
-
-				.plan-features__table-item {
-					border-left: 1px solid #e2e4e7;
-					border-right: 1px solid #e2e4e7;
-					background-clip: padding-box;
-
-					.plan-features__description {
-						color: var(--color-neutral-60-rgb);
-						padding-bottom: 42px;
-					}
-				}
-
-				.plan-features__pricing {
-					border-color: #e2e4e7;
-					text-align: left;
-
-					.plan-price {
-						text-align: left;
-						font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-						color: var(--color-neutral-100);
-						margin-top: 15px;
-
-						.plan-price__currency-symbol {
-							vertical-align: initial;
-							font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-							color: var(--color-neutral-100);
-						}
-					}
-
-					.plan-features__header-billing-info {
-						text-align: left;
-						font-size: 10px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-						color: var(--color-neutral-50);
-						font-weight: 400;
-					}
-				}
-
-				.plan-features__row {
-					border-top: none;
-					border-bottom: none;
-				}
-
-				.plan-features__item-checkmark {
-					fill: #00a32a;
-				}
-
-				.plan-features__item-tip-info {
-					.gridicon {
-						fill: #ccced0;
-					}
-				}
-			}
-		}
 	}
 }
 
 .plans-features-main__plan-type-selector-layout {
+	display: flex;
+	justify-content: center;
+
 	.segmented-control.price-toggle {
 		.is-section-signup &,
 		.is-section-stepper & {
 			border: solid 1px var(--studio-gray-5);
 		}
+	}
+
+	/**
+	 * Following styles are important for stretching the plan type selector to full width when sticky
+	 *   - .is-sticky-plan-type-selector is the class added when the plan type selector is sticky
+	 *   - 15px is the padding added by the layout overrides in modernized-layout.tsx
+	 */
+	.is-sticky-plan-type-selector & {
+		.is-section-plans & {
+			margin-left: -15px;
+			width: 100vw;
+		}
+	}
+}
+
+/**
+ * Styles required for the 2023 pricing grid plan type dropdown, sticky behavior to work
+ */
+body.is-section-plans .layout__content .main {
+	@include plan-type-selector-custom-mobile-breakpoint {
+		padding: 0;
+		.is-2023-pricing-grid .plans-wrapper {
+			margin: 0;
+			padding: 17px;
+		}
+	}
+}
+
+body.is-section-stepper,
+body.is-section-signup.is-white-signup {
+	.step-wrapper__header {
+		margin: 24px 20px 38px;
 	}
 }

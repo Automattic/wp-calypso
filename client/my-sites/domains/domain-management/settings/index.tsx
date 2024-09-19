@@ -35,6 +35,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import DnssecCard from 'calypso/my-sites/domains/domain-management/settings/cards/dnssec-card';
 import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
@@ -61,15 +62,16 @@ import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
+import DomainDiagnosticsCard from './cards/domain-diagnostics-card';
 import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
+import GravatarDomainCard from './cards/gravatar-domain';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
 import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
-import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -78,8 +80,10 @@ const Settings = ( {
 	currentRoute,
 	domain,
 	domains,
+	isFetchingNameservers,
 	isLoadingPurchase,
 	isLoadingNameservers,
+	isUpdatingNameservers,
 	loadingNameserversError,
 	nameservers,
 	dns,
@@ -102,7 +106,7 @@ const Settings = ( {
 		}
 	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
-	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
+	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
 	const renderHeader = () => {
 		const previousPath = domainManagementList(
@@ -144,9 +148,7 @@ const Settings = ( {
 		if ( ! domain ) {
 			return null;
 		}
-		if ( ! isSecuredWithUs( domain ) ) {
-			return null;
-		}
+
 		if (
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.type === domainTypes.TRANSFER ||
@@ -156,26 +158,22 @@ const Settings = ( {
 		}
 
 		return (
-			<Accordion
-				title={ translate( 'Domain security', { textOnly: true } ) }
-				subtitle={ getSslReadableStatus( domain ) }
-				key="security"
+			<DomainSecurityDetails
+				domain={ domain }
+				sslStatus={ domain.sslStatus }
+				selectedSite={ selectedSite }
+				purchase={ purchase }
+				isLoadingPurchase={ isLoadingPurchase }
 				isDisabled={ domain.isMoveToNewSitePending }
-			>
-				<DomainSecurityDetails
-					domain={ domain }
-					selectedSite={ selectedSite }
-					purchase={ purchase }
-					isLoadingPurchase={ isLoadingPurchase }
-				/>
-			</Accordion>
+			/>
 		);
 	};
 
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			domain.type === domainTypes.TRANSFER
+			domain?.type === domainTypes.TRANSFER ||
+			domain?.isGravatarDomain
 		) {
 			return null;
 		}
@@ -192,6 +190,22 @@ const Settings = ( {
 					selectedSite={ selectedSite }
 					hasConnectableSites={ hasConnectableSites }
 				/>
+			</Accordion>
+		);
+	};
+
+	const renderGravatarSection = () => {
+		if ( ! ( domain && domain.isGravatarDomain ) ) {
+			return null;
+		}
+
+		return (
+			<Accordion
+				title={ translate( 'Gravatar profile domain', { textOnly: true } ) }
+				key="status"
+				expanded
+			>
+				<GravatarDomainCard />
 			</Accordion>
 		);
 	};
@@ -294,10 +308,7 @@ const Settings = ( {
 	};
 
 	const renderNameServersSection = () => {
-		if ( ! domain ) {
-			return null;
-		}
-		if ( domain.type !== domainTypes.REGISTERED ) {
+		if ( ! domain || domain.type !== domainTypes.REGISTERED || domain.isGravatarDomain ) {
 			return null;
 		}
 
@@ -406,8 +417,14 @@ const Settings = ( {
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC ||
-			! domain.canManageDnsRecords
+			! domain.canManageDnsRecords ||
+			! domains
 		) {
+			return null;
+		}
+
+		const selectedDomain = domains.find( ( domain ) => selectedDomainName === domain.name );
+		if ( ! selectedDomain ) {
 			return null;
 		}
 
@@ -423,6 +440,7 @@ const Settings = ( {
 							{ renderExternalNameserversNotice( 'DNS' ) }
 							<DnsRecords
 								dns={ dns }
+								selectedDomain={ selectedDomain }
 								selectedDomainName={ selectedDomainName }
 								selectedSite={ selectedSite }
 								currentRoute={ currentRoute }
@@ -575,17 +593,23 @@ const Settings = ( {
 			>
 				<Button
 					onClick={ handleTransferDomainClick }
-					href={ domainUseMyDomain(
-						selectedSite?.slug,
-						domain.name,
-						useMyDomainInputMode.transferDomain
-					) }
-					primary={ true }
+					href={ domainUseMyDomain( selectedSite?.slug, {
+						domain: domain.name,
+						initialMode: useMyDomainInputMode.transferDomain,
+					} ) }
+					primary
 				>
 					{ translate( 'Transfer' ) }
 				</Button>
 			</Accordion>
 		);
+	};
+
+	const renderDiagnosticsSection = () => {
+		if ( ! domain ) {
+			return null;
+		}
+		return <DomainDiagnosticsCard domain={ domain } />;
 	};
 
 	const renderContactVerificationSection = () => {
@@ -605,7 +629,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				expanded={ true }
+				expanded
 				title={ translate( 'Contact verification', { textOnly: true } ) }
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,
@@ -674,6 +698,27 @@ const Settings = ( {
 		return <GlueRecordsCard domain={ domain } />;
 	};
 
+	const renderDnssecSection = () => {
+		if (
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.isSubdomain ||
+			! domain.isDnssecSupported ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return (
+			<DnssecCard
+				domain={ domain }
+				nameservers={ nameservers }
+				isUpdatingNameservers={ isUpdatingNameservers }
+				isLoadingNameservers={ isLoadingNameservers || isFetchingNameservers }
+			/>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
@@ -691,14 +736,17 @@ const Settings = ( {
 			<>
 				{ renderUnverifiedEmailNotice() }
 				{ renderStatusSection() }
+				{ renderGravatarSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
+				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
 				{ renderForwardingSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
+				{ renderDnssecSection() }
 				{ renderDomainSecuritySection() }
 				{ renderDomainGlueRecordsSection() }
 			</>
@@ -707,11 +755,13 @@ const Settings = ( {
 
 	const renderSettingsCards = () => {
 		if ( ! domain ) {
-			return undefined;
+			return null;
 		}
 		return (
 			<>
-				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+				{ ! domain.isGravatarDomain && (
+					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+				) }
 				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
@@ -727,9 +777,12 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+
 			{ renderHeader() }
+
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

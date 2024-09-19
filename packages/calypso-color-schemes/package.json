@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-color-schemes",
-	"version": "3.1.1",
+	"version": "3.1.3",
 	"description": "Calypso Shared Style Bits.",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
@@ -28,7 +28,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@automattic/color-studio": "2.5.0",
+		"@automattic/color-studio": "^3.0.1",
 		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
 		"sass": "^1.37.5"

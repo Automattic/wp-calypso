@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import EmptyContent from 'calypso/components/empty-content';
 import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
@@ -11,7 +11,7 @@ function ServerError( { entrypoint } ) {
 		<html lang="en">
 			<Head>{ chunkCssLinks( entrypoint ) }</Head>
 			<body
-				className={ classNames( {
+				className={ clsx( {
 					[ 'theme-' + theme ]: theme,
 				} ) }
 			>

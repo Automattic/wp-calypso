@@ -21,7 +21,7 @@ class DomainTransferSuggestion extends Component {
 				buttonContent={ buttonContent }
 				buttonStyles={ { borderless: true } }
 				extraClasses="is-visible domain-transfer-suggestion"
-				hidePrice={ true }
+				hidePrice
 				onButtonClick={ this.props.onButtonClick }
 				showChevron
 				tracksButtonClickSource={ this.props.tracksButtonClickSource }

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
@@ -59,9 +59,9 @@ export default function ConnectDomainStepAdvancedRecords( {
 	};
 
 	const itemClassNames = {
-		type: classNames( itemClasses.type ),
-		name: classNames( itemClasses.name ),
-		value: classNames( itemClasses.value ),
+		type: clsx( itemClasses.type ),
+		name: clsx( itemClasses.name ),
+		value: clsx( itemClasses.value ),
 	};
 
 	const recordsListHeader = (
@@ -69,10 +69,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 			{ Object.entries( recordLabels ).map( ( [ key, value ] ) => (
 				<div
 					key={ key }
-					className={ classNames(
-						className + '__records-list-record-label',
-						...itemClasses[ key ]
-					) }
+					className={ clsx( className + '__records-list-record-label', ...itemClasses[ key ] ) }
 				>
 					{ value }
 				</div>

@@ -36,6 +36,7 @@ export type DnsMenuOptionsButtonProps = {
 	domain: ResponseDomain | undefined;
 	hasDefaultARecords: boolean;
 	hasDefaultCnameRecord: boolean;
+	hasDefaultEmailRecords: boolean;
 	dns: Dns;
 	dispatchApplyDnsTemplate: UnpackPromisedValue< typeof applyDnsTemplate >;
 	dispatchUpdateDns: UnpackPromisedValue< typeof updateDns >;

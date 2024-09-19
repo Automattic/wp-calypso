@@ -1,0 +1,125 @@
+.partner-directory__dashboard {
+	.a4a-layout__body-wrapper {
+		max-width: 700px;
+	}
+
+	.partner-directory-dashboard__checked-step svg.sidebar__menu-icon {
+		width: 20px;
+		height: 20px;
+		padding: 2px;
+		background: var(--color-success-50);
+		border-radius: 50%;
+		fill: var(--color-text-white);
+	}
+}
+
+.partner-directory-dashboard__heading {
+	margin-block-start: 32px;
+	font-size: rem(24px);
+	margin-block-end: 8px;
+	font-weight: 600;
+}
+.partner-directory-dashboard__subtitle {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	font-size: rem(14px);
+	font-weight: 400;
+	margin-block-end: 48px;
+	color: var(--color-neutral-50);
+}
+
+.partner-directory-dashboard__learn-more-section {
+	margin-block-start: 40px;
+
+	a.button {
+		padding-block: 4px;
+	}
+
+	.step-section__header {
+		margin-block-end: 0;
+	}
+}
+
+.partner-directory-dashboard__brand-status-section {
+	margin-block-start: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	.badge {
+		min-width: 100px;
+		margin-inline-end: 8px;
+		text-align: center;
+	}
+
+	span {
+		color: var(--color-text-black);
+	}
+}
+
+.partner-directory-dashboard__completed-section {
+	.partner-directory-dashboard__heading {
+		margin-block-end: 32px;
+	}
+	.step-section-item__status {
+		margin-block-start: 4px;
+	}
+
+	.a8c-blue-link {
+		padding-block: 2px;
+	}
+
+	.sidebar__menu-icon {
+		width: 33px;
+		height: 33px;
+	}
+
+	.partner-directory-dashboard__woo-icon {
+		.sidebar__menu-icon {
+			width: 38px;
+			height: 38px;
+			position: relative;
+			left: -3px;
+		}
+	}
+}
+
+.partner-directory-dashboard__edit-section {
+	margin-block-start: 40px;
+
+	.step-section__header {
+		margin-block-end: 4px;
+	}
+
+	.partner-directory-dashboard__subtitle {
+		margin-block-end: 24px;
+	}
+
+	.button {
+		margin-inline-end: 8px;
+	}
+}
+
+.partner-directory-dashboard__popover-content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	border-radius: 4px;
+	width: 300px;
+
+	.button {
+		margin-inline-end: 8px;
+	}
+
+	.partner-directory-dashboard__popover-content-title {
+		font-size: rem(14px);
+		color: var(--color-accent-60);
+	}
+}
+
+.partner-directory-dashboard__popover {
+	.components-popover__content {
+		padding: 16px;
+	}
+}

@@ -1,5 +1,5 @@
 import { Dialog } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -28,7 +28,7 @@ class AcceptDialog extends Component {
 	getActionButtons = () => {
 		const { options } = this.props;
 		const isScary = options && options.isScary;
-		const additionalClassNames = classnames( { 'is-scary': isScary } );
+		const additionalClassNames = clsx( { 'is-scary': isScary } );
 		return [
 			{
 				action: 'cancel',

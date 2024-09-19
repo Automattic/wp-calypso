@@ -15,17 +15,14 @@ import {
 	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiDeleteSite, getNewPlanName } from '../shared';
+import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle(
-		'Plans: Create a WordPress.com Creator/Business site as exising user'
-	),
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com/Business site as exising user' ),
 	function () {
 		const planName = 'Business';
-		const newPlanName = getNewPlanName( planName );
 
 		let testAccount: TestAccount;
 		let page: Page;
@@ -52,6 +49,7 @@ describe(
 
 			it( 'Skip domain selection', async function () {
 				const signupDomainPage = new SignupDomainPage( page );
+				await signupDomainPage.searchForFooDomains();
 				await signupDomainPage.skipDomainSelection();
 			} );
 
@@ -64,7 +62,7 @@ describe(
 
 			it( 'See secure checkout', async function () {
 				cartCheckoutPage = new CartCheckoutPage( page );
-				await cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` );
+				await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
 			it( 'Enter payment details', async function () {
@@ -89,10 +87,10 @@ describe(
 		describe( `Validate WordPress.com ${ planName } functionality`, function () {
 			let sidebarComponent: SidebarComponent;
 
-			it( `Sidebar states user is on WordPress.com ${ newPlanName } plan`, async function () {
+			it( `Sidebar states user is on WordPress.com ${ planName } plan`, async function () {
 				sidebarComponent = new SidebarComponent( page );
 				const currentPlan = await sidebarComponent.getCurrentPlanName();
-				expect( currentPlan ).toBe( newPlanName );
+				expect( currentPlan ).toBe( planName );
 			} );
 		} );
 

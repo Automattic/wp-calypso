@@ -84,7 +84,7 @@ export default function UpgradePopover( {
 			showDelay={ 300 }
 			onShow={ handleOnShow }
 		>
-			<h2 className="upgrade-popover__heading">{ translate( 'Maximise uptime' ) }</h2>
+			<h2 className="upgrade-popover__heading">{ translate( 'Maximize uptime' ) }</h2>
 			{ dismissibleWithPreference && (
 				<Button
 					borderless

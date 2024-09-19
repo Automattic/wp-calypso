@@ -29,14 +29,18 @@
 }
 
 .reader-post-card.card {
-	border-bottom: 5px solid var(--color-neutral-0);
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
-	box-shadow: none;
+	border-bottom: 5px solid var(--color-neutral-5);
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	box-shadow: rgba(0, 0, 0, 0.05) 0 0 0 1px inset;
 	margin: 0;
-	margin-bottom: 16px;
-	padding: 16px;
+	margin-bottom: 24px;
 	position: relative;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		background: none;
+		border-radius: 0;
+		box-shadow: none;
+	}
 
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
@@ -80,7 +84,7 @@
 			.reader-post-card__post-details {
 				flex: 0 auto; // IE11 Photo card actions hidden
 				margin: 0;
-				padding-top: 8px;
+				padding-top: 24px;
 			}
 
 			.reader-post-card__title {
@@ -165,6 +169,7 @@
 
 			@include breakpoint-deprecated( "<660px" ) {
 				flex-direction: column-reverse;
+				gap: 12px;
 			}
 
 			&.reader-post-card__no-excerpt {
@@ -248,6 +253,14 @@
 			.comments__form {
 				margin-top: 0;
 			}
+
+			.comments__comment .comments__form {
+				margin-top: 10px;
+			}
+
+			@include breakpoint-deprecated( "<660px" ) {
+				margin: 24px 0 0;
+			}
 		}
 	}
 
@@ -284,6 +297,10 @@
 		border-top: none;
 		margin: 20px 0 0 10px;
 		padding-top: 0;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 20px 0 0;
+		}
 	}
 }
 
@@ -291,6 +308,7 @@
 	.comments__comment-actions {
 		display: flex;
 		justify-content: flex-start;
+		padding-top: 8px;
 	}
 }
 
@@ -305,8 +323,7 @@
 	position: relative;
 	top: 0;
 	height: 300px;
-	margin-right: 0;
-	margin-bottom: 0;
+	margin: 24px 0 0;
 	max-width: 100%;
 
 	&:hover {
@@ -385,6 +402,7 @@
 
 .reader-post-card__byline-secondary-item {
 	// Add extra margin to give space for the bullet that may exist between items.
+	white-space: nowrap;
 	margin-right: 12px;
 	&:last-of-type {
 		margin-right: 0;
@@ -525,7 +543,7 @@
 
 @include breakpoint-deprecated( "<660px" ) {
 	.reader-post-card__post {
-		margin-left: 0;
+		margin: 0;
 	}
 }
 
@@ -534,7 +552,7 @@
 }
 
 .reader-post-card__post-details {
-	font-family: $serif;
+	font-family: $sans;
 }
 
 .reader-post-card__title {
@@ -554,6 +572,7 @@
 	font-weight: 600;
 	display: block;
 	line-height: 29px;
+	text-wrap: pretty;
 
 	&:hover {
 		color: var(--color-neutral-70);

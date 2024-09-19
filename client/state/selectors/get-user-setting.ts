@@ -11,7 +11,7 @@ export default function getUserSetting(
 	state: AppState,
 	settingName: string
 ): UserSettingValue | null {
-	const { settings, unsavedSettings } = state.userSettings;
+	const { settings, unsavedSettings } = state.userSettings ?? {};
 	let setting = null;
 
 	// If we haven't fetched settings, or if the setting doesn't exist return null

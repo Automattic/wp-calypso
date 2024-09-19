@@ -1,0 +1,88 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.github-deployments-connect-repository {
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: 32px;
+
+		> div {
+			flex: 1;
+		}
+
+		@include break-medium {
+			flex-direction: row;
+			gap: 58px;
+		}
+	}
+
+	.form-label {
+		font-weight: 500;
+	}
+
+	.components-select-control {
+		height: 40px;
+		.components-input-control__backdrop {
+			border: 1px solid var(--color-neutral-10);
+		}
+	}
+
+	&__configs {
+		.form-fieldset {
+			margin-bottom: 16px;
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	&__repository {
+		&-input {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 7px 7px 7px 14px;
+			font-size: $font-body;
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 2px;
+			background-color: #fff;
+
+			&--has-error {
+				border-color: var(--color-error);
+			}
+		}
+
+		.form-input-validation {
+			padding-bottom: 0;
+		}
+	}
+
+	&__branch-select {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+
+		.form-select {
+			width: 100%;
+			font-size: $font-body;
+		}
+	}
+
+	&__submit {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 16px;
+
+		.button {
+			overflow: visible;
+		}
+
+		.form-setting-explanation {
+			margin: 0;
+		}
+	}
+}

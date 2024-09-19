@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -61,7 +61,9 @@ export const TimeFormatOption = ( {
 			/>
 			<FormSettingExplanation>
 				<ExternalLink
-					href={ localizeUrl( 'https://wordpress.com/support/settings/time-settings/' ) }
+					href={ localizeUrl(
+						'https://wordpress.org/documentation/article/customize-date-and-time-format/'
+					) }
 					icon
 					target="_blank"
 				>

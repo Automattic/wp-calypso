@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
@@ -33,7 +33,7 @@ export default function SiteExpandedContent( {
 
 	return (
 		<div
-			className={ classNames( 'site-expanded-content', {
+			className={ clsx( 'site-expanded-content', {
 				'is-small-screen': isSmallScreen,
 			} ) }
 		>

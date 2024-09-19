@@ -10,6 +10,8 @@ jest.mock(
 		}
 );
 
+jest.mock( 'calypso/state/selectors/is-site-p2-hub' );
+
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -27,11 +29,13 @@ import moment from 'moment';
 import editorReducer from 'calypso/state/editor/reducer';
 import jetpackReducer from 'calypso/state/jetpack/reducer';
 import mediaReducer from 'calypso/state/media/reducer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import siteSettingsReducer from 'calypso/state/site-settings/reducer';
 import timezonesReducer from 'calypso/state/timezones/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SiteSettingsFormGeneral } from '../form-general';
+import SiteSettingPrivacyForm from '../site-setting-privacy/form';
 
 moment.tz = {
 	guess: () => moment(),
@@ -85,6 +89,7 @@ const props = {
 	selectedSite: {},
 	translate: ( x ) => x,
 	onChangeField: () => ( z ) => z,
+	handleToggle: () => ( z ) => z,
 	eventTracker: () => ( z ) => z,
 	trackEvent: () => ( z ) => z,
 	updateFields: () => ( z ) => z,
@@ -129,7 +134,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } />, {
+			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack />, {
 				ui: {
 					selectedSiteId: 1234,
 				},
@@ -159,7 +164,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: true,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
@@ -179,7 +183,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: true,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: true,
 				updateFields: jest.fn( ( fields ) => {
@@ -199,7 +202,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: true,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
@@ -215,7 +217,6 @@ describe( 'SiteSettingsFormGeneral', () => {
 				siteIsJetpack: false,
 				siteIsP2Hub: false,
 				isAtomicAndEditingToolkitDeactivated: false,
-				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
@@ -251,6 +252,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					wpcom_public_coming_soon: 0,
 					wpcom_coming_soon: 0,
 					blog_public: '-1',
+					wpcom_data_sharing_opt_out: false,
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
@@ -276,6 +278,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 
 			await userEvent.click( discourageRadio );
@@ -283,6 +286,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -339,6 +343,17 @@ describe( 'SiteSettingsFormGeneral', () => {
 		} );
 
 		test( 'Jetpack Site, Public -> click Discourage Search Engines', async () => {
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...jetpackProps } />, {
+				ui: {
+					selectedSiteId: 1234,
+				},
+			} );
+			expect(
+				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
+			).toBe( 0 );
+		} );
+
+		test( 'Jetpack Site, Public -> click Discourage Search Engines, Privacy Setting', async () => {
 			testProps = {
 				...jetpackProps,
 				isComingSoon: false,
@@ -347,6 +362,46 @@ describe( 'SiteSettingsFormGeneral', () => {
 					wpcom_public_coming_soon: 0,
 					wpcom_coming_soon: 0,
 					blog_public: 1,
+					wpcom_data_sharing_opt_out: false,
+				},
+			};
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingPrivacyForm { ...testProps } />,
+				{
+					ui: {
+						selectedSiteId: 1234,
+					},
+				}
+			);
+
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 1 );
+
+			const discourageRadio = getByLabelText( 'Discourage search engines from indexing this site', {
+				exact: false,
+			} );
+			expect( discourageRadio ).not.toBeChecked();
+
+			await userEvent.click( discourageRadio );
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
+				blog_public: 0,
+				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: true,
+			} );
+		} );
+
+		test( 'Jetpack Site, Public -> click Discourage AI training', async () => {
+			testProps = {
+				...jetpackProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				siteIsJetpack: true,
+				siteIsAtomic: true,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 1,
+					wpcom_data_sharing_opt_out: false,
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
@@ -360,18 +415,21 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
-			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 1 );
+			expect( container.querySelectorAll( '[name="wpcom_data_sharing_opt_out"]' ).length ).toBe(
+				1
+			);
 
-			const discourageRadio = getByLabelText( 'Discourage search engines from indexing this site', {
+			const discourageRadio = getByLabelText( 'Prevent third-party sharing for', {
 				exact: false,
 			} );
 			expect( discourageRadio ).not.toBeChecked();
 
 			await userEvent.click( discourageRadio );
 			expect( testProps.updateFields ).toHaveBeenCalledWith( {
-				blog_public: 0,
+				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -386,6 +444,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					blog_public: 0,
 				},
 			};
+
 			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
@@ -404,8 +463,9 @@ describe( 'SiteSettingsFormGeneral', () => {
 					blog_public: 0,
 				},
 			};
+
 			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
+				<SiteSettingPrivacyForm { ...testProps } />
 			);
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
@@ -430,8 +490,9 @@ describe( 'SiteSettingsFormGeneral', () => {
 					blog_public: 1,
 				},
 			};
+
 			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
+				<SiteSettingPrivacyForm { ...testProps } />
 			);
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
@@ -456,13 +517,29 @@ describe( 'SiteSettingsFormGeneral', () => {
 					blog_public: 0,
 				},
 			};
-			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
-			);
+
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 			// Staging sites shouldn't ever show the 'Launch site' container.
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
+		} );
+
+		test( 'Atomic Staging Site, Unlaunched, Privacy Setting', () => {
+			testProps = {
+				...atomicStagingProps,
+				isComingSoon: true,
+				isUnlaunchedSite: true,
+				fields: {
+					wpcom_public_coming_soon: 1,
+					wpcom_coming_soon: 0,
+					blog_public: 0,
+				},
+			};
+
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingPrivacyForm { ...testProps } />
+			);
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 			expect( getByLabelText( 'Coming Soon' ) ).toBeChecked();
 		} );
@@ -476,14 +553,31 @@ describe( 'SiteSettingsFormGeneral', () => {
 					wpcom_public_coming_soon: 1,
 					wpcom_coming_soon: 0,
 					blog_public: 0,
+					wpcom_data_sharing_opt_out: false,
 				},
 			};
-			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
-			);
+
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
+		} );
+
+		test( 'Atomic Staging Site, Coming Soon -> click Public, Privacy Setting', async () => {
+			testProps = {
+				...atomicStagingProps,
+				isComingSoon: true,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 1,
+					wpcom_coming_soon: 0,
+					blog_public: 0,
+				},
+			};
+
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingPrivacyForm { ...testProps } />
+			);
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 
 			const publicRadio = getByLabelText( 'Public' );
@@ -497,6 +591,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
 			} );
 		} );
 
@@ -511,12 +606,28 @@ describe( 'SiteSettingsFormGeneral', () => {
 					blog_public: 1,
 				},
 			};
-			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
-			);
+
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
+		} );
+
+		test( 'Atomic Staging Site, Public, Privacy Setting', () => {
+			testProps = {
+				...atomicStagingProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 1,
+				},
+			};
+
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingPrivacyForm { ...testProps } />
+			);
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
@@ -534,12 +645,28 @@ describe( 'SiteSettingsFormGeneral', () => {
 					blog_public: 0,
 				},
 			};
-			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
-			);
+
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
+		} );
+
+		test( 'Atomic Staging Site, Search Engines Discouraged, Privacy Setting', () => {
+			testProps = {
+				...atomicStagingProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 0,
+				},
+			};
+
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingPrivacyForm { ...testProps } />
+			);
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
@@ -588,6 +715,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -608,6 +736,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: true,
 			} );
 		} );
 
@@ -617,25 +746,45 @@ describe( 'SiteSettingsFormGeneral', () => {
 					'Coming soon',
 					'Coming Soon',
 					1,
-					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 1 },
+					{
+						blog_public: 0,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 1,
+					},
 				],
 				[
 					'Public',
 					'Public',
 					-1,
-					{ blog_public: 1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+					{
+						blog_public: 1,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 0,
+					},
 				],
 				[
 					'Hidden',
 					'Discourage search engines from indexing this site',
 					-1,
-					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+					{
+						blog_public: 0,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: true,
+						wpcom_public_coming_soon: 0,
+					},
 				],
 				[
 					'Private',
 					'Private',
 					1,
-					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+					{
+						blog_public: -1,
+						wpcom_coming_soon: 0,
+						wpcom_data_sharing_opt_out: false,
+						wpcom_public_coming_soon: 0,
+					},
 				],
 			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
 				test( `${ name } option should be selectable`, async () => {
@@ -662,7 +811,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 						},
 					};
 
-					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+					const { getByLabelText } = renderWithRedux( <SiteSettingPrivacyForm { ...newProps } /> );
 					const radioButtonComingSoon = getByLabelText( 'Coming soon', { exact: false } );
 					expect( radioButtonComingSoon ).not.toBeChecked();
 
@@ -679,7 +828,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 						},
 					};
 
-					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+					const { getByLabelText } = renderWithRedux( <SiteSettingPrivacyForm { ...newProps } /> );
 					const radioButtonComingSoon = getByLabelText( 'Coming soon', { exact: false } );
 					expect( radioButtonComingSoon ).toBeChecked();
 
@@ -698,7 +847,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					};
 
 					const { getByLabelText, container } = renderWithRedux(
-						<SiteSettingsFormGeneral { ...newProps } />
+						<SiteSettingPrivacyForm { ...newProps } />
 					);
 					expect(
 						container.querySelector( '.site-settings__visibility-label.is-coming-soon' )
@@ -732,7 +881,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					isAtomicAndEditingToolkitDeactivated: false,
 				};
 
-				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+				const { container } = renderWithRedux( <SiteSettingPrivacyForm { ...newProps } /> );
 				expect(
 					container.querySelectorAll( '.site-settings__visibility-label.is-coming-soon' )
 				).toHaveLength( 1 );
@@ -743,7 +892,8 @@ describe( 'SiteSettingsFormGeneral', () => {
 					...props,
 					isAtomicAndEditingToolkitDeactivated: true,
 				};
-				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+
+				const { container } = renderWithRedux( <SiteSettingPrivacyForm { ...newProps } /> );
 				expect(
 					container.querySelectorAll( '.site-settings__visibility-label.is-coming-soon' )
 				).toHaveLength( 0 );
@@ -758,8 +908,9 @@ describe( 'SiteSettingsFormGeneral', () => {
 					},
 					isAtomicAndEditingToolkitDeactivated: true,
 				};
-				const { getByLabelText, container } = renderWithRedux(
-					<SiteSettingsFormGeneral { ...newProps } />
+
+				const { container, getByLabelText } = renderWithRedux(
+					<SiteSettingPrivacyForm { ...newProps } />
 				);
 				expect( container.querySelector( '.site-settings__visibility-label.is-coming-soon' ) ).toBe(
 					null
@@ -780,13 +931,9 @@ describe( 'SiteSettingsFormGeneral', () => {
 
 		describe( 'P2 Hub', () => {
 			it( 'Should not show the privacy settings UI', () => {
-				testProps = {
-					...testProps,
-					isP2HubSite: true,
-				};
+				isSiteP2Hub.mockImplementation( () => true );
 
 				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
-
 				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
 			} );
 		} );

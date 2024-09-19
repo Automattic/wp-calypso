@@ -42,11 +42,14 @@ const VERBOSE = argv.verbose;
 try {
 	await runBuilder( argv );
 } catch ( e ) {
-	const { pid } = process;
-	if ( VERBOSE ) {
-		console.log( `Removing children of PID: ${ pid }` );
+	// treeKill doesn't really work in CI and also isn't necessary.
+	if ( process.env.IS_CI !== 'true' ) {
+		const { pid } = process;
+		if ( VERBOSE ) {
+			console.log( `Removing children of PID: ${ pid }` );
+		}
+		treeKill( pid );
 	}
-	treeKill( pid );
 	showTips( e.tasks );
 	console.error( e.message );
 }
@@ -71,10 +74,13 @@ async function runBuilder( args ) {
 	await Promise.all( [
 		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
-			if ( ! watch && sync ) {
-				// In non-watch + sync mode, we sync only once after the build has finished.
-				setupRemoteSync( localPath, remotePath );
-			}
+			const translate = runAll( 'translate', runOpts ).catch( () => {} );
+			translate.then( () => {
+				if ( ! watch && sync ) {
+					// In non-watch + sync mode, we sync only once after the build has finished.
+					setupRemoteSync( localPath, remotePath );
+				}
+			} );
 		} ),
 		// In watch + sync mode, we start watching to sync while the webpack build is happening.
 		watch && sync && setupRemoteSync( localPath, remotePath, true ),
@@ -160,10 +166,6 @@ function showTips( tasks ) {
 		return;
 	}
 
-	const tips = {
-		'build:newspack-blocks': 'You may need to run `composer install` from wp-calypso root.',
-	};
-
 	const numFailed = tasks.reduce( ( total, { code } ) => total + ( code ? 1 : 0 ), 0 );
 	if ( numFailed === tasks.length ) {
 		console.log(
@@ -171,13 +173,6 @@ function showTips( tasks ) {
 		);
 		return;
 	}
-
-	// If only individual tasks failed, print individual tips.
-	tasks.forEach( ( { code, name } ) => {
-		if ( code !== 0 && tips[ name ] ) {
-			console.log( tips[ name ] );
-		}
-	} );
 }
 
 function git( cmd ) {

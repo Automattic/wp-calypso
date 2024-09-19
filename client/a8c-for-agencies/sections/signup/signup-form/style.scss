@@ -1,0 +1,32 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.agency-signup-form {
+	max-width: 720px;
+	padding: 56px 32px 68px;
+
+	@include break-small {
+		padding: 56px 68px 68px;
+	}
+
+	.agency-signup-form__logo {
+		display: block;
+		margin-block-end: 52px;
+	}
+
+	.agency-signup-form__heading {
+		margin: 0 0 24px;
+		font-weight: 700;
+		font-size: 2rem;
+		line-height: 40px;
+		color: var(--color-neutral-100);
+	}
+
+	.agency-signup-form__subheading {
+		margin: 0 0 38px;
+		font-weight: 400;
+		font-size: 1rem;
+		line-height: 24px;
+		color: var(--color-neutral-100);
+	}
+}

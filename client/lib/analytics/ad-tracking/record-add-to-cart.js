@@ -1,4 +1,6 @@
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
@@ -46,24 +48,38 @@ export async function recordAddToCart( cartItem ) {
 			'AddToCart',
 			{
 				product_slug: cartItem.product_slug,
-				free_trial: Boolean( cartItem.free_trial ),
 			},
 		];
 		debug( 'recordAddToCart: [Facebook]', params );
 		window.fbq( ...params );
 
 		// Jetpack
-		params = [
-			'trackSingle',
-			TRACKING_IDS.facebookJetpackInit,
-			'AddToCart',
-			{
-				product_slug: cartItem.product_slug,
-				free_trial: Boolean( cartItem.free_trial ),
-			},
-		];
-		debug( 'recordAddToCart: [Jetpack]', params );
-		window.fbq( ...params );
+		if ( isJetpackCheckout() ) {
+			params = [
+				'trackSingle',
+				TRACKING_IDS.facebookJetpackInit,
+				'AddToCart',
+				{
+					product_slug: cartItem.product_slug,
+				},
+			];
+			debug( 'recordAddToCart: [Jetpack]', params );
+			window.fbq( ...params );
+		}
+
+		// Akismet
+		if ( isAkismetCheckout() ) {
+			params = [
+				'trackSingle',
+				TRACKING_IDS.facebookAkismetInit,
+				'AddToCart',
+				{
+					product_slug: cartItem.product_slug,
+				},
+			];
+			debug( 'recordAddToCart: [Akismet]', params );
+			window.fbq( ...params );
+		}
 	}
 
 	// Bing

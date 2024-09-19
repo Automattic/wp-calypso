@@ -1,10 +1,10 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
 
 export default function Column( { children, type, className } ) {
-	const columnClasses = classnames(
+	const columnClasses = clsx(
 		'layout__column',
 		type === 'main' && 'layout__column--main',
 		type === 'sidebar' && 'layout__column--sidebar',

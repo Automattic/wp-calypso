@@ -1,10 +1,10 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import Paid from 'calypso/components/jetpack/card/jetpack-product-card/display-price/paid';
 import { ProductData } from 'calypso/jetpack-cloud/sections/overview/primary/overview-products/jetpack-products';
-import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store/more-info-link';
 import { SimpleItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
-import { PartnerSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 interface Props {
 	productData: ProductData;
@@ -12,27 +12,26 @@ interface Props {
 }
 
 const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => {
-	if ( productData.data === undefined ) {
+	const translate = useTranslate();
+
+	if ( ! productData.data ) {
 		return null;
 	}
 
 	const productSlug = productData.slug ?? '';
 
-	const itemData: PartnerSelectorProduct = {
-		moreAboutUrl: productData.url,
-		shortName: <>{ productData.name }</>,
-		productSlug: productSlug,
-	};
-
 	const displayDescription = (
 		<>
 			{ productData.description } <br />
-			<MoreInfoLink
+			<Button
+				className="more-info-link"
 				onClick={ () => onMoreAboutClick( productData.data.slug ) }
-				item={ itemData }
-				isLinkExternal={ true }
-				withIcon={ false }
-			/>
+				plain
+			>
+				{ translate( 'More about {{productName/}}', {
+					components: { productName: <>{ productData.name }</> },
+				} ) }
+			</Button>
 		</>
 	);
 
@@ -53,7 +52,7 @@ const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => 
 
 	return (
 		<SimpleItemCard
-			isCondensedVersion={ true }
+			isCondensedVersion
 			title={ productData.name }
 			icon={ displayIcon }
 			description={ displayDescription }

@@ -1,28 +1,33 @@
-import classnames from 'classnames';
+import { DotPager } from '@automattic/components';
+import clsx from 'clsx';
 import { createElement, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
-import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import {
 	PRIMARY_CARD_COMPONENTS,
 	isUrgentCard,
 } from 'calypso/my-sites/customer-home/locations/card-components';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import trackMyHomeCardImpression, {
+	CardLocation,
+} from 'calypso/my-sites/customer-home/track-my-home-card-impression';
 
-const Primary = ( { cards, trackCard } ) => {
+const Primary = ( { cards } ) => {
 	const viewedCards = useRef( new Set() );
 
 	const handlePageSelected = ( index ) => {
+		if ( ! cards || ! cards.length || ! cards[ index ] ) {
+			return;
+		}
+
 		const selectedCard = cards && cards[ index ];
 		if ( viewedCards.current.has( selectedCard ) ) {
 			return;
 		}
 
 		viewedCards.current.add( selectedCard );
-		trackCard( selectedCard );
+		trackMyHomeCardImpression( { card: selectedCard, location: CardLocation.PRIMARY } );
 	};
 
-	useEffect( () => handlePageSelected( 0 ) );
+	useEffect( () => handlePageSelected( 0 ), [ cards ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -35,7 +40,7 @@ const Primary = ( { cards, trackCard } ) => {
 
 	return (
 		<DotPager
-			className={ classnames( 'primary__customer-home-location-content', {
+			className={ clsx( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
 			showControlLabels="true"
@@ -56,13 +61,4 @@ const Primary = ( { cards, trackCard } ) => {
 	);
 };
 
-const trackCardImpression = ( card ) => {
-	return composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-		bumpStat( 'calypso_customer_home_card_impression', card )
-	);
-};
-
-export default withPerformanceTrackerStop(
-	connect( null, { trackCard: trackCardImpression } )( Primary )
-);
+export default withPerformanceTrackerStop( Primary );

@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 
 const simplePaymentsNoticeTextWPCOM =
-	'Upgrade to a Premium or Business plan today and start collecting payments with the Pay with PayPal button!';
+	'Upgrade to a Explorer or Creator plan today and start collecting payments with the Pay with PayPal button!';
 
 const simplePaymentsNoticeTextJetpack =
 	'Upgrade to a Premium or Professional plan today and start collecting payments with the Pay with PayPal button!';

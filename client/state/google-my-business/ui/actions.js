@@ -4,7 +4,7 @@ import 'calypso/state/google-my-business/init';
 
 /**
  * Returns an action object to be used in signalling that the interval of the
- * Google My Business stats chart should change
+ * Google Business Profile stats chart should change
  * @param  {number} siteId Site ID
  * @param  {string} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
  * @param  {string} interval 'week' | 'month' | 'quarter'

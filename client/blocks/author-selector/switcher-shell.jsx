@@ -68,7 +68,7 @@ class AuthorSwitcherShell extends Component {
 							compact
 							onSearch={ this.props.updateSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
-							delaySearch={ true }
+							delaySearch
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ ! hasTouch() }
 						/>
@@ -179,7 +179,7 @@ class AuthorSwitcherShell extends Component {
 
 	renderLoadingAuthors = () => {
 		return (
-			<PopoverMenuItem disabled={ true } key="author-item-placeholder">
+			<PopoverMenuItem disabled key="author-item-placeholder">
 				<UserItem />
 			</PopoverMenuItem>
 		);

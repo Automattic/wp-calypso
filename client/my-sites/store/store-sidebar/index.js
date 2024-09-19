@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -19,7 +19,7 @@ class StoreSidebar extends Component {
 	dashboard = () => {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store' + siteSuffix;
-		const classes = classNames( {
+		const classes = clsx( {
 			dashboard: true,
 			'is-placeholder': ! site,
 			selected: true,
@@ -40,7 +40,7 @@ class StoreSidebar extends Component {
 
 		const link = site.URL + '/wp-admin/edit.php?post_type=product';
 
-		const classes = classNames( {
+		const classes = clsx( {
 			products: true,
 			'is-placeholder': ! site,
 		} );
@@ -59,7 +59,7 @@ class StoreSidebar extends Component {
 		const { site, translate } = this.props;
 		const link = site.URL + '/wp-admin/edit-comments.php';
 
-		const classes = classNames( {
+		const classes = clsx( {
 			reviews: true,
 			'is-placeholder': ! site,
 		} );
@@ -79,7 +79,7 @@ class StoreSidebar extends Component {
 
 		const link = site.URL + '/wp-admin/edit.php?post_type=shop_order';
 
-		const classes = classNames( {
+		const classes = clsx( {
 			orders: true,
 			'is-placeholder': ! site,
 		} );
@@ -99,7 +99,7 @@ class StoreSidebar extends Component {
 
 		const link = site.URL + '/wp-admin/edit.php?post_type=shop_coupon';
 
-		const classes = classNames( {
+		const classes = clsx( {
 			promotions: true,
 			'is-placeholder': ! site,
 		} );
@@ -119,7 +119,7 @@ class StoreSidebar extends Component {
 
 		const link = site.URL + '/wp-admin/admin.php?page=wc-settings';
 
-		const classes = classNames( {
+		const classes = clsx( {
 			settings: true,
 			'is-placeholder': ! site,
 		} );

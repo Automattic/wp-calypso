@@ -8,6 +8,9 @@ import {
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
+	JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES,
 } from './action-types';
 import type {
 	PurchasedProductsInfo,
@@ -71,10 +74,55 @@ const selectedLicenses: Reducer<
 	}
 	return state;
 };
+
+type License = { siteId: number; products: Array< string > };
+
+const addLicense = ( state: AppState, siteId: number, license: string ) => {
+	const foundSite = state.licenses.find(
+		( licenceItem: License ) => licenceItem.siteId === siteId
+	);
+	if ( ! foundSite ) {
+		return [ ...state.licenses, { siteId, products: [ license ] } ];
+	}
+	return state.licenses.map( ( licenceItem: License ) =>
+		licenceItem.siteId === siteId
+			? { ...licenceItem, products: Array.from( new Set( [ ...licenceItem.products, license ] ) ) }
+			: licenceItem
+	);
+};
+
+const removeLicense = ( state: AppState, siteId: number, license: string ) => {
+	return state.licenses.map( ( licenceItem: License ) =>
+		licenceItem.siteId === siteId
+			? {
+					...licenceItem,
+					products: licenceItem.products.filter( ( product: string ) => product !== license ),
+			  }
+			: licenceItem
+	);
+};
+
+const selectedSiteLicenses: Reducer<
+	{ licenses: Array< { siteId: number; products: Array< string > } > },
+	AnyAction
+> = ( state = { licenses: [] }, action: AnyAction ): AppState => {
+	switch ( action?.type ) {
+		case JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE:
+			return { ...state, licenses: addLicense( state, action.siteId, action.license ) };
+		case JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE:
+			return { ...state, licenses: removeLicense( state, action.siteId, action.license ) };
+		case JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES:
+			return { ...state, licenses: [] };
+		default:
+			return state;
+	}
+};
+
 const combinedReducer = combineReducers( {
 	purchasedLicense,
 	selectedLicenses,
 	siteMonitorStatus,
+	selectedSiteLicenses,
 } );
 
 export default withStorageKey( 'agencyDashboard', combinedReducer );

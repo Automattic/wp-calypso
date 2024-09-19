@@ -1,0 +1,57 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$iframe-background-color: #f7f7f7;
+
+.bank-details__iframe-container {
+	margin-block-start: 24px;
+	min-height: calc(100vh - 182px); // Take the full height & hide the scrollbar on the main page
+	height: 100%; // Setting the height to 100% to make sure the iFrame is always visible
+
+	.a4a-text-placeholder {
+		display: block;
+		min-height: calc(100vh - 182px); // Take the full height & hide the scrollbar on the main page
+		height: 100%;
+	}
+}
+
+.bank-details__layout.main.a4a-layout {
+	height: 100%; // Setting the height to 100% to make sure the iFrame is always visible
+
+	@include breakpoint-deprecated( ">660px" ) {
+		height: calc(100vh - 32px);
+	}
+
+	.a4a-layout__body {
+		background-color: $iframe-background-color;
+	}
+}
+
+.bank-details__heading {
+	padding-block: 8px;
+	font-size: rem(24px);
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.bank-details__subheading {
+	font-size: rem(16px);
+	line-height: 1.5;
+	color: var(--color-neutral-60);
+}
+
+.bank-details__layout--automated {
+	.a4a-layout__top-wrapper {
+		padding-block-start: 24px;
+		padding-block-end: 0;
+	}
+}
+
+.bank-details__status {
+	@include a4a-font-label-button;
+	color: var(--color-accent-80);
+
+	.badge {
+		margin-inline-start: 6px;
+	}
+}

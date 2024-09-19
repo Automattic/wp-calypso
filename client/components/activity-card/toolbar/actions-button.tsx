@@ -63,7 +63,18 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 	const isRestoreDisabled =
 		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
 
-	const onDownloadClick = () => dispatch( rewindRequestBackup( siteId, rewindId ) );
+	const onRestoreClick = () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_actions_restore_click' ) );
+	};
+
+	const onDownloadClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_actions_download_click', {
+				rewind_id: rewindId,
+			} )
+		);
+		dispatch( rewindRequestBackup( siteId, rewindId ) );
+	};
 
 	return (
 		<>
@@ -87,6 +98,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 					href={ ! isRestoreDisabled && backupRestorePath( siteSlug, rewindId ) }
 					className="toolbar__restore-button"
 					disabled={ isRestoreDisabled }
+					onClick={ onRestoreClick }
 				>
 					{ translate( 'Restore to this point' ) }
 				</Button>
@@ -133,7 +145,7 @@ const MultisiteActionsButton: React.FC< MultisiteOwnProps > = ( { siteSlug, rewi
 	return (
 		<Button
 			compact
-			isPrimary={ true }
+			isPrimary
 			href={ backupDownloadPath( siteSlug, rewindId ) }
 			className="toolbar__download-button--multisite"
 		>

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { extent as d3Extent } from 'd3-array';
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { line as d3Line } from 'd3-shape';
@@ -56,7 +56,7 @@ const Sparkline = ( {
 
 	return (
 		<D3Base
-			className={ classNames( 'sparkline', className ) }
+			className={ clsx( 'sparkline', className ) }
 			drawChart={ drawChart }
 			getParams={ getParams }
 		/>

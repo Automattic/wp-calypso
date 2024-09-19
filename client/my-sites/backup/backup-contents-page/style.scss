@@ -21,12 +21,39 @@
 		}
 	}
 
+	.status-card__header-content {
+		align-items: center;
+		display: flex;
+		// Given the layout is mobile-first, reverse the div arrangement by default
+		flex-direction: column-reverse;
+	}
+
+	.status-card__learn-about {
+		font-size: $font-body-small;
+		font-weight: 400;
+		text-decoration-line: underline;
+	}
+
+	.status-card__learn-about a {
+		color: var(--studio-gray-80);
+	}
+
 	// We are using the deprecated mixin to match the when the mobile navigation appears
 	// which is at 660px instead of the 600px break-small breakpoint.
 	@include breakpoint-deprecated( ">660px" ) {
 		&__back-button.components-button.is-link {
 			padding: 0 0 12px 0;
 			margin: 0;
+		}
+
+		.status-card__header-content {
+			// Return to the default div arrangement on the desktop
+			flex-direction: row;
+			flex-grow: 1;
+		}
+
+		.status-card__learn-about {
+			margin-left: auto;
 		}
 	}
 
@@ -90,7 +117,9 @@
 		}
 
 		.components-button {
+			border: 0;
 			font-size: $font-body-small;
+			font-weight: normal;
 			height: 32px;
 		}
 
@@ -267,8 +296,6 @@
 
 		svg.components-checkbox-control__checked,
 		svg.components-checkbox-control__indeterminate {
-			left: -2px;
-			top: -2px;
 			height: 20px;
 			width: 20px;
 		}

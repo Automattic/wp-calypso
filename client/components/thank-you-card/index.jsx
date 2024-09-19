@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
@@ -24,7 +24,7 @@ const ThankYouCard = ( {
 
 		return (
 			<a
-				className={ classnames( 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
+				className={ clsx( 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
 				href={ buttonUrl }
 			>
 				{ buttonText }
@@ -42,7 +42,7 @@ const ThankYouCard = ( {
 				) }
 
 				<div className="thank-you-card__header-detail">
-					<div className={ classnames( 'thank-you-card__name', { 'is-placeholder': ! name } ) }>
+					<div className={ clsx( 'thank-you-card__name', { 'is-placeholder': ! name } ) }>
 						{ name }
 					</div>
 				</div>

@@ -1,7 +1,7 @@
 import { Modal } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 
 type Device = 'mobile' | 'tablet' | 'desktop';
@@ -145,10 +145,7 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							onClick={ showMobilePreview }
 							color="inherit"
 							rel="noreferrer"
-							className={ classNames(
-								'link-preview',
-								previewSelected === 'mobile' ? 'active' : ''
-							) }
+							className={ clsx( 'link-preview', previewSelected === 'mobile' ? 'active' : '' ) }
 						>
 							<MobileIcon />
 							<span>{ __( 'Mobile' ) }</span>
@@ -158,10 +155,7 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							onClick={ showTabletPreview }
 							color="inherit"
 							rel="noreferrer"
-							className={ classNames(
-								'link-preview',
-								previewSelected === 'tablet' ? 'active' : ''
-							) }
+							className={ clsx( 'link-preview', previewSelected === 'tablet' ? 'active' : '' ) }
 						>
 							<TabletIcon />
 							<span>{ __( 'Tablet' ) }</span>
@@ -171,10 +165,7 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							onClick={ showDesktopPreview }
 							color="inherit"
 							rel="noreferrer"
-							className={ classNames(
-								'link-preview',
-								previewSelected === 'desktop' ? 'active' : ''
-							) }
+							className={ clsx( 'link-preview', previewSelected === 'desktop' ? 'active' : '' ) }
 						>
 							<DesktopIcon />
 							<span>{ __( 'Desktop' ) }</span>

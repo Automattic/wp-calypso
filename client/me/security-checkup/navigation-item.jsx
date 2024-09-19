@@ -1,6 +1,6 @@
+import { MaterialIcon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
-import MaterialIcon from 'calypso/components/material-icon';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 const SecurityCheckupNavigationItemContents = function ( props ) {
@@ -34,7 +34,7 @@ class SecurityCheckupNavigationItem extends Component {
 
 	render() {
 		if ( this.props.isPlaceholder ) {
-			return <VerticalNavItem isPlaceholder={ true } />;
+			return <VerticalNavItem isPlaceholder />;
 		}
 
 		return (

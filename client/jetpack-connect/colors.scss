@@ -1,3 +1,5 @@
+@import "~@automattic/color-studio/dist/color-variables";
+
 @mixin jetpack-connect-colors() {
 	// Override accent variables with Jetpack colors
 	--color-accent: var(--studio-jetpack-green-30);
@@ -18,9 +20,9 @@
 
 @mixin woocommerce-colors() {
 	// Override accent variables with WooCommerce colors
-	--color-accent: var(--studio-pink-50);
-	--color-accent-light: var(--studio-pink-30);
-	--color-accent-dark: var(--studio-pink-70);
+	--color-accent: var(--studio-woocommerce-purple);
+	--color-accent-light: var(--studio-woocommerce-purple-30);
+	--color-accent-dark: var(--studio-woocommerce-purple-70);
 
 	--color-woocommerce-onboarding-background: #f6f7f7;
 	--color-woocommerce-header-border: #dcdcde;
@@ -44,4 +46,22 @@
 	--color-primary: var(--studio-blue-40);
 	--color-accent-dark: var(--studio-blue-60);
 	--color-accent-60: var(--studio-blue-60);
+}
+
+@mixin automattic-for-agencies-colors() {
+	// Override accent variables with Jetpack colors
+	--color-accent: #{$studio-automattic-blue};
+	--color-accent-light: #{$studio-automattic-blue-20};
+	--color-accent-dark: #{$studio-automattic-blue-50};
+	--color-accent-60: #{$studio-automattic-blue-40};
+
+	// Override global colors with accent variables
+	--color-primary: #{$studio-automattic-blue};
+	--color-primary-light: #{$studio-automattic-blue-40};
+	--color-primary-dark: #{$studio-automattic-blue-50};
+
+	::selection {
+		color: var(--color-text-inverted);
+		background: var(--color-accent);
+	}
 }

@@ -31,7 +31,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 
-	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+	const isProductListFetching = useSelector( getIsProductListFetching );
 
 	// In the siteless-checkout flow, the subscription is transferred from temporary-site to the user's target site.
 	const subscriptionTransferSucceeded = destinationSiteId > 0;

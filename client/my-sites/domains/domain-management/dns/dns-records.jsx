@@ -62,6 +62,38 @@ class DnsRecords extends Component {
 		return dns?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field );
 	};
 
+	hasDefaultEmailRecords = () => {
+		const { dns, selectedDomainName } = this.props;
+
+		const hasDefaultDkim1Record = dns?.records?.some(
+			( record ) =>
+				record.type === 'CNAME' &&
+				record.name === `wpcloud1._domainkey` &&
+				record.data === 'wpcloud1._domainkey.wpcloud.com.'
+		);
+		const hasDefaultDkim2Record = dns?.records?.some(
+			( record ) =>
+				record?.type === 'CNAME' &&
+				record.name === `wpcloud2._domainkey` &&
+				record.data === 'wpcloud2._domainkey.wpcloud.com.'
+		);
+		const hasDefaultDmarcRecord = dns?.records?.some(
+			( record ) =>
+				record.type === 'TXT' && record.name === `_dmarc` && record.data?.startsWith( 'v=DMARC1' )
+		);
+		const hasDefaultSpfRecord = dns?.records?.some(
+			( record ) =>
+				record.type === 'TXT' &&
+				record.name === `${ selectedDomainName }.` &&
+				record.data?.startsWith( 'v=spf1' ) &&
+				record.data?.match( /\binclude:_spf.wpcloud.com\b/ )
+		);
+
+		return (
+			hasDefaultDkim1Record && hasDefaultDkim2Record && hasDefaultDmarcRecord && hasDefaultSpfRecord
+		);
+	};
+
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
@@ -98,6 +130,7 @@ class DnsRecords extends Component {
 				dns={ dns }
 				hasDefaultARecords={ this.hasDefaultARecords() }
 				hasDefaultCnameRecord={ this.hasDefaultCnameRecord() }
+				hasDefaultEmailRecords={ this.hasDefaultEmailRecords() }
 			/>
 		);
 
@@ -120,13 +153,13 @@ class DnsRecords extends Component {
 				key="mobile-add-new-record-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
-				isMobile={ true }
+				isMobile
 			/>,
 			<DnsImportBindFileButton
 				key="import-bind-file-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
-				isMobile={ true }
+				isMobile
 			/>,
 			optionsButton,
 		];
@@ -238,6 +271,7 @@ class DnsRecords extends Component {
 						<DnsRecordsList
 							dns={ dns }
 							selectedSite={ selectedSite }
+							selectedDomain={ selectedDomain }
 							selectedDomainName={ selectedDomainName }
 						/>
 						<EmailSetup selectedDomainName={ selectedDomainName } />

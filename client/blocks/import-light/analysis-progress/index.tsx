@@ -21,7 +21,7 @@ const AnalysisProgress: React.FunctionComponent< Props > = ( props ) => {
 			<div className="import__heading-center">
 				<Progress>
 					{ titleEl }
-					{ percentage && <ProgressBar value={ percentage } compact={ true } /> }
+					{ percentage && <ProgressBar value={ percentage } compact /> }
 					{ otherEl }
 				</Progress>
 			</div>

@@ -87,3 +87,4 @@ export { getThemeFiltersRequestError } from 'calypso/state/themes/selectors/get-
 export { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publish-theme-review';
 export { getThemeTiers } from 'calypso/state/themes/selectors/get-theme-tiers';
 export { getThemeTier } from 'calypso/state/themes/selectors/get-theme-tier';
+export { getThemeTierForTheme } from 'calypso/state/themes/selectors/get-theme-tier-for-theme';

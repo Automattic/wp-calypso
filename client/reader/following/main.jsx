@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
@@ -23,7 +23,7 @@ function FollowingStream( { ...props } ) {
 				<NavigationHeader
 					title={ translate( 'Recent' ) }
 					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
-					className={ classNames( 'following-stream-header', {
+					className={ clsx( 'following-stream-header', {
 						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 					} ) }
 				/>

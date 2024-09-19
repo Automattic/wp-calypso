@@ -1,11 +1,11 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { EMAIL_VALIDATION_AND_VERIFICATION } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryWhois from 'calypso/components/data/query-whois';
 import { resendIcannVerification } from 'calypso/lib/domains';
-import { EMAIL_VALIDATION_AND_VERIFICATION } from 'calypso/lib/url/support';
 import EmailVerificationCard from 'calypso/my-sites/domains/domain-management/components/email-verification';
 import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
 import { errorNotice } from 'calypso/state/notices/actions';

@@ -11,10 +11,9 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -74,6 +73,7 @@ const TOSItemWrapper = styled.div`
 	padding-left: 24px;
 	position: relative;
 	font-size: 12px;
+	margin: 1.5em auto 0;
 
 	> svg {
 		position: absolute;
@@ -213,11 +213,10 @@ export default function PaymentMethodSelector( {
 			theme={ theme }
 		>
 			<Card
-				className={ classNames( 'payment-method-selector__content', {
+				className={ clsx( 'payment-method-selector__content', {
 					'is-jetpack-cloud': isJetpackCloud(),
 				} ) }
 			>
-				<QueryPaymentCountries />
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 				) }

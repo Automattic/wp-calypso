@@ -1,0 +1,79 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.upsell-product-wpcom-plan-card .upsell-product-card {
+	&__included {
+		margin: 24px 0 0;
+	}
+
+	&__features {
+		list-style: none;
+		margin: 0 0 24px;
+		&.is-wpcom-features {
+			margin: 12px 0 0;
+		}
+	}
+
+	&__features-item {
+		margin-bottom: 12px;
+		span {
+			.is-placeholder & {
+				@include placeholder( --studio-gray-5 );
+			}
+		}
+
+		.gridicon {
+			fill: var(--studio-jetpack-green-50);
+			margin-right: 8px;
+		}
+	}
+
+	&__price-plan {
+		font-weight: 600;
+		font-size: 1.25rem;
+	}
+	&__price-container {
+		display: flex;
+	}
+
+	&__discount-label {
+		display: inline-block;
+		align-self: flex-start;
+
+		padding: 0.125rem 0.5rem;
+		margin: 22px 0 0 16px;
+
+		background-color: var(--studio-yellow-10);
+		border-radius: 4px;
+
+		font-size: $font-body-small;
+		font-weight: 700;
+		white-space: nowrap;
+
+		sup {
+			position: relative;
+			top: -0.5em;
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+			font-size: 0.75em;
+		}
+	}
+
+	&__above-button {
+		color: var(--studio-gray-40);
+		font-size: 0.875rem;
+		line-height: 1.2;
+	}
+}
+
+main.main.upsell-switch__loading.is_jetpackcom {
+	max-width: 1040px;
+}
+
+.upsell-product-wpcom-plan-card .display-price.is-placeholder .plan-price {
+	background: var(--studio-gray-5);
+}
+
+.upsell-product-wpcom-plan-card .display-price.is-placeholder .display-price__billing-time-frame {
+	background: var(--studio-gray-5);
+}

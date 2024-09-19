@@ -15,7 +15,7 @@ export default class ConversationFollowButtonExample extends PureComponent {
 					<ConversationFollowButton isFollowing={ false } />
 				</Card>
 				<Card compact>
-					<ConversationFollowButton isFollowing={ true } />
+					<ConversationFollowButton isFollowing />
 				</Card>
 			</div>
 		);

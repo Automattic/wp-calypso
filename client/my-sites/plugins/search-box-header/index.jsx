@@ -8,7 +8,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useTermsSuggestions } from './useTermsSuggestions';
+import { useTermsSuggestions } from '../use-terms-suggestions';
 import './style.scss';
 
 const SearchBox = ( {

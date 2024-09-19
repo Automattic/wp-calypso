@@ -7,7 +7,6 @@ const MISSING_BLOCK_NAME = 'core/missing';
 /**
  * Determines whether the provided collection of Blocks contains any "missing"
  * blocks as determined by the presence of the `core/missing` block type.
- *
  * @param blocks the collection of block objects to check for "missing" block .
  * @returns whether the collection blocks contains any missing blocks.
  */

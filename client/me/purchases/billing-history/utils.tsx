@@ -12,6 +12,7 @@ import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list
 import {
 	BillingTransaction,
 	BillingTransactionItem,
+	ReceiptCostOverride,
 } from 'calypso/state/billing-transactions/types';
 
 interface GroupedDomainProduct {
@@ -38,8 +39,34 @@ export const groupDomainProducts = (
 	>( ( groups, product ) => {
 		const existingGroup = groups.get( product.domain );
 		if ( existingGroup ) {
+			const mergedOverrides: ReceiptCostOverride[] = [];
+			existingGroup.product.cost_overrides = existingGroup.product.cost_overrides.map(
+				( existingGroupOverride ) => {
+					const productOverride = product.cost_overrides.find(
+						( override ) => override.override_code === existingGroupOverride.override_code
+					);
+					if ( productOverride ) {
+						mergedOverrides.push( productOverride );
+						return {
+							...existingGroupOverride,
+							new_price_integer:
+								existingGroupOverride.new_price_integer + productOverride.new_price_integer,
+							old_price_integer:
+								existingGroupOverride.old_price_integer + productOverride.old_price_integer,
+						};
+					}
+					return existingGroupOverride;
+				}
+			);
+			product.cost_overrides.forEach( ( override ) => {
+				if ( ! mergedOverrides.some( ( merged ) => merged.id === override.id ) ) {
+					existingGroup.product.cost_overrides.push( override );
+				}
+			} );
 			existingGroup.product.raw_amount += product.raw_amount;
 			existingGroup.product.amount_integer += product.amount_integer;
+			existingGroup.product.subtotal_integer += product.subtotal_integer;
+			existingGroup.product.tax_integer += product.tax_integer;
 			existingGroup.groupCount++;
 		} else {
 			const newGroup = {
@@ -83,10 +110,8 @@ export function transactionIncludesTax( transaction: BillingTransaction ) {
 
 export function TransactionAmount( {
 	transaction,
-	addingTax = false,
 }: {
 	transaction: BillingTransaction;
-	addingTax?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const taxName = useTaxName( transaction.tax_country_code );
@@ -101,28 +126,6 @@ export function TransactionAmount( {
 			</>
 		);
 	}
-
-	const addingTaxString = taxName
-		? translate( '(+%(taxAmount)s %(taxName)s)', {
-				args: {
-					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-					taxName,
-				},
-				comment:
-					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
-		  } )
-		: translate( '(+%(taxAmount)s tax)', {
-				args: {
-					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-				},
-				comment: 'taxAmount is a localized price, like $12.34',
-		  } );
 
 	const includesTaxString = taxName
 		? translate( '(includes %(taxAmount)s %(taxName)s)', {
@@ -146,8 +149,6 @@ export function TransactionAmount( {
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
 
-	const taxAmount = addingTax ? addingTaxString : includesTaxString;
-
 	return (
 		<Fragment>
 			<div>
@@ -156,7 +157,7 @@ export function TransactionAmount( {
 					stripZeros: true,
 				} ) }
 			</div>
-			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
+			<div className="transaction-amount__tax-amount">{ includesTaxString }</div>
 		</Fragment>
 	);
 }
@@ -226,6 +227,45 @@ function renderSpaceAddOnquantitySummary(
 		args: { quantity: licensed_quantity },
 		comment: '%(quantity)d is number of GBs purchased',
 	} );
+}
+
+export function renderDomainTransactionVolumeSummary(
+	{ volume, product_slug, type }: BillingTransactionItem,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( ! volume ) {
+		return null;
+	}
+
+	const isRenewal = 'recurring' === type;
+
+	volume = parseInt( String( volume ) );
+
+	if ( 'wp-domains' !== product_slug ) {
+		return null;
+	}
+
+	if ( isRenewal ) {
+		return translate(
+			'Domain renewed for %(quantity)d year',
+			'Domain renewed for %(quantity)d years',
+			{
+				args: { quantity: volume },
+				count: volume,
+				comment: '%(quantity)d is the number of years the domain has been renewed for',
+			}
+		);
+	}
+
+	return translate(
+		'Domain registered for %(quantity)d year',
+		'Domain registered for %(quantity)d years',
+		{
+			args: { quantity: volume },
+			count: volume,
+			comment: '%(quantity)d is number of years the domain has been registered for',
+		}
+	);
 }
 
 export function renderTransactionQuantitySummary(

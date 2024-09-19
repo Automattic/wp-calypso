@@ -33,4 +33,4 @@ function render() {
 ## Related components
 
 - To group buttons together, use the [ButtonGroup](./button-group) component.
-- To use show/hide certain content, use the [SegmentedControl](./segmented-control) component.
+- To use show/hide certain content, use the [SegmentedControl](/packages/components/segmented-control) component.

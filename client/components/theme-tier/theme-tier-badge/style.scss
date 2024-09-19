@@ -4,16 +4,25 @@
 	color: var(--color-neutral-60);
 	display: flex;
 	flex-basis: 100%;
+	flex-wrap: wrap;
 	font-size: $font-body-small;
 	line-height: 20px;
+	overflow: hidden;
+	white-space: nowrap;
 
 	.theme-tier-badge__content {
-		margin: 0 8px 0 0;
+		margin: 0 8px 4px 0;
+		max-width: 100%;
 		vertical-align: middle;
 
 		&.is-third-party {
 			background-color: var(--color-neutral-5);
 			color: var(--color-neutral-70);
+		}
+
+		.premium-badge__label {
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 }

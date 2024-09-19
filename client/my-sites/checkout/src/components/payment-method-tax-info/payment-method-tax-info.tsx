@@ -74,7 +74,7 @@ const PaymentMethodEditDialog: FunctionComponent< {
 			<CardHeading tagName="h2" size={ 24 }>
 				<strong>{ paymentMethodSummary }</strong>
 			</CardHeading>
-			{ error && <Notice status="is-error" isCompact={ true } text={ error } /> }
+			{ error && <Notice status="is-error" isCompact text={ error } /> }
 			<TaxFields
 				section={ `existing-card-payment-method-${ storedDetailsId }` }
 				taxInfo={ value }

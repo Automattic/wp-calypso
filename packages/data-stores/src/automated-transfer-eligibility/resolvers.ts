@@ -3,7 +3,6 @@ import { TransferEligibility, Dispatch } from './types';
 
 /**
  * Requests the site's transfer eligibility from the WPCOM API.
- *
  * @param   {number} siteId The id of the site to retrieve
  */
 export const getAutomatedTransferEligibility =

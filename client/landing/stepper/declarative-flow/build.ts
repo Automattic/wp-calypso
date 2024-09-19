@@ -1,10 +1,11 @@
 import { BUILD_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import LaunchPad from './internals/steps-repository/launchpad';
 import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -14,6 +15,7 @@ const build: Flow = {
 	get title() {
 		return 'WordPress';
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
@@ -25,22 +27,16 @@ const build: Flow = {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
+		const { exitFlow } = useExitFlow( { navigate, processing: true } );
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
+
+		const { postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
@@ -52,7 +48,12 @@ const build: Flow = {
 						);
 					}
 
-					return navigate( `launchpad` );
+					initializeLaunchpadState( {
+						siteId,
+						siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
+					} );
+
+					return postFlowNavigator( { siteId, siteSlug } );
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}

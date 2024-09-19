@@ -3,3 +3,8 @@ export { default as eye } from './eye';
 export { default as protect } from './protect';
 export { default as akismet } from './akismet';
 export { default as alert } from './alert';
+export { default as BraveTick } from './brave-tick';
+export { default as sparkles } from './sparkles';
+export { default as mail } from './mail';
+export { default as blockPostAuthor } from './block-post-author';
+export { default as commentContent } from './comment-content';

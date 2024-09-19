@@ -5,25 +5,21 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	NonProductLineItem,
-	hasCheckoutVersion,
 	LineItemType,
-	getCouponLineItemFromCart,
-	getSubtotalWithoutCoupon,
+	getSubtotalWithoutDiscounts,
+	getTotalDiscountsWithoutCredits,
+	isBillingInfoEmpty,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
-const CheckoutTermsWrapper = styled.div< {
-	showToSFoldableCard: boolean;
-} >`
+const CheckoutTermsWrapper = styled.div`
 	& > * {
 		margin: 16px 0;
-		padding-left: ${ ( { showToSFoldableCard } ) =>
-			hasCheckoutVersion( '2' ) || showToSFoldableCard ? null : '24px' };
+		padding-left: 0;
 		position: relative;
 	}
 
@@ -31,14 +27,6 @@ const CheckoutTermsWrapper = styled.div< {
 		margin: 16px 0;
 		padding-right: 24px;
 		padding-left: 0;
-	}
-
-	& > div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 0;
 	}
 
 	a {
@@ -52,14 +40,13 @@ const CheckoutTermsWrapper = styled.div< {
 	& .checkout__terms-foldable-card {
 		box-shadow: none;
 		padding: 0;
-		& .foldable-card__header {
+		&.is-compact .foldable-card__header {
 			font-size: 12px;
 			font-weight: 500;
 			line-height: 1.5;
 			padding: 0;
 		}
-		& .foldable-card.is-expanded,
-		.foldable-card__content {
+		&.is-expanded .foldable-card__content {
 			display: block;
 			padding: 0;
 			border-top: none;
@@ -80,58 +67,78 @@ const NonTotalPrices = styled.div`
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
-	padding: 16px 0;
+	padding: 16px 0 6px;
 `;
+
+const TaxNotCalculatedLineItemWrapper = styled.div`
+	font-size: 14px;
+	text-wrap: pretty;
+	line-height: 1em;
+	color: ${ ( { theme } ) => theme.colors.textColorLight };
+	margin-bottom: 8px;
+`;
+
+export function TaxNotCalculatedLineItem() {
+	const translate = useTranslate();
+	return (
+		<TaxNotCalculatedLineItemWrapper>
+			{ translate( 'Tax: to be calculated', {
+				textOnly: true,
+			} ) }
+		</TaxNotCalculatedLineItemWrapper>
+	);
+}
 
 export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
-	const subTotalLineItemWithoutCoupon: LineItemType = {
-		id: 'subtotal-without-coupon',
+
+	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart );
+	const discountLineItem: LineItemType = {
+		id: 'total-discount',
 		type: 'subtotal',
-		label: translate( 'Subtotal' ),
-		formattedAmount: formatCurrency( subtotalWithoutCoupon, responseCart.currency, {
+		label: translate( 'Discounts' ),
+		formattedAmount: formatCurrency( totalDiscount, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
 	};
 
-	const showToSFoldableCard = useToSFoldableCard();
+	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
+	const subTotalLineItemWithoutCoupon: LineItemType = {
+		id: 'subtotal-without-coupon',
+		type: 'subtotal',
+		label: totalDiscount > 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
+		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} ),
+	};
 
 	return (
 		<>
-			{ ! showToSFoldableCard ? (
-				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) : (
-				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
-					<CheckoutTerms cart={ responseCart } />
-				</CheckoutTermsWrapper>
-			) }
-
-			{ ! hasCheckoutVersion( '2' ) && (
-				<WPOrderReviewSection>
-					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						{ couponLineItem && <NonProductLineItem subtotal lineItem={ couponLineItem } /> }
-						{ taxLineItems.map( ( taxLineItem ) => (
-							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-						) ) }
-						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-						) }
-					</NonTotalPrices>
-					<TotalPrice>
-						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-					</TotalPrice>
-				</WPOrderReviewSection>
-			) }
+			<CheckoutTermsWrapper>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsWrapper>
+			<WPOrderReviewSection>
+				<NonTotalPrices>
+					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+					{ totalDiscount > 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+					) }
+				</NonTotalPrices>
+				<TotalPrice>
+					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+				</TotalPrice>
+				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
+			</WPOrderReviewSection>
 		</>
 	);
 }

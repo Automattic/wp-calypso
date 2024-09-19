@@ -25,12 +25,31 @@
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
 	}
 
+	.edit-post-header {
+		display: flex;
+		margin-top: 18px;
+
+		.placeholder {
+			height: 30px;
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
+		}
+
+		.edit-post-header-toolbar {
+			flex-grow: 1;
+		}
+	}
+
+	.edit-post-header__settings {
+		display: flex;
+	}
+
 	.placeholder-site {
+		width: 120px;
 		margin-left: 18px;
 	}
 
 	.placeholder-button {
-		width: 40px;
+		width: 30px;
 		margin: 0 8px;
 	}
 
@@ -46,7 +65,7 @@
 		.edit-post-layout__content {
 			//fixes a notice display issue in Safari
 			margin-left: 0;
-			@media ( min-width: 600px ) {
+			@media (min-width: 600px) {
 				top: 56px;
 			}
 			// Fixes a color consistency issue.
@@ -60,7 +79,7 @@
 		}
 
 		.components-notice-list {
-			@media ( max-width: 600px ) {
+			@media (max-width: 600px) {
 				top: auto;
 			}
 

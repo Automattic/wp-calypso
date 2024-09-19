@@ -27,7 +27,10 @@ module.exports = ( api, opts ) => ( {
 		],
 		[
 			require.resolve( '@babel/preset-react' ),
-			{ runtime: 'automatic', importSource: '@emotion/react' },
+			{
+				runtime: 'automatic',
+				importSource: opts.importSource ?? process.env.IMPORT_SOURCE,
+			},
 		],
 		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
 	],

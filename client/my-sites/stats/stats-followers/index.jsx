@@ -1,79 +1,33 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SUPPORT_URL } from '../const';
+import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
+
 import './style.scss';
+
+const MAX_FOLLOWERS_TO_SHOW = 10;
 
 class StatModuleFollowers extends Component {
 	state = {
 		activeFilter: 'wpcom-followers',
 	};
-
-	changeFilter = ( selection ) => {
-		const filter = selection.value;
-		let gaEvent;
-		if ( filter !== this.state.activeFilter ) {
-			switch ( filter ) {
-				case 'wpcom-followers':
-					gaEvent = 'Clicked By WordPress.com Followers Toggle';
-					break;
-				case 'email-followers':
-					gaEvent = 'Clicked Email Followers Toggle';
-					break;
-			}
-			if ( gaEvent ) {
-				this.props.recordGoogleEvent( 'Stats', gaEvent );
-			}
-
-			this.setState( {
-				activeFilter: filter,
-			} );
-		}
-	};
-
-	filterSelect() {
-		const { emailData, wpcomData } = this.props;
-		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
-		const hasWpcomFollowers = !! get( wpcomData, 'subscribers', [] ).length;
-		if ( ! hasWpcomFollowers || ! hasEmailFollowers ) {
-			return null;
-		}
-
-		const options = this.filterOptions();
-
-		return <StatsModuleSelectDropdown options={ options } onSelect={ this.changeFilter } />;
-	}
-
-	filterOptions() {
-		const { translate } = this.props;
-		return [
-			{
-				value: 'wpcom-followers',
-				label: translate( 'WordPress.com' ),
-			},
-			{
-				value: 'email-followers',
-				label: translate( 'Email' ),
-			},
-		];
-	}
 
 	calculateOffset( pastValue ) {
 		const { translate } = this.props;
@@ -113,26 +67,37 @@ class StatModuleFollowers extends Component {
 			translate,
 			emailQuery,
 			wpcomQuery,
-			isOdysseyStats,
+			isAtomic,
+			isJetpack,
+			className,
+			isAdminInterface,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
 		const hasWpcomFollowers = !! get( wpcomData, 'subscribers', [] ).length;
 		const noData = ! hasWpcomFollowers && ! hasEmailFollowers;
-		const activeFilter = ! hasWpcomFollowers ? 'email-followers' : this.state.activeFilter;
 		const hasError = hasEmailQueryFailed || hasWpcomQueryFailed;
 
 		const summaryPageSlug = siteSlug || '';
 		// email-followers is no longer available, so fallback to the new subscribers URL.
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
-		let summaryPageLink = '/people/subscribers/' + summaryPageSlug;
+		// If the site is Atomic, Simple Classic or Jetpack self-hosted, it links to Jetpack Cloud.
+		// jetpack/manage-simple-sites is the feature flag for allowing Simple sites in Jetpack Cloud.
+		const jetpackCloudLink = `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`;
+		const wpcomLink = `https://wordpress.com/people/subscribers/${ summaryPageSlug }`;
+		const summaryPageLink =
+			isAtomic || isJetpack || ( isEnabled( 'jetpack/manage-simple-sites' ) && isAdminInterface )
+				? jetpackCloudLink
+				: wpcomLink;
 
-		// Limit scope for Odyssey stats, as the Followers page is not yet available.
-		summaryPageLink = ! isOdysseyStats ? summaryPageLink : null;
-
-		const data =
-			( activeFilter === 'wpcom-followers' ? wpcomData?.subscribers : emailData?.subscribers ) ||
-			[];
+		// Combine data sets, sort by recency, and limit to 10.
+		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
+			.sort( ( a, b ) => {
+				// If value is undefined, send zero to ensure they sort to the bottom.
+				// Otherwise they stick to the top of the list which is not helpful.
+				return new Date( b.value?.value || 0 ) - new Date( a.value?.value || 0 );
+			} )
+			.slice( 0, MAX_FOLLOWERS_TO_SHOW );
 
 		return (
 			<>
@@ -149,13 +114,14 @@ class StatModuleFollowers extends Component {
 						value: this.calculateOffset( dataPoint.value?.value ), // case 'relative-date': value = this.props.moment( valueData.value ).fromNow( true );
 					} ) ) }
 					usePlainCard
+					hasNoBackground
 					title={ translate( 'Subscribers' ) }
 					emptyMessage={ translate(
 						'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
 						{
 							comment: '{{link}} links to support documentation.',
 							components: {
-								link: <a href={ localizeUrl( `${ SUPPORT_URL }#subscribers` ) } />,
+								link: <a href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) } />,
 							},
 							context: 'Stats: Info box label when the Subscribers module is empty',
 						}
@@ -187,14 +153,7 @@ class StatModuleFollowers extends Component {
 						)
 					}
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					toggleControl={
-						<SimplifiedSegmentedControl
-							options={ this.filterOptions() }
-							onSelect={ this.changeFilter }
-						/>
-					}
-					className="stats__modernised-followers"
-					isLinkUnderlined={ activeFilter === 'wpcom-followers' }
+					className={ clsx( 'stats__modernised-followers', className ) }
 					showLeftIcon
 				/>
 			</>
@@ -231,6 +190,9 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
+			isAtomic: isAtomicSite( state, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isAdminInterface: isAdminInterfaceWPAdmin( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

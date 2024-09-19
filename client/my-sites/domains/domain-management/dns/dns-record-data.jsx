@@ -1,8 +1,8 @@
+import { DNS_RECORDS_EDITING_OR_DELETING } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import { DNS_RECORDS_EDITING_OR_DELETING } from 'calypso/lib/url/support';
 import DnsRecordsListItem from './dns-records-list-item';
 
 class DnsRecordData extends Component {

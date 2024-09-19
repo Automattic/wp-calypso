@@ -13,6 +13,7 @@ export const useAnalyzeUrlQuery = ( domain: string, isValid?: boolean ) => {
 		meta: {
 			persist: false,
 		},
+		staleTime: 5000, // 5 seconds
 		enabled: !! domain && isValid,
 		retry: false,
 		refetchOnWindowFocus: false,

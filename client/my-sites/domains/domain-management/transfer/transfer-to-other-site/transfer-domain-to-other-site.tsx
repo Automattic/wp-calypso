@@ -55,7 +55,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 
 		return (
-			site.capabilities.manage_options &&
+			site?.capabilities?.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! isWpcomStagingSite &&
 			! ( site?.options?.is_domain_only ?? false ) &&
@@ -121,7 +121,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(
-			"Connect {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
+			"Attach {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
 			translateArgs
 		);
 	}
@@ -173,7 +173,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
-				label: translate( 'Connect' ),
+				label: translate( 'Attach' ),
 				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{

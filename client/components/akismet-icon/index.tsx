@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import type { AkismetIconType } from './types';
 
@@ -10,7 +10,7 @@ const AkismetIcon: AkismetIconType = ( {
 	<svg
 		width={ size }
 		height={ size }
-		className={ classNames( 'akismet-icon', className ) }
+		className={ clsx( 'akismet-icon', className ) }
 		viewBox="0 0 63 63"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"

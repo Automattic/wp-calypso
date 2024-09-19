@@ -1,7 +1,6 @@
 import {
 	ECOMMERCE_FLOW,
 	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_DOMAIN_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	FREE_FLOW,
 	COPY_SITE_FLOW,
@@ -35,14 +34,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		domains: 3,
 		plans: 4,
 		launchpad: 5,
-	},
-	[ LINK_IN_BIO_DOMAIN_FLOW ]: {
-		intro: 0,
-		user: 0,
-		patterns: 1,
-		linkInBioSetup: 2,
-		plans: 3,
-		launchpad: 4,
 	},
 	[ LINK_IN_BIO_TLD_FLOW ]: {
 		domains: 0,
@@ -86,7 +77,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		storeProfiler: 1,
 		designCarousel: 2,
 		domains: 3,
-		siteCreationStep: 4,
+		createSite: 4,
 		processing: 4,
 		waitForAtomic: 4,
 		checkPlan: 4,
@@ -94,7 +85,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 	[ COPY_SITE_FLOW ]: {
 		domains: 0,
-		'site-creation-step': 1,
+		'create-site': 1,
 		processing: 2,
 		'automated-copy': 3,
 		'processing-copy': 3,

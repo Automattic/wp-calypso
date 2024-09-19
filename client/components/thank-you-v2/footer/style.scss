@@ -1,0 +1,67 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.thank-you__footer {
+	max-width: 650px;
+	margin: 40px auto 50px;
+	width: 100%;
+
+	@include break-mobile {
+		margin: 50px auto;
+	}
+
+	.thank-you__footer-inner {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		margin-bottom: 50px;
+
+		@include break-medium {
+			padding: 0 25px;
+			flex-direction: row;
+		}
+	}
+
+	&.has-multiple-details {
+		.thank-you__footer-detail {
+			@include break-medium {
+				width: 50%;
+			}
+		}
+	}
+
+	.thank-you__footer-detail-title {
+		font-size: $font-body;
+		line-height: 20px;
+		font-weight: 500;
+		color: var(--studio-gray-100);
+	}
+
+	.thank-you__footer-detail-description {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-weight: 400;
+		margin: 8px 0 16px;
+	}
+
+	.thank-you__footer-detail-button {
+		border: none;
+		display: inline;
+		margin: inherit;
+		outline: inherit;
+		overflow: inherit;
+		text-align: left;
+		text-overflow: inherit;
+		text-decoration: underline;
+		vertical-align: inherit;
+		box-sizing: border-box;
+		padding: 0;
+		appearance: none;
+		background: none;
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-weight: 500;
+		color: var(--studio-blue-50);
+	}
+}

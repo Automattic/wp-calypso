@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
@@ -53,6 +53,7 @@ import {
 	getIsLivePreviewSupported,
 	getThemeTiers,
 	getThemeTier,
+	getThemeTierForTheme,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -66,6 +67,13 @@ const twentyfifteen = {
 	author_uri: 'https://wordpress.org/',
 };
 
+const freeThemeTier = {
+	slug: 'free',
+	name: 'Free',
+	plan: PLAN_FREE,
+	feature: FEATURE_WOOP,
+};
+
 const twentysixteen = {
 	id: 'twentysixteen',
 	name: 'Twenty Sixteen',
@@ -75,6 +83,7 @@ const twentysixteen = {
 	stylesheet: 'pub/twentysixteen',
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 	author_uri: 'https://wordpress.org/',
+	theme_tier: freeThemeTier,
 };
 
 const mood = {
@@ -2521,7 +2530,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2565,7 +2574,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
@@ -2611,7 +2620,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( "Should return false when the customer has a premium plan but didn't purchase a externally managed theme", () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -3420,22 +3429,48 @@ describe( '#getThemeTiers', () => {
 		expect( themeTiers ).toEqual( {} );
 	} );
 	test( 'should return the tier object if it exists', () => {
-		const themeTiers = getThemeTiers( { themes: { themeTiers: { free: {} } } } );
+		const themeTiers = getThemeTiers( { themes: { themeFilters: { tier: { free: {} } } } } );
 		expect( themeTiers ).toEqual( { free: {} } );
 	} );
 } );
 describe( '#getThemeTier', () => {
-	const state = { themes: { themeTiers: { free: { foo: 'bar' } } } };
 	test( 'should return an empty object if the state is empty', () => {
-		const themeTiers = getThemeTier( {}, 'free' );
-		expect( themeTiers ).toEqual( {} );
+		const themeTier = getThemeTier( {}, 'free' );
+		expect( themeTier ).toEqual( {} );
 	} );
+	const state = { themes: { themeFilters: { tier: { free: { foo: 'bar' } } } } };
 	test( 'should return an empty object if the tier is empty', () => {
-		const themeTiers = getThemeTier( state, null );
+		const themeTier = getThemeTier( state, null );
+		expect( themeTier ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const themeTier = getThemeTier( state, 'free' );
+		expect( themeTier ).toEqual( { foo: 'bar' } );
+	} );
+} );
+describe( '#getThemeTierForTheme', () => {
+	test( 'should return an empty object if the theme is not found', () => {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: null,
+				},
+			},
+		};
+		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
 		expect( themeTiers ).toEqual( {} );
 	} );
 	test( 'should return the tier object if it exists', () => {
-		const themeTiers = getThemeTier( state, 'free' );
-		expect( themeTiers ).toEqual( { foo: 'bar' } );
+		const state = {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: { twentysixteen },
+					} ),
+				},
+			},
+		};
+		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
+		expect( themeTiers ).toEqual( freeThemeTier );
 	} );
 } );

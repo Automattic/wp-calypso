@@ -1,10 +1,10 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import './style.scss';
 
 const FlowProgressIndicator = ( { flowLength, positionInFlow, translate, flowName } ) => {
 	if ( flowLength > 1 ) {
-		const flowClassName = classNames(
+		const flowClassName = clsx(
 			'flow-progress-indicator',
 			`flow-progress-indicator__${ flowName }`
 		);

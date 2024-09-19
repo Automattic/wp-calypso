@@ -27,10 +27,9 @@ export function validatePaymentMethods(
 export function validatePaymentMethod(
 	payment: ExternalPaymentMethod
 ): asserts payment is PaymentMethod {
-	const { id, label, submitButton, inactiveContent, getAriaLabel } = payment;
+	const { id, label, submitButton, getAriaLabel } = payment;
 	validateArg( id, 'Invalid payment method; missing id property' );
 	validateArg( label, `Invalid payment method '${ id }'; missing label` );
 	validateArg( submitButton, `Invalid payment method '${ id }'; missing submitButton` );
-	validateArg( inactiveContent, `Invalid payment method '${ id }'; missing inactiveContent` );
 	validateArg( getAriaLabel, `Invalid payment method '${ id }'; missing getAriaLabel` );
 }

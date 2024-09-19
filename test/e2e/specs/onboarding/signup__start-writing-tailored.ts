@@ -39,13 +39,15 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 
 	it( 'Publish first post', async function () {
 		const editorPage = new EditorPage( page );
+		await editorPage.waitUntilLoaded();
+		await page.getByLabel( 'Close', { exact: true } ).click();
 		await editorPage.enterTitle( 'my first post title' );
 		await editorPage.publish();
 		await page.getByText( "Your blog's almost ready!" ).waitFor();
 	} );
 
 	it( 'Add blog name and description', async function () {
-		await page.getByRole( 'button', { name: 'Name your blog' } ).click();
+		await page.getByText( 'Name your blog' ).click();
 
 		await page.locator( 'input[name="setup-form-input-name"]' ).fill( 'The Land of Foo' );
 		await page
@@ -56,7 +58,7 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 	} );
 
 	it( 'Ensure domain search is working', async function () {
-		await page.getByRole( 'button', { name: 'Choose a domain' } ).click();
+		await page.getByText( 'Choose a domain' ).click();
 		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.search( 'test' );
 		await page
@@ -71,7 +73,7 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 	} );
 
 	it( 'Select WordPress.com Free plan', async function () {
-		await page.getByRole( 'button', { name: 'Choose a plan' } ).click();
+		await page.getByText( 'Choose a plan' ).click();
 		// See https://github.com/Automattic/wp-calypso/pull/84468
 		await ElementHelper.reloadAndRetry( page, async function () {
 			await page.getByRole( 'button', { name: 'Start with Free' } ).click();

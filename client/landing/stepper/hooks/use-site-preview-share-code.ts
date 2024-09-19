@@ -24,7 +24,7 @@ export function useSitePreviewShareCode() {
 	} );
 
 	// Provides createLink() function used to generate a new site preview share code
-	const { createLink, isLoading: isCreatingSitePreviewLinks } = useCreateSitePreviewLink( {
+	const { createLink, isPending: isCreatingSitePreviewLinks } = useCreateSitePreviewLink( {
 		siteId: Number( site?.ID ),
 	} );
 

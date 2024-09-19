@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "2.0.1-beta.10",
+	"version": "2.1.0-beta.6",
 	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -29,38 +29,39 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
-		"src"
+		"src",
+		"CHANGELOG.md"
 	],
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepare": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^25.14.0",
-		"@wordpress/element": "^5.25.0",
-		"@wordpress/i18n": "^4.48.0",
-		"classnames": "^2.3.2",
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/i18n": "^5.2.0",
+		"clsx": "^2.1.1",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
-		"@testing-library/react": "^14.1.2",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.94.0"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.23.6",
+		"@babel/runtime": "^7.24.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

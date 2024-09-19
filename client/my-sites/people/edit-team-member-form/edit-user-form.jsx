@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useAddExternalContributorMutation from 'calypso/data/external-contributors/use-add-external-contributor-mutation';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
@@ -207,7 +207,7 @@ class EditUserForm extends Component {
 					<RoleSelect
 						key="role-select"
 						formControlType={ this.props.roleSelectControlType }
-						explanation={ true }
+						explanation
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }
@@ -312,7 +312,8 @@ class EditUserForm extends Component {
 			return null;
 		}
 
-		const { autoSave, translate, hasWPCOMAccountLinked, disabled, isUpdating } = this.props;
+		const { autoSave, currentUser, user, translate, hasWPCOMAccountLinked, disabled, isUpdating } =
+			this.props;
 
 		return (
 			<form
@@ -322,10 +323,10 @@ class EditUserForm extends Component {
 				onChange={ () => this.onFormChange() }
 			>
 				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, isUpdating ) ) }
-				{ hasWPCOMAccountLinked && (
+				{ hasWPCOMAccountLinked && user.ID !== currentUser.ID && (
 					<p className="edit-team-member-form__explanation">
 						{ translate(
-							'This user has a WordPress.com account, only they are allowed to update their personal information through their WordPress.com profile settings.'
+							'This user has a WordPress.com account. Only they are allowed to update their personal information through their WordPress.com profile settings.'
 						) }
 					</p>
 				) }

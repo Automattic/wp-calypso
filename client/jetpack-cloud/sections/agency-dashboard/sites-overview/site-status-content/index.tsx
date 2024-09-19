@@ -66,12 +66,18 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'stats' ) {
-		return <SiteStatsColumn stats={ rows.stats.value } />;
+		return (
+			<SiteStatsColumn
+				site={ rows.site.value }
+				stats={ rows.stats.value }
+				siteError={ hasAnyError }
+			/>
+		);
 	}
 
 	// We will show a progress icon when the site score is being fetched.
 	if ( type === 'boost' && status !== 'progress' ) {
-		return <SiteBoostColumn site={ rows.site.value } />;
+		return <SiteBoostColumn site={ rows.site.value } siteError={ hasAnyError } />;
 	}
 
 	return (

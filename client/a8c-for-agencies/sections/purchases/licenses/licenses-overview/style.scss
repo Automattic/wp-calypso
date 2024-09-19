@@ -1,0 +1,31 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.licenses-overview .search {
+	box-shadow: 0 0 0 1px var(--color-neutral-5);
+}
+
+.licenses-overview__empty-message {
+	margin: 32px auto;
+	text-align: center;
+}
+
+.a4a-licenses__header-actions {
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+
+		a {
+			width: 100%;
+		}
+	}
+
+	.button {
+		font-weight: 500;
+	}
+}
+
+.a4a-layout__navigation-wrapper {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-block-end: 1rem;
+	}
+}

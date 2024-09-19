@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import type { StatsCardProps } from './types';
 
@@ -12,6 +12,7 @@ const StatsCard = ( {
 	title,
 	titleURL,
 	titleAriaLevel = 4,
+	titleNodes,
 	footerAction,
 	isEmpty,
 	emptyMessage,
@@ -36,13 +37,14 @@ const StatsCard = ( {
 			role="heading"
 			aria-level={ titleAriaLevel }
 		>
-			{ title }
+			<div>{ title }</div>
+			<div className={ `${ BASE_CLASS_NAME }-header__title-nodes` }>{ titleNodes }</div>
 		</div>
 	);
 
 	// On one line shows card title and value column header
 	const simpleHeaderNode = (
-		<div className={ classNames( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
+		<div className={ clsx( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
 			{ titleNode }
 			{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
 		</div>
@@ -51,14 +53,16 @@ const StatsCard = ( {
 	// Show Card title on one line and all other column header(s) below:
 	// (main item, optional additional columns and value)
 	const splitHeaderNode = (
-		<div className={ `${ BASE_CLASS_NAME }-header ${ BASE_CLASS_NAME }-header--split` }>
+		<div
+			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
+		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
 				{ titleNode }
 				{ toggleControl }
 			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
-					<div className={ `${ BASE_CLASS_NAME }--column-header__left` }>
+					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
 						{ splitHeader && mainItemLabel }
 						{ additionalHeaderColumns && (
 							<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
@@ -67,7 +71,7 @@ const StatsCard = ( {
 						) }
 					</div>
 					{ ! isEmpty && (
-						<div className={ `${ BASE_CLASS_NAME }--column-header__right` }>
+						<div className={ `${ BASE_CLASS_NAME }--column-header__right` } key="right">
 							{ metricLabel ?? translate( 'Views' ) }
 						</div>
 					) }
@@ -78,7 +82,7 @@ const StatsCard = ( {
 
 	return (
 		<div
-			className={ classNames( className, BASE_CLASS_NAME, {
+			className={ clsx( className, BASE_CLASS_NAME, {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
@@ -87,7 +91,7 @@ const StatsCard = ( {
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
 					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
 					<div
-						className={ classNames( `${ BASE_CLASS_NAME }--body`, {
+						className={ clsx( `${ BASE_CLASS_NAME }--body`, {
 							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
 						} ) }
 					>

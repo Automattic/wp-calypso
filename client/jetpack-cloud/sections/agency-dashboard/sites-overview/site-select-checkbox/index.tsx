@@ -57,7 +57,7 @@ export default function SiteSelectCheckbox( {
 				id={ `${ item.site.value.blog_id }` }
 				onClick={ handleCheckboxClick }
 				checked={ item.isSelected }
-				readOnly={ true }
+				readOnly
 				disabled={ disabled || siteError }
 			/>
 

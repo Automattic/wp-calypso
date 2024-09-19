@@ -15,7 +15,7 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -29,7 +29,7 @@ export default function SubscriberDetails( props: Props ) {
 	const dispatch = useDispatch();
 	const { removeFollower, isSuccess: isRemoveFollowerSuccess } = useRemoveFollowerMutation();
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const { subscriberId, subscriberType } = props;
 	const [ templateState, setTemplateState ] = useState( 'loading' );
 	const { data: subscriber, isLoading } = useFollowerQuery(

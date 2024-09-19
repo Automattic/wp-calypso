@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog } from '@automattic/components';
+import { Dialog, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -13,7 +13,6 @@ import googleSheetsIcon from 'calypso/assets/images/email-providers/google-works
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useRemoveEmailForwardMutation from 'calypso/data/emails/use-remove-email-forward-mutation';
 import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
@@ -83,30 +82,26 @@ const getTitanMenuItems = ( {
 			href: getTitanEmailUrl( titanAppsUrlPrefix, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
-			isInternalLink: true,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
 		},
-		...( canCurrentUserAddEmail( domain )
-			? [
-					{
-						isInternalLink: true,
-						materialIcon: 'delete',
-						onClick: () => {
-							showRemoveMailboxDialog?.();
+		{
+			isInternalLink: true,
+			materialIcon: 'delete',
+			disabled: ! canCurrentUserAddEmail( domain ),
+			onClick: () => {
+				showRemoveMailboxDialog?.();
 
-							recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
-								domain_name: mailbox.domain,
-								mailbox: mailbox.mailbox,
-							} );
-						},
-						key: `remove_mailbox:${ mailbox.mailbox }`,
-						title: translate( 'Remove mailbox' ),
-					},
-			  ]
-			: [] ),
+				recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
+					domain_name: mailbox.domain,
+					mailbox: mailbox.mailbox,
+				} );
+			},
+			key: `remove_mailbox:${ mailbox.mailbox }`,
+			title: translate( 'Remove mailbox' ),
+		},
 	];
 };
 
@@ -367,11 +362,13 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 						materialIcon,
 						onClick,
 						title,
+						disabled,
 					} ) => (
 						<PopoverMenuItem
 							key={ href || key }
 							className="email-mailbox-action-menu__menu-item"
 							isExternalLink={ ! isInternalLink }
+							disabled={ disabled }
 							href={ href }
 							onClick={ onClick }
 						>

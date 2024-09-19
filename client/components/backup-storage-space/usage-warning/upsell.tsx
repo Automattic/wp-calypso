@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import { PlanPrice } from '@automattic/components';
+import clsx from 'clsx';
 import { useCallback, useEffect } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { useDispatch } from 'calypso/state';
@@ -32,7 +32,7 @@ export const UpsellPrice: React.FC< UpsellPriceProps > = ( {
 	isPriceFetching,
 	currencyCode,
 } ) => {
-	const priceClass = classNames( 'usage-warning__upsell-price', {
+	const priceClass = clsx( 'usage-warning__upsell-price', {
 		'is-placeholder': isPriceFetching,
 	} );
 

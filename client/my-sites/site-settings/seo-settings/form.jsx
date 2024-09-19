@@ -6,7 +6,7 @@ import {
 	findFirstSimilarPlanKey,
 	getPlan,
 } from '@automattic/calypso-products';
-import { Card, Button, FormInputValidation } from '@automattic/components';
+import { Card, Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
@@ -17,7 +17,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -295,7 +294,9 @@ export class SiteSettingsFormSEO extends Component {
 							);
 						} )() }
 					>
-						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
+						<NoticeAction href={ generalTabUrl }>
+							{ translate( 'Privacy Settings', { context: 'Site visibility settings' } ) }
+						</NoticeAction>
 					</Notice>
 				) }
 				{ conflictedSeoPlugin && (
@@ -321,7 +322,7 @@ export class SiteSettingsFormSEO extends Component {
 							'Get tools to optimize your site for improved search engine results.'
 						) }
 						event="calypso_seo_settings_upgrade_nudge"
-						showIcon={ true }
+						showIcon
 					/>
 				) }
 				<form
@@ -405,7 +406,7 @@ export class SiteSettingsFormSEO extends Component {
 									/>
 									{ hasHtmlTagError && (
 										<FormInputValidation
-											isError={ true }
+											isError
 											text={ translate( 'HTML tags are not allowed.' ) }
 										/>
 									) }

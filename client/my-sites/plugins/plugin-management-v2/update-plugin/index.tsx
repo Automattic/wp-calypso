@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { useSelector } from 'calypso/state';
@@ -53,63 +53,46 @@ export default function UpdatePlugin( {
 			( selectedSite ? parseInt( status.siteId ) === selectedSite.ID : true )
 	);
 
-	const handleUpdateConfirmation = () => {
-		setDisplayConfirmModal( true );
-	};
-
 	const pluginUpdateConfirmationTitle = translate( 'Update %(plugin)s', {
 		args: {
 			plugin: plugin.name ?? plugin.slug,
 		},
 	} );
 
-	const showConfirmationModal = () => (
-		<ConfirmModal
-			isVisible={ displayConfirmModal }
-			confirmButtonLabel={ translate( 'Update' ) }
-			text={ translate(
-				'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d site. ',
-				'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d sites. ',
-				{
-					count: siteCount ?? 1,
-					args: {
-						version: updatedVersions[ 0 ],
-						plugin: plugin.name ?? plugin.slug,
-						siteCount: String( siteCount ),
-					},
-				}
-			) }
-			title={ String( pluginUpdateConfirmationTitle ) }
-			onCancel={ () => setDisplayConfirmModal( false ) }
-			onConfirm={ () => {
-				updatePlugin && updatePlugin( plugin );
-			} }
-		/>
-	);
+	const onUpdatePlugin = useCallback( () => {
+		updatePlugin && updatePlugin( plugin );
+		setDisplayConfirmModal( false );
+	}, [ plugin, updatePlugin ] );
+
+	const onShowUpdateConfirmationModal = useCallback( () => {
+		setDisplayConfirmModal( true );
+	}, [] );
+
+	const onHideUpdateConfirmationModal = useCallback( () => {
+		setDisplayConfirmModal( false );
+	}, [] );
 
 	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
 	} else if ( updateStatuses.length > 0 ) {
 		content = (
-			<>
-				<div className="update-plugin__plugin-action-status">
-					<PluginActionStatus
-						showMultipleStatuses={ false }
-						currentSiteStatuses={ updateStatuses }
-						selectedSite={ selectedSite }
-						retryButton={
-							<Button
-								onClick={ () => updatePlugin && updatePlugin( plugin ) }
-								className="update-plugin__retry-button"
-								borderless
-								compact
-							>
-								{ translate( 'Retry' ) }
-							</Button>
-						}
-					/>
-				</div>
-			</>
+			<div className="update-plugin__plugin-action-status">
+				<PluginActionStatus
+					showMultipleStatuses={ false }
+					currentSiteStatuses={ updateStatuses }
+					selectedSite={ selectedSite }
+					retryButton={
+						<Button
+							onClick={ onUpdatePlugin }
+							className="update-plugin__retry-button"
+							borderless
+							compact
+						>
+							{ translate( 'Retry' ) }
+						</Button>
+					}
+				/>
+			</div>
 		);
 	} else if ( hasUpdate ) {
 		content = (
@@ -123,7 +106,7 @@ export default function UpdatePlugin( {
 				</span>
 				<Button
 					primary
-					onClick={ handleUpdateConfirmation }
+					onClick={ onShowUpdateConfirmationModal }
 					className="update-plugin__new-version"
 					compact
 				>
@@ -134,9 +117,29 @@ export default function UpdatePlugin( {
 						args: updatedVersions[ 0 ],
 					} ) }
 				</Button>
-				{ displayConfirmModal && showConfirmationModal() }
+
+				<ConfirmModal
+					isVisible={ displayConfirmModal }
+					confirmButtonLabel={ translate( 'Update' ) }
+					text={ translate(
+						'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d site. ',
+						'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d sites. ',
+						{
+							count: siteCount ?? 1,
+							args: {
+								version: updatedVersions[ 0 ],
+								plugin: plugin.name ?? plugin.slug,
+								siteCount: String( siteCount ),
+							},
+						}
+					) }
+					title={ String( pluginUpdateConfirmationTitle ) }
+					onCancel={ onHideUpdateConfirmationModal }
+					onConfirm={ onUpdatePlugin }
+				/>
 			</div>
 		);
 	}
-	return content ? <div className={ classNames( className ) }>{ content }</div> : null;
+
+	return content ? <div className={ clsx( className ) }>{ content }</div> : null;
 }

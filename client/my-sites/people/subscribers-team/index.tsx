@@ -18,7 +18,7 @@ import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
 import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
-import type { UsersQuery } from '../team-members/types';
+import type { UsersQuery } from '@automattic/data-stores';
 
 interface Props {
 	filter: string;
@@ -27,7 +27,7 @@ interface Props {
 function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID as number );
 	const pendingInvites = useSelector( ( state ) =>
@@ -110,7 +110,7 @@ function SubscribersTeam( props: Props ) {
 										title="People > Team Members / Invites"
 									/>
 
-									<TeamInvites singleInviteView={ true } />
+									<TeamInvites singleInviteView />
 									<TeamMembers
 										search={ search }
 										usersQuery={ usersQuery }

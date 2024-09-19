@@ -1,4 +1,6 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ActionCard from 'calypso/components/action-card';
@@ -22,6 +24,7 @@ import './style.scss';
 
 const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
@@ -103,6 +106,13 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
 					intent="plans-plugins"
+					showPlanTypeSelectorDropdown={
+						/**
+						 *	Override the default feature flag to prevent this feature from rendering in untested locations
+						 *  The hardcoded 'false' short curicuit should be removed once the feature is fully tested in the given context
+						 */
+						config.isEnabled( 'onboarding/interval-dropdown' ) && false
+					}
 				/>
 			</div>
 
@@ -111,16 +121,33 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			<ActionCard
 				classNames="plugin-plans"
 				headerText=""
-				mainText={ translate(
-					'Need some help? Let us help you find the perfect plan for your site. {{a}}Chat now{{/a}} or {{a}}contact our support{{/a}}.',
-					{
-						components: {
-							a: <ActionPanelLink href="/help/contact" />,
-						},
-					}
-				) }
-				buttonText={ translate( 'Upgrade to Business' ) }
-				buttonPrimary={ true }
+				mainText={
+					hasEnTranslation(
+						'Need some help? Let us help you find the perfect plan for your site. {{a}}Contact our support now{{/a}}.'
+					)
+						? translate(
+								'Need some help? Let us help you find the perfect plan for your site. {{a}}Contact our support now{{/a}}.',
+								{
+									components: {
+										a: <ActionPanelLink href="/help/contact" />,
+									},
+								}
+						  )
+						: translate(
+								'Need some help? Let us help you find the perfect plan for your site. {{a}}Chat now{{/a}} or {{a}}contact our support{{/a}}.',
+								{
+									components: {
+										a: <ActionPanelLink href="/help/contact" />,
+									},
+								}
+						  )
+				}
+				buttonText={
+					translate( 'Upgrade to %(planName)s', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) as string
+				}
+				buttonPrimary
 				buttonOnClick={ () => {
 					alert( 'Connect code after merging PR 68087' );
 				} }

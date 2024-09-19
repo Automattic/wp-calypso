@@ -1,4 +1,3 @@
-import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -7,9 +6,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import nextdoorExample from 'calypso/assets/images/connections/connections-nextdoor.png';
+import threadsExample from 'calypso/assets/images/connections/connections-threads.png';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
@@ -38,6 +37,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'tumblr',
 	'nextdoor',
 	'twitter',
+	'threads',
 	'google_photos',
 	'google-drive',
 	'mailchimp',
@@ -237,11 +237,13 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
-					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
+					alt: this.props.translate( 'Manage Google Business Profile locations', {
+						textOnly: true,
+					} ),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to view stats and other useful information from your ' +
-						'Google My Business account inside WordPress.com.',
+						'Google Business Profile account inside WordPress.com.',
 					{
 						components: {
 							strong: <strong />,
@@ -330,6 +332,26 @@ class SharingServiceExamples extends Component {
 		const image = {
 			src: nextdoorExample,
 			alt: this.props.translate( 'Share posts with your local community on Nextdoor.', {
+				textOnly: true,
+			} ),
+		};
+		return [
+			{
+				label,
+			},
+			{
+				image,
+			},
+		];
+	}
+
+	threads() {
+		const label = this.props.translate(
+			'Increase your presence in social media by sharing your posts automatically to Threads.'
+		);
+		const image = {
+			src: threadsExample,
+			alt: this.props.translate( 'Share posts to your Threads feed.', {
 				textOnly: true,
 			} ),
 		};
@@ -524,7 +546,7 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
-		if ( 'mastodon' === this.props.service.ID && this.props.isMastodonEligible ) {
+		if ( 'mastodon' === this.props.service.ID ) {
 			return (
 				<Mastodon
 					service={ this.props.service }
@@ -560,11 +582,8 @@ class SharingServiceExamples extends Component {
 }
 
 export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
 	return {
 		site: getSelectedSite( state ),
 		hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
-		isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 	};
 } )( localize( SharingServiceExamples ) );

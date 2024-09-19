@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { useLocale } from '@automattic/i18n-utils';
 import {
 	ECOMMERCE_FLOW,
@@ -22,7 +23,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
 import VideoPressIntroModalContent from './videopress-intro-modal-content';
 import type { Step } from '../../types';
-
 import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
@@ -41,11 +41,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 	if ( VIDEOPRESS_FLOW === flowName ) {
 		const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
 		let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
-			return plan.periodAgnosticSlug === 'premium';
+			return plan.periodAgnosticSlug === TIMELESS_PLAN_PREMIUM;
 		} );
 		if ( ! defaultSupportedPlan ) {
 			defaultSupportedPlan = supportedPlans.find( ( plan ) => {
-				return plan.periodAgnosticSlug === 'business';
+				return plan.periodAgnosticSlug === TIMELESS_PLAN_BUSINESS;
 			} );
 		}
 
@@ -187,7 +187,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			stepName="intro"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
+			isWideLayout
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }

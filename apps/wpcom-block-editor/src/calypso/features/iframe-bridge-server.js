@@ -6,6 +6,7 @@ import { dispatch, select, subscribe, use } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -13,7 +14,6 @@ import debugFactory from 'debug';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import {
 	getPages,
 	inIframe,
@@ -36,6 +36,32 @@ function addEditorListener( selector, cb ) {
 		addedListener = true;
 	}
 }
+
+function addCommandsInputListener( selector, cb ) {
+	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
+		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+
+		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
+			cb( e );
+		}
+	} );
+}
+
+/**
+ * Returns the Popover fallback container if exists or creates a new node
+ */
+const fallbackContainerClassname = 'components-popover__fallback-container';
+const getPopoverFallbackContainer = () => {
+	let container = document.body.querySelector( '.' + fallbackContainerClassname );
+	if ( ! container ) {
+		container = document.createElement( 'div' );
+		container.className = fallbackContainerClassname;
+		document.body.append( container );
+	}
+
+	return container;
+};
 
 // Calls a callback if the event occured on an element or parent thereof matching
 // the callback's selector. This is needed because elements are added and removed
@@ -85,6 +111,18 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
+	/**
+	 * As of Gutenberg 18.2, posts are trashed with code that we cannot override
+	 * via the actions registry, so we need to change the behavior overriding the
+	 * onClick event.
+	 *
+	 * See https://github.com/WordPress/gutenberg/blob/379e5f42d11a46dfa29fe4c595ba43f1f3ba9b17/packages/editor/src/components/post-actions/actions.js#L122-L220
+	 */
+	addEditorListener( '.editor-action-modal__move-to-trash button.is-primary', ( e ) => {
+		e.preventDefault();
+		calypsoPort.postMessage( { action: 'trashPost' } );
+	} );
+
 	use( ( registry ) => {
 		return {
 			dispatch: ( store ) => {
@@ -446,10 +484,6 @@ function handleCloseEditor( calypsoPort ) {
 		return;
 	}
 
-	if ( isNavSidebarPresent() ) {
-		return;
-	}
-
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
 			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
@@ -499,19 +533,8 @@ function handleCloseInLegacyEditors( handleClose ) {
 
 	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
 	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
-	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
-	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
+	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector })`;
 	addEditorListener( selector, handleClose );
-}
-
-/**
- * Uses presence of data store to detect whether the nav sidebar has been loaded.
- * Could run into timing issues, but the nav sidebar's data store is currently
- * loaded early enough that this works for our needs.
- */
-function isNavSidebarPresent() {
-	const selectors = select( NAV_SIDEBAR_STORE_KEY );
-	return !! selectors;
 }
 
 /**
@@ -692,13 +715,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				const popoverSlot = node.querySelector( '.components-popover' );
-
-				if ( popoverSlot ) {
-					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
+				if ( node?.classList?.contains( 'components-popover' ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
-					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
+
+					const manageNavigationMenusAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
 
@@ -722,8 +744,10 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotElem = document.querySelector( 'body' );
-	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+
+	// Observe children of the Popover Container
+	const popoverContainer = getPopoverFallbackContainer();
+	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -1020,39 +1044,6 @@ function handleCheckoutModal( calypsoPort ) {
 }
 
 /**
- * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleSiteEditorBackButton( calypsoPort ) {
-	// We use the traversal helper because the target element may be the SVG or an SVG element inside.
-	function traverseToFindLink( element, link, depth = 2 ) {
-		let foundLink = false;
-		while ( depth >= 0 ) {
-			if ( element.tagName.toLowerCase() === 'a' && element?.href === link ) {
-				foundLink = true;
-				break;
-			}
-			element = element.parentElement;
-			depth--;
-		}
-		return foundLink;
-	}
-
-	// have to do this event delegation style because the Editor isn't fully initialized yet.
-	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
-		const dashboardLink = select( 'core/edit-site' )?.getSettings?.().__experimentalDashboardLink;
-		// The link has changed. Pray it doesn't change any further.
-		// This is how to find it in Gutenberg 15.2.
-		const isDashboardLink = traverseToFindLink( event.target, dashboardLink );
-
-		if ( isDashboardLink ) {
-			event.preventDefault();
-			calypsoPort.postMessage( { action: 'navigateToHome' } );
-		}
-	} );
-}
-
-/**
  * If WelcomeTour is set to show, check if the App Banner is visible.
  * If App Banner is visible, we set the Welcome Tour to not show.
  * When the App Banner gets dismissed, we set the Welcome Tour to show.
@@ -1082,6 +1073,45 @@ function handleAppBannerShowing( calypsoPort ) {
 			} );
 		}
 	};
+}
+
+function handleWpAdminRedirect( { calypsoPort, path, title } ) {
+	const selector = `[data-value="${ title }"]`;
+
+	const callback = ( e ) => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'wpAdminRedirect',
+			payload: {
+				destinationUrl: `/wp-admin/${ path }`,
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
+}
+
+function handlePatterns( calypsoPort ) {
+	handleWpAdminRedirect( {
+		calypsoPort,
+		path: 'site-editor.php?postType=wp_block',
+		title: __( 'Patterns' ),
+	} );
+}
+
+function handleAddPage( calypsoPort ) {
+	handleWpAdminRedirect( {
+		calypsoPort,
+		path: 'post-new.php?post_type=page',
+		title: __( 'Add new page' ),
+	} );
+}
+
+function handleAddPost( calypsoPort ) {
+	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
 function initPort( message ) {
@@ -1185,7 +1215,11 @@ function initPort( message ) {
 
 		handleAppBannerShowing( calypsoPort );
 
-		handleSiteEditorBackButton( calypsoPort );
+		handlePatterns( calypsoPort );
+
+		handleAddPage( calypsoPort );
+
+		handleAddPost( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

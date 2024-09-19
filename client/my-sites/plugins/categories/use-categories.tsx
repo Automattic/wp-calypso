@@ -94,8 +94,8 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	popular: {
 		menu: __( 'Popular plugins' ),
-		title: __( 'The free essentials' ),
-		description: __( 'Add and install the very best free plugins' ),
+		title: __( 'Popular plugins' ),
+		description: __( 'Add and install the most popular free plugins' ),
 		slug: 'popular',
 		tags: [],
 		preview: [],

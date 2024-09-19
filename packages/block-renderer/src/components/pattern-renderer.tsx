@@ -6,21 +6,25 @@ import { usePatternsRendererContext } from './patterns-renderer-context';
 import type { RenderedStyle } from '../types';
 
 interface Props {
-	patternId: string;
-	viewportWidth?: number;
-	viewportHeight?: number;
-	minHeight?: number;
 	maxHeight?: 'none' | number;
+	minHeight?: number;
+	patternId: string;
+	scripts?: string;
+	styles?: RenderedStyle[];
 	transformHtml?: ( patternHtml: string ) => string;
+	viewportHeight?: number;
+	viewportWidth?: number;
 }
 
 const PatternRenderer = ( {
-	patternId,
-	viewportWidth,
-	viewportHeight,
-	minHeight,
 	maxHeight,
+	minHeight,
+	patternId,
+	scripts = '',
+	styles = [],
 	transformHtml,
+	viewportHeight,
+	viewportWidth,
 }: Props ) => {
 	const { renderedPatterns, shouldShufflePosts } = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
@@ -33,17 +37,19 @@ const PatternRenderer = ( {
 		patternHtml = transformHtml( patternHtml );
 	}
 
-	let patternStyles = pattern?.styles ?? [];
+	let patternStyles = [ ...styles, ...( pattern?.styles ?? [] ) ];
 	if ( shouldShufflePosts ) {
 		const css = shufflePosts( patternId, patternHtml );
 		patternStyles = [ ...patternStyles, { css } as RenderedStyle ];
 	}
 
+	const patternScripts = [ pattern?.scripts ?? '', scripts ];
+
 	return (
 		<BlockRendererContainer
 			key={ pattern?.ID }
 			styles={ patternStyles }
-			scripts={ pattern?.scripts ?? '' }
+			scripts={ patternScripts.join( '' ) }
 			viewportWidth={ viewportWidth }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }

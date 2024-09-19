@@ -112,7 +112,7 @@ const PluginsSearchResultPage = ( {
 
 		return (
 			<>
-				<UpgradeNudge siteSlug={ siteSlug } paidPlugins={ true } />
+				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
@@ -124,7 +124,7 @@ const PluginsSearchResultPage = ( {
 							<ClearSearchButton />
 						</>
 					}
-					showReset={ true }
+					showReset
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }
 					currentSites={ sites }

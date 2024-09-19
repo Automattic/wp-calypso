@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FC } from 'react';
 import './style.scss';
 
@@ -9,7 +9,7 @@ interface OutlookIconProps {
 const OutlookIcon: FC< OutlookIconProps > = ( { isEnabled = true, ...rest } ) => {
 	return (
 		<svg
-			className={ classNames( 'social-icons social-icons__outlook', {
+			className={ clsx( 'social-icons social-icons__outlook', {
 				'social-icons--disabled': ! isEnabled,
 			} ) }
 			width="20"

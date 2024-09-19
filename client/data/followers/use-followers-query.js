@@ -29,7 +29,7 @@ const useFollowersQuery = ( siteId, type = 'wpcom', fetchOptions = {}, queryOpti
 
 	return useInfiniteQuery( {
 		queryKey: [ 'followers', siteId, type, search ],
-		queryFn: async ( { pageParam = 1 } ) =>
+		queryFn: async ( { pageParam } ) =>
 			wpcom.req.get( `/sites/${ siteId }/followers`, {
 				...defaults,
 				...fetchOptions,
@@ -37,6 +37,7 @@ const useFollowersQuery = ( siteId, type = 'wpcom', fetchOptions = {}, queryOpti
 				page: pageParam,
 			} ),
 		...queryOptions,
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage, allPages ) => {
 			if ( lastPage.pages <= allPages.length || allPages.length >= MAX_FOLLOWERS ) {
 				return;

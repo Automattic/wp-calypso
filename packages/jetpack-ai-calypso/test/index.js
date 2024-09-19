@@ -13,8 +13,8 @@ import { render, screen } from '@testing-library/react';
 import { GeneratorModal } from '../src';
 
 describe( 'Base', () => {
-	it( 'should render Hello World', async () => {
-		render( <GeneratorModal /> );
-		expect( await screen.findByText( 'Hello World' ) ).toBeInTheDocument();
+	it( 'should render modal header', async () => {
+		render( <GeneratorModal isOpen /> );
+		expect( await screen.findByText( 'Jetpack AI Logo Generator' ) ).toBeInTheDocument();
 	} );
 } );

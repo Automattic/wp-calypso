@@ -1,7 +1,6 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import i18n, { getLocaleSlug, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -11,7 +10,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import {
@@ -22,7 +20,7 @@ import {
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
-import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
+import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -36,16 +34,7 @@ import useVatDetails from './vat-info/use-vat-details';
 function useLogPurchasesError( message ) {
 	return useCallback(
 		( error ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message,
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-				extra: {
-					env: config( 'env_id' ),
-					type: 'account_level_purchases',
-					message: convertErrorToString( error ),
-				},
-			} );
+			logStashLoadErrorEvent( 'account_level_purchases', error, { message } );
 		},
 		[ message ]
 	);
@@ -156,10 +145,7 @@ export function vatDetails( context, next ) {
 		const genericTaxName =
 			/* translators: This is a generic name for taxes to use when we do not know the user's country. */
 			translate( 'tax (VAT/GST/CT)' );
-		const fallbackTaxName =
-			getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
-				? genericTaxName
-				: translate( 'VAT', { textOnly: true } );
+		const fallbackTaxName = genericTaxName;
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 		const title = translate( 'Add %s details', {
 			textOnly: true,

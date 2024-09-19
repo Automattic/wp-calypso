@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -65,7 +65,7 @@ const PlanUpgradeSection: FC< Props > = ( {
 					),
 				},
 			} ) }
-			className={ classNames( { 'with-single-reco': newItemCount === 1 } ) }
+			className={ clsx( { 'with-single-reco': newItemCount === 1 } ) }
 		>
 			<p className="plan-upgrade__description">
 				{ translate(

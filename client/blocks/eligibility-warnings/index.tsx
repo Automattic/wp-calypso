@@ -11,7 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { useState } from 'react';
@@ -55,6 +55,7 @@ interface ExternalProps {
 	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
 	disableContinueButton?: boolean;
+	showFreeTrial?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -83,6 +84,7 @@ export const EligibilityWarnings = ( {
 	makeSitePublic,
 	translate,
 	disableContinueButton,
+	showFreeTrial,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -90,13 +92,14 @@ export const EligibilityWarnings = ( {
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
-	const classes = classNames(
+	const classes = clsx(
 		'eligibility-warnings',
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
-			'eligibility-warnings--without-title': context !== 'plugin-details',
+			'eligibility-warnings--without-title':
+				context !== 'plugin-details' && context !== 'hosting-features',
 		},
 		className
 	);
@@ -117,7 +120,13 @@ export const EligibilityWarnings = ( {
 			const planSlug = PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
-				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
+				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(
+					`/plugins/upload/${ siteSlug }?showUpgradeSuccessNotice=true`
+				) }`;
+			}
+			if ( showFreeTrial ) {
+				onProceed( options );
+				return;
 			}
 			page.redirect( redirectUrl );
 			return;
@@ -189,7 +198,17 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
+			{ context === 'hosting-features' && (
+				<CompactCard>
+					<div className="eligibility-warnings__header">
+						<div className="eligibility-warnings__title">
+							{ translate( 'Activate hosting features' ) }
+						</div>
+					</div>
+				</CompactCard>
+			) }
+
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && ! showFreeTrial && (
 				<CompactCard>
 					<HoldList
 						context={ context }
@@ -241,7 +260,7 @@ export const EligibilityWarnings = ( {
 						} ) }
 					</div>
 					<Button
-						primary={ true }
+						primary
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
@@ -251,7 +270,7 @@ export const EligibilityWarnings = ( {
 						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, context ) }
+						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -277,11 +296,15 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
-	context: string | null
+	context: string | null,
+	showFreeTrial?: boolean
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
 		if ( context === 'plugin-details' || context === 'plugins' ) {
 			return translate( 'Upgrade and activate plugin' );
+		}
+		if ( showFreeTrial ) {
+			return translate( 'Start your free trial' );
 		}
 		return translate( 'Upgrade and continue' );
 	}
@@ -290,6 +313,9 @@ function getProceedButtonText(
 	}
 	if ( siteRequiresGoingPublic( holds ) ) {
 		return translate( 'Make your site public and continue' );
+	}
+	if ( context === 'hosting-features' ) {
+		return translate( 'Activate hosting features' );
 	}
 
 	return translate( 'Continue' );
@@ -430,6 +456,10 @@ function mergeProps(
 			? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			: FEATURE_INSTALL_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
+	} else if ( ownProps.currentContext === 'hosting-features' ) {
+		context = ownProps.currentContext;
+		feature = FEATURE_SFTP;
+		ctaName = 'calypso-hosting-features-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;

@@ -62,12 +62,15 @@ class GoogleMyBusinessNewAccount extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-new-account" wideLayout>
-				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
+				<PageViewTracker
+					path="/google-my-business/new/:site"
+					title="Google Business Profile > New"
+				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+					{ translate( 'Google Business Profile' ) }
 				</HeaderCake>
 
 				<Card>
@@ -79,12 +82,12 @@ class GoogleMyBusinessNewAccount extends Component {
 						/>
 
 						<h1 className="gmb-new-account__heading">
-							{ translate( 'It looks like you might be new to Google My Business' ) }
+							{ translate( 'It looks like you might be new to Google Business Profile' ) }
 						</h1>
 
 						<p>
 							{ translate(
-								'Google My Business lists your local business on Google Search and Google Maps. ' +
+								'Google Business Profile lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location, or serve a local area.'
 							) }
 						</p>
@@ -101,7 +104,7 @@ class GoogleMyBusinessNewAccount extends Component {
 
 							<KeyringConnectButton
 								serviceId="google_my_business"
-								forceReconnect={ true }
+								forceReconnect
 								onClick={ this.trackUseAnotherGoogleAccountClick }
 								onConnect={ this.handleConnect }
 							>

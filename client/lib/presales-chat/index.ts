@@ -1,14 +1,15 @@
-import {
-	useChatStatus,
-	useMessagingAvailability,
-	useZendeskMessaging,
-} from '@automattic/help-center/src/hooks';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import {
+	useZendeskMessagingAvailability,
+	useLoadZendeskMessaging,
+	useCanConnectToZendeskMessaging,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+} from '@automattic/zendesk-client';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
+import type { ZendeskConfigName } from '@automattic/zendesk-client';
 
 export type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
 
@@ -17,7 +18,9 @@ declare global {
 		zE: (
 			action: string,
 			value: string,
-			handler?: ( callback: ( data: string | number ) => void ) => void
+			handler?:
+				| ( ( callback: ( data: string | number ) => void ) => void )
+				| { id: number; value: string }[]
 		) => void;
 	}
 }
@@ -55,19 +58,21 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	const isWpMobileAppUser = isWpMobileApp();
 	const group = getGroupName( keyType );
 
-	const { canConnectToZendesk } = useChatStatus( group, enabled );
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging(
+		enabled && ! skipAvailabilityCheck
+	);
 	const isEligibleForPresalesChat =
-		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
+		enabled && isEnglishLocale && canConnectToZendeskMessaging && ! isWpMobileAppUser;
 
-	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
-		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
+	const { data: chatAvailability, isLoading: isLoadingAvailability } =
+		useZendeskMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
 
 	const isPresalesChatAvailable =
 		skipAvailabilityCheck || Boolean( chatAvailability?.is_available );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
-	const { isMessagingScriptLoaded } = useZendeskMessaging(
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		zendeskKeyName,
 		isEligibleForPresalesChat && isPresalesChatAvailable,
 		isLoggedIn
@@ -81,6 +86,9 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		// presales chat is always shown by default
 		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
 			window.zE( 'messenger', 'show' );
+			window.zE( 'messenger:set', 'conversationFields', [
+				{ id: ZENDESK_SOURCE_URL_TICKET_FIELD_ID, value: window.location.href },
+			] );
 		}
 	}, [ enabled, isMessagingScriptLoaded, isPresalesChatAvailable ] );
 

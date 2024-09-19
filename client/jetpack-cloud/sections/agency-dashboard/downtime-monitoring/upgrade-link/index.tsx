@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -30,7 +30,7 @@ export default function UpgradeLink( { isInline = false } ) {
 
 	return (
 		<Button
-			className={ classNames( 'upgrade-link', { 'is-inline': isInline } ) }
+			className={ clsx( 'upgrade-link', { 'is-inline': isInline } ) }
 			borderless
 			compact
 			onClick={ handleOnClick }

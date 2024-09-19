@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import {
 	useSiteResetContentSummaryQuery,
 	useSiteResetMutation,
@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -26,7 +25,8 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { BuiltByUpsell } from './built-by-upsell-banner';
+import { DIFMUpsell } from './difm-upsell-banner';
+import { getSettingsSource } from './site-tools/utils';
 
 function SiteResetCard( {
 	translate,
@@ -44,6 +44,8 @@ function SiteResetCard( {
 	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
+
+	const source = getSettingsSource();
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {
@@ -305,11 +307,11 @@ function SiteResetCard( {
 				) }
 			/>
 			<PageViewTracker path="/settings/start-reset/:site" title="Settings > Site Reset" />
-			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
+			<HeaderCake backHref={ `${ source }/${ selectedSiteSlug }` }>
 				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
 			{ renderBody() }
-			<BuiltByUpsell
+			<DIFMUpsell
 				site={ site }
 				isUnlaunchedSite={ isUnlaunchedSiteProp }
 				urlRef="unlaunched-site-reset"

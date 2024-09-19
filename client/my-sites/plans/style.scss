@@ -25,9 +25,10 @@
 }
 
 body.is-section-plans {
-	.layout__content {
+	.layout:not(.has-no-sidebar) .layout__content {
 		@media (min-width: $break-small) {
-			padding: 79px 0 0 0 !important;
+			padding-left: 0 !important;
+			padding-right: 0 !important;
 		}
 		@media (min-width: $break-medium) {
 			padding-left: calc(var(--sidebar-width-max) + 1px) !important;
@@ -56,6 +57,12 @@ body.is-section-plans {
 			.main {
 				padding: 17px max(calc(50% - 612px), 15px);
 			}
+		}
+	}
+
+	.layout:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+		@media (min-width: $break-small) {
+			padding-top: 79px !important;
 		}
 	}
 }

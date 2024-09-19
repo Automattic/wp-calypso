@@ -5,6 +5,43 @@
 	display: flex;
 	flex-direction: row;
 
+	.multiple-choice-question {
+		margin-block-start: 0;
+		margin-block-end: 8px;
+
+		.form-legend {
+			display: none;
+		}
+
+		.multiple-choice-question__answers {
+			display: flex;
+			gap: 24px;
+		}
+
+		.multiple-choice-question__answer-item-content {
+			margin: 0;
+		}
+
+		.form-radio {
+			margin: 2px 0 0;
+			line-height: 1.5;
+		}
+
+		.form-label {
+			font-size: $font-body-small;
+			line-height: 1.5;
+			margin: 0;
+		}
+
+		.form-radio:checked::before {
+			background: var(--studio-green-50);
+		}
+
+		.form-radio__label {
+			font-size: $font-body-small;
+		}
+	}
+
 	@include break-medium {
 		gap: 1rem;
 	}
@@ -18,7 +55,7 @@
 	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 	border-radius: 4px;
 
-	@media only screen and ( min-width: 821px ) {
+	@media only screen and (min-width: 821px) {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -62,9 +99,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 	font-size: $font-body;
 	min-width: 5.7rem;
 	border-width: 0;
+	white-space: nowrap;
+
 	.gridicon.gridicons-checkmark {
 		transform: rotate(-8.37deg);
 		margin-right: 11.46px;

@@ -9,9 +9,6 @@
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
-# Repository configuration
-.github @Automattic/team-calypso-platform
-
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
@@ -24,7 +21,6 @@
 /client/lib/gsuite @Automattic/letero
 /client/lib/titan @Automattic/letero
 /client/me/purchases/remove-purchase/index.jsx @Automattic/letero
-/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/letero
 /client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/letero
 /client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/letero
 /client/my-sites/checkout/checkout/index.jsx @Automattic/letero
@@ -36,6 +32,7 @@
 /client/state/gsuite-users @Automattic/letero
 
 # Payments
+/client/lib/checkout/ @Automattic/shilling
 /client/me/purchases/add-new-payment-method/ @Automattic/shilling
 /client/me/purchases/billing-history/ @Automattic/shilling
 /client/me/purchases/manage-purchase/ @Automattic/shilling
@@ -58,21 +55,9 @@
 /client/types.ts @Automattic/type-review
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
-# Editing Toolkit Modules
-/apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
-/apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
-/apps/editing-toolkit/editing-toolkit-plugin/block-patterns @Automattic/dotcom-view-design
-
-# Editing Toolkit Workflow Files
-/.github/workflows/editing-toolkit-plugin.yml @noahtallen
-/.github/workflows/send-calypso-app-build-trigger.sh @noahtallen
-
 # Experimentation platform legacy library and new client
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
-
-# TeamCity configuration
-/.teamcity @Automattic/team-calypso-platform
 
 # I18n
 /bin/build-languages.js @Automattic/i18n
@@ -95,13 +80,6 @@
 /packages/i18n-utils @Automattic/i18n
 /packages/language-picker @Automattic/i18n
 /packages/languages @Automattic/i18n
-
-# E2E specs
-/test/e2e @Automattic/team-calypso-platform
-/packages/calypso-e2e @Automattic/team-calypso-platform
-
-# Node updates
-/.nvmrc @Automattic/team-calypso-platform
 
 # Domains
 /client/components/data/domain-management @Automattic/nomado
@@ -134,13 +112,16 @@
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech-decepticons
+/packages/plans-grid @Automattic/martech-decepticons
+/packages/plans-grid-next @Automattic/martech-decepticons
+/packages/data-stores/plans @Automattic/martech-decepticons
+/packages/data-stores/add-ons @Automattic/martech-decepticons
+/packages/data-stores/wpcom-plans-ui @Automattic/martech-decepticons
 
 # Importing
 /client/my-sites/importer @Automattic/caribou
 /client/blocks/import @Automattic/caribou
 /client/blocks/import-light @Automattic/caribou
-/client/blocks/importer @Automattic/caribou
-/client/my-sites/migrate @Automattic/caribou
 /client/landing/stepper/declarative-flow/import-flow.ts @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/import @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/import-list @Automattic/caribou
@@ -160,3 +141,17 @@
 # Renovate config
 /renovate.json5 @noahtallen
 /.github/workflows/renovate.yml @noahtallen
+
+# Support
+/packages/help-center @Automattic/vertex
+
+# Stepper internals
+client/landing/stepper/declarative-flow/internals @Automattic/dotcom-stepper
+client/landing/stepper/declarative-flow/helpers @Automattic/dotcom-stepper
+client/landing/stepper/utils @Automattic/dotcom-stepper
+client/landing/stepper/*.ts @Automattic/dotcom-stepper
+client/landing/stepper/*.tsx @Automattic/dotcom-stepper
+
+# Exclude Stepper steps
+client/landing/stepper/declarative-flow/internals/steps-repository
+

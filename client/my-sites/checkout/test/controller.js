@@ -50,7 +50,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	it( 'should not redirect if the plan is not a Jetpack legacy plan', () => {
 		utils.getProductSlugFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP_T1_YEARLY );
 
-		redirectJetpackLegacyPlans( {}, next );
+		redirectJetpackLegacyPlans( { store }, next );
 
 		expect( spy ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();

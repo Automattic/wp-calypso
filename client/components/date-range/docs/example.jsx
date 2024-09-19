@@ -46,7 +46,7 @@ class DateRangeExample extends Component {
 
 				<h3>Compact</h3>
 				<Card>
-					<DateRange isCompact={ true } />
+					<DateRange isCompact />
 				</Card>
 
 				<h3>Select only past dates</h3>
@@ -64,6 +64,30 @@ class DateRangeExample extends Component {
 
 				<h3>Custom Inputs Component</h3>
 				<Card>{ this.withCustomInputs() }</Card>
+
+				<h3>With Shortcuts Menu Displayed</h3>
+				<Card>
+					<DateRange displayShortcuts />
+				</Card>
+
+				<h3>With Arrow Navigation Enabled</h3>
+				<Card>
+					<DateRange useArrowNavigation />
+				</Card>
+
+				<h3>With Overlay Enabled</h3>
+				<Card>
+					<DateRange
+						useArrowNavigation
+						displayShortcuts
+						overlay={ <div>🔒 Please upgrade to use the date range picker.</div> }
+					/>
+				</Card>
+
+				<h3>With Custom Title</h3>
+				<Card>
+					<DateRange customTitle="Custom Title" />
+				</Card>
 			</Fragment>
 		);
 	}

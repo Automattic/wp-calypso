@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { filter, find, get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
@@ -38,6 +38,7 @@ class SelectDropdown extends Component {
 				path: PropTypes.string,
 				icon: PropTypes.element,
 				secondaryIcon: PropTypes.element,
+				count: PropTypes.number,
 			} )
 		),
 		isLoading: PropTypes.bool,
@@ -197,6 +198,7 @@ class SelectDropdown extends Component {
 						path={ item.path }
 						icon={ item.icon }
 						secondaryIcon={ item.secondaryIcon }
+						count={ item.count }
 					>
 						{ item.label }
 					</DropdownItem>
@@ -205,7 +207,7 @@ class SelectDropdown extends Component {
 	}
 
 	render() {
-		const dropdownClassName = classNames( 'select-dropdown', this.props.className, {
+		const dropdownClassName = clsx( 'select-dropdown', this.props.className, {
 			'is-compact': this.props.compact,
 			'is-open': this.state.isOpen && ! this.props.disabled,
 			'is-disabled': this.props.disabled,

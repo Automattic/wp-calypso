@@ -1,6 +1,7 @@
 export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
 	onNoticeViewed?: () => void;
 	isOdysseyStats: boolean;
+	isCommercial?: boolean;
 }
 
 export interface StatsNoticeProps {
@@ -18,6 +19,9 @@ export interface StatsNoticeProps {
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
 	isCommercialOwned?: boolean;
+	hasPWYWPlanOnly?: boolean;
+	showPaywallNotice?: boolean;
+	hasSignificantViews?: boolean;
 }
 
 export interface NoticeBodyProps {

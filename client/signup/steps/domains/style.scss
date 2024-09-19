@@ -9,12 +9,13 @@
 
 .signup__step.is-domains {
 	.action-buttons.step-wrapper__navigation {
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: none;
 		}
 	}
 }
 
+body.is-section-stepper .domains__step-content,
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
 
@@ -53,7 +54,6 @@
 	}
 
 	.search-component.is-open.has-focus {
-		border: none;
 		border-radius: 2px;
 		box-shadow: 0 0 0 3px var(--color-accent-light);
 	}
@@ -236,6 +236,7 @@
  * Styles for design reskin
  * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
  */
+body.is-section-stepper.is-group-stepper,
 body.is-section-signup.is-white-signup {
 	$light-white: #f3f4f5;
 
@@ -454,6 +455,10 @@ body.is-section-signup.is-white-signup {
 	.signup__step.is-domain-only,
 	.signup__step.is-domains,
 	.signup__step.is-mailbox-domain {
+		padding: 0 12px;
+	}
+
+	.step-container__content .domains__step-content-domain-step {
 		padding: 0 12px;
 	}
 }

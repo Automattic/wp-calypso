@@ -4,8 +4,6 @@ import './features/deprecate-coblocks-buttons';
 import './features/fix-block-invalidation-errors';
 import './features/fix-coblocks-fonts';
 import './features/reorder-block-categories';
-import './features/override-edit-site-back-button';
-import './features/override-edit-site-manage-all-pages';
 import './features/tracking';
 import './features/use-classic-block-guide';
 import { RedirectOnboardingUserAfterPublishingPost } from './features/redirect-onboarding-user-after-publishing-post';

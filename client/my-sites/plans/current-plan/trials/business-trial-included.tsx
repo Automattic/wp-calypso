@@ -16,8 +16,8 @@ interface Props {
 const BusinessTrialIncluded: FunctionComponent< Props > = ( props ) => {
 	const { displayAll = true, displayOnlyActionableItems = false, tracksContext } = props;
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const siteSlug = useSelector( getSelectedSiteSlug ) || '';
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const allIncludedFeatures = useBusinessTrialIncludedFeatures( siteSlug, siteAdminUrl || '' );

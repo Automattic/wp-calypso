@@ -1,5 +1,6 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Children, ReactNode, useLayoutEffect, useState } from 'react';
+import Breadcrumb, { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 
 type Props = {
@@ -19,7 +20,20 @@ export function LayoutHeaderActions( { children }: Props ) {
 	return <div className="jetpack-cloud-layout__header-actions">{ children }</div>;
 }
 
+export function LayoutHeaderBreadcrumb( { items }: { items: BreadcrumbItem[] } ) {
+	return (
+		<div className="jetpack-cloud-layout__header-breadcrumb">
+			<Breadcrumb items={ items } />
+		</div>
+	);
+}
+
 export default function LayoutHeader( { showStickyContent, children }: Props ) {
+	const headerBreadcrumb = Children.toArray( children ).find(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		( child: any ) => child.type === LayoutHeaderBreadcrumb
+	);
+
 	const headerTitle = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === LayoutHeaderTitle
@@ -70,16 +84,17 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 			style={ showStickyContent ? { minHeight: `${ minHeaderHeight }px` } : {} }
 		>
 			<div
-				className={ classNames( {
+				className={ clsx( {
 					'jetpack-cloud-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
 				<div
-					className={ classNames( 'jetpack-cloud-layout__header', {
+					className={ clsx( 'jetpack-cloud-layout__header', {
 						'has-actions': !! headerActions,
 					} ) }
 				>
 					<div className="jetpack-cloud-layout__header-main">
+						{ headerBreadcrumb }
 						{ headerTitle }
 						{ headerSubtitle }
 					</div>

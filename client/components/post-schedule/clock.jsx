@@ -1,3 +1,4 @@
+import { SegmentedControl } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -7,7 +8,6 @@ import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import SegmentedControl from 'calypso/components/segmented-control';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import {
 	is12hr,

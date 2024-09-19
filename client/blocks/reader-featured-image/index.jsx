@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
@@ -10,8 +10,6 @@ import {
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
 import './style.scss';
-
-const noop = () => {};
 
 const getFeaturedImageType = (
 	canonicalMedia,
@@ -152,6 +150,8 @@ const ReaderFeaturedImage = ( {
 		height: containerHeight,
 	};
 
+	const isPortrait = imageHeight > imageWidth;
+
 	if ( children ) {
 		// If there are children, then we are rendering an image tag inside the anchor tag
 		// In this case we will need to anchor tag will need specific styling to show the image(s)
@@ -164,13 +164,21 @@ const ReaderFeaturedImage = ( {
 			backgroundRepeat: 'no-repeat',
 		};
 	} else {
+		if ( isPortrait ) {
+			featuredImageStyle.background = 'var(--studio-gray-0)';
+		}
+
 		// Since there is no children in props, we need to create a new image tag to ensure the correct size is rendered
 		children = (
-			<img src={ safeCssUrl } alt="Featured" style={ { height: containerHeight, width: '100%' } } />
+			<img
+				src={ safeCssUrl }
+				alt="Featured"
+				style={ { height: containerHeight, ...( ! isPortrait && { width: '100%' } ) } }
+			/>
 		);
 	}
 
-	const classNames = classnames( className, 'reader-featured-image' );
+	const classNames = clsx( className, 'reader-featured-image' );
 
 	return (
 		<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
@@ -183,10 +191,6 @@ ReaderFeaturedImage.propTypes = {
 	canonicalMedia: PropTypes.object,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
-};
-
-ReaderFeaturedImage.defaultProps = {
-	onClick: noop,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

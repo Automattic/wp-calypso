@@ -1,41 +1,42 @@
-import classNames from 'classnames';
-import ChecklistItem from '../checklist-item';
-import { Task } from '../types';
-
+import clsx from 'clsx';
+import { Children, cloneElement, type FC, type ReactElement, type ComponentProps } from 'react';
+import ChecklistItem, { Placeholder as ChecklistItemPlaceholder } from '../checklist-item';
 import './style.scss';
 
-interface ChecklistProps {
-	tasks: Task[] | null;
+interface Props {
 	makeLastTaskPrimaryAction?: boolean;
+	children?:
+		| ReactElement< ComponentProps< typeof ChecklistItem > >
+		| ReactElement< ComponentProps< typeof ChecklistItem > >[];
 }
 
-const Checklist = ( { tasks, makeLastTaskPrimaryAction }: ChecklistProps ) => {
+const Checklist: FC< Props > = ( { children, makeLastTaskPrimaryAction } ) => {
+	const lastChildIndex = Children.count( children ) - 1;
+
 	return (
 		<ul
-			className={ classNames( 'checklist__tasks', {
+			className={ clsx( 'checklist__tasks', {
 				'checklist__has-primary-action': makeLastTaskPrimaryAction,
 			} ) }
 			aria-label="Launchpad Checklist"
 		>
-			{ tasks &&
-				tasks.map( ( task: Task, index: number ) => (
-					<ChecklistItem
-						key={ task.id }
-						task={ task }
-						isPrimaryAction={ makeLastTaskPrimaryAction && index === tasks.length - 1 }
-					/>
-				) ) }
+			{ Children.map( children || [], ( child, index ) => {
+				if ( index === lastChildIndex ) {
+					return cloneElement( child, { isPrimaryAction: makeLastTaskPrimaryAction } );
+				}
+				return child;
+			} ) }
 		</ul>
 	);
 };
 
-Checklist.Placeholder = () => {
+export const Placeholder = () => {
 	return (
 		<ul className="checklist__tasks" aria-label="Launchpad Checklist">
-			<ChecklistItem.Placeholder />
-			<ChecklistItem.Placeholder />
-			<ChecklistItem.Placeholder />
-			<ChecklistItem.Placeholder />
+			<ChecklistItemPlaceholder />
+			<ChecklistItemPlaceholder />
+			<ChecklistItemPlaceholder />
+			<ChecklistItemPlaceholder />
 		</ul>
 	);
 };

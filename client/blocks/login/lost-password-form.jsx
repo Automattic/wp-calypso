@@ -1,13 +1,14 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
-
+import { useDispatch } from 'calypso/state';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 const LostPasswordForm = ( {
 	redirectToAfterLoginUrl,
 	oauth2ClientId,
@@ -19,6 +20,7 @@ const LostPasswordForm = ( {
 	const [ email, setEmail ] = useState( '' );
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
+	const dispatch = useDispatch();
 
 	const validateEmail = () => {
 		if ( email.length === 0 || email.includes( '@' ) ) {
@@ -26,6 +28,19 @@ const LostPasswordForm = ( {
 		} else {
 			setError( translate( 'This email address is not valid. It must include a single @' ) );
 		}
+	};
+
+	const getAuthAccountTypeRequest = async ( emailAddress ) => {
+		const resp = await window.fetch(
+			`https://public-api.wordpress.com/rest/v1.1/users/${ emailAddress }/auth-options`,
+			{
+				method: 'GET',
+			}
+		);
+		if ( resp.status < 200 || resp.status >= 300 ) {
+			throw resp;
+		}
+		return await resp.json();
 	};
 
 	const lostPasswordRequest = async () => {
@@ -47,6 +62,34 @@ const LostPasswordForm = ( {
 
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
+
+		if (
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+			isWooCoreProfilerFlow
+		) {
+			const accountType = await getAuthAccountTypeRequest( email );
+			if ( accountType?.passwordless === true ) {
+				await dispatch(
+					sendEmailLogin( email, {
+						redirectTo: redirectToAfterLoginUrl,
+						loginFormFlow: true,
+						showGlobalNotices: true,
+						flow: 'jetpack',
+					} )
+				);
+				page(
+					login( {
+						isJetpack: true,
+						// If no notification is sent, the user is using the authenticator for 2FA by default
+						twoFactorAuthType: 'link',
+						locale: locale,
+						from: from,
+						emailAddress: email,
+					} )
+				);
+				return;
+			}
+		}
 
 		try {
 			setBusy( true );

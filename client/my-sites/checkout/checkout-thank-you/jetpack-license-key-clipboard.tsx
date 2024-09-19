@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -57,7 +57,7 @@ const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyProps > = ( {
 				</label>
 				<div className="jetpack-license-key-clipboard__container">
 					<FormTextInput
-						className={ classnames( 'jetpack-license-key-clipboard__input', {
+						className={ clsx( 'jetpack-license-key-clipboard__input', {
 							'is-loading': isLoadingLicense,
 						} ) }
 						value={ licenseKey }

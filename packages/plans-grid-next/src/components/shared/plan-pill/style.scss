@@ -1,0 +1,30 @@
+@import "@automattic/typography/styles/variables.scss";
+
+.plans-grid__plan-pill {
+	position: absolute;
+	bottom: -10px;
+	left: 14px;
+
+	padding: 4px;
+	border-radius: 2px;
+	background: var(--color-accent);
+
+	font-size: $font-body-extra-small;
+	text-align: center;
+	line-height: 1;
+	color: var(--color-text-inverted);
+	text-transform: uppercase;
+
+	white-space: nowrap;
+}
+
+.plans-grid__plan-pill.is-in-signup {
+	top: 10px;
+	bottom: unset;
+	right: 14px;
+	left: unset;
+	text-transform: none;
+	padding: 4px 10px;
+	border-radius: 10px; /* stylelint-disable-line scales/radii */
+	background-color: var(--color-neutral-100);
+}

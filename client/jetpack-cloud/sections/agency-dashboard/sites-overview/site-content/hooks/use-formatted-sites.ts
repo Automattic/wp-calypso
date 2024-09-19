@@ -1,8 +1,15 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
+	AUTOMOMANAGED_PLUGINS,
+	ECOMMERCE_BUNDLED_PLUGINS,
+	PREINSTALLED_PLUGINS,
+	PREINSTALLED_PREMIUM_PLUGINS,
+} from 'calypso/my-sites/plugins/constants';
+import {
 	BackupNode,
 	BoostNode,
+	ErrorNode,
 	MonitorNode,
 	PluginNode,
 	ScanNode,
@@ -149,8 +156,24 @@ const useFormatPluginData = () => {
 
 	return useCallback(
 		( site: Site ): PluginNode => {
-			const pluginUpdates = site.awaiting_plugin_updates;
+			const pluginUpdates = site.is_atomic
+				? site.awaiting_plugin_updates?.filter(
+						( plugin ) =>
+							! PREINSTALLED_PLUGINS.includes( plugin ) &&
+							! AUTOMOMANAGED_PLUGINS.includes( plugin ) &&
+							! ECOMMERCE_BUNDLED_PLUGINS.includes( plugin ) &&
+							! Object.keys( PREINSTALLED_PREMIUM_PLUGINS ).includes( plugin )
+				  )
+				: site.awaiting_plugin_updates;
 
+			if ( ! pluginUpdates ) {
+				return {
+					value: '',
+					status: 'disabled',
+					type: 'plugin',
+					updates: 0,
+				};
+			}
 			return {
 				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
 				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
@@ -161,6 +184,12 @@ const useFormatPluginData = () => {
 		[ translate ]
 	);
 };
+
+const formatErrorData = ( site: Site ): ErrorNode => ( {
+	status: site.is_connection_healthy ? 'success' : 'failed',
+	type: 'error',
+	value: site.is_connection_healthy ? 'error' : '',
+} );
 
 const useFormatSite = () => {
 	const formatBackupData = useFormatBackupData();
@@ -183,6 +212,7 @@ const useFormatSite = () => {
 				scan: formatScanData( site ),
 				monitor: formatMonitorData( site ),
 				plugin: formatPluginData( site ),
+				error: formatErrorData( site ),
 				isFavorite: site.is_favorite,
 				isSelected: site.isSelected,
 				onSelect: site.onSelect,

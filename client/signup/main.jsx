@@ -40,14 +40,17 @@ import {
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+	isBlazeProOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	isUserLoggedIn,
@@ -58,6 +61,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -71,6 +75,7 @@ import {
 	getSitePlanName,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import BlazeProSignupProcessingScreen from './blaze-pro-processing-screen';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -130,7 +135,6 @@ class Signup extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
-		loadTrackingTool: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -245,7 +249,10 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
+
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.enableHotjar ) {
+			addHotJarScript();
+		}
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
@@ -306,7 +313,7 @@ class Signup extends Component {
 				this.props.locale
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
-			this.handleDestination( this.props.signupDependencies, stepUrl );
+			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
 		}
 	}
 
@@ -329,7 +336,7 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies, hostingFlow, queryObject } = this.props;
+		const { signupDependencies, hostingFlow, queryObject, wccomFrom, oauth2Client } = this.props;
 		const mainFlow = queryObject?.main_flow;
 
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
@@ -346,6 +353,8 @@ class Signup extends Component {
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 			is_in_hosting_flow: hostingFlow,
+			wccom_from: wccomFrom,
+			oauth2_client_id: oauth2Client?.id,
 			...( mainFlow ? { flow: mainFlow } : {} ),
 		};
 	}
@@ -403,7 +412,7 @@ class Signup extends Component {
 
 		await this.handlePostFlowCallbacks( dependencies );
 
-		this.handleDestination( dependencies, filteredDestination );
+		this.handleDestination( dependencies, filteredDestination, this.props.flowName );
 	};
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -553,7 +562,7 @@ class Signup extends Component {
 		}
 	};
 
-	handleDestination( dependencies, destination ) {
+	handleDestination( dependencies, destination, flowName ) {
 		if ( this.props.isLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
@@ -563,6 +572,11 @@ class Signup extends Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
+				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
+				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
+					page( destination );
+					return;
+				}
 				window.location.href = destination;
 			} );
 
@@ -784,6 +798,10 @@ class Signup extends Component {
 			);
 		}
 
+		if ( isBlazeProOAuth2Client( this.props.oauth2Client ) ) {
+			return <BlazeProSignupProcessingScreen />;
+		}
+
 		return <SignupProcessingScreen flowName={ this.props.flowName } />;
 	}
 
@@ -965,13 +983,13 @@ export default connect(
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
 		};
 	},
 	{
 		submitSignupStep,
 		removeStep,
-		loadTrackingTool,
 		addStep,
 	}
 )( Signup );

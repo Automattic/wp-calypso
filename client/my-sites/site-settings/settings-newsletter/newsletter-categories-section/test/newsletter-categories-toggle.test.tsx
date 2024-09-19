@@ -19,7 +19,7 @@ describe( 'NewsletterCategoriesToggle', () => {
 	it( 'renders toggle control correctly with given value', () => {
 		const mockHandleToggle = jest.fn();
 		const { getByText } = render(
-			<NewsletterCategoriesToggle value={ true } handleToggle={ mockHandleToggle } />
+			<NewsletterCategoriesToggle value handleToggle={ mockHandleToggle } />
 		);
 
 		expect( getByText( 'Enable newsletter categories' ) ).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe( 'NewsletterCategoriesToggle', () => {
 		const mockHandleChange = jest.fn();
 		const mockHandleToggle = jest.fn().mockImplementation( () => mockHandleChange );
 		const { getByLabelText } = render(
-			<NewsletterCategoriesToggle value={ true } handleToggle={ mockHandleToggle } />
+			<NewsletterCategoriesToggle value handleToggle={ mockHandleToggle } />
 		);
 
 		fireEvent.click( getByLabelText( 'Enable newsletter categories' ) );
@@ -54,11 +54,7 @@ describe( 'NewsletterCategoriesToggle', () => {
 	it( 'disables toggle control when disabled prop is true', () => {
 		const mockHandleToggle = jest.fn().mockImplementation( () => () => undefined );
 		const { getByLabelText } = render(
-			<NewsletterCategoriesToggle
-				value={ true }
-				disabled={ true }
-				handleToggle={ mockHandleToggle }
-			/>
+			<NewsletterCategoriesToggle value disabled handleToggle={ mockHandleToggle } />
 		);
 
 		const button = getByLabelText( 'Enable newsletter categories' );

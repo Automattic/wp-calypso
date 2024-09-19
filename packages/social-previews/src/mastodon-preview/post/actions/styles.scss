@@ -2,34 +2,19 @@
 
 .mastodon-preview__post-actions {
 	margin-top: 1rem;
-
-	ul {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-
-		margin: 0;
-		padding: 0;
-
-		list-style-type: none;
-
-		> li {
-			display: flex;
-			align-items: center;
-			gap: 0.25rem;
-
-			margin: 0;
-		}
-	}
-}
-
-.mastodon-preview__post-icon-wrapper {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 
-	width: 24px;
-	height: 24px;
+	& > div {
+		display: flex;
+		align-items: center;
+		color: #606984;
+	}
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .mastodon-preview__post-icon-text {

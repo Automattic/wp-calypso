@@ -22,6 +22,8 @@ export type CampaignResponse = {
 	target_urn: string;
 	delivery_percent: number;
 	format: string;
+	budget_cents: number;
+	type: string;
 	campaign_stats: {
 		impressions_total: number;
 		clicks_total: number;
@@ -36,6 +38,10 @@ export type CampaignResponse = {
 		views_organic: number;
 		views_organic_rate: number;
 		views_ad_rate: number;
+		conversions_total?: number;
+		conversion_rate?: number;
+		conversion_value?: Record< string, number >;
+		conversion_last_currency_found?: string;
 	};
 	billing_data: {
 		payment_method: string;
@@ -44,7 +50,55 @@ export type CampaignResponse = {
 		currency: string;
 		total: number;
 		card_name: string;
+		orders: Order[];
+		debt_amount?: number;
+		payment_links?: {
+			date: string;
+			amount: number;
+			url: string;
+		}[];
 	};
+	is_evergreen?: boolean;
+};
+
+export type Order = {
+	id: number;
+	orderKey: string;
+	userId: number;
+	customerId: number;
+	status: 'COMPLETED' | 'PENDING' | 'FAILED' | string;
+	currency: string;
+	total: string;
+	totalTax: string;
+	paymentMethod: string;
+	failedPaymentCounter: number;
+	paymentMethodTitle: string;
+	dateCreatedGmt: string;
+	dateModifiedGmt: string;
+	dateCompletedGmt: string;
+	datePaidGmt: string;
+	createdAt: string;
+	updatedAt: string;
+	lineItems: LineItem[];
+	feeItems: FeeItem[];
+	credits: number;
+	subtotal: number;
+};
+
+type LineItem = {
+	id: number;
+	orderId: number;
+	campaignId: number;
+	name: string;
+	subtotal: string;
+	total: string;
+};
+
+type FeeItem = {
+	id: number;
+	orderId: number;
+	name: string;
+	total: string;
 };
 
 const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {

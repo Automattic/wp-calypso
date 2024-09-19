@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -38,7 +38,7 @@ export default function ExpandedCard( {
 		href,
 		compact: true,
 		showLinkIcon: false,
-		className: classNames( 'expanded-card', {
+		className: clsx( 'expanded-card', {
 			'expanded-card__not-enabled': ! isEnabled,
 			'expanded-card__clickable': isClickable,
 			'expanded-card__loading': isLoading,

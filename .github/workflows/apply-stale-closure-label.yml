@@ -30,6 +30,6 @@ jobs:
       - name: Add [Closed] Stale label
         id: add_closed_stale_label
         uses: actions-ecosystem/action-add-labels@v1
-        if: contains( steps.get_last_comment.outputs.comment, 'Since this issue has been inactive for quite some time, KitKat has made the decision to close it.' )
+        if: contains( steps.get_last_comment.outputs.comment, 'Since this issue has been inactive for quite some time, it has now been closed.' )
         with:
           labels: "[Closed] Stale"

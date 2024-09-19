@@ -80,7 +80,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 				title={ organization.title }
 				onClick={ this.handleClick }
 				customIcon={ this.renderIcon() }
-				disableFlyout={ true }
+				disableFlyout
 				className={
 					( '/read/' + organization.slug === path ||
 						sites.some( ( site ) => `/read/feeds/${ site.feed_ID }` === path ) ) &&

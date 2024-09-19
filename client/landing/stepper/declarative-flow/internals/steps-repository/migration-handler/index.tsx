@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
+import { addProtocolToUrl } from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
@@ -12,7 +13,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
-import { redirect } from '../import/util';
 import type { Step } from '../../types';
 import type { UserSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -28,7 +28,10 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const [ isUnAuthorized, setIsUnAuthorized ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
-	const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
+	const { data: sites } = useSiteExcerptsQuery(
+		SITE_PICKER_FILTER_CONFIG,
+		( site ) => ! site.is_deleted
+	);
 	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
 		useSourceMigrationStatusQuery( sourceSiteSlug );
 
@@ -65,17 +68,13 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		return __( 'Scanning your site' );
 	};
 
-	const skipToDashboard = () => {
-		recordTracksEvent( 'calypso_importer_migration_skip_to_dashboard' );
-		return redirect( '/' );
-	};
-
 	const renderContent = () => {
 		if ( isUnAuthorized ) {
 			return (
 				<NotAuthorized
-					onStartBuilding={ skipToDashboard }
-					onStartBuildingText={ __( 'Skip to dashboard' ) }
+					type="source-site-not-connected-move-plugin"
+					sourceSiteUrl={ addProtocolToUrl( sourceSiteSlug ) }
+					startImport={ () => window.location.reload() }
 				/>
 			);
 		}
@@ -93,9 +92,9 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
-				isWideLayout={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
+				isWideLayout
 				stepName="migration-handler"
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={ renderContent() }

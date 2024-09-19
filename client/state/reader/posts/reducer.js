@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 
-import { keyBy, get, forEach } from 'lodash';
+import { get, forEach } from 'lodash';
 import {
 	READER_POSTS_RECEIVE,
 	READER_POST_SEEN,
@@ -20,7 +20,25 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_POSTS_RECEIVE:
 			const posts = action.posts || action.payload.posts;
-			return { ...state, ...keyBy( posts, 'global_ID' ) };
+			const postsByKey = {};
+
+			// Keep track of all the feed_item_ID that have the same global_ID.
+			// See: https://github.com/Automattic/wp-calypso/pull/88408
+			posts.forEach( ( post ) => {
+				const { feed_item_IDs = [] } = state[ post.global_ID ] ?? {};
+				const { feed_item_ID, global_ID } = post;
+
+				postsByKey[ global_ID ] = {
+					...post,
+					...( feed_item_ID && {
+						feed_item_IDs: feed_item_IDs.length
+							? [ ...new Set( [ ...feed_item_IDs, feed_item_ID ] ) ]
+							: [ feed_item_ID ],
+					} ),
+				};
+			} );
+
+			return { ...state, ...postsByKey };
 
 		case READER_SEEN_MARK_AS_SEEN_RECEIVE:
 		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE:

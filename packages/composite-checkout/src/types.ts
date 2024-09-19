@@ -48,17 +48,23 @@ export interface PaymentMethod {
 
 export type ExternalPaymentMethod = Partial< PaymentMethod >;
 
+export interface FormAndTransactionStatus {
+	formStatus: FormStatus;
+	transactionStatus: TransactionStatusState;
+}
+
 export enum FormStatus {
 	LOADING = 'loading',
 	READY = 'ready',
 	SUBMITTING = 'submitting',
 	VALIDATING = 'validating',
-	COMPLETE = 'complete',
 }
 
 export interface FormStatusState {
 	formStatus: FormStatus;
 }
+
+export type FormAndTransactionStatusAction = FormStatusAction | TransactionStatusAction;
 
 export type FormStatusAction = ReactStandardAction< 'FORM_STATUS_CHANGE', FormStatus >;
 
@@ -67,10 +73,11 @@ export interface FormStatusController extends FormStatusState {
 	setFormLoading: () => void;
 	setFormValidating: () => void;
 	setFormSubmitting: () => void;
-	setFormComplete: () => void;
 }
 
 export type FormStatusSetter = ( newStatus: FormStatus ) => void;
+
+export type FormAndTransactionStatusManager = FormStatusManager & TransactionStatusManager;
 
 export type FormStatusManager = {
 	formStatus: FormStatus;
@@ -140,7 +147,6 @@ export type StepChangedEventArguments = {
 };
 
 export type PaymentEventCallbackArguments = {
-	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 };
 
@@ -158,16 +164,11 @@ export type PaymentProcessorRedirect = {
 	type: PaymentProcessorResponseType.REDIRECT;
 	payload: string | undefined;
 };
-export type PaymentProcessorManual = {
-	type: PaymentProcessorResponseType.MANUAL;
-	payload: unknown;
-};
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorError
 	| PaymentProcessorSuccess
-	| PaymentProcessorRedirect
-	| PaymentProcessorManual;
+	| PaymentProcessorRedirect;
 
 export type PaymentProcessorSubmitData = unknown;
 
@@ -178,7 +179,6 @@ export type PaymentProcessorFunction = (
 export enum PaymentProcessorResponseType {
 	SUCCESS = 'SUCCESS',
 	REDIRECT = 'REDIRECT',
-	MANUAL = 'MANUAL',
 	ERROR = 'ERROR',
 }
 
@@ -237,7 +237,10 @@ export type TransactionStatusPayload =
 	| TransactionStatusPayloadRedirecting
 	| TransactionStatusPayloadError;
 
-export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
+export type TransactionStatusAction = ReactStandardAction<
+	'TRANSACTION_STATUS_CHANGE',
+	TransactionStatusPayload
+>;
 
 export interface TransactionStatusManager extends TransactionStatusState {
 	resetTransaction: ResetTransaction;

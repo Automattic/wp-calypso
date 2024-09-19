@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'calypso/state';
@@ -22,7 +22,7 @@ export const GoldenTokenDialog = () => {
 	};
 
 	return (
-		<div className={ classnames( 'golden-token-dialog', { animating: isAnimating } ) }>
+		<div className={ clsx( 'golden-token-dialog', { animating: isAnimating } ) }>
 			<svg
 				className="jetpack-logo"
 				xmlns="http://www.w3.org/2000/svg"

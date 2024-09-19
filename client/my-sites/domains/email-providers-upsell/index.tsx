@@ -16,7 +16,7 @@ const EmailProvidersUpsell = ( {
 	<CalypsoShoppingCartProvider>
 		<EmailProvidersStackedComparison
 			comparisonContext="domain-upsell"
-			isDomainInCart={ true }
+			isDomainInCart
 			selectedDomainName={ selectedDomainName }
 			selectedEmailProviderSlug={ selectedEmailProviderSlug }
 			selectedIntervalLength={ selectedIntervalLength }

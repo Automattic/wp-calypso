@@ -36,7 +36,7 @@ const Page = ( { headline, heading, content, image, cta, handleClick } ) => {
 
 const Modal = ( { announcementId, pages, finishButtonText } ) => {
 	const dispatch = useDispatch();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );

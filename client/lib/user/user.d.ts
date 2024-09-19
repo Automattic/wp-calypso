@@ -34,6 +34,7 @@ export type OptionalUserData = {
 	primary_blog_url: string;
 	site_count: number;
 	jetpack_site_count?: number;
+	atomic_site_count?: number;
 	has_jetpack_partner_access?: boolean;
 	jetpack_partner_types?: string[];
 	social_login_connections: unknown;
@@ -42,6 +43,8 @@ export type OptionalUserData = {
 	username: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
+	atomic_visible_site_count?: number;
 	is_google_domain_owner: boolean;
 	had_hosting_trial: boolean;
+	is_subscription_only: boolean;
 };

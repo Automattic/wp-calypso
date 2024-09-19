@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -8,6 +9,7 @@ import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
+import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -28,13 +30,21 @@ const EducationFooterContainer = styled.div`
 
 	> div:first-child {
 		padding: 0;
+		margin-bottom: 18px;
+
+		@media ( max-width: 660px ) {
+			padding: 0 16px;
+		}
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
 		}
+	}
 
-		> div:first-child {
-			margin-bottom: 24px;
+	.plugin-how-to-guides {
+		@media ( min-width: 1280px ) {
+			justify-content: flex-start;
+			gap: 18px;
 		}
 	}
 
@@ -42,10 +52,22 @@ const EducationFooterContainer = styled.div`
 		display: flex;
 		width: calc( 33% - 10px );
 
-		@media ( max-width: 660px ) {
-			display: block;
+		@media ( max-width: 960px ) {
 			width: 100%;
 			margin-top: 10px;
+
+			> div:first-child {
+				padding: 16px;
+			}
+		}
+
+		> div:first-child:hover {
+			border-color: var( --studio-gray-30 );
+		}
+
+		div {
+			width: 100%;
+			text-wrap: pretty;
 		}
 	}
 `;
@@ -53,6 +75,7 @@ const EducationFooterContainer = styled.div`
 const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
+	margin-bottom: -32px;
 
 	.marketplace-cta {
 		min-width: 122px;
@@ -67,7 +90,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
 		`${ SectionContainer } {
-		padding-bottom: 0;
+		padding-bottom: 32px;
 	}` }
 
 	${ SectionContainer }::before {
@@ -102,30 +125,28 @@ export const MarketplaceFooter = () => {
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
 			>
-				<>
-					{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
-						<Button className="is-primary marketplace-cta" href={ startUrl }>
-							{ __( 'Get Started' ) }
-						</Button>
-					) }
-					<ThreeColumnContainer>
-						<FeatureItem header={ __( 'Fully Managed' ) }>
-							{ __(
-								'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Thousands of plugins' ) }>
-							{ __(
-								'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Flexible pricing' ) }>
-							{ __(
-								'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							) }
-						</FeatureItem>
-					</ThreeColumnContainer>
-				</>
+				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
+					<Button className="is-primary marketplace-cta" href={ startUrl }>
+						{ __( 'Get Started' ) }
+					</Button>
+				) }
+				<ThreeColumnContainer>
+					<FeatureItem header={ __( 'Fully Managed' ) }>
+						{ __(
+							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Thousands of plugins' ) }>
+						{ __(
+							'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Flexible pricing' ) }>
+						{ __(
+							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+						) }
+					</FeatureItem>
+				</ThreeColumnContainer>
 			</Section>
 		</MarketplaceContainer>
 	);
@@ -135,73 +156,74 @@ const EducationFooter = () => {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
 	const dispatch = useDispatch();
+	const { openArticleInHelpCenter } = useOpenArticleInHelpCenter();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const onClickLinkCard = useCallback(
-		( content_type: string ) => {
+		( content_type: string, url: string ) => ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_educational_content_click', { content_type } )
 			);
+			if ( isLoggedIn ) {
+				e.preventDefault();
+				openArticleInHelpCenter( url );
+			}
 		},
-		[ dispatch ]
+		[ dispatch, openArticleInHelpCenter, isLoggedIn ]
 	);
+
+	const links = {
+		websiteBuilding: localizeUrl( 'https://wordpress.com/support/plugins/' ),
+		customization: localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ),
+		seo: localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ),
+	};
 
 	return (
 		<EducationFooterContainer>
-			<Section
-				header={ __( 'Get started with plugins' ) }
-				subheader={ __( 'Our favorite how-to guides to get you started with plugins' ) }
-			>
-				<ThreeColumnContainer>
-					<LinkCard
-						external
-						target="_blank"
-						title={
-							<CardText color="var(--studio-gray-100)">
-								{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
-							</CardText>
-						}
-						titleMarginBottom="16px"
-						cta={ <ReadMoreLink /> }
-						url={ localizeUrl(
-							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
-						) }
-						border="var(--studio-gray-5)"
-						onClick={ () => onClickLinkCard( 'website_building' ) }
-					/>
-					<LinkCard
-						external
-						target="_blank"
-						title={
-							<CardText color="var(--studio-gray-100)">
-								{ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
-							</CardText>
-						}
-						titleMarginBottom="16px"
-						cta={ <ReadMoreLink /> }
-						url={ localizeUrl(
-							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
-						) }
-						border="var(--studio-gray-5)"
-						onClick={ () => onClickLinkCard( 'customization' ) }
-					/>
-					<LinkCard
-						external
-						target="_blank"
-						title={
-							<CardText color="var(--studio-gray-100)">
-								{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
-							</CardText>
-						}
-						titleMarginBottom="16px"
-						cta={ <ReadMoreLink /> }
-						url={ localizeUrl(
-							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
-						) }
-						border="var(--studio-gray-5)"
-						onClick={ () => onClickLinkCard( 'seo' ) }
-					/>
-				</ThreeColumnContainer>
-			</Section>
+			<PluginsResultsHeader
+				title={ __( 'Get started with plugins' ) }
+				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
+			/>
+			<ThreeColumnContainer className="plugin-how-to-guides">
+				<LinkCard
+					title={
+						<CardText color="var(--studio-gray-100)">
+							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
+						</CardText>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ links.websiteBuilding }
+					border="var(--studio-gray-5)"
+					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
+				/>
+				<LinkCard
+					title={
+						<CardText color="var(--studio-gray-100)">
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
+						</CardText>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ links.customization }
+					border="var(--studio-gray-5)"
+					onClick={ onClickLinkCard( 'customization', links.customization ) }
+				/>
+				<LinkCard
+					title={
+						<CardText color="var(--studio-gray-100)">
+							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
+						</CardText>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ links.seo }
+					border="var(--studio-gray-5)"
+					onClick={ onClickLinkCard( 'seo', links.seo ) }
+				/>
+			</ThreeColumnContainer>
 		</EducationFooterContainer>
 	);
 };
@@ -209,12 +231,7 @@ const EducationFooter = () => {
 function ReadMoreLink() {
 	const { __ } = useI18n();
 
-	return (
-		<CardText color="var(--studio-blue-50)">
-			{ __( 'Read More' ) }
-			<Gridicon icon="external" size={ 12 } />
-		</CardText>
-	);
+	return <CardText color="var(--studio-blue-50)">{ __( 'Learn more' ) }</CardText>;
 }
 
 export default EducationFooter;

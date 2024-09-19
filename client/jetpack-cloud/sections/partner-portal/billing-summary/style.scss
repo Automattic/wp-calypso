@@ -79,7 +79,7 @@
 		font-size: 1.75rem;
 		line-height: 36px;
 
-		@media ( min-width: 661px ) and ( max-width: 781px ) {
+		@media (min-width: 661px) and (max-width: 781px) {
 			// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
 			// a lot of the available space.
 			font-size: 1.25rem;

@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import usePlanOptions from '../hooks/plan-options';
 import { BlockPlan } from '../hooks/pricing-plans';
@@ -23,14 +23,16 @@ interface Props {
 const NORMALIZE_DOMAIN_REGEX = /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi;
 const VALIDATE_DOMAIN_REGEX =
 	/^(([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)\.)+([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)$/;
+const VALIDATE_AFFILIATE_REGEX = /^https:\/\/automattic\.pxf\.io\/.+/;
 
 const BlockSettings: FunctionComponent<
 	Pick< BlockEditProps< BlockAttributes >, 'attributes' | 'setAttributes' > & Props
 > = ( { attributes, setAttributes, plans } ) => {
-	const { productSlug, planTypeOptions, domain } = attributes;
+	const { productSlug, planTypeOptions, domain, affiliateLink } = attributes;
 	const planOptions = usePlanOptions( plans );
 	const currentPlan = plans?.find( ( plan ) => plan.productSlug === productSlug );
 	const [ newDomainInputValue, setNewDomainInputValue ] = useState( domain );
+	const [ newAffiliateLinkInputValue, setNewAffiliateLinkInputValue ] = useState( affiliateLink );
 
 	const setPlan = ( type: string, term: string ) => {
 		const plan = plans?.find( ( plan ) => plan.type === type && plan.term === term );
@@ -75,17 +77,28 @@ const BlockSettings: FunctionComponent<
 		}
 	};
 
+	const onAffiliateChange = ( value: string ) => {
+		setNewAffiliateLinkInputValue( value );
+
+		if ( ! value || ! VALIDATE_AFFILIATE_REGEX.test( value ) ) {
+			setAttributes( { affiliateLink: false } );
+			return;
+		}
+
+		setAttributes( { affiliateLink: value } );
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
 				className="hb-pricing-plans-embed__settings"
 				title={ __( 'Basic', 'happy-blocks' ) }
-				initialOpen={ true }
+				initialOpen
 			>
 				<PanelRow>
 					{ planOptions.map( ( option ) => (
 						<CheckboxControl
-							className={ classNames( {
+							className={ clsx( {
 								'hb-pricing-plans-embed__settings-checkbox--disabled': isDisabled( option.value ),
 							} ) }
 							key={ option.value }
@@ -104,6 +117,13 @@ const BlockSettings: FunctionComponent<
 							'happy-blocks'
 						) }
 						onChange={ onDomainChange }
+					/>
+					<TextControl
+						className="hb-pricing-plans-embed__settings-domain"
+						label={ __( 'Affiliate Link', 'happy-blocks' ) }
+						value={ newAffiliateLinkInputValue || '' }
+						help={ __( 'Enter the affiliate link for the Upgrade CTA', 'happy-blocks' ) }
+						onChange={ onAffiliateChange }
 					/>
 					<RadioControl
 						label={ __( 'Price', 'happy-blocks' ) }

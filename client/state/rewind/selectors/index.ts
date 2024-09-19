@@ -1,3 +1,4 @@
+export { default as getFinishedBackupForSiteById } from './get-finished-backup-for-site-by-id';
 export { default as getInProgressBackupForSite } from './get-in-progress-backup-for-site';
 export { default as getRewindBytesAvailable } from './get-rewind-bytes-available';
 export { default as getRewindBytesUsed } from './get-rewind-bytes-used';

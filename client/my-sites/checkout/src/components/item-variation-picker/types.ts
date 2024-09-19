@@ -34,3 +34,11 @@ export type OnChangeItemVariant = (
 	productId: number,
 	volume?: number
 ) => void;
+
+export type CurrentOptionProps = {
+	open: boolean;
+};
+
+export type OptionProps = {
+	selected: boolean;
+};

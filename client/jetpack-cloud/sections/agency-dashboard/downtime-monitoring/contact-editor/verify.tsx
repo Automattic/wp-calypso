@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import { Button, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useCountdownTimer from 'calypso/jetpack-cloud/sections/hooks/use-countdown-timer';
@@ -83,14 +82,14 @@ export default function VerifyContactForm( {
 	);
 
 	const {
-		isLoading: isSubmittingVerificationCode,
+		isPending: isSubmittingVerificationCode,
 		isVerified: isSubmittingVerificationCodeSuccess,
 		isError: isSubmittingVerificationCodeFailed,
 		errorMessage: submitVerificationCodeErrorMessage,
 		mutate: submitVerificationCode,
 	} = useValidateVerificationCode();
 	const {
-		isLoading: isRequestingVerificationCode,
+		isPending: isRequestingVerificationCode,
 		isSuccess: isRequestingVerificationCodeSuccess,
 		isError: isRequestingVerificationCodeFailed,
 		isVerified: isRequestingVerificationCodeAlreadyVerified,
@@ -98,7 +97,7 @@ export default function VerifyContactForm( {
 	} = useRequestVerificationCode();
 
 	const {
-		isLoading: isResendingVerificationCode,
+		isPending: isResendingVerificationCode,
 		isSuccess: isResendingVerificationCodeSuccess,
 		isError: isResendingVerificationCodeFailed,
 		mutate: resendVerificationCode,
@@ -281,7 +280,7 @@ export default function VerifyContactForm( {
 		components: {
 			button: (
 				<Button
-					className={ classNames( 'configure-contact__resend-code-button', {
+					className={ clsx( 'configure-contact__resend-code-button', {
 						'is-loading': isResendingVerificationCode,
 					} ) }
 					borderless

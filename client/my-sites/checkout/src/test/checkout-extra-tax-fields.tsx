@@ -28,6 +28,7 @@ import {
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	gSuiteProduct,
+	mockSetCachedContactDetailsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -80,6 +81,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 		mockLogStashEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetVatInfoEndpoint( {} );
+		mockSetCachedContactDetailsEndpoint();
 	} );
 
 	it.each( [

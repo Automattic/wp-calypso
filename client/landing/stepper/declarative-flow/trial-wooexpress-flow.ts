@@ -1,63 +1,68 @@
 import config from '@automattic/calypso-config';
-import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { useSearchParams } from 'react-router-dom';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
+import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
+	isSignupFlow: true,
 
 	useSteps() {
-		return [
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'error', component: ErrorStep },
-		];
+		return stepsWithRequiredLogin( [
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ASSIGN_TRIAL_PLAN,
+			STEPS.WAIT_FOR_ATOMIC,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.ERROR,
+		] );
 	},
+
+	useLoginParams() {
+		const [ searchParams ] = useSearchParams();
+
+		const oauth2ClientId = searchParams.get( 'client_id' );
+		const wccomFrom = searchParams.get( 'wccom-from' );
+		const aff = searchParams.get( 'aff' );
+		const vendorId = searchParams.get( 'vid' );
+
+		return {
+			customLoginPath: '/log-in',
+			extraQueryParams: {
+				...( oauth2ClientId ? { oauth2ClientId } : {} ),
+				...( wccomFrom ? { wccomFrom } : {} ),
+				...( aff ? { aff } : {} ),
+				...( vendorId ? { vendorId } : {} ),
+			},
+		};
+	},
+
 	useAssertConditions(): AssertConditionResult {
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
+		const { setSiteSetupError } = useDispatch( SITE_STORE );
+		const translate = useTranslate();
+
+		setSiteSetupError(
+			undefined,
+			translate(
+				'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+			)
 		);
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		const flowName = this.name;
-
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
-		const aff = queryParams.get( 'aff' );
-		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -70,46 +75,10 @@ const wooexpress: Flow = {
 			} catch {}
 		}
 
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-			const queryParams = new URLSearchParams();
-
-			if ( vendorId ) {
-				queryParams.set( 'vid', vendorId );
-			}
-
-			if ( aff ) {
-				queryParams.set( 'aff', aff );
-			}
-
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/wooexpress` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			let queryString = `redirect_to=${ redirectTarget }`;
-
-			if ( queryParams.toString() ) {
-				queryString = `${ queryString }&${ queryParams.toString() }`;
-			}
-
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				locale,
-			} );
-
-			return `${ logInUrl }&${ queryString }`;
-		};
-
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// /setup/wooexpress/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			// Log when profiler data does not contain valid data.
@@ -135,28 +104,12 @@ const wooexpress: Flow = {
 					},
 				} );
 			}
-
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
-				window.location.assign( logInUrl );
-			}
 		}, [] );
 
-		if ( ! userIsLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'wooexpress-trial requires a logged in user',
-			};
-		}
-
-		return result;
+		return { state: AssertConditionState.SUCCESS };
 	},
+
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const siteSlugParam = useSiteSlugParam();
 
 		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
@@ -172,13 +125,12 @@ const wooexpress: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'siteCreationStep': {
+				case 'create-site': {
 					return navigate( 'processing', {
 						currentStep,
 					} );

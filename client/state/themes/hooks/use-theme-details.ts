@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 type Theme = {
 	id: string;
@@ -12,6 +13,12 @@ type Theme = {
 	price: string;
 	taxonomies: Record< string, [] >;
 	theme_type: string;
+	theme_tier: {
+		feature: string;
+		slug: string;
+		platform: string;
+	};
+	style_variations: GlobalStylesObject[];
 };
 
 export function useThemeDetails( slug = '' ): UseQueryResult< Theme > {

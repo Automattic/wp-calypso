@@ -22,6 +22,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
@@ -45,7 +46,8 @@ import getBootstrappedUser from 'calypso/server/user-bootstrap';
 import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
@@ -143,12 +145,17 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	setStore( reduxStore, getCachedState );
 	performanceMark( request.context, 'create basic options', true );
 
-	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
+	const devEnvironments = [
+		'development',
+		'jetpack-cloud-development',
+		'a8c-for-agencies-development',
+	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -179,6 +186,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		accountSettingsHelper,
 		authHelper,
 		preferencesHelper,
+		storeSandboxHelper,
 		featuresHelper,
 		devDocsURL: '/devdocs',
 		store: reduxStore,
@@ -235,6 +243,18 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	if ( calypsoEnv === 'jetpack-cloud-development' ) {
 		context.badge = 'jetpack-cloud-dev';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+		context.branchName = getCurrentBranchName();
+		context.commitChecksum = getCurrentCommitShortChecksum();
+	}
+
+	if ( calypsoEnv === 'a8c-for-agencies-stage' ) {
+		context.badge = 'a8c-for-agencies-staging';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+	}
+
+	if ( calypsoEnv === 'a8c-for-agencies-development' ) {
+		context.badge = 'a8c-for-agencies-dev';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
@@ -485,10 +505,18 @@ function setUpCSP( req, res, next ) {
 			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
+			'use.typekit.net',
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
-		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
+		'style-src': [
+			"'self'",
+			'*.wp.com',
+			'https://fonts.googleapis.com',
+			'use.typekit.net',
+			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
+			"'unsafe-inline'",
+		],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
 		'img-src': [
@@ -501,6 +529,7 @@ function setUpCSP( req, res, next ) {
 			'https://amplifypixel.outbrain.com',
 			'https://img.youtube.com',
 			'localhost:8888',
+			'p.typekit.net',
 		],
 		'frame-src': [
 			"'self'",
@@ -512,6 +541,7 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'*.wp.com',
 			'https://fonts.gstatic.com',
+			'use.typekit.net',
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
@@ -574,6 +604,12 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 	if ( Array.isArray( section.links ) ) {
 		section.links.forEach( ( link ) => req.context.store.dispatch( setDocumentHeadLink( link ) ) );
+	}
+
+	if ( Array.isArray( section.meta ) ) {
+		// Append section specific meta tags.
+		const meta = getDocumentHeadMeta( req.context.store.getState() ).concat( section.meta );
+		req.context.store.dispatch( setDocumentHeadMeta( meta ) );
 	}
 	next();
 };
@@ -678,7 +714,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
-		const locale = req.params?.locale;
+		const locale = req.params?.locale ?? config( 'i18n_default_locale_slug' );
 
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
@@ -695,7 +731,7 @@ function wpcomPages( app ) {
 				res.redirect( pricingPageUrl );
 			}
 		} else {
-			if ( locale ) {
+			if ( locale && locale !== config( 'i18n_default_locale_slug' ) ) {
 				const queryParams = new URLSearchParams( req.query );
 				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
 				res.redirect( `/plans${ queryString }` );
@@ -883,7 +919,7 @@ export default function pages() {
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
-	if ( ! isJetpackCloud() ) {
+	if ( ! ( isJetpackCloud() || isA8CForAgencies() ) ) {
 		wpcomPages( app );
 	}
 

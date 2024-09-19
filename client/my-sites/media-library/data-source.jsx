@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -91,10 +91,10 @@ export class MediaLibraryDataSource extends Component {
 		const { translate, source } = this.props;
 		const sources = this.getSources();
 		const currentSelected = find( sources, ( item ) => item.value === source );
-		const classes = classnames( 'media-library__datasource', {
+		const classes = clsx( 'media-library__datasource', {
 			'is-single-source': 1 === sources.length,
 		} );
-		const buttonClasses = classnames( 'button media-library__source-button', {
+		const buttonClasses = clsx( 'button media-library__source-button', {
 			'is-open': this.state.popover,
 		} );
 

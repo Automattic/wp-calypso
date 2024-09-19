@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { STICKY_OFFSET_TOP } from '@automattic/design-picker';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import { computer, tablet, phone } from 'calypso/signup/icons';
@@ -107,7 +107,7 @@ const PreviewToolbar = ( {
 							key={ device }
 							borderless
 							aria-label={ devices.current[ device ].title }
-							className={ classNames( 'preview-toolbar__button', {
+							className={ clsx( 'preview-toolbar__button', {
 								'is-selected': device === currentDevice,
 							} ) }
 							onClick={ () => setDeviceViewport( device ) }

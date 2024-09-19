@@ -49,6 +49,10 @@ const defaultArgs = {
 		{ name: 'about', label: 'About', description: 'Introduce yourself.' },
 		{ name: 'blog', label: 'Blog' },
 	],
+	patternCountMapByCategory: {
+		about: 2,
+		blog: 2,
+	},
 	patternsMapByCategory: {
 		about: [
 			{

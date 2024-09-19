@@ -17,7 +17,7 @@ interface Props {
 function TeamInvites( props: Props ) {
 	const translate = useTranslate();
 	const { singleInviteView } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID as number;
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;

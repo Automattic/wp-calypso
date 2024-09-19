@@ -1,0 +1,25 @@
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-sidebar-menu-selected-background);
+}
+
+.a4a-sidebar-placeholder {
+	.sidebar-v2__main,
+	.sidebar-v2__footer {
+		padding-inline: 8px;
+	}
+}
+
+.a4a-sidebar-placeholder__header-icon {
+	@include loading-effect;
+	width: 32px;
+	height: 32px;
+}
+
+.a4a-sidebar-placeholder__menu-item {
+	@include loading-effect;
+	width: 100%;
+	height: 32px;
+	margin-block-end: 4px;
+	border-radius: 4px;
+}

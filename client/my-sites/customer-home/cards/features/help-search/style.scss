@@ -37,9 +37,12 @@ $min_results_height: 180px;
 	.help-search__cta {
 		display: flex;
 		align-items: center;
+		width: 100%;
 		padding: 10px $card_padding_small;
 		color: var(--color-text);
 		line-height: 1;
+		font-size: inherit;
+		height: auto;
 
 		@include break-mobile {
 			padding: 10px $card_padding_large;

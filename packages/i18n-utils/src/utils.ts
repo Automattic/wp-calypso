@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
-import i18n, { getLocaleSlug } from 'i18n-calypso';
+import { hasTranslation } from '@wordpress/i18n';
 import { find, map, pickBy, includes } from 'lodash';
+import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
  * This regex is defined as a string so that it can be combined with other regexes.
@@ -25,7 +26,6 @@ export function getPathParts( path: string ) {
 
 /**
  * Checks if provided locale is a default one.
- *
  * @param {string} locale - locale slug (eg: 'fr')
  * @returns {boolean} true when the default locale is provided
  */
@@ -35,7 +35,6 @@ export function isDefaultLocale( locale: string | null ) {
 
 /**
  * Checks if provided locale has a parentLangSlug and is therefore a locale variant
- *
  * @param {string} locale - locale slug (eg: 'fr')
  * @returns {boolean} true when the locale has a parentLangSlug
  */
@@ -63,7 +62,6 @@ export function isLocaleRtl( locale: string ) {
  * Checks against a list of locales that don't have any GP translation sets
  * A 'translation set' refers to a collection of strings to be translated see:
  * https://glotpress.blog/the-manual/translation-sets/
- *
  * @param {string} locale - locale slug (eg: 'fr')
  * @returns {boolean} true when the locale is NOT a member of the exception list
  */
@@ -77,17 +75,15 @@ export function canBeTranslated( locale: string ) {
  *
  * Since the text is in English, this is always true in that case. Otherwise
  * We check whether a translation was provided for this text.
- *
  * @returns {boolean} true when a user would see text they can read.
  */
 export function translationExists( phrase: string ) {
-	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( phrase );
+	const localeSlug = getWpI18nLocaleSlug() || 'en';
+	return isDefaultLocale( localeSlug ) || hasTranslation( phrase );
 }
 
 /**
  * Return a list of all supported language slugs
- *
  * @returns {Array} A list of all supported language slugs
  */
 export function getLanguageSlugs() {
@@ -96,7 +92,6 @@ export function getLanguageSlugs() {
 
 /**
  * Map provided language slug to supported slug if applicable.
- *
  * @param {string} langSlug Locale slug for the language
  * @returns {string} Mapped language slug
  */
@@ -111,7 +106,6 @@ export function getMappedLanguageSlug( langSlug: string | undefined ) {
 
 /**
  * Return a specifier for page.js/Express route param that enumerates all supported languages.
- *
  * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
  * @param {boolean} optional whether to put the `?` character at the end, making the param optional
  * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
@@ -123,7 +117,6 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
 /**
  * Return a specifier for a route param to match anything that looks like a language code, whether it is valid or not.
  * This is useful for routes that need to match any language, including unsupported ones.
- *
  * @returns {string} Router param specifier string
  */
 export function getAnyLanguageRouteParam() {
@@ -132,7 +125,6 @@ export function getAnyLanguageRouteParam() {
 
 /**
  * Matches and returns language from config.languages based on the given localeSlug
- *
  * @param   {string} langSlug locale slug of the language to match
  * @returns {Object | undefined} An object containing the locale data or undefined.
  */
@@ -150,7 +142,6 @@ export function getLanguage( langSlug: string | undefined ): Language | undefine
 
 /**
  * Assuming that locale is adding at the end of path, retrieves the locale if present.
- *
  * @param {string} path - original path
  * @returns {string|undefined} The locale slug if present or undefined
  */
@@ -165,7 +156,6 @@ export function getLocaleFromPath( path: string ) {
  * Adds a locale slug to the current path.
  *
  * Will replace existing locale slug, if present.
- *
  * @param path - original path
  * @param locale - locale slug (eg: 'fr')
  * @returns original path with new locale slug
@@ -180,7 +170,6 @@ export function addLocaleToPath( path: string, locale: string ) {
 /**
  * Removes the trailing locale slug from the path, if it is present.
  * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
- *
  * @param  path - original path
  * @returns original path minus locale slug
  */
@@ -199,7 +188,6 @@ export function removeLocaleFromPath( path: string ): string {
 
 /**
  * Filter out unexpected values from the given language revisions object.
- *
  * @param {Object} languageRevisions A candidate language revisions object for filtering.
  * @returns {Object} A valid language revisions object derived from the given one.
  */
@@ -223,7 +211,6 @@ export function filterLanguageRevisions( languageRevisions: Record< string, stri
 
 /**
  * Checks if provided locale is one of the magnificenet non-english locales.
- *
  * @param locale Locale slug
  * @returns true when provided magnificent non-english locale.
  */
@@ -233,7 +220,6 @@ export function isMagnificentLocale( locale: string ): boolean {
 
 /**
  * Checks if provided locale is translated incompletely (is missing essential translations).
- *
  * @param   {string}  locale Locale slug
  * @returns {boolean} Whether provided locale is flagged as translated incompletely.
  */
@@ -245,14 +231,12 @@ export function isTranslatedIncompletely( locale: string ) {
  * Adds a locale slug infront of the current path.
  *
  * Will replace existing locale slug, if present.
- *
  * @param path - original path
  * @param locale - the locale to add to the path (Optional)
- *
  * @returns original path with new locale slug
  */
 export function addLocaleToPathLocaleInFront( path: string, locale?: string ) {
-	const localeOrDefault = locale || getLocaleSlug();
+	const localeOrDefault = locale || getWpI18nLocaleSlug();
 	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
 	if ( ! localeOrDefault || isDefaultLocale( localeOrDefault ) ) {
@@ -266,7 +250,6 @@ export function addLocaleToPathLocaleInFront( path: string, locale?: string ) {
 /**
  * Removes the locale slug in the start of the path, if it is present.
  * '/en/themes' => '/themes', '/themes' => '/themes', '/fr/plugins' => '/plugins'
- *
  * @param  path - original path
  * @returns original path minus locale slug
  */
@@ -289,7 +272,6 @@ export function removeLocaleFromPathLocaleInFront( path: string ): string {
 /**
  * Retreive the locale slug in the start of the path, if it is present.
  * '/en/themes' => 'en', '/themes' => 'en', '/fr/plugins' => 'fr'
- *
  * @param  path - original path
  * @returns locale
  */

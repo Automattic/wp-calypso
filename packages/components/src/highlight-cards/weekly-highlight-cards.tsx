@@ -7,29 +7,30 @@ import {
 	moreVertical,
 	check,
 } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
+import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
 import CountComparisonCard from './count-comparison-card';
+import HighlightCardsHeading from './highlight-cards-heading';
+import MobileHighlightCardListing from './mobile-highlight-cards';
+
 import './style.scss';
+
+type HighlightCardCounts = {
+	comments: number | null;
+	likes: number | null;
+	views: number | null;
+	visitors: number | null;
+};
 
 type WeeklyHighlightCardsProps = {
 	className?: string;
-	counts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
-	previousCounts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
 	showValueTooltip?: boolean | null;
 	onClickComments: ( event: MouseEvent ) => void;
 	onClickLikes: ( event: MouseEvent ) => void;
@@ -96,7 +97,7 @@ const HighlightCardsSettings = function ( {
 				isVisible={ showTooltip }
 				position="bottom left"
 				context={ settingsActionRef.current }
-				autoRepositionOnInitialLoad={ true }
+				autoRepositionOnInitialLoad
 			>
 				<div className="highlight-card-tooltip-content">
 					<p>
@@ -136,6 +137,101 @@ const HighlightCardsSettings = function ( {
 	);
 };
 
+type WeeklyHighlighCardsStandardProps = {
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
+	showValueTooltip?: boolean | null;
+	onClickComments: ( event: MouseEvent ) => void;
+	onClickLikes: ( event: MouseEvent ) => void;
+	onClickViews: ( event: MouseEvent ) => void;
+	onClickVisitors: ( event: MouseEvent ) => void;
+};
+
+function WeeklyHighlighCardsStandard( {
+	counts,
+	previousCounts,
+	showValueTooltip,
+	onClickComments,
+	onClickLikes,
+	onClickViews,
+	onClickVisitors,
+}: WeeklyHighlighCardsStandardProps ) {
+	const translate = useTranslate();
+	return (
+		<div className="highlight-cards-list">
+			<CountComparisonCard
+				heading={ translate( 'Views' ) }
+				icon={ <Icon icon={ eye } /> }
+				count={ counts?.views ?? null }
+				previousCount={ previousCounts?.views ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickViews }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Visitors' ) }
+				icon={ <Icon icon={ people } /> }
+				count={ counts?.visitors ?? null }
+				previousCount={ previousCounts?.visitors ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickVisitors }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Likes' ) }
+				icon={ <Icon icon={ starEmpty } /> }
+				count={ counts?.likes ?? null }
+				previousCount={ previousCounts?.likes ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickLikes }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Comments' ) }
+				icon={ <Icon icon={ commentContent } /> }
+				count={ counts?.comments ?? null }
+				previousCount={ previousCounts?.comments ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickComments }
+			/>
+		</div>
+	);
+}
+
+type WeeklyHighlighCardsMobileProps = {
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
+};
+
+function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCardsMobileProps ) {
+	const translate = useTranslate();
+	const highlights = [
+		{
+			heading: translate( 'Visitors' ),
+			count: counts?.visitors,
+			previousCount: previousCounts?.visitors,
+			icon: people,
+		},
+		{
+			heading: translate( 'Views' ),
+			count: counts?.views,
+			previousCount: previousCounts?.views,
+			icon: eye,
+		},
+		{
+			heading: translate( 'Likes' ),
+			count: counts?.likes,
+			previousCount: previousCounts?.likes,
+			icon: starEmpty,
+		},
+		{
+			heading: translate( 'Comments' ),
+			count: counts?.comments,
+			previousCount: previousCounts?.comments,
+			icon: commentContent,
+		},
+	];
+
+	return <MobileHighlightCardListing highlights={ highlights } />;
+}
+
 export default function WeeklyHighlightCards( {
 	className,
 	counts,
@@ -157,8 +253,8 @@ export default function WeeklyHighlightCards( {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 
 	return (
-		<div className={ classNames( 'highlight-cards', className ?? null ) }>
-			<h3 className="highlight-cards-heading">
+		<div className={ clsx( 'highlight-cards', className ?? null ) }>
+			<HighlightCardsHeading>
 				<span>
 					{ currentPeriod === PAST_THIRTY_DAYS
 						? translate( '30-day highlights' )
@@ -226,42 +322,25 @@ export default function WeeklyHighlightCards( {
 						showTooltip={ showSettingsTooltip }
 					/>
 				) }
-			</h3>
+			</HighlightCardsHeading>
 
-			<div className="highlight-cards-list">
-				<CountComparisonCard
-					heading={ translate( 'Visitors' ) }
-					icon={ <Icon icon={ people } /> }
-					count={ counts?.visitors ?? null }
-					previousCount={ previousCounts?.visitors ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickVisitors }
-				/>
-				<CountComparisonCard
-					heading={ translate( 'Views' ) }
-					icon={ <Icon icon={ eye } /> }
-					count={ counts?.views ?? null }
-					previousCount={ previousCounts?.views ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickViews }
-				/>
-				<CountComparisonCard
-					heading={ translate( 'Likes' ) }
-					icon={ <Icon icon={ starEmpty } /> }
-					count={ counts?.likes ?? null }
-					previousCount={ previousCounts?.likes ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickLikes }
-				/>
-				<CountComparisonCard
-					heading={ translate( 'Comments' ) }
-					icon={ <Icon icon={ commentContent } /> }
-					count={ counts?.comments ?? null }
-					previousCount={ previousCounts?.comments ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickComments }
-				/>
-			</div>
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={
+					<WeeklyHighlighCardsMobile counts={ counts } previousCounts={ previousCounts } />
+				}
+				breakpointInactiveComponent={
+					<WeeklyHighlighCardsStandard
+						counts={ counts }
+						previousCounts={ previousCounts }
+						showValueTooltip={ showValueTooltip }
+						onClickComments={ onClickComments }
+						onClickLikes={ onClickLikes }
+						onClickViews={ onClickViews }
+						onClickVisitors={ onClickVisitors }
+					/>
+				}
+			/>
 		</div>
 	);
 }

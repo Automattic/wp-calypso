@@ -1,17 +1,29 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import i18n from 'i18n-calypso';
+import { doesIntroductoryOfferHavePriceIncrease } from './transformations';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export function getIntroductoryOfferIntervalDisplay(
-	translate: typeof i18n.translate,
-	intervalUnit: string,
-	intervalCount: number,
-	isFreeTrial: boolean,
-	context: string,
-	remainingRenewalsUsingOffer = 0
-): string {
-	let text = String( translate( 'Discount for first period' ) );
+export function getIntroductoryOfferIntervalDisplay( {
+	translate,
+	intervalUnit,
+	intervalCount,
+	isFreeTrial,
+	isPriceIncrease,
+	context,
+	remainingRenewalsUsingOffer = 0,
+}: {
+	translate: typeof i18n.translate;
+	intervalUnit: string;
+	intervalCount: number;
+	isFreeTrial: boolean;
+	isPriceIncrease: boolean;
+	context: string;
+	remainingRenewalsUsingOffer: number;
+} ): string {
+	let text = isPriceIncrease
+		? translate( 'First billing period', { textOnly: true } )
+		: String( translate( 'Discount for first period' ) );
 	if ( isFreeTrial ) {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
@@ -42,28 +54,44 @@ export function getIntroductoryOfferIntervalDisplay(
 	} else {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first month' ) );
+				text = isPriceIncrease
+					? translate( 'Price for first month', { textOnly: true } )
+					: String( translate( 'Discount for first month' ) );
 			} else {
-				text = String(
-					translate( 'Discount for first %(numberOfMonths)d months', {
-						args: {
-							numberOfMonths: intervalCount,
-						},
-					} )
-				);
+				text = isPriceIncrease
+					? translate( 'Price for first %(numberOfMonths)d months', {
+							textOnly: true,
+							args: {
+								numberOfMonths: intervalCount,
+							},
+					  } )
+					: String(
+							translate( 'Discount for first %(numberOfMonths)d months', {
+								args: {
+									numberOfMonths: intervalCount,
+								},
+							} )
+					  );
 			}
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first year' ) );
+				text = isPriceIncrease
+					? translate( 'Price for first year', { textOnly: true } )
+					: String( translate( 'Discount for first year' ) );
 			} else {
-				text = String(
-					translate( 'Discount for first %(numberOfYears)d years', {
-						args: {
-							numberOfYears: intervalCount,
-						},
-					} )
-				);
+				text = isPriceIncrease
+					? translate( 'Price for first %(numberOfYears)d years', {
+							textOnly: true,
+							args: { numberOfYears: intervalCount },
+					  } )
+					: String(
+							translate( 'Discount for first %(numberOfYears)d years', {
+								args: {
+									numberOfYears: intervalCount,
+								},
+							} )
+					  );
 			}
 		}
 	}
@@ -71,40 +99,55 @@ export function getIntroductoryOfferIntervalDisplay(
 		text += ' - ';
 		if ( context === 'checkout' ) {
 			if ( remainingRenewalsUsingOffer === 1 ) {
-				text += String(
-					translate( 'The first renewal is also discounted.', {
-						args: {
-							remainingRenewals: remainingRenewalsUsingOffer,
-						},
-					} )
-				);
+				text += isPriceIncrease
+					? translate( 'Applies for one renewal', { textOnly: true } )
+					: translate( 'The first renewal is also discounted.', { textOnly: true } );
 			} else {
-				text += String(
-					translate(
-						'The first %(remainingRenewals)d renewal is also discounted.',
-						'The first %(remainingRenewals)d renewals are also discounted.',
+				text += isPriceIncrease
+					? translate( 'Applies for %(remainingRenewals)d renewals', {
+							textOnly: true,
+							args: {
+								remainingRenewals: remainingRenewalsUsingOffer,
+							},
+					  } )
+					: String(
+							translate(
+								'The first %(remainingRenewals)d renewal is also discounted.',
+								'The first %(remainingRenewals)d renewals are also discounted.',
+								{
+									count: remainingRenewalsUsingOffer,
+									args: {
+										remainingRenewals: remainingRenewalsUsingOffer,
+									},
+								}
+							)
+					  );
+			}
+		} else {
+			text += isPriceIncrease
+				? translate(
+						'Applies for %(remainingRenewals)d renewal',
+						'Applies for %(remainingRenewals)d renewals',
 						{
+							textOnly: true,
 							count: remainingRenewalsUsingOffer,
 							args: {
 								remainingRenewals: remainingRenewalsUsingOffer,
 							},
 						}
-					)
-				);
-			}
-		} else {
-			text += String(
-				translate(
-					'%(remainingRenewals)d discounted renewal remaining.',
-					'%(remainingRenewals)d discounted renewals remaining.',
-					{
-						count: remainingRenewalsUsingOffer,
-						args: {
-							remainingRenewals: remainingRenewalsUsingOffer,
-						},
-					}
-				)
-			);
+				  )
+				: String(
+						translate(
+							'%(remainingRenewals)d discounted renewal remaining.',
+							'%(remainingRenewals)d discounted renewals remaining.',
+							{
+								count: remainingRenewalsUsingOffer,
+								args: {
+									remainingRenewals: remainingRenewalsUsingOffer,
+								},
+							}
+						)
+				  );
 		}
 	}
 	return text;
@@ -161,6 +204,13 @@ export function getItemIntroductoryOfferDisplay(
 	translate: typeof i18n.translate,
 	product: ResponseCartProduct
 ) {
+	// Introductory offer manual renewals often have prorated prices that are
+	// difficult to display as a simple discount so we keep their display
+	// simple.
+	if ( product.is_renewal ) {
+		return null;
+	}
+
 	if ( product.introductory_offer_terms?.reason ) {
 		const text = translate( 'Order not eligible for introductory discount' );
 		return { enabled: false, text };
@@ -177,14 +227,15 @@ export function getItemIntroductoryOfferDisplay(
 	}
 
 	const isFreeTrial = product.item_subtotal_integer === 0;
-	const text = getIntroductoryOfferIntervalDisplay(
+	const text = getIntroductoryOfferIntervalDisplay( {
 		translate,
-		product.introductory_offer_terms.interval_unit,
-		product.introductory_offer_terms.interval_count,
+		intervalUnit: product.introductory_offer_terms.interval_unit,
+		intervalCount: product.introductory_offer_terms.interval_count,
 		isFreeTrial,
-		'checkout',
-		product.introductory_offer_terms.transition_after_renewal_count
-	);
+		isPriceIncrease: doesIntroductoryOfferHavePriceIncrease( product ),
+		context: 'checkout',
+		remainingRenewalsUsingOffer: product.introductory_offer_terms.transition_after_renewal_count,
+	} );
 
 	return { enabled: true, text };
 }

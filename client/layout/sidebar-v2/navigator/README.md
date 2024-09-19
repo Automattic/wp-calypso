@@ -53,7 +53,7 @@ A component representing an individual menu item.
 			link="/item-link"
 			title="Menu Item 1"
 			onClickMenuItem={ handleClick }
-			isSelected={ true }
+			isSelected
 		/>
 	</SidebarNavigatorMenu>
 </SidebarNavigator>

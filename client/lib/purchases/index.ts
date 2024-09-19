@@ -23,16 +23,20 @@ import {
 	isAkismetProduct,
 	isTieredVolumeSpaceAddon,
 	is100Year,
+	isJetpackAISlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import i18n, { TranslateResult } from 'i18n-calypso';
+import i18n, { numberFormat, type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isMarketplaceTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -247,8 +251,34 @@ export function getName( purchase: Purchase ): string {
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 
-	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+	if (
+		isJetpackAISlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
+		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
+			args: {
+				productName: jetpackProductsDisplayNames[ productSlug ],
+				quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+			},
+		} );
+	}
+
+	if (
+		isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
+		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
+			args: {
+				productName: jetpackProductsDisplayNames[ productSlug ],
+				quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+			},
+		} );
+	}
+
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
@@ -305,7 +335,14 @@ export function handleRenewNowClick(
 				throw new Error( 'Could not find product slug for renewal.' );
 			}
 			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
-			const serviceSlug = isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ? 'akismet/' : '';
+
+			let serviceSlug = '';
+
+			if ( isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ) {
+				serviceSlug = 'akismet/';
+			} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+				serviceSlug = 'marketplace/';
+			}
 
 			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
 				purchaseIds[ 0 ]
@@ -315,7 +352,9 @@ export function handleRenewNowClick(
 			}
 			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-			page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
+			page(
+				isJetpackCloud() || isA8CForAgencies() ? `https://wordpress.com${ renewalUrl }` : renewalUrl
+			);
 		} catch ( error ) {
 			dispatch( errorNotice( ( error as Error ).message ) );
 		}
@@ -675,7 +714,9 @@ export function isRemovable( purchase: Purchase ): boolean {
 	);
 }
 
-export function isPartnerPurchase( purchase: Purchase ): boolean {
+export function isPartnerPurchase(
+	purchase: Purchase
+): purchase is Purchase & { partnerType: string } {
 	return !! purchase.partnerName;
 }
 
@@ -810,12 +851,15 @@ export function subscribedWithinPastWeek( purchase: Purchase ) {
 
 /**
  * Returns the payment logo to display based on the payment method
+ * 'displayBrand' respects the customer's card brand choice if available
  * @param {Object} purchase - the purchase with which we are concerned
  * @returns {string|null} the payment logo type, or null if no payment type is set.
  */
 export function paymentLogoType( purchase: Purchase ): string | null | undefined {
 	if ( isPaidWithCreditCard( purchase ) ) {
-		return purchase.payment.creditCard?.type;
+		return purchase.payment.creditCard?.displayBrand
+			? purchase.payment.creditCard?.displayBrand
+			: purchase.payment.creditCard?.type;
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
@@ -823,6 +867,14 @@ export function paymentLogoType( purchase: Purchase ): string | null | undefined
 	}
 
 	return purchase.payment.type || null;
+}
+
+export function isAgencyPartnerType( partnerType: string ) {
+	if ( ! partnerType ) {
+		return false;
+	}
+
+	return [ 'agency', 'agency_beta', 'a4a_agency' ].includes( partnerType );
 }
 
 export function purchaseType( purchase: Purchase ) {
@@ -835,6 +887,10 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isPartnerPurchase( purchase ) ) {
+		if ( isAgencyPartnerType( purchase.partnerType ) ) {
+			return i18n.translate( 'Agency Managed Plan' );
+		}
+
 		return i18n.translate( 'Host Managed Plan' );
 	}
 
@@ -851,6 +907,10 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isAkismetProduct( purchase ) ) {
+		return null;
+	}
+
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 

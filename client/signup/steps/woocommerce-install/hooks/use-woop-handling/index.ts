@@ -69,8 +69,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	// Get email verification data.
-	const currentUserEmail = useSelector( ( state ) => getCurrentUserEmail( state ) );
-	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const currentUserEmail = useSelector( getCurrentUserEmail );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	/*
 	 * Inspect transfer to detect blockers.

@@ -1,9 +1,9 @@
-import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { ThankYou } from 'calypso/components/thank-you';
+import Main from 'calypso/components/main';
+import ThankYouV2 from 'calypso/components/thank-you-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
@@ -45,8 +45,6 @@ const MarketplaceThankYou = ( {
 		siteId ? isRequesting( state, siteId ) : false
 	);
 
-	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
-
 	const [
 		pluginsSection,
 		allPluginsFetched,
@@ -80,9 +78,7 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
-	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
-		( slugs ) => slugs.length !== 0
-	);
+	const [ hasThemes ] = [ themeSlugs ].map( ( slugs ) => slugs.length !== 0 );
 
 	const [ title, subtitle ] = usePageTexts( {
 		pluginSlugs,
@@ -135,11 +131,13 @@ const MarketplaceThankYou = ( {
 		themesProgressbarSteps,
 	} );
 
-	const sections = [
-		...( hasThemes ? [ themesSection ] : [] ),
-		...( hasPlugins ? [ pluginsSection ] : [] ),
-		defaultThankYouFooter,
-	];
+	let products = pluginsSection ?? [];
+
+	if ( hasThemes ) {
+		products = products.concat( themesSection );
+	}
+
+	const footerDetails = useThankYouFoooter( pluginSlugs, themeSlugs );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -170,20 +168,18 @@ const MarketplaceThankYou = ( {
 					/>
 				</div>
 			) }
+
 			{ ! showProgressBar && (
-				<div className="marketplace-thank-you__container">
-					<ConfettiAnimation delay={ 1000 } />
-					<ThankYou
-						containerClassName="marketplace-thank-you"
-						sections={ sections }
-						showSupportSection={ false }
-						thankYouTitle={ title }
-						thankYouSubtitle={ subtitle }
-						thankYouHeaderBody={ thankYouHeaderAction }
-						headerBackgroundColor="#fff"
-						headerTextColor="#000"
+				<Main className="marketplace-thank-you__container">
+					<ThankYouV2
+						title={ title }
+						subtitle={ subtitle }
+						headerButtons={ thankYouHeaderAction }
+						products={ products }
+						footerDetails={ footerDetails }
+						showSuccessAnimation={ hasThemes }
 					/>
-				</div>
+				</Main>
 			) }
 		</ThemeProvider>
 	);

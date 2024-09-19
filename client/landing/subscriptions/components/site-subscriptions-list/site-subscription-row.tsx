@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
@@ -101,7 +102,7 @@ const SiteSubscriptionRow = ( {
 
 	const hostname = useMemo( () => {
 		try {
-			return new URL( url ).hostname;
+			return new URL( localizeUrl( url ) ).hostname;
 		} catch ( e ) {
 			return '';
 		}
@@ -112,15 +113,15 @@ const SiteSubscriptionRow = ( {
 	);
 	const sanitizedBlogId = Reader.isValidId( blog_id ) ? Number( blog_id ) : undefined;
 
-	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
+	const { mutate: updateNotifyMeOfNewPosts, isPending: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
-	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
+	const { mutate: updateEmailMeNewPosts, isPending: updatingEmailMeNewPosts } =
 		SubscriptionManager.useSiteEmailMeNewPostsMutation();
-	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
+	const { mutate: updateDeliveryFrequency, isPending: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
-	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+	const { mutate: updateEmailMeNewComments, isPending: updatingEmailMeNewComments } =
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
-	const { mutate: unsubscribe, isLoading: unsubscribing } =
+	const { mutate: unsubscribe, isPending: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
@@ -313,7 +314,7 @@ const SiteSubscriptionRow = ( {
 						icon={ ! delivery_methods.email?.send_comments ? 'cross' : 'checkmark' }
 						iconSize={ 16 }
 						className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
-						showOnHover={ true }
+						showOnHover
 					>
 						{ delivery_methods.email?.send_comments
 							? translate( 'You will receive email notifications for new comments on this site.' )

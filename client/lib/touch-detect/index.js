@@ -11,7 +11,7 @@
 export function hasTouch() {
 	/* global DocumentTouch:true */
 	return (
-		window &&
+		typeof window !== 'undefined' &&
 		( 'ontouchstart' in window || ( window.DocumentTouch && document instanceof DocumentTouch ) )
 	);
 }

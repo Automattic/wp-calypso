@@ -57,16 +57,16 @@ const selectors = {
 	cardCVVInput: 'input[data-elements-stable-field-name="cardCvc"]',
 
 	// Checkout elements
-	couponCodeInputButton: `button:text("Add a coupon code"):visible`,
+	couponCodeInputButton: `button:text("Have a coupon?"):visible`,
 	couponCodeInput: `input[id="order-review-coupon"]`,
 	couponCodeApplyButton: `button:text("Apply")`,
 	disabledButton: 'button[disabled]:has-text("Processing")',
-	paymentButton: `button.checkout-button`,
+	paymentButton: `.checkout-submit-button button`,
 	totalAmount:
 		envVariables.VIEWPORT_NAME === 'mobile'
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
-	purchaseButton: `button.checkout-button:has-text("Pay")`,
+	purchaseButton: `.checkout-submit-button button:has-text("Pay")`,
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 

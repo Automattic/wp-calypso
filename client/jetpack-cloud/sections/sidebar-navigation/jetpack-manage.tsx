@@ -1,4 +1,5 @@
-import { plugins, currencyDollar, category, home } from '@wordpress/icons';
+import { isEnabled } from '@automattic/calypso-config';
+import { plugins, currencyDollar, category, home, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
@@ -11,6 +12,8 @@ import {
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_BILLING_LINK,
 	JETPACK_MANAGE_OVERVIEW_LINK,
+	JETPACK_MANAGE_PRICING_LINK,
+	JETPACK_MANAGE_SITES_LINK,
 } from './lib/constants';
 import type { MenuItemProps } from './types';
 
@@ -36,17 +39,34 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		},
 	} );
 
+	const dashboardMenuItem = createItem( {
+		icon: category,
+		path: '/',
+		link: JETPACK_MANAGE_DASHBOARD_LINK,
+		title: translate( 'Sites' ),
+		trackEventProps: {
+			menu_item: 'Jetpack Cloud / Dashboard',
+		},
+	} );
+
+	const sitesV2MenuItem = createItem( {
+		icon: category,
+		path: '/',
+		link: JETPACK_MANAGE_SITES_LINK,
+		title: translate( 'Sites V2' ),
+		trackEventProps: {
+			menu_item: 'Jetpack Cloud / Dashboard v2',
+		},
+		withChevron: true,
+	} );
+
+	const showSitesV2Menu =
+		isEnabled( 'jetpack/manage-sites-v2-menu' ) &&
+		isSectionNameEnabled( 'jetpack-cloud-agency-sites-v2' );
+
 	const menuItems = [
 		...( isSectionNameEnabled( 'jetpack-cloud-overview' ) ? [ overviewMenuItem ] : [] ),
-		createItem( {
-			icon: category,
-			path: '/',
-			link: JETPACK_MANAGE_DASHBOARD_LINK,
-			title: translate( 'Sites' ),
-			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Dashboard',
-			},
-		} ),
+		...( showSitesV2Menu ? [ sitesV2MenuItem ] : [ dashboardMenuItem ] ),
 		createItem( {
 			icon: plugins,
 			path: '/',
@@ -54,6 +74,15 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 			title: translate( 'Plugins' ),
 			trackEventProps: {
 				menu_item: 'Jetpack Cloud / Plugins',
+			},
+		} ),
+		createItem( {
+			icon: tag,
+			path: '/',
+			link: JETPACK_MANAGE_PRICING_LINK,
+			title: translate( 'Pricing' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Partner Portal / Pricing',
 			},
 		} ),
 		createItem( {

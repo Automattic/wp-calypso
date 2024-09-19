@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .plugins-discovery-page__upsell.card.banner.upsell-nudge {
 	background-color: #f0f7fc;
 	border: none;
@@ -22,5 +25,26 @@
 		padding: 8px 14px;
 		font-size: 0.875rem;
 		line-height: 22px;
+		white-space: nowrap;
+		width: 100%;
+
+		@include break-wide {
+			width: auto;
+		}
+	}
+
+	.banner__action .button:not(:first-child) {
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
+
+		width: 100%;
+		margin-top: 12px;
+		margin-left: 0;
+
+		@include break-wide {
+			width: auto;
+			margin-left: 12px;
+			margin-top: 0;
+		}
 	}
 }

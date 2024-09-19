@@ -94,6 +94,9 @@ describe( '<SiteCard>', () => {
 					[ blogId ]: siteObj,
 				},
 			},
+			a8cForAgencies: {
+				agencies: {},
+			},
 		};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );

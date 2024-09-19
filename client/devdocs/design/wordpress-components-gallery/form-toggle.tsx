@@ -1,6 +1,6 @@
+import { FormLabel } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { useState } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 
 const FormToggleExample = () => {
 	const [ isChecked, setChecked ] = useState( true );

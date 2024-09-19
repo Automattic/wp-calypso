@@ -1,5 +1,4 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
-import { englishLocales, useLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -11,8 +10,7 @@ const GoogleDomainsCopyStyle = styled.p`
 `;
 
 export function GoogleDomainsCopy( { responseCart }: { responseCart: ResponseCart } ) {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 
 	const hasFreeCouponTransfersOnly = responseCart.products?.every( ( item ) => {
 		return (
@@ -24,19 +22,9 @@ export function GoogleDomainsCopy( { responseCart }: { responseCart: ResponseCar
 	} );
 
 	if ( hasFreeCouponTransfersOnly ) {
-		let couponText = __(
-			"We're paying the first year of your domain transfer. We'll use the payment information below to renew your domain transfer starting next year."
+		const couponText = __(
+			'We’re paying to extend your registration for an additional year. We’ll use the payment information below to renew your domain before it expires.'
 		);
-		if (
-			englishLocales.includes( locale ) ||
-			hasTranslation(
-				'We’re paying to extend your registration for an additional year. We’ll use the payment information below to renew your domain before it expires.'
-			)
-		) {
-			couponText = __(
-				'We’re paying to extend your registration for an additional year. We’ll use the payment information below to renew your domain before it expires.'
-			);
-		}
 
 		return <GoogleDomainsCopyStyle>{ couponText }</GoogleDomainsCopyStyle>;
 	}

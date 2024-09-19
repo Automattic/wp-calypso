@@ -1,3 +1,4 @@
+import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import {
@@ -5,18 +6,19 @@ import {
 	type PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import classNames from 'classnames';
+import { getContactDetailsType } from '@automattic/wpcom-checkout';
+import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
-import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact-details-type';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
@@ -35,6 +37,7 @@ type PurchaseModalProps = {
 	onClose: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
+	coupon?: string;
 	showFeatureList: boolean;
 } & (
 	| {
@@ -80,9 +83,9 @@ function PurchaseModal( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			baseClassName="purchase-modal dialog"
-			className={ classNames( {
+			className={ clsx( {
 				'has-feature-list': showFeatureList,
 			} ) }
 			onClose={ onClose }
@@ -110,6 +113,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		onPurchaseSuccess = null,
 		disabledThankYouPage,
 		productToAdd,
+		coupon,
 		siteSlug,
 		showFeatureList,
 	} = props;
@@ -127,15 +131,25 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	};
 
 	const { stripe, stripeConfiguration } = useStripe();
+	const { razorpayConfiguration } = useRazorpay();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
-	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate } =
+	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate, applyCoupon } =
 		useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 	const paymentMethodsState = useStoredPaymentMethods( {
 		type: 'card',
 	} );
 	const countries = useCountryList();
+
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isJetpackNotAtomic = useSelector(
+		( state ) =>
+			!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
+	);
+	const isAkismetSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 
 	const cards = paymentMethodsState.paymentMethods.filter( isCreditCard );
 	const contactDetailsType = getContactDetailsType( responseCart );
@@ -148,12 +162,15 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			getThankYouUrl: () => '/plans',
 			includeDomainDetails,
 			includeGSuiteDetails,
+			isAkismetSitelessCheckout,
+			isJetpackNotAtomic,
 			reduxDispatch,
 			responseCart,
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			contactDetails: {
 				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
 				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
@@ -165,9 +182,12 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			includeGSuiteDetails,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			reduxDispatch,
 			selectedSite,
 			responseCart,
+			isAkismetSitelessCheckout,
+			isJetpackNotAtomic,
 		]
 	);
 
@@ -186,7 +206,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
 				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
 			};
+
 			setRequestSent( true );
+
 			updateCartContactDetailsForCheckout(
 				countries ?? [],
 				responseCart,
@@ -195,6 +217,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				vatDetails
 			);
 			replaceProductsInCart( [ productToAdd ] );
+			if ( coupon ) {
+				applyCoupon( coupon );
+			}
 		}
 	}, [
 		replaceProductsInCart,
@@ -207,6 +232,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		requestSent,
 		setRequestSent,
 		responseCart,
+		applyCoupon,
+		coupon,
 	] );
 
 	const handleOnClose = () => {

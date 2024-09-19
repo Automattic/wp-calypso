@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
@@ -476,7 +476,7 @@ export default function NotificationSettings( {
 					{ translate( 'Settings for selected sites will be overwritten.' ) }
 				</AlertBanner>
 			) }
-			<div className={ classNames( { 'notification-settings__content': ! isBulkUpdate } ) }>
+			<div className={ clsx( { 'notification-settings__content': ! isBulkUpdate } ) }>
 				<NotificationDuration
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }

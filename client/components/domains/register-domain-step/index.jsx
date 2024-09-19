@@ -5,7 +5,7 @@ import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/compone
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -28,7 +28,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
@@ -469,11 +468,11 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
-		const containerDivClassName = classNames( 'register-domain-step', {
+		const containerDivClassName = clsx( 'register-domain-step', {
 			'register-domain-step__signup': this.props.isSignupStep,
 		} );
 
-		const searchBoxClassName = classNames( 'register-domain-step__search', {
+		const searchBoxClassName = clsx( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
@@ -515,14 +514,13 @@ class RegisterDomainStep extends Component {
 						<Notice
 							status="is-error"
 							text={ replaceDomainFailedMessage }
-							showDismiss={ true }
+							showDismiss
 							onDismissClick={ dismissReplaceDomainFailed }
 						/>
 					) }
 					{ this.renderFilterContent() }
 					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
-					<QueryContactDetailsCache />
 				</div>
 				{ showAlreadyOwnADomain && (
 					<AlreadyOwnADomain
@@ -699,7 +697,7 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
-		const className = classNames( 'register-domain-step__next-page', {
+		const className = clsx( 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (
@@ -820,7 +818,6 @@ class RegisterDomainStep extends Component {
 
 							const isAvailablePremiumDomain = domainAvailability.AVAILABLE_PREMIUM === status;
 							const isAvailableSupportedPremiumDomain =
-								config.isEnabled( 'domains/premium-domain-purchases' ) &&
 								domainAvailability.AVAILABLE_PREMIUM === status &&
 								availabilityResult?.is_supported_premium_domain;
 
@@ -1031,9 +1028,7 @@ class RegisterDomainStep extends Component {
 					const status = get( result, 'status', error );
 					const isAvailable = domainAvailability.AVAILABLE === status;
 					const isAvailableSupportedPremiumDomain =
-						config.isEnabled( 'domains/premium-domain-purchases' ) &&
-						domainAvailability.AVAILABLE_PREMIUM === status &&
-						result?.is_supported_premium_domain;
+						domainAvailability.AVAILABLE_PREMIUM === status && result?.is_supported_premium_domain;
 					resolve( {
 						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
@@ -1063,6 +1058,17 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
+		// Skips availability check for the Gravatar flow - so TLDs that are
+		// available but not eligible for Gravatar won't be displayed
+		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			// Also, we want to error messages for unavailable TLDs in Gravatar.
+			// Since only .link is enabled for now, we show the message for all other TLDs.
+			if ( getTld( domain ) !== 'link' ) {
+				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
+			}
+			return;
+		}
+
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
@@ -1085,6 +1091,11 @@ class RegisterDomainStep extends Component {
 
 					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
 
+					if ( error ) {
+						resolve( null );
+						return;
+					}
+
 					if ( this.props.includeOwnedDomainInSuggestions ) {
 						availableDomainStatuses.push( REGISTERED_OTHER_SITE_SAME_USER );
 					}
@@ -1094,9 +1105,7 @@ class RegisterDomainStep extends Component {
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
 					const isAvailableSupportedPremiumDomain =
-						config.isEnabled( 'domains/premium-domain-purchases' ) &&
-						AVAILABLE_PREMIUM === status &&
-						result?.is_supported_premium_domain;
+						AVAILABLE_PREMIUM === status && result?.is_supported_premium_domain;
 
 					/**
 					 * In rare cases we don't get the FQDN as suggestion from the suggestion engine but only
@@ -1473,7 +1482,7 @@ class RegisterDomainStep extends Component {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
-		const { REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
+		const { DOMAIN_AVAILABILITY_THROTTLED, REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1506,7 +1515,8 @@ class RegisterDomainStep extends Component {
 
 					const skipAvailabilityErrors =
 						! status ||
-						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions );
+						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions ) ||
+						status === DOMAIN_AVAILABILITY_THROTTLED;
 
 					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
@@ -1680,10 +1690,9 @@ class RegisterDomainStep extends Component {
 		} else {
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 			if ( this.props.selectedSite ) {
-				useYourDomainUrl = domainUseMyDomain(
-					this.props.selectedSite.slug,
-					this.state.lastQuery.trim()
-				);
+				useYourDomainUrl = domainUseMyDomain( this.props.selectedSite.slug, {
+					domain: this.state.lastQuery.trim(),
+				} );
 			}
 		}
 
@@ -1723,16 +1732,20 @@ class RegisterDomainStep extends Component {
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
 			REGISTERED_OTHER_SITE_SAME_USER,
+			REGISTERED_SAME_SITE,
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
+		const isGravatarFlow = this.props.flowName === 'domain-for-gravatar';
 
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
-			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error )
+			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error ) ||
+			( isGravatarFlow &&
+				[ REGISTERED_OTHER_SITE_SAME_USER, REGISTERED_SAME_SITE ].includes( error ) )
 		) {
 			return;
 		}

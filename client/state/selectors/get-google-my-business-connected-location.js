@@ -2,7 +2,7 @@ import { filter, last } from 'lodash';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 
 /**
- * Returns the Google My Business location/external user the given site
+ * Returns the Google Business Profile location/external user the given site
  * is connected to
  * @param  {Object} state  Global state tree
  * @param  {?number} siteId The site ID

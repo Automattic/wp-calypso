@@ -1,0 +1,1176 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.main.a4a-layout.sites-dashboard {
+	padding-block-start: 0;
+
+	.a4a-layout__header-actions {
+		white-space: nowrap;
+	}
+
+	.site-preview-pane .a4a-layout-column__container {
+		display: flex;
+	}
+
+	.a4a-layout-column {
+		.a4a-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
+	}
+
+	.site-actions__actions-large-screen {
+		display: block;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
+	}
+
+	.site-actions__actions-small-screen {
+		position: unset;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
+	}
+
+	.a4a-layout__top-wrapper:not(.preview-hidden) {
+		padding-block-start: 24px;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-block-start: 0;
+		}
+	}
+
+	.components-input-base {
+		border-radius: 4px;
+	}
+
+	@media (min-width: $break-large) {
+		background: inherit;
+
+		.dataviews-view-table thead {
+			position: sticky;
+			top: 0;
+			z-index: 2;
+		}
+
+		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
+			font-size: 1.25rem;
+			font-weight: 500;
+		}
+
+		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
+			display: none;
+		}
+	}
+
+	@media (max-width: 660px) {
+		.a4a-layout__header-main {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-large) {
+		.section-nav__mobile-header {
+			padding: 13px;
+		}
+
+		&.sites-dashboard__layout {
+			.sites-overview {
+				overflow: hidden;
+
+				.sites-overview__page-title-container {
+					display: flex;
+				}
+
+				#sites-overview-add-sites-button {
+					a.button.split-button__main {
+						width: auto;
+						height: auto;
+						font-size: rem(12px);
+						line-height: 24px;
+						padding: 0 12px;
+					}
+				}
+
+				.current-section button {
+					padding: 14px 8px;
+				}
+
+				a.sites-overview__issue-license-button {
+					display: flex;
+					font-size: rem(12px);
+					justify-content: center;
+					align-items: center;
+					height: 28px;
+					flex-grow: 0;
+				}
+
+				.sites-overview__tabs,
+				.dataviews-filters__view-actions {
+					border-bottom: 1px solid var(--color-accent-5);
+				}
+
+				.sites-overview__content {
+					padding: 0;
+					margin: 0;
+					margin-top: 16px;
+				}
+			}
+		}
+
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			width: 80%;
+		}
+
+		.dataviews-view-table tr td:first-child:has(.sites-dataview__site-error) {
+			padding: 8px 0 8px 8px;
+		}
+
+		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
+			min-width: 40px;
+		}
+
+		.components-button.is-compact.is-tertiary {
+			margin-right: 8px;
+		}
+
+		.dataviews-filters__view-actions {
+			padding-bottom: 8px;
+
+			& > :first-child {
+				margin-inline-start: 8px;
+			}
+
+			.components-input-control {
+				flex-grow: 1;
+			}
+
+			.components-flex.components-h-stack {
+				flex: 6;
+			}
+
+			.components-button.is-compact.has-icon {
+				flex: 1;
+				margin-left: -12px;
+			}
+		}
+
+		.sites-overview__stats-trend,
+		.sites-overview__column-action-button,
+		.sites-overview__row-status,
+		.toggle-activate-monitoring__toggle-button,
+		.sites-dataviews__favorite-btn-wrapper,
+		.sites-overview__boost-score {
+			display: none;
+		}
+
+		.item-preview__content {
+			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
+
+			.backup__page .main {
+				/* Prevents the backup page from overriding our padding and overflow settings. */
+				padding-bottom: 88px; /* 88px matches the padding from PR #39201. */
+				overflow: hidden;
+			}
+		}
+	}
+
+	@media (max-width: $break-wide) {
+		&.sites-dashboard__layout:not(.preview-hidden) {
+			flex-direction: column;
+			gap: 0;
+
+			.sites-overview__container {
+				min-height: 0;
+				overflow: hidden;
+			}
+
+			.sites-overview__content {
+				display: none;
+			}
+
+			.sites-overview {
+				width: unset;
+				display: none;
+			}
+		}
+	}
+
+	@media (min-width: $break-large) {
+		&.sites-dashboard__layout:not(.preview-hidden) {
+			.sites-overview {
+				padding: 0;
+
+				.a4a-layout__viewport {
+					padding-inline: 16px;
+				}
+
+				.a4a-layout__header-title {
+					font-size: rem(20px);
+					font-weight: 500;
+				}
+			}
+
+			.sites-overview__content {
+				padding: 0;
+				padding-inline: 0 !important;
+			}
+
+			.sites-overview__issue-license-button-short-caption {
+				height: 28px;
+				width: auto;
+				line-height: 11px;
+				font-size: rem(12px);
+			}
+
+			.sites-overview__page-subtitle {
+				display: none;
+			}
+
+			.sites-overview__tabs,
+			.dataviews-filters__view-actions {
+				border-bottom: 1px solid var(--color-accent-5);
+			}
+
+			.dataviews-filters__view-actions {
+				padding: 16px 0;
+				margin: 0;
+				display: flex;
+
+				.components-h-stack {
+					width: unset;
+				}
+
+				.components-h-stack,
+				.components-button {
+					flex-grow: 1;
+				}
+
+			}
+
+			.sites-overview__tabs {
+				padding: 0 24px;
+			}
+
+			.sites-overview__page-title {
+				font-size: rem(20px);
+				font-weight: 500;
+			}
+
+			.sites-overview__issue-license-button {
+				display: flex;
+				font-size: rem(12px);
+				justify-content: center;
+				align-items: center;
+				height: 28px;
+			}
+
+			ul.dataviews-view-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				overflow-y: auto;
+
+				li {
+					border-bottom: 1px solid var(--color-accent-5);
+				}
+
+				li:has(.sites-dataview__site-error-span) {
+					border-bottom: 0;
+				}
+
+				li:has(.sites-dataview__site-error) {
+					.dataviews-view-list__item {
+						padding: 0 24px;
+					}
+				}
+
+				.dataviews-view-list__fields {
+					display: flex;
+					justify-content: space-between;
+				}
+
+				.components-h-stack,
+				.dataviews-view-list__item {
+					width: 100%;
+				}
+
+				/* This styling is a bit of a hack: To make the site name clickable area larger, will need
+				 * to hide the other fields when in preview mode.
+				 */
+				.dataviews-view-list__field {
+					// Hide the field except first (Site name) and last (actions menu)
+					&:not(:first-child):not(:last-child) {
+						display: none;
+					}
+
+					// Force the site name to take up the full width
+					&:first-child {
+						flex-grow: 1;
+
+						.sites-dataviews__site {
+							width: 100%;
+							justify-content: flex-start;
+						}
+
+						.sites-dataview__site-error {
+							font-size: rem(13px);
+							border-radius: 4px;
+							padding: 4px 8px;
+						}
+					}
+				}
+
+				// Ideally instead of reusing the site name full field
+				// We should be setting a media field and a primary field.
+				.dataviews-view-list__media-wrapper {
+					display: none;
+				}
+				.dataviews-view-list__primary-field {
+					display: none;
+				}
+
+				.sites-overview__stats-trend,
+				.sites-overview__column-action-button,
+				.sites-overview__row-status,
+				.toggle-activate-monitoring__toggle-button,
+				.sites-dataviews__favorite-btn-wrapper,
+				.sites-overview__boost-score {
+					display: none;
+				}
+
+				.site-actions__actions-large-screen {
+					display: block;
+				}
+
+			}
+		}
+	}
+
+	thead .dataviews-view-table__row th span {
+		font-size: rem(11px);
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--color-accent-80);
+	}
+
+	tr.dataviews-view-table__row th[data-field-id="favorite"] svg {
+		vertical-align: middle;
+	}
+
+	tr.dataviews-view-table__row {
+		&:hover {
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
+		}
+	}
+
+	tr:has(.sites-dataview__site-error):hover {
+		background: unset;
+		background-color: unset;
+	}
+
+	td:has(.sites-dataview__site-error-span) {
+		border-bottom: 0;
+	}
+
+	td:has(.sites-dataview__site-error) {
+		padding: 0 0 16px 0;
+		height: 40px;
+	}
+
+	td:first-child:has(.sites-dataview__site-error) {
+		padding: 0 0 0 64px;
+
+		.sites-dataview__site-error {
+			padding: 5px 10px;
+			border-radius: 4px;
+		}
+	}
+
+	td:last-child:has(.sites-dataview__site-error) {
+		padding: 0 64px 16px 0;
+
+		.sites-dataview__site-error {
+			border-radius: 4px;
+		}
+	}
+
+	.dataviews-view-table__cell-content-wrapper:has(.sites-dataview__site-error) {
+		height: 100%;
+	}
+
+	.sites-dataview__site-error {
+		color: #691c1c;
+		background-color: #facfd2;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.sites-overview__content-wrapper {
+		max-width: none;
+	}
+
+	&.sites-dashboard__layout:not(.preview-hidden) {
+
+
+		.a4a-layout__top-wrapper {
+			padding-block-start: 16px;
+
+			.a4a-layout__header {
+				padding: 0;
+			}
+		}
+
+		.dataviews-filters__view-actions {
+			.components-h-stack {
+				flex-grow: 0;
+				width: 80%;
+				gap: 6px;
+			}
+
+			.components-button {
+				flex-grow: 0;
+			}
+		}
+
+		.site-preview__open {
+			display: none;
+		}
+	}
+
+	&.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
+		display: none;
+	}
+
+	&.sites-dashboard__layout {
+
+		.activity-card-list .activity-card .activity-card__time {
+			background: none;
+		}
+
+		.sites-overview__add-site-issue-license-buttons {
+			display: flex;
+			grid-gap: 8px;
+
+			&.is-with-split-button {
+				flex-direction: row;
+
+				> a {
+					flex-grow: 1;
+				}
+
+				.split-button {
+					display: flex;
+				}
+
+				.split-button__main {
+					flex-grow: 1;
+				}
+
+				@media (max-width: $break-small) {
+					> a {
+						flex-grow: 0;
+					}
+				}
+			}
+		}
+
+		.sites-overview__add-new-site {
+			white-space: nowrap;
+		}
+
+		.dataviews-wrapper {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			width: 100%;
+
+			> div[data-wp-component="VStack"] {
+				align-items: stretch;
+				overflow: hidden;
+			}
+
+			.components-button:focus:not(:disabled) {
+				box-shadow: 0 0 0 2px var(--color-primary-light);
+			}
+		}
+
+		.a4a-layout__top-wrapper,
+		.a4a-layout__body {
+			> * {
+				@include breakpoint-deprecated(">660px") {
+					max-width: none;
+				}
+			}
+		}
+
+		.sites-overview {
+			height: 100%;
+			width: 400px;
+			flex: unset;
+			transition: all 0.2s;
+			background: var(--color-light-backdrop);
+
+			.sites-overview__content {
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: auto;
+			}
+		}
+
+		@media only screen and (min-width: $break-large) {
+			.sites-overview {
+				padding: 24px 18px;
+			}
+		}
+
+
+		.sites-overview__container {
+			min-height: calc(100vh - 90px);
+		}
+
+		.sites-overview__page-title {
+			font-size: rem(24px);
+		}
+
+		.item-preview__pane {
+			flex-grow: 1;
+			width: auto;
+			transition: flex-grow 0.2s;
+			background: var(--color-light-backdrop);
+			max-height: calc(100vh - 32px);
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+		}
+
+		.site-preview__open {
+			display: block;
+		}
+
+
+		&.preview-hidden {
+			.sites-overview {
+				flex-grow: 1;
+				transition: flex-grow 0.2s;
+			}
+
+			.item-preview__pane {
+				max-width: 0;
+				padding: 0;
+			}
+
+			@media only screen and (min-width: $break-large) {
+				.sites-overview {
+					padding: 0;
+
+					.sites-overview__content {
+						margin-top: 24px;
+					}
+
+					.dataviews-filters__view-actions {
+						& > :first-child {
+							margin-inline-start: 64px;
+						}
+
+						& > :last-child {
+							margin-inline-end: 64px;
+						}
+					}
+				}
+			}
+		}
+
+		@media (max-width: 660px) {
+			.sites-overview__page-heading {
+				display: none;
+			}
+		}
+	}
+
+	.sites-overview__add-site-issue-license-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		> a,
+		> button {
+			font-size: 1rem;
+			box-sizing: border-box;
+			max-height: 40px;
+		}
+
+		@include break-large {
+			flex-direction: row;
+		}
+	}
+
+
+	.sites-overview__add-site-issue-license-buttons.is-with-split-button {
+		flex-direction: row;
+
+		> a {
+			flex-grow: 1;
+		}
+
+		.split-button {
+			display: flex;
+		}
+
+		.split-button__main {
+			flex-grow: 1;
+		}
+
+		@include break-small {
+			> a {
+				flex-grow: 0;
+			}
+		}
+	}
+
+	.sites-overview__add-new-site {
+		white-space: nowrap;
+	}
+
+	.sites-overview__column-action-button {
+		max-width: 100%;
+		display: inline-flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		width: fit-content;
+		height: 22px;
+		background: var(--color-light-backdrop);
+		box-sizing: border-box;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
+		font-weight: 500;
+		font-size: 0.75rem;
+		vertical-align: middle;
+		color: var(--color-accent-80);
+		border: 1px solid var(--color-accent-5);
+		padding: 2px 11px;
+		cursor: pointer;
+		white-space: nowrap;
+
+		span {
+			margin: 0 0.2em;
+		}
+		svg {
+			margin-inline-start: -0.4em;
+		}
+		&:hover:not(.is-link) {
+			background: var(--color-accent-80);
+			color: var(--color-light-backdrop);
+		}
+
+		&:visited:not(:hover) {
+			color: var(--color-accent-80);
+		}
+
+		&.is-selected {
+			background: var(--color-jetpack-50);
+			color: var(--color-light-backdrop);
+			border: none;
+		}
+
+		&.is-link {
+			border: none;
+			background: none;
+			text-decoration: underline;
+			outline: none;
+			margin: 0;
+			padding: 0;
+
+			&:hover {
+				color: var(--color-accent-80);
+			}
+		}
+	}
+
+	.sites-overview__grey-icon {
+		vertical-align: middle;
+		color: var(--color-accent-40);
+	}
+	.sites-overview__icon-active {
+		vertical-align: middle;
+		color: var(--color-accent-5);
+	}
+	.sites-overview__stats-trend {
+		padding: 0 8px 0 4px;
+	}
+	.sites-overview__stats-trend__up,
+	.sites-overview__stats-trend__down {
+		vertical-align: middle;
+		display: inline-flex;
+		margin-inline-start: -5px;
+	}
+	.sites-overview__stats-trend__up {
+		fill: var(--color-jetpack-40);
+	}
+	.sites-overview__stats-trend__down {
+		fill: var(--color-scary-50);
+	}
+	.sites-overview__stats-trend__same .empty-icon {
+		vertical-align: middle;
+		height: 8px;
+		width: 8px;
+		border-radius: 50%;
+		background: var(--color-accent-5);
+		display: inline-flex;
+		margin-inline-end: 5px;
+		@media screen and (max-width: $break-xlarge) {
+			margin-block-start: 8px;
+		}
+	}
+	.sites-overview__stats .shortened-number,
+	.sites-overview__stats-trend .shortened-number {
+		vertical-align: middle;
+		color: var(--color-accent-80);
+		font-size: 0.75rem;
+	}
+	.sites-overview__disabled {
+		color: var(--color-accent-5);
+		cursor: not-allowed;
+		opacity: 0.5;
+		button {
+			pointer-events: none;
+		}
+	}
+	.sites-overview__row-text {
+		display: inline-block;
+		font-weight: 500;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: clip;
+		vertical-align: middle;
+		color: var(--color-accent-100);
+		align-items: center;
+		@include break-zoomed-in {
+			width: calc(100% - 120px);
+			margin-inline-start: 8px;
+			margin-inline-end: 5px;
+			font-size: 1rem !important;
+		}
+	}
+
+	.site-host-info {
+		display: inline-block;
+		margin-inline-end: 10px;
+		min-width: 40px;
+		text-align: center;
+
+		.wordpress-logo {
+			display: inline-block;
+			fill: var(--color-primary-50);
+			visibility: hidden;
+			margin: auto 0;
+
+			&.is-visible {
+				visibility: visible;
+			}
+		}
+	}
+
+	.sites-overview__error-container {
+		background: #414141;
+		margin: 0 -6px;
+		display: flex;
+		align-items: center;
+		height: 40px;
+		position: relative;
+	}
+	.sites-overview__error-icon {
+		background: #d94f4f;
+		padding: 11px;
+		color: var(--color-light-backdrop);
+		width: 5%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.sites-overview__error-message {
+		font-size: 0.75rem;
+		color: var(--color-light-backdrop);
+		padding: 0.5em;
+		margin: auto 0;
+	}
+	.sites-overview__error-message-large-screen {
+		display: none;
+		@include break-wide {
+			display: inline-block;
+		}
+	}
+	.sites-overview__error-message-small-screen {
+		display: inline-block;
+		@include break-wide {
+			display: none;
+		}
+	}
+	.sites-overview__error-message-link {
+		font-size: 0.75rem;
+		color: var(--color-text-white) !important;
+		padding: 6px;
+		position: absolute;
+		inset-inline-end: 16px;
+		text-decoration: underline;
+		font-weight: 500;
+	}
+	.sites-overview__badge {
+		font-size: 0.75rem !important;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: middle;
+		@include break-wide {
+			max-width: 70px;
+		}
+		@include break-wide() {
+			max-width: fit-content;
+		}
+	}
+
+	.sites-overview__stats {
+		color: var(--color-text-black);
+		display: inline-block;
+		line-height: 1;
+		height: 18px;
+		padding: 2px 1px;
+	}
+	.sites-overview__tooltip {
+		.popover__arrow {
+			&::before {
+				border-bottom-color: var(--color-accent-60) !important;
+				inset-block-start: 1px !important;
+			}
+		}
+		.popover__inner {
+			background: var(--color-accent-60);
+			color: var(--color-text-white);
+			padding: 10px 12px;
+			border: none;
+		}
+	}
+	.sites-overview__status-critical {
+		color: var(--color-scary-50);
+		position: absolute;
+		inset-inline-end: 42px;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		display: inline-flex;
+	}
+	.sites-overview__status-count {
+		position: absolute;
+		inset-inline-end: 42px;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		border-radius: 50%;
+		border-width: 2px;
+		border-style: solid;
+		width: 24px;
+		height: 24px;
+		text-align: center;
+		font-size: 0.75rem;
+		line-height: 20px;
+		box-sizing: border-box;
+	}
+	.sites-overview__status-failed {
+		background-color: var(--color-scary-50);
+		border-color: var(--color-scary-50);
+		color: var(--color-text-inverted);
+	}
+	.sites-overview__status-warning {
+		background-color: var(--color-yellow-20);
+		border-color: var(--color-yellow-20);
+		color: var(--color-warning-80);
+	}
+	@keyframes highlight-tab-animation {
+		0% {
+			background: var(--color-neutral-70);
+		}
+		100% {
+			background: unset;
+		}
+	}
+	@keyframes highlight-tab-animation-count {
+		0% {
+			color: var(--color-text-inverted);
+		}
+		100% {
+			color: unset;
+		}
+	}
+	@keyframes highlight-tab-animation-icon {
+		0% {
+			fill: var(--color-text-inverted);
+		}
+		100% {
+			fill: unset;
+		}
+	}
+	.sites-overview__highlight-tab.section-nav {
+		animation: highlight-tab-animation 0.4s linear;
+		.section-nav__mobile-header-text {
+			animation: highlight-tab-animation-count 0.4s linear;
+		}
+		.section-nav__mobile-header .gridicon {
+			animation: highlight-tab-animation-icon 0.4s linear;
+		}
+	}
+	.sites-overview__no-sites {
+		text-align: center;
+		font-size: 1.5rem;
+		margin-top: 16px;
+	}
+
+	.sites-overview__issue-licenses-button-small-screen {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		padding: 1rem;
+		background: var(--color-light-backdrop);
+		box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12);
+		z-index: 20;
+
+		.sites-overview__licenses-buttons-issue-license {
+			width: 70%;
+			max-width: 275px;
+		}
+
+		@include break-mobile {
+			text-align: right;
+		}
+
+		@include breakpoint-deprecated( ">660px" ) {
+			left: var(--sidebar-width-min);
+			padding: 0.5rem;
+		}
+	}
+
+	.sites-overview__column-content {
+		font-size: 0.75rem !important;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: middle;
+	}
+
+	.sites-overview__warning {
+		@extend .sites-overview__column-content;
+		color: var(--color-warning-50);
+	}
+
+	.sites-overview__failed {
+		@extend .sites-overview__column-content;
+		color: var(--color-scary-50);
+	}
+
+	.sites-overview__critical {
+		@extend .sites-overview__column-content;
+		padding: 15px;
+		color: var(--color-scary-50);
+	}
+
+	@mixin boost-score-style($color, $background-color) {
+		@extend .sites-overview__column-content;
+		color: $color;
+		background-color: $background-color;
+
+		&:hover,
+		&:active,
+		&:focus {
+			color: $color;
+			background-color: $background-color;
+		}
+	}
+
+	a.sites-overview__boost-score {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		width: 24px;
+		height: 24px;
+		font-weight: 500;
+		user-select: none;
+
+		&.boost-score-good {
+			@include boost-score-style(var(--color-jetpack-50), var(--color-jetpack-0));
+		}
+
+		&.boost-score-okay {
+			@include boost-score-style(var(--color-yellow-50), var(--color-yellow-0));
+		}
+
+		&.boost-score-bad {
+			@include boost-score-style(var(--color-scary-50), var(--color-scary-0));
+		}
+	}
+
+	.width-fit-content {
+		width: fit-content !important;
+	}
+
+	.site-content__small-screen-view {
+		.sites-overview__icon-active {
+			position: relative;
+			left: 4px;
+		}
+	}
+
+	.fixed-site-column {
+		max-width: 140px !important;
+		min-width: 140px !important;
+	}
+
+	.cursor-pointer {
+		cursor: pointer;
+	}
+
+	.is-loading {
+		opacity: 0.5;
+	}
+
+	.margin-top-16 {
+		margin-top: 16px;
+	}
+
+	.sites-dataviews__favorite-btn-wrapper {
+		display: flex;
+		align-items: center;
+
+		.site-set-favorite__favorite-icon {
+			visibility: hidden;
+			color: var(--color-primary);
+		}
+
+		button.site-set-favorite__favorite-icon {
+			position: unset;
+		}
+
+		&:hover {
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
+		}
+	}
+}
+
+/* Once LicenseLightboxJetpackManageLicense is ported to A4A, this can be removed */
+.is-section-a8c-for-agencies-sites {
+	.license-lightbox__jetpack-manage-license-title {
+		display: none;
+	}
+}
+
+.sites-dashboard-empty {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	align-items: center;
+
+	margin: 24px auto;
+	max-width: 700px;
+	text-align: center;
+
+	@include break-large {
+		align-items: start;
+		text-align: left;
+	}
+}
+
+.sites-dashboard-empty__heading {
+	font-size: rem(24px);
+	font-weight: 600;
+}
+
+.sites-dashboard-empty__subheading {
+	font-size: inherit;
+}
+
+.sites-dashboard-empty__body {
+	margin-block-end: 16px;
+	border-radius: 4px;
+	border: 1px solid var(--color-accent-5);
+	padding: 16px 24px;
+
+	@include break-large {
+		display: flex;
+		gap: 16px;
+	}
+
+	.sites-dashboard-empty__plugins-icon {
+		display: none;
+		opacity: 0.7;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	.sites-dashboard-empty__content {
+		text-align: left;
+	}
+
+	.sites-dashboard-empty__content-heading {
+		font-size: rem(16px);
+		font-weight: 500;
+	}
+
+	.sites-dashboard-empty__content-description {
+		margin-block-start: 4px;
+		font-size: rem(14px);
+		line-height: 1.7;
+		color: var(--color-accent);
+	}
+
+	.sites-dashboard-empty__content-button {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+
+		margin-block-start: 16px;
+		margin-inline-start: auto;
+
+		@include break-large {
+			flex-direction: row;
+		}
+
+		.button {
+			width: 100%;
+			height: 40px;
+
+			@include break-large {
+				width: auto;
+				height: inherit;
+			}
+		}
+	}
+}
+
+
+/* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
+.layout__primary .preview-hidden {
+	@include breakpoint-deprecated( ">960px" ) {
+		padding-bottom: 0 !important;
+	}
+}
+
+.sites-dashboard .notice-banner {
+	display: none;
+}
+
+.sites-dashboard.preview-hidden .notice-banner {
+	display: flex;
+	margin: 0 64px 24px !important;
+}

@@ -1,5 +1,14 @@
-import { useI18n } from '@wordpress/react-i18n';
-import i18n, { getLocaleSlug } from 'i18n-calypso';
+import {
+	FEATURE_SENSEI_SUPPORT,
+	FEATURE_SENSEI_UNLIMITED,
+	FEATURE_SENSEI_INTERACTIVE,
+	FEATURE_SENSEI_QUIZZES,
+	FEATURE_SENSEI_SELL_COURSES,
+	FEATURE_SENSEI_STORAGE,
+	FEATURE_SENSEI_HOSTING,
+	FEATURE_SENSEI_JETPACK,
+	getFeatureByKey,
+} from '@automattic/calypso-products';
 import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 
 export enum Status {
@@ -8,49 +17,38 @@ export enum Status {
 	Error,
 }
 
-const useSenseiPlanStorageText = () => {
-	const { __ } = useI18n();
-	// If we have the new CTA translated or the locale is EN, return the new string, otherwise use the simpler already translated one.
-	return i18n.hasTranslation( '50GB file and video storage' ) ||
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-		? __( '50 GB file and video storage' )
-		: __( '50 GB Storage' );
-};
-
 export function useFeatures(): PlanItemProps[ 'features' ] {
-	const { __ } = useI18n();
-
 	return [
 		{
-			name: __( 'Priority live chat support' ),
+			name: getFeatureByKey( FEATURE_SENSEI_SUPPORT ).getTitle() as string,
 			requiresAnnuallyBilledPlan: true,
 		},
 		{
-			name: __( 'Unlimited courses and students' ),
+			name: getFeatureByKey( FEATURE_SENSEI_UNLIMITED ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Interactive videos and lessons' ),
+			name: getFeatureByKey( FEATURE_SENSEI_INTERACTIVE ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Quizzes and certificates' ),
+			name: getFeatureByKey( FEATURE_SENSEI_QUIZZES ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Sell courses and subscriptions' ),
+			name: getFeatureByKey( FEATURE_SENSEI_SELL_COURSES ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: useSenseiPlanStorageText(),
+			name: getFeatureByKey( FEATURE_SENSEI_STORAGE ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Best-in-class hosting' ),
+			name: getFeatureByKey( FEATURE_SENSEI_HOSTING ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Advanced Jetpack features' ),
+			name: getFeatureByKey( FEATURE_SENSEI_JETPACK ).getTitle() as string,
 			requiresAnnuallyBilledPlan: false,
 		},
 	];

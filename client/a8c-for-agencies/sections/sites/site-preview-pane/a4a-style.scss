@@ -1,0 +1,152 @@
+.item-preview__pane {
+
+	.preview-pane__navigation {
+		.section-nav-tabs__list {
+			padding: 0 0 0 32px;
+			width: unset;
+		}
+
+		@media (min-width: 481px) {
+			.section-nav-group {
+				overflow-x: auto;
+			}
+
+			.section-nav-tabs {
+				width: unset;
+			}
+		}
+	}
+}
+
+.item-preview__content {
+	& > * {
+		width: 100%;
+		max-width: 1400px;
+		box-sizing: border-box;
+
+		.main {
+			max-width: 100%;
+			padding-block-end: 16px;
+		}
+
+		.backup__main-wrap {
+			margin: 0;
+		}
+
+		.backup__header-title,
+		.activity-log-v2__header-title {
+			@include a4a-font-heading-lg;
+		}
+
+		.backup-getting-started {
+			background-image: none;
+		}
+	}
+
+
+	.expanded-card {
+		text-align: left;
+		width: auto;
+		max-width: unset !important;
+		border: none;
+		box-shadow: none;
+		padding: 0 !important;
+
+		.site-expanded-content__card-footer {
+			justify-content: unset !important;
+		}
+
+		.expanded-card__header {
+			@include a4a-font-heading-lg;
+		}
+
+		.site-expanded-content__card-content-score {
+			text-align: left;
+		}
+	}
+
+	.site-preview-pane__plugins-content {
+		padding: 0;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		border-radius: 0.5rem;
+		text-align: left;
+	}
+
+	.site-preview-pane__plugins-caption {
+		padding-top: 16px;
+		font-size: small;
+	}
+
+	.site-preview-pane__plugins-icon {
+		fill: #fff;
+		padding-left: 8px;
+	}
+}
+
+.site-preview-pane__stats-content,
+.site-preview-pane__boost-content {
+	.site-expanded-content__card-content-column {
+		flex: unset;
+		max-width: 285px;
+	}
+}
+
+.site-preview-pane__monitor-content {
+
+	text-align: unset !important;
+
+	.site-expanded-content__card-content-column {
+		max-width: unset;
+	}
+
+	.chart__bars {
+		overflow: hidden;
+		gap: 3px;
+		margin-bottom: 4px;
+	}
+
+	.chart__bar,
+	.chart__bars {
+		transform-origin: 0 100%;
+		border-radius: 2px;
+	}
+
+	.chart__bar {
+		gap: 2px;
+	}
+	.chart__bar-section {
+		left: 0;
+		right: 0;
+		text-align: unset;
+	}
+
+
+	.site-expanded-content__chart .chart .chart__bar.site-expanded-content__chart-bar-is-uptime .chart__bar-section {
+		border-radius: 2px;
+	}
+}
+
+.site-preview-pane__stats-content {
+
+	.shortened-number {
+		font-size: 2rem;
+	}
+
+	.site-expanded-content__card-content-column {
+		margin-right: 24px;
+	}
+}
+
+.site-preview-pane__boost-content {
+	.site-expanded-content__card-content-column {
+		margin-right: 32px;
+	}
+
+	.site-expanded-content__card-content-score-title {
+		text-align: left;
+	}
+
+	a.site-expanded-content__card-button {
+		color: var(--color-surface-backdrop);
+	}
+}

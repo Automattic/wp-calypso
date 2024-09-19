@@ -1,14 +1,13 @@
 import config from '@automattic/calypso-config';
-import { Button, Count, Popover } from '@automattic/components';
+import { Button, Count, FormLabel, Popover } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
@@ -140,7 +139,7 @@ export class DropdownFilters extends Component {
 
 		return (
 			<div
-				className={ classNames( 'search-filters__dropdown-filters', {
+				className={ clsx( 'search-filters__dropdown-filters', {
 					'search-filters__dropdown-filters--has-filter-values': hasFilterValues,
 					'search-filters__dropdown-filters--is-open': this.state.showPopover,
 				} ) }

@@ -1,3 +1,51 @@
+$no-sidebar-min-page-width: 800px;
+$with-sidebar-min-page-width: 1114px;
+
+@mixin setToggleNoteBehaviour {
+	.wpnc__list-view.wpnc__current {
+		display: block;
+
+		.wpnc__selected-note {
+			animation-name: wpnc__selectIn;
+			animation-timing-function: ease-in;
+			animation-duration: 0.4s;
+			animation-iteration-count: 1;
+		}
+
+		box-shadow: none;
+	}
+
+	.wpnc__note-list {
+		left: auto;
+		width: 400px;
+	}
+
+	.wpnc__single-view {
+		right: 400px;
+		left: 10px;
+		top: 0;
+		bottom: 0;
+		z-index: -1;
+
+		header {
+			nav {
+				display: none;
+			}
+		}
+
+		.wpnc__note {
+			margin-top: 0;
+		}
+
+		-webkit-transform: translate3d(0, 0, 0); // fix for getting scrollbar in right z-index
+		animation-name: wpnc__slideIn;
+		animation-timing-function: ease-out;
+		animation-fill-mode: forwards;
+		animation-duration: 0.2s;
+		animation-iteration-count: 1;
+	}
+}
+
 .wpnc {
 	margin: 0;
 }
@@ -15,7 +63,7 @@
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	/* stylelint-disable-next-line unit-allowed-list */
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 		body.font-smoothing-antialiased & {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;
@@ -23,10 +71,10 @@
 		}
 	}
 
-	@media only screen and ( max-width: 799px ) {
+	@media only screen and (max-width: 799px) {
 		background-color: var(--color-neutral-0);
 	}
-	@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
+	@media only screen and (min-width: 409px) and (max-width: 430px) {
 		background-color: var(--color-surface);
 	}
 
@@ -190,7 +238,7 @@
 		border-left: 1px solid var(--color-neutral-0);
 	}
 
-	.wpnc__filter__segmented-control {
+	.wpnc__filter--segmented-control {
 		display: flex;
 		padding: 6px 8px;
 
@@ -199,7 +247,7 @@
 		}
 	}
 
-	.wpnc__filter__segmented-control-item {
+	.wpnc__filter--segmented-control-item {
 		background: var(--color-surface);
 		border: 1px solid var(--color-neutral-light);
 		border-right: none;
@@ -218,6 +266,11 @@
 
 		&:hover {
 			color: var(--color-neutral-70);
+		}
+
+		&:focus {
+			outline: var(--color-primary-light) solid 2px;
+			outline-offset: -2px;
 		}
 
 		&:first-of-type {
@@ -355,7 +408,7 @@
 			overflow-y: hidden;
 		}
 
-		@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
+		@media only screen and (min-width: 409px) and (max-width: 430px) {
 			left: 9px;
 		}
 
@@ -402,6 +455,7 @@
 			border-style: solid;
 		}
 
+		.wpnc__note:focus,
 		.wpnc__selected-note {
 			box-shadow: inset 4px 0 0 var(--color-primary);
 
@@ -471,6 +525,7 @@
 			.gridicons-cog {
 				cursor: pointer;
 				align-self: center;
+				border-radius: 2px;
 				margin-left: auto;
 				margin-right: $wpnc__padding-small;
 			}
@@ -482,11 +537,23 @@
 			z-index: 100;
 			text-align: left;
 			position: sticky;
-		}
-	}
 
-	.disable-sticky .wpnc__time-group-wrap {
-		position: static;
+			.wpnc__settings,
+			.wpnc__keyboard-shortcuts-button {
+				display: flex;
+				flex-grow: 1;
+
+				&:focus svg {
+					outline: var(--color-primary-light) solid 2px;
+				}
+			}
+
+			.wpnc__keyboard-shortcuts-button {
+				flex-grow: 0;
+				padding-right: 8px;
+				color: var(--color-neutral-40, #787c82);
+			}
+		}
 	}
 
 	.wpnc__undo-item {
@@ -532,7 +599,7 @@
 		right: 0;
 		box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
 
-		@media only screen and ( min-width: 480px ) {
+		@media only screen and (min-width: 480px) {
 			border-left: 1px solid var(--color-neutral-0);
 		}
 
@@ -720,6 +787,7 @@
 				border: 1px solid var(--color-neutral-10);
 				border-radius: 3px;
 				padding: 4px;
+				white-space: normal;
 
 				code {
 					border: none;
@@ -890,48 +958,17 @@
 		padding: $wpnc__padding-large $wpnc__padding-medium 0;
 	}
 
-	@media only screen and ( min-width: 800px ) {
-		.wpnc__list-view.wpnc__current {
-			display: block;
-
-			.wpnc__selected-note {
-				animation-name: wpnc__selectIn;
-				animation-timing-function: ease-in;
-				animation-duration: 0.4s;
-				animation-iteration-count: 1;
-			}
-
-			box-shadow: none;
+	// Check if global-sidebar-visible not present
+	body:not(:has(.is-global-sidebar-visible)) & {
+		@media only screen and (min-width: $no-sidebar-min-page-width) {
+			@include setToggleNoteBehaviour;
 		}
+	}
 
-		.wpnc__note-list {
-			left: auto;
-			width: 410px;
-		}
-
-		.wpnc__single-view {
-			right: 410px;
-			left: 10px;
-			top: 0;
-			bottom: 0;
-			z-index: -1;
-
-			header {
-				nav {
-					display: none;
-				}
-			}
-
-			.wpnc__note {
-				margin-top: 0;
-			}
-
-			-webkit-transform: translate3d(0, 0, 0); // fix for getting scrollbar in right z-index
-			animation-name: wpnc__slideIn;
-			animation-timing-function: ease-out;
-			animation-fill-mode: forwards;
-			animation-duration: 0.2s;
-			animation-iteration-count: 1;
+	// Override the CSS variable value if .global-sidebar-visible is present
+	body:has(.is-global-sidebar-visible) & {
+		@media only screen and (min-width: $with-sidebar-min-page-width) {
+			@include setToggleNoteBehaviour;
 		}
 	}
 
@@ -952,6 +989,61 @@
 		}
 		to {
 			background-color: var(--color-surface);
+		}
+	}
+}
+
+.wpnc__keyboard-shortcuts-popover.popover {
+	font: {
+		family: $sans;
+		size: $wpnc__capital-font-size;
+	}
+
+	.popover__arrow {
+		z-index: 1000;
+	}
+	.popover__inner {
+		width: 250px;
+		z-index: 999;
+		left: 0;
+
+		h2 {
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid var(--color-neutral-10);
+			text-align: left;
+			font-weight: bold;
+			font-size: $wpnc__capital-font-size;
+		}
+
+		ul {
+			padding: 10px 20px 10px 10px;
+			margin: 0;
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 8px;
+
+			.shortcut {
+				border: 1px solid var(--color-neutral-10);
+				border-radius: 4px;
+				min-width: 25px;
+				min-height: 25px;
+
+				&.letter {
+					font-weight: bold;
+					line-height: 25px;
+				}
+
+				&.has-icon {
+					svg {
+						margin-top: 4px;
+					}
+				}
+			}
 		}
 	}
 }

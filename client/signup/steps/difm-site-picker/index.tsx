@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useStore } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -13,6 +14,7 @@ import './styles.scss';
 interface Props {
 	stepSectionName: string | null;
 	stepName: string;
+	flowName: string;
 	goToStep: () => void;
 	goToNextStep: () => void;
 }
@@ -66,7 +68,8 @@ export default function DIFMSitePickerStep( props: Props ) {
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
-	}, [ dispatch, props.stepName ] );
+		triggerGuidesForStep( props.flowName, props.stepName );
+	}, [ dispatch, props.flowName, props.stepName ] );
 
 	const handleSiteSelect = ( siteId: number ) => {
 		const siteSlug = getSiteSlug( store.getState(), siteId );

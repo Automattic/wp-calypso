@@ -1,0 +1,92 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "calypso/jetpack-cloud/sections/partner-portal/mixins.scss";
+
+.payment-method-list-v2 {
+	@include breakpoint-deprecated( "<660px" ) {
+		.jetpack-cloud-layout__header-main {
+			margin-block-end: 16px;
+		}
+
+		.jetpack-cloud-layout__header-actions .button {
+			width: 100%;
+		}
+	}
+}
+
+.payment-method-list-v2-empty-state {
+	margin-block-start: 60px;
+
+	img {
+		margin: auto;
+		display: block;
+		width: 270px;
+	}
+}
+
+.payment-method-list-v2-empty-state__top-content {
+	width: 315px;
+	margin: auto;
+
+	.button {
+		margin-block-start: 40px;
+		width: 100%;
+	}
+}
+
+.payment-method-list-v2-empty-state__bottom-content {
+	margin-block-start: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.payment-method-list-v2-empty-state__card {
+		flex: 1;
+		width: calc(33.33% - 64px); /* 64px is the total margin width */
+		margin: 16px;
+		padding: 24px;
+		box-sizing: border-box;
+		flex-basis: 100%;
+		text-align: center;
+
+		svg {
+			fill: var(--studio-gray-40);
+			margin-block-end: 24px;
+		}
+
+		.payment-method-list-v2-empty-state__card-title {
+			font-size: rem(18px);
+			font-weight: 600;
+			margin-block-end: 8px;
+		}
+
+		.payment-method-list-v2-empty-state__card-description {
+			color: var(--studio-gray-60);
+			font-size: rem(14px);
+		}
+
+		@include break-medium {
+			flex-basis: calc(50% - 10px);
+		}
+
+		@include break-large {
+			flex-basis: unset;
+		}
+	}
+}
+
+.payment-method-list-v2__stored-cards {
+	margin-block-start: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-block-start: 32px;
+	}
+}
+
+.payment-method-list-v2__pagination {
+	margin: 64px 0;
+	@include licensing-portal-cursor-pagination();
+}

@@ -53,7 +53,7 @@ $wpcom-menu-collapse: 783px;
 
 // Remove extra padding on wordpress.com/jetpack/connect/plans/:site page (to match the same
 // padding on the cloud.jetpack.com/pricing page) (limited browser support with :has()).
-.is-section-jetpack-connect.has-no-sidebar .layout__content:has(.jetpack-pricing-page-rework-v1) {
+.is-section-jetpack-connect.has-no-sidebar .layout__content:has(.jetpack-pricing-page-rework-v1) .layout__content:has(.jetpack-manage-pricing-page) {
 	padding-left: 0;
 	padding-right: 0;
 }

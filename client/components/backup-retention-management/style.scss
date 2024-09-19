@@ -4,6 +4,7 @@
 .backup-retention-management {
 	box-sizing: border-box;
 	margin: auto;
+	margin-top: 1px;
 	max-width: 720px;
 	margin-left: -16px;
 	margin-right: -16px;
@@ -155,6 +156,10 @@
 				box-shadow: none;
 			}
 
+			&::before {
+				content: none;
+			}
+
 			&::after {
 				content: "";
 				display: block;
@@ -169,7 +174,8 @@
 					border: 3px solid #fff;
 				}
 
-				border-color: var(--color-accent);
+				border-color: var(--studio-jetpack-green-50);
+				background: var(--studio-jetpack-green-50);
 			}
 		}
 

@@ -1,0 +1,101 @@
+.is-section-reader .navigation-header.discover-stream-header {
+	margin: 0 auto;
+	max-width: 600px;
+	&.reader-dual-column {
+		max-width: 968px; // Max width of dual column reader stream.
+	}
+}
+
+.scrollable-horizontal-navigation {
+	position: relative;
+	margin: auto;
+	margin-bottom: -20px;
+	max-width: 600px; // Max width of single column reader stream.
+	overflow: hidden;
+	@media only screen and (max-width: 600px) {
+		padding: 0 24px;
+	}
+
+	&.reader-dual-column {
+		max-width: 968px; // Max width of dual column reader stream.
+		margin-bottom: 0;
+	}
+	@media only screen and (max-width: 660px) {
+		margin: 0 16px -24px;
+	}
+
+	.scrollable-horizontal-navigation__left-button-wrapper,
+	.scrollable-horizontal-navigation__right-button-wrapper {
+		position: absolute;
+		z-index: 1;
+		pointer-events: none;
+		height: 100%;
+		margin-top: 5px;
+
+		&.display-none {
+			display: none;
+		}
+
+		.scrollable-horizontal-navigation__left-button,
+		.scrollable-horizontal-navigation__right-button {
+			border-radius: 50%;
+			padding: 6px 10px;
+			pointer-events: auto;
+			width: 40px;
+			height: 40px;
+			top: -2px;
+			position: relative;
+		}
+	}
+
+	.scrollable-horizontal-navigation__right-button-wrapper {
+		right: 0;
+		padding-left: 30px;
+		background: linear-gradient(270deg, rgba(var(--color-surface-rgb), 1) 30%, rgba(var(--color-surface-rgb), 0.7) 40%, rgba(var(--color-surface-rgb), 0) 100%);
+	}
+	.scrollable-horizontal-navigation__left-button-wrapper {
+		left: 0;
+		padding-right: 30px;
+		background: linear-gradient(90deg, rgba(var(--color-surface-rgb), 1) 30%, rgba(var(--color-surface-rgb), 0.7) 40%, rgba(var(--color-surface-rgb), 0) 100%);
+	}
+
+	.scrollable-horizontal-navigation__tabs {
+		position: relative;
+		overflow-x: scroll;
+		left: -5px;
+		margin-bottom: 20px;
+		padding-top: 5px;
+		padding-bottom: 15px;
+		border-bottom: 1px solid var(--color-neutral-5);
+		-ms-overflow-style: none;  /* Internet Explorer 10+ */
+		scrollbar-width: none;  /* Firefox */
+
+		&::-webkit-scrollbar {
+			display: none;  /* Safari and Chrome */
+		}
+
+		.segmented-control.is-primary.scrollable-horizontal-navigation__tab-control {
+			background: inherit;
+
+			.segmented-control__item {
+				.segmented-control__link {
+					border: 1px solid var(--color-neutral-10);
+					border-radius: 4px;
+					margin: 0 5px;
+				}
+
+				&:not(.is-selected) {
+					.segmented-control__link {
+						background: var(--studio-white);
+					}
+				}
+			}
+		}
+	}
+}
+
+// Hide the buttons and not the wrappers as we still want the opacity/fade effect from wrappers.
+.accessible-focus .scrollable-horizontal-navigation .scrollable-horizontal-navigation__left-button,
+.accessible-focus .scrollable-horizontal-navigation .scrollable-horizontal-navigation__right-button {
+	display: none;
+}

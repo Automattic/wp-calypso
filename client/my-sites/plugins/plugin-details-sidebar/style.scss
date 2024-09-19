@@ -4,7 +4,7 @@
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		display: block;
 	}
 }
@@ -36,7 +36,7 @@
 		background: transparent;
 	}
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap; // Needed for paid plugin USPs.

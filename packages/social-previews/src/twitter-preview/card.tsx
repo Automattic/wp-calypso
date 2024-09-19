@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { baseDomain, firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
 import { TwitterCardProps } from './types';
 
@@ -16,7 +16,7 @@ export const Card: React.FC< TwitterCardProps > = ( {
 	cardType,
 	url,
 } ) => {
-	const cardClassNames = classnames( `twitter-preview__card-${ cardType }`, {
+	const cardClassNames = clsx( `twitter-preview__card-${ cardType }`, {
 		'twitter-preview__card-has-image': !! image,
 	} );
 

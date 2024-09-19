@@ -1,5 +1,5 @@
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
@@ -29,7 +29,7 @@ class FormAnalyticsStores extends Component {
 	renderSettings = ( settings, disableAll, isChild = false ) => {
 		const { fields } = this.props;
 
-		const classes = classNames( {
+		const classes = clsx( {
 			'site-settings__analytics-stores-settings': ! isChild,
 			'site-settings__analytics-stores-child-settings': isChild,
 		} );

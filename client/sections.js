@@ -1,3 +1,5 @@
+const anyLocaleRegex = '([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
+
 const sections = [
 	{
 		name: 'root',
@@ -15,8 +17,19 @@ const sections = [
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
-		module: 'calypso/sites-dashboard',
+		module: 'calypso/hosting/sites',
 		group: 'sites-dashboard',
+	},
+	{
+		name: 'sites-dashboard',
+		paths: [ '/p2s' ],
+		module: 'calypso/hosting/sites',
+		group: 'sites-dashboard',
+	},
+	{
+		name: 'switch-site',
+		paths: [ '/switch-site' ],
+		module: 'calypso/switch-site',
 	},
 	{
 		name: 'account',
@@ -40,6 +53,12 @@ const sections = [
 		name: 'concierge',
 		paths: [ '/me/concierge', '/me/quickstart' ],
 		module: 'calypso/me/concierge',
+		group: 'me',
+	},
+	{
+		name: 'developer',
+		paths: [ '/me/developer' ],
+		module: 'calypso/me/developer',
 		group: 'me',
 	},
 	{
@@ -203,6 +222,18 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'hosting-overview',
+		paths: [ '/overview' ],
+		module: 'calypso/hosting/overview',
+		group: 'sites',
+	},
+	{
+		name: 'hosting-features',
+		paths: [ '/hosting-features' ],
+		module: 'calypso/hosting/hosting-features',
+		group: 'sites',
+	},
+	{
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'calypso/jetpack-connect',
@@ -239,6 +270,13 @@ const sections = [
 		module: 'calypso/my-sites/google-my-business',
 		group: 'sites',
 	},
+	{
+		name: 'patterns',
+		paths: [ '/patterns', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/patterns' ],
+		module: 'calypso/my-sites/patterns',
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
@@ -270,6 +308,16 @@ const sections = [
 		group: 'site-profiler',
 		isomorphic: true,
 		title: 'Site Profiler',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'performance-profiler',
+		paths: [ '/speed-test-tool', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/speed-test-tool` ],
+		module: 'calypso/performance-profiler',
+		enableLoggedOut: true,
+		group: 'performance-profiler',
+		isomorphic: true,
+		title: 'Speed Test',
 		trackLoadPerformance: true,
 	},
 	{
@@ -522,7 +570,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/my-sites/hosting',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{
@@ -571,7 +619,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
+		paths: [ '/pricing', '/(?!manage)[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
@@ -582,6 +630,14 @@ const sections = [
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
+	},
+	{
+		name: 'jetpack-cloud-manage-pricing',
+		paths: [ '/manage/pricing', `/${ anyLocaleRegex }/manage/pricing` ],
+		module: 'calypso/jetpack-cloud/sections/manage/pricing',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
@@ -601,6 +657,12 @@ const sections = [
 		name: 'jetpack-cloud-overview',
 		paths: [ '/overview' ],
 		module: 'calypso/jetpack-cloud/sections/overview',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-cloud-agency-sites-v2',
+		paths: [ '/sites' ],
+		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
 		group: 'jetpack-cloud',
 	},
 	{
@@ -628,6 +690,18 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-subscribers',
+		paths: [ '/subscribers' ],
+		module: 'calypso/my-sites/subscribers',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-monetize',
+		paths: [ '/monetize' ],
+		module: 'calypso/my-sites/earn',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'woocommerce-installation',
 		paths: [ '/woocommerce-installation' ],
 		module: 'calypso/my-sites/woocommerce',
@@ -647,9 +721,156 @@ const sections = [
 	},
 	{
 		name: 'site-monitoring',
-		paths: [ '/site-monitoring', '/site-logs' ],
-		module: 'calypso/my-sites/site-monitoring',
+		paths: [ '/site-monitoring' ],
+		module: 'calypso/hosting/monitoring',
 		group: 'sites',
+	},
+	{
+		name: 'site-performance',
+		paths: [ '/site-performance' ],
+		module: 'calypso/hosting/performance',
+		group: 'sites',
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/hosting/logs',
+		group: 'sites',
+	},
+	{
+		name: 'github-deployments',
+		paths: [ '/github-deployments' ],
+		module: 'calypso/hosting/deployments',
+		group: 'sites',
+	},
+	{
+		name: 'staging-site',
+		paths: [ '/staging-site' ],
+		module: 'calypso/hosting/staging-site',
+		group: 'sites',
+	},
+	{
+		name: 'a8c-for-agencies',
+		paths: [ '/' ],
+		module: 'calypso/a8c-for-agencies',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-landing',
+		paths: [ '/landing' ],
+		module: 'calypso/a8c-for-agencies/sections/landing',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-auth',
+		paths: [ '/connect', '/connect/oauth/token' ],
+		module: 'calypso/a8c-for-agencies/sections/auth',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-overview',
+		paths: [ '/overview' ],
+		module: 'calypso/a8c-for-agencies/sections/overview',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-sites',
+		paths: [ '/sites', 'sites/need-setup' ],
+		module: 'calypso/a8c-for-agencies/sections/sites',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-plugins',
+		paths: [ '/plugins' ],
+		module: 'calypso/a8c-for-agencies/sections/plugins',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-marketplace',
+		paths: [
+			'/marketplace',
+			'/marketplace/products',
+			'/marketplace/hosting',
+			'/marketplace/hosting/pressable',
+			'/marketplace/hosting/wpcom',
+			'/marketplace/checkout',
+			'/marketplace/assign-license',
+			'/marketplace/download-products',
+		],
+		module: 'calypso/a8c-for-agencies/sections/marketplace',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-purchases',
+		paths: [
+			'/purchases',
+			'/purchases/licenses',
+			'/purchases/billing',
+			'/purchases/payment-methods',
+			'/purchases/payment-methods/add',
+			'/purchases/invoices',
+		],
+		module: 'calypso/a8c-for-agencies/sections/purchases',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-referrals',
+		paths: [
+			'/referrals',
+			'/referrals/bank-details',
+			'/referrals/commissions',
+			// FIXME: Remove the above 2 items when automated referral is enabled
+			'/referrals/dashboard',
+			'/referrals/payment-settings',
+			'/referrals/faq',
+		],
+		module: 'calypso/a8c-for-agencies/sections/referrals',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-migrations',
+		paths: [ '/migrations' ],
+		module: 'calypso/a8c-for-agencies/sections/migrations',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-settings',
+		paths: [ '/settings' ],
+		module: 'calypso/a8c-for-agencies/sections/settings',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-partner-directory',
+		paths: [ '/partner-directory' ],
+		module: 'calypso/a8c-for-agencies/sections/partner-directory',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-team',
+		paths: [ '/team', '/team/invite' ],
+		module: 'calypso/a8c-for-agencies/sections/team',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-signup',
+		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
+		module: 'calypso/a8c-for-agencies/sections/signup',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-client',
+		paths: [
+			'/client/landing',
+			'/client/subscriptions',
+			'/client/payment-methods',
+			'/client/payment-methods/add',
+			'/client/checkout',
+		],
+		module: 'calypso/a8c-for-agencies/sections/client',
+		group: 'a8c-for-agencies',
 	},
 ];
 

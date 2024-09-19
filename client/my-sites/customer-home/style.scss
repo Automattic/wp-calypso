@@ -257,6 +257,10 @@ body.is-section-home.theme-default.color-scheme {
 	.card,
 	.task {
 		margin: 32px;
+
+		@media (min-width: ($break-wide + 1)) {
+			margin: 0 32px 32px;
+		}
 	}
 
 	// Extend the checklist to the edge of the primary content area
@@ -301,7 +305,7 @@ body.is-section-home.theme-default.color-scheme {
 
 		// 32px spacing for everything except the space before the CTA (48px)
 		.task__text {
-			gap: 32px;
+			gap: 16px;
 
 			& > * {
 				margin-top: 0;

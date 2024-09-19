@@ -61,7 +61,7 @@ const CustomerDetails = ( { customer }: CustomerDetailsProps ) => {
 			</div>
 			<div className="customer-details__content">
 				<h3 className="customer-details__content-title">
-					{ translate( 'Subscriber information' ) }
+					{ translate( 'Supporter information' ) }
 				</h3>
 				<div className="customer-details__content-body">
 					<div className="customer-details__content-column">

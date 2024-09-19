@@ -1,7 +1,8 @@
+import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { TranslateResult } from 'i18n-calypso';
+import { isNumber } from 'lodash';
 import InfoPopover from 'calypso/components/info-popover';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -20,6 +21,8 @@ type OwnProps = {
 	tooltipText?: TranslateResult | ReactNode;
 	expiryDate?: Moment;
 	displayPriceText?: TranslateResult | null;
+	customTimeFrameSavings?: ReactNode;
+	customTimeFrameBillingTerms?: ReactNode;
 };
 
 const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discountedPrice } ) => {
@@ -31,7 +34,9 @@ const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discounte
 				rawPrice={ 0.01 }
 				currencyCode="USD"
 			/>
-			{ discountedPrice && <PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" /> }
+			{ isNumber( discountedPrice ) && (
+				<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
+			) }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 		</>
 	);
@@ -97,9 +102,14 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		displayFrom,
 		tooltipText,
 		displayPriceText,
+		customTimeFrameSavings,
+		customTimeFrameBillingTerms,
 	} = props;
-	const finalPrice = ( discountedPrice ?? originalPrice ) as number;
-	const isDiscounted = !! ( finalPrice && originalPrice && finalPrice < originalPrice );
+	const finalPrice = ( isNumber( discountedPrice ) ? discountedPrice : originalPrice ) as number;
+	const isDiscounted = !! ( isNumber( finalPrice ) && originalPrice && finalPrice < originalPrice );
+	const discountPercentage = isDiscounted
+		? Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 )
+		: 0;
 
 	// Placeholder (while prices are loading)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
@@ -139,6 +149,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		<>
 			<PriceAriaLabel
 				{ ...props }
+				discountPercentage={ discountPercentage }
 				currencyCode={ currencyCode }
 				finalPrice={ finalPrice }
 				isDiscounted={ isDiscounted }
@@ -154,14 +165,22 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 				</InfoPopover>
 			) }
 			{ ! displayPriceText && (
-				<span className="display-price__details" aria-hidden="true">
-					<TimeFrame
-						billingTerm={ billingTerm }
-						discountedPriceDuration={ discountedPriceDuration }
-						formattedOriginalPrice={ formattedOriginalPrice }
-						isDiscounted={ isDiscounted }
-					/>
-				</span>
+				<>
+					<span className="display-price__details" aria-hidden="true">
+						{ ! customTimeFrameBillingTerms && (
+							<TimeFrame
+								billingTerm={ billingTerm }
+								discountedPriceDuration={ discountedPriceDuration }
+								discountPercentage={ discountPercentage }
+								formattedOriginalPrice={ formattedOriginalPrice }
+								isDiscounted={ isDiscounted }
+								finalPrice={ finalPrice }
+							/>
+						) }
+						{ customTimeFrameSavings && customTimeFrameSavings }
+					</span>
+					{ customTimeFrameBillingTerms && customTimeFrameBillingTerms }
+				</>
 			) }
 		</>
 	);

@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-sentry",
 	"version": "1.0.0",
-	"description": "A wrapper of the sentry for Calypso",
+	"description": "A wrapper of the sentry for Calypso.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",

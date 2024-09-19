@@ -115,7 +115,10 @@ export default function ConnectDomainStepLogin( {
 									),
 									{
 										em: createElement( 'em' ),
-										a: createElement( 'a', { href: 'https://lookup.icann.org', target: '_blank' } ),
+										a: createElement( 'a', {
+											href: localizeUrl( 'https://wordpress.com/site-profiler' ),
+											target: '_blank',
+										} ),
 									}
 								) }
 							</p>

@@ -1,0 +1,86 @@
+{
+	"name": "@automattic/plans-grid-next",
+	"version": "1.0.0-alpha.0",
+	"description": "WordPress.com plans UI grid components and helpers.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/plans-grid-next"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepare": "yarn run build",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"storybook": "yarn msw init && sb dev"
+	},
+	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
+		"@automattic/calypso-products": "workspace:^",
+		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/format-currency": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
+		"@automattic/viewport": "workspace:^",
+		"@emotion/react": "11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/primitives": "^4.2.0",
+		"@wordpress/url": "^4.2.0",
+		"@wordpress/warning": "^3.2.0",
+		"clsx": "^2.1.1",
+		"i18n-calypso": "workspace:^",
+		"react-intersection-observer": "^9.4.3",
+		"react-transition-group": "^4.3.0"
+	},
+	"peerDependencies": {
+		"@wordpress/i18n": "^5.2.0",
+		"postcss": "^8.4.5",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-actions": "^7.6.19",
+		"@storybook/cli": "^7.6.19",
+		"@storybook/react": "^7.6.19",
+		"@testing-library/dom": "^10.1.0",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
+		"@testing-library/user-event": "^14.5.2",
+		"msw": "^2.2.14",
+		"msw-storybook-addon": "^2.0.2",
+		"resize-observer-polyfill": "^1.5.1",
+		"typescript": "^5.3.3",
+		"webpack": "^5.94.0"
+	},
+	"msw": {
+		"workerDirectory": "static"
+	}
+}

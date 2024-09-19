@@ -46,7 +46,7 @@ _If_ your search component should only be displayed dynamically, you can use `th
 
 ```jsx
 function render() {
-	const containerClass = classNames( {
+	const containerClass = clsx( {
 		'search-open': this.props.getSearchOpen(),
 	} );
 

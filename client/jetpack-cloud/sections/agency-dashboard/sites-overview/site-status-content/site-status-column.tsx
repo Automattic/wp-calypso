@@ -1,14 +1,30 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, Tooltip } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_UNASSIGNED_LICENSES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
+import { checkLicenseKeyForFeature } from 'calypso/components/jetpack/unassigned-license-notice/lib/check-license-key-for-feature';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import {
+	hasSelectedLicensesOfType,
+	hasSelectedSiteLicensesOfType,
+} from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
-import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE, FEATURE_TYPES_BY_TYPE } from '../lib/constants';
 import { AllowedTypes, RowMetaData, SiteData } from '../types';
 
 type Props = {
@@ -18,7 +34,7 @@ type Props = {
 	disabled?: boolean;
 };
 
-export default function SiteStatsColumn( { type, rows, metadata, disabled }: Props ) {
+export default function SiteStatusColumn( { type, rows, metadata, disabled }: Props ) {
 	const {
 		link,
 		isExternalLink,
@@ -29,15 +45,32 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		isSupported,
 	} = metadata;
 
+	if ( rows.site.value.sticker?.includes( 'migration-in-progress' ) ) {
+		disabled = true;
+	}
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const siteId = rows.site.value.blog_id;
-
-	const isLicenseSelected = useSelector( ( state ) =>
-		hasSelectedLicensesOfType( state, siteId, type )
+	const { data } = useFetchLicenses(
+		LicenseFilter.Detached,
+		'',
+		LicenseSortField.IssuedAt,
+		LicenseSortDirection.Descending,
+		1
 	);
 
+	const siteId = rows.site.value.blog_id;
+
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
+	const isLicenseSelected = useSelector( ( state ) =>
+		isStreamlinedPurchasesEnabled
+			? hasSelectedSiteLicensesOfType( state, siteId, type )
+			: hasSelectedLicensesOfType( state, siteId, type )
+	);
+
+	const isA4AEnabled = isA8CForAgencies();
 	const partner = useSelector( getCurrentPartner );
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
@@ -49,14 +82,35 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 		} );
 	}, [ siteId, type ] );
 
+	const handleA4AAddAction = useCallback( () => {
+		const productSlug = DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ];
+		let productPurchaseLink = `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ productSlug }&source=sitesdashboard&site_id=${ siteId }`;
+		const licenses = data?.items ?? [];
+		const featureType = FEATURE_TYPES_BY_TYPE[ type ];
+		if ( featureType ) {
+			for ( const l in licenses ) {
+				const hasFeature = checkLicenseKeyForFeature( featureType, licenses[ l ].licenseKey );
+				if ( hasFeature ) {
+					productPurchaseLink = A4A_UNASSIGNED_LICENSES_LINK;
+					break;
+				}
+			}
+		}
+		return page( productPurchaseLink );
+	}, [ data?.items, siteId, type ] );
+
 	const handleSelectLicenseAction = useCallback( () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			dispatch( selectLicense( siteId, type ) );
+			return;
+		}
 		const inactiveProducts = Object.values( rows ).filter( ( row ) => row?.status === 'inactive' );
 		if ( inactiveProducts.length > 1 ) {
 			return dispatch( selectLicense( siteId, type ) );
 		}
 		// Redirect to issue-license if there is only one inactive product available for a site
 		return page( issueLicenseRedirectUrl );
-	}, [ dispatch, issueLicenseRedirectUrl, rows, siteId, type ] );
+	}, [ dispatch, isStreamlinedPurchasesEnabled, issueLicenseRedirectUrl, rows, siteId, type ] );
 
 	const handleDeselectLicenseAction = useCallback( () => {
 		dispatch( unselectLicense( siteId, type ) );
@@ -101,6 +155,14 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 				return <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
 			}
 			case 'inactive': {
+				if ( isA4AEnabled ) {
+					return (
+						<button className="sites-overview__column-action-button" onClick={ handleA4AAddAction }>
+							<Gridicon icon="plus-small" size={ 16 } />
+							<span>{ translate( 'Add' ) }</span>
+						</button>
+					);
+				}
 				if ( ! partnerCanIssueLicense ) {
 					return null;
 				}
@@ -124,14 +186,16 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 			}
 		}
 	}, [
-		handleDeselectLicenseAction,
-		handleSelectLicenseAction,
-		partnerCanIssueLicense,
-		isLicenseSelected,
 		isSupported,
 		status,
-		translate,
 		value,
+		isA4AEnabled,
+		partnerCanIssueLicense,
+		isLicenseSelected,
+		handleSelectLicenseAction,
+		translate,
+		handleDeselectLicenseAction,
+		handleA4AAddAction,
 	] );
 
 	let wrappedContent = content;

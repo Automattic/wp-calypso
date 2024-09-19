@@ -11,12 +11,9 @@ export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
 	font-size: ${ ( { shrinkMobileFont } ) => ( shrinkMobileFont ? '22px' : '32px' ) };
-	line-height: 26px;
-	letter-spacing: 0.38px;
 	@media ( min-width: 780px ) {
 		font-size: 32px;
 		line-height: 40px;
-		letter-spacing: -0.32px;
 	}
 `;
 
@@ -26,11 +23,9 @@ export const SubHeading = styled.div`
 	color: var( --studio-gray-60 );
 	font-size: 14px;
 	line-height: 20px;
-	letter-spacing: -0.15px;
 	@media ( min-width: 780px ) {
 		font-size: 16px;
 		line-height: 24px;
-		letter-spacing: -0.1px;
 	}
 `;
 
@@ -68,11 +63,10 @@ export const RowWithBorder = styled( Row )`
 export const DomainName = styled.div`
 	font-size: 16px;
 	line-height: 20px;
-	letter-spacing: -0.24px;
 	color: var( --studio-gray-80 );
 	overflow-wrap: break-word;
 	max-width: 100%;
 	@media ( min-width: 780px ) {
-		max-width: 50%;
+		max-width: 54%;
 	}
 `;

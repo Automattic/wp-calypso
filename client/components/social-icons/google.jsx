@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -22,7 +22,7 @@ export default class GoogleIcon extends PureComponent {
 
 		return (
 			<svg
-				className={ classNames( 'social-icons social-icons__google', {
+				className={ clsx( 'social-icons social-icons__google', {
 					'social-icons--enabled': ! isDisabled,
 					'social-icons--disabled': !! isDisabled,
 				} ) }

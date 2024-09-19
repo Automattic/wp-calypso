@@ -7,17 +7,7 @@ import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { render, waitFor } from '@testing-library/react';
 import { shouldDehydrateQuery } from '../should-dehydrate-query';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
-// https://github.com/tannerlinsley/react-query/blob/2771a15403cb2e7c70022b850e8c54c6d2b3d8a0/docs/src/pages/guides/testing.md#turn-off-network-error-logging
-const logger = {
-	error: noop,
-	log: noop,
-	warn: noop,
-};
-
-const queryClient = new QueryClient( { logger } );
+const queryClient = new QueryClient();
 
 const PERSISTENCE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
 
@@ -144,14 +134,14 @@ describe( 'shouldDehydrateQuery', () => {
 				expect.objectContaining( {
 					clientState: expect.objectContaining( {
 						queries: [
-							{
+							expect.objectContaining( {
 								state: expect.objectContaining( {
 									data,
 									status: 'success',
 								} ),
 								queryKey: [ queryKey ],
 								queryHash: `["${ queryKey }"]`,
-							},
+							} ),
 						],
 					} ),
 				} )
@@ -198,14 +188,14 @@ describe( 'shouldDehydrateQuery', () => {
 				expect.objectContaining( {
 					clientState: expect.objectContaining( {
 						queries: [
-							{
+							expect.objectContaining( {
 								state: expect.objectContaining( {
 									data,
 									status: 'success',
 								} ),
 								queryKey: [ queryKey ],
 								queryHash: `["${ queryKey }"]`,
-							},
+							} ),
 						],
 					} ),
 				} )

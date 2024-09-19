@@ -8,11 +8,13 @@ import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selector
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
-export default function useSiteActions(
-	site: SiteNode,
-	isLargeScreen: boolean,
-	siteError?: boolean
-) {
+type Props = {
+	site: SiteNode;
+	isLargeScreen: boolean;
+	siteError?: boolean;
+};
+
+export default function useSiteActions( { site, isLargeScreen, siteError }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
@@ -27,6 +29,12 @@ export default function useSiteActions(
 
 		const { url, url_with_scheme, blog_id, has_backup, is_atomic } = siteValue;
 
+		let issueLicenseURL = undefined;
+
+		if ( partnerCanIssueLicense ) {
+			issueLicenseURL = `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`;
+		}
+
 		const siteSlug = urlToSlug( url );
 
 		const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
@@ -37,36 +45,36 @@ export default function useSiteActions(
 		const isWPCOMAtomicSiteCreationEnabled =
 			isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && is_atomic;
 
+		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
+
 		return [
 			{
 				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/home/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'set_up_site' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMAtomicSiteCreationEnabled,
+				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Change domain' ),
 				href: `https://wordpress.com/domains/manage/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'change_domain' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMAtomicSiteCreationEnabled,
+				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Hosting configuration' ),
 				href: `https://wordpress.com/hosting-config/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'hosting_configuration' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMAtomicSiteCreationEnabled,
+				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: partnerCanIssueLicense
-					? `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`
-					: undefined,
+				href: issueLicenseURL,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic,
+				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),
@@ -75,7 +83,7 @@ export default function useSiteActions(
 					: `/activity-log/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'view_activity' ),
 				isExternalLink: is_atomic,
-				isEnabled: ! siteError,
+				isEnabled: ! siteError && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Copy this site' ),
@@ -84,7 +92,7 @@ export default function useSiteActions(
 					: `/backup/${ siteSlug }/clone`,
 				onClick: () => handleClickMenuItem( 'clone_site' ),
 				isExternalLink: is_atomic,
-				isEnabled: has_backup,
+				isEnabled: has_backup && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Site settings' ),
@@ -93,7 +101,7 @@ export default function useSiteActions(
 					: `/settings/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'site_settings' ),
 				isExternalLink: is_atomic,
-				isEnabled: has_backup,
+				isEnabled: has_backup && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View site' ),
@@ -107,8 +115,16 @@ export default function useSiteActions(
 				href: `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard`,
 				onClick: () => handleClickMenuItem( 'visit_wp_admin' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: true && ! isUrlOnly,
 			},
 		];
-	}, [ dispatch, isLargeScreen, partnerCanIssueLicense, siteError, siteValue, translate ] );
+	}, [
+		dispatch,
+		isLargeScreen,
+		partnerCanIssueLicense,
+		site?.value?.sticker,
+		siteError,
+		siteValue,
+		translate,
+	] );
 }

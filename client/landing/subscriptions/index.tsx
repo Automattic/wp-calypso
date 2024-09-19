@@ -36,7 +36,7 @@ const setupReduxStore = ( user: CurrentUser ) => {
 	setStore( reduxStore, getStateFromCache( user.ID ) );
 	setupLocale( user, reduxStore );
 
-	const userStoreKey = User.register( { client_id: '', client_secret: '' } );
+	const userStoreKey = User.register();
 	if ( user?.ID ) {
 		reduxStore.dispatch( setCurrentUser( user ) as AnyAction );
 		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUser( user );
@@ -53,7 +53,7 @@ declare const window: Window & {
 
 window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown as CurrentUser;
-	const queryClient = await createQueryClient( user.ID );
+	const { queryClient } = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
 

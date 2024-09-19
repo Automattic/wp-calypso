@@ -26,7 +26,6 @@
 	.loading-placeholder {
 		@include placeholder();
 		display: inline-block;
-		margin-bottom: 30px;
 
 		&.big {
 			width: 50%;
@@ -40,6 +39,12 @@
 		&.hidden {
 			background-color: transparent;
 			animation: none;
+		}
+	}
+
+	.subscriber-list__loading {
+		.loading-placeholder {
+			margin-bottom: 30px;
 		}
 	}
 }

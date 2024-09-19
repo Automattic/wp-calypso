@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import FormLabel from 'calypso/components/forms/form-label';
 
 /*
  * This component is temporary until we can pull in `@wordpress/components` and merge https://github.com/Automattic/wp-calypso/pull/34277.
@@ -56,7 +56,7 @@ class MurielTextControl extends Component {
 		const isEmpty = ! value;
 		const isActive = isFocused && ! disabled;
 
-		const classes = classNames(
+		const classes = clsx(
 			'woocommerce-muriel-text-control',
 			className,
 			this.getStatusClassName( disabled, isEmpty ),

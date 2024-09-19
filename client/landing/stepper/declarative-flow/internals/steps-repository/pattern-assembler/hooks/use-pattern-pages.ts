@@ -1,13 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
 import { INITIAL_PAGES, ORDERED_PATTERN_PAGES_CATEGORIES } from '../constants';
 import { useCategoriesOrder } from '../hooks';
-import { getPagePatternTitle } from '../utils';
+import { getPagePatternTitle, isPriorityPattern } from '../utils';
 import type { Pattern, Category, CustomPageTitle } from '../types';
 
 const usePatternPages = (
-	pagesMapByCategory: Record< string, Pattern[] >,
+	pageCategoryPatternsMap: Record< string, Pattern[] >,
 	categories: Category[],
-	dotcomPatterns: Pattern[]
+	assemblerPatterns: Pattern[]
 ): {
 	pages: Pattern[];
 	pageSlugs: string[];
@@ -39,7 +39,7 @@ const usePatternPages = (
 	// Pairs of page title and pattern id can be passed in the URL from AI flow.
 	if ( mockedPages.length > 0 ) {
 		mockedPages.forEach( ( { ID, title, selected }: CustomPageTitle ) => {
-			const patterns = dotcomPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
+			const patterns = assemblerPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
 			if ( patterns.length === 0 ) {
 				return;
 			}
@@ -61,7 +61,7 @@ const usePatternPages = (
 			setSearchParams(
 				( currentSearchParams ) => {
 					const newMockedPages = mockedPages.map( ( page: CustomPageTitle ) => {
-						const patterns = dotcomPatterns.filter(
+						const patterns = assemblerPatterns.filter(
 							( pattern: Pattern ) => pattern.ID === page.ID
 						);
 						page.selected = slugs.includes( patterns[ 0 ].name );
@@ -82,13 +82,17 @@ const usePatternPages = (
 		pageSlugs = INITIAL_PAGES;
 	}
 
+	const getFeaturedPageOrFirstInCategory = ( name: string ) =>
+		pageCategoryPatternsMap[ name ]?.find( isPriorityPattern ) ||
+		pageCategoryPatternsMap[ name ]?.[ 0 ];
+
 	pages = pageSlugs
-		.map( ( slug ) => {
-			const firstPage = pagesMapByCategory[ slug ]?.[ 0 ];
-			if ( firstPage ) {
+		.map( ( name ) => {
+			const page = getFeaturedPageOrFirstInCategory( name );
+			if ( page ) {
 				return {
-					...firstPage,
-					title: getPagePatternTitle( firstPage ),
+					...page,
+					title: getPagePatternTitle( page ),
 				};
 			}
 		} )
@@ -96,12 +100,12 @@ const usePatternPages = (
 
 	pagesToShow = pageCategoriesInOrder
 		.map( ( category: Category ) => {
-			const { name } = category;
-			const firstPage = name && pagesMapByCategory[ name ]?.[ 0 ];
-			if ( firstPage ) {
+			const { name = '' } = category;
+			const page = getFeaturedPageOrFirstInCategory( name );
+			if ( page ) {
 				return {
 					name,
-					title: getPagePatternTitle( firstPage ),
+					title: getPagePatternTitle( page ),
 					isSelected: pageSlugs.includes( name ),
 				};
 			}

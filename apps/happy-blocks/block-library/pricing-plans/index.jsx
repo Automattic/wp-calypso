@@ -20,6 +20,9 @@ const blockAttributes = {
 	domain: {
 		type: 'string',
 	},
+	affiliateLink: {
+		type: 'string',
+	},
 	planTypeOptions: {
 		type: 'array',
 		default: [],

@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import { SegmentedControl } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,7 +8,6 @@ import { connect } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
@@ -74,7 +74,7 @@ class TagStreamHeader extends Component {
 		const titleText = description ?? title;
 		const subtitleText = description ? title : null;
 
-		const classes = classnames( {
+		const classes = clsx( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
 			'has-description': isPromptTag || description,

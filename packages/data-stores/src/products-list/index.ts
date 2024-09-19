@@ -18,4 +18,7 @@ export const store = createReduxStore( STORE_KEY, {
 	selectors,
 } );
 
+/** Queries */
+export { default as useProducts } from './queries/use-products';
+
 register( store );

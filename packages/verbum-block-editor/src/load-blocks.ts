@@ -15,6 +15,22 @@ interface EmbedBlock extends Block {
 		} >;
 	};
 }
+
+const DISABLED_VARIATIONS = [ 'imgur', 'kickstarter', 'wordpress-tv' ];
+
+/**
+ * Check if the URL is a valid URL.
+ * @param url URL to check
+ * @returns true if the URL is valid, false otherwise
+ */
+const isUrl = ( url: string ) => {
+	try {
+		return Boolean( new URL( url ) );
+	} catch ( e ) {
+		return false;
+	}
+};
+
 /**
  * Run the URL against the available embed patterns to determine if the URL is embeddable.
  * @param url URL to check
@@ -92,10 +108,14 @@ export const loadBlocksWithCustomizations = () => {
 						transform: ( node: HTMLElement ) =>
 							createBlock( 'core/embed', { url: node.textContent } ),
 					},
+					// Transform links to link block if they are not embeddable.
 					{
 						type: 'raw',
 						isMatch: ( node: HTMLElement ) =>
-							node.nodeName === 'P' && node.textContent && ! isEmbedUrl( node.textContent ),
+							node.nodeName === 'P' &&
+							node.textContent &&
+							isUrl( node.textContent ) &&
+							! isEmbedUrl( node.textContent ),
 						transform: ( node: HTMLElement ) => {
 							const providedUrl = node.textContent && new URL( node.textContent );
 							const content =
@@ -138,8 +158,15 @@ export const loadBlocksWithCustomizations = () => {
 		 */
 		if ( name === 'core/embed' ) {
 			const customVariations = settings.variations.filter(
-				( variation: { name: string } ) => variation.name !== 'imgur'
+				( variation: { name: string } ) => ! DISABLED_VARIATIONS.includes( variation.name )
 			);
+
+			// Add a WordPress.com variation.
+			const wpVariation = customVariations.find( ( v: any ) => v.name === 'wordpress' );
+			wpVariation.patterns = [ /^https?:\/\/(\w+)\.wordpress\.com\/.+/i ];
+			wpVariation.title = 'WordPress.com';
+			wpVariation.isActive = ( _: null, variationAttributes: any ) =>
+				variationAttributes.providerNameSlug === 'wordpress';
 
 			settings.variations = customVariations;
 		}

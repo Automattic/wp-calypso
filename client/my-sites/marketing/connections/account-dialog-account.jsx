@@ -1,14 +1,13 @@
-import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { FormLabel, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Image from 'calypso/components/image';
 
 import './account-dialog-account.scss';
 
 const AccountDialogAccount = ( { account, conflicting, onChange, selected, defaultIcon } ) => {
-	const classes = classNames( 'account-dialog-account', {
+	const classes = clsx( 'account-dialog-account', {
 		'is-connected': account.isConnected,
 		'is-conflict': conflicting,
 	} );

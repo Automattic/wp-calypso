@@ -10,7 +10,7 @@
 	color: var(--studio-black);
 	background-color: var(--studio-jetpack-green-30);
 
-	@media ( min-width: 1101px ) {
+	@media (min-width: 1101px) {
 		padding: 1rem;
 	}
 
@@ -18,16 +18,16 @@
 		width: calc(100% - 4rem);
 		max-width: 1200px;
 
-		@media ( min-width: 783px ) {
+		@media (min-width: 783px) {
 			display: flex;
 			width: 95vw;
 		}
 
-		@media ( min-width: 1101px ) {
+		@media (min-width: 1101px) {
 			width: 90vw;
 		}
 
-		@media ( min-width: 1301px ) {
+		@media (min-width: 1301px) {
 			width: 85vw;
 		}
 	}

@@ -34,6 +34,10 @@ export function useStepNavigator(
 		navigation.goToStep?.( 'import' );
 	}
 
+	function goToImportContentOnlyPage() {
+		navigator( getWordpressImportContentOnlyUrl() );
+	}
+
 	function goToSiteViewPage() {
 		navigation.submit?.( {
 			type: 'redirect',
@@ -94,19 +98,24 @@ export function useStepNavigator(
 		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
 	}
 
-	function getCheckoutUrl( importOption: WPImportOption, extraArgs = {} ) {
-		const path = buildCheckoutUrl( siteSlug, selectedPlan );
+	function getCheckoutUrl(
+		importOption: WPImportOption,
+		extraArgs: { plan?: string; slug?: string; redirect_to?: string } = {}
+	) {
+		const plan = extraArgs.plan ?? selectedPlan;
+		const slug = extraArgs.slug ?? siteSlug;
+		const path = buildCheckoutUrl( slug, plan );
 		let redirectTo = '';
 		let cancelTo = '';
 
 		switch ( importOption ) {
 			case WPImportOption.CONTENT_ONLY:
-				redirectTo = getWordpressImportContentOnlyUrl( extraArgs );
+				redirectTo = extraArgs.redirect_to ?? getWordpressImportContentOnlyUrl( extraArgs );
 				cancelTo = getWordpressImportContentOnlyUrl();
 				break;
 
 			case WPImportOption.EVERYTHING:
-				redirectTo = getWordpressImportEverythingUrl( extraArgs );
+				redirectTo = extraArgs.redirect_to ?? getWordpressImportEverythingUrl( extraArgs );
 				cancelTo = getWordpressImportEverythingUrl();
 				break;
 		}
@@ -140,6 +149,7 @@ export function useStepNavigator(
 		goToIntentPage,
 		goToGoalsPage,
 		goToImportCapturePage,
+		goToImportContentOnlyPage,
 		goToSiteViewPage,
 		goToDashboardPage,
 		goToCheckoutPage,

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import { includes, isEmpty, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -235,7 +235,7 @@ class Site extends Component {
 			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
-					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					autoCapitalize="off"
 					className="site__site-url"
 					disabled={ fieldDisabled }

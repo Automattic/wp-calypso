@@ -111,7 +111,7 @@ export function InviteLinkForm( props: Props ) {
 							disabled={ false }
 							explanation={ false }
 							showLabel={ false }
-							includeFollower={ true }
+							includeFollower
 							includeSubscriber={ false }
 							formControlType="select"
 							onChange={ ( e: ChangeEvent< HTMLSelectElement > ) => setRole( e.target.value ) }

@@ -35,6 +35,10 @@ export const mapToRequestBody = ( action ) => {
 		requestBody.context = action.context;
 	}
 
+	if ( action.transferIntent ) {
+		requestBody.transfer_intent = action.transferIntent;
+	}
+
 	return requestBody;
 };
 

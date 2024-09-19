@@ -19,6 +19,13 @@
 	line-height: 1.5;
 }
 
+@mixin blazepress-data-row-font-buttons-mobile {
+	color: var(--studio-gray-60);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.5;
+}
+
 @mixin blazepress-data-row {
 	&data-row {
 		align-items: center;
@@ -31,12 +38,18 @@
 
 			.post-item__actions-mobile {
 				display: flex;
+				align-items: flex-end;
 				justify-content: space-between;
-				margin-top: 20px;
+			}
+
+			.post-item__stats-mobile {
+				@include blazepress-data-row-font-mobile;
+				align-items: center;
+				display: flex;
+				justify-content: space-between;
 				width: 100%;
 			}
 
-			.post-item__stats-mobile,
 			.campaign-item__stats-mobile {
 				align-self: start;
 				@include blazepress-data-row-font-mobile;
@@ -74,7 +87,7 @@
 			}
 
 			&.promote-post-i2__search-bar-search {
-				height: 42px;
+				height: 44px;
 			}
 		}
 	}
@@ -99,7 +112,7 @@
 }
 
 // Grabbed from wp-calypso/client/my-sites/sidebar/style.scss
-@media screen and ( max-width: 660px ) {
+@media screen and (max-width: 660px) {
 	.theme-default {
 		// client/layout/style.scss
 		.layout__content {
@@ -259,6 +272,21 @@ body.is-section-promote-post-i2 {
 
 	}
 
+	&__payment-blocked-notice {
+		display: flex;
+		align-items: center;
+		margin: 24px;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 1040px;
+		width: calc(100% - 128px);
+		justify-content: center;
+
+		@media screen and (max-width: ($break-medium + 287px)) {
+			width: calc(100% - 32px);
+		}
+	}
+
 	.promote-post-i2__header-subtitle {
 		&_desktop {
 			display: block;
@@ -295,6 +323,11 @@ body.is-section-promote-post-i2 {
 		.section-nav__mobile-header {
 			display: none;
 		}
+	}
+
+	.promote-post-i2__debt-notifier {
+		color: $studio-gray-100;
+		padding-top: 16px;
 	}
 
 	.section-nav-tab {
@@ -452,6 +485,7 @@ body.is-section-promote-post-i2 {
 
 				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
+				.promote-post-i2__debt-notifier,
 				.posts-list__table,
 				.posts-list__loading-container,
 				.promote-post-i2__table,
@@ -564,6 +598,7 @@ $break-medium-expanded-menu: $break-medium + 272px;
 	.promote-post-i2__search-bar-wrapper,
 	.promote-post-i2__table,
 	.promote-post-i2__aux-wrapper,
+	.promote-post-i2__debt-notifier,
 	.posts-list-banner__container .posts-list-banner__content,
 	.posts-list-woo-banner__container .posts-list-banner__content {
 		margin-left: auto;

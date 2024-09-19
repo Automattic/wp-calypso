@@ -1,9 +1,9 @@
+import { SelectDropdown } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'calypso/lib/media/constants';
 import { isModuleActive } from 'calypso/lib/site/utils';
 import EditorMediaModalFieldset from '../fieldset';

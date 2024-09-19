@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { filter, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -221,7 +221,7 @@ class SharingButtonsPreviewButtons extends Component {
 			return;
 		}
 
-		const classes = classNames( 'sharing-buttons-preview-buttons__more', {
+		const classes = clsx( 'sharing-buttons-preview-buttons__more', {
 			'is-visible': this.state.morePreviewVisible,
 		} );
 

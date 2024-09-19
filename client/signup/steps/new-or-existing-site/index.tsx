@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -26,7 +27,8 @@ export default function NewOrExistingSiteStep( props: Props ) {
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
-	}, [ dispatch, stepName ] );
+		triggerGuidesForStep( flowName, stepName );
+	}, [ dispatch, flowName, stepName ] );
 
 	const branchSteps = useBranchSteps( stepName, () => [ 'difm-site-picker' ] );
 
@@ -64,11 +66,11 @@ export default function NewOrExistingSiteStep( props: Props ) {
 					isStoreFlow={ 'do-it-for-me-store' === flowName }
 				/>
 			}
-			hideFormattedHeader={ true }
+			hideFormattedHeader
 			align="left"
 			hideSkip
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
+			isWideLayout
 			headerImageUrl={ difmImage }
 			{ ...props }
 		/>

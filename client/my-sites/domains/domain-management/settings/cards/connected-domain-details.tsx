@@ -2,7 +2,14 @@
 
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import {
+	domainMappingInstructionsMode,
+	subdomainMappingInstructionsMode,
+} from 'calypso/components/domains/connect-domain-step/constants';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { isSubdomain } from 'calypso/lib/domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { DetailsCardProps } from './types';
 
@@ -27,6 +34,31 @@ const ConnectedDomainDetails = ( {
 				disabled={ isLoadingPurchase }
 			>
 				{ translate( 'View plan settings' ) }
+			</Button>
+		);
+	};
+
+	const renderMappingInstructionsButton = () => {
+		const shouldRenderMappingInstructions =
+			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom;
+
+		if ( ! shouldRenderMappingInstructions ) {
+			return null;
+		}
+
+		const mappingInstructionsMode = isSubdomain( domain.domain )
+			? subdomainMappingInstructionsMode
+			: domainMappingInstructionsMode;
+
+		const modeType = domain.connectionMode as keyof typeof mappingInstructionsMode;
+		const setupStep = mappingInstructionsMode[ modeType ];
+
+		return (
+			<Button
+				href={ domainMappingSetup( selectedSite.slug, domain.domain, setupStep ) }
+				disabled={ isLoadingPurchase }
+			>
+				{ translate( 'View connection setup instructions' ) }
 			</Button>
 		);
 	};
@@ -61,7 +93,10 @@ const ConnectedDomainDetails = ( {
 	return (
 		<div className="details-card">
 			<div className="details-card__section">{ getDescriptionText() }</div>
-			<div className="details-card__section">{ renderPlanDetailsButton() }</div>
+			<div className="details-card__section details-card__section-actions">
+				{ renderPlanDetailsButton() }
+				{ renderMappingInstructionsButton() }
+			</div>
 		</div>
 	);
 };

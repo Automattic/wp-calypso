@@ -2,10 +2,7 @@ import { User } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import type { UserSelect } from '@automattic/data-stores';
 
-const USER_STORE = User.register( {
-	client_id: '',
-	client_secret: '',
-} );
+const USER_STORE = User.register();
 
 const useIsLoggedIn = () => {
 	const currentUser = useSelect(

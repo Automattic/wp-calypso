@@ -48,6 +48,7 @@ export type Campaign = {
 	creative_html: string;
 	campaign_stats_loading: boolean;
 	campaign_stats?: CampaignStats;
+	is_evergreen: number;
 };
 
 export type CampaignStats = {
@@ -56,6 +57,10 @@ export type CampaignStats = {
 	clicks_total: number;
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
+	conversions_total?: Record< string, number >;
+	conversion_value?: Record< string, number >;
+	conversion_rate?: number;
+	conversion_last_currency_found?: string;
 };
 
 export type BlazablePost = {
@@ -75,6 +80,8 @@ export type BlazablePost = {
 	post_url: string;
 	featured_image: string | false;
 	post_thumbnail?: string;
+	sku?: string;
+	price?: string;
 };
 
 export type BlazePagedItem = BlazablePost | Campaign;
@@ -85,6 +92,8 @@ export type PostQueryResult = {
 	total_items: number;
 	total_pages: number;
 	page: number;
+	pages: [];
+	pageParams: [];
 };
 
 export type CampaignQueryResult = {

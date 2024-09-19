@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0
+
+- Add dangerouslyGetMaybeLoadedExperimentAssignment for use in useExperiment
+
+## 0.0.5
+
+- Changed runtime experiment name validation to match server side validation: [a-z0-9_]*
+
 ## 0.0.4
 
 - Fix case where checking for localstorage throws an error.

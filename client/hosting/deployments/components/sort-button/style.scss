@@ -1,0 +1,12 @@
+.github-deployments-sort-button.button-plain {
+	text-align: left;
+	line-height: 20px;
+	letter-spacing: -0.15px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	&:focus {
+		outline: thin dotted;
+	}
+}

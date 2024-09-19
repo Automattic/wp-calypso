@@ -1,0 +1,6 @@
+{
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	]
+}

@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Card, ShortenedNumber, Button } from '../';
+import { eye } from '../icons';
 import './style.scss';
 
 type PostStatsCardProps = {
@@ -52,7 +52,7 @@ export default function PostStatsCard( {
 		}
 	};
 
-	const classes = classNames( 'post-stats-card', {
+	const classes = clsx( 'post-stats-card', {
 		'is-loading': isLoading,
 	} );
 

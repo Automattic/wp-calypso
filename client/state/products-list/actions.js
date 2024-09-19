@@ -32,15 +32,22 @@ export function receiveProductsList( productsList, type = null ) {
  * Requests the list of all products from the WPCOM API.
  * @param   {Object} [query] A list of request parameters.
  * @param   {string} query.type The type of products to request (e.g., "jetpack");
+ * @param   {string[]} [query.product_slugs] The specific products being requested. Optional.
+ *
  * 								or undefined, for all products
  * @returns {Function} 			an Action thunk
  */
 export function requestProductsList( query = {} ) {
+	const requestQuery = { ...query };
+	if ( query.product_slugs && query.product_slugs.length > 0 ) {
+		const product_slugs = query.product_slugs?.join( ',' );
+		requestQuery.product_slugs = product_slugs;
+	}
 	return ( dispatch ) => {
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
 
 		return wpcom.req
-			.get( '/products', query )
+			.get( '/products', requestQuery )
 			.then( ( productsList ) => dispatch( receiveProductsList( productsList, query.type ) ) )
 			.catch( ( error ) =>
 				dispatch( {

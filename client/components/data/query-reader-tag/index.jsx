@@ -5,7 +5,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { requestTags } from 'calypso/state/reader/tags/items/actions';
 
 const QueryReaderTag = ( { tag } ) => {
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const locale = useSelector( getCurrentUserLocale );
 	const dispatch = useDispatch();
 
 	useEffect( () => {

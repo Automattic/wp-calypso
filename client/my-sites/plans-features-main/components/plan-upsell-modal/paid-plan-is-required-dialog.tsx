@@ -1,10 +1,8 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { PlanButton } from '@automattic/plans-grid-next';
 import { useEffect, useState } from '@wordpress/element';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -20,10 +18,9 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 export default function PaidPlanIsRequiredDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
-	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps & { paidDomainName: string } ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -33,28 +30,14 @@ export default function PaidPlanIsRequiredDialog( {
 		} );
 	}, [] );
 
-	function handlePaidPlanClick() {
-		setIsBusy( true );
-		onPlanSelected();
-	}
-
 	function handleFreeDomainClick() {
 		setIsBusy( true );
 		onFreePlanSelected();
 	}
 
-	const isEnglish = useIsEnglishLocale();
-	const upsellDescription =
-		isEnglish ||
-		hasTranslation(
-			"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
-		)
-			? translate(
-					"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
-			  )
-			: translate(
-					'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
-			  );
+	const upsellDescription = translate(
+		"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+	);
 
 	return (
 		<DialogContainer>
@@ -66,9 +49,8 @@ export default function PaidPlanIsRequiredDialog( {
 				<RowWithBorder>
 					<SuggestedPlanSection
 						paidDomainName={ paidDomainName }
-						suggestedPlanSlug={ suggestedPlanSlug }
 						isBusy={ isBusy }
-						onButtonClick={ handlePaidPlanClick }
+						onPlanSelected={ onPlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>

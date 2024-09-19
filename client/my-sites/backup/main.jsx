@@ -1,11 +1,10 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
-import { ExternalLink, Tooltip } from '@wordpress/components';
-import classNames from 'classnames';
+import { ExternalLink } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -13,21 +12,22 @@ import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -40,7 +40,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import BackupDatePicker from './backup-date-picker';
 import BackupsMadeRealtimeBanner from './banners/backups-made-realtime-banner';
 import EnableRestoresBanner from './banners/enable-restores-banner';
-import { backupMainPath, backupClonePath } from './paths';
+import { backupMainPath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
 
@@ -74,18 +74,18 @@ const BackupPage = ( { queryDate } ) => {
 
 	return (
 		<div
-			className={ classNames( 'backup__page', {
-				wordpressdotcom: ! isJetpackCloud(),
+			className={ clsx( 'backup__page', {
+				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
 		>
 			<Main
-				className={ classNames( {
+				className={ clsx( {
 					is_jetpackcom: isJetpackCloud(),
 				} ) }
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! isJetpackCloud() && (
+				{ ! ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<NavigationHeader
 						navigationItems={ [] }
 						title={ translate( 'Jetpack VaultPress Backup' ) }
@@ -97,7 +97,9 @@ const BackupPage = ( { queryDate } ) => {
 								},
 							}
 						) }
-					/>
+					>
+						<BackupActionsToolbar siteId={ siteId } />
+					</NavigationHeader>
 				) }
 
 				<AdminContent selectedDate={ selectedDate } />
@@ -130,10 +132,6 @@ function AdminContent( { selectedDate } ) {
 	const activityLogFilter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const isFiltering = ! isFilterEmpty( activityLogFilter );
 
-	const areCredentialsInvalid = useSelector( ( state ) =>
-		areJetpackCredentialsInvalid( state, siteId, 'main' )
-	);
-
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
 	const onDateChange = useCallback(
@@ -147,6 +145,7 @@ function AdminContent( { selectedDate } ) {
 		<>
 			<QuerySiteSettings siteId={ siteId } />
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
+			<QuerySiteCredentials siteId={ siteId } />
 			<QueryRewindPolicies
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
@@ -166,8 +165,6 @@ function AdminContent( { selectedDate } ) {
 						onDateChange={ onDateChange }
 						selectedDate={ selectedDate }
 						needCredentials={ needCredentials }
-						areCredentialsInvalid={ areCredentialsInvalid }
-						isAtomic={ isAtomic }
 					/>
 				</>
 			) }
@@ -175,18 +172,11 @@ function AdminContent( { selectedDate } ) {
 	);
 }
 
-function BackupStatus( {
-	selectedDate,
-	needCredentials,
-	onDateChange,
-	areCredentialsInvalid,
-	isAtomic,
-} ) {
+function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -194,13 +184,13 @@ function BackupStatus( {
 	);
 
 	if ( isFetchingSiteFeatures || ! isPoliciesInitialized ) {
-		return <BackupPlaceholder showDatePicker={ true } />;
+		return <BackupPlaceholder showDatePicker />;
 	}
 
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
-				{ isJetpackCloud() && (
+				{ ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<div className="backup__header">
 						<div className="backup__header-left">
 							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
@@ -209,31 +199,13 @@ function BackupStatus( {
 							</div>
 						</div>
 						<div className="backup__header-right">
-							{ siteSlug && (
-								<Tooltip
-									text={ translate(
-										'To test your site changes, migrate or keep your data safe in another site'
-									) }
-								>
-									<Button
-										className="backup__clone-button"
-										href={ backupClonePath( siteSlug ) }
-										onClick={ () =>
-											dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
-										}
-									>
-										{ translate( 'Copy site' ) }
-									</Button>
-								</Tooltip>
-							) }
+							<BackupActionsToolbar siteId={ siteId } />
 						</div>
 					</div>
 				) }
 
-				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
-					<BackupsMadeRealtimeBanner />
-				) }
+				{ needCredentials && <EnableRestoresBanner /> }
+				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />

@@ -1,13 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { ScreenReaderText, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { ScreenReaderText, FormLabel, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -84,6 +83,8 @@ class SharingConnection extends Component {
 			facebook: 'user',
 			'instagram-business': 'user',
 			mastodon: 'user',
+			threads: 'user',
+			nextdoor: 'user',
 		},
 	};
 
@@ -106,7 +107,7 @@ class SharingConnection extends Component {
 			const isNowSitewide = event.target.checked ? 1 : 0;
 
 			this.setState( { isSavingSitewide: true } );
-			this.props.onToggleSitewideConnection( this.props.connection, isNowSitewide );
+			this.props.onToggleSitewideConnection( this.props.connection, !! isNowSitewide );
 			this.props.recordTracksEvent( 'calypso_connections_connection_sitewide_checkbox_clicked', {
 				is_now_sitewide: isNowSitewide,
 				path,
@@ -244,10 +245,10 @@ class SharingConnection extends Component {
 
 	render() {
 		const connectionSitewideElement = this.getConnectionSitewideElement();
-		const connectionClasses = classNames( 'sharing-connection', {
+		const connectionClasses = clsx( 'sharing-connection', {
 			disabled: this.props.isDisconnecting || this.props.isRefreshing,
 		} );
-		const statusClasses = classNames( 'sharing-connection__account-status', {
+		const statusClasses = clsx( 'sharing-connection__account-status', {
 			'is-shareable': undefined !== connectionSitewideElement,
 		} );
 

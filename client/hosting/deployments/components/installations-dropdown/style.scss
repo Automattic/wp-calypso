@@ -1,0 +1,41 @@
+.github-deployments-installations-select {
+	.select-dropdown__header {
+		height: 40px !important;
+
+	}
+
+
+	&.is-disabled .select-dropdown__header {
+		color: var(--studio-gray-10);
+		background: var(--color-surface);
+		border-color: var(--studio-gray-10);
+
+		.gridicons-chevron-down {
+			fill: var(--studio-gray-10);
+		}
+	}
+
+	.select-dropdown__header-text {
+		font-size: $font-body;
+		font-weight: normal;
+	}
+
+	.select-dropdown__item-text {
+		font-weight: normal;
+	}
+
+	&__add-installation {
+		display: inline-flex !important;
+		align-items: center;
+		gap: 16px;
+	}
+}
+
+.is-section-github-deployments {
+	// overwrite notices z-index so they are visible on top of the repository selection modal
+	.global-notices {
+		// This should be - z-index: z-index("root", ".is-section-github-deployments .global-notices")
+		// but the @automattic/onboarding/styles/mixins import overwrites the z-index function on client/assets/stylesheets/shared/functions/_z-index.scss
+		z-index: 100201;
+	}
+}

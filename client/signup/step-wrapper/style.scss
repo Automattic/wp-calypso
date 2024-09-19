@@ -175,12 +175,6 @@
 		}
 	}
 
-	// pressable-nux has no title or subtitle so
-	// needs to not hide the (W) logo
-	.is-pressable-nux & {
-		margin-top: 30px;
-	}
-
 	// On small screens remove the margin from the
 	// bottom of the cards.
 	@include breakpoint-deprecated( "<660px" ) {

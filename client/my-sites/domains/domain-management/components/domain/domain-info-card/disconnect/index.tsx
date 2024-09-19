@@ -1,9 +1,9 @@
 import { Dialog } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { type as domainType } from 'calypso/lib/domains/constants';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -65,9 +65,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 			dispatch( markAsPendingMove( selectedSite.ID, domain.name ) );
 
 			dispatch(
-				successNotice(
-					translate( 'The domain will be disconnected from this site in a few minutes.' )
-				)
+				successNotice( translate( 'The domain will be detached from this site in a few minutes.' ) )
 			);
 			setDisconnecting( false );
 			setDialogVisible( false );
@@ -85,7 +83,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 		},
 		{
 			action: 'disconnect',
-			label: translate( 'Disconnect' ),
+			label: translate( 'Detach' ),
 			onClick: clickDisconnectDomain,
 			additionalClassNames: isDisconnecting ? 'is-busy' : '',
 			isPrimary: true,
@@ -98,15 +96,13 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 				<div className="dialog__grid">
 					<div className="dialog__grid-column">
 						<FormSectionHeading>
-							{ translate( '{{strong}}Disconnect %(domain)s{{/strong}}', {
+							{ translate( '{{strong}}Detach %(domain)s{{/strong}}', {
 								args: { domain: domain.name },
 								components: { strong: <strong /> },
 							} ) }
 						</FormSectionHeading>
 						<p>
-							{ translate(
-								'Are you sure? This will disconnect the domain from its current site.'
-							) }
+							{ translate( 'Are you sure? This will detach the domain from its current site.' ) }
 						</p>
 					</div>
 				</div>
@@ -118,10 +114,10 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 		<>
 			<DomainInfoCard
 				type="click"
-				title="Disconnect"
-				description="Disconnect this domain from the site"
+				title={ translate( 'Detach' ) }
+				description={ translate( 'Detach this domain from the site' ) }
 				onClick={ () => setDialogVisible( true ) }
-				ctaText="Disconnect"
+				ctaText={ translate( 'Detach' ) }
 			/>
 			{ renderDialog() }
 		</>

@@ -26,7 +26,10 @@ export const STAT_TYPE_COMMENT_FOLLOWERS = 'statsCommentFollowers';
 export const STAT_TYPE_COMMENTS = 'statsComments';
 export const STAT_TYPE_COUNTRY_VIEWS = 'statsCountryViews';
 export const STAT_TYPE_FOLLOWERS = 'statsFollowers';
-export const STAT_TYPE_INSIGHTS = 'statsInsights';
+export const STAT_TYPE_INSIGHTS_ALL_TIME_STATS = 'statsInsightsAllTimeStats';
+export const STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME = 'statsInsightsMostPopularTime';
+export const STAT_TYPE_INSIGHTS_MOST_POPULAR_DAY = 'statsInsightsMostPopularDay';
+export const STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS = 'statsInsightsAllTimeInsights';
 export const STAT_TYPE_PUBLICIZE = 'statsPublicize';
 export const STAT_TYPE_REFERRERS = 'statsReferrers';
 export const STAT_TYPE_SEARCH_TERMS = 'statsSearchTerms';
@@ -34,12 +37,14 @@ export const STAT_TYPE_STREAK = 'statsStreak';
 export const STAT_TYPE_SUMMARY = 'statsSummary';
 export const STAT_TYPE_TAGS = 'statsTags';
 export const STAT_TYPE_TOP_AUTHORS = 'statsTopAuthors';
+export const STAT_TYPE_EMAILS_SUMMARY = 'statsEmailsSummary';
 export const STAT_TYPE_TOP_POSTS = 'statsTopPosts';
 export const STAT_TYPE_VIDEO_PLAYS = 'statsVideoPlays';
 export const STAT_TYPE_VISITS = 'statsVisits';
 export const STAT_TYPE_TAGS_LIST = 'tagsList';
 export const STAT_TYPE_USERS_LIST = 'usersList';
 export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
+export const STATS_TYPE_DEVICE_STATS = 'stats_devices_module';
 
 // stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';
@@ -60,6 +65,8 @@ export const STATS_FEATURE_SUMMARY_LINKS_30_DAYS = 'StatsModuleSummaryLinks/30_d
 export const STATS_FEATURE_SUMMARY_LINKS_QUARTER = 'StatsModuleSummaryLinks/quarter';
 export const STATS_FEATURE_SUMMARY_LINKS_YEAR = 'StatsModuleSummaryLinks/year';
 export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
+// UTM Stats which is already in use, so didn't align with the naming convertion.
+export const STATS_FEATURE_UTM_STATS = 'stats_utm';
 
 // other
 export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';

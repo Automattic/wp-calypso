@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
@@ -89,7 +89,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 					return {
 						...oldSites,
-						sites: oldSites?.sites.map( ( site: Site ) => {
+						sites: oldSites?.sites?.map( ( site: Site ) => {
 							if ( site.blog_id === siteId ) {
 								return {
 									...site,
@@ -132,7 +132,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		};
 	};
 
-	const { isLoading, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
+	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
 	const handleFavoriteChange = () => {
 		mutate( { siteId, isFavorite } );
@@ -149,9 +149,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		<Button
 			borderless
 			compact
-			disabled={ isLoading }
+			disabled={ isPending }
 			onClick={ handleFavoriteChange }
-			className={ classNames(
+			className={ clsx(
 				'site-set-favorite__favorite-icon',
 				'disable-card-expand',
 				isFavorite && 'site-set-favorite__favorite-icon-active'

@@ -196,7 +196,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 					letter-spacing: 0.2px;
 					margin: 0;
 
-					@media ( min-width: 1080px ) {
+					@media (min-width: 1080px) {
 						padding: 0;
 					}
 
@@ -578,6 +578,11 @@ $design-button-primary-color: rgb(17, 122, 201);
 					}
 				}
 			}
+
+		}
+
+		.design-picker-design-title__theme-tier-badge {
+			gap: 8px;
 		}
 
 		.step-container__navigation {
@@ -638,11 +643,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 // Free flow
 .update-design.design-setup,
 .free.design-setup {
-	.step-container:not(.design-setup__preview) {
-		.navigation-link {
-			display: none;
-		}
-	}
 	.step-container__navigation {
 		.step-container__skip-wrapper {
 			button.step-container__navigation-link {

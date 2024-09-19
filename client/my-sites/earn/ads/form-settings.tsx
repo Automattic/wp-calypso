@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -22,7 +21,11 @@ import { useDispatch, useSelector } from 'calypso/state';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
 import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
-import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	getCustomizerUrl,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 
@@ -33,6 +36,7 @@ type DisplayOptions = {
 	display_archive?: boolean;
 	enable_header_ad?: boolean;
 	second_belowpost?: boolean;
+	inline_enabled?: boolean;
 	sidebar?: boolean;
 };
 
@@ -47,6 +51,7 @@ type Settings = {
 	custom_adstxt_enabled?: boolean;
 	custom_adstxt?: string;
 	jetpack_module_enabled?: boolean;
+	cmp_enabled?: boolean;
 };
 
 const AdsFormSettings = () => {
@@ -55,8 +60,8 @@ const AdsFormSettings = () => {
 	const [ settings, setSettings ] = useState< Settings >( {} );
 	const [ isChanged, setIsChanged ] = useState( false );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const site = useSelector( getSelectedSite );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ?? 0 ) );
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ?? 0 ) );
 	const isSavingSettings = useSelector( ( state ) =>
@@ -64,6 +69,10 @@ const AdsFormSettings = () => {
 	);
 	const wordadsSettings = useSelector( ( state ) => getWordadsSettings( state, siteId ) );
 	const widgetsUrl = useSelector( ( state ) => getCustomizerUrl( state, siteId, 'widgets' ) );
+	const isMinVersionForInlineAds = useSelector(
+		( state ) => siteId && isJetpackMinimumVersion( state, siteId, '13.5-a.1' )
+	);
+	const supportsInlineAds = ! siteIsJetpack || isMinVersionForInlineAds;
 
 	const isLoading = ! wordadsSettings || isSavingSettings;
 	const isWordAds = site?.options?.wordads;
@@ -136,6 +145,7 @@ const AdsFormSettings = () => {
 			custom_adstxt_enabled: false,
 			custom_adstxt: '',
 			jetpack_module_enabled: false,
+			cmp_enabled: false,
 		};
 	}
 
@@ -151,6 +161,7 @@ const AdsFormSettings = () => {
 			custom_adstxt_enabled: settings.custom_adstxt_enabled,
 			custom_adstxt: settings.custom_adstxt,
 			jetpack_module_enabled: settings.jetpack_module_enabled,
+			cmp_enabled: settings.cmp_enabled,
 		};
 	}
 
@@ -170,7 +181,6 @@ const AdsFormSettings = () => {
 			<FormFieldset>
 				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="yes"
@@ -182,7 +192,6 @@ const AdsFormSettings = () => {
 				</FormLabel>
 
 				<FormLabel>
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="no"
@@ -194,7 +203,6 @@ const AdsFormSettings = () => {
 				</FormLabel>
 
 				<FormLabel>
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="pause"
@@ -254,6 +262,14 @@ const AdsFormSettings = () => {
 						onChange={ () => handleDisplayToggle( 'second_belowpost' ) }
 						label={ translate( 'Second ad below post' ) }
 					/>
+					{ supportsInlineAds && (
+						<ToggleControl
+							checked={ !! settings.display_options?.inline_enabled }
+							disabled={ isDisabled }
+							onChange={ () => handleDisplayToggle( 'inline_enabled' ) }
+							label={ translate( 'Inline within post content' ) }
+						/>
+					) }
 					{ ! siteIsJetpack && (
 						<ToggleControl
 							checked={ !! settings.display_options?.sidebar }
@@ -410,6 +426,25 @@ const AdsFormSettings = () => {
 							</FormSettingExplanation>
 						</FormFieldset>
 					</div>
+				) }
+
+				{ siteIsJetpack && (
+					<FormFieldset>
+						<ToggleControl
+							checked={ !! settings.cmp_enabled }
+							disabled={ isDisabled }
+							onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
+							label={ translate( 'Enable GDPR Consent Banner' ) }
+						/>
+
+						<div className="ads__child-settings">
+							<FormSettingExplanation>
+								{ translate(
+									'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
+								) }
+							</FormSettingExplanation>
+						</div>
+					</FormFieldset>
 				) }
 			</div>
 		);

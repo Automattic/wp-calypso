@@ -1,9 +1,11 @@
 import { PatternRenderer } from '@automattic/block-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { __unstableCompositeItem as CompositeItem } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import prependTitleBlockToPagePattern from '../html-transformers/prepend-title-block-to-page-pattern';
 import PatternTooltipDeadClick from '../pattern-tooltip-dead-click';
@@ -29,9 +31,6 @@ interface PagePreviewProps extends BasePageProps {
 	onFullscreenLeave: () => void;
 }
 
-const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
-const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
-
 const Page = ( { className, style, patterns, transformPatternHtml }: PageProps ) => {
 	const pageTitle = useMemo( () => {
 		return patterns.find( isPagePattern )?.title ?? '';
@@ -40,6 +39,9 @@ const Page = ( { className, style, patterns, transformPatternHtml }: PageProps )
 	const transformPagePatternHtml = useCallback(
 		( patternHtml: string ) => {
 			const transformedPatternHtml = transformPatternHtml( patternHtml );
+			if ( isEnabled( 'pattern-assembler/v2' ) ) {
+				return transformedPatternHtml;
+			}
 			return prependTitleBlockToPagePattern( transformedPatternHtml, pageTitle );
 		},
 		[ transformPatternHtml, pageTitle ]
@@ -50,9 +52,10 @@ const Page = ( { className, style, patterns, transformPatternHtml }: PageProps )
 			{ patterns.map( ( pattern ) => (
 				<PatternRenderer
 					key={ pattern.ID }
+					maxHeight="none"
 					patternId={ encodePatternId( pattern.ID ) }
-					viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
-					viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }
+					viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
+					viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 					transformHtml={
 						isPagePattern( pattern ) ? transformPagePatternHtml : transformPatternHtml
 					}
@@ -147,7 +150,7 @@ const PatternPagePreview = ( {
 
 	return (
 		<div
-			className={ classnames( 'pattern-assembler__preview', {
+			className={ clsx( 'pattern-assembler__preview', {
 				'pattern-assembler__preview--fullscreen': isFullscreen,
 				'pattern-assembler__preview--fullscreen-enter': isFullscreenEnter,
 				'pattern-assembler__preview--fullscreen-leave': isFullscreenLeave,

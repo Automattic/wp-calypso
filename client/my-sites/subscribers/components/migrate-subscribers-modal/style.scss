@@ -18,7 +18,7 @@
 				white-space: nowrap;
 				overflow: hidden;
 				line-height: unset;
-				@media ( max-width: $break-small ) {
+				@media (max-width: $break-small) {
 					max-width: 80vw;
 				}
 			}
@@ -29,7 +29,7 @@
 			overflow: visible;
 		}
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			width: auto;
 		}
 	}

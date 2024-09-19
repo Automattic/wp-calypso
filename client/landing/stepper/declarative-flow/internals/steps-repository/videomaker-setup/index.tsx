@@ -38,11 +38,8 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 		setSelectedDesign( {
 			slug: 'videomaker',
 			theme: slug,
-			is_premium: ! config.isEnabled( 'videomaker-trial' ),
 			title: 'Videomaker',
 			categories: [],
-			features: [],
-			template: styleVariation?.name ?? '',
 		} );
 
 		if ( config.isEnabled( 'videomaker-trial' ) && styleVariation ) {
@@ -94,8 +91,8 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 	return (
 		<StepContainer
 			stepName="videomaker-setup"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="videopress"
 			formattedHeader={
 				<FormattedHeader

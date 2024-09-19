@@ -1,3 +1,7 @@
+.main.is-wide-layout.plugins-browser--site-view {
+	max-width: 100%;
+}
+
 .plugins-browser__billling-interval-switcher {
 	margin-right: 15px;
 }
@@ -6,7 +10,7 @@
 	display: flex;
 	align-items: center;
 
-	@media screen and ( max-width: 960px ) {
+	@media screen and (max-width: 960px) {
 		.plugins-browser__button {
 			border: none;
 		}
@@ -46,8 +50,8 @@
 		padding-top: 0;
 	}
 }
-.plugins-browser__main-container {
-	display: contents;
+.has-no-sidebar .plugins-browser__main-container {
+	position: relative;
 
 	&::before {
 		box-sizing: border-box;
@@ -58,8 +62,12 @@
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		border-top: 1px solid #f6f7f7;
 	}
+
+}
+
+.plugins-browser__main-container .plugins-browser-list:last-of-type {
+	padding-bottom: 32px;
 }
 
 .plugins-browser__upgrade-banner {
@@ -69,10 +77,6 @@
 	.banner.card {
 		margin: 48px 0 0;
 	}
-}
-
-.plugins-browser__marketplace-footer {
-	margin-top: 60px;
 }
 
 body.is-section-plugins #primary .main.is-logged-out {
@@ -88,17 +92,17 @@ body.is-section-plugins #primary .main.is-logged-out {
 		padding: 0 8px;
 
 		.responsive-toolbar-group__button-item {
-			padding: 0 16px;
+			padding: 4px 12px;
 		}
 		.responsive-toolbar-group__button-item:not([class*="is-pressed"]):hover::before {
 			background: rgba(6, 117, 196, 0.1);
 		}
 	}
 
-	.components-button.is-pressed::before {
+	.responsive-toolbar-group__button-item.is-pressed::before {
 		background: var(--studio-blue-50);
-		left: 4px;
-		right: 4px;
+		left: 0;
+		right: 0;
 	}
 }
 // Jetpack injects a banner on the /plugins page for jetpack sites

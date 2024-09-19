@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Dialog, Button } from '@automattic/components';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
@@ -9,6 +10,7 @@ import {
 	useMarketplaceReviewsQuery,
 	useMarketplaceReviewsStatsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsList } from 'calypso/my-sites/marketplace/components/reviews-list';
 import './styles.scss';
@@ -20,6 +22,7 @@ import {
 import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import { MarketplaceCreateReviewItem } from '../review-item/create-review-item';
 
 type Props = {
 	isVisible: boolean;
@@ -36,8 +39,17 @@ export const ReviewsModal = ( props: Props ) => {
 	const isMarketplacePlugin = useSelector(
 		( state ) => productType === 'plugin' && isMarketplaceProduct( state, slug )
 	);
+	const [ editCompletedTimes, setEditCompletedTimes ] = useState( 0 );
 
-	const { data: userReviews } = useMarketplaceReviewsQuery( {
+	useEffect( () => {
+		isVisible &&
+			recordTracksEvent( 'calypso_marketplace_reviews_modal_open', {
+				product_type: productType,
+				slug: slug,
+			} );
+	}, [ isVisible, productType, slug ] );
+
+	const { data: userReviews, isFetching: isFetchingUserReviews } = useMarketplaceReviewsQuery( {
 		productType,
 		slug,
 		perPage: 1,
@@ -56,7 +68,11 @@ export const ReviewsModal = ( props: Props ) => {
 	const hasActiveSubscription = useSelector( ( state: AppState ) =>
 		hasActivePluginSubscription( state, variations )
 	);
-	const askForReview = canPublishReview && ! userHasReviewed;
+
+	// Hide the Thank You section if user removed their review
+	if ( ! userReviews?.length && ! isFetchingUserReviews && editCompletedTimes ) {
+		setEditCompletedTimes( 0 );
+	}
 
 	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
 	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
@@ -71,7 +87,14 @@ export const ReviewsModal = ( props: Props ) => {
 		<Dialog
 			className="marketplace-reviews-modal"
 			isVisible={ isVisible }
-			onClose={ onClose }
+			onClose={ () => {
+				recordTracksEvent( 'calypso_marketplace_reviews_modal_close', {
+					product_type: productType,
+					slug: slug,
+				} );
+				onClose();
+				setEditCompletedTimes( 0 );
+			} }
 			showCloseIcon
 		>
 			<div className="marketplace-reviews-modal__header">
@@ -102,15 +125,10 @@ export const ReviewsModal = ( props: Props ) => {
 								</div>
 							</div>
 						</div>
-						{ askForReview && (
-							<div className="marketplace-reviews-modal__summary-button">
-								<Button primary onClick={ () => alert( 'Not implemented yet' ) }>
-									{ translate( 'Leave my review' ) }
-								</Button>
-							</div>
-						) }
+
 						{ /* TODO: Add theme purchase */ }
-						{ ! askForReview &&
+						{ ! canPublishReview &&
+							! userHasReviewed &&
 							! hasActiveSubscription &&
 							isMarketplacePlugin &&
 							selectedSite?.slug && (
@@ -130,9 +148,19 @@ export const ReviewsModal = ( props: Props ) => {
 					</div>
 				) }
 
-				{ /* TODO: Add the review creation section */ }
+				<MarketplaceCreateReviewItem
+					productType={ productType }
+					slug={ slug }
+					forceShowThankYou={ editCompletedTimes }
+					canPublishReview={ canPublishReview }
+				/>
+
 				<div className="marketplace-reviews-modal__reviews-list">
-					<MarketplaceReviewsList productType={ productType } slug={ slug } />
+					<MarketplaceReviewsList
+						productType={ productType }
+						slug={ slug }
+						onEditCompleted={ () => setEditCompletedTimes( editCompletedTimes + 1 ) }
+					/>
 				</div>
 			</div>
 		</Dialog>

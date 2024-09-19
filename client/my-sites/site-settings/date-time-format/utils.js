@@ -28,7 +28,7 @@ export function getLocalizedDate( timezoneString ) {
  * @see http://momentjs.com/docs/#/displaying/format/
  * @type {Object}
  */
-const phpToMomentMapping = {
+export const phpToMomentMapping = {
 	d: 'DD',
 	D: 'ddd',
 	j: 'D',

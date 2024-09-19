@@ -16,13 +16,14 @@ const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 
 	return useInfiniteQuery( {
 		queryKey: [ 'users', siteId, search ],
-		queryFn: ( { pageParam = 0 } ) =>
+		queryFn: ( { pageParam } ) =>
 			wpcom.req.get( `/sites/${ siteId }/users`, {
 				...defaults,
 				...fetchOptions,
 				offset: pageParam,
 			} ),
 		enabled: !! siteId,
+		initialPageParam: 0,
 		getNextPageParam: ( lastPage, allPages ) => {
 			const n = fetchOptions.number ?? defaults.number;
 			if ( lastPage.found <= allPages.length * n ) {

@@ -21,18 +21,18 @@
 	@include navigation-segment-control-buttons;
 
 	// Make the content break line earlier than 660px
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		.stats-period-navigation {
 			margin: 0 0 24px 0;
 			padding: 0;
 		}
 	}
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		padding: 0 16px;
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		margin-top: 0;
 	}
 }

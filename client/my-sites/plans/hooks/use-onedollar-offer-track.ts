@@ -10,7 +10,7 @@ type Location = 'plans' | 'trialexpired' | 'homescreen' | 'checkout';
  * @param location Location of the track being fired, i.e. 'plans', 'trialexpired', 'homescreen', 'checkout'
  */
 const useOneDollarOfferTrack = ( siteId: number | null | undefined, location: Location ) => {
-	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( { siteId } );
+	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( { siteId, coupon: undefined } );
 	const hasWooExpressIntroOffer = Object.values( wooExpressIntroOffers ?? {} ).length > 0;
 
 	useEffect( () => {

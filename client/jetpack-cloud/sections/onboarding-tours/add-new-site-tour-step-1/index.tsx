@@ -31,6 +31,7 @@ export default function AddNewSiteTourStep1() {
 						),
 
 						nextStepOnTargetClick: '#sites-overview-add-sites-button .split-button__toggle',
+						forceShowSkipButton: true,
 					},
 				] }
 			/>

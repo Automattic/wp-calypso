@@ -25,7 +25,10 @@ function getInstallThemeUrl( state, siteId ) {
 	const atomicSite = isAtomicSite( state, siteId );
 	const siteCanInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 	if ( atomicSite && siteCanInstallThemes ) {
-		return getSiteThemeInstallUrl( state, siteId );
+		const themeInstallUrlObj = new URL( getSiteThemeInstallUrl( state, siteId ) );
+		themeInstallUrlObj.searchParams.append( 'browse', 'popular' );
+		themeInstallUrlObj.searchParams.append( 'wpcom-upload', '1' );
+		return themeInstallUrlObj.toString();
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

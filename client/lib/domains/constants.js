@@ -29,6 +29,7 @@ export const domainAvailability = {
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	CONFLICTING_CNAME_EXISTS: 'conflicting_cname_exists',
 	DISALLOWED: 'blacklisted_domain',
+	DOMAIN_AVAILABILITY_THROTTLED: 'domain_availability_throttle',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
 	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',
@@ -120,6 +121,7 @@ export const sslStatuses = {
 	SSL_DISABLED: 'disabled',
 	SSL_PENDING: 'pending',
 	SSL_ACTIVE: 'active',
+	SSL_NEWLY_REGISTERED: 'newly_registered',
 };
 
 export const domainInfoContext = {

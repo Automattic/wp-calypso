@@ -12,7 +12,7 @@ export function useCanPublishPluginReview( plugin = { isMarketplaceProduct: fals
 	const { isMarketplaceProduct } = plugin;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const purchases = useSelector( getUserPurchases );
 	const purchasedPlugin = getPluginPurchased( plugin, purchases || [] );
 	const hasActiveSubscription = !! purchasedPlugin;
 

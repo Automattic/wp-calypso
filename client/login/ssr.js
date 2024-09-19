@@ -34,6 +34,7 @@ function isRedirectToValidForSsr( redirectToQueryValue ) {
 	const redirectToDecoded = decodeURIComponent( redirectToQueryValue );
 	return (
 		redirectToDecoded.startsWith( 'https://wordpress.com/theme' ) ||
+		// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 		redirectToDecoded.startsWith( 'https://wordpress.com/go' )
 	);
 }

@@ -8,6 +8,7 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -53,9 +54,7 @@ function getWebpackConfig(
 	).slice( 0, 11 );
 
 	const pageMeta = {
-		nodePlatform: process.platform,
-		nodeVersion: process.version,
-		gitDescribe,
+		'git-describe': gitDescribe,
 	};
 
 	return {
@@ -63,36 +62,30 @@ function getWebpackConfig(
 		optimization: {
 			concatenateModules: ! shouldEmitStats,
 		},
-		devServer: {
-			host: 'calypso.localhost',
-			port: 3000,
-			static: {
-				directory: path.join( __dirname, 'dist' ),
-			},
-			client: {
-				progress: true,
-			},
-			watchFiles: [ 'dist/**/*' ],
-		},
 		plugins: [
 			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {
 				filename: path.join( outputPath, 'index.html' ),
 				template: path.join( __dirname, 'src', 'index.ejs' ),
-				title: 'Notifications',
+				publicPath: 'https://widgets.wp.com/notifications/',
 				hash: true,
 				inject: false,
-				isRTL: false,
-				...pageMeta,
+				scriptLoading: 'blocking',
+				meta: pageMeta,
+				includeStyle: ( href ) => ! href.includes( '.rtl.css' ),
 			} ),
 			new HtmlWebpackPlugin( {
 				filename: path.join( outputPath, 'rtl.html' ),
 				template: path.join( __dirname, 'src', 'index.ejs' ),
-				title: 'Notifications',
+				publicPath: 'https://widgets.wp.com/notifications/',
 				hash: true,
 				inject: false,
-				isRTL: true,
-				...pageMeta,
+				scriptLoading: 'blocking',
+				meta: pageMeta,
+				includeStyle: ( href ) => href.includes( '.rtl.css' ),
+			} ),
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( __dirname, 'dist/chunks-map.json' ),
 			} ),
 			shouldEmitStats &&
 				new BundleAnalyzerPlugin( {

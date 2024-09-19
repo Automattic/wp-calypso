@@ -1,0 +1,58 @@
+import { Card, ConfettiAnimation } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
+import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
+import ContentSummary from './summary/content';
+import SubscribersSummary from './summary/subscribers';
+import { getImporterStatus } from './utils';
+
+function getStepTitle( importerStatus: StepStatus ) {
+	if ( importerStatus === 'done' ) {
+		return 'Success! 🎉';
+	}
+
+	if ( importerStatus === 'importing' ) {
+		return 'Almost there…';
+	}
+
+	return 'Summary';
+}
+
+interface SummaryProps {
+	selectedSite: SiteDetails;
+	steps: Steps;
+}
+
+export default function Summary( { steps, selectedSite }: SummaryProps ) {
+	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
+
+	return (
+		<Card>
+			{ importerStatus === 'done' && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
+			<h2>{ getStepTitle( importerStatus ) }</h2>
+			{ steps.content.content && (
+				<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
+			) }
+			{ steps.subscribers.content && (
+				<SubscribersSummary
+					stepContent={ steps.subscribers.content }
+					status={ steps.subscribers.status }
+				/>
+			) }
+
+			<ImporterActionButtonContainer noSpacing>
+				<ImporterActionButton href={ '/settings/newsletter/' + selectedSite.slug } primary>
+					Customize your newsletter
+				</ImporterActionButton>
+				<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
+					View content
+				</ImporterActionButton>
+				<ImporterActionButton href={ '/subscribers/' + selectedSite.slug }>
+					Check subscribers
+				</ImporterActionButton>
+			</ImporterActionButtonContainer>
+		</Card>
+	);
+}

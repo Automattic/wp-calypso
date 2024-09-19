@@ -43,6 +43,7 @@ ENV BUILD_TRANSLATION_CHUNKS true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD true
 ENV SKIP_TSC true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
+ENV IS_CI=true
 WORKDIR /calypso
 
 # Build a "base" layer
@@ -63,7 +64,7 @@ RUN bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --immutable --check-cache
+RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
 # Build the final layer

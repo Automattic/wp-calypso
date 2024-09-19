@@ -190,7 +190,7 @@ export async function fetchPlugin( context, next ) {
 
 	const dataOrError = await prefetchTimebox(
 		[
-			// We need to have the product list before prefetchPlugin so it can determin where to fetch from.
+			// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
 			prefetchProductList( queryClient, store ).then( () =>
 				prefetchPlugin( queryClient, store, options )
 			),
@@ -210,7 +210,11 @@ export async function fetchPlugin( context, next ) {
 export function validatePlugin( { path, params: { plugin } }, next ) {
 	const siteFragment = getSiteFragment( path );
 
-	if ( siteFragment || Number.isInteger( parseInt( plugin, 10 ) ) ) {
+	if (
+		plugin === 'scheduled-updates' ||
+		siteFragment ||
+		Number.isInteger( parseInt( plugin, 10 ) )
+	) {
 		return next( 'route' );
 	}
 	next();

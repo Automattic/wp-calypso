@@ -7,12 +7,12 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import {
+	addNavigationIfLoggedIn,
 	navigation,
-	selectSiteIfLoggedInWithSites,
+	noSite,
+	selectSiteOrSkipIfLoggedInWithMultipleSites,
 	siteSelection,
 	sites,
-	hideNavigationIfLoggedInWithNoSites,
-	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
 import { fetchThemeData, redirectToThemeDetails } from './controller';
 import { renderThemes, upload } from './controller-logged-in';
@@ -73,9 +73,9 @@ export default function ( router ) {
 		routesWithoutSites,
 		redirectWithoutLocaleParamIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
-		selectSiteIfLoggedInWithSites,
+		selectSiteOrSkipIfLoggedInWithMultipleSites,
+		noSite,
 		renderThemes,
-		hideNavigationIfLoggedInWithNoSites,
 		addNavigationIfLoggedIn,
 		makeLayout,
 		clientRender

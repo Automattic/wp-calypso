@@ -6,16 +6,11 @@ import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } 
 const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
-	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button[role="tab"]:has-text("${ tabName }")`,
-	activeTabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button[aria-selected="true"][role="tab"]:has-text("${ tabName }")`,
-
-	// General section-related
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
-	showRevisionButton: '.edit-post-last-revision__panel', // Revision is a link, not a panel.
+
+	// Revisions (after 18.7.0)
+	showRevisionButton: '.editor-private-post-last-revision__button',
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
@@ -25,6 +20,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
+	schedulePopoverCloseButton:
+		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
 
@@ -106,18 +103,16 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar. Ensures that tab becomes active.
+	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar.
 	 *
 	 * @param {EditorSidebarTab} tabName Name of tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.tabButton( tabName ) );
-		await locator.click();
+		const settingsPanel = editorParent.locator( panel );
 
-		const activeTabLocator = editorParent.locator( selectors.activeTabButton( tabName ) );
-		await activeTabLocator.waitFor();
+		await settingsPanel.getByRole( 'tab', { name: tabName } ).click();
 	}
 
 	/**
@@ -140,6 +135,28 @@ export class EditorSettingsSidebarComponent {
 			`${ selectors.section( name ) }[aria-expanded="true"]`
 		);
 		await expandedLocator.waitFor();
+	}
+
+	/**
+	 * Expands a collapsed `Summary` section of the sidebar if it exists.
+	 * The `Summary` section is no longer collapsible in recent GB iterations
+	 * @see https://github.com/WordPress/gutenberg/commit/201099408131e2abe3cd094f7a1e7e539a350c12
+	 * @deprecated To discourage the adoption of this function
+	 * @todo Remove when all platforms have eventually been migrated
+	 *
+	 * If the section is already open, this method will pass.
+	 *
+	 * @param {string} name Name of section to be expanded.
+	 */
+	async expandSummary( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const sectionLocator = editorParent.locator( selectors.section( name ) );
+
+		if ( ! ( await sectionLocator.isVisible() ) ) {
+			return;
+		}
+
+		this.expandSection( name );
 	}
 
 	/**
@@ -281,8 +298,14 @@ export class EditorSettingsSidebarComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		const buttonLocator = editorParent.locator( selectors.scheduleButton );
-		await buttonLocator.click();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const buttonLocator = editorParent.locator( selectors.schedulePopoverCloseButton );
+			await buttonLocator.click();
+		} else {
+			const buttonLocator = editorParent.locator( selectors.scheduleButton );
+			await buttonLocator.click();
+		}
 	}
 
 	/**
@@ -322,14 +345,14 @@ export class EditorSettingsSidebarComponent {
 		}
 	}
 
-	/* Revisions */
-
 	/**
-	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
+	 * Opens the Revisions modal
+	 * via summary button for Gutenberg 18.7.0
 	 */
 	async showRevisions(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selectors.showRevisionButton );
+
 		await locator.click();
 	}
 
@@ -377,8 +400,9 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterUrlSlug( slug: string ) {
 		const editorParent = await this.editor.parent();
-		await editorParent.getByRole( 'button', { name: /Change URL:/ } ).click();
-		await editorParent.getByLabel( 'Permalink' ).fill( slug );
+		// TODO: Once WordPress/gutenberg#60632 is everywhere, remove the alternation.
+		await editorParent.getByRole( 'button', { name: /Change (link|URL):/ } ).click();
+		await editorParent.getByRole( 'textbox', { name: /^(Link|Permalink)$/ } ).fill( slug );
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }

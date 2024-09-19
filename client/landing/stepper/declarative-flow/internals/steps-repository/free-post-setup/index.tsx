@@ -75,7 +75,7 @@ const FreePostSetup: Step = ( { navigation, flow } ) => {
 	return (
 		<StepContainer
 			stepName="free-setup"
-			isWideLayout={ true }
+			isWideLayout
 			hideBack={ ! isSiteAssemblerFlow( flow ) }
 			goBack={ goBack }
 			flowName="free"

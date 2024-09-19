@@ -1,4 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
+import ExternalLink from 'calypso/components/external-link';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import SharingButtonsPreviewButtons from '../preview-buttons';
@@ -11,15 +13,20 @@ const buttons = [
 	{ ID: 'pinterest', name: 'Pinterest', shortname: 'pinterest' },
 ];
 
-const ButtonsBlockAppearance = ( { translate, siteId } ) => {
+const ButtonsBlockAppearance = ( { isJetpack, translate, siteId } ) => {
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const siteEditorUrl = siteAdminUrl + 'site-editor.php?path=%2Fwp_template';
+	const supportDocLink = localizeUrl(
+		isJetpack
+			? 'https://jetpack.com/support/jetpack-blocks/sharing-buttons-block/'
+			: 'https://wordpress.com/support/wordpress-editor/blocks/sharing-buttons-block/'
+	);
 
 	return (
 		<div className="sharing-buttons__panel sharing-buttons-appearance">
 			<p className="sharing-buttons-appearance__description">
 				{ translate(
-					'Allow readers to easily share your posts with others by adding sharing buttons throughout your site.'
+					'Allow readers to easily share your posts with others by adding a sharing buttons block anywhere in one of your site’s templates.'
 				) }
 			</p>
 			<div className="sharing-buttons__buttons-wrapper">
@@ -27,7 +34,9 @@ const ButtonsBlockAppearance = ( { translate, siteId } ) => {
 					{ translate( 'Go to the Site Editor' ) }
 				</a>
 
-				<button className="button">{ translate( 'Learn how to add Sharing Buttons' ) }</button>
+				<ExternalLink className="button" href={ supportDocLink } icon>
+					{ translate( 'Learn how to add Sharing Buttons' ) }
+				</ExternalLink>
 			</div>
 			<p className="sharing-buttons__example-text">{ translate( 'Sharing Buttons example:' ) }</p>
 			<SharingButtonsPreviewButtons buttons={ buttons } style="icon-text" />

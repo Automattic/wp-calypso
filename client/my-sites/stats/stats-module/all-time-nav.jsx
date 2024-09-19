@@ -1,12 +1,10 @@
-import { ComponentSwapper } from '@automattic/components';
+import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/components';
 import { Icon, lock } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
 import { connect, useDispatch } from 'react-redux';
-import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -127,7 +125,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	const tabs = (
 		<SegmentedControl
 			primary
-			className={ classnames( 'stats-summary-nav__intervals' ) }
+			className={ clsx( 'stats-summary-nav__intervals' ) }
 			compact={ false }
 		>
 			{ options.map( ( i ) => (
@@ -170,7 +168,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		</SelectDropdown>
 	);
 
-	const navClassName = classnames( 'stats-summary-nav', {
+	const navClassName = clsx( 'stats-summary-nav', {
 		[ 'stats-summary-nav--with-button' ]: hideNavigation && navigationSwap,
 	} );
 
@@ -178,7 +176,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		<div className={ navClassName }>
 			{ ! hideNavigation && (
 				<ComponentSwapper
-					className={ classnames( 'stats-summary-nav__intervals-container' ) }
+					className={ clsx( 'stats-summary-nav__intervals-container' ) }
 					breakpoint="<660px"
 					breakpointActiveComponent={ select }
 					breakpointInactiveComponent={ tabs }

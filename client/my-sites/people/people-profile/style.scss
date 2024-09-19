@@ -48,9 +48,9 @@
 	color: var(--color-neutral-70);
 	font-size: $font-body;
 	font-weight: 600;
-	white-space: pre;
 	text-overflow: clip;
 	overflow: hidden;
+	overflow-wrap: anywhere;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-title-small;

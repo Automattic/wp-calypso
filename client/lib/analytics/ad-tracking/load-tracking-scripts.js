@@ -4,7 +4,6 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
-import { getGaGtag } from '../utils/get-ga-gtag';
 import {
 	debug,
 	TRACKING_IDS,
@@ -19,12 +18,14 @@ import {
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
+	REDDIT_TRACKING_SCRIPT_URL,
+	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
-
-// Ensure setup has run.
-import './setup';
+import { setup } from './setup';
 
 export const loadTrackingScripts = attemptLoad( async () => {
+	setup();
+
 	const scripts = getTrackingScriptsToLoad();
 
 	let hasError = false;
@@ -50,6 +51,8 @@ export const loadTrackingScripts = attemptLoad( async () => {
 
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+
+	return scripts;
 } );
 
 function getTrackingScriptsToLoad() {
@@ -61,7 +64,6 @@ function getTrackingScriptsToLoad() {
 
 	// The Gtag script needs to be loaded with an ID in the URL so we search for the first available one.
 	const enabledGtags = [
-		mayWeTrackByTracker( 'ga' ) && getGaGtag(),
 		mayWeTrackByTracker( 'googleAds' ) && TRACKING_IDS.wpcomGoogleAdsGtag,
 		mayWeTrackByTracker( 'floodlight' ) && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( ( id ) => false !== id );
@@ -113,6 +115,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( WPCOM_CLARITY_URI );
 	}
 
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
+	}
+
 	return scripts;
 }
 
@@ -156,6 +162,15 @@ function initLoadedTrackingScripts() {
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
 	}
 
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		const params = {
+			optOut: false,
+			useDecimalCurrencyValues: true,
+		};
+
+		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
+	}
+
 	debug( 'loadTrackingScripts: init done' );
 }
 
@@ -167,24 +182,31 @@ function initLoadedTrackingScripts() {
 //   promise, for the current and all previous callers. That effectively implements a queue.
 function attemptLoad( loader ) {
 	let setLoadResult;
+	let loadResult;
 	let status = 'not-loading';
 
-	const loadResult = new Promise( ( resolve ) => {
-		setLoadResult = resolve;
-	} );
+	function initiateLoad() {
+		loadResult = new Promise( ( resolve ) => {
+			setLoadResult = resolve;
+		} );
 
-	return () => {
-		if ( status === 'not-loading' ) {
-			status = 'loading';
-			loader().then(
-				( result ) => {
-					status = 'loaded';
-					setLoadResult( result );
-				},
-				() => {
-					status = 'not-loading';
-				}
-			);
+		loader().then(
+			( result ) => {
+				status = 'loaded';
+				setLoadResult( result );
+			},
+			() => {
+				status = 'not-loading';
+			}
+		);
+	}
+
+	return ( reload = false ) => {
+		if ( status === 'not-loading' || reload ) {
+			if ( reload ) {
+				status = 'not-loading';
+			}
+			initiateLoad();
 		}
 		return loadResult;
 	};
@@ -221,10 +243,18 @@ function initFacebook() {
 	// WP Facebook pixel
 	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
 
-	// Jetpack Facebook pixel
-	// Also initialize the FB pixel for Jetpack.
+	// Jetpack & Akismet Facebook pixel
+	// Also initialize the FB pixel for Jetpack & Akismet.
 	// However, disable auto-config for this secondary pixel ID.
 	// See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
-	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
-	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+	if ( isJetpackCheckout() ) {
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+		window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
+	}
+	if ( isAkismetCheckout() ) {
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookAkismetInit );
+		window.fbq( 'init', TRACKING_IDS.facebookAkismetInit, advancedMatching );
+		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
+	}
 }

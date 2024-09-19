@@ -1,0 +1,99 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+
+$stats-utm-builder-modal-header-margin: 76px;
+$stats-utm-builder-help-padding: 38px;
+
+.stats-utm-builder__overlay {
+	@media (min-width: $break-large) {
+		.components-modal__frame {
+			max-height: 85%;
+		}
+	}
+}
+
+.components-modal__header {
+	font-family: $font-recoleta;
+
+	// Overwrite the modal's class
+	h1.components-modal__header-heading {
+		font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
+		line-height: 39px;
+	}
+}
+
+.stats-utm-builder-modal {
+	display: flex;
+}
+
+.stats-utm-builder__fields {
+	flex: 1 0 55%;
+	padding: 0 32px 0 0;
+	width: 500px;
+}
+
+.stats-utm-builder__url {
+	margin: 8px 0;
+	background-color: $studio-gray-0;
+	border: 1px solid var(--color-neutral-10);
+	padding: 6px;
+	word-wrap: break-word;
+	word-break: break-all;
+	overflow-wrap: break-word;
+}
+
+.stats-utm-builder__help {
+	flex: 1 0 45%;
+	padding: 0 0 0 $stats-utm-builder-help-padding;
+
+	section + section {
+		padding-top: 12px;
+	}
+}
+
+.stats-utm-builder__help-bg {
+	width: 100%;
+	height: 100%;
+	margin: -$stats-utm-builder-modal-header-margin 0 0 (-$stats-utm-builder-help-padding);
+	position: absolute;
+	background-color: $studio-gray-0;
+	z-index: -1;
+}
+
+.stats-utm-builder__description {
+	padding: 0 0 24px 0;
+}
+
+.stats-utm-builder__form-field {
+	margin-bottom: 12px;
+	max-width: 700px;
+}
+
+.stats-utm-builder__label {
+	font-family: $font-sf-pro-text;
+	font-weight: 600;
+}
+
+.stats-utm-builder__help-section-parameter {
+	font-family: $code;
+	background-color: $studio-gray-5;
+	padding: 2px 4px;
+	margin: 6px 0;
+	display: inline-block;
+}
+
+.stats-utm-builder__help-section-parameter-example {
+	font-style: italic;
+}
+
+.stats-utm-builder__trigger {
+	display: flex;
+	justify-content: center;
+
+	&.components-button {
+		color: $studio-black;
+		border-radius: 4px;
+	}
+}

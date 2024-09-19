@@ -3,7 +3,8 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/my-sites/plans-grid', () => ( {
+jest.mock( '@automattic/plans-grid-next', () => ( {
+	...jest.requireActual( '@automattic/plans-grid-next' ),
 	FeaturesGrid: ( { gridPlans } ) => (
 		<div data-testid="plan-features">
 			<div data-testid="visible-plans">
@@ -12,6 +13,8 @@ jest.mock( 'calypso/my-sites/plans-grid', () => ( {
 		</div>
 	),
 	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
+	usePlanFeaturesForGridPlans: jest.fn(),
+	useRestructuredPlanFeaturesForComparisonGrid: jest.fn(),
 } ) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
@@ -21,35 +24,36 @@ jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( 
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/add-ons/hooks/use-storage-add-ons.ts', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
 	getSelectedSite: jest.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans',
-	() => jest.fn()
-);
-jest.mock(
-	'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid',
-	() => jest.fn()
-);
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans',
-	() => jest.fn()
-);
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
 	Plans: {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
 		usePlans: jest.fn(),
+		usePricingMetaForGridPlans: jest.fn(),
+	},
+	AddOns: {
+		...jest.requireActual( '@automattic/data-stores' ).AddOns,
+		useStorageAddOns: jest.fn(),
 	},
 } ) );
 
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
+
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/use-simplified-features-grid-experiment',
+	() =>
+		jest.fn( () => ( {
+			isLoading: false,
+			variant: 'control',
+		} ) )
+);
 
 import {
 	PLAN_FREE,
@@ -69,9 +73,6 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
-import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
-import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
-import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
@@ -105,11 +106,7 @@ describe( 'PlansFeaturesMain', () => {
 			isFetching: false,
 			data: emptyPlansIndexForMockedFeatures,
 		} ) );
-		usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
-		usePlanFeaturesForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
-		useRestructuredPlanFeaturesForComparisonGrid.mockImplementation(
-			() => emptyPlansIndexForMockedFeatures
-		);
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {

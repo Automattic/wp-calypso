@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useInstallPluginMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-install-plugin-mutation';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import type { Site } from '../types';
@@ -17,6 +18,8 @@ export default function useInstallBoost(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const agency = useSelector( getActiveAgency );
+	const agencyId = agency ? agency.id : undefined;
 
 	const handleUpdateSites = useCallback( async () => {
 		// Cancel any current refetches, so they don't overwrite our update
@@ -47,6 +50,7 @@ export default function useInstallBoost(
 		installPlugin( {
 			site_id: siteId,
 			plugin_slug: 'jetpack_boost',
+			agency_id: agencyId,
 		} );
 	};
 

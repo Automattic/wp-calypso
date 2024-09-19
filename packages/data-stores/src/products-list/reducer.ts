@@ -1,10 +1,13 @@
 import { combineReducers } from '@wordpress/data';
-import { ProductsList } from './types';
+import { RawAPIProductsList } from './types';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
 // Stores the complete list of products, indexed by the product key
-export const productsList: Reducer< ProductsList | undefined, Action > = ( state, action ) => {
+export const productsList: Reducer< RawAPIProductsList | undefined, Action > = (
+	state,
+	action
+) => {
 	switch ( action.type ) {
 		case 'PRODUCTS_LIST_RECEIVE':
 			return action.productsList;

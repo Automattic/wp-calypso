@@ -37,6 +37,7 @@ export const membershipCouponFromApi = ( coupon ) => ( {
 	discount_type: coupon.discount_type,
 	discount_value: parseFloat( coupon.discount_value ),
 	discount_percentage: parseFloat( coupon.discount_percentage ),
+	discount_currency: coupon.discount_currency,
 	start_date: coupon.start_date,
 	end_date: coupon.end_date,
 	plan_ids_allow_list: coupon.plan_ids_allow_list.map( ( productId ) => parseInt( productId ) ),

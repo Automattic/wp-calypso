@@ -67,17 +67,17 @@ export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) =
 	const localeSlug = getCurrentUserLocale( context.store.getState() ) || context.lang;
 
 	context.queryClient
-		.fetchQuery(
-			[ 'trending-tags', localeSlug ?? '' ],
-			() => {
+		.fetchQuery( {
+			queryKey: [ 'trending-tags', localeSlug ],
+			queryFn: () => {
 				return wpcom.req.get( '/read/trending/tags', {
 					apiVersion: '1.2',
 					count: '6',
 					lang: localeSlug, // Note: undefined will be omitted by the query string builder.
 				} );
 			},
-			{ staleTime: 86400000 } // 24 hours
-		)
+			staleTime: 86400000, // 24 hours
+		} )
 		.then( ( trendingTags: { tags: TagResult[] } ) => {
 			context.params.trendingTags = trendingTags.tags;
 			next();
@@ -94,19 +94,19 @@ export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error )
 	}
 	performanceMark( context as PartialContext, 'fetchAlphabeticTags' );
 
-	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+	const currentUserLocale = getCurrentUserLocale( context.store.getState() ) || context.lang;
 
 	context.queryClient
-		.fetchQuery(
-			[ 'alphabetic-tags', currentUserLocale ?? '' ],
-			() => {
+		.fetchQuery( {
+			queryKey: [ 'alphabetic-tags', currentUserLocale ],
+			queryFn: () => {
 				return wpcom.req.get( '/read/tags/alphabetic', {
 					apiVersion: '1.2',
-					lang: currentUserLocale, // Note: undefined will be omitted by the query string builder.
+					locale: currentUserLocale, // Note: undefined will be omitted by the query string builder.
 				} );
 			},
-			{ staleTime: 86400000 } // 24 hours
-		)
+			staleTime: 86400000, // 24 hours
+		} )
 		.then( ( alphabeticTags: AlphabeticTagsResult ) => {
 			context.params.alphabeticTags = alphabeticTags;
 			next();

@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import { Component, Children } from 'react';
@@ -21,7 +21,7 @@ class FormButton extends Component {
 
 	render() {
 		const { children, className, isPrimary, ...props } = this.props;
-		const buttonClasses = classNames( className, 'form-button' );
+		const buttonClasses = clsx( className, 'form-button' );
 
 		return (
 			<Button

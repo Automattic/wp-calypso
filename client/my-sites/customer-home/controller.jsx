@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -39,6 +40,14 @@ export async function maybeRedirect( context, next ) {
 		return;
 	}
 
+	const { verified, courseSlug } = getQueryArgs() || {};
+
+	// The courseSlug is to display pages with onboarding videos for learning,
+	// so we should not redirect the page to launchpad.
+	if ( courseSlug ) {
+		return next();
+	}
+
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
@@ -59,15 +68,25 @@ export async function maybeRedirect( context, next ) {
 			checklist: launchpadChecklist,
 		} = await fetchLaunchpad( slug );
 
+		const experimentAssignment = await loadExperimentAssignment(
+			'calypso_onboarding_launchpad_removal_test_2024_08'
+		);
+
+		const shouldShowLaunchpad =
+			'treatment' !== experimentAssignment?.variationName &&
+			// for testing/development purposes we can use sessionStorage to force the treatment
+			'treatment' !==
+				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' );
+
 		if (
+			shouldShowLaunchpad &&
 			launchpadScreenOption === 'full' &&
 			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )
 		) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
-			const verifiedParam = getQueryArgs()?.verified;
-			redirectToLaunchpad( slug, siteIntentOption, verifiedParam );
+			redirectToLaunchpad( slug, siteIntentOption, verified );
 			return;
 		}
 	} catch ( error ) {}

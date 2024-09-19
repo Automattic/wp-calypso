@@ -128,9 +128,9 @@ class PostByline extends Component {
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
 						author={ post.author }
-						preferGravatar={ true }
+						preferGravatar
 						siteUrl={ streamUrl }
-						isCompact={ true }
+						isCompact
 					/>
 				) }
 				<div className="reader-post-card__byline-details">
@@ -204,7 +204,7 @@ class PostByline extends Component {
 						site={ site }
 						teams={ teams }
 						post={ post }
-						showFollow={ true }
+						showFollow
 						openSuggestedFollows={ openSuggestedFollows }
 					/>
 				) }

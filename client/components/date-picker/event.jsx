@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import SocialLogo from 'calypso/components/social-logo';
 
 const renderIcon = ( icon ) =>
@@ -14,7 +14,7 @@ const renderSocialIcon = ( icon, color ) => {
 		return null;
 	}
 
-	const socialIconClasses = classNames(
+	const socialIconClasses = clsx(
 		'date-picker__social-icon-wrapper',
 		`date-picker__social-icon-wrapper-${ icon }`,
 		{ 'date-picker__social-icon-wrapper-color': color }

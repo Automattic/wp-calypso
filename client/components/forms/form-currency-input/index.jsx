@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -57,7 +57,7 @@ function FormCurrencyInput( {
 	placeholder = '0.00',
 	...props
 } ) {
-	const classes = classNames( 'form-currency-input', className );
+	const classes = clsx( 'form-currency-input', className );
 	const prefix = renderAffix( currencySymbolPrefix, onCurrencyChange, currencyList );
 	const suffix = renderAffix( currencySymbolSuffix, onCurrencyChange, currencyList );
 	const step = currencySymbolPrefix === 'JPY' ? '1' : '0.01';

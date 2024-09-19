@@ -1,18 +1,15 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
 import './style.scss';
 
 type NudgeProps = {
-	useMockData: boolean;
-	siteId: number | null;
-	className?: string;
-	path: string;
-	withDiscount: string;
+	siteId?: number | null;
+	path?: string;
 };
 
 type JITMTProps = {
@@ -29,7 +26,7 @@ type JITMTProps = {
 	} >;
 };
 
-const Container = styled.div< Pick< NudgeProps, 'path' > >`
+const Container = styled.div`
 	display: flex;
 
 	&.is-signup-plans {
@@ -78,7 +75,7 @@ const Message = styled.div< { isPlansStep: boolean } >`
 	}
 `;
 
-const Text = styled.p< Pick< NudgeProps, 'path' > >`
+const Text = styled.p`
 	white-space: pre-wrap;
 	text-indent: -1.5em;
 	margin: 0;
@@ -107,8 +104,8 @@ const limitedTimeOfferDiscountNudge = () => {
 	);
 };
 
-export default function MarketingMessage( { siteId, useMockData, ...props }: NudgeProps ) {
-	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId, useMockData );
+export default function MarketingMessage( { siteId = null, path = '' }: NudgeProps ) {
+	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId );
 	const hasNudge = ! isFetching && messages.length > 0;
 
 	useEffect( () => {
@@ -122,13 +119,13 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 		return null;
 	}
 
-	const classNames = cx( 'nudge-container', props.className, `is-${ slugify( props.path ) }` );
+	const classNames = clsx( 'nudge-container', { [ `is-${ slugify( path ) }` ]: path } );
 
 	return (
-		<Container path={ props.path } className={ classNames } role="status">
+		<Container className={ classNames } role="status">
 			{ messages.map( ( msg ) => (
-				<Message key={ msg.id } isPlansStep={ props.path === 'signup/plans' }>
-					<Text path={ props.path }>{ msg.text }</Text>
+				<Message key={ msg.id } isPlansStep={ path === 'signup/plans' }>
+					<Text>{ msg.text }</Text>
 					<Button compact borderless onClick={ () => removeMessage( msg.id ) }>
 						<Gridicon icon="cross" size={ 24 } />
 					</Button>
@@ -137,10 +134,3 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 		</Container>
 	);
 }
-
-MarketingMessage.defaultProps = {
-	useMockData: false,
-	siteId: null,
-	path: '',
-	withDiscount: null,
-};

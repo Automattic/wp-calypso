@@ -633,7 +633,6 @@ Page.prototype.redirect = function ( from, to ) {
 
 /**
  * Replace `path` with optional `state` object.
- *
  * @param {string} path
  * @param {Object=} state
  * @param {boolean=} init
@@ -1118,7 +1117,6 @@ Context.prototype.save = function () {
  * Options:
  * - `sensitive`    enable case-sensitive routes
  * - `strict`       enable strict matching for trailing slashes
- *
  * @class
  * @param {string} path
  * @param {Object=} options

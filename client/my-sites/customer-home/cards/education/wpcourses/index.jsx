@@ -5,6 +5,7 @@ import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/consta
 import EducationalContent from '../educational-content';
 
 const WpCourses = () => {
+	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
 	const { localeSlug } = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( localeSlug );
 

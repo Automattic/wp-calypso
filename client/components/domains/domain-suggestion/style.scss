@@ -20,7 +20,6 @@
 		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 		&:hover {
-			box-shadow: 0 0 0 1px var(--color-neutral-light);
 			z-index: z-index("root", ".domain-suggestion.is-clickable:hover");
 		}
 	}
@@ -62,6 +61,13 @@
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( ">480px" ) {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	.is-section-stepper & {
+		@include breakpoint-deprecated(">480px") {
 			flex-direction: row;
 			align-items: center;
 		}
@@ -331,6 +337,8 @@
 	}
 }
 
+
+body.is-section-stepper,
 body.is-section-signup.is-white-signup {
 	svg {
 		padding-top: 0;
@@ -381,14 +389,17 @@ body.is-section-signup.is-white-signup {
 			justify-content: space-between;
 		}
 
-		.domain-product-price {
-			max-width: 180px;
-			width: unset;
+		.domain-product-price__free-text {
+			font-size: $font-body-small;
+			color: var(--studio-green-60);
 		}
 
-		.domain-product-price__free-text {
-			color: var(--color-neutral-60);
-			font-size: $font-body;
+		.domain-product-price__free-price {
+			font-weight: initial;
+
+			@include break-mobile {
+				font-weight: 500;
+			}
 		}
 
 		.domain-product-price__price {
@@ -425,18 +436,6 @@ body.is-section-signup.is-white-signup {
 			white-space: nowrap;
 		}
 
-		& .domain-product-price__free-price {
-			font-size: $font-body-small;
-			font-weight: initial;
-			color: var(--studio-green-60);
-			line-height: 20px;
-			letter-spacing: 0.2px;
-
-			@include break-mobile {
-				font-weight: 500;
-			}
-		}
-
 		&:not(.featured-domain-suggestion) {
 			background: none;
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
@@ -454,6 +453,14 @@ body.is-section-signup.is-white-signup {
 
 				.domain-registration-suggestion__domain-title-tld {
 					font-weight: 500;
+				}
+			}
+
+			.domain-product-price {
+				width: unset;
+
+				@include break-small {
+					max-width: 180px;
 				}
 			}
 

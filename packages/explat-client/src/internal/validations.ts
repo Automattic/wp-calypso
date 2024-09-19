@@ -6,16 +6,14 @@ export function isObject( x: unknown ): x is Record< string, unknown > {
 
 /**
  * Test if a piece of data is a valid name
- *
  * @param name The data to test
  */
 export function isName( name: unknown ): name is string {
-	return typeof name === 'string' && name !== '';
+	return typeof name === 'string' && name !== '' && /^[a-z0-9_]*$/.test( name );
 }
 
 /**
  * Test if a piece of data is a valid experimentAssignment
- *
  * @param experimentAssignment The data to test
  */
 export function isExperimentAssignment(
@@ -35,7 +33,6 @@ export function isExperimentAssignment(
 /**
  * Basic validation of ExperimentAssignment
  * Throws if invalid, returns the experimentAssignment if valid.
- *
  * @param experimentAssignment The data to validate
  */
 export function validateExperimentAssignment(

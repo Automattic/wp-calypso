@@ -1,10 +1,9 @@
-import { FormInputValidation } from '@automattic/components';
-import classnames from 'classnames';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 
@@ -18,7 +17,7 @@ class CnameRecord extends Component {
 
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
-		const classes = classnames( { 'is-hidden': ! show } );
+		const classes = clsx( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
 		const isTTLValid = isValid( 'ttl' );

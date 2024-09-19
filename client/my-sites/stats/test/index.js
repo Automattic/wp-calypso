@@ -51,6 +51,8 @@ const validModules = [
 	'filedownloads',
 	'searchterms',
 	'annualstats',
+	'utm',
+	'devices',
 ].join( '|' );
 
 const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );

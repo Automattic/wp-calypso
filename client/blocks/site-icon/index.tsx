@@ -1,5 +1,5 @@
 import { Gridicon, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -49,7 +49,7 @@ export function SiteIcon( {
 }: SiteIconProps ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
-	const classes = classNames( 'site-icon', {
+	const classes = clsx( 'site-icon', {
 		'is-blank': ! iconSrc,
 		'is-transient': isTransientIcon,
 	} );

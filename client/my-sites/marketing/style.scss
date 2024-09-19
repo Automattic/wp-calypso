@@ -9,6 +9,12 @@
 		margin-right: 8px;
 	}
 
+	&.bluesky {
+		.sharing-service__logo {
+			color: var(--color-bluesky);
+		}
+	}
+
 	&.facebook {
 		.sharing-service__logo {
 			color: var(--color-facebook);
@@ -30,6 +36,16 @@
 	&.linkedin {
 		.sharing-service__logo {
 			color: var(--color-linkedin);
+		}
+	}
+
+	&.threads {
+		.sharing-service__logo {
+			color: var(--color-threads);
+			// This is to fix the logo being too big
+			// See Nextdoor below for similar details
+			width: 40px;
+			padding-inline: 4px;
 		}
 	}
 
@@ -307,9 +323,11 @@
 	}
 }
 
+@include sharing-service( "bluesky", var( --color-bluesky ) );
 @include sharing-service( "facebook", var( --color-facebook ) );
 @include sharing-service( "twitter", var( --color-twitter ) );
 @include sharing-service( "google_plus", var( --color-google-plus ) );
+@include sharing-service( "threads", var( --color-threads ) );
 @include sharing-service( "tumblr", var( --color-tumblr ) );
 @include sharing-service( "linkedin", var( --color-linkedin ) );
 @include sharing-service( "instagram-basic-display", var( --color-instagram ) );
@@ -971,6 +989,7 @@
 	}
 }
 
+@include sharing-button-service( "bluesky", var( --color-bluesky ) );
 @include sharing-button-service( "facebook", var( --color-facebook ) );
 @include sharing-button-service( "twitter", var( --color-twitter ) );
 @include sharing-button-service( "press-this", var( --color-wordpress-com ) );
@@ -978,6 +997,7 @@
 @include sharing-button-service( "instagram-basic-display", var( --color-instagram ) );
 @include sharing-button-service( "linkedin", var( --color-linkedin ) );
 @include sharing-button-service( "stumbleupon", var( --color-stumbleupon ) );
+@include sharing-button-service( "threads", var( --color-threads ) );
 @include sharing-button-service( "tumblr", var( --color-tumblr ) );
 @include sharing-button-service( "reddit", var( --color-reddit ) );
 @include sharing-button-service( "pinterest", var( --color-pinterest ) );

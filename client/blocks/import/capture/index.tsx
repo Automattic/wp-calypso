@@ -1,14 +1,15 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Title } from '@automattic/onboarding';
-import { localize, translate } from 'i18n-calypso';
-import React, { useEffect, useRef } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { useEffect } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import React, { useRef, useState } from 'react';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
-import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser, getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep, UrlData } from '../types';
+import { GoToStep } from '../types';
 import CaptureInput from './capture-input';
 import type { OnInputEnter, OnInputChange } from './types';
 import type { FunctionComponent } from 'react';
@@ -16,14 +17,14 @@ import type { FunctionComponent } from 'react';
 import './style.scss';
 
 interface Props {
-	translate: typeof translate;
+	hasError?: boolean;
 	onInputEnter: OnInputEnter;
 	onInputChange?: OnInputChange;
-	hasError?: boolean;
 	onDontHaveSiteAddressClick?: () => void;
 }
-const Capture: FunctionComponent< Props > = ( props ) => {
-	const { translate, onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
+export const Capture: FunctionComponent< Props > = ( props ) => {
+	const translate = useTranslate();
+	const { onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
 
 	return (
 		<>
@@ -42,13 +43,12 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-const LocalizedCapture = localize( Capture );
-
-export { LocalizedCapture as Capture };
-
-type StepProps = ConnectedProps< typeof connector > & {
-	goToStep: GoToStep;
+type StepProps = {
+	initialUrl?: string;
 	disableImportListStep?: boolean;
+	goToStep: GoToStep;
+	onValidFormSubmit?: ( dependencies: Record< string, unknown > ) => void;
+	onImportListClick?: () => void;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -57,38 +57,58 @@ const trackEventParams = {
 	step: 'capture',
 };
 
-const CaptureStep: React.FunctionComponent< StepProps > = ( {
-	currentUser,
-	goToStep,
-	analyzeUrl,
-	resetError,
-	isAnalyzing,
-	analyzerError,
-	recordTracksEvent,
+export const CaptureStep: React.FunctionComponent< StepProps > = ( {
+	initialUrl = '',
 	disableImportListStep,
+	goToStep,
+	onValidFormSubmit,
+	onImportListClick,
 } ) => {
+	const currentUser = useSelector( getCurrentUser );
+	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	const isStartingPointEventTriggeredRef = useRef( false );
-	const runProcess = ( url: string ): void => {
-		// Analyze the URL and when we receive the urlData, decide where to go next.
-		analyzeUrl( url ).then( ( response: UrlData ) => {
-			let stepSectionName;
+	const [ url, setUrl ] = useState( initialUrl );
+	const {
+		data: urlData,
+		isFetching: isAnalyzing,
+		error: analyzerError,
+		isFetchedAfterMount,
+	} = useAnalyzeUrlQuery( url );
+	const showCapture = ! isAnalyzing || ( initialUrl && isFetchedAfterMount );
 
-			switch ( response.platform ) {
-				case 'unknown':
+	useEffect( () => {
+		if ( window && window.hj ) {
+			window.hj( 'trigger', 'importer_capture_step_2' );
+		}
+	}, [ detectedCountryCode ] );
+
+	const decideStepRedirect = () => {
+		if ( ! urlData ) {
+			return;
+		}
+
+		const stepName = 'ready';
+		let stepSectionName;
+
+		switch ( urlData.platform ) {
+			case 'unknown':
+				stepSectionName = 'not';
+				break;
+
+			case 'wordpress':
+				stepSectionName = urlData.platform_data?.is_wpcom ? 'wpcom' : 'preview';
+				break;
+
+			default:
+				if ( ! isSupportedImporterEngine( urlData.platform ) ) {
 					stepSectionName = 'not';
-					break;
-
-				case 'wordpress':
-					stepSectionName = response.platform_data?.is_wpcom ? 'wpcom' : 'preview';
-					break;
-
-				default:
+				} else {
 					stepSectionName = 'preview';
-					break;
-			}
+				}
+				break;
+		}
 
-			goToStep( 'ready', stepSectionName );
-		} );
+		goToStep( stepName, stepSectionName, { fromUrl: url } );
 	};
 
 	const recordScanningEvent = () => {
@@ -125,7 +145,9 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		}
 	};
 
-	const onDontHaveSiteAddressClick = disableImportListStep ? undefined : () => goToStep( 'list' );
+	const onDontHaveSiteAddressClick = () => {
+		onImportListClick ? onImportListClick() : goToStep( 'list' );
+	};
 
 	/**
 	 ↓ Effects
@@ -134,15 +156,23 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	useEffect( recordScanningErrorEvent, [ analyzerError ] );
 	useEffect( recordMigrationStartingPointEvent, [ currentUser ] );
 	useEffect( recordCaptureScreen, [] );
+	useEffect( () => decideStepRedirect(), [ urlData ] );
 
 	return (
 		<>
-			{ ! isAnalyzing && (
-				<LocalizedCapture
-					onInputEnter={ runProcess }
-					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
+			{ showCapture && (
+				<Capture
+					onInputEnter={ ( url ) => {
+						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
+					} }
+					onDontHaveSiteAddressClick={
+						disableImportListStep ? undefined : onDontHaveSiteAddressClick
+					}
 					hasError={ !! analyzerError }
-					onInputChange={ () => resetError() }
+					onInputChange={ () => {
+						// resets the error when the user starts typing again
+						setUrl( '' );
+					} }
 				/>
 			) }
 			{ isAnalyzing && <ScanningStep /> }
@@ -150,17 +180,4 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	);
 };
 
-const connector = connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state || {} ),
-		isAnalyzing: isAnalyzing( state ),
-		analyzerError: getAnalyzerError( state ),
-	} ),
-	{
-		analyzeUrl,
-		resetError,
-		recordTracksEvent,
-	}
-);
-
-export default connector( CaptureStep );
+export default CaptureStep;

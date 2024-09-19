@@ -1,19 +1,16 @@
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
+import { getAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -28,13 +25,14 @@ const SiteIntent = Onboard.SiteIntent;
 
 const assemblerFirstFlow: Flow = {
 	name: ASSEMBLER_FIRST_FLOW,
+	isSignupFlow: true,
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
+		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.
@@ -63,7 +61,7 @@ const assemblerFirstFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
 			STEPS.NEW_OR_EXISTING_SITE,
 			STEPS.SITE_PICKER,
@@ -77,15 +75,10 @@ const assemblerFirstFlow: Flow = {
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
@@ -134,14 +127,12 @@ const assemblerFirstFlow: Flow = {
 			providedDependencies: ProvidedDependencies = {},
 			...results: string[]
 		) => {
-			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				case 'check-sites': {
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
 					return navigate( 'new-or-existing-site' );
@@ -149,12 +140,12 @@ const assemblerFirstFlow: Flow = {
 
 				case 'new-or-existing-site': {
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'site-picker' );
 				}
 
-				case 'site-creation-step': {
+				case 'create-site': {
 					return navigate( 'processing' );
 				}
 
@@ -278,42 +269,20 @@ const assemblerFirstFlow: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( `setup/${ flowName }` ) ||
 			currentPath.endsWith( `setup/${ flowName }/` ) ||
 			currentPath.includes( `setup/${ flowName }/check-sites` );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			locale,
-		} );
-
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				window.location.assign( logInUrl );
-			} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
-				window.location.assign( `/setup/${ flowName }/site-creation-step` );
+			if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
+				window.location.assign( `/setup/${ flowName }/create-site` );
 			}
 		}, [] );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

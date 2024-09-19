@@ -4,10 +4,13 @@ export const COLOR_VARIATIONS_BLOCK_LIST = [
 	'pub/calyx',
 	'pub/entry',
 	'pub/eventual',
+	'pub/feelingood',
 	'pub/foam',
 	'pub/jinjang',
 	'pub/loudness',
 	'pub/nested',
+	'pub/ritratto',
+	'pub/spiel',
 	'pub/tenaz',
 	'premium/skivers',
 ];

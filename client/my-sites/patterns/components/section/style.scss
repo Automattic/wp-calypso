@@ -1,0 +1,89 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
+
+.patterns-section {
+	padding: 90px 0 96px;
+	color: #101517;
+	background: var(--studio-white);
+
+	@media (max-width: $break-wide) {
+		padding: 40px 0 48px;
+	}
+
+	&.patterns-section--dark {
+		background: #1d2327;
+		color: var(--studio-white);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: #c3c4c7;
+			}
+		}
+	}
+
+	&.patterns-section--gray {
+		background: var(--studio-gray-0);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+
+	&.patterns-section--blue {
+		background: var(--studio-blue-80);
+		color: var(--studio-white);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: var(--studio-gray-10);
+			}
+		}
+	}
+}
+
+.patterns-section__premium-badge {
+	@include patterns-page-width;
+	margin-bottom: 10px;
+	.premium-badge {
+		margin-left: 0;
+		background-color: #50575e;
+	}
+}
+
+.patterns-section__header {
+	@include patterns-page-width;
+	padding-bottom: 48px;
+
+	@media (max-width: $break-wide) {
+		padding-bottom: 32px;
+	}
+
+	h2 {
+		font-family: $font-recoleta;
+		font-size: rem(40px);
+		line-height: 1.2;
+		letter-spacing: 0.185px;
+		padding-bottom: 6px;
+	}
+
+	.patterns-section__header-description {
+		font-family: $font-sf-pro-text;
+		color: #3c434a;
+		font-size: rem(18px);
+		line-height: 1.4;
+		max-width: 520px;
+	}
+}
+
+.patterns-section__body {
+	@include patterns-page-width;
+
+	.patterns-section--full-width-body & {
+		padding: 0;
+		max-width: none;
+	}
+}

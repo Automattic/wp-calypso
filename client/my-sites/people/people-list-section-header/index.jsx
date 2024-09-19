@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -81,7 +82,7 @@ class PeopleListSectionHeader extends Component {
 		const { label, count, children, translate, includeSubscriberImporter } = this.props;
 		const siteLink = this.getAddLink();
 		const addSubscriberLink = this.getAddSubscriberLink();
-		const classes = classNames( this.props.className, 'people-list-section-header' );
+		const classes = clsx( this.props.className, 'people-list-section-header' );
 
 		const showInviteUserBtn =
 			( siteLink && ! this.isSubscribersTab() ) || ( siteLink && ! includeSubscriberImporter );
@@ -101,7 +102,7 @@ class PeopleListSectionHeader extends Component {
 								position="right"
 								text={ popoverText }
 								privacyLink={ false }
-								link="https://wordpress.com/support/followers/"
+								link={ localizeUrl( 'https://wordpress.com/support/followers/' ) }
 							/>
 						) }
 					</>

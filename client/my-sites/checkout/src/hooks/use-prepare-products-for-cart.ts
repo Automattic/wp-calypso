@@ -4,6 +4,7 @@ import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout'
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
+import { getCartProductByBillingIntentId } from 'calypso/data/marketplace/use-marketplace-billing-intents';
 import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useStripProductsFromUrl from './use-strip-products-from-url';
@@ -51,6 +52,7 @@ export default function usePrepareProductsForCart( {
 	jetpackPurchaseToken,
 	source,
 	isGiftPurchase,
+	hostingIntent,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -65,6 +67,7 @@ export default function usePrepareProductsForCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	isGiftPurchase?: boolean;
+	hostingIntent?: string | undefined;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -117,6 +120,12 @@ export default function usePrepareProductsForCart( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source,
+		hostingIntent,
+	} );
+	useAddProductFromBillingIntent( {
+		intentId: productAliasFromUrl,
+		dispatch,
+		addHandler,
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
@@ -134,6 +143,7 @@ export default function usePrepareProductsForCart( {
 		! areProductsRetrievedFromUrl ||
 			sitelessCheckoutType === 'jetpack' ||
 			sitelessCheckoutType === 'akismet' ||
+			sitelessCheckoutType === 'marketplace' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -180,7 +190,12 @@ function preparedProductsReducer(
 	}
 }
 
-type AddHandler = 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd' | 'addFromLocalStorage';
+type AddHandler =
+	| 'addProductFromSlug'
+	| 'addRenewalItems'
+	| 'doNotAdd'
+	| 'addFromLocalStorage'
+	| 'addProductFromBillingIntent';
 
 function chooseAddHandler( {
 	isLoading,
@@ -199,13 +214,20 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	// Akismet products can be renewed in a "siteless" context
-	if ( sitelessCheckoutType === 'akismet' && originalPurchaseId ) {
+	// Akismet and some Marketplace products can be renewed in a "siteless" context
+	if (
+		( sitelessCheckoutType === 'akismet' || sitelessCheckoutType === 'marketplace' ) &&
+		originalPurchaseId
+	) {
 		return 'addRenewalItems';
 	}
 
 	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
 		return 'addProductFromSlug';
+	}
+
+	if ( sitelessCheckoutType === 'marketplace' ) {
+		return 'addProductFromBillingIntent';
 	}
 
 	if ( ! isLoading ) {
@@ -250,6 +272,55 @@ function useNothingToAdd( {
 		debug( 'nothing to add' );
 		dispatch( { type: 'PRODUCTS_ADD', products: [] } );
 	}, [ addHandler, dispatch ] );
+}
+
+function useAddProductFromBillingIntent( {
+	intentId,
+	dispatch,
+	addHandler,
+}: {
+	intentId: string | undefined | null;
+	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
+} ) {
+	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( addHandler !== 'addProductFromBillingIntent' ) {
+			return;
+		}
+
+		const billingIntentId = Number( intentId );
+
+		if ( isNaN( billingIntentId ) || billingIntentId < 1 ) {
+			debug( 'creating products from billing intent failed' );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: translate( 'I tried and failed to create products', {
+					textOnly: true,
+				} ),
+			} );
+			return;
+		}
+
+		( async () => {
+			const productsForCart: RequestCartProduct[] = [];
+			const cartProduct = await getCartProductByBillingIntentId( billingIntentId );
+
+			if ( cartProduct ) {
+				productsForCart.push( cartProduct );
+				dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+			} else {
+				debug( 'creating products from billing intent failed' );
+				dispatch( {
+					type: 'PRODUCTS_ADD_ERROR',
+					message: translate( 'I tried and failed to create products', {
+						textOnly: true,
+					} ),
+				} );
+			}
+		} )();
+	}, [ addHandler, dispatch, intentId, translate ] );
 }
 
 function useAddProductsFromLocalStorage( {
@@ -382,6 +453,7 @@ function useAddProductFromSlug( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	hostingIntent,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -392,6 +464,7 @@ function useAddProductFromSlug( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	hostingIntent?: string | undefined;
 } ) {
 	const translate = useTranslate();
 
@@ -426,6 +499,7 @@ function useAddProductFromSlug( {
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
 				source,
+				hostingIntent,
 			} )
 		);
 
@@ -487,7 +561,7 @@ function useAddProductFromSlug( {
  * (`-label-DATA`). Since domain names cannot start with a hyphen we will know
  * that the label refers to something else.
  */
-function getProductPartsFromAlias( productAlias: string ): {
+export function getProductPartsFromAlias( productAlias: string ): {
 	slug: string;
 	meta: null | string;
 	quantity: null | number;
@@ -557,6 +631,7 @@ function createRenewalItemToAddToCart( {
 	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
 		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+		isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};
@@ -578,6 +653,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	hostingIntent,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -585,6 +661,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	hostingIntent?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -614,6 +691,7 @@ function createItemToAddToCart( {
 			jetpackPurchaseToken,
 			context: 'calypstore',
 			source: source ?? undefined,
+			hosting_intent: hostingIntent,
 		},
 		...( cartMeta ? { meta: cartMeta } : {} ),
 	} );

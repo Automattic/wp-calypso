@@ -19,7 +19,9 @@ jest.mock( '@automattic/calypso-config', () => {
 describe( 'NotificationSettings', () => {
 	const sites = [ site ];
 
-	const initialState = {};
+	const initialState = {
+		a8cForAgencies: { agencies: {} },
+	};
 
 	const mockStore = configureStore();
 	const store = mockStore( initialState );

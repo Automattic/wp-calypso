@@ -16,7 +16,7 @@ $tip_icon_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0i
 		flex-wrap: wrap;
 		gap: 8px;
 
-		@media ( min-width: calc( $break-small + 1px ) ) {
+		@media (min-width: calc($break-small + 1px)) {
 			width: 457px;
 		}
 	}
@@ -26,7 +26,7 @@ $tip_icon_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0i
 		flex-basis: calc(50% - 4px);
 		margin-bottom: 12px;
 
-		@media screen and ( max-width: $break-small ) {
+		@media screen and (max-width: $break-small) {
 			flex-basis: 100%;
 		}
 	}

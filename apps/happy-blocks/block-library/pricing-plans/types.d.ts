@@ -2,6 +2,7 @@ export interface BlockAttributes {
 	defaultProductSlug: string;
 	productSlug: string;
 	domain: string | false;
+	affiliateLink: string | false;
 	planTypeOptions: string[];
 }
 

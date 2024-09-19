@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 import './style.scss';
@@ -32,7 +32,7 @@ const ConfirmModal: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<Modal
-			className={ classnames( 'components-modal-new__frame', 'import__confirm-modal', {
+			className={ clsx( 'components-modal-new__frame', 'import__confirm-modal', {
 				compact: compact,
 			} ) }
 			title={ title }

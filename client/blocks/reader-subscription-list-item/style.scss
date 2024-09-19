@@ -4,31 +4,6 @@
 	flex: 1 1 0;
 }
 
-.following-manage__subscriptions-list {
-	-webkit-font-smoothing: subpixel-antialiased; // Fixes aliasing in Safari
-}
-
-/* Fix for https://github.com/bvaughn/react-virtualized/issues/454 */
-.following-manage__subscriptions-list .ReactVirtualized__List {
-	direction: ltr !important;
-}
-
-.following-manage__subscriptions-list .reader-subscription-list-item__options {
-	display: flex;
-	flex-direction: column;
-	min-width: 24px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		min-width: 90px;
-	}
-
-	.button.follow-button {
-		@include breakpoint-deprecated( ">660px" ) {
-			display: flex;
-		}
-	}
-}
-
 .reader-subscription-list-item__link,
 .reader-subscription-list-item__link:visited {
 	color: var(--color-neutral-100);
@@ -70,10 +45,6 @@
 	flex-direction: row;
 	font-size: $font-body-small;
 	padding: 15px 0;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 15px;
-	}
 }
 
 .reader-subscription-list-item__site-url,

@@ -8,7 +8,7 @@ import {
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpMailboxPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { EmailPlanWarningNotice } from './email-plan-warning-notice';
@@ -37,11 +37,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	if ( hasUnusedMailboxWarning( emailAccount ) && isTitanMailAccount( emailAccount ) ) {
 		cta = (
-			<Button
-				compact
-				primary
-				href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domain.name ) }
-			>
+			<Button compact primary href={ getTitanSetUpMailboxPath( selectedSiteSlug, domain.name ) }>
 				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);

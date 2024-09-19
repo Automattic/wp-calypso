@@ -1,4 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -6,7 +7,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

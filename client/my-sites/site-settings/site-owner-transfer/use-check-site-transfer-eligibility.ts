@@ -31,12 +31,12 @@ export const useCheckSiteTransferEligibility = (
 			),
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const checkSiteTransferEligibility = useCallback(
 		( args: MutationVariables ) => mutate( args ),
 		[ mutate ]
 	);
 
-	return { checkSiteTransferEligibility, isLoading };
+	return { checkSiteTransferEligibility, isPending };
 };

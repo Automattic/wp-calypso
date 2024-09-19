@@ -1,6 +1,6 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
@@ -47,18 +47,11 @@ const SiteSettings = ( {
 	return (
 		<div className="settings site-settings">
 			{ isLoggedIn && (
-				<>
-					<NotifyMeOfNewPostsToggle
-						value={ notifyMeOfNewPosts }
-						onChange={ onNotifyMeOfNewPostsChange }
-						isUpdating={ updatingNotifyMeOfNewPosts }
-					/>
-					<EmailMeNewPostsToggle
-						value={ emailMeNewPosts }
-						onChange={ onEmailMeNewPostsChange }
-						isUpdating={ updatingEmailMeNewPosts }
-					/>
-				</>
+				<EmailMeNewPostsToggle
+					value={ emailMeNewPosts }
+					onChange={ onEmailMeNewPostsChange }
+					isUpdating={ updatingEmailMeNewPosts }
+				/>
 			) }
 			{ emailMeNewPosts && (
 				<DeliveryFrequencyInput
@@ -72,6 +65,13 @@ const SiteSettings = ( {
 					value={ emailMeNewComments }
 					onChange={ onEmailMeNewCommentsChange }
 					isUpdating={ updatingEmailMeNewComments }
+				/>
+			) }
+			{ isLoggedIn && (
+				<NotifyMeOfNewPostsToggle
+					value={ notifyMeOfNewPosts }
+					onChange={ onNotifyMeOfNewPostsChange }
+					isUpdating={ updatingNotifyMeOfNewPosts }
 				/>
 			) }
 		</div>
@@ -107,7 +107,7 @@ export const SiteSettingsPopover = ( {
 					{ isWpComSite && <SiteSettings { ...props } /> }
 
 					<Button
-						className={ classNames( 'site-settings-popover__unsubscribe-button', {
+						className={ clsx( 'site-settings-popover__unsubscribe-button', {
 							'is-loading': unsubscribing,
 						} ) }
 						disabled={ unsubscribing }

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useCallback, useEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
@@ -136,7 +136,7 @@ export default function InvoicesList() {
 
 			{ showPagination && (
 				<Pagination
-					className={ classnames( 'invoices-list__pagination', {
+					className={ clsx( 'invoices-list__pagination', {
 						'invoices-list__pagination--has-prev': page > 1,
 						'invoices-list__pagination--has-next': invoices.isFetching || hasMore,
 					} ) }

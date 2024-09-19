@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useEffect, useReducer } from 'react';
 import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
@@ -20,7 +20,6 @@ export interface ExPlatClientReactHelpers {
 	 * An ExPlat useExperiment hook.
 	 *
 	 * NOTE: Doesn't obey ExperimentAssignment TTL in order to keep stable UX.
-	 *
 	 * @returns [isExperimentAssignmentLoading, ExperimentAssignment | null]
 	 */
 	useExperiment: (
@@ -65,18 +64,17 @@ export default function createExPlatClientReactHelpers(
 			...providedOptions,
 		};
 
-		const [ previousExperimentName ] = useState( experimentName );
-		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
-			true,
-			null,
-		] );
+		// Manual updates to ensure rerendering when we want it:
+		// https://legacy.reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate
+		const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
+		const previousExperimentNameRef = useRef( experimentName );
 
 		useEffect( () => {
 			let isSubscribed = true;
 			if ( options.isEligible ) {
-				exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
+				exPlatClient.loadExperimentAssignment( experimentName ).then( () => {
 					if ( isSubscribed ) {
-						setState( [ false, experimentAssignment ] );
+						forceUpdate();
 					}
 				} );
 			}
@@ -86,8 +84,8 @@ export default function createExPlatClientReactHelpers(
 		}, [ experimentName, options.isEligible ] );
 
 		if (
-			experimentName !== previousExperimentName &&
-			! previousExperimentName.startsWith( 'explat_test' )
+			experimentName !== previousExperimentNameRef.current &&
+			! previousExperimentNameRef.current.startsWith( 'explat_test' )
 		) {
 			exPlatClient.config.logError( {
 				message: '[ExPlat] useExperiment: experimentName should never change between renders!',
@@ -98,7 +96,9 @@ export default function createExPlatClientReactHelpers(
 			return [ false, null ];
 		}
 
-		return state;
+		const maybeExperimentAssignment =
+			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment( experimentName );
+		return [ ! maybeExperimentAssignment, maybeExperimentAssignment ];
 	};
 
 	const Experiment = ( {

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -181,7 +181,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	render() {
-		const classes = classNames( this.props.className, 'is-video' );
+		const classes = clsx( this.props.className, 'is-video' );
 		const { item } = this.props;
 		const { height = 480, videopress_guid, width = 854 } = item;
 

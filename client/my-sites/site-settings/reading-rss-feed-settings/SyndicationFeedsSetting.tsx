@@ -1,6 +1,6 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
@@ -23,7 +23,11 @@ export const SyndicationFeedsSetting = ( {
 	const siteFeedUrl = siteUrl ? `${ siteUrl }/feed/` : '';
 	return (
 		<FormFieldset>
-			<FormLabel id={ `${ SYNDICATION_FEEDS_OPTION }-label` } htmlFor={ SYNDICATION_FEEDS_OPTION }>
+			<FormLabel
+				id={ `${ SYNDICATION_FEEDS_OPTION }-label` }
+				className="reduce-margin-bottom-fix"
+				htmlFor={ SYNDICATION_FEEDS_OPTION }
+			>
 				{ translate( 'Syndication feeds' ) }
 			</FormLabel>
 			<div>

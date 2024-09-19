@@ -23,7 +23,7 @@ export function EmptyCart() {
 		<CheckoutStepBody
 			stepId="empty-cart"
 			isStepActive={ false }
-			isStepComplete={ true }
+			isStepComplete
 			titleContent={ <EmptyCartTitle /> }
 			completeStepContent={ <EmptyCartExplanation /> }
 		/>

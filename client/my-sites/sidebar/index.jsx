@@ -11,33 +11,26 @@ import { Spinner } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarRegion from 'calypso/layout/sidebar/region';
-import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import CurrentSite from 'calypso/my-sites/current-site';
+import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddNewSite from './add-new-site';
-import MySitesSidebarUnifiedItem from './item';
-import MySitesSidebarUnifiedMenu from './menu';
 import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
-import { itemLinkMatches } from './utils';
 import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path } ) => {
+export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const siteId = useSelector( getSelectedSiteId );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const selectedSite = useSelector( getSelectedSite );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -49,46 +42,27 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	// Jetpack self-hosted sites should open external links to WP Admin in new tabs,
-	// since WP Admin is considered a separate area from Calypso on those sites.
-	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
-
 	return (
 		<Fragment>
 			<Sidebar>
-				<SidebarRegion>
-					<CurrentSite forceAllSitesView={ isAllDomainsView } />
-				</SidebarRegion>
-				{ menuItems.map( ( item, i ) => {
-					const isSelected = item?.url && itemLinkMatches( item.url, path );
-
-					if ( 'separator' === item?.type ) {
-						return <SidebarSeparator key={ i } />;
-					}
-
-					if ( item?.children?.length ) {
-						return (
-							<MySitesSidebarUnifiedMenu
-								key={ item.slug }
-								path={ path }
-								link={ item.url }
-								selected={ isSelected }
-								sidebarCollapsed={ sidebarIsCollapsed }
-								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-								{ ...item }
-							/>
-						);
-					}
-
-					return (
-						<MySitesSidebarUnifiedItem
-							key={ item.slug }
-							selected={ isSelected }
-							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-							{ ...item }
+				{ isUnifiedSiteSidebarVisible && selectedSite && ! isAllDomainsView && (
+					<SidebarRegion>
+						<AsyncLoad
+							require="calypso/my-sites/current-site/notice"
+							placeholder={ null }
+							site={ selectedSite }
 						/>
-					);
-				} ) }
+					</SidebarRegion>
+				) }
+				{ ! isUnifiedSiteSidebarVisible && (
+					<SidebarRegion>
+						<CurrentSite forceAllSitesView={ isAllDomainsView } />
+					</SidebarRegion>
+				) }
+				<MySitesSidebarUnifiedBody
+					path={ path }
+					isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+				/>
 				<CollapseSidebar
 					key="collapse"
 					title={ translate( 'Collapse menu' ) }

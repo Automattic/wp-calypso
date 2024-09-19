@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -41,7 +41,7 @@ export default class Rating extends PureComponent {
 
 		return times( 5, ( i ) => {
 			const isEmpty = i >= 5 - noFillOutlineCount;
-			const className = classNames( { 'is-empty': isEmpty } );
+			const className = clsx( { 'is-empty': isEmpty } );
 			return (
 				<Gridicon key={ i } icon="star-outline" className={ className } style={ starStyles } />
 			);

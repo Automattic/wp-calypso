@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { createElement, forwardRef, memo } from 'react';
 import Gridicon from '../gridicon';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
@@ -40,7 +40,7 @@ const Card = < T extends TagName = 'div' >(
 	}: Props< T >,
 	forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => {
-	const elementClass = classNames(
+	const elementClass = clsx(
 		'card',
 		className,
 		{

@@ -158,9 +158,9 @@ function ContactInfo( {
 				onValidate={ validate }
 				labelTexts={ { submitButton: translate( 'Accept domain transfer' ) } }
 				isSubmitting={ false }
-				updateWpcomEmailCheckboxHidden={ true }
-				cancelHidden={ true }
-				ignoreCountryOnDisableSubmit={ true }
+				updateWpcomEmailCheckboxHidden
+				cancelHidden
+				ignoreCountryOnDisableSubmit
 			>
 				<div className="domain-contact-info-form__terms">
 					<Gridicon icon="info-outline" size={ 18 } />

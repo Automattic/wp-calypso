@@ -1,11 +1,11 @@
-import classnames from 'classnames';
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTelInput from 'calypso/components/forms/form-tel-input';
 import phoneValidation from 'calypso/lib/phone-validation';
 
@@ -46,7 +46,7 @@ export class FormPhoneInput extends Component {
 
 	render() {
 		return (
-			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
+			<div className={ clsx( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-phone-input__country">
 					<FormLabel htmlFor="country_code">
 						{ this.props.translate( 'Country code', {

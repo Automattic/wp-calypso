@@ -1,6 +1,6 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
-import { CompactCard, ScreenReaderText } from '@automattic/components';
-import classNames from 'classnames';
+import { CompactCard, ScreenReaderText, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -11,7 +11,6 @@ import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggest
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';
@@ -73,7 +72,7 @@ class DomainSearchResults extends Component {
 			translate,
 			isDomainOnly,
 		} = this.props;
-		const availabilityElementClasses = classNames( {
+		const availabilityElementClasses = clsx( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );

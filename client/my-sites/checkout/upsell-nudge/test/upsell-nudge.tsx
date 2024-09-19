@@ -3,22 +3,24 @@
  */
 
 import page from '@automattic/calypso-router';
+import { Plans, ProductsList } from '@automattic/data-stores';
 import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
 	ShoppingCartProvider,
 } from '@automattic/shopping-cart';
+import { CountryListItem } from '@automattic/wpcom-checkout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
-import { mockCartEndpoint } from 'calypso/my-sites/checkout/src/test/util';
-import { createReduxStore } from 'calypso/state';
 import {
-	PURCHASES_SITE_FETCH_COMPLETED,
-	COUNTRIES_PAYMENTS_UPDATED,
-} from 'calypso/state/action-types';
+	mockCartEndpoint,
+	mockGetSupportedCountriesEndpoint,
+} from 'calypso/my-sites/checkout/src/test/util';
+import { createReduxStore } from 'calypso/state';
+import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
@@ -27,8 +29,58 @@ import UpsellNudge, { BUSINESS_PLAN_UPGRADE_UPSELL, PROFESSIONAL_EMAIL_UPSELL } 
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	ProductsList: {
+		...jest.requireActual( '@automattic/data-stores' ).ProductsList,
+		useProducts: jest.fn(),
+	},
+	Plans: {
+		...jest.requireActual( '@automattic/data-stores' ).Plans,
+		usePlans: jest.fn(),
+		useCurrentPlan: jest.fn(),
+		usePricingMetaForGridPlans: jest.fn(),
+	},
+} ) );
 
-const mockCountries = [ { code: 'US', has_postal_codes: true, name: 'United States' } ];
+const mockCountries: CountryListItem[] = [
+	{ code: 'US', has_postal_codes: true, name: 'United States', vat_supported: false },
+];
+
+const mockDataStorePlans = {
+	'business-bundle': {
+		planSlug: 'business-bundle',
+		pricing: {
+			currencyCode: 'USD',
+			billPeriod: 365,
+			originalPrice: {
+				full: 30000,
+				monthly: 30000,
+			},
+			discountedPrice: {
+				full: 30000,
+				monthly: 30000,
+			},
+		},
+	},
+};
+
+const mockDataStoreProducts = {
+	'business-bundle': {
+		id: 1008,
+		productSlug: 'business-bundle',
+	},
+
+	wp_titan_mail_yearly: {
+		id: 401,
+		productSlug: 'wp_titan_mail_yearly',
+	},
+
+	wp_titan_mail_monthly: {
+		id: 400,
+		productSlug: 'wp_titan_mail_monthly',
+	},
+};
 
 const mockProducts = {
 	'business-bundle': {
@@ -178,10 +230,6 @@ function createTestReduxStore() {
 		siteId,
 		purchases: [],
 	} );
-	reduxStore.dispatch( {
-		type: COUNTRIES_PAYMENTS_UPDATED,
-		countries: mockCountries,
-	} );
 
 	return reduxStore;
 }
@@ -200,6 +248,21 @@ describe( 'UpsellNudge', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/products?type=all' )
 			.reply( 200, () => mockProducts );
+		Plans.useCurrentPlan.mockImplementation( () => ( {
+			[ 'business-bundle' ]: mockDataStorePlans[ 'business-bundle' ],
+		} ) );
+		Plans.usePlans.mockImplementation( () => ( {
+			data: {
+				[ 'business-bundle' ]: mockDataStorePlans,
+			},
+		} ) );
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ 'business-bundle' ]: {
+				...mockDataStorePlans[ 'business-bundle' ].pricing,
+				billingPeriod: mockDataStorePlans[ 'business-bundle' ].pricing.billPeriod,
+			},
+		} ) );
+		ProductsList.useProducts.mockImplementation( () => ( { data: mockDataStoreProducts } ) );
 	} );
 
 	afterAll( () => {
@@ -216,6 +279,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>
@@ -250,6 +314,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>
@@ -281,6 +346,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>
@@ -320,6 +386,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>

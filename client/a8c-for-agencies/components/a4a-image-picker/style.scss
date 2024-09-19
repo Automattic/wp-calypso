@@ -1,0 +1,52 @@
+.a4a-image-picker__upload-instructions {
+	border: 1px dotted var(--color-neutral-100);
+	border-radius: 4px;
+	width: 400px;
+	height: 160px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: var(--color-neutral-50);
+
+	&:hover {
+		color: var(--color-text);
+	}
+
+	&.is-error {
+		border-color: var(--color-error);
+		color: var(--color-error);
+	}
+}
+
+.a4a-image-picker__image-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	> * {
+		cursor: pointer;
+	}
+
+	.button-plain {
+		color: var(--color-primary);
+		font-size: rem(14px);
+		font-weight: 400;
+		text-decoration: underline;
+	}
+}
+
+.a4a-image-picker__image {
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	width: 400px;
+	height: 160px;
+}
+
+.a4a-image-picker__error {
+	color: var(--color-error);
+	font-size: rem(14px);
+	font-weight: 400;
+}

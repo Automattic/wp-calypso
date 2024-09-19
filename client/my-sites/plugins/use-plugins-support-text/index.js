@@ -1,6 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
 
 /*
  * Gets text used to describe the support level a user will receive
@@ -27,10 +25,5 @@ import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selector
  */
 export default function usePluginsSupportText() {
 	const translate = useTranslate();
-	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
-	const supportTextNonPro = isLiveSupport
-		? translate( 'Live chat support' )
-		: translate( 'Unlimited email support' );
-	const supportText = supportTextNonPro;
-	return supportText;
+	return translate( '24/7 expert support' );
 }

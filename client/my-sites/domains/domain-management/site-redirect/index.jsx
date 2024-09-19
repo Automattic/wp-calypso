@@ -1,20 +1,19 @@
 import page from '@automattic/calypso-router';
-import { CompactCard as Card } from '@automattic/components';
+import { CompactCard as Card, FormLabel } from '@automattic/components';
+import { SITE_REDIRECT } from '@automattic/urls';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useSelector } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { withoutHttp } from 'calypso/lib/url';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementSiteRedirect,
@@ -106,7 +105,7 @@ class SiteRedirect extends Component {
 		const { isUpdating, notice } = location;
 		const isFetching = location.isFetching;
 
-		const classes = classNames( 'site-redirect-card', { fetching: isFetching } );
+		const classes = clsx( 'site-redirect-card', { fetching: isFetching } );
 
 		return (
 			<div>

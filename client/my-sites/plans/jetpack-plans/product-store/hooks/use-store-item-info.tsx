@@ -261,12 +261,13 @@ export const useStoreItemInfo = ( {
 
 				shoppingCartTracker( 'calypso_jetpack_shopping_cart_add_product', {
 					productSlug: item.productSlug,
+					quantity: item.quantity,
 				} );
 
 				const addedToCartText = translate( 'added to cart' );
 				const productName = reactNodeToString( item.displayName );
 				dispatch( successNotice( `${ productName } ${ addedToCartText }`, { duration: 5000 } ) );
-				return addProductsToCart( [ { product_slug: item.productSlug } ] );
+				return addProductsToCart( [ { product_slug: item.productSlug, quantity: item.quantity } ] );
 			}
 
 			if ( item.type === 'item-type-plan' ) {

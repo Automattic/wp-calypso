@@ -3,6 +3,14 @@ import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import ui from './ui/reducer';
 
+export const gravatarClientData = {
+	id: 1854,
+	name: 'gravatar',
+	title: 'Gravatar',
+	icon: 'https://gravatar.com/images/grav-logo-blue.svg',
+	favicon: 'https://gravatar.com/favicon.ico',
+};
+
 export const initialClientsData = {
 	930: {
 		id: 930,
@@ -22,13 +30,7 @@ export const initialClientsData = {
 		title: 'Crowdsignal',
 		icon: 'https://app.crowdsignal.com/images/logo-white.png',
 	},
-	1854: {
-		id: 1854,
-		name: 'gravatar',
-		title: 'Gravatar',
-		icon: 'https://gravatar.com/images/grav-logo-blue.svg',
-		favicon: 'https://gravatar.com/favicon.ico',
-	},
+	1854: gravatarClientData,
 	90057: {
 		id: 90057,
 		name: 'wpjobmanager',
@@ -74,6 +76,41 @@ export const initialClientsData = {
 		id: 69041,
 		name: 'jetpack-cloud',
 		title: 'Jetpack Cloud',
+	},
+	95928: {
+		id: 95928,
+		name: 'a8c-for-agencies',
+		title: 'A8C for Agencies',
+	},
+	95931: {
+		id: 95931,
+		name: 'a8c-for-agencies',
+		title: 'A8C for Agencies',
+	},
+	95932: {
+		id: 95932,
+		name: 'a8c-for-agencies',
+		title: 'A8C for Agencies',
+	},
+	95109: {
+		id: 95109,
+		name: 'studio',
+		title: 'Studio by WordPress.com',
+	},
+	92099: {
+		id: 92099,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
+	},
+	99370: {
+		id: 99370,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
+	},
+	98166: {
+		id: 98166,
+		name: 'blaze-pro',
+		title: 'Blaze Pro',
 	},
 };
 

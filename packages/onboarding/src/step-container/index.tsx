@@ -1,5 +1,5 @@
 import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
@@ -33,6 +33,7 @@ interface Props {
 	headerButton?: ReactElement;
 	customizedActionButtons?: ReactElement;
 	isWideLayout?: boolean;
+	isExtraWideLayout?: boolean;
 	isFullLayout?: boolean;
 	isHorizontalLayout?: boolean;
 	goBack?: () => void;
@@ -46,6 +47,7 @@ interface Props {
 	showFooterWooCommercePowered?: boolean;
 	showSenseiPowered?: boolean;
 	showVideoPressPowered?: boolean;
+	backUrl?: string;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -70,9 +72,11 @@ const StepContainer: React.FC< Props > = ( {
 	isHorizontalLayout,
 	isFullLayout,
 	isWideLayout,
+	isExtraWideLayout,
 	isExternalBackUrl,
 	isLargeSkipLayout,
 	customizedActionButtons,
+	backUrl,
 	goBack,
 	goNext,
 	flowName,
@@ -106,13 +110,15 @@ const StepContainer: React.FC< Props > = ( {
 	};
 
 	function BackButton() {
-		if ( shouldHideNavButtons ) {
+		// Hide back button if goBack is falsy, it won't do anything in that case.
+		if ( shouldHideNavButtons || ( ! goBack && ! backUrl ) ) {
 			return null;
 		}
 		return (
 			<StepNavigationLink
 				direction="back"
 				handleClick={ goBack }
+				backUrl={ backUrl }
 				label={ backLabelText }
 				hasBackIcon
 				rel={ isExternalBackUrl ? 'external' : '' }
@@ -135,10 +141,10 @@ const StepContainer: React.FC< Props > = ( {
 					direction="forward"
 					handleClick={ goNext }
 					label={ skipLabelText }
-					cssClass={ classNames( 'step-container__navigation-link', 'has-underline', {
+					cssClass={ clsx( 'step-container__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
 					} ) }
-					borderless={ true }
+					borderless
 					recordClick={ () => recordClick( 'forward' ) }
 				/>
 			</div>
@@ -162,18 +168,19 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	const classes = classNames( 'step-container', className, flowName, stepName, {
+	const classes = clsx( 'step-container', className, flowName, stepName, {
 		'is-horizontal-layout': isHorizontalLayout,
 		'is-wide-layout': isWideLayout,
 		'is-full-layout': isFullLayout,
 		'is-large-skip-layout': isLargeSkipLayout,
 		'has-navigation': ! shouldHideNavButtons,
+		'is-extra-wide-layout': isExtraWideLayout,
 	} );
 
 	return (
 		<div className={ classes }>
 			<ActionButtons
-				className={ classNames( 'step-container__navigation', {
+				className={ clsx( 'step-container__navigation', {
 					'should-hide-nav-buttons': shouldHideNavButtons,
 					'should-sticky-nav-buttons': shouldStickyNavButtons,
 					'has-sticky-nav-buttons-padding': hasStickyNavButtonsPadding,

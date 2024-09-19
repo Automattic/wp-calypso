@@ -1,8 +1,8 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import SkipNavigation from './skip-navigation';
 
 const SidebarRegion = ( { children, className = '' } ) => (
-	<li className={ classNames( 'sidebar__region', className ) }>
+	<li className={ clsx( 'sidebar__region', className ) }>
 		<SkipNavigation skipToElementId="primary" />
 		{ children }
 	</li>

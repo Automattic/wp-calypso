@@ -18,6 +18,7 @@ import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import config from './lib/config-api';
+import initSentry from './lib/init-sentry';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
@@ -78,4 +79,6 @@ async function AppBoot() {
 	} );
 }
 
+// Caution: We're loading Sentry after initializing Webpack; Webpack load failures may not be captured.
+initSentry();
 AppBoot();

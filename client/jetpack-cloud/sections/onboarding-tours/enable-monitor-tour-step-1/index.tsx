@@ -26,7 +26,6 @@ export default function EnableMonitorTourStep1() {
 								) }
 							</>
 						),
-
 						nextStepOnTargetClick: '.dashboard-bulk-actions__edit-button',
 					},
 					{
@@ -47,6 +46,7 @@ export default function EnableMonitorTourStep1() {
 						nextStepOnTargetClick: '.dashboard-bulk-actions__custom_notification_button',
 					},
 				] }
+				hideSteps
 			/>
 		)
 	);

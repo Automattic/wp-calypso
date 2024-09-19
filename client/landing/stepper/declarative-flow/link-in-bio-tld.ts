@@ -1,10 +1,8 @@
-import { type UserSelect } from '@automattic/data-stores';
 import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -13,16 +11,14 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import CreateSite from './internals/steps-repository/create-site';
 import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
 import LaunchPad from './internals/steps-repository/launchpad';
 import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
 import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const linkInBio: Flow = {
@@ -30,57 +26,32 @@ const linkInBio: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: true,
 	useSteps() {
-		return [
+		//TODO: Use steps from steps.ts and in its async version.
+		return stepsWithRequiredLogin( [
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'patterns', component: DesignCarousel },
 			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
 			{ slug: 'plans', component: PlansStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'createSite', component: CreateSite },
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: translate( 'Link in Bio' ),
-		} );
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'domains':
 					clearSignupDestinationCookie();
 
-					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
-					}
-
-					return window.location.assign( logInUrl );
+					return navigate( 'patterns' );
 
 				case 'patterns':
 					return navigate( 'linkInBioSetup' );
@@ -89,9 +60,9 @@ const linkInBio: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

@@ -12,6 +12,7 @@ import { JetpackSignup } from '../signup.js';
 jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
 jest.mock( 'calypso/components/social-buttons/google', () => () => 'GoogleSocialButton' );
 jest.mock( 'calypso/components/social-buttons/apple', () => () => 'AppleLoginButton' );
+jest.mock( 'calypso/components/social-buttons/github', () => () => 'GitHubLoginButton' );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, {

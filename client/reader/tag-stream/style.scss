@@ -15,6 +15,10 @@
 	.navigation-header {
 		margin: 0 auto;
 		padding: 0 0 16px 0;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 0 16px 16px;
+		}
 	}
 }
 
@@ -35,7 +39,7 @@
 }
 
 .reader__content .tag-stream__header {
-	margin-bottom: 0;
+	margin-bottom: 24px;
 }
 
 .reader__content .tag-stream__header.has-description {
@@ -61,9 +65,8 @@
 	justify-content: space-between;
 	align-items: flex-start;
 
-	@include break-small {
-		padding-top: 20px;
-		padding-bottom: 20px;
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
 	}
 }
 
@@ -92,10 +95,24 @@
 	.button.header-cake__back {
 		padding: 0;
 	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px 16px;
+	}
+}
+
+.is-reader-page .reader-feed-header.has-back-button .card.header-cake {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 32px 0;
+	}
 }
 
 .is-reader-page .main .tag-stream__empty-content {
 	margin-top: 15px;
+
+	.tag-stream__empty-content-message {
+		margin: 16px 0 24px;
+	}
 }
 
 // Tag page only shows site titles in the sidebar, so spacing needs to be tighter

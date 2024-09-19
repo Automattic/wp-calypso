@@ -2,7 +2,7 @@ import { Dialog } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 function ImportBindFileConfirmationDialog( {
 	numberOfSelectedRecords,
@@ -85,7 +85,7 @@ function ImportBindFileConfirmationDialog( {
 	};
 
 	const renderRecordRow = ( record, index ) => {
-		const className = classNames( 'import-bind-file-confirmation-dialog__row', {
+		const className = clsx( 'import-bind-file-confirmation-dialog__row', {
 			'not-selected': ! record.selected,
 		} );
 

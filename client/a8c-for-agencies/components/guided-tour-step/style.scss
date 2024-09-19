@@ -1,0 +1,46 @@
+.guided-tour__popover {
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+	}
+}
+
+.guided-tour__popover-heading {
+	color: var(--color-neutral-100);
+	@include a4a-font-label-button;
+}
+
+.guided-tour__popover-description {
+	color: var(--color-neutral-80);
+	@include a4a-font-body-sm;
+	max-width: 220px;
+	text-align: left;
+	margin-block-end: 0;
+}
+
+.guided-tour__popover-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+
+	.guided-tour__popover-step-count {
+		color: var(--color-neutral-60);
+		@include a4a-font-body-sm;
+	}
+
+	.guided-tour__popover-footer-right-content {
+		display: flex;
+		gap: 8px;
+
+		button {
+			padding: 4px 8px;
+			@include a4a-font-body-sm;
+		}
+	}
+}

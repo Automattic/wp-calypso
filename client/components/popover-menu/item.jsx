@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -10,6 +10,7 @@ const noop = () => {};
 export default class PopoverMenuItem extends Component {
 	static propTypes = {
 		href: PropTypes.string,
+		disabled: PropTypes.bool,
 		className: PropTypes.string,
 		isSelected: PropTypes.bool,
 		icon: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
@@ -38,7 +39,7 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, href, icon, isExternalLink, isSelected } = this.props;
+		const { children, className, disabled, href, icon, isExternalLink, isSelected } = this.props;
 		const itemProps = omit(
 			this.props,
 			'icon',
@@ -48,15 +49,15 @@ export default class PopoverMenuItem extends Component {
 			'className',
 			'itemComponent'
 		);
-		const classes = classnames( 'popover__menu-item', className, {
+		const classes = clsx( 'popover__menu-item', className, {
 			'is-selected': isSelected,
 		} );
 
 		let ItemComponent = this.props.itemComponent;
-		if ( isExternalLink && href ) {
+		if ( isExternalLink && href && ! disabled ) {
 			ItemComponent = ExternalLink;
 			itemProps.icon = true;
-		} else if ( href ) {
+		} else if ( href && ! disabled ) {
 			ItemComponent = 'a';
 		}
 

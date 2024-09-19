@@ -8,15 +8,17 @@ import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
-import { domainManagementLink } from '../utils/paths';
+import { domainManagementLink as getDomainManagementLink } from '../utils/paths';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
+import DomainsTableSslCell from './domains-table-ssl-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 import { DomainsTableStatusCTA } from './domains-table-status-cta';
+import type { MouseEvent } from 'react';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -42,6 +44,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isAllSitesView,
 		domainStatus,
 		pendingUpdates,
+		sslStatus,
+		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
 	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
 
@@ -66,6 +70,10 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const domainTypeText =
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
+	const domainManagementLink = isManageableDomain
+		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
+		: '';
+
 	const renderOwnerCell = () => {
 		if ( isLoadingSiteDetails || isLoadingSiteDomainsDetails ) {
 			return <DomainsTablePlaceholder style={ { width: `${ placeholderWidth }%` } } />;
@@ -80,21 +88,32 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
 	};
 
+	const handleSelect = () => {
+		window.location.href = domainManagementLink;
+	};
+
 	return (
-		<tr key={ domain.domain }>
+		<tr
+			key={ domain.domain }
+			className="domains-table__row"
+			onClick={ domainManagementLink ? handleSelect : undefined }
+		>
 			{ canSelectAnyDomains && (
-				<td>
-					{ canBulkUpdate( domain ) && (
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							checked={ isSelected }
-							onChange={ () => handleSelectDomain( domain ) }
-							/* translators: Label for a checkbox control that selects a domain name.*/
-							aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-								domain: domain.domain,
-							} ) }
-						/>
-					) }
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+				<td
+					className="domains-table-checkbox-td"
+					onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+				>
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ isSelected }
+						onChange={ () => handleSelectDomain( domain ) }
+						/* translators: Label for a checkbox control that selects a domain name.*/
+						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+							domain: domain.domain,
+						} ) }
+						disabled={ ! canBulkUpdate( domain ) }
+					/>
 				</td>
 			) }
 
@@ -108,10 +127,11 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 							ref={ ref }
 						>
 							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
-							{ isManageableDomain ? (
+							{ domainManagementLink ? (
 								<a
 									className="domains-table__domain-name"
-									href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+									href={ domainManagementLink }
+									onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 								>
 									{ domain.domain }
 								</a>
@@ -180,9 +200,25 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 					);
 				}
 
+				if ( column.name === 'ssl' ) {
+					return (
+						<DomainsTableSslCell
+							key={ domain.domain + column.name }
+							domainManagementLink={ domainManagementLink }
+							sslStatus={ sslStatus }
+							hasWpcomManagedSslCert={ hasWpcomManagedSslCert }
+						/>
+					);
+				}
+
 				if ( column.name === 'action' ) {
 					return (
-						<td key={ domain.domain + column.name } className="domains-table-row__actions">
+						// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+						<td
+							key={ domain.domain + column.name }
+							className="domains-table-row__actions"
+							onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+						>
 							{ currentDomainData && (
 								<DomainsTableRowActions
 									siteSlug={ siteSlug }

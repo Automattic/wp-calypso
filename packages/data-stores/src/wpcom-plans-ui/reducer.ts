@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import type { WpcomPlansUIAction } from './actions';
-import type { SelectedStorageOptionForPlans } from './types';
+import type { SelectedStorageOptionForPlan } from './types';
 import type { Reducer } from 'redux';
 
 const showDomainUpsellDialog: Reducer< boolean | undefined, WpcomPlansUIAction > = (
@@ -15,19 +15,24 @@ const showDomainUpsellDialog: Reducer< boolean | undefined, WpcomPlansUIAction >
 	return state;
 };
 
-const selectedStorageOptionForPlans: Reducer<
-	SelectedStorageOptionForPlans | undefined,
+const selectedStorageOptionForPlan: Reducer<
+	SelectedStorageOptionForPlan | undefined,
 	WpcomPlansUIAction
 > = ( state, action ) => {
 	if ( action.type === 'WPCOM_PLANS_UI_SET_SELECTED_STORAGE_OPTION_FOR_PLAN' ) {
-		return { ...state, [ action.planSlug ]: action.addOnSlug };
+		return {
+			...state,
+			// @ts-expect-error TS is unhappy if we index an object by a null or an undefined value. We, however,
+			// expect siteId to be null or undefined here before site creation ( Ex. during onboarding ).
+			[ action.siteId ]: { ...state?.[ action.siteId ], [ action.planSlug ]: action.addOnSlug },
+		};
 	}
 	return state;
 };
 
 const reducer = combineReducers( {
 	showDomainUpsellDialog,
-	selectedStorageOptionForPlans,
+	selectedStorageOptionForPlan,
 } );
 
 export type State = ReturnType< typeof reducer >;

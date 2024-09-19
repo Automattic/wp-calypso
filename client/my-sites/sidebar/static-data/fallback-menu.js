@@ -28,6 +28,8 @@ const WOOCOMMERCE_ICON = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3
 
 export default function buildFallbackResponse( {
 	siteDomain = '',
+	isAtomic,
+	isPlanExpired,
 	shouldShowMailboxes = false,
 	shouldShowLinks = false,
 	shouldShowTestimonials = false,
@@ -517,6 +519,13 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
+				{
+					parent: 'tools.php',
+					slug: 'tools-github-deployments',
+					title: translate( 'GitHub Deployments' ),
+					type: 'submenu-item',
+					url: `/github-deployments/${ siteDomain }`,
+				},
 				...( showSiteMonitoring
 					? [
 							{
@@ -593,7 +602,10 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'options-general.php',
 					slug: 'options-hosting-configuration-php',
-					title: translate( 'Hosting Configuration' ),
+					title:
+						isAtomic && ! isPlanExpired
+							? translate( 'Server Settings' )
+							: translate( 'Hosting Features' ),
 					type: 'submenu-item',
 					url: `/hosting-config/${ siteDomain }`,
 				},

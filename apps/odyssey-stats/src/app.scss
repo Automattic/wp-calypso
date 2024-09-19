@@ -3,7 +3,7 @@
 @import "./styles/wp-admin.scss";
 @import "./styles/typography.scss";
 
-.jp-stats-dashboard {
+.wp-admin {
 	.card {
 		border: 0;
 		max-width: initial;
@@ -76,6 +76,39 @@
 
 		&.is-selected + .segmented-control__item .segmented-control__link {
 			border-left-color: var(--studio-black);
+		}
+	}
+
+	// Use base component styling of `@automattic/components/Button`
+	.button.jetpack-emerald-button {
+		padding: 0.5em 1.5em;
+		font-size: 1rem;
+		line-height: 1.375;
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&.is-primary {
+			color: var(--studio-white);
+			background: var(--studio-black);
+		}
+
+		// Use `transparent` styling as secondary styles
+		&.is-transparent {
+			color: var(--studio-black);
+			background: inset 0 0 0 1.5px var(--studio-white);
+
+			&:hover:not(.is-busy) {
+				color: var(--studio-black);
+				background: var(--studio-gray-0);
+			}
+
+			&.is-busy {
+				background: #dcdcde;
+				color: var(--studio-gray-20);
+				border: 1px solid transparent;
+			}
 		}
 	}
 }

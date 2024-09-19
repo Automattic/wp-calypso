@@ -1,11 +1,10 @@
-import { Dialog, FormInputValidation } from '@automattic/components';
+import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -33,7 +32,7 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate, slug, currentRoute } = this.props;
+		const { translate, slug, currentRoute, isGravatarDomain } = this.props;
 
 		return (
 			<Fragment>
@@ -45,6 +44,13 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
+				{ isGravatarDomain && (
+					<p>
+						{ translate(
+							'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
+						) }
+					</p>
+				) }
 				<p>
 					{ translate(
 						'If you want to use {{strong}}%(domain)s{{/strong}} with another provider you can {{moveAnchor}}move it to another service{{/moveAnchor}} or {{transferAnchor}}transfer it to another provider{{/transferAnchor}}.',
@@ -268,6 +274,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedDomainName = getName( ownProps.purchase );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	return {
+		isGravatarDomain: selectedDomain?.isGravatarDomain,
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
 		slug: getSelectedSiteSlug( state ),

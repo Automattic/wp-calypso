@@ -1,0 +1,192 @@
+@import "../../media-queries";
+
+.plan-type-selector {
+	width: fit-content;
+	min-width: 275px;
+	background-color: var(--studio-white);
+	z-index: 2;
+}
+
+.is-sticky-plan-type-selector {
+	.plan-type-selector {
+		@include plan-type-selector-custom-mobile-breakpoint {
+			width: 100%;
+		}
+	}
+}
+
+.plan-type-selector__title {
+	margin-bottom: 20px;
+}
+
+.plan-type-selector .plan-type-selector__interval-type {
+	width: fit-content;
+	margin: 0 auto;
+	.is-sticky-header-row & {
+		margin: unset;
+	}
+
+	.segmented-control.price-toggle {
+		background-color: #f2f2f2;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		margin-top: 16px;
+		margin-top: 0;
+
+		.segmented-control__item {
+			border: 6px;
+			padding: 2px;
+
+			&.is-selected + .segmented-control__item .segmented-control__link {
+				border-left-color: #f2f2f2;
+				&:hover {
+					border-left-color: var(--studio-gray-10);
+				}
+			}
+
+			.segmented-control__link {
+				color: var(--studio-gray-90);
+				font-weight: 500;
+				padding: 6px 11px;
+				border: 1px solid #f2f2f2;
+				border-radius: 5px; /* stylelint-disable-line scales/radii */
+				&:hover {
+					border: 1px solid var(--studio-gray-10);
+					background-color: unset;
+					border-radius: 5px; /* stylelint-disable-line scales/radii */
+				}
+				&:focus {
+					box-shadow: 0 0 0 1px var(--studio-gray-90);
+					outline: none;
+				}
+			}
+
+			&.is-selected .segmented-control__link {
+				color: var(--studio-gray-80);
+				font-weight: 400;
+				border: 0.5px solid rgba(0, 0, 0, 0.04);
+				box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+				border-radius: 5px; /* stylelint-disable-line scales/radii */
+				background-color: var(--studio-white);
+				&:hover {
+					background-color: var(--studio-white);
+					border-color: rgba(0, 0, 0, 0.04);
+				}
+			}
+
+			.segmented-control__text {
+				white-space: initial;
+			}
+		}
+	}
+}
+
+.plan-type-selector .plan-type-selector__interval-type-dropdown-container {
+	margin: 0 auto;
+	.is-sticky-plan-type-selector & {
+		width: 100%;
+		margin: unset;
+	}
+	.plan-type-selector__interval-type-dropdown {
+		&,
+		&:visited,
+		&:hover span.name {
+			color: var(--color-text);
+		}
+
+		button .plan-type-selector__interval-type-dropdown-option {
+			padding-right: 32px;
+		}
+
+		.plan-type-selector__interval-type-dropdown-option {
+			display: flex;
+			padding: 13px 13px 13px 16px;
+			font-size: 0.875rem;
+			text-wrap: nowrap;
+
+			.discount {
+				display: flex;
+				border-radius: 3px;
+				line-height: 20px;
+			}
+		}
+
+		.components-flex {
+			width: 100%;
+			.components-input-control__container {
+				.components-custom-select-control__button {
+					min-width: 225px;
+					padding: 0;
+					height: auto;
+					.is-sticky-plan-type-selector & {
+						height: 64px;
+					}
+				}
+				.components-input-control__backdrop {
+					border-color: var(--studio-gray-10);
+				}
+
+				.components-input-control__suffix > div {
+					padding-right: 13px;
+				}
+			}
+		}
+		.components-custom-select-control__menu {
+			margin: 0;
+			border-radius: 0;
+			border-bottom-right-radius: 2px;
+			border-bottom-left-radius: 2px;
+			box-sizing: border-box;
+			border: 1px solid var(--studio-gray-10);
+			margin-top: -2px;
+
+			.is-sticky-plan-type-selector & {
+				border-bottom-right-radius: 0;
+				border-bottom-left-radius: 0;
+			}
+		}
+		.components-custom-select-control__item {
+			grid-template-columns: auto min-content;
+			padding: 0;
+			.is-highlighted {
+				background-color: var(--studio-gray-0);
+			}
+			.a {
+				padding: 11.5px 16px;
+			}
+
+			.components-custom-select-control__item-icon {
+				display: none;
+			}
+		}
+		.components-custom-select-control__label {
+			display: none;
+		}
+	}
+}
+
+div.is-sticky-plan-type-selector .plan-type-selector__interval-type-dropdown {
+	width: 100%;
+	@include plan-type-selector-custom-mobile-breakpoint {
+		// Display above sticky feature and comparison grid plan headers
+		.components-flex {
+			width: 100vw;
+			padding: 0;
+			border-bottom: 1px solid #e0e0e0;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+
+		.components-custom-select-control__menu {
+			width: 100%;
+			border: 1px solid #e0e0e0;
+			/*
+			* Override the default popup menu z index so that it does not appear above other sticky elements.
+			* The default z-index is 1_000_000 which is too high
+			*/
+			z-index: 3;
+		}
+		.components-input-control__backdrop.components-input-control__backdrop {
+			border: none;
+		}
+	}
+}

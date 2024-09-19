@@ -21,11 +21,11 @@ const SupportButton: FC< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { url } = useStillNeedHelpURL();
-	const { setInitialRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setNavigateToRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	function handleClick() {
 		if ( skipToContactOptions ) {
-			setInitialRoute( url );
+			setNavigateToRoute( url );
 		}
 		setShowHelpCenter( true );
 		recordTracksEvent( 'calypso_support_button_click', {

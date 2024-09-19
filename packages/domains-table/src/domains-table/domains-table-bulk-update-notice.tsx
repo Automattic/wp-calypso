@@ -34,6 +34,7 @@ export const DomainsTableBulkUpdateNotice = () => {
 			if ( job.failed.length ) {
 				return (
 					<Notice
+						key={ job.id }
 						status="is-error"
 						text={ translate( 'Some domain updates were not successful ' ) }
 						onDismissClick={ () => handleDismissNotice( job.id ) }
@@ -53,8 +54,13 @@ export const DomainsTableBulkUpdateNotice = () => {
 					</Notice>
 				);
 			}
+
 			return (
-				<Notice status="is-success" onDismissClick={ () => handleDismissNotice( job.id ) }>
+				<Notice
+					key={ job.id }
+					status="is-success"
+					onDismissClick={ () => handleDismissNotice( job.id ) }
+				>
 					{ translate( 'Bulk domain updates finished successfully ' ) }
 				</Notice>
 			);

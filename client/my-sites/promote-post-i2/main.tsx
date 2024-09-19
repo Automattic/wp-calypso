@@ -1,27 +1,28 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
 import {
 	BlazablePost,
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
-	PostQueryResult,
 } from 'calypso/data/promote-post/types';
+import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
-	getSearchOptionsQueryParams,
+	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -33,15 +34,15 @@ import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils'
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
+import BlazePluginBanner from './components/blaze-plugin-banner';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
-import WooBanner from './components/woo-banner';
+import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
-
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
-
+const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
@@ -72,12 +73,15 @@ export type PagedBlazeSearchResponse = {
 
 const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 	order: SORT_OPTIONS_DEFAULT,
+	filter: {
+		postType: isWooStore ? 'product' : '',
+	},
 };
 
 export default function PromotedPosts( { tab }: Props ) {
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
@@ -108,6 +112,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		'',
 	] );
 
+	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+	const paymentBlocked = data?.paymentsBlocked ?? false;
+
 	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
 		'campaigns',
 		campaignsData
@@ -119,6 +126,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	/* query for posts */
+	const { data: postsStatsData } = usePostsQueryStats( selectedSiteId ?? 0 );
+	const { total_items: totalPostsUnfiltered } = postsStatsData || {};
+
 	const [ postsSearchOptions, setPostsSearchOptions ] = useState< SearchOptions >(
 		POST_DEFAULT_SEARCH_OPTIONS
 	);
@@ -135,19 +145,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postsIsLoadingNewContent = postsIsLoading || postIsRefetching;
 
-	const initialPostQueryState = queryClient.getQueryState( [
-		'promote-post-posts',
-		selectedSiteId,
-		getSearchOptionsQueryParams( POST_DEFAULT_SEARCH_OPTIONS ),
-	] );
-
 	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
 		'posts',
 		postsData
-	);
-	const { total_items: totalPostsUnfiltered } = getPagedBlazeSearchData(
-		'posts',
-		initialPostQueryState?.data as InfiniteData< PostQueryResult >
 	);
 
 	const tabs: TabOption[] = [
@@ -200,10 +200,8 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
+	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
-
-	// Add Hotjar script to the page.
-	addHotJarScript();
 
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {
@@ -214,7 +212,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		const baseClassName = 'promote-post-i2__header-subtitle';
 		return (
 			<div
-				className={ classNames(
+				className={ clsx(
 					baseClassName,
 					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
 				) }
@@ -237,13 +235,11 @@ export default function PromotedPosts( { tab }: Props ) {
 			<div className="promote-post-i2__top-bar">
 				<FormattedHeader
 					brandFont
-					className={ classNames( 'advertising__page-header', {
+					className={ clsx( 'advertising__page-header', {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
-					headerText={
-						isWooBlaze ? translate( 'Blaze for WooCommerce' ) : translate( 'Advertising' )
-					}
+					headerText={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }
 					align="left"
 				/>
 
@@ -252,18 +248,52 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInJetpack }
+						showSupportModal={ ! isRunningInWpAdmin }
 					/>
-					<Button variant="primary" onClick={ onClickPromote }>
+					<Button
+						variant="primary"
+						onClick={ onClickPromote }
+						disabled={ isLoadingBillingSummary || paymentBlocked }
+					>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
 			</div>
 			{ headerSubtitle( true ) /* for mobile */ }
 
-			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
+			{ showBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
+
+			{
+				// TODO: Uncomment when DebtNotifier is implemented
+				/* <DebtNotifier /> */
+			 }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
+
+			{ ! isLoadingBillingSummary && paymentBlocked && (
+				<Notice
+					isReskinned
+					showDismiss={ false }
+					status="is-error"
+					icon="notice-outline"
+					className="promote-post-i2__payment-blocked-notice"
+				>
+					{ translate(
+						'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
+						{
+							components: {
+								wpcomSupport: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</Notice>
+			) }
 
 			{ /* Render campaigns tab */ }
 			{ selectedTab === 'campaigns' && (
@@ -312,6 +342,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						totalCampaigns={ totalPostsUnfiltered || 0 }
 						hasMorePages={ postsHasMorePages }
 						posts={ posts as BlazablePost[] }
+						hasPaymentsBlocked={ paymentBlocked }
 					/>
 				</>
 			) }

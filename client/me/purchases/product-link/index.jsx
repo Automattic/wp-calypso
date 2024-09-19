@@ -9,8 +9,9 @@ import {
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
@@ -23,6 +24,9 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 	if ( isPlan( purchase ) ) {
 		url = '/plans/my-plan/' + selectedSite.slug;
+		if ( isJetpackCloud() ) {
+			url = 'https://wordpress.com' + url;
+		}
 		text = i18n.translate( 'Plan Features' );
 	}
 
@@ -32,7 +36,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	}
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
-		url = emailManagement( selectedSite.slug, purchase.meta );
+		url = getEmailManagementPath( selectedSite.slug, purchase.meta );
 		text = i18n.translate( 'Email Settings' );
 	}
 

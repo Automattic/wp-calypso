@@ -95,6 +95,12 @@ export class LayoutGridBlockFlow implements BlockFlow {
 			// A more stable, viewport-safe approach is to focus and press enter (which is also a real workflow for keyboard users).
 			await addBlockButtonLocator.focus();
 			await addBlockButtonLocator.press( 'Enter' );
+
+			// Sometimes the inserter popover doesn't come-up after the `Enter` press.
+			// We use the `aria-expanded` attribute to further send the missing click event
+			if ( ( await addBlockButtonLocator.getAttribute( 'aria-expanded' ) ) === 'false' ) {
+				await addBlockButtonLocator.click();
+			}
 		};
 
 		await context.editorPage.addBlockInline(

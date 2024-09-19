@@ -40,7 +40,6 @@ const tscPackages = withTscInfo( {
 } );
 
 const tscCommands = [
-	{ cmd: 'tsc --noEmit --project apps/editing-toolkit/tsconfig.json', id: 'type_check_etk' },
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
 	{ cmd: 'tsc --noEmit --project test/e2e/tsconfig.json', id: 'type_check_tests' },
 ].map( withTscInfo );
@@ -56,12 +55,16 @@ const tscCommands = [
 // runs by itself with 8 cores, and the other tasks run one by one with 4 other
 // cores. This leaves a final 4 cores free for tsc + any other tasks. This seems
 // to result in the fastest overall completion time.
-const testClient = withUnitTestInfo( 'test-client --maxWorkers=8' );
-const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4' );
-const testServer = withUnitTestInfo( 'test-server --maxWorkers=4' );
-const testBuildTools = withUnitTestInfo( 'test-build-tools --maxWorkers=4' );
+//
+// --workerIdleMemoryLimit=512MB is added because of https://github.com/jestjs/jest/issues/11956
+const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB' );
+const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
+const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
+const testBuildTools = withUnitTestInfo(
+	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
+);
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
-const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1' );
+const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
 const testWorkspaces = {
 	name: 'yarn',

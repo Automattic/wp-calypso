@@ -4,6 +4,8 @@
 @import "calypso/my-sites/stats/modernized-layout-styles.scss";
 @import "calypso/my-sites/stats/theme-override-mixin.scss";
 
+$stats-card-min-width: 390px;
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {
@@ -55,6 +57,12 @@
 
 	.stats-date-picker__refresh-status {
 		display: none;
+	}
+}
+
+.stats-card {
+	@media (max-width: $break-medium) {
+		min-width: $stats-card-min-width;
 	}
 }
 

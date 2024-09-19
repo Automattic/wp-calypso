@@ -1,5 +1,5 @@
 import { Popover, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
@@ -130,7 +130,7 @@ export default class InfoPopover extends Component {
 					onMouseEnter={ this.handleOnMouseEnterButton }
 					onMouseLeave={ this.handleOnMouseLeave }
 					ref={ this.iconRef }
-					className={ classNames( 'info-popover', this.props.className, {
+					className={ clsx( 'info-popover', this.props.className, {
 						'is-active': this.state.showPopover,
 					} ) }
 				>
@@ -145,7 +145,7 @@ export default class InfoPopover extends Component {
 						ignoreContext={ this.props.ignoreContext }
 						position={ this.props.position }
 						onClose={ this.handleClose }
-						className={ classNames( 'info-popover__tooltip', this.props.className ) }
+						className={ clsx( 'info-popover__tooltip', this.props.className ) }
 						onMouseEnter={ this.handleOnMouseEnterPopover }
 						onMouseLeave={ this.handleOnMouseLeavePopover }
 					>

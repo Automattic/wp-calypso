@@ -47,13 +47,11 @@ export function useThemeDesignsQuery(
 	} );
 }
 
-function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): Design {
+function apiThemeToDesign( { id, name, taxonomies, stylesheet, price, theme_tier }: any ): Design {
 	// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
 	const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
 		( { slug }: any ) => slug === 'featured'
 	);
-
-	const is_premium = stylesheet && stylesheet.startsWith( 'premium/' );
 
 	return {
 		slug: id,
@@ -61,18 +59,16 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): D
 		recipe: {
 			stylesheet,
 		},
-		is_premium,
 		categories: taxonomies?.theme_subject ?? [],
-		features: [],
 		is_featured_picks: isFeaturedPicks,
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-		design_type: is_premium ? 'premium' : 'standard',
+		design_type: theme_tier?.slug === 'free' ? 'standard' : 'premium',
+		design_tier: theme_tier?.slug,
 		price,
 
 		// Deprecated; used for /start flow
 		stylesheet,
-		template: id,
 		theme: id,
 	};
 }

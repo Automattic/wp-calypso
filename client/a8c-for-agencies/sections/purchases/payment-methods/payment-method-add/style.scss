@@ -1,0 +1,51 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.card.payment-method-add__card {
+	border: none;
+	outline: none;
+	box-shadow: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.payment-method-add__content {
+	padding-block: 47px;
+	display: flex;
+	flex-direction: column;
+	gap: 27px;
+
+	@include break-small {
+		padding-block: 32px;
+	}
+
+	@include break-xlarge {
+		flex-direction: row;
+	}
+}
+
+.payment-method-add__card.aside {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	align-content: center;
+
+	.payment-method-stripe-info {
+		margin: auto;
+	}
+
+	@include break-xlarge {
+		max-width: 380px;
+	}
+}
+
+.payment-method-add.is-client-checkout {
+	.payment-method-form {
+		max-width: 600px;
+	}
+	.payment-method-stripe-info {
+		margin-block-start: 0;
+		text-align: left;
+	}
+}

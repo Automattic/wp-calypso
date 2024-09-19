@@ -1,5 +1,10 @@
 import config from '@automattic/calypso-config';
-import { InfiniteQueryObserverResult, useInfiniteQuery } from '@tanstack/react-query';
+import {
+	InfiniteQueryObserverResult,
+	keepPreviousData,
+	useInfiniteQuery,
+	useQuery,
+} from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { PostQueryResult } from './types';
@@ -7,6 +12,10 @@ import { PostQueryResult } from './types';
 type BlazablePostsQueryOptions = {
 	page?: number;
 };
+
+interface PostQueryResultError {
+	code?: string;
+}
 
 export const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 	let searchQueryParams = '';
@@ -39,15 +48,34 @@ async function queryPosts( siteId: number, queryparams: string ) {
 	} );
 }
 
+export const usePostsQueryStats = ( siteId: number, queryOptions = {} ) => {
+	return useQuery( {
+		queryKey: [ 'promote-post-posts-stats', siteId ],
+		queryFn: async () => {
+			const postsResponse = await queryPosts( siteId, `page=1&posts_per_page=1` );
+			return {
+				total_items: postsResponse?.total_items,
+			};
+		},
+		...queryOptions,
+		enabled: !! siteId,
+		retryDelay: 3000,
+		refetchOnWindowFocus: false,
+		meta: {
+			persist: false,
+		},
+	} );
+};
+
 const usePostsQueryPaged = (
 	siteId: number,
 	searchOptions: SearchOptions,
 	queryOptions: BlazablePostsQueryOptions = {}
-): InfiniteQueryObserverResult< PostQueryResult > => {
+): InfiniteQueryObserverResult< PostQueryResult, PostQueryResultError > => {
 	const searchQueryParams = getSearchOptionsQueryParams( searchOptions );
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-posts', siteId, searchQueryParams ],
-		queryFn: async ( { pageParam = 1 } ) => {
+		queryFn: async ( { pageParam } ) => {
 			// Fetch blazable posts
 			const postsResponse = await queryPosts( siteId, `page=${ pageParam }${ searchQueryParams }` );
 
@@ -65,16 +93,31 @@ const usePostsQueryPaged = (
 		...queryOptions,
 		enabled: !! siteId,
 		retryDelay: 3000,
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,
 		meta: {
 			persist: false,
 		},
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage ) => {
 			if ( lastPage.has_more_pages ) {
 				return lastPage.page + 1;
 			}
 			return undefined;
+		},
+		retry: ( failureCount, error ) => {
+			// The posts_not_ready happens when the posts are not sync yet
+			// We want to show the error ASAP not waiting the retries in this case.
+			if ( error.hasOwnProperty( 'code' ) && 'posts_not_ready' === error.code ) {
+				return false;
+			}
+
+			// We have to define a fallback amount of failures because we
+			// override the retry option with a function.
+			// We use 3 as the failureCount since its the default value for
+			// react-query that we used before.
+			// @link https://react-query.tanstack.com/guides/query-retries
+			return 3 > failureCount;
 		},
 	} );
 };

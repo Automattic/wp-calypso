@@ -6,7 +6,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import type { Step } from '../../types';
 
-import './style.scss';
 const STEP_NAME = 'difmStartingPoint';
 const DIFMStartingPoint: Step = function ( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
@@ -24,8 +23,8 @@ const DIFMStartingPoint: Step = function ( { navigation } ) {
 				stepName={ STEP_NAME }
 				goBack={ goBack }
 				goNext={ goNext }
-				isHorizontalLayout={ true }
-				isWideLayout={ true }
+				isHorizontalLayout
+				isWideLayout
 				isLargeSkipLayout={ false }
 				skipLabelText={ translate( 'No Thanks, I’ll Build It' ) }
 				stepContent={

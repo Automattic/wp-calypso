@@ -26,10 +26,10 @@ import {
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
-	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
+	isErrorResponse,
 } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
 import { useTransactionStatus } from './lib/transaction-status';
@@ -52,7 +52,7 @@ export {
 	checkoutTheme,
 	createCheckoutStepGroupStore,
 	makeErrorResponse,
-	makeManualResponse,
+	isErrorResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
 	useAllPaymentMethods,

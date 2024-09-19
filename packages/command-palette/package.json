@@ -1,0 +1,71 @@
+{
+	"name": "@automattic/command-palette",
+	"version": "1.0.0",
+	"description": "The Command Palette is a UI element that displays a searchable list of commands.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"calypso:src": "src/index.tsx",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"command",
+		"palette",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/command-palette"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/command-palette#readme",
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-products": "workspace:^",
+		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/sites": "workspace:^",
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@tanstack/react-query": "^5.15.5",
+		"@wordpress/commands": "^1.2.0",
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/compose": "^7.2.0",
+		"@wordpress/i18n": "^5.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/react-i18n": "^4.2.0",
+		"@wordpress/url": "^4.2.0",
+		"clsx": "^2.1.1",
+		"cmdk": "^0.2.0",
+		"utility-types": "^3.10.0"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^10.2.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"redux": "^4.2.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^5.3.3"
+	},
+	"private": true
+}

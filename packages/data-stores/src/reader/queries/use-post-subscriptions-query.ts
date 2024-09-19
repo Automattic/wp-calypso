@@ -45,26 +45,28 @@ const usePostSubscriptionsQuery = ( {
 	const enabled = useIsQueryEnabled();
 	const cacheKey = useCacheKey( postSubscriptionsQueryKeyPrefix );
 
-	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
-		useInfiniteQuery< SubscriptionManagerPostSubscriptions >( {
-			queryKey: cacheKey,
-			queryFn: async ( { pageParam = 1 } ) => {
-				const result = await callApi< SubscriptionManagerPostSubscriptions >( {
-					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
-					isLoggedIn,
-					apiVersion: '2',
-					apiNamespace: 'wpcom/v2',
-				} );
+	const infiniteQuery = useInfiniteQuery< SubscriptionManagerPostSubscriptions >( {
+		queryKey: cacheKey,
+		queryFn: async ( { pageParam } ) => {
+			const result = await callApi< SubscriptionManagerPostSubscriptions >( {
+				path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
+				isLoggedIn,
+				apiVersion: '2',
+				apiNamespace: 'wpcom/v2',
+			} );
 
-				return result;
-			},
-			enabled,
-			getNextPageParam: ( lastPage, pages ) =>
-				pages.length * number >= lastPage.total_comment_subscriptions_count
-					? undefined
-					: pages.length + 1,
-			refetchOnWindowFocus: false,
-		} );
+			return result;
+		},
+		enabled,
+		initialPageParam: 1,
+		getNextPageParam: ( lastPage, pages ) =>
+			pages.length * number >= lastPage.total_comment_subscriptions_count
+				? undefined
+				: pages.length + 1,
+		refetchOnWindowFocus: false,
+	} );
+
+	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = infiniteQuery;
 
 	useEffect( () => {
 		if ( hasNextPage && ! isFetchingNextPage && ! isFetching ) {
@@ -122,11 +124,11 @@ const usePostSubscriptionsQuery = ( {
 	}, [ data?.pages, filterFunction, searchTerm, sortTerm ] );
 
 	return {
+		...infiniteQuery,
 		data: outputData,
 		isFetchingNextPage,
 		isFetching,
 		hasNextPage,
-		...rest,
 	};
 };
 

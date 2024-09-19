@@ -1,6 +1,6 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { generatePassword } from '@automattic/generate-password';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -127,7 +126,7 @@ class AccountPassword extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const passwordInputClasses = classNames( {
+		const passwordInputClasses = clsx( {
 			'account-password__password-field': true,
 			'is-error': this.state.validation?.test_results.failed.length,
 		} );

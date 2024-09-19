@@ -1,5 +1,5 @@
 import { getPlan } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {
 	ReactElement,
 	useState,
@@ -136,9 +136,7 @@ function UpsellSwitch( props: Props ) {
 
 	if ( UI_STATE_LOADED !== uiState ) {
 		return (
-			<Main
-				className={ classNames( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }
-			>
+			<Main className={ clsx( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }>
 				<QueryComponent siteId={ siteId } />
 				{ /* render placeholder */ }
 				{ children }

@@ -6,7 +6,7 @@ export function CheckoutCompleteRedirecting() {
 		<CheckoutStepBody
 			stepId="checkout-complete-redirecting"
 			isStepActive={ false }
-			isStepComplete={ true }
+			isStepComplete
 			titleContent={ <CheckoutCompleteRedirectingTitle /> }
 		/>
 	);

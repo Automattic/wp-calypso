@@ -20,8 +20,8 @@ export class SubscribeFlow implements BlockFlow {
 			.getByRole( 'main' )
 			.getByRole( 'textbox', { name: 'Type your email' } );
 
-		// The email input field only appears if not logged in, or if logged in user is not subscribed already.
-		if ( await emailInputLocator.isVisible() ) {
+		// The email input field only appears as editable if not logged in. When logged in, it appears if not subscribed but is disabled.
+		if ( ( await emailInputLocator.isVisible() ) && ( await emailInputLocator.isEnabled() ) ) {
 			await emailInputLocator.fill( 'foo@example.com' );
 		}
 

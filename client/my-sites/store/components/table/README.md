@@ -29,7 +29,7 @@ function render() {
 		[ 7, 8, 9 ],
 	];
 	return (
-		<Table header={ titles } compact={ true }>
+		<Table header={ titles } compact>
 			{ values.map( ( row, i ) => (
 				<TableRow key={ i }>
 					{ row.map( ( item, j ) => (

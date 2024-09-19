@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/block-renderer",
 	"version": "1.0.0",
-	"description": "Render blocks on the client side",
+	"description": "Render blocks on the client side.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -30,10 +30,10 @@
 	},
 	"dependencies": {
 		"@automattic/global-styles": "workspace:^",
-		"@tanstack/react-query": "^4.36.1",
-		"@wordpress/block-editor": "^12.16.0",
-		"@wordpress/compose": "^6.25.0",
-		"classnames": "^2.3.2",
+		"@tanstack/react-query": "^5.15.5",
+		"@wordpress/block-editor": "^13.2.0",
+		"@wordpress/compose": "^7.2.0",
+		"clsx": "^2.1.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"
@@ -45,12 +45,10 @@
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
-		"@wordpress/element": "^5.25.0",
-		"@wordpress/i18n": "^4.48.0",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/i18n": "^5.2.0",
 		"debug": "^4.3.3",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"
 	},
 	"private": true

@@ -75,8 +75,8 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 	return (
 		<StepContainer
 			stepName="setup-blog"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="free"
 			formattedHeader={
 				<FormattedHeader

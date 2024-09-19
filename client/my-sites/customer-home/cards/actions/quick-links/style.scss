@@ -67,6 +67,10 @@
 		height: 24px;
 		fill: var(--color-neutral-60);
 		transition: all 0.1s;
+
+		&.dashicons {
+			color: var(--color-neutral-80);
+		}
 	}
 
 	.quick-links__action-box-text {
@@ -104,6 +108,10 @@
 
 		.quick-links__action-box-icon {
 			fill: var(--color-neutral-80);
+
+			&.dashicons {
+				color: var(--color-neutral-80);
+			}
 		}
 	}
 

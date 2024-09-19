@@ -125,11 +125,7 @@ function P2ConfirmEmail( {
 					) }
 				</div>
 				<div className="p2-confirm-email__buttons">
-					<Button
-						className="p2-confirm-email__continue"
-						isPrimary={ true }
-						onClick={ handleNextStepClick }
-					>
+					<Button className="p2-confirm-email__continue" isPrimary onClick={ handleNextStepClick }>
 						{ translate( 'Continue' ) }
 					</Button>
 				</div>

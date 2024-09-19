@@ -1,0 +1,20 @@
+.store-credit-placeholder-card {
+	width: 360px;
+}
+
+.store-credit-placeholder-card-content {
+	min-height: 220px;
+	border-radius: 18px; /* stylelint-disable-line scales/radii */
+	margin-block-end: 16px;
+}
+
+.store-credit-placeholder-card-footer {
+	min-height: 44px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+}
+
+.store-credit-placeholder-card-content,
+.store-credit-placeholder-card-footer {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-neutral-10);
+}

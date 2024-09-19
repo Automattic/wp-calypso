@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FoldableCard } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { AccordionProps } from './types';
 import './style.scss';
 
@@ -16,16 +16,14 @@ const Accordion = ( {
 	onOpen,
 	className,
 }: AccordionProps ) => {
-	const classes = classNames( {
+	const classes = clsx( {
 		'is-placeholder': isPlaceholder,
 	} );
 	const renderHeader = () => {
 		return (
 			<div>
-				<p className={ classNames( 'accordion__title', classes ) }>{ title }</p>
-				{ subtitle && (
-					<p className={ classNames( 'accordion__subtitle', classes ) }>{ subtitle }</p>
-				) }
+				<p className={ clsx( 'accordion__title', classes ) }>{ title }</p>
+				{ subtitle && <p className={ clsx( 'accordion__subtitle', classes ) }>{ subtitle }</p> }
 			</div>
 		);
 	};

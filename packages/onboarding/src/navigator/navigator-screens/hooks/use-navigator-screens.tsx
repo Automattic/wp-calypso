@@ -23,7 +23,7 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 			onSubmit,
 			onBack,
 		} ) => (
-			<NavigatorScreen key={ path } path={ path }>
+			<NavigatorScreen key={ path } path={ path } style={ { animationDuration: '0s' } }>
 				<>
 					<NavigatorHeader
 						title={ <>{ title ?? label }</> }
@@ -37,7 +37,7 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 							className="navigator-screen__footer-back-button"
 							as={ Button }
 							title={ translate( 'Back' ) }
-							borderless={ true }
+							borderless
 							aria-label={ translate( 'Navigate to the previous view' ) }
 							onClick={ () => onBack?.( slug ) }
 						>

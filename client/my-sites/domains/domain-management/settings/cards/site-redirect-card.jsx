@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SITE_REDIRECT } from '@automattic/urls';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,7 +10,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { withoutHttp } from 'calypso/lib/url';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
 import { domainManagementSiteRedirect } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,

@@ -1,0 +1,127 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-feedback-content {
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 21px;
+	letter-spacing: -0.24px;
+	color: var(--studio-gray-100);
+}
+
+.stats-feedback-content__actions {
+	display: flex;
+	flex-direction: column;
+
+	.components-button {
+		width: fit-content;
+		font-weight: 500;
+		font-size: $font-body-small;
+		border-radius: 4px;
+
+		&:not(:last-child) {
+			margin-bottom: 8px;
+		}
+	}
+}
+
+.stats-feedback-content__cta {
+	margin: 0 16px 16px 0;
+}
+
+.stats-feedback-content__emoji {
+	font-size: larger;
+	margin-right: 6px;
+}
+
+.stats-feedback-card {
+	background: var(--studio-white);
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 5px; // stylelint-disable-line scales/radii
+
+	padding: 20px;
+
+	@media (max-width: $break-medium) {
+		border-radius: 0;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+	}
+
+	.stats-feedback-content {
+		display: flex;
+		flex-direction: column;
+
+		@media (min-width: $break-wide) {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+	}
+
+	.stats-feedback-content__cta {
+		@media (min-width: $break-wide) {
+			margin-right: 12px;
+			margin-bottom: 0;
+		}
+	}
+
+	.stats-feedback-content__actions {
+		@media (min-width: $break-wide) {
+			flex-direction: row;
+
+			.components-button {
+				margin-left: 6px;
+				margin-bottom: 0;
+			}
+		}
+		@media (max-width: $break-mobile) {
+			.components-button {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.stats-feedback-panel {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	z-index: 10;
+
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 8px; // stylelint-disable-line scales/radii
+	padding: 24px;
+	width: 300px;
+	box-sizing: border-box;
+	box-shadow: 0 10px 20px 0 #00000014;
+
+	background-color: var(--studio-white);
+
+	.components-button.is-link {
+		color: var(--studio-gray-100);
+	}
+}
+
+.stats-feedback-panel__close-button {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+
+	svg {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+.stats-feedback-panel__dismiss-button {
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 21px;
+
+	&.components-button.is-link {
+		margin-top: 16px;
+	}
+}

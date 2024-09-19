@@ -1,10 +1,11 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import * as React from 'react';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
@@ -70,16 +71,18 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 					fetchStripeConfiguration={ getStripeConfiguration }
 					locale={ translate.localeSlug }
 				>
-					<CheckoutMain
-						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
-						isInModal
-						disabledThankYouPage={ isFocusedLaunch }
-						siteId={ selectedSiteId ?? undefined }
-						siteSlug={ site?.slug }
-						productAliasFromUrl={ commaSeparatedProductSlugs }
-						productSourceFromUrl="editor-checkout-modal"
-						onAfterPaymentComplete={ handleAfterPaymentComplete }
-					/>
+					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+						<CheckoutMain
+							redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
+							isInModal
+							disabledThankYouPage={ isFocusedLaunch }
+							siteId={ selectedSiteId ?? undefined }
+							siteSlug={ site?.slug }
+							productAliasFromUrl={ commaSeparatedProductSlugs }
+							productSourceFromUrl="editor-checkout-modal"
+							onAfterPaymentComplete={ handleAfterPaymentComplete }
+						/>
+					</RazorpayHookProvider>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</Modal>

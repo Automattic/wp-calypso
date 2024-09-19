@@ -1,30 +1,38 @@
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	isOnboardingGuidedFlow,
+	ONBOARDING_GUIDED_FLOW,
+	StepContainer as StepperStepContainer,
+} from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
-import wp from 'calypso/lib/wp';
+import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import StartStepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getIntervalType } from './util';
+import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -39,17 +47,7 @@ export class PlansStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
 		if ( isTailoredSignupFlow( this.props.flowName ) ) {
-			// trigger guides on this step, we don't care about failures or response
-			wp.req.post(
-				'guides/trigger',
-				{
-					apiNamespace: 'wpcom/v2/',
-				},
-				{
-					flow: this.props.flowName,
-					step: 'plans',
-				}
-			);
+			triggerGuidesForStep( this.props.flowName, 'plans' );
 		}
 	}
 
@@ -79,7 +77,11 @@ export class PlansStep extends Component {
 				isPurchasingItem: false,
 				stepSectionName: undefined,
 			},
-			{ domainItem }
+			// Since we're removing the paid domain, it means that the user chose to continue
+			// with a free domain. Because signupDomainOrigin should reflect the last domain
+			// selection status before they land on the checkout page, we switch the value
+			// to "free".
+			{ domainItem, signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.FREE }
 		);
 	};
 
@@ -102,15 +104,20 @@ export class PlansStep extends Component {
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
+			deemphasizeFreePlan: deemphasizeFreePlanFromProps,
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
 			intent,
 			flowName,
+			initialContext,
+			intervalType,
 		} = this.props;
 
-		const intervalType = getIntervalType( this.props.path );
+		const intervalTypeValue = intervalType || getIntervalType( this.props.path );
+
 		let errorDisplay;
+
 		if ( 'invalid' === this.props.step?.status ) {
 			errorDisplay = (
 				<div>
@@ -121,17 +128,31 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( ! this.props.plansLoaded ) {
-			return this.renderLoading();
-		}
-
 		const { signupDependencies } = this.props;
-		const { siteUrl, domainItem, siteTitle, username, coupon } = signupDependencies;
+		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
+			signupDependencies;
+
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		const surveyedIntent = shouldBasePlansOnSegment(
+			flowName,
+			initialContext?.trailMapExperimentVariant
+		)
+			? segmentSlug
+			: undefined;
+
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 			freeWPComSubdomain = siteUrl;
 		}
+
+		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
+		// More context can be found in p2-p5uIfZ-f5p
+		const deemphasizeFreePlan =
+			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
+			deemphasizeFreePlanFromProps;
+
 		return (
 			<div>
 				{ errorDisplay }
@@ -142,24 +163,27 @@ export class PlansStep extends Component {
 					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
 					isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
-					isInSignup={ true }
+					isInSignup
 					isLaunchPage={ isLaunchPage }
-					intervalType={ intervalType }
+					intervalType={ intervalTypeValue }
+					displayedIntervals={ this.props.displayedIntervals }
 					onUpgradeClick={ ( cartItems ) => this.onSelectPlan( cartItems ) }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
+					deemphasizeFreePlan={ deemphasizeFreePlan }
 					plansWithScroll={ this.state.isDesktop }
-					intent={ intent }
+					intent={ intent || surveyedIntent }
 					flowName={ flowName }
 					hideFreePlan={ hideFreePlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
-					showBiennialToggle={ this.props.showBiennialToggle }
 					removePaidDomain={ this.removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 					coupon={ coupon }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					onPlanIntervalUpdate={ this.props.onPlanIntervalUpdate }
 				/>
 			</div>
 		);
@@ -184,7 +208,32 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader } = this.props;
+		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+
+		const { segmentationSurveyAnswers } = signupDependencies;
+		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
+
+		if (
+			isOnboardingGuidedFlow( flowName ) &&
+			segmentSlug === 'plans-guided-segment-developer-or-agency'
+		) {
+			const a4aLinkButton = (
+				<Button
+					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=onboarding' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' )
+					}
+					borderless
+				/>
+			);
+
+			return translate(
+				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
+				{ components: { link: a4aLinkButton } }
+			);
+		}
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
@@ -205,8 +254,16 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
-			this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+			steps,
+			wrapperProps,
+			useStepperWrapper,
+		} = this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -248,33 +305,52 @@ export class PlansStep extends Component {
 			}
 		}
 
-		return (
-			<>
-				<StepWrapper
+		if ( useStepperWrapper ) {
+			return (
+				<StepperStepContainer
 					flowName={ flowName }
 					stepName={ stepName }
-					positionInFlow={ positionInFlow }
-					headerText={ headerText }
-					shouldHideNavButtons={ this.props.shouldHideNavButtons }
-					fallbackHeaderText={ fallbackHeaderText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ fallbackSubHeaderText }
+					formattedHeader={
+						<FormattedHeader
+							id="plans-header"
+							align="center"
+							subHeaderAlign="center"
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+						/>
+					}
 					isWideLayout={ false }
-					isExtraWideLayout={ true }
+					isExtraWideLayout
 					stepContent={ this.plansFeaturesList() }
-					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-					backUrl={ backUrl }
 					backLabelText={ backLabelText }
-					queryParams={ queryParams }
+					{ ...wrapperProps }
 				/>
-			</>
+			);
+		}
+
+		return (
+			<StartStepWrapper
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerText={ headerText }
+				shouldHideNavButtons={ this.props.shouldHideNavButtons }
+				fallbackHeaderText={ fallbackHeaderText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
+				isWideLayout={ false }
+				isExtraWideLayout
+				stepContent={ this.plansFeaturesList() }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ backUrl }
+				backLabelText={ backLabelText }
+				queryParams={ queryParams }
+			/>
 		);
 	}
 
 	render() {
-		const { signupDependencies } = this.props;
-		const { coupon } = signupDependencies;
-		const classes = classNames( 'plans plans-step', {
+		const classes = clsx( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
 			'is-extra-wide-layout': true,
@@ -282,7 +358,6 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<QueryPlans coupon={ coupon } />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
@@ -309,7 +384,6 @@ PlansStep.propTypes = {
 		'plans-plugins',
 		'plans-jetpack-app',
 		'plans-import',
-		'plans-paid-media',
 		'default',
 	] ),
 };
@@ -339,9 +413,7 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isLoadingExperiment: false,
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

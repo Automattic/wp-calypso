@@ -51,7 +51,7 @@ const buildMetadataCollector = ( metadata = {} ) => {
 	};
 };
 
-const isPerformanceTrackingEnabled = () => {
+export const isPerformanceTrackingEnabled = () => {
 	return config.isEnabled( 'rum-tracking/logstash' );
 };
 

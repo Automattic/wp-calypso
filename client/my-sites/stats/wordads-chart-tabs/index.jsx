@@ -1,6 +1,6 @@
 import { eye } from '@automattic/components/src/icons';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -100,7 +100,7 @@ class WordAdsChartTabs extends Component {
 				recordClassName = record.classNames.join( ' ' );
 			}
 
-			const className = classNames( recordClassName, {
+			const className = clsx( recordClassName, {
 				'is-selected': record.period === this.props.queryDate,
 			} );
 
@@ -129,7 +129,7 @@ class WordAdsChartTabs extends Component {
 			<>
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
-				<div className={ classNames( ...classes ) }>
+				<div className={ clsx( ...classes ) }>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
 					<Chart barClick={ this.props.barClick } data={ this.buildChartData() } minBarWidth={ 35 }>

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
@@ -170,9 +169,7 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 }
 
 export function getTierRouteParam() {
-	return isEnabled( 'themes/tiers' )
-		? `:tier(${ Object.keys( THEME_TIERS ).join( '|' ) })?`
-		: ':tier(free|premium|marketplace)?';
+	return `:tier(${ Object.keys( THEME_TIERS ).join( '|' ) })?`;
 }
 
 export function isStaticFilter( currentFilter ) {
@@ -205,4 +202,8 @@ export function constructThemeShowcaseUrl( {
 	url = localizeThemesPath( url, locale, ! isLoggedIn );
 
 	return buildRelativeSearchUrl( url, search );
+}
+
+export function shouldSelectSite( { isLoggedIn, siteCount, siteId } ) {
+	return isLoggedIn && ! siteId && siteCount > 1;
 }

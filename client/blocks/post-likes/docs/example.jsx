@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { createRef, PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import PostLikes from '../';
 import PostLikesPopover from '../popover';
 

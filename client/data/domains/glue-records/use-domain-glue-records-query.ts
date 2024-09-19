@@ -6,7 +6,7 @@ export type Maybe< T > = T | null | undefined;
 export type GlueRecordResponse = GlueRecordObject[] | null | undefined;
 
 export type GlueRecordObject = {
-	record: string;
+	nameserver: string;
 	address: string;
 };
 
@@ -19,7 +19,7 @@ export type GlueRecordApiObject = {
 
 export const mapGlueRecordObjectToApiObject = ( record: GlueRecordObject ): GlueRecordApiObject => {
 	return {
-		nameserver: record.record.toLowerCase(),
+		nameserver: record.nameserver.toLowerCase(),
 		ip_addresses: [ record.address ],
 	};
 };
@@ -31,7 +31,7 @@ const selectGlueRecords = ( response: GlueRecordApiObject[] | null ): GlueRecord
 
 	return response?.map( ( record: GlueRecordApiObject ) => {
 		return {
-			record: record.nameserver.toLowerCase(),
+			nameserver: record.nameserver.toLowerCase(),
 			address: record.ip_addresses[ 0 ],
 		};
 	} );
@@ -51,6 +51,6 @@ export default function useDomainGlueRecordsQuery(
 		select: selectGlueRecords,
 		enabled: false,
 		staleTime: 5 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
 	} );
 }

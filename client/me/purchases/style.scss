@@ -152,15 +152,13 @@
 
 .purchase-item__link,
 a.purchase-item__link {
-	color: var(--color-neutral-50);
-	text-decoration: underline;
+	color: var(--color-link);
 
 	&.purchase-item__link--error {
 		color: var(--color-error-50);
 	}
 
 	&:hover {
-		text-decoration: none;
 		cursor: pointer;
 	}
 

@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { emailManagementAddEmailForwards } from 'calypso/my-sites/email/paths';
+import { getAddEmailForwardsPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -42,12 +42,9 @@ const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps )
 				components: {
 					a: (
 						<a
-							href={ emailManagementAddEmailForwards(
-								selectedSite.slug,
-								selectedDomainName,
-								currentRoute,
-								'purchase'
-							) }
+							href={ getAddEmailForwardsPath( selectedSite.slug, selectedDomainName, currentRoute, {
+								source: 'purchase',
+							} ) }
 						/>
 					),
 				},

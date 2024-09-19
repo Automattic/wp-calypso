@@ -1,14 +1,14 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
 import './link-item.scss';
 
-function LoggedOutFormBackLink( props ) {
-	const { locale, oauth2Client, translate, recordClick } = props;
+export default function LoggedOutFormBackLink( { locale, oauth2Client, recordClick, classes } ) {
+	const translate = useTranslate();
 
 	let url = localizeUrl( 'https://wordpress.com', locale );
 	let message = translate( 'Back to WordPress.com' );
@@ -32,10 +32,10 @@ function LoggedOutFormBackLink( props ) {
 			key="return-to-wpcom-link"
 			onClick={ recordClick }
 			rel="external"
-			className={ classnames( {
+			className={ clsx( {
 				'logged-out-form__link-item': true,
 				'logged-out-form__back-link': true,
-				...props.classes,
+				...classes,
 			} ) }
 		>
 			<Gridicon icon="arrow-left" size={ 18 } />
@@ -43,12 +43,10 @@ function LoggedOutFormBackLink( props ) {
 		</a>
 	);
 }
+
 LoggedOutFormBackLink.propTypes = {
 	classes: PropTypes.object,
 	locale: PropTypes.string,
-	translate: PropTypes.func.isRequired,
 	recordClick: PropTypes.func.isRequired,
 	oauth2Client: PropTypes.object,
 };
-
-export default localize( LoggedOutFormBackLink );

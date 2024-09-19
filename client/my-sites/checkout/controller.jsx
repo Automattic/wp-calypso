@@ -1,4 +1,4 @@
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
@@ -17,6 +18,7 @@ import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserVisibleSiteCount,
@@ -109,7 +111,7 @@ function sitelessCheckout( context, next, extraProps ) {
 				isComingFromUpsell={ !! context.query.upgrade }
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOut }
-				isNoSiteCart={ true }
+				isNoSiteCart
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
 				{ ...extraProps }
 			/>
@@ -243,10 +245,11 @@ export function checkout( context, next ) {
 
 export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getProductSlugFromContext( context );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const upgradeFrom = getQueryArgs()?.upgrade_from;
 
-	if ( isJetpackLegacyItem( product ) ) {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+	if ( isJetpackLegacyItem( product ) && ! isJetpackLegacyTermUpgrade( product, upgradeFrom ) ) {
 		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
 
 		page(
@@ -345,7 +348,6 @@ export function checkoutThankYou( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				selectedFeature={ context.params.feature }
 				selectedSite={ selectedSite }
-				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 				upgradeIntent={ context.query.intent }
 			/>
 		</>
@@ -559,6 +561,11 @@ export function transferDomainToAnyUser( context, next ) {
 	// background via .is-section-checkout-thank-you
 	context.section.name = 'checkout-thank-you';
 	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
+	next( context );
+}
+
+export async function refreshUserSession( context, next ) {
+	await context.store.dispatch( fetchCurrentUser() );
 	next( context );
 }
 

@@ -1,17 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { ThankYouSectionProps, ThankYouNextStepProps } from 'calypso/components/thank-you/types';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
 export function useThankYouFoooter(
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
-): ThankYouSectionProps {
+): ThankYouFooterDetailProps[] {
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
@@ -22,7 +20,7 @@ export function useThankYouFoooter(
 	/**
 	 * Base case: multiple product types
 	 */
-	let footerSteps: FooterStep[] = [ pluginExploreStep, pluginSupportStep, WordPressForumStep ];
+	let footerSteps: FooterStep[] = [ pluginExploreStep, themeSupportStep ];
 
 	/**
 	 * If only plugins are present
@@ -38,31 +36,16 @@ export function useThankYouFoooter(
 		footerSteps = [ themeSupportStep, WordPressForumStep ];
 	}
 
-	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
-
-	return {
-		sectionKey: 'thank_you_footer',
-		nextStepsClassName: 'thank-you__footer',
-		nextSteps: steps.slice( 0, 3 ),
-	};
+	return useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 }
 
 function usePluginSteps(): FooterStep[] {
 	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
-	const locale = useLocale();
-	const newText =
-		'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.';
 
-	const descriptionText =
-		locale.startsWith( 'en' ) || hasTranslation?.( newText )
-			? translate(
-					'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
-			  )
-			: translate(
-					'Check out our support documentation for step-by-step instructions and expert guidance on your plugin set up.'
-			  );
+	const descriptionText = translate(
+		'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
+	);
 
 	return [
 		{
@@ -119,7 +102,7 @@ function useNextSteps(
 	footerSteps: FooterStep[],
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
-): ThankYouNextStepProps[] {
+): ThankYouFooterDetailProps[] {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const sendTrackEvent = useCallback(
@@ -135,19 +118,12 @@ function useNextSteps(
 
 	return footerSteps.map( ( step ) => {
 		return {
-			stepKey: step.key,
-			stepTitle: step.title,
-			stepDescription: step.description,
-			stepCta: (
-				<Button
-					variant="link"
-					href={ step.link }
-					target={ step.blankTarget !== false ? '_blank' : undefined } // the default is to open in a new tab
-					onClick={ () => sendTrackEvent( step.eventKey ) }
-				>
-					{ step.linkText }
-				</Button>
-			),
+			key: step.key,
+			title: step.title,
+			description: step.description,
+			buttonText: step.linkText,
+			buttonHref: step.link,
+			buttonOnClick: () => sendTrackEvent( step.eventKey ),
 		};
 	} );
 }

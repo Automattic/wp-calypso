@@ -12,7 +12,7 @@
 	"references": [
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-url" },
-		{ "path": "../data-stores" },
-		{ "path": "../search" }
+		{ "path": "../format-currency" },
+		{ "path": "../i18n-utils" }
 	]
 }

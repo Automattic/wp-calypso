@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
@@ -9,12 +11,8 @@ import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import {
-	recordDSPEntryPoint,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-} from 'calypso/lib/promote-post';
-import { useOdieAssistantContext } from 'calypso/odie/context';
+import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -31,6 +29,7 @@ import {
 	isNewSite,
 	getSitePlanSlug,
 	getSite,
+	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -71,9 +70,9 @@ export const QuickLinks = ( {
 	isFSEActive,
 	siteEditorUrl,
 	isAtomic,
+	adminInterface,
 } ) => {
 	const translate = useTranslate();
-	const { sendNudge } = useOdieAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
@@ -85,13 +84,10 @@ export const QuickLinks = ( {
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
+	const advertisingUrl = useAdvertisingUrl();
 
 	const addNewDomain = () => {
-		sendNudge( {
-			nudge: 'add-domain',
-			initialMessage:
-				'I see you want to add a domain. I can give you a few tips on how to do that.',
-		} );
 		trackAddDomainAction();
 	};
 
@@ -105,6 +101,11 @@ export const QuickLinks = ( {
 				materialIcon="laptop"
 			/>
 		) : null;
+
+	const usesWpAdminInterface = adminInterface === 'wp-admin';
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
+	);
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
@@ -120,7 +121,7 @@ export const QuickLinks = ( {
 				customizerLinks
 			) }
 			<ActionBox
-				href={ `/post/${ siteSlug }` }
+				href={ usesWpAdminInterface ? `${ siteAdminUrl }post-new.php` : `/post/${ siteSlug }` }
 				hideLinkIndicator
 				onClick={ trackWritePostAction }
 				label={ translate( 'Write blog post' ) }
@@ -128,7 +129,7 @@ export const QuickLinks = ( {
 			/>
 			{ isPromotePostActive && ! isWpcomStagingSite && (
 				<ActionBox
-					href={ `/advertising/${ siteSlug }` }
+					href={ advertisingUrl }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
@@ -137,7 +138,9 @@ export const QuickLinks = ( {
 			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
-					href={ `/comments/${ siteSlug }` }
+					href={
+						usesWpAdminInterface ? `${ siteAdminUrl }edit-comments.php` : `/comments/${ siteSlug }`
+					}
 					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
@@ -146,7 +149,11 @@ export const QuickLinks = ( {
 			) }
 			{ canEditPages && (
 				<ActionBox
-					href={ `/page/${ siteSlug }` }
+					href={
+						usesWpAdminInterface
+							? `${ siteAdminUrl }post-new.php?post_type=page`
+							: `/page/${ siteSlug }`
+					}
 					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
@@ -221,7 +228,9 @@ export const QuickLinks = ( {
 			{ canManageSite && (
 				<>
 					<ActionBox
-						href={ `/plugins/${ siteSlug }` }
+						href={
+							usesWpAdminInterface ? `${ siteAdminUrl }plugins.php` : `/plugins/${ siteSlug }`
+						}
 						hideLinkIndicator
 						onClick={ trackExplorePluginsAction }
 						label={ translate( 'Explore Plugins' ) }
@@ -241,6 +250,22 @@ export const QuickLinks = ( {
 						external
 						iconSrc={ fiverrIcon }
 					/>
+					{ config.isEnabled( 'jetpack/ai-logo-generator' ) && (
+						<>
+							<ActionBox
+								hideLinkIndicator
+								gridicon="plans"
+								label={ translate( 'Create a logo with Jetpack AI' ) }
+								onClick={ () => setIsAILogoGeneratorOpen( true ) }
+							/>
+							<GeneratorModal
+								siteDetails={ site }
+								isOpen={ isAILogoGeneratorOpen }
+								onClose={ () => setIsAILogoGeneratorOpen( false ) }
+								context="calypso"
+							/>
+						</>
+					) }
 				</>
 			) }
 			{ isAtomic && hasBoost && (
@@ -253,7 +278,11 @@ export const QuickLinks = ( {
 			) }
 			{ isAtomic && hasBackups && (
 				<ActionBox
-					href={ `/backup/${ siteSlug }` }
+					href={
+						adminInterfaceIsWPAdmin
+							? `https://jetpack.com/redirect/?source=calypso-backups&site=${ siteSlug }`
+							: `/backup/${ siteSlug }`
+					}
 					hideLinkIndicator
 					label={ translate( 'Restore a backup' ) }
 					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
@@ -306,7 +335,7 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 };
 
 const trackPromotePostAction = () => ( dispatch ) => {
-	dispatch( recordDSPEntryPoint( 'myhome_quick-links' ) );
+	dispatch( recordTracksEvent( 'calypso_customer_home_my_site_quick_link_blaze' ) );
 };
 
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
@@ -465,6 +494,7 @@ const mapStateToProps = ( state ) => {
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteEditorUrl: getSiteEditorUrl( state, siteId ),
+		adminInterface: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
 	};
 };
 

@@ -1,0 +1,127 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.site-migration-credentials {
+	#site-migration-credentials-header {
+		.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+
+	.card {
+		max-width: 500px;
+		padding: 2em;
+
+		@media (max-width: $break-mobile) {
+			padding: 1.25em;
+		}
+		hr {
+			margin-top: 1em;
+			background: var(--color-border-subtle);
+		}
+		.action-buttons__next {
+			width: 100%;
+			margin-top: 1em;
+		}
+		.site-migration-credentials__form-fields-row {
+			display: flex;
+			flex-direction: row;
+			gap: 1em;
+			@media (max-width: 522px) {
+				flex-direction: column;
+				gap: 0;
+			}
+		}
+		.site-migration-credentials__form-field {
+			margin-top: 1em;
+			flex: 1;
+		}
+		.site-migration-credentials__form-field--notes {
+			margin-top: 5px;
+		}
+		.site-migration-credentials__radio-group {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+			@media (max-width: $break-mobile) {
+				flex-direction: row;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+		}
+		.site-migration-credentials__radio {
+			display: flex;
+			align-items: center;
+			.form-radio__label {
+				margin-left: 0.5em;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			.form-radio {
+				margin: 0;
+			}
+		}
+		.site-migration-credentials__form-note {
+			color: var(--color-text-subtle);
+			font-size: 0.875rem;
+			font-style: italic;
+		}
+		.site-migration-credentials__form-error {
+			color: var(--color-error);
+			font-size: 0.875rem;
+			margin-top: 0.25rem;
+		}
+
+		.site-migration-credentials__form-password {
+			position: relative;
+
+			.site-migration-credentials__form-password__toggle {
+				display: block;
+				cursor: pointer;
+				position: absolute;
+				right: 8px;
+				top: 50%;
+				transform: translateY(-50%);
+				user-select: none;
+				line-height: 1;
+
+				svg {
+					fill: var(--color-neutral-20);
+
+					&:hover {
+						fill: var(--studio-blue-50);
+					}
+				}
+			}
+		}
+	}
+	.site-migration-credentials__skip {
+		margin-top: 1em;
+		text-align: center;
+	}
+	.site-migration-credentials__special-instructions {
+		.components-button {
+			padding: 0;
+			height: auto;
+			font-size: 0.875rem;
+			font-weight: 600;
+			color: var(--color-text);
+			margin-top: 1rem;
+		}
+
+		.site-migration-credentials__special-instructions-icon {
+			fill: var(--color-text) !important;
+		}
+	}
+	.site-migration-credentials__backup-note {
+		margin-top: 0.25rem;
+	}
+	.site-migration-credentials__error-banner {
+		border-left-color: var(--color-error);
+		&.card {
+			padding: 1rem;
+		}
+	}
+}

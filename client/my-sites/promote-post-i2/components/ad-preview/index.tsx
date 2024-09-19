@@ -1,5 +1,5 @@
 import './style.scss';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { BannerWidth } from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 
@@ -48,7 +48,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat, width 
 		);
 	}
 
-	const classes = classNames( 'campaign-item-details__preview-content', {
+	const classes = clsx( 'campaign-item-details__preview-content', {
 		v02: templateFormat === 'html5_v2',
 	} );
 

@@ -5,7 +5,6 @@ const aDay = anHour * 24;
 
 /**
  * Get localized relative time string for past timestamp.
- *
  * @param options The parameters to be used.
  * @param options.timestamp Web timestamp (milliseconds since Epoch)
  * @param options.locale Locale slug
@@ -58,7 +57,6 @@ export const getRelativeTimeString = ( {
 
 /**
  * Get ISO date format for timestamp.
- *
  * @param {number} timestamp Web timestamp (milliseconds since Epoch)
  * @returns {string} Formatted ISO date, e.g. '2020-12-20'
  */
@@ -68,7 +66,6 @@ export const getISODateString = ( timestamp: number ) => {
 
 /**
  * Get localized short date format for timestamp.
- *
  * @param {number} timestamp Web timestamp (milliseconds since Epoch)
  * @param {string} locale Locale slug
  * @returns {string} Formatted localized date, e.g. 'Dec 20, 2021' for US English.
@@ -89,7 +86,6 @@ export const getShortDateString = ( timestamp: number, locale = 'en' ) => {
 
 /**
  * Get localized numeric date format for timestamp.
- *
  * @param {number} timestamp Web timestamp (milliseconds since Epoch)
  * @param {string} locale Locale slug
  * @returns {string} Formatted localized date, e.g. '12/20/2021' for US English

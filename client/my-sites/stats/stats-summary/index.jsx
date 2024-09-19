@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, video } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -53,15 +53,11 @@ class StatsSummaryChart extends Component {
 		return icon;
 	}
 
-	renderEmptyState() {
-		return <StatsEmptyState />;
-	}
-
 	buildChartData() {
 		const { data, chartType, numberFormat, sectionClass, selected, tabLabel } = this.props;
 
 		return data.map( ( record ) => {
-			const className = classNames( {
+			const className = clsx( {
 				'is-selected': isEqual( selected, record ),
 			} );
 
@@ -106,19 +102,17 @@ class StatsSummaryChart extends Component {
 		const isModernized = 'post' === type;
 
 		return isModernized ? (
-			<div className={ classNames( 'is-summary-chart', { 'is-loading': isLoading } ) }>
+			<div className={ clsx( 'is-summary-chart', { 'is-loading': isLoading } ) }>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
-					{ this.renderEmptyState() }
+					<StatsEmptyState />
 				</ElementChart>
 			</div>
 		) : (
-			<Card
-				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
-			>
+			<Card className={ clsx( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
-					{ this.renderEmptyState() }
+					<StatsEmptyState />
 				</ElementChart>
 				<StatsTabs>
 					<StatsTab { ...tabOptions } />

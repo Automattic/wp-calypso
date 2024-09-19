@@ -1,9 +1,8 @@
-import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { Button, Gridicon, SelectDropdown } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
@@ -127,7 +126,7 @@ export default function DashboardBulkActions( {
 		<>
 			<div
 				ref={ actionBarRef }
-				className={ classNames( 'dashboard-bulk-actions', {
+				className={ clsx( 'dashboard-bulk-actions', {
 					'dashboard-bulk-actions__is-action-bar-visible': actionBarVisible,
 				} ) }
 			>

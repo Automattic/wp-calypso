@@ -1,13 +1,9 @@
-import { Gridicon } from '@automattic/components';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
+import clsx from 'clsx';
 import type { MouseEventHandler, PropsWithChildren } from 'react';
 
-const Wrapper = styled.div< { showToSFoldableCard: boolean } >`
-	padding-left: ${ ( { showToSFoldableCard } ) =>
-		hasCheckoutVersion( '2' ) || showToSFoldableCard ? '0px' : '24px' };
+const Wrapper = styled.div`
+	padding-left: 0px;
 	position: relative;
 	font-size: 12px;
 
@@ -40,17 +36,8 @@ const CheckoutTermsItem = ( {
 	onClick?: MouseEventHandler< HTMLDivElement >;
 	isPrewrappedChildren?: boolean;
 } > ) => {
-	const showToSFoldableCard = useToSFoldableCard();
-
 	return (
-		<Wrapper
-			className={ classNames( 'checkout__terms-item', className ) }
-			onClick={ onClick }
-			showToSFoldableCard={ showToSFoldableCard }
-		>
-			{ hasCheckoutVersion( '2' ) || showToSFoldableCard ? null : (
-				<Gridicon icon="info-outline" size={ 18 } />
-			) }
+		<Wrapper className={ clsx( 'checkout__terms-item', className ) } onClick={ onClick }>
 			{ isPrewrappedChildren ? children : <p>{ children }</p> }
 		</Wrapper>
 	);

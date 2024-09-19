@@ -49,6 +49,7 @@ export interface GlobalStylesObject {
 			};
 		};
 		typography?: Typography;
+		blocks?: Record< string, { variations?: object } >;
 	};
 }
 

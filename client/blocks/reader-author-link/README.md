@@ -8,8 +8,8 @@ This component does not dictate the content of the link, only the href and click
 
 The `ReaderAuthorLink` component can be used in much the same way that you would use an `<ExternalLink>` component. The link wraps whatever is placed between the ReaderAuthorLink elements.
 
-```html
-<ReaderAuthorLink author="{" author } siteUrl="{" siteUrl }>Your link text here</ReaderAuthorLink>
+```jsx
+<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>Your link text here</ReaderAuthorLink>
 ```
 
 ## Props

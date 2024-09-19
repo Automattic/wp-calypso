@@ -28,7 +28,9 @@ describe( 'ToggleActivateMonitoring', () => {
 		isLargeScreen: false,
 	};
 
-	const initialState = {};
+	const initialState = {
+		a8cForAgencies: { agencies: {} },
+	};
 
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
@@ -115,7 +117,7 @@ describe( 'ToggleActivateMonitoring', () => {
 			userEvent.hover( button );
 		} );
 		waitFor( () => {
-			expect( screen.getByText( 'Maximise uptime' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Maximize uptime' ) ).toBeInTheDocument();
 		} );
 	} );
 

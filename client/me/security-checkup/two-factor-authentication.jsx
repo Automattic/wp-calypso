@@ -28,7 +28,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		} = this.props;
 
 		if ( ! areUserSettingsLoaded ) {
-			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
+			return <SecurityCheckupNavigationItem isPlaceholder />;
 		}
 
 		let icon;

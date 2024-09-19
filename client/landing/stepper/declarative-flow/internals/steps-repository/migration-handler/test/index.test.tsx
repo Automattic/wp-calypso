@@ -123,8 +123,7 @@ describe( 'MigrationHandlerStep', () => {
 
 		await waitFor( () => {
 			expect( jest.spyOn( navigation, 'submit' ) ).not.toHaveBeenCalled();
-			expect( screen.getByText( 'You are not authorized to import content' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Please check with your site admin.' ) ).toBeInTheDocument();
+			expect( screen.getByText( "We couldn't start the migration" ) ).toBeInTheDocument();
 		} );
 	} );
 } );

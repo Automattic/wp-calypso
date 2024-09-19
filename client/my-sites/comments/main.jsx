@@ -41,9 +41,12 @@ export class CommentsManagement extends Component {
 
 	state = {
 		order: NEWEST_FIRST,
+		filterUnreplied: false,
 	};
 
 	setOrder = ( order ) => () => this.setState( { order } );
+
+	setFilterUnreplied = ( filterUnreplied ) => () => this.setState( { filterUnreplied } );
 
 	render() {
 		const {
@@ -61,7 +64,7 @@ export class CommentsManagement extends Component {
 			translate,
 			hideModerationTips,
 		} = this.props;
-		const { order } = this.state;
+		const { filterUnreplied, order } = this.state;
 
 		return (
 			<Main className="comments" wideLayout>
@@ -102,9 +105,11 @@ export class CommentsManagement extends Component {
 						<CommentList
 							key={ `${ siteId }-${ status }` }
 							changePage={ changePage }
+							filterUnreplied={ filterUnreplied }
 							order={ order }
 							page={ page }
 							postId={ postId }
+							setFilterUnreplied={ this.setFilterUnreplied }
 							setOrder={ this.setOrder }
 							siteId={ siteId }
 							siteFragment={ siteFragment }

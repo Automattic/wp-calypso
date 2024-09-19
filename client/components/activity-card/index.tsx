@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import * as React from 'react';
@@ -87,7 +87,7 @@ const ActivityCard: React.FC< OwnProps > = ( {
 
 	return (
 		<div
-			className={ classnames( className, 'activity-card', {
+			className={ clsx( className, 'activity-card', {
 				'with-error': 'error' === activity.activityStatus,
 				'with-warning': 'warning' === activity.activityStatus,
 			} ) }

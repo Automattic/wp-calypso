@@ -58,7 +58,7 @@ const useSiteSubscriptionsQuery = ( {
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
 		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >( {
 			queryKey: cacheKey,
-			queryFn: async ( { pageParam = 1 } ) => {
+			queryFn: async ( { pageParam } ) => {
 				const data = await callApi< SubscriptionManagerSiteSubscriptions >( {
 					path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
 					isLoggedIn,
@@ -77,6 +77,7 @@ const useSiteSubscriptionsQuery = ( {
 				};
 			},
 			enabled,
+			initialPageParam: 1,
 			getNextPageParam: ( lastPage, pages ) => {
 				return lastPage.page * number < lastPage.total_subscriptions ? pages.length + 1 : undefined;
 			},
@@ -119,8 +120,8 @@ const useSiteSubscriptionsQuery = ( {
 			}
 
 			return (
-				item.name.toLowerCase().includes( searchTermLowerCase ) ||
-				item.URL.toLowerCase().includes( searchTermLowerCase )
+				item?.name?.toLowerCase?.().includes( searchTermLowerCase ) ||
+				item?.URL?.toLowerCase?.().includes( searchTermLowerCase )
 			);
 		};
 		const sort = getSortFunction( sortTerm );

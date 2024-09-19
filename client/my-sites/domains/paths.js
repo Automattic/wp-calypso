@@ -370,7 +370,19 @@ export function domainUseYourDomain( siteName, domain ) {
 	return path;
 }
 
-export function domainUseMyDomain( siteName, domain, initialMode ) {
+/**
+ * @typedef {Object} QueryArgs - query args for the domainUseMyDomain function.
+ * @property {string} [domain] - the domain name to search.
+ * @property {string} [initialMode] - useMyDomainInputMode.
+ * @property {string} [redirectTo] - the page to redirect on pressing back.
+ */
+
+/**
+ * @param {string} siteName - The slug for the site.
+ * @param {QueryArgs} [options] - The query args for the function.
+ * @returns {string} The resulting URL for the use my domain page.
+ */
+export function domainUseMyDomain( siteName, { domain, initialMode, redirectTo } = {} ) {
 	const path = `/domains/add/use-my-domain/${ siteName }`;
 	const queryArgs = [];
 	if ( domain ) {
@@ -379,6 +391,9 @@ export function domainUseMyDomain( siteName, domain, initialMode ) {
 		if ( initialMode ) {
 			queryArgs.push( `initialMode=${ initialMode }` );
 		}
+	}
+	if ( redirectTo ) {
+		queryArgs.push( `redirect_to=${ redirectTo }` );
 	}
 
 	return path + ( queryArgs.length ? `?${ queryArgs.join( '&' ) }` : '' );

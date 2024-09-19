@@ -36,16 +36,16 @@ describe( 'Logged Out Landing Page', () => {
 } );
 
 describe( 'Logged In Landing Page', () => {
-	test( 'user with no sites goes to reader', async () => {
+	test( 'user with no sites goes to Sites Dashboard', async () => {
 		const state = { currentUser: { id: 1 }, sites: { items: {} } };
 		const { page } = initRouter( { state } );
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/read' ) );
+		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
-	test( 'user with a primary site but no permissions goes to stats', async () => {
+	test( 'user with a primary site but no permissions goes to day stats', async () => {
 		const state = {
 			currentUser: { id: 1, capabilities: { 1: {} }, user: { primary_blog: 1 } },
 			sites: {
@@ -61,7 +61,7 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/stats/test.wordpress.com' ) );
+		await waitFor( () => expect( page.current ).toBe( '/stats/day/test.wordpress.com' ) );
 	} );
 
 	test( 'user with a primary site and edit permissions goes to My Home', async () => {
@@ -83,7 +83,7 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/home/test.wordpress.com' ) );
 	} );
 
-	test( 'user with a Jetpack site set as their primary site goes to stats', async () => {
+	test( 'user with a Jetpack site set as their primary site goes to day stats', async () => {
 		const state = {
 			currentUser: { id: 1, capabilities: { 1: { edit_posts: true } }, user: { primary_blog: 1 } },
 			sites: {
@@ -100,7 +100,7 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/stats/test.jurassic.ninja' ) );
+		await waitFor( () => expect( page.current ).toBe( '/stats/day/test.jurassic.ninja' ) );
 	} );
 
 	test( 'user who opts in goes to sites page', async () => {

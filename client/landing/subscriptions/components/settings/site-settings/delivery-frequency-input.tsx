@@ -1,8 +1,8 @@
+import { SegmentedControl } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 type DeliveryFrequencyOptionProps = {
 	children: React.ReactNode;
@@ -60,7 +60,7 @@ const DeliveryFrequencyInput = ( {
 
 	return (
 		<div
-			className={ classNames( 'setting-item', 'delivery-frequency-input', {
+			className={ clsx( 'setting-item', 'delivery-frequency-input', {
 				'is-logged-in': isLoggedIn,
 			} ) }
 		>
@@ -68,7 +68,7 @@ const DeliveryFrequencyInput = ( {
 				<p className="setting-item__label">{ translate( 'Email me new posts' ) }</p>
 			) }
 			<SegmentedControl
-				className={ classNames( 'delivery-frequency-input__control', {
+				className={ clsx( 'delivery-frequency-input__control', {
 					'is-loading': isUpdating,
 				} ) }
 			>

@@ -1,7 +1,5 @@
-import {
-	type IsEligibleForOneClickCheckoutReturnValue,
-	useIsEligibleForOneClickCheckout,
-} from './use-is-eligible-for-one-click-checkout';
+import IsEligibleForOneClickCheckoutWrapper from './is-eligible-for-one-click-checkout-wrapper';
+import type { IsEligibleForOneClickCheckoutReturnValue } from './use-is-eligible-for-one-click-checkout';
 import type { ComponentType } from 'react';
 
 export interface WithIsEligibleForOneClickCheckoutProps {
@@ -9,15 +7,9 @@ export interface WithIsEligibleForOneClickCheckoutProps {
 }
 
 export function withIsEligibleForOneClickCheckout< P >( Component: ComponentType< P > ) {
-	return function IsEligibleForOneClickCheckoutWrapper(
-		props: Omit< P, keyof WithIsEligibleForOneClickCheckoutProps >
-	) {
-		const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
+	return function ( props: Omit< P, keyof WithIsEligibleForOneClickCheckoutProps > ) {
 		return (
-			<Component
-				{ ...( props as P ) }
-				isEligibleForOneClickCheckout={ isEligibleForOneClickCheckout }
-			/>
+			<IsEligibleForOneClickCheckoutWrapper component={ Component } componentProps={ props } />
 		);
 	};
 }

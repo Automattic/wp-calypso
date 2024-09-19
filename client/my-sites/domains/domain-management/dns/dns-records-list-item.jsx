@@ -1,6 +1,6 @@
 import './style.scss';
 import { Icon, moreVertical } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
@@ -33,7 +33,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 
 	return (
 		<div
-			className={ classNames(
+			className={ clsx(
 				'dns-records-list-item__wrapper',
 				{ 'is-disabled': disabled },
 				{ 'is-header': isHeader }

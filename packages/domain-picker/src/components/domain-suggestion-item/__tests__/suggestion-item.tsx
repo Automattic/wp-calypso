@@ -82,7 +82,7 @@ describe( 'conditional elements', () => {
 
 	/* eslint-disable jest/no-disabled-tests */
 	it.skip( 'renders info tooltip for domains that require HSTS', async () => {
-		render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } hstsRequired={ true } /> );
+		render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } hstsRequired /> );
 
 		expect( screen.getByTestId( 'info-tooltip' ) ).toBeInTheDocument();
 	} );
@@ -99,7 +99,7 @@ describe( 'conditional elements', () => {
 				{ ...testRequiredProps }
 				onSelect={ jest.fn() }
 				onRender={ jest.fn() }
-				hstsRequired={ true }
+				hstsRequired
 			/>
 		);
 
@@ -124,9 +124,7 @@ describe( 'conditional elements', () => {
 	} );
 
 	it.skip( 'renders info tooltip for domains that require .gay information notice', async () => {
-		render(
-			<SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } isDotGayNoticeRequired={ true } />
-		);
+		render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } isDotGayNoticeRequired /> );
 
 		expect( screen.getByTestId( 'info-tooltip' ) ).toBeInTheDocument();
 	} );

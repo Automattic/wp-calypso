@@ -32,10 +32,10 @@ const BlogIntent: Step = function BlogIntent() {
 			<DocumentHead title={ translate( 'Create your blog' ) } />
 			<StepContainer
 				stepName="intent"
-				hideBack={ true }
-				hideSkip={ true }
-				hideNext={ true }
-				showJetpackPowered={ true }
+				hideBack
+				hideSkip
+				hideNext
+				showJetpackPowered
 				stepContent={
 					<div className="blogger-intent__container">
 						<h2 className="blogger-intent__heading">

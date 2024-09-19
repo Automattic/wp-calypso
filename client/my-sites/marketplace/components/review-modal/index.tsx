@@ -1,12 +1,12 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button, Card, Spinner } from '@automattic/components';
 import { TextareaControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	ProductType,
-	ErrorResponse,
 	useCreateMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 
@@ -26,12 +26,37 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 
 	const createReview = useCreateMarketplaceReviewMutation( { productType, slug } );
 
+	const handleSubmit = ( e: FormEvent ) => {
+		e.preventDefault();
+		createReview.mutate( {
+			productType,
+			slug: slug,
+			content: content,
+			rating: Number( rating ),
+		} );
+
+		recordTracksEvent( 'calypso_marketplace_reviews_add_submit', {
+			product_type: productType,
+			slug: slug,
+			rating: Number( rating ),
+		} );
+	};
+
+	const handleClose = () => {
+		recordTracksEvent( 'calypso_marketplace_reviews_add_dismiss', {
+			is_success: createReview.isSuccess,
+			is_error: createReview.isError,
+		} );
+
+		onClose();
+	};
+
 	if ( createReview.isSuccess ) {
 		return (
 			<Dialog
 				className="marketplace-review-modal"
 				isVisible={ isVisible }
-				onClose={ onClose }
+				onClose={ handleClose }
 				showCloseIcon
 			>
 				<Card className="marketplace-review-modal__card-success">
@@ -52,25 +77,14 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 		<Dialog
 			className="marketplace-review-modal"
 			isVisible={ isVisible }
-			onClose={ onClose }
+			onClose={ handleClose }
 			showCloseIcon
 		>
 			<Card className="marketplace-review-modal__card">
 				<CardHeading tagName="h1" size={ 21 }>
 					{ translate( 'Add New Review for %(productName)s', { args: { productName } } ) }
 				</CardHeading>
-				<form
-					onSubmit={ ( e ) => {
-						e.preventDefault();
-						const requestData = {
-							productType: productType,
-							slug: slug,
-							content: content,
-							rating: Number( rating ),
-						};
-						createReview.mutate( requestData );
-					} }
-				>
+				<form onSubmit={ handleSubmit }>
 					<TextareaControl
 						rows={ 12 }
 						cols={ 40 }
@@ -85,18 +99,16 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 							className="marketplace-review-modal__button-submit"
 							primary
 							type="submit"
-							disabled={ createReview.isLoading }
+							disabled={ createReview.isPending }
 						>
-							{ createReview.isLoading && <Spinner className="card__icon" /> }
+							{ createReview.isPending && <Spinner className="card__icon" /> }
 							<span>{ translate( 'Submit' ) }</span>
 						</Button>
-						<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
+						<Button onClick={ handleClose }>{ translate( 'Cancel' ) }</Button>
 					</div>
 				</form>
 				{ createReview.isError && (
-					<span className="marketplace-review-modal__error">
-						{ ( createReview.error as ErrorResponse ).message }
-					</span>
+					<span className="marketplace-review-modal__error">{ createReview.error.message }</span>
 				) }
 			</Card>
 		</Dialog>

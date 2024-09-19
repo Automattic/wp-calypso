@@ -19,7 +19,7 @@ describe( 'assembler', () => {
 			selectedPageTitles: [ 'test1', 'test2' ],
 		};
 		const siteSlug = 'testsiteslug';
-		expect( buildDIFMCartExtrasObject( dependencies, siteSlug ) ).toEqual( {
+		expect( buildDIFMCartExtrasObject( dependencies, siteSlug, 'test-context' ) ).toEqual( {
 			twitter_url: 'test twitterUrl',
 			facebook_url: 'test facebookUrl',
 			linkedin_url: 'test linkedinUrl',

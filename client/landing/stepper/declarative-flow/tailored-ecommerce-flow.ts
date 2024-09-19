@@ -3,12 +3,11 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
@@ -18,16 +17,8 @@ import {
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import CheckPlan from './internals/steps-repository/check-plan';
-import DesignCarousel from './internals/steps-repository/design-carousel';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreProfiler from './internals/steps-repository/store-profiler';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
+import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
+import { STEPS } from './internals/steps';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type {
@@ -48,32 +39,47 @@ function getPlanFromRecurType( recurType: string ) {
 		case ecommerceFlowRecurTypes[ '3Y' ]:
 			return PLAN_ECOMMERCE_3_YEARS;
 		default:
-			return PLAN_ECOMMERCE_MONTHLY;
+			return PLAN_ECOMMERCE;
 	}
 }
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
-	useSteps() {
-		const recurType = useSelect(
+	isSignupFlow: true,
+	useSignupStartEventProps() {
+		const recur = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
 			[]
 		);
 
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
-		}, [] );
-
-		return [
-			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'designCarousel', component: DesignCarousel },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'checkPlan', component: CheckPlan },
+		return { recur };
+	},
+	useSteps() {
+		const steps = [
+			{
+				slug: 'storeProfiler',
+				asyncComponent: () => import( './internals/steps-repository/store-profiler' ),
+			},
+			STEPS.DOMAINS,
+			{
+				slug: 'designCarousel',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
+			{
+				// Note: the slug for STEPS.SITE_CREATION_STEP is 'create-site'
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
+			},
+			STEPS.PROCESSING,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.WAIT_FOR_ATOMIC,
+			{
+				slug: 'checkPlan',
+				asyncComponent: () => import( './internals/steps-repository/check-plan' ),
+			},
 		];
+
+		return stepsWithRequiredLogin( steps );
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -83,67 +89,10 @@ const ecommerceFlow: Flow = {
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
-		const flowName = this.name;
-
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const { recurType } = useSelect(
-			( select ) => ( {
-				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
-			} ),
-			[]
-		);
-
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-
-			if ( recurType !== ecommerceFlowRecurTypes.YEARLY ) {
-				flowParams.set( 'recur', recurType );
-				hasFlowParams = true;
-			}
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/ecommerce/storeProfiler` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				redirectTo: redirectTarget,
-				locale,
-			} );
-
-			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
-		};
-
-		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/blog/blogger-intent route which has no locale in the path so we need to
-		// redirect off of the first render.
-		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
-		// The double call also hapens on urls without locale.
-		useEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
-				window.location.assign( logInUrl );
-			}
-		}, [] );
-
 		if ( ! userIsLoggedIn ) {
 			result = {
 				state: AssertConditionState.FAILURE,
-				message: 'store-setup requires a logged in user',
+				message: 'ecommerce requires a logged in user',
 			};
 		}
 
@@ -152,14 +101,28 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setPlanCartItem, setPluginsToVerify, resetCouponCode } = useDispatch( ONBOARD_STORE );
+		const {
+			setPlanCartItem,
+			setProductCartItems,
+			setPluginsToVerify,
+			resetCouponCode,
+			resetStorageAddonSlug,
+		} = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const { selectedDesign, recurType, couponCode } = useSelect(
-			( select ) => ( {
-				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
-				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
-			} ),
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
+		);
+		const couponCode = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+			[]
+		);
+		const storageAddonSlug = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			[]
 		);
 		const selectedPlan = getPlanFromRecurType( recurType );
@@ -169,7 +132,6 @@ const ecommerceFlow: Flow = {
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepName );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 
@@ -184,9 +146,21 @@ const ecommerceFlow: Flow = {
 						product_slug: selectedPlan,
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
-					return navigate( 'siteCreationStep' );
 
-				case 'siteCreationStep':
+					if ( storageAddonSlug && recurType !== ecommerceFlowRecurTypes.MONTHLY ) {
+						setProductCartItems( [
+							{
+								product_slug: PRODUCT_1GB_SPACE,
+								quantity: getQuantityFromStorageType( storageAddonSlug ),
+								volume: 1,
+								extra: { feature_slug: storageAddonSlug },
+							},
+						] );
+						resetStorageAddonSlug();
+					}
+					return navigate( 'createSite' );
+
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

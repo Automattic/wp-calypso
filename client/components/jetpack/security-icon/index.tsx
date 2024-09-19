@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import errorIcon from './images/error.svg';
 import inProgressIcon from './images/in-progress.svg';
 import placeholderIcon from './images/placeholder.svg';
@@ -40,7 +40,7 @@ function SecurityIcon( props: Props ) {
 	return (
 		<img
 			src={ iconPath }
-			className={ classnames( 'security-icon', `security-icon__${ icon }`, className ) }
+			className={ clsx( 'security-icon', `security-icon__${ icon }`, className ) }
 			role="presentation"
 			alt=""
 		/>

@@ -8,6 +8,7 @@ interface Props {
 	campaigns: Campaign[];
 	isLoading: boolean;
 	isFetchingPageResults: boolean;
+	isWooStore: boolean;
 }
 
 export const SingleItemLoading = ( { totalRows = 8 }: { totalRows?: number } ) => {
@@ -41,53 +42,62 @@ export const ItemsLoading = ( { totalRows = 8 }: { totalRows?: number } ) => {
 };
 
 export default function CampaignsTable( props: Props ) {
-	const { campaigns, isLoading, isFetchingPageResults } = props;
+	const { campaigns, isLoading, isFetchingPageResults, isWooStore } = props;
 
 	type CampaignColumn = {
 		key: string;
 		title: string;
 	};
-	const columns: CampaignColumn[] = [
-		{
-			key: 'data',
-			title: translate( 'Campaign' ),
-		},
-		{
-			key: 'user',
-			title: translate( 'User' ),
-		},
-		{
-			key: 'status',
-			title: translate( 'Status' ),
-		},
-		{
-			key: 'ends',
-			title: translate( 'Ends' ),
-		},
-		{
-			key: 'budget',
-			title: translate( 'Budget' ),
-		},
-		{
-			key: 'impressions',
-			title: translate( 'Impressions' ),
-		},
-		{
-			key: 'clicks',
-			title: translate( 'Clicks' ),
-		},
-		{
+
+	const getHeaderColumns = (): CampaignColumn[] => {
+		const columns: CampaignColumn[] = [
+			{
+				key: 'data',
+				title: translate( 'Campaign' ),
+			},
+			{
+				key: 'status',
+				title: translate( 'Status' ),
+			},
+			{
+				key: 'ends',
+				title: translate( 'Ends' ),
+			},
+			{
+				key: 'budget',
+				title: translate( 'Budget' ),
+			},
+			{
+				key: 'impressions',
+				title: translate( 'Impressions' ),
+			},
+			{
+				key: 'clicks',
+				title: translate( 'Clicks' ),
+			},
+		];
+
+		if ( isWooStore ) {
+			columns.push( {
+				key: 'conversion',
+				title: translate( 'Conversion rate' ),
+			} );
+		}
+
+		columns.push( {
 			key: 'action',
 			title: '',
-		},
-	];
+		} );
+
+		return columns;
+	};
 
 	return (
 		<div>
 			<table className="promote-post-i2__table campaigns-list__table">
 				<thead>
 					<tr>
-						{ columns.map( ( item, key ) => (
+						{ getHeaderColumns().map( ( item, key ) => (
 							<th className={ `campaign-item__${ item.key }` } key={ key }>
 								{ item.title }
 							</th>

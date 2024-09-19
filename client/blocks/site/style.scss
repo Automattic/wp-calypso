@@ -80,6 +80,25 @@
 			margin-top: 0;
 		}
 	}
+
+	&.inline-badges .site__domain-and-badges {
+		display: flex;
+		align-items: flex-start;
+
+		.site__badge {
+			margin: -2px 0 0 3px;
+			padding: 0;
+			background: inherit;
+			color: var(--studio-blue-40);
+			text-wrap: nowrap;
+
+			&::before {
+				content: "•";
+				color: var(--studio-white);
+				padding-right: 3px;
+			}
+		}
+	}
 }
 
 // Wraps the anchor element
@@ -122,6 +141,7 @@
 	width: 0; // Firefox needs explicit width (even 0)
 	flex: 1 0 auto;
 	text-align: initial;
+	margin-top: -2px;
 }
 
 .site__title {
@@ -138,7 +158,7 @@
 	max-width: 95%;
 	font-size: $font-body-extra-small;
 	line-height: 1.4;
-	margin-top: 2px;
+	margin-top: -1px;
 }
 
 .site__title-with-chevron-icon {
@@ -160,6 +180,7 @@
 .site__domain {
 	overflow: hidden;
 	white-space: nowrap;
+	text-overflow: ellipsis;
 
 	&::after {
 		@include long-content-fade( $color: var( --color-surface-rgb ) );

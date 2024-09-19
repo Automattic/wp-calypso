@@ -1,18 +1,15 @@
-import { domainProductSlugs, getPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { PlanButton } from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { DialogContainer, Heading } from './components';
+import PlanUpsellButton from './components/plan-upsell-button';
+import { usePlanUpsellInfo } from './hooks/use-plan-upsell-info';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -33,8 +30,15 @@ const ButtonRow = styled.div`
 	justify-content: flex-start;
 	margin: 16px 0;
 	flex-direction: column;
+	gap: 12px;
+
 	@media ( min-width: 780px ) {
 		flex-direction: row;
+		justify-content: space-between;
+
+		button {
+			max-width: 282px;
+		}
 	}
 `;
 
@@ -42,23 +46,27 @@ type TextBoxProps = {
 	fontSize?: number;
 	bold?: boolean;
 	color?: 'gray';
-	noBottomGap?: boolean;
+	marginTop?: number;
+	marginBottom?: number;
 };
-const TextBox = styled.div< TextBoxProps >`
+const TextBox = styled.p< TextBoxProps >`
 	font-size: ${ ( { fontSize } ) => fontSize || 14 }px;
 	font-weight: ${ ( { bold } ) => ( bold ? 600 : 400 ) };
-	line-height: 20px;
+	line-height: 1.5;
 	color: ${ ( { color } ) => {
 		if ( color === 'gray' ) {
 			return 'var(--studio-gray-50)';
 		}
 		return 'var(--color-text)';
 	} };
-	margin-bottom: ${ ( { noBottomGap } ) => ( noBottomGap ? 0 : '8px' ) };
+	margin-top: ${ ( { marginTop } ) => ( marginTop ? `${ marginTop }px` : 'inherit' ) };
+	margin-bottom: ${ ( { marginBottom } ) => ( marginBottom ? `${ marginBottom }px` : 'inherit' ) };
+	padding-bottom: 3px;
 `;
 
 const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
+	padding-top: 1px; // a brute-force way of aligning the icon and the sentence.
 `;
 
 function LazyDisplayText( {
@@ -85,33 +93,12 @@ export function FreePlanFreeDomainDialog( {
 	generatedWPComSubdomain,
 	onFreePlanSelected,
 	onPlanSelected,
-	suggestedPlanSlug,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const domainRegistrationProduct = useSelector( ( state ) =>
-		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
-	);
-	const domainProductCost = domainRegistrationProduct?.cost;
-	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
-	const planPriceMonthly = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug: suggestedPlanSlug,
-			siteId,
-			returnMonthly: true,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
-	const planPriceFull = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug: suggestedPlanSlug,
-			siteId,
-			returnMonthly: false,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
+	const hasEnTranslation = useHasEnTranslation();
+	const basicPlanUpsellInfo = usePlanUpsellInfo( { planSlug: PLAN_PERSONAL } );
+	const advancePlanUpsellInfo = usePlanUpsellInfo( { planSlug: PLAN_PREMIUM } );
+	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -119,151 +106,124 @@ export function FreePlanFreeDomainDialog( {
 		} );
 	}, [] );
 
+	const featureUpsells = [
+		translate(
+			'No free custom domain: Your site will be shown to visitors as {{subdomain}}{{/subdomain}}',
+			{
+				components: {
+					subdomain: (
+						<LazyDisplayText
+							displayText={ generatedWPComSubdomain?.result?.domain_name }
+							isLoading={ generatedWPComSubdomain?.isLoading }
+						/>
+					),
+				},
+			}
+		),
+		translate( 'No ad-free experience: Your visitors will see external ads on your site.' ),
+		translate( 'No unlimited professional customer support (only community forums)' ),
+		translate( 'No extra storage. You only get 1GB for photos, videos, media, and documents.' ),
+		translate( 'Monetize your site through paid subscribers' ),
+	];
+
 	return (
 		<DialogContainer>
 			<QueryProductsList />
 			<Heading id="plan-upsell-modal-title">{ translate( "Don't miss out" ) }</Heading>
-			<TextBox id="plan-upsell-modal-description">
-				{ translate( "With a Free plan, you'll miss out on a lot of great features:" ) }
+			<TextBox id="plan-upsell-modal-description" marginTop={ 8 }>
+				{ translate( 'With a Free plan, you miss out on a lot of great features:' ) }
 			</TextBox>
 			<List>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox>
-						{ translate(
-							'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}{{subdomain}}{{/subdomain}}{{/strong}}',
-							{
-								components: {
-									strong: <strong></strong>,
-									subdomain: (
-										<LazyDisplayText
-											displayText={ generatedWPComSubdomain?.result?.domain_name }
-											isLoading={ generatedWPComSubdomain?.isLoading }
-										/>
-									),
-								},
-							}
-						) }
-					</TextBox>
-				</ListItem>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox>
-						{ translate(
-							'{{strong}}No ad-free experience:{{/strong}} Your visitors will see external ads on your site.',
-							{
-								components: { strong: <strong></strong> },
-							}
-						) }
-					</TextBox>
-				</ListItem>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox>
-						{ translate(
-							'{{strong}}No unlimited professional customer support{{/strong}} (only community forums)',
-							{
-								components: { strong: <strong></strong> },
-							}
-						) }
-					</TextBox>
-				</ListItem>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox noBottomGap>
-						{ translate(
-							'{{strong}}No extra storage:{{/strong}} You only get 1GB for photos, videos, media, and documents.',
-							{
-								components: { strong: <strong></strong> },
-							}
-						) }
-					</TextBox>
-				</ListItem>
+				{ featureUpsells.map( ( upsellItem ) => (
+					<ListItem>
+						<div>
+							<CrossIcon icon="cross" size={ 20 } />
+						</div>
+						<TextBox bold>{ upsellItem }</TextBox>
+					</ListItem>
+				) ) }
 			</List>
-			<TextBox>
-				{ planTitle &&
-					translate(
-						'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan, starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
-						{
-							args: {
-								planTitle,
-								planPrice: formatCurrency( planPriceMonthly, currencyCode, {
-									stripZeros: true,
-								} ),
-							},
-							components: { break: <br />, strong: <strong></strong> },
-						}
-					) }
+			<TextBox marginBottom={ 20 }>
+				{ translate(
+					'Unlock all of these features with a %(planTitle)s plan, starting at just %(planPrice)s/month.',
+					{
+						args: {
+							planTitle: basicPlanUpsellInfo.title,
+							planPrice: basicPlanUpsellInfo.formattedPriceMonthly,
+						},
+					}
+				) }
 			</TextBox>
 			<TextBox>
-				{ domainProductCost &&
-					translate(
-						'As a bonus, you will get a custom domain - like {{strong}}{{italic}}yourgroovydomain.com{{/italic}}{{/strong}} - {{break}}{{/break}} free for the first year (%(domainPrice)s value).',
-						{
-							args: {
-								domainPrice: formatCurrency( domainProductCost, currencyCode, {
-									stripZeros: true,
-								} ),
-							},
-							components: {
-								strong: <strong></strong>,
-								italic: <i></i>,
-								break: <br />,
-							},
-						}
-					) }
+				{ hasEnTranslation(
+					'{{strong}}Need premium themes, fast support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.'
+				)
+					? translate(
+							'{{strong}}Need premium themes, fast support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
+							{
+								args: {
+									planTitle: advancePlanUpsellInfo.title,
+									planPrice: advancePlanUpsellInfo.formattedPriceMonthly,
+								},
+								components: {
+									strong: <strong></strong>,
+									break: <br />,
+								},
+							}
+					  )
+					: translate(
+							'{{strong}}Need premium themes, live chat support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
+							{
+								args: {
+									planTitle: advancePlanUpsellInfo.title,
+									planPrice: advancePlanUpsellInfo.formattedPriceMonthly,
+								},
+								components: {
+									strong: <strong></strong>,
+									break: <br />,
+								},
+							}
+					  ) }
 			</TextBox>
 
 			<ButtonRow>
-				<PlanButton
-					planSlug={ suggestedPlanSlug }
-					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
-					onClick={ () => {
-						onPlanSelected();
-					} }
-				>
-					{ planTitle &&
-						translate( 'Get the %(planTitle)s plan', {
-							args: {
-								planTitle,
-							},
-						} ) }
-				</PlanButton>
-
-				<PlanButton
-					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
-					onClick={ () => {
-						onFreePlanSelected();
-					} }
-					borderless
-				>
-					{ translate( 'Continue with Free' ) }
-				</PlanButton>
+				<PlanUpsellButton
+					planSlug={ PLAN_PERSONAL }
+					disabled={ buttonDisabled }
+					onPlanSelected={ onPlanSelected }
+				/>
+				<PlanUpsellButton
+					planSlug={ PLAN_PREMIUM }
+					disabled={ buttonDisabled }
+					onPlanSelected={ onPlanSelected }
+				/>
 			</ButtonRow>
-			<TextBox fontSize={ 12 } color="gray" noBottomGap>
-				{ planTitle &&
+			<PlanButton
+				disabled={ buttonDisabled }
+				onClick={ () => {
+					onFreePlanSelected();
+				} }
+				borderless
+			>
+				{ translate( 'Continue with Free' ) }
+			</PlanButton>
+			<TextBox fontSize={ 12 } color="gray">
+				{
+					/* translators: /mo is the abbreviation form of "per month" */
 					translate(
-						'%(planTitle)s plan: %(monthlyPlanPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
+						'%(planTitle1)s plan: %(monthlyPlanPrice1)s/mo, %(annualPlanPrice1)s billed annually. %(planTitle2)s plan: %(monthlyPlanPrice2)s/mo, %(annualPlanPrice2)s billed annually. Excluding taxes.',
 						{
 							args: {
-								planTitle,
-								monthlyPlanPrice: formatCurrency( planPriceMonthly, currencyCode, {
-									stripZeros: true,
-								} ),
-								annualPlanPrice: formatCurrency( planPriceFull, currencyCode, {
-									stripZeros: true,
-								} ),
+								planTitle1: basicPlanUpsellInfo.title,
+								monthlyPlanPrice1: basicPlanUpsellInfo.formattedPriceMonthly,
+								annualPlanPrice1: basicPlanUpsellInfo.formattedPriceFull,
+								planTitle2: advancePlanUpsellInfo.title,
+								monthlyPlanPrice2: advancePlanUpsellInfo.formattedPriceMonthly,
+								annualPlanPrice2: advancePlanUpsellInfo.formattedPriceFull,
 							},
 						}
-					) }
+					)
+				}
 			</TextBox>
 		</DialogContainer>
 	);

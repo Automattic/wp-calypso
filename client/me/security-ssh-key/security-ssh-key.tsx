@@ -81,7 +81,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const [ showDialog, setShowDialog ] = useState( false );
 	const { __ } = useI18n();
 
-	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
+	const { addSSHKey, isPending: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeySaveFailureNoticeId ) );
 		},
@@ -129,7 +129,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 		},
 	} );
 
-	const { updateSSHKey, isLoading: keyBeingUpdated } = useUpdateSSHKeyMutation( {
+	const { updateSSHKey, isPending: keyBeingUpdated } = useUpdateSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeyUpdateFailureNoticeId ) );
 		},
@@ -222,12 +222,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 				</div>
 
 				{ currentUser?.username && (
-					<Dialog
-						isVisible={ showDialog }
-						onClose={ closeDialog }
-						showCloseIcon={ true }
-						shouldCloseOnEsc={ true }
-					>
+					<Dialog isVisible={ showDialog } onClose={ closeDialog } showCloseIcon shouldCloseOnEsc>
 						<UpdateSSHDialogContainer>
 							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
 							<UpdateSSHModalDescription>

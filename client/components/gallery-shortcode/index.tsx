@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { pick } from 'lodash';
 import { Component } from 'react';
@@ -109,7 +109,7 @@ export default class GalleryShortcode extends Component< Props > {
 		const { siteId, items, type, columns, orderBy, link, size, className, children, ...restProps } =
 			this.props;
 
-		const classes = classNames( 'gallery-shortcode', className );
+		const classes = clsx( 'gallery-shortcode', className );
 
 		return (
 			<Shortcode

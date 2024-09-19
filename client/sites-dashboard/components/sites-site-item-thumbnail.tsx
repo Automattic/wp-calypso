@@ -4,13 +4,14 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
+import { getFirstGrapheme } from 'calypso/lib/string';
 import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',
@@ -35,7 +36,7 @@ export const SiteItemThumbnail = ( {
 	...props
 }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
-	const classes = classNames( props.className, disallowSelection );
+	const classes = clsx( props.className, disallowSelection );
 
 	// Allow parent component to lazy load the entire component.
 	if ( showPlaceholder === true ) {
@@ -131,18 +132,3 @@ export const SiteItemThumbnail = ( {
 		</SiteThumbnail>
 	);
 };
-
-function getFirstGrapheme( input: string ) {
-	if ( 'Segmenter' in Intl ) {
-		const segmenter = new Intl.Segmenter();
-		const [ firstSegmentData ] = segmenter.segment( input );
-
-		return firstSegmentData?.segment ?? '';
-	}
-
-	const codePoint = input.codePointAt( 0 );
-	if ( codePoint ) {
-		return String.fromCodePoint( codePoint );
-	}
-	return '';
-}

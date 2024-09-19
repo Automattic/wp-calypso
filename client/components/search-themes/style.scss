@@ -114,7 +114,7 @@ $search-border-radius: 4px;
 		}
 
 		.keyed-suggestions__value {
-			align-items: center;
+			align-items: flex-start;
 			border: 0;
 			display: flex;
 			font-size: 0;
@@ -147,13 +147,17 @@ $search-border-radius: 4px;
 
 			.keyed-suggestions__value-label {
 				flex: 0 0 auto;
+				width: 33%;
+			}
+
+			.keyed-suggestions__value-icon + .keyed-suggestions__value-label {
+				width: auto;
 			}
 
 			.keyed-suggestions__value-normal,
 			.keyed-suggestions__value-emphasis,
 			.keyed-suggestions__value-description {
 				font-size: $font-body-small;
-				height: 24px;
 				line-height: 24px;
 				margin: 0;
 				padding: 0;
@@ -162,6 +166,10 @@ $search-border-radius: 4px;
 			.keyed-suggestions__value-normal,
 			.keyed-suggestions__value-emphasis {
 				font-weight: 600;
+				height: 24px;
+			}
+			.keyed-suggestions__value-description {
+				height: auto;
 			}
 		}
 	}

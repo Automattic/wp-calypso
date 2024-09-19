@@ -489,7 +489,7 @@ export const normalizers = {
 		if ( ! data ) {
 			return null;
 		}
-		const { total_wpcom, total_email } = data;
+		const { total_wpcom, total_email, total } = data;
 		const subscriberData = get( data, [ 'subscribers' ], [] );
 
 		const subscribers = subscriberData.map( ( item ) => {
@@ -511,7 +511,7 @@ export const normalizers = {
 			};
 		} );
 
-		return { total_wpcom, total_email, subscribers };
+		return { total_wpcom, total_email, total, subscribers };
 	},
 
 	statsCommentFollowers( data ) {
@@ -973,16 +973,5 @@ export const normalizers = {
 				],
 			};
 		} );
-	},
-	/**
-	 * Returns a normalized statsEmailsSummaryByOpens array, ready for use in stats-module
-	 * @param   {Object} data   Stats data
-	 * @param   {Object} query  Stats query
-	 * @param   {number} siteId  Site ID
-	 * @param   {Object} site    Site object
-	 * @returns {Array}       Normalized stats data
-	 */
-	statsEmailsSummaryByOpens: ( data, query, siteId, site ) => {
-		return normalizers.statsEmailsSummary( data, query, siteId, site );
 	},
 };

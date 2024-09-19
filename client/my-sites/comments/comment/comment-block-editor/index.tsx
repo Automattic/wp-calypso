@@ -24,12 +24,16 @@ const CommentBlockEditor = ( {
 
 	useEffect( () => {
 		if ( siteId ) {
-			addApiMiddleware( siteId );
+			addApiMiddleware( ( url ) => ( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/proxy`,
+				query: `url=${ encodeURIComponent( url ) }`,
+				apiNamespace: 'oembed/1.0',
+			} ) );
 		}
 	}, [ siteId ] );
 
 	return (
-		<div className="editor__wrapper">
+		<div className="verbum-editor-wrapper">
 			<Editor initialContent={ commentContent } onChange={ onChange } isRTL={ isRTL } />
 		</div>
 	);

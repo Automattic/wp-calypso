@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
@@ -31,7 +31,7 @@ export default function SiteTopHeaderButtons() {
 
 	return (
 		<div
-			className={ classNames( 'sites-overview__add-site-issue-license-buttons', {
+			className={ clsx( 'sites-overview__add-site-issue-license-buttons', {
 				'is-with-split-button': isWPCOMAtomicSiteCreationEnabled,
 			} ) }
 		>
@@ -68,6 +68,20 @@ export default function SiteTopHeaderButtons() {
 							dispatch(
 								recordTracksEvent(
 									'calypso_jetpack_agency_dashboard_sites_overview_connect_jetpack_site_click'
+								)
+							)
+						}
+						onClickBluehostMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_create_bluehost_site_click'
+								)
+							)
+						}
+						onClickUrlMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_connect_url_site_click'
 								)
 							)
 						}

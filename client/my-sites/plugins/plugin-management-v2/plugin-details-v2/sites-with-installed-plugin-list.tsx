@@ -100,7 +100,9 @@ export default function SitesWithInstalledPluginsList( {
 				{ ...rest }
 				plugin={ plugin }
 				selectedSite={ selectedSite }
-				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
+				items={ sitesWithSecondarySites
+					.map( ( site ) => site.site )
+					.filter( ( site ) => site && ! site.is_deleted ) }
 				columns={ columns }
 				renderActions={ renderActions }
 			/>

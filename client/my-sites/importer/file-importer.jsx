@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -39,6 +39,7 @@ class FileImporter extends PureComponent {
 			icon: PropTypes.string.isRequired,
 			description: PropTypes.node.isRequired,
 			uploadDescription: PropTypes.node,
+			acceptedFileTypes: PropTypes.array,
 		} ).isRequired,
 		importerStatus: PropTypes.shape( {
 			errorData: PropTypes.shape( {
@@ -52,6 +53,8 @@ class FileImporter extends PureComponent {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		fromSite: PropTypes.string,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	handleClick = ( shouldStartImport ) => {
@@ -71,13 +74,20 @@ class FileImporter extends PureComponent {
 	};
 
 	render() {
-		const { title, icon, description, overrideDestination, uploadDescription, optionalUrl } =
-			this.props.importerData;
-		const { importerStatus, site } = this.props;
+		const {
+			title,
+			icon,
+			description,
+			overrideDestination,
+			uploadDescription,
+			optionalUrl,
+			acceptedFileTypes,
+		} = this.props.importerData;
+		const { importerStatus, site, fromSite, hideActionButtons } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
-		const cardClasses = classNames( 'importer__file-importer-card', {
+		const cardClasses = clsx( 'importer__file-importer-card', {
 			'is-compact': showStart,
 			'is-disabled': ! isEnabled,
 		} );
@@ -93,7 +103,9 @@ class FileImporter extends PureComponent {
 			 *
 			 * This is used for the new Migration logic for the moment.
 			 */
-			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
+			cardProps.href = overrideDestination
+				.replace( '%SITE_SLUG%', site.slug )
+				.replace( '%SITE_ID%', site.ID );
 			cardProps.onClick = this.handleClick.bind( this, false );
 		}
 
@@ -126,6 +138,9 @@ class FileImporter extends PureComponent {
 						importerStatus={ importerStatus }
 						site={ site }
 						optionalUrl={ optionalUrl }
+						fromSite={ fromSite }
+						acceptedFileTypes={ acceptedFileTypes }
+						hideActionButtons={ hideActionButtons }
 					/>
 				) }
 			</Card>

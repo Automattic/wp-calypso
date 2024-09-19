@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
@@ -35,7 +35,7 @@ const NewsletterCategoriesSection = ( {
 			</Card>
 
 			<Card
-				className={ classNames(
+				className={ clsx(
 					'newsletter-categories-settings__term-tree-selector',
 					'site-settings__card',
 					{
@@ -46,8 +46,8 @@ const NewsletterCategoriesSection = ( {
 			>
 				<TermTreeSelector
 					taxonomy="category"
-					addTerm={ true }
-					multiple={ true }
+					addTerm
+					multiple
 					selected={ newsletterCategoryIds }
 					onChange={ (
 						category: { ID: number },

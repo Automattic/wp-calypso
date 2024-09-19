@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { difference } from 'lodash';
 import PropTypes from 'prop-types';
@@ -83,7 +83,7 @@ class TokenField extends PureComponent {
 	}
 
 	render() {
-		const classes = classNames( 'token-field', {
+		const classes = clsx( 'token-field', {
 			'is-active': this.state.isActive,
 			'is-disabled': this.props.disabled,
 		} );

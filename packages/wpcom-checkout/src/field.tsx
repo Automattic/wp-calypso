@@ -99,15 +99,18 @@ const Label = styled.label< { disabled?: boolean } >`
 	}
 `;
 
-const Input = styled.input< { isError?: boolean; icon?: ReactNode } >`
+const Input = styled.input< {
+	isError?: boolean;
+	icon?: ReactNode;
+} >`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
-	font-size: 16px;
 	border: 1px solid
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 7px 10px;
 	line-height: 1.5;
+	font-size: 14px;
 
 	.rtl & {
 		padding: 7px 10px 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };

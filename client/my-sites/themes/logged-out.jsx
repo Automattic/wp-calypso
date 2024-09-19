@@ -15,7 +15,7 @@ export default ( props ) => (
 			} }
 			source="showcase"
 			showUploadButton={ false }
-			loggedOutComponent={ true }
+			loggedOutComponent
 		/>
 	</Main>
 );

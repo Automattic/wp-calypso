@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,

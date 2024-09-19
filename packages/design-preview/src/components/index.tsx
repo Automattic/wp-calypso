@@ -1,6 +1,6 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { useViewportMatch } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
@@ -121,7 +121,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 
 	return (
 		<div
-			className={ classnames( 'design-preview', {
+			className={ clsx( 'design-preview', {
 				'design-preview--has-multiple-screens': screens.length > 1,
 				'design-preview--is-fullscreen': isFullscreen,
 			} ) }

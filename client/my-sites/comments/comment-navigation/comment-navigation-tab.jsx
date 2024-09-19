@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export const CommentNavigationTab = ( { children, className } ) => (
-	<div className={ classNames( 'comment-navigation__tab', className ) }>{ children }</div>
+	<div className={ clsx( 'comment-navigation__tab', className ) }>{ children }</div>
 );
 
 export default CommentNavigationTab;

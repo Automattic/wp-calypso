@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { Spinner } from '@wordpress/components';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -22,12 +23,11 @@ import {
 	isEmpty,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
 import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -48,16 +48,22 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
@@ -85,34 +91,43 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		disableBlurValidation: PropTypes.bool,
+		disableContinueAsUser: PropTypes.bool,
+		disabled: PropTypes.bool,
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
-		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
+		handleCreateAccountSuccess: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
+		horizontal: PropTypes.bool,
 		isPasswordless: PropTypes.bool,
-		isSocialSignupEnabled: PropTypes.bool,
 		isSocialFirst: PropTypes.bool,
+		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
+		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		positionInFlow: PropTypes.number,
+		redirectToAfterLoginUrl: PropTypes.string,
 		save: PropTypes.func,
+		shouldDisplayUserExistsError: PropTypes.bool,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
-		submitButtonText: PropTypes.string.isRequired,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
+		submitButtonText: PropTypes.string,
+		submitForm: PropTypes.func,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		horizontal: PropTypes.bool,
-		shouldDisplayUserExistsError: PropTypes.bool,
+		disableTosText: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -165,6 +180,7 @@ class SignupForm extends Component {
 			},
 			form: stateWithFilledUsername,
 			validationInitialized: false,
+			emailErrorMessage: '',
 		};
 	}
 
@@ -233,7 +249,20 @@ class SignupForm extends Component {
 
 			this.props.createSocialUserFailed( socialInfo, userExistsError, 'signup' );
 
-			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
+			// Reset the signup step so that we don't re trigger this logic when the user goes back from login screen.
+			this.props.resetSignup();
+
+			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
+			page(
+				addQueryArgs(
+					{
+						service: this.props.step?.service,
+						access_token: this.props.step?.access_token,
+						id_token: this.props.step?.id_token,
+					},
+					loginLink
+				)
+			);
 		}
 	}
 
@@ -269,8 +298,8 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			'password',
-			this.props.displayUsernameInput && 'username',
+			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
+			this.displayUsernameInput() && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -414,6 +443,10 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = ( event ) => {
+		if ( this.props.disableBlurValidation ) {
+			return;
+		}
+
 		const fieldId = event.target.id;
 		this.setState( {
 			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
@@ -492,12 +525,11 @@ class SignupForm extends Component {
 		return login( {
 			emailAddress,
 			isJetpack: this.isJetpack(),
-			from: this.getLoginLinkFrom(),
+			from: this.props.isP2Flow ? 'p2' : this.props.from,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 			wccomFrom: this.props.wccomFrom,
-			isWhiteLogin: this.props.isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
 	}
@@ -524,7 +556,7 @@ class SignupForm extends Component {
 	globalNotice( notice, status ) {
 		return (
 			<Notice
-				className={ classNames( 'signup-form__notice', {
+				className={ clsx( 'signup-form__notice', {
 					'signup-form__span-columns': this.isHorizontal(),
 				} ) }
 				showDismiss={ false }
@@ -553,7 +585,7 @@ class SignupForm extends Component {
 			};
 		}
 
-		if ( this.props.displayUsernameInput ) {
+		if ( this.displayUsernameInput() ) {
 			userData.username = formState.getFieldValue( this.state.form, 'username' );
 		} else {
 			userData.extra = {
@@ -600,6 +632,10 @@ class SignupForm extends Component {
 			}
 			return message;
 		} );
+	}
+
+	displayUsernameInput() {
+		return this.props.displayUsernameInput && ! this.props.isBlazePro;
 	}
 
 	formFields() {
@@ -671,7 +707,7 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				{ this.props.displayUsernameInput && (
+				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
 							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
@@ -697,7 +733,6 @@ class SignupForm extends Component {
 						) }
 					</>
 				) }
-
 				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
@@ -746,6 +781,16 @@ class SignupForm extends Component {
 			}
 		} );
 		this.handleSubmit( event );
+	};
+
+	handlePasswordlessSubmit = ( passwordLessData ) => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			if ( hasErrors ) {
+				this.setState( { submitting: false } );
+				return;
+			}
+			this.props.submitForm( this.state.form, passwordLessData );
+		} );
 	};
 
 	renderWooCommerce() {
@@ -830,6 +875,10 @@ class SignupForm extends Component {
 
 	termsOfServiceLink = () => {
 		if ( this.props.isWoo ) {
+			if ( this.props.isWooPasswordless ) {
+				return null;
+			}
+
 			return (
 				<p className="signup-form__terms-of-service-link">
 					{ this.props.translate(
@@ -883,6 +932,20 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.isBlazePro ) {
+			tosText = (
+				<>
+					{ this.props.translate(
+						'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+						options
+					) }{ ' ' }
+					{ this.props.translate(
+						'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+					) }
+				</>
+			);
+		}
+
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 
@@ -894,9 +957,8 @@ class SignupForm extends Component {
 			return this.globalNotice(
 				{
 					message: this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
-							'or sign up with a different email address.',
+						'We found a WordPress.com account with the email "%(email)s". ' +
+							'{{a}}Log in to connect it{{/a}}, or use a different email to sign up.',
 						{
 							args: { email: userExistsError.email },
 							components: {
@@ -930,28 +992,14 @@ class SignupForm extends Component {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
-		if ( this.userCreationComplete() ) {
-			return (
-				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice(
-						{
-							info: true,
-							message: this.props.translate(
-								'Your account has already been created. You can change your email, username, and password later.'
-							),
-						},
-						'is-info'
-					) }
-				</TrackRender>
-			);
-		}
+
 		return false;
 	}
 
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
-				<FormSettingExplanation noValidate={ true }>
+				<FormSettingExplanation noValidate>
 					{ this.props.disableEmailExplanation }
 				</FormSettingExplanation>
 			);
@@ -993,24 +1041,14 @@ class SignupForm extends Component {
 	};
 
 	formFooter() {
-		if ( this.userCreationComplete() ) {
-			return (
-				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
-				</LoggedOutFormFooter>
-			);
-		}
-
 		const params = new URLSearchParams( window.location.search );
 		const variationName = params.get( 'variationName' );
 
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
-				{ this.termsOfServiceLink() }
+				{ ! this.props.disableTosText && this.termsOfServiceLink() }
 				<FormButton
-					className={ classNames(
+					className={ clsx(
 						'signup-form__submit',
 						variationName && `${ variationName }-signup-form`
 					) }
@@ -1029,7 +1067,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo } = this.props;
+		const { flowName, translate, isWoo, isBlazePro } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1046,6 +1084,19 @@ class SignupForm extends Component {
 
 		if ( isWoo ) {
 			return null;
+		}
+
+		if ( isBlazePro ) {
+			return (
+				<div className="signup-form__p2-footer-link">
+					<LoggedOutFormLinks>
+						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+							{ this.props.translate( 'Log in here' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				</div>
+			);
 		}
 
 		return (
@@ -1069,10 +1120,6 @@ class SignupForm extends Component {
 		);
 	}
 
-	userCreationComplete() {
-		return this.props.step && 'completed' === this.props.step.status;
-	}
-
 	handleOnChangeAccount = () => {
 		recordTracksEvent( 'calypso_signup_click_on_change_account' );
 		this.props.redirectToLogout( window.location.href );
@@ -1088,6 +1135,24 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	handleCreateAccountError = ( error, email ) => {
+		if ( this.props.handleCreateAccountError ) {
+			return this.props.handleCreateAccountError( error, email );
+		}
+
+		if ( isExistingAccountError( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: email,
+						is_signup_existing_account: true,
+					},
+					this.getLoginLink()
+				)
+			);
+		}
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1097,7 +1162,6 @@ class SignupForm extends Component {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
-				'socialService',
 				'socialServiceResponse',
 			] );
 
@@ -1115,30 +1179,55 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
 			return (
 				<ContinueAsUser
-					redirectPath={ this.props.redirectToAfterLoginUrl }
+					currentUser={ this.props.currentUser }
 					onChangeAccount={ this.handleOnChangeAccount }
-					isSignUpFlow
+					redirectPath={ this.props.redirectToAfterLoginUrl }
+					isWoo={ this.props.isWoo }
+					isWooPasswordless={ this.props.isWooPasswordless }
+					isBlazePro={ this.props.isBlazePro }
+					notYouText={
+						this.props.notYouText ||
+						this.props.translate(
+							'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}',
+							{
+								components: {
+									br: <br />,
+									link: (
+										<button
+											type="button"
+											id="loginAsAnotherUser"
+											className="continue-as-user__change-user-link"
+											onClick={ this.handleOnChangeAccount }
+										/>
+									),
+								},
+								args: {
+									userName: this.props.currentUser.display_name || this.props.currentUser.username,
+								},
+								comment: 'Link to continue login as different user',
+							}
+						)
+					}
 				/>
 			);
 		}
 
 		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
 			return (
-				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
-					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
+				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
+					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
 						{ this.props.formHeader && (
 							<header className="signup-form__header">{ this.props.formHeader }</header>
 						) }
 
 						{ this.renderWooCommerce() }
 
-						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						{ this.props.isSocialSignupEnabled && (
 							<SocialSignupForm
 								handleResponse={ this.handleWooCommerceSocialConnect }
-								socialService={ this.props.socialService }
 								socialServiceResponse={ this.props.socialServiceResponse }
 								redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							/>
@@ -1158,7 +1247,6 @@ class SignupForm extends Component {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
-				'socialService',
 				'socialServiceResponse',
 			] );
 
@@ -1182,15 +1270,12 @@ class SignupForm extends Component {
 		if ( this.props.isSocialFirst ) {
 			return (
 				<SignupFormSocialFirst
-					step={ this.props.step }
 					stepName={ this.props.stepName }
 					flowName={ this.props.flowName }
 					goToNextStep={ this.props.goToNextStep }
 					logInUrl={ logInUrl }
 					handleSocialResponse={ this.props.handleSocialResponse }
-					socialService={ this.props.socialService }
 					socialServiceResponse={ this.props.socialServiceResponse }
-					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					queryArgs={ this.props.queryArgs }
 					userEmail={ this.getEmailValue() }
@@ -1201,50 +1286,76 @@ class SignupForm extends Component {
 		}
 
 		const isGravatar = this.props.isGravatar;
+		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
+			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo;
 
-		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
-			const gravatarProps = isGravatar
-				? {
+		if (
+			( this.props.isPasswordless &&
+				( 'wpcc' !== this.props.flowName || this.props.isWooPasswordless ) ) ||
+			isGravatar
+		) {
+			let formProps = {
+				submitButtonLabel: this.props.submitButtonLabel,
+				submitButtonLoadingLabel: this.props.submitButtonLoadingLabel,
+			};
+
+			switch ( true ) {
+				case isGravatar:
+					formProps = {
 						inputPlaceholder: this.props.translate( 'Enter your email address' ),
 						submitButtonLabel: this.props.translate( 'Continue' ),
 						submitButtonLoadingLabel: this.props.translate( 'Continue' ),
-				  }
-				: {};
+					};
+					break;
+				case this.props.isWoo:
+					formProps = {
+						inputPlaceholder: null,
+						submitButtonLabel: this.props.translate( 'Continue with email' ),
+						submitButtonLoadingLabel: <Spinner />,
+					};
+			}
 
 			return (
 				<div
-					className={ classNames( 'signup-form', this.props.className, {
+					className={ clsx( 'signup-form', this.props.className, {
 						'is-horizontal': this.isHorizontal(),
 					} ) }
 				>
 					{ this.getNotice() }
 					<PasswordlessSignupForm
-						step={ this.props.step }
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						disableTosText={ this.props.disableTosText }
+						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
-						disableSubmitButton={ this.props.disableSubmitButton }
+						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
-						{ ...gravatarProps }
-					/>
+						labelText={ this.props.labelText }
+						onInputBlur={ this.handleBlur }
+						onInputChange={ this.handleChangeEvent }
+						onCreateAccountError={ this.handleCreateAccountError }
+						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
+						{ ...formProps }
+					>
+						{ emailErrorMessage && (
+							<ValidationFieldset errorMessages={ [ emailErrorMessage ] }></ValidationFieldset>
+						) }
+					</PasswordlessSignupForm>
 
 					{ ! isGravatar && (
 						<>
 							{ showSeparator && <FormDivider /> }
-
-							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+							{ this.props.isSocialSignupEnabled && (
 								<SocialSignupForm
 									handleResponse={ this.props.handleSocialResponse }
-									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
-									isReskinned={ this.props.isReskinned }
 									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+									compact={ this.props.isWoo }
 								/>
 							) }
 							{ this.props.footerLink || this.footerLink() }
@@ -1256,13 +1367,13 @@ class SignupForm extends Component {
 
 		return (
 			<div
-				className={ classNames( 'signup-form', this.props.className, {
+				className={ clsx( 'signup-form', this.props.className, {
 					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>
-				{ this.getNotice() }
+				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
+					{ this.getNotice() }
 
-				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
@@ -1274,33 +1385,20 @@ class SignupForm extends Component {
 
 				{ showSeparator && <FormDivider /> }
 
-				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-					<Fragment>
-						{ this.props.isWoo && <FormDivider /> }
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							isReskinned={ this.props.isReskinned }
-							flowName={ this.props.flowName }
-							compact={ this.props.isWoo }
-							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-						/>
-					</Fragment>
+				{ this.props.isSocialSignupEnabled && (
+					<SocialSignupForm
+						handleResponse={ this.props.handleSocialResponse }
+						socialServiceResponse={ this.props.socialServiceResponse }
+						flowName={ this.props.flowName }
+						compact={ this.props.isWoo }
+						redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+					/>
 				) }
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>
 		);
 	}
-}
-
-function TrackRender( { children, eventName } ) {
-	useEffect( () => {
-		recordTracksEvent( eventName );
-	}, [ eventName ] );
-
-	return children;
 }
 
 export default connect(
@@ -1316,17 +1414,20 @@ export default connect(
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
-			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			wccomFrom: getWccomFrom( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
 			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			isBlazePro: getIsBlazePro( state ),
 		};
 	},
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
 		redirectToLogout,
+		resetSignup,
 	}
 )( localize( SignupForm ) );

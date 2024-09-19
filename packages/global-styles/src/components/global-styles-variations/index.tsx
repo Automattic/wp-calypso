@@ -3,7 +3,7 @@ import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
@@ -54,7 +54,7 @@ const GlobalStylesVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, globalStylesVariation ),
 			inline_css: baseInlineCss + globalStylesVariationInlineCss,
 		};
-	}, [ globalStylesVariation, base ] );
+	}, [ globalStylesVariation.slug, base ] );
 	const selectOnEnter = ( event: React.KeyboardEvent ) => {
 		if ( event.keyCode === ENTER ) {
 			event.preventDefault();
@@ -63,7 +63,7 @@ const GlobalStylesVariation = ( {
 	};
 	return (
 		<div
-			className={ classnames( 'global-styles-variations__item', {
+			className={ clsx( 'global-styles-variations__item', {
 				'is-active': isActive,
 			} ) }
 			role="button"
@@ -105,16 +105,10 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const premiumStylesDescription = hasEnTranslation(
-		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.'
-	)
-		? translate(
-				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-				{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
-		  )
-		: translate(
-				'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
-		  );
+	const premiumStylesDescription = translate(
+		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+		{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+	);
 
 	const baseGlobalStyles = useMemo(
 		() =>
@@ -153,7 +147,7 @@ const GlobalStylesVariations = ( {
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div className="global-styles-variations__container">
 				<div
-					className={ classnames( 'global-styles-variations__type', {
+					className={ clsx( 'global-styles-variations__type', {
 						'combined-variations': ! splitDefaultVariation,
 					} ) }
 				>

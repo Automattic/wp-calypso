@@ -1,5 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import { Button, Gridicon, SegmentedControl } from '@automattic/components';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, size, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,7 +7,6 @@ import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
-import SegmentedControl from 'calypso/components/segmented-control';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -658,7 +657,7 @@ class PostCommentList extends Component {
 
 		return (
 			<div
-				className={ classnames( 'comments__comment-list', {
+				className={ clsx( 'comments__comment-list', {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
 					'is-inline': expandableView,
 					'is-collapsed': isCollapsedInline,

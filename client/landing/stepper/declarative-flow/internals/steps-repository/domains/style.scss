@@ -285,12 +285,12 @@
 		max-width: $domain-stepper-component-width;
 		padding: 0;
 		margin: 0 auto;
-		@media ( max-width: break-large ) {
+		@media (max-width: break-large) {
 			margin: 0 40px;
 		}
 
 		.step-container__header .formatted-header__title {
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				font-size: 2.25rem;
 			}
 		}
@@ -365,7 +365,7 @@
 			flex-direction: column-reverse;
 			margin-bottom: initial;
 
-			@media (min-width: $break-wide ) {
+			@media (min-width: $break-wide) {
 				flex-direction: row;
 			}
 		}

@@ -4,6 +4,14 @@ const CCPA_US_REGIONS = [
 	'connecticut', // CT
 	'utah', // UT
 	'virginia', // VA
+	'texas', // TX
+	'tennessee', // TN
+	'oregon', // OR
+	'new jersey', // NJ
+	'montana', // MT
+	'iowa', // IA
+	'indiana', // IN
+	'delaware', // DE
 ];
 
 /**

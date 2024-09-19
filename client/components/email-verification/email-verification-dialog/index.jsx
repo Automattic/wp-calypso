@@ -46,7 +46,7 @@ class VerifyEmailDialog extends Component {
 			>
 				{ this.getResendButtonLabel() }
 			</Button>,
-			<Button key="close" primary={ true } onClick={ this.handleClose }>
+			<Button key="close" primary onClick={ this.handleClose }>
 				{ this.props.translate( 'OK' ) }
 			</Button>,
 		];
@@ -86,7 +86,7 @@ class VerifyEmailDialog extends Component {
 			<Dialog
 				additionalClassNames="email-verification-dialog__confirmation-dialog is-narrow"
 				buttons={ this.getDialogButtons() }
-				isVisible={ true }
+				isVisible
 				label="Email Verification Dialog"
 			>
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">

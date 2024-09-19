@@ -7,12 +7,12 @@ $heading-font-family: "SF Pro Display", $sans;
 .domain-contact-info {
 	padding: 16px 24px;
 
-	@media (max-width: $break-xlarge ) {
+	@media (max-width: $break-xlarge) {
 		max-width: 600px;
 		margin: 0 auto;
 	}
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		padding-top: 36px;
 	}
 
@@ -51,7 +51,7 @@ $heading-font-family: "SF Pro Display", $sans;
 
 		.contact-details-form-fields {
 			padding: 0;
-			@media (max-width: $break-xlarge ) {
+			@media (max-width: $break-xlarge) {
 				padding: 0 0 24px;
 			}
 		}
@@ -63,7 +63,7 @@ $heading-font-family: "SF Pro Display", $sans;
 		}
 		.contact-details-form-fields__submit-button {
 			padding: 8px 60px;
-			@media (max-width: $break-small ) {
+			@media (max-width: $break-small) {
 				width: 100%;
 			}
 		}

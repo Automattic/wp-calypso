@@ -99,6 +99,10 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			await blazeCampaignPage.clickButton( 'Get started' );
 		} );
 
+		it( 'Click on Continue', async function () {
+			await blazeCampaignPage.clickButton( 'Continue' );
+		} );
+
 		it( 'Upload image', async function () {
 			const testFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 			await blazeCampaignPage.uploadImage( testFile );

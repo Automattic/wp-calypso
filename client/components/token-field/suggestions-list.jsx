@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -68,7 +68,7 @@ class SuggestionsList extends PureComponent {
 	};
 
 	render() {
-		const classes = classNames( 'token-field__suggestions-list', {
+		const classes = clsx( 'token-field__suggestions-list', {
 			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0,
 		} );
 
@@ -105,7 +105,7 @@ class SuggestionsList extends PureComponent {
 		return filteredSuggestions.map( ( suggestion, index ) => {
 			const isLabel = isSuggestionLabel( suggestion );
 
-			const classes = classNames( 'token-field__suggestion', {
+			const classes = clsx( 'token-field__suggestion', {
 				'is-selected': index === this.props.selectedIndex,
 				'is-label': isLabel,
 			} );

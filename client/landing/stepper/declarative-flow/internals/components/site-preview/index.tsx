@@ -70,7 +70,7 @@ const SitePreview = ( {
 				disableTabbing
 				showDeviceSwitcher={ showDeviceSwitcher }
 				showPreview
-				showSEO={ true }
+				showSEO
 				isContentOnly
 				externalUrl={ siteSlug }
 				previewUrl={ formatPreviewUrl() }

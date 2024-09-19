@@ -19,10 +19,11 @@ interface Props {
 	whois: WhoIs;
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
+	hideTitle?: boolean;
 }
 
 export default function DomainInformation( props: Props ) {
-	const { domain, whois, hostingProvider, urlData } = props;
+	const { domain, whois, hostingProvider, urlData, hideTitle = false } = props;
 	const moment = useLocalizedMoment();
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 	const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*/g;
@@ -70,20 +71,20 @@ export default function DomainInformation( props: Props ) {
 
 	return (
 		<div className="domain-information">
-			<h3>{ translate( 'Domain information' ) }</h3>
+			{ ! hideTitle && <h3>{ translate( 'Domain information' ) }</h3> }
 
 			<ul className="domain-information-details result-list">
 				{ filteredWhois.domain_name && (
 					<li>
 						<div className="name">{ translate( 'Domain name' ) }</div>
-						<div>{ whois.domain_name }</div>
+						<div>{ normalizeWhoisField( whois.domain_name ) }</div>
 					</li>
 				) }
 				{ filteredWhois.registrar && (
 					<li>
 						<div className="name">{ translate( 'Registrar' ) }</div>
 						<div>
-							{ whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+							{ normalizeWhoisURL( whois.registrar_url ).toLowerCase().includes( 'automattic' ) && (
 								<VerifiedProvider
 									hostingProvider={ hostingProvider }
 									urlData={ urlData }
@@ -91,13 +92,15 @@ export default function DomainInformation( props: Props ) {
 								/>
 							) }
 							{ whois.registrar_url &&
-								! whois.registrar_url?.toLowerCase().includes( 'automattic' ) && (
+								! normalizeWhoisURL( whois.registrar_url )
+									.toLowerCase()
+									.includes( 'automattic' ) && (
 									<a
 										href={ normalizeWhoisURL( whois.registrar_url ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									>
-										{ whois.registrar }
+										{ normalizeWhoisField( whois.registrar ) }
 									</a>
 								) }
 							{ ! whois.registrar_url && <span>{ normalizeWhoisField( whois.registrar ) }</span> }

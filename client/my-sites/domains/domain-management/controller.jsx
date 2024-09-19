@@ -24,7 +24,7 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainManagement from '.';
 
@@ -63,7 +63,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -80,7 +79,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -97,7 +95,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -114,7 +111,6 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -165,7 +161,7 @@ export default {
 	},
 
 	domainManagementEmailRedirect( pageContext ) {
-		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
+		page.redirect( getEmailManagementPath( pageContext.params.site, pageContext.params.domain ) );
 	},
 
 	domainManagementDns( pageContext, next ) {
@@ -176,6 +172,7 @@ export default {
 				component={ DomainManagement.DnsRecords }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
+				needsDomains
 			/>
 		);
 		next();
@@ -189,6 +186,7 @@ export default {
 				component={ DomainManagement.AddDnsRecord }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
+				needsDomains
 			/>
 		);
 		next();

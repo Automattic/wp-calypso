@@ -33,7 +33,6 @@ export interface CachedSelector< S, A extends unknown[], R = unknown > {
 
 /**
  * Returns a selector that caches values.
- *
  * @param getDependents A Function describing the dependent(s) of the selector.
  *                      Must return an array which gets passed as the first arg to the selector.
  * @param selector      A standard selector for calculating cached result.

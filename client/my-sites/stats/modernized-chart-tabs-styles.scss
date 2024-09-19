@@ -53,7 +53,7 @@ $custom-stats-tab-mobile-break: $break-small;
 			}
 
 			// Keep the original mobile stats-tabs styles
-			@media ( max-width: $custom-stats-tab-mobile-break ) {
+			@media (max-width: $custom-stats-tab-mobile-break) {
 				width: 100%;
 				float: none;
 				border-bottom: 1px solid var(--color-neutral-5);
@@ -68,7 +68,7 @@ $custom-stats-tab-mobile-break: $break-small;
 			}
 
 			.gridicon {
-				@media ( max-width: $custom-stats-tab-mobile-break ) {
+				@media (max-width: $custom-stats-tab-mobile-break) {
 					float: left;
 					margin: 3px 8px 0 20px;
 				}
@@ -83,7 +83,7 @@ $custom-stats-tab-mobile-break: $break-small;
 				color: var(--studio-black);
 				padding: 10px 6px;
 
-				@media ( max-width: $custom-stats-tab-mobile-break ) {
+				@media (max-width: $custom-stats-tab-mobile-break) {
 					display: flex;
 					flex-direction: row;
 					align-items: center;
@@ -115,7 +115,7 @@ $custom-stats-tab-mobile-break: $break-small;
 					line-height: 30px;
 					margin-left: 0;
 
-					@media ( max-width: $custom-stats-tab-mobile-break ) {
+					@media (max-width: $custom-stats-tab-mobile-break) {
 						margin-left: auto;
 						padding: 0 20px 0 10px;
 						font-size: $font-body-small;
@@ -131,7 +131,7 @@ $custom-stats-tab-mobile-break: $break-small;
 					justify-content: center;
 
 					// For mobile stats-tabs in Store page
-					@media ( max-width: $custom-stats-tab-mobile-break ) {
+					@media (max-width: $custom-stats-tab-mobile-break) {
 						display: none;
 					}
 				}
@@ -153,7 +153,7 @@ $custom-stats-tab-mobile-break: $break-small;
 					background-color: var(--color-surface);
 
 					// Keep the original mobile stats-tabs border styles
-					@media ( max-width: $custom-stats-tab-mobile-break ) {
+					@media (max-width: $custom-stats-tab-mobile-break) {
 						border-color: transparent;
 					}
 

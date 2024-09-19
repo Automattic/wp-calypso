@@ -1,16 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -54,7 +53,7 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 				<Icon
 					size={ 24 }
 					icon={ isValidDomain ? check : closeSmall }
-					className={ classnames( 'domains__domain-input-icon', {
+					className={ clsx( 'domains__domain-input-icon', {
 						'is-valid': isValidDomain,
 						'is-not-valid': ! isValidDomain,
 					} ) }
@@ -145,7 +144,7 @@ export function DomainCodePair( {
 				// this means that the domain is locked and we need to show the instructions
 				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
 					<GoogleDomainsModal
-						className={ classnames( {
+						className={ clsx( {
 							'is-first-row': showLabels,
 						} ) }
 						focusedStep={ 3 }
@@ -165,7 +164,7 @@ export function DomainCodePair( {
 				title={ __( 'Refresh' ) }
 				disabled={ ! refetch }
 				onClick={ () => refetch?.() }
-				className={ classnames( 'domains__domain-refresh', {
+				className={ clsx( 'domains__domain-refresh', {
 					'is-invisible-field': ! refetch,
 				} ) }
 				variant="link"
@@ -178,7 +177,7 @@ export function DomainCodePair( {
 	const renderGoogleDomainsModal = () => {
 		return (
 			<GoogleDomainsModal
-				className={ classnames( {
+				className={ clsx( {
 					'is-first-row': showLabels,
 				} ) }
 				focusedStep={ 4 }
@@ -191,7 +190,7 @@ export function DomainCodePair( {
 	const renderInfoPopover = () => {
 		return (
 			<InfoPopover
-				className={ classnames( {
+				className={ clsx( {
 					'is-first-row': showLabels,
 				} ) }
 				position="right"
@@ -220,7 +219,7 @@ export function DomainCodePair( {
 				<div className="domains__domain-domain">
 					<FormFieldset>
 						<FormLabel
-							className={ classnames( {
+							className={ clsx( {
 								'is-first-row': showLabels,
 							} ) }
 							htmlFor={ id }
@@ -250,12 +249,12 @@ export function DomainCodePair( {
 				<div className="domains__domain-key">
 					<FormFieldset>
 						<FormLabel
-							className={ classnames( {
+							className={ clsx( {
 								'is-first-row': showLabels,
 							} ) }
 							htmlFor={ id + '-auth' }
 						>
-							{ __( 'Authorization code' ) }
+							{ isGoogleDomainsTransferFlow ? __( 'Transfer code' ) : __( 'Authorization code' ) }
 							{ isGoogleDomainsTransferFlow ? renderGoogleDomainsModal() : renderInfoPopover() }
 						</FormLabel>
 
@@ -290,14 +289,14 @@ export function DomainCodePair( {
 								className="is-checking-domain"
 								text={ message }
 								isError={ false }
-								isMuted={ true }
+								isMuted
 							/>
 						) }
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
 								text=""
-								isMuted={ true }
+								isMuted
 								children={ domainCount > 1 && domainActions() }
 							/>
 						) }
@@ -306,7 +305,7 @@ export function DomainCodePair( {
 				<div className="domains__domain-price">
 					<FormFieldset>
 						<FormLabel
-							className={ classnames( {
+							className={ clsx( {
 								'is-first-row': showLabels,
 							} ) }
 							htmlFor={ id + '-price' }
@@ -334,13 +333,13 @@ export function DomainCodePair( {
 						className="is-checking-domain"
 						text={ message }
 						isError={ false }
-						isMuted={ true }
+						isMuted
 					/>
 				) }
 				{ ! shouldReportError && ! loading && (
 					<FormInputValidation
 						isError={ false }
-						isMuted={ true }
+						isMuted
 						text=""
 						children={ domainCount > 1 && domainActions() }
 					/>

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { Icon, globe } from '@wordpress/icons';
@@ -8,6 +9,7 @@ import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getPluginTitle } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -22,10 +24,12 @@ export class AuthFormHeader extends Component {
 		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
+		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object,
+		disableSiteCard: PropTypes.bool,
 	};
 
 	getState() {
@@ -58,6 +62,7 @@ export class AuthFormHeader extends Component {
 			isWooCoreProfiler,
 			wooDnaConfig,
 			isWpcomMigration,
+			isFromAutomatticForAgenciesPlugin,
 		} = this.props;
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
@@ -112,6 +117,21 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
+		if ( isFromAutomatticForAgenciesPlugin ) {
+			switch ( currentState ) {
+				case 'logged-out':
+					/** @todo redirect to landing page when user is not signed up for A4A. */
+					return translate( 'Create an account to set up Automattic for Agencies' );
+				case 'logged-in-success':
+					return translate( "You're all set!" );
+				case 'auth-in-progress':
+					return translate( 'Connecting your site' );
+				case 'logged-in':
+				default:
+					return translate( 'Finish connecting your site' );
+			}
+		}
+
 		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'Create an account to set up Jetpack' );
@@ -124,8 +144,14 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWooOnboarding, isWooCoreProfiler, wooDnaConfig, isWpcomMigration } =
-			this.props;
+		const {
+			translate,
+			isWooOnboarding,
+			isWooCoreProfiler,
+			wooDnaConfig,
+			isWpcomMigration,
+			isFromAutomatticForAgenciesPlugin,
+		} = this.props;
 		const currentState = this.getState();
 
 		if ( isWooOnboarding ) {
@@ -140,13 +166,7 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			const pluginNames = {
-				'jetpack-ai': 'Jetpack AI',
-				'jetpack-boost': 'Jetpack Boost',
-				default: 'Jetpack',
-			};
-
-			const pluginName = pluginNames[ this.props.authQuery.plugin_name ] || pluginNames.default;
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			const translateParams = {
 				components: {
 					br: <br />,
@@ -167,10 +187,15 @@ export class AuthFormHeader extends Component {
 
 			switch ( currentState ) {
 				case 'logged-out':
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-						translateParams
-					);
+					return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						? translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  )
+						: translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  );
 				default:
 					return translate(
 						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
@@ -191,6 +216,17 @@ export class AuthFormHeader extends Component {
 						return translate(
 							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments'
 						);
+					} else if ( wooDnaConfig.getFlowName() === 'woodna:blaze-ads-on-woo' ) {
+						const pluginName = wooDnaConfig.getServiceName();
+						/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
+						return translate(
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by %(pluginName)s.',
+							{
+								args: {
+									pluginName,
+								},
+							}
+						);
 					}
 					return translate( 'Approve your connection' );
 			}
@@ -201,6 +237,10 @@ export class AuthFormHeader extends Component {
 				case 'logged-in':
 					return translate( 'Connect your site with your WordPress.com account' );
 			}
+		}
+
+		if ( isFromAutomatticForAgenciesPlugin ) {
+			return undefined;
 		}
 
 		switch ( currentState ) {
@@ -261,7 +301,7 @@ export class AuthFormHeader extends Component {
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }
 				/>
-				{ this.getSiteCard() }
+				{ ! this.props.disableSiteCard && this.getSiteCard() }
 			</div>
 		);
 	}

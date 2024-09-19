@@ -67,8 +67,8 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 							minBarWidth={ 10 }
 							sliceFromBeginning={ false }
 							minBarsToBeShown={ 20 }
-							hideYAxis={ true }
-							hideXAxis={ true }
+							hideYAxis
+							hideXAxis
 						/>
 					) : (
 						<TextPlaceholder />
@@ -99,19 +99,18 @@ export default function MonitorActivity( { hasMonitor, site, trackEvent, hasErro
 		<ExpandedCard
 			header={ translate( 'Monitor activity' ) }
 			isEnabled={ hasMonitor }
-			emptyContent={
-				site.is_atomic
-					? translate( 'Monitoring is managed by WordPress.com' )
-					: translate( 'Activate {{strong}}Monitor{{/strong}} to see your uptime records', {
-							components: {
-								strong: <strong></strong>,
-							},
-					  } )
-			}
+			emptyContent={ translate(
+				'Activate {{strong}}Monitor{{/strong}} to see your uptime records',
+				{
+					components: {
+						strong: <strong></strong>,
+					},
+				}
+			) }
 			isLoading={ isLoading }
 			hasError={ hasError }
 			// Allow to click on the card only if the monitor is not active & the site is not atomic
-			onClick={ ! hasMonitor && ! site.is_atomic ? handleOnClick : undefined }
+			onClick={ ! hasMonitor ? handleOnClick : undefined }
 		>
 			{ hasMonitor && <MonitorDataContent siteId={ site.blog_id } /> }
 		</ExpandedCard>

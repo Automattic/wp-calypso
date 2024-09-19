@@ -4,6 +4,7 @@ import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
 	mayWeTrackUserGpcInCcpaRegion,
+	mayWeSessionTrack,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -26,13 +27,17 @@ const allAdTrackers = [
 	'experian',
 	'iconMedia',
 	'linkedin',
+	'logrocket',
 	'criteo',
 	'pandora',
 	'quora',
 	'adroll',
 	'parsely',
 	'clarity',
+	'reddit',
 ] as const;
+
+const sessionAdTrackers = [ 'hotjar', 'logrocket' ];
 
 type AdTracker = ( typeof allAdTrackers )[ number ];
 
@@ -54,10 +59,10 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
 	googleTagManager: Bucket.ADVERTISING,
-	outbrain: Bucket.ADVERTISING,
-	pinterest: Bucket.ADVERTISING,
+	logrocket: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
+	reddit: Bucket.ADVERTISING,
 
 	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
 	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
@@ -72,6 +77,8 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	quora: null,
 	adroll: null,
 	clarity: null,
+	outbrain: null,
+	pinterest: null,
 };
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
@@ -96,6 +103,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
 	clarity: () => 'clarity' in window,
+	reddit: () => 'rdt' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
@@ -132,5 +140,12 @@ export const mayWeInitTracker = ( tracker: AdTracker ) => {
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
 
-export const mayWeTrackByTracker = ( tracker: AdTracker ) =>
-	mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
+export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+	const mayTrackerInit = mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
+
+	if ( sessionAdTrackers.includes( tracker ) ) {
+		return mayWeSessionTrack() && mayTrackerInit;
+	}
+
+	return mayTrackerInit;
+};

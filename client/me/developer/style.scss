@@ -1,0 +1,202 @@
+@import "@wordpress/base-styles/breakpoints.scss";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/mixins";
+
+.navigation-header.developer__header {
+	@include break-small {
+		margin-top: 50px;
+	}
+
+	.formatted-header__title {
+		font-family: $brand-serif;
+		font-size: rem(44px);
+		line-height: 52px;
+		letter-spacing: 0.2px;
+		text-align: center;
+		padding-bottom: 8px;
+		word-break: break-word;
+	}
+
+	.formatted-header__subtitle {
+		font-family: $font-sf-pro-text;
+		font-size: rem(16px);
+		line-height: 24px;
+		letter-spacing: -0.32px;
+		text-align: center;
+	}
+
+	@media (max-width: $break-medium) {
+		padding: 40px 32px 24px;
+
+		.formatted-header__title {
+			font-size: rem(32px);
+		}
+
+		.formatted-header__subtitle {
+			display: block;
+			font-size: rem(14px);
+		}
+	}
+}
+
+.developer__form {
+	text-align: center;
+}
+
+.form-fieldset.developer__is_dev_account-fieldset {
+	border-radius: 2px;
+	background: var(--color-link-0);
+	padding: 16px;
+	margin: 0 auto 30px;
+	display: inline-block;
+
+	.components-toggle-control {
+		font-family: $font-sf-pro-text;
+		font-size: rem(14px);
+		display: inline-block;
+		margin-bottom: 0;
+	}
+
+	&.is-loading {
+		.components-form-toggle {
+			.components-form-toggle__thumb {
+				visibility: hidden;
+			}
+
+			.components-form-toggle__track {
+				border: none;
+				@include placeholder( --color-neutral-10 );
+			}
+		}
+
+		.components-toggle-control__label {
+			@include placeholder();
+			a {
+				color: inherit;
+			}
+		}
+	}
+
+	@media (max-width: $break-medium) {
+		position: fixed;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		margin-bottom: 0;
+		text-align: left;
+		padding: 16px 32px;
+		z-index: 2;
+	}
+}
+
+.developer-survey-notice {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 1000;
+
+	.developer-survey-notice__backdrop {
+		background: var(--studio-black);
+		opacity: 0.2;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		cursor: default;
+	}
+
+	.developer-survey-notice__popup {
+		position: absolute;
+		right: 25px;
+		bottom: 25px;
+		width: 416px;
+		max-width: calc(100% - 50px);
+		z-index: 2;
+		border-radius: 2px;
+		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+		overflow: hidden;
+		font-family: $font-sf-pro-text;
+
+		.developer-survey-notice__popup-head {
+			background: #0675c4;
+			border-bottom: 1px solid #f6f7f7;
+			height: 56px;
+			padding: 0 14px 0 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.developer-survey-notice__popup-head-title {
+				color: var(--studio-white);
+				font-size: rem(14px);
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.15px;
+			}
+
+			.developer-survey-notice__popup-head-close svg {
+				fill: var(--studio-white);
+			}
+		}
+
+		.developer-survey-notice__popup-img {
+			background: #0675c4;
+			padding-bottom: 57.9%;
+			height: 0;
+
+			img {
+				width: 100%;
+				display: block;
+			}
+		}
+
+		.developer-survey-notice__popup-content {
+			padding: 18px 24px 30px;
+			background: var(--studio-white);
+
+			.developer-survey-notice__popup-content-title {
+				font-size: rem(16px);
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: -0.32px;
+				padding-bottom: 8px;
+			}
+
+			.developer-survey-notice__popup-content-description {
+				font-size: rem(14px);
+				line-height: 20px;
+				letter-spacing: -0.15px;
+				padding-bottom: 18px;
+			}
+
+			.developer-survey-notice__popup-content-buttons {
+				display: flex;
+				justify-content: flex-end;
+
+				.developer-survey-notice__popup-content-buttons-ok {
+					font-family: $font-sf-pro-text;
+					padding: 8px 14px;
+					background: var(--studio-blue-50);
+					color: var(--studio-white);
+					font-size: rem(14px);
+					line-height: 20px;
+					letter-spacing: -0.15px;
+				}
+
+				.developer-survey-notice__popup-content-buttons-cancel {
+					font-family: $font-sf-pro-text;
+					padding: 8px 14px;
+					color: var(--studio-blue-50);
+					text-align: center;
+					font-size: rem(14px);
+					line-height: 20px;
+					letter-spacing: -0.15px;
+				}
+			}
+		}
+	}
+}

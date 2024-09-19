@@ -14,7 +14,7 @@ type SiteDataExtraInfo = SiteDetails & {
 		is_domain_only: boolean;
 	};
 	title: string;
-	capabilities: Record< string, boolean >;
+	capabilities?: Record< string, boolean >;
 };
 
 // props passed to the component

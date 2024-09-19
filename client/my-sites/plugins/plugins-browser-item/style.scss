@@ -19,8 +19,8 @@
 	}
 
 	.plugin-icon {
-		width: 47px;
-		height: 47px;
+		width: 44px;
+		height: 44px;
 		margin-right: 0;
 
 		&.is-placeholder {
@@ -34,6 +34,14 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		margin-left: calc(47px + 16px); // icon width + margin
+	}
+
+	.plugins-browser-item__title {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		white-space: unset;
 	}
 
 	.plugins-browser-item__ratings {
@@ -62,7 +70,7 @@
 	}
 
 	.plugins-browser-item__description {
-		margin: 16px 0;
+		margin: 12px 0 24px 0;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		font-weight: 400;
@@ -70,17 +78,17 @@
 		color: $studio-gray-80;
 
 		// limit to 2 lines
-		height: calc(20px * 2); // line height * number of lines
+		height: calc(20px * 3); // line height * number of lines
 		display: -webkit-box;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
 
 	&.compact {
 		.plugin-icon {
-			width: 40px;
-			height: 40px;
+			width: 44px;
+			height: 44px;
 			margin-right: 16px;
 		}
 
@@ -89,13 +97,14 @@
 		}
 
 		.plugins-browser-item__title {
-			margin-top: -3px;
-			font-size: $font-body-small;
+			margin-top: -1px;
+			font-size: $font-body;
 			margin-left: 0;
 		}
 
 		.plugins-browser-item__description {
-			font-size: $font-body-extra-small;
+			display: block;
+			font-size: $font-body-small;
 			margin: 0;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -126,6 +135,10 @@
 		@include break-large {
 			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
+
+		@include break-wide {
+			width: calc(33% - 10px); // 3 column grid with 20px gutter
+		}
 	}
 
 	&.incompatible {
@@ -151,7 +164,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 29px 30px 24px;
+	padding: 24px;
 	box-sizing: border-box;
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -174,23 +187,28 @@
 	}
 }
 
+.plugins-browser-item__header {
+	min-height: 66px;
+}
+
 .plugins-browser-item__title {
 	color: var(--color-neutral-100);
 	font-weight: 500;
 	font-size: $font-body;
-	line-height: 24px;
+	line-height: 20px;
 }
 
 .plugins-browser-item__author {
 	color: var(--studio-gray-60);
 	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-extra-small;
+	font-weight: 500;
+	font-size: $font-body-small;
 	line-height: 20px;
 	padding-bottom: 6px;
 }
 
 .plugins-browser-item__author-name {
-	color: var(--studio-blue-50);
+	color: var(--color-link);
 }
 
 .plugins-browser-item__last-updated,
@@ -224,10 +242,10 @@
 
 .plugins-browser-item__pricing,
 .plugins-browser-item__installed {
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 20px;
-	color: $studio-black;
+	color: var(--studio-gray-80);
 }
 
 .plugins-browser-item__active {
@@ -289,10 +307,10 @@
 
 .plugins-browser-item__period,
 .plugins-browser-item__requires-plan-upgrade {
-	color: var(--studio-gray-60);
+	color: var(--studio-gray-50);
 	font-family: "SF Pro Text", $sans;
 	font-weight: 400;
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 }
 
 .plugins-browser-item__requires-plan-upgrade {

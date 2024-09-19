@@ -1,8 +1,9 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT, PLACEHOLDER_HEIGHT } from './constants';
 import { encodePatternId, isPriorityPattern } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -30,10 +31,6 @@ interface PatternListRendererProps {
 	isShowMorePatterns?: boolean;
 }
 
-const DEFAULT_VIEWPORT_WIDTH = 1060;
-const DEFAULT_VIEWPORT_HEIGHT = 500;
-const PLACEHOLDER_HEIGHT = 100;
-
 const PatternListItem = ( {
 	pattern,
 	className,
@@ -45,7 +42,7 @@ const PatternListItem = ( {
 	onSelect,
 }: PatternListItemProps ) => {
 	const ref = useRef< HTMLButtonElement >();
-	const { ref: inViewRef, inView: inViewOnce } = useInView( {
+	const { ref: inViewRef } = useInView( {
 		triggerOnce: true,
 	} );
 
@@ -78,7 +75,7 @@ const PatternListItem = ( {
 				aria-current={ isSelected }
 				onClick={ () => onSelect( pattern ) }
 			>
-				{ isShown && inViewOnce ? (
+				{ isShown ? (
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
@@ -115,7 +112,7 @@ const PatternListRenderer = ( {
 				<PatternListItem
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
-					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
+					className={ clsx( 'pattern-list-renderer__pattern-list-item', {
 						[ activeClassName ]:
 							pattern.ID === selectedPattern?.ID ||
 							selectedPatterns?.find( ( { ID } ) => ID === pattern.ID ),

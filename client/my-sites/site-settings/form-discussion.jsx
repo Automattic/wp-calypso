@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { flowRight, pick } from 'lodash';
@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -69,25 +68,31 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	commentDisplaySettings() {
-		const { isJetpack } = this.props;
-		if ( ! isJetpack ) {
-			return null;
-		}
-
-		const { fields, isRequestingSettings, isSavingSettings, onChangeField } = this.props;
+		const {
+			isJetpack,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			handleAutosavingToggle,
+		} = this.props;
 
 		const commentDisplaySettingsFields = {
 			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
 			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
+			enable_verbum_commenting: fields.enable_verbum_commenting,
+			enable_blocks_comments: fields.enable_blocks_comments,
 		};
 
 		return (
 			<div>
-				<QueryJetpackModules siteId={ this.props.siteId } />
+				{ isJetpack && <QueryJetpackModules siteId={ this.props.siteId } /> }
 				<CommentDisplaySettings
 					onChangeField={ onChangeField }
 					submittingForm={ isRequestingSettings || isSavingSettings }
 					fields={ commentDisplaySettingsFields }
+					isJetpack={ isJetpack }
+					handleAutosavingToggle={ handleAutosavingToggle }
 				/>
 				<hr />
 			</div>
@@ -659,6 +664,8 @@ export const getFormSettings = ( settings ) => {
 		'stb_enabled',
 		'stc_enabled',
 		'wpcom_publish_comments_with_markdown',
+		'enable_verbum_commenting',
+		'enable_blocks_comments',
 	] );
 };
 

@@ -163,7 +163,7 @@ export class SearchPurchase extends Component {
 					onSubmit={ this.handleUrlSubmit }
 					isError={ status }
 					isFetching={ this.props.isCurrentUrlFetching || this.state.waitingForSites }
-					isInstall={ true }
+					isInstall
 					isSearch={ isSearch }
 					candidateSites={ this.state.candidateSites }
 				/>

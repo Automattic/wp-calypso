@@ -40,13 +40,17 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 		job?.importerFileType !== 'playground' ? __( 'Importing' ) : getPlaygroundImportTitle();
 
 	return (
-		<Progress>
-			<Title>{ title }...</Title>
-			<ProgressBar compact={ true } value={ progressValue } />
-			<SubTitle>
-				{ __( 'Feel free to close this window. We’ll email you when your new site is ready.' ) }
-			</SubTitle>
-		</Progress>
+		<div className="import-layout__center">
+			<Progress>
+				<div className="import__heading import__heading-center">
+					<Title>{ title }...</Title>
+					<ProgressBar compact value={ progressValue } />
+					<SubTitle>
+						{ __( 'Feel free to close this window. We’ll email you when your new site is ready.' ) }
+					</SubTitle>
+				</div>
+			</Progress>
+		</div>
 	);
 };
 

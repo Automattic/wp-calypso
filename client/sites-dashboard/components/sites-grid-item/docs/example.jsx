@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import sampleSiteData from '../../docs/sample-site-data';
 import { SitesGridItem } from '../../sites-grid-item';
@@ -29,18 +29,24 @@ const itemClassName = css( {
 	minWidth: 0,
 } );
 
-const SitesGridItemExample = () => {
+const SitesGridItemSelectExample = () => {
 	return (
-		<div className={ classnames( container, className ) }>
+		<div className={ clsx( container, className ) }>
 			{ sampleSiteData.map( ( site ) => (
 				<div className={ itemClassName } key={ site.ID }>
-					<SitesGridItem site={ site } key={ site.ID } />
+					<SitesGridItem
+						site={ site }
+						key={ site.ID }
+						onSiteSelectBtnClick={ ( _site ) => {
+							console.log( _site );
+						} }
+					/>
 				</div>
 			) ) }
 		</div>
 	);
 };
 
-SitesGridItemExample.displayName = 'SitesGridItem';
+SitesGridItemSelectExample.displayName = 'SitesGridItemSelect';
 
-export default SitesGridItemExample;
+export default SitesGridItemSelectExample;

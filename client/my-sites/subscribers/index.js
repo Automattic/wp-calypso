@@ -8,15 +8,8 @@ import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { subscribers, subscriberDetails, externalSubscriberDetails } from './controller';
 
 export default function () {
-	page(
-		'/subscribers',
-		siteSelection,
-		sites,
-		navigation,
-		redirectIfCurrentUserCannot( 'list_users' ),
-		makeLayout,
-		clientRender
-	);
+	page( '/subscribers', siteSelection, sites, makeLayout, clientRender );
+
 	page(
 		'/subscribers/:domain',
 		siteSelection,

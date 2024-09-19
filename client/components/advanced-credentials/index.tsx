@@ -13,7 +13,6 @@ import {
 	deleteCredentials,
 	updateCredentials,
 	testCredentials,
-	markCredentialsAsInvalid,
 } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsTestStatus from 'calypso/state/selectors/get-jetpack-credentials-test-status';
@@ -115,14 +114,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	useEffect( () => {
 		if ( hasCredentials ) {
 			dispatch( testCredentials( siteId, role ) );
-		} else {
-			dispatch( markCredentialsAsInvalid( siteId, role ) );
 		}
-	}, [ dispatch, hasCredentials, isAlternate, role, siteId ] );
+	}, [ dispatch, hasCredentials, role, siteId ] );
 
 	useEffect(
 		function () {
-			if ( 'pending' !== credentialsTestStatus ) {
+			// If we're not testing credentials, we're done loading
+			if ( 'pending' !== credentialsTestStatus || ! hasCredentials ) {
 				setTestCredentialsLoading( false );
 			}
 
@@ -134,7 +132,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				setTestCredentialsResult( false );
 			}
 		},
-		[ credentialsTestStatus ]
+		[ credentialsTestStatus, hasCredentials ]
 	);
 
 	const statusState = useMemo( (): StatusState => {
@@ -422,7 +420,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				title="Advanced Credentials"
 				properties={ { step: currentStep } }
 			/>
-			<Card compact={ true } className="advanced-credentials__server-connection-status">
+			<Card compact className="advanced-credentials__server-connection-status">
 				<div className="advanced-credentials__server-connection-status-content">
 					<h3>{ translate( 'Remote server credentials' ) }</h3>
 					<ConnectionStatus state={ statusState } />

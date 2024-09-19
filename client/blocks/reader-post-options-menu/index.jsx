@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -16,7 +16,9 @@ class ReaderPostOptionsMenu extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		feed: PropTypes.object,
+		followSource: PropTypes.string,
 		onBlock: PropTypes.func,
+		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
@@ -33,11 +35,13 @@ class ReaderPostOptionsMenu extends Component {
 			post,
 			site,
 			feed,
+			followSource,
 			teams,
 			translate,
 			position,
 			posts,
 			onBlock,
+			openSuggestedFollows,
 			showVisitPost,
 			showReportPost,
 			showReportSite,
@@ -50,7 +54,7 @@ class ReaderPostOptionsMenu extends Component {
 			return null;
 		}
 
-		const classes = classnames( 'reader-post-options-menu', this.props.className );
+		const classes = clsx( 'reader-post-options-menu', this.props.className );
 
 		return (
 			<span className={ classes }>
@@ -73,6 +77,8 @@ class ReaderPostOptionsMenu extends Component {
 					showEditPost={ showEditPost }
 					showFollow={ showFollow }
 					showConversationFollow={ showConversationFollow }
+					openSuggestedFollows={ openSuggestedFollows }
+					followSource={ followSource }
 				/>
 			</span>
 		);

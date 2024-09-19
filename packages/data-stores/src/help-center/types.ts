@@ -28,6 +28,11 @@ export interface HelpCenterSite {
 	is_wpcom_atomic: boolean;
 	jetpack: boolean;
 	logo: SiteLogo;
+	options: {
+		launchpad_screen: string;
+		site_intent: string;
+		admin_url: string;
+	};
 }
 
 export interface Dispatch {

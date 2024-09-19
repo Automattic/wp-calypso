@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -9,11 +9,7 @@ interface Props {
 }
 
 const AutomatticLogo: FunctionComponent< Props > = ( { className, size = 96 } ) => (
-	<svg
-		className={ classNames( 'automattic-logo', className ) }
-		height={ size }
-		viewBox="0 0 792 96"
-	>
+	<svg className={ clsx( 'automattic-logo', className ) } height={ size } viewBox="0 0 792 96">
 		<path d="M292.1,80.5c-19.4,0-31.9-13.9-31.9-28.5v-1.8c0-14.8,12.6-28.5,31.9-28.5c19.4,0,32,13.7,32,28.5V52C324.1,66.5,311.6,80.5,292.1,80.5z M313.8,50.3c0-10.6-7.7-20-21.7-20s-21.6,9.4-21.6,20v1.3c0,10.6,7.6,20.2,21.6,20.2s21.7-9.6,21.7-20.2V50.3z" />
 		<path d="M73.5,78.3l-7.2-13.5H34.2l-7,13.5H16.4L46,23.7h8.5l30,54.6H73.5z M50,34.4l-11.9,23h24.2L50,34.4z" />
 		<path d="M131.1,80.5c-19.6,0-28.7-10.7-28.7-24.9V23.7h10.2v32.1c0,10.1,6.6,16.1,19.3,16.1c13,0,18.3-6,18.3-16.1V23.7h10.3v31.9C160.4,69.1,151.7,80.5,131.1,80.5z" />

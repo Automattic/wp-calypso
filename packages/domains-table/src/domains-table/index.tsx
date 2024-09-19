@@ -1,6 +1,6 @@
 import { DomainData } from '@automattic/data-stores';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import {
 	DomainsTableProps,
@@ -15,8 +15,9 @@ import { DomainsTableToolbar } from './domains-table-toolbar';
 import './style.scss';
 
 export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } ) {
+	const { className, hideCheckbox, footer, useMobileCards, ...allProps } = props;
+
 	const isMobile = useMobileBreakpoint();
-	const { footer, ...allProps } = props;
 
 	const state = useGenerateDomainsTableState( allProps );
 
@@ -31,15 +32,15 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 
 	return (
 		<DomainsTableStateContext.Provider value={ state }>
-			<div className="domains-table">
+			<div className={ clsx( className, 'domains-table' ) }>
 				<DomainsTableBulkUpdateNotice />
 				{ showDomainsToolbar && <DomainsTableToolbar /> }
-				{ isMobile ? (
+				{ useMobileCards ?? isMobile ? (
 					<DomainsTableMobileCards />
 				) : (
 					<table
-						className={ classnames( `is-${ state.domainsTableColumns.length }-column`, {
-							'has-checkbox': state.canSelectAnyDomains,
+						className={ clsx( `is-${ state.domainsTableColumns.length }-column`, {
+							'has-checkbox': state.canSelectAnyDomains && ! hideCheckbox,
 						} ) }
 					>
 						<DomainsTableHeader />

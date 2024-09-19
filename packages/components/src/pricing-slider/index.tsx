@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { HTMLProps } from 'react';
 import ReactSlider from 'react-slider';
 import { RenderThumbFunction, PricingSliderProps } from './types';
@@ -25,10 +25,10 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 } ) => {
 	const [ isThumbHolding, setIsThumbHolding ] = React.useState( false );
 
-	const componentClassName = classNames( 'jp-components-pricing-slider', className, {
+	const componentClassName = clsx( 'jp-components-pricing-slider', className, {
 		'jp-components-pricing-slider--is-holding': isThumbHolding,
 	} );
-	const thumbClassNames = classNames( 'jp-components-pricing-slider__thumb', thumbClassName );
+	const thumbClassNames = clsx( 'jp-components-pricing-slider__thumb', thumbClassName );
 
 	const onBeforeChangeCallback = ( beforeValue: number ) => {
 		setIsThumbHolding( true );
@@ -55,7 +55,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 	const renderMarks = ( props: HTMLProps< HTMLSpanElement > ) => (
 		<span
 			{ ...props }
-			className={ classNames( props?.className, {
+			className={ clsx( props?.className, {
 				[ 'jp-components-pricing-slider__mark--selected' ]:
 					( ( props?.key as number ) ?? 0 ) <= ( value ?? 0 ),
 			} ) }

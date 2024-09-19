@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -17,6 +17,7 @@ const services = ( translate = ( string ) => string ) => ( {
 	x: { icon: 'x', label: translate( 'X' ) },
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
 	nextdoor: { icon: 'nextdoor', label: translate( 'Nextdoor' ) },
+	threads: { icon: 'threads', label: translate( 'Threads' ) },
 } );
 
 const noop = () => {};
@@ -25,7 +26,7 @@ export const SocialItem = ( props ) => {
 	const { isSelected, onClick, service, translate } = props;
 
 	const { icon, label } = get( services( translate ), service );
-	const classes = classNames( 'vertical-menu__social-item', 'vertical-menu__items', {
+	const classes = clsx( 'vertical-menu__social-item', 'vertical-menu__items', {
 		'is-selected': isSelected,
 	} );
 

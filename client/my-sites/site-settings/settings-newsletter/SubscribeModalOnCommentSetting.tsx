@@ -1,6 +1,8 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-export const SUBSCRIBE_MODAL_ON_COMMENT_OPTION = 'jetpack_verbum_subscription_modal';
+import SupportInfo from 'calypso/components/support-info';
+
+const SUBSCRIBE_MODAL_ON_COMMENT_OPTION = 'jetpack_verbum_subscription_modal';
 
 type SubscribeModalOnCommentSettingProps = {
 	value?: boolean;
@@ -17,11 +19,15 @@ export const SubscribeModalOnCommentSetting = ( {
 
 	return (
 		<>
+			<SupportInfo
+				text={ translate( 'Ask your readers to subscribe after commenting.' ) }
+				privacyLink={ false }
+			/>
 			<ToggleControl
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_ON_COMMENT_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Display subscription suggestion after comment' ) }
+				label={ translate( 'Enable subscription pop-up for commenters' ) }
 			/>
 		</>
 	);

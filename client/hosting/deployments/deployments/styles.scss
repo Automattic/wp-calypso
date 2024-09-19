@@ -1,0 +1,227 @@
+@import "@automattic/typography/styles/variables";
+$brand-text: "SF Pro Text", $sans;
+
+.github-deployments-list {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+
+	.github-deployments__search {
+		max-width: 504px;
+		display: flex;
+		height: 43px;
+	}
+
+	table {
+		border-collapse: collapse;
+	}
+
+	th {
+		.button-plain {
+			text-align: left;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+
+			&:focus {
+				outline: thin dotted;
+			}
+		}
+	}
+
+	th,
+	td {
+		font-weight: normal;
+	}
+
+	thead tr,
+	tbody tr:not(:last-of-type) {
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+	tr th {
+		padding: 8px 0 16px 0;
+		font-weight: 500;
+		color: var(--studio-gray-60, #50575e);
+	}
+
+	td {
+		vertical-align: middle !important;
+		padding-right: 22px;
+
+		> * {
+			white-space: nowrap;
+		}
+
+		.github-deployments-list__repository-details,
+		&.deployment-message i {
+			white-space: normal;
+		}
+
+		&:last-child {
+			padding-right: 0;
+			text-align: right;
+		}
+	}
+
+	&__no-results {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 517px;
+		margin: 64px auto;
+		text-align: center;
+		p:first-child {
+			line-height: 24px;
+			font-size: $font-body;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		p:last-of-type {
+			line-height: 20px;
+		}
+	}
+
+	&__repository-details {
+		width: 200px;
+		display: flex;
+		flex-direction: column;
+		padding: 21px 0;
+		font-weight: 500;
+
+		button {
+			text-align: left;
+			padding: 0;
+			border: none;
+			color: var(--studio-gray-100, #101517);
+
+			&:hover {
+				text-decoration: underline;
+				color: var(--studio-gray-100, #101517);
+			}
+		}
+
+		span {
+			color: var(--studio-gray-60);
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+		}
+	}
+
+	&__commit-details {
+		display: flex;
+		white-space: normal !important;
+		flex-direction: column;
+		> div {
+			display: inline-flex;
+			gap: 8px;
+			font-size: $font-body-extra-small;
+			font-family: monospace;
+			span {
+				display: inline-flex;
+				align-items: center;
+			}
+		}
+
+		a {
+			text-decoration: underline;
+			color: var(--studio-gray-60);
+		}
+	}
+
+	&__menu-item-danger {
+		color: var(--color-error);
+	}
+}
+
+
+.github-deployments-status {
+	display: inline-flex;
+	min-height: 24px;
+	padding-left: 8px;
+	padding-right: 8px;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 12px;
+	cursor: pointer;
+
+	&__pending,
+	&__queued {
+		border: 1px solid var(--Gray-Gray-10, #c3c4c7);
+		color: var(--Gray-Gray-60, #50575e);
+		background-color: var(--studio-white);
+	}
+
+	&__success {
+		background-color: var(--Green-Green-5, #b8e6bf);
+		color: var(--Green-Green-80, #00450c);
+	}
+
+	&__failed {
+		background-color: var(--Red-Red-5, #facfd2);
+		color: var(--Red-Red-80, #691c1c);
+	}
+
+	&__running,
+	&__building {
+		background-color: var(--Blue-Blue-5, #bbe0fa);
+		color: var(--Blue-Blue-80, #02395c);
+	}
+
+	&__warnings {
+		background-color: var(--Yellow-Yellow-5, #f5c4a1);
+		color: var(--Yellow-Yellow-80, #4f3500);
+	}
+
+	span {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 13px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px; /* 153.846% */
+		text-transform: capitalize;
+	}
+
+	&:visited,
+	&:hover {
+		color: inherit;
+	}
+}
+
+.github-deployments-delete-deployment-dialog {
+	max-width: 560px;
+
+	p,
+	.components-toggle-control__label {
+		font-size: $font-body-small;
+	}
+
+	p {
+		line-height: 20px;
+	}
+
+	.components-form-toggle,
+	.components-toggle-control__label {
+		line-height: 1;
+	}
+}
+
+.github-deployments-commit-details-popover {
+	.popover__inner {
+		padding: 16px;
+	}
+}
+
+.github-deployments {
+	.header-cake__back {
+		color: var(--studio-gray-60);
+		font-size: $font-body-small;
+		padding: 0;
+		margin-bottom: 16px;
+		svg {
+			margin-right: 2px;
+			fill: var(--studio-gray-60);
+		}
+	}
+}

@@ -2,7 +2,11 @@ import {
 	FEATURE_GOOGLE_ANALYTICS,
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
-import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import {
+	CompactCard,
+	FormInputValidation as FormTextValidation,
+	FormLabel,
+} from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { find } from 'lodash';
@@ -12,7 +16,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -20,7 +23,9 @@ import SupportInfo from 'calypso/components/support-info';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteSettings } from 'calypso/state/site-settings/actions';
 import FormAnalyticsStores from '../form-analytics-stores';
 
 import './style.scss';
@@ -49,27 +54,37 @@ const GoogleAnalyticsJetpackForm = ( {
 	sitePlugins,
 	translate,
 	isAtomic,
+	isJetpackModuleAvailable,
 } ) => {
 	const upsellHref = `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`;
 	const analyticsSupportUrl = isAtomic
-		? 'https://wordpress.com/support/google-analytics/'
+		? localizeUrl( 'https://wordpress.com/support/google-analytics/' )
 		: 'https://jetpack.com/support/google-analytics/';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	// TODO: it would be better to get wooCommercePlugin directly in form-google-analytics using getAllPluginsIndexedByPluginSlug
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
+	const dispatch = useDispatch();
+	const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );
 
 	useEffect( () => {
-		if ( jetpackModuleActive ) {
+		// Show the form if GA module is active, or it's been removed but GA is activated via the Legacy Plugin.
+		if ( jetpackModuleActive || ( ! isJetpackModuleAvailable && fields?.wga?.is_active ) ) {
 			setDisplayForm( true );
 		} else {
 			setDisplayForm( false );
 		}
-	}, [ jetpackModuleActive, setDisplayForm ] );
+	}, [ jetpackModuleActive, setDisplayForm, isJetpackModuleAvailable, fields?.wga?.is_active ] );
+
+	useEffect( () => {
+		if ( jetpackModuleActive && ! fields.hasOwnProperty( 'wga' ) ) {
+			dispatch( requestSiteSettings( siteId ) );
+		}
+	}, [ jetpackModuleActive, siteId ] );
 
 	const handleToggleChange = ( key ) => {
 		const value = fields.wga ? ! fields.wga[ key ] : false;
-		recordTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
+		trackTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
 		handleFieldChange( key, value );
 	};
 
@@ -77,19 +92,51 @@ const GoogleAnalyticsJetpackForm = ( {
 		handleToggleChange( 'anonymize_ip' );
 	};
 
+	const handleSubmitFormCustom = () => {
+		if ( isJetpackModuleAvailable ) {
+			handleFieldChange( 'is_active', !! jetpackModuleActive, handleSubmitForm );
+			return;
+		}
+
+		handleSubmitForm();
+	};
+
+	const trackActiveToggle = () => {
+		trackTracksEvent( 'calypso_google_analytics_setting_changed', { key: 'is_active', path } );
+	};
+
+	const handleSettingsToggleChange = ( value ) => {
+		trackActiveToggle();
+		handleFieldChange( 'is_active', value, handleSubmitForm );
+	};
+
+	const renderSettingsToggle = () => {
+		return (
+			<span className="jetpack-module-toggle">
+				<ToggleControl
+					id={ `${ siteId }-ga-settings-toggle` }
+					checked={ fields?.wga?.is_active }
+					onChange={ handleSettingsToggleChange }
+					label={ translate( 'Add Google' ) }
+					disabled={ isRequestingSettings || isSavingSettings }
+				/>
+			</span>
+		);
+	};
+
 	const renderForm = () => {
 		return (
 			<form
 				aria-label="Google Analytics Site Settings"
 				id="analytics"
-				onSubmit={ handleSubmitForm }
+				onSubmit={ handleSubmitFormCustom }
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
+					onButtonClick={ handleSubmitFormCustom }
 					showButton
 					title={ translate( 'Google' ) }
 				/>
@@ -139,7 +186,7 @@ const GoogleAnalyticsJetpackForm = ( {
 								/>
 								{ ! isCodeValid && (
 									<FormTextValidation
-										isError={ true }
+										isError
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
@@ -191,11 +238,7 @@ const GoogleAnalyticsJetpackForm = ( {
 									{
 										components: {
 											a: (
-												<a
-													href={ localizeUrl( analyticsSupportUrl ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
+												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
 											),
 										},
 									}
@@ -213,7 +256,7 @@ const GoogleAnalyticsJetpackForm = ( {
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_JETPACK_SECURITY_DAILY }
 						href={ upsellHref }
-						showIcon={ true }
+						showIcon
 						title={ nudgeTitle }
 					/>
 				) : (
@@ -228,12 +271,17 @@ const GoogleAnalyticsJetpackForm = ( {
 									) }
 									link="https://jetpack.com/support/google-analytics/"
 								/>
-								<JetpackModuleToggle
-									siteId={ siteId }
-									moduleSlug="google-analytics"
-									label={ translate( 'Add Google' ) }
-									disabled={ isRequestingSettings || isSavingSettings }
-								/>
+								{ isJetpackModuleAvailable ? (
+									<JetpackModuleToggle
+										siteId={ siteId }
+										moduleSlug="google-analytics"
+										label={ translate( 'Add Google' ) }
+										disabled={ isRequestingSettings || isSavingSettings }
+										onChange={ trackActiveToggle }
+									/>
+								) : (
+									renderSettingsToggle()
+								) }
 							</FormFieldset>
 						</div>
 					</CompactCard>

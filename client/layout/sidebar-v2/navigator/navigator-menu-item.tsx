@@ -5,7 +5,7 @@ import {
 	FlexBlock,
 } from '@wordpress/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -22,6 +22,8 @@ interface Props {
 	withChevron?: boolean;
 	isExternalLink?: boolean;
 	isSelected?: boolean;
+	openInSameTab?: boolean;
+	extraContent?: JSX.Element;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -34,26 +36,36 @@ export const SidebarNavigatorMenuItem = ( {
 	withChevron = false,
 	isExternalLink = false,
 	isSelected = false,
+	openInSameTab = false,
+	extraContent,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
 			<Item
-				className={ classnames( 'sidebar-v2__menu-item', {
+				className={ clsx( 'sidebar-v2__menu-item', {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
 				href={ link }
 				id={ id }
 				as="a"
-				target={ isExternalLink ? '_blank' : undefined }
+				target={ isExternalLink && ! openInSameTab ? '_blank' : undefined }
 			>
 				<HStack justify="flex-start">
-					{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ ICON_SIZE } /> }
+					{ icon && (
+						<Icon
+							className="sidebar__menu-icon"
+							style={ { fill: 'currentcolor' } }
+							icon={ icon }
+							size={ ICON_SIZE }
+						/>
+					) }
 					<FlexBlock>{ children }</FlexBlock>
 					{ withChevron && <Icon icon={ chevronRightSmall } size={ ICON_SIZE } /> }
 					{ isExternalLink && (
 						<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
 					) }
+					{ extraContent }
 				</HStack>
 			</Item>
 		);

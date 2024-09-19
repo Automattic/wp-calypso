@@ -1,16 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { MigrationStatus } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import { retrieveMigrationStatus } from 'calypso/blocks/importer/wordpress/utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -41,15 +44,18 @@ import type { ImporterCompType } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
 
+type StepContainerProps = React.ComponentProps< typeof StepContainer >;
+
 interface Props {
 	importer: Importer;
+	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
 }
 
 export function withImporterWrapper( Importer: ImporterCompType ) {
 	const ImporterWrapper = ( props: Props & StepProps ) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
-		const { importer, navigation, flow } = props;
+		const { importer, customizedActionButtons, navigation, flow } = props;
 		const currentSearchParams = useQuery();
 		/**
 	 	↓ Fields
@@ -61,7 +67,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
-		const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
+		const hasAllSitesFetched = useSelector( hasAllSitesList );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const isMigrateFromWp = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
@@ -70,6 +76,14 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
+		const migrationStatus = retrieveMigrationStatus();
+		const isMigrationInProgress =
+			migrationStatus === MigrationStatus.BACKING_UP ||
+			migrationStatus === MigrationStatus.BACKING_UP_QUEUED ||
+			migrationStatus === MigrationStatus.RESTORING;
+		const currentPath = window.location.pathname + window.location.search;
+
+		useSaveHostingFlowPathStep( flow, currentPath );
 
 		/**
 	 	↓ Effects
@@ -155,7 +169,11 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		const renderStepContent = () => {
 			if ( isLoading() ) {
-				return <LoadingEllipsis />;
+				return (
+					<div className="import-layout__center">
+						<LoadingEllipsis />
+					</div>
+				);
 			} else if ( ! siteSlug || ! site || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
@@ -189,7 +207,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 				<StepContainer
-					className={ classnames(
+					className={ clsx(
 						'import__onboarding-page',
 						'importer-wrapper',
 						'import__onboarding-page--redesign',
@@ -198,10 +216,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						}
 					) }
 					stepName="importer-step"
-					hideSkip={ true }
-					hideFormattedHeader={ true }
+					customizedActionButtons={ customizedActionButtons }
+					hideSkip
+					hideBack={ isMigrationInProgress }
+					hideFormattedHeader
 					goBack={ onGoBack }
-					isWideLayout={ true }
+					isWideLayout
 					stepContent={ renderStepContent() }
 					recordTracksEvent={ recordTracksEvent }
 				/>

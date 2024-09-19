@@ -7,6 +7,7 @@
 
 .main.professional-email-upsell {
 	max-width: 1040px;
+	margin-top: 40px;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 1em;
@@ -17,59 +18,13 @@
 	text-align: center;
 
 	.billing-interval-toggle {
-		display: flex;
-
 		.segmented-control.is-primary {
 			background-color: var(--studio-gray-0);
 			border: 1px solid var(--studio-gray-5);
-			border-radius: 6px; /* stylelint-disable-line scales/radii */
-			color: var(--color-text);
 
 			&.is-compact {
 				margin-bottom: 0;
 				max-width: unset;
-			}
-
-			.segmented-control__item {
-				border-radius: 6px; /* stylelint-disable-line scales/radii */
-				border: 1px solid var(--studio-gray-0);
-				padding: 2px;
-
-				.segmented-control__link .segmented-control__text span {
-					padding: 6px 9px;
-				}
-
-				&:hover:not(.is-selected) {
-					border-color: var(--studio-gray-30);
-				}
-
-				&:first-child {
-					margin-right: 5px;
-				}
-
-				& .segmented-control__link {
-					color: var(--color-text);
-					border: 0;
-					&:hover {
-						background-color: unset;
-					}
-				}
-
-				&.is-selected .segmented-control__link {
-					border-radius: 5px; /* stylelint-disable-line scales/radii */
-					background-color: var(--studio-white);
-					border-color: var(--studio-white);
-					box-shadow:
-						0 4px 4px rgba(0, 0, 0, 0.25),
-						0 3px 8px rgba(0, 0, 0, 0.12),
-						inset 0 0 0 rgba(0, 0, 0, 0.2);
-					color: var(--color-text);
-
-					&:hover,
-					&:focus {
-						background-color: var(--studio-white);
-					}
-				}
 			}
 		}
 	}
@@ -95,16 +50,29 @@
 }
 
 .professional-email-upsell__pricing {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 24px;
+	.professional-email-price__trial-badge {
+		background-color: var(--color-success);
+		color: var(--color-text-inverted);
+		margin-bottom: 4px;
+	}
 
-	@include break-mobile {
-		justify-content: center;
-		margin-bottom: 10px;
+	.price-with-interval__sale-price {
+		color: var(--studio-green-50);
+	}
 
-		span + span {
-			margin-left: 8px;
+	.price__cost > span {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
+	.price-information__free-trial {
+		display: block;
+		font-size: $font-body-small;
+		margin-bottom: 0;
+		margin-top: 4px;
+
+		@include break-medium {
+			margin-bottom: 12px;
 		}
 	}
 }
@@ -117,27 +85,14 @@
 }
 
 .professional-email-upsell__content {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	gap: 40px;
 	margin-top: 2.5em;
 
 	@include break-medium {
-		flex-direction: row;
+		grid-template-columns: 7fr 4fr;
+		gap: 50px;
 		margin-top: 3em;
-
-		> div {
-			padding: 1em;
-
-			&:first-of-type {
-				flex: 1;
-				max-width: 550px;
-				padding-right: 3em;
-			}
-
-			&:last-of-type {
-				padding-left: 3em;
-			}
-		}
 	}
 }
 
@@ -183,11 +138,7 @@
 .professional-email-upsell__features {
 	display: flex;
 	flex-direction: column;
-	margin-top: 2.5em;
-
-	@include break-medium {
-		margin-top: 0;
-	}
+	max-width: 380px;
 
 	h2 {
 		font-size: $font-body-small;

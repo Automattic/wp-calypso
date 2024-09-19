@@ -15,7 +15,7 @@ const RecurringPaymentsCouponDeleteModal = ( {
 	coupon,
 }: RecurringPaymentsCouponDeleteModalProps ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
 	const onClose = ( action?: string ) => {
@@ -33,7 +33,7 @@ const RecurringPaymentsCouponDeleteModal = ( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			className="memberships__delete-plan-modal"
 			buttons={ [
 				{

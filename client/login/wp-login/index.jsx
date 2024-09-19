@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -14,12 +15,19 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
-import TranslatorInvite from 'calypso/components/translator-invite';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import {
+	getSignupUrl,
+	isReactLostPasswordScreenEnabled,
+	pathWithLeadingSlash,
+} from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -29,15 +37,17 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
-import LoginButtons from './login-buttons';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
@@ -165,7 +175,7 @@ export class Login extends Component {
 
 		return (
 			<div
-				className={ classNames( 'wp-login__footer', {
+				className={ clsx( 'wp-login__footer', {
 					'wp-login__footer--oauth': isOauthLogin,
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
@@ -233,11 +243,18 @@ export class Login extends Component {
 	renderGravPoweredLoginBlockFooter() {
 		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
 
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
+		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+		const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQuery?.email_address );
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
+			gravatarFrom: currentQuery?.gravatar_from,
+			gravatarFlow: isGravatarFlow,
+			emailAddress: currentQuery?.email_address,
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -260,7 +277,9 @@ export class Login extends Component {
 							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
 						}
 					>
-						{ translate( 'Email me a login link.' ) }
+						{ isGravatar
+							? translate( 'Email me a login code.' )
+							: translate( 'Email me a login link.' ) }
 					</a>
 					<a
 						href={ lostPasswordUrl }
@@ -270,13 +289,15 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					<div>
-						{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
-							components: {
-								signupLink: <a href={ signupUrl } />,
-							},
-						} ) }
-					</div>
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
+						<div>
+							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
+								components: {
+									signupLink: <a href={ signupUrl } />,
+								},
+							} ) }
+						</div>
+					) }
 					<div>
 						{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
 							components: {
@@ -298,11 +319,44 @@ export class Login extends Component {
 			return null;
 		}
 
+		if (
+			isReactLostPasswordScreenEnabled() &&
+			( this.props.isWoo ||
+				this.props.isBlazePro ||
+				( this.props.isWooCoreProfilerFlow &&
+					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) )
+		) {
+			return (
+				<a
+					className="login__lost-password-link"
+					href="/"
+					onClick={ ( event ) => {
+						event.preventDefault();
+						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+						page(
+							login( {
+								redirectTo: this.props.redirectTo,
+								locale: this.props.locale,
+								action: this.props.isWooCoreProfilerFlow ? 'jetpack/lostpassword' : 'lostpassword',
+								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+								from: get( this.props.currentQuery, 'from' ),
+							} )
+						);
+					} }
+				>
+					{ this.props.translate( 'Lost your password?' ) }
+				</a>
+			);
+		}
+
 		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
 
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+		if (
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client )
+		) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			const queryArgs = {
@@ -342,7 +396,14 @@ export class Login extends Component {
 			usernameOrEmail,
 		} = this.props;
 
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+			return null;
+		}
+
+		if (
+			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
+			'/log-in/authenticator' !== currentRoute
+		) {
 			return null;
 		}
 
@@ -383,6 +444,88 @@ export class Login extends Component {
 		);
 	}
 
+	renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) {
+		const {
+			isJetpack,
+			isWhiteLogin,
+			isP2Login,
+			isGravPoweredClient,
+			privateSite,
+			socialConnect,
+			twoFactorAuthType,
+			locale,
+			isLoginView,
+			signupUrl,
+			isWooCoreProfilerFlow,
+			isWooPasswordless,
+			isPartnerSignup,
+			isWoo,
+			isBlazePro,
+			currentQuery,
+		} = this.props;
+
+		if ( isGravPoweredLoginPage ) {
+			return this.renderGravPoweredLoginBlockFooter();
+		}
+
+		if (
+			currentQuery.lostpassword_flow === 'true' &&
+			isWooCoreProfilerFlow &&
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+		) {
+			return null;
+		}
+
+		if ( ( isWooPasswordless || isBlazePro ) && isLoginView ) {
+			return (
+				<>
+					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
+				</>
+			);
+		}
+
+		if ( isSocialFirst ) {
+			return (
+				<>
+					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
+				</>
+			);
+		}
+
+		const isJetpackMagicLinkSignUpFlow =
+			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const shouldRenderFooter =
+			! socialConnect &&
+			! isJetpackMagicLinkSignUpFlow &&
+			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
+			! ( isWoo && ! isPartnerSignup ) &&
+			! isBlazePro &&
+			! isWooCoreProfilerFlow;
+
+		if ( shouldRenderFooter ) {
+			return (
+				<>
+					<LoginLinks
+						locale={ locale }
+						privateSite={ privateSite }
+						twoFactorAuthType={ twoFactorAuthType }
+						isWhiteLogin={ isWhiteLogin }
+						isP2Login={ isP2Login }
+						isGravPoweredClient={ isGravPoweredClient }
+						signupUrl={ signupUrl }
+						usernameOrEmail={ this.state.usernameOrEmail }
+						oauth2Client={ this.props.oauth2Client }
+						getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
+						renderSignUpLink={ this.renderSignUpLink.bind( this ) }
+					/>
+				</>
+			);
+		}
+
+		return null;
+	}
+
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -400,12 +543,8 @@ export class Login extends Component {
 			socialServiceResponse,
 			fromSite,
 			locale,
-			isLoginView,
-			path,
 			signupUrl,
 			action,
-			isWooCoreProfilerFlow,
-			isPartnerSignup,
 			currentRoute,
 		} = this.props;
 
@@ -413,59 +552,7 @@ export class Login extends Component {
 			return <PrivateSite />;
 		}
 
-		const isJetpackMagicLinkSignUpFlow =
-			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
-
-		const shouldRenderFooter =
-			! socialConnect &&
-			! isJetpackMagicLinkSignUpFlow &&
-			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
-			! isWooCoreProfilerFlow;
-
-		const footer = (
-			<>
-				{ isSocialFirst ? (
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
-				) : (
-					shouldRenderFooter && (
-						<LoginLinks
-							locale={ locale }
-							privateSite={ privateSite }
-							twoFactorAuthType={ twoFactorAuthType }
-							isWhiteLogin={ isWhiteLogin }
-							isP2Login={ isP2Login }
-							isGravPoweredClient={ isGravPoweredClient }
-							signupUrl={ signupUrl }
-							usernameOrEmail={ this.state.usernameOrEmail }
-							oauth2Client={ this.props.oauth2Client }
-							getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
-							renderSignUpLink={ this.renderSignUpLink.bind( this ) }
-						/>
-					)
-				) }
-				{ isLoginView && <TranslatorInvite path={ path } /> }
-			</>
-		);
-
-		const loginButtons = (
-			<>
-				{ isSocialFirst && isWhiteLogin && (
-					<LoginButtons
-						locale={ locale }
-						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
-						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2Client={ this.props.oauth2Client }
-					/>
-				) }
-			</>
-		);
-
-		// It's used to toggle UIs for the login and magic login of Gravatar powered clients only (not for F2A pages)
+		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
 		const isGravPoweredLoginPage =
 			isGravPoweredClient &&
 			! currentRoute.startsWith( '/log-in/push' ) &&
@@ -491,28 +578,38 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				footer={ isGravPoweredLoginPage ? this.renderGravPoweredLoginBlockFooter() : footer }
+				footer={ this.renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
 				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
 			/>
 		);
 	}
 
 	render() {
-		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
-			this.props;
+		const {
+			locale,
+			translate,
+			isFromMigrationPlugin,
+			isGravPoweredClient,
+			isWoo,
+			isBlazePro,
+			isWhiteLogin,
+		} = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+			config.isEnabled( 'login/social-first' ) &&
+			isWhiteLogin &&
+			! isGravPoweredClient &&
+			! isWoo &&
+			! isBlazePro;
 
 		return (
 			<div>
 				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main
-					className={ classNames( 'wp-login__main', {
+					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
 						'is-social-first': isSocialFirst,
 					} ) }
@@ -540,20 +637,31 @@ export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const currentRoute = getCurrentRoute( state );
 
 		return {
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			locale: getCurrentLocaleSlug( state ),
 			oauth2Client,
-			isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
+			isLoginView:
+				! props.twoFactorAuthType &&
+				! props.socialConnect &&
+				// React lost password screen.
+				! currentRoute.includes( '/lostpassword' ) &&
+				// When user clicks on the signup link, it changes the route but it doesn't immediately render the signup page
+				// So we need to check if the current route is not the signup route to avoid flickering
+				! currentRoute.includes( '/start' ),
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ),
-			currentRoute: getCurrentRoute( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
+			isBlazePro: getIsBlazePro( state ),
+			currentRoute,
 			currentQuery,
+			redirectTo: getRedirectToOriginal( state ),
 		};
 	},
 	{

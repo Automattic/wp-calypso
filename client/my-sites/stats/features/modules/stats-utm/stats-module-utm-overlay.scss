@@ -1,0 +1,11 @@
+.stats-module-utm-overlay {
+	.stats-card--column-header {
+		filter: blur(10px);
+	}
+
+	.stats-card__content {
+		// Prevent blur elements from being interactable.
+		pointer-events: none;
+		user-select: none;
+	}
+}

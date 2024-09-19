@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -7,7 +7,7 @@ import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post } ) => {
+const ReaderFullPostHeader = ( { post, authorProfile } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -27,7 +27,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
-		<div className={ classNames( classes ) }>
+		<div className={ clsx( classes ) }>
 			{ post.title ? (
 				<AutoDirection>
 					<h1 className="reader-full-post__header-title">
@@ -43,6 +43,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 					</h1>
 				</AutoDirection>
 			) : null }
+			<div className="reader-full-post__author-block">{ authorProfile }</div>
 			<div className="reader-full-post__header-meta">
 				{ post.date ? (
 					<span className="reader-full-post__header-date">
@@ -66,6 +67,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 
 ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
+	children: PropTypes.node,
 };
 
 export default ReaderFullPostHeader;

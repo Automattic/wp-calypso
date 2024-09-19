@@ -5,7 +5,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const useSubscriberLaunchpadTasks = () => {
 	const checklistSlug = 'subscribers';
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const {
 		data: { checklist },

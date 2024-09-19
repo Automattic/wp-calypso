@@ -8,7 +8,6 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -18,6 +17,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
+	isSignupFlow: false,
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -57,11 +57,6 @@ const withThemeAssemblerFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const siteSlug = useSiteSlug();
 
@@ -76,8 +71,6 @@ const withThemeAssemblerFlow: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
-			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {

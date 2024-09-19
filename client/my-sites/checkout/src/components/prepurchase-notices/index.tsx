@@ -22,6 +22,8 @@ import {
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSitePlan, isJetpackMinimumVersion, getSiteOption } from 'calypso/state/sites/selectors';
@@ -156,7 +158,7 @@ const PrePurchaseNotices = () => {
 	return null;
 };
 
-const Wrapper = () => {
+const PrePurchaseNoticesWrapper = () => {
 	const notice = PrePurchaseNotices();
 
 	return (
@@ -170,4 +172,20 @@ const Wrapper = () => {
 	);
 };
 
-export default Wrapper;
+function PrePurchaseNoticesQueryContainer( {
+	siteId,
+	isSiteless,
+}: {
+	siteId: number | undefined;
+	isSiteless: boolean;
+} ) {
+	return (
+		<>
+			<QuerySitePurchases siteId={ siteId } />
+			{ isSiteless && <QueryUserPurchases /> }
+			<PrePurchaseNoticesWrapper />
+		</>
+	);
+}
+
+export default PrePurchaseNoticesQueryContainer;

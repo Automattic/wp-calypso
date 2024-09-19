@@ -7,6 +7,8 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
+		autoRenewCouponCode: purchase.auto_renew_coupon_code,
+		autoRenewCouponDiscountPercentage: Number( purchase.auto_renew_coupon_discount_percentage ),
 		billPeriodDays: Number( purchase.bill_period_days ),
 		billPeriodLabel: purchase.bill_period_label,
 		mostRecentRenewDate: purchase.most_recent_renew_date,
@@ -62,6 +64,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
+		isWooExpressTrial: Boolean( purchase.is_woo_express_trial ),
 		meta: purchase.meta,
 		ownershipId: Number( purchase.ownership_id ),
 		priceText: purchase.price_text,
@@ -77,6 +80,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		),
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,
+		partnerType: purchase.partner_type,
 		partnerKeyId: purchase.partner_key_id,
 		payment: {
 			name: purchase.payment_name,
@@ -122,6 +126,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		object.payment.creditCard = {
 			id: Number( purchase.payment_card_id ),
 			type: purchase.payment_card_type,
+			displayBrand: purchase.payment_card_display_brand,
 			processor: purchase.payment_card_processor,
 			number: purchase.payment_details,
 			expiryDate: purchase.payment_expiry,

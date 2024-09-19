@@ -16,7 +16,6 @@ export const localStorageExperimentAssignmentKey = ( experimentName: string ): s
 
 /**
  * Store an ExperimentAssignment.
- *
  * @param experimentAssignment The ExperimentAssignment
  */
 export function storeExperimentAssignment( experimentAssignment: ExperimentAssignment ): void {
@@ -42,7 +41,6 @@ export function storeExperimentAssignment( experimentAssignment: ExperimentAssig
 
 /**
  * Retrieve an ExperimentAssignment.
- *
  * @param experimentName The experiment name.
  */
 export function retrieveExperimentAssignment(

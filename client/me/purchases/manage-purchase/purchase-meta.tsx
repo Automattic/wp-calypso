@@ -6,7 +6,9 @@ import {
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
+import { ExternalLink } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -22,13 +24,13 @@ import {
 	isRenewing,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
+import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaOwner from './purchase-meta-owner';
@@ -76,22 +78,50 @@ export default function PurchaseMeta( {
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
 
-	const renewalPriceHeader =
-		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
-			? translate( 'Renewal Price' )
-			: translate( 'Price' );
+	const renewalPriceHeader = translate( 'Renewal Price' );
+
+	const hideRenewalPriceSection = isOneTimePurchase( purchase );
+	const hideTaxString = isIncludedWithPlan( purchase );
+
+	// To-do: There isn't currently a way to get the taxName based on the country.
+	// The country is not included in the purchase information envelope
+	// We should add this information so we can utilize useTaxName to retrieve the correct taxName
+	// For now, we are using a fallback tax name
+	const taxName = translate( 'tax', {
+		context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+	} );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringAbbreviation = translate( 'excludes %s', {
+		textOnly: true,
+		args: [ taxName ],
+	} );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringTitle = translate( 'Renewal price excludes any applicable %s', {
+		textOnly: true,
+		args: [ taxName ],
+	} );
 
 	return (
 		<>
 			<ul className="manage-purchase__meta">
 				<PurchaseMetaOwner owner={ owner } />
-				<li>
-					<em className="manage-purchase__detail-label">{ renewalPriceHeader }</em>
-					<span className="manage-purchase__detail">
-						<PurchaseMetaPrice purchase={ purchase } />
-						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
-					</span>
-				</li>
+				{ ! hideRenewalPriceSection && (
+					<li>
+						<em className="manage-purchase__detail-label">{ renewalPriceHeader }</em>
+						<span className="manage-purchase__detail">
+							<PurchaseMetaPrice purchase={ purchase } />
+							<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
+						</span>
+						{ ! hideTaxString && (
+							<span>
+								<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+							</span>
+						) }
+						<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
+					</li>
+				) }
 				<PurchaseMetaExpiration
 					purchase={ purchase }
 					site={ site ?? undefined }
@@ -320,6 +350,7 @@ function PurchaseJetpackUserLicense( { purchaseId }: { purchaseId: number } ) {
 			size={ licenseKeyInputSize }
 			value={ licenseKey }
 			loading={ isLoading || isInitialLoading }
+			activationUrl="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
 		/>
 	);
 }
@@ -342,6 +373,7 @@ function PurchaseAkismetApiKey() {
 				size={ keyInputSize }
 				value={ akismetApiKey }
 				loading={ isLoading }
+				activationUrl="https://akismet.com/support/getting-started/api-key/"
 			/>
 		</>
 	);
@@ -352,11 +384,13 @@ function PurchaseClipboardCard( {
 	value,
 	size,
 	loading = false,
+	activationUrl,
 }: {
 	label: string;
 	value: string;
 	size: number;
 	loading?: boolean;
+	activationUrl: string;
 } ) {
 	const translate = useTranslate();
 	const [ isCopied, setCopied ] = useState( false );
@@ -390,6 +424,9 @@ function PurchaseClipboardCard( {
 					</>
 				) }
 			</div>
+			<ExternalLink className="manage-purchase__license-clipboard-link" href={ activationUrl }>
+				{ translate( 'How to activate' ) }
+			</ExternalLink>
 		</Card>
 	);
 }

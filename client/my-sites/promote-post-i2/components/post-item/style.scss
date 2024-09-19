@@ -27,7 +27,9 @@ body.is-section-promote-post-i2 {
 		&-likes,
 		&-comments,
 		&-view,
-		&-promote {
+		&-promote,
+		&-sku,
+		&-price {
 			vertical-align: middle;
 		}
 
@@ -49,8 +51,8 @@ body.is-section-promote-post-i2 {
 					.post-item__post-title {
 						display: flex;
 						justify-content: flex-start;
-
-						.post-item__post-subheading-mobile {
+						.post-item__post-subheading-mobile,
+						.post-item__post-subtitle-mobile {
 							display: none;
 						}
 					}
@@ -88,6 +90,16 @@ body.is-section-promote-post-i2 {
 			text-decoration-line: underline;
 			width: 5.4%;
 		}
+
+		&-price {
+			font-size: 0.875rem;
+			width: 10%;
+		}
+
+		&-sku {
+			font-size: 0.875rem;
+			width: 10%;
+		}
 	}
 
 	// View link
@@ -113,6 +125,55 @@ body.is-section-promote-post-i2 {
 
 		&__post-promote-button {
 			border-radius: 4px;
+			border: 1.5px solid var(--color-accent);
+			color: var(--color-accent);
+			background-color: var(--color-surface);
+			box-shadow: none;
+
+			&:disabled {
+				color: var(--color-neutral-20);
+				border-color: var(--color-neutral-20);
+			}
+		}
+
+		&__post-promote-button:hover {
+			text-decoration: underline;
+			color: var(--color-accent) !important;
+		}
+
+		&__view-button {
+			@include blazepress-data-row-font-buttons-mobile;
+			background-color: #f6f7f7;
+			border-radius: 4px;
+			border: none;
+			flex-grow: 1;
+			height: 28px;
+			width: 53px;
+			max-width: 53px;
+			line-height: 30px;
+			margin-right: 12px;
+			text-decoration: none;
+			text-align: center;
+			align-items: center;
+		}
+
+		&__view-button:hover {
+			text-decoration: underline;
+		}
+
+		&__post-promote-button-mobile {
+			border-radius: 4px;
+			border: 1.5px solid var(--color-accent);
+			color: var(--color-accent);
+			background-color: var(--color-surface);
+			box-shadow: none;
+			height: 28px;
+		}
+
+		&__post-promote-button-mobile:hover {
+			text-decoration: underline;
+			color: var(--color-accent);
+			background-color: var(--color-surface);
 		}
 	}
 
@@ -176,6 +237,9 @@ body.is-section-promote-post-i2 {
 			&-likes,
 			&-comments,
 			&-view,
+			&-sku,
+			&-price,
+			&-visitors,
 			&-promote {
 				display: none;
 			}
@@ -195,9 +259,14 @@ body.is-section-promote-post-i2 {
 
 							.post-item__post-subheading-mobile {
 								@include blazepress-data-row-font-mobile;
-
 								display: block;
-								margin-bottom: 8px;
+								margin-bottom: 4px;
+							}
+
+							.post-item__post-subtitle-mobile {
+								@include blazepress-data-row-font-mobile;
+								display: block;
+								margin-top: 4px;
 							}
 
 							.post-item__post-title-content {
@@ -232,6 +301,28 @@ body.is-section-promote-post-i2 {
 			flex-grow: 1;
 			height: 40px;
 			margin-left: 8px;
+		}
+
+		.post-item__post-thumbnail-wrapper {
+			align-self: stretch;
+			background-position: 50% 50%;
+			background-repeat: no-repeat;
+			background-size: cover;
+			border: 1px solid #eee;
+			border-radius: 4px;
+			display: block;
+			height: 76px;
+			min-width: 76px;
+			overflow: hidden;
+			position: relative;
+			width: 76px;
+			&_no-image {
+				align-items: center;
+				background: $studio-gray-0;
+				border-radius: 4px;
+				display: flex;
+				justify-content: center;
+			}
 		}
 	}
 }

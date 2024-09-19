@@ -1,0 +1,69 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
+
+.is-section-patterns {
+	.layout__content {
+		padding: 0;
+		overflow: visible; // necessary for sticky CategoryPillNavigation
+
+		.masterbar {
+			// Makes sure the navigation bar header appears below the masterbar and notices
+			z-index: z-index("root", ".main") - 1;
+		}
+	}
+
+	.layout__primary {
+		.main {
+			padding-bottom: 0;
+		}
+	}
+
+	.is-logged-in {
+		.lpc-header-nav-wrapper {
+			padding-top: 32px;
+
+			@media (max-width: $break-medium) {
+				padding-top: 46px;
+			}
+		}
+
+		.lp-footer-language {
+			display: none;
+		}
+
+		.lpc-footer-nav,
+		.lpc-footer-automattic-nav {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.lpc-footer-nav-wrapper,
+		.lpc-footer-automattic-nav-wrapper,
+		.lp-link-work-m {
+			@include patterns-page-width;
+		}
+	}
+
+	.has-no-sidebar {
+		.masterbar-menu {
+			.masterbar {
+				background: #1d2327;
+				border-bottom: 1px solid #1d2327;
+			}
+		}
+	}
+
+	.x-nav-link__logo svg path {
+		fill: var(--studio-white);
+	}
+
+	.x-nav-item,
+	.x-nav-link-chevron::before {
+		color: var(--studio-white);
+	}
+
+	.x-nav-item .cta-btn-nav {
+		background: var(--studio-white) !important;
+		color: var(--studio-black) !important;
+	}
+}

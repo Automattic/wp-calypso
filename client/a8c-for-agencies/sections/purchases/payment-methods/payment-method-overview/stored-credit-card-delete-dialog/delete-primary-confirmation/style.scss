@@ -1,0 +1,45 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.delete-primary-card-confirmation__separator {
+	margin: 24px 0;
+}
+
+.delete-primary-card-confirmation__card {
+	font-size: 0.875rem;
+}
+
+.delete-primary-card-confirmation__card-title {
+	font-weight: bold;
+}
+
+.delete-primary-card-confirmation__card-details {
+	display: flex;
+	margin-top: 1rem;
+
+	& > div {
+		margin-right: 32px;
+	}
+}
+
+.delete-primary-card-confirmation__card-details-loader {
+	width: 100%;
+	height: 30px;
+
+	@include placeholder( --color-neutral-10 );
+
+	@include break-mobile {
+		width: 50%;
+	}
+}
+
+.delete-primary-card-confirmation__card-details-logo {
+	svg {
+		filter: grayscale(100%);
+	}
+}
+
+.delete-primary-card-confirmation__notice {
+	margin: 1rem 0 0;
+	font-size: 1rem;
+}

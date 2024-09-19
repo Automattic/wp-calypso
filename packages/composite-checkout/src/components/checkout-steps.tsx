@@ -534,7 +534,7 @@ export const CheckoutStepAreaWrapper = styled.div`
 
 export const SubmitButtonWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
-	padding: 24px 16px;
+	padding: 24px;
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
@@ -577,7 +577,8 @@ export const SubmitButtonWrapper = styled.div`
 
 // Set right padding so that text doesn't overlap with inline help floating button.
 export const SubmitFooterWrapper = styled.div`
-	padding-right: 42px;
+	padding-right: 0;
+	min-height: 45px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding-right: 0;

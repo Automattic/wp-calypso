@@ -1,14 +1,15 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Badge } from '@automattic/components';
+import { Badge, Tooltip } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { chevronRight } from '@wordpress/icons';
-import { Moment } from 'moment';
-import { Fragment, useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { translate } from 'i18n-calypso';
+import moment from 'moment';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
@@ -17,6 +18,7 @@ import {
 	formatNumber,
 	getAdvertisingDashboardPath,
 	getCampaignBudgetData,
+	getCampaignStartDateFormatted,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
@@ -25,18 +27,16 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
-const getCampaignEndText = ( end_date: Moment, status: string ) => {
-	if (
-		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
-	) {
+
+const getCampaignEndText = ( end_date: string, status: string, is_evergreen = 0 ) => {
+	if ( is_evergreen && [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
+		return __( 'Until stopped' );
+	} else if ( ! end_date ) {
 		return '-';
-	} else if ( [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
-		return __( 'Ongoing' );
-	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
-		// return moment in format similar to 27 June
-		return end_date.format( 'D MMMM' );
 	}
-	return '-';
+
+	// return moment in format similar to 27 June
+	return moment( end_date ).format( 'D MMMM' );
 };
 
 export default function CampaignItem( props: Props ) {
@@ -44,32 +44,73 @@ export default function CampaignItem( props: Props ) {
 	const {
 		name,
 		content_config,
-		display_name,
 		ui_status,
 		end_date,
 		budget_cents,
 		start_date,
 		campaign_stats,
+		type,
+		is_evergreen,
 	} = campaign;
 
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
 	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
 	const impressions_total = campaign_stats?.impressions_total ?? 0;
+	const conversion_rate_percentage = campaign_stats?.conversion_rate
+		? campaign_stats.conversion_rate * 100
+		: 0;
+	const conversion_rate = campaign_stats?.conversion_rate
+		? `${ conversion_rate_percentage.toFixed( 2 ) }%`
+		: '-';
 
-	const moment = useLocalizedMoment();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
-	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
-		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
-		[ budget_cents, end_date, spent_budget_cents, start_date ]
+	const { totalBudget, campaignDays } = useMemo(
+		() =>
+			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
+		[ budget_cents, end_date, spent_budget_cents, start_date, is_evergreen ]
 	);
 
-	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
-	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
-	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
+	let budgetString = '-';
+	let budgetStringMobile = '';
+	if ( is_evergreen && campaignDays && ui_status !== campaignStatus.REJECTED ) {
+		/* translators: Daily average spend. dailyAverageSpending is the budget */
+		budgetString = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s weekly' ),
+			formatCents( totalBudget )
+		);
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s weekly budget' ),
+			totalBudget
+		);
+	} else if ( campaignDays && ui_status !== campaignStatus.REJECTED ) {
+		budgetString = `$${ formatCents( totalBudget ) }`;
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s budget' ),
+			totalBudget
+		);
+	}
+
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+
+	const getPostType = ( type: string ) => {
+		switch ( type ) {
+			case 'post':
+				return translate( 'Post' );
+			case 'page':
+				return translate( 'Page' );
+			case 'product':
+				return translate( 'Product' );
+			default:
+				return translate( 'Post' );
+		}
+	};
 
 	const statusBadge = (
 		<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
@@ -84,6 +125,11 @@ export default function CampaignItem( props: Props ) {
 		event.stopPropagation();
 		page.show( openCampaignURL );
 	};
+
+	const campaignIdString = campaign.campaign_id.toString();
+	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const tooltipRef = useRef< HTMLDivElement >( null );
+	const isTouch = hasTouch();
 
 	function getMobileStats() {
 		const statElements = [];
@@ -133,7 +179,9 @@ export default function CampaignItem( props: Props ) {
 							></div>
 						) }
 						<div className="campaign-item__title-row">
+							<div className="campaign-item__post-type-mobile">{ getPostType( type ) }</div>
 							<div className="campaign-item__title">{ name }</div>
+							<div className="campaign-item__post-type">{ getPostType( type ) }</div>
 							<div className="campaign-item__status-mobile">{ statusBadge }</div>
 						</div>
 					</div>
@@ -143,22 +191,42 @@ export default function CampaignItem( props: Props ) {
 					<div className="campaign-item__actions-mobile">
 						<Button
 							onClick={ navigateToDetailsPage }
-							variant="link"
+							variant="primary"
 							className="campaign-item__view-link"
 						>
-							{ __( 'Open details' ) }
+							{ __( 'Details' ) }
 						</Button>
 					</div>
 				</div>
 			</td>
-			<td className="campaign-item__user">
-				<div>{ display_name }</div>
-			</td>
 			<td className="campaign-item__status">
-				<div>{ statusBadge }</div>
+				{ ui_status === campaignStatus.SCHEDULED ? (
+					<>
+						<div
+							ref={ tooltipRef }
+							onMouseEnter={ () => ! isTouch && setActiveTooltipId( campaignIdString ) }
+							onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
+						>
+							{ statusBadge }
+						</div>
+						<Tooltip
+							className="import__campaign-schedule-tooptip"
+							position="bottom"
+							hideArrow
+							context={ tooltipRef.current }
+							isVisible={ activeTooltipId === campaignIdString }
+						>
+							<div>{ getCampaignStartDateFormatted( start_date ) }</div>
+						</Tooltip>
+					</>
+				) : (
+					<div>{ statusBadge }</div>
+				) }
 			</td>
 			<td className="campaign-item__ends">
-				<div>{ getCampaignEndText( moment( campaign.end_date ), campaign.status ) }</div>
+				<div>
+					{ getCampaignEndText( campaign.end_date, campaign.status, campaign?.is_evergreen ) }
+				</div>
 			</td>
 			<td className="campaign-item__budget">
 				<div>{ budgetString }</div>
@@ -169,8 +237,21 @@ export default function CampaignItem( props: Props ) {
 			<td className="campaign-item__clicks">
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
+			{ isWooStore && (
+				<td className="campaign-item__conversion">
+					<div>{ conversion_rate } </div>
+				</td>
+			) }
+
 			<td className="campaign-item__action">
-				<Button onClick={ navigateToDetailsPage } variant="link" icon={ chevronRight } />
+				<Button
+					isBusy={ false }
+					disabled={ false }
+					onClick={ navigateToDetailsPage }
+					className="campaign-item__post-details-button"
+				>
+					{ __( 'Details' ) }
+				</Button>
 			</td>
 		</tr>
 	);

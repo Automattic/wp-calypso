@@ -16,7 +16,7 @@ jest.mock( 'calypso/lib/jetpack/actionable-rewind-id' );
 
 jest.mock( 'react', () => ( {
 	...jest.requireActual( 'react' ),
-	useState: jest.fn(),
+	useState: jest.fn( () => [ false, jest.fn() ] ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {

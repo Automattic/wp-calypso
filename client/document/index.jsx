@@ -1,8 +1,9 @@
 import path from 'path';
 import config from '@automattic/calypso-config';
 import { isLocaleRtl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Component } from 'react';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
@@ -11,58 +12,61 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
+	StoreSandboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
-import { initialClientsData } from 'calypso/state/oauth2-clients/reducer';
+import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
 class Document extends Component {
 	render() {
 		const {
-			app,
 			accountSettingsHelper,
+			app,
 			authHelper,
-			chunkFiles,
-			commitSha,
-			buildTimestamp,
-			head,
-			i18nLocaleScript,
-			initialReduxState,
-			initialQueryState,
-			entrypoint,
-			manifests,
-			lang,
-			languageRevisions,
-			renderedLayout,
-			user,
-			sectionGroup,
-			sectionName,
-			clientData,
-			env,
 			badge,
-			preferencesHelper,
-			reactQueryDevtoolsHelper,
 			branchName,
+			buildTimestamp,
+			chunkFiles,
+			clientData,
 			commitChecksum,
+			commitSha,
 			devDocs,
 			devDocsURL,
+			entrypoint,
+			env,
+			featuresHelper,
 			feedbackURL,
+			head,
+			i18nLocaleScript,
+			initialQueryState,
+			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
 			isWooDna,
-			requestFrom,
-			useTranslationChunks,
-			target,
-			featuresHelper,
+			lang,
+			languageRevisions,
+			manifests,
 			params,
+			preferencesHelper,
 			query,
+			reactQueryDevtoolsHelper,
+			renderedLayout,
+			requestFrom,
+			sectionGroup,
+			sectionName,
+			storeSandboxHelper,
+			target,
+			user,
+			useTranslationChunks,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -106,22 +110,27 @@ class Document extends Component {
 		let headTitle = head.title;
 		let headFaviconUrl;
 
-		// To customize the page title and favicon for the Gravatar passwordless login relevant pages.
+		// To customize the page title and favicon for Gravatar-related login pages.
 		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
 			const searchParams = new URLSearchParams( query.redirect_to.split( '?' )[ 1 ] );
-			// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
+			// To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
 			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
-			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
-			headTitle = isGravPoweredClient ? oauth2Client.title : headTitle;
-			headFaviconUrl = isGravPoweredClient ? oauth2Client.favicon : headFaviconUrl;
+			if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+				headTitle = oauth2Client.title;
+				headFaviconUrl = oauth2Client.favicon;
+			} else if ( query?.gravatar_flow ) {
+				// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
+				headTitle = gravatarClientData.title;
+				headFaviconUrl = gravatarClientData.favicon;
+			}
 		}
 
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
+				className={ clsx( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
 					title={ headTitle }
@@ -139,7 +148,7 @@ class Document extends Component {
 					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
-					className={ classNames( {
+					className={ clsx( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
 						[ 'theme-' + theme ]: theme,
@@ -162,7 +171,7 @@ class Document extends Component {
 					) : (
 						<div id="wpcom" className="wpcom-site">
 							<div
-								className={ classNames( 'layout', {
+								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
@@ -182,6 +191,7 @@ class Document extends Component {
 							{ preferencesHelper && <PreferencesHelper /> }
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
+							{ storeSandboxHelper && <StoreSandboxHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
@@ -292,6 +302,10 @@ function chooseLoadingLogo( { useLoadingEllipsis }, isWpMobileApp, isWcMobileApp
 
 	if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp ) {
 		return JetpackLogo;
+	}
+
+	if ( isA8CForAgencies() ) {
+		return A4ALogo;
 	}
 
 	return WordPressLogo;

@@ -2,15 +2,21 @@
  * Component which handle remote credentials for installing Jetpack
  */
 import page from '@automattic/calypso-router';
-import { Button, Card, FormInputValidation, Gridicon, Spinner } from '@automattic/components';
-import classnames from 'classnames';
+import {
+	Button,
+	Card,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+	Spinner,
+} from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
@@ -181,10 +187,10 @@ export class OrgCredentialsForm extends Component {
 		const { translate, isRemoteInstalling } = this.props;
 		const { password, username } = this.state;
 
-		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
+		const userClassName = clsx( 'jetpack-connect__credentials-form-input', {
 			'is-error': this.isInvalidUsername(),
 		} );
-		const passwordClassName = classnames( 'jetpack-connect__password-form-input', {
+		const passwordClassName = clsx( 'jetpack-connect__password-form-input', {
 			'is-error': this.isInvalidPassword(),
 		} );
 		const removedProtocolURL = this.props.siteToConnect.replace( /(^\w+:|^)\/\//, '' );

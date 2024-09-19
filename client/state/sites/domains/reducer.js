@@ -6,6 +6,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
+	DOMAIN_DNSSEC_DISABLE_SUCCESS,
+	DOMAIN_DNSSEC_ENABLE_SUCCESS,
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
 	DOMAIN_PRIVACY_ENABLE_SUCCESS,
@@ -19,6 +21,8 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 	DOMAIN_MARK_AS_PENDING_MOVE,
+	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS,
+	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
@@ -82,6 +86,16 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				isMoveToNewSitePending: true,
 			} );
+		case DOMAIN_DNSSEC_DISABLE_SUCCESS:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				isDnssecEnabled: false,
+				dnssecRecords: null,
+			} );
+		case DOMAIN_DNSSEC_ENABLE_SUCCESS:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				isDnssecEnabled: true,
+				dnssecRecords: action.dnssecRecords,
+			} );
 	}
 
 	return state;
@@ -122,6 +136,28 @@ export const updatingPrivacy = ( state = {}, action ) => {
 			} );
 	}
 
+	return state;
+};
+
+/**
+ * Updating privacy reducer
+ *
+ * Figure out if we're in the middle of privacy modification command
+ * @param {Object} state - current state
+ * @param {Object} action - action
+ * @returns {any} - new state
+ */
+export const updatingPrimaryDomain = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: true,
+			} );
+		case DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: false,
+			} );
+	}
 	return state;
 };
 
@@ -173,4 +209,5 @@ export default combineReducers( {
 	items,
 	requesting,
 	updatingPrivacy,
+	updatingPrimaryDomain,
 } );

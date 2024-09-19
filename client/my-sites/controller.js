@@ -39,17 +39,17 @@ import {
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
-	emailManagement,
-	emailManagementAddEmailForwards,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-	emailManagementMailboxes,
-	emailManagementInDepthComparison,
-	emailManagementManageTitanAccount,
-	emailManagementManageTitanMailboxes,
-	emailManagementNewTitanAccount,
-	emailManagementPurchaseNewEmailAccount,
-	emailManagementTitanControlPanelRedirect,
+	getEmailManagementPath,
+	getAddEmailForwardsPath,
+	getAddGSuiteUsersPath,
+	getForwardingPath,
+	getMailboxesPath,
+	getEmailInDepthComparisonPath,
+	getManageTitanAccountPath,
+	getManageTitanMailboxesPath,
+	getNewTitanAccountPath,
+	getPurchaseNewEmailAccountPath,
+	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -71,7 +71,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import wasTrialSite from 'calypso/state/selectors/was-trial-site';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -226,23 +226,23 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransfer,
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
-		emailManagement,
-		emailManagementAddEmailForwards,
-		emailManagementAddGSuiteUsers,
-		emailManagementForwarding,
-		emailManagementMailboxes,
-		emailManagementInDepthComparison,
-		emailManagementManageTitanAccount,
-		emailManagementManageTitanMailboxes,
-		emailManagementNewTitanAccount,
-		emailManagementPurchaseNewEmailAccount,
-		emailManagementTitanControlPanelRedirect,
+		getEmailManagementPath,
+		getAddEmailForwardsPath,
+		getAddGSuiteUsersPath,
+		getForwardingPath,
+		getMailboxesPath,
+		getEmailInDepthComparisonPath,
+		getManageTitanAccountPath,
+		getManageTitanMailboxesPath,
+		getNewTitanAccountPath,
+		getPurchaseNewEmailAccountPath,
+		getTitanControlPanelRedirectPath,
 	];
 
 	// Builds a list of paths using a site slug plus any additional parameter that may be required
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
-		if ( pathFactory === emailManagementAddGSuiteUsers ) {
-			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
+		if ( pathFactory === getAddGSuiteUsersPath ) {
+			return getAddGSuiteUsersPath( slug, slug, contextParams.productType );
 		}
 
 		return pathFactory( slug, slug );
@@ -271,6 +271,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	}
 
 	const startsWithPaths = [
+		'/themes',
+		'/plugins',
 		'/checkout/',
 		`/me/purchases/${ slug }`,
 		`/purchases/add-payment-method/${ slug }`,
@@ -306,7 +308,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  * @returns {boolean} true if the path is allowed, false otherwise
  */
 function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
-	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), getEmailManagementPath( slug ) ];
 
 	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
 		isPathAllowedForDomainOnlySite( path, slug, domain, contextParams )
@@ -329,7 +331,7 @@ function onSelectedSiteAvailable( context ) {
 	// If we had a trial plan, and the user doesn't have a paid plan (active or expired),
 	// redirect to full-page trial expired page.
 	if (
-		wasTrialSite( state, selectedSite.ID ) &&
+		wasEcommerceTrialSite( state, selectedSite.ID ) &&
 		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
@@ -444,6 +446,7 @@ function createSitesComponent( context ) {
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
 			clearPageTitle={ context.clearPageTitle }
+			isPostShare={ context.query?.is_post_share }
 		/>
 	);
 }
@@ -491,6 +494,7 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -499,6 +503,7 @@ export function noSite( context, next ) {
 		! isDomainOnlyFlow &&
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
+		! isMarketplaceSitelessCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these
@@ -514,6 +519,8 @@ export function noSite( context, next ) {
 	return next();
 }
 
+const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [ '/plugins' ];
+
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
@@ -527,6 +534,8 @@ export function siteSelection( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
+	const isPathExcludedFromSingleSiteContext =
+		PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS.includes( context.path );
 
 	// Making sure non-connected users get redirected to user connection flow.
 	// Details: p9dueE-6Hf-p2
@@ -555,14 +564,14 @@ export function siteSelection( context, next ) {
 
 	/*
 	 * If the user has only one site, redirect to the single site context instead of
-	 * rendering the all-site views.
+	 * rendering the all-site views. Exclude plugins page from this behavior.
 	 *
 	 * If the primary site is not yet available in Redux state, initiate a fetch and postpone the
 	 * redirect until the fetch is complete. (while the primary site ID is a property of the
 	 * current user object and therefore always available, we need to fetch the site info in order
 	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
-	if ( hasOneSite && ! siteFragment ) {
+	if ( hasOneSite && ! siteFragment && ! isPathExcludedFromSingleSiteContext ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
@@ -599,10 +608,7 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 
-	const isUnlinkedCheckoutNotBoost =
-		isUnlinkedCheckout && ! context.pathname.includes( 'jetpack_boost' );
-
-	if ( siteId && ! isUnlinkedCheckoutNotBoost ) {
+	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
@@ -643,16 +649,15 @@ export function siteSelection( context, next ) {
 				let freshSiteId = getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment.replace(
-						/\b.wordpress.com/,
-						'.wpcomstaging.com'
-					);
+					const wpcomStagingFragment = siteFragment
+						.toString()
+						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
 				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
 				// Details: p9dueE-6Hf-p2
-				if ( freshSiteId && ! isUnlinkedCheckoutNotBoost ) {
+				if ( freshSiteId && ! isUnlinkedCheckout ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
@@ -864,7 +869,19 @@ export function selectSite( context ) {
 	// Logged in: Terminate the regular handler path by not calling next()
 	// and render the site selection screen, redirecting the user if they
 	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+	composeHandlers( siteSelection, selectSiteIfNotDeleted, sites, makeLayout, render )( context );
+}
+
+export function selectSiteIfNotDeleted( context, next ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && selectedSite.is_deleted ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return;
+	}
+
+	return next();
 }
 
 export function selectSiteIfLoggedIn( context, next ) {
@@ -877,14 +894,34 @@ export function selectSiteIfLoggedIn( context, next ) {
 	selectSite( context );
 }
 
-export function selectSiteIfLoggedInWithSites( context, next ) {
+/**
+ * If the section has an "all sites" view to delay the site selection,
+ * only handle the site selection with 0 or 1 sites.
+ */
+export function selectSiteOrSkipIfLoggedInWithMultipleSites( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) && ! context.params.site_id ) {
+	const isLoggedIn = isUserLoggedIn( state );
+	const siteCount = getCurrentUserSiteCount( state );
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
+
+	// If the user is logged out, has 0 sites, or the path contains a site fragment,
+	// proceed with the regular site selection.
+	if ( ! isLoggedIn || ! siteCount || !! siteFragment ) {
+		siteSelection( context, next );
+		return;
+	}
+
+	// If the user only has 1 site and the path doesn't contain a site fragment,
+	// select the site automatically and move on.
+	if ( siteCount === 1 ) {
 		selectSite( context );
 		return;
 	}
 
-	siteSelection( context, next );
+	// If the user has multiple sites and the path doesn't contain a site fragment,
+	// proceed with rendering the page, delaying the site selection.
+	next();
 }
 
 export function hideNavigationIfLoggedInWithNoSites( context, next ) {
@@ -897,7 +934,7 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+	if ( isUserLoggedIn( state ) ) {
 		navigation( context, next );
 	}
 	next();

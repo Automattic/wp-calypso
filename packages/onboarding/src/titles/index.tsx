@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 import './styles.scss';
@@ -19,7 +19,7 @@ export const Title: React.FunctionComponent< TitlesProps > = ( {
 } ) =>
 	React.createElement(
 		tagName,
-		{ className: classnames( 'onboarding-title', className ), ...rest },
+		{ className: clsx( 'onboarding-title', className ), ...rest },
 		children
 	);
 
@@ -31,6 +31,6 @@ export const SubTitle: React.FunctionComponent< TitlesProps > = ( {
 } ) =>
 	React.createElement(
 		tagName,
-		{ className: classnames( 'onboarding-subtitle', className ), ...rest },
+		{ className: clsx( 'onboarding-subtitle', className ), ...rest },
 		children
 	);

@@ -1,5 +1,6 @@
-import { isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -8,33 +9,33 @@ import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -64,17 +65,17 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	sitePlan,
-	isNew7DUser,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
+	isAdmin,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -82,31 +83,22 @@ const Home = ( {
 		retry: false,
 	} );
 
-	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
-
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
+	const primaryDomain = customDomains?.find( ( domain ) => domain.isPrimary );
 
-	useEffect( () => {
-		if ( ! isFreePlanProduct( sitePlan ) ) {
-			return;
-		}
-
-		if ( ! [ 'US', 'GB', 'AU', 'JP' ].includes( detectedCountryCode ) ) {
-			return;
-		}
-
-		if ( isNew7DUser ) {
-			return;
-		}
-
-		addHotJarScript();
-
-		if ( window && window.hj ) {
-			window.hj( 'trigger', 'pnp_survey_1' );
-		}
-	}, [ detectedCountryCode, sitePlan, isNew7DUser ] );
+	const {
+		data: domainDiagnosticData,
+		isFetching: isFetchingDomainDiagnostics,
+		refetch: refetchDomainDiagnosticData,
+	} = useDomainDiagnosticsQuery( primaryDomain?.name, {
+		staleTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
+		enabled: primaryDomain !== undefined && primaryDomain.isMappedToAtomicSite,
+	} );
+	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
+	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
@@ -126,6 +118,18 @@ const Home = ( {
 			setLaunchedSiteId( siteId );
 		}
 	}, [ isSiteLaunching, siteId ] );
+
+	useEffect( () => {
+		if ( emailDnsDiagnostics?.dismissed_email_dns_issues_notice ) {
+			setDismissedEmailDnsDiagnostics( true );
+		}
+	}, [ emailDnsDiagnostics ] );
+
+	const isFirstSecondaryCardInPrimaryLocation =
+		Array.isArray( layout?.primary ) &&
+		layout.primary.length === 0 &&
+		Array.isArray( layout?.secondary ) &&
+		layout.secondary.length > 0;
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -147,6 +151,18 @@ const Home = ( {
 		return <WooCommerceHomePlaceholder />;
 	}
 
+	const headerActions = (
+		<>
+			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+				{ translate( 'View site' ) }
+			</Button>
+			{ isAdmin && ! isP2 && (
+				<Button primary href={ `/overview/${ site.slug }` }>
+					{ translate( 'Hosting Overview' ) }
+				</Button>
+			) }
+		</>
+	);
 	const header = (
 		<div className="customer-home__heading">
 			<NavigationHeader
@@ -154,11 +170,9 @@ const Home = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for posting, editing, and growing your site.' ) }
+				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
-				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-					{ translate( 'Visit site' ) }
-				</Button>
+				{ headerActions }
 			</NavigationHeader>
 
 			<div className="customer-home__site-content">
@@ -197,11 +211,53 @@ const Home = ( {
 		return null;
 	};
 
+	const renderDnsSettingsDiagnosticNotice = () => {
+		if (
+			dismissedEmailDnsDiagnostics ||
+			isFetchingDomainDiagnostics ||
+			! emailDnsDiagnostics ||
+			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
+			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+		) {
+			return null;
+		}
+
+		return (
+			<Notice
+				text={ translate(
+					"There are some issues with your domain's email DNS settings. {{diagnosticLink}}Click here{{/diagnosticLink}} to see the full diagnostic for your domain. {{supportLink}}Learn more{{/supportLink}}.",
+					{
+						components: {
+							diagnosticLink: (
+								<a
+									href={ domainManagementEdit( siteId, primaryDomain.name, null, {
+										diagnostics: true,
+									} ) }
+								/>
+							),
+							supportLink: (
+								<a href={ localizeUrl( SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN ) } />
+							),
+						},
+					}
+				) }
+				icon="cross-circle"
+				showDismiss
+				onDismissClick={ () => {
+					setDismissedEmailDnsDiagnostics( true );
+					setDomainNotice( primaryDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
+						refetchDomainDiagnosticData();
+					} );
+				} }
+				status="is-warning"
+			/>
+		);
+	};
+
 	return (
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
-			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
@@ -217,6 +273,7 @@ const Home = ( {
 			) : null }
 
 			{ renderUnverifiedEmailNotice() }
+			{ renderDnsSettingsDiagnosticNotice() }
 
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
 			{ ! isLoading && layout && ! homeLayoutError ? (
@@ -224,7 +281,11 @@ const Home = ( {
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout?.secondary } siteId={ siteId } />
+							<Secondary
+								cards={ layout?.secondary }
+								siteId={ siteId }
+								trackFirstCardAsPrimary={ isFirstSecondaryCardInPrimaryLocation }
+							/>
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
 							<Tertiary cards={ layout?.tertiary } />
@@ -264,6 +325,7 @@ const mapStateToProps = ( state ) => {
 		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
+		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 };
 
@@ -292,4 +354,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default connectHome( withJetpackConnectionProblem( withTrackingTool( 'HotJar' )( Home ) ) );
+export default connectHome( withJetpackConnectionProblem( Home ) );

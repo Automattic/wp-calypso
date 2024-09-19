@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isVideoPressItem } from 'calypso/lib/media/utils';
@@ -29,7 +29,7 @@ export default class extends Component {
 		return (
 			<EditorMediaModalDetailPreviewMediaFile
 				component="video"
-				className={ classNames( className, 'is-video' ) }
+				className={ clsx( className, 'is-video' ) }
 				{ ...props }
 			/>
 		);

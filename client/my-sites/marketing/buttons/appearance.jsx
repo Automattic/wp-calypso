@@ -1,10 +1,11 @@
+import { FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import SupportInfo from 'calypso/components/support-info';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -143,7 +144,7 @@ class SharingButtonsAppearance extends Component {
 						text={ translate(
 							'Give your readers the ability to show appreciation for your posts.'
 						) }
-						link="https://wordpress.com/support/likes/"
+						link={ localizeUrl( 'https://wordpress.com/support/likes/' ) }
 						privacyLink={ false }
 						position="bottom left"
 					/>

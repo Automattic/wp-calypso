@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { usePlans } from '@automattic/data-stores/src/plans';
+import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
@@ -24,7 +24,7 @@ export type Screen = {
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
-	const plans = usePlans();
+	const plans = Plans.usePlans( { coupon: undefined } );
 	const screens: Record< ScreenName, Screen > = {
 		main: {
 			name: 'main',

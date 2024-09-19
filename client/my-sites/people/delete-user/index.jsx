@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
+import { Card, Button, CompactCard, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
@@ -11,7 +11,6 @@ import AuthorSelector from 'calypso/blocks/author-selector';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
@@ -282,7 +281,7 @@ class DeleteUser extends Component {
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
+						<FormButton scary disabled={ this.isDeleteButtonDisabled() }>
 							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>

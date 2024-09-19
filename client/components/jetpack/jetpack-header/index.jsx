@@ -1,11 +1,11 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 import './style.scss';
 
 function JetpackHeader( { className } ) {
-	const classes = classNames( 'jetpack-header', className );
+	const classes = clsx( 'jetpack-header', className );
 
 	return (
 		<header className={ classes }>

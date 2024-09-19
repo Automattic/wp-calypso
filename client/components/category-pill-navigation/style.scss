@@ -1,0 +1,131 @@
+@import "@wordpress/base-styles/breakpoints.scss";
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/typography/styles/variables";
+
+.category-pill-navigation {
+	--color-accent: #3858e9;
+
+	background: var(--studio-white);
+	display: flex;
+	align-items: center;
+
+	@media (max-width: $break-mobile) {
+		display: block;
+	}
+}
+
+.category-pill-navigation__button-divider {
+	flex-shrink: 0;
+	width: 1px;
+	height: 14px;
+	display: block;
+	border-radius: 2px;
+	background: #2c3338;
+	margin-left: 16px;
+}
+
+.category-pill-navigation__list {
+	overflow: hidden;
+	position: relative;
+
+	.category-pill-navigation__list-inner {
+		overflow: auto;
+		display: flex;
+		gap: 16px;
+		align-items: center;
+		// Chrome, Edge, Firefox
+		scrollbar-width: none;
+
+		// Safari
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.category-pill-navigation__button:first-child {
+			margin-left: 16px;
+		}
+	}
+
+	.category-pill-navigation__arrow {
+		display: block;
+		width: 44px;
+		height: 44px;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 2;
+		transform: rotate(180deg);
+		cursor: pointer;
+
+		&:focus:not(:disabled) {
+			box-shadow: none;
+		}
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 68px;
+			height: 44px;
+			background: linear-gradient(270deg, var(--studio-white) 45.38%, transparent 100%);
+			cursor: none;
+			pointer-events: none;
+		}
+
+		svg {
+			z-index: 2;
+			position: relative;
+		}
+
+		&.right {
+			left: auto;
+			right: 0;
+			transform: rotate(0);
+		}
+
+		@media (max-width: $break-large) {
+			width: 0;
+			padding: 0;
+		}
+	}
+}
+
+.category-pill-navigation__button {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	height: 44px;
+	padding: 0 16px;
+	border-radius: 4px;
+	gap: 8px;
+	font-family: $font-sf-pro-text;
+	font-size: rem(14px);
+	letter-spacing: -0.15px;
+	color: #2c3338;
+	background: #f2f2f2;
+	white-space: nowrap;
+
+	&:visited {
+		color: #2c3338;
+	}
+
+	&.is-active {
+		background: var(--color-accent);
+		color: var(--studio-white);
+
+		svg {
+			fill: var(--studio-white);
+		}
+	}
+}
+
+.category-pill-navigation__children {
+	padding-left: 32px;
+	flex: none;
+	margin-left: auto;
+}
+
+.category-pill-navigation__mobile-select .select-dropdown__container {
+	width: 100%;
+}

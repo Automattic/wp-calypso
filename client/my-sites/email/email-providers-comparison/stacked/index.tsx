@@ -5,7 +5,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useEffect, useState } from 'react';
@@ -31,13 +31,16 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import {
+	getEmailManagementPath,
+	getEmailInDepthComparisonPath,
+} from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -70,10 +73,11 @@ const EmailProvidersStackedComparison = ( {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: selectedDomainName,
-	} );
+	const hasLoadedDomains = useSelector( ( state ) =>
+		hasLoadedSiteDomains( state, selectedSite?.ID ?? null )
+	);
+
+	const domain = getSelectedDomain( { domains, selectedDomainName } );
 	const domainsWithForwards = getDomainsWithEmailForwards( domains );
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
@@ -182,7 +186,7 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
-	if ( ! domain && ! isDomainInCart ) {
+	if ( hasLoadedDomains && ! domain && ! isDomainInCart ) {
 		return null;
 	}
 
@@ -214,7 +218,7 @@ const EmailProvidersStackedComparison = ( {
 	const comparisonComponents = {
 		a: (
 			<a
-				href={ emailManagementInDepthComparison(
+				href={ getEmailInDepthComparisonPath(
 					selectedSite?.slug ?? '',
 					selectedDomainName,
 					currentRoute,
@@ -228,7 +232,7 @@ const EmailProvidersStackedComparison = ( {
 
 	return (
 		<Main
-			className={ classnames( {
+			className={ clsx( {
 				'email-providers-stacked-comparison__main--domain-upsell': isDomainInCart,
 			} ) }
 			wideLayout
@@ -242,7 +246,7 @@ const EmailProvidersStackedComparison = ( {
 					backUrl={
 						isDomainInCart
 							? domainAddNew( selectedSite?.slug )
-							: emailManagement( selectedSite?.slug, null )
+							: getEmailManagementPath( selectedSite?.slug, null )
 					}
 					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
 				/>

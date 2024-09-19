@@ -7,7 +7,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Marketplace = () => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
 		<Task

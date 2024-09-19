@@ -1,12 +1,11 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent, useRef, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
@@ -41,7 +40,7 @@ function InviteForm( props: Props ) {
 	];
 	const defaultEmailControlPlaceholder = translate( 'Add another email or username' );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID as number;
 	const defaultUserRole = useInitialRole( siteId );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -159,7 +158,7 @@ function InviteForm( props: Props ) {
 	function getRoleLearnMoreLink() {
 		return (
 			<Button
-				plain={ true }
+				plain
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 			>
@@ -171,7 +170,7 @@ function InviteForm( props: Props ) {
 	return (
 		<form
 			autoComplete="off"
-			className={ classNames( 'team-invite-form', { 'team-invite-form-valid': readyForSubmit } ) }
+			className={ clsx( 'team-invite-form', { 'team-invite-form-valid': readyForSubmit } ) }
 			onSubmit={ onFormSubmit }
 		>
 			<RoleSelect
@@ -228,8 +227,8 @@ function InviteForm( props: Props ) {
 				{ ! showMsg && (
 					<Button
 						className="team-invite-form__add-message"
-						primary={ true }
-						borderless={ true }
+						primary
+						borderless
 						onClick={ () => setShowMsg( true ) }
 					>
 						{ translate( '+ Add a message' ) }

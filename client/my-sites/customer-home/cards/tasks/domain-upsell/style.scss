@@ -5,13 +5,14 @@
 	&.task__domain-upsell {
 		margin-bottom: 0 !important;
 
-		@media (min-width: ( $break-large + 1 ) ) {
+		@media (min-width: ($break-large + 1)) {
 			margin-right: 0 !important;
 			margin-top: 0 !important;
 			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.svg) no-repeat right top;
+			background-size: 350px auto;
 		}
 
-		@media ( min-width: ( $break-large + 1 ) ) and ( max-width: $break-wide ) {
+		@media (min-width: ($break-large + 1)) and (max-width: $break-wide) {
 			background-position-x: calc(100% + 120px);
 		}
 
@@ -21,18 +22,27 @@
 
 		.task__text {
 			margin-bottom: 32px;
-			margin-top: 32px;
 			min-width: 360px;
 
-			@media (min-width: ( $break-wide + 1 ) ) {
-				max-width: calc(100% - 450px);
+			@media (min-width: ($break-wide + 1)) {
+				max-width: calc(100% - 200px);
+
+				.task__description {
+					padding-right: 16px;
+					min-height: 140px;
+				}
+
+				.task__description,
+				.task__title {
+					max-width: 68%;
+				}
 			}
 
 			@media (max-width: $break-wide) {
-				max-width: calc(115% - 450px);
+				max-width: calc(115% - 200px);
 			}
 
-			@media ( max-width: $break-wide ) {
+			@media (max-width: $break-wide) {
 				gap: 16px !important;
 				margin-bottom: 16px;
 				margin-top: 16px;
@@ -71,12 +81,26 @@
 
 		}
 
+		.task__actions {
+			button {
+				width: auto;
+			}
+			.is-link {
+				padding-left: 0;
+
+				@media (min-width: ($break-wide + 1)) {
+					padding-left: 8px;
+					margin-left: 8px;
+				}
+			}
+		}
+
 		.task__illustration {
 			position: relative;
 			width: 100%;
 			padding: 0;
 
-			@media (min-width: ( $break-large + 1 )) {
+			@media (min-width: ($break-large + 1)) {
 				display: none;
 			}
 
@@ -90,25 +114,6 @@
 				left: 35%;
 				height: 7%;
 				width: 70%;
-			}
-		}
-
-		.task__badge {
-			background: none;
-			color: #000;
-			position: absolute;
-			right: 0;
-			top: 119px;
-			width: 270px;
-			word-break: break-all;
-			overflow: hidden;
-			padding: 0;
-			display: inline-flex;
-			@media (max-width: $break-wide) {
-				width: 155px;
-			}
-			@media (max-width: $break-large) {
-				display: none;
 			}
 		}
 	}

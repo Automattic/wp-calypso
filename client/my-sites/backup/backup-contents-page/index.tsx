@@ -1,9 +1,10 @@
 import { Card } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useCallback, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import ActionButtons from 'calypso/components/jetpack/daily-backup-status/action-buttons';
 import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-success.svg';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
@@ -40,8 +41,13 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
 	}, [ dispatch ] );
 
+	const onLearnAboutClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_learn_about_click' ) );
+	}, [ dispatch ] );
+
 	return (
 		<>
+			<QuerySiteCredentials siteId={ siteId } />
 			<Main className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
@@ -50,13 +56,23 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 					className="backup-contents-page__back-button is-borderless"
 					href={ backupMainPath( siteSlug ) }
 				>
-					<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go Back' ) }
+					<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go back' ) }
 				</Button>
 				<Card>
 					<div className="backup-contents-page__header daily-backup-status status-card">
 						<div className="status-card__message-head">
 							<img src={ cloudIcon } alt="" role="presentation" />
-							<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
+							<div className="status-card__header-content">
+								<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
+								<div className="status-card__learn-about">
+									<ExternalLink
+										href="https://jetpack.com/blog/introducing-backup-file-browser/"
+										onClick={ onLearnAboutClick }
+									>
+										{ translate( 'Learn about the file browser' ) }
+									</ExternalLink>
+								</div>
+							</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
 						{ browserCheckList.totalItems === 0 && (

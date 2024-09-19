@@ -3,6 +3,10 @@
 		display: flex;
 	}
 }
+.theme-jetpack-cloud .backup__page .components-button {
+	--color-accent: var(--color-jetpack);
+	--color-accent-60: var(--studio-jetpack-green-70);
+}
 
 .backup__last-backup-status {
 	background: var(--studio-white);
@@ -177,10 +181,6 @@
 			}
 		}
 	}
-}
-
-.backups-made-realtime-banner .banner__icons .banner__icon {
-	display: block;
 }
 
 /* Jetpack.com-only changes */

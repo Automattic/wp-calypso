@@ -8,7 +8,6 @@ import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useLocalizedPlugins, useServerEffect } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -19,6 +18,8 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
+import './style.scss';
 
 const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
@@ -166,18 +167,12 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 
 	return (
 		<NavigationHeader
-			navigationItems={ breadcrumbs }
+			className="plugins-navigation-header"
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
-			title={ translate( 'Plugins' ) }
-			subtitle={ translate(
-				'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-					},
-				}
-			) }
+			title={ translate( 'Plugins {{wbr}}{{/wbr}}marketplace', {
+				components: { wbr: <wbr /> },
+			} ) }
 		>
 			<ManageButton
 				shouldShowManageButton={ shouldShowManageButton }

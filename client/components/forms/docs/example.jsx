@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Card, FormInputValidation } from '@automattic/components';
+import { Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -12,7 +12,6 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
@@ -290,7 +289,7 @@ class FormFields extends PureComponent {
 					<br />
 					<ToggleControl checked={ false } disabled />
 					<br />
-					<ToggleControl checked={ true } disabled />
+					<ToggleControl checked disabled />
 					<br />
 
 					<FormButtonsBar>
@@ -359,7 +358,7 @@ class FormFields extends PureComponent {
 						/>
 						<br />
 						<FormRadiosBarExample
-							isThumbnail={ true }
+							isThumbnail
 							checked={ this.state.checkedRadio }
 							onChange={ this.handleRadioChange }
 						/>

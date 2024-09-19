@@ -8,6 +8,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -17,6 +18,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, {
 	Props as PromoSectionProps,
@@ -24,16 +26,18 @@ import PromoSection, {
 } from 'calypso/components/promo-section';
 import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import EarnSupportButton from './components/earn-support-button';
@@ -47,7 +51,8 @@ const Home = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const [ isPeerReferralCtaDisabled, setPeerReferralCtaDisabled ] = useState( false );
+	const site = useSelector( getSelectedSite );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
@@ -55,8 +60,8 @@ const Home = () => {
 	const isUserAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
 	);
 	const hasSimplePayments = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_SIMPLE_PAYMENTS )
@@ -64,7 +69,7 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-	const hasConnectedAccount = Boolean( connectedAccountId );
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, site?.ID ) );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
@@ -114,8 +119,14 @@ const Home = () => {
 		wp.req.post(
 			'/me/peer-referral-link-enable',
 			{ enable: true },
-			( error: string, data: string ) => {
-				setPeerReferralLink( ! error && data ? data : '' );
+			( errorResponse: { error: string; message: string }, peerReferralLink: string ) => {
+				if ( errorResponse ) {
+					setPeerReferralCtaDisabled( true );
+					dispatch( errorNotice( errorResponse.message ) );
+					return;
+				}
+
+				setPeerReferralLink( peerReferralLink );
 			}
 		);
 	};
@@ -149,15 +160,19 @@ const Home = () => {
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 */
 	const getSimplePaymentsCard = (): PromoSectionCardProps => {
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/pay-with-paypal/'
+			: 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/';
+
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Learn more' ),
-					component: <EarnSupportButton supportContext="paypal" />,
+					...( ! isJetpackCloud() && {
+						component: <EarnSupportButton supportContext="paypal" />,
+					} ),
 					action: () => {
 						trackCtaButton( 'simple-payments' );
-						window.location.href = localizeUrl(
-							'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
-						);
+						window.location.href = localizeUrl( ctaURL );
 					},
 			  }
 			: {
@@ -165,12 +180,22 @@ const Home = () => {
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
-						page(
-							addQueryArgs( `/plans/${ site?.slug }`, {
-								feature: FEATURE_SIMPLE_PAYMENTS,
-								plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
-							} )
-						);
+						const url = addQueryArgs( `/plans/${ site?.slug }`, {
+							feature: FEATURE_SIMPLE_PAYMENTS,
+							plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+						} );
+						/**
+						 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
+						 */
+						if ( isSimple && isJetpackCloud() ) {
+							page( getCalypsoUrl( url ) );
+							return;
+						}
+						/**
+						 * Otherwise, the destination is either Jetpack Cloud `/pricing` page or WP.com plans page
+						 * depending on where the user is.
+						 */
+						page( url );
 					},
 			  };
 		const title = translate( 'Collect PayPal payments' );
@@ -193,15 +218,19 @@ const Home = () => {
 	 * Return the content to display in the Recurring Payments card based on the current plan.
 	 */
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/jetpack-blocks/payments-block/'
+			: 'https://wordpress.com/payments-donations/';
 		const cta = {
 			text: translate( 'Learn more' ),
-			...( hasConnectedAccount && {
-				component: <EarnSupportButton supportContext="payment_button_block" />,
-			} ),
+			...( ! isJetpackCloud() &&
+				hasConnectedAccount && {
+					component: <EarnSupportButton supportContext="payment_button_block" />,
+				} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -234,15 +263,20 @@ const Home = () => {
 	 * Return the content to display in the Donations card based on the current plan.
 	 */
 	const getDonationsCard = (): PromoSectionCardProps => {
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/jetpack-blocks/donations-block/'
+			: 'https://wordpress.com/payments-donations/';
+
 		const cta = {
 			text: translate( 'Learn more' ),
-			...( hasConnectedAccount && {
-				component: <EarnSupportButton supportContext="donations" />,
-			} ),
+			...( ! isJetpackCloud() &&
+				hasConnectedAccount && {
+					component: <EarnSupportButton supportContext="donations" />,
+				} ),
 			action: () => {
 				trackCtaButton( 'donations' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -271,15 +305,19 @@ const Home = () => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/jetpack-blocks/paid-content-block/'
+			: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/';
+
 		const cta = {
 			text: translate( 'Learn more' ),
-			component: <EarnSupportButton supportContext="premium_content_block" />,
+			...( ! isJetpackCloud() && {
+				component: <EarnSupportButton supportContext="premium_content_block" />,
+			} ),
 			action: () => {
 				trackLearnLink( 'premium-content' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl(
-						'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
-					);
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -306,13 +344,19 @@ const Home = () => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/newsletter/paid-newsletters/'
+			: 'https://wordpress.com/support/paid-newsletters/';
+
 		const cta = {
 			text: translate( 'Learn more' ),
-			component: <EarnSupportButton supportContext="paid-newsletters" />,
+			...( ! isJetpackCloud() && {
+				component: <EarnSupportButton supportContext="paid-newsletters" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( 'https://wordpress.com/support/paid-newsletters/' );
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -346,6 +390,7 @@ const Home = () => {
 				trackCtaButton( 'peer-referral-wpcom' );
 				onPeerReferralCtaClick();
 			},
+			disabled: isPeerReferralCtaDisabled,
 		};
 
 		if ( peerReferralLink ) {
@@ -384,13 +429,17 @@ const Home = () => {
 	 * Return the content to display in the Ads card based on the current plan.
 	 */
 	const getAdsCard = (): PromoSectionCardProps => {
+		const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
+
 		const cta =
 			hasWordAdsFeature || hasSetupAds
 				? {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
-							page( `/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }` );
+							page(
+								`${ earnPath }/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }`
+							);
 						},
 				  }
 				: {
@@ -398,9 +447,22 @@ const Home = () => {
 						isPrimary: true,
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
-							page(
-								`/plans/${ site?.slug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
-							);
+							const url = addQueryArgs( `/plans/${ site?.slug }`, {
+								feature: FEATURE_WORDADS_INSTANT,
+								plan: PLAN_PREMIUM,
+							} );
+							/**
+							 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
+							 */
+							if ( isSimple && isJetpackCloud() ) {
+								page( getCalypsoUrl( url ) );
+								return;
+							}
+							/**
+							 * Otherwise, the destination is either Jetpack Cloud `/pricing` page or WP.com plans page
+							 * depending on where the user is.
+							 */
+							page( url );
 						},
 				  };
 
@@ -465,6 +527,7 @@ const Home = () => {
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
+			<QuerySitePlans siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />

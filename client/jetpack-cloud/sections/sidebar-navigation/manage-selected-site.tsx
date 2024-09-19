@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
+	Icon,
 	chevronLeft,
 	cloud,
 	settings,
@@ -9,6 +10,8 @@ import {
 	plugins,
 	search,
 	shield,
+	people,
+	payment,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -31,14 +34,18 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
+	JETPACK_CLOUD_MONETIZE_LINK,
+	JETPACK_CLOUD_SCAN_HISTORY_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
+	JETPACK_CLOUD_SUBSCRIBERS_LINK,
 } from './lib/constants';
 
 const useMenuItems = ( {
@@ -63,6 +70,8 @@ const useMenuItems = ( {
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
+
+	const showScanHistory = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	const shouldShowSettings =
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) ) &&
@@ -99,7 +108,7 @@ const useMenuItems = ( {
 					icon: cloud,
 					path: '/',
 					link: backupPath( siteSlug ),
-					title: translate( 'Backup' ),
+					title: translate( 'VaultPress Backup' ),
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
 					enabled: isAdmin && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, backupPath( siteSlug ) ),
@@ -112,6 +121,16 @@ const useMenuItems = ( {
 					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
 					enabled: isAdmin && ! isWPCOM && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, scanPath( siteSlug ) ),
+				},
+				// Scan history is mutually exclusive with the scan item above and should only be shown for atomic sites
+				{
+					icon: shield,
+					path: '/',
+					link: `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }`,
+					title: translate( 'Scan' ),
+					trackEventName: 'calypso_jetpack_sidebar_scan_history_clicked',
+					enabled: isAdmin && showScanHistory && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: search,
@@ -130,6 +149,24 @@ const useMenuItems = ( {
 					trackEventName: 'calypso_jetpack_sidebar_social_clicked',
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-social' ) && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SOCIAL_LINK }/${ siteSlug }` ),
+				},
+				{
+					icon: <Icon icon={ people } size={ 24 } />,
+					path: '/',
+					link: `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }`,
+					title: translate( 'Subscribers' ),
+					trackEventName: 'calypso_jetpack_sidebar_subscribers_clicked',
+					enabled: isAdmin && isSectionNameEnabled( 'jetpack-subscribers' ) && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }` ),
+				},
+				{
+					icon: payment,
+					path: '/',
+					link: `${ JETPACK_CLOUD_MONETIZE_LINK }/${ siteSlug }`,
+					title: translate( 'Monetize' ),
+					trackEventName: 'calypso_jetpack_sidebar_monetize_clicked',
+					enabled: isAdmin && isSectionNameEnabled( 'jetpack-monetize' ) && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_MONETIZE_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: settings,

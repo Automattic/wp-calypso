@@ -1,0 +1,122 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+$recoleta-font-family: "Recoleta", sans-serif;
+$font-sf-pro-text: "SF Pro Text", $sans;
+body.is-section-accept-invite {
+	.logged-out-wp-logo {
+		position: absolute;
+		left: 24px;
+		top: 24px;
+	}
+	background: #fdfdfd;
+	.invite-accept {
+		margin-top: 50px;
+		@media (min-width: $break-small) {
+			margin-top: 150px;
+		}
+	}
+	.layout__content {
+		padding: 24px;
+	}
+}
+.invite-accept-logged-out-wrapper {
+	width: 100%;
+	margin: 0 auto;
+	@media (min-width: $break-small) {
+		width: 372px;
+	}
+	font-family: $font-sf-pro-text;
+
+	.invite-accept-logged-out-invite-header {
+		color: var(--studio-gray-100, #2c3338);
+		text-align: center;
+		font-family: $recoleta-font-family;
+		font-size: 2rem;
+		line-height: normal;
+		letter-spacing: 0.2px;
+		span {
+			word-break: break-word;
+		}
+		h2 {
+			word-break: break-word;
+		}
+
+	}
+	.invite-accept-logged-out-invite-description {
+		color: var(--studio-gray-50, #2c3338);
+		text-align: center;
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 24px;
+		margin-top: 4px;
+		font-family: $font-sf-pro-text;
+	}
+
+	.card.logged-out-form {
+		box-shadow: none;
+		padding: 0;
+		margin: 0;
+		max-width: 372px;
+		button.is-primary {
+			border-radius: 2px;
+			border: 1px solid #117ac9;
+			background: #117ac9;
+			height: 48px;
+			font-weight: 500;
+			&:hover {
+				background: #0e64a5;
+			}
+			&:focus {
+				background-color: #0e64a5;
+				border-color: #0e64a5;
+				color: var(--color-text-inverted);
+				box-shadow: none;
+			}
+			&:disabled {
+				background: var(--studio-gray-20);
+				border: 1px solid var(--studio-gray-20);
+				color: var(--color-surface);
+			}
+		}
+		label.form-label {
+			color: var(--studio-gray-60, #50575e);
+			font-size: 0.875rem;
+			font-weight: 500;
+			line-height: 20px;
+			margin-bottom: 8px;
+		}
+		.form-fieldset {
+			margin-bottom: 0;
+		}
+	}
+
+	.signup-form__passwordless-form-wrapper {
+		.signup-form__terms-of-service-link {
+			margin: 16px 0;
+			color: var(--studio-gray-50, #2c3338);
+			font-size: $font-body-small; // 14px
+			line-height: 20px;
+			a {
+				color: var(--studio-gray-80, #2c3338);
+				font-style: normal;
+				text-decoration-line: underline;
+			}
+		}
+	}
+
+	.card.logged-out-form__footer {
+		margin: 16px 0;
+		padding: 0;
+	}
+	.logged-out-form__link-item {
+		color: var(--studio-gray-90, #2c3338);
+		font-weight: 500;
+		text-underline-offset: 5px;
+		margin-top: 32px;
+		padding: 0;
+		&:hover {
+			color: var(--studio-blue-50, #0675c4);
+		}
+	}
+}

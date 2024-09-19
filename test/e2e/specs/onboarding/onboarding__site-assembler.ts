@@ -30,7 +30,7 @@ describe( 'Onboarding: Site Assembler', () => {
 	} );
 
 	describe( 'Create site', function () {
-		it( 'Navigate to /new', async function () {
+		it( 'Navigate to /start', async function () {
 			await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 		} );
 
@@ -80,6 +80,11 @@ describe( 'Onboarding: Site Assembler', () => {
 			}
 		} );
 
+		it( 'Select "Choose a theme" and land on the Design Picker', async function () {
+			await startSiteFlow.clickButton( 'Choose a theme' );
+			await page.waitForURL( /setup\/site-setup\/designSetup/ );
+		} );
+
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
 			await startSiteFlow.clickButton( 'Design your own' );
 			await page.waitForURL( /setup\/site-setup\/pattern-assembler/, {
@@ -95,27 +100,31 @@ describe( 'Onboarding: Site Assembler', () => {
 			siteAssemblerFlow = new SiteAssemblerFlow( page );
 		} );
 
-		it( 'Select a Header pattern', async function () {
-			// The pane is now open by default.
-			// @see https://github.com/Automattic/wp-calypso/pull/80924
+		it( 'Select a pattern in the default category', async function () {
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
-			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 1 );
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 3 );
 		} );
 
-		// Skip section patterns while the Assembler v2 is being developed.
-		it.skip( 'Select a Quote pattern', async function () {
-			await siteAssemblerFlow.clickLayoutComponentType( 'Quotes' );
+		it( 'Select a Testimonials pattern', async function () {
+			await siteAssemblerFlow.clickLayoutComponentType( 'Testimonials' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
-			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 4 );
 		} );
 
-		it( 'Select a Footer pattern', async function () {
+		it( 'Select another Header pattern', async function () {
+			await siteAssemblerFlow.clickLayoutComponentType( 'Header' );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
+
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 4 );
+		} );
+
+		it( 'Select another Footer pattern', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Footer' );
-			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 1 } );
 
-			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 4 );
 		} );
 
 		it( 'Pick default style', async function () {

@@ -253,7 +253,7 @@
 	}
 
 	&.is-selected,
-	&:hover,
+	&:not(:disabled):hover,
 	&:focus {
 		> img {
 			filter: grayscale(100%) brightness(0.2) invert(1);
@@ -262,6 +262,10 @@
 		> svg {
 			fill: var(--studio-white);
 		}
+	}
+
+	&:disabled > svg {
+		fill: currentColor;
 	}
 
 	&.external-link > .gridicons-external {
@@ -299,6 +303,7 @@
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
+		gap: 0.5em;
 		padding-right: 40px;
 
 		@include break-mobile {
@@ -308,10 +313,6 @@
 		@include break-xlarge {
 			/* Padding moves to parent mailbox-list-item when we shift to flex-direction: row */
 			padding-right: 0;
-		}
-
-		> div:not(:first-child) {
-			margin-top: 0.5em;
 		}
 	}
 
@@ -326,11 +327,14 @@
 		font-style: italic;
 	}
 
-	> svg,
+	.email-plan-mailboxes-list__mailbox-list-link {
+		display: inline-flex;
+		gap: 10px;
+	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-main svg {
 		fill: var(--studio-gray-40);
-		margin-right: 10px;
-		vertical-align: middle;
+		margin: 0;
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main span {
@@ -338,14 +342,19 @@
 		word-break: break-all;
 	}
 
+	.email-plan-mailboxes-list__mailbox-secondary-details {
+		display: flex;
+		gap: 10px;
+	}
+
 	> .badge {
+		align-self: center;
 		/* Hide admin badge in mobile layouts */
 		display: none;
 
 		@include break-xlarge {
 			display: unset;
 			margin-left: 10px;
-			margin-top: 3px;
 		}
 	}
 
@@ -460,6 +469,20 @@
 					width: 16px;
 				}
 			}
+		}
+	}
+}
+
+.is-section-email {
+	.empty-content {
+		.empty-content__illustration {
+			margin-top: 100px;
+		}
+
+		.empty-content__title,
+		.empty-content__line,
+		.empty-content__action {
+			margin-top: 32px;
 		}
 	}
 }

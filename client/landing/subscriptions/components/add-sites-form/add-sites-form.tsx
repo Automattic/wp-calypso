@@ -2,7 +2,7 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { isValidUrl } from '../../helpers';
@@ -22,7 +22,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
-	const { mutate: subscribe, isLoading: subscribing } =
+	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	const validateInputValue = useCallback(
@@ -97,7 +97,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	return (
 		<div className="subscriptions-add-sites__form--container">
 			<TextControl
-				className={ classnames(
+				className={ clsx(
 					'subscriptions-add-sites__form-input',
 					inputFieldError ? 'is-error' : ''
 				) }
@@ -110,7 +110,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 				onBlur={ () => validateInputValue( inputValue, true ) }
 			/>
 
-			{ inputFieldError ? <FormInputValidation isError={ true } text={ inputFieldError } /> : null }
+			{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
 
 			<Button
 				primary

@@ -1,8 +1,8 @@
+import { SegmentedControl } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Notice from 'calypso/components/notice';
-import SegmentedControl from 'calypso/components/segmented-control';
 import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';

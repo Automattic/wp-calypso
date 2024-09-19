@@ -20,13 +20,12 @@ export const LivePreviewUpgradeNotice: FC< {
 	useHideTemplatePartHint();
 
 	const noticeText = sprintf(
-		// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium')
+		// translators: %s: plan name (e.g. Starter, Explorer).
 		__(
-			'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
+			'Get access to this theme, and a ton of other features, with a subscription to the %s plan.',
 			'wpcom-live-preview'
 		),
-		previewingTheme.name,
-		previewingTheme.typeDisplay
+		previewingTheme.plan
 	);
 
 	/**
@@ -44,6 +43,7 @@ export const LivePreviewUpgradeNotice: FC< {
 								label: __( 'Back to themes', 'wpcom-live-preview' ),
 								url: dashboardLink,
 								variant: 'secondary',
+								className: 'wpcom-live-preview-action',
 							},
 					  ]
 					: [] ),

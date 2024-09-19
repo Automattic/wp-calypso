@@ -1,8 +1,8 @@
 {
 	"name": "@automattic/jetpack-ai-calypso",
-	"version": "1.0.0",
-	"description": "Jetpack AI utilities available to Calypso",
-	"calypso:src": "src/index.js",
+	"version": "2.0.0",
+	"description": "Jetpack AI utilities available to Calypso.",
+	"calypso:src": "src/index.ts",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": [
@@ -38,23 +38,24 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepare": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
-		"@testing-library/react": "^14.1.2",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.3.3",
-		"webpack": "^5.89.0"
+		"webpack": "^5.94.0"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.23.6",
+		"@babel/runtime": "^7.24.5",
+		"@wordpress/data": "^10.2.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
@@ -62,5 +63,11 @@
 		"@babel/runtime": {
 			"optional": true
 		}
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"clsx": "^2.1.1",
+		"debug": "^4.3.4"
 	}
 }

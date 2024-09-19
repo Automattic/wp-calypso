@@ -40,6 +40,15 @@ export const stripHtmlTags: Formatter< Array< string > > = ( description, allowe
 	return description ? description.replace( pattern, '' ) : '';
 };
 
+/**
+ * For social note posts we use the first 50 characters of the description.
+ * @param description The post description.
+ * @returns The first 50 characters of the description.
+ */
+export const getTitleFromDescription = ( description: string ): string => {
+	return stripHtmlTags( description ).substring( 0, 50 );
+};
+
 export const hasTag = ( text: string, tag: string ): boolean => {
 	const pattern = new RegExp( `<${ tag }[^>]*>`, 'gi' );
 
@@ -52,13 +61,34 @@ export const formatNextdoorDate = new Intl.DateTimeFormat( 'en-GB', {
 	month: 'short',
 } ).format;
 
+export const formatThreadsDate = new Intl.DateTimeFormat( 'en-US', {
+	// Result: "'06/21/2024"
+	day: '2-digit',
+	month: '2-digit',
+	year: 'numeric',
+} ).format;
+
 export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	// Result: "Apr 7", "Dec 31"
 	month: 'short',
 	day: 'numeric',
 } ).format;
 
-export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'mastodon' | 'nextdoor';
+export const formatMastodonDate = new Intl.DateTimeFormat( 'en-US', {
+	// Result: "Apr 7, 2024", "Dec 31, 2023"
+	month: 'short',
+	day: 'numeric',
+	year: 'numeric',
+} ).format;
+
+export type Platform =
+	| 'twitter'
+	| 'facebook'
+	| 'linkedin'
+	| 'instagram'
+	| 'mastodon'
+	| 'nextdoor'
+	| 'threads';
 
 type PreviewTextOptions = {
 	platform: Platform;
@@ -76,6 +106,7 @@ export const hashtagUrlMap: Record< Platform, string > = {
 	instagram: 'https://www.instagram.com/explore/tags/%1$s',
 	mastodon: 'https://%2$s/tags/%1$s',
 	nextdoor: 'https://nextdoor.com/hashtag/%1$s',
+	threads: 'https://www.threads.net/search?q=%1$s&serp_type=tags',
 };
 
 /**

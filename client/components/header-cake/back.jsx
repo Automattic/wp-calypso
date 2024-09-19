@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -66,7 +66,7 @@ class HeaderCakeBack extends Component {
 	render() {
 		const { href, icon, onClick, spacer, text, translate } = this.props;
 		const backText = text === undefined ? translate( 'Back' ) : text;
-		const linkClasses = classNames( {
+		const linkClasses = clsx( {
 			'header-cake__back': true,
 			'is-spacer': spacer,
 			'is-action': !! icon,

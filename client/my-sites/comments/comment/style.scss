@@ -35,6 +35,19 @@
 	transition: margin 0.15s linear;
 }
 
+// Collapsed Comment
+
+.comment.foldable-card {
+	.foldable-card__main {
+		color: var(--color-text-subtle);
+		font-size: $font-body-extra-small;
+	}
+
+	&.is-expanded .foldable-card__content {
+		padding: 0;
+	}
+}
+
 // Comment Header Block
 
 .comment__header {

@@ -19,6 +19,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -52,10 +53,6 @@ object WPComTests : Project({
 	// Gutenberg Atomic Nightly
 	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-	// Editor Tracking
-	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
-	// Editor Tracking Edge
-	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
 
 	// E2E Tests for Jetpack Simple Deployment
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
@@ -143,7 +140,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				name = "Post Failure Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
 				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look? @calypso-platform-team! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -177,59 +174,13 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 	)
 }
 
-fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
-	var siteType = if (atomic) "atomic" else "simple";
-	var edgeType = if (edge) "edge" else "production";
-
-    return E2EBuildType (
-		buildId = "WPComTests_editor_tracking_${siteType}_${edgeType}_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "Editor tracking $siteType E2E tests $edgeType ($targetDevice)",
-		buildDescription = "Runs editor tracking $siteType E2E tests on $targetDevice size",
-		testGroup = "editor-tracking",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,siteEditorSimpleSiteEdgeUser,siteEditorSimpleSiteUser")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) {
-				param("env.TEST_ON_ATOMIC", "true")
-			}
-			if (edge) {
-				param("env.GUTENBERG_EDGE", "true")
-			}
-		},
-		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
-			}
-		}
-	)
-}
-
 fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType({
 		id("WPComTests_jetpack_simple_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -285,13 +236,13 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-	
+
 	return BuildType({
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -352,7 +303,8 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			defaultE2eFailureConditions()
 			// These are long-running tests, and we have to scale back the parallelization too.
 			// Let's give them some more breathing room.
-			executionTimeoutMin = 25
+			// This number is arbitrary, but tests in mid-2024 tend to run longer than 25 minutes.
+			executionTimeoutMin = 31
 		}
 	});
 }
@@ -363,7 +315,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
 		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -515,4 +467,3 @@ object P2E2ETests : E2EBuildType(
 		}
 	}
 )
-

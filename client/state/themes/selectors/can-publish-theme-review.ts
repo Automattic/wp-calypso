@@ -5,9 +5,9 @@ import {
 } from 'calypso/state/themes/selectors';
 import { AppState } from 'calypso/types';
 
-export function canPublishThemeReview( state: AppState, themeId: string | undefined ) {
+export function canPublishThemeReview( state: AppState, themeId: string | undefined ): boolean {
 	const isLoggedIn = isUserLoggedIn( state );
-	const isExternallyManagedTheme = themeId && getIsExternallyManagedTheme( state, themeId );
+	const isExternallyManagedTheme = !! ( themeId && getIsExternallyManagedTheme( state, themeId ) );
 	const isMarketplaceThemeSubscribed =
 		isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, themeId );
 

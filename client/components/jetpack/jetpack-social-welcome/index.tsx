@@ -1,7 +1,7 @@
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import { JetpackWelcomePage } from '../jetpack-welcome-page';
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';

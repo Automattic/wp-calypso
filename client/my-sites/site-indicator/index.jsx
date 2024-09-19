@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -199,7 +199,7 @@ export class SiteIndicator extends Component {
 	}
 
 	renderIndicator() {
-		const indicatorClass = classNames( {
+		const indicatorClass = clsx( {
 			'is-expanded': this.state.expand,
 			'is-update': this.hasUpdate(),
 			'is-error': this.hasError(),

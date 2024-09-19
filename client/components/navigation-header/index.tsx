@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
@@ -9,7 +9,6 @@ import './style.scss';
 
 const Container = styled.div`
 	.main.is-wide-layout & {
-		max-width: 1040px;
 		margin: auto;
 	}
 
@@ -31,12 +30,14 @@ interface Props {
 	subtitle?: string | ReactNode;
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
+	style?: object;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
 	const {
 		id,
 		className,
+		style,
 		children,
 		navigationItems = [],
 		mobileItem,
@@ -49,11 +50,12 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	return (
 		<header
 			id={ id }
-			className={ classnames(
+			className={ clsx(
 				className,
 				'navigation-header',
 				screenOptionsTab && children ? 'navigation-header__screen-options-tab' : ''
 			) }
+			style={ style }
 			ref={ ref }
 		>
 			<Container>

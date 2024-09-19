@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
 import { useSubscriptionPlans } from '../../hooks';
+import { SubscriptionPlanData } from '../../hooks/use-subscription-plans';
 import { Subscriber } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
 import { SubscriberStats } from '../subscriber-stats';
@@ -42,6 +43,33 @@ const SubscriberDetails = ( {
 	const notApplicableLabel = translate( 'N/A', {
 		context: 'For free subscriptions the plan description is displayed as N/A (not applicable)',
 	} );
+
+	const displayPaidUpgrade = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
+		if ( subscriptionPlan.is_gift ) {
+			return (
+				<div className="subscriber-details__content-value" key={ index }>
+					{ translate( 'Gift' ) }
+				</div>
+			);
+		}
+
+		if ( subscriptionPlan.startDate ) {
+			return (
+				<TimeSince
+					className="subscriber-details__content-value"
+					date={ subscriptionPlan.startDate }
+					dateFormat="LL"
+					key={ index }
+				/>
+			);
+		}
+
+		return (
+			<div className="subscriber-details__content-value" key={ index }>
+				{ notApplicableLabel }
+			</div>
+		);
+	};
 
 	return (
 		<div className="subscriber-details">
@@ -88,28 +116,16 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ subscriptionPlan.title ? `${ subscriptionPlan.title } - ` : '' }
+									{ ! subscriptionPlan.is_gift && subscriptionPlan.title
+										? `${ subscriptionPlan.title } - `
+										: '' }
 									{ subscriptionPlan.plan }
 								</div>
 							) ) }
 					</div>
 					<div className="subscriber-details__content-column">
 						<div className="subscriber-details__content-label">{ translate( 'Paid upgrade' ) }</div>
-						{ subscriptionPlans &&
-							subscriptionPlans.map( ( subscriptionPlan, index ) =>
-								subscriptionPlan.startDate ? (
-									<TimeSince
-										className="subscriber-details__content-value"
-										date={ subscriptionPlan.startDate }
-										dateFormat="LL"
-										key={ index }
-									/>
-								) : (
-									<div className="subscriber-details__content-value" key={ index }>
-										{ notApplicableLabel }
-									</div>
-								)
-							) }
+						{ subscriptionPlans && subscriptionPlans.map( displayPaidUpgrade ) }
 					</div>
 				</div>
 			</div>
@@ -130,9 +146,7 @@ const SubscriberDetails = ( {
 					) }
 					{ url && (
 						<div className="subscriber-details__content-column">
-							<div className="subscriber-details__content-label">
-								{ translate( 'Acquisition source' ) }
-							</div>
+							<div className="subscriber-details__content-label">{ translate( 'Site' ) }</div>
 							<div className="subscriber-details__content-value">
 								<ExternalLink href={ url }>{ url }</ExternalLink>
 							</div>

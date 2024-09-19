@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { delay, get, map, reduce, reject } from 'lodash';
 import PropTypes from 'prop-types';
@@ -203,7 +203,7 @@ export class CommentHtmlEditor extends Component {
 					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
 						<Button
 							borderless
-							className={ classNames( `comment-html-editor__toolbar-button-${ tag }`, {
+							className={ clsx( `comment-html-editor__toolbar-button-${ tag }`, {
 								'is-tag-open': this.isTagOpen( tag ),
 							} ) }
 							compact

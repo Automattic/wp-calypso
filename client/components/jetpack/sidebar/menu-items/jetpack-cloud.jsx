@@ -55,7 +55,7 @@ export default ( { path } ) => {
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<JetpackSidebarMenuItems
 				path={ path }
-				showIcons={ true }
+				showIcons
 				tracksEventNames={ {
 					activityClicked: 'calypso_jetpack_sidebar_activity_clicked',
 					backupClicked: 'calypso_jetpack_sidebar_backup_clicked',

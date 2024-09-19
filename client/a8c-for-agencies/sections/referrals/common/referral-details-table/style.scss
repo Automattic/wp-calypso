@@ -1,0 +1,22 @@
+
+.referrals-details-table__container {
+
+	.referrals-details-table__heading {
+		padding-block-end: 16px;
+		font-size: rem(20px);
+		font-weight: 500;
+	}
+
+	.dataviews-filters__view-actions {
+		display: none;
+	}
+
+	.dataviews-view-table {
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 2px;
+	}
+
+	.dataviews-wrapper tr.dataviews-view-table__row:last-child td {
+		border-bottom: none;
+	}
+}

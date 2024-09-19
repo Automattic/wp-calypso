@@ -18,6 +18,8 @@ jest.mock(
 	() => 'span'
 );
 
+jest.mock( 'calypso/components/data/query-reader-teams', () => 'span' );
+
 describe( '<SiteTable>', () => {
 	beforeAll( () => {
 		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
@@ -164,6 +166,7 @@ describe( '<SiteTable>', () => {
 				[ blogId ]: siteObj,
 			},
 		},
+		a8cForAgencies: { agencies: {} },
 	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );

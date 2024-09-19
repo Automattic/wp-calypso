@@ -103,8 +103,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 
 		await fullSiteEditorPage.ensureNavigationTopLevel();
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Index' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
+		await fullSiteEditorPage.openTemplateEditor( 'Index' );
 	} );
 
 	it( 'Editor canvas loads', async function () {

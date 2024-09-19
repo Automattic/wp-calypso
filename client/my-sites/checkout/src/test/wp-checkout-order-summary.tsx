@@ -15,6 +15,9 @@ import {
 	PRODUCT_JETPACK_BOOST_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
 	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
@@ -88,7 +91,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import WPCheckoutOrderSummary from '../components/wp-checkout-order-summary';
+import { WPCheckoutOrderSummary } from '../components/wp-checkout-order-summary';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import {
@@ -148,6 +151,9 @@ const jetpackProductSlugs = [
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
 ];
 
 const akismetProductSlugs = [
@@ -267,7 +273,11 @@ describe( 'WPCheckoutOrderSummary', () => {
 								defaultCartKey: 123456,
 							} }
 						>
-							<WPCheckoutOrderSummary siteId={ undefined } onChangeSelection={ () => null } />
+							<WPCheckoutOrderSummary
+								siteId={ undefined }
+								onChangeSelection={ () => null }
+								showFeaturesList
+							/>
 						</ShoppingCartProvider>
 					</ThemeProvider>
 				</ReduxProvider>

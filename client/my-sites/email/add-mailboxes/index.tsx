@@ -38,14 +38,14 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
-	emailManagement,
-	emailManagementMailboxes,
-	emailManagementTitanSetUpMailbox,
+	getEmailManagementPath,
+	getMailboxesPath,
+	getTitanSetUpMailboxPath,
 } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -199,7 +199,7 @@ const MailboxNotices = ( {
 			throw new Error( 'Cannot finish unused mailbox setup without selected site' );
 		}
 
-		page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedDomainName, currentRoute ) );
+		page( getTitanSetUpMailboxPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
 	return (
@@ -235,18 +235,18 @@ const MailboxesForm = ( {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
 } ): JSX.Element => {
-	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
 
-	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
-	if ( isPasswordResetEmailValid ) {
-		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
-	}
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] =
-		useState< HiddenFieldNames[] >( defaultHiddenFields );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+			defaultHiddenFields,
+		} );
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
@@ -315,10 +315,6 @@ const MailboxesForm = ( {
 			} );
 	};
 
-	const passwordResetEmailDefaultValue = {
-		[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
-	};
-
 	return (
 		<>
 			<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
@@ -327,7 +323,9 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ passwordResetEmailDefaultValue }
+					initialFieldValues={ {
+						[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
+					} }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
@@ -369,7 +367,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		: getGoogleMailServiceFamily( emailProduct?.product_slug );
 
 	const goToEmail = (): void => {
-		let url = emailManagement(
+		let url = getEmailManagementPath(
 			selectedSite?.slug,
 			isSelectedDomainNameValid ? selectedDomainName : null,
 			currentRoute,
@@ -377,7 +375,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		);
 
 		if ( source === MAILBOXES_SOURCE ) {
-			url = emailManagementMailboxes( selectedSite?.slug );
+			url = getMailboxesPath( selectedSite?.slug );
 		}
 
 		page( url );
@@ -395,7 +393,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
 				<EmailHeader />

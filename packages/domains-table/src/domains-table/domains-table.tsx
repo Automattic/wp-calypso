@@ -47,12 +47,15 @@ type OnDomainAction = (
 ) => DomainActionDescription | void;
 
 interface BaseDomainsTableProps {
+	className?: string;
 	domains: PartialDomainData[] | DomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
+	hideCheckbox?: boolean;
 	isLoadingDomains?: boolean;
+	useMobileCards?: boolean;
 
 	// These props allow table users to provide their own fetching functions. This is used for
 	// testing and for Calypso to provide functions that handle authentication in a special way.
@@ -302,10 +305,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 	const hasSelectedDomains = selectedDomains.size > 0;
 	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
-	const canSelectAnyDomains = isAllSitesView
-		? selectableDomains.length > 0
-		: ( ( domains as unknown as DomainData[] ) ?? [] ).filter( ( domain ) => ! domain.is_subdomain )
-				.length > 1;
+	const canSelectAnyDomains = selectableDomains.length > 1;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
@@ -340,10 +340,15 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	};
 
 	const handleAutoRenew = ( enable: boolean ) => {
-		const domainsToBulkUpdate = ( domains ?? [] )
-			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
-			.map( ( domain ) => domain.domain );
-		setAutoRenew( domainsToBulkUpdate, enable );
+		const domainsToBulkUpdate = ( domains ?? [] ).filter( ( domain ) =>
+			selectedDomains.has( getDomainId( domain ) )
+		);
+
+		const domainNames = domainsToBulkUpdate.map( ( domain ) => domain.domain );
+		const blogIds = [ ...new Set( domainsToBulkUpdate.map( ( domain ) => domain.blog_id ) ) ];
+
+		setAutoRenew( domainNames, blogIds, enable );
+
 		handleRestartDomainStatusPolling();
 	};
 

@@ -1,7 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import page from '@automattic/calypso-router';
-import { Card, CompactCard, Gridicon } from '@automattic/components';
+import { Card, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -10,15 +11,18 @@ import QueryMembershipsSubscriptions from 'calypso/components/data/query-members
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import MaterialIcon from 'calypso/components/material-icon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
-import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
+import {
+	requestAutoRenewDisable,
+	requestAutoRenewResume,
+	requestSubscriptionStop,
+} from 'calypso/state/memberships/subscriptions/actions';
 import {
 	getSubscription,
 	getStoppingStatus,
+	getUpdatingStatus,
 } from 'calypso/state/memberships/subscriptions/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { purchasesRoot } from '../purchases/paths';
@@ -26,42 +30,69 @@ import MembershipSiteHeader from './header';
 
 import './subscription.scss';
 
-function Subscription( { translate, subscription, moment, stoppingStatus } ) {
+function Subscription( { translate, subscription, moment, stoppingStatus, updatingStatus } ) {
 	const dispatch = useDispatch();
 
-	const stopSubscription = () => dispatch( requestSubscriptionStop( subscription.ID ) );
-	const isProduct = subscription && ! subscription.renew_interval;
+	const isStopping = stoppingStatus === 'start';
+	const isUpdating = updatingStatus === 'start';
+	const isProcessing = isStopping || isUpdating;
+	const stopSubscription = () =>
+		dispatch( ! isProcessing && requestSubscriptionStop( subscription.ID ) );
+	const disableAutoRenew = () =>
+		dispatch( ! isProcessing && requestAutoRenewDisable( subscription.ID ) );
+	const enableAutoRenew = () =>
+		dispatch( ! isProcessing && requestAutoRenewResume( subscription.ID ) );
+	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
+	const isAutoRenewing = isRenewable && subscription.renew_interval;
+	const isProduct = subscription && ! isRenewable;
+	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 
 	useEffect( () => {
-		if ( stoppingStatus === 'fail' ) {
+		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
 			// run is-error notice to contact support
-			isProduct
-				? dispatch(
-						errorNotice(
-							translate(
-								'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-								{
-									components: {
-										a: <a href={ CALYPSO_CONTACT } />,
-										strong: <strong />,
-									},
-								}
-							)
+			if ( isProduct ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
 						)
-				  )
-				: dispatch(
-						errorNotice(
-							translate(
-								'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-								{
-									components: {
-										a: <a href={ CALYPSO_CONTACT } />,
-										strong: <strong />,
-									},
-								}
-							)
+					)
+				);
+			} else if ( stoppingStatus === 'fail' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
 						)
-				  );
+					)
+				);
+			} else if ( updatingStatus === 'fail' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while updating your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
+						)
+					)
+				);
+			}
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
 			dispatch(
@@ -69,7 +100,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 			);
 			page( purchasesRoot );
 		}
-	}, [ stoppingStatus, dispatch, translate, isProduct ] );
+	}, [ stoppingStatus, updatingStatus, dispatch, translate, isProduct ] );
 
 	return (
 		<Main wideLayout className="manage-purchase memberships__subscription">
@@ -81,15 +112,22 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 			<HeaderCake backHref={ purchasesRoot }>
 				{ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
 			</HeaderCake>
-			{ stoppingStatus === 'start' && (
+			{ isStopping && (
 				<Notice
 					status="is-info"
-					isLoading={ true }
+					isLoading
 					text={
 						isProduct
 							? translate( 'Removing this product' )
 							: translate( 'Stopping this subscription' )
 					}
+				/>
+			) }
+			{ isUpdating && (
+				<Notice
+					status="is-info"
+					isLoading
+					text={ translate( 'Updating subscription auto-renew' ) }
 				/>
 			) }
 			{ subscription && (
@@ -124,16 +162,35 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 							</li>
 							<li>
 								<em className="memberships__subscription-inner-detail-label">
-									{ translate( 'Renews on' ) }
+									{ isDisabledAutorenewing ? translate( 'Expires on' ) : translate( 'Renews on' ) }
 								</em>
-								<span className="memberships__subscription-inner-detail">
+								<div className="memberships__subscription-inner-detail">
 									{ subscription.end_date
 										? moment( subscription.end_date ).format( 'll' )
 										: translate( 'Never Expires' ) }
-								</span>
+								</div>
+								{ ! isProduct && (
+									<div className="memberships__subscription-inner-detail">
+										Auto-renew is { subscription.renew_interval ? 'ON' : 'OFF' }
+									</div>
+								) }
 							</li>
 						</ul>
 					</Card>
+					{ isRenewable && (
+						<CompactCard
+							tagName="button"
+							className="auto-renew-toggle__card"
+							onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
+							disabled={ isUpdating }
+						>
+							<MaterialIcon icon="autorenew" className="card__icon" />
+							{ isAutoRenewing
+								? translate( 'Disable auto-renew' )
+								: translate( 'Enable auto-renew' ) }
+							<Gridicon className="card__link-indicator" icon="chevron-right" />
+						</CompactCard>
+					) }
 					<CompactCard
 						tagName="button"
 						className="remove-purchase__card"
@@ -154,4 +211,5 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 export default connect( ( state, props ) => ( {
 	subscription: getSubscription( state, props.subscriptionId ),
 	stoppingStatus: getStoppingStatus( state, props.subscriptionId ),
+	updatingStatus: getUpdatingStatus( state, props.subscriptionId ),
 } ) )( localize( withLocalizedMoment( Subscription ) ) );

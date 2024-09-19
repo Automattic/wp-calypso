@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import usePlanOptions from '../hooks/plan-options';
 import { BlockPlan } from '../hooks/pricing-plans';
@@ -35,7 +35,7 @@ const PricingPlansTabs: FunctionComponent< Props > = ( {
 			{ availablePlanOptions.map( ( planOption ) => (
 				<button
 					onClick={ () => onTabButtonClick( planOption.value ) }
-					className={ classnames( 'hb-pricing-plans-embed__tabs-label', {
+					className={ clsx( 'hb-pricing-plans-embed__tabs-label', {
 						'hb-pricing-plans-embed__tabs-label--active': planOption.value === currentPlan.type,
 					} ) }
 					key={ planOption.value }

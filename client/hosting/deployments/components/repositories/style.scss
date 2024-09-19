@@ -1,0 +1,109 @@
+.github-deployments-repositories {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+
+	&__search-bar {
+		display: flex;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	&__search {
+		flex-grow: 1;
+		height: 40px;
+		.gridicons-search {
+			top: 8px !important;
+		}
+		input {
+			width: 100%;
+		}
+	}
+	.components-spinner {
+		margin-left: auto;
+		margin-right: auto;
+		padding: 32px 24px;
+	}
+
+	&__no-results {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 517px;
+		margin: 64px auto;
+		text-align: center;
+		p:first-child {
+			line-height: 24px;
+			font-size: $font-body;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		p:last-of-type {
+			line-height: 20px;
+		}
+		a.is-primary {
+			svg {
+				margin-left: 4px;
+			}
+		}
+	}
+}
+
+.github-repositories-list {
+	&-permissions-notice {
+		margin-top: auto;
+	}
+
+	.pagination {
+		margin-top: auto;
+
+		+ .github-repositories-list-permissions-notice {
+			margin-top: initial;
+		}
+	}
+
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.github-deployments-repository-list-table {
+	border-collapse: collapse;
+	margin-bottom: 16px;
+
+	th,
+	td {
+		padding: 8px 0;
+		font-weight: normal;
+	}
+
+	th:first-child {
+		width: 285px;
+	}
+
+	thead tr,
+	tbody tr:not(:last-of-type) {
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+	td {
+		vertical-align: middle !important;
+	}
+
+	tr th {
+		font-weight: 500;
+		color: var(--studio-gray-60, #50575e);
+	}
+
+	tr td:last-child {
+		text-align: right;
+	}
+
+	&__repo-name {
+		color: inherit !important;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

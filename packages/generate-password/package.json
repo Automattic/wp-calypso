@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/generate-password",
 	"version": "0.1.0",
-	"description": "Generate cryptographically secure random passwords",
+	"description": "Generate cryptographically secure random passwords.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",

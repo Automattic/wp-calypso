@@ -2,7 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -155,7 +155,7 @@ const PatternLargePreview = ( {
 			<li
 				key={ clientId }
 				aria-label={ pattern.title }
-				className={ classnames( 'pattern-large-preview__pattern', {
+				className={ clsx( 'pattern-large-preview__pattern', {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
@@ -198,6 +198,39 @@ const PatternLargePreview = ( {
 					</Popover>
 				) }
 			</li>
+		);
+	};
+
+	const renderPlaceholder = () => {
+		return (
+			<li className="pattern-large-preview__placeholder">
+				<h2>{ translate( 'Welcome to your homepage.' ) }</h2>
+				<ul>
+					<li>{ translate( 'Select patterns for your homepage.' ) }</li>
+					<li>{ translate( 'Choose your colors and fonts.' ) }</li>
+					<li>{ translate( 'Pick additional site pages.' ) }</li>
+					<li>{ translate( 'Add your own content in the Editor.' ) }</li>
+				</ul>
+			</li>
+		);
+	};
+
+	const renderPatterns = () => {
+		const hasPlaceholder = sections.length === 0;
+		return (
+			<ul
+				className={ clsx( 'pattern-large-preview__patterns', {
+					'pattern-large-preview__patterns--has-placeholder': hasPlaceholder,
+				} ) }
+				style={ patternLargePreviewStyle }
+				ref={ listRef }
+			>
+				{ header && renderPattern( 'header', header ) }
+				{ hasPlaceholder
+					? renderPlaceholder()
+					: sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
+				{ footer && renderPattern( 'footer', footer ) }
+			</ul>
 		);
 	};
 
@@ -292,27 +325,7 @@ const PatternLargePreview = ( {
 			onViewportChange={ updateViewportHeight }
 			onZoomOutScaleChange={ handleZoomOutScale }
 		>
-			{ hasSelectedPattern ? (
-				<ul
-					className="pattern-large-preview__patterns"
-					style={ patternLargePreviewStyle }
-					ref={ listRef }
-				>
-					{ header && renderPattern( 'header', header ) }
-					{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
-					{ footer && renderPattern( 'footer', footer ) }
-				</ul>
-			) : (
-				<div className="pattern-large-preview__placeholder">
-					<h2>{ translate( 'Welcome to your homepage.' ) }</h2>
-					<ul>
-						<li>{ translate( 'Select patterns for your homepage.' ) }</li>
-						<li>{ translate( 'Choose your colors and fonts.' ) }</li>
-						<li>{ translate( 'Pick additional site pages.' ) }</li>
-						<li>{ translate( 'Add your own content in the Editor.' ) }</li>
-					</ul>
-				</div>
-			) }
+			{ renderPatterns() }
 			{ activeElement && (
 				<PatternTooltipDeadClick targetRef={ frameRef } isVisible={ shouldShowTooltip } />
 			) }

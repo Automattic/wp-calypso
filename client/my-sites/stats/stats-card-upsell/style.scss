@@ -3,6 +3,7 @@
 	height: 100%;
 	font-size: $font-body-small;
 	.stats-card-upsell__content {
+		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;

@@ -1,4 +1,5 @@
-import classnames from 'classnames';
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -215,7 +215,7 @@ class EditorMediaModalDetailFields extends Component {
 
 		return (
 			<EditorMediaModalFieldset legend={ this.props.translate( 'Rating' ) }>
-				<div className={ classnames( 'form-radios-bar' ) } style={ { display: 'flex' } }>
+				<div className={ clsx( 'form-radios-bar' ) } style={ { display: 'flex' } }>
 					{ items.map( ( item, i ) => (
 						<FormLabel key={ item.value + i } style={ { paddingRight: '15px' } }>
 							<FormRadio

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -59,7 +59,7 @@ export class CountedTextarea extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'counted-textarea', this.props.className, {
+		const classes = clsx( 'counted-textarea', this.props.className, {
 			'is-exceeding-acceptable-length':
 				this.props.acceptableLength && this.props.value.length > this.props.acceptableLength,
 		} );

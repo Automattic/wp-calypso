@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
-		loginUserWithSecurityKey: PropTypes.func.isRequired,
+		twoStepAuthorization: PropTypes.object.isRequired,
 		onComplete: PropTypes.func,
 
 		translate: PropTypes.func.isRequired,
@@ -20,14 +21,30 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event ) => {
-		event.preventDefault();
+	componentDidMount() {
+		this.initiateSecurityKeyAuthentication();
+	}
 
+	initiateSecurityKeyAuthentication = ( retryRequest = true ) => {
 		this.setState( { isAuthenticating: true, showError: false } );
-		this.props
-			.loginUserWithSecurityKey()
+
+		this.props.twoStepAuthorization
+			.loginUserWithSecurityKey( { user_id: this.props.currentUserId } )
 			.then( ( response ) => this.onComplete( null, response ) )
 			.catch( ( error ) => {
+				const errors = error?.data?.errors ?? [];
+				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
+					this.props.twoStepAuthorization.fetch( () => {
+						if ( retryRequest ) {
+							this.initiateSecurityKeyAuthentication( false );
+						} else {
+							// We only retry once, so let's show the original error.
+							this.setState( { isAuthenticating: false, showError: true } );
+							this.onComplete( error, null );
+						}
+					} );
+					return;
+				}
 				this.setState( { isAuthenticating: false, showError: true } );
 				this.onComplete( error, null );
 			} );
@@ -44,7 +61,12 @@ class SecurityKeyForm extends Component {
 		const { isAuthenticating } = this.state;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					this.initiateSecurityKeyAuthentication();
+				} }
+			>
 				<Card compact className="security-key-form__verification-code-form">
 					{ ! isAuthenticating ? (
 						<div>
@@ -95,4 +117,6 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, null )( localize( SecurityKeyForm ) );
+export default connect( ( state ) => ( {
+	currentUserId: getCurrentUserId( state ),
+} ) )( localize( SecurityKeyForm ) );

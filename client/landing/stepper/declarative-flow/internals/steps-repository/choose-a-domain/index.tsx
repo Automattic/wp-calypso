@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import useChangeSiteDomain from '../../../../hooks/use-change-site-domain';
+import useChangeSiteDomainIfNeeded from '../../../../hooks/use-change-site-domain-if-needed';
 import type { Step } from '../../types';
 import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
@@ -43,7 +43,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		useState< DomainSuggestion >();
 	const site = useSite();
 
-	const changeSiteDomain = useChangeSiteDomain();
+	const changeSiteDomainIfNeeded = useChangeSiteDomainIfNeeded();
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -97,7 +97,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		}
 
 		if ( suggestion?.is_free && suggestion?.domain_name ) {
-			changeSiteDomain( suggestion?.domain_name );
+			changeSiteDomainIfNeeded( suggestion?.domain_name );
 		}
 
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
@@ -112,12 +112,12 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				<RegisterDomainStep
 					key={ domainSuggestion }
 					suggestion={ domainSuggestion }
-					domainsWithPlansOnly={ true }
+					domainsWithPlansOnly
 					onAddDomain={ submitWithDomain }
-					includeWordPressDotCom={ true }
+					includeWordPressDotCom
 					offerUnavailableOption={ false }
 					showAlreadyOwnADomain={ false }
-					isSignupStep={ true }
+					isSignupStep
 					basePath=""
 					products={ productsList }
 					vendor={ getSuggestionsVendor( {
@@ -142,16 +142,16 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					vendor={ flow }
 					basePath=""
 					suggestion={ domainSuggestion }
-					domainsWithPlansOnly={ true }
-					isSignupStep={ true }
-					includeWordPressDotCom={ true }
+					domainsWithPlansOnly
+					isSignupStep
+					includeWordPressDotCom
 					includeDotBlogSubdomain={ false }
 					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
 					products={ productsList }
-					useProvidedProductsList={ true }
-					isReskinned={ true }
+					useProvidedProductsList
+					isReskinned
 				/>
 				<div className="aside-sections">
 					<div className="aside-section">
@@ -249,7 +249,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
-				isWideLayout={ true }
+				isWideLayout
 				isLargeSkipLayout={ false }
 				stepContent={ getStepContent() }
 				recordTracksEvent={ recordTracksEvent }

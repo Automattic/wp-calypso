@@ -1,5 +1,5 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -48,7 +48,7 @@ function ShowLicenseActivationLinkIfAvailable( { siteId }: Props ) {
 		return (
 			<div className="show-license-activation-link-if-available__container">
 				<div
-					className={ classNames( 'show-license-activation-link-if-available', {
+					className={ clsx( 'show-license-activation-link-if-available', {
 						'is-placeholder': ! hasFetchedLicensesCounts,
 					} ) }
 				>

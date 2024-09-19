@@ -1,12 +1,7 @@
-import { PlanSlug, getPlan } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/format-currency';
+import { type PlanSlug, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanPrices } from 'calypso/state/plans/selectors';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import PlanUpsellButton from './plan-upsell-button';
 import { DomainName } from '.';
 
 const FreeDomainText = styled.div`
@@ -17,46 +12,40 @@ const FreeDomainText = styled.div`
 	margin-top: 4px;
 `;
 
-export default function SuggestedPlanSection( {
-	paidDomainName,
-	suggestedPlanSlug,
-	onButtonClick,
-	isBusy,
-}: {
-	paidDomainName: string;
-	suggestedPlanSlug: PlanSlug;
-	onButtonClick: () => void;
+export default function SuggestedPlanSection( props: {
+	paidDomainName?: string;
+	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	isBusy: boolean;
 } ) {
 	const translate = useTranslate();
-	const planPriceMonthly = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug: suggestedPlanSlug,
-			siteId,
-			returnMonthly: true,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
+	const { paidDomainName, onPlanSelected, isBusy } = props;
 
 	return (
 		<>
-			<DomainName>
-				<div>{ paidDomainName }</div>
-				<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
-			</DomainName>
-			<PlanButton planSlug={ suggestedPlanSlug } busy={ isBusy } onClick={ onButtonClick }>
-				{ currencyCode &&
-					translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-						comment: 'Eg: Get Personal - $4/month',
-						args: {
-							planTitle: planTitle as string,
-							planPrice: formatCurrency( planPriceMonthly, currencyCode, { stripZeros: true } ),
-						},
-					} ) }
-			</PlanButton>
+			{ paidDomainName && (
+				<DomainName>
+					<div>{ paidDomainName }</div>
+					<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
+				</DomainName>
+			) }
+			<PlanUpsellButton
+				planSlug={ PLAN_PERSONAL }
+				onPlanSelected={ onPlanSelected }
+				isBusy={ isBusy }
+			/>
+			{ paidDomainName && (
+				<DomainName>
+					<div>{ paidDomainName }</div>
+					<FreeDomainText>
+						{ translate( 'Free for one year. Includes Premium themes.' ) }
+					</FreeDomainText>
+				</DomainName>
+			) }
+			<PlanUpsellButton
+				planSlug={ PLAN_PREMIUM }
+				onPlanSelected={ onPlanSelected }
+				isBusy={ isBusy }
+			/>
 		</>
 	);
 }

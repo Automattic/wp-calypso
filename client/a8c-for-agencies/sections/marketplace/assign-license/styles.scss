@@ -1,0 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.assign-license .a4a-layout__body {
+	padding-block-start: 16px;
+}
+
+.assign-license__controls {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+
+	.assign-license-form__assign-later.button {
+		margin-inline-end: 0;
+		font-weight: 700;
+		text-decoration: underline;
+		white-space: nowrap;
+	}
+
+}
+
+.assign-license__search-field {
+	margin-block-end: 1px;
+}
+
+.assign-license__sites-list {
+	margin-block-end: 64px;
+
+	.card {
+		margin: 0;
+	}
+}
+
+.assign-license__site-card-radio.form-radio {
+	margin-inline-end: 1rem;
+}
+
+.assign-license__sites-no-results {
+	text-align: center;
+	font-size: 1.25rem;
+	line-height: 24px;
+}

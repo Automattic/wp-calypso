@@ -13,6 +13,7 @@
 		{ "path": "../components" },
 		{ "path": "../data-stores" },
 		{ "path": "../viewport" },
-		{ "path": "../i18n-utils" }
+		{ "path": "../i18n-utils" },
+		{ "path": "../search" }
 	]
 }

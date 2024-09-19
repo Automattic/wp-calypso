@@ -1,7 +1,13 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo } from 'react';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import ExternalLink from 'calypso/components/external-link';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
 import SitesOverviewContext from '../../context';
 import DashboardDataContext from '../../dashboard-data-context';
@@ -19,18 +25,58 @@ interface Props {
 
 export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: Props ) {
 	const translate = useTranslate();
+	const isA4AEnabled = isA8CForAgencies();
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+
+	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+
 	const { isLargeScreen } = useContext( DashboardDataContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], isLargeScreen );
 
 	const { blog_id: siteId, url: siteUrl, is_atomic, url_with_scheme } = site;
 
+	const agencyId = useSelector( getActiveAgencyId );
+
 	// queryKey is needed to optimistically update the site list
 	const queryKey = useMemo(
-		() => [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ],
-		[ filter, search, currentPage, sort ]
+		() =>
+			isA4AEnabled
+				? [
+						'jetpack-agency-dashboard-sites',
+						dataViewsState?.search,
+						dataViewsState?.page,
+						{
+							issueTypes: getSelectedFilters( dataViewsState?.filters ),
+							showOnlyFavorites: showOnlyFavorites || false,
+						},
+						dataViewsState.sort,
+						dataViewsState?.perPage,
+						...( agencyId ? [ agencyId ] : [] ),
+				  ]
+				: [
+						'jetpack-agency-dashboard-sites',
+						search,
+						currentPage,
+						filter,
+						sort,
+						...( agencyId ? [ agencyId ] : [] ),
+				  ],
+		[
+			isA4AEnabled,
+			dataViewsState?.search,
+			dataViewsState?.page,
+			dataViewsState?.filters,
+			dataViewsState.sort,
+			dataViewsState?.perPage,
+			showOnlyFavorites,
+			agencyId,
+			search,
+			currentPage,
+			filter,
+			sort,
+		]
 	);
 	const { installBoost, status } = useInstallBoost( siteId, siteUrl, queryKey );
 
@@ -55,13 +101,17 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 		}
 	}, [ status, onClose ] );
 
+	const productPurchaseLink = isA4AEnabled
+		? `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=jetpack-boost&source=sitesdashboard&site_id=${ siteId }`
+		: '#';
+
 	return (
 		<LicenseInfoModal
 			className="site-boost-column__upgrade-modal"
 			currentLicenseInfo="boost"
 			label={
 				upgradeOnly
-					? translate( 'Upgrade to Auto-optimize' )
+					? translate( 'Upgrade to auto-optimize' )
 					: translate( 'Purchase Boost License' )
 			}
 			onClose={ onClose }
@@ -69,8 +119,11 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			onCtaClick={ handlePurchaseBoost }
 			isCTAExternalLink={ is_atomic }
 			ctaHref={
-				is_atomic ? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard` : undefined
+				is_atomic
+					? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard`
+					: productPurchaseLink
 			}
+			showPaymentPlan={ ! is_atomic }
 			extraAsideContent={
 				<>
 					{ ! upgradeOnly && (
@@ -93,7 +146,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 										<ExternalLink
 											href="https://wordpress.org/plugins/jetpack-boost/"
 											onClick={ onJetpackBoostClick }
-											icon={ true }
+											icon
 										>
 											{ translate( 'Jetpack Boost' ) }
 										</ExternalLink>

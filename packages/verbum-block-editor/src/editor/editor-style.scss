@@ -1,98 +1,125 @@
 /* stylelint-disable declaration-property-unit-allowed-list */
-@import "@wordpress/components/build-style/style";
-@import "@wordpress/edit-post/build-style/style";
-@import "@wordpress/block-editor/build-style/style";
-@import "@wordpress/block-editor/build-style/content.css";
 
-.editor__wrapper {
+.verbum-editor-wrapper {
 	width: 100%;
-	padding: 0 10px;
 	box-sizing: border-box;
-}
 
-.editor__header {
-	top: 0;
-	overflow: hidden;
-	position: sticky;
-	display: grid;
-	grid-template-rows: 0fr;
-	border: 1px solid var(--color-neutral-0);
-	// Avoid double border.
-	border-bottom: none;
+	@import "@wordpress/components/build-style/style";
+	@import "@wordpress/edit-post/build-style/style";
+	@import "@wordpress/block-editor/build-style/style";
+	@import "@wordpress/block-editor/build-style/content";
 
-	&.is-editing {
-		overflow: visible;
-		grid-template-rows: 1fr;
-		transition: all 0.5s 0.5s ease-in-out;
-	}
-
-	@at-root body.admin-bar & {
-		top: 32px;
-	}
-
-	.editor__header-wrapper {
-		display: flex;
+	.editor__header {
+		top: 0;
+		background-color: #fefefe;
 		overflow: hidden;
-		justify-content: space-between;
-		align-items: center;
+		position: sticky;
+		display: grid;
+		border: 1px solid var(--color-neutral-0);
+		// Avoid double border.
+		border-bottom: none;
 
-		.editor__header-toolbar {
-			flex-grow: 1;
+		&.is-editing {
+			overflow: visible;
+		}
 
-			.block-editor-block-toolbar {
+		@at-root body.admin-bar & {
+			top: 32px;
+		}
 
-				.block-editor-block-settings-menu,
-				button:disabled {
-					display: none;
+		.editor__header-wrapper {
+			display: flex;
+			overflow: hidden;
+			justify-content: space-between;
+			align-items: center;
+			min-height: 52px;
+			border-bottom: solid 1px #dcdcde;
+
+			button {
+				box-shadow: none;
+			}
+
+			.editor__header-toolbar {
+				flex-grow: 1;
+
+				.block-editor-block-contextual-toolbar.components-accessible-toolbar {
+					border-bottom: none;
 				}
 
-				.block-editor-block-parent-selector {
-					background-color: transparent;
+				.block-editor-block-toolbar {
 
-					button.block-editor-block-parent-selector__button {
-						border: none;
+					.block-editor-block-settings-menu,
+					button:disabled {
+						display: none;
+					}
+
+					.block-editor-block-parent-selector {
+						background-color: transparent;
+
+						button.block-editor-block-parent-selector__button {
+							border: none;
+						}
 					}
 				}
 			}
-		}
 
-		.block-editor-inserter {
-			padding: 5px 8px;
+			.block-editor-inserter {
+				padding: 5px 8px;
 
-			.block-editor-inserter__toggle {
-				svg {
-					margin: auto;
+				.block-editor-inserter__toggle {
+					svg {
+						margin: auto;
+					}
+				}
+			}
+
+			.block-editor-media-placeholder__url-input-form {
+				display: flex;
+				box-sizing: border-box;
+			}
+
+			.block-editor-media-flow__url-input {
+				border-top: 1px solid #1e1e1e;
+				margin-top: -9px;
+				padding: 8px 16px;
+
+				.block-editor-media-replace-flow__image-url-label {
+					display: block;
+					margin-bottom: 8px;
+					font-size: 13px;
+				}
+
+				.block-editor-link-control {
+					width: 300px;
 				}
 			}
 		}
+	}
 
-		.block-editor-media-placeholder__url-input-form {
-			display: flex;
-			box-sizing: border-box;
+	.editor__main {
+		border: 1px solid var(--color-neutral-0);
+		margin-bottom: 10px;
+		&.loading-placeholder {
+			&.loading {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
 		}
 
-		.block-editor-media-flow__url-input {
-			border-top: 1px solid #1e1e1e;
-			margin-top: -9px;
-			padding: 8px 16px;
+		.block-editor-iframe__container {
+			overflow-x: unset;
+		}
 
-			.block-editor-media-replace-flow__image-url-label {
-				display: block;
-				margin-bottom: 8px;
-				font-size: 13px;
-			}
-
-			.block-editor-link-control {
-				width: 300px;
-			}
+		&,
+		& iframe {
+			min-height: 140px;
 		}
 	}
-}
 
-.editor__main {
-	border: solid 1px var(--color-neutral-0);
-	margin-bottom: 10px;
-
+	iframe[name="editor-canvas"] {
+		background-color: inherit;
+	}
 }
 
 
@@ -148,6 +175,11 @@ div[id^="portal/tooltip"] {
 
 		&:hover {
 			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		&:focus {
+			// the default rule uses `--wp-admin-border-width-focus` which is not always available
+			box-shadow: inset 0 0 0 1.5px var(--wp-admin-theme-color, #3858e9) !important;
 		}
 
 		svg {
@@ -391,5 +423,12 @@ div[id^="portal/tooltip"] {
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+
+	svg,
+	button {
+		min-width: initial;
+		max-width: initial;
+		display: initial;
 	}
 }

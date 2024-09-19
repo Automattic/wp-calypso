@@ -33,6 +33,7 @@ import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/a
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	isRequestingForSites,
+	isRequestingForAllSites,
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
@@ -407,7 +408,9 @@ function PrimaryButton( {
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
+	const isIncompatibleForAtomic = isAtomic && 'vaultpress' === plugin.slug;
 
 	const onClick = useCallback( () => {
 		dispatch(
@@ -452,23 +455,30 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
+			disabled={
+				incompatiblePlugin ||
+				userCantManageTheSite ||
+				isDisabledForWpcomStaging ||
+				isIncompatibleForAtomic
+			}
 		/>
 	);
 }
 
-function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct, startFreeTrial = false } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 	const billingPeriod = useSelector( getBillingInterval );
-
+	const buttonText = startFreeTrial
+		? translate( 'Start your free trial' )
+		: translate( 'Get started' );
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
 			plugin: plugin.slug,
 			billing_period: isMarketplaceProduct ? billingPeriod : '',
 		},
-		'/start/with-plugin'
+		startFreeTrial ? 'start/hosting' : '/start/with-plugin'
 	);
 	return (
 		<Button
@@ -478,7 +488,7 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 			onClick={ onClick }
 			href={ startUrl }
 		>
-			{ translate( 'Get started' ) }
+			{ buttonText }
 		</Button>
 	);
 }
@@ -486,6 +496,8 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
 	const translate = useTranslate();
 	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
+	const isRequestingPlugins = useSelector( ( state ) => isRequestingForAllSites( state ) );
+
 	const toggleDisplayManageSitePluginsModal = useCallback( () => {
 		setDisplayManageSitePluginsModal( ( value ) => ! value );
 	}, [] );
@@ -516,6 +528,7 @@ function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
 			<Button
 				className="plugin-details-cta__manage-button"
 				onClick={ toggleDisplayManageSitePluginsModal }
+				busy={ isRequestingPlugins }
 			>
 				{ translate( 'Manage sites' ) }
 			</Button>

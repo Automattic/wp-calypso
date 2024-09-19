@@ -35,12 +35,18 @@ const useCategoryPatternsMap = ( patterns: Pattern[] ) => {
 			}
 		};
 
-		patterns.reverse().forEach( ( pattern ) => {
+		[ ...patterns ].reverse().forEach( ( pattern ) => {
 			Object.keys( pattern.categories ).forEach( ( category ) => {
 				const isPage = isPagePattern( pattern );
 
 				insert( allCategoryPatternsMap, category, pattern );
-				if ( isPage && pageCategoryPatternsMap.hasOwnProperty( category ) ) {
+				// @TODO: For the future feature to shuffle pages will have to remove isPriorityPattern( pattern ) from this condition.
+				// It's only being used here just to help testing priority pages as the rest are excluded.
+				if (
+					isPage &&
+					pageCategoryPatternsMap.hasOwnProperty( category ) &&
+					isPriorityPattern( pattern )
+				) {
 					insert( pageCategoryPatternsMap, category, pattern );
 				}
 

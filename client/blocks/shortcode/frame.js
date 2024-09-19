@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -37,7 +37,7 @@ export default class ShortcodeFrame extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'shortcode-frame', this.props.className );
+		const classes = clsx( 'shortcode-frame', this.props.className );
 
 		if ( ! generateEmbedFrameMarkup( this.props ) ) {
 			return null;
@@ -48,7 +48,7 @@ export default class ShortcodeFrame extends Component {
 		// `shouldComponentUpdate`
 		const key = Math.random();
 
-		const sandbox = classNames( {
+		const sandbox = clsx( {
 			'allow-scripts': true,
 			'allow-same-origin': this.props.allowSameOrigin,
 		} );

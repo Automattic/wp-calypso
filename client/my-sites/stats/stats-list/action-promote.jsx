@@ -1,25 +1,26 @@
 import { blaze } from '@automattic/components/src/icons';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import {
-	recordDSPEntryPoint,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-} from 'calypso/lib/promote-post';
+import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
+import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId, onToggleVisibility } = props;
 
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const keyValue = 'post-' + postId;
-	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { isModalOpen, value } = useRouteModal( 'blazepress-widget', keyValue );
+	const openPromoteModal = useOpenPromoteWidget( {
+		keyValue,
+		entrypoint: 'mysites_stats_posts-and-pages_speaker-button',
+		external: true,
+	} );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
@@ -27,14 +28,12 @@ const PromotePost = ( props ) => {
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();
 		onToggleVisibility( true );
-		openModal();
+		openPromoteModal();
 
 		gaRecordEvent(
 			'Stats',
 			'Clicked on Promote Post Widget Button in ' + moduleName + ' List Action Menu'
 		);
-
-		dispatch( recordDSPEntryPoint( 'mysites_stats_posts-and-pages_speaker-button' ) );
 	};
 
 	return (

@@ -1,0 +1,208 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "../styles/clear-fix";
+
+.odie-foldable-card.card {
+	@include a8c-clear-fix;
+	position: relative;
+	transition: margin 0.15s linear;
+	padding: 0;
+
+	&.is-expanded {
+		margin-bottom: 8px;
+	}
+}
+
+.odie-foldable-card__header {
+	min-height: 64px;
+	width: 100%;
+	padding: 16px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+
+	&.is-clickable {
+		cursor: pointer;
+	}
+
+	&.has-border {
+		.odie-foldable-card__summary,
+		.odie-foldable-card__summary-expanded {
+			margin-right: 48px;
+		}
+
+		.odie-foldable-card__expand {
+			border-left: 1px var(--color-neutral-5) solid;
+		}
+	}
+}
+
+.odie-foldable-card.is-compact .odie-foldable-card__header {
+	padding: 8px 16px;
+	min-height: 40px;
+}
+
+.odie-foldable-card.is-expanded .odie-foldable-card__header {
+	margin-bottom: 0;
+	height: inherit;
+	min-height: 64px;
+}
+
+.odie-foldable-card.is-expanded.is-compact .odie-foldable-card__header {
+	min-height: 40px;
+}
+
+.odie-foldable-card.is-disabled .odie-foldable-card__header {
+	opacity: 0.2;
+}
+
+.odie-foldable-card__action {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+}
+
+.odie-foldable-card.is-expanded .odie-foldable-card__action {
+	height: 100%;
+}
+
+.odie-foldable-card.is-disabled .odie-foldable-card__action {
+	cursor: default;
+}
+
+.accessible-focus .odie-foldable-card__action:focus {
+	outline: thin dotted;
+}
+
+button.odie-foldable-card__action {
+	cursor: pointer;
+	// Reset button styles to protect against wp-admin styles.
+	background: #0000;
+	appearance: none;
+	border: none;
+	font-size: inherit;
+	outline: 0;
+	padding: 0;
+	vertical-align: initial;
+}
+
+.odie-foldable-card__main {
+	max-width: calc(100% - 36px);
+	display: flex;
+	align-items: center;
+	flex: 2 1;
+	margin-right: 5px;
+
+	@media (max-width: #{ ($break-mobile) }) {
+		flex: 1 1;
+	}
+}
+
+.odie-foldable-card__secondary {
+	display: flex;
+	align-items: center;
+	flex: 1 1;
+	justify-content: flex-end;
+
+	@media (max-width: #{ ($break-mobile) }) {
+		flex: 0 1;
+	}
+}
+
+.odie-foldable-card__expand {
+	width: 48px;
+
+	.gridicon {
+		fill: var(--color-neutral-30);
+		display: flex;
+		align-items: center;
+		width: 100%;
+		vertical-align: middle;
+
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+	}
+
+	.gridicon:hover {
+		fill: var(--color-neutral-30);
+	}
+
+	&:hover .gridicon {
+		fill: var(--color-neutral-50);
+	}
+}
+
+.odie-foldable-card.is-expanded > .odie-foldable-card__header .odie-foldable-card__expand .gridicon {
+	transform: rotate(180deg);
+}
+
+.odie-foldable-card__content {
+	display: none;
+}
+
+.odie-foldable-card.is-smooth .odie-foldable-card__content {
+	display: block;
+	overflow: hidden;
+
+	transition: max-height 0.25s ease;
+	max-height: 0;
+}
+
+.odie-foldable-card.is-expanded.is-smooth .odie-foldable-card__content {
+	height: auto;
+	max-height: 250px; // fallback if not set inline with js
+	transition: max-height 0.25s ease;
+	padding: 0;
+}
+
+.odie-foldable-card.is-expanded .odie-foldable-card__content {
+	display: block;
+	border-top: 1px solid var(--color-neutral-5);
+}
+
+.odie-foldable-card.is-compact .odie-foldable-card.is-expanded .odie-foldable-card__content {
+	padding: 8px;
+}
+
+.odie-foldable-card__summary,
+.odie-foldable-card__summary-expanded {
+	margin-right: 40px;
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	transition: opacity 0.2s linear;
+	display: inline-block;
+
+	@media (max-width: #{ ($break-mobile) }) {
+		display: none;
+	}
+}
+
+.odie-foldable-card.has-expanded-summary .odie-foldable-card__summary,
+.odie-foldable-card.has-expanded-summary .odie-foldable-card__summary-expanded {
+	transition: none;
+	flex: 2;
+	text-align: right;
+}
+
+.odie-foldable-card__summary {
+	opacity: 1;
+	display: inline-block;
+}
+
+.odie-foldable-card.is-expanded .odie-foldable-card__summary {
+	display: none;
+}
+
+.has-expanded-summary .odie-foldable-card.is-expanded .odie-foldable-card__summary {
+	display: none;
+}
+
+.odie-foldable-card__summary-expanded {
+	display: none;
+}
+
+.odie-foldable-card.is-expanded .odie-foldable-card__summary-expanded {
+	display: inline-block;
+}

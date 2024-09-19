@@ -13,7 +13,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 // Only for categories page, tablet or bellow viewport, set the search box width to 100%.
 body.archive {
-	@media only screen and ( max-width: $breakpoint-tablet ) {
+	@media only screen and (max-width: $breakpoint-tablet) {
 		div.happy-blocks-search__inside-wrapper {
 			width: 100%;
 		}
@@ -26,7 +26,7 @@ body.archive {
 		height: 57px;
 	}
 
-	@media only screen and ( max-width: $breakpoint-tablet ) {
+	@media only screen and (max-width: $breakpoint-tablet) {
 		height: 57px;
 		margin-bottom: 16px !important;
 		justify-content: flex-start !important;
@@ -35,7 +35,7 @@ body.archive {
 			width: var(--wp--style--global--content-size);
 		}
 	}
-	@media only screen and ( max-width: $breakpoint-mobile ) {
+	@media only screen and (max-width: $breakpoint-mobile) {
 		margin: 16px 0 !important;
 	}
 
@@ -51,7 +51,7 @@ body.archive {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	@media only screen and ( max-width: $breakpoint-mobile ) {
+	@media only screen and (max-width: $breakpoint-mobile) {
 		flex-direction: column-reverse;
 	}
 }
@@ -82,7 +82,7 @@ body.archive {
 
 .happy-blocks-mini-search {
 	margin-top: 32px;
-	@media only screen and ( max-width: $breakpoint-mobile ) {
+	@media only screen and (max-width: $breakpoint-mobile) {
 		margin-top: 16px;
 		margin-bottom: 0;
 	}
@@ -102,7 +102,7 @@ body.archive {
 		box-shadow: 0 0 0 1px var(--color-neutral-5) inset;
 		display: flex;
 
-		@media only screen and ( max-width: $breakpoint-mobile ) {
+		@media only screen and (max-width: $breakpoint-mobile) {
 			margin-left: 0;
 			width: 100%;
 		}
@@ -159,12 +159,12 @@ body.archive {
 			width: 100%;
 			display: flex;
 			justify-content: flex-end;
-			@media ( max-width: $breakpoint-mobile ) {
+			@media (max-width: $breakpoint-mobile) {
 				margin-top: 0;
 			}
 		}
 
-		@media ( max-width: $breakpoint-desktop ) {
+		@media (max-width: $breakpoint-desktop) {
 			padding: 0 24px;
 		}
 	}
@@ -174,7 +174,7 @@ body.archive {
 			margin-top: 120px;
 			margin-bottom: 6px;
 
-			@media ( max-width: $breakpoint-mobile ) {
+			@media (max-width: $breakpoint-mobile) {
 				margin-top: 56px;
 				margin-bottom: 8px;
 			}
@@ -185,7 +185,7 @@ body.archive {
 
 				.happy-blocks-global-header-site__title__wrapper {
 					margin-bottom: 32px;
-					@media ( max-width: $breakpoint-mobile ) {
+					@media (max-width: $breakpoint-mobile) {
 						margin-top: 0;
 					}
 				}
@@ -193,7 +193,7 @@ body.archive {
 				h1 {
 					font-size: rem(70px);
 					line-height: 76px;
-					@media ( max-width: $breakpoint-mobile ) {
+					@media (max-width: $breakpoint-mobile) {
 						font-size: rem(50px);
 						line-height: 57px;
 					}
@@ -203,7 +203,7 @@ body.archive {
 					margin-top: 16px;
 					font-size: rem(18px);
 					line-height: 26px;
-					@media ( max-width: $breakpoint-mobile ) {
+					@media (max-width: $breakpoint-mobile) {
 						font-size: 1rem;
 						line-height: 24px;
 					}
@@ -218,11 +218,11 @@ body.archive {
 
 		&.is-webinars,
 		&.is-courses {
-			@media ( max-width: $breakpoint-mobile ) {
+			@media (max-width: $breakpoint-mobile) {
 				margin-top: 23px;
 			}
 			.happy-blocks-global-header-site__title__wrapper {
-				@media ( max-width: $breakpoint-mobile ) {
+				@media (max-width: $breakpoint-mobile) {
 					margin-top: 0;
 
 					p {
@@ -246,7 +246,7 @@ body.archive {
 	display: flex;
 	align-items: center;
 	margin-top: 24px;
-	@media ( max-width: $breakpoint-mobile ) {
+	@media (max-width: $breakpoint-mobile) {
 		flex-direction: column;
 		margin-top: 0;
 	}
@@ -255,7 +255,7 @@ body.archive {
 		font-size: 2.75rem;
 		line-height: 52px;
 		margin: 0;
-		@media ( max-width: $breakpoint-tablet ) {
+		@media (max-width: $breakpoint-tablet) {
 			font-size: 1.75rem;
 			line-height: 29px;
 		}
@@ -268,7 +268,7 @@ body.archive {
 		margin-top: 0;
 		margin-bottom: 0;
 
-		@media ( max-width: $breakpoint-tablet ) {
+		@media (max-width: $breakpoint-tablet) {
 			font-size: 0.875rem;
 			line-height: 20px;
 			margin-top: 0;
@@ -277,7 +277,7 @@ body.archive {
 
 	.happy-blocks-global-header-site__title__wrapper {
 		width: 100%;
-		@media ( max-width: $breakpoint-mobile ) {
+		@media (max-width: $breakpoint-mobile) {
 			margin: 16px 0 16px 0;
 		}
 	}

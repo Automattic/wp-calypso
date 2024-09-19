@@ -188,13 +188,13 @@ class SharingServiceDescription extends Component {
 			},
 			google_my_business: function () {
 				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Connected to your Google My Business account.', {
-						comment: 'Description for Google My Business when an account is connected',
+					return this.props.translate( 'Connected to your Google Business Profile account.', {
+						comment: 'Description for Google Business Profile when an account is connected',
 					} );
 				}
 
-				return this.props.translate( 'Connect to your Google My Business account.', {
-					comment: 'Description for Google My Business when no account is connected',
+				return this.props.translate( 'Connect to your Google Business Profile account.', {
+					comment: 'Description for Google Business Profile when no account is connected',
 				} );
 			},
 			p2_slack: function () {
@@ -240,6 +240,12 @@ class SharingServiceDescription extends Component {
 					return this.props.translate( 'Sharing posts to Nextdoor.' );
 				}
 				return this.props.translate( 'Share posts with your local community on Nextdoor.' );
+			},
+			threads() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Sharing posts to Threads.' );
+				}
+				return this.props.translate( 'Share posts to your Threads feed.' );
 			},
 		} ),
 		numberOfConnections: 0,

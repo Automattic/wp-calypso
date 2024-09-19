@@ -18,8 +18,8 @@ import {
 	CheckoutFormSubmit,
 	CheckoutStepGroup,
 	useSetStepComplete,
-	makeManualResponse,
 	useTogglePaymentMethod,
+	makeErrorResponse,
 } from '../src/public-api';
 import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
@@ -679,7 +679,7 @@ describe( 'Checkout', () => {
 		it( 'does not call the payment processor function if the validateForm callback is falsy', async () => {
 			const validateForm = jest.fn();
 			validateForm.mockResolvedValue( false );
-			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 			render(
 				<MyCheckout
 					steps={ [ steps[ 0 ] ] }
@@ -698,7 +698,7 @@ describe( 'Checkout', () => {
 		it( 'calls the payment processor function if the validateForm callback is truthy', async () => {
 			const validateForm = jest.fn();
 			validateForm.mockResolvedValue( true );
-			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 			render(
 				<MyCheckout
 					steps={ [ steps[ 0 ] ] }
@@ -715,7 +715,7 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'calls the payment processor function if the validateForm callback undefined', async () => {
-			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 			render( <MyCheckout steps={ [ steps[ 0 ] ] } paymentProcessor={ processor } /> );
 			const submitButton = screen.getByText( 'Pay Please' );
 
@@ -852,7 +852,7 @@ function createStepObjectConverter( paymentData ) {
 				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
 				isStepActive={ false }
-				isStepComplete={ true }
+				isStepComplete
 				stepNumber={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }

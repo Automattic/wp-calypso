@@ -1,0 +1,97 @@
+.chatbox {
+	width: 100%;
+	height: calc(100% - 138px);
+	background-color: #f8f9fa;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+
+.chatbox-toggle {
+	padding: 0;
+	background-color: transparent;
+	z-index: 999;
+	transform: translateX(0);
+	transition: transform 0.5s ease-in-out;
+	outline: none !important;
+	box-shadow: none !important;
+	border: none !important;
+	position: fixed;
+	right: 248px;
+	bottom: 330px;
+}
+
+.chatbox-messages {
+	overflow-y: auto;
+	overflow-x: hidden;
+	word-wrap: break-word;
+	font-size: medium;
+	max-width: 100%;
+	line-height: 1.4;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	height: 100%;
+	overscroll-behavior: contain;
+
+	.odie-chatbox-bottom-edge {
+		min-height: 8px;
+		width: 100%;
+	}
+
+	.odie-chatbox-message-sources-container {
+		width: 100%;
+
+		&:last-of-type > .odie-chatbox-message-sources-container {
+			margin-bottom: 64px;
+		}
+	}
+}
+
+.odie-chatbox-message-dislike-feedback {
+	min-height: 235px;
+	gap: 18px;
+	justify-content: flex-start;
+}
+
+.chat-box-message-container {
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+}
+
+.using-environment-badge {
+	margin-bottom: 86px;
+	height: calc(100vh - 120px - 86px);
+}
+
+.chatbox-header-button {
+	color: #ece6f6;
+	border: none;
+	outline: none;
+	padding: 0;
+	cursor: pointer;
+	background: none;
+	font-size: large;
+	font-weight: normal;
+	text-align: left;
+	width: 100%;
+}
+
+.odie-chat-message-input-container {
+	z-index: 10;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	max-width: 410px;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	border-radius: 4px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	padding: 12px;
+	border-top: 1px solid var(--gray-gray-5, #dcdcde);
+	background: var(--black-white-white, #fff);
+}

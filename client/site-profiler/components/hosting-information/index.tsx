@@ -9,16 +9,17 @@ interface Props {
 	dns: DNS[];
 	urlData?: UrlData;
 	hostingProvider?: HostingProvider;
+	hideTitle?: boolean;
 }
 
 export default function HostingInformation( props: Props ) {
-	const { dns = [], urlData, hostingProvider } = props;
+	const { dns = [], urlData, hostingProvider, hideTitle = false } = props;
 	const aRecordIps = dns.filter( ( x ) => x.type === 'A' && x.ip );
 	const supportUrl = useHostingProviderURL( 'support', hostingProvider, urlData );
 
 	return (
 		<div className="hosting-information">
-			<h3>{ translate( 'Hosting information' ) }</h3>
+			{ ! hideTitle && <h3>{ translate( 'Hosting information' ) }</h3> }
 			<ul className="hosting-information-details result-list">
 				<li>
 					<div className="name">{ translate( 'Provider' ) }</div>

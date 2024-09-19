@@ -22,16 +22,20 @@
 		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"dependencies": {
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/search": "workspace:^"
+	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
+		"@wordpress/data": "^10.2.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^6.1.5",
-		"@testing-library/react": "^14.1.2",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
 		"typescript": "^5.3.3"
 	},
 	"scripts": {

@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash';
-import { ImporterPlatform } from './types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 export const CAPTURE_URL_RGX =
 	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;

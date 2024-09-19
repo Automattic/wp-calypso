@@ -18,7 +18,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { deleteInvite } from 'calypso/state/invites/actions';
 import { getAcceptedInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 import type { Invite } from 'calypso/my-sites/people/team-invites/types';
 
 interface Props {
@@ -30,7 +30,7 @@ export default function ViewerDetails( props: Props ) {
 	const dispatch = useDispatch();
 
 	const { userId } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const acceptedInvites = useSelector( ( state ) =>
 		getAcceptedInvitesForSite( state, site?.ID as number )
 	);
@@ -84,11 +84,9 @@ export default function ViewerDetails( props: Props ) {
 		accept(
 			<div>
 				<p>
-					{ translate(
-						'If you remove this viewer, he or she will not be able to visit this site.'
-					) }
+					{ translate( 'If you remove this viewer, they will not be able to visit this site.' ) }
 				</p>
-				<p>{ translate( 'Would you still like to remove this viewer?' ) }</p>
+				<p>{ translate( 'Would you still like to remove them?' ) }</p>
 			</div>,
 			( accepted: boolean ) => {
 				if ( accepted ) {

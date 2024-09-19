@@ -12,12 +12,6 @@ jest.mock( '../locale-context', () => {
 	} );
 } );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	// Useful because the getAvailableDesigns function uses feature flags for
-	// arguments default values
-	isEnabled: () => false,
-} ) );
-
 const { useLocale } = jest.requireMock( '../locale-context' );
 
 describe( '#localizeUrl', () => {
@@ -436,6 +430,44 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'learn', () => {
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+	} );
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
 			'https://wordpress.com/tos/'
@@ -454,6 +486,24 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'pricing', () => {
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'en' ) ).toEqual(
+			'https://wordpress.com/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'fr' ) ).toEqual(
+			'https://wordpress.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://wordpress.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'xx' ) ).toEqual(
+			'https://wordpress.com/pricing/'
+		);
+	} );
+
 	test( 'jetpack', () => {
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'en' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
@@ -469,6 +519,42 @@ describe( '#localizeUrl', () => {
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pl' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
+		);
+	} );
+
+	test( 'cloud.jetpack.com', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+	} );
+
+	test( 'Jetpack Manage', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
 		);
 	} );
 

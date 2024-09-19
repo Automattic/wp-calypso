@@ -1,6 +1,6 @@
 import { Card, Spinner } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect } from 'react';
@@ -13,7 +13,11 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { preventWidows } from 'calypso/lib/formatting';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	getSiteOption,
+	isAdminInterfaceWPAdmin,
+} from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import {
@@ -35,11 +39,13 @@ export const StatsV2 = ( {
 	insightsQuery,
 	isLoading,
 	isSiteUnlaunched,
+	adminInterfaceIsWPAdmin,
 	mostPopularDay,
 	mostPopularTime,
 	siteCreatedAt,
 	siteId,
 	siteSlug,
+	siteAdminUrl,
 	topPage,
 	topPost,
 	topPostsQuery,
@@ -81,7 +87,7 @@ export const StatsV2 = ( {
 				</>
 			) }
 			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-			<Card className={ classnames( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
+			<Card className={ clsx( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
@@ -163,7 +169,14 @@ export const StatsV2 = ( {
 							) }
 						</div>
 						<div className="stats__all">
-							<a href={ `/stats/day/${ siteSlug }` } className="stats__all-link">
+							<a
+								href={
+									adminInterfaceIsWPAdmin
+										? `${ siteAdminUrl }admin.php?page=stats`
+										: `/stats/day/${ siteSlug }`
+								}
+								className="stats__all-link"
+							>
 								{ translate( 'See all stats' ) }
 							</a>
 						</div>
@@ -269,7 +282,9 @@ const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+	const adminInterfaceIsWPAdmin = isAdminInterfaceWPAdmin( state, siteId );
 	const siteCreatedAt = getSiteOption( state, siteId, 'created_at' );
 
 	const { chartQuery, insightsQuery, topPostsQuery, visitsQuery } = getStatsQueries(
@@ -297,9 +312,11 @@ const mapStateToProps = ( state ) => {
 		insightsQuery,
 		isLoading: canShowStatsData ? statsData.chartData.length !== chartQuery.quantity : isLoading,
 		isSiteUnlaunched,
+		adminInterfaceIsWPAdmin,
 		siteCreatedAt,
 		siteId,
 		siteSlug,
+		siteAdminUrl,
 		topPostsQuery,
 		visitsQuery,
 		...statsData,

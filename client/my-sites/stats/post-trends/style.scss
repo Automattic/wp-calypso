@@ -13,10 +13,6 @@ $lowestLevelColor: var(--color-neutral-5);
 	border-bottom: 1px solid var(--studio-gray-5);
 	border-top: 1px solid var(--studio-gray-5);
 
-	.stats-heat-map__legend {
-		margin-bottom: 48px;
-	}
-
 	.stats-heat-map__legend-item {
 		&.level-1 {
 			background-color: $lowestLevelColor;
@@ -34,7 +30,6 @@ $lowestLevelColor: var(--color-neutral-5);
 }
 
 .post-trends__heading {
-	margin-top: 48px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -52,7 +47,7 @@ $lowestLevelColor: var(--color-neutral-5);
 }
 
 .post-trends__year {
-	margin-top: 16px;
+	margin-top: 1em;
 	padding: 16px 2px;
 	display: flex;
 	justify-content: space-between;

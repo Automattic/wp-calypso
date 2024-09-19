@@ -9,11 +9,16 @@
 	font-size: 0.75rem;
 	font-weight: 600;
 	border-radius: 4px;
-	max-width: calc(100vw - 250px);
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: inline-block;
 	vertical-align: middle;
+	text-align: center;
+
+	@include break-small {
+		max-width: calc(100vw - 400px);
+		text-align: left;
+	}
 }
 
 .cancel-purchase-form__feedback,
@@ -63,15 +68,7 @@
 		.components-checkbox-control__label {
 			font-size: 0.875rem;
 			color: var(--studio-gray-60);
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:checked {
-			background: var(--studio-black);
-			border-color: var(--studio-black);
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-black);
+			text-wrap: pretty;
 		}
 
 		.components-checkbox-control__input-container,
@@ -81,9 +78,9 @@
 			height: 1rem;
 		}
 
-		svg.components-checkbox-control__checked {
-			left: 0;
-			top: 0;
+		.components-checkbox-control__input-container {
+			margin-top: auto;
+			margin-bottom: auto;
 		}
 	}
 }
@@ -125,10 +122,12 @@
 .cancel-purchase-form__buttons {
 	display: flex;
 	position: relative;
+	padding: 3px;
 
 	@include break-small {
 		display: inline-block;
 	}
+
 
 	.components-button {
 		flex: 1;
@@ -212,7 +211,7 @@
 
 	.blank-canvas__header {
 		padding: 0 1rem;
-		margin-bottom: 4rem;
+		margin-bottom: 3rem;
 		box-shadow: none;
 
 		.wordpress-logo {
@@ -226,7 +225,7 @@
 
 	.blank-canvas__header-title {
 		z-index: 0;
-		top: 5rem;
+		top: 3rem;
 		left: 1rem;
 
 		@include break-small {

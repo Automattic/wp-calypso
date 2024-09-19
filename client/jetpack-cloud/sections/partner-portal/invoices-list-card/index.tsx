@@ -68,7 +68,7 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 
 			<div className="invoices-list-card__actions">
 				{ status === 'open' && (
-					<Button compact primary busy={ payInvoice.isLoading } onClick={ pay }>
+					<Button compact primary busy={ payInvoice.isPending } onClick={ pay }>
 						{ translate( 'Pay' ) }
 					</Button>
 				) }

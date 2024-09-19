@@ -33,7 +33,7 @@ import {
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 } from 'calypso/state/domains/actions';
-import useChangeSiteDomain from '../../../../hooks/use-change-site-domain';
+import useChangeSiteDomainIfNeeded from '../../../../hooks/use-change-site-domain-if-needed';
 import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
@@ -53,7 +53,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const dispatch = useReduxDispatch();
 
-	const changeSiteDomain = useChangeSiteDomain();
+	const changeSiteDomainIfNeeded = useChangeSiteDomainIfNeeded();
 
 	const { submit, exitFlow, goBack } = navigation;
 
@@ -126,7 +126,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		}
 
 		if ( suggestion?.is_free && suggestion?.domain_name ) {
-			changeSiteDomain( suggestion?.domain_name );
+			changeSiteDomainIfNeeded( suggestion?.domain_name );
 		}
 
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
@@ -204,7 +204,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === NEWSLETTER_FLOW || DESIGN_FIRST_FLOW ) {
+		if ( flow === DESIGN_FIRST_FLOW || flow === NEWSLETTER_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
@@ -303,10 +303,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	return (
 		<Container
 			stepName="domains"
-			isWideLayout={ true }
+			isWideLayout
 			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
-			hideSkip={ true }
+			hideSkip
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
@@ -316,7 +316,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				<FormattedHeader
 					id="domains-header"
 					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
-					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : null }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : undefined }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

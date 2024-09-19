@@ -9,6 +9,7 @@ import type {
 } from 'calypso/state/partner-portal/types';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
+import type { IAppState } from 'calypso/state/types';
 
 export function getActivePartnerKeyId( state: PartnerPortalStore ): number {
 	return state.partnerPortal.partner.activePartnerKey;
@@ -56,13 +57,18 @@ export function hasJetpackPartnerAccess( state: PartnerPortalStore ): boolean {
 	return currentUser?.has_jetpack_partner_access ?? false;
 }
 
-export function isAgencyUser( state: PartnerPortalStore ): boolean {
+export function isAgencyUser( state: PartnerPortalStore | IAppState ): boolean {
 	const currentUser = getCurrentUser( state );
 	return (
 		( currentUser?.jetpack_partner_types?.includes( 'agency' ) ||
 			currentUser?.jetpack_partner_types?.includes( 'agency_beta' ) ) ??
 		false
 	);
+}
+
+export function isA4AUser( state: PartnerPortalStore | IAppState ): boolean {
+	const currentUser = getCurrentUser( state );
+	return currentUser?.jetpack_partner_types?.includes( 'a4a_agency' ) ?? false;
 }
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {

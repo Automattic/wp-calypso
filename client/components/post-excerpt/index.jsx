@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -18,7 +18,7 @@ class PostExcerpt extends Component {
 			return null;
 		}
 
-		const classes = classnames( {
+		const classes = clsx( {
 			'post-excerpt': true,
 			'is-long': this.props.content.length > this.props.maxLength,
 		} );

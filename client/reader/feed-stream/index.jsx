@@ -77,7 +77,7 @@ const FeedStream = ( props ) => {
 			showSiteNameOnCards={ false }
 			sidebarTabTitle={ translate( 'Related' ) }
 			streamSidebar={ streamSidebar }
-			useCompactCards={ true }
+			useCompactCards
 		>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {

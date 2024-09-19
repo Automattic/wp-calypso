@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
@@ -6,8 +7,11 @@ import { useState } from 'react';
 import { useIsEligibleSubscriberImporter } from 'calypso/landing/stepper/hooks/use-is-eligible-subscriber-importer';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import type { Step } from '../../types';
 import './style.scss';
+import type { AppState } from 'calypso/types';
 
 const Subscribers: Step = function ( { navigation } ) {
 	const [ isImportValid, setIsImportValid ] = useState( false );
@@ -15,12 +19,15 @@ const Subscribers: Step = function ( { navigation } ) {
 	const { submit } = navigation;
 	const site = useSite();
 	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
+	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
+		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
+	);
 
 	const handleSubmit = () => {
 		submit?.();
 	};
 
-	const hasSubscriberLimit = !! site?.plan?.is_free;
+	const hasSubscriberLimit = ! hasUnlimitedSubscribers && !! site?.plan?.is_free;
 
 	const subtitleText = hasSubscriberLimit
 		? translate(
@@ -36,12 +43,12 @@ const Subscribers: Step = function ( { navigation } ) {
 
 	return (
 		<StepContainer
-			shouldHideNavButtons={ true }
-			hideFormattedHeader={ true }
+			shouldHideNavButtons
+			hideFormattedHeader
 			stepName="subscribers"
 			flowName="newsletter"
 			isHorizontalLayout={ false }
-			showJetpackPowered={ true }
+			showJetpackPowered
 			stepContent={
 				<div className="subscribers">
 					{ site?.ID && (
@@ -59,8 +66,8 @@ const Subscribers: Step = function ( { navigation } ) {
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
 							subtitleText={ subtitleText }
-							showSubtitle={ true }
-							showSkipLink={ true }
+							showSubtitle
+							showSkipLink
 							submitBtnAlwaysEnable={ false }
 						/>
 					) }

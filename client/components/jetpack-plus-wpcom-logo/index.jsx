@@ -1,5 +1,5 @@
 import colorStudio from '@automattic/color-studio';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 /**
@@ -12,7 +12,7 @@ const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 const COLOR_GRAY = PALETTE[ 'Gray 80' ];
 
 const JetpackPlusWpComLogo = ( { size = 32, className } ) => {
-	const classes = classNames( 'jetpack-plus-wpcom-logo', className );
+	const classes = clsx( 'jetpack-plus-wpcom-logo', className );
 
 	return (
 		<svg height={ size } className={ classes } viewBox="0 0 2000 629">

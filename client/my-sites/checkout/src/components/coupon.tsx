@@ -1,7 +1,7 @@
 import { Button } from '@automattic/composite-checkout';
 import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';
@@ -102,16 +102,21 @@ const CouponWrapper = styled.form`
 	margin: 0;
 	padding-top: 0;
 	position: relative;
+
+	& input {
+		font-size: 14px;
+	}
 `;
 
 const ApplyButton = styled( Button )`
-	position: absolute;
-	top: 3px;
-	right: 3px;
-	padding: 8px;
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;
 	margin: 0;
+	position: absolute;
+	font-size: 14px;
+	padding: 8px;
+	top: 2px;
+	right: 2px;
 
 	.rtl & {
 		animation-name: ${ animateInRTL };
@@ -126,16 +131,7 @@ function getCouponErrorMessageFromStatus(
 	isFreshOrEdited: boolean
 ): string | undefined {
 	if ( status === 'rejected' && ! isFreshOrEdited ) {
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'There was a problem applying this coupon.' )
-		) {
-			return translate( 'There was a problem applying this coupon.', { textOnly: true } );
-		}
-		return String(
-			translate( "We couldn't find your coupon. Please check your coupon code and try again." )
-		);
+		return translate( 'There was a problem applying this coupon.', { textOnly: true } );
 	}
 	return undefined;
 }

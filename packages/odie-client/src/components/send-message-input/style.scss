@@ -1,0 +1,57 @@
+@import "@automattic/typography/styles/variables";
+
+.odie-send-message-input-container {
+	display: flex;
+	width: 100%;
+	align-items: flex-end;
+	gap: 8px;
+	z-index: 10;
+
+	.odie-send-message-input {
+		resize: none;
+		width: 100%;
+		display: flex;
+		padding: 6px 16px;
+		flex: 1 0 0;
+		box-sizing: border-box;
+		min-height: 40px !important;
+		height: 40px;
+		max-height: 210px;
+	}
+}
+
+.odie-send-message-input-spinner {
+	position: absolute !important;
+	right: 60px;
+	top: 20px;
+}
+
+.odie-send-message-input-container textarea {
+	font-family: inherit;
+}
+
+.odie-send-message-input-container .odie-send-message-inner-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	background-color: var(--color-primary);
+	height: 40px;
+	width: 40px;
+
+
+	&[disabled] {
+		background-color: var(--color-neutral-20);
+		border-color: var(--color-neutral-5);
+		cursor: default;
+
+		&:active,
+		&.is-active {
+			border-width: 1px;
+		}
+	}
+}
+
+.odie-send-message-input-container .odie-send-message-inner-button img {
+	width: 24px;
+	height: 24px;
+}

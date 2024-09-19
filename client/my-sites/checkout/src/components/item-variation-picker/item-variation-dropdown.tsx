@@ -1,93 +1,20 @@
-import { isMultiYearDomainProduct } from '@automattic/calypso-products';
+import {
+	isJetpackPlan,
+	isJetpackProduct,
+	isMultiYearDomainProduct,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import { JetpackItemVariantDropDownPrice } from './jetpack-variant-dropdown-price';
+import { CurrentOption, Dropdown, OptionList, Option } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-interface CurrentOptionProps {
-	open: boolean;
-}
-
-const CurrentOption = styled.button< CurrentOptionProps >`
-	align-items: center;
-	background: white;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	border-radius: 3px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	padding: ${ hasCheckoutVersion( '2' ) ? '4px 16px' : '14px 16px' };
-	width: 100%;
-	cursor: pointer;
-
-	.gridicon {
-		fill: #a7aaad;
-		margin-left: 14px;
-	}
-
-	${ ( props ) =>
-		props.open &&
-		css`
-			border-radius: 3px 3px 0 0;
-		` }
-`;
-
-interface OptionProps {
-	selected: boolean;
-}
-
-const Option = styled.li< OptionProps >`
-	align-items: center;
-	background: white;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	color: #646970;
-	display: flex;
-	flex-direction: row;
-	font-size: ${ ( props ) => props.theme.fontSize.small };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	justify-content: space-between;
-	/* the calc aligns the price with the price in CurrentOption */
-	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
-	cursor: pointer;
-
-	&:hover {
-		background: #e9f0f5;
-	}
-
-	&.item-variant-option--selected {
-		background: #055d9c;
-	}
-`;
-
-const Dropdown = styled.div`
-	position: relative;
-	width: 100%;
-	margin: ${ hasCheckoutVersion( '2' ) ? '6px 0' : '16px 0' };
-	> ${ Option } {
-		border-radius: 3px;
-	}
-`;
-
-const OptionList = styled.ul`
-	position: absolute;
-	width: 100%;
-	z-index: 1;
-	margin: 0;
-
-	${ Option } {
-		margin-top: -1px;
-
-		&:last-child {
-			border-bottom-left-radius: 3px;
-			border-bottom-right-radius: 3px;
-		}
-	}
-`;
+const isJetpack = ( variant: WPCOMProductVariant ) =>
+	isJetpackProduct( variant ) || isJetpackPlan( variant );
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
 	id,
@@ -99,7 +26,6 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
@@ -195,8 +121,22 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		return null;
 	}
 
+	const ItemVariantDropDownPriceWrapper: FunctionComponent< { variant: WPCOMProductVariant } > = (
+		props
+	) =>
+		isJetpack( props.variant ) ? (
+			<JetpackItemVariantDropDownPrice { ...props } allVariants={ variants } />
+		) : (
+			<ItemVariantDropDownPrice { ...props } product={ selectedItem } />
+		);
+
 	return (
-		<Dropdown aria-expanded={ isOpen } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
+		<Dropdown
+			className={ isJetpackCheckout() ? 'is-jetpack' : '' }
+			aria-expanded={ isOpen }
+			aria-haspopup="listbox"
+			onKeyDown={ handleKeyDown }
+		>
 			<CurrentOption
 				aria-label={ translate( 'Pick a product term' ) }
 				disabled={ isDisabled }
@@ -205,7 +145,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
-					<ItemVariantDropDownPrice variant={ variants[ selectedVariantIndex ] } />
+					<ItemVariantDropDownPriceWrapper variant={ variants[ selectedVariantIndex ] } />
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
@@ -251,6 +191,8 @@ function ItemVariantOptionList( {
 					}
 					compareTo={ compareTo }
 					variant={ variant }
+					allVariants={ variants }
+					selectedItem={ selectedItem }
 				/>
 			) ) }
 		</OptionList>
@@ -262,11 +204,15 @@ function ItemVariantOption( {
 	onSelect,
 	compareTo,
 	variant,
+	allVariants,
+	selectedItem,
 }: {
 	isSelected: boolean;
 	onSelect: () => void;
 	compareTo?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
+	allVariants: WPCOMProductVariant[];
+	selectedItem: ResponseCartProduct;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
 	return (
@@ -279,7 +225,15 @@ function ItemVariantOption( {
 			onClick={ onSelect }
 			selected={ isSelected }
 		>
-			<ItemVariantDropDownPrice variant={ variant } compareTo={ compareTo } />
+			{ isJetpack( variant ) ? (
+				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />
+			) : (
+				<ItemVariantDropDownPrice
+					variant={ variant }
+					compareTo={ compareTo }
+					product={ selectedItem }
+				/>
+			) }
 		</Option>
 	);
 }

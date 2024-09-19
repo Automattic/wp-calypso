@@ -104,10 +104,6 @@ class PluginRatings extends Component {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! rating ) {
-			return null;
-		}
-
 		const tierViews = ratings && ratingTiers.map( this.renderRatingTier );
 		return (
 			<div className="plugin-ratings">
@@ -122,7 +118,9 @@ class PluginRatings extends Component {
 							)
 						</span>
 					) }
-					{ ! hideRatingNumber && <span className="plugin-ratings__number">{ rating / 20 }</span> }
+					{ ! hideRatingNumber && rating > 0 && (
+						<span className="plugin-ratings__number">{ rating / 20 }</span>
+					) }
 				</div>
 				{ ! inlineNumRatings && numRatings && (
 					<div className="plugin-ratings__rating-text">

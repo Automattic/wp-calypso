@@ -48,7 +48,7 @@ export const Default = ( { compact } ) => {
 			<SegmentedControl
 				selectedText={ selected }
 				style={ controlDemoStyles }
-				primary={ true }
+				primary
 				compact={ compact }
 			>
 				<SegmentedControl.Item

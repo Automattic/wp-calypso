@@ -1,8 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.product-lightbox__variants-options {
+.product-lightbox__variants-options,
+.product-lightbox__variants-dropdown {
 	.form-legend {
+		display: flex;
 		font-weight: 600;
 		font-size: $font-body;
 		margin-bottom: 0.5rem;
@@ -59,6 +61,11 @@
 	}
 }
 
+.info-popover.product-lightbox__variants-dropdown--popover {
+	height: 24px;
+	width: 24px;
+}
+
 .product-lightbox__variants-content {
 	display: flex;
 	flex-direction: column;
@@ -68,6 +75,33 @@
 	p {
 		font-weight: 600;
 		font-size: $font-body;
+	}
+}
+
+.product-lightbox__variants-dropdown-link {
+	text-decoration: underline;
+}
+
+.product-lightbox__tiers-dropdown {
+	margin-bottom: 1rem;
+
+	.select-dropdown__item.is-disabled {
+		opacity: 1;
+		color: var(--studio-gray-70);
+	}
+
+	.select-dropdown__container {
+		width: 100%;
+	}
+	.select-dropdown__header {
+		border: 1px solid var(--studio-gray-10);
+		border-radius: 4px;
+	}
+
+	.select-dropdown__header-text,
+	.select-dropdown__item {
+		font-size: 1rem;
+		font-weight: normal;
 	}
 }
 
@@ -173,13 +207,13 @@
 	}
 }
 
-@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
+@media screen and (max-width: $break-medium) and (orientation: portrait) {
 	.product-lightbox__variants-options {
 		margin: 0;
 	}
 }
 
-@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
+@media screen and (max-height: 365px) and (orientation: landscape) {
 	.product-lightbox__variants-options {
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;
@@ -221,4 +255,11 @@
 	clip: rect(0, 0, 0, 0) !important;
 	white-space: nowrap !important;
 	border: 0 !important;
+}
+
+// The lightbox z-index is 100200, consequences of updating the popover z-index
+// to higher than that are unclear, so we'll manually set it to 100200 here so we
+// can see the popover in the lightbox.
+.popover.product-lightbox__variants-dropdown--popover {
+	z-index: 100200;
 }

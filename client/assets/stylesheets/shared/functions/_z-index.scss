@@ -23,7 +23,7 @@
 //
 // Usage:
 // .environment-badge {
-//     z-index: z-index( 'root', '.environment-badge' );
+//     z-index: z-index("root", ".environment-badge");
 // }
 //
 // For a refresher on stacking contexts see:
@@ -46,13 +46,13 @@ $z-layers: (
 		".tag-stream__header-follow": 0,
 		".reader-feed-header": 0,
 		".reader-feed-header__back-and-follow": 0,
-		".reader-recommended-sites__recommended-site-dismiss": 1,
 		".reader-related-card.card": 0,
 		".reader-full-post__sidebar-comment-like": 1,
 		".list-stream__header-follow": 0,
 		".following__intro-close-icon-bg": 0,
 		".form-text-input-with-affixes .form-text-input": 1,
 		".is-section-signup": 1,
+		".sidebar__skip-navigation": 1,
 		".media-library .search.is-expanded-to-container": 1,
 		".ribbon": 1,
 		".reader__featured-post-title": 1,
@@ -95,6 +95,7 @@ $z-layers: (
 		"ul.module-content-list-item-actions.collapsed": 3,
 		".jetpack-connect__password-form .gridicon": 3,
 		".jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner": 3,
+		".stream__init-overlay-enabled": 10,
 		".site-selector": 10,
 		".layout__secondary .site-selector": 10,
 		".range__label": 10,
@@ -122,7 +123,6 @@ $z-layers: (
 		".popover.comment__author-more-info-popover": 178,
 		".global-notices": 179,
 		".screen-options-tab": 179,
-		".app-banner": 180,
 		".masterbar": 180,
 		".legal-updates-banner": 185,
 		".detail-page__backdrop": 190,
@@ -130,6 +130,7 @@ $z-layers: (
 		".offline-status": 200,
 		".environment-badge": 999,
 		".customizer-loading-panel__placeholder-change-theme": 999,
+		".app-banner": 1000,
 		".module-overlay": 1000,
 		".drop-zone": 1000,
 		".popover": 1000,
@@ -154,20 +155,23 @@ $z-layers: (
 		".theme-preview-modal": 100200,
 		".wplink__dialog.dialog.card": 100200,
 		".web-preview": 100200,
+		".theme-site-selector-modal": 100201,
+		".is-section-theme .global-notices": 100201,
 		".popover.ellipsis-menu__menu": 100201,
 		".popover.plugin-action__disabled-info": 100202,
 		".design-picker__premium-badge-tooltip": 100300,
 		".design-preview__sidebar-action-buttons": 100300,
-		".plan-storage__tooltip": 100300,
 		".popover.gallery__order-popover": 100300,
 		"popover.is-dialog-visible": 100300,
 		".popover.info-tooltip__container": 100300,
 		".popover.info-popover__tooltip.plugin-action__disabled-info": 100300,
 		"body .webui-popover": 100300,
+		".reauth-required__dialog-body .masterbar__section--left": 100300,
 		".fullscreen-fader": 200000,
 		".guided-tours__overlay": 200050,
 		".guided-tours__step": 201000,
 		".support-article-dialog__base.dialog__backdrop": 201001,
+		".commands-commands-menu__overlay": 201100,
 
 		".wpcom-site__global-noscript": 300000,
 

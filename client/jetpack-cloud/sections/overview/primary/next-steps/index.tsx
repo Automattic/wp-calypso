@@ -1,5 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
-import { Checklist, type Task } from '@automattic/launchpad';
+import { Checklist, ChecklistItem, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -32,7 +33,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 
 	const tasks: Task[] = [
 		{
-			calypso_path: '/dashboard?tour=dashboard-walkthrough',
+			calypso_path: isEnabled( 'jetpack/manage-sites-v2-menu' )
+				? '/sites?tour=dashboard-walkthrough'
+				: '/dashboard?tour=dashboard-walkthrough',
 			completed: checkTourCompletion( 'dashboardWalkthrough' ),
 			disabled: false,
 			actionDispatch: () => {
@@ -46,7 +49,9 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '/dashboard?tour=add-new-site',
+			calypso_path: isEnabled( 'jetpack/manage-sites-v2-menu' )
+				? '/sites?tour=add-new-site'
+				: '/dashboard?tour=add-new-site',
 			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {
@@ -56,7 +61,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
-			title: translate( 'Learn how to add new sites' ),
+			title: translate( 'Learn how to add sites' ),
 			useCalypsoPath: true,
 		},
 		{
@@ -123,7 +128,11 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 					</button>
 				</p>
 			) }
-			<Checklist tasks={ tasks } />
+			<Checklist>
+				{ tasks.map( ( task ) => (
+					<ChecklistItem task={ task } key={ task.id } />
+				) ) }
+			</Checklist>
 		</div>
 	);
 }

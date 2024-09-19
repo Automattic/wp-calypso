@@ -38,7 +38,7 @@ const getUpgradeBannerForPlan = ( planSlug ) => {
 					} )
 				}
 				callToAction={ translate( 'Upgrade now' ) }
-				showIcon={ true }
+				showIcon
 			/>
 		);
 	}

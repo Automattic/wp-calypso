@@ -17,7 +17,7 @@ jobs:
       - name: Fetch git history
         run: git fetch --prune --unshallow
       - name: Install dependencies
-        run: yarn install --inline-builds
+        run: SKIP_TSC=true yarn install --inline-builds
       - name: Build ICFY stats
         env:
           NODE_ENV: production
@@ -25,7 +25,7 @@ jobs:
           WORKERS: 2
         run: yarn run analyze-icfy
       - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: icfy
           path: icfy-stats

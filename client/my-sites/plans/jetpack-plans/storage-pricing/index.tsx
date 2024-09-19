@@ -35,7 +35,7 @@ export const StoragePricing: React.FC< Props > = ( {
 	locale,
 } ) => {
 	const [ duration, setDuration ] = useState< Duration >( defaultDuration );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
 
 	const filterBar = React.useMemo(

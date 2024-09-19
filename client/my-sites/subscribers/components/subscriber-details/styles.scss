@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .subscriber-details {
 	.subscriber-details__header {
@@ -23,6 +24,9 @@
 			flex: 1 1 0;
 			overflow: hidden;
 			word-wrap: break-word;
+			@media (max-width: $break-large) {
+				flex: auto;
+			}
 		}
 	}
 
@@ -50,6 +54,9 @@
 			font-size: $font-body-small;
 			line-height: rem(20px);
 			letter-spacing: -0.15px;
+		}
+		@media (max-width: $break-large) {
+			flex-direction: column;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon, ScreenReaderText } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -141,7 +141,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<Button
-				className={ classNames( 'editor-media-modal-detail__restore' ) }
+				className={ clsx( 'editor-media-modal-detail__restore' ) }
 				onClick={ this.handleOnRestoreClick }
 				disabled={ isItemBeingUploaded( item ) }
 			>
@@ -170,7 +170,7 @@ export class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
+		const classes = clsx( 'editor-media-modal-detail__edition-bar', classname );
 
 		return (
 			<div className={ classes }>
@@ -185,7 +185,7 @@ export class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
+		const classes = clsx( 'editor-media-modal-detail__edition-bar', classname );
 
 		return <div className={ classes }>{ this.renderEditButton() }</div>;
 	}
@@ -274,7 +274,7 @@ export class EditorMediaModalDetailItem extends Component {
 	render() {
 		const { isJetpack, item, siteId } = this.props;
 
-		const classes = classNames( 'editor-media-modal-detail__item', {
+		const classes = clsx( 'editor-media-modal-detail__item', {
 			'is-loading': ! item,
 		} );
 

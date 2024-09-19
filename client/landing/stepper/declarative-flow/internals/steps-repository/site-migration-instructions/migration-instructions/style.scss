@@ -1,0 +1,46 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
+
+.migration-instructions {
+	display: flex;
+	flex-direction: column;
+
+	@include break-large {
+		flex-direction: row;
+		gap: 24px;
+	}
+}
+
+.migration-instructions--with-preview {
+	flex-direction: column;
+	height: 100%;
+
+	@include break-large {
+		width: 344px;
+		gap: 0;
+	}
+}
+
+.migration-instructions__content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.migration-instructions__progress {
+	padding: 6px; // We need to compensate the spacing because `enableDesktopScaling` on the progress element uses scale.
+	margin-bottom: 2rem;
+}
+
+.migration-instructions__title {
+	font-family: $brand-serif;
+	font-size: 2.75rem;
+	line-height: 1.3;
+	margin-bottom: 0.5rem;
+}
+
+.migration-instructions__description {
+	font-size: 0.875rem;
+	margin-bottom: 1rem;
+}

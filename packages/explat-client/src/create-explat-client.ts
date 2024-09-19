@@ -24,7 +24,6 @@ export interface ExPlatClient {
 	 *
 	 * Will never throw in production, it will return the default assignment.
 	 * It should not be run on the server but it won't crash anything.
-	 *
 	 * @param experimentName The experiment's name
 	 */
 	loadExperimentAssignment: ( experimentName: string ) => Promise< ExperimentAssignment >;
@@ -36,6 +35,15 @@ export interface ExPlatClient {
 	 *
 	 */
 	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
+
+	/**
+	 * Get an experiment assignment, return null if it hasn't been loaded.
+	 *
+	 * Only intended for use in useExperiment hook.
+	 */
+	dangerouslyGetMaybeLoadedExperimentAssignment: (
+		experimentName: string
+	) => null | ExperimentAssignment;
 
 	/**
 	 * INTERNAL USE ONLY
@@ -58,7 +66,6 @@ export class MissingExperimentAssignmentError extends Error {
 
 /**
  * Create an ExPlat Client
- *
  * @param config Configuration object
  */
 export function createExPlatClient( config: Config ): ExPlatClient {
@@ -70,8 +77,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
 	 * Using asyncOneAtATime, is how we ensure for each experiment that there is only ever one fetch process occuring.
-	 *
-	 *
 	 * @param experimentName The experiment's name
 	 */
 	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
@@ -216,13 +221,37 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return createFallbackExperimentAssignment( experimentName );
 			}
 		},
+		dangerouslyGetMaybeLoadedExperimentAssignment: (
+			experimentName: string
+		): ExperimentAssignment | null => {
+			try {
+				if ( ! Validation.isName( experimentName ) ) {
+					throw new Error( `Invalid experimentName: ${ experimentName }` );
+				}
+
+				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
+				if ( ! storedExperimentAssignment ) {
+					return null;
+				}
+
+				return storedExperimentAssignment;
+			} catch ( error ) {
+				if ( config.isDevelopmentMode ) {
+					safeLogError( {
+						message: ( error as Error ).message,
+						experimentName,
+						source: 'dangerouslyGetMaybeLoadedExperimentAssignment-error',
+					} );
+				}
+				return createFallbackExperimentAssignment( experimentName );
+			}
+		},
 		config,
 	};
 }
 
 /**
  * A dummy ExPlat client to sub in under SSR contexts
- *
  * @param config The config
  */
 export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
@@ -235,6 +264,13 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			return createFallbackExperimentAssignment( experimentName );
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ) => {
+			config.logError( {
+				message: 'Attempting to dangerously get ExperimentAssignment in SSR context',
+				experimentName,
+			} );
+			return createFallbackExperimentAssignment( experimentName );
+		},
+		dangerouslyGetMaybeLoadedExperimentAssignment: ( experimentName: string ) => {
 			config.logError( {
 				message: 'Attempting to dangerously get ExperimentAssignment in SSR context',
 				experimentName,

@@ -25,6 +25,7 @@ jest.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
 
 jest.mock( 'calypso/data/marketplace/use-marketplace-reviews', () => ( {
 	useMarketplaceReviewsQuery: () => ( { data: [] } ),
+	useMarketplaceReviewsStatsQuery: () => ( { data: [] } ),
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => {

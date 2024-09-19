@@ -135,7 +135,7 @@ object BuildDockerImage : BuildType({
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
-			--build-arg node_memory=32768
+			--build-arg node_memory=16384
 			--build-arg use_cache=true
 			--build-arg base_image=%base_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
@@ -231,6 +231,19 @@ object BuildDockerImage : BuildType({
 							</td>
 							<td>
 								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack</a>
+							</td>
+						</tr>
+					</table>
+				</details>
+				<details>
+					<summary>Automattic for Agencies live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=a8c-for-agencies">(direct link)</a></summary>
+					<table>
+						<tr>
+							<td>
+								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26env%3Da8c-for-agencies%26flags%3Doauth&choe=UTF-8" />
+							</td>
+							<td>
+								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=a8c-for-agencies">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=a8c-for-agencies</a>
 							</td>
 						</tr>
 					</table>
@@ -468,7 +481,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 8
+		executionTimeoutMin = 10
 	}
 	features {
 		feature {
@@ -531,6 +544,10 @@ object CheckCodeStyleBranch : BuildType({
 		)
 	}
 
+	cleanup {
+		artifacts(days = 14)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
@@ -553,21 +570,24 @@ object CheckCodeStyleBranch : BuildType({
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
+				set -x
 				export NODE_ENV="test"
 
 				# Find files to lint
-				if [ "%run_full_eslint%" = "true" ]; then
-					FILES_TO_LINT="."
-				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
-				fi
-				echo "Files to lint:"
-				echo ${'$'}FILES_TO_LINT
-				echo ""
+				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '\.[jt]sx?' || true)
 
-				# Lint files
-				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+				# Avoid running more than 16 parallel eslint tasks as it could OOM
+				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
+					echo "Linting all files"
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+				else
+					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
+					# instead of passing the full list of files to eslint directly.
+					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?)${'$'}' || true); do
+						( echo "Linting ${'$'}file"
+						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
+					done
+					wait
 				fi
 			"""
 		}
@@ -593,6 +613,13 @@ object CheckCodeStyleBranch : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			threshold = 0
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = value()
+		}
 	}
 
 	features {
@@ -848,13 +875,13 @@ object PreReleaseE2ETests : BuildType({
 				set +o errexit
 
 				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release
 
 				# Restore exit on error.
 				set -o errexit
 
 				# Retry failed tests only.
-				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

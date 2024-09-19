@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .customer {
 	.customer__header {
@@ -41,6 +42,15 @@
 			max-width: 30px;
 			margin-bottom: 20px;
 		}
+		.customer__stats-list {
+			@media (max-width: $break-large) {
+				flex-flow: column;
+				gap: 24px;
+				padding-left: 0;
+				padding-right: 0;
+				overflow-x: visible;
+			}
+		}
 	}
 
 	.customer-details__content {
@@ -67,6 +77,9 @@
 			flex: 1 1 0;
 			overflow: hidden;
 			word-wrap: break-word;
+			@media (max-width: $break-large) {
+				flex: auto;
+			}
 		}
 
 		.customer-details__content-label {
@@ -85,6 +98,10 @@
 			font-size: $font-body-small;
 			line-height: rem(20px);
 			letter-spacing: -0.15px;
+		}
+
+		@media (max-width: $break-large) {
+			flex-direction: column;
 		}
 	}
 

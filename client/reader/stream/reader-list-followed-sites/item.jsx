@@ -19,7 +19,7 @@ const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen, feed, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
 
@@ -84,8 +84,8 @@ const ReaderListFollowingItem = ( props ) => {
 					<ReaderAvatar
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
-						preferGravatar={ true }
-						isCompact={ true }
+						preferGravatar
+						isCompact
 						iconSize={ 32 }
 					/>
 				</span>
@@ -99,7 +99,7 @@ const ReaderListFollowingItem = ( props ) => {
 					{ follow.description?.length > 0 && (
 						<span className="reader-sidebar-site_description">{ follow.description }</span>
 					) }
-					{ urlForDisplay.length > 0 && (
+					{ urlForDisplay?.length > 0 && (
 						<span className="reader-sidebar-site_url">{ urlForDisplay }</span>
 					) }
 				</span>

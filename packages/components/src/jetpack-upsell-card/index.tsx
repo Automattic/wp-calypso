@@ -1,12 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Button, Card, Gridicon } from '..';
-import SecurityIcon from '../../assets/jetpack-icon-lock.svg';
-import BackupIcon from '../../assets/jetpack-product-icon-backup.svg';
-import BoostIcon from '../../assets/jetpack-product-icon-boost.svg';
-import SearchIcon from '../../assets/jetpack-product-icon-search.svg';
-import SocialIcon from '../../assets/jetpack-product-icon-social.svg';
-import VideoPressIcon from '../../assets/jetpack-product-icon-videopress.svg';
+import SecurityIcon from '../assets/jetpack-icon-lock.svg';
+import BackupIcon from '../assets/jetpack-product-icon-backup.svg';
+import BoostIcon from '../assets/jetpack-product-icon-boost.svg';
+import SearchIcon from '../assets/jetpack-product-icon-search.svg';
+import SocialIcon from '../assets/jetpack-product-icon-social.svg';
+import VideoPressIcon from '../assets/jetpack-product-icon-videopress.svg';
 import './style.scss';
 
 type JetpackUpsellCardProps = {

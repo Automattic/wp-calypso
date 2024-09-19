@@ -39,7 +39,7 @@ describe( 'PlanUpsellModal tests', () => {
 			renderWithProvider(
 				<MockPlansFeaturesMain
 					flowName="onboarding-pm"
-					isCustomDomainAllowedOnFreePlan={ true }
+					isCustomDomainAllowedOnFreePlan
 					selectedPlan={ PLAN_FREE }
 					paidDomainName="yourgroovydomain.com"
 				/>
@@ -51,10 +51,7 @@ describe( 'PlanUpsellModal tests', () => {
 
 		test( 'A free domain should show the FREE_PLAN_FREE_DOMAIN_DIALOG when custom domains are enabled for the Free plan', () => {
 			renderWithProvider(
-				<MockPlansFeaturesMain
-					isCustomDomainAllowedOnFreePlan={ true }
-					selectedPlan={ PLAN_FREE }
-				/>
+				<MockPlansFeaturesMain isCustomDomainAllowedOnFreePlan selectedPlan={ PLAN_FREE } />
 			);
 			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
 				FREE_PLAN_FREE_DOMAIN_DIALOG

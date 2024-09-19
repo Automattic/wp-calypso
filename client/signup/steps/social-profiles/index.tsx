@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -12,18 +13,20 @@ import './style.scss';
 interface Props {
 	goToNextStep: () => void;
 	stepName: string;
+	flowName: string;
 	signupDependencies: SocialProfilesState;
 }
 
 export default function SocialProfilesStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { stepName, signupDependencies, goToNextStep } = props;
+	const { stepName, signupDependencies, flowName, goToNextStep } = props;
 
 	const headerText = translate( 'Do you have social media profiles?' );
 	const subHeaderText = translate( 'You can always add them later.' );
 
 	useEffect( () => {
+		triggerGuidesForStep( flowName, stepName );
 		dispatch( saveSignupStep( { stepName: stepName } ) );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
@@ -78,8 +81,8 @@ export default function SocialProfilesStep( props: Props ) {
 			}
 			align="left"
 			hideSkip
-			isHorizontalLayout={ true }
-			isWideLayout={ true }
+			isHorizontalLayout
+			isWideLayout
 			headerImageUrl={ startingPointImageUrl }
 			{ ...props }
 		/>

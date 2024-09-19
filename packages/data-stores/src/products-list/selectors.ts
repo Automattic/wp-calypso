@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import { ProductsList } from './types';
+import { RawAPIProductsList } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -14,7 +14,7 @@ export const getProductBySlug = ( _state: State, slug: string ) => {
 		return undefined;
 	}
 	const products = (
-		select( STORE_KEY ) as { getProductsList: () => ProductsList | undefined }
+		select( STORE_KEY ) as { getProductsList: () => RawAPIProductsList | undefined }
 	 ).getProductsList();
 
 	if ( ! products ) {

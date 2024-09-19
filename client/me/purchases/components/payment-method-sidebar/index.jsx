@@ -15,12 +15,7 @@ export default function PaymentMethodSidebar( { purchase } ) {
 			<MainCard purchase={ purchase } />
 
 			<Card className="payment-method-sidebar__security-card">
-				<CardHeading
-					tagName="h1"
-					size={ 16 }
-					isBold={ true }
-					className="payment-method-sidebar__title"
-				>
+				<CardHeading tagName="h1" size={ 16 } isBold className="payment-method-sidebar__title">
 					{ translate( 'Security' ) }
 				</CardHeading>
 				<p className="payment-method-sidebar__paragraph">
@@ -44,12 +39,7 @@ function MainCard( { purchase } ) {
 
 		return (
 			<Card className="payment-method-sidebar__details-card">
-				<CardHeading
-					tagName="h1"
-					size={ 16 }
-					isBold={ true }
-					className="payment-method-sidebar__title"
-				>
+				<CardHeading tagName="h1" size={ 16 } isBold className="payment-method-sidebar__title">
 					{ translate( 'Purchase Details' ) }
 				</CardHeading>
 

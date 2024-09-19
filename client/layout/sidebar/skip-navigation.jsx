@@ -6,6 +6,7 @@ import { Component } from 'react';
 class SkipNavigation extends Component {
 	static propTypes = {
 		skipToElementId: PropTypes.string,
+		displayText: PropTypes.string,
 	};
 
 	onClick = ( event ) => {
@@ -20,9 +21,11 @@ class SkipNavigation extends Component {
 	};
 
 	render() {
+		const displayText = this.props.displayText || this.props.translate( 'Skip navigation' );
+
 		return (
 			<Button onClick={ this.onClick } className="sidebar__skip-navigation">
-				{ this.props.translate( 'Skip navigation' ) }
+				{ displayText }
 			</Button>
 		);
 	}

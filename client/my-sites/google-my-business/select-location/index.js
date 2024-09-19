@@ -79,17 +79,17 @@ class GoogleMyBusinessSelectLocation extends Component {
 			<Main className="gmb-select-location" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/select-location/:site"
-					title="Google My Business > Select Location"
+					title="Google Business Profile > Select Location"
 				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 
 				<QueryKeyringServices />
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+					{ translate( 'Google Business Profile' ) }
 				</HeaderCake>
 
 				<CompactCard>
@@ -119,7 +119,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 						<KeyringConnectButton
 							serviceId="google_my_business"
-							forceReconnect={ true }
+							forceReconnect
 							onClick={ this.trackUseAnotherGoogleAccountClick }
 							onConnect={ this.handleConnect }
 						>

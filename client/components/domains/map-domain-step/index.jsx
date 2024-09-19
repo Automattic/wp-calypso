@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -14,7 +15,6 @@ import { getDomainPriceRule } from 'calypso/lib/cart-values/cart-items';
 import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -105,7 +105,7 @@ class MapDomainStep extends Component {
 							false // domainAndPlanUpsellFlow
 						) }
 						price={ suggestion.cost }
-						isMappingProduct={ true }
+						isMappingProduct
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">

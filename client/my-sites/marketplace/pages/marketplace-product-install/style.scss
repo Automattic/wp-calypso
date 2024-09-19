@@ -2,21 +2,6 @@ body.is-section-marketplace.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }
 
-.is-section-marketplace {
-	&.has-no-sidebar {
-		.layout__content {
-			height: 100vh;
-			@media ( max-width: 782px ) {
-				padding: 0;
-				height: 100vh;
-				.layout__primary {
-					height: 100vh;
-				}
-			}
-		}
-	}
-}
-
 .marketplace-plugin-install__masterbar {
 	display: flex;
 	align-items: baseline;
@@ -40,6 +25,10 @@ body.is-section-marketplace.theme-default.color-scheme {
 	justify-content: center;
 	height: 100vh;
 	align-items: center;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
 
 	> div {
 		width: 90%;

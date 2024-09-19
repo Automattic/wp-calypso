@@ -1,0 +1,17 @@
+.theme-site-selector-modal {
+	z-index: z-index("root", ".theme-site-selector-modal");
+}
+
+.theme-site-selector-modal__content {
+	.site-icon {
+		margin-right: 12px;
+	}
+
+	.site__badge {
+		margin-top: 4px;
+	}
+
+	.site__domain {
+		margin-top: 2px;
+	}
+}

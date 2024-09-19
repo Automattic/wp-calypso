@@ -1,4 +1,9 @@
 export { default } from './components';
+export { default as themesIllustrationImage } from './components/assets/images/themes-illustration.png';
+export { default as assemblerIllustrationImage } from './components/assets/images/assembler-illustration.png';
+export { default as assemblerIllustrationV2Image } from './components/assets/images/assembler-illustration-v2.png';
+export { default as hiBigSky } from './components/assets/images/hi-big-sky.png';
+export { default as bigSkyModalHeader } from './components/assets/images/big-sky-interstitial-800.png';
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
 export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
@@ -13,21 +18,16 @@ export {
 	usePatternAssemblerCtaData,
 } from './components/pattern-assembler-cta';
 export {
-	availableDesignsConfig,
 	getAssemblerDesign,
-	getAvailableDesigns,
-	getFontTitle,
-	getDesignUrl,
 	getDesignPreviewUrl,
 	isAssemblerDesign,
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
 	isAssemblerSupported,
+	isLockedStyleVariation,
 } from './utils';
 export {
-	FONT_PAIRINGS,
-	ANCHORFM_FONT_PAIRINGS,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
@@ -35,13 +35,13 @@ export {
 	STICKY_OFFSET_TOP,
 	DEFAULT_ASSEMBLER_DESIGN,
 	FREE_THEME,
+	PERSONAL_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from './constants';
 export type {
-	FontPair,
 	Design,
 	Category,
 	StyleVariation,

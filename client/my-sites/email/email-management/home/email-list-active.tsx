@@ -1,7 +1,6 @@
-import { CompactCard } from '@automattic/components';
-import classnames from 'classnames';
+import { CompactCard, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
@@ -9,7 +8,7 @@ import {
 	getNumberOfMailboxesText,
 	resolveEmailPlanStatus,
 } from 'calypso/my-sites/email/email-management/home/utils';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -39,7 +38,7 @@ const EmailListActiveWarning = ( { domain }: EmailListActiveWarningProps ) => {
 	}
 
 	return (
-		<div className={ classnames( 'email-list-active__warning', statusClass ) }>
+		<div className={ clsx( 'email-list-active__warning', statusClass ) }>
 			<MaterialIcon icon={ icon } />
 
 			<span>{ text }</span>
@@ -58,7 +57,7 @@ const EmailListActiveItem = ( { domain, source = '' }: EmailListActiveItemProps 
 
 	return (
 		<CompactCard
-			href={ emailManagement( selectedSite?.slug, domain.name, currentRoute, { source } ) }
+			href={ getEmailManagementPath( selectedSite?.slug, domain.name, currentRoute, { source } ) }
 		>
 			<span className="email-list-active__item-icon">
 				<EmailTypeIcon domain={ domain } />

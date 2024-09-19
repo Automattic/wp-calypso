@@ -1,8 +1,8 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, isValidElement } from 'react';
 // @todo: Convert to import from `components/gridicon`
 // which makes Calypso mysteriously crash at the moment.
 //
@@ -42,7 +42,7 @@ export class Notice extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		duration: PropTypes.number,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		isCompact: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		onDismissClick: PropTypes.func,
@@ -121,21 +121,28 @@ export class Notice extends Component {
 			translate,
 			isReskinned,
 		} = this.props;
-		const classes = classnames( 'notice', status, className, {
+		const classes = clsx( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
 			'is-reskinned': isReskinned,
 		} );
 
-		const iconName = icon || this.getIcon();
-		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
+		let iconNeedsDrop = false;
+		let renderedIcon = null;
+		if ( icon && isValidElement( icon ) ) {
+			renderedIcon = icon;
+		} else {
+			const iconName = icon || this.getIcon();
+			renderedIcon = <Gridicon className="notice__icon" icon={ iconName } size={ 24 } />;
+			iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
+		}
 
 		return (
 			<div className={ classes } role="status" aria-label={ translate( 'Notice' ) }>
 				<span className="notice__icon-wrapper">
 					{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
-					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />
+					{ renderedIcon }
 				</span>
 				<span className="notice__content">
 					<span className="notice__text">{ text ? text : children }</span>

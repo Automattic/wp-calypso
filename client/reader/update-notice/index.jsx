@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { filter, get, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,7 +25,7 @@ class UpdateNotice extends PureComponent {
 	render() {
 		const { count, cappedUnreadCount, translate } = this.props;
 
-		const counterClasses = classnames( {
+		const counterClasses = clsx( {
 			'reader-update-notice': true,
 			'is-active': count > 0,
 		} );

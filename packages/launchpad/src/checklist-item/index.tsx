@@ -1,23 +1,23 @@
 import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
-import { Task } from '../types';
+import type { Task, Expandable } from '../types';
+import type { FC, Key } from 'react';
 
 import './style.scss';
 
-const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
+interface Props {
+	key?: Key;
+	task: Task;
+	isPrimaryAction?: boolean;
+	expandable?: Expandable;
+	onClick?: () => void;
+}
+
+const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClick } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
-
-	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
-	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
-
-	// Display task counter if task is incomplete and has the count properties;
-	const shouldDisplayTaskCounter =
-		task.target_repetitions &&
-		null !== task.repetition_count &&
-		undefined !== task.repetition_count;
+	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
 	// This allows the UI routing code to hook into the URL changes and should reduce full-page (re)loads
@@ -31,29 +31,48 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 		...( disabled ? {} : { href: buttonHref } ),
 	};
 
+	const onClickHandler = onClick || actionDispatch;
+	const isClickable = !! ( buttonProps.href || onClickHandler );
+
+	// Display chevron if task is incomplete.
+	// Don't display chevron and badge at the same time.
+	// Don't display chevron if item is not clickable.
+	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text && isClickable;
+
+	// Display task counter if task is incomplete and has the count properties;
+	const shouldDisplayTaskCounter =
+		task.target_repetitions &&
+		null !== task.repetition_count &&
+		undefined !== task.repetition_count;
+
+	// Make sure the button keeps the button styles if it is not clickable.
+	const buttonClassName = isClickable ? '' : 'components-button';
+	const ButtonElement = isClickable ? Button : 'div';
+
 	return (
 		<li
-			className={ classnames( 'checklist-item__task', {
+			className={ clsx( 'checklist-item__task', {
 				completed: completed,
 				pending: ! completed,
 				enabled: ! disabled,
 				disabled: disabled,
+				expanded: expandable && expandable.isOpen,
 			} ) }
 		>
 			{ isPrimaryAction ? (
-				<Button
-					className="checklist-item__checklist-primary-button"
+				<ButtonElement
+					className={ clsx( 'checklist-item__checklist-primary-button', buttonClassName ) }
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ title }
-				</Button>
+				</ButtonElement>
 			) : (
-				<Button
-					className="checklist-item__task-content"
+				<ButtonElement
+					className={ clsx( 'checklist-item__task-content', buttonClassName ) }
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ onClickHandler }
 					{ ...buttonProps }
 				>
 					{ completed && (
@@ -83,13 +102,26 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 						/>
 					) }
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
-				</Button>
+				</ButtonElement>
+			) }
+			{ expandable && expandable.isOpen && (
+				<div className="checklist-item__expanded-content">
+					{ expandable.content }
+					{ expandable.action && (
+						<Button
+							className="checklist-item__checklist-expanded-action-button"
+							onClick={ expandable.action.onClick }
+						>
+							{ expandable.action.label }
+						</Button>
+					) }
+				</div>
 			) }
 		</li>
 	);
 };
 
-ChecklistItem.Placeholder = () => {
+export const Placeholder: FC = () => {
 	return (
 		<div className="checklist-item__task-content is-placeholder">
 			<div className="checklist-item__content">

@@ -1,10 +1,9 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
@@ -109,7 +108,7 @@ class EmailForwardingAddNewCompact extends Component {
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
-					{ ! isValidMailbox && <FormInputValidation text={ mailboxError } isError={ true } /> }
+					{ ! isValidMailbox && <FormInputValidation text={ mailboxError } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -121,9 +120,7 @@ class EmailForwardingAddNewCompact extends Component {
 						isError={ ! isValidDestination }
 						value={ destination }
 					/>
-					{ ! isValidDestination && (
-						<FormInputValidation text={ destinationError } isError={ true } />
-					) }
+					{ ! isValidDestination && <FormInputValidation text={ destinationError } isError /> }
 				</FormFieldset>
 			</div>
 		);

@@ -64,11 +64,12 @@
 				display: inline;
 				background: transparent;
 			}
-		}
-	}
 
-	&.is-inline * {
-		font-size: $font-body;
+			script,
+			br {
+				display: none;
+			}
+		}
 	}
 }
 

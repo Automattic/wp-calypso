@@ -1,5 +1,6 @@
 import useDisplayCartMessages from './use-display-cart-messages';
 
+export * from './get-contact-details-type';
 export * from './transformations';
 export * from './types';
 export * from './payment-method-store';
@@ -11,12 +12,12 @@ export * from './postal-code';
 export { default as Field } from './field';
 export { default as styled } from '@emotion/styled';
 export * from './payment-methods/bancontact';
-export * from './payment-methods/giropay';
 export * from './payment-methods/ideal';
 export * from './payment-methods/sofort';
 export * from './payment-methods/p24';
 export * from './payment-methods/eps';
 export * from './payment-methods/alipay';
+export * from './payment-methods/razorpay';
 export * from './payment-methods/web-pay-utils';
 export * from './payment-methods/google-pay';
 export { isWpComProductRenewal } from './is-wpcom-product-renewal';

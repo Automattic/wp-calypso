@@ -238,11 +238,12 @@ exports[`JetpackSignup should render 1`] = `
             >
               GoogleSocialButton
               AppleLoginButton
+              GitHubLoginButton
             </div>
             <p
               class="auth-form__social-buttons-tos"
             >
-              If you continue with Google or Apple, you agree to our 
+              If you continue with Google, Apple or GitHub, you agree to our 
               <a
                 href="https://wordpress.com/tos/"
                 rel="noopener noreferrer"
@@ -536,11 +537,12 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
             >
               GoogleSocialButton
               AppleLoginButton
+              GitHubLoginButton
             </div>
             <p
               class="auth-form__social-buttons-tos"
             >
-              If you continue with Google or Apple, you agree to our 
+              If you continue with Google, Apple or GitHub, you agree to our 
               <a
                 href="https://wordpress.com/tos/"
                 rel="noopener noreferrer"

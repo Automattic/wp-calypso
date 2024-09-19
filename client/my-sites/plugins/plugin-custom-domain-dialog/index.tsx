@@ -24,7 +24,7 @@ export const PluginCustomDomainDialog = ( {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 
-	const selectedSiteUrl = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const selectedSiteUrl = useSelector( getSelectedSiteSlug );
 
 	const hasNonPrimaryCustomDomain = domains.some(
 		( { isPrimary, isSubdomain } ) => ! isPrimary && ! isSubdomain

@@ -27,7 +27,8 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 				<div className="payment-method-delete-primary-confirmation__card">
 					<p className="payment-method-delete-primary-confirmation__notice">
 						{ translate(
-							'Issuing new licenses will be paused until you add a new primary payment method.'
+							'Issuing new licenses will be paused until you add a new primary payment method. ' +
+								'Additionally, the existing licenses will be revoked at the end of their respective terms.'
 						) }
 					</p>
 				</div>
@@ -43,7 +44,7 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 				</div>
 				<div className="payment-method-delete-primary-confirmation__card-details">
 					<div className="payment-method-delete-primary-confirmation__card-details-logo">
-						<PaymentLogo brand={ paymentMethod?.card.brand } isSummary={ true } />
+						<PaymentLogo brand={ paymentMethod?.card.brand } isSummary />
 					</div>
 					<div>**** **** **** { paymentMethod?.card.last4 }</div>
 					<div>{ `${ paymentMethod?.card.exp_month }/${ paymentMethod?.card.exp_year }` }</div>
@@ -65,7 +66,7 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 					{ ! isFetching && (
 						<>
 							<div className="payment-method-delete-primary-confirmation__card-details-logo">
-								<PaymentLogo brand={ nextPrimaryPaymentMethod?.card.brand } isSummary={ true } />
+								<PaymentLogo brand={ nextPrimaryPaymentMethod?.card.brand } isSummary />
 							</div>
 							<div>**** **** **** { nextPrimaryPaymentMethod?.card.last4 }</div>
 							<div>{ `${ nextPrimaryPaymentMethod?.card.exp_month }/${ nextPrimaryPaymentMethod?.card.exp_year }` }</div>

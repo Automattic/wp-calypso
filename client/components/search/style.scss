@@ -169,7 +169,7 @@
 		&::before {
 			@include long-content-fade(
 				$size: 32px,
-				$z-index: z-index( ".search", ".search__input" ) + 2
+				$z-index: z-index(".search", ".search__input") + 2
 			);
 			border-radius: inherit;
 		}
@@ -180,7 +180,7 @@
 				@include long-content-fade(
 					$direction: right,
 					$size: 32px,
-					$z-index: z-index( ".search", ".search__input" ) + 2
+					$z-index: z-index(".search", ".search__input") + 2
 				);
 				border-radius: inherit;
 			}

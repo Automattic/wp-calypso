@@ -12,45 +12,94 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 	let page: Page;
 	let loginPage: LoginPage;
 
-	beforeAll( async () => {
-		page = await browser.newPage();
+	describe( 'WordPress.com', function () {
+		beforeAll( async () => {
+			page = await browser.newPage();
+		} );
+		// This spec intentionally manually calls individual
+		// methods from LoginPage to separate out the steps that
+		// are bundled together in the TestAccount class.
+		it( 'Navigate to Login page', async function () {
+			// Test redirect to full URL.
+			await page.goto(
+				DataHelper.getCalypsoURL(
+					`log-in?site=${ credentials.primarySite }&redirect_to=%2Fsettings%2Fgeneral%2F${ credentials.primarySite }`
+				)
+			);
+		} );
+
+		it( 'Enter username', async function () {
+			loginPage = new LoginPage( page );
+			await loginPage.fillUsername( credentials.username );
+			await loginPage.clickSubmit();
+		} );
+
+		it( 'Enter password', async function () {
+			await loginPage.fillPassword( credentials.password );
+		} );
+
+		it( 'Submit form', async function () {
+			await Promise.all( [ page.waitForNavigation(), loginPage.clickSubmit() ] );
+		} );
+
+		it( 'Enter 2FA code', async function () {
+			const totpClient = new TOTPClient( credentials.totpKey as string );
+			const code = totpClient.getToken();
+
+			await loginPage.submitVerificationCode( code );
+		} );
+
+		it( 'User is redirected to Settings > General Settings', async function () {
+			const redirectedURL = DataHelper.getCalypsoURL( '/settings/general' );
+			await page.waitForURL( `${ redirectedURL }/${ credentials.primarySite }` );
+		} );
+
+		afterAll( async () => {
+			await page.close();
+		} );
 	} );
 
-	// This spec intentionally manually calls individual
-	// methods from LoginPage to separate out the steps that
-	// are bundled together in the TestAccount class.
-	it( 'Navigate to Login page', async function () {
-		// Test redirect to full URL.
-		await page.goto(
-			DataHelper.getCalypsoURL(
-				`log-in?site=${ credentials.primarySite }&redirect_to=%2Fsettings%2Fgeneral%2F${ credentials.primarySite }`
-			)
-		);
-	} );
+	describe( 'WooCommerce', function () {
+		beforeAll( async () => {
+			page = await browser.newPage();
+			// Wait 30s to avoid OTP code reuse error.
+			await page.waitForTimeout( 30000 );
+		} );
 
-	it( 'Enter username', async function () {
-		loginPage = new LoginPage( page );
-		await loginPage.fillUsername( credentials.username );
-		await loginPage.clickSubmit();
-	} );
+		it( 'Navigate to Login page', async function () {
+			loginPage = new LoginPage( page );
+			await loginPage.visit( {
+				path: SecretsManager.secrets.wooLoginPath,
+			} );
+		} );
 
-	it( 'Enter password', async function () {
-		await loginPage.fillPassword( credentials.password );
-	} );
+		it( 'Enter username', async function () {
+			loginPage = new LoginPage( page );
+			await loginPage.fillUsername( credentials.username );
 
-	it( 'Submit form', async function () {
-		await Promise.all( [ page.waitForNavigation(), loginPage.clickSubmit() ] );
-	} );
+			const isWooPasswordless = await page.evaluate( `configData.features['woo/passwordless']` );
+			if ( isWooPasswordless ) {
+				await loginPage.clickSubmit();
+			}
+		} );
 
-	it( 'Enter 2FA code', async function () {
-		const totpClient = new TOTPClient( credentials.totpKey as string );
-		const code = totpClient.getToken();
+		it( 'Enter password', async function () {
+			await loginPage.fillPassword( credentials.password );
+		} );
 
-		await loginPage.submitVerificationCode( code );
-	} );
+		it( 'Submit form', async function () {
+			await Promise.all( [ page.waitForURL( /log-in\/authenticator/ ), loginPage.clickSubmit() ] );
+		} );
 
-	it( 'User is redirected to Settings > General Settings', async function () {
-		const redirectedURL = DataHelper.getCalypsoURL( '/settings/general' );
-		await page.waitForURL( `${ redirectedURL }/${ credentials.primarySite }` );
+		it( 'Enter 2FA code', async function () {
+			const totpClient = new TOTPClient( credentials.totpKey as string );
+			const code = totpClient.getToken();
+
+			await loginPage.submitVerificationCode( code );
+		} );
+
+		it( 'Redirected to woo.com upon successful login', async function () {
+			await page.waitForURL( /.*woo\.com*/ );
+		} );
 	} );
 } );

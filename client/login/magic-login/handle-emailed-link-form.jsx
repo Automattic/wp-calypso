@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -10,7 +10,13 @@ import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { isGravPoweredOAuth2Client, isWPJobManagerOAuth2Client } from 'calypso/lib/oauth2-clients';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
+import {
+	isGravPoweredOAuth2Client,
+	isWPJobManagerOAuth2Client,
+	isWooOAuth2Client,
+	isA4AOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -30,10 +36,12 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
+import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
@@ -48,7 +56,7 @@ class HandleEmailedLinkForm extends Component {
 		activate: PropTypes.string,
 
 		// Connected props
-		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		authError: PropTypes.object,
 		currentUser: PropTypes.object,
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
@@ -71,6 +79,7 @@ class HandleEmailedLinkForm extends Component {
 
 	state = {
 		hasSubmitted: false,
+		isRedirecting: false,
 	};
 
 	constructor( props ) {
@@ -102,7 +111,7 @@ class HandleEmailedLinkForm extends Component {
 
 		// To customize the login experience for Gravatar-powered clients in the backend, e.g. SMS messages
 		const flow = isGravPoweredOAuth2Client( this.props.oauth2Client )
-			? this.props.oauth2Client.name
+			? getGravatarOAuth2Flow( this.props.oauth2Client )
 			: null;
 
 		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );
@@ -111,7 +120,13 @@ class HandleEmailedLinkForm extends Component {
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
 	handleValidToken = () => {
-		const { redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent } = this.props;
+		const {
+			redirectToSanitized,
+			twoFactorEnabled,
+			twoFactorNotificationSent,
+			oauth2Client,
+			wccomFrom,
+		} = this.props;
 
 		if ( ! twoFactorEnabled ) {
 			this.props.rebootAfterLogin( { magic_login: 1 } );
@@ -121,8 +136,14 @@ class HandleEmailedLinkForm extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
 					redirectTo: redirectToSanitized,
+					oauth2ClientId: oauth2Client.id,
+					wccomFrom,
 				} )
 			);
+
+			this.setState( {
+				isRedirecting: true,
+			} );
 		}
 	};
 
@@ -130,7 +151,7 @@ class HandleEmailedLinkForm extends Component {
 	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
-		if ( ! nextState.hasSubmitted || isFetching ) {
+		if ( ! nextState.hasSubmitted || isFetching || nextState.isRedirecting ) {
 			// Don't do anything here unless the browser has received the `POST` response
 			return;
 		}
@@ -140,7 +161,6 @@ class HandleEmailedLinkForm extends Component {
 			this.props.showMagicLoginLinkExpiredPage();
 			return;
 		}
-
 		this.handleValidToken();
 	}
 
@@ -157,6 +177,9 @@ class HandleEmailedLinkForm extends Component {
 			transition,
 			token,
 			activate,
+			wccomFrom,
+			isWoo,
+			isA4A,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
@@ -166,7 +189,6 @@ class HandleEmailedLinkForm extends Component {
 
 			return (
 				<EmailedLoginLinkExpired
-					isGravPoweredClient={ isGravPoweredClient }
 					redirectTo={ redirectTo }
 					transition={ transition }
 					token={ token }
@@ -182,6 +204,12 @@ class HandleEmailedLinkForm extends Component {
 			buttonLabel = translate( 'Confirm Login to WordPress.com' );
 		} else if ( isWooDna ) {
 			buttonLabel = translate( 'Connect' );
+		} else if ( wccomFrom === 'nux' ) {
+			buttonLabel = translate( 'Continue to Woo Express' );
+		} else if ( isWoo ) {
+			buttonLabel = translate( 'Continue to Woo.com' );
+		} else if ( isA4A ) {
+			buttonLabel = translate( 'Continue to Automattic for Agencies' );
 		} else {
 			buttonLabel = translate( 'Continue to WordPress.com' );
 		}
@@ -201,6 +229,8 @@ class HandleEmailedLinkForm extends Component {
 			title = translate( 'Update your payment details and renew your subscription' );
 		} else if ( isWooDna ) {
 			title = wooDnaConfig( initialQuery ).getServiceName();
+		} else if ( isA4A ) {
+			title = translate( 'Finish sign up using your WordPress.com account' );
 		} else {
 			title =
 				this.props.clientId === config( 'wpcom_signup_id' )
@@ -232,20 +262,19 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
-		const illustration = isWooDna
-			? '/calypso/images/illustrations/illustration-woo-magic-link.svg'
-			: '';
+		const illustration =
+			isWoo || isWooDna ? '/calypso/images/illustrations/illustration-woo-magic-link.svg' : '';
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		if ( isGravPoweredClient ) {
 			return (
 				<div
-					className={ classNames( 'grav-powered-magic-link', {
+					className={ clsx( 'grav-powered-magic-link', {
 						'grav-powered-magic-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<img src={ oauth2Client.icon } width={ 32 } height={ 32 } alt={ oauth2Client.title } />
 					<EmptyContent
 						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
 						illustration=""
@@ -256,7 +285,7 @@ class HandleEmailedLinkForm extends Component {
 		}
 
 		// transition is a GET parameter for when the user is transitioning from email user to WPCom user
-		if ( isFetching || transition ) {
+		if ( isFetching || transition || this.state.isRedirecting ) {
 			return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 		}
 
@@ -264,7 +293,7 @@ class HandleEmailedLinkForm extends Component {
 			! isFetching && (
 				<EmptyContent
 					action={ action }
-					className={ classNames( 'magic-login__handle-link', {
+					className={ clsx( 'magic-login__handle-link', {
 						'magic-login__is-fetching-auth': isFetching,
 					} ) }
 					illustration={ illustration }
@@ -280,7 +309,7 @@ class HandleEmailedLinkForm extends Component {
 const mapState = ( state ) => {
 	const redirectToOriginal = getRedirectToOriginal( state ) || '';
 	const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'client_id' );
-	const oauth2Client = state.oauth2Clients?.clients?.[ clientId ] || {};
+	const oauth2Client = getOAuth2Client( state, clientId ) || {};
 
 	return {
 		redirectToOriginal,
@@ -295,6 +324,9 @@ const mapState = ( state ) => {
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		initialQuery: getInitialQueryArguments( state ),
+		isWoo: isWooOAuth2Client( oauth2Client ),
+		isA4A: isA4AOAuth2Client( oauth2Client ),
+		wccomFrom: getWccomFrom( state ),
 		oauth2Client,
 	};
 };

@@ -1,3 +1,4 @@
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GaPurchase } from '../utils/cart-to-ga-purchase';
@@ -11,12 +12,14 @@ export enum Ga4PropertyGtag {
 	JETPACK,
 	WPCOM,
 	AKISMET,
+	A8C_FOR_AGENCIES,
 }
 
 export const ga4Properties: { [ env in Ga4PropertyGtag ]: string } = {
 	[ Ga4PropertyGtag.WPCOM ]: TRACKING_IDS.wpcomGoogleGA4Gtag,
 	[ Ga4PropertyGtag.JETPACK ]: TRACKING_IDS.jetpackGoogleGA4Gtag,
 	[ Ga4PropertyGtag.AKISMET ]: TRACKING_IDS.akismetGoogleGA4Gtag,
+	[ Ga4PropertyGtag.A8C_FOR_AGENCIES ]: TRACKING_IDS.a8cForAgenciesGA4Gtag,
 };
 
 export function setup( params: Gtag.ConfigParams ) {
@@ -27,6 +30,9 @@ export function setup( params: Gtag.ConfigParams ) {
 	}
 	if ( isAkismetCheckout() ) {
 		window.gtag( 'config', TRACKING_IDS.akismetGoogleGA4Gtag, params );
+	}
+	if ( isA8CForAgencies() ) {
+		window.gtag( 'config', TRACKING_IDS.a8cForAgenciesGA4Gtag, params );
 	}
 }
 

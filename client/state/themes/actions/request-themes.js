@@ -2,10 +2,11 @@ import { map, property } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
-import { updateThemeTiers } from 'calypso/state/themes/actions/theme-tiers';
-import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
+import { getThemeTier, prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
@@ -30,6 +31,9 @@ import 'calypso/state/themes/init';
 export function requestThemes( siteId, query = {}, locale ) {
 	return ( dispatch, getState ) => {
 		const startTime = new Date().getTime();
+
+		const isAtomic = isSiteAutomatedTransfer( getState(), siteId );
+		const isJetpack = isJetpackSite( getState(), siteId );
 
 		dispatch( {
 			type: THEMES_REQUEST,
@@ -62,24 +66,32 @@ export function requestThemes( siteId, query = {}, locale ) {
 						locale ? { locale } : null
 					)
 				);
-		} else {
+		} else if ( isAtomic || isJetpack ) {
 			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
+		} else {
+			request = () =>
+				wpcom.req.get( `/sites/${ siteId }/themes/activation-history`, {
+					apiNamespace: 'wpcom/v2',
+				} );
 		}
 
 		// WP.com returns the number of results in a `found` attr, so we can use that right away.
 		// WP.org returns an `info` object containing a `results` number, so we destructure that
 		// and use it as default value for `found`.
 		return request()
-			.then( ( { themes: rawThemes, info: { results } = {}, found = results, tiers = {} } ) => {
+			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 				let themes;
 				if ( siteId === 'wporg' ) {
-					themes = map( rawThemes, normalizeWporgTheme );
+					const communityThemeTier = getThemeTier( getState(), 'community' );
+					themes = map( rawThemes, ( theme ) => normalizeWporgTheme( theme, communityThemeTier ) );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
-					dispatch( updateThemeTiers( tiers ) );
-				} else {
-					// Jetpack Site
+				} else if ( isAtomic || isJetpack ) {
+					// Jetpack or Atomic Site
 					themes = map( rawThemes, normalizeJetpackTheme );
+				} else {
+					// WPCOM Site
+					themes = map( rawThemes, normalizeWpcomTheme );
 				}
 
 				if ( ( query.search || query.filter ) && query.page === 1 ) {

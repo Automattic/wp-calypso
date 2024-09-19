@@ -5,6 +5,7 @@ import {
 	isDomainMapping,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
+import { getContactDetailsType } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -19,7 +20,6 @@ import {
 	formatDomainContactValidationResponse,
 	getSignupValidationErrorResponse,
 } from '../types/wpcom-store-state';
-import getContactDetailsType from './get-contact-details-type';
 import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
@@ -44,6 +44,7 @@ const getEmailTakenLoginRedirectMessage = (
 ) => {
 	const { href, pathname } = window.location;
 	const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckout = pathname.includes( '/checkout/akismet' );
 	const isGiftingCheckout = pathname.includes( '/gift/' );
 
 	// Users with a WP.com account should return to the checkout page
@@ -51,7 +52,7 @@ const getEmailTakenLoginRedirectMessage = (
 	// checkout -> login -> checkout.
 	const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
 	const redirectTo =
-		isJetpackCheckout || isGiftingCheckout
+		isJetpackCheckout || isAkismetCheckout || isGiftingCheckout
 			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
 			: '/checkout/no-site?cart=no-user';
 

@@ -12,7 +12,7 @@
 	max-width: 1080px;
 	max-height: 100%;
 
-	@media ( prefers-reduced-motion: no-preference ) {
+	@media (prefers-reduced-motion: no-preference) {
 		transform: translateY(20px);
 	}
 
@@ -102,7 +102,7 @@
 	}
 }
 
-@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
+@media screen and (max-width: $break-medium) and (orientation: portrait) {
 	.jetpack-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -150,7 +150,7 @@
 	}
 }
 
-@media screen and ( max-height: 630px ) and ( orientation: landscape ) {
+@media screen and (max-height: 630px) and (orientation: landscape) {
 	.jetpack-lightbox__modal {
 		display: flex;
 		border-radius: 0;
@@ -165,7 +165,7 @@
 	}
 }
 
-@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
+@media screen and (max-height: 365px) and (orientation: landscape) {
 	.jetpack-lightbox__content-aside {
 		padding: 1.5rem;
 		background: var(--studio-gray-0);

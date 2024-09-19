@@ -1,5 +1,5 @@
 import { ProgressBar, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ import BusyImportingButton from 'calypso/my-sites/importer/importer-action-butto
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
-import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import AuthorMappingPane from './author-mapping-pane';
@@ -164,24 +164,6 @@ export class ImportingPane extends PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
-	maybeLoadHotJar = () => {
-		if ( this.hjLoaded || ! this.isImporting() ) {
-			return;
-		}
-
-		this.hjLoaded = true;
-
-		this.props.loadTrackingTool( 'HotJar' );
-	};
-
-	componentDidMount() {
-		this.maybeLoadHotJar();
-	}
-
-	componentDidUpdate() {
-		this.maybeLoadHotJar();
-	}
-
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
@@ -249,7 +231,7 @@ export class ImportingPane extends PureComponent {
 			site,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = classNames( 'importer__import-progress', {
+		const progressClasses = clsx( 'importer__import-progress', {
 			'is-complete': this.isFinished(),
 		} );
 
@@ -315,7 +297,6 @@ export class ImportingPane extends PureComponent {
 }
 
 export default connect( null, {
-	loadTrackingTool,
 	mapAuthor,
 	recordTracksEvent,
 	resetImport,

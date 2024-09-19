@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Children, createRef, useMemo, useState, useRef, useLayoutEffect } from 'react';
 import { v4 as uuid } from 'uuid';
@@ -65,7 +65,7 @@ export const ExpandableSidebarMenu = ( {
 		expanded = containsSelectedSidebarItem( children );
 	}
 
-	const classes = classNames( className, {
+	const classes = clsx( className, {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
 		hovered: submenuHovered,

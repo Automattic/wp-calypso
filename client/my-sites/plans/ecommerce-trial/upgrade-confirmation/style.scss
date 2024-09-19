@@ -69,4 +69,10 @@ body.business-trial-upgraded {
 			grid-template-columns: repeat(1, auto);
 		}
 	}
+
+	.trial-upgrade-confirmation__loading {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
 }

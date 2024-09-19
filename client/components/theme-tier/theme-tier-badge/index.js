@@ -1,8 +1,10 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
+import clsx from 'clsx';
 import { useSelector } from 'calypso/state';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
+import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useThemeTier from '../use-theme-tier';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
@@ -14,7 +16,9 @@ import './style.scss';
 
 export default function ThemeTierBadge( {
 	canGoToCheckout = true,
+	className = '',
 	isLockedStyleVariation,
+	showUpgradeBadge = true,
 	themeId,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -22,7 +26,8 @@ export default function ThemeTierBadge( {
 	const isLegacyPremiumPurchased = useSelector( ( state ) =>
 		isThemePurchased( state, themeId, siteId )
 	);
-	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
+	const themeTier = useThemeTierForTheme( themeId );
+	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
 	const getBadge = () => {
 		if ( BUNDLED_THEME === themeType ) {
@@ -37,21 +42,33 @@ export default function ThemeTierBadge( {
 			return <ThemeTierCommunityBadge />;
 		}
 
-		if ( 'partner' === themeTier.slug || MARKETPLACE_THEME === themeType ) {
+		if ( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType ) {
 			return <ThemeTierPartnerBadge />;
 		}
 
-		if ( isThemeAllowedOnSite || ( 'premium' === themeTier.slug && isLegacyPremiumPurchased ) ) {
+		if ( isThemeAllowed || ( 'premium' === themeTier?.slug && isLegacyPremiumPurchased ) ) {
 			return null;
 		}
 
 		return <ThemeTierUpgradeBadge />;
 	};
 
+	const badge = getBadge();
+
+	if ( ! badge ) {
+		return null;
+	}
+
 	return (
-		<div className="theme-tier-badge">
-			<ThemeTierBadgeContextProvider canGoToCheckout={ canGoToCheckout } themeId={ themeId }>
-				{ getBadge() }
+		<div
+			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTier.slug }`, className ) }
+		>
+			<ThemeTierBadgeContextProvider
+				canGoToCheckout={ canGoToCheckout }
+				showUpgradeBadge={ showUpgradeBadge }
+				themeId={ themeId }
+			>
+				{ badge }
 			</ThemeTierBadgeContextProvider>
 		</div>
 	);

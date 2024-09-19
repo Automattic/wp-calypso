@@ -10,15 +10,18 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverview from '../sites-overview';
 import SitesOverviewContext from '../sites-overview/context';
+import SitesDashboardV2 from '../sites-overview/sites-dashboard-v2';
 import type { DashboardOverviewContextInterface, Site } from '../sites-overview/types';
 
 import '../style.scss';
 
 export default function DashboardOverview( {
+	path,
 	search,
 	currentPage,
 	filter,
 	sort,
+	showSitesDashboardV2,
 }: DashboardOverviewContextInterface ) {
 	useQueryJetpackPartnerPortalPartner();
 
@@ -52,6 +55,7 @@ export default function DashboardOverview( {
 
 	if ( hasFetched ) {
 		const context = {
+			path,
 			search,
 			currentPage,
 			filter,
@@ -67,10 +71,11 @@ export default function DashboardOverview( {
 			setMostRecentConnectedSite,
 			isPopoverOpen,
 			setIsPopoverOpen,
+			showSitesDashboardV2,
 		};
 		return (
 			<SitesOverviewContext.Provider value={ context }>
-				<SitesOverview />
+				{ showSitesDashboardV2 ? <SitesDashboardV2 /> : <SitesOverview /> }
 			</SitesOverviewContext.Provider>
 		);
 	}

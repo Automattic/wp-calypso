@@ -1,17 +1,19 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import {
+	getPlan,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
+import { CompactCard, ProductIcon, Gridicon, PlanPrice } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import QueryPlans from 'calypso/components/data/query-plans';
 import HeaderCake from 'calypso/components/header-cake';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import MigrateButton from './migrate-button.jsx';
 
 import './section-migrate.scss';
@@ -22,16 +24,35 @@ class StepUpgrade extends Component {
 		sourceSite: PropTypes.object.isRequired,
 		startMigration: PropTypes.func.isRequired,
 		targetSite: PropTypes.object.isRequired,
+		isEcommerceTrial: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
+		recordTracksEvent( 'calypso_site_migration_business_viewed' );
+	}
+
+	getHeadingText( isEcommerceTrial, upsellPlanName ) {
+		const { translate } = this.props;
+
+		if ( isEcommerceTrial ) {
+			// translators: %(essentialPlanName)s is the name of the Essential plan
+			return translate( 'An %(essentialPlanName)s Plan is required to import everything.', {
+				args: {
+					essentialPlanName: upsellPlanName,
+				},
+			} );
+		}
+
+		// translators: %(businessPlanName)s is the name of the Creator/Business plan
+		return translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+			args: { businessPlanName: upsellPlanName },
+		} );
 	}
 
 	render() {
 		const {
 			billingTimeFrame,
-			currency,
+			currencyCode,
 			planPrice,
 			plugins,
 			sourceSite,
@@ -40,22 +61,21 @@ class StepUpgrade extends Component {
 			targetSiteSlug,
 			themes,
 			translate,
+			isEcommerceTrial,
 		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
+		const upsellPlanName = isEcommerceTrial
+			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
+			: getPlan( PLAN_BUSINESS )?.getTitle();
 
 		return (
 			<>
-				<QueryPlans />
 				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
-					<CardHeading>
-						{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
-							args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-						} ) }
-					</CardHeading>
+					<CardHeading>{ this.getHeadingText( isEcommerceTrial, upsellPlanName ) }</CardHeading>
 					<div>
 						{ translate(
 							'To import your themes, plugins, users, and settings from %(sourceSiteDomain)s we need to upgrade your WordPress.com site.',
@@ -109,9 +129,16 @@ class StepUpgrade extends Component {
 								<ProductIcon slug="business-bundle" />
 							</div>
 							<div className="migrate__plan-upsell-info">
-								<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
+								<div className="migrate__plan-name">
+									{
+										// translators: %(planName)s is the name of the Creator/Business/Essential plan
+										translate( 'WordPress.com %(planName)s', {
+											args: { planName: upsellPlanName },
+										} )
+									}
+								</div>
 								<div className="migrate__plan-price">
-									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
+									<PlanPrice rawPrice={ planPrice } currencyCode={ currencyCode } isSmallestUnit />
 								</div>
 								<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
 							</div>
@@ -129,16 +156,32 @@ class StepUpgrade extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const plan = getPlan( PLAN_BUSINESS );
-		const planId = plan.getProductId();
+const WrappedStepUpgrade = ( props ) => {
+	const { targetSite } = props;
+	const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
+	const planSlug = plan.getStoreSlug();
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ planSlug ],
+		coupon: undefined,
+		siteId: targetSite.ID,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
 
-		return {
-			billingTimeFrame: plan.getBillingTimeFrame(),
-			currency: getCurrentUserCurrencyCode( state ),
-			planPrice: getPlanRawPrice( state, planId, true ),
-		};
-	},
-	{ recordTracksEvent }
-)( localize( StepUpgrade ) );
+	return (
+		<StepUpgrade
+			{ ...props }
+			isEcommerceTrial={ isEcommerceTrial }
+			billingTimeFrame={ plan.getBillingTimeFrame() }
+			currencyCode={ pricingMeta?.[ planSlug ]?.currencyCode }
+			planPrice={
+				pricingMeta?.[ planSlug ]?.discountedPrice?.monthly ??
+				pricingMeta?.[ planSlug ]?.originalPrice?.monthly
+			}
+		/>
+	);
+};
+
+export default localize( WrappedStepUpgrade );

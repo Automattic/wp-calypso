@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import licensingActivationPluginBanner from 'calypso/assets/images/jetpack/licensing-activation-plugin-banner.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
@@ -9,6 +9,7 @@ import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import JetpackInstructionList from './jetpack-instruction-list';
 import JetpackLicenseKeyClipboard, {
 	JetpackLicenseKeyProps,
 } from './jetpack-license-key-clipboard';
@@ -25,7 +26,32 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 
-	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+	const isProductListFetching = useSelector( getIsProductListFetching );
+
+	const items = useMemo(
+		() => [
+			{
+				id: 1,
+				content: translate( 'From WP Admin, go to {{strong}}Jetpack > My Jetpack{{/strong}}.', {
+					components: { strong: <strong /> },
+				} ),
+			},
+			{
+				id: 2,
+				content: translate(
+					'Click the {{strong}}Activate a license{{/strong}} link at the bottom of the page.',
+					{
+						components: { strong: <strong /> },
+					}
+				),
+			},
+			{
+				id: 3,
+				content: translate( 'Use your license key below to activate your product.' ),
+			},
+		],
+		[ translate ]
+	);
 
 	return (
 		<>
@@ -47,16 +73,9 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 				progressIndicatorValue={ 3 }
 				progressIndicatorTotal={ 3 }
 			>
-				<p>
-					{ translate(
-						'Go to your {{strong}}WP Admin Jetpack Dashboard > My Plan{{/strong}} page after Jetpack is installed, and use this license key to activate your product.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
+				<p>{ translate( 'After installing the plugin:' ) }</p>
+
+				<JetpackInstructionList items={ items } />
 
 				<JetpackLicenseKeyClipboard productSlug={ productSlug } receiptId={ receiptId } />
 			</LicensingActivation>

@@ -60,7 +60,7 @@ const ConnectFlowPlansHeader = () => (
 );
 
 const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	// Site plan
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;

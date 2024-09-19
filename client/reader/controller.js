@@ -151,11 +151,12 @@ export function feedDiscovery( context, next ) {
 	if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 		const url = context.params.feed_id;
 		context.queryClient
-			.fetchQuery(
-				[ 'feed-discovery', url ],
-				() => wpcom.req.get( '/read/feed', { url } ).then( ( res ) => res.feeds[ 0 ].feed_ID ),
-				{ meta: { persist: false } }
-			)
+			.fetchQuery( {
+				queryKey: [ 'feed-discovery', url ],
+				queryFn: () =>
+					wpcom.req.get( '/read/feed', { url } ).then( ( res ) => res.feeds[ 0 ].feed_ID ),
+				meta: { persist: false },
+			} )
 			.then( ( feedId ) => {
 				page.redirect( `/read/feeds/${ feedId }` );
 			} )
@@ -195,7 +196,7 @@ export function feedListing( context, next ) {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			suppressSiteNameLink={ true }
+			suppressSiteNameLink
 			showBack={ userHasHistory( context ) }
 			placeholder={ null }
 		/>
@@ -229,7 +230,7 @@ export function blogListing( context, next ) {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			suppressSiteNameLink={ true }
+			suppressSiteNameLink
 			showBack={ userHasHistory( context ) }
 			placeholder={ null }
 		/>
@@ -318,11 +319,11 @@ export async function blogDiscoveryByFeedId( context, next ) {
 	// Query the site by feed_id and inject to the context params so that calypso can get correct site
 	// after redirecting the user to log-in page
 	context.queryClient
-		.fetchQuery(
-			[ '/read/feed/', feed_id ],
-			() => wpcom.req.get( `/read/feed/${ feed_id }` ).then( ( res ) => res.blog_ID ),
-			{ meta: { persist: false } }
-		)
+		.fetchQuery( {
+			queryKey: [ '/read/feed/', feed_id ],
+			queryFn: () => wpcom.req.get( `/read/feed/${ feed_id }` ).then( ( res ) => res.blog_ID ),
+			meta: { persist: false },
+		} )
 		.then( ( blog_id ) => {
 			context.params.blog_id = blog_id;
 			next();

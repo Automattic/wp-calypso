@@ -11,7 +11,7 @@
 	width: 100%;
 	min-height: 100vh;
 	background: #fdfdfd;
-	overflow: hidden;
+	overflow: auto;
 	overscroll-behavior: contain;
 
 	// Hide masterbar behind.
@@ -74,10 +74,6 @@
 		border-color: var(--color-accent);
 		color: var(--color-text-inverted);
 		opacity: 0.5;
-	}
-
-	.components-button.is-secondary:focus {
-		box-shadow: inset 0 0 0 1px var(--color-neutral-10);
 	}
 }
 

@@ -15,6 +15,11 @@ export const plansSlugs = [
 	TIMELESS_PLAN_PREMIUM,
 	TIMELESS_PLAN_BUSINESS,
 	TIMELESS_PLAN_ECOMMERCE,
+	// Keeping the old slugs for backwards compatibility.
+	'starter',
+	'explorer',
+	'creator',
+	'entrepreneur',
 ] as const;
 
 export const DEFAULT_PAID_PLAN = TIMELESS_PLAN_PREMIUM;
@@ -63,3 +68,7 @@ export const PERIOD_LIST = [
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 ] as const;
+
+export const COST_OVERRIDE_REASONS = {
+	RECENT_PLAN_PRORATION: 'recent-plan-proration',
+};

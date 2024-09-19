@@ -23,7 +23,7 @@ declare const browser: Browser;
  * Keywords: Settings, Jetpack, Hosting Configuration, phpMyAdmin
  */
 skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
-	DataHelper.createSuiteTitle( 'Settings: Accewss phpMyAdmin' ),
+	DataHelper.createSuiteTitle( 'Settings: Access phpMyAdmin' ),
 	function () {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 

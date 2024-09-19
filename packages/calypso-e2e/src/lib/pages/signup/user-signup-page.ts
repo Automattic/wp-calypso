@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 import envVariables from '../../../env-variables';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
@@ -140,5 +140,68 @@ export class UserSignupPage {
 		const responseBody: NewUserResponse = await response.json();
 
 		return responseBody;
+	}
+
+	/**
+	 * Signup form that is used by WordPress.com Connect (WPCC) endpoint for WooCommerce.
+	 *
+	 * WPCC is a single sign-on service. For more information, please see
+	 * https://wordpress.com/support/wpcc-faq/.
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @param {string} username Username of the new user.
+	 * @param {string} password Password of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
+	 */
+	async signupWoo( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		const isWooPasswordless = await this.page.evaluate( `configData.features['woo/passwordless']` );
+
+		await this.page.fill( selectors.emailInput, email );
+
+		if ( ! isWooPasswordless ) {
+			await this.page.fill( selectors.usernameInput, username );
+			await this.page.fill( selectors.passwordInput, password );
+		}
+
+		const [ , response ] = await Promise.all( [
+			this.page.waitForURL( /.*woo\.com*/ ),
+			this.page.waitForResponse( /.*new\?.*/ ),
+			this.page.click( selectors.submitButton ),
+		] );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to create new user at WooCommerce using WPCC.' );
+		}
+
+		const responseBody: NewUserResponse = await response.json();
+
+		return responseBody;
+	}
+
+	/**
+	 * Clicks the "Continue with Google" link.
+	 *
+	 * @returns {Promise<Page>} Handler to the popup page.
+	 */
+	async clickContinueWithGoogle(): Promise< Page > {
+		const locator = this.page.getByRole( 'button', { name: 'Continue with Google' } );
+
+		await locator.waitFor();
+
+		// Intercept the popup that appears when Login with Google button
+		// is clicked.
+		const [ page ] = await Promise.all( [ this.page.waitForEvent( 'popup' ), locator.click() ] );
+
+		return page;
+	}
+
+	/**
+	 * Clicks the "Continue with Apple" link.
+	 */
+	async clickContinueWithApple(): Promise< Locator > {
+		const locator = await this.page.locator( ':text-is("Continue with Apple")' );
+		await locator.click();
+
+		return locator;
 	}
 }

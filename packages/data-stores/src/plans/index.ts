@@ -6,6 +6,7 @@ import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 
+/** Types */
 export type { State };
 export type {
 	Plan,
@@ -17,15 +18,21 @@ export type {
 	PlanPath,
 	PlanBillingPeriod,
 	PlanSimplifiedFeature,
+	PlanPricing,
+	PricingMetaForGridPlan,
 } from './types';
+export type { UseCheckPlanAvailabilityForPurchase } from './hooks/use-pricing-meta-for-grid-plans';
 
 /** Queries */
 export { default as usePlans } from './queries/use-plans';
 export { default as useSitePlans } from './queries/use-site-plans';
 /** Hooks/Selectors */
 export { default as useCurrentPlan } from './hooks/use-current-plan';
+export { default as useCurrentPlanTerm } from './hooks/use-current-plan-term';
 export { default as useIntroOffers } from './hooks/use-intro-offers';
 export { default as useIntroOffersForWooExpress } from './hooks/use-intro-offers-for-woo-express';
+export { default as usePricingMetaForGridPlans } from './hooks/use-pricing-meta-for-grid-plans';
+export { default as useCurrentPlanExpiryDate } from './hooks/use-current-plan-expiry-date';
 
 // plansSlugs is a list with the identifiers for each plan and they are agnostic of billing period; eg: 'free', 'personal'
 // plansSlugs is also used to construct the route that accepts plan slugs like '/free', '/personal', '/business'

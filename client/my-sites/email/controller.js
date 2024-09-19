@@ -14,14 +14,13 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import MailboxesManagement from 'calypso/my-sites/email/mailboxes';
 import * as paths from 'calypso/my-sites/email/paths';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
-import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
 	emailManagementAddEmailForwards( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementAddEmailForwards( ':site', ':domain' ) }
+					path={ paths.getAddEmailForwardsPath( ':site', ':domain' ) }
 					title="Email Management > Add Email Forwards"
 				/>
 
@@ -39,7 +38,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementAddGSuiteUsers( ':site', ':domain', ':productType' ) }
+					path={ paths.getAddGSuiteUsersPath( ':site', ':domain', ':productType' ) }
 					title="Email Management > Add Google Users"
 				/>
 
@@ -58,7 +57,7 @@ export default {
 		pageContext.primary = (
 			<>
 				<PageViewTracker
-					path={ paths.emailManagementManageTitanAccount( ':site', ':domain' ) }
+					path={ paths.getManageTitanAccountPath( ':site', ':domain' ) }
 					title="Email Management > Titan > Manage Account"
 				/>
 
@@ -76,7 +75,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementManageTitanMailboxes( ':site', ':domain' ) }
+					path={ paths.getManageTitanMailboxesPath( ':site', ':domain' ) }
 					title="Email Management > Titan > Manage All Mailboxes"
 				/>
 
@@ -94,7 +93,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementNewTitanAccount( ':site', ':domain' ) }
+					path={ paths.getNewTitanAccountPath( ':site', ':domain' ) }
 					title="Email Management > Add Titan Mailboxes"
 				/>
 
@@ -113,7 +112,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ) }
+					path={ paths.getTitanSetUpMailboxPath( ':site', ':domain' ) }
 					title="Email Management > Set Up Titan Mailbox"
 				/>
 
@@ -131,7 +130,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
+					path={ paths.getPurchaseNewEmailAccountPath( ':site', ':domain' ) }
 					title="Email Comparison"
 					properties={ {
 						source: pageContext.query.source,
@@ -157,7 +156,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementInDepthComparison(
+					path={ paths.getEmailInDepthComparisonPath(
 						':site',
 						':domain',
 						null,
@@ -190,34 +189,20 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetUpThankYou( pageContext, next ) {
-		pageContext.primary = (
-			<>
-				<PageViewTracker
-					path={ paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ) }
-					title="Checkout > Purchased Titan mailbox"
-				/>
-
-				<TitanSetUpThankYou
-					containerClassName="titan-set-up-thank-you__container_wrapped"
-					domainName={ pageContext.params.domain }
-					emailAddress={ pageContext.query.email }
-				/>
-			</>
-		);
-
-		next();
-	},
-
 	emailManagementForwardingRedirect( pageContext ) {
-		page.redirect( paths.emailManagement( pageContext.params.site, pageContext.params.domain ) );
+		page.redirect(
+			paths.getEmailManagementPath( pageContext.params.site, pageContext.params.domain )
+		);
 	},
 
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagement( ':site', pageContext.params.domain ? ':domain' : null ) }
+					path={ paths.getEmailManagementPath(
+						':site',
+						pageContext.params.domain ? ':domain' : null
+					) }
 					title="Email Home"
 					properties={ { source: pageContext.query.source } }
 				/>

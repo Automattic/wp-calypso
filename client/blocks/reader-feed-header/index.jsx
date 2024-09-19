@@ -1,6 +1,6 @@
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -44,7 +44,7 @@ class FeedHeader extends Component {
 		const wideDisplay = width > 900;
 		const narrowDisplay = width < 480;
 
-		const classes = classnames( 'reader-feed-header', {
+		const classes = clsx( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 			'has-back-button': showBack,
 			'is-wide-display': wideDisplay,

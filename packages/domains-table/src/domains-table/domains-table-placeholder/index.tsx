@@ -1,5 +1,5 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -14,7 +14,7 @@ export function DomainsTablePlaceholder( {
 }: DomainsTablePlaceholderProps ) {
 	return (
 		<LoadingPlaceholder
-			className={ classnames( 'domains-table-placeholder', { 'is-header': isHeader }, className ) }
+			className={ clsx( 'domains-table-placeholder', { 'is-header': isHeader }, className ) }
 			{ ...rest }
 		/>
 	);

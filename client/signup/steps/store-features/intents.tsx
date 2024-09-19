@@ -1,3 +1,4 @@
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SelectItem } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -81,7 +82,8 @@ export function useIntents(
 					<span className="store-features__requirements">
 						{ hasWooFeature
 							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}Business plan{{/a}}', {
+							: // translators: %(planName)s is the name of the Creator/Business plan
+							  translate( 'Requires a {{a}}%(planName)s plan{{/a}}', {
 									components: {
 										a: (
 											<a
@@ -90,6 +92,9 @@ export function useIntents(
 												rel="noopener noreferrer"
 											/>
 										),
+									},
+									args: {
+										planName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
 									},
 							  } ) }
 					</span>

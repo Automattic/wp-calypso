@@ -1,15 +1,24 @@
-import { Badge, CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { Badge, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import MaterialIcon from 'calypso/components/material-icon';
+import ExternalLink from 'calypso/components/external-link';
 import SectionHeader from 'calypso/components/section-header';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
-import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
+import {
+	getEmailAddress,
+	getEmailForwardAddress,
+	isEmailForward,
+	isEmailForwardAccount,
+	isEmailUserAdmin,
+	isTitanMailAccount,
+} from 'calypso/lib/emails';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
-import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
+import { getGSuiteSubscriptionStatus, getGmailUrl } from 'calypso/lib/gsuite';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
+import { recordEmailAppLaunchEvent } from './utils';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {
@@ -38,7 +47,7 @@ const MailboxListHeader = ( { accountType = null, children, isPlaceholder = fals
 };
 
 const MailboxListItem = ( { children, isError = false, isPlaceholder, hasNoEmails } ) => {
-	const className = classNames( 'email-plan-mailboxes-list__mailbox-list-item', {
+	const className = clsx( 'email-plan-mailboxes-list__mailbox-list-item', {
 		'is-placeholder': isPlaceholder,
 		'no-emails': hasNoEmails,
 	} );
@@ -49,25 +58,54 @@ const MailboxListItem = ( { children, isError = false, isPlaceholder, hasNoEmail
 	);
 };
 
-const MailboxListItemSecondaryDetails = ( { children, className } ) => {
-	const fullClassName = classNames(
-		'email-plan-mailboxes-list__mailbox-secondary-details',
-		className
-	);
-	return <div className={ fullClassName }>{ children }</div>;
-};
-
-const getSecondaryContentForMailbox = ( mailbox ) => {
+function EmailForwardSecondaryDetails( { mailbox } ) {
 	if ( isEmailForward( mailbox ) ) {
 		return (
-			<MailboxListItemSecondaryDetails className="email-plan-mailboxes-list__mailbox-list-forward">
+			<div className="email-plan-mailboxes-list__mailbox-secondary-details">
 				<Gridicon icon="chevron-right" />
 				<span>{ getEmailForwardAddress( mailbox ) }</span>
-			</MailboxListItemSecondaryDetails>
+			</div>
 		);
 	}
 	return null;
-};
+}
+
+function MailboxLink( { account, mailbox } ) {
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
+	const emailAddress = getEmailAddress( mailbox );
+
+	if ( isEmailForwardAccount( account ) ) {
+		return (
+			<div className="email-plan-mailboxes-list__mailbox-list-link">
+				<span>{ emailAddress }</span>
+			</div>
+		);
+	}
+
+	const isTitan = isTitanMailAccount( account );
+	const primaryHref = isTitan
+		? getTitanEmailUrl( titanAppsUrlPrefix, emailAddress, false, window.location.href )
+		: getGmailUrl( emailAddress );
+
+	return (
+		<ExternalLink
+			className="email-plan-mailboxes-list__mailbox-list-link"
+			href={ primaryHref }
+			onClick={ () => {
+				recordEmailAppLaunchEvent( {
+					app: isTitan ? titanAppsUrlPrefix : 'webmail',
+					context: 'email-management-list',
+					provider: isTitan ? 'titan' : 'google',
+				} );
+			} }
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<span>{ emailAddress }</span>
+			<Gridicon icon="external" size={ 18 } />
+		</ExternalLink>
+	);
+}
 
 function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes } ) {
 	const translate = useTranslate();
@@ -111,14 +149,10 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 		return (
 			<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
 				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-					<div>
-						<MaterialIcon icon="email" />
-						<span>
-							{ mailbox.mailbox }@{ mailbox.domain }
-						</span>
-					</div>
-					{ getSecondaryContentForMailbox( mailbox ) }
+					<MailboxLink account={ account } mailbox={ mailbox } />
+					<EmailForwardSecondaryDetails mailbox={ mailbox } />
 				</div>
+
 				{ isEmailUserAdmin( mailbox ) && (
 					<Badge type="info">
 						{ translate( 'Admin', {

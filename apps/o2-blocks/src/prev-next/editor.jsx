@@ -81,7 +81,8 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 			<Fragment>
 				<URLInput
 					className="prev-next__link-entry"
-					autoFocus={ true }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus
 					label="Previous link"
 					value={ attributes.prev }
 					onChange={ ( url, post ) =>

@@ -3,6 +3,7 @@ import {
 	getPlan,
 	FEATURE_CUSTOM_DOMAIN,
 	IncompleteWPcomPlan,
+	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
@@ -10,9 +11,9 @@ import {
 	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isBlogOnboardingFlow,
+	isSenseiFlow,
 } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 
 const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;
@@ -28,6 +29,10 @@ const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 
 const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingSignupFeatures;
+};
+
+const senseiFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+	return isSenseiFlow( flowName ) && plan.getSenseiFeatures?.( plan.term );
 };
 
 const signupFlowDefaultFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
@@ -50,6 +55,7 @@ const getPlanFeatureAccessor = ( {
 		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
 		blogOnboardingFeatures( flowName, plan ),
+		senseiFeatures( flowName, plan ),
 		signupFlowDefaultFeatures( flowName, plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
@@ -72,12 +78,17 @@ const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWP
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
 };
 
+const senseiHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+	return isSenseiFlow( flowName ) && plan.getSenseiHighlightedFeatures;
+};
+
 const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	const accessor = [
 		newsletterHighlightedFeatures( flowName, plan ),
 		linkInBioHighlightedFeatures( flowName, plan ),
 		hostingHighlightedFeatures( flowName, plan ),
 		blogOnboardingHighlightedFeatures( flowName, plan ),
+		senseiHighlightedFeatures( flowName, plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );

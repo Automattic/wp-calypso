@@ -1,0 +1,93 @@
+table.github-deployments-logs {
+	border-collapse: collapse;
+	margin-bottom: 0;
+
+	thead th span {
+		font-weight: 500;
+	}
+
+	th,
+	td {
+		padding: 8px 0;
+		font-weight: normal;
+	}
+
+	tr th {
+		padding: 8px 0 16px 0;
+		color: var(--studio-gray-60, #50575e);
+	}
+
+	thead tr,
+	tbody tr:not(:last-of-type) {
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+
+
+	tbody tr td {
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+
+	tbody tr:last-of-type {
+		td {
+			padding-bottom: 0;
+		}
+	}
+
+
+	td {
+		vertical-align: middle !important;
+		padding-right: 32px;
+
+		> * {
+			white-space: nowrap;
+		}
+
+		&:has(.github-deployments-commit-author) {
+			padding-right: 64px;
+		}
+
+		&:last-child {
+			padding-left: 32px;
+			padding-right: 0;
+			text-align: right;
+		}
+	}
+
+	tr.github-deployments-run-item {
+		cursor: pointer;
+	}
+}
+
+td.github-deployments-logs-content {
+	text-align: left !important;
+	padding-left: 0 !important;
+
+	.github-deployments-loading-placeholder {
+		margin-bottom: 0;
+	}
+
+	.show-more {
+		text-decoration: underline;
+	}
+
+	pre {
+		background-color: transparent;
+		border-left: 1px solid;
+		margin: 5px 0;
+	}
+}
+
+
+.github-deployments-commit-author {
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	width: max-content;
+	img {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+		border-radius: 50%;
+	}
+}

@@ -1,84 +1,77 @@
+import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useSelector, useDispatch } from 'react-redux';
+import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
+import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
 
-const noop = () => {};
+function FollowButtonContainer( props ) {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const following = useSelector( ( state ) => isFollowing( state, { feedUrl: props.siteUrl } ) );
 
-class FollowButtonContainer extends Component {
-	static propTypes = {
-		siteUrl: PropTypes.string.isRequired,
-		iconSize: PropTypes.number,
-		onFollowToggle: PropTypes.func,
-		followLabel: PropTypes.string,
-		followingLabel: PropTypes.string,
-		feedId: PropTypes.number,
-		siteId: PropTypes.number,
-		followIcon: PropTypes.object,
-		followingIcon: PropTypes.object,
-		hasButtonStyle: PropTypes.bool,
-	};
+	const dispatch = useDispatch();
+	const resendEmailVerification = useResendEmailVerification();
+	const translate = useTranslate();
 
-	static defaultProps = {
-		onFollowToggle: noop,
-	};
-
-	handleFollowToggle = ( following ) => {
-		if ( ! this.props.isLoggedIn ) {
-			return this.props.registerLastActionRequiresLogin( {
-				type: 'follow-site',
-				siteId: this.props.siteId,
-			} );
+	const handleFollowToggle = ( followingSite ) => {
+		if ( ! isLoggedIn ) {
+			return dispatch(
+				registerLastActionRequiresLogin( {
+					type: 'follow-site',
+					siteId: props.siteId,
+				} )
+			);
 		}
-		if ( following ) {
+
+		if ( ! isEmailVerified ) {
+			return dispatch(
+				errorNotice( translate( 'Your email has not been verified yet.' ), {
+					id: 'resend-verification-email',
+					button: translate( 'Resend Email' ),
+					onClick: () => {
+						resendEmailVerification();
+					},
+				} )
+			);
+		}
+
+		if ( followingSite ) {
 			const followData = omitBy(
 				{
-					feed_ID: this.props.feedId,
-					blog_ID: this.props.siteId,
+					feed_ID: props.feedId,
+					blog_ID: props.siteId,
 				},
 				( data ) => typeof data === 'undefined'
 			);
 
-			this.props.follow( this.props.siteUrl, followData );
+			dispatch( follow( props.siteUrl, followData ) );
 		} else {
-			this.props.unfollow( this.props.siteUrl );
+			dispatch( unfollow( props.siteUrl ) );
 		}
 
-		this.props.onFollowToggle( following );
+		props.onFollowToggle( followingSite );
 	};
 
-	render() {
-		return (
-			<FollowButton
-				following={ this.props.following }
-				onFollowToggle={ this.handleFollowToggle }
-				iconSize={ this.props.iconSize }
-				tagName={ this.props.tagName }
-				disabled={ this.props.disabled }
-				followLabel={ this.props.followLabel }
-				followingLabel={ this.props.followingLabel }
-				className={ this.props.className }
-				followIcon={ this.props.followIcon }
-				followingIcon={ this.props.followingIcon }
-				hasButtonStyle={ this.props.hasButtonStyle }
-			/>
-		);
-	}
+	return (
+		<FollowButton
+			following={ following }
+			onFollowToggle={ handleFollowToggle }
+			iconSize={ props.iconSize }
+			tagName={ props.tagName }
+			disabled={ props.disabled }
+			followLabel={ props.followLabel }
+			followingLabel={ props.followingLabel }
+			className={ props.className }
+			followIcon={ props.followIcon }
+			followingIcon={ props.followingIcon }
+			hasButtonStyle={ props.hasButtonStyle }
+		/>
+	);
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		following: isFollowing( state, { feedUrl: ownProps.siteUrl } ),
-		isLoggedIn: isUserLoggedIn( state ),
-	} ),
-	{
-		follow,
-		unfollow,
-		registerLastActionRequiresLogin,
-	}
-)( FollowButtonContainer );
+export default FollowButtonContainer;

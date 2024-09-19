@@ -132,11 +132,11 @@ const ImportLight: Step = function ImportStep( props ) {
 				stepName="import-step"
 				className="import__onboarding-page"
 				hideSkip={ false }
-				hideFormattedHeader={ true }
+				hideFormattedHeader
 				goBack={ navigation.goBack }
 				goNext={ navigation.goNext }
 				skipLabelText={ __( 'Skip this step' ) }
-				isFullLayout={ true }
+				isFullLayout
 				stepContent={ renderStepContent() }
 				recordTracksEvent={ recordTracksEvent }
 			/>

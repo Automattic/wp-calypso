@@ -1,31 +1,49 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { FormLabel } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { useChatStatus } from '@automattic/help-center/src/hooks';
 import { localizeUrl } from '@automattic/i18n-utils';
+import Button from '@automattic/odie-client/src/components/button';
+import { UPDATE_NAMESERVERS } from '@automattic/urls';
+import {
+	useCanConnectToZendeskMessaging,
+	useZendeskMessagingAvailability,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
+	hasAmountAvailableToRefund,
 	isRefundable,
 	isSubscription,
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
+	isGravatarDomain,
 	isJetpackPurchase,
 	includedDomainPurchase,
 	cancelBundledDomain,
 	confirmCancelBundledDomain,
 	onCancelConfirmationStateChange,
 } ) => {
-	const { refundPeriodInDays } = purchase;
+	const { siteId, siteUrl, refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
 	const onCancelBundledDomainChange = ( event ) => {
@@ -34,6 +52,88 @@ const CancelPurchaseRefundInformation = ( {
 			cancelBundledDomain: newCancelBundledDomainValue,
 			confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancelBundledDomain,
 		} );
+	};
+	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { isEligibleForChat } = useChatStatus();
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
+		'wpcom_messaging',
+		isEligibleForChat
+	);
+	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
+		'migration-error',
+		'zendesk_support_chat_key',
+		isEligibleForChat
+	);
+
+	const getHelp = useCallback( () => {
+		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
+			openZendeskWidget( {
+				siteUrl: siteUrl,
+				siteId: siteId,
+				message: `${ status }: Import onboarding flow; migration failed`,
+				onSuccess: () => {
+					resetStore();
+					setShowHelpCenter( false );
+				},
+			} );
+		} else {
+			setNavigateToRoute( '/contact-options' );
+			setShowHelpCenter( true );
+		}
+	}, [
+		resetStore,
+		openZendeskWidget,
+		siteId,
+		isMessagingAvailable,
+		siteUrl,
+		canConnectToZendeskMessaging,
+		setNavigateToRoute,
+		setShowHelpCenter,
+	] );
+
+	const ContactSupportLink = () => {
+		const onClick = () => {
+			recordTracksEvent( 'calypso_cancellation_help_button_click' );
+			getHelp();
+		};
+
+		return (
+			<strong className="cancel-purchase__support-information">
+				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
+					? i18n.translate(
+							'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+							{
+								components: {
+									contactLink: (
+										<Button
+											borderless="true"
+											onClick={ onClick }
+											className="cancel-purchase__support-information support-link"
+											disabled={ isOpeningZendeskWidget }
+										/>
+									),
+								},
+							}
+					  )
+					: i18n.translate(
+							'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+							{
+								components: {
+									contactLink: (
+										<Button
+											borderless="true"
+											onClick={ onClick }
+											className="cancel-purchase__support-information support-link"
+											disabled={ isOpeningZendeskWidget }
+										/>
+									),
+								},
+							}
+					  ) }
+			</strong>
+		);
 	};
 
 	const onConfirmCancelBundledDomainChange = ( event ) => {
@@ -45,13 +145,24 @@ const CancelPurchaseRefundInformation = ( {
 
 	if ( isRefundable( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
-			text = i18n.translate(
-				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-					"you'll receive a refund and it will be removed from your site immediately.",
-				{
-					args: { refundPeriodInDays },
-				}
-			);
+			// Domain bought with domain credits, so there's no refund
+			if ( ! hasAmountAvailableToRefund( purchase ) ) {
+				text = i18n.translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						'it will be removed from your site immediately.',
+					{
+						args: { refundPeriodInDays },
+					}
+				);
+			} else {
+				text = i18n.translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						"you'll receive a refund and it will be removed from your site immediately.",
+					{
+						args: { refundPeriodInDays },
+					}
+				);
+			}
 		}
 
 		if ( isSubscription( purchase ) ) {
@@ -275,10 +386,20 @@ const CancelPurchaseRefundInformation = ( {
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {
-		text = i18n.translate(
-			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
-				'at which point it will be automatically removed from your site.'
-		);
+		text = [
+			i18n.translate(
+				'When you cancel your domain, it will remain registered and active until the registration expires, ' +
+					'at which point it will be automatically removed from your site.'
+			),
+		];
+
+		if ( isGravatarDomain ) {
+			text.push(
+				i18n.translate(
+					'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
+				)
+			);
+		}
 	} else if (
 		isSubscription( purchase ) &&
 		includedDomainPurchase &&
@@ -336,27 +457,7 @@ const CancelPurchaseRefundInformation = ( {
 				<p className="cancel-purchase__refund-information">{ text }</p>
 			) }
 
-			{ showSupportLink && (
-				<strong className="cancel-purchase__support-information">
-					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-						? i18n.translate(
-								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  )
-						: i18n.translate(
-								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  ) }
-				</strong>
-			) }
+			{ showSupportLink && <ContactSupportLink /> }
 		</div>
 	);
 };
@@ -370,6 +471,13 @@ CancelPurchaseRefundInformation.propTypes = {
 	onCancelConfirmationStateChange: PropTypes.func,
 };
 
-export default connect( ( state, props ) => ( {
-	includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
-} ) )( CancelPurchaseRefundInformation );
+export default connect( ( state, props ) => {
+	const domains = getDomainsBySiteId( state, props.purchase.siteId );
+	const selectedDomainName = getName( props.purchase );
+	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+
+	return {
+		includedDomainPurchase: getIncludedDomainPurchase( state, props.purchase ),
+		isGravatarDomain: selectedDomain?.isGravatarDomain,
+	};
+} )( CancelPurchaseRefundInformation );

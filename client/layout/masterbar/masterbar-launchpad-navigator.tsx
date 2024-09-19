@@ -1,5 +1,5 @@
 import { FloatingNavigator, LaunchpadNavigatorIcon } from '@automattic/launchpad-navigator';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ const MasterbarLaunchpadNavigator = () => {
 		<>
 			<Item
 				onClick={ toggleLaunchpadIsVisible }
-				className={ classnames( 'masterbar__item-launchpad-navigator', {
+				className={ clsx( 'masterbar__item-launchpad-navigator', {
 					'is-active': launchpadIsVisible,
 				} ) }
 				tooltip={ translate( 'My tasks' ) }

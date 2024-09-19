@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -30,10 +30,7 @@ class JetpackCredentials extends Component {
 
 	render() {
 		const { credentials, rewindState, siteId, translate, siteSlug } = this.props;
-		const classes = classNames(
-			'jetpack-credentials',
-			this.isSectionHighlighted() && 'is-highlighted'
-		);
+		const classes = clsx( 'jetpack-credentials', this.isSectionHighlighted() && 'is-highlighted' );
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
 		const hasCredentials = ! isEmpty( credentials );
 

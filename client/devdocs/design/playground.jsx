@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import { SelectDropdown } from '@automattic/components';
+import clsx from 'clsx';
 import { keys } from 'lodash';
 import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import * as componentExamples from 'calypso/devdocs/design/component-examples';
 import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
 import { getExampleCodeFromComponent } from './playground-utils';
@@ -103,7 +103,7 @@ export default class DesignAssets extends Component {
 	}
 
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = clsx( 'devdocs', 'devdocs__components', {
 			'is-single': true,
 			'is-list': ! this.props.component,
 		} );

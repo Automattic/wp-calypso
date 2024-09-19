@@ -1,5 +1,5 @@
 import { Card, Popover } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { forwardRef, useMemo, useRef, useState } from 'react';
 import StyleVariationBadges from '../style-variation-badges';
@@ -29,6 +29,28 @@ interface ThemeCardProps {
 	onStyleVariationMoreClick?: () => void;
 }
 
+const ActiveBadge = () => {
+	return (
+		<div className="theme-card__info-badge-container">
+			<div className="theme-card__info-badge theme-card__info-badge-active">
+				<svg fill="none" height="14" width="14" viewBox="0 0 14 14">
+					<clipPath id="a">
+						<path d="m0 .5h14v14h-14z" />
+					</clipPath>
+					<g>
+						<path d="m11.6992 3.1001-6.29998 8.5-3.3-2.5-.9 1.2 4.5 3.4 7.19998-9.7z" fill="#fff" />
+					</g>
+				</svg>
+				<span>
+					{ translate( 'Active', {
+						context: 'singular noun, the currently active theme',
+					} ) }
+				</span>
+			</div>
+		</div>
+	);
+};
+
 const ThemeCard = forwardRef(
 	(
 		{
@@ -54,22 +76,22 @@ const ThemeCard = forwardRef(
 		}: ThemeCardProps,
 		forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => {
-		const e2eName = useMemo( () => name.toLowerCase().replace( /\s+/g, '-' ), [ name ] );
+		const e2eName = useMemo( () => name?.toLowerCase?.().replace( /\s+/g, '-' ), [ name ] );
 		const imageRef = useRef< HTMLAnchorElement >( null );
 		const [ isShowTooltip, setIsShowTooltip ] = useState( false );
 
 		const isActionable = imageClickUrl || onImageClick;
-		const themeClasses = classnames( 'theme-card', {
+		const themeClasses = clsx( 'theme-card', {
 			'theme-card--is-active': isActive,
 			'theme-card--is-actionable': isActionable,
 		} );
-		const themeInfoClasses = classnames( 'theme-card__info', {
+		const themeInfoClasses = clsx( 'theme-card__info', {
 			'theme-card__info--has-style-variations': styleVariations.length > 0,
 		} );
 
 		return (
 			<Card
-				className={ classnames( themeClasses, className ) }
+				className={ clsx( themeClasses, className ) }
 				onClick={ onClick }
 				data-e2e-theme={ e2eName }
 			>
@@ -123,14 +145,7 @@ const ThemeCard = forwardRef(
 						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>
-						{ isActive && (
-							<span className="theme-card__info-badge theme-card__info-badge-active">
-								{ translate( 'Active', {
-									context: 'singular noun, the currently active theme',
-								} ) }
-							</span>
-						) }
-						{ ! isActive && styleVariations.length > 0 && (
+						{ ! optionsMenu && styleVariations.length > 0 && (
 							<div className="theme-card__info-style-variations">
 								<StyleVariationBadges
 									variations={ styleVariations }
@@ -142,6 +157,7 @@ const ThemeCard = forwardRef(
 						) }
 						{ ! isActive && <>{ badge }</> }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
+						{ isActive && <ActiveBadge /> }
 					</div>
 				</div>
 			</Card>

@@ -1,10 +1,10 @@
+import { SelectDropdown } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import ReactDom from 'react-dom';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
@@ -21,10 +21,13 @@ class NavTabs extends Component {
 		selectedCount: PropTypes.number,
 		label: PropTypes.string,
 		hasSiblingControls: PropTypes.bool,
+		hasHorizontalScroll: PropTypes.bool,
+		enforceTabsView: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		hasSiblingControls: false,
+		enforceTabsView: false,
 	};
 
 	state = {
@@ -67,8 +70,10 @@ class NavTabs extends Component {
 			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
-		const tabsClassName = classNames( 'section-nav-tabs', {
-			'is-dropdown': this.state.isDropdown,
+		const isDropdownEnabled = ! this.props.enforceTabsView && this.state.isDropdown;
+
+		const tabsClassName = clsx( 'section-nav-tabs', {
+			'is-dropdown': isDropdownEnabled,
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 
@@ -76,14 +81,22 @@ class NavTabs extends Component {
 
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<div className="section-nav-group" ref={ this.navGroupRef }>
+			<div
+				className={ clsx( {
+					'section-nav-group': true,
+					'has-horizontal-scroll':
+						this.props.hasHorizontalScroll && innerWidth > MOBILE_PANEL_THRESHOLD,
+					'enforce-tabs-view': this.props.enforceTabsView,
+				} ) }
+				ref={ this.navGroupRef }
+			>
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 					<ul className="section-nav-tabs__list" role="menu" onKeyDown={ this.keyHandler }>
 						{ tabs }
 					</ul>
 
-					{ this.state.isDropdown && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
+					{ isDropdownEnabled && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
 				</div>
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -133,10 +146,13 @@ class NavTabs extends Component {
 			}
 
 			const navGroupWidth = this.navGroupRef.current.offsetWidth;
-
 			this.getTabWidths();
 
-			if ( navGroupWidth <= this.tabsWidth && ! this.state.isDropdown ) {
+			if (
+				navGroupWidth <= this.tabsWidth &&
+				! this.state.isDropdown &&
+				! this.props.hasHorizontalScroll
+			) {
 				this.setState( {
 					isDropdown: true,
 				} );

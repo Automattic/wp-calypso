@@ -25,27 +25,8 @@
 }
 
 .wooexpress-plans__grid.is-2023-pricing-grid {
-	.plans-grid__header-title {
-		font-family: $sans;
-	}
-
-	.plans-grid__content .plans-grid__table-item .plan-price,
-	.plans-grid__plan-comparison-grid-container .plan-comparison-grid .plan-price {
-		font-family: $sans;
-	}
-
 	.plan-price .plan-price__currency-symbol {
 		font-size: $woo-font-title-medium;
-	}
-
-	.plans-grid__plan-comparison-grid-container .plan-comparison-grid .wp-brand-font {
-		display: none;
-	}
-
-	.plans-grid__table.has-2-cols {
-		margin-left: auto;
-		margin-right: auto;
-		max-width: 800px;
 	}
 }
 
@@ -56,7 +37,7 @@
 	max-width: calc(800px - 3em);
 	padding: 2em 1.25em;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		.is-ecommerce-trial-plan & {
 			margin-left: 1.25em;
 			margin-right: 1.25em;
@@ -85,7 +66,7 @@
 			margin-left: 2em;
 			text-align: right;
 
-			@media ( max-width: $break-small ) {
+			@media (max-width: $break-small) {
 				flex: 1 100%;
 				margin-top: 2em;
 				margin-left: 0;
@@ -102,7 +83,7 @@
 					color: #044b7a;
 				}
 
-				@media ( max-width: $break-small ) {
+				@media (max-width: $break-small) {
 					width: 100%;
 				}
 			}

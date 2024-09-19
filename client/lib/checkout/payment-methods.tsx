@@ -1,5 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
+import creditCardCartesBancairesImage from 'calypso/assets/images/upgrades/cc-cb.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
 import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
@@ -8,18 +9,22 @@ import creditCardPlaceholderImage from 'calypso/assets/images/upgrades/cc-placeh
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
+import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
-export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
+export const PARTNER_RAZORPAY = 'razorpay';
+export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS, PARTNER_RAZORPAY ];
+export const UPI_PARTNERS = [ PARTNER_RAZORPAY ];
 
 /**
- * A saved payment method (card or PayPal agreement).
+ * A saved payment method (card, PayPal agreement, or Razorpay emandate).
  *
  * Used by the `/me/payment-methods` endpoint after version 1.1.
  */
 export type StoredPaymentMethod =
 	| StoredPaymentMethodBase
 	| StoredPaymentMethodPayPal
+	| StoredPaymentMethodRazorpay
 	| StoredPaymentMethodCard
 	| StoredPaymentMethodEbanx
 	| StoredPaymentMethodStripeSource;
@@ -51,11 +56,16 @@ export interface StoredPaymentMethodPayPal extends StoredPaymentMethodBase {
 	payment_partner: 'paypal_express';
 }
 
+export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
+	payment_partner: 'razorpay';
+}
+
 export interface StoredPaymentMethodCard extends StoredPaymentMethodBase {
 	card_type: string;
 	card_iin: string;
 	card_last_4: string;
 	card_zip: string;
+	display_brand: string | null;
 }
 
 export interface StoredPaymentMethodEbanx extends StoredPaymentMethodBase {
@@ -75,6 +85,11 @@ export interface StoredPaymentMethodStripeSource extends StoredPaymentMethodBase
 	bic: string;
 }
 
+export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
+	payment_partner: 'razorpay';
+	razorpay_vpa: string;
+}
+
 export interface StoredPaymentMethodTaxLocation {
 	country_code?: string;
 	postal_code?: string;
@@ -91,8 +106,11 @@ export const isPaymentAgreement = (
 ): method is StoredPaymentMethodPayPal =>
 	PAYMENT_AGREEMENTS_PARTNERS.includes( method.payment_partner );
 
+export const isUpiMethod = ( method: StoredPaymentMethod ): method is StoredPaymentMethodRazorpay =>
+	UPI_PARTNERS.includes( method.payment_partner );
+
 export const isCreditCard = ( method: StoredPaymentMethod ): method is StoredPaymentMethodCard =>
-	! isPaymentAgreement( method );
+	! isPaymentAgreement( method ) && ! isUpiMethod( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;
@@ -100,6 +118,7 @@ interface ImagePathsMap {
 
 const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	amex: creditCardAmexImage,
+	cartes_bancaires: creditCardCartesBancairesImage,
 	diners: creditCardDinersImage,
 	discover: creditCardDiscoverImage,
 	jcb: creditCardJCBImage,
@@ -108,6 +127,7 @@ const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	visa: creditCardVisaImage,
 	paypal_express: payPalImage,
 	paypal: payPalImage,
+	razorpay: razorpayImage,
 };
 
 const CREDIT_CARD_DEFAULT_PATH = creditCardPlaceholderImage;
@@ -131,11 +151,18 @@ export const PaymentMethodSummary = ( {
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
 		return <>{ email || '' }</>;
 	}
+	if ( type === PARTNER_RAZORPAY ) {
+		return <>{ translate( 'Unified Payments Interface (UPI)' ) }</>;
+	}
 	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {
 		case 'american express':
 		case 'amex':
 			displayType = translate( 'American Express' );
+			break;
+
+		case 'cartes_bancaires':
+			displayType = translate( 'Cartes Bancaires' );
 			break;
 
 		case 'diners':

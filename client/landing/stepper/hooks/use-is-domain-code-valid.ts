@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -36,6 +36,7 @@ type DomainLockResponse = {
 	currency_code?: string;
 	tld?: string;
 	is_price_limit_exceeded?: boolean;
+	cannot_transfer_due_to_unsupported_premium_tld?: boolean;
 };
 
 type DomainCodePair = { domain: string; auth: string };
@@ -72,6 +73,8 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 						unlocked: false,
 						transferrability: availability.transferrability,
 						is_price_limit_exceeded: availability?.is_price_limit_exceeded,
+						cannot_transfer_due_to_unsupported_premium_tld:
+							availability?.cannot_transfer_due_to_unsupported_premium_tld,
 					};
 				}
 
@@ -91,6 +94,8 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					raw_price: availability.raw_price,
 					sale_cost: availability.sale_cost,
 					currency_code: availability.currency_code,
+					cannot_transfer_due_to_unsupported_premium_tld:
+						availability?.cannot_transfer_due_to_unsupported_premium_tld,
 				};
 			} catch ( error ) {
 				return {
@@ -99,8 +104,8 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 			}
 		},
 		staleTime: 5 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
-		keepPreviousData: true,
+		gcTime: 5 * 60 * 1000,
+		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
 		...queryOptions,

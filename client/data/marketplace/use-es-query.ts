@@ -103,7 +103,11 @@ const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 export const useESPlugin = (
 	slug: string,
 	fields?: Array< string >,
-	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions< any > = {}
+	{
+		enabled = true,
+		staleTime = ONE_DAY_IN_MS,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -115,15 +119,21 @@ export const useESPlugin = (
 	} );
 };
 
+type PageParam = string | number;
+
 export const getESPluginsInfiniteQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
-): { queryKey: QueryKey; queryFn: QueryFunction< ESResponse, QueryKey > } => {
+): {
+	queryKey: QueryKey;
+	queryFn: QueryFunction< ESResponse, QueryKey, PageParam >;
+	initialPageParam: PageParam;
+} => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 	const queryKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
 	const groupId = options.category !== 'popular' ? 'marketplace' : 'wporg';
-	const queryFn = ( { pageParam = 1 } ) =>
+	const queryFn: QueryFunction< ESResponse, QueryKey, PageParam > = ( { pageParam } ) =>
 		search( {
 			query: searchTerm,
 			author,
@@ -133,17 +143,27 @@ export const getESPluginsInfiniteQueryParams = (
 			pageSize,
 			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
 		} );
-	return { queryKey, queryFn };
+	return { queryKey, queryFn, initialPageParam: 1 };
 };
 
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions< any > = {}
-): UseQueryResult => {
+	{
+		enabled = true,
+		staleTime = 10000,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
+) => {
 	const locale = useSelector( getCurrentUserLocale );
 
+	const { queryKey, queryFn, initialPageParam } = getESPluginsInfiniteQueryParams(
+		options,
+		locale
+	);
+
 	return useInfiniteQuery( {
-		...getESPluginsInfiniteQueryParams( options, locale ),
+		queryKey,
+		queryFn,
 		select: ( data: InfiniteData< ESResponse > ) => {
 			return {
 				...data,
@@ -155,8 +175,9 @@ export const useESPluginsInfinite = (
 				},
 			};
 		},
+		initialPageParam,
 		getNextPageParam: ( lastPage ) => {
-			return lastPage?.data?.page_handle;
+			return lastPage?.data?.page_handle || undefined;
 		},
 		enabled,
 		staleTime,

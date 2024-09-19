@@ -1,15 +1,15 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { Card, FormLabel } from '@automattic/components';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { map, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -123,12 +123,30 @@ class ConfirmCancelDomain extends Component {
 			}
 
 			if ( error ) {
-				this.props.errorNotice(
-					error.message ||
+				if (
+					getLocaleSlug() === 'en' ||
+					getLocaleSlug() === 'en-gb' ||
+					i18n.hasTranslation(
+						'Unable to cancel your purchase. Please try again later or {{a}}contact support{{/a}}.'
+					)
+				) {
+					this.props.errorNotice(
+						translate(
+							'Unable to cancel your purchase. Please try again later or {{a}}contact support{{/a}}.',
+							{
+								components: {
+									a: <ActionPanelLink href="/help/contact" />,
+								},
+							}
+						)
+					);
+				} else {
+					this.props.errorNotice(
 						translate(
 							'Unable to cancel your purchase. Please try again later or contact support.'
 						)
-				);
+					);
+				}
 
 				return;
 			}
@@ -217,7 +235,7 @@ class ConfirmCancelDomain extends Component {
 
 		if ( this.state.submitting ) {
 			return (
-				<FormButton isPrimary={ true } disabled={ true }>
+				<FormButton isPrimary disabled>
 					{ this.props.translate( 'Cancelling Domain…' ) }
 				</FormButton>
 			);
@@ -228,14 +246,14 @@ class ConfirmCancelDomain extends Component {
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
-				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
+				<FormButton isPrimary onClick={ this.onSubmit } disabled={ ! confirmed }>
 					{ this.props.translate( 'Cancel Anyway' ) }
 				</FormButton>
 			);
 		}
 
 		return (
-			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed }>
+			<FormButton isPrimary onClick={ this.onSubmit } disabled={ ! confirmed }>
 				{ this.props.translate( 'Cancel Domain' ) }
 			</FormButton>
 		);

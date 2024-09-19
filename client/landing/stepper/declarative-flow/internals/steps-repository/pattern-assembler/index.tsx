@@ -35,17 +35,17 @@ import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record
 import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
+	useAssemblerPatterns,
 	useCategoryPatternsMap,
 	useCurrentScreen,
 	useCustomStyles,
-	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
+	useIsNewSite,
 	usePatternCategories,
 	usePatternPages,
 	useRecipe,
 	useSyncNavigatorScreen,
-	useIsNewSite,
 } from './hooks';
 import useAIAssembler from './hooks/use-ai-assembler';
 import withNotices, { NoticesProps } from './notices/notices';
@@ -80,6 +80,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -103,10 +104,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
+
 	// Fetching curated patterns and categories from PTK api
-	const dotcomPatterns = useDotcomPatterns( locale );
+	const assemblerPatterns = useAssemblerPatterns( locale );
+
 	const { allCategoryPatternsMap, layoutCategoryPatternsMap, pageCategoryPatternsMap } =
-		useCategoryPatternsMap( dotcomPatterns );
+		useCategoryPatternsMap( assemblerPatterns );
+
 	const {
 		header,
 		footer,
@@ -119,7 +123,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		setColorVariation,
 		setFontVariation,
 		resetRecipe,
-	} = useRecipe( site?.ID, dotcomPatterns, categories );
+	} = useRecipe( site?.ID, assemblerPatterns, categories );
 
 	const { shouldUnlockGlobalStyles, numOfSelectedGlobalStyles } = useCustomStyles( {
 		siteID: site?.ID,
@@ -130,7 +134,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const { pages, pageSlugs, setPageSlugs, pagesToShow } = usePatternPages(
 		pageCategoryPatternsMap,
 		categories,
-		dotcomPatterns
+		assemblerPatterns
 	);
 
 	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
@@ -197,17 +201,20 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		patternType,
 		patternId,
 		patternName,
+		patternTitle,
 		patternCategory,
 	}: {
 		patternType: string;
 		patternId: number;
 		patternName: string;
+		patternTitle: string;
 		patternCategory: string | undefined;
 	} ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_CLICK, {
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
+			pattern_title: patternTitle,
 			pattern_category: patternCategory,
 		} );
 	};
@@ -228,10 +235,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
 
-		patterns.forEach( ( { ID, name, category } ) => {
+		patterns.forEach( ( { ID, name, title, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
+				pattern_title: title,
 				pattern_category: category?.name,
 			} );
 		} );
@@ -241,6 +249,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
 				pattern_id: pattern.ID,
 				pattern_name: pattern.name,
+				pattern_title: pattern.title,
 				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
@@ -344,6 +353,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				patternType: type,
 				patternId: selectedPattern.ID,
 				patternName: selectedPattern.name,
+				patternTitle: selectedPattern.title,
 				patternCategory: selectedPattern.category?.name,
 			} );
 
@@ -361,6 +371,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		}
 		if ( 'footer' === type ) {
 			updateFooter( selectedPattern );
+		}
+	};
+
+	const onPreselectPattern = ( type: PatternType, selectedPattern: Pattern ) => {
+		injectCategoryToPattern( selectedPattern, categories, type );
+
+		if ( 'header' === type ) {
+			setHeader( selectedPattern );
+		}
+		if ( 'footer' === type ) {
+			setFooter( selectedPattern );
 		}
 	};
 
@@ -500,11 +521,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			return false;
 		}
 
-		if ( currentScreen.name === 'confirmation' ) {
-			return false;
-		}
-
-		return true;
+		return ! [ 'confirmation', 'upsell' ].includes( currentScreen.name );
 	};
 
 	const customActionButtons = () => {
@@ -648,6 +665,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
+						onPreselectPattern={ onPreselectPattern }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
 						sections={ sections }
@@ -682,6 +700,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						isNewSite={ isNewSite }
 						siteId={ site?.ID }
 						selectedDesign={ selectedDesign }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
 						onConfirm={ onConfirm }
 					/>
 				</NavigatorScreen>
@@ -708,7 +728,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_COLORS }>
+				<NavigatorScreen
+					path={ NAVIGATOR_PATHS.STYLES_COLORS }
+					style={ { animationDuration: '0s' } }
+				>
 					<ScreenColorPalettes
 						siteId={ site?.ID }
 						stylesheet={ stylesheet }
@@ -716,7 +739,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						onSelect={ onScreenColorsSelect }
 					/>
 				</NavigatorScreen>
-				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_FONTS }>
+				<NavigatorScreen
+					path={ NAVIGATOR_PATHS.STYLES_FONTS }
+					style={ { animationDuration: '0s' } }
+				>
 					<ScreenFontPairings
 						siteId={ site?.ID }
 						stylesheet={ stylesheet }
@@ -763,9 +789,9 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
-			isFullLayout={ true }
+			isFullLayout
 			hideBack={ shouldHideBack() }
-			hideSkip={ true }
+			hideSkip
 			stepContent={
 				<PatternAssemblerContainer
 					siteId={ site?.ID }

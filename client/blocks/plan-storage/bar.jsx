@@ -1,6 +1,6 @@
 import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
 import { ProgressBar } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import filesize from 'filesize';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -24,29 +24,25 @@ export class PlanStorageBar extends Component {
 			return null;
 		}
 
-		if ( ! mediaStorage || mediaStorage.max_storage_bytes === -1 ) {
+		if ( ! mediaStorage || mediaStorage.maxStorageBytes === -1 ) {
 			return null;
 		}
 
-		const percentInteger =
-			( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10;
+		let percent = ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100;
 
-		// Format to 2 decimal places when under 1%.
-		const percent =
-			percentInteger < 1
-				? Math.min( parseFloat( percentInteger.toFixed( 2 ) ), 100 )
-				: Math.min( Math.round( percentInteger ), 100 );
+		// Round percentage to 2dp for values under 1%, and whole numbers otherwise.
+		percent = percent < 1 ? percent.toFixed( 2 ) : Math.round( percent );
 
-		const classes = classNames( className, 'plan-storage__bar', {
+		const classes = clsx( className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,
 			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT,
 		} );
 
-		const max = filesize( mediaStorage.max_storage_bytes, { round: 0 } );
+		const max = filesize( mediaStorage.maxStorageBytes, { round: 0 } );
 
 		return (
 			<div className={ classes }>
-				<ProgressBar value={ percent } total={ 100 } compact={ true } />
+				<ProgressBar value={ percent } total={ 100 } compact />
 
 				<span className="plan-storage__storage-label">
 					{ translate( '%(percent)f%% of %(max)s used', {

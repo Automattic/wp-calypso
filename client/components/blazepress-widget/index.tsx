@@ -3,7 +3,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,6 +14,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 	cleanupDSP,
+	useDspOriginProps,
 } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -27,6 +28,7 @@ export type BlazePressPromotionProps = {
 	isVisible: boolean;
 	siteId: string | number;
 	postId: string | number;
+	campaignId?: string;
 	keyValue: string;
 	source?: string;
 };
@@ -52,10 +54,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const previousRoute = useSelector( getPreviousRoute );
 	const selectedSite = useSelector( getSelectedSite );
 	const jetpackVersion = selectedSite?.options?.jetpack_version;
+	const blazeAdsVersion = selectedSite?.options?.blaze_ads_version;
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSite?.ID ) );
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
 	const localeSlug = useLocale();
+	const dspOriginProps = useDspOriginProps();
 	const dispatch = useDispatch();
 
 	// Scroll to top on initial load regardless of previous page position
@@ -118,7 +122,10 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						handleShowTopBar,
 						localeSlug,
 						jetpackVersion,
-						dispatch
+						blazeAdsVersion,
+						dispatch,
+						dspOriginProps,
+						props.campaignId
 					);
 				} catch ( error ) {
 					setError( true );
@@ -153,12 +160,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		<>
 			{ isVisible && (
 				<BlankCanvas
-					className={ classNames( 'blazepress-widget', 'blazepress-i2', {
+					className={ clsx( 'blazepress-widget', 'blazepress-i2', {
 						'hidden-header': hiddenHeader,
 					} ) }
 				>
 					<BlankCanvas.Header
-						className={ classNames( 'blazepress-widget__header-bar', {
+						className={ clsx( 'blazepress-widget__header-bar', {
 							'no-back-button': ! showCancelButton,
 						} ) }
 						onBackClick={ () => {
@@ -174,9 +181,9 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
 					</BlankCanvas.Header>
 
-					<div className={ classNames( 'blazepress-widget__content', { loading: isLoading } ) }>
+					<div className={ clsx( 'blazepress-widget__content', { loading: isLoading } ) }>
 						<Dialog
-							showCloseIcon={ true }
+							showCloseIcon
 							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }

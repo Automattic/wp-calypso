@@ -1,12 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { TextControl, Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect } from 'react';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -75,7 +74,7 @@ const SetupForm = ( {
 		}
 	}, [ siteTitle, invalidSiteTitle, setInvalidSiteTitle ] );
 
-	const formClasses = classnames( 'setup-form__form', className );
+	const formClasses = clsx( 'setup-form__form', className );
 	return (
 		<form className={ formClasses } onSubmit={ handleSubmit }>
 			<SiteIconWithPicker

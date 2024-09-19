@@ -2,7 +2,7 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Icon, close } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -64,7 +64,7 @@ class StatsActionFollow extends Component {
 	render() {
 		const { siteDomain } = this.props;
 		const { isFollowing } = this.state;
-		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
+		const wrapperClass = clsx( 'module-content-list-item-action-wrapper', {
 			follow: ! isFollowing,
 			following: isFollowing,
 		} );
@@ -76,7 +76,7 @@ class StatsActionFollow extends Component {
 					context: 'Stats: Subscribe action / Subscription status',
 			  } );
 		const gridiconType = isFollowing ? 'reader-following' : 'reader-follow';
-		const wrapperClassSet = classNames( wrapperClass );
+		const wrapperClassSet = clsx( wrapperClass );
 
 		return (
 			<li className="module-content-list-item-action">

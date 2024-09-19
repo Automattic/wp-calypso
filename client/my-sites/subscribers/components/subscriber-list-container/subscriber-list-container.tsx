@@ -39,22 +39,27 @@ const SubscriberListContainer = ( {
 		isLoading,
 		subscribers,
 		pages,
+		isOwnerSubscribed,
 	} = useSubscribersPage();
 	useRecordSearch();
 
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
+	const shouldShowLaunchpad =
+		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
+	const shouldShowSubscriberList = ! isLoading && Boolean( grandTotal ) && ! shouldShowLaunchpad;
+	const shouldShowSubscriberHeader = Boolean( grandTotal ) && ! shouldShowLaunchpad;
 
 	useEffect( () => {
 		if ( ! isLoading && subscribers.length === 0 && page > 1 ) {
 			pageChangeCallback( pages ?? 0 );
 		}
-	}, [ isLoading, subscribers, page, pageChangeCallback ] );
+	}, [ isLoading, subscribers, page, pageChangeCallback, pages ] );
 
 	return (
 		<section className="subscriber-list-container">
-			{ ! isLoading && ( Boolean( grandTotal ) || searchTerm ) && (
+			{ shouldShowSubscriberHeader && (
 				<>
 					<div className="subscriber-list-container__header">
 						<span className="subscriber-list-container__title">
@@ -67,23 +72,23 @@ const SubscriberListContainer = ( {
 								isLoading ? 'loading-placeholder' : ''
 							}` }
 						>
-							{ formatNumber( total, getLocaleSlug() || undefined ) }
+							{ formatNumber( total, getLocaleSlug() || undefined, { notation: 'standard' } ) }
 						</span>
 					</div>
 
-					{ ( total > 3 || searchTerm ) && <SubscriberListActionsBar /> }
+					<SubscriberListActionsBar />
 				</>
 			) }
 			{ isLoading &&
 				new Array( 10 ).fill( null ).map( ( _, index ) => (
-					<div key={ index } data-ignored={ _ }>
+					<div className="subscriber-list__loading" key={ index } data-ignored={ _ }>
 						<div className="loading-placeholder big"></div>
 						<div className="loading-placeholder small"></div>
 						<div className="loading-placeholder small"></div>
 						<div className="loading-placeholder small hidden"></div>
 					</div>
 				) ) }
-			{ ! isLoading && Boolean( grandTotal ) && (
+			{ shouldShowSubscriberList && (
 				<>
 					{ Boolean( total ) && (
 						<SubscriberList
@@ -105,7 +110,7 @@ const SubscriberListContainer = ( {
 					<GrowYourAudience />
 				</>
 			) }
-			{ ! isLoading && ! grandTotal && ! searchTerm && <EmptyComponent /> }
+			{ shouldShowLaunchpad && <EmptyComponent /> }
 		</section>
 	);
 };

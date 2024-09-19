@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -50,14 +50,14 @@ class UploadDropZone extends Component {
 		const dropText = translate( 'Drop files or click here to install' );
 		const uploadInstructionsText = translate( 'Only single .zip files are accepted.' );
 
-		const className = classNames( 'upload-drop-zone', {
+		const className = clsx( 'upload-drop-zone', {
 			'is-disabled': disabled,
 		} );
 
 		return (
 			<div className={ className }>
 				<div className="upload-drop-zone__dropzone">
-					<DropZone onFilesDrop={ this.onFileSelect } />
+					<DropZone onFilesDrop={ this.onFileSelect } disabled={ disabled } />
 					<FilePicker accept="application/zip" onPick={ this.onFileSelect }>
 						<Gridicon className="upload-drop-zone__icon" icon="cloud-upload" size={ 48 } />
 						{ dropText }

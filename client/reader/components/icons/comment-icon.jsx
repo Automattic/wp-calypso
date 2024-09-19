@@ -1,7 +1,7 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 export default function ReaderCommentIcon( { iconSize } ) {
-	const className = classnames( 'comment-button__icon', {
+	const className = clsx( 'comment-button__icon', {
 		'needs-offset-x': iconSize % 18 === 0,
 		'reader-comment': true,
 	} );

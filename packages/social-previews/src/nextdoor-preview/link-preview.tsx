@@ -1,3 +1,4 @@
+import { getTitleFromDescription } from '../helpers';
 import { NextdoorPostPreview } from './post-preview';
 import { NextdoorPreviewProps } from './types';
 
@@ -15,6 +16,7 @@ export function NextdoorLinkPreview( props: NextdoorLinkPreviewProps ) {
 			// Override the props that are irrelevant to link preview
 			description=""
 			media={ undefined }
+			title={ props.title || getTitleFromDescription( props.description ) }
 		/>
 	);
 }

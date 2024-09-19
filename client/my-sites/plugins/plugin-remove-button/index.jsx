@@ -4,7 +4,7 @@
 
 import { Button } from '@wordpress/components';
 import { Icon, trash } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -167,7 +167,7 @@ class PluginRemoveButton extends Component {
 					onClick={ handleClick }
 					icon="trash"
 					disabled={ this.props.inProgress }
-					className={ classNames( 'plugin-remove-button__remove-button', this.props.classNames ) }
+					className={ clsx( 'plugin-remove-button__remove-button', this.props.classNames ) }
 				>
 					{ label }
 				</PopoverMenuItem>

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Component } from 'react';
 import type { LegacyRef, HTMLProps } from 'react';
 
@@ -19,7 +19,7 @@ class FormSelect extends Component<
 
 	render() {
 		const { inputRef, className, isError, ...props } = this.props;
-		const classes = classNames( className, 'form-select', {
+		const classes = clsx( className, 'form-select', {
 			'is-error': isError,
 		} );
 

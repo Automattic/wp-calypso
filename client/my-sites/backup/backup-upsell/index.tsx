@@ -1,4 +1,9 @@
-import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
+import {
+	FEATURE_TYPE_JETPACK_BACKUP,
+	PLAN_BUSINESS,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	WPCOM_FEATURES_ATOMIC,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
@@ -10,14 +15,16 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Upsell from 'calypso/components/jetpack/upsell';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
+import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
@@ -67,37 +74,53 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 
 const BackupsUpsellBody: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
-		// For the Backup upsell in Jetpack Cloud, we want to redirect back here to the Backup page after checkout.
-		redirect_to: window.location.href,
-	} );
 	const dispatch = useDispatch();
+	const isSimple = useSelector( isSimpleSite );
 
-	const onClick = useCallback(
-		() => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ),
-		[ dispatch ]
-	);
+	const onClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) );
+		recordLogRocketEvent( 'calypso_jetpack_backup_upsell_click' );
+	}, [ dispatch ] );
 
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
-			<QueryProductsList type="jetpack" />
+			{ isSimple && <QueryProductsList /> }
+			{ ! isSimple && <QueryProductsList type="jetpack" /> }
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			<UpsellProductCard
-				productSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
-				siteId={ siteId }
-				currencyCode={ currencyCode }
-				getButtonURL={ createCheckoutURL }
-				onCtaButtonClick={ onClick }
-			/>
+			{ isSimple && (
+				<UpsellProductWpcomPlanCard
+					WPcomPlanSlug={ PLAN_BUSINESS }
+					nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+					siteId={ siteId }
+					onCtaButtonClick={ onClick }
+				/>
+			) }
+			{ ! isSimple && (
+				<UpsellProductCard
+					featureType={ FEATURE_TYPE_JETPACK_BACKUP }
+					nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+					siteId={ siteId }
+					onCtaButtonClick={ onClick }
+				/>
+			) }
 		</>
 	);
 };
 
 const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => {
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const canTransfer = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
+	);
+
+	// We know the site is not AT as it's not Jetpack,
+	// so show the activation for Atomic plans.
+	if ( canTransfer ) {
+		return <WPCOMBusinessAT />;
+	}
+
 	let body;
 	switch ( reason ) {
 		case 'vp_active_on_site':

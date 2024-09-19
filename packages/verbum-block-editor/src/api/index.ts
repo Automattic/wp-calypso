@@ -18,7 +18,15 @@ function createFallbackResponse( url: string ) {
 	};
 }
 
-export function addApiMiddleware( siteId: number ) {
+export type EmbedRequestParams = {
+	path: string;
+	query: string;
+	apiNamespace: string;
+};
+
+export function addApiMiddleware(
+	requestParamsGenerator: ( embedURL: string ) => EmbedRequestParams
+) {
 	apiFetch.setFetchHandler( ( options ) => {
 		const { path } = options;
 
@@ -26,11 +34,10 @@ export function addApiMiddleware( siteId: number ) {
 			const url = new URL( 'https://wordpress.com' + path );
 			const embedUrl = url.searchParams.get( 'url' );
 
-			return wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/proxy`,
-				query: `url=${ embedUrl }`,
-				apiNamespace: 'oembed/1.0',
-			} );
+			if ( embedUrl ) {
+				return wpcomRequest( requestParamsGenerator( embedUrl ) );
+			}
+			return Promise.reject( new Error( 'Invalid embed URL' ) );
 		}
 
 		return defaultFetchHandler( options );

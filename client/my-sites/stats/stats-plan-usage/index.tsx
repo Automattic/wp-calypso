@@ -1,5 +1,5 @@
 import { formattedNumber } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
@@ -20,7 +20,7 @@ interface StatsPlanUsageProps {
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/tier-upgrade-slider&from=${ from }-stats-tier-upgrade-usage-section&productType=commercial`;
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-tier-upgrade-usage-section&productType=commercial`;
 
 	return purchasePath;
 };
@@ -35,7 +35,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	const translate = useTranslate();
 
 	const isOverLimit = limit && usage >= limit;
-	const progressClassNames = classNames( 'plan-usage-progress', {
+	const progressClassNames = clsx( 'plan-usage-progress', {
 		'is-over-limit': isOverLimit,
 	} );
 	const progressWidthInPercentage = limit ? ( usage / limit ) * 100 : 0;
@@ -56,7 +56,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 
 	if ( overLimitMonths && overLimitMonths >= 2 ) {
 		overLimitMonthsText = translate(
-			"{{bold}}You've surpassed your limit for two consecutive months already.{{/bold}} ",
+			"{{bold}}You've surpassed your limit for two consecutive periods already.{{/bold}} ",
 			{
 				components: {
 					bold: <b />,
@@ -66,7 +66,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	}
 
 	const upgradeNote = translate(
-		'Do you want to increase your monthly views limit? {{link}}Upgrade now{{/link}}',
+		'Do you want to increase your views limit? {{link}}Upgrade now{{/link}}',
 		{
 			components: {
 				link: <a href={ upgradeLink } />,
@@ -77,20 +77,21 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	return (
 		<div className="plan-usage">
 			<h3 className="plan-usage-heading">{ translate( 'Your Stats plan usage' ) }</h3>
-			<div className={ progressClassNames }>
+			<div className={ progressClassNames } key="progress">
 				<div
 					className="plan-usage-progress-bar"
 					style={ { width: `${ progressWidthInPercentage }%` } }
+					key="bar"
 				></div>
-				<div>
-					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views this month', {
+				<div key="usage">
+					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
 						args: {
 							numberOfUsage: formattedNumber( usage ),
 							numberOfLimit: formattedNumber( limit ),
 						},
 					} ) }
 				</div>
-				<div>
+				<div key="message">
 					{ translate( 'Restarts in %(numberOfDays)d day', 'Restarts in %(numberOfDays)d days', {
 						count: daysToReset,
 						args: {
@@ -99,7 +100,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					} ) }
 				</div>
 			</div>
-			<div className="plan-usage-note">
+			<div className="plan-usage-note" key="upgrade">
 				<span>
 					{ overLimitMonthsText } { upgradeNote }
 				</span>

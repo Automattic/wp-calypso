@@ -1,5 +1,5 @@
 import colorStudio from '@automattic/color-studio';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import useAriaProps from 'calypso/lib/a11y/use-aria-props';
 
@@ -49,7 +49,7 @@ const LogoPathSize32Monochrome = () => (
 );
 
 const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, aria } ) => {
-	const classes = classNames( 'jetpack-logo', className );
+	const classes = clsx( 'jetpack-logo', className );
 	const ariaProps = useAriaProps( aria );
 
 	if ( full === true ) {

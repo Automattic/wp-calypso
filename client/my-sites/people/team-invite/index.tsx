@@ -33,7 +33,7 @@ function TeamInvite( props: Props ) {
 	const siteId = site.ID;
 	const [ hasPermission, setHasPermission ] = useState( false );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const needsVerification = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const needsVerification = useSelector( isCurrentUserEmailVerified );
 	const isSiteForTeams = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 	const showSSONotice = useSsoNotice( siteId );
 
@@ -84,8 +84,6 @@ function TeamInvite( props: Props ) {
 				if ( ! site || ! isJetpack || needsVerification ) {
 					return (
 						<Card>
-							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
-							{ /* @ts-ignore */ }
 							<EmailVerificationGate>
 								<InviteForm onInviteSuccess={ goBack } />
 							</EmailVerificationGate>

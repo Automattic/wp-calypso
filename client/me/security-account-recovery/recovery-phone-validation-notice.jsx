@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -70,7 +70,7 @@ class RecoveryPhoneValidationNotice extends Component {
 				/>
 
 				<FormButtonsBar className="security-account-recovery__recovery-phone-validation-buttons">
-					<FormButton isPrimary={ true } disabled={ isValidating } onClick={ this.onValidate }>
+					<FormButton isPrimary disabled={ isValidating } onClick={ this.onValidate }>
 						{ validateButtonText }
 					</FormButton>
 				</FormButtonsBar>

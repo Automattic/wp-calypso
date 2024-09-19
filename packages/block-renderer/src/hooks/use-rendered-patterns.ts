@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPattern, RenderedPatterns, SiteInfo } from '../types';
@@ -7,6 +8,7 @@ const CACHE_TIME = isEnabled( 'pattern-assembler/v2' ) ? 0 : 1000 * 60 * 5; // 5
 
 const fetchRenderedPatterns = (
 	siteId: number | string,
+	locale: string,
 	stylesheet: string,
 	category: string,
 	patternIds: string[],
@@ -17,7 +19,7 @@ const fetchRenderedPatterns = (
 		stylesheet,
 		category,
 		pattern_ids: patternIds.join( ',' ),
-		_locale: 'user',
+		_locale: locale,
 	} );
 
 	if ( title ) {
@@ -41,9 +43,12 @@ const useRenderedPatterns = (
 	patternIdsByCategory: Record< string, string[] >,
 	siteInfo: SiteInfo = {}
 ) => {
+	const locale = useLocale();
+
 	const queries = Object.entries( patternIdsByCategory ).map( ( [ category, patternIds ] ) => ( {
-		queryKey: [ 'rendered-patterns', siteId, stylesheet, category, patternIds, siteInfo ],
-		queryFn: () => fetchRenderedPatterns( siteId, stylesheet, category, patternIds, siteInfo ),
+		queryKey: [ 'rendered-patterns', siteId, locale, stylesheet, category, patternIds, siteInfo ],
+		queryFn: () =>
+			fetchRenderedPatterns( siteId, locale, stylesheet, category, patternIds, siteInfo ),
 		staleTime: CACHE_TIME,
 		refetchOnWindowFocus: false,
 	} ) );

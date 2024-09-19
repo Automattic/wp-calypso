@@ -1,26 +1,30 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n from 'i18n-calypso';
 import { keys } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
+import creditCardCartesBancairesImage from 'calypso/assets/images/upgrades/cc-cb.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
 import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
 import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
+import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 
 import './style.scss';
 
 const LOGO_PATHS = {
 	amex: creditCardAmexImage,
+	cartes_bancaires: creditCardCartesBancairesImage,
 	diners: creditCardDinersImage,
 	discover: creditCardDiscoverImage,
 	jcb: creditCardJCBImage,
 	mastercard: creditCardMasterCardImage,
 	unionpay: creditCardUnionPayImage,
 	visa: creditCardVisaImage,
+	upi: upiImage,
 };
 
 const ALT_TEXT = {
@@ -28,10 +32,10 @@ const ALT_TEXT = {
 	amex: 'American Express',
 	'apple-pay': 'Apple Pay',
 	bancontact: 'Bancontact',
+	cartes_bancaires: 'Cartes Bancaires',
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',
-	giropay: 'Giropay',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',
@@ -39,6 +43,7 @@ const ALT_TEXT = {
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: 'Payment logo',
+	upi: 'UPI',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
@@ -61,7 +66,7 @@ class PaymentLogo extends Component {
 	render() {
 		const { altText, className, isCompact, type, disabled } = this.props;
 
-		const classes = classNames(
+		const classes = clsx(
 			'payment-logo',
 			`is-${ type }`,
 			{ 'is-compact': isCompact },

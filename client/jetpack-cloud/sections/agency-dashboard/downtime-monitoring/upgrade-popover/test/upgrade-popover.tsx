@@ -35,7 +35,7 @@ describe( 'UpgradePopover', () => {
 	it( 'renders the component when the popover is visible and not dismissible', () => {
 		render( <UpgradePopover { ...defaultProps } />, { wrapper: Wrapper } );
 
-		expect( screen.getByText( 'Maximise uptime' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Maximize uptime' ) ).toBeInTheDocument();
 		expect( screen.getByText( '1 minute monitoring interval' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'SMS Notifications' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Multiple email recipients' ) ).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe( 'UpgradePopover', () => {
 
 	it( 'renders an empty component when the popover is not visible', () => {
 		render( <UpgradePopover { ...defaultProps } isVisible={ false } />, { wrapper: Wrapper } );
-		expect( screen.queryByText( 'Maximise uptime' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Maximize uptime' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the component when the popover is dismissible and show close button', () => {
@@ -73,7 +73,7 @@ describe( 'UpgradePopover', () => {
 			wrapper: Wrapper,
 		} );
 
-		expect( screen.getByText( 'Maximise uptime' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Maximize uptime' ) ).toBeInTheDocument();
 		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
 		expect( closeButton ).toBeInTheDocument();
 		fireEvent.click( closeButton );

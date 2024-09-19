@@ -8,8 +8,6 @@
 }
 
 .main.jetpack-cloud-layout {
-	padding-inline: 0;
-
 	header.current-section {
 		button {
 			padding: 20px 8px;
@@ -142,6 +140,10 @@
 	}
 }
 
+.jetpack-cloud-layout__header-breadcrumb {
+	margin-block-end: 4px;
+}
+
 .jetpack-cloud-layout__header-title {
 	font-size: 2.25rem;
 	margin-block-end: 8px;
@@ -209,6 +211,83 @@
 	}
 }
 
-.jetpack-cloud-layout__viewport {
-	margin-inline-start: 0;
+
+.jetpack-cloud-layout__stepper {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-block: 16px 32px;
+}
+
+.jetpack-cloud-layout__stepper-step {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	.jetpack-cloud-layout__stepper-step-circle {
+		width: 20px;
+		height: 20px;
+		display: flex;
+		border-radius: 50%;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		font-size: 0.75rem;
+	}
+
+	.jetpack-cloud-layout__stepper-step-name {
+		margin-left: 0.5rem;
+		white-space: nowrap;
+	}
+
+	.jetpack-cloud-layout__viewport {
+		margin-inline-start: 0;
+	}
+
+	&.is-current > .jetpack-cloud-layout__stepper-step-circle {
+		background-color: var(--studio-gray-60);
+		border: 2px solid var(--studio-gray-60);
+		color: var(--studio-white);
+	}
+
+	&.is-next > .jetpack-cloud-layout__stepper-step-circle {
+		border: 2px solid var(--studio-gray-60);
+		color: var(--studio-gray-80);
+	}
+
+	&.is-complete > .jetpack-cloud-layout__stepper-step-circle {
+		background-color: var(--studio-jetpack-green-50);
+		border: 2px solid var(--studio-jetpack-green-50);
+		color: var(--studio-white);
+	}
+
+	&.is-next > .jetpack-cloud-layout__stepper-step-name {
+		display: none;
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+
+	&.is-complete > .jetpack-cloud-layout__stepper-step-name,
+	&.is-complete > .jetpack-cloud-layout__stepper-step-circle,
+	&.is-complete + .jetpack-cloud-layout__stepper-step-separator {
+		display: none;
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+}
+
+.jetpack-cloud-layout__stepper-step-separator {
+	border: 1px solid var(--studio-gray-80);
+	width: 20px;
+	height: 0;
+	margin: 0 0.75rem;
+
+	@include break-medium {
+		width: 40px;
+		margin: 0 1.25rem;
+	}
 }

@@ -6,9 +6,12 @@ export type SubscriberEndpointResponse = {
 	page: number;
 	pages: number;
 	subscribers: Subscriber[];
+	is_owner_subscribed: boolean;
 };
 
 export type SubscriptionPlan = {
+	is_gift: boolean;
+	gift_id: number;
 	paid_subscription_id: string;
 	status: string;
 	title: string;

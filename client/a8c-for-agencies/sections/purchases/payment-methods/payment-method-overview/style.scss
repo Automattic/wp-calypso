@@ -1,0 +1,118 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.payment-method-overview-empty-state {
+	margin-block-start: 60px;
+
+	img {
+		margin: auto;
+		display: block;
+		width: 270px;
+	}
+}
+
+.payment-method-overview-empty-state__top-content {
+	width: 315px;
+	margin: auto;
+
+	.button {
+		margin-block-start: 40px;
+		width: 100%;
+		font-weight: 500;
+	}
+}
+
+.payment-method-overview-empty-state__bottom-content {
+	margin-block-start: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.payment-method-overview-empty-state__card {
+		flex: 1;
+		width: calc(33.33% - 64px); /* 64px is the total margin width */
+		margin: 16px;
+		padding: 24px;
+		box-sizing: border-box;
+		flex-basis: 100%;
+		text-align: center;
+
+		svg {
+			fill: var(--color-neutral-40);
+			margin-block-end: 24px;
+		}
+
+		.payment-method-overview-empty-state__card-title {
+			font-size: rem(18px);
+			font-weight: 600;
+			margin-block-end: 8px;
+		}
+
+		.payment-method-overview-empty-state__card-description {
+			color: var(--color-neutral-60);
+			font-size: rem(14px);
+		}
+
+		@include break-medium {
+			flex-basis: calc(50% - 10px);
+		}
+
+		@include break-large {
+			flex-basis: unset;
+		}
+	}
+}
+
+.payment-method-overview__stored-cards {
+	margin-block-start: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+
+	@include break-small {
+		margin-block-start: 32px;
+	}
+}
+
+.payment-method-overview__pagination {
+	margin: 64px 0;
+
+	.pagination__list-item.is-right,
+	.pagination__list-item.is-left {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	&.payment-method-overview__pagination--has-prev {
+		.pagination__list-item.is-left {
+			opacity: 1;
+			pointer-events: initial;
+		}
+	}
+
+	&.payment-method-overview__pagination--has-next {
+		.pagination__list-item.is-right {
+			opacity: 1;
+			pointer-events: initial;
+		}
+	}
+}
+
+.a4a-payment-methods__header-actions {
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+	}
+}
+
+.a4a-payment-methods__mobile-description {
+	display: none;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+		font-size: 1rem;
+		color: var(--color-neutral-60);
+		font-weight: 400;
+		line-height: 1.2;
+	}
+}
+

@@ -1,10 +1,9 @@
-import { formattedNumber } from '@automattic/components';
+import { formattedNumber, SegmentedControl } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState, FunctionComponent } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { HighLightItem } from '../typings';
@@ -109,7 +108,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	const translate = useTranslate();
 
 	return (
-		<div className={ classNames( 'stats-widget-highlights-card', className ) }>
+		<div className={ clsx( 'stats-widget-highlights-card', className ) }>
 			<label className="stats-widget-highlights-card__title">{ title }</label>
 			{ items.length === 0 && (
 				<p className="stats-widget-highlights-card__empty">
@@ -201,7 +200,7 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: Highlig
 			</div>
 			<div className="stats-widget-highlights__body">
 				<TopColumn
-					className={ classNames( 'stats-widget-highlights__column', {
+					className={ clsx( 'stats-widget-highlights__column', {
 						'stats-widget-highlights__column--show-in-mobile':
 							selectedTab === HIGHLIGHT_TAB_TOP_POSTS_PAGES,
 					} ) }
@@ -215,7 +214,7 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: Highlig
 					isItemLink
 				/>
 				<TopColumn
-					className={ classNames( 'stats-widget-highlights__column', {
+					className={ clsx( 'stats-widget-highlights__column', {
 						'stats-widget-highlights__column--show-in-mobile':
 							selectedTab === HIGHLIGHT_TAB_TOP_REFERRERS,
 					} ) }

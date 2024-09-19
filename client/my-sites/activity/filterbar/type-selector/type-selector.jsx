@@ -1,10 +1,9 @@
-import { Button, Card, Popover, Gridicon } from '@automattic/components';
+import { Button, Card, Popover, FormLabel, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { createRef, Component, Fragment } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import MobileSelectPortal from '../mobile-select-portal';
 
 export class TypeSelector extends Component {
@@ -285,7 +284,7 @@ export class TypeSelector extends Component {
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = this.hasSelectedCheckboxes();
 
-		const buttonClass = classnames( 'filterbar__selection', {
+		const buttonClass = clsx( 'filterbar__selection', {
 			'is-selected': hasSelectedCheckboxes,
 			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );

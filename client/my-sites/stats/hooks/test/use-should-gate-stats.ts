@@ -11,6 +11,7 @@ jest.mock( '@automattic/calypso-config', () => {
 const siteId = 123;
 const gatedStatType = 'statsSearchTerms';
 const notGatedStatType = 'notGatedStatType';
+const jetpackStatsAdvancedStatType = 'stats_devices_module';
 
 describe( 'shouldGateStats in Calypso', () => {
 	beforeAll( () => {
@@ -28,9 +29,41 @@ describe( 'shouldGateStats in Calypso', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'should not gate stats when site features are not loaded', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: null,
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: false, // true for atomic sites
+						options: {
+							is_wpcom_atomic: false,
+						},
+					},
+				},
+			},
+			purchases: {
+				data: [],
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+		expect( isGatedStats ).toBe( false );
+	} );
+
 	it( 'should gate stats when site is atomic without site feature', () => {
 		const mockState = {
 			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [],
+						},
+					},
+				},
 				items: {
 					[ siteId ]: {
 						jetpack: true, // true for atomic sites
@@ -39,6 +72,9 @@ describe( 'shouldGateStats in Calypso', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
@@ -64,6 +100,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -87,6 +126,9 @@ describe( 'shouldGateStats in Calypso', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
@@ -112,6 +154,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, notGatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -135,6 +180,9 @@ describe( 'shouldGateStats in Calypso', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, notGatedStatType );
@@ -160,6 +208,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( true );
@@ -182,13 +233,13 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should not gate stats for jetpack sites with feature', () => {
+	it( 'should not gate basic stats for non-commercial jetpack sites without Stats commercial purchase', () => {
 		const mockState = {
 			sites: {
 				features: {
 					[ siteId ]: {
 						data: {
-							active: [ FEATURE_STATS_PAID ],
+							active: [],
 						},
 					},
 				},
@@ -197,16 +248,57 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 						jetpack: true,
 						options: {
 							is_wpcom_atomic: false,
+							is_commercial: false,
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	it( 'should not gate stats for jetpack sites without feature', () => {
+	it( 'should gate basic stats for commercial jetpack sites having 1k views count without Stats commercial purchase', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [],
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: true,
+						options: {
+							is_wpcom_atomic: false,
+							is_commercial: true,
+						},
+					},
+				},
+			},
+			purchases: {
+				data: [],
+			},
+			stats: {
+				planUsage: {
+					data: {
+						[ siteId ]: {
+							should_show_paywall: true,
+						},
+					},
+				},
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+		expect( isGatedStats ).toBe( true );
+	} );
+
+	it( 'should gate advanced stats for non-commercial jetpack sites without Stats commercial purchase', () => {
 		const mockState = {
 			sites: {
 				features: {
@@ -225,8 +317,45 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
-		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
+		expect( isGatedStats ).toBe( true );
+	} );
+
+	it( 'should not gate advanced stats for commercial jetpack sites with a Stats commercial purchase', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [],
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: true,
+						options: {
+							is_wpcom_atomic: false,
+							is_commercial: true,
+						},
+					},
+				},
+			},
+			purchases: {
+				data: [
+					{
+						blog_id: siteId,
+						product_slug: 'jetpack_stats_yearly',
+						expiry_status: 'active',
+					},
+				],
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
 		expect( isGatedStats ).toBe( false );
 	} );
 } );

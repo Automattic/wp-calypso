@@ -39,5 +39,6 @@
 
 .comments__comment-content {
 	@extend %rendered-block-content;
+	font-family: $sans;
 	line-height: 1.56;
 }

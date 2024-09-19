@@ -21,7 +21,7 @@ const PromoCardBlock = ( {
 	impressionEvent,
 	productSlug,
 } ) => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSiteId, productSlug )
 	);

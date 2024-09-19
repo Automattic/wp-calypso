@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
+import { MaterialIcon } from '@automattic/components';
 import { edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import MaterialIcon from 'calypso/components/material-icon';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns/dns-records-list-header';
 import { domainManagementDnsEditRecord } from 'calypso/my-sites/domains/paths';
@@ -18,6 +18,7 @@ import DomainConnectInfoDialog from './domain-connect-info-dialog';
 class DnsRecordsList extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
+		selectedDOmain: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -230,12 +231,15 @@ class DnsRecordsList extends Component {
 	}
 
 	render() {
-		const { dns, selectedDomainName, selectedSite } = this.props;
+		const { dns, selectedDomain, selectedDomainName, selectedSite } = this.props;
 		const { dialog } = this.state;
 
 		let domainConnectRecordIsEnabled = false;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
-			if ( 'NS' === dnsRecord.type ) {
+			const isRootRecord = dnsRecord.name === `${ selectedDomainName }.`;
+
+			// We want to hide root NS records for root domains, but not for subdomains
+			if ( 'NS' === dnsRecord.type && ! selectedDomain.isSubdomain && isRootRecord ) {
 				return;
 			}
 
@@ -250,7 +254,7 @@ class DnsRecordsList extends Component {
 					dnsRecord={ dnsRecord }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
-					enabled={ true }
+					enabled
 					actions={ this.getActionsForDnsRecord( dnsRecord ) }
 				/>
 			);

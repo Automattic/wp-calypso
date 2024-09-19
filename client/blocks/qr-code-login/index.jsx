@@ -222,8 +222,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 				),
 			},
 		} ),
-		translate( 'Tap the My Site Tab.' ),
-		translate( 'Tap your Profile image.' ),
+		translate( 'Tap the Me Tab.' ),
 		translate( 'Tap the {{strong}}Scan Login Code{{/strong}} option.', {
 			components: {
 				strong: <strong />,

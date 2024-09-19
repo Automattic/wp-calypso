@@ -45,10 +45,10 @@ export default function RevokeLicenseDialog( {
 	} );
 
 	close = useCallback( () => {
-		if ( ! mutation.isLoading ) {
+		if ( ! mutation.isPending ) {
 			onClose();
 		}
-	}, [ onClose, mutation.isLoading ] );
+	}, [ onClose, mutation.isPending ] );
 
 	const revoke = useCallback( () => {
 		dispatch(
@@ -67,7 +67,7 @@ export default function RevokeLicenseDialog( {
 			{ translate( 'Go back' ) }
 		</Button>,
 
-		<Button primary scary busy={ mutation.isLoading } onClick={ revoke }>
+		<Button primary scary busy={ mutation.isPending } onClick={ revoke }>
 			{ isParentLicense ? translate( 'Revoke bundle' ) : translate( 'Revoke License' ) }
 		</Button>,
 	];
@@ -176,7 +176,7 @@ export default function RevokeLicenseDialog( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ buttons }
 			additionalClassNames="revoke-license-dialog"
 			onClose={ close }

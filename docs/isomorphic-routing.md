@@ -65,7 +65,7 @@ SSR logged-in requests.
 
 It's common for SSR layouts to include network-fetched data. For example, the themes
 SSR page includes themes fetched on the backend. If your SSR section includes
-network requsets, it is **crucial** for those requsets to be cached and optimized
+network requsets, it is **crucial** for those requests to be cached and optimized
 as much as possible. Caching cannot be a follow-up enhancement -- without caching,
 performance across the server can be negatively impacted, resulting in route timeouts
 and even outages.

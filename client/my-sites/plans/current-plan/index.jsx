@@ -19,7 +19,7 @@ import {
 	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -181,7 +181,7 @@ class CurrentPlan extends Component {
 				) }
 
 				<div
-					className={ classNames( 'current-plan__header-text current-plan__text', {
+					className={ clsx( 'current-plan__header-text current-plan__text', {
 						'is-placeholder': { isLoading },
 					} ) }
 				>
@@ -232,9 +232,13 @@ class CurrentPlan extends Component {
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
 
+		const planDescription = isJetpackNotAtomic
+			? translate( 'Learn about the features included in your Jetpack plan.' )
+			: translate( 'Learn about the features included in your WordPress.com plan.' );
+
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+				<ModernizedLayout />
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
@@ -249,9 +253,7 @@ class CurrentPlan extends Component {
 						className="plans__section-header"
 						navigationItems={ [] }
 						title={ translate( 'Plans' ) }
-						subtitle={ translate(
-							'Learn about the features included in your WordPress.com plan.'
-						) }
+						subtitle={ planDescription }
 					/>
 					<div className="current-plan current-plan__content">
 						{ showThankYou && ! this.state.hideThankYouModal && (

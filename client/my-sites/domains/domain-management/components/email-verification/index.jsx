@@ -1,5 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -76,7 +76,7 @@ class EmailVerificationCard extends Component {
 	renderStatus() {
 		const { changeEmailHref, contactEmail, translate } = this.props;
 		const { emailSent, submitting } = this.state;
-		const statusClassNames = classNames( 'email-verification__status-container', {
+		const statusClassNames = clsx( 'email-verification__status-container', {
 			waiting: ! emailSent,
 			sent: emailSent,
 		} );

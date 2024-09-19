@@ -12,6 +12,7 @@ import 'calypso/state/themes/init';
  */
 export function getThemeForumUrl( state, themeId ) {
 	if ( isWpcomTheme( state, themeId ) ) {
+		// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 		return '//wordpress.com/forums/';
 	}
 	if ( isWporgTheme( state, themeId ) ) {

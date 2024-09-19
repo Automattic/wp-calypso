@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, localize } from 'i18n-calypso';
 import { isEmpty, omit } from 'lodash';
 import { Component } from 'react';
@@ -55,7 +55,7 @@ export class FormCountrySelect extends Component<
 					'moment',
 					'numberFormat',
 				] ) }
-				className={ classnames( this.props.className, 'form-country-select' ) }
+				className={ clsx( this.props.className, 'form-country-select' ) }
 				onChange={ this.props.onChange }
 				disabled={ this.props.disabled }
 			>

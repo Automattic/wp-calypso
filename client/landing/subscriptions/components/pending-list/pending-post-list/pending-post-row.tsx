@@ -16,9 +16,9 @@ export default function PendingPostRow( {
 }: Reader.PendingPostSubscription ) {
 	const hostname = useMemo( () => new URL( post_url ).hostname, [ post_url ] );
 
-	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } =
+	const { mutate: confirmPendingSubscription, isPending: confirmingPendingSubscription } =
 		SubscriptionManager.usePendingPostConfirmMutation();
-	const { mutate: deletePendingSubscription, isLoading: deletingPendingSubscription } =
+	const { mutate: deletePendingSubscription, isPending: deletingPendingSubscription } =
 		SubscriptionManager.usePendingPostDeleteMutation();
 
 	return (

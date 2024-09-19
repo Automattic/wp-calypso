@@ -30,47 +30,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		max-width: var(--wp--style--global--wide-size);
 	}
 
-	.support-content-cta {
-		border-bottom: 1px solid var(--studio-gray-0);
-		display: flex;
-		margin-bottom: 2rem;
-		font-size: 1.25rem;
-
-		.support-content-cta-left {
-			flex: 1;
-			padding: 28px 0 28px 0;
-			max-width: 535px;
-
-			h4 {
-				line-height: 32px;
-			}
-
-			p {
-				color: var(--studio-gray-60);
-				margin-top: 4px;
-				margin-bottom: 16px;
-			}
-		}
-
-		.support-content-cta-right {
-			display: flex;
-			justify-content: flex-end;
-			flex: 1;
-
-			img {
-				height: 100%;
-				max-height: 202px;
-				// To prevent any white space around the image.
-				display: block;
-			}
-
-			figure {
-				margin-bottom: 0;
-				height: 100%;
-			}
-		}
-	}
-
 	.support-content-resources {
 		display: flex;
 		gap: 24px;
@@ -189,25 +148,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		p {
 			margin-top: 4px;
 			margin-bottom: 16px;
-		}
-
-		.support-content-cta {
-			margin-bottom: 0;
-			height: initial;
-
-			.support-content-cta-left {
-				padding: 0 0 24px 0;
-				max-width: initial;
-
-				p {
-					margin-top: 4px;
-					margin-bottom: 16px;
-				}
-			}
-
-			.support-content-cta-right {
-				display: none;
-			}
 		}
 
 		.support-content-resources {

@@ -43,21 +43,27 @@
 		}
 
 		.post {
-			flex: 0 0 403px;
+			flex: 1 0 30%;
 			font-size: $font-body-small;
 			line-height: 20px;
 			color: $studio-gray-60;
+			min-width: 200px;
 
 			.title {
 				max-width: 350px;
-				@extend %ellipsis;
 
 				a {
+					@extend %ellipsis;
+					display: block;
 					font-weight: 500;
 					color: $studio-gray-100;
 
 					&:hover {
 						text-decoration: underline;
+					}
+
+					&:focus {
+						outline-offset: -1px;
 					}
 				}
 			}
@@ -82,6 +88,11 @@
 			display: flex;
 			align-items: center;
 			min-width: 0;
+			flex: 1 0 30%;
+
+			&:focus {
+				outline-offset: -1px;
+			}
 
 			.site-icon {
 				max-width: 40px;

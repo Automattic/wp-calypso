@@ -1,6 +1,7 @@
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useQuery, useQueries, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from './default-query-params';
 
 export interface SubscriberPayload {
 	date: string;
@@ -30,6 +31,7 @@ function querySubscribers(
 		unit: period,
 		quantity,
 		date: formattedDate,
+		stat_fields: 'subscribers,subscribers_paid',
 	};
 
 	return wpcom.req.get(
@@ -52,10 +54,12 @@ function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
 			return {
+				// period
 				[ payload.fields[ 0 ] ]:
 					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
-				// Exclude the site owner count to align with the `Total subscribers` count from querySubscribersTotals.
-				[ payload.fields[ 1 ] ]: dataSet[ 1 ] > 0 ? dataSet[ 1 ] - 1 : dataSet[ 1 ],
+				// subscribers
+				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
+				// subscribers_paid
 				[ payload.fields[ 2 ] ]: dataSet[ 2 ],
 			};
 		} ),
@@ -71,6 +75,7 @@ export default function useSubscribersQuery(
 	const queryDate = date ? date.toISOString() : new Date().toISOString();
 
 	return useQuery( {
+		...getDefaultQueryParams< SubscriberPayload >(),
 		queryKey: [ 'stats', 'subscribers', siteId, period, quantity, queryDate ],
 		queryFn: () => querySubscribers( siteId, period, quantity, queryDate ),
 		select: selectSubscribers,
@@ -85,17 +90,14 @@ export function useSubscribersQueries(
 	dates: string[]
 ): { isLoading: boolean; isError: boolean; subscribersData: SubscribersData[] } {
 	const queryConfigs = dates.map( ( date, index ) => ( {
+		...getDefaultQueryParams< SubscriberPayload >(),
 		queryKey: [ 'stats', 'subscribers', index, siteId, period, quantity, date ],
 		queryFn: () => querySubscribers( siteId, period, quantity, date ),
 		select: selectSubscribers,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} ) );
 
-	const results = useQueries( { queries: queryConfigs } ) as UseQueryResult<
-		SubscriberPayload,
-		unknown
-	>[];
-
+	const results = useQueries( { queries: queryConfigs } );
 	const isLoading = results.some( ( result ) => result.isLoading );
 	const isError = results.some( ( result ) => result.isError );
 	const subscribersData = results.map( ( result ) => result.data ).filter( isValueTruthy );

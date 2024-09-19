@@ -2,7 +2,8 @@ $profile-picture-size: 36px;
 $border-color: #eee;
 
 
-.marketplace-review-item__review-container {
+.marketplace-review-item__review-container,
+.marketplace-create-review-item__container {
 	border-top: 1px solid $border-color;
 	padding: 32px 0;
 
@@ -22,6 +23,7 @@ $border-color: #eee;
 		.marketplace-review-item__rating-data {
 			display: flex;
 			flex-direction: column;
+			justify-content: center;
 
 			.rating {
 				margin-left: -1px;
@@ -90,13 +92,14 @@ $border-color: #eee;
 		}
 	}
 
-	.marketplace-review-item__editor {
+	.marketplace-review-item__editor textarea {
 		color: var(--studio-gray-100);
 		background-color: var(--studio-gray-0);
 		border-radius: 4px;
 		font-size: $font-body-small;
 		margin-top: 16px;
 		padding: 16px;
+		border: 0;
 
 		p {
 			margin-bottom: 0;
@@ -151,5 +154,35 @@ $border-color: #eee;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		line-height: 20px;
+	}
+}
+
+.marketplace-create-review-item__container {
+	margin-top: 32px;
+	padding: 40px;
+	border: 1px solid $border-color;
+	border-radius: 9px; /* stylelint-disable-line scales/radii */
+}
+
+.marketplace-create-review-item__thank-you {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	text-align: center;
+
+	h2 {
+		font-family: Recoleta, sans-serif;
+		font-size: $font-title-large;
+		line-height: 40px;
+		color: var(--studio-gray-100);
+	}
+
+	.marketplace-create-review-item__thank-you-subtitle {
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var(--studio-gray-60);
 	}
 }

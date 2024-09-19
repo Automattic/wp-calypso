@@ -7,11 +7,11 @@ export default localize( ( { selectedSite, translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src={ googleMyBusinessImage } /> }
-				title={ translate( 'Google My Business' ) }
+				title={ translate( 'Google Business Profile' ) }
 				description={ translate(
-					'Create a Google business listing, connect with customers, and discover how customers find you on Google by connecting to a Google My Business location.'
+					'Create a Google business listing, connect with customers, and discover how customers find you on Google by connecting to a Google Business Profile location.'
 				) }
-				buttonText={ translate( 'Connect to Google My Business' ) }
+				buttonText={ translate( 'Connect to Google Business Profile' ) }
 				href={ '/google-my-business/' + selectedSite.slug }
 			/>
 		</div>

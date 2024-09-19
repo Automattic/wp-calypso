@@ -1,8 +1,8 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import ShortenedNumber from '../number-formatters';
 import type { HorizontalBarListItemProps } from './types';
 
@@ -27,6 +27,7 @@ const HorizontalBarListItem = ( {
 	additionalColumns,
 	usePlainCard,
 	isLinkUnderlined,
+	hasNoBackground,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -68,15 +69,15 @@ const HorizontalBarListItem = ( {
 		labelText = (
 			<>
 				{ label.length > 1
-					? label.map( ( item ) => (
-							<>
+					? label.map( ( item, index ) => (
+							<Fragment key={ index }>
 								<Icon
 									className="stats-icon"
 									icon={ item.labelIcon === 'folder' ? file : tag }
 									size={ 22 }
 								/>
 								<span>{ decodeEntities( item.label ) }</span>
-							</>
+							</Fragment>
 					  ) )
 					: label[ 0 ].label }
 			</>
@@ -105,13 +106,14 @@ const HorizontalBarListItem = ( {
 	return (
 		<>
 			<li
-				className={ classnames(
+				className={ clsx(
 					`${ BASE_CLASS_NAME }-item`,
 					{
 						[ `${ BASE_CLASS_NAME }-item--indicated` ]: hasIndicator,
 						[ `${ BASE_CLASS_NAME }-item--link` ]: isLink || hasChildren,
 						[ `${ BASE_CLASS_NAME }-item--link-underlined` ]: isLinkUnderlined,
 						[ `${ BASE_CLASS_NAME }-item--static` ]: isStatic,
+						[ `${ BASE_CLASS_NAME }-item--no-bg` ]: hasNoBackground,
 					},
 					className
 				) }
@@ -135,7 +137,7 @@ const HorizontalBarListItem = ( {
 						</span>
 					) }
 					<TagName
-						className={ classnames(
+						className={ clsx(
 							`${ BASE_CLASS_NAME }-label`,
 							hasChildren && `${ BASE_CLASS_NAME }-label--group-header`
 						) }
@@ -171,7 +173,7 @@ const HorizontalBarListItem = ( {
 
 							return (
 								<HorizontalBarListItem
-									key={ `group-${ child?.id || index }` }
+									key={ `group-${ child?.id ?? index }` }
 									data={ child }
 									className={ className }
 									maxValue={ maxValue }

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -12,6 +12,7 @@ import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	lastDigits?: string;
+	displayBrand?: string | null;
 	cardType?: string;
 	name: string;
 	expiry?: string;
@@ -19,16 +20,19 @@ interface Props {
 	paymentPartner?: string;
 	selected?: boolean;
 	isExpired?: boolean;
+	razorpayVpa?: string;
 }
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	lastDigits,
+	displayBrand,
 	cardType,
 	name,
 	expiry,
 	email,
 	paymentPartner,
 	isExpired,
+	razorpayVpa,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -37,7 +41,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ) : null;
 	const displayExpirationDate = expirationDate?.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
-	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
+	const type = displayBrand ?? ( cardType?.toLocaleLowerCase() || paymentPartner || '' );
 
 	return (
 		<div className="payment-method-details">
@@ -62,7 +66,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 
 				{ isExpired && (
 					<span
-						className={ classnames( 'payment-method-details__expiration-notice', {
+						className={ clsx( 'payment-method-details__expiration-notice', {
 							'is-expired': isExpired,
 						} ) }
 					>
@@ -70,6 +74,9 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 						{ translate( 'Credit card expired' ) }
 					</span>
 				) }
+
+				{ razorpayVpa && <span className="payment-method-details__vpa">{ razorpayVpa }</span> }
+
 				<span className="payment-method-details__name">{ name }</span>
 			</div>
 		</div>

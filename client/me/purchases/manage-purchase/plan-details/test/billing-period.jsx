@@ -47,7 +47,9 @@ describe( 'PlanBillingPeriod', () => {
 			render( <PlanBillingPeriod { ...props } /> );
 			const btn = screen.getByRole( 'button', { name: /upgrade/i } );
 			fireEvent.click( btn );
-			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
+			expect( page ).toHaveBeenCalledWith(
+				'/checkout/site.com/jetpack_premium?upgrade_from=jetpack_premium_monthly'
+			);
 		} );
 
 		it( 'should display a message instead of the upgrade button for a disconnected site', () => {

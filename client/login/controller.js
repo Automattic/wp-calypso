@@ -5,6 +5,7 @@ import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -50,9 +51,9 @@ const enhanceContextWithLogin = ( context ) => {
 	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	const isGravPoweredClient = isGravPoweredOAuth2Client( {
-		id: Number( clientId || oauth2ClientId ),
-	} );
+	const oauth2Client =
+		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
+	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			! isP2Login &&
@@ -100,8 +101,14 @@ export async function login( context, next ) {
 		}
 
 		const { searchParams: redirectParams } = getUrlParts( redirect_to );
+		const back = redirectParams.get( 'back' );
 
-		if ( client_id !== redirectParams.get( 'client_id' ) ) {
+		const redirectClientId =
+			redirectParams.get( 'client_id' ) ||
+			// If the client_id is not in the redirect_to URL, check the back URL. This is for the case where the client_id is passed in the back parameter of remote login link when proxy is enabled. See: https://github.com/Automattic/wp-calypso/issues/52940
+			( back ? getUrlParts( back ).searchParams.get( 'client_id' ) : null );
+
+		if ( client_id !== redirectClientId ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
@@ -109,10 +116,14 @@ export async function login( context, next ) {
 			return next( error );
 		}
 
-		try {
-			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
-		} catch ( error ) {
-			return next( error );
+		const OAuth2Client = getOAuth2Client( context.store.getState(), client_id );
+		if ( ! OAuth2Client ) {
+			// Only fetch the OAuth2 client data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+			try {
+				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+			} catch ( error ) {
+				return next( error );
+			}
 		}
 	}
 
@@ -121,11 +132,39 @@ export async function login( context, next ) {
 	next();
 }
 
-export function magicLogin( context, next ) {
-	const { path } = context;
+export async function magicLogin( context, next ) {
+	const {
+		path,
+		query: { gravatar_flow, client_id, redirect_to },
+	} = context;
 
 	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return login( context, next );
+	}
+
+	// For Gravatar-related OAuth2 clients, check the necessary URL parameters and fetch the client data if needed.
+	if ( gravatar_flow ) {
+		if ( ! client_id ) {
+			const error = new Error( 'The `client_id` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		if ( ! redirect_to ) {
+			const error = new Error( 'The `redirect_to` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		const oauth2Client = getOAuth2Client( context.store.getState(), client_id );
+		// Only fetch the data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+		if ( ! oauth2Client ) {
+			try {
+				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+			} catch ( error ) {
+				return next( error );
+			}
+		}
 	}
 
 	context.primary = <MagicLogin path={ path } />;

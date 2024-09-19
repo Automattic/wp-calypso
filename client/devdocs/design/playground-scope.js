@@ -4,8 +4,10 @@ export {
 	Card,
 	Count,
 	CompactCard,
+	ExternalLink,
 	FormInputValidation,
 	Gridicon,
+	MaterialIcon,
 	Popover,
 	ProgressBar,
 	Ribbon,
@@ -13,7 +15,9 @@ export {
 	SegmentedControl,
 	Suggestions,
 	FoldableCard,
+	FormLabel,
 	Tooltip,
+	SelectDropdown,
 } from '@automattic/components';
 
 /**
@@ -38,7 +42,6 @@ export { default as DiffViewer } from 'calypso/components/diff-viewer';
 export { default as DropZones } from 'calypso/components/drop-zone';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu';
 export { default as EmptyContent } from 'calypso/components/empty-content';
-export { default as ExternalLink } from 'calypso/components/external-link';
 export { default as FAQ } from 'calypso/components/faq';
 export { default as FeatureGate } from 'calypso/components/feature-example';
 export { default as FilePickers } from 'calypso/components/file-picker';
@@ -51,7 +54,6 @@ export { default as FormCheckbox } from 'calypso/components/forms/form-checkbox'
 export { default as FormCountrySelect } from 'calypso/components/forms/form-country-select';
 export { default as FormCurrencyInput } from 'calypso/components/forms/form-currency-input';
 export { default as FormFieldset } from 'calypso/components/forms/form-fieldset';
-export { default as FormLabel } from 'calypso/components/forms/form-label';
 export { default as FormLegend } from 'calypso/components/forms/form-legend';
 export { default as FormPasswordInput } from 'calypso/components/forms/form-password-input';
 export { default as FormPhoneInput } from 'calypso/components/forms/form-phone-input';
@@ -82,7 +84,6 @@ export { default as LanguagePicker } from 'calypso/components/language-picker';
 export { default as Layout } from 'calypso/components/layout';
 export { default as ListEnd } from 'calypso/components/list-end';
 export { default as Main } from 'calypso/components/main';
-export { default as MaterialIcon } from 'calypso/components/material-icon';
 export { default as MarkedLines } from 'calypso/components/marked-lines';
 export { default as Notices } from 'calypso/components/notice';
 export { default as Pagination } from 'calypso/components/pagination';
@@ -97,7 +98,6 @@ export { default as SectionNav } from 'calypso/components/section-nav';
 export { default as NavTabs } from 'calypso/components/section-nav/tabs';
 export { default as NavSegmented } from 'calypso/components/section-nav/segmented';
 export { default as NavItem } from 'calypso/components/section-nav/item';
-export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';
 export { default as SpinnerButton } from 'calypso/components/spinner-button';

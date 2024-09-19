@@ -45,6 +45,11 @@ export type TitanEmailSubscription = EmailSubscription & {
 
 export type TransferStatus = ( typeof transferStatus )[ keyof typeof transferStatus ];
 
+export type DnssecRecords = {
+	dnskey?: string;
+	dsData?: Array< string >;
+};
+
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;
 	aftermarketAuction: boolean;
@@ -59,6 +64,8 @@ export type ResponseDomain = {
 	bundledPlanSubscriptionId: string | number | null | undefined;
 	canManageDnsRecords: boolean;
 	canManageNameServers: boolean;
+	canTransferToOtherSite: boolean;
+	canTransferToAnyUser: boolean;
 	cannotManageDnsRecordsReason: string | null;
 	cannotManageNameServersReason: string | null;
 	cannotUpdateContactInfoReason: string | null;
@@ -72,6 +79,7 @@ export type ResponseDomain = {
 	currentUserCanManage: boolean;
 	currentUserCannotAddEmailReason: CannotAddEmailReason | null;
 	currentUserIsOwner: boolean;
+	dnssecRecords?: DnssecRecords;
 	domain: string;
 	domainLockingAvailable: boolean;
 	domainRegistrationAgreementUrl: string | null;
@@ -82,13 +90,19 @@ export type ResponseDomain = {
 	gdprConsentStatus: GDPRConsentStatus;
 	googleAppsSubscription: GoogleEmailSubscription | null;
 	hasEmailForwardsDnsRecords?: boolean | null;
+	hasPendingContactUpdate: boolean;
 	hasRegistration: boolean;
 	hasWpcomNameservers: boolean;
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isDnssecEnabled: boolean;
+	isDnssecSupported: boolean;
+	isGravatarDomain: boolean;
 	isIcannVerificationSuspended: boolean | null;
 	isLocked: boolean;
+	isMappedToAtomicSite: boolean;
+	isMoveToNewSitePending: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
 	isPendingWhoisUpdate: boolean;
@@ -108,17 +122,21 @@ export type ResponseDomain = {
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
+	pendingRegistrationAtRegistry: boolean;
+	pendingRegistrationAtRegistryUrl: string;
 	pendingRegistrationTime: string;
 	pendingTransfer?: boolean;
 	pointsToWpcom: boolean;
 	privacyAvailable: boolean;
 	privateDomain: boolean;
 	redeemableUntil: string;
+	registeredViaTrustee: boolean;
+	registeredViaTrusteeUrl: string;
 	registrar: string;
 	registrationDate: string;
 	registryExpiryDate: string;
 	renewableUntil: string;
-	sslStatus: 'active' | 'pending' | 'disabled' | null;
+	sslStatus: 'active' | 'pending' | 'newly_registered' | 'disabled' | null;
 	subdomainPart?: string;
 	subscriptionId: string | null;
 	supportsDomainConnect: boolean;

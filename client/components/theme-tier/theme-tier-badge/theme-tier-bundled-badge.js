@@ -14,7 +14,7 @@ import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 export default function ThemeTierBundledBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const { themeId } = useThemeTierBadgeContext();
+	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
@@ -48,7 +48,7 @@ export default function ThemeTierBundledBadge() {
 
 	return (
 		<div className="theme-tier-badge">
-			{ ! isThemeIncluded && (
+			{ showUpgradeBadge && ! isThemeIncluded && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge

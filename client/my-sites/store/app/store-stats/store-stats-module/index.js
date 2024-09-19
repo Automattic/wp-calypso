@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
@@ -14,7 +14,7 @@ function StoreStatsModule( { header, children, data, emptyMessage, className, re
 	const hasEmptyData = ! requesting && data && data.length === 0;
 
 	return (
-		<div className={ classnames( 'store-stats-module', className ) }>
+		<div className={ clsx( 'store-stats-module', className ) }>
 			{ header }
 			{ isLoading && (
 				<Card>

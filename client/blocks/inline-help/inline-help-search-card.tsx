@@ -2,11 +2,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useRef, useEffect } from 'react';
 import SearchCard from 'calypso/components/search-card';
-import { useSelector } from 'calypso/state';
-import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**
  * Module variables
@@ -19,7 +16,10 @@ type Props = {
 	isVisible?: boolean;
 	placeholder?: string;
 	onSearch?: ( query: string ) => void;
+	sectionName: string;
 };
+
+const AUTO_FOCUS_LOCATION = [ 'help-center', 'inline-help-popover' ];
 
 const InlineHelpSearchCard = ( {
 	searchQuery = '',
@@ -27,16 +27,15 @@ const InlineHelpSearchCard = ( {
 	isVisible = true,
 	placeholder,
 	onSearch,
+	sectionName,
 }: Props ) => {
 	const cardRef = useRef< { searchInput: HTMLInputElement } >();
 	const translate = useTranslate();
-	const sectionName = useSelector( getSectionName );
 
 	// Focus in the input element.
 	useEffect( () => {
 		const inputElement = cardRef.current?.searchInput;
-		// Focuses only in the popover.
-		if ( location !== 'inline-help-popover' || ! inputElement || ! isVisible ) {
+		if ( ! AUTO_FOCUS_LOCATION.includes( location ) || ! inputElement || ! isVisible ) {
 			return;
 		}
 
@@ -78,13 +77,6 @@ const InlineHelpSearchCard = ( {
 			delaySearch
 		/>
 	);
-};
-
-InlineHelpSearchCard.propTypes = {
-	searchQuery: PropTypes.string,
-	onSearch: PropTypes.func,
-	placeholder: PropTypes.string,
-	location: PropTypes.string,
 };
 
 export default InlineHelpSearchCard;

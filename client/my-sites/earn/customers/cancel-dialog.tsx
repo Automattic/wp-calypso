@@ -14,7 +14,7 @@ type CancelDialogProps = {
 function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDialogProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	function onCloseCancelSubscription( reason: string | undefined ) {
 		if ( reason === 'cancel' ) {

@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import config from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -13,7 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -38,7 +37,6 @@ import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
-import { PreCancellationDialog } from '../pre-cancellation-dialog';
 import {
 	isDataLoading,
 	isAkismetTemporarySitePurchase,
@@ -107,22 +105,13 @@ class RemovePurchase extends Component {
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
-		if ( this.shouldShowPreCancellationDialog() && ! this.state.isShowingPreCancellationDialog ) {
-			this.setState( {
-				isShowingNonPrimaryDomainWarning: false,
-				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancellationDialog: true,
-				isShowingWordAdsEligibilityWarningDialog: false,
-				isDialogVisible: false,
-			} );
-		} else if (
+		if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
 		) {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: true,
 				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancellationDialog: false,
 				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: false,
 			} );
@@ -133,7 +122,6 @@ class RemovePurchase extends Component {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: true,
-				isShowingPreCancellationDialog: false,
 				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: false,
 			} );
@@ -144,7 +132,6 @@ class RemovePurchase extends Component {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancellationDialog: false,
 				isShowingWordAdsEligibilityWarningDialog: true,
 				isDialogVisible: false,
 			} );
@@ -152,7 +139,6 @@ class RemovePurchase extends Component {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancellationDialog: false,
 				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: true,
 			} );
@@ -266,35 +252,6 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				planName={ getName( purchase ) }
-			/>
-		);
-	}
-
-	shouldShowPreCancellationDialog() {
-		const { purchase } = this.props;
-		return (
-			config.isEnabled( 'pre-cancellation-modal' ) &&
-			isPlan( purchase ) &&
-			! isJetpackPlan( purchase ) &&
-			! isGSuiteOrGoogleWorkspace( purchase )
-		);
-	}
-
-	renderPreCancellationDialog() {
-		const { site, purchase, primaryDomain, hasCustomPrimaryDomain } = this.props;
-		const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
-		const primaryDomainName = customDomain ? primaryDomain.name : '';
-
-		return (
-			<PreCancellationDialog
-				isDialogVisible={ this.state.isShowingPreCancellationDialog }
-				closeDialog={ this.closeDialog }
-				removePlan={ this.showRemovePlanDialog }
-				site={ site }
-				purchase={ purchase }
-				hasDomain={ customDomain }
-				primaryDomain={ primaryDomainName }
-				wpcomURL={ site.wpcom_url }
 			/>
 		);
 	}
@@ -438,13 +395,9 @@ class RemovePurchase extends Component {
 			</>
 		);
 
-		const wrapperClassName = classNames( 'remove-purchase__card', className );
+		const wrapperClassName = clsx( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
 		const getWarningDialog = () => {
-			if ( this.shouldShowPreCancellationDialog() ) {
-				return this.renderPreCancellationDialog();
-			}
-
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {
 				return this.renderNonPrimaryDomainWarningDialog();
 			}

@@ -1,17 +1,17 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { PlanPrice } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../components/sensei-step-error';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
@@ -113,7 +113,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 					<div className="plan-item-wrapper">
 						<div
-							className={ classnames( 'plan-item plan-item--sensei', {
+							className={ clsx( 'plan-item plan-item--sensei', {
 								'plan-item--is-loading': isLoadingPlans,
 							} ) }
 						>

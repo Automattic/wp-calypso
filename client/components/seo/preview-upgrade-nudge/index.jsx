@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import FeatureExample from 'calypso/components/feature-example';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -32,7 +32,8 @@ export const SeoPreviewNudge = ( {
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	return (
 		<div className="preview-upgrade-nudge">
-			<QueryPlans />
+			{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+			<QueryProducts />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
 			<UpsellNudge

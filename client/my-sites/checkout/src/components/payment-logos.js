@@ -28,6 +28,76 @@ VisaLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+export function CBLogo( { className } ) {
+	// We need to provide a unique ID to any svg that uses an id prop
+	// especially if we expect multiple instances of the component to render on the page
+	const uniqueID = `${ Math.floor( 10000 + Math.random() * 90000 ) }`;
+
+	return (
+		<svg
+			className={ className }
+			aria-hidden="true"
+			focusable="false"
+			viewBox="0 0 60 38"
+			width="42"
+			height="26.6"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<defs>
+				<clipPath id={ `${ uniqueID }paths` }>
+					<rect
+						xmlns="http://www.w3.org/2000/svg"
+						x="0.5"
+						y="0.5"
+						width="59"
+						height="37"
+						rx="3"
+						fill="none"
+					/>
+				</clipPath>
+				<radialGradient
+					id={ `${ uniqueID }b` }
+					cx="-5"
+					cy="70"
+					gradientUnits="userSpaceOnUse"
+					r="140"
+				>
+					<stop offset=".09" stopColor="#009245" />
+					<stop offset=".23" stopColor="#049552" stopOpacity=".89" />
+					<stop offset=".52" stopColor="#0d9e74" stopOpacity=".59" />
+					<stop offset=".91" stopColor="#1bacab" stopOpacity=".12" />
+					<stop offset="1" stopColor="#1fb0b8" stopOpacity="0" />
+				</radialGradient>
+				<radialGradient
+					id={ `${ uniqueID }c` }
+					cx="-5"
+					cy="70"
+					gradientUnits="userSpaceOnUse"
+					r="140"
+				>
+					<stop offset=".15" stopColor="#1fb0b8" stopOpacity="0" />
+					<stop offset=".35" stopColor="#1c7491" stopOpacity=".4" />
+					<stop offset=".56" stopColor="#1a4471" stopOpacity=".73" />
+					<stop offset=".74" stopColor="#18265e" stopOpacity=".93" />
+					<stop offset=".87" stopColor="#181b57" />
+				</radialGradient>
+			</defs>
+			<g clipPath={ `url(#${ uniqueID }paths)` }>
+				<path d="M0 0h60v38H0z" fill="#29abe2" />
+				<path d="M0 0h60v38H0z" fill={ `url(#${ uniqueID }b)` } />
+				<path d="M0 0h60v38H0z" fill={ `url(#${ uniqueID }c)` } />
+			</g>
+			<g fill="#fff" transform="scale(1.8) translate(3, 1.5)">
+				<path d="M14.39 3.86h7.07a2.47 2.47 0 0 1 2.47 2.47 2.47 2.47 0 0 1-2.47 2.47h-7.07V3.86zM14.39 9.36h7.07a2.47 2.47 0 0 1 2.47 2.47 2.47 2.47 0 0 1-2.47 2.47h-7.07V9.36zM8.23 9.36V8.8h5.69a5.51 5.51 0 0 0-5.69-4.94 5.47 5.47 0 0 0-5.69 5.22 5.47 5.47 0 0 0 5.69 5.22 5.51 5.51 0 0 0 5.69-4.94z" />
+			</g>
+		</svg>
+	);
+}
+
+CBLogo.propTypes = {
+	className: PropTypes.string,
+};
+
 export function MastercardLogo( { className } ) {
 	return (
 		<svg

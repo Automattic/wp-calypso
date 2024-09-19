@@ -1,0 +1,232 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.product-card {
+	display: flex;
+	justify-content: stretch;
+	&.disabled {
+		opacity: 0.5;
+
+		.product-card__inner {
+			cursor: not-allowed;
+		}
+	}
+
+	// Override discount text color with success color
+	.product-price-with-discount__price .product-price-with-discount__price-discount {
+		color: var(--color-success);
+	}
+}
+
+.product-card__inner {
+	flex-grow: 1;
+	margin: 0;
+	padding: 1.5rem;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	user-select: none;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+
+	@include break-xlarge {
+		padding: 1.75rem;
+	}
+}
+
+.product-card:hover,
+.product-card:focus-within,
+.product-card.selected {
+	.product-card__inner {
+		border: 1px solid var(--color-border-light);
+		background: var(--color-border-light);
+		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+	}
+}
+
+.product-card:focus-visible .components-button {
+	box-shadow: inset 0 0 0 1px var(--color-surface), 0 0 0 var(--wp-admin-border-width-focus) var(--color-accent);
+}
+
+@mixin product-card-block__details {
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+@mixin product-card-line__details {
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+.product-card__details {
+	display: flex;
+	justify-content: space-between;
+
+	@include product-card-block__details;
+
+	@include break-mobile {
+		@include product-card-line__details;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		@include product-card-block__details;
+	}
+
+	@include break-medium {
+		@include product-card-line__details;
+	}
+
+	@include break-xlarge {
+		@include product-card-block__details;
+	}
+}
+
+.product-card__main {
+	display: block;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+}
+
+.product-card__buttons {
+	display: inline-flex;
+	gap: 1rem;
+	justify-content: center;
+	align-self: flex-start;
+	margin-block-start: auto;
+	padding-block-start: 1rem;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		.button {
+			padding: 4px;
+		}
+	}
+}
+
+.product-card__select-button {
+	display: block;
+	justify-content: center;
+	text-align: center;
+	font-size: 1rem;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 7px 12px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		height: 2rem;
+	}
+}
+
+
+.product-card__heading {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+@mixin product-card-block__title {
+	flex: 0 1  calc(100% - 34px);
+}
+
+@mixin product-card-line__title {
+	flex: 1 1 0;
+}
+
+.product-card__title {
+	@include a4a-font-heading-xl;
+	color: var(--color-neutral-80);
+
+	@include product-card-block__title;
+
+	@include break-mobile {
+		@include product-card-line__title;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		@include product-card-block__title;
+	}
+
+	@include break-medium {
+		@include product-card-line__title;
+	}
+
+	@include break-xlarge {
+		@include product-card-block__title;
+	}
+}
+
+.product-card__description {
+	@include a4a-font-body-lg;
+	color: var(--color-neutral-60);
+	margin: 8px 0;
+}
+
+@mixin product-card-block__pricing {
+	flex-basis: 100%;
+	margin: 1rem 0 0;
+	text-align: left;
+}
+
+@mixin product-card-line__pricing {
+	flex-basis: auto;
+	margin: 0 0 0 1rem;
+	text-align: right;
+}
+
+.product-card__pricing:not(.is-compact) {
+	@include product-card-block__pricing;
+
+	@include break-mobile {
+		@include product-card-line__pricing;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		@include product-card-block__pricing;
+	}
+
+	@include break-medium {
+		@include product-card-line__pricing;
+	}
+
+	@include break-xlarge {
+		@include product-card-block__pricing;
+	}
+}
+
+.product-card__pricing.is-compact {
+	margin: 1rem 0 0;
+	max-width: 200px;
+}
+
+.product-card .multiple-choice-question {
+	margin-block-start: 16px;
+	margin-block-end: 0;
+
+	.form-legend {
+		display: none;
+	}
+
+	.multiple-choice-question__answers {
+		display: flex;
+		gap: 36px;
+	}
+
+	.multiple-choice-question__answer-item-content {
+		margin: 0;
+	}
+
+	.form-label {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 0;
+	}
+
+	.form-radio:checked::before {
+		background: var(--color-link);
+	}
+}
+

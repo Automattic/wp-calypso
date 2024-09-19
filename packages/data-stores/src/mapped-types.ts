@@ -8,7 +8,6 @@ import type { FunctionKeys } from 'utility-types';
  *
  * Mapped types can be thought of as functions in the type system, they accept some type
  * argument and transform it to another type.
- *
  * @see https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types
  */
 
@@ -20,7 +19,6 @@ type CastToFunction< T > = Cast< T, ( ...args: any[] ) => any >;
 
 /**
  * Maps a "raw" selector object to the selectors available when registered on the @wordpress/data store.
- *
  * @template S Selector map, usually from `import * as selectors from './my-store/selectors';`
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -32,7 +30,6 @@ export type SelectFromMap< S extends object > = {
 
 /**
  * Maps a "raw" actionCreators object to the actions available when registered on the @wordpress/data store.
- *
  * @template A Selector map, usually from `import * as actions from './my-store/actions';`
  */
 export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any > > = {

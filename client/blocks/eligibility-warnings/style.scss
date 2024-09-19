@@ -1,19 +1,25 @@
 .eligibility-warnings {
 	// 16px from card padding + 32 = 48 gap from top|bottom
 	// 24px from card padding + 24 = 48 gab from left|right
-	padding: 32px 24px;
+	padding: 8px 0;
 	overflow-wrap: anywhere;
 	background: #fff;
 	font-size: $font-body-small;
 	margin: 0;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
+	@media (max-width: 660px) {
+		padding: 0;
+	}
+
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
 		justify-content: space-between;
 
-		@media ( max-width: 660px ) {
-			display: block;
+		@media (max-width: 660px) {
+			flex-direction: column-reverse;
+			flex-wrap: wrap;
+			gap: 20px;
 
 			.button {
 				width: 100%;
@@ -27,7 +33,15 @@
 		display: flex;
 		gap: 5px;
 		color: var(--color-text-subtle);
-		font-size: 1rem;
+		font-size: 0.875rem;
+
+		a {
+			text-decoration: underline;
+		}
+
+		@media (max-width: 660px) {
+			justify-content: center;
+		}
 	}
 
 	.card {
@@ -166,6 +180,10 @@
 	.eligibility-warnings__message-description {
 		color: var(--color-text-subtle);
 		font-size: $font-body;
+
+		&--hosting-features {
+			font-weight: 500;
+		}
 	}
 }
 
@@ -176,6 +194,7 @@
 
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
+	text-wrap: nowrap;
 	.gridicons-help-outline {
 		color: var(--color-neutral-light);
 	}
@@ -219,14 +238,37 @@
 	margin-top: 20px;
 
 	.card {
-		padding: 10px 24px;
-		margin-bottom: 5px;
+		padding: 12px 16px;
+		margin-bottom: 4px;
 	}
 
 	.badge {
 		position: absolute;
 		right: 20px;
 		border-radius: 4px;
+		font-weight: 500;
+		font-size: $font-body-extra-small;
+
+		&.badge--success {
+			background: var(--studio-green-5);
+			color: var(--studio-green-80);
+		}
+	}
+
+	@media (max-width: 660px) {
+		.card {
+			display: flex;
+			flex-direction: column-reverse;
+			flex-wrap: wrap;
+			gap: 4px;
+
+			.badge {
+				position: relative;
+				right: unset;
+				width: fit-content;
+				align-self: flex-start;
+			}
+		}
 	}
 }
 
@@ -235,7 +277,7 @@
 	margin: 0 24px;
 	border-radius: 4px;
 
-	@media ( max-width: 480px ) {
+	@media (max-width: 480px) {
 		margin: 0 16px;
 	}
 
@@ -251,5 +293,7 @@
 
 	.eligibility-warnings__message {
 		border-bottom: none;
+		padding-bottom: 0;
+		margin-bottom: 0;
 	}
 }

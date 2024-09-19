@@ -38,6 +38,8 @@ export function convertKeysBy( obj, fn ) {
 }
 
 /**
+ * @deprecated Use TS version of this function: `import { convertSnakeCaseToCamelCase } from 'calypso/state/data-layer/convert-snake-case-to-camel-case';`
+ *
  * Deeply converts keys from the specified object to camelCase notation.
  * @param {Object} obj object to convert
  * @returns {Object} a new object with all keys converted

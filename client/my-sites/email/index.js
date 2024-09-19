@@ -30,10 +30,10 @@ const emailMailboxesSiteSelectionHeader = ( context, next ) => {
 };
 
 export default function () {
-	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
+	page( paths.getEmailManagementPath(), siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		paths.emailManagementMailboxes(),
+		paths.getMailboxesPath(),
 		siteSelection,
 		emailMailboxesSiteSelectionHeader,
 		sites,
@@ -42,7 +42,7 @@ export default function () {
 	);
 
 	page(
-		paths.emailManagementMailboxes( ':site' ),
+		paths.getMailboxesPath( ':site' ),
 		...commonHandlers,
 		controller.emailManagementMailboxes,
 		makeLayout,
@@ -51,9 +51,9 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagement( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
-			paths.emailManagement( ':site', ':domain' ),
-			paths.emailManagement( ':site' ),
+			paths.getEmailManagementPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getEmailManagementPath( ':site', ':domain' ),
+			paths.getEmailManagementPath( ':site' ),
 		],
 		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
 	} );
@@ -62,12 +62,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddEmailForwards(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementAddEmailForwards( ':site', ':domain' ),
+			paths.getAddEmailForwardsPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getAddEmailForwardsPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -79,13 +75,13 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsers(
+			paths.getAddGSuiteUsersPath(
 				':site',
 				':domain',
 				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain', productType ),
+			paths.getAddGSuiteUsersPath( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -97,12 +93,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementManageTitanAccount(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementManageTitanAccount( ':site', ':domain' ),
+			paths.getManageTitanAccountPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getManageTitanAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -114,12 +106,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementManageTitanMailboxes(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementManageTitanMailboxes( ':site', ':domain' ),
+			paths.getManageTitanMailboxesPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getManageTitanMailboxesPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -130,7 +118,7 @@ export default function () {
 	} );
 
 	registerMultiPage( {
-		paths: [ paths.emailManagementInDepthComparison( ':site', ':domain' ) ],
+		paths: [ paths.getEmailInDepthComparisonPath( ':site', ':domain' ) ],
 		handlers: [
 			...commonHandlers,
 			controller.emailManagementInDepthComparison,
@@ -141,12 +129,12 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementPurchaseNewEmailAccount(
+			paths.getPurchaseNewEmailAccountPath(
 				':site',
 				':domain',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementPurchaseNewEmailAccount( ':site', ':domain' ),
+			paths.getPurchaseNewEmailAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -158,12 +146,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementNewTitanAccount(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
+			paths.getNewTitanAccountPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getNewTitanAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -175,12 +159,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetUpMailbox(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ),
+			paths.getTitanSetUpMailboxPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getTitanSetUpMailboxPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -192,12 +172,12 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanControlPanelRedirect(
+			paths.getTitanControlPanelRedirectPath(
 				':site',
 				':domain',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanControlPanelRedirect( ':site', ':domain' ),
+			paths.getTitanControlPanelRedirectPath( ':site', ':domain' ),
 		],
 		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
 		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
@@ -205,26 +185,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetUpThankYou(
-				':site',
-				':domain',
-				null,
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ),
-		],
-		handlers: [
-			...commonHandlers,
-			controller.emailManagementTitanSetUpThankYou,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
-			paths.emailManagementForwarding( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
-			paths.emailManagementForwarding( ':site', ':domain' ),
+			paths.getForwardingPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getForwardingPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,

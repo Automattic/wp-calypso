@@ -103,7 +103,6 @@ export default {
 			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'pressable-nux' ||
 			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
@@ -160,7 +159,7 @@ export default {
 		next();
 	},
 
-	redirectToFlow( context, next ) {
+	async redirectToFlow( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
@@ -224,14 +223,26 @@ export default {
 			return;
 		}
 
+		store.set( 'signup-locale', localeFromParams );
+
+		// const isOnboardingFlow = flowName === 'onboarding';
+		// // See: 1113-gh-Automattic/experimentation-platform for details.
+		// if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
+		// 	// `isTokenLoaded` covers users who just logged in.
+		// 	if ( wpcom.isTokenLoaded() || userLoggedIn ) {
+		// 		const trailMapExperimentAssignment = await loadExperimentAssignment(
+		// 			'calypso_signup_onboarding_trailmap_guided_flow'
+		// 		);
+		// 		initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
+		// 	}
+		// }
+
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
 				getValidPath( context.params, userLoggedIn ) +
 					( context.querystring ? '?' + context.querystring : '' )
 			);
 		}
-
-		store.set( 'signup-locale', localeFromParams );
 
 		next();
 	},
@@ -262,9 +273,17 @@ export default {
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+		const params = {
 			flow: flowName,
-		} );
+		};
+
+		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
+		// This is kept for documentation purposes.
+		// if ( isOnboardingGuidedFlow( flowName ) ) {
+		// 	params.trailmap_variant = initialContext.trailMapExperimentVariant || 'control';
+		// }
+
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );

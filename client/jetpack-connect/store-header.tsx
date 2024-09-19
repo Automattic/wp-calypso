@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -18,7 +18,7 @@ export default function StoreHeader() {
 		currentRoute === '/jetpack/connect/store' ||
 		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
 
-	const headerClass = classNames( 'jetpack-connect__main-logo', {
+	const headerClass = clsx( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
 	} );
 

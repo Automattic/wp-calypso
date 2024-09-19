@@ -148,10 +148,7 @@ describe( 'BackupRetentionManagement', () => {
 
 			// Render component
 			render(
-				<BackupRetentionManagement
-					defaultRetention={ retentionSelected }
-					storagePurchased={ true }
-				/>
+				<BackupRetentionManagement defaultRetention={ retentionSelected } storagePurchased />
 			);
 
 			// Ensure the retention passed is checked
@@ -176,10 +173,7 @@ describe( 'BackupRetentionManagement', () => {
 
 			// Render component
 			render(
-				<BackupRetentionManagement
-					defaultRetention={ retentionSelected }
-					storagePurchased={ true }
-				/>
+				<BackupRetentionManagement defaultRetention={ retentionSelected } storagePurchased />
 			);
 
 			// Ensure the retention passed is checked
@@ -214,10 +208,7 @@ describe( 'BackupRetentionManagement', () => {
 
 			// Render component
 			render(
-				<BackupRetentionManagement
-					defaultRetention={ retentionSelected }
-					storagePurchased={ true }
-				/>
+				<BackupRetentionManagement defaultRetention={ retentionSelected } storagePurchased />
 			);
 
 			// Ensure the retention passed is checked

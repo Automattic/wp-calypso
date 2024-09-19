@@ -29,7 +29,6 @@ body {
 /* This is needed for useResizeObserver to work. */
 .editor__block-canvas-container {
 	box-sizing: border-box;
-	position: absolute;
 	width: 100%;
 }
 

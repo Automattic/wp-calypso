@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
 $slider-height: 40px;
@@ -20,7 +21,6 @@ $track-height: 4px;
 
 .tier-upgrade-slider {
 	--jp-white: #fff;
-	--jp-green-50: #008710;
 	--gray-gray-5: #dcdcde;
 
 	margin-top: 42px;
@@ -29,13 +29,33 @@ $track-height: 4px;
 
 	border: 1px solid var(--gray-gray-5);
 	border-radius: 5px; // stylelint-disable-line scales/radii
-	padding: 12px;
+	padding: 16px;
+
+	// Make sure the icon size is not affected by the slider thumb size.
+	.tier-upgrade-slider__thumb-icon {
+		position: absolute;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		padding: 0 4px;
+		left: 3px;
+		box-sizing: border-box;
+	}
+
+	// Remove the box shadow on the slider thumb when not holding.
+	.tier-upgrade-slider__slider:not(.jp-components-pricing-slider--is-holding) {
+		.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
+			box-shadow: none;
+		}
+	}
 
 	.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
 		width: $thumb-width;
 		height: $slider-height;
 		border-radius: 50%;
-		background-color: var(--jp-green-50);
+		background-color: var(--jp-green-40);
 		color: var(--jp-white);
 	}
 
@@ -97,29 +117,47 @@ $track-height: 4px;
 
 .tier-upgrade-slider__info-message {
 	color: var(--studio-gray-40);
-	margin: 12px 0;
+	margin: 12px 0 0;
 	text-align: center;
+	font-size: $font-body-small;
 }
 
 .tier-upgrade-slider__step-callouts {
 	display: flex;
 	justify-content: space-between;
+	align-items: end;
 
 	h2 {
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
+
+		@media (max-width: $break-medium) {
+			font-size: $font-body-extra-small;
+		}
 	}
-	p {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 2em;
-		font-weight: 500;
+
+	b {
+		font-size: $font-headline-small;
+		font-weight: bold;
 		margin: 0;
+
+		@media (max-width: $break-medium) {
+			font-size: $font-title-medium;
+		}
 	}
+
 	.right-aligned {
 		text-align: right;
 	}
+
 	.full-price-label {
+		font-size: $font-title-medium;
 		color: var(--studio-gray-40);
 		text-decoration: line-through;
+
+		@media (max-width: $break-medium) {
+			font-size: $font-body-large;
+		}
 	}
 
 	svg {

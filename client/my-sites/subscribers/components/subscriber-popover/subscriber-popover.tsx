@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { close, Icon, seen, trash, box } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ const SubscriberPopover = ( {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, site?.ID )
 	);
@@ -38,7 +38,7 @@ const SubscriberPopover = ( {
 		<div className="subscriber-popover__container">
 			<button
 				aria-label="Open subscriber menu"
-				className={ classNames( 'components-button subscriber-popover__toggle', {
+				className={ clsx( 'components-button subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }

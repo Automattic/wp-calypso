@@ -1,0 +1,69 @@
+.stats-card-skeleton {
+	width: 100%;
+
+	.stats-card {
+		height: 100%;
+		box-sizing: border-box;
+	}
+
+	// use separate animation to match the cycle actoss card
+	.stats-card-skeleton__placeholder {
+		animation: stats-skeleton-card 2.5s ease-in-out infinite;
+		background-color: rgba(var(--color-neutral-5-rgb), 0.8);
+		border-radius: 4px;
+	}
+
+	ul {
+		padding: 0 24px; // match horizontal bar spacing
+		margin: 0;
+	}
+
+	li {
+		list-style: none;
+
+		& + li {
+			margin-top: 3px;
+		}
+	}
+
+	&.stats-card-skeleton--with-hero {
+		.stats-card__content {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.stats-card--hero {
+			margin-left: 24px;
+			margin-right: 24px;
+			flex: 1 1 auto;
+		}
+
+		.stats-card--header-and-body {
+			flex: 1 1 auto;
+		}
+
+		// match contry map breakpoint
+		@media (min-width: 1280px) {
+			.stats-card__content {
+				display: flex;
+				flex-direction: row;
+			}
+
+			.stats-card--hero {
+				padding: 0;
+				margin-right: 0;
+				flex: 4 4 auto;
+			}
+
+			.stats-card--header-and-body {
+				flex: 2 2 auto;
+			}
+		}
+	}
+}
+
+@keyframes stats-skeleton-card {
+	50% {
+		background-color: var(--color-neutral-0);
+	}
+}

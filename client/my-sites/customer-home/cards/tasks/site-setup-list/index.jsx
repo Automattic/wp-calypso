@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
 import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
@@ -241,7 +242,7 @@ const SiteSetupList = ( {
 	};
 
 	return (
-		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
+		<Card className={ clsx( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
 			{ ! useAccordionLayout && (
 				<CurrentTaskItem
@@ -385,4 +386,21 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	};
 } )( SiteSetupList );
 
-export default withIsFSEActive( ConnectedSiteSetupList );
+const WithIsFSEActiveSiteSetupList = withIsFSEActive( ConnectedSiteSetupList );
+export default WithIsFSEActiveSiteSetupList;
+
+const SiteSetupListWrapper = ( { siteId } ) => {
+	if ( ! siteId ) {
+		return null;
+	}
+	return (
+		<>
+			<QuerySiteChecklist siteId={ siteId } />
+			<WithIsFSEActiveSiteSetupList />
+		</>
+	);
+};
+
+export const ConnectedSiteSetupListWrapper = connect( ( state ) => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( SiteSetupListWrapper );

@@ -1,6 +1,6 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useCheckSiteTransferStatus } from '../hooks/use-check-site-transfer-status';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const PollAtomicTransfer = ( { site, children }: WithAtomicTransferProps ) => {
 	const result = useCheckSiteTransferStatus( { siteId: site.ID, intervalTime: 5000 } );

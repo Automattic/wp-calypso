@@ -1,6 +1,11 @@
-## next
+## 2.1.1
+
+- Fix import path in post-stats-card/index.tsx and fix can't resolve "assets" error #90267.
+
+## 2.1.0
 
 - Update social-logos to ^2.5.2 (#72876)
+- Remove the `HappinessEngineersTray` component and the dependencies on `@automattic/data-stores`, `@automattic/search` and `wpcom-proxy-request`
 
 ## 2.0.1
 

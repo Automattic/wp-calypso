@@ -1,0 +1,14 @@
+$plans-2023-small-breakpoint: 780px;
+
+/**
+ * @see @automattic/plans-grid-next/src/components/plan-type-selector/style.scss
+ * This introduces mobile only sticky behavior for the plan type selector.
+ *
+ * @deprecated
+ * TODO clk This should migrate to use grid-size on the parent container. As done for features/comparison grid.
+ */
+@mixin plan-type-selector-custom-mobile-breakpoint() {
+	@media (max-width: $plans-2023-small-breakpoint) {
+		@content;
+	}
+}

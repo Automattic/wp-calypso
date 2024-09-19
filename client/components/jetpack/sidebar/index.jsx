@@ -9,7 +9,7 @@ import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import { getJetpackAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 import JetpackIcons from './menu-items/jetpack-icons';

@@ -1,204 +1,282 @@
-import { isJetpackProduct, isJetpackPlan, isAkismetProduct } from '@automattic/calypso-products';
+import { isAkismetProduct, isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import formatCurrency from '@automattic/format-currency';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import { createInterpolateElement } from '@wordpress/element';
+import { formatCurrency } from '@automattic/format-currency';
+import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
+import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { preventWidows } from 'calypso/lib/formatting';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { getItemVariantDiscountPercentage } from '../item-variation-picker/util';
-import type { FC } from 'react';
 
 import './style.scss';
 
+type PriceBreakdown = {
+	label: string;
+	priceInteger: number;
+	isBold?: boolean;
+	isDiscount?: boolean;
+	forceDisplay?: boolean;
+	isIntroductoryOffer?: boolean;
+};
+
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
-interface UpsellLineProps {
-	label: string;
-	value?: string;
-	boldLabel?: boolean;
-	boldValue?: boolean;
-	isTitle?: boolean;
-}
+const isJetpackAkismetProduct = ( product: ResponseCartProduct ) =>
+	isJetpackProduct( product ) || isJetpackPlan( product ) || isAkismetProduct( product );
 
-const UpsellLine: FC< UpsellLineProps > = ( {
+const useCurrentProductWithVariants = () => {
+	const cartKey = useCartKey();
+	const reduxDispatch = useDispatch();
+	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
+	const product = responseCart.products.find( isJetpackAkismetProduct );
+	const variantsArray = useGetProductVariants( product );
+
+	const current = variantsArray?.find( ( variant ) => variant.productId === product?.product_id );
+	const biennial = variantsArray?.find( ( variant ) => variant.termIntervalInMonths === 24 );
+
+	const replaceWithBiennial = useCallback( () => {
+		if ( ! product || ! current || ! biennial ) {
+			return;
+		}
+
+		debug( 'switching from', current.productSlug, 'to', biennial.productSlug );
+		reduxDispatch(
+			recordTracksEvent( 'calypso_jetpack_checkout_sidebar_upsell_click', {
+				upsell_type: 'biennial-plan',
+				switching_from: current.productSlug,
+				switching_to: biennial.productSlug,
+			} )
+		);
+
+		replaceProductInCart( product.uuid, {
+			product_id: biennial.productId,
+			product_slug: biennial.productSlug,
+		} );
+	}, [ product, current, biennial, reduxDispatch, replaceProductInCart ] );
+
+	return {
+		product,
+		variants: { current, biennial },
+		replaceWithBiennial,
+	};
+};
+
+const useCalculatedDiscounts = () => {
+	const { __ } = useI18n();
+	const {
+		product,
+		variants: { current, biennial },
+	} = useCurrentProductWithVariants();
+
+	if ( ! product ) {
+		return null;
+	}
+
+	if ( ! current || ! biennial || current.productId === biennial.productId ) {
+		debug( 'product in cart has no biennial variant or is already biennial', {
+			current,
+			biennial,
+		} );
+		return null;
+	}
+
+	const originalPrice = current.priceBeforeDiscounts * 2;
+	const introductoryOfferDiscount = biennial.priceBeforeDiscounts - biennial.priceInteger;
+	const multiYearDiscount = originalPrice - biennial.priceBeforeDiscounts;
+
+	const priceBreakdown: PriceBreakdown[] = [];
+
+	priceBreakdown.push( {
+		label: __( 'Plan subscription' ),
+		priceInteger: originalPrice,
+	} );
+
+	// Introductory discount (optional)
+	if ( product.introductory_offer_terms?.enabled ) {
+		const isProductFreeTrial =
+			product.bill_period === '365' &&
+			product.introductory_offer_terms?.interval_unit === 'month' &&
+			product.introductory_offer_terms?.interval_count === 1;
+		if ( 'month' === biennial.introductoryTerm && 1 === biennial.introductoryInterval ) {
+			// For free monthly trials (biennial), display the monthly price as the discount.
+			priceBreakdown.push( {
+				label: __( 'Free trial*' ),
+				priceInteger: product.item_original_monthly_cost_integer,
+				isDiscount: true,
+				isIntroductoryOffer: true,
+			} );
+		} else if ( ! isProductFreeTrial ) {
+			// We don't show the discount for free trials (annual) in upsell if biennial plan doesn't have free trial.
+			priceBreakdown.push( {
+				label: __( 'Introductory offer*' ),
+				priceInteger: introductoryOfferDiscount,
+				isDiscount: true,
+				isIntroductoryOffer: true,
+			} );
+		}
+	}
+
+	if ( multiYearDiscount > 0 ) {
+		priceBreakdown.push( {
+			label: __( 'Multi-year discount' ),
+			priceInteger: multiYearDiscount,
+			isDiscount: true,
+		} );
+	}
+
+	// Coupon discount is added on top of other discounts
+	if ( product.coupon_savings_integer ) {
+		const couponRate = product.coupon_savings_integer / product.item_original_subtotal_integer;
+		priceBreakdown.push( {
+			label: __( 'Coupon' ),
+			priceInteger: biennial.priceInteger * couponRate,
+			isDiscount: true,
+		} );
+	}
+
+	const allAppliedDiscounts = priceBreakdown
+		.filter( ( { isDiscount } ) => isDiscount )
+		.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
+
+	const subtotalPrice = originalPrice - allAppliedDiscounts;
+
+	const vatPrice = ( originalPrice - allAppliedDiscounts ) * ( product.item_tax_rate ?? 0 );
+
+	priceBreakdown.push( { label: __( 'Tax' ), priceInteger: vatPrice } );
+
+	const finalBreakdown: PriceBreakdown[] = [
+		{
+			label: __( 'Total' ),
+			priceInteger: subtotalPrice + vatPrice,
+			isBold: true,
+		},
+	];
+
+	return {
+		percentSavings: getItemVariantDiscountPercentage( biennial, current ),
+		priceBreakdown,
+		finalBreakdown,
+	};
+};
+
+const UpsellEntry: FC< Omit< PriceBreakdown, 'priceInteger' > & { priceInteger?: number } > = ( {
 	label,
-	value,
-	boldLabel = false,
-	boldValue = false,
-	isTitle = false,
+	priceInteger,
+	isBold,
+	isDiscount,
+	forceDisplay,
 } ) => {
-	const labelMarkup = boldLabel ? <strong>{ label }</strong> : label;
-	const valueMarkup = boldValue ? <strong>{ value }</strong> : value;
+	const { product } = useCurrentProductWithVariants();
+	const className = clsx( 'checkout-sidebar-plan-upsell__plan-grid-cell', {
+		'section-bold': isBold,
+		'section-discount': isDiscount,
+	} );
+
+	if ( 0 === priceInteger && ! forceDisplay ) {
+		// If value is defined (it's price entry) but $0, we don't show it.
+		return null;
+	}
+
 	return (
 		<>
-			<div
-				className={ classNames(
-					'checkout-sidebar-plan-upsell__plan-grid-cell',
-					isTitle ? 'section-title' : ''
-				) }
-			>
-				{ labelMarkup }
-			</div>
-			<div
-				className={ classNames(
-					'checkout-sidebar-plan-upsell__plan-grid-cell',
-					isTitle ? 'section-title' : ''
-				) }
-			>
-				{ valueMarkup }
-			</div>
+			<div className={ className }>{ label }</div>
+			{ undefined !== priceInteger && (
+				<div className={ className }>
+					{ isDiscount ? '-' : '' }
+					{ formatCurrency( Math.round( priceInteger ), product?.currency ?? 'USD', {
+						isSmallestUnit: true,
+					} ) }
+				</div>
+			) }
 		</>
 	);
 };
 
-const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
-	const { formStatus } = useFormStatus();
-	const isFormLoading = FormStatus.READY !== formStatus;
-	const reduxDispatch = useDispatch();
-	const { __ } = useI18n();
-	const cartKey = useCartKey();
-	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
-	const plan = responseCart.products.find(
-		( product ) =>
-			isJetpackProduct( product ) || isJetpackPlan( product ) || isAkismetProduct( product )
-	);
-
-	const variants = useGetProductVariants( plan );
-
-	if ( ! plan ) {
-		debug( 'no jetpack plan found in cart' );
-		return null;
-	}
-
-	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
-	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
-
-	if ( ! biennialVariant ) {
-		debug( 'plan in cart has no biennial variant; variants are', variants );
-		return null;
-	}
-
-	if ( ! currentVariant ) {
-		debug( 'plan in cart has no current variant; variants are', variants );
-		return null;
-	}
-
-	if ( biennialVariant.productId === plan.product_id ) {
-		debug( 'plan in cart is already biennial' );
-		return null;
-	}
-
-	const onUpgradeClick = () => {
-		if ( isFormLoading ) {
-			return;
+const IntroductoryOfferAsterisk: FC< { renewalsCount: number } > = ( { renewalsCount } ) => {
+	const { __, _n } = useI18n();
+	const description = useMemo( () => {
+		if ( renewalsCount > 0 ) {
+			return sprintf(
+				// translators: %d is the number of renewals after the introductory offer.
+				_n(
+					'*Introductory offer first term and %d renewal only, then renews at regular rate.',
+					'*Introductory offer first term and %d renewals only, then renews at regular rate.',
+					renewalsCount
+				),
+				renewalsCount
+			);
 		}
-		const newPlan = {
-			product_slug: biennialVariant.productSlug,
-			product_id: biennialVariant.productId,
-		};
-		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_jetpack_checkout_sidebar_upsell_click', {
-				upsell_type: 'biennial-plan',
-				switching_from: plan.product_slug,
-				switching_to: newPlan.product_slug,
-			} )
-		);
-		replaceProductInCart( plan.uuid, newPlan );
-	};
 
-	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
-	if ( percentSavings === 0 ) {
-		debug( 'percent savings is too low', percentSavings );
+		return __( '*Introductory offer first term only, renews at regular rate.' );
+	}, [ renewalsCount, __, _n ] );
+
+	return <>{ preventWidows( description ) }</>;
+};
+
+const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
+	const { __ } = useI18n();
+	const { formStatus } = useFormStatus();
+	const { product, replaceWithBiennial } = useCurrentProductWithVariants();
+	const calculatedDiscounts = useCalculatedDiscounts();
+
+	if ( ! product || ! calculatedDiscounts ) {
 		return null;
 	}
 
-	const isComparisonWithIntroOffer =
-		biennialVariant.introductoryInterval === 2 &&
-		biennialVariant.introductoryTerm === 'year' &&
-		currentVariant.introductoryInterval === 1 &&
-		currentVariant.introductoryTerm === 'year';
-	const isDiscounted =
-		! isComparisonWithIntroOffer &&
-		currentVariant.priceInteger < currentVariant.priceBeforeDiscounts;
-	const currencyConfig = {
-		stripZeros: true,
-		isSmallestUnit: true,
-	};
+	const { percentSavings, priceBreakdown, finalBreakdown } = calculatedDiscounts;
 
-	const cardTitle = createInterpolateElement(
-		sprintf(
-			// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
-			{ percentSavings }
-		),
-		{ strong: <strong /> }
+	if ( percentSavings <= 0 ) {
+		return null;
+	}
+
+	const hasIntroductoryOffers = priceBreakdown.some(
+		( breakdown ) => breakdown.isIntroductoryOffer
 	);
 
-	const yearOnePrice =
-		isComparisonWithIntroOffer || isDiscounted
-			? currentVariant.priceInteger
-			: currentVariant.priceBeforeDiscounts;
-
-	const yearTwoPrice = currentVariant.priceBeforeDiscounts;
-
-	const twoYearTotal =
-		currentVariant.priceBeforeDiscounts +
-		( isComparisonWithIntroOffer || isDiscounted
-			? currentVariant.priceInteger
-			: currentVariant.priceBeforeDiscounts );
-
-	const twoYearTotalBiennial = biennialVariant.priceInteger;
-
-	// We don't want to call out the two year plan if it doesn't save them money
-	if ( twoYearTotal <= twoYearTotalBiennial ) {
-		return null;
-	}
+	const isLoading = FormStatus.READY !== formStatus;
+	const cardTitle = sprintf(
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		__( 'Save %(percentSavings)d%% by paying for two years.' ),
+		{ percentSavings }
+	);
 
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell jetpack">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
-				<UpsellLine label={ __( 'Yearly plan' ) } boldLabel isTitle />
-
-				<UpsellLine
-					label={ __( 'Year One' ) }
-					value={ formatCurrency( yearOnePrice, currentVariant.currency, currencyConfig ) }
-				/>
-
-				<UpsellLine
-					label={ __( 'Year Two' ) }
-					value={ formatCurrency( yearTwoPrice, currentVariant.currency, currencyConfig ) }
-				/>
-
-				<UpsellLine
-					label={ __( 'Total' ) }
-					value={ formatCurrency( twoYearTotal, currentVariant.currency, currencyConfig ) }
-					boldValue
-				/>
-
-				<UpsellLine label={ __( 'Two-year plan' ) } boldLabel isTitle />
-
-				<UpsellLine
-					label={ __( 'Two-year total' ) }
-					value={ formatCurrency( twoYearTotalBiennial, biennialVariant.currency, currencyConfig ) }
-					boldValue
-				/>
+				<UpsellEntry label={ __( '2 year plan' ) } isBold />
 			</div>
+			<hr className="checkout-sidebar-plan-upsell__separator" />
+			<div className="checkout-sidebar-plan-upsell__plan-grid">
+				{ priceBreakdown.map( ( props ) => (
+					<UpsellEntry key={ props.label } { ...props } />
+				) ) }
+			</div>
+			<hr className="checkout-sidebar-plan-upsell__separator" />
+			<div className="checkout-sidebar-plan-upsell__plan-grid">
+				{ finalBreakdown.map( ( props ) => (
+					<UpsellEntry key={ props.label } { ...props } />
+				) ) }
+			</div>
+			{ hasIntroductoryOffers && product.introductory_offer_terms && (
+				<IntroductoryOfferAsterisk
+					renewalsCount={ product.introductory_offer_terms.transition_after_renewal_count }
+				/>
+			) }
 
 			<PromoCardCTA
 				cta={ {
-					disabled: isFormLoading,
-					busy: isFormLoading,
+					disabled: isLoading,
+					busy: isLoading,
 					text: __( 'Switch to a two-year plan' ),
-					action: onUpgradeClick,
+					action: replaceWithBiennial,
 				} }
 			/>
 		</PromoCard>

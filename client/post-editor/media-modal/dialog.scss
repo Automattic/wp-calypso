@@ -128,12 +128,12 @@
 }
 
 .editor-media-modal .media-library__content .empty-content__illustration {
-	@media ( max-height: 470px ) {
+	@media (max-height: 470px) {
 		display: none;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		@media ( max-height: 600px ) {
+		@media (max-height: 600px) {
 			display: none;
 		}
 	}

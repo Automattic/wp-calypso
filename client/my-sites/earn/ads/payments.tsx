@@ -1,10 +1,10 @@
 import { Badge, Card } from '@automattic/components';
-import classNames from 'classnames';
+import { CALYPSO_CONTACT } from '@automattic/urls';
+import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import Notice from 'calypso/components/notice';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -33,16 +33,18 @@ type WordAdSettings = {
 		display_page: boolean;
 		enable_header_ad: boolean;
 		second_belowpost: boolean;
+		inline_enabled: boolean;
 		sidebar: boolean;
 		display_archive: boolean;
 	};
 	ccpa_enabled: boolean;
 	ccpa_privacy_policy_url: string;
+	cmp_enabled: boolean;
 };
 
 const WordAdsPayments = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const payments: Payments = useSelector( ( state ) => getWordAdsPayments( state, siteId ?? 0 ) );
 	const wordAdsSettings: WordAdSettings = useSelector( ( state ) =>
 		getWordadsSettings( state, siteId )
@@ -59,7 +61,7 @@ const WordAdsPayments = () => {
 
 	function paymentsTable( currentPayments: Payments, type: string ) {
 		const rows: React.ReactNode[] = [];
-		const classes = classNames( 'payments_history' );
+		const classes = clsx( 'payments_history' );
 
 		currentPayments.forEach( ( payment ) => {
 			rows.push(

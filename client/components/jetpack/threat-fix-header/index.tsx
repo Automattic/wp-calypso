@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -38,7 +38,7 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, act
 			<div className="threat-fix-header__card-container">
 				<div className="threat-fix-header__card-top">{ getThreatMessage( threat ) }</div>
 				<span
-					className={ classnames(
+					className={ clsx(
 						'threat-fix-header__card-bottom',
 						severityClassNames( threat.severity )
 					) }

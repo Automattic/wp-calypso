@@ -10,6 +10,7 @@ type FormFieldWrapperProps = {
 const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
 	select {
 		width: 100%;
+		font-size: 14px;
 	}
 `;
 

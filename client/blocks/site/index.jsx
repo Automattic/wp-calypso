@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Icon, chevronDown, layout } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -43,6 +43,9 @@ class Site extends Component {
 		// Choose to show the SiteIndicator
 		indicator: true,
 
+		// Show badges inline with domain
+		inlineBadges: false,
+
 		// Mark as selected or not
 		isSelected: false,
 
@@ -68,6 +71,7 @@ class Site extends Component {
 		onMouseEnter: PropTypes.func,
 		onMouseLeave: PropTypes.func,
 		isSelected: PropTypes.bool,
+		inlineBadges: PropTypes.bool,
 		isHighlighted: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -113,6 +117,7 @@ class Site extends Component {
 
 	renderSiteDomain = () => {
 		const { site, homeLink, translate } = this.props;
+
 		return (
 			<div className="site__domain">
 				{ isJetpackCloud() &&
@@ -125,27 +130,26 @@ class Site extends Component {
 		);
 	};
 
-	render() {
+	renderDomainAndInlineBadges = () => {
+		const { site, homeLink, translate } = this.props;
+
+		return (
+			<div className="site__domain-and-badges">
+				<div className="site__domain">
+					{ isJetpackCloud() &&
+						homeLink &&
+						translate( 'View %(domain)s', {
+							args: { domain: site.domain },
+						} ) }
+					{ ( ! isJetpackCloud() || ! homeLink ) && site.domain }
+				</div>
+				{ this.renderSiteBadges() }
+			</div>
+		);
+	};
+
+	renderSiteBadges() {
 		const { isSiteUnlaunched, site, translate, isAtomicAndEditingToolkitDeactivated } = this.props;
-
-		if ( ! site ) {
-			// we could move the placeholder state here
-			return null;
-		}
-
-		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
-		const siteClass = classnames( {
-			site: true,
-			'is-jetpack': site.jetpack,
-			'is-primary': site.primary,
-			'is-private': site.is_private,
-			'is-redirect': site.options && site.options.is_redirect,
-			'is-selected': this.props.isSelected,
-			'is-highlighted': this.props.isHighlighted,
-			'is-compact': this.props.compact,
-			'is-reskinned': this.props.isReskinned,
-			'is-trial': this.props.isTrialSite,
-		} );
 
 		// We show public coming soon badge only when the site is not private.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
@@ -160,6 +164,72 @@ class Site extends Component {
 		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
 		const shouldShowPrivateByDefaultComingSoonBadge =
 			this.props.site.is_coming_soon || isPrivateAndUnlaunched;
+
+		return (
+			<>
+				{ this.props.isSiteP2 && ! this.props.isP2Hub && (
+					<span className="site__badge is-p2">P2</span>
+				) }
+				{ site?.is_wpcom_staging_site && (
+					<SitesStagingBadge className="site__badge" secondary>
+						{ translate( 'Staging' ) }
+					</SitesStagingBadge>
+				) }
+				{ this.props.isTrialSite && (
+					<SitesMigrationTrialBadge className="site__badge" secondary>
+						{ translate( 'Trial' ) }
+					</SitesMigrationTrialBadge>
+				) }
+				{ this.props.isP2Hub && <span className="site__badge is-p2-workspace">P2 Workspace</span> }
+				{ this.props.site.is_private && (
+					<span className="site__badge site__badge-private">
+						{ shouldShowPrivateByDefaultComingSoonBadge
+							? translate( 'Coming Soon' )
+							: translate( 'Private' ) }
+					</span>
+				) }
+				{ site.options && site.options.is_difm_lite_in_progress && (
+					<span className="site__badge site__badge-domain-only">
+						{ translate( 'Express Service' ) }
+					</span>
+				) }
+				{ shouldShowPublicComingSoonSiteBadge && (
+					<span className="site__badge site__badge-coming-soon">
+						{ translate( 'Coming Soon' ) }
+					</span>
+				) }
+				{ site.options && site.options.is_redirect && (
+					<span className="site__badge site__badge-redirect">{ translate( 'Redirect' ) }</span>
+				) }
+				{ site.options && site.options.is_domain_only && (
+					<span className="site__badge site__badge-domain-only">{ translate( 'Domain' ) }</span>
+				) }
+			</>
+		);
+	}
+
+	render() {
+		const { site, translate, inlineBadges } = this.props;
+
+		if ( ! site ) {
+			// we could move the placeholder state here
+			return null;
+		}
+
+		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
+		const siteClass = clsx( {
+			site: true,
+			'is-jetpack': site.jetpack,
+			'is-primary': site.primary,
+			'is-private': site.is_private,
+			'is-redirect': site.options && site.options.is_redirect,
+			'is-selected': this.props.isSelected,
+			'is-highlighted': this.props.isHighlighted,
+			'is-compact': this.props.compact,
+			'is-reskinned': this.props.isReskinned,
+			'is-trial': this.props.isTrialSite,
+			'inline-badges': inlineBadges,
+		} );
 
 		return (
 			<div className={ siteClass }>
@@ -203,48 +273,17 @@ class Site extends Component {
 								</span>
 							</div>
 						) }
-						{ ! this.props.isReskinned && this.renderSiteDomain() }
-						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
-							<span className="site__badge is-p2">P2</span>
+						{ inlineBadges ? (
+							this.renderDomainAndInlineBadges()
+						) : (
+							<>
+								{ ! this.props.isReskinned && this.renderSiteDomain() }
+								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+								{ this.renderSiteBadges() }
+								{ this.props.isReskinned && this.renderSiteDomain() }
+							</>
 						) }
-						{ site?.is_wpcom_staging_site && (
-							<SitesStagingBadge className="site__badge" secondary>
-								{ translate( 'Staging' ) }
-							</SitesStagingBadge>
-						) }
-						{ this.props.isTrialSite && (
-							<SitesMigrationTrialBadge className="site__badge" secondary>
-								{ translate( 'Trial' ) }
-							</SitesMigrationTrialBadge>
-						) }
-						{ this.props.isP2Hub && (
-							<span className="site__badge is-p2-workspace">P2 Workspace</span>
-						) }
-						{ this.props.site.is_private && (
-							<span className="site__badge site__badge-private">
-								{ shouldShowPrivateByDefaultComingSoonBadge
-									? translate( 'Coming Soon' )
-									: translate( 'Private' ) }
-							</span>
-						) }
-						{ site.options && site.options.is_difm_lite_in_progress && (
-							<span className="site__badge site__badge-domain-only">
-								{ translate( 'Built By Express' ) }
-							</span>
-						) }
-						{ shouldShowPublicComingSoonSiteBadge && (
-							<span className="site__badge site__badge-coming-soon">
-								{ translate( 'Coming Soon' ) }
-							</span>
-						) }
-						{ site.options && site.options.is_redirect && (
-							<span className="site__badge site__badge-redirect">{ translate( 'Redirect' ) }</span>
-						) }
-						{ site.options && site.options.is_domain_only && (
-							<span className="site__badge site__badge-domain-only">{ translate( 'Domain' ) }</span>
-						) }
-						{ this.props.isReskinned && this.renderSiteDomain() }
+
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</div>
 					{ this.props.homeLink && this.props.showHomeIcon && (

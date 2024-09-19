@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import ScreenReaderText from '../screen-reader-text';
 
@@ -76,7 +76,7 @@ export default class ProgressBar extends React.PureComponent< Props, State > {
 	}
 
 	render() {
-		const classes = classnames( this.props.className, 'progress-bar', {
+		const classes = clsx( this.props.className, 'progress-bar', {
 			'is-compact': this.props.compact,
 			'is-pulsing': this.props.isPulsing,
 		} );

@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
@@ -27,7 +27,7 @@ class ComponentPlayground extends Component {
 
 	render() {
 		const toggleCode = this.props.code.length > 200;
-		const codeClassName = classNames( {
+		const codeClassName = clsx( {
 			'design__component-playground-code': true,
 			'show-code': toggleCode ? this.state.showCode : true,
 		} );

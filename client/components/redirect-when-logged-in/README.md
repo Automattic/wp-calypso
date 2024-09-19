@@ -20,7 +20,7 @@ class YourComponent extends React.Component {
 				<RedirectWhenLoggedIn
 					delayAtMount={ 3500 }
 					redirectTo="/"
-					replaceCurrentLocation={ true }
+					replaceCurrentLocation
 					waitForEmailAddress={ this.props.emailAddress }
 				/>
 				Stuff you want logged-out users to see before they log in.

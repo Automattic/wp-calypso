@@ -9,7 +9,7 @@
 	bottom: 0;
 	min-width: 400px;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@media only screen and (max-width: 600px) {
 		width: 100%;
 		min-width: 0;
 	}
@@ -164,47 +164,65 @@ html.touch #wpnc-panel {
 }
 
 div.reader-notifications__panel {
-	#wpnc-panel {
+	#wpnc-panel.wpnc__main {
+		min-width: 410px;
 
 		&.wpnt-open {
 			position: fixed;
 			top: var(--masterbar-height);
-			right: var(--sidebar-width-max);
+			right: auto;
 			left: var(--sidebar-width-max);
 			bottom: 0;
-			min-width: 400px;
-		}
-	}
 
-	.wpnc__main {
+			@media only screen and (max-width: 783px) {
+				left: 0;
+			}
+			@media only screen and (min-width: 783px) {
+				top: calc(var(--masterbar-height) + 20px);
+				height: calc(100vh - var(--masterbar-height) - 36px);
+				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
+			}
+			@media only screen and (min-width: 601px) and (max-width: 783px) {
+				top: calc(var(--masterbar-height) + 24px);
+				height: calc(100vh - 50px - var(--masterbar-height));
+				left: 24px;
+				border-top-left-radius: 8px; /* stylelint-disable-line scales/radii */
+				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
+			}
+		}
+		.wpnc__list-view {
+			border: none;
+			border-right: 1px solid var(--color-neutral-0);
+
+			.wpnc__note:focus,
+			.wpnc__selected-note {
+				box-shadow: inset -4px 0 0 var(--color-primary);
+			}
+		}
+
 		&.wpnc__note-list {
 			right: auto;
 			left: 0;
 		}
+
+		.wpnc__single-view {
+			min-width: 410px;
+		}
 	}
 
-	#wpnc-panel.wpnc__main {
-		background-color: unset;
+	@media only screen and (min-width: 1114px) {
+		#wpnc-panel.wpnc__main {
+			background-color: unset;
 
-		.wpnc__list-view .wpnc__selected-note {
-			box-shadow: inset -4px 0 0 var(--color-primary);
-		}
-		&.wpnt-open {
-			left: 272px;
-			right: unset;
-		}
-		.wpnc__note-list {
-			right: auto;
-			left: 0;
-		}
-		.wpnc__note-list:not(.is-note-open) {
-			box-shadow: 3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
-		}
-		.wpnc__single-view {
-			animation-name: dedicated_wpnc__slideIn;
-			border-right: 1px solid var(--color-neutral-5);
-			left: 9px;
-			right: inherit;
+			.wpnc__note-list:not(.is-note-open) {
+				box-shadow: 3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+			}
+
+			.wpnc__single-view {
+				animation-name: dedicated_wpnc__slideIn;
+				border-right: 1px solid var(--color-neutral-5);
+				right: inherit;
+			}
 		}
 	}
 	@keyframes dedicated_wpnc__slideIn {
@@ -213,25 +231,6 @@ div.reader-notifications__panel {
 		}
 		to {
 			transform: translateX(100%);
-		}
-	}
-}
-@media only screen and (max-width: 783px) {
-	div.reader-notifications__panel #wpnc-panel.wpnc__main {
-		&.wpnt-open {
-			left: 0;
-			min-width: 100%;
-		}
-		.wpnc__list-view .wpnc__selected-note {
-			box-shadow: none;
-		}
-		.wpnc__note-list {
-			max-width: 400px;
-			right: 0;
-		}
-		.wpnc__single-view {
-			animation-name: wpnc__slideIn;
-			left: 0;
 		}
 	}
 }

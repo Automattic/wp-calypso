@@ -35,7 +35,7 @@ const sharedCache = new QueryCacheSSR();
 
 export function createQueryClientSSR() {
 	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { cacheTime: MAX_AGE, staleTime: BASE_STALE_TIME } },
+		defaultOptions: { queries: { gcTime: MAX_AGE, staleTime: BASE_STALE_TIME } },
 		queryCache: sharedCache,
 	} );
 

@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
-import { getDSPOrigin } from 'calypso/lib/promote-post';
+import { UnconnectedPageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import { getDSPOrigin, useDspOriginProps } from 'calypso/lib/promote-post';
 import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -24,9 +24,15 @@ interface Props {
 
 // This component will pass through all properties to PageViewTracker unconnected component from the analytics library
 // We do this to make it compatible with the Blaze Jetpack version of the dashboard that uses hashbang for navigation
-const BlazePageViewTracker = ( props: Props ) => (
-	<PageViewTracker { ...props } properties={ { ...props.properties, origin: getDSPOrigin() } } />
-);
+const BlazePageViewTracker = ( props: Props ) => {
+	const dspOriginProps = useDspOriginProps();
+	return (
+		<UnconnectedPageViewTracker
+			{ ...props }
+			properties={ { ...props.properties, origin: getDSPOrigin( dspOriginProps ) } }
+		/>
+	);
+};
 
 const mapStateToProps = ( state: Record< string, unknown > ) => {
 	const isUserAuthenticated = getCurrentUserId( state );

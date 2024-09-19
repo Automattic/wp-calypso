@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
@@ -20,7 +21,12 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from 'calypso/my-sites/checkout/src/payment-methods/credit-card';
-import { createTestReduxStore, fetchStripeConfiguration, stripeConfiguration } from './util';
+import {
+	createTestReduxStore,
+	fetchRazorpayConfiguration,
+	fetchStripeConfiguration,
+	stripeConfiguration,
+} from './util';
 import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
 
 jest.mock( '@stripe/react-stripe-js', () => {
@@ -65,17 +71,19 @@ function TestWrapperInner( { paymentProcessors = undefined } ) {
 		<>
 			<GlobalNotices />
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				<CheckoutProvider
-					paymentMethods={ [ paymentMethod ] }
-					selectFirstAvailablePaymentMethod
-					paymentProcessors={ paymentProcessors ?? {} }
-				>
-					<CheckoutStepGroup>
-						<CompleteCreditCardFields />
-						<PaymentMethodStep />
-						<CheckoutFormSubmit />
-					</CheckoutStepGroup>
-				</CheckoutProvider>
+				<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
+					<CheckoutProvider
+						paymentMethods={ [ paymentMethod ] }
+						selectFirstAvailablePaymentMethod
+						paymentProcessors={ paymentProcessors ?? {} }
+					>
+						<CheckoutStepGroup>
+							<CompleteCreditCardFields />
+							<PaymentMethodStep />
+							<CheckoutFormSubmit />
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</RazorpayHookProvider>
 			</StripeHookProvider>
 		</>
 	);

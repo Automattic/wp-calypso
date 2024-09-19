@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -22,7 +23,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 	const {
 		isRequestingSettings,
 		isSavingSettings,
-		enableForm,
 		translate,
 		fields,
 		updateFields,
@@ -31,14 +31,22 @@ export const GoogleAnalyticsForm = ( props ) => {
 		uniqueEventTracker,
 		path,
 		isAtomic,
+		isJetpackModuleAvailable,
+		jetpackModuleActive,
 		isGoogleAnalyticsEligible,
+		site,
+		siteIsJetpack,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
 	const [ displayForm, setDisplayForm ] = useState( false );
+	const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
+
+	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
+	const enableForm =
+		isGoogleAnalyticsEligible && ( googleAnalyticsEnabled || fields?.wga?.is_active );
 	const isSubmitButtonDisabled =
 		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
-	const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 
 	const handleFieldChange = ( key, value, callback = () => {} ) => {
 		const updatedFields = Object.assign( {}, fields.wga || {}, {
@@ -83,8 +91,17 @@ export const GoogleAnalyticsForm = ( props ) => {
 		recordSupportLinkClick,
 		setDisplayForm,
 		isAtomic,
+		enableForm,
 	};
+
 	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
+		// Google Analytics module is not available (important distinction from not active)
+		if (
+			! isJetpackModuleAvailable &&
+			( ! fields.hasOwnProperty( 'wga' ) || ! fields.wga.hasOwnProperty( 'is_active' ) )
+		) {
+			return null;
+		}
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -94,14 +111,13 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const isGoogleAnalyticsEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
+	const isJetpackModuleAvailable = Boolean( getJetpackModule( state, siteId, 'google-analytics' ) );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getFilteredAndSortedPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
-		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
 		path,
 		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		site,
@@ -109,6 +125,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
+		isJetpackModuleAvailable,
 		isAtomic: isAtomicSite( state, siteId ),
 		isGoogleAnalyticsEligible,
 	};

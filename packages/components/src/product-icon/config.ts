@@ -99,6 +99,7 @@ export type SupportedSlugs =
 	| 'jetpack_backup_t2_monthly'
 	| 'jetpack_boost'
 	| 'jetpack_boost_monthly'
+	| 'jetpack_boost_yearly'
 	| 'jetpack_scan'
 	| 'jetpack_scan_monthly'
 	| 'jetpack_scan_v2'
@@ -119,6 +120,7 @@ export type SupportedSlugs =
 	| 'wpcom_search_monthly'
 	| 'jetpack_search_v2'
 	| 'jetpack_search_monthly_v2'
+	| 'jetpack_search_free'
 	| 'jetpack_anti_spam'
 	| 'jetpack_anti_spam_monthly'
 	| 'jetpack_anti_spam_v2'
@@ -208,7 +210,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_backup_addon_storage_3tb_yearly',
 		'jetpack_backup_addon_storage_5tb_yearly',
 	],
-	'jetpack-boost': [ 'jetpack_boost', 'jetpack_boost_monthly' ],
+	'jetpack-boost': [ 'jetpack_boost', 'jetpack_boost_monthly', 'jetpack_boost_yearly' ],
 	'jetpack-scan': [
 		'jetpack_scan',
 		'jetpack_scan_monthly',
@@ -226,6 +228,8 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'wpcom_search_monthly',
 		'jetpack_search_v2',
 		'jetpack_search_monthly_v2',
+		'jetpack_search_free',
+		'jetpack_search_monthly',
 	],
 	'jetpack-stats': [
 		'jetpack_stats_monthly',

@@ -1,0 +1,16 @@
+{
+	"WordPress.com": {
+		"date": "May 2024",
+		"goodCWM": 0.6855411789,
+		"goodLCP": 0.8544712613,
+		"goodCLS": 0.7805696786,
+		"goodFID": 0.9994334706
+	},
+	"WordPress": {
+		"date": "May 2024",
+		"goodCWM": 0.4369906891,
+		"goodLCP": 0.5937459153,
+		"goodCLS": 0.6953353768,
+		"goodFID": 0.9997646454
+	}
+}

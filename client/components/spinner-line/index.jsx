@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -6,7 +6,7 @@ import './style.scss';
 
 export default class SpinnerLine extends PureComponent {
 	render() {
-		const classes = classnames( 'spinner-line', this.props.className );
+		const classes = clsx( 'spinner-line', this.props.className );
 
 		return <hr className={ classes } />;
 	}

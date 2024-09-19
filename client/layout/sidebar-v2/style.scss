@@ -1,15 +1,11 @@
 .sidebar-v2 {
-	// TODO: Existing variables, overridden with values directly from designs;
-	// confirm these colors are correct and refactor as necessary
-	--color-sidebar-menu-hover-background: var(--studio-gray-0);
-	--color-sidebar-background: #fcfcfc;
-
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 
 	height: 100vh;
 	background-color: var(--color-sidebar-background);
+	color: var(--color-sidebar-text);
 
 	margin: 0;
 	padding: 16px;

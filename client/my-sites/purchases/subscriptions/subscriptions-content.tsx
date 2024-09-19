@@ -10,6 +10,7 @@ import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-l
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
+import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -103,15 +104,29 @@ export default function SubscriptionsContentWrapper() {
 
 function NoPurchasesMessage() {
 	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
+	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
+
+	let url;
+	if ( hasJetpackPartnerAccess ) {
+		url = selectedSiteId
+			? `/partner-portal/issue-license?site_id=${ selectedSiteId }`
+			: '/partner-portal/issue-license';
+	} else if ( isJetpackCloud() ) {
+		url = selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing';
+	} else {
+		url = selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
+	}
+
 	return isJetpackCloud() ? (
 		<JetpackRnaActionCard
 			headerText={ translate( 'You don’t have any active subscriptions for this site.' ) }
 			subHeaderText={ translate(
 				'Check out how Jetpack’s security, performance, and growth tools can improve your site.'
 			) }
-			ctaButtonLabel={ translate( 'Compare plans' ) }
-			ctaButtonURL={ selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing' }
+			ctaButtonLabel={ translate( 'View products' ) }
+			ctaButtonURL={ url }
 		/>
 	) : (
 		<CompactCard className="subscriptions__list">
@@ -119,7 +134,7 @@ function NoPurchasesMessage() {
 				title={ translate( 'Looking to upgrade?' ) }
 				line={ translate( 'You have made no purchases for this site.' ) }
 				action={ translate( 'Upgrade now' ) }
-				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
+				actionURL={ url }
 				illustration={ noSitesIllustration }
 			/>
 		</CompactCard>

@@ -1,5 +1,5 @@
 import { isLocaleRtl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import Head from 'calypso/components/head';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { chunkCssLinks } from './utils';
@@ -29,7 +29,7 @@ function DomainsLanding( {
 				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
 			<body
-				className={ classnames( {
+				className={ clsx( {
 					rtl: isRTL,
 				} ) }
 			>

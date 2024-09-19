@@ -1,9 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,7 +15,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -22,6 +23,7 @@ import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -59,9 +61,14 @@ export default function SitesOverview() {
 	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const selectedLicensesCount = selectedLicenses?.length;
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
+	const selectedLicensesCount = isStreamlinedPurchasesEnabled
+		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
+		: selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -77,19 +84,19 @@ export default function SitesOverview() {
 		setIsBulkManagementActive,
 	} = useContext( SitesOverviewContext );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
-		search,
+		searchQuery: search,
 		currentPage,
 		filter,
-		sort
-	);
+		sort,
+	} );
 
 	const {
 		data: verifiedContacts,
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
-	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+	} = useFetchMonitorVerifiedContacts( isPartnerOAuthTokenLoaded );
 
 	const { data: products } = useProductsQuery();
 
@@ -141,6 +148,14 @@ export default function SitesOverview() {
 		}
 	}, [ isError, translate, dispatch ] );
 
+	useEffect( () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			return () => {
+				dispatch( resetSite() );
+			};
+		}
+	}, [ isStreamlinedPurchasesEnabled, dispatch ] );
+
 	const pageTitle = translate( 'Sites' );
 
 	const basePath = '/dashboard';
@@ -188,7 +203,7 @@ export default function SitesOverview() {
 
 	const selectedTab = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 	const hasAppliedFilter = !! search || filter?.issueTypes?.length > 0;
-	const showEmptyState = ! isLoading && ! isError && ! data?.total;
+	const showEmptyState = ! isLoading && ! isError && data?.sites?.length === 0;
 
 	let emptyState;
 	if ( showEmptyState ) {
@@ -218,6 +233,19 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, serializedLicenses ] );
 
+	const handleIssueLicenses = () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			// TODO: Show a modal with the selected licenses and a button to issue them.
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+				site_id: selectedLicensesSiteId,
+				products: serializedLicenses,
+			} )
+		);
+	};
+
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -231,23 +259,24 @@ export default function SitesOverview() {
 				<Button
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
-					href={ issueLicenseRedirectUrl }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
-								site_id: selectedLicensesSiteId,
-								products: serializedLicenses,
-							} )
-						)
-					}
+					href={ isStreamlinedPurchasesEnabled ? undefined : issueLicenseRedirectUrl }
+					onClick={ handleIssueLicenses }
 				>
-					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-						context: 'button label',
-						count: selectedLicensesCount,
-						args: {
-							numLicenses: selectedLicensesCount,
-						},
-					} ) }
+					{ isStreamlinedPurchasesEnabled
+						? translate( 'Review %(numLicenses)d license', 'Review %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } )
+						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } ) }
 				</Button>
 			</div>
 		);
@@ -317,17 +346,17 @@ export default function SitesOverview() {
 							selectedText={
 								<span>
 									{ selectedTab.label }
-									<Count count={ selectedTab.count } compact={ true } />
+									<Count count={ selectedTab.count } compact />
 								</span>
 							}
 							selectedCount={ selectedTab.count }
-							className={ classNames(
+							className={ clsx(
 								isMobile && highlightTab && isFavoritesTab && 'sites-overview__highlight-tab'
 							) }
 						>
 							<NavTabs selectedText={ selectedTab.label } selectedCount={ selectedTab.count }>
 								{ navItems.map( ( props ) => (
-									<NavItem { ...props } compactCount={ true } />
+									<NavItem { ...props } compactCount />
 								) ) }
 							</NavTabs>
 						</SectionNav>

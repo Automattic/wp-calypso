@@ -9,13 +9,14 @@ $button-padding: 8px 32px;
 	--jp-white: #fff;
 	--jp-green-50: #008710;
 	--gray-gray-50: #646970;
-	--stats-purchase-left-min-width: 500px;
-	--stats-purchase-left-max-width: 700px;
+	--stats-purchase-width: 1124px;
+	// The following variables are layout distribution related to the `--stats-purchase-width`.
 	--stats-purchase-right-width: 456px;
+	--stats-purchase-left-max-width: calc(var(--stats-purchase-width) - var(--stats-purchase-right-width));
 
 	// Apply Jetpack dedicated styling upon the Calypso theme base.
 	&:not(.stats-purchase-page--is-wpcom) {
-		.stats-purchase-wizard__persnal-checklist {
+		.stats-purchase-wizard__personal-checklist {
 			.components-checkbox-control__input[type="checkbox"] {
 				&:checked {
 					background-color: var(--studio-jetpack-green-50);
@@ -28,7 +29,9 @@ $button-padding: 8px 32px;
 			}
 		}
 
-		.stats-purchase-single__persnal-checklist {
+		.stats-purchase-single__personal-checklist {
+			margin-bottom: 24px;
+
 			.components-checkbox-control__input[type="checkbox"] {
 				&:checked {
 					background-color: var(--studio-jetpack-green-50);
@@ -37,6 +40,15 @@ $button-padding: 8px 32px;
 
 				&:focus {
 					box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2 * var(--wp-admin-border-width-focus)) var(--studio-jetpack-green-50);
+				}
+			}
+
+			.stats-purchase-single__control--checkbox {
+				.components-checkbox-control__label {
+					font-size: var(--font-body);
+					line-height: 24px;
+					width: auto;
+					color: var(--jp-black);
 				}
 			}
 		}
@@ -154,12 +166,13 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__card-parent {
 		border-radius: 4px;
-		width: 1124px;
+		width: var(--stats-purchase-width);
 		max-width: 100%;
 	}
 
 	.stats-purchase-wizard__card {
 		display: flex;
+
 		h1,
 		.components-panel__header h2 {
 			color: var(--studio-black);
@@ -168,31 +181,65 @@ $button-padding: 8px 32px;
 			font-weight: 700;
 			line-height: 40px;
 		}
+
+		a {
+			color: var(--studio-black);
+			text-decoration: underline;
+			font-weight: bolder;
+		}
+	}
+
+	.stats-purchase-wizard__card-inner--single {
+		padding: 64px;
+		box-sizing: border-box;
+		flex: 2 2 auto;
+
+		p {
+			width: 36em;
+			@media (max-width: $break-medium) {
+				width: unset;
+			}
+		}
+
+		@media (max-width: $break-medium) {
+			padding: 32px 24px;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--left {
 		padding: 64px;
-		min-width: var(--stats-purchase-left-min-width);
-		max-width: var(--stats-purchase-left-max-width);
-		width: 60%;
 		box-sizing: border-box;
+		flex: 2 2 auto;
+		max-width: var(--stats-purchase-left-max-width);
+
+		@media (max-width: $break-medium) {
+			padding: 32px 24px;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--right {
-		display: flex;
+		display: none;
 		align-items: center;
-		width: var(--stats-purchase-right-width);
 		background: #f9f9f6;
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 4px;
+		flex: 1 1 var(--stats-purchase-right-width);
+
+		@media (min-width: $break-small) {
+			display: flex;
+		}
+
+		@media (min-width: $break-medium) {
+			display: none;
+		}
+
+		// Hide the right side on a smaller content area due to the sidebar menu.
+		@media (min-width: $break-large) {
+			display: flex;
+		}
 
 		> * {
 			z-index: 2;
-		}
-
-		img,
-		svg {
-			min-width: 400px;
 		}
 	}
 
@@ -220,6 +267,7 @@ $button-padding: 8px 32px;
 			margin-bottom: 8px;
 			padding-left: 28px;
 			background: no-repeat 0 50%;
+			background-position-y: top;
 
 			display: flex;
 			align-items: center;
@@ -242,7 +290,7 @@ $button-padding: 8px 32px;
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
-	.stats-purchase-wizard__persnal-checklist {
+	.stats-purchase-wizard__personal-checklist {
 		margin-bottom: 24px;
 	}
 
@@ -489,12 +537,14 @@ $button-padding: 8px 32px;
 	}
 
 	.stats-purchase-wizard__notice {
+		margin: 12px 0;
 		padding: 12px 16px;
 		background: var(--studio-yellow-5);
 		border-radius: 4px;
 
 		.is-link {
 			color: var(--jp-black);
+			font-weight: normal;
 		}
 	}
 
@@ -512,6 +562,8 @@ $button-padding: 8px 32px;
 }
 
 .stats-purchase-wizard--single {
+	margin-bottom: 24px;
+
 	h1 {
 		font-family: $font-sf-pro-display;
 		font-size: $font-headline-small;
@@ -519,61 +571,39 @@ $button-padding: 8px 32px;
 		line-height: 40px;
 		margin-bottom: 24px;
 	}
+}
 
-	.components-button + button.components-button {
-		margin-left: 12px;
+.stats-purchase-wizard__actions {
+	.components-button {
+		display: block;
+		width: 100%;
+		margin-bottom: 12px;
 	}
 }
 
-.stats-purchase-single__additional-card-panel {
-	margin-top: 32px;
-	width: var(--stats-purchase-left-min-width); // avoid jumping when tab content is added to the document
-
-	.stats-purchase-single__card-panel {
-		border-radius: 4px;
-	}
-
-	.components-panel__arrow {
-		display: block;
-	}
-
-	.components-panel__body {
-		padding: 0;
-
-		&.is-opened {
-			padding: 12px 16px 12px 24px;
-
-			.components-panel__body-title {
-				.components-panel__body-toggle {
-					padding: 16px; // default to the original padding due to negative margins from an opened panel
-				}
+.stats-purchase-single__personal-checklist-button {
+	.components-button {
+		box-shadow: inset 0 0 0 1px #1a1a1a;
+		&.is-secondary {
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				box-shadow: inset 0 0 0 1px var(--color-neutral-5);
 			}
 		}
 	}
+}
 
-	.components-panel__body-title {
-		.components-panel__body-toggle {
-			padding: 12px 16px 12px 24px;
-			font-size: var(--font-body);
-			line-height: 24px;
-			color: var(--jp-black);
-		}
-	}
+.stats-purchase-single__error-msg {
+	color: var(--gray-gray-50);
+	font-style: italic;
+	font-size: $font-body-small;
+	margin-top: 24px;
+}
 
-	p {
-		color: var(--gray-gray-50);
-		font-size: var(--font-body);
-		font-weight: 400;
-		line-height: 24px;
-	}
-
-	ul {
-		margin-bottom: 24px;
-
-		label {
-			font-size: var(--font-body);
-			line-height: 24px;
-			color: var(--jp-black);
-		}
-	}
+.stats-purchase-page__footnotes {
+	margin-top: 24px;
+	color: var(--gray-gray-50);
+	font-size: $font-body-small;
+	text-align: center;
 }

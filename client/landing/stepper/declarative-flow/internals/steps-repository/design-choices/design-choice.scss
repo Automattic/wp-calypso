@@ -1,0 +1,46 @@
+@import "@automattic/typography/styles/fonts";
+
+.design-choice {
+	display: flex;
+	flex-direction: column;
+	width: 380px;
+	padding: 36px 36px 60px;
+	border-radius: 4px;
+	outline: var(--studio-gray-5) solid 1px;
+	transition: outline ease-in 0.15s;
+	cursor: pointer;
+
+	.design-choice__title {
+		margin-bottom: 16px;
+		color: var(--studio-gray-100);
+		font-size: $font-title-medium;
+		font-weight: 400;
+		line-height: 26px;
+	}
+
+	.design-choice__description {
+		margin-bottom: 21px;
+		color: var(--studio-gray-50);
+		font-size: $font-body;
+		font-weight: 400;
+		line-height: 24px;
+		letter-spacing: -0.32px;
+		text-align: start;
+	}
+
+	.design-choice__image-container {
+		display: flex;
+		width: 308px;
+		min-height: 226px;
+		transition: transform ease-in 0.15s;
+	}
+
+	&:hover,
+	&:focus-visible {
+		outline: #3858e9 solid 2px;
+
+		.design-choice__image-container {
+			transform: scale(1.05);
+		}
+	}
+}

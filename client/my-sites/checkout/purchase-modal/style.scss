@@ -32,13 +32,16 @@ $left-margin: 36px;
 		width: 800px;
 	}
 
-	@media ( min-width: 480px ) {
+	@media (min-width: 480px) {
 		padding: 0;
 	}
 }
 
 .purchase-modal__wrapper {
-	display: flex;
+	display: block;
+	.has-feature-list & {
+		display: flex;
+	}
 	width: 100%;
 	flex-direction: column;
 	gap: 12px;
@@ -231,6 +234,11 @@ $left-margin: 36px;
 .purchase-modal__tax {
 	font-weight: normal;
 	color: var(--color-neutral-40);
+	font-size: $font-body-small;
+}
+
+.purchase-modal__coupon {
+	font-weight: normal;
 	font-size: $font-body-small;
 }
 

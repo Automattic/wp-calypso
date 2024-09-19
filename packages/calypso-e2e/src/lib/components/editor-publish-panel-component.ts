@@ -77,6 +77,19 @@ export class EditorPublishPanelComponent {
 	async publish(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const publishButtonLocator = editorParent.locator( selectors.publishButton );
+
+		// Check if the button is able to be triggered before proceeding.
+		// We limit the timeout to fix local testings.
+		try {
+			await publishButtonLocator.waitFor( { state: 'attached', timeout: 5 * 1000 } );
+		} catch {
+			return;
+		}
+
+		if ( ! ( await publishButtonLocator.count() ) ) {
+			return;
+		}
+
 		await publishButtonLocator.click();
 	}
 

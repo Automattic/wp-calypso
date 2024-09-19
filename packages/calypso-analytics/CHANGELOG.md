@@ -1,3 +1,7 @@
+## 1.1.2
+
+- Add additional 8 US states to the list of CCPA regions (DE, IN, IA, MT, NJ, OR, TN, TX).
+
 ## 1.1.1
 
 - Improved user privacy according to cookie banner preferences

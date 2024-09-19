@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -11,7 +11,7 @@ export default class ActivityIcon extends PureComponent {
 
 	render() {
 		const { activityIcon, activityStatus } = this.props;
-		const classes = classNames(
+		const classes = clsx(
 			'activity-log-item__activity-icon',
 			activityStatus && `is-${ activityStatus }`
 		);

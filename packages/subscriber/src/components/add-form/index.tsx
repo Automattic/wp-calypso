@@ -23,6 +23,7 @@ import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition'
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import { tip } from './icon';
+
 import './style.scss';
 
 interface Props {
@@ -46,6 +47,8 @@ interface Props {
 	subtitleText?: string;
 	showSkipLink?: boolean;
 	hidden?: boolean;
+	isWPCOMSite?: boolean;
+	disabled?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -75,6 +78,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		subtitleText,
 		showSkipLink,
 		hidden = false,
+		isWPCOMSite = false,
+		disabled,
 	} = props;
 
 	const {
@@ -112,7 +117,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		createElement( FormFileUpload, {
 			name: 'import',
 			onChange: onFileInputChange,
-			disabled: inProgress,
+			disabled: inProgress || disabled,
 		} )
 	);
 
@@ -287,7 +292,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		return (
 			error && (
-				<FormInputValidation icon="tip" isError={ false } isWarning={ true } text="">
+				<FormInputValidation icon="tip" isError={ false } isWarning text="">
 					<Icon icon={ tip } />
 					{ ( (): React.ReactNode => {
 						switch ( error.code ) {
@@ -316,7 +321,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function renderFileValidationMsg() {
 		return (
 			! isSelectedFileValid && (
-				<FormInputValidation className="is-file-validation" isError={ true } text="">
+				<FormInputValidation className="is-file-validation" isError text="">
 					{ createInterpolateElement(
 						translate(
 							'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
@@ -340,7 +345,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			!! submitAttemptCount &&
 			submitAttemptCount !== prevSubmitAttemptCount.current &&
 			! emails.filter( ( x ) => !! x ).length &&
-			! selectedFile && <FormInputValidation isError={ true } text={ validationMsg } />
+			! selectedFile && <FormInputValidation isError text={ validationMsg } />
 		);
 	}
 
@@ -356,6 +361,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvDisclaimerMsg() {
+		const importSubscribersUrl = ! isWPCOMSite
+			? 'https://jetpack.com/support/newsletter/import-subscribers/'
+			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
+
 		return (
 			( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) && (
 				<p className="add-subscriber__form--disclaimer">
@@ -372,9 +381,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								<Button
 									variant="link"
 									target="_blank"
-									href={ localizeUrl(
-										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-									) }
+									href={ localizeUrl( importSubscribersUrl ) }
 								/>
 							),
 						}
@@ -389,6 +396,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
 			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
 
+		const importSubscribersUrl = ! isWPCOMSite
+			? 'https://jetpack.com/support/newsletter/import-subscribers/'
+			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
+
 		const interpolateElement = {
 			uploadBtn: formFileUploadElement,
 			Button: (
@@ -396,9 +407,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					variant="link"
 					target="_blank"
 					rel="noreferrer"
-					href={ localizeUrl(
-						'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-					) }
+					href={ localizeUrl( importSubscribersUrl ) }
 				/>
 			),
 		};
@@ -487,7 +496,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								) }
 								<TextControl
 									className={ showError ? 'is-error' : '' }
-									disabled={ inProgress }
+									disabled={ inProgress || disabled }
 									placeholder={ placeholder }
 									value={ emails[ i ] || '' }
 									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
@@ -497,7 +506,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 								{ showError && (
 									<FormInputValidation
-										isError={ true }
+										isError
 										text={ translate( 'The format of the email is invalid' ) }
 									/>
 								) }
@@ -519,8 +528,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					<NextButton
 						type="submit"
 						className="add-subscriber__form-submit-btn"
-						isBusy={ inProgress }
-						disabled={ ! submitBtnReady }
+						isBusy={ inProgress && ! disabled }
+						disabled={ ! submitBtnReady || disabled }
 					>
 						{ submitBtnName }
 					</NextButton>

@@ -39,10 +39,10 @@ export default function UnassignLicenseDialog( {
 	} );
 
 	close = useCallback( () => {
-		if ( ! mutation.isLoading ) {
+		if ( ! mutation.isPending ) {
 			onClose();
 		}
-	}, [ onClose, mutation.isLoading ] );
+	}, [ onClose, mutation.isPending ] );
 
 	const unassign = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_unassign_dialog_unassign' ) );
@@ -54,14 +54,14 @@ export default function UnassignLicenseDialog( {
 			{ translate( 'Go back' ) }
 		</Button>,
 
-		<Button primary scary busy={ mutation.isLoading } onClick={ unassign }>
+		<Button primary scary busy={ mutation.isPending } onClick={ unassign }>
 			{ translate( 'Unassign License' ) }
 		</Button>,
 	];
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ buttons }
 			additionalClassNames="unassign-license-dialog"
 			onClose={ close }

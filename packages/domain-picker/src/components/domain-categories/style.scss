@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .domain-categories {
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		margin-bottom: 20px;
 
 		.domain-categories__dropdown-button.components-button {
@@ -39,7 +39,7 @@
 }
 
 .domain-categories__item-group {
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		text-align: center;
 		border: 1px solid var(--studio-gray-5);
 		// Overlap with border-bottom from dropdown button
@@ -72,7 +72,7 @@
 		}
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		.components-button {
 			display: block;
 			text-align: center;

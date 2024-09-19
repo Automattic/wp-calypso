@@ -5,7 +5,7 @@ import DnsRecordsListItem from 'calypso/my-sites/domains/domain-management/dns/d
 function DnsRecordsListHeader( { translate } ) {
 	return (
 		<DnsRecordsListItem
-			isHeader={ true }
+			isHeader
 			type={ translate( 'Type' ) }
 			name={ translate( 'Name' ) }
 			value={ translate( 'Value' ) }

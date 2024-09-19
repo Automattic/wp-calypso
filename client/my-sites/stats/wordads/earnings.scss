@@ -1,5 +1,6 @@
 @import "@automattic/components/src/styles/mixins";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
 
 .ads__table-header {
@@ -7,7 +8,7 @@
 	display: flex;
 
 	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
 	}
@@ -25,13 +26,14 @@
 
 .earnings_history {
 	border-radius: 4px;
+	margin-bottom: $vertical-margin;
 
 	table {
 		margin: 0;
 	}
 
 	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
 	}

@@ -1,4 +1,6 @@
 import { Page, ElementHandle } from 'playwright';
+import { envVariables } from '../..';
+import { CookieBannerComponent } from './cookie-banner-component';
 import { EditorComponent } from './editor-component';
 
 const selectors = {
@@ -20,6 +22,7 @@ const selectors = {
 export class EditorGutenbergComponent {
 	private page: Page;
 	private editor: EditorComponent;
+	private cookieBannerComponent: CookieBannerComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -29,6 +32,7 @@ export class EditorGutenbergComponent {
 	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
+		this.cookieBannerComponent = new CookieBannerComponent( page, editor );
 	}
 
 	/**
@@ -45,6 +49,11 @@ export class EditorGutenbergComponent {
 	async resetSelectedBlock(): Promise< void > {
 		const editorCanvas = await this.editor.canvas();
 		const locator = editorCanvas.locator( selectors.title );
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.cookieBannerComponent.acceptCookie();
+		}
+
 		// Every now and then, a block toolbar can cover the title, so we "force" using click events and the direct focus method.
 		await locator.dispatchEvent( 'click' );
 		await locator.focus();

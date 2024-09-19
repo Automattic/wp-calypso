@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import ChartBarTooltip from './bar-tooltip';
@@ -108,7 +108,7 @@ export default class ChartBar extends PureComponent {
 				onClick={ this.clickHandler }
 				onMouseEnter={ this.mouseEnter }
 				onMouseLeave={ this.mouseLeave }
-				className={ classNames( 'chart__bar', this.props.className ) }
+				className={ clsx( 'chart__bar', this.props.className ) }
 			>
 				{ this.renderBar() }
 				<div key="label" className="chart__bar-label">

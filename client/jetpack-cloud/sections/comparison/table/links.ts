@@ -34,7 +34,6 @@ export const links = {
 	social: localizeUrl( 'https://jetpack.com/social/' ),
 	stats: localizeUrl( 'https://jetpack.com/stats/' ),
 	subscriptions: 'https://jetpack.com/features/discussion/subscriptions/',
-	themes: 'https://jetpack.com/features/design/themes/',
 	transaction_fees: 'https://jetpack.com/support/jetpack-earn-transaction-fees/',
 	videopress: 'https://jetpack.com/features/writing/video-hosting/',
 } as const;

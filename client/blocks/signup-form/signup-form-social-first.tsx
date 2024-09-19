@@ -3,8 +3,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -12,21 +14,32 @@ import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
 
+interface QueryArgs {
+	redirect_to?: string;
+}
+
 interface SignupFormSocialFirst {
-	goToNextStep: () => void;
-	step: string;
+	goToNextStep: ( data: AccountCreateReturn ) => void;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
-	socialService: string;
-	socialServiceResponse: string;
-	handleSocialResponse: () => void;
-	isReskinned: boolean;
-	queryArgs: object;
+	socialServiceResponse: object;
+	handleSocialResponse: (
+		service: string,
+		access_token: string,
+		id_token: string | null,
+		userData: {
+			password: string;
+			email: string;
+			extra: { first_name: string; last_name: string; username_hint: string };
+		} | null
+	) => void;
+	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
+	passDataToNextStep?: boolean;
 }
 
 const options = {
@@ -50,19 +63,17 @@ const options = {
 
 const SignupFormSocialFirst = ( {
 	goToNextStep,
-	step,
 	stepName,
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
-	socialService,
 	socialServiceResponse,
 	handleSocialResponse,
-	isReskinned,
 	queryArgs,
 	userEmail,
 	notice,
 	isSocialFirst,
+	passDataToNextStep,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
@@ -89,7 +100,7 @@ const SignupFormSocialFirst = ( {
 		} else if ( currentStep === 'initial' ) {
 			tosText = createInterpolateElement(
 				__(
-					'If you continue with Google or Apple, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					'If you continue with Google, Apple or GitHub, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
 				),
 				options
 			);
@@ -120,22 +131,13 @@ const SignupFormSocialFirst = ( {
 					{ notice }
 					<SocialSignupForm
 						handleResponse={ handleSocialResponse }
-						socialService={ socialService }
+						setCurrentStep={ setCurrentStep }
 						socialServiceResponse={ socialServiceResponse }
-						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText={ true }
-						compact={ true }
+						disableTosText
+						compact
 						isSocialFirst={ isSocialFirst }
-					>
-						<Button
-							className="social-buttons__button button"
-							onClick={ () => setCurrentStep( 'email' ) }
-						>
-							<MailIcon width="20" height="20" />
-							<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
-						</Button>
-					</SocialSignupForm>
+					/>
 				</>
 			);
 		} else if ( currentStep === 'email' ) {
@@ -149,7 +151,6 @@ const SignupFormSocialFirst = ( {
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
-						step={ step }
 						stepName={ stepName }
 						flowName={ flowName }
 						goToNextStep={ goToNextStep }
@@ -159,6 +160,21 @@ const SignupFormSocialFirst = ( {
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						passDataToNextStep={ passDataToNextStep }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: queryArgs?.redirect_to,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
 						{ ...gravatarProps }
 					/>
 					<Button

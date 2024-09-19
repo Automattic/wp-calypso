@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -29,10 +29,16 @@ class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 		clearPageTitle: PropTypes.bool,
+		isPostShare: PropTypes.bool,
 	};
 
 	componentDidMount() {
 		const path = this.getPath();
+		recordTracksEvent( 'calypso_site_selector_view', {
+			path,
+			is_post_share: this.props.isPostShare,
+		} );
+
 		if ( this.props.fromSite && path ) {
 			recordTracksEvent( 'calypso_site_selector_site_missing', {
 				path,
@@ -47,6 +53,11 @@ class Sites extends Component {
 		if ( hasJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
+
+		if ( site.is_deleted ) {
+			return false;
+		}
+
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
@@ -141,11 +152,59 @@ class Sites extends Component {
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
 				break;
+			case 'hosting-overview':
+				path = translate( 'Hosting Overview' );
+				break;
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
+				break;
+			case 'github-deployments':
+				path = translate( 'GitHub Deployments' );
+				break;
+			case 'earn':
+				path = translate( 'Monetize' );
+				break;
+			case 'subscribers':
+				path = translate( 'Subscribers' );
+				break;
+			case 'themes':
+				path = translate( 'Themes' );
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
+				break;
+			case 'email':
+				path = translate( 'Emails' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
+			case 'customize':
+				path = translate( 'Customizer' );
+				break;
+			case 'google-my-business':
+				path = translate( 'Google Business Profile' );
+				break;
+			case 'view':
+				path = translate( 'Preview' );
+				break;
+			case 'woocommerce-installation':
+				path = 'WooCommerce';
+				break;
+			case 'store':
+				path = translate( 'Store' );
+				break;
+			case 'add-ons':
+				path = translate( 'Add-ons' );
 				break;
 		}
 
@@ -168,7 +227,7 @@ class Sites extends Component {
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
-				<Main className={ classNames( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
+				<Main className={ clsx( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
 					{ showEmptyContent ? (
 						<div className="sites__empty-state">
 							<h1 className="card-heading-36">{ translate( 'Add a site' ) }</h1>

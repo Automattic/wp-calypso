@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
@@ -50,12 +50,21 @@ class RequestLoginEmailForm extends Component {
 
 		tosComponent: PropTypes.node,
 		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
 		hideSubHeaderText: PropTypes.bool,
+		customFormLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
+		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
 		blogId: PropTypes.string,
+		errorMessage: PropTypes.string,
+		onErrorDismiss: PropTypes.func,
+		isEmailInputDisabled: PropTypes.bool,
+		isEmailInputError: PropTypes.bool,
+		isSubmitButtonDisabled: PropTypes.bool,
+		isSubmitButtonBusy: PropTypes.bool,
 	};
 
 	state = {
@@ -88,6 +97,10 @@ class RequestLoginEmailForm extends Component {
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
 		}
+
+		if ( this.props.errorMessage ) {
+			this.props.onErrorDismiss?.();
+		}
 	};
 
 	onNoticeDismiss = () => {
@@ -119,8 +132,12 @@ class RequestLoginEmailForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, locale } = this.props;
+		const { translate, locale, subHeaderText } = this.props;
 		const siteName = this.state.site?.name;
+
+		if ( subHeaderText ) {
+			return subHeaderText;
+		}
 
 		// If we have a siteName and new translation is available
 		if (
@@ -171,10 +188,18 @@ class RequestLoginEmailForm extends Component {
 			inputPlaceholder,
 			submitButtonLabel,
 			locale,
+			customFormLabel,
+			onSubmitEmail,
+			errorMessage,
+			onErrorDismiss,
+			isEmailInputDisabled,
+			isEmailInputError,
+			isSubmitButtonDisabled,
+			isSubmitButtonBusy,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
-		const siteIcon = this.state.site?.icon?.ico ?? this.state.site?.icon?.img ?? null;
+		const siteIcon = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;
 
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
@@ -187,7 +212,11 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		const submitEnabled =
-			usernameOrEmail.length && ! isFetching && ! emailRequested && ! requestError;
+			usernameOrEmail.length &&
+			! isFetching &&
+			! emailRequested &&
+			! requestError &&
+			! isSubmitButtonDisabled;
 
 		const errorText =
 			typeof requestError === 'string' && requestError.length
@@ -199,9 +228,15 @@ class RequestLoginEmailForm extends Component {
 				? translate( 'Send link' )
 				: translate( 'Get Link' );
 
-		const formLabel = hasTranslation( 'Email address or username' )
-			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+		const formLabel =
+			customFormLabel ||
+			( hasTranslation( 'Email address or username' )
+				? this.props.translate( 'Email address or username' )
+				: this.props.translate( 'Email Address or Username' ) );
+
+		const onSubmit = onSubmitEmail
+			? ( e ) => onSubmitEmail( this.getUsernameOrEmailFromState(), e )
+			: this.onSubmit;
 
 		return (
 			<div className="magic-login__form">
@@ -218,16 +253,6 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				{ requestError && (
-					<Notice
-						duration={ 10000 }
-						text={ errorText }
-						className="magic-login__request-login-email-form-notice"
-						showDismiss={ true }
-						onDismissClick={ this.onNoticeDismiss }
-						status="is-error"
-					/>
-				) }
 				{ currentUser && currentUser.username && (
 					<p>
 						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
@@ -237,25 +262,46 @@ class RequestLoginEmailForm extends Component {
 						} ) }
 					</p>
 				) }
-				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p className="magic-login__form-sub-header">
-						{ ! hideSubHeaderText && this.getSubHeaderText() }
-					</p>
+				<LoggedOutForm onSubmit={ onSubmit }>
+					{ ! hideSubHeaderText && (
+						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
+					) }
 					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							disabled={ isFetching || emailRequested }
+							disabled={ isFetching || emailRequested || isEmailInputDisabled }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
 							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 							placeholder={ inputPlaceholder }
+							isError={ isEmailInputError }
 						/>
 						{ tosComponent }
+						{ requestError && (
+							<Notice
+								duration={ 10000 }
+								text={ errorText }
+								className="magic-login__request-login-email-form-notice"
+								showDismiss={ false }
+								onDismissClick={ this.onNoticeDismiss }
+								status="is-transparent-info"
+							/>
+						) }
+						{ errorMessage && (
+							<Notice
+								duration={ 10000 }
+								text={ errorMessage }
+								className="magic-login__request-login-email-form-notice"
+								showDismiss={ false }
+								onDismissClick={ onErrorDismiss }
+								status="is-transparent-info"
+							/>
+						) }
 						<div className="magic-login__form-action">
-							<FormButton primary disabled={ ! submitEnabled }>
+							<FormButton primary disabled={ ! submitEnabled } busy={ isSubmitButtonBusy }>
 								{ submitButtonLabel || buttonLabel }
 							</FormButton>
 						</div>

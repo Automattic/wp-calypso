@@ -332,7 +332,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	margin-top: 9px;
 }
 
-@media ( min-width: 768px ) {
+@media (min-width: 768px) {
 
 	.x-nav-link--menu {
 		padding: 0 9px 0 9px;
@@ -340,7 +340,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	}
 }
 
-@media ( min-width: 864px ) {
+@media (min-width: 864px) {
 	.x-nav-item--narrow {
 		display: none;
 	}
@@ -369,7 +369,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	}
 }
 
-@media ( min-width: 1056px ) {
+@media (min-width: 1056px) {
 
 	.x-nav-link--primary {
 		padding: 9px 12px 10px;
@@ -433,7 +433,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	pointer-events: none;
 }
 
-@media ( min-width: 480px ) {
+@media (min-width: 480px) {
 	.x-menu-content {
 		left: auto;
 		width: 408px;

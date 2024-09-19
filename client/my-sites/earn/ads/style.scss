@@ -160,6 +160,19 @@
 	}
 }
 
+.theme-jetpack-cloud {
+	.ads__activate-header-title {
+		font-size: $font-title-small;
+	}
+	.action-card__heading {
+		font-size: $font-body-large;
+	}
+	.action-card__main {
+		p {
+			font-size: $font-body;
+		}
+	}
+}
 .ads__activate-header-title {
 	font-weight: 600;
 }

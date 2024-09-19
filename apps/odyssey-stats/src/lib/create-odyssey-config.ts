@@ -41,7 +41,6 @@ export class ConfigApi extends Function {
 	init( configKey = 'configData' ) {
 		/**
 		 * Manages config flags for various deployment builds
-		 *
 		 * @module config/index
 		 */
 		if ( 'undefined' === typeof window ) {
@@ -119,6 +118,9 @@ export class ConfigApi extends Function {
 
 		// Note: configData is hydrated in https://github.com/Automattic/jetpack/blob/d4d0f987cbf63a864b03b542b7813aabe87e0ed3/projects/packages/stats-admin/src/class-dashboard.php#L214
 		this.configData.features = productionConfig.features;
+
+		// Sets the Blaze Dashboard path prefix.
+		this.configData.advertising_dashboard_path_prefix = '/advertising';
 	}
 
 	// Copied from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/calypso-config/src/index.ts#L60

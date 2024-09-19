@@ -9,7 +9,7 @@ export const useActivityPubStatus = ( blogId, onUpdate = () => {} ) => {
 	const { data, isInitialLoading, isError } = useQuery( {
 		queryKey,
 		staleTime: 0, // refetches are important here, lots of stuff in play while doing upgrades, activation, etc
-		cacheTime: 5 * 60 * 1000, // 5 mins
+		gcTime: 5 * 60 * 1000, // 5 mins
 		queryFn: () => wpcom.req.get( { path, apiNamespace } ),
 	} );
 	const queryClient = useQueryClient();

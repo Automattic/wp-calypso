@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
@@ -22,7 +22,7 @@ const PromoCardPrice: FunctionComponent< Props > = ( {
 		formattedPrice = <span>{ translate( 'Free' ) }</span>;
 	}
 
-	const costClassNames = classnames( 'price__cost', {
+	const costClassNames = clsx( 'price__cost', {
 		price__discounted: !! discount,
 	} );
 

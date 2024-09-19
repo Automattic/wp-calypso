@@ -368,8 +368,8 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 		}
 
 		.social-buttons__button {
-			border: 1px solid var(--studio-pink-50);
-			color: var(--studio-pink-50);
+			border: 1px solid var(--studio-wordpress-blue);
+			color: var(--studio-wordpress-blue);
 			box-shadow: none;
 			max-width: 250px;
 			height: 48px;
@@ -393,6 +393,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 /**
  * Common styles for reskinSignupFlow a/b test
  */
+body.is-section-stepper,
 body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
@@ -433,14 +434,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.navigation-link.button.is-borderless {
-		color: var(--color-accent);
-
-		svg {
-			fill: var(--color-accent);
-		}
-	}
-
 	.step-wrapper__navigation {
 		.navigation-link.button.is-borderless {
 			color: $gray-100;
@@ -460,22 +453,16 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout) {
+	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout),
+	// Stepper's header.
+	.step-container:not(.is-horizontal-layout) {
+		// Stepper's header.
+		.step-container__header,
 		.step-wrapper__header {
 			margin: 24px 20px;
 
 			@include break-large {
 				margin: 48px 0 40px;
-			}
-		}
-	}
-
-	.signup.is-onboarding-2023-pricing-grid .step-wrapper:not(.is-horizontal-layout) {
-		.step-wrapper__header {
-			margin: 24px 20px 38px;
-
-			@media (min-width: 880px) {
-				margin: 24px 20px;
 			}
 		}
 	}
@@ -639,7 +626,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				max-width: 100%;
 				margin-top: 30px;
 
-				@media screen and (max-width: $breakpoint-mobile ) {
+				@media screen and (max-width: $breakpoint-mobile) {
 					margin-top: 0;
 
 					&::before,
@@ -727,7 +714,24 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	// https://github.com/Automattic/wp-calypso/pull/83886
 	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment,
 	.signup__step.is-user-social {
-		margin-top: 25vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: calc(100vh - 96px);
+
+		.step-wrapper {
+			width: 100%;
+			margin-bottom: 48px;
+
+			@media screen and (max-width: $breakpoint-mobile) {
+				margin-bottom: 0;
+			}
+		}
+
+		.locale-suggestions {
+			width: 100%;
+		}
 
 		.step-wrapper__header {
 			margin-bottom: 24px !important;
@@ -810,7 +814,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	}
 
 	/* TODO: Remove the following when the 2023 pricig grid is live to all users */
-	.signup:not(.is-onboarding-2023-pricing-grid) .signup__step .plans.plans-step {
+	.signup .signup__step .plans.plans-step {
 		.formatted-header {
 			.formatted-header__title {
 				font-size: 2.25rem;
@@ -828,23 +832,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			.formatted-header__subtitle button.is-borderless {
 				font-weight: 500;
 				color: var(--studio-gray-90);
-			}
-		}
-	}
-
-	.signup.is-onboarding-2023-pricing-grid .signup__step .plans.plans-step {
-		.formatted-header {
-			.formatted-header__title {
-				font-size: 2.25rem;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 2.5rem;
-				font-weight: 400;
-
-				@media (min-width: 880px) {
-					font-size: 2.75rem;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 3rem;
-				}
 			}
 		}
 	}

@@ -49,7 +49,10 @@ export const SubscriberRow = ( {
 			<span className="subscriber-list__menu-column" role="cell">
 				<SubscriberPopover
 					onView={ () => onView( subscriber ) }
-					onGiftSubscription={ () => onGiftSubscription( subscriber ) }
+					onGiftSubscription={
+						// Do not show if user is not on WPCOM
+						subscriber.user_id ? () => onGiftSubscription( subscriber ) : undefined
+					}
 					onUnsubscribe={ () => onUnsubscribe( subscriber ) }
 					isViewButtonVisible
 				/>

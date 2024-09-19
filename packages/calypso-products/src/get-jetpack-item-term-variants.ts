@@ -5,7 +5,6 @@ type termMap = { yearly: JetpackPurchasableItemSlug; monthly: JetpackPurchasable
 
 /**
  * Return the slugs of a Jetpack plan or product for all existing terms.
- *
  * @param itemSlug Slug of the Jetpack product or plan
  * @returns Object with term and product slug as key/value
  */

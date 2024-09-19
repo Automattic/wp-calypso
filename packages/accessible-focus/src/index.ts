@@ -18,7 +18,6 @@ declare global {
 		/**
 		 * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyIdentifier
 		 * Provides Safari support
-		 *
 		 * @deprecated
 		 */
 		keyIdentifier: string;
@@ -37,7 +36,6 @@ declare global {
  *
  * Therefore, we have two arrays of keycodes, one for the string APIs and one for the
  * older number based API.
- *
  * @param event The keyboard event to detect keyboard navigation against.
  */
 export function detectKeyboardNavigation( event: KeyboardEvent ): boolean {

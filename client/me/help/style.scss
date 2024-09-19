@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "client/me/style.scss";
 
 .help__heading {
 	display: flex;

@@ -1,11 +1,10 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { Badge, Gridicon, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import { Badge, FormLabel, Gridicon, Spinner } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Site from 'calypso/blocks/site';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import './style.scss';
 
@@ -81,7 +80,7 @@ class SitesBlock extends Component {
 	render() {
 		const { targetSite, step, translate } = this.props;
 		const isSourceSelectStep = step === 'sourceSelect';
-		const className = classNames( 'sites-block__sites', {
+		const className = clsx( 'sites-block__sites', {
 			'is-step-source-select': isSourceSelectStep,
 		} );
 

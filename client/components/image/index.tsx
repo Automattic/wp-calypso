@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { SyntheticEvent } from 'react';
 
 const hideImageOnError = ( event: SyntheticEvent< HTMLImageElement > ) => {
@@ -12,7 +12,7 @@ export default function Image( { alt, className, src, ...rest }: ImageProps ) {
 		<img
 			src={ src }
 			onError={ hideImageOnError }
-			className={ classnames( className, 'image' ) }
+			className={ clsx( className, 'image' ) }
 			alt={ alt }
 			{ ...rest }
 		/>

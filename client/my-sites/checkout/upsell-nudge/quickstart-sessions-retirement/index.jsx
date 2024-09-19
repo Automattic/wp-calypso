@@ -1,10 +1,10 @@
 import { CompactCard, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SUPPORT_ROOT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import ExternalLink from 'calypso/components/external-link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { SUPPORT_ROOT } from 'calypso/lib/url/support';
 import {
 	CONCIERGE_QUICKSTART_SESSION,
 	CONCIERGE_SUPPORT_SESSION,

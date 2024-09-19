@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -24,6 +23,8 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		url?.replace( /^https?:\/\//, '' )
 	);
 
+	const isSafeJetpackRedirectUrl = /^https:\/\/jetpack\.com\/redirect\//.test( url );
+
 	// Gives WP Admin Customizer a chance to return to where we started from.
 	if ( isSafeWpAdminUrl && url?.includes( 'wp-admin/customize.php' ) ) {
 		url = addQueryArgs(
@@ -34,7 +35,7 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		);
 	}
 
-	if ( isSafeInternalUrl || isSafeWpAdminUrl ) {
+	if ( isSafeInternalUrl || isSafeWpAdminUrl || isSafeJetpackRedirectUrl ) {
 		return url;
 	}
 
@@ -51,11 +52,6 @@ const sanitizeMenuItem = ( menuItem, siteSlug, wpAdminUrl ) => {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
 			sanitizeMenuItem( subMenuItem, siteSlug, wpAdminUrl )
 		);
-	}
-
-	// Enable the import page if the feature option is on.
-	if ( menuItem.slug === 'import-php' && isEnabled( 'importer/unified' ) ) {
-		menuItem.url = `/import/${ siteSlug }`;
 	}
 
 	return {

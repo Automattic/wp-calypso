@@ -1,5 +1,5 @@
 import { Card, Gridicon, Button } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FollowButton from 'calypso/blocks/follow-button/button';
@@ -20,7 +20,7 @@ const ListStreamHeader = ( {
 	onFollowToggle,
 	translate,
 } ) => {
-	const classes = classnames( {
+	const classes = clsx( {
 		'list-stream__header': true,
 		'is-placeholder': isPlaceholder,
 		'has-description': !! description,

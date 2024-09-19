@@ -61,7 +61,7 @@ const StyledGridicon = styled( Gridicon )`
 	color: var( --color-neutral-10 );
 `;
 
-const HelpBuble = styled( InfoPopover )`
+const HelpBubble = styled( InfoPopover )`
 	margin-left: 7px;
 	display: flex;
 	align-items: center;
@@ -79,13 +79,18 @@ const renderHelpBubble = ( item: Item ) => {
 	}
 
 	return (
-		<HelpBuble icon="help-outline" position="right">
+		<HelpBubble icon="help-outline" position="right">
 			{ item.helpBubble }
-		</HelpBuble>
+		</HelpBubble>
 	);
 };
 
-export type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
+export type Item = {
+	label: string;
+	href?: string;
+	helpBubble?: React.ReactElement;
+	onClick?: () => void;
+};
 interface Props {
 	items: Item[];
 	mobileItem?: Item;
@@ -95,7 +100,11 @@ interface Props {
 
 const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
+	const { items = [], mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
+
+	if ( items.length === 0 ) {
+		return null;
+	}
 
 	if ( items.length === 1 ) {
 		if ( hideWhenOnlyOneLevel ) {
@@ -110,40 +119,35 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	if ( compact && items.length > 1 ) {
+	if ( compact ) {
 		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
+		const onClick = mobileItem?.onClick ?? items[ items.length - 2 ].onClick;
 		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
-			<StyledBackLink className="breadcrumbs-back" href={ urlBack }>
+			<StyledBackLink className="breadcrumbs-back" href={ urlBack } onClick={ onClick }>
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ label }
 			</StyledBackLink>
 		);
 	}
 
-	if ( items.length > 1 ) {
-		return (
-			<StyledUl className="breadcrumbs">
-				{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
-					<StyledLi key={ index }>
-						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
-						{ item.href && index !== items.length - 1 ? (
-							<a href={ item.href }>{ item.label }</a>
-						) : (
-							<span>{ item.label }</span>
-						) }
-						{ renderHelpBubble( item ) }
-					</StyledLi>
-				) ) }
-			</StyledUl>
-		);
-	}
-	// Default case -> items: []
-	return null;
-};
-
-Breadcrumb.defaultProps = {
-	items: [],
+	return (
+		<StyledUl className="breadcrumbs">
+			{ items.map( ( item: Item, index: Key ) => (
+				<StyledLi key={ index }>
+					{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
+					{ item.href && index !== items.length - 1 ? (
+						<a href={ item.href } onClick={ item.onClick }>
+							{ item.label }
+						</a>
+					) : (
+						<span>{ item.label }</span>
+					) }
+					{ renderHelpBubble( item ) }
+				</StyledLi>
+			) ) }
+		</StyledUl>
+	);
 };
 
 export default Breadcrumb;

@@ -1,0 +1,82 @@
+
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
+
+.patterns-header {
+	background: #1d2327;
+
+	.patterns-header__inner {
+		@include patterns-page-width;
+		padding-top: 105px;
+		padding-bottom: 64px;
+		background-image: url(./images/background@3x.png);
+		background-repeat: no-repeat;
+		background-position: 87% top;
+		background-size: 45% auto;
+		color: var(--studio-white);
+
+		h1 {
+			font-family: $font-recoleta;
+			font-size: rem(70px);
+			line-height: 1;
+			letter-spacing: 0.2px;
+			width: 600px;
+			padding-bottom: 24px;
+		}
+
+		.patterns-header__description {
+			font-family: $font-sf-pro-display;
+			font-size: rem(18px);
+			letter-spacing: 0.4px;
+			line-height: 1.4;
+			padding-bottom: 32px;
+			width: 450px;
+		}
+
+		.patterns-header__search-input {
+			.search {
+				border-radius: 4px;
+				width: 450px;
+				height: 56px;
+				overflow: hidden;
+				margin-bottom: 0;
+
+				input[type="search"] {
+					font-family: $font-sf-pro-text;
+					letter-spacing: -0.32px;
+
+					&::placeholder {
+						color: #01283d;
+					}
+				}
+			}
+		}
+	}
+
+	@media (max-width: $break-xlarge) {
+		.patterns-header__inner {
+			padding-top: 90px;
+			padding-bottom: 24px;
+			background: none;
+
+			h1 {
+				width: auto;
+				font-size: rem(50px);
+				line-height: 1.15;
+			}
+
+			.patterns-header__description {
+				width: auto;
+				padding-bottom: 24px;
+			}
+
+			.patterns-header__search-input {
+				.search {
+					width: auto;
+					height: 52px;
+				}
+			}
+		}
+	}
+}

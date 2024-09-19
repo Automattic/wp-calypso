@@ -100,7 +100,7 @@ const MarketplaceProductInstall = ( {
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
-	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, pluginSlug )

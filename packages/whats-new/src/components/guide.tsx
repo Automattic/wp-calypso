@@ -9,7 +9,7 @@ import { LEFT, RIGHT } from '@wordpress/keycodes';
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 interface Props {
@@ -45,8 +45,8 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 
 	return (
 		<Modal
-			className={ classnames( 'components-guide', className ) }
-			overlayClassName={ classnames( 'components-guide-overlay', className ) }
+			className={ clsx( 'components-guide', className ) }
+			overlayClassName={ clsx( 'components-guide-overlay', className ) }
 			onRequestClose={ onFinish }
 			onKeyDown={ ( event ) => {
 				if ( event.keyCode === LEFT ) {

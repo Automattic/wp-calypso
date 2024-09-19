@@ -59,7 +59,7 @@
 	padding-bottom: 45px;
 }
 
-@media ( min-width: $break-medium ) {
+@media (min-width: $break-medium) {
 	.items-included__list-table {
 		grid-template-columns: repeat(2, 1fr);
 	}

@@ -5,12 +5,13 @@ import {
 	sortLaunchpadTasksByCompletionStatus,
 	useLaunchpad,
 } from '@automattic/data-stores';
-import { LaunchpadInternal } from '@automattic/launchpad';
+import { LaunchpadInternal, type Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -25,9 +26,8 @@ import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getEnhancedTasks } from './task-helper';
+import { getEnhancedTasks } from './task-definitions';
 import { getLaunchpadTranslations } from './translations';
-import { type Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
@@ -65,11 +65,12 @@ const Sidebar = ( {
 	const translate = useTranslate();
 	const site = useSite();
 	const siteIntentOption = site?.options?.site_intent ?? null;
+	const checklistSlug = siteIntentOption;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const queryClient = useQueryClient();
-
+	const hasSkippedCheckout = Boolean( getQueryArg( window.location.href, 'skippedCheckout' ) );
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const {
@@ -93,7 +94,7 @@ const Sidebar = ( {
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
-	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
+	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow, hasSkippedCheckout );
 
 	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
@@ -128,6 +129,7 @@ const Sidebar = ( {
 			domainCartItem,
 			productCartItems,
 			stripeConnectUrl,
+			hasSkippedCheckout,
 		} );
 	}, [
 		site,
@@ -202,100 +204,98 @@ const Sidebar = ( {
 	return (
 		<>
 			{ site && <QueryMembershipsSettings siteId={ site.ID } source="launchpad" /> }
-			<div className="launchpad__sidebar">
-				<div className="launchpad__sidebar-content-container">
-					<div className="launchpad__progress-bar-container">
-						<CircularProgressBar
-							size={ 40 }
-							enableDesktopScaling
-							currentStep={ currentTask || 0 }
-							numberOfSteps={ numberOfSteps }
-							showProgressText={ site !== null }
-						/>
-					</div>
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
-					<h1 className="launchpad__sidebar-h1">
-						{ showLaunchTitle && launchTitle ? launchTitle : title }
-					</h1>
-					<p className="launchpad__sidebar-description">{ subtitle }</p>
-					{ showDomain && (
-						<div className="launchpad__url-box">
-							{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-							<div className="launchpad__url-box-domain">
-								<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
-								{ showClipboardButton && (
-									<>
-										<ClipboardButton
-											aria-label={ translate( 'Copy URL' ) }
-											text={ siteSlug }
-											className="launchpad__clipboard-button"
-											borderless
-											compact
-											onCopy={ () => setClipboardCopied( true ) }
-											onMouseLeave={ () => setClipboardCopied( false ) }
-											ref={ clipboardButtonEl }
-										>
-											<Icon icon={ copy } size={ 18 } />
-										</ClipboardButton>
-										<Tooltip
-											context={ clipboardButtonEl.current }
-											isVisible={ clipboardCopied }
-											position="top"
-										>
-											{ translate( 'Copied to clipboard!' ) }
-										</Tooltip>
-									</>
-								) }
-							</div>
-							{ showDomainUpgradeBadge() && (
-								<a href={ getDomainUpgradeBadgeUrl() }>
-									<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-										{ translate( 'Customize' ) }
-									</Badge>
-								</a>
+			<div className="launchpad__sidebar-content-container">
+				<div className="launchpad__progress-bar-container">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						currentStep={ currentTask || 0 }
+						numberOfSteps={ numberOfSteps }
+						showProgressText={ site !== null }
+					/>
+				</div>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
+				<h1 className="launchpad__sidebar-h1">
+					{ showLaunchTitle && launchTitle ? launchTitle : title }
+				</h1>
+				<p className="launchpad__sidebar-description">{ subtitle }</p>
+				{ showDomain && (
+					<div className="launchpad__url-box">
+						{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+						<div className="launchpad__url-box-domain">
+							<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
+							{ showClipboardButton && (
+								<>
+									<ClipboardButton
+										aria-label={ translate( 'Copy URL' ) }
+										text={ siteSlug }
+										className="launchpad__clipboard-button"
+										borderless
+										compact
+										onCopy={ () => setClipboardCopied( true ) }
+										onMouseLeave={ () => setClipboardCopied( false ) }
+										ref={ clipboardButtonEl }
+									>
+										<Icon icon={ copy } size={ 18 } />
+									</ClipboardButton>
+									<Tooltip
+										context={ clipboardButtonEl.current }
+										isVisible={ clipboardCopied }
+										position="top"
+									>
+										{ translate( 'Copied to clipboard!' ) }
+									</Tooltip>
+								</>
 							) }
 						</div>
-					) }
-					{ isDomainSSLProcessing && (
-						<div className="launchpad__domain-notification">
-							<div className="launchpad__domain-notification-icon">
-								<Gridicon
-									className="launchpad__domain-checkmark-icon"
-									icon="checkmark"
-									size={ 18 }
-								/>
-							</div>
-							<p>
-								{ translate(
-									'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
-									{ components: { br: <br /> } }
-								) }
-							</p>
+						{ showDomainUpgradeBadge() && (
+							<a href={ getDomainUpgradeBadgeUrl() }>
+								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+									{ translate( 'Customize' ) }
+								</Badge>
+							</a>
+						) }
+					</div>
+				) }
+				{ isDomainSSLProcessing && (
+					<div className="launchpad__domain-notification">
+						<div className="launchpad__domain-notification-icon">
+							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
 						</div>
-					) }
-					<LaunchpadInternal
-						siteSlug={ launchpadKey }
-						taskFilter={ () => enhancedTasks || [] }
-						makeLastTaskPrimaryAction={ true }
+						<p>
+							{ translate(
+								'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
+								{ components: { br: <br /> } }
+							) }
+						</p>
+					</div>
+				) }
+				<LaunchpadInternal
+					flow={ flow }
+					site={ site }
+					siteSlug={ launchpadKey }
+					checklistSlug={ checklistSlug }
+					taskFilter={ () => enhancedTasks || [] }
+					launchpadContext="onboarding"
+					makeLastTaskPrimaryAction
+				/>
+				{ showPlansModal && site?.ID && (
+					<RecurringPaymentsPlanAddEditModal
+						closeDialog={ () => setShowPlansModal( false ) }
+						product={ {
+							price: 5,
+							subscribe_as_site_subscriber: true,
+							title: translate( 'Paid newsletter' ),
+							type: TYPE_TIER,
+						} }
+						annualProduct={ {
+							price: 5 * 12,
+							subscribe_as_site_subscriber: true,
+							title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+						} }
+						siteId={ site.ID }
 					/>
-					{ showPlansModal && site?.ID && (
-						<RecurringPaymentsPlanAddEditModal
-							closeDialog={ () => setShowPlansModal( false ) }
-							product={ {
-								price: 5,
-								subscribe_as_site_subscriber: true,
-								title: translate( 'Paid newsletter' ),
-								type: TYPE_TIER,
-							} }
-							annualProduct={ {
-								price: 5 * 12,
-								subscribe_as_site_subscriber: true,
-								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
-							} }
-							siteId={ site.ID }
-						/>
-					) }
-				</div>
+				) }
 			</div>
 		</>
 	);

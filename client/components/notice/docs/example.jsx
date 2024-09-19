@@ -93,7 +93,7 @@ class Notices extends PureComponent {
 						showDismiss={ false }
 						text={ "I'm an `is-success` notice with an arrow link." }
 					>
-						<NoticeAction href="#" external={ true }>
+						<NoticeAction href="#" external>
 							Preview
 						</NoticeAction>
 					</Notice>
@@ -101,7 +101,7 @@ class Notices extends PureComponent {
 				<div>
 					<Notice
 						status="is-error"
-						showDismiss={ true }
+						showDismiss
 						text="I'm an always dismissable error notice."
 						isCompact={ this.state.compactNotices ? true : null }
 					>

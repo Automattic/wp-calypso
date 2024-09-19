@@ -18,13 +18,13 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 			@if $size == $and-smaller {
 				$approved-value: 1;
-				@media ( max-width: $breakpoint ) {
+				@media (max-width: $breakpoint) {
 					@content;
 				}
 			} @else {
 				@if $size == $and-larger {
 					$approved-value: 2;
-					@media ( min-width: $breakpoint + 1 ) {
+					@media (min-width: $breakpoint + 1) {
 						@content;
 					}
 				} @else {
@@ -32,7 +32,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 						$range: $breakpoint + "-" + $breakpoint-end;
 						@if $size == $range {
 							$approved-value: 3;
-							@media ( min-width: $breakpoint + 1 ) and ( max-width: $breakpoint-end ) {
+							@media (min-width: $breakpoint + 1) and (max-width: $breakpoint-end) {
 								@content;
 							}
 						}

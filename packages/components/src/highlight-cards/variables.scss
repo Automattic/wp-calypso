@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@automattic/typography/styles/variables";
 
 $vertical-margin: 32px;
@@ -5,3 +6,4 @@ $vertical-margin: 32px;
 // Technically deprecated, but majority of Calypso still uses this.
 $custom-mobile-breakpoint: 660px;
 $break-wpcom-smallest: 320px;
+$mobile-highlights-section-top-padding: math.div($vertical-margin, 2);

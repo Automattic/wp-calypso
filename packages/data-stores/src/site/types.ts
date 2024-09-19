@@ -1,3 +1,4 @@
+import { SiteGoal } from '../onboard';
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
@@ -81,6 +82,19 @@ export interface P2ThumbnailElements {
 	header_image: string | null;
 }
 
+export interface SiteFeatures {
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	active: string[];
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	available: Record< string, string[] >;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;
@@ -113,9 +127,12 @@ export interface SiteDetails {
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;
+	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
 	is_wpcom_staging_site?: boolean;
+	is_a4a_client?: boolean;
+	is_a4a_dev_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
 	launch_status: string;
@@ -143,6 +160,33 @@ export interface SiteDetails {
 	canUpdateFiles?: boolean;
 	isMainNetworkSite?: boolean;
 	isSecondaryNetworkSite?: boolean;
+
+	// Migration
+	site_migration?: SourceSiteMigrationBase;
+}
+
+export enum SiteCapabilities {
+	ACTIVATE_PLUGINS = 'activate_plugins',
+	ACTIVATE_WORDADS = 'activate_wordads',
+	DELETE_OTHERS_POSTS = 'delete_others_posts',
+	DELETE_USERS = 'delete_users',
+	EDIT_OTHERS_PAGES = 'edit_others_pages',
+	EDIT_OTHERS_POSTS = 'edit_others_posts',
+	EDIT_PAGES = 'edit_pages',
+	EDIT_POSTS = 'edit_posts',
+	EDIT_THEME_OPTIONS = 'edit_theme_options',
+	EDIT_USERS = 'edit_users',
+	LIST_USERS = 'list_users',
+	MANAGE_CATEGORIES = 'manage_categories',
+	MANAGE_OPTIONS = 'manage_options',
+	MODERATE_COMMENTS = 'moderate_comments',
+	OWN_SITE = 'own_site',
+	PROMOTE_USERS = 'promote_users',
+	PUBLISH_POSTS = 'publish_posts',
+	REMOVE_USERS = 'remove_users',
+	UPLOAD_FILES = 'upload_files',
+	VIEW_HOSTING = 'view_hosting',
+	VIEW_STATS = 'view_stats',
 }
 
 export interface SiteDetailsCapabilities {
@@ -166,6 +210,7 @@ export interface SiteDetailsCapabilities {
 	publish_posts: boolean;
 	remove_users: boolean;
 	upload_files: boolean;
+	update_plugins: boolean;
 	view_hosting: boolean;
 	view_stats: boolean;
 }
@@ -211,6 +256,7 @@ export interface SiteDetailsOptions {
 	is_pending_plan?: boolean;
 	is_redirect?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_simple?: boolean;
 	is_wpcom_store?: boolean;
 	is_wpforteams_site?: boolean;
 	jetpack_connection_active_plugins?: string[];
@@ -227,6 +273,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
 	software_version?: string;
@@ -246,7 +293,9 @@ export interface SiteDetailsOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
+	blaze_ads_version?: string;
 	is_commercial?: boolean | null;
+	is_commercial_reasons?: string[];
 	wpcom_admin_interface?: string;
 }
 
@@ -305,6 +354,7 @@ export interface Domain {
 	private_domain: boolean;
 	partner_domain: boolean;
 	wpcom_domain: boolean;
+	has_pending_contact_update: boolean;
 	has_zone: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;
@@ -333,6 +383,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_mapped_to_atomic_site: boolean;
 }
 
 export interface SiteSettings {
@@ -453,6 +504,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	slug?: string;
 	title?: string;
 	settings: {
 		color: {
@@ -493,13 +545,112 @@ export interface CurrentTheme {
 
 export type SiteSelect = SelectFromMap< typeof selectors >;
 
-export interface SourceSiteMigrationDetails {
-	status: string;
+export enum MigrationStatus {
+	UNKNOWN = 'unknown',
+	INACTIVE = 'inactive',
+	NEW = 'new',
+	BACKING_UP = 'backing-up',
+	BACKING_UP_QUEUED = 'backing-up-queued',
+	RESTORING = 'restoring',
+	DONE = 'done',
+	DONE_USER = 'done-user',
+	ERROR = 'error',
+}
+
+export enum MigrationStatusError {
+	OLD_JETPACK = 'old_jetpack',
+	FORBIDDEN = 'forbidden',
+	GENERIC = 'error',
+	SOURCE_SITE_MULTISITE = 'source_site_multisite',
+	SOURCE_SITE_IS_ATOMIC = 'source_site_is_atomic',
+	SOURCE_SITE_IS_PROTECTED = 'source_site_is_protected',
+	TARGET_SITE_IS_PROTECTED = 'target_site_is_protected',
+	NO_START_USER_ADMIN_ON_SOURCE = 'no_start_user_admin_on_source',
+	NO_START_USER_ADMIN_ON_TARGET = 'no_start_user_admin_on_target',
+	NO_START_SOURCE_IN_PROGRESS = 'no_start_source_in_progress',
+	NO_START_TARGET_IN_PROGRESS = 'no_start_target_in_progress',
+	WPCOM_MIGRATION_PLUGIN_INCOMPATIBLE = 'wpcom_migration_plugin_incompatible',
+
+	// Start of migration #1
+	ACTIVATE_REWIND = 'error-rewind-activate',
+	BACKUP_QUEUEING = 'error-backup-queue',
+
+	// Start of backup
+	// eslint-disable-next-line inclusive-language/use-inclusive-words
+	MISSING_SOURCE_MASTER_USER = 'error-get-master-user',
+
+	// During backup
+	NO_BACKUP_STATUS = 'error-backup-status',
+	BACKUP_SITE_NOT_ACCESSIBLE = 'error-backup-fail-not-accessible',
+	BACKUP_UNKNOWN = 'error-backup-fail-unknown',
+
+	// End of backup
+	WOA_GET_TRANSFER_RECORD = 'error-atomic-transfer-get',
+	MISSING_WOA_CREDENTIALS = 'error-credentials-atomic',
+
+	// Start of restore
+	RESTORE_QUEUE = 'error-restore-queue',
+	RESTORE_FAILED = 'error-restore-fail',
+
+	// During restore
+	RESTORE_STATUS = 'error-restore-status',
+
+	// End of restore
+	FIX_EXTERNAL_USER_ID = 'error-fix-external-user-id',
+	GET_SOURCE_EXTERNAL_USER_ID = 'error-get-external-user-id',
+	GET_USER_TOKEN = 'error-get-target-user-token',
+	UPDATE_TARGET_USER_TOKEN = 'error-update-target-user-token',
+
+	// Start of migration #2
+	// End of backup #2
+	WOA_TRANSFER = 'error-atomic-transfer',
+
+	// Miscellanous
+	GENERAL = 'error-general',
+	UNKNOWN = 'error-unknown',
+}
+
+export interface SourceSiteMigrationBase {
 	source_blog_id?: number;
+	error_status?: MigrationStatusError;
+	status: MigrationStatus;
+	last_modified: string;
+	// Migration meta
+	recent_migration?: boolean;
+	failed_backup_source?: boolean;
+}
+
+export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {
 	target_blog_id?: number;
+	site_migration_id: number;
+	percent: number;
+	created: string;
+	is_atomic: boolean;
+	// Statistics
+	backup_percent?: number;
+	backup_size?: number;
+	backup_started?: string;
+	site_size?: number;
+	restore_percent?: number;
+	restore_message?: string;
+	restore_failure?: string;
+	restore_started?: number;
+	comments_count?: number;
+	plugins_count?: number;
+	posts_count?: number;
+	tables_count?: number;
+	themes_count?: number;
+	uploads_count?: number;
+	real_percent?: number;
+	wp_version?: string;
+	// Source site details
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
 	target_blog_slug?: string;
+	// Steps details
+	step?: number;
+	step_name?: string;
+	total_steps?: number;
 }
 
 export interface Page {
@@ -515,4 +666,20 @@ export interface AssembleSiteOptions {
 	globalStyles?: GlobalStyles;
 	canReplaceContent?: boolean;
 	siteSetupOption?: string;
+}
+
+/**
+ * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
+ */
+export interface RawSiteMediaStorage {
+	max_storage_bytes: number;
+	storage_used_bytes: number;
+}
+
+/**
+ * Site media storage transformed for frontend use
+ */
+export interface SiteMediaStorage {
+	maxStorageBytes: number;
+	storageUsedBytes: number;
 }

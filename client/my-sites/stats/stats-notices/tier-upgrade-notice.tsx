@@ -9,7 +9,7 @@ import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/tier-upgrade-slider&from=${ from }-stats-tier-upgrade-notice&productType=commercial`;
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-tier-upgrade-notice&productType=commercial`;
 
 	return purchasePath;
 };
@@ -47,7 +47,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
 
 	const bannerTitle = isOverLimit
-		? translate( 'You have reached your monthly views limit' )
+		? translate( 'You have reached your views limit' )
 		: translate( 'You are nearing your monthly limit' );
 	const bannerBody = isOverLimit
 		? translate(

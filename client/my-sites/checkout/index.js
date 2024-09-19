@@ -1,13 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	redirectLoggedOut,
+	redirectMyJetpack,
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	checkout,
 	checkoutAkismetSiteless,
@@ -29,6 +30,7 @@ import {
 	hundredYearCheckoutThankYou,
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
+	refreshUserSession,
 } from './controller';
 
 export default function () {
@@ -108,48 +110,54 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'marketplace-siteless-checkout' ) ) {
-		page(
-			`/checkout/marketplace/:productSlug`,
-			setLocaleMiddleware(),
-			noSite,
-			checkoutMarketplaceSiteless,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		`/checkout/marketplace/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/marketplace/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
 
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
-	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
-		page(
-			`/checkout/akismet/:productSlug`,
-			setLocaleMiddleware(),
-			noSite,
-			checkoutAkismetSiteless,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/checkout/akismet/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/checkout/akismet/:productSlug/renew/:purchaseId`,
-			setLocaleMiddleware(),
-			redirectLoggedOut,
-			noSite,
-			checkoutAkismetSiteless,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/checkout/akismet/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/checkout/akismet/thank-you/:productSlug',
-			setLocaleMiddleware(),
-			redirectLoggedOut,
-			noSite,
-			akismetCheckoutThankYou,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/checkout/akismet/thank-you/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		akismetCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
 
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
@@ -165,6 +173,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
+		refreshUserSession, // Load user session into state in userless checkout
 		redirectLoggedOut,
 		checkoutPending,
 		makeLayout,
@@ -175,6 +184,7 @@ export default function () {
 	// not include the `siteSelection` middleware.
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
+		refreshUserSession, // Load user session into state in userless checkout
 		redirectLoggedOut,
 		noSite,
 		checkoutThankYou,
@@ -231,58 +241,46 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'upsell/concierge-session' ) ) {
-		// For backwards compatibility, retaining the old URL structure.
-		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
+	// For backwards compatibility, retaining the old URL structure.
+	page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
-		page(
-			'/checkout/offer-support-session/:site?',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-support-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:site?',
-			loggedInSiteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-	}
-
-	// Use `noSite` instead of the `siteSelection` middleware for the no-site route.
 	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
+		'/checkout/offer-support-session/:site?',
 		redirectLoggedOut,
-		noSite,
-		checkoutThankYou,
+		siteSelection,
+		upsellNudge,
 		makeLayout,
 		clientRender
 	);
 
 	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/:site?',
+		'/checkout/offer-support-session/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-quickstart-session/:site?',
+		loggedInSiteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-quickstart-session/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ),
 		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,
@@ -302,6 +300,7 @@ export default function () {
 	page(
 		`/checkout/:domainOrProduct`,
 		setLocaleMiddleware(),
+		redirectMyJetpack,
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
@@ -313,6 +312,7 @@ export default function () {
 	page(
 		`/checkout/:product/:domainOrProduct`,
 		setLocaleMiddleware(),
+		redirectMyJetpack,
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,

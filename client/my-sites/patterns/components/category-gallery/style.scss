@@ -1,0 +1,89 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.patterns-category-gallery {
+	display: grid;
+	gap: 32px 24px;
+	grid-template-columns: 1fr;
+
+	@include break-medium {
+		grid-template-columns: repeat(calc(var(--column-count) - 1), 1fr);
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat(var(--column-count), 1fr);
+	}
+
+	&.is-regular-patterns {
+		--column-count: 4;
+	}
+
+	&.is-page-patterns {
+		--column-count: 3;
+	}
+
+	.patterns-category-gallery__item-preview {
+		aspect-ratio: 29 / 16;
+		background: #f6f7f7;
+		border-radius: 4px;
+		margin-bottom: 14px;
+		overflow: hidden;
+	}
+
+	.patterns-category-gallery__item-preview--page-layout {
+		aspect-ratio: 39 / 44;
+	}
+
+	.patterns-category-gallery__item-preview-inner {
+		background: var(--color-surface);
+		border-radius: 4px 4px 0 0;
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08);
+		overflow: hidden;
+		transition: transform 0.35s ease;
+		margin: 20px 30px 0;
+		transform: translateY(10px);
+		height: calc(100% - 20px);
+	}
+
+	.patterns-category-gallery__item-preview--mirrored {
+		.patterns-category-gallery__item-preview-inner {
+			align-items: end;
+			border-radius: 0 0 4px 4px;
+			display: grid;
+			margin: 0 30px 20px;
+			transform-origin: center top;
+			transform: translateY(-10px);
+		}
+	}
+
+	@media (hover) {
+		.patterns-category-gallery__item:hover .patterns-category-gallery__item-preview-inner {
+			transform: translateY(0);
+		}
+	}
+
+	.patterns-category-gallery__item-name {
+		font-family: $font-sf-pro-display;
+		font-size: rem(18px);
+		color: #101517;
+		line-height: 1.4;
+	}
+
+	.patterns-category-gallery__item-count {
+		font-family: $font-sf-pro-text;
+		font-size: rem(12px);
+		color: #50575e;
+		line-height: 1.6;
+	}
+
+	.pattern-preview {
+		.pattern-preview__renderer {
+			aspect-ratio: auto;
+		}
+
+		.pattern-preview__header {
+			display: none;
+		}
+	}
+}

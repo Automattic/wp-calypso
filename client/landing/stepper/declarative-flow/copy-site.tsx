@@ -12,16 +12,16 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../hooks/use-site-copy';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
+import CreateSite from './internals/steps-repository/create-site';
 import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
+	StepProps,
 } from './internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -69,33 +69,37 @@ function useIsValidSite() {
 	};
 }
 
+function ProcessingCopy( props: StepProps ) {
+	return (
+		<ProcessingStep
+			{ ...props }
+			title={ translate( 'We’re copying your site' ) }
+			subtitle={ translate(
+				'Feel free to close this window. We’ll email you when your new site is ready.'
+			) }
+		/>
+	);
+}
+
+const COPY_SITE_STEPS = [
+	{ slug: 'domains', component: DomainsStep },
+	{ slug: 'create-site', component: CreateSite },
+	{ slug: 'processing', component: ProcessingStep },
+	{ slug: 'automated-copy', component: AutomatedCopySite },
+	{ slug: 'processing-copy', component: ProcessingCopy },
+	{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
+];
+
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 
 	get title() {
 		return '';
 	},
+	isSignupFlow: false,
 
 	useSteps() {
-		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'automated-copy', component: AutomatedCopySite },
-			{
-				slug: 'processing-copy',
-				component: ( props ) => (
-					<ProcessingStep
-						{ ...props }
-						title={ translate( 'We’re copying your site' ) }
-						subtitle={ translate(
-							'Feel free to close this window. We’ll email you when your new site is ready.'
-						) }
-					/>
-				),
-			},
-			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
-		];
+		return COPY_SITE_STEPS;
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
@@ -103,16 +107,14 @@ const copySite: Flow = {
 		const urlQueryParams = useQuery();
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					return navigate( 'site-creation-step', {
+					return navigate( 'create-site', {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
 					} );
 				}
 
-				case 'site-creation-step': {
+				case 'create-site': {
 					return navigate( 'processing' );
 				}
 

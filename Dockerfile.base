@@ -6,6 +6,7 @@ FROM node:20.8.1-bullseye-slim as cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=8192
+ARG commit_sha="(unknown)"
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
@@ -16,10 +17,12 @@ ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
+ENV IS_CI=true
+ENV COMMIT_SHA $commit_sha
 
 COPY . .
 
-RUN yarn \
+RUN yarn --inline-builds \
 	# Prime webpack caches, including sourcemaps.
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
@@ -114,7 +117,7 @@ RUN apt-get update && \
 RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
 	dpkg -i libffi6_3.2.1-8_amd64.deb && \
 	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
-	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list && \
+	echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php-sury.list && \
 	apt-get update && \
  	apt-get upgrade -y && \
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \

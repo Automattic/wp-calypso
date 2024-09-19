@@ -1,6 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { download } from '@wordpress/icons';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback, ComponentPropsWithoutRef } from 'react';
@@ -40,7 +39,6 @@ const ReaderExportButton = ( {
 }: ReaderExportButtonProps & AcceptedButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
 	const isMounted = useRef( false );
 	const [ isExportInProgress, setExportInProgress ] = useState< boolean >( false );
 
@@ -96,12 +94,10 @@ const ReaderExportButton = ( {
 			className="reader-export-button"
 			disabled={ disabled || isExportInProgress }
 			onClick={ onClick }
+			icon={ download }
 			{ ...props }
 		>
-			{ ! props.icon && <Gridicon icon="cloud-download" className="reader-export-button__icon" /> }
-			<span className="reader-export-button__label">
-				{ hasTranslation( 'Export OPML' ) ? translate( 'Export OPML' ) : translate( 'Export' ) }
-			</span>
+			<span className="reader-export-button__label">{ translate( 'Export OPML' ) }</span>
 		</Button>
 	);
 };

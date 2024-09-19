@@ -1,6 +1,7 @@
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
+	PLAN_P2_PLUS,
 	getPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
@@ -15,7 +16,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
- * @param  {Object}   state      Global state tree
+ * @param  {import('calypso/types').AppState}   state      Global state tree
  * @param  {number}   siteId     The site we're interested in upgrading
  * @param  {string}   planKey    The plan we want to upgrade to
  * @returns {boolean}             True if the site can be upgraded
@@ -49,6 +50,11 @@ export default function ( state, siteId, planKey ) {
 		isSiteAutomatedTransfer( state, siteId )
 	) {
 		return true;
+	}
+
+	// 2024-04-02 Disable upgrade to P2+
+	if ( PLAN_P2_PLUS === planKey ) {
+		return false;
 	}
 
 	return get( getPlan( planKey ), [ 'availableFor' ], () => false )( currentPlanSlug );

@@ -31,6 +31,7 @@ export interface InitiateTransfer {
 	pluginFile?: File;
 	themeFile?: File;
 	context?: string;
+	transferIntent?: string;
 }
 
 /**

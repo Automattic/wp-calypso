@@ -1,0 +1,161 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.plan-features-2023-grid__actions-button {
+	font-weight: 500;
+	line-height: 20px;
+	border-radius: 4px;
+	padding: 10px 12px;
+	border: unset;
+	text-align: center;
+	flex: 1;
+	width: 100%;
+
+	&:hover {
+		opacity: 0.85;
+		transition: 0.7s;
+	}
+
+	&.is-free-plan {
+		background-color: var(--studio-blue-50);
+		color: var(--studio-blue-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+		}
+	}
+
+	&.is-personal-plan {
+		background-color: var(--studio-blue-60);
+		color: var(--studio-blue-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+		}
+	}
+
+	&.is-premium-plan {
+		background-color: #004687;
+		color: var(--studio-blue-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #004687;
+		}
+	}
+
+	&.is-business-plan {
+		background-color: #7f54b3;
+		color: var(--studio-purple-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+		}
+
+		+ .button.is-borderless {
+			background: transparent;
+			font-size: $font-body-small;
+			color: #7f54b3;
+			text-decoration: none;
+
+			&:focus {
+				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+			}
+		}
+	}
+
+	&.is-wooexpress-medium-plan {
+		background-color: var(--color-accent);
+		color: var(--color-text-inverted);
+		font-weight: 400;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+		}
+	}
+
+	&.is-wooexpress-small-plan {
+		background-color: var(--color-surface);
+		color: var(--color-accent);
+		border: 1px solid var(--color-accent);
+		font-weight: 400;
+	}
+
+	&.is-wooexpress-plus-plan {
+		display: inline-block;
+		width: 85%;
+		text-align: center;
+		background-color: var(--color-surface);
+		color: var(--color-accent);
+		border: 1px solid  var(--color-accent);
+		font-weight: 400;
+	}
+
+	&.is-ecommerce-plan {
+		background-color: #55347d;
+		color: var(--studio-purple-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #55347d;
+		}
+	}
+
+	&.is-wpcom-enterprise-grid-plan {
+		background-color: var(--studio-gray-80);
+		color: var(--studio-gray-0);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
+		}
+	}
+
+	&.is-p2-plus-plan {
+		background-color: var(--color-accent);
+		color: var(--color-text-inverted);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+		}
+	}
+
+	// Currently these two are identical, but the both are kept
+	// since it's too early to say the current plan button will always
+	// be the default style, i.e. the secondary CTA button style
+	&.is-secondary,
+	&.is-current-plan,
+	&.is-default {
+		background-color: var(--studio-white);
+		color: var(--studio-gray-100);
+		box-shadow: inset 0 0 0 1px var(--studio-gray-10);
+
+		&.is-storage-upgradeable {
+			background-color: var(--color-accent);
+			color: var(--color-text-inverted);
+		}
+
+		&:hover {
+			box-shadow: inset 0 0 0 1px var(--studio-gray-80);
+		}
+	}
+
+	&.disabled,
+	&[disabled] {
+		background-color: var(--studio-white);
+		color: var(--color-neutral-light);
+		box-shadow: inset 0 0 0 1px #e0e0e0;
+	}
+
+	&.is-stuck.is-large-currency {
+		height: 48px;
+		line-height: 15px;
+		padding: 9px 12px;
+	}
+
+	&.is-borderless {
+		box-shadow: unset;
+		text-decoration: underline;
+		font-weight: 600;
+
+		&:hover {
+			box-shadow: unset;
+		}
+	}
+}

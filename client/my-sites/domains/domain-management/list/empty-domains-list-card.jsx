@@ -1,6 +1,6 @@
 import { PLAN_100_YEARS, domainProductSlugs, isFreePlan } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n, { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -28,9 +28,9 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 	);
 	let secondLine;
 	let action = translate( 'Upgrade to a plan' );
-	let actionURL = `/plans/${ selectedSite.slug }`;
+	let actionURL = `/plans/${ selectedSite?.slug }`;
 	let secondaryAction = translate( 'Just search for a domain' );
-	let secondaryActionURL = domainAddNew( selectedSite.slug );
+	let secondaryActionURL = domainAddNew( selectedSite?.slug );
 	let contentType = 'no_plan';
 
 	const domainRegistrationProduct = useSelector( ( state ) =>
@@ -75,11 +75,13 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
-		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug, {
+			redirectTo: `/domains/manage/${ selectedSite.slug }`,
+		} );
 		contentType = 'free_domain_credit';
 	}
 
-	const className = classNames( {
+	const className = clsx( {
 		'has-non-wpcom-domains': hasNonWpcomDomains,
 	} );
 

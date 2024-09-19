@@ -3,127 +3,14 @@
 $grid-horizontal-gutters: 24px;
 $grid-vertical-gutters: 32px;
 
-@mixin stats-desktop-grid($grid-template-areas, $grid-template-rows) {
-	align-items: stretch;
-	display: grid;
-	grid-template-columns: repeat(12, 1fr);
-	grid-template-rows: repeat($grid-template-rows, min-content);
-	gap: $grid-vertical-gutters $grid-horizontal-gutters;
-	grid-template-areas: $grid-template-areas;
-}
-
-@mixin stats-tablet-grid($grid-template-areas, $grid-template-rows) {
-	@media (max-width: $break-large ) {
-		grid-template-columns: repeat(8, 1fr);
-		grid-template-rows: repeat($grid-template-rows, min-content);
-		grid-template-areas: $grid-template-areas;
-	}
-}
-
-@mixin stats-mobile-grid($grid-template-areas, $grid-template-rows) {
-	@media (max-width: $break-medium ) {
-		grid-template-columns: repeat(4, 1fr);
-		grid-template-rows: repeat($grid-template-rows, min-content);
-		gap: 0;
-		grid-template-areas: $grid-template-areas;
-	}
+@function gutter-offset($blocks, $gutters, $gutter-width: $grid-horizontal-gutters) {
+	@return ($gutter-width * $gutters) / $blocks;
 }
 
 .stats__module-list.stats__module--unified.subscribers-page {
-	@include stats-desktop-grid(
-		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
-		"emails emails emails emails emails emails emails emails emails emails emails emails",
-		2
-	);
-
-	@include stats-tablet-grid(
-		"followers followers followers followers publicize publicize publicize publicize"
-		"emails emails emails emails emails emails emails emails",
-		2
-	);
-
-	@include stats-mobile-grid(
-		"followers followers followers followers"
-		"publicize publicize publicize publicize"
-		"emails emails emails emails",
-		3
-	);
-
-	@media (max-width: 660px) {
-		padding: 0 16px;
-	}
-
-	.stats__module-wrapper--followers,
-	.list-followers {
-		grid-area: followers;
-	}
-
-	.stats__module-wrapper--publicize,
-	.list-publicize {
-		grid-area: publicize;
-	}
-
-	.stats__module-wrapper--emails,
-	.list-emails {
-		grid-area: emails;
-	}
-}
-
-.stats__module-list--insights {
-	&.is-jetpack {
-		@include stats-desktop-grid(
-			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
-			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
-			2
-		);
-
-		@include stats-tablet-grid(
-			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories"
-			"comments comments comments comments comments comments comments comments"
-			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-			"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
-			4
-		);
-	}
-
-	@include stats-desktop-grid(
-		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories"
-		"comments comments comments comments comments comments shares shares shares shares shares shares"
-		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
-		3
-	);
-
-	@include stats-tablet-grid(
-		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories"
-		"comments comments comments comments comments comments comments comments"
-		"shares shares shares shares shares shares shares shares"
-		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-		"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
-		5
-	);
-
-	.stats__module-wrapper--tags-categories,
-	.list-tags-categories {
-		grid-area: tags-categories;
-	}
-
-	.stats__module-wrapper--comments,
-	.list-comments {
-		grid-area: comments;
-	}
-
-	.stats__module-wrapper--shares,
-	.list-shares {
-		grid-area: shares;
-	}
-
-	.stats__module-wrapper--total-followers,
-	.list-total-followers {
-		grid-area: social-followers;
-	}
-
-	.stats__module-wrapper--latest-post-summary {
-		grid-area: latest-post-summary;
+	// Eliminate the vertical gap appended to the bottom of the grid.
+	&::after {
+		display: none;
 	}
 }
 
@@ -132,152 +19,11 @@ $grid-vertical-gutters: 32px;
 	overflow-x: auto;
 
 	.stats-card--header-and-body {
-		width: fit-content;
 		min-width: 100%;
 	}
 }
 
 .is-section-stats .stats__module-list--traffic {
-	// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
-	// which would make different gaps for sites.
-	@include stats-desktop-grid(
-		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-		"country country country country country country country country country country country country"
-		"authors authors authors authors search search search search clicks clicks clicks clicks"
-		"videos videos videos videos videos videos emails emails emails emails emails emails"
-		"downloads downloads downloads downloads downloads downloads x x x x x x",
-		6
-	);
-
-	@include stats-tablet-grid(
-		"posts posts posts posts referrers referrers referrers referrers"
-		"country country country country country country country country"
-		"authors authors authors authors search search search search"
-		"clicks clicks clicks clicks videos videos videos videos"
-		"emails emails emails emails emails emails emails emails"
-		"downloads downloads downloads downloads downloads downloads downloads downloads",
-		7
-	);
-
-	@include stats-mobile-grid(
-		"posts posts posts posts"
-		"referrers referrers referrers referrers"
-		"country country country country"
-		"authors authors authors authors"
-		"search search search search"
-		"clicks clicks clicks clicks"
-		"videos videos videos videos"
-		"emails emails emails emails"
-		"downloads downloads downloads downloads",
-		10
-	);
-
-	// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
-	// Hide the Authors module.
-	&.stats__module-list--traffic-no-authors {
-		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
-		// which would make different gaps for sites.
-		@include stats-desktop-grid(
-			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-			"country country country country country country country country country country country country"
-			"search search search search clicks clicks clicks clicks videos videos videos videos"
-			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
-			5
-		);
-
-		// Keep Emails occupying the whole row.
-		@include stats-tablet-grid(
-			"posts posts posts posts referrers referrers referrers referrers"
-			"country country country country country country country country"
-			"search search search search clicks clicks clicks clicks"
-			"videos videos videos videos videos videos videos videos"
-			"emails emails emails emails emails emails emails emails"
-			"downloads downloads downloads downloads downloads downloads downloads downloads",
-			6
-		);
-
-		@include stats-mobile-grid(
-			"posts posts posts posts"
-			"referrers referrers referrers referrers"
-			"country country country country"
-			"search search search search"
-			"clicks clicks clicks clicks"
-			"videos videos videos videos"
-			"emails emails emails emails"
-			"downloads downloads downloads downloads",
-			8
-		);
-	}
-
-	// Hide the Videos module.
-	&.stats__module-list--traffic-no-videos {
-		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
-		// which would make different gaps for sites.
-		@include stats-desktop-grid(
-			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-			"country country country country country country country country country country country country"
-			"authors authors authors authors search search search search clicks clicks clicks clicks"
-			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
-			5
-		);
-
-		// Keep Emails occupying the whole row.
-		@include stats-tablet-grid(
-			"posts posts posts posts referrers referrers referrers referrers"
-			"country country country country country country country country"
-			"authors authors authors authors search search search search"
-			"clicks clicks clicks clicks clicks clicks clicks clicks"
-			"emails emails emails emails emails emails emails emails"
-			"downloads downloads downloads downloads downloads downloads downloads downloads",
-			6
-		);
-
-		@include stats-mobile-grid(
-			"posts posts posts posts"
-			"referrers referrers referrers referrers"
-			"country country country country"
-			"authors authors authors authors"
-			"search search search search"
-			"clicks clicks clicks clicks"
-			"emails emails emails emails"
-			"downloads downloads downloads downloads",
-			8
-		);
-	}
-
-	// Hide Authors and Videos modules.
-	&.stats__module-list--traffic-no-authors.stats__module-list--traffic-no-videos {
-		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
-		// which would make different gaps for sites.
-		@include stats-desktop-grid(
-			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-			"country country country country country country country country country country country country"
-			"search search search search search search clicks clicks clicks clicks clicks clicks"
-			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
-			5
-		);
-
-		@include stats-tablet-grid(
-			"posts posts posts posts referrers referrers referrers referrers"
-			"country country country country country country country country"
-			"search search search search clicks clicks clicks clicks"
-			"emails emails emails emails emails emails emails emails"
-			"downloads downloads downloads downloads downloads downloads downloads downloads",
-			5
-		);
-
-		@include stats-mobile-grid(
-			"posts posts posts posts"
-			"referrers referrers referrers referrers"
-			"country country country country"
-			"search search search search"
-			"clicks clicks clicks clicks"
-			"emails emails emails emails"
-			"downloads downloads downloads downloads",
-			7
-		);
-	}
-
 	.card.stats-module {
 		margin-bottom: 0;
 	}
@@ -300,58 +46,123 @@ $grid-vertical-gutters: 32px;
 			flex-grow: 1;
 		}
 	}
+}
 
-	.stats__module-wrapper--posts,
-	.list-posts {
-		grid-area: posts;
-	}
+// page level class
+.is-section-stats {
+	// grid level class
+	.stats__module-list.stats__module-list--traffic,
+	.stats__module-list.stats__module-list--insights,
+	.stats__module-list.subscribers-page {
+		&.stats__flexible-grid-container {
+			display: flex;
+			flex-wrap: wrap;
+			margin-bottom: $grid-vertical-gutters;
+			gap: $grid-vertical-gutters $grid-horizontal-gutters;
 
-	.stats__module-wrapper--referrers,
-	.list-referrers {
-		grid-area: referrers;
-	}
+			@media (max-width: $break-medium) {
+				gap: 0;
+			}
 
-	.stats__module-wrapper--countryviews,
-	.list-countryviews {
-		grid-area: country;
-	}
+			.stats-card {
+				width: 100%;
+			}
 
-	.stats__module-wrapper--authors,
-	.list-authors {
-		grid-area: authors;
-	}
+			/* Module takes full row */
+			.stats__flexible-grid-item--full {
+				flex: 0 1 100%;
+			}
 
-	.stats__module-wrapper--searchterms,
-	.list-searchterms {
-		grid-area: search;
-	}
+			/* Module takes half row */
+			.stats__flexible-grid-item--half {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(50% - $grid-horizontal-gutters / 2);
+			}
 
-	.stats__module-wrapper--clicks,
-	.list-clicks {
-		grid-area: clicks;
-	}
+			/* Module takes 1/3 row (spacing adjusted for when there are 2 blocks per row) */
+			.stats__flexible-grid-item--one-third--once-space {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(33.33% - #{gutter-offset(2, 1)}); // at certain breakpints the container doesn't want to shrink without max-width
+			}
 
-	.stats__module-wrapper--videoplays,
-	.list-videoplays {
-		grid-area: videos;
+			/* Module takes 1/3 row (spacing adjusted for when there are 3 blocks per row) */
+			.stats__flexible-grid-item--one-third--two-spaces {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(33.33% - #{gutter-offset(3, 2)});
+			}
 
-		// Downloads module is disabled for Jetpack sites.
-		// Expand the Videos module to take up the entire row.
-		&:last-child {
-			grid-row-start: videos;
-			grid-row-end: downloads;
-			grid-column-start: videos;
-			grid-column-end: downloads;
+			/* Module takes 2/3 row (spacing adjusted for when there are two blocks per row) */
+			.stats__flexible-grid-item--two-thirds {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(66.66% - #{gutter-offset(2, 1)});
+			}
+
+			/* Module takes 40% (about 5/12) row (spacing adjusted for when there are 2 blocks per row) */
+			.stats__flexible-grid-item--40--once-space {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(40% - #{gutter-offset(2, 1)}); // at certain breakpints the container doesn't want to shrink without max-width
+			}
+
+			/* Module takes 40% (about 5/12) row (spacing adjusted for when there are 3 blocks per row) */
+			.stats__flexible-grid-item--40--two-spaces {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(40% - #{gutter-offset(3, 2)});
+			}
+
+			/* Module takes 60% (about 7/12) row (spacing adjusted for when there are two blocks per row) */
+			.stats__flexible-grid-item--60 {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(60% - #{gutter-offset(2, 1)});
+			}
+
+			// sidebar + content // wide(2xl) is the max value so the classe is for an xlarge screen
+			@media (max-width: $break-wide) {
+				.stats__flexible-grid-item--full--xlarge {
+					flex: 0 1 100%;
+					max-width: 100%;
+				}
+			}
+
+			// sidebar + content // xlarge is the max value so the classes are for a large screen
+			@media (max-width: $break-xlarge) {
+				// move 2/3 and 1/2 to full
+				.stats__flexible-grid-item--full--large {
+					flex: 0 1 100%;
+					max-width: 100%;
+				}
+
+				// move 1/3 to 1/2
+				.stats__flexible-grid-item--half--large {
+					flex: 0 1 auto;
+					box-sizing: border-box;
+					max-width: calc(50% - $grid-horizontal-gutters / 2);
+				}
+			}
+
+			// large breakpoint is the max width applicable so the CSS rule applies for a medium screen
+			@media (max-width: $break-large) {
+				/* Full row */
+				.stats__flexible-grid-item--full--medium {
+					flex: 0 1 100%;
+					max-width: 100%;
+				}
+			}
+
+			// no sidebar // medium breakpoint is the max width applicable so the CSS rule applies for a small screen
+			@media (max-width: $break-medium) {
+				/* Full row */
+				.stats__flexible-grid-item--full--small {
+					flex: 0 1 100%;
+					max-width: 100%;
+				}
+			}
 		}
-	}
-
-	.stats__module-wrapper--filedownloads,
-	.list-filedownloads {
-		grid-area: downloads;
-	}
-
-	.stats__module-wrapper--emails,
-	.list-emails {
-		grid-area: emails;
 	}
 }

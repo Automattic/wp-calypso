@@ -45,6 +45,7 @@ export default function ShowcaseThemeCollection( {
 		isLivePreviewStarted,
 		siteId,
 		getThemeType,
+		getThemeTierForTheme,
 		filterString,
 		getThemeDetailsUrl,
 	} = useThemeCollection( query );
@@ -56,6 +57,7 @@ export default function ShowcaseThemeCollection( {
 			themes,
 			filterString,
 			getThemeType,
+			getThemeTierForTheme,
 			isActive,
 			collectionSlug,
 			collectionIndex

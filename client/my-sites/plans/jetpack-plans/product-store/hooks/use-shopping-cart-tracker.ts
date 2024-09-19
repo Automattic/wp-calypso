@@ -16,6 +16,7 @@ type EventData = {
 type EventDataOptions = {
 	productSlug?: string;
 	addProducts?: boolean;
+	quantity?: number | null;
 };
 
 // Record tracks are not allowing objects inside track events
@@ -33,7 +34,7 @@ export const useShoppingCartTracker = () => {
 	const dispatch = useDispatch();
 
 	return useCallback(
-		( eventName: string, { productSlug, addProducts }: EventDataOptions ) => {
+		( eventName: string, { productSlug, addProducts, quantity }: EventDataOptions ) => {
 			// We do need this only for Jetpack cloud
 			// If we want to use it everywhere we could move it as a parameter in event
 			if ( ! isJetpackCloud() ) {
@@ -46,6 +47,10 @@ export const useShoppingCartTracker = () => {
 
 			if ( productSlug ) {
 				eventData[ 'selected_product' ] = productSlug;
+			}
+
+			if ( quantity ) {
+				eventData[ 'quantity' ] = quantity;
 			}
 
 			if ( addProducts ) {

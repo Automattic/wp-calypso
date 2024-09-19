@@ -1,0 +1,63 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+
+.patterns-get-started__buttons {
+	margin-top: -32px;
+	margin-bottom: 48px;
+
+	@media (max-width: $break-wide) {
+		margin-top: -16px;
+	}
+
+	.patterns-get-started__start-button {
+		font-family: $font-sf-pro-text;
+		font-size: rem(13px);
+		color: var(--studio-white);
+		height: 40px;
+		padding: 0 17px;
+		border-radius: 2px;
+		background: #3858e9;
+
+		&:hover {
+			background: #1d35b4;
+			color: inherit;
+		}
+	}
+}
+
+.patterns-get-started__list {
+	display: flex;
+	gap: 24px;
+	overflow: auto;
+	scroll-snap-type: x proximity;
+	scroll-padding-left: 24px;
+}
+
+.patterns-get-started__item {
+	flex: 1;
+	min-width: 320px;
+	scroll-snap-align: start;
+
+	.patterns-get-started__item-image {
+		border-radius: 4px;
+		margin-bottom: 16px;
+	}
+
+	.patterns-get-started__item-name {
+		font-family: $font-sf-pro-text;
+		font-size: rem(12px);
+		color: #a7aaad;
+		font-weight: 500;
+		line-height: 1.6;
+		letter-spacing: 0.4px;
+		padding-bottom: 16px;
+	}
+
+	.patterns-get-started__item-description {
+		font-family: $font-recoleta;
+		color: var(--studio-white);
+		font-size: rem(24px);
+		line-height: 1.3;
+	}
+}

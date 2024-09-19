@@ -1,16 +1,19 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
-import { shouldLoadInlineHelp } from '@automattic/help-center';
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { useLocale } from '@automattic/i18n-utils';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
 import { useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, Component } from 'react';
+import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -22,33 +25,46 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
+import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { onboardingUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { OdieAssistantProvider } from 'calypso/odie/context';
+import { useSelector } from 'calypso/state';
 import { isOffline } from 'calypso/state/application/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	getShouldShowCollapsedGlobalSidebar,
+	getShouldShowGlobalSidebar,
+	getShouldShowUnifiedSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getSelectedSite,
 	getSelectedSiteId,
-	masterbarIsVisible,
 	getSidebarIsCollapsed,
+	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+import { getColorScheme, refreshColorScheme } from './color-scheme';
+import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
-
+import { shouldLoadInlineHelp, handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -88,12 +104,50 @@ function SidebarScrollSynchronizer() {
 	return null;
 }
 
+function WhatsNewLoader( { loadWhatsNew, siteId } ) {
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
+		}
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
+
+	const handleClose = useCallback( () => {
+		setShowWhatsNew( false );
+	}, [ setShowWhatsNew ] );
+
+	if ( ! loadWhatsNew ) {
+		return null;
+	}
+
+	return (
+		showWhatsNew && (
+			<AsyncLoad
+				require="@automattic/whats-new"
+				placeholder={ null }
+				onClose={ handleClose }
+				siteId={ siteId }
+			/>
+		)
+	);
+}
+
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false );
 	}, [ setShowHelpCenter ] );
+
+	const locale = useLocale();
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const user = useSelector( getCurrentUser );
+	const selectedSite = useSelector( getSelectedSite );
+	const primarySiteSlug = useSelector( getPrimarySiteSlug );
+	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -105,8 +159,15 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }
+			locale={ locale }
+			sectionName={ sectionName }
+			site={ selectedSite || primarySite }
+			currentUser={ user }
+			hasPurchases={ hasPurchases }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
+			onboardingUrl={ onboardingUrl() }
+			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 		/>
 	);
 }
@@ -140,6 +201,23 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	return null;
 }
 
+function AppBannerLoader( { siteId } ) {
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
+		}
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
+
+	return (
+		! isLoading &&
+		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+	);
+}
+
 class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
@@ -151,59 +229,26 @@ class Layout extends Component {
 		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
-		colorSchemePreference: PropTypes.string,
+		colorScheme: PropTypes.string,
 	};
 
-	componentDidMount() {
-		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
-			return;
-		}
-		if ( typeof document !== 'undefined' ) {
-			if ( this.props.colorSchemePreference ) {
-				document
-					.querySelector( 'body' )
-					.classList.add( `is-${ this.props.colorSchemePreference }` );
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isDesktop: isWithinBreakpoint( '>=782px' ),
+		};
+	}
 
-				const themeColor = getComputedStyle( document.body )
-					.getPropertyValue( '--color-masterbar-background' )
-					.trim();
-				const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
-				// We only want to set `themeColor` if it's not set by a config value (i.e. for JetpackCloud)
-				if ( themeColorMeta && ! themeColorMeta.content ) {
-					themeColorMeta.content = themeColor;
-					themeColorMeta.setAttribute( 'data-colorscheme', 'true' );
-				}
-			}
-		}
+	componentDidMount() {
+		this.unsubscribe = subscribeIsWithinBreakpoint( '>=782px', ( isDesktop ) => {
+			this.setState( { isDesktop } );
+		} );
+
+		refreshColorScheme( undefined, this.props.colorScheme );
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
-			return;
-		}
-		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
-			return;
-		}
-		if ( typeof document !== 'undefined' ) {
-			const classList = document.querySelector( 'body' ).classList;
-			classList.remove( `is-${ prevProps.colorSchemePreference }` );
-			classList.add( `is-${ this.props.colorSchemePreference }` );
-
-			const themeColor = getComputedStyle( document.body )
-				.getPropertyValue( '--color-masterbar-background' )
-				.trim();
-			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
-			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
-			if ( themeColorMeta && themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
-				themeColorMeta.content = themeColor;
-			}
-		}
-
-		// intentionally don't remove these in unmount
-	}
-
-	shouldShowOdieAssistant() {
-		return false;
+		refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
@@ -211,7 +256,12 @@ class Layout extends Component {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
-			return <WooCoreProfilerMasterbar />;
+			return (
+				<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
+			);
+		}
+		if ( this.props.isBlazePro ) {
+			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -229,12 +279,13 @@ class Layout extends Component {
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 			/>
 		);
 	}
 
 	render() {
-		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
+		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
@@ -247,7 +298,15 @@ class Layout extends Component {
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
+			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooCoreProfilerFlow,
+			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
+			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
+			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
+			'is-blaze-pro': this.props.isBlazePro,
+			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+				'woocommerce/core-profiler-passwordless-auth'
+			),
 		} );
 
 		const optionalBodyProps = () => {
@@ -268,14 +327,27 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
+		const shouldDisableSidebarScrollSynchronizer =
+			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
+
+		const shouldEnableCommandPalette =
+			// There is a custom command palette in the "Switch site" page, so we disable it.
+			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
+
 		return (
 			<div className={ sectionClass }>
+				<WhatsNewLoader
+					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden && ! this.props.isNewUser }
+					siteId={ this.props.siteId }
+				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				{ ! shouldDisableSidebarScrollSynchronizer && (
+					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				) }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
@@ -285,10 +357,14 @@ class Layout extends Component {
 				/>
 				<HtmlIsIframeClassname />
 				<DocumentHead />
-				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
-				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
+				{ this.props.shouldQueryAllSites ? (
+					<QuerySites allSites />
+				) : (
+					<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
+				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
+				<QuerySiteAdminColor siteId={ this.props.siteId } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
@@ -300,6 +376,12 @@ class Layout extends Component {
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+				) }
+				{ isA8CForAgencies() && (
+					<>
+						<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+						<QueryAgencies />
+					</>
 				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
@@ -319,13 +401,7 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.shouldShowOdieAssistant() ? (
-							<OdieAssistantProvider sectionName={ this.props.sectionName }>
-								{ this.props.primary }
-							</OdieAssistantProvider>
-						) : (
-							this.props.primary
-						) }
+						{ this.props.primary }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
@@ -339,7 +415,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+					<AppBannerLoader siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
@@ -347,8 +423,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'yolo/command-palette' ) && (
-					<AsyncLoad require="calypso/components/command-palette" placeholder={ null } />
+				<GlobalNotifications />
+				{ shouldEnableCommandPalette && (
+					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
 			</div>
 		);
@@ -369,6 +446,25 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
+		const isBlazePro = getIsBlazePro( state );
+		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+			state,
+			siteId,
+			sectionGroup,
+			sectionName
+		);
+		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+			state,
+			siteId,
+			sectionGroup,
+			sectionName
+		);
+		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
+			state,
+			siteId,
+			sectionGroup,
+			sectionName
+		);
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -377,14 +473,19 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			( ! isWooCoreProfilerFlow &&
+				! isBlazePro &&
+				[ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+		const isFromAutomatticForAgenciesPlugin =
+			'automattic-for-agencies-client' === currentQuery?.from;
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
 			isWcMobileApp() ||
-			isJetpackCloud();
+			isJetpackCloud() ||
+			isA8CForAgencies();
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -403,8 +504,16 @@ export default withCurrentRoute(
 			'comments',
 		].includes( sectionName );
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
+		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
 
-		const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
+		const userAllowedToHelpCenter =
+			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
+
+		const colorScheme = getColorScheme( {
+			state,
+			sectionName,
+			isGlobalSidebarVisible,
+		} );
 
 		return {
 			masterbarIsHidden,
@@ -415,7 +524,9 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isWooCoreProfilerFlow,
+			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
+			isBlazePro,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn: isUserLoggedIn( state ),
@@ -425,7 +536,7 @@ export default withCurrentRoute(
 			sectionJitmPath,
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			colorSchemePreference: getPreference( state, 'colorScheme' ),
+			colorScheme,
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
@@ -436,6 +547,10 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
+			isGlobalSidebarVisible,
+			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
+			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
+			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 		};
 	} )( Layout )
 );

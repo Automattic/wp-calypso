@@ -150,11 +150,24 @@
 		color: var(--studio-gray-70);
 	}
 
+	li.trigger-highlight {
+		animation: trigger-highlight 500ms ease-out;
+	}
+
 	&:not(.jetpack-product-info__faq-list) li {
 		background: url(../../../assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		background-size: 14px;
 		background-position-y: 5px;
+	}
+}
+
+@keyframes trigger-highlight {
+	0% {
+		background-color: var(--studio-yellow-5);
+	}
+	100% {
+		background-color: initial;
 	}
 }
 
@@ -236,7 +249,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@media ( min-width: $break-medium ) {
+	@media (min-width: $break-medium) {
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
@@ -254,7 +267,7 @@
 	color: var(--studio-gray-70);
 	font-size: 0.875rem;
 
-	@media ( min-width: $break-medium ) {
+	@media (min-width: $break-medium) {
 		padding: 0.25rem;
 		min-width: 160px;
 		background-color: #eaefef;
@@ -275,7 +288,7 @@ p.jetpack-product-info__product-list-item-description {
 
 	display: none;
 
-	@media ( min-width: $break-medium ) {
+	@media (min-width: $break-medium) {
 		display: block;
 	}
 
@@ -283,7 +296,7 @@ p.jetpack-product-info__product-list-item-description {
 		display: block;
 		margin-top: 0.75rem;
 
-		@media ( min-width: $break-medium ) {
+		@media (min-width: $break-medium) {
 			display: none;
 		}
 	}

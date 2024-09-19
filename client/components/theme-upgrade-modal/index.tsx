@@ -6,33 +6,36 @@ import {
 	FEATURE_CDN,
 	FEATURE_CPUS,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FAST_DNS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
-	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
 	FEATURE_PLUGINS_THEMES,
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	getPlan,
+	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
-import { usePlans } from '@automattic/data-stores/src/plans';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon as WpIcon, check, close } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
@@ -49,6 +52,7 @@ interface UpgradeModalProps {
 	isOpen: boolean;
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
 	isMarketplacePlanSubscriptionNeeeded?: boolean;
+	requiredPlan: string;
 	marketplaceProduct?: ProductListItem;
 	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
@@ -63,7 +67,6 @@ interface UpgradeModalContent {
 
 /**
  * - This component provides users with details about a specific theme and outlines the plan they need to upgrade to.
- * - It is also used outside of Calypso, currently in `apps/wpcom-block-editor`, so refrain from incorporating Calypso state, Gridicons, or any logic that relies on Calypso dependencies.
  */
 export const ThemeUpgradeModal = ( {
 	additionalClassNames,
@@ -72,6 +75,7 @@ export const ThemeUpgradeModal = ( {
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
 	isMarketplacePlanSubscriptionNeeeded,
+	requiredPlan,
 	marketplaceProduct,
 	closeModal,
 	checkout,
@@ -91,43 +95,37 @@ export const ThemeUpgradeModal = ( {
 	const firstThemeSoftwareSet = themeSoftwareSet?.[ 0 ];
 	const bundleSettings = useBundleSettings( firstThemeSoftwareSet?.slug );
 
-	const premiumPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
-		[]
+	const requiredPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( requiredPlan ),
+		[ requiredPlan ]
 	);
-	const businessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle' ),
-		[]
-	);
-	const monthlyBusinessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
-		[]
-	);
-	const plans = usePlans();
 
 	//Wait until we have theme and product data to show content
-	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
+	const isLoading = ! requiredPlanProduct || ! theme.data;
 
-	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const planPrice = premiumPlanProduct?.combined_cost_display;
+	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
+	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
+	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
+
+	const getPersonalPlanModalData = (): UpgradeModalContent => {
+		const planPrice = requiredPlanProduct?.combined_cost_display;
 
 		return {
 			header: (
-				<h1 className="theme-upgrade-modal__heading">
-					{ translate( 'Unlock this premium theme' ) }
-				</h1>
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
 			),
 			text: (
 				<p>
 					{ translate(
-						'Get access to our Premium themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to this theme, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
 							},
 							args: {
 								planPrice: planPrice || '',
-								premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '',
+								plan: personalPlanName,
 							},
 						}
 					) }
@@ -154,8 +152,146 @@ export const ThemeUpgradeModal = ( {
 		};
 	};
 
+	const getStandardPurchaseModalData = (): UpgradeModalContent => {
+		const getPlanText = ( planName: string, term: string, planPrice: string ) => {
+			switch ( term ) {
+				case 'three years':
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} per three years, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'two years':
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} per two years, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'month':
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} per month, risk-free with a 7-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'year':
+				default:
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} annually, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+			}
+		};
+		const planPrice = requiredPlanProduct?.combined_cost_display;
+
+		const planText = getPlanText(
+			premiumPlanName as string,
+			requiredPlanProduct?.product_term || '',
+			planPrice || ''
+		);
+
+		return {
+			header: (
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
+			),
+			text: <p>{ planText }</p>,
+			price: null,
+			action: (
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
+
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
-		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		const getPlanText = ( planName: string, term: string, planPrice: string ) => {
+			switch ( term ) {
+				case 'three years':
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per three years with a 14-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'two years':
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per two years with a 14-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+
+				case 'month':
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per month with a 7-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'year':
+				default:
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per year with a 14-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+			}
+		};
+		const businessPlanPrice = requiredPlanProduct?.combined_cost_display;
 
 		if ( ! bundleSettings ) {
 			return {
@@ -170,6 +306,11 @@ export const ThemeUpgradeModal = ( {
 		const bundledPluginMessage = bundleSettings.bundledPluginMessage;
 		const color = bundleSettings.color;
 		const Icon = bundleSettings.iconComponent;
+		const planText = getPlanText(
+			businessPlanName as string,
+			requiredPlanProduct?.product_term || '',
+			businessPlanPrice || ''
+		);
 
 		return {
 			header: (
@@ -187,17 +328,7 @@ export const ThemeUpgradeModal = ( {
 			),
 			text: (
 				<p>
-					{ bundledPluginMessage }{ ' ' }
-					{ translate(
-						// translators: %s is the business plan price.
-						'Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features. It’s %(businessPlanPrice)s per year with a 14-day money-back guarantee.',
-						{
-							args: {
-								businessPlanPrice: businessPlanPrice || '',
-								businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
-							},
-						}
-					) }
+					{ bundledPluginMessage } { planText }
 				</p>
 			),
 			price: null,
@@ -222,13 +353,25 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
-		const businessPlanPrice = monthlyBusinessPlanProduct?.combined_cost_display;
-		const productPrice = marketplaceProduct?.cost_display;
+		const getMarketplacePlanTextByTerm = ( term: string, cost: string ) => {
+			switch ( term ) {
+				case 'three years':
+					return translate( '%(cost)s per three years', { args: { cost } } );
+				case 'two years':
+					return translate( '%(cost)s per two years', { args: { cost } } );
+				case 'month':
+					return translate( '%(cost)s per month', { args: { cost } } );
+				case 'year':
+				default:
+					return translate( '%(cost)s per year', { args: { cost } } );
+			}
+		};
 
-		const businessPlanPriceText =
-			monthlyBusinessPlanProduct?.product_term === 'year'
-				? translate( '%(cost)s per year', { args: { cost: businessPlanPrice || '' } } )
-				: translate( '%(cost)s per month', { args: { cost: businessPlanPrice || '' } } );
+		const productPrice = marketplaceProduct?.cost_display;
+		const businessPlanPriceText = getMarketplacePlanTextByTerm(
+			requiredPlanProduct?.product_term || '',
+			requiredPlanProduct?.combined_cost_display || ''
+		);
 
 		const productPriceText =
 			marketplaceProduct?.product_term === 'year'
@@ -250,8 +393,8 @@ export const ThemeUpgradeModal = ( {
 							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
 							{
 								args: {
-									businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
-									commercePlanName: plans.data?.[ PLAN_ECOMMERCE ]?.productNameShort || '',
+									businessPlanName: businessPlanName,
+									commercePlanName: ecommercePlanName,
 								},
 							}
 						) }
@@ -275,7 +418,7 @@ export const ThemeUpgradeModal = ( {
 									<label>
 										{ translate( '%(businessPlanName)s plan', {
 											args: {
-												businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+												businessPlanName: businessPlanName,
 											},
 										} ) }
 									</label>
@@ -312,20 +455,29 @@ export const ThemeUpgradeModal = ( {
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
+		] );
+	};
+
+	const getPersonalPlanFeatureList = () => {
+		return getPlanFeaturesObject( [
+			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
 		] );
 	};
 
 	const getBundledFirstPartyPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
 			FEATURE_BANDWIDTH,
@@ -342,7 +494,7 @@ export const ThemeUpgradeModal = ( {
 		return getPlanFeaturesObject( [
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_NO_ADS,
 			FEATURE_ACCEPT_PAYMENTS,
 			FEATURE_MANAGED_HOSTING,
@@ -362,19 +514,25 @@ export const ThemeUpgradeModal = ( {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+			args: { businessPlanName: businessPlanName },
 		} );
 	} else if ( isExternallyManaged ) {
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+			args: { businessPlanName: businessPlanName },
+		} );
+	} else if ( theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ) {
+		modalData = getPersonalPlanModalData();
+		featureList = getPersonalPlanFeatureList();
+		featureListHeader = translate( 'Included with your %(plan)s plan', {
+			args: { plan: personalPlanName },
 		} );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
 		featureListHeader = translate( 'Included with your %(premiumPlanName)s plan', {
-			args: { premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '' },
+			args: { premiumPlanName: premiumPlanName },
 		} );
 	}
 
@@ -401,7 +559,7 @@ export const ThemeUpgradeModal = ( {
 		<Dialog
 			additionalClassNames={ additionalClassNames }
 			additionalOverlayClassNames={ additionalOverlayClassNames }
-			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
+			className={ clsx( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal( 'dialog_action' ) }
 			isFullScreen

@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
 import { connect } from 'react-redux';
@@ -27,7 +27,7 @@ export class UploadingPane extends UploadingPaneBase {
 		// Override base component only where we are uploading something
 		if ( importerState === appStates.UPLOAD_PROCESSING || importerState === appStates.UPLOADING ) {
 			const uploadPercent = percentComplete;
-			const progressClasses = classNames( {
+			const progressClasses = clsx( {
 				'is-complete': uploadPercent > 95,
 			} );
 			const uploaderPrompt =
@@ -42,7 +42,7 @@ export class UploadingPane extends UploadingPaneBase {
 				<div>
 					<p>{ uploaderPrompt }</p>
 					<ProgressBar
-						compact={ true }
+						compact
 						className={ progressClasses }
 						value={ uploadPercent }
 						total={ 100 }
@@ -58,7 +58,7 @@ export class UploadingPane extends UploadingPaneBase {
 
 	render() {
 		const isReadyForImport = this.isReadyForImport();
-		const importerStatusClasses = classNames(
+		const importerStatusClasses = clsx(
 			'uploading-pane__upload-content',
 			this.props.importerStatus.importerState
 		);

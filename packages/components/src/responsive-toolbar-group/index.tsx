@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import DropdownGroup from './dropdown-group';
 import SwipeGroup from './swipe-group';
@@ -43,7 +43,7 @@ const ResponsiveToolbarGroup = ( {
 	 */
 	swipeEnabled?: boolean;
 } ) => {
-	const classes = classnames( 'responsive-toolbar-group', className );
+	const classes = clsx( 'responsive-toolbar-group', className );
 	const isWithinBreakpoint = useBreakpoint( swipeBreakpoint );
 
 	if ( forceSwipe || ( swipeEnabled && isWithinBreakpoint ) ) {

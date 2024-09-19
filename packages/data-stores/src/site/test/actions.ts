@@ -160,27 +160,31 @@ describe( 'Site Actions', () => {
 		it( 'should return a ATOMIC_TRANSFER_START Action', () => {
 			const { atomicTransferStart } = createActions( mockedClientCredentials );
 			const softwareSet = 'woo-on-plans';
+			const transferIntent = 'migrate';
 
 			const expected = {
 				type: 'ATOMIC_TRANSFER_START',
 				siteId,
 				softwareSet,
+				transferIntent,
 			};
 
-			expect( atomicTransferStart( siteId, softwareSet ) ).toEqual( expected );
+			expect( atomicTransferStart( siteId, softwareSet, transferIntent ) ).toEqual( expected );
 		} );
 
 		it( 'should return a ATOMIC_TRANSFER_SUCCESS Action', () => {
 			const { atomicTransferSuccess } = createActions( mockedClientCredentials );
 			const softwareSet = 'woo-on-plans';
+			const transferIntent = 'migrate';
 
 			const expected = {
 				type: 'ATOMIC_TRANSFER_SUCCESS',
 				siteId,
 				softwareSet,
+				transferIntent,
 			};
 
-			expect( atomicTransferSuccess( siteId, softwareSet ) ).toEqual( expected );
+			expect( atomicTransferSuccess( siteId, softwareSet, transferIntent ) ).toEqual( expected );
 		} );
 
 		it( 'should return a ATOMIC_TRANSFER_FAILURE Action', () => {
@@ -202,14 +206,19 @@ describe( 'Site Actions', () => {
 		it( 'should start an Atomic transfer', () => {
 			const { initiateAtomicTransfer } = createActions( mockedClientCredentials );
 			const softwareSet = 'woo-on-plans';
-			const generator = initiateAtomicTransfer( siteId, softwareSet );
+			const transferIntent = 'migrate';
+			const generator = initiateAtomicTransfer( siteId, softwareSet, transferIntent );
 
 			const mockedApiResponse = {
 				request: {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet, context: 'woo-on-plans' },
+					body: {
+						software_set: softwareSet,
+						context: 'woo-on-plans',
+						transfer_intent: transferIntent,
+					},
 				},
 				type: 'WPCOM_REQUEST',
 			};
@@ -219,6 +228,7 @@ describe( 'Site Actions', () => {
 				type: 'ATOMIC_TRANSFER_START',
 				siteId,
 				softwareSet,
+				transferIntent,
 			} );
 
 			// Second iteration: WP_COM_REQUEST is fired
@@ -229,19 +239,25 @@ describe( 'Site Actions', () => {
 				type: 'ATOMIC_TRANSFER_SUCCESS',
 				siteId,
 				softwareSet,
+				transferIntent,
 			} );
 		} );
 		it( 'should fail to transfer a site to Atomic', () => {
 			const { initiateAtomicTransfer } = createActions( mockedClientCredentials );
 			const softwareSet = 'woo-on-plans';
-			const generator = initiateAtomicTransfer( siteId, softwareSet );
+			const transferIntent = 'migrate';
+			const generator = initiateAtomicTransfer( siteId, softwareSet, transferIntent );
 
 			const mockedApiResponse = {
 				request: {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet, context: 'woo-on-plans' },
+					body: {
+						software_set: softwareSet,
+						context: 'woo-on-plans',
+						transfer_intent: transferIntent,
+					},
 				},
 				type: 'WPCOM_REQUEST',
 			};
@@ -251,6 +267,7 @@ describe( 'Site Actions', () => {
 				type: 'ATOMIC_TRANSFER_START',
 				siteId,
 				softwareSet,
+				transferIntent,
 			} );
 
 			// Second iteration: WP_COM_REQUEST is fired
@@ -416,7 +433,6 @@ describe( 'Site Actions', () => {
 			template: 'zoologist',
 			theme: 'zoologist',
 			categories: [ { slug: 'featured', name: 'Featured' } ],
-			is_premium: false,
 			features: [],
 			recipe: mockedRecipe,
 		};

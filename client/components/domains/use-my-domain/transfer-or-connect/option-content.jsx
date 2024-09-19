@@ -1,7 +1,7 @@
 import { Badge, Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import '../style.scss';
@@ -21,13 +21,13 @@ export default function OptionContent( {
 	topText,
 } ) {
 	const localizeUrl = useLocalizeUrl();
-	const pricingTextClasses = classNames( 'option-content__pricing-text', {
+	const pricingTextClasses = clsx( 'option-content__pricing-text', {
 		[ 'is-free' ]: pricing?.isFree,
 	} );
-	const pricingCostClasses = classNames( 'option-content__pricing-cost', {
+	const pricingCostClasses = clsx( 'option-content__pricing-cost', {
 		[ 'has-sale-price' ]: pricing?.sale,
 	} );
-	const optionContentClasses = classNames( 'option-content__main', {
+	const optionContentClasses = clsx( 'option-content__main', {
 		'is-placeholder': isPlaceholder,
 	} );
 

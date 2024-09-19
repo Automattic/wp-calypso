@@ -17,7 +17,7 @@ export default function useSubmitProductFeedback(): {
 		isError,
 		isSuccess,
 		mutate,
-		isLoading: isSubmittingFeedback,
+		isPending: isSubmittingFeedback,
 	} = useSubmitProductFeedbackMutation();
 
 	useEffect( () => {

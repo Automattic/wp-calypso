@@ -21,7 +21,7 @@ const useRecipe = (
 	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
-	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
+	const isPreviewingDesign = !! searchParams.get( 'theme' );
 	const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
 		const { getSelectedDesign, getSelectedStyleVariation } = select(
 			ONBOARD_STORE
@@ -83,17 +83,25 @@ const useRecipe = (
 
 	const handleSelectedDesignChange = ( design?: Design ) => {
 		setSelectedDesign( design );
-		setSearchParams( ( currentSearchParams ) => {
-			if ( design && design.is_virtual && design.recipe?.slug ) {
-				currentSearchParams.set( 'theme', design.recipe?.slug );
-			} else if ( design ) {
-				currentSearchParams.set( 'theme', design.slug );
-			} else {
-				currentSearchParams.delete( 'theme' );
-			}
 
-			return currentSearchParams;
-		} );
+		let theme: string | null = null;
+		if ( design && design.is_virtual && design.recipe?.slug ) {
+			theme = design.recipe?.slug;
+		} else if ( design ) {
+			theme = design.slug;
+		}
+
+		if ( theme !== searchParams.get( 'theme' ) ) {
+			setSearchParams( ( currentSearchParams ) => {
+				if ( theme ) {
+					currentSearchParams.set( 'theme', theme );
+				} else {
+					currentSearchParams.delete( 'theme' );
+				}
+
+				return currentSearchParams;
+			} );
+		}
 	};
 
 	const handleSelectedStyleVariationChange = ( variation?: StyleVariation ) => {
@@ -155,8 +163,6 @@ const useRecipe = (
 
 		handleSelectedDesignChange( design );
 		handleSelectedStyleVariationChange( styleVariation );
-
-		setIsPreviewingDesign( true );
 	};
 
 	const previewDesignVariation = ( variation: StyleVariation ) => {
@@ -170,7 +176,6 @@ const useRecipe = (
 		handleSelectedColorVariationChange( null );
 		handleSelectedFontVariationChange( null );
 		setGlobalStyles( null );
-		setIsPreviewingDesign( false );
 	};
 
 	// Unset the selected design, thus restarting the design picking experience.
@@ -187,7 +192,6 @@ const useRecipe = (
 		}
 
 		setSelectedDesign( preselectedDesign );
-		setIsPreviewingDesign( true );
 		if ( preselectedStyleSlug ) {
 			const preselectedStyleVariation = preselectedDesign.style_variations?.find(
 				( styleVariation ) => styleVariation.slug === preselectedStyleSlug

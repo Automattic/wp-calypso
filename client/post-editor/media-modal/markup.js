@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server.browser';
 import * as MediaUtils from 'calypso/lib/media/utils';
@@ -92,11 +92,7 @@ const Markup = {
 		/*eslint-disable react/no-danger*/
 		return (
 			<dl
-				className={ classNames(
-					'wp-caption',
-					parsed.attrs.named.align,
-					parsed.attrs.named.classes
-				) }
+				className={ clsx( 'wp-caption', parsed.attrs.named.align, parsed.attrs.named.classes ) }
 				style={ { width: parseInt( width, 10 ) } }
 			>
 				<dt className="wp-caption-dt" dangerouslySetInnerHTML={ { __html: img } } />
@@ -151,11 +147,7 @@ const Markup = {
 				alt: media.alt || media.title,
 				width: isFinite( width ) ? width : null,
 				height: isFinite( height ) ? height : null,
-				className: classNames(
-					'align' + options.align,
-					'size-' + options.size,
-					'wp-image-' + media.ID
-				),
+				className: clsx( 'align' + options.align, 'size-' + options.size, 'wp-image-' + media.ID ),
 				// make data-istransient a boolean att https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
 				// it is false if it doesn't exist
 				'data-istransient': media.transient ? 'istransient' : null,

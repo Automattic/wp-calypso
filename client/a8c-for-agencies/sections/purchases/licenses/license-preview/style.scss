@@ -1,0 +1,247 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.license-preview {
+	margin: 0;
+	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.25rem;
+	color: var(--color-neutral-70);
+	transition: margin 0.2s ease;
+
+	// Matching bottom margin of Card component.
+	&--is-open {
+		margin-block: 10px;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			margin-block: 16px;
+		}
+	}
+}
+
+.license-preview__card {
+	// Increased specificity to override card styles.
+	&--is-detached.card.is-compact,
+	&--is-revoked.card.is-compact {
+		// Reduce padding to fit the extra border width on the left so columns are still aligned perfectly.
+		padding-inline-start: 13px;
+
+		@include break-mobile {
+			padding-inline-start: 21px;
+		}
+	}
+}
+
+.license-preview__no-value {
+	position: relative;
+	inset-block-start: 3px;
+}
+
+.license-preview__product-pressable-link {
+
+	&,
+	&:visited {
+		@include a4a-font-body-md($font-weight: 500);
+		display: flex;
+		flex-direction: row;
+		gap: 4px;
+		align-items: center;
+		text-decoration: underline;
+		color: var(--color-text);
+	}
+
+	.gridicon {
+		fill: var(--color-text);
+
+	}
+}
+
+.license-preview__domain {
+	padding: 0;
+	margin: 0 0 4px;
+	font-size: 1.25rem;
+	font-weight: normal;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.75rem;
+	color: var(--color-neutral-100);
+	overflow: hidden;
+	word-break: break-all;
+
+	span + span {
+		margin-inline-start: 12px;
+
+		@include break-xlarge() {
+			display: block;
+			margin-inline-start: 0;
+		}
+
+		@include break-wide() {
+			display: inline;
+			margin-inline-start: 12px;
+		}
+	}
+}
+
+.license-preview__tag {
+	white-space: nowrap;
+	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1rem;
+
+	&--is-just-issued,
+	&--is-assigned {
+		color: var(--color-link);
+		opacity: 0;
+		animation: hide-just-issued-tag 5s linear;
+	}
+
+	&--is-detached {
+		color: var(--color-orange-40);
+	}
+
+	&--is-revoked {
+		color: var(--color-error-60);
+	}
+
+	svg {
+		position: relative;
+		inset-block-start: 3px;
+		margin-inline-end: 4px;
+	}
+}
+
+.license-preview__product {
+	span {
+		display: none;
+
+		@include break-wide() {
+			display: inline;
+		}
+	}
+}
+
+.license-preview__label {
+	font-weight: 600;
+	white-space: nowrap;
+
+	@include break-xlarge() {
+		display: none;
+	}
+}
+
+.license-preview__copy-license-key {
+	&.button {
+		font-weight: 600;
+		color: var(--color-neutral-80);
+		border-color: var(--color-text-subtle);
+	}
+}
+
+.license-preview__toggle {
+	padding: 0;
+}
+
+.license-preview__toggle::before {
+	content: "";
+	position: absolute;
+	width: 3.9rem;
+	height: 3.9rem;
+}
+
+.license-preview__assign-button {
+	font-size: 0.75rem;
+	font-weight: 400;
+	text-decoration: underline;
+	margin-inline-start: 10px;
+}
+
+.license-preview--placeholder {
+	.license-preview__domain,
+	.license-preview__product,
+	.license-preview__label + div,
+	.license-preview__copy-license-key {
+		@include placeholder( --color-neutral-10 );
+	}
+}
+
+@keyframes hide-just-issued-tag {
+	0% {
+		display: inline;
+		opacity: 1;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.card.license-preview__card.license-preview__card--child-license {
+	padding: 16px 32px;
+	background-color: #fafafa;
+}
+
+button.button.is-borderless.license-bundle-dropdown__button {
+	text-overflow: clip;
+	padding: 4px;
+	max-height: 24px;
+	&:hover,
+	&:focus {
+		background: var(--wp-components-color-accent);
+		color: var(--color-text-inverted);
+		fill: var(--color-text-inverted);
+	}
+}
+
+.license-preview__client-email {
+	font-size: 0.75rem;
+	line-height: 1.3;
+	font-weight: 400;
+	color: var(--color-neutral-50);
+	margin-block-start: 4px;
+
+	strong {
+		max-width: 120px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		display: block;
+
+		@include break-wide() {
+			max-width: 200px;
+		}
+		@include break-huge() {
+			max-width: 250px;
+		}
+	}
+}
+
+.license-preview__migration-badge {
+	cursor: pointer;
+}
+
+.license-preview__migration-content {
+	min-width: 200px;
+	@include a4a-font-body-md;
+
+	@include break-mobile {
+		min-width: 300px;
+	}
+
+	a,
+	a:visited {
+		display: inline-block;
+		margin-block-start: 10px;
+		color: var(--color-neutral-100);
+		text-decoration: underline;
+	}
+	a:focus {
+		outline: none;
+	}
+}
+
+.license-preview__migration-external-icon {
+	vertical-align: text-bottom;
+	margin-inline-start: 3px;
+}

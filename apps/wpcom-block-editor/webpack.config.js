@@ -6,11 +6,13 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const webpack = require( 'webpack' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 
 /**
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 
 /**
  * Return a webpack config object
@@ -78,6 +80,17 @@ function getWebpackConfig(
 					}
 				},
 			} ),
+			shouldEmitStats &&
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'server',
+					statsOptions: {
+						source: false,
+						reasons: false,
+						optimizationBailout: false,
+						chunkOrigins: false,
+						chunkGroups: true,
+					},
+				} ),
 		],
 	};
 }

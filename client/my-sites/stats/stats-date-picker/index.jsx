@@ -91,7 +91,6 @@ class StatsDatePicker extends Component {
 
 	renderQueryDate() {
 		const { query, queryDate, moment, translate } = this.props;
-
 		let content;
 
 		if ( ! queryDate || ! isAutoRefreshAllowedForQuery( query ) ) {

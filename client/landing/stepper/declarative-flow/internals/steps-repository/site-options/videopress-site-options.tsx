@@ -1,4 +1,4 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -6,7 +6,6 @@ import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -119,7 +118,7 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 			<StepContainer
 				stepName="site-options"
 				shouldHideNavButtons
-				hideSkip={ true }
+				hideSkip
 				isHorizontalLayout={ false }
 				formattedHeader={
 					<FormattedHeader

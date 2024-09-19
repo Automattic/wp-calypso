@@ -1,5 +1,6 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { REGISTER_DOMAIN } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import {
 	hasDomainRegistration,
@@ -9,7 +10,6 @@ import {
 	hasP2PlusPlan,
 	has100YearPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

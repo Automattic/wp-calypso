@@ -1,25 +1,4 @@
-@import "calypso/my-sites/plans-grid/media-queries";
-
-.is-section-stepper .plans-features-main__group.is-2023-pricing-grid,
-.is-section-signup .is-2023-pricing-grid .plan-features-2023-grid__content {
-	@include pricing-grid-breakpoints;
-}
-
-.is-section-plans:not(.is-sidebar-collapsed) .is-2023-pricing-grid .plans-wrapper {
-	@include pricing-grid-breakpoints-with-sidebar;
-}
-
-.is-section-plans.is-sidebar-collapsed .is-2023-pricing-grid .plans-wrapper {
-	@include pricing-grid-breakpoints;
-}
-
-.is-section-plans:not(.is-sidebar-collapsed) .is-2023-pricing-grid .plans-features-main__comparison-grid-container {
-	@include plan-comparison-grid-breakpoints-with-sidebar;
-}
-
-.is-section-plans.is-sidebar-collapsed .is-2023-pricing-grid .plans-features-main__comparison-grid-container {
-	@include plan-comparison-grid-breakpoints;
-}
+@import "@automattic/plans-grid-next/src/media-queries";
 
 .plans-step {
 	margin: 0 auto;
@@ -39,10 +18,6 @@
 		max-width: 1480px;
 	}
 
-	.is-onboarding-2023-pricing-grid &.is-wide-layout {
-		@include pricing-grid-breakpoints;
-	}
-
 	.formatted-header.is-without-subhead {
 		margin-bottom: 15px;
 	}
@@ -50,10 +25,6 @@
 	.step-wrapper {
 		&.is-wide-layout {
 			max-width: 1200px;
-		}
-
-		.is-onboarding-2023-pricing-grid .signup__step &.is-wide-layout {
-			@include pricing-grid-breakpoints;
 		}
 	}
 }
@@ -75,13 +46,17 @@
 	margin-top: 25px;
 }
 
-.signup__step .plans.plans-step .formatted-header__subtitle .button.is-borderless {
+.plans.plans-step .formatted-header__subtitle .button.is-borderless {
 	padding: 0;
 	color: inherit;
 	font-size: inherit;
 	font-weight: inherit;
 	line-height: inherit;
 	text-decoration: underline;
+
+	&:hover {
+		color: inherit;
+	}
 }
 
 .plans__loading {

@@ -1,14 +1,16 @@
-@import "./upgrade-modal";
+.components-notice:has(.wpcom-live-preview-action) {
+	.components-notice__content {
+		display: flex;
+		align-items: center;
+		margin-right: 0;
 
-.components-editor-notices__pinned .components-notice__content {
-	display: flex;
-	margin-right: 0;
+		.components-notice__actions {
+			margin-left: auto;
 
-	.components-notice__actions {
-		margin-left: auto;
-
-		.components-notice__action {
-			margin-top: 0;
+			.components-notice__action {
+				margin-top: 0;
+				white-space: nowrap;
+			}
 		}
 	}
 }

@@ -77,10 +77,15 @@ export function normalizeWpcomTheme( theme ) {
 
 /**
  * Normalizes a theme obtained from the WordPress.org REST API
- * @param  {Object} theme  Theme object
+ * @param   {Object} theme   Theme object
+ * @param   {Object} tier     Theme tier that wporg themes belong to.
  * @returns {Object}        Normalized theme object
  */
-export function normalizeWporgTheme( theme ) {
+export function normalizeWporgTheme( theme, tier ) {
+	if ( ! theme ) {
+		return {};
+	}
+
 	const attributesMap = {
 		slug: 'id',
 		preview_url: 'demo_uri',
@@ -104,6 +109,8 @@ export function normalizeWporgTheme( theme ) {
 	if ( author ) {
 		normalizedTheme.author = author;
 	}
+
+	normalizedTheme.theme_tier = tier ?? { slug: 'community' };
 
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;

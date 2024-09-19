@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -12,7 +11,9 @@ import { MarketplaceReviewItem } from 'calypso/my-sites/marketplace/components/r
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
-export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) => {
+export const MarketplaceReviewsList = (
+	props: { onEditCompleted?: () => void } & MarketplaceReviewsQueryProps
+) => {
 	const translate = useTranslate();
 	const currentUserId = useSelector( getCurrentUserId );
 	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {
@@ -27,10 +28,6 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		author: currentUserId ?? undefined,
 		status: 'all',
 	} );
-
-	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
-		return null;
-	}
 
 	// TODO: In the future there should a form of catching and displaying an error
 	// But as currently we returns errors for products without reviews,
@@ -61,7 +58,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 			<div className="marketplace-reviews-list__customer-reviews">
 				<div className="marketplace-reviews-list__items">
 					{ allReviews.map( ( review: MarketplaceReviewResponse ) => (
-						<MarketplaceReviewItem review={ review } { ...props } />
+						<MarketplaceReviewItem key={ review.id } review={ review } { ...props } />
 					) ) }
 				</div>
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />

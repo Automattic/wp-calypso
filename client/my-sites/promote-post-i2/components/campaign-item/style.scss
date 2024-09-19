@@ -7,9 +7,35 @@
 		@include blazepress-data-row;
 	}
 
+	.campaign-item__title-row .campaign-item__post-type {
+		font-size: 0.875rem;
+		font-weight: 400;
+		color: var(--studio-gray-40);
+		line-height: 20px;
+	}
+
+	.campaign-item__title-row .campaign-item__post-type-mobile {
+		display: none;
+	}
+
 	.campaign-item__impressions,
-	.campaign-item__item__clicks {
-		text-align: center;
+	.campaign-item__item__clicks,
+	.campaign-item__conversion {
+		text-align: left;
+	}
+
+	.campaign-item__post-details-button {
+		border-radius: 4px;
+		border: 1.5px solid var(--color-accent);
+		color: var(--color-accent);
+		background-color: var(--color-surface);
+		box-shadow: none;
+	}
+
+	.campaign-item__post-details-button:hover {
+		text-decoration: underline;
+		color: var(--color-accent);
+		background-color: var(--color-surface);
 	}
 }
 
@@ -21,14 +47,31 @@
 			display: flex;
 			justify-content: space-between;
 
+			.campaign-item__stats-mobile {
+				align-self: center;
+			}
+
 			// View link
 			.campaign-item__view-link,
 			.campaign-item__view-link:visited {
 				@include blazepress-data-row-font-mobile;
+				align-self: start;
+				height: 28px;
+				background-color: var(--studio-gray-0);
+				color: #50575e;
+			}
 
-				color: var(--studio-gray-100);
+			.campaign-item__view-link:hover {
 				text-decoration: underline;
 			}
+		}
+
+		.campaign-item__title-row .campaign-item__post-type-mobile {
+			display: block;
+			font-size: 0.75rem;
+			font-weight: 400;
+			color: var(--studio-gray-40);
+			line-height: 20px;
 		}
 
 		.campaign-item__title {
@@ -42,7 +85,7 @@
 
 			.segmented-control {
 				align-items: center;
-				background: var(--studio-gray-0);
+				background: #fff;
 				height: 28px;
 				margin-left: 0;
 

@@ -16,7 +16,8 @@ const FAKE_SITE: Site = {
 	is_favorite: false,
 	monitor_last_status_change: '',
 	php_version_num: 0,
-	is_connected: false,
+	php_version: '0',
+	wordpress_version: '0',
 	awaiting_plugin_updates: [ 'plugin-1' ],
 	is_connection_healthy: false,
 	latest_backup_status: 'rewind_backup_complete',
@@ -55,6 +56,14 @@ const FAKE_SITE: Site = {
 		mobile: 50,
 		desktop: 50,
 	},
+	sticker: [],
+	blogname: '',
+	is_atomic: false,
+	has_pending_boost_one_time_score: false,
+	has_vulnerable_plugins: false,
+	latest_scan_has_threats_found: false,
+	active_paid_subscription_slugs: [],
+	hosting_provider_guess: 'automattic',
 };
 
 describe( 'useSiteCountText', () => {

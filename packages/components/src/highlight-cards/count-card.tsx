@@ -1,39 +1,67 @@
-import { useMemo } from 'react';
-import BaseCard from './base-card';
+import clsx from 'clsx';
+import { useRef, useState } from 'react';
+import { Card } from '../';
+import Popover from '../popover';
+import { formatNumber } from './lib/numbers';
 
 interface CountCardProps {
-	heading: React.ReactNode;
-	icon: React.ReactNode;
-	value: number | string;
+	heading?: React.ReactNode;
+	icon?: JSX.Element;
+	note?: string;
+	showValueTooltip?: boolean;
+	value: number | string | null;
 }
 
-function useDisplayValue( value: CountCardProps[ 'value' ] ) {
-	return useMemo( () => {
-		if ( typeof value === 'string' ) {
-			return value;
-		}
-		if ( typeof value === 'number' ) {
-			return value.toLocaleString();
-		}
-		return '-';
-	}, [ value ] );
+function TooltipContent( { value }: CountCardProps ) {
+	return (
+		<div className="highlight-card-tooltip-content">
+			<span className="highlight-card-tooltip-counts">
+				{ formatNumber( value as number, false ) }
+			</span>
+		</div>
+	);
 }
 
-export default function CountCard( { heading, icon, value }: CountCardProps ) {
-	const displayValue = useDisplayValue( value );
+export default function CountCard( {
+	heading,
+	icon,
+	note,
+	value,
+	showValueTooltip,
+}: CountCardProps ) {
+	const textRef = useRef( null );
+	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+
+	// Tooltips are used to show the full number instead of the shortened number.
+	// Non-numeric values are not shown in the tooltip.
+	const shouldShowTooltip = showValueTooltip && typeof value === 'number';
 
 	return (
-		<BaseCard
-			heading={
-				<>
-					<div className="highlight-card-icon">{ icon }</div>
-					<div className="highlight-card-title">{ heading }</div>
-				</>
-			}
-		>
-			<div className="highlight-card-count">
-				<span className="highlight-card-count-value">{ displayValue }</span>
+		<Card className="highlight-card">
+			{ icon && <div className="highlight-card-icon">{ icon }</div> }
+			{ heading && <div className="highlight-card-heading">{ heading }</div> }
+			<div
+				className={ clsx( 'highlight-card-count', {
+					'is-pointer': showValueTooltip,
+				} ) }
+				onMouseEnter={ () => setTooltipVisible( true ) }
+				onMouseLeave={ () => setTooltipVisible( false ) }
+			>
+				<span className="highlight-card-count-value" ref={ textRef }>
+					{ typeof value === 'number' ? formatNumber( value, true ) : value }
+				</span>
 			</div>
-		</BaseCard>
+			{ shouldShowTooltip && (
+				<Popover
+					className="tooltip tooltip--darker highlight-card-tooltip"
+					isVisible={ isTooltipVisible }
+					position="bottom right"
+					context={ textRef.current }
+				>
+					<TooltipContent value={ value } />
+					{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
+				</Popover>
+			) }
+		</Card>
 	);
 }

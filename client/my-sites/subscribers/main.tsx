@@ -1,23 +1,27 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import { HelpCenter } from '@automattic/data-stores';
+import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-stores';
 import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
 	useSubscribersPage,
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
@@ -31,32 +35,43 @@ import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
+	disableCta: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
+const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID || null;
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	const openHelpCenter = () => {
 		setShowHelpCenter( true );
 		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
 	};
 
+	const paidNewsletterUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/paid-newsletters/'
+		: 'https://wordpress.com/support/paid-newsletters/';
+
 	const subtitleOptions = {
 		components: {
 			link: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) }
+					href={ localizeUrl( paidNewsletterUrl ) }
 					target="blank"
 					onClick={ ( event ) => {
-						event.preventDefault();
-						openHelpCenter();
+						if ( ! isJetpackCloud() ) {
+							event.preventDefault();
+							openHelpCenter();
+						}
 					} }
+					rel="noreferrer"
 				/>
 			),
 		},
@@ -87,6 +102,7 @@ const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 			<Button
 				className="add-subscribers-button"
 				primary
+				disabled={ disableCta }
 				onClick={ () => setShowAddSubscribersModal( true ) }
 			>
 				<Gridicon icon="plus" size={ 24 } />
@@ -100,12 +116,14 @@ const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 type SubscribersProps = {
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
+	timestamp: number;
 	searchTerm: string;
 	sortTerm: SubscribersSortBy;
 	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
 	pageChanged: ( page: number ) => void;
 	searchTermChanged: ( term: string ) => void;
 	sortTermChanged: ( term: SubscribersSortBy ) => void;
+	reloadData: () => void;
 };
 
 const SubscribersPage = ( {
@@ -113,10 +131,12 @@ const SubscribersPage = ( {
 	pageNumber,
 	searchTerm,
 	sortTerm,
+	timestamp,
 	filterOptionChanged,
 	pageChanged,
 	searchTermChanged,
 	sortTermChanged,
+	reloadData,
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -132,8 +152,24 @@ const SubscribersPage = ( {
 		sortTerm,
 	};
 
+	const importSelector = useSelect(
+		( select ) => select( SubscriberDataStore.store ).getImportSubscribersSelector(),
+		[]
+	);
+
+	const isUnverified = importSelector?.error?.code === 'unverified_email';
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+
+	const { getSubscribersImports } = useDataStoreDispatch( SubscriberDataStore.store );
+
+	useEffect( () => {
+		if ( siteId ) {
+			getSubscribersImports( siteId );
+		}
+	}, [ siteId ] );
+
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
-		useUnsubscribeModal( selectedSite?.ID, pageArgs );
+		useUnsubscribeModal( selectedSite?.ID ?? null, pageArgs );
 	const onClickView = ( { subscription_id, user_id }: Subscriber ) => {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
@@ -150,6 +186,7 @@ const SubscribersPage = ( {
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }
 			sortTerm={ sortTerm }
+			timestamp={ timestamp }
 			filterOptionChanged={ filterOptionChanged }
 			pageChanged={ pageChanged }
 			searchTermChanged={ searchTermChanged }
@@ -159,32 +196,39 @@ const SubscribersPage = ( {
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader selectedSiteId={ selectedSite?.ID } />
-
-				<SubscriberListContainer
-					siteId={ siteId }
-					onClickView={ onClickView }
-					onGiftSubscription={ onGiftSubscription }
-					onClickUnsubscribe={ onClickUnsubscribe }
+				<SubscribersHeader
+					selectedSiteId={ selectedSite?.ID }
+					disableCta={ isUnverified || isStagingSite }
 				/>
-
-				<UnsubscribeModal
-					subscriber={ currentSubscriber }
-					onCancel={ resetSubscriber }
-					onConfirm={ onConfirmModal }
-				/>
-
-				{ giftUserId !== 0 && (
-					<GiftSubscriptionModal
-						siteId={ selectedSite?.ID ?? 0 }
-						userId={ giftUserId }
-						username={ giftUsername }
-						onCancel={ () => setGiftUserId( 0 ) }
-						onConfirm={ () => setGiftUserId( 0 ) }
+				<SubscriberValidationGate siteId={ siteId }>
+					<SubscriberListContainer
+						siteId={ siteId }
+						onClickView={ onClickView }
+						onGiftSubscription={ onGiftSubscription }
+						onClickUnsubscribe={ onClickUnsubscribe }
 					/>
-				) }
-				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
-				{ selectedSite && <MigrateSubscribersModal /> }
+
+					<UnsubscribeModal
+						subscriber={ currentSubscriber }
+						onCancel={ resetSubscriber }
+						onConfirm={ onConfirmModal }
+					/>
+
+					{ giftUserId !== 0 && (
+						<GiftSubscriptionModal
+							siteId={ selectedSite?.ID ?? 0 }
+							userId={ giftUserId }
+							username={ giftUsername }
+							onCancel={ () => setGiftUserId( 0 ) }
+							onConfirm={ function () {
+								setGiftUserId( 0 );
+								reloadData();
+							} }
+						/>
+					) }
+					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
+					{ selectedSite && <MigrateSubscribersModal /> }
+				</SubscriberValidationGate>
 			</Main>
 		</SubscribersPageProvider>
 	);

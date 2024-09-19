@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { SUPPORT_ROOT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -7,9 +8,8 @@ import EmptyContent from 'calypso/components/empty-content';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getTitanProductName } from 'calypso/lib/titan';
-import { SUPPORT_ROOT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
-import { emailManagementNewTitanAccount } from 'calypso/my-sites/email/paths';
+import { getNewTitanAccountPath } from 'calypso/my-sites/email/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -81,7 +81,7 @@ class TitanRedirector extends Component {
 		if ( ! loaded || ! hasAllSitesLoaded ) {
 			return (
 				<>
-					{ ! hasAllSitesLoaded && <QuerySites allSites={ true } /> }
+					{ ! hasAllSitesLoaded && <QuerySites allSites /> }
 
 					<EmptyContent title={ translate( 'Redirecting…' ) } />
 				</>
@@ -132,7 +132,7 @@ class TitanRedirector extends Component {
 				redirectURL = getManagePurchaseUrlFor( siteSlug, subscriptionId );
 				break;
 			case 'buyMoreAccounts':
-				redirectURL = emailManagementNewTitanAccount( siteSlug, domain );
+				redirectURL = getNewTitanAccountPath( siteSlug, domain );
 				break;
 		}
 

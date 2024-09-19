@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce, get, last, map, throttle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
 import './style.scss';
+import { getPostRevisionFields } from 'calypso/state/posts/selectors/get-post-revision-fields';
 
 const getCenterOffset = ( node ) =>
 	get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
@@ -19,6 +20,7 @@ class EditorDiffViewer extends PureComponent {
 	static propTypes = {
 		postId: PropTypes.number.isRequired,
 		selectedRevisionId: PropTypes.number,
+		revisionFields: PropTypes.object,
 		siteId: PropTypes.number.isRequired,
 		diff: PropTypes.shape( {
 			post_content: PropTypes.array,
@@ -149,8 +151,8 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	render() {
-		const { diff, diffView } = this.props;
-		const classes = classNames( 'editor-diff-viewer', {
+		const { diff, diffView, revisionFields } = this.props;
+		const classes = clsx( 'editor-diff-viewer', {
 			'is-loading':
 				! diff.hasOwnProperty( 'post_content' ) && ! diff.hasOwnProperty( 'post_title' ),
 			'is-split': diffView === 'split',
@@ -170,6 +172,23 @@ class EditorDiffViewer extends PureComponent {
 		const countAbove = this.changesAboveViewport.length;
 		const countBelow = this.changesBelowViewport.length;
 
+		const fields = [];
+
+		const { post_title, totals, ...fieldsWithoutTitle } = diff;
+
+		for ( const field in fieldsWithoutTitle ) {
+			fields.push(
+				<div key={ field }>
+					{ Object.keys( fieldsWithoutTitle ).length > 1 && (
+						<h2 className="editor-diff-viewer__fieldname">{ revisionFields[ field ] }</h2>
+					) }
+					<pre className="editor-diff-viewer__content">
+						<TextDiff operations={ diff[ field ] } splitLines />
+					</pre>
+				</div>
+			);
+		}
+
 		return (
 			<div className={ classes }>
 				<div className="editor-diff-viewer__scrollable" ref={ this.handleScrollableRef }>
@@ -177,18 +196,14 @@ class EditorDiffViewer extends PureComponent {
 						<h1 className="editor-diff-viewer__title">
 							<TextDiff operations={ diff.post_title } />
 						</h1>
-						<pre className="editor-diff-viewer__content">
-							<TextDiff operations={ diff.post_content } splitLines />
-						</pre>
+						{ fields }
 					</div>
 					{ diffView === 'split' && (
 						<div className="editor-diff-viewer__secondary-pane">
 							<h1 className="editor-diff-viewer__title">
 								<TextDiff operations={ diff.post_title } />
 							</h1>
-							<pre className="editor-diff-viewer__content">
-								<TextDiff operations={ diff.post_content } splitLines />
-							</pre>
+							{ fields }
 						</div>
 					) }
 				</div>
@@ -219,6 +234,7 @@ class EditorDiffViewer extends PureComponent {
 
 export default connect(
 	( state, { siteId, postId, selectedRevisionId } ) => ( {
+		revisionFields: getPostRevisionFields( state, siteId, postId ),
 		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
 	} ),
 	{ recordTracksEvent }

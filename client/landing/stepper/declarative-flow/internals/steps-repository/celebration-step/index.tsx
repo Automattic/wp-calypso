@@ -61,7 +61,7 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 			<DocumentHead title={ title } />
 			<StepContainer
 				stepName="celebration-step"
-				hideBack={ true }
+				hideBack
 				flowName={ flow }
 				formattedHeader={
 					<FormattedHeader

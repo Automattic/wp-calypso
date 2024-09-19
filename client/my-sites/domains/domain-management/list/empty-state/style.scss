@@ -1,0 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.is-bulk-all-domains-page.is-bulk-all-domains-page--is-empty .layout__content .main .navigation-header {
+	border-block-end: 1px solid var(--studio-gray-0);
+	padding-bottom: 1rem;
+	padding-inline: 1rem;
+	padding-top: 1rem;
+
+	@include break-large {
+		margin: 0;
+		padding-bottom: 1.5rem;
+		padding-inline: 4rem;
+		padding-top: 1.5rem;
+	}
+}
+
+.domains-empty-state {
+	padding-inline: 1rem;
+	text-align: left;
+
+	@include break-large {
+		padding-inline: 4rem;
+	}
+
+	@include break-wide {
+		max-width: 50%;
+	}
+
+	p {
+		color: var(--studio-gray-100);
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		line-height: 1.625;
+		margin: 1.5rem auto;
+	}
+}
+
+.domains-empty-state-actions {
+	display: flex;
+	gap: 8px;
+}

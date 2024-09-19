@@ -1,10 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
-import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -23,8 +21,19 @@ import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
-import MasterbarStyled from './masterbar-styled';
+
+type ThankYouData = [
+	React.ReactElement[],
+	boolean,
+	JSX.Element,
+	string,
+	string,
+	string[],
+	boolean,
+	React.ReactElement | null,
+];
 
 export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const dispatch = useDispatch();
@@ -157,13 +166,9 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		pluginSlugs,
 	] );
 
-	const pluginsSection: ThankYouSectionProps = {
-		sectionKey: 'plugin_information',
-		nextSteps: pluginsInformationList.map( ( plugin: any ) => ( {
-			stepKey: `plugin_information_${ plugin.slug }`,
-			stepSection: <ThankYouPluginSection plugin={ plugin } />,
-		} ) ),
-	};
+	const pluginsSection = pluginsInformationList.map( ( plugin: any ) => {
+		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
+	} );
 
 	const goBackSection = (
 		<MasterbarStyled
@@ -199,32 +204,17 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		[ siteId, pluginSlugs ]
 	);
 
-	const ThankYouHeaderAction = styled.div`
-		padding: 20px 24px 0 24px;
-		@media ( max-width: 480px ) {
-			text-align: left;
-		}
-	`;
-
-	const ThankYouHeaderActionButton = styled( Button )`
-		border-radius: 4px;
-	`;
-
 	const thankYouHeaderAction =
 		pluginsInformationList.length > 1 ? (
-			<>
-				<ThankYouHeaderAction>
-					<ThankYouHeaderActionButton
-						primary
-						href={ `https://${ siteSlug }/wp-admin/plugins.php` }
-						onClick={ () => {
-							sendTrackEvent( 'calypso_plugin_thank_you_setup_plugins_click' );
-						} }
-					>
-						{ translate( 'Setup the plugins' ) }
-					</ThankYouHeaderActionButton>
-				</ThankYouHeaderAction>
-			</>
+			<Button
+				primary
+				href={ `https://${ siteSlug }/wp-admin/plugins.php` }
+				onClick={ () => {
+					sendTrackEvent( 'calypso_plugin_thank_you_setup_plugins_click' );
+				} }
+			>
+				{ translate( 'Setup the plugins' ) }
+			</Button>
 		) : null;
 
 	// Plugins are only installed in atomic sites

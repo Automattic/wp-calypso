@@ -83,3 +83,7 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
 export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
 	return state?.sites?.domains?.updatingPrivacy?.[ siteId ]?.[ domain ];
 };
+
+export const isUpdatingPrimaryDomain = ( state, siteId ) => {
+	return state?.sites?.domains?.updatingPrimaryDomain?.[ siteId ];
+};

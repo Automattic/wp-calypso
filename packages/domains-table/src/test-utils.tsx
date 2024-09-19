@@ -9,7 +9,7 @@ export function renderWithProvider(
 ): RenderResult {
 	const queryClient = new QueryClient();
 
-	const Wrapper = ( { children }: { children: React.ReactElement } ) => {
+	const Wrapper = ( { children }: { children: React.ReactNode } ) => {
 		if ( renderOptions.wrapper ) {
 			children = <renderOptions.wrapper>{ children }</renderOptions.wrapper>;
 		}
@@ -74,6 +74,8 @@ export function testDomain(
 		cannot_manage_dns_records_reason: null,
 		cannot_manage_name_servers_reason: null,
 		cannot_update_contact_info_reason: null,
+		can_transfer_to_any_user: true,
+		can_transfer_to_other_site: true,
 		connection_mode: null,
 		current_user_can_add_email: false,
 		current_user_can_create_site_from_domain_only: false,
@@ -95,7 +97,11 @@ export function testDomain(
 		privacy_available: false,
 		private_domain: false,
 		partner_domain: false,
+		has_pending_contact_update: false,
 		has_zone: false,
+		is_dnssec_enabled: false,
+		is_dnssec_supported: true,
+		is_gravatar_domain: false,
 		is_renewable: false,
 		is_redeemable: false,
 		is_subdomain: false,
@@ -155,6 +161,12 @@ export function testDomain(
 		registry_expiry_date: '',
 		subdomain_part: '',
 		auth_code_required: true,
+		is_mapped_to_atomic_site: false,
+		is_move_to_new_site_pending: false,
+		pending_registration_at_registry: false,
+		pending_registration_at_registry_url: '',
+		registered_via_trustee: false,
+		registered_via_trustee_url: '',
 		...defaults,
 	};
 

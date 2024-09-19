@@ -30,6 +30,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 	const moment = useLocalizedMoment();
 	const [ isClosed, setIsClosed ] = useState( false );
 	const saleTitle = coupon.sale_title;
+	const saleDescription = coupon.sale_description;
 	const now = moment.utc().unix();
 	const expiryDate = moment.utc( coupon?.expiry_date ).unix();
 	const isBeforeExpiry = coupon && now <= expiryDate;
@@ -62,13 +63,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 						<div>
 							<b>{ saleTitle }</b>
 							&nbsp;
-							{ translate(
-								'Take up to %(discount)d%% off all annual Jetpack bundles and products.',
-								{
-									args: { discount: coupon.final_discount },
-									comment: '%(discount)d%% is discount amount in percentage, e.g. 65%',
-								}
-							) }
+							{ saleDescription }
 						</div>
 						<span className="sale-banner__countdown-timer">
 							{ translate( 'Sale ends in: %(days)dd %(hours)dh %(minutes)dm %(seconds)ss', {

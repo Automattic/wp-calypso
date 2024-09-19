@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from 'calypso/lib/url';
 import Circle from './circle';
@@ -6,7 +7,9 @@ import Logo from './logo-wide';
 import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
 
-const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#supported-browsers';
+const SUPPORTED_BROWSERS_LINK = localizeUrl(
+	'https://wordpress.com/support/browser-issues/#supported-browsers'
+);
 
 export default function Browsehappy( { from } ) {
 	// `from` is passed into the component via server-side-render. Since the query

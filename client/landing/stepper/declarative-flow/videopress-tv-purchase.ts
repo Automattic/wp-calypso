@@ -1,9 +1,10 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { VIDEOPRESS_TV_PURCHASE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import {
 	setSignupCompleteSlug,
@@ -24,6 +25,7 @@ const videopressTvPurchase: Flow = {
 	get title() {
 		return translate( 'VideoPress TV' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'processing', component: ProcessingStep },
@@ -40,7 +42,7 @@ const videopressTvPurchase: Flow = {
 		}
 
 		const name = this.name;
-		const locale = useLocale();
+		const locale = useFlowLocale();
 		const { setPendingAction, setProgress, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { supportedPlans } = useSupportedPlans( locale, 'MONTHLY' );
@@ -104,9 +106,13 @@ const videopressTvPurchase: Flow = {
 				setIntentOnSite( _siteSlug || '', VIDEOPRESS_TV_PURCHASE_FLOW );
 
 				// select the premium plan for now. This will be replaced with our video plan.
-				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
+				let planObject = supportedPlans.find(
+					( plan ) => TIMELESS_PLAN_PREMIUM === plan.periodAgnosticSlug
+				);
 				if ( ! planObject ) {
-					planObject = supportedPlans.find( ( plan ) => 'business' === plan.periodAgnosticSlug );
+					planObject = supportedPlans.find(
+						( plan ) => TIMELESS_PLAN_BUSINESS === plan.periodAgnosticSlug
+					);
 				}
 
 				const cartKey = _siteSlug

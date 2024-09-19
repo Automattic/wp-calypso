@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/variables";
 
-@media ( max-width: 600px ) {
+@media (max-width: 600px) {
 	.is-iframed #wpbody {
 		padding-top: 0;
 	}
@@ -11,7 +11,7 @@
 }
 
 // For Gutenberg < 7.7
-@media ( min-width: 600px ) {
+@media (min-width: 600px) {
 	body.is-iframed.is-fullscreen-mode .edit-post-header {
 		top: 0;
 	}
@@ -20,7 +20,7 @@
 // For Gutenberg >= 7.7
 // 782px is $break-medium in Gutenberg which is
 // the starting breakpoint for tablet view.
-@media ( max-width: 782px ) {
+@media (max-width: 782px) {
 	// In non-iframed version, top: 46px is provided to accommodate #wpadminbar.
 	// On fullscreen mode, #wpadminbar is visible on tablet & mobile voew because
 	// fullscreen mode actually don't exists on tablet & mobile view.
@@ -38,7 +38,7 @@ body.is-fullscreen-mode {
 	}
 }
 
-@media ( min-width: 782px ) and ( max-width: 1079px ) {
+@media (min-width: 782px) and (max-width: 1079px) {
 	.is-fullscreen-mode .edit-post-layout.has-fixed-toolbar .components-notice {
 		top: 37px;
 	}

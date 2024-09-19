@@ -1,15 +1,18 @@
 import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import { SearchIcon, type ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
 import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import { useSelector } from 'react-redux';
+import { getSection } from 'calypso/state/ui/selectors';
 import { MEDIA_QUERIES } from '../utils';
-import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
+
+type SiteTypes = 'p2' | 'non-p2';
 
 export interface SitesDashboardQueryParams {
 	page?: number;
@@ -18,13 +21,14 @@ export interface SitesDashboardQueryParams {
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
 	newSiteID?: number;
+	siteType?: SiteTypes;
 }
 
 const FilterBar = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '16px',
-	paddingBlock: '32px',
+	marginBottom: '32px',
 	paddingInline: 0,
 
 	flexDirection: 'column',
@@ -35,6 +39,10 @@ const FilterBar = styled.div( {
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingBlock: '16px',
+
+		'.layout.focus-sidebar &': {
+			flexWrap: 'wrap',
+		},
 	},
 } );
 
@@ -85,8 +93,8 @@ type SitesContentControlsProps = {
 	onQueryParamChange?: ( params: Partial< SitesDashboardQueryParams > ) => void;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
-} & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
-	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
+	showDeletedStatus?: boolean;
+} & ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
 /**
  * Updates one or more query param used by the sites dashboard, causing a page navigation.
@@ -105,7 +113,7 @@ export function handleQueryParamChange( queryParams: SitesDashboardQueryParams )
 	} );
 
 	// Use relative URL to avoid full page refresh.
-	page.replace( url.pathname + url.search );
+	page.replace( url.pathname + url.search + url.hash );
 }
 
 export const SitesContentControls = ( {
@@ -113,27 +121,43 @@ export const SitesContentControls = ( {
 	onQueryParamChange = handleQueryParamChange,
 	statuses,
 	selectedStatus,
-	displayMode,
-	onDisplayModeChange,
 	sitesSorting,
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
+	showDeletedStatus = false,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 	const searchRef = useRef< SearchImperativeHandle >( null );
+	const section = useSelector( getSection );
+	const handleSearch = ( term: string ) => {
+		const queryParams = { search: term?.trim(), page: undefined };
+
+		// There is a chance that the URL is not up to date when it mounts, so delay
+		// the onQueryParamChange call to avoid it getting the incorrect URL and then
+		// redirecting back to the previous path.
+		if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
+			onQueryParamChange( queryParams );
+		} else {
+			window.setTimeout( () => onQueryParamChange( queryParams ) );
+		}
+	};
 
 	useSearchShortcut( () => {
 		searchRef.current?.focus();
 	} );
 
+	if ( ! showDeletedStatus ) {
+		statuses = statuses.filter( ( status ) => status.name !== 'deleted' );
+	}
+
 	return (
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SearchIcon /> }
-				onSearch={ ( term ) => onQueryParamChange( { search: term?.trim(), page: undefined } ) }
+				onSearch={ handleSearch }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
-				disableAutocorrect={ true }
+				disableAutocorrect
 				defaultValue={ initialSearch }
 				ref={ searchRef }
 			/>
@@ -182,12 +206,6 @@ export const SitesContentControls = ( {
 						sitesSorting={ sitesSorting }
 						onSitesSortingChange={ onSitesSortingChange }
 					/>
-					{ onDisplayModeChange && (
-						<SitesDisplayModeSwitcher
-							displayMode={ displayMode }
-							onDisplayModeChange={ onDisplayModeChange }
-						/>
-					) }
 				</VisibilityControls>
 			</DisplayControls>
 		</FilterBar>

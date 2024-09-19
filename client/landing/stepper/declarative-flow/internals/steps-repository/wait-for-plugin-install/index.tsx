@@ -73,11 +73,14 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 						apiVersion: '1.1',
 					} );
 
-					// Check that all plugins to verify have been installed.
-					// If they _have_ been installed, we can stop polling.
+					// Check that all plugins to verify have been installed and activated.
+					// If they _have_ been installed and activated, we can stop polling.
 					if ( response?.plugins && pluginsToVerify ) {
 						stopPollingPlugins = pluginsToVerify.every( ( slug ) => {
-							return response?.plugins.find( ( plugin: { slug: string } ) => plugin.slug === slug );
+							return response?.plugins.find(
+								( plugin: { slug: string; active: boolean } ) =>
+									plugin.slug === slug && plugin.active === true
+							);
 						} );
 					}
 				} catch ( err ) {

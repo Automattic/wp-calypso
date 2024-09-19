@@ -1,0 +1,82 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.user-feedback-modal-form {
+	max-width: 827px;
+	max-height: 100%;
+	margin: 0;
+
+	.components-modal__content {
+		padding: 0;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+		}
+	}
+
+	.reviews-ratings-stars__star:focus {
+		outline: none;
+	}
+
+	.reviews-ratings-stars__star:focus-within {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-radius: 4px;
+	}
+
+	@include break-medium {
+		margin: auto;
+	}
+}
+
+.user-feedback-modal-form .form-fieldset {
+	margin: 0;
+}
+
+.user-feedback-modal-form__main {
+	padding: 40px;
+	gap: 24px;
+	display: flex;
+	flex-direction: column;
+}
+
+.user-feedback-modal-form__title {
+	@include a4a-font-body-lg;
+	margin: 0;
+	padding: 0;
+}
+
+p.user-feedback-modal-form__instruction {
+	@include a4a-font-body-lg;
+	margin: 0;
+}
+
+.user-feedback-modal-form__footer {
+	padding: 24px 40px;
+	text-align: right;
+	background-color: var(--studio-gray-0);
+	border-radius: 4px;
+}
+
+.user-feedback-modal-form__close-button {
+	position: absolute;
+	inset-inline-end: 1rem;
+	inset-block-start: 1rem;
+	cursor: pointer;
+	transition: scale 0.2s ease-in;
+	max-height: 24px;
+
+	&:hover {
+		scale: 1.2;
+	}
+
+	&:focus-visible {
+		border-color: var(--color-primary);
+		outline: none;
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-radius: 4px;
+	}
+}

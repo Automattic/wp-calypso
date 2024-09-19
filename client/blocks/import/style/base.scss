@@ -6,12 +6,14 @@
 @import "./components.scss";
 
 .import__onboarding-page {
-	.components-button.action-buttons__next.is-primary {
-		padding: 9px 40px;
-		border-radius: 4px;
+	.components-button.action-buttons__next {
 		font-weight: 500;
 		line-height: 20px;
+		border-radius: 4px;
+		padding: 9px 40px;
+	}
 
+	.components-button.action-buttons__next.is-primary {
 		// override unnecessary super specificity added by another class
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
@@ -40,6 +42,10 @@
 			color: inherit;
 			font-size: inherit;
 			text-decoration: underline;
+		}
+
+		&.onboarding-subtitle--full-width {
+			max-width: 100%;
 		}
 	}
 
@@ -71,6 +77,14 @@
 
 		.import__buttons-group {
 			margin: 28px 0;
+
+			.components-button {
+				margin-inline-start: 0.5rem;
+
+				&:first-child {
+					margin-inline-start: 0;
+				}
+			}
 		}
 
 		.action-buttons__next {
@@ -128,7 +142,7 @@
 
 .import__onboarding-page--redesign {
 	.components-button.action-buttons__next.is-primary {
-		padding: 10px 20px;
+		padding: 10px 24px;
 	}
 }
 

@@ -3,7 +3,7 @@
  */
 import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
-import DomainsMiniCart from '../domains-mini-cart';
+import { DomainsMiniCart } from '../domains-mini-cart';
 
 describe( 'DomainsMiniCart', () => {
 	it( 'renders the correct number of domains in the cart with free wpcom subdomain', () => {

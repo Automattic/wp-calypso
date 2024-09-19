@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { type as domainTypes } from '../utils/constants';
 import { getDomainType } from '../utils/get-domain-type';
 import { emailManagementEdit } from '../utils/paths';
+import type { MouseEvent } from 'react';
 
 interface DomainsTableEmailIndicatorProps {
 	domain: PartialDomainData;
@@ -64,6 +65,7 @@ export const DomainsTableEmailIndicator = ( {
 			<a
 				className="domains-table-view-email-button"
 				href={ emailManagementEdit( siteSlug, domain.domain ) }
+				onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 			>
 				{ message }
 			</a>
@@ -78,6 +80,7 @@ export const DomainsTableEmailIndicator = ( {
 		<a
 			className="domains-table-add-email-button"
 			href={ emailManagementEdit( siteSlug, domain.domain ) }
+			onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 		>
 			{ __( '+ Add email' ) }
 		</a>

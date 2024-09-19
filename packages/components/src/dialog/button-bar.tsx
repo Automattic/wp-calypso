@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { isValidElement, cloneElement } from 'react';
 import Button from '../button';
 import type { ReactElement, ReactNode, FunctionComponent } from 'react';
@@ -6,6 +6,8 @@ import type { ReactElement, ReactNode, FunctionComponent } from 'react';
 export type BaseButton = {
 	action: string;
 	disabled?: boolean;
+	busy?: boolean;
+	scary?: boolean;
 	label: ReactNode;
 	className?: string;
 	additionalClassNames?: string;
@@ -35,8 +37,8 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 					return cloneElement( button, { key } );
 				}
 
-				const classes = classnames( button.className, button.additionalClassNames, {
-					'is-primary': button.isPrimary || buttons.length === 1,
+				const classes = clsx( button.className, button.additionalClassNames, {
+					'is-primary': button.isPrimary || ( buttons.length === 1 && ! button.scary ),
 				} );
 
 				return (
@@ -47,8 +49,10 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 						data-tip-target={ `dialog-base-action-${ button.action }` }
 						onClick={ () => onButtonClick( button ) }
 						disabled={ !! button.disabled }
+						busy={ !! button.busy }
 						href={ button.href }
 						target={ button.target }
+						scary={ button.scary }
 					>
 						<span className={ baseClassName + '__button-label' }>{ button.label }</span>
 					</Button>

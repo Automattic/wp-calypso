@@ -1,7 +1,7 @@
+import { FormLabel } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 
 export default class ChartLegendItem extends PureComponent {
 	static propTypes = {

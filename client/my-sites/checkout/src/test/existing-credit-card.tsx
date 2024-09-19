@@ -12,13 +12,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
-	const queryClient = new QueryClient();
+	const queryClient = useMemo( () => new QueryClient(), [] );
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>

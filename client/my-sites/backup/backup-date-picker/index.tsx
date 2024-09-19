@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo, FC } from 'react';
@@ -8,12 +8,11 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
+import siteHasBackups from 'calypso/state/rewind/selectors/site-has-backups';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDatesWithNoSuccessfulBackups } from '../status/hooks';
 import DateButton from './date-button';
 import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
-
 import './style.scss';
 
 const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
@@ -43,11 +42,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 		firstKnownBackupAttempt.backupAttempt?.activityTs
 	);
 
-	const hasNoBackups = useSelector( ( state ) => {
-		const backups = getRewindBackups( state, siteId ) || [];
-		// in-progress backups should not be counted as backups, yet.
-		return ! backups.filter( ( backup ) => backup.status !== 'started' ).length;
-	} );
+	const hasNoBackups = useSelector( ( state ) => ! siteHasBackups( state, siteId ) );
 
 	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable, hasNoBackups );
 
@@ -167,7 +162,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 						</Button>
 
 						<span
-							className={ classNames( 'backup-date-picker__display-date', {
+							className={ clsx( 'backup-date-picker__display-date', {
 								disabled: ! canGoToPreviousDate,
 							} ) }
 						>
@@ -188,7 +183,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 					>
 						<div className="backup-date-picker__next-date-link">
 							<span
-								className={ classNames( 'backup-date-picker__display-date', {
+								className={ clsx( 'backup-date-picker__display-date', {
 									disabled: ! canGoToNextDate,
 								} ) }
 							>
@@ -216,6 +211,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 				selectedDate={ selectedDate }
 				firstBackupDate={ oldestDateAvailable }
 				disabledDates={ datesWithNoBackups.dates }
+				{ ...( hasNoBackups ? { disabled: true } : {} ) }
 			/>
 		</div>
 	);

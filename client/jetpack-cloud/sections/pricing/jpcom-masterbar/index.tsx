@@ -1,5 +1,5 @@
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
@@ -56,7 +56,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
 
-	const classes = classNames( 'header__content-background-wrapper', {
+	const classes = clsx( 'header__content-background-wrapper', {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
 	} );
 

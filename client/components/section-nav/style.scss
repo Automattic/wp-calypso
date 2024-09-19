@@ -145,6 +145,13 @@
 			width: 0;
 			flex: 1 0 auto;
 		}
+
+	}
+}
+
+@include breakpoint-deprecated( ">480px" ) {
+	.section-nav-group.has-horizontal-scroll {
+		overflow-x: auto;
 	}
 }
 

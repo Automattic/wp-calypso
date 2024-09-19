@@ -1,7 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
-import { useDispatch } from 'calypso/state';
+import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
 import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -13,14 +17,39 @@ const NOTIFICATION_DURATION = 3000;
 const DEFAULT_CHECK_INTERVAL = 5;
 
 export default function useToggleActivateMonitor(
-	sites: Array< { blog_id: number; url: string } >
+	sites: Array< Site >
 ): ( isEnabled: boolean ) => void {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
+
+	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+
+	const agencyId = useSelector( getActiveAgencyId );
+
+	const queryKey = isA8CForAgencies()
+		? [
+				'jetpack-agency-dashboard-sites',
+				dataViewsState.search,
+				dataViewsState.page,
+				{
+					issueTypes: getSelectedFilters( dataViewsState.filters ),
+					showOnlyFavorites: showOnlyFavorites || false,
+				},
+				dataViewsState.sort,
+				dataViewsState.perPage,
+				...( agencyId ? [ agencyId ] : [] ),
+		  ]
+		: [
+				'jetpack-agency-dashboard-sites',
+				search,
+				currentPage,
+				filter,
+				sort,
+				...( agencyId ? [ agencyId ] : [] ),
+		  ];
 
 	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {
@@ -75,7 +104,11 @@ export default function useToggleActivateMonitor(
 			sites.forEach( ( site ) =>
 				requests.push( {
 					site,
-					mutation: toggleActivateMonitoring.mutateAsync( { siteId: site.blog_id, params } ),
+					mutation: toggleActivateMonitoring.mutateAsync( {
+						siteId: site.blog_id,
+						params,
+						hasJetpackPluginInstalled: site?.enabled_plugin_slugs?.includes( 'jetpack' ) ?? false,
+					} ),
 				} )
 			);
 			const promises = await Promise.allSettled(

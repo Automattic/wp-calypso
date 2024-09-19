@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -14,6 +14,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
 	requestModuleToggles,
@@ -59,6 +60,9 @@ class StatsNavigation extends Component {
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 		isLegacy: PropTypes.bool,
+		adminUrl: PropTypes.string,
+		showLock: PropTypes.bool,
+		hideModuleSettings: PropTypes.bool,
 	};
 
 	state = {
@@ -136,14 +140,22 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip, statsAdminVersion } =
-			this.props;
+		const {
+			slug,
+			selectedItem,
+			interval,
+			isLegacy,
+			showSettingsTooltip,
+			statsAdminVersion,
+			showLock,
+			hideModuleSettings,
+		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
-		const wrapperClass = classNames( 'stats-navigation', {
+		const wrapperClass = clsx( 'stats-navigation', {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
@@ -165,6 +177,20 @@ class StatsNavigation extends Component {
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
 								const className = 'stats-navigation__' + item;
+								if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+									return (
+										<NavItem
+											className={ className }
+											key={ item }
+											onClick={ () =>
+												( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+											}
+											selected={ false }
+										>
+											{ navItem.label }
+										</NavItem>
+									);
+								}
 								return (
 									<NavItem
 										className={ className }
@@ -173,6 +199,7 @@ class StatsNavigation extends Component {
 										selected={ selectedItem === item }
 									>
 										{ navItem.label }
+										{ navItem.paywall && showLock && ' 🔒' }
 									</NavItem>
 								);
 							} ) }
@@ -189,7 +216,8 @@ class StatsNavigation extends Component {
 
 				{ ! isLegacy &&
 					isModuleSettingsSupported &&
-					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
+					! hideModuleSettings && (
 						<PageModuleToggler
 							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
 							pageModules={ pageModules }
@@ -217,6 +245,7 @@ export default connect(
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
+			adminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

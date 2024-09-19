@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -109,7 +109,7 @@ export class AppsBadge extends PureComponent {
 			this.props;
 		const { imageSrc, hasExternalImageLoaded } = this.state;
 
-		const figureClassNames = classNames( 'get-apps__app-badge', {
+		const figureClassNames = clsx( 'get-apps__app-badge', {
 			[ `${ storeName }-app-badge` ]: true,
 			'is-external-image': hasExternalImageLoaded,
 		} );

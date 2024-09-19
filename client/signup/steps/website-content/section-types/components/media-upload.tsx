@@ -8,7 +8,7 @@ import {
 	mediaUploaded,
 	mediaRemoved,
 } from 'calypso/state/signup/steps/website-content/actions';
-import { type MediaUploadData, WordpressMediaUpload } from '../../wordpress-media-upload';
+import { type MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { PageData } from 'calypso/state/signup/steps/website-content/types';
 

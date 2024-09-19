@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -24,7 +24,6 @@ import {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -124,7 +123,6 @@ const NewMailBoxList = (
 	};
 
 	const [ mailboxes, setMailboxes ] = useState( [ createNewMailbox() ] );
-	const { sendNudge } = useOdieAssistantContext();
 	const isTitan = provider === EmailProvider.Titan;
 
 	const persistMailboxesToState = useCallback( () => {
@@ -139,12 +137,6 @@ const NewMailBoxList = (
 	}, [ hiddenFieldNames.join( '' ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const addMailbox = () => {
-		sendNudge( {
-			nudge: 'add-mailbox',
-			initialMessage:
-				'I see you want to add a mailbox. I can give you a few tips on how to do that.',
-			context: { mailbox_count: mailboxes.length, domain: selectedDomainName },
-		} );
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];
 		const eventName = isTitan
 			? 'calypso_email_titan_add_mailboxes_add_another_mailbox_button_click'
@@ -165,14 +157,8 @@ const NewMailBoxList = (
 
 			setMailboxes( newMailboxes );
 			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
-			sendNudge( {
-				nudge: 'remove-mailbox',
-				initialMessage:
-					'I see you want to remove a mailbox. I can give you a few tips on how to do that.',
-				context: { mailbox_count: newMailboxes.length, domain: selectedDomainName },
-			} );
 		},
-		[ isTitan, mailboxes, sendNudge ]
+		[ isTitan, mailboxes ]
 	);
 
 	const handleCancel = () => onCancel();
@@ -247,7 +233,7 @@ const NewMailBoxList = (
 				} ) }
 
 				<div
-					className={ classNames( 'new-mailbox-list__supplied-actions', {
+					className={ clsx( 'new-mailbox-list__supplied-actions', {
 						'new-mailbox-list__supplied-actions--disable-additional-mailboxes':
 							! showAddNewMailboxButton,
 					} ) }

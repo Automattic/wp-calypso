@@ -1,9 +1,8 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React, { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { tip } from '../../icons';
@@ -113,7 +112,7 @@ const SiteOptions: React.FC< Props > = ( {
 			</FormFieldset>
 			{ acceptSearchTerms && (
 				<FormFieldset className="site-options__form-fieldset">
-					<FormLabel htmlFor="searchTerms" optional={ true }>
+					<FormLabel htmlFor="searchTerms" optional>
 						{ translate( 'Search terms' ) }
 					</FormLabel>
 					<FormInput

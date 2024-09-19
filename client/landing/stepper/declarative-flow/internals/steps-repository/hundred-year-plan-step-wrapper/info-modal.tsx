@@ -147,7 +147,7 @@ export default function InfoModal( { onClose }: { onClose: () => void } ) {
 	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
 
 	return (
-		<StyledModal title="" onRequestClose={ onClose } isFullScreen={ true }>
+		<StyledModal title="" onRequestClose={ onClose } isFullScreen>
 			<Wrapper>
 				<Header>
 					<HundredYearPlanLogo />

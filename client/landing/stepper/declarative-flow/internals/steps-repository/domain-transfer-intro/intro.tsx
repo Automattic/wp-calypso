@@ -3,8 +3,8 @@ import { IntentScreen, GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import GoogleDomainsModal from 'calypso/landing/stepper/declarative-flow/internals/components/google-domains-transfer-instructions';
 import { preventWidows } from 'calypso/lib/formatting';
-import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 
 interface Props {
 	onSubmit: () => void;
@@ -31,7 +31,9 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 									) }
 								</p>
 								{ isGoogleDomainsTransferFlow && (
-									<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
+									<GoogleDomainsModal className="unlock-instructions__cta">
+										{ __( 'Show me how' ) }
+									</GoogleDomainsModal>
 								) }
 							</>
 						),
@@ -63,10 +65,10 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 							<p>
 								{ isEnglishLocale ||
 								hasTranslation(
-									"Review your payment and contact details. If you're transferring a domain from Google or Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
+									"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
 								)
 									? __(
-											"Review your payment and contact details. If you're transferring a domain from Google or Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
+											"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
 									  )
 									: __(
 											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."

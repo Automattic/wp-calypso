@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/explat-client",
-	"version": "0.0.4",
+	"version": "0.1.0",
 	"description": "Standalone ExPlat Client.",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -30,6 +30,7 @@
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"jest": "^29.7.0",
 		"typescript": "^5.3.3"
 	}
 }

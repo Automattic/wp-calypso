@@ -1,4 +1,3 @@
-@import "calypso/my-sites/plans-grid/media-queries";
 @import "@wordpress/base-styles/variables";
 @import "@automattic/typography/styles/fonts";
 
@@ -7,8 +6,6 @@ body {
 }
 
 .jetpack-app__plans {
-	@include plan-features-layout-switcher;
-
 	.jetpack-app__plans-header {
 		display: block;
 		overflow: auto;

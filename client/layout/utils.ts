@@ -1,8 +1,34 @@
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.
 let pinnedSidebarTop = true; // We pin sidebar to the top by default.
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
+
+export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {
+	if ( isWpMobileApp() ) {
+		return false;
+	}
+
+	const exemptedSections = [ 'jetpack-connect', 'devdocs', 'help', 'home' ];
+	const exemptedRoutes = [ '/log-in/jetpack' ];
+	const exemptedRoutesStartingWith = [
+		'/start/p2',
+		'/start/videopress',
+		'/start/setup-site',
+		'/start/newsletter',
+		'/plugins/domain',
+		'/plugins/marketplace/setup',
+	];
+
+	return (
+		! exemptedSections.includes( sectionName ) &&
+		! exemptedRoutes.includes( currentRoute ) &&
+		! exemptedRoutesStartingWith.some( ( startsWithString ) =>
+			currentRoute.startsWith( startsWithString )
+		)
+	);
+}
 
 export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	// Do not run until next requestAnimationFrame or if running out of browser context.

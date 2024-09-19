@@ -1,5 +1,5 @@
+import { FormLabel } from '@automattic/components';
 import { PureComponent } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import InfoPopover from 'calypso/components/info-popover';
 
@@ -36,7 +36,7 @@ class InfoPopoverExample extends PureComponent {
 				<InfoPopover
 					id="popover__info-popover-example"
 					position={ this.state.popoverPosition }
-					showOnHover={ true }
+					showOnHover
 				>
 					Shows on hover.
 				</InfoPopover>

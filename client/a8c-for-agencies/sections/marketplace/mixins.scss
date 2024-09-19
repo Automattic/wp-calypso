@@ -1,0 +1,52 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+@mixin licensing-portal-bottom-action-bar() {
+	position: fixed;
+	inset-inline: 0;
+	inset-block-end: 0;
+	padding: 0.875rem 0.875rem 1.5rem;
+	background: var(--color-light-backdrop);
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12);
+	z-index: 20;
+
+	.button {
+		width: 100%;
+		padding: 8px 24px;
+		font-size: 1rem;
+		white-space: nowrap;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		position: static;
+		padding: 0;
+		background: transparent;
+		box-shadow: none;
+
+		.button {
+			width: auto;
+		}
+	}
+}
+
+@mixin licensing-portal-cursor-pagination() {
+	.pagination__list-item.is-right,
+	.pagination__list-item.is-left {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	&--has-prev {
+		.pagination__list-item.is-left {
+			opacity: 1;
+			pointer-events: initial;
+		}
+	}
+
+	&--has-next {
+		.pagination__list-item.is-right {
+			opacity: 1;
+			pointer-events: initial;
+		}
+	}
+}

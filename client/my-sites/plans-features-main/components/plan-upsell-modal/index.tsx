@@ -1,10 +1,10 @@
-import { PLAN_PERSONAL, PlanSlug } from '@automattic/calypso-products';
+import { PlanSlug } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
 import PaidPlanIsRequiredDialog from './paid-plan-is-required-dialog';
-import type { DataResponse } from 'calypso/my-sites/plans-grid/types';
+import type { DataResponse } from '@automattic/plans-grid-next';
 
 export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
 export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';
@@ -18,77 +18,41 @@ export type ModalType =
 	| typeof MODAL_LOADER;
 
 export type DomainPlanDialogProps = {
+	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	suggestedPlanSlug: PlanSlug;
+	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
-	onPlanSelected: () => void;
+	onPlanSelected: ( planSlug: PlanSlug ) => void;
 };
 
 type ModalContainerProps = {
 	isModalOpen: boolean;
-	paidDomainName?: string;
 	modalType?: ModalType | null;
-	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	onClose: () => void;
-	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
-	onPlanSelected: ( planSlug: string ) => void;
-};
+} & DomainPlanDialogProps;
 
 // See p2-pbxNRc-2Ri#comment-4703 for more context
 export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
-function DisplayedModal( {
-	paidDomainName,
-	modalType,
-	generatedWPComSubdomain,
-	onFreePlanSelected,
-	onPlanSelected,
-}: Omit< ModalContainerProps, 'selectedPlan' > ) {
+function getDisplayedModal( modalType: ModalType, dialogProps: DomainPlanDialogProps ) {
 	switch ( modalType ) {
 		case FREE_PLAN_PAID_DOMAIN_DIALOG:
-			return (
-				<FreePlanPaidDomainDialog
-					paidDomainName={ paidDomainName as string }
-					generatedWPComSubdomain={ generatedWPComSubdomain }
-					suggestedPlanSlug={ PLAN_PERSONAL }
-					onFreePlanSelected={ onFreePlanSelected }
-					onPlanSelected={ () => {
-						onPlanSelected( PLAN_PERSONAL );
-					} }
-				/>
-			);
+			return <FreePlanPaidDomainDialog { ...dialogProps } />;
 		case FREE_PLAN_FREE_DOMAIN_DIALOG:
-			return (
-				<FreePlanFreeDomainDialog
-					suggestedPlanSlug={ PLAN_PERSONAL }
-					generatedWPComSubdomain={ generatedWPComSubdomain }
-					onFreePlanSelected={ onFreePlanSelected }
-					onPlanSelected={ () => {
-						onPlanSelected( PLAN_PERSONAL );
-					} }
-				/>
-			);
+			return <FreePlanFreeDomainDialog { ...dialogProps } />;
 		case PAID_PLAN_IS_REQUIRED_DIALOG:
-			return (
-				<PaidPlanIsRequiredDialog
-					paidDomainName={ paidDomainName as string }
-					suggestedPlanSlug={ PLAN_PERSONAL }
-					generatedWPComSubdomain={ generatedWPComSubdomain }
-					onFreePlanSelected={ onFreePlanSelected }
-					onPlanSelected={ () => {
-						onPlanSelected( PLAN_PERSONAL );
-					} }
-				/>
-			);
+			return <PaidPlanIsRequiredDialog { ...dialogProps } />;
 		default:
-			break;
+			return null;
 	}
-
-	return null;
 }
 
 export default function ModalContainer( props: ModalContainerProps ) {
 	const { isModalOpen, modalType } = props;
+
+	if ( ! modalType ) {
+		return null;
+	}
 
 	const modalWidth = () => {
 		switch ( modalType ) {
@@ -102,10 +66,10 @@ export default function ModalContainer( props: ModalContainerProps ) {
 	};
 	return (
 		<Dialog
-			isBackdropVisible={ true }
+			isBackdropVisible
 			isVisible={ isModalOpen && !! modalType }
 			onClose={ props.onClose }
-			showCloseIcon={ true }
+			showCloseIcon
 			labelledby="plan-upsell-modal-title"
 			describedby="plan-upsell-modal-description"
 		>
@@ -120,7 +84,7 @@ export default function ModalContainer( props: ModalContainerProps ) {
 					}
 				` }
 			/>
-			<DisplayedModal { ...props } />
+			{ getDisplayedModal( modalType, props ) }
 		</Dialog>
 	);
 }

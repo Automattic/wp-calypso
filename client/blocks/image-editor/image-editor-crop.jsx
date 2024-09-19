@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -424,7 +424,7 @@ class ImageEditorCrop extends Component {
 						top: topBound,
 						left: leftBound,
 					} }
-					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
+					className={ clsx( handleClassName, handleClassName + '-nwse' ) }
 				/>
 				<Draggable
 					onDrag={ this.onTopRightDrag }
@@ -438,7 +438,7 @@ class ImageEditorCrop extends Component {
 						top: topBound,
 						right: rightBound,
 					} }
-					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
+					className={ clsx( handleClassName, handleClassName + '-nesw' ) }
 				/>
 				<Draggable
 					onDrag={ this.onBottomRightDrag }
@@ -452,7 +452,7 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						right: rightBound,
 					} }
-					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
+					className={ clsx( handleClassName, handleClassName + '-nwse' ) }
 				/>
 				<Draggable
 					onDrag={ this.onBottomLeftDrag }
@@ -466,7 +466,7 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						left: leftBound,
 					} }
-					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
+					className={ clsx( handleClassName, handleClassName + '-nesw' ) }
 				/>
 			</div>
 		);

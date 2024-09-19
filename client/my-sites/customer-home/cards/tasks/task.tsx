@@ -1,7 +1,7 @@
 import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -229,7 +229,7 @@ const Task = ( {
 
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				'task',
 				{
 					'is-loading': isLoading,

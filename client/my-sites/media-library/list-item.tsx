@@ -1,5 +1,5 @@
 import { Gridicon, ProgressBar, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isEqual } from 'lodash';
 import * as React from 'react';
 import { getMimePrefix } from 'calypso/lib/media/utils';
@@ -126,7 +126,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		const { uploadProgress } = this.state;
 		const isTransient = media && ( media as MediaObject ).transient;
 
-		const classes = classNames( 'media-library__list-item', {
+		const classes = clsx( 'media-library__list-item', {
 			'is-placeholder': ! media,
 			'is-selected': -1 !== selectedIndex,
 			'is-transient': isTransient,

@@ -26,8 +26,8 @@ const VideoPressTvRedirect: Step = function VideoPressTvRedirect( { data } ) {
 	return (
 		<StepContainer
 			stepName="redirect"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="videopress-tv-purchase"
 			formattedHeader={
 				<FormattedHeader

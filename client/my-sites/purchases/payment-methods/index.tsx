@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -15,8 +15,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { logToLogstash } from 'calypso/lib/logstash';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
@@ -24,9 +23,10 @@ import { PaymentMethodSelectorSubmitButtonContent } from 'calypso/me/purchases/m
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
-import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
+import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
@@ -34,16 +34,7 @@ import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths'
 function useLogPaymentMethodsError( message: string ) {
 	return useCallback(
 		( error: Error ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message,
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-				extra: {
-					env: config( 'env_id' ),
-					type: 'site_level_payment_methods',
-					message: convertErrorToString( error ),
-				},
-			} );
+			logStashLoadErrorEvent( 'site_level_payment_methods', error, { message } );
 		},
 		[ message ]
 	);
@@ -94,9 +85,11 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level add new payment method load error'
 	);
+	const currency = useSelector( getCurrentUserCurrencyCode );
 
 	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
+		currency,
 		isStripeLoading,
 		stripeLoadingError,
 		shouldUseEbanx: false,
@@ -159,7 +152,9 @@ export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<SiteLevelAddNewPaymentMethodForm { ...props } />
+			<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+				<SiteLevelAddNewPaymentMethodForm { ...props } />
+			</RazorpayHookProvider>
 		</StripeHookProvider>
 	);
 }

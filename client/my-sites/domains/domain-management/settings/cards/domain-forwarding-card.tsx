@@ -1,8 +1,8 @@
-import { Badge, Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Badge, Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,7 +11,6 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -429,7 +428,7 @@ export default function DomainForwardingCard( {
 			>
 				<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
 				<div
-					className={ classNames( 'forwards-from', {
+					className={ clsx( 'forwards-from', {
 						'has-subdomain-selector':
 							sourceType === 'domain' ||
 							( ! checkIfIsThereMainDomainForwarding() && pointsToWpcom ),
@@ -441,7 +440,7 @@ export default function DomainForwardingCard( {
 						name="origin"
 						onChange={ handleSubdomainChange }
 						value={ sourceType === 'domain' ? domain.domain : subdomain }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						className={ clsx( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
 						prefix={
 							( ( child.subdomain === '' && child.domain_redirect_id !== 0 ) ||
@@ -470,7 +469,7 @@ export default function DomainForwardingCard( {
 						onChange={ handleForwardToChange }
 						onBlur={ forwardValidation }
 						value={ targetUrl }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						className={ clsx( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
 						suffix={
 							child.target_host + child.target_path !== '' &&
@@ -482,7 +481,7 @@ export default function DomainForwardingCard( {
 						}
 					/>
 					<Button
-						className={ classNames( 'forwarding__checkmark', {
+						className={ clsx( 'forwarding__checkmark', {
 							visible: pointsToWpcom && isValidUrl && child.target_host + child.target_path !== '',
 						} ) }
 					>
@@ -491,14 +490,13 @@ export default function DomainForwardingCard( {
 				</div>
 				{ ! isValidUrl && (
 					<div className="domain-forwarding-card__error-field">
-						<FormInputValidation isError={ true } text={ errorMessage } />
+						<FormInputValidation isError text={ errorMessage } />
 					</div>
 				) }
 				<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
 					<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
 					<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="redirect_type"
 							value="0"
@@ -513,7 +511,6 @@ export default function DomainForwardingCard( {
 						{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
 					</FormSettingExplanation>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="redirect_type"
 							value="0"
@@ -537,7 +534,6 @@ export default function DomainForwardingCard( {
 						) }
 					</p>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="path_forwarding"
 							value="0"
@@ -553,7 +549,6 @@ export default function DomainForwardingCard( {
 						{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
 					</FormSettingExplanation>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="path_forwarding"
 							value="0"
@@ -610,7 +605,7 @@ export default function DomainForwardingCard( {
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
-			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload={ true } /> }
+			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload /> }
 			<form
 				onSubmit={ ( e ) => {
 					e.preventDefault();

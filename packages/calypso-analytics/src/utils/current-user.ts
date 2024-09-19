@@ -26,7 +26,6 @@ export interface CurrentUser {
 
 /**
  * Gets current user.
- *
  * @returns Current user.
  */
 export function getCurrentUser(): CurrentUser {
@@ -35,7 +34,6 @@ export function getCurrentUser(): CurrentUser {
 
 /**
  * Sets current user, (stored in javascript memory).
- *
  * @param currentUser the user data for the current user
  * @returns Current user.
  */

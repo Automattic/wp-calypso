@@ -3,14 +3,32 @@
 
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
-.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration),
-.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow) {
+.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration):not(.is-automattic-for-agencies-flow),
+.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
 	@include jetpack-connect-colors();
 }
 
 .layout.is-jetpack-woocommerce-flow,
 .layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
+}
+
+.is-automattic-for-agencies-flow,
+.layout.is-automattic-for-agencies-flow {
+	@include automattic-for-agencies-colors();
+
+	.formatted-header__title {
+		margin: 32px 0;
+		font-size: 1.25rem;
+	}
+
+	.jetpack-connect__tos-link {
+		font-size: 0.875rem;
+	}
+}
+
+.jetpack-connect__main.main.is-automattic-for-agencies-flow {
+	max-width: 426px;
 }
 
 .is-section-jetpack-connect,
@@ -955,8 +973,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		.auth-form__social,
 		.login__form-social {
 			.social-buttons__button {
-				border-color: var(--studio-pink-50);
-				color: var(--studio-pink-50);
+				border-color: var(--studio-woocommerce-purple);
+				color: var(--studio-woocommerce-purple);
 
 				&.disabled {
 					border-color: var(--studio-gray-30);
@@ -1101,8 +1119,113 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		max-width: 615px;
 	}
 
+	&.feature-flag-woocommerce-core-profiler-passwordless-auth {
+		.jetpack-connect__tos-link {
+			a.jetpack-connect__sso-actions-modal-link {
+				color: var(--wp-admin-theme-color);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+			}
+		}
+	}
+
+	.is-woo-passwordless,
+	.feature-flag-woocommerce-core-profiler-passwordless-auth {
+		.signup-form {
+			max-width: 327px;
+			padding-top: 48px;
+			.signup-form__passwordless-form-wrapper {
+				button.is-primary {
+					background-color: var(--wp-admin-theme-color);
+					border-radius: 0;
+				}
+				.logged-out-form__footer {
+					padding: 0;
+				}
+				.form-fieldset {
+					margin-bottom: 24px;
+				}
+			}
+
+			input.signup-form__passwordless-email {
+				margin-bottom: 0;
+			}
+
+			.auth-form__social {
+				padding-top: 0;
+				.auth-form__social-buttons {
+					width: 100%;
+					.social-buttons__button {
+						width: 100%;
+						border: 1px solid #a7aaad;
+						border-radius: 2px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						svg {
+							border-radius: 0;
+							border: none;
+							flex-shrink: 0;
+						}
+						span {
+							flex-grow: 1;
+							text-align: center;
+							// icon width * 2
+							margin-left: -40px;
+						}
+					}
+				}
+			}
+		}
+
+		.site-icon {
+			border-radius: 4px;
+		}
+
+		.jetpack-connect__logged-in-card {
+			padding: 32px 24px;
+			align-items: center;
+			border: 1px solid $gray-300;
+		}
+
+		a.logged-out-form__link-item {
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 400;
+			line-height: 24px;
+		}
+
+		img.gravatar {
+			width: 80px;
+			height: 80px;
+		}
+
+		.jetpack-connect__logged-in-form-user {
+			flex-direction: column;
+		}
+
+		.jetpack-connect__logged-in-form-user-text {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 13.5px;
+
+			strong {
+				font-size: 1rem;
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: -0.008px;
+				display: block;
+			}
+		}
+
+		.jetpack-connect__tos-link {
+			margin: 24px auto 70px;
+		}
+	}
+
 	.jetpack-connect__site.card {
-		border: 1px solid $gray-400;
+		border: 1px solid $gray-300;
 		border-radius: 2px;
 		background: #fff;
 		display: flex;
@@ -1153,7 +1276,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		flex-direction: column;
 		padding: 16px 24px;
 		background: #fff;
-		border: 1px solid $gray-400;
+		border: 1px solid $gray-300;
 		border-radius: 2px;
 		max-width: 405px;
 		margin: 0;

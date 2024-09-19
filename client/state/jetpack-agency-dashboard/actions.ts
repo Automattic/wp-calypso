@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { AnyAction } from 'redux';
 import {
@@ -13,7 +14,12 @@ import {
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
+	JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES,
 } from './action-types';
+
+const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
 
 const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
 	if ( ! filterOptions.length ) {
@@ -39,14 +45,16 @@ export const updateDashboardURLQueryArgs = ( {
 		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+	const currentTour = params.get( 'tour' );
 
-	page(
+	page.replace(
 		addQueryArgs(
 			{
 				...( searchQuery && { s: searchQuery } ),
 				...filterStateToQuery( filterOptions ),
 				...( sortField && { sort_field: sortField } ),
 				...( sortDirection && { sort_direction: sortDirection } ),
+				...( currentTour && { tour: currentTour } ),
 			},
 			window.location.pathname
 		)
@@ -61,7 +69,7 @@ export const updateFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
 	updateDashboardURLQueryArgs( { filter } );
 };
 
-export const updateSort = ( sort: DashboardSortInterface ) => () => {
+export const updateSort = ( sort?: DashboardSortInterface ) => () => {
 	updateDashboardURLQueryArgs( { sort } );
 };
 
@@ -70,15 +78,31 @@ export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): Any
 }
 
 export function selectLicense( siteId: number, license: string ): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE, siteId: siteId, license: license };
+	return {
+		type: isStreamlinedPurchasesEnabled
+			? JETPACK_AGENCY_DASHBOARD_SELECT_SITE_LICENSE
+			: JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
+		siteId: siteId,
+		license: license,
+	};
 }
 
 export function unselectLicense( siteId: number, license: string ): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE, siteId: siteId, license: license };
+	return {
+		type: isStreamlinedPurchasesEnabled
+			? JETPACK_AGENCY_DASHBOARD_UNSELECT_SITE_LICENSE
+			: JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
+		siteId: siteId,
+		license: license,
+	};
 }
 
 export function resetSite(): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_RESET_SITE };
+	return {
+		type: isStreamlinedPurchasesEnabled
+			? JETPACK_AGENCY_DASHBOARD_RESET_SITE_LICENSES
+			: JETPACK_AGENCY_DASHBOARD_RESET_SITE,
+	};
 }
 
 export function setSiteMonitorStatus( siteId: number, status: 'loading' | 'completed' ): AnyAction {

@@ -19,7 +19,14 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSitePlan, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isBusy } ) => {
+const UpgradeNudge = ( {
+	siteSlug,
+	paidPlugins,
+	handleUpsellNudgeClick,
+	secondaryCallToAction,
+	secondaryOnClick,
+	secondaryEvent,
+} ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
@@ -89,7 +96,7 @@ const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isBusy }
 				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
 				icon="notice-outline"
-				showIcon={ true }
+				showIcon
 				href={
 					pluginsPlansPageFlag
 						? pluginsPlansPage
@@ -98,6 +105,7 @@ const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isBusy }
 				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
 				plan={ requiredPlan.getStoreSlug() }
 				title={ title }
+				isOneClickCheckoutEnabled
 			/>
 		);
 	}
@@ -114,7 +122,7 @@ const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isBusy }
 				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
 				icon="notice-outline"
-				showIcon={ true }
+				showIcon
 				href={ `/plans/${ siteSlug }` }
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
@@ -136,12 +144,15 @@ const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isBusy }
 				args: { planName: getPlan( plan )?.getTitle() },
 			} ) }
 			icon="notice-outline"
-			showIcon={ true }
+			showIcon
 			onClick={ handleUpsellNudgeClick }
+			secondaryCallToAction={ secondaryCallToAction }
+			secondaryOnClick={ secondaryOnClick }
+			secondaryEvent={ secondaryEvent }
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
-			isBusy={ isBusy }
+			isOneClickCheckoutEnabled
 		/>
 	);
 };

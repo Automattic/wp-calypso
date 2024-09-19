@@ -1,20 +1,33 @@
-import { WPCOM_FEATURES_INSTALL_PLUGINS, getPlan } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	getPlan,
+	TERM_ANNUALLY,
+	findFirstSimilarPlanKey,
+} from '@automattic/calypso-products';
+import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import getThemeTier from 'calypso/components/theme-tier/get-theme-tier';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+	getSiteSlug,
+	getSitePlanSlug,
+} from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -38,8 +51,25 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 	getIsLivePreviewSupported,
+	isWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+/**
+ * Get the checkout path slug for the given site and minimum plan.
+ * @param {Object} state
+ * @param {number} siteId
+ * @param {string} minimumPlan
+ * @returns
+ */
+function getPlanPathSlugForThemes( state, siteId, minimumPlan ) {
+	const currentPlanSlug = getSitePlanSlug( state, siteId );
+	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
+	const mappedPlan = getPlan( requiredPlanSlug );
+	return mappedPlan?.getPathSlug();
+}
 
 function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
@@ -59,10 +89,19 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const { themeTier } = getThemeTier( state, siteId, themeId );
+			const themeTier = options.themeTier;
+
 			const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
-			const mappedPlan = getPlan( tierMinimumUpsellPlan );
-			const planPathSlug = mappedPlan?.getPathSlug();
+			const isLockedStyleVariation =
+				options?.styleVariationSlug &&
+				! isDefaultGlobalStylesVariationSlug( options.styleVariationSlug );
+
+			const minimumPlan =
+				tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation
+					? PLAN_PREMIUM
+					: tierMinimumUpsellPlan;
+
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, minimumPlan );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -150,7 +189,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
+
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
@@ -161,6 +202,41 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
+	// WPCOM-specific plan upgrade for community themes.
+	const upgradePlanForDotOrgThemes = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) => {
+			const { origin = 'https://wordpress.com' } =
+				typeof window !== 'undefined' ? window.location : {};
+			const slug = getSiteSlug( state, siteId );
+
+			const redirectTo = encodeURIComponent(
+				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
+			);
+
+			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
+
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! siteId ||
+			isExternallyManagedTheme( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			! isWporgTheme( state, themeId ),
 	};
 
 	const upgradePlanForExternallyManagedThemes = {
@@ -262,7 +338,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing a block theme',
 		} ),
 		action: ( themeId, siteId ) => {
-			return livePreviewAction( themeId, siteId, 'list' );
+			return livePreviewAction( siteId, themeId, 'list' );
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			! getIsLivePreviewSupported( state, themeId, siteId ),
@@ -293,9 +369,19 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		},
 	};
 
-	const signupLabel = translate( 'Pick this design', {
-		comment: 'when signing up for a WordPress.com account with a selected theme',
-	} );
+	const signupLabel = ( state ) =>
+		shouldSelectSite( {
+			isLoggedIn: isUserLoggedIn( state ),
+			siteCount: getCurrentUserSiteCount( state ),
+			siteId: getSelectedSiteId( state ),
+		} )
+			? translate( 'Select a site for this theme', {
+					comment:
+						'On the theme details page, button text shown so the user selects one of their sites before activating the selected theme',
+			  } )
+			: translate( 'Pick this design', {
+					comment: 'when signing up for a WordPress.com account with a selected theme',
+			  } );
 
 	const signup = {
 		label: signupLabel,
@@ -326,6 +412,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		upgradePlan,
 		upgradePlanForBundledThemes,
 		upgradePlanForExternallyManagedThemes,
+		upgradePlanForDotOrgThemes,
 		activate,
 		tryandcustomize,
 		deleteTheme,
@@ -339,16 +426,16 @@ export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug,
 	return {
 		assembler: {
 			key: 'assembler',
-			label: translate( 'Quick editing in the Assembler' ),
-			extendedLabel: translate( 'Quick editing in the Assembler' ),
+			label: translate( 'Quick editing in the Store Designer' ),
+			extendedLabel: translate( 'Quick editing in the Store Designer' ),
 			getUrl: () => {
 				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub&customizing=true`;
 			},
 		},
 		customize: {
 			...options.customize,
-			label: translate( 'Advance customization in the Editor' ),
-			extendedLabel: translate( 'Advance customization in the Editor' ),
+			label: translate( 'Advanced customization in the Editor' ),
+			extendedLabel: translate( 'Advanced customization in the Editor' ),
 		},
 		preview: {
 			label: translate( 'Store preview' ),
@@ -370,15 +457,19 @@ const connectOptionsHoc = connect(
 			localizeThemesPath( getUrl( state, t, siteId, options ), locale, isLoggedOut );
 		const mapHideForTheme = ( hideForTheme ) => ( t, s ) =>
 			hideForTheme( state, t, s ?? siteId, origin );
+		const mapLabel = ( label ) => label( state );
 
-		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
-			Object.assign(
+		return mapValues( getAllThemeOptions( props ), ( option, key ) => {
+			return Object.assign(
 				{ key },
 				option,
 				option.getUrl ? { getUrl: mapGetUrl( option.getUrl ) } : {},
-				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}
-			)
-		);
+				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {},
+				option.label
+					? { label: typeof option.label === 'function' ? mapLabel( option.label ) : option.label }
+					: {}
+			);
+		} );
 		/* eslint-enable wpcalypso/redux-no-bound-selectors */
 	},
 	( dispatch, props ) => {

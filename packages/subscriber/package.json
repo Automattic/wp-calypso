@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/subscriber",
 	"version": "0.0.1",
-	"description": "Subscriber importer",
+	"description": "Subscriber importer.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -34,15 +34,15 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.11.8",
-		"@wordpress/base-styles": "^4.39.0",
-		"@wordpress/components": "^25.14.0",
-		"@wordpress/dom": "^3.48.0",
-		"@wordpress/element": "^5.25.0",
-		"@wordpress/i18n": "^4.48.0",
-		"@wordpress/icons": "^9.39.0",
-		"@wordpress/primitives": "^3.46.0",
-		"@wordpress/react-i18n": "^3.46.0",
-		"classnames": "^2.3.2",
+		"@wordpress/base-styles": "^5.2.0",
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/dom": "^4.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/i18n": "^5.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/primitives": "^4.2.0",
+		"@wordpress/react-i18n": "^4.2.0",
+		"clsx": "^2.1.1",
 		"debug": "^4.3.4",
 		"react-popper": "^2.3.0"
 	},
@@ -52,7 +52,7 @@
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.18.0",
+		"@wordpress/data": "^10.2.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"

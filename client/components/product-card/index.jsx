@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import ProductCardPriceGroup from './price-group';
@@ -19,7 +19,7 @@ function ProductCard( {
 	title,
 } ) {
 	const hasPriceGroup = ! purchase && !! currencyCode && !! billingTimeFrame;
-	const cardClassNames = classNames( 'product-card', {
+	const cardClassNames = clsx( 'product-card', {
 		'is-placeholder': isPlaceholder,
 		'is-purchased': !! purchase,
 		'has-secondary-header': subtitle || hasPriceGroup,

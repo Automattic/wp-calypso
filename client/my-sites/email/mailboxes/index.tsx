@@ -16,7 +16,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import MailboxSelectionList from 'calypso/my-sites/email/mailboxes/mailbox-selection-list';
 import ProgressLine from 'calypso/my-sites/email/mailboxes/mailbox-selection-list/progress-line';
-import { emailManagementMailboxes } from 'calypso/my-sites/email/paths';
+import { getMailboxesPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -28,7 +28,7 @@ import './style.scss';
 const TrackPageView = ( { context }: { context: string } ) => {
 	return (
 		<PageViewTracker
-			path={ emailManagementMailboxes( ':site' ) }
+			path={ getMailboxesPath( ':site' ) }
 			title="My Mailboxes"
 			properties={ { context } }
 		/>

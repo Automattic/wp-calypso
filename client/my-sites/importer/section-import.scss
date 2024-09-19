@@ -16,3 +16,22 @@
 		}
 	}
 }
+
+.import__onboarding-page {
+	margin-left: 1rem;
+	margin-right: 1rem;
+
+	.import__navigation {
+		position: absolute;
+		top: calc(var(--masterbar-height) + 1rem);
+		margin-left: -1rem;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			top: calc(var(--masterbar-height));
+		}
+	}
+
+	.list__importers.list__importers-secondary {
+		min-height: 350px;
+	}
+}

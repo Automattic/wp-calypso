@@ -3,11 +3,11 @@ import { html as toHtml } from '../indices-to-html';
 /**
  * Adds markup to some common text patterns
  *
- *  - Bullet lists
- *  - Todo lists, WP style
- *  - Inline `code` snippets
- *  - Code fences
- *  - Header: description/explanation paragraphs
+ * - Bullet lists
+ * - Todo lists, WP style
+ * - Inline `code` snippets
+ * - Code fences
+ * - Header: description/explanation paragraphs
  *
  * Note: This code is only meant to serve until a
  * proper parser can be built up to convert the
@@ -16,7 +16,6 @@ import { html as toHtml } from '../indices-to-html';
  * and on every render this function will serve
  * sufficiently but it should not be looked upon
  * as good example code!
- *
  * @param {string} text input list of blocks as HTML string
  * @returns {string} marked-up text
  */

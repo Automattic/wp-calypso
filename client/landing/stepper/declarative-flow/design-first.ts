@@ -1,33 +1,33 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
-import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
+	type Flow,
+	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
 	get title() {
 		return translate( 'Blog' );
 	},
+	isSignupFlow: true,
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			{
 				slug: 'check-sites',
 				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
@@ -41,8 +41,8 @@ const designFirst: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
 			},
 			{
-				slug: 'site-creation-step',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'create-site',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -73,7 +73,7 @@ const designFirst: Flow = {
 				slug: 'celebration-step',
 				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
-		];
+		] );
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -81,6 +81,12 @@ const designFirst: Flow = {
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
+		const { exitFlow } = useExitFlow();
+
+		const { postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -93,20 +99,18 @@ const designFirst: Flow = {
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'check-sites':
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
 					return navigate( 'new-or-existing-site' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'site-picker' );
 				case 'site-picker': {
@@ -130,7 +134,7 @@ const designFirst: Flow = {
 					}
 					return navigate( 'launchpad' );
 				}
-				case 'site-creation-step':
+				case 'create-site':
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
@@ -142,13 +146,20 @@ const designFirst: Flow = {
 						saveSiteSettings( siteId, {
 							launchpad_screen: 'full',
 						} );
+						initializeLaunchpadState( {
+							siteId: siteId as number,
+							siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
+						} );
 
 						if ( providedDependencies?.hasSetPreselectedTheme ) {
 							updateLaunchpadSettings( siteSlug as string, {
 								checklist_statuses: { design_completed: true },
 							} );
 
-							return navigate( `launchpad?siteSlug=${ siteSlug }` );
+							return postFlowNavigator( {
+								siteId: siteId as number,
+								siteSlug: siteSlug as string,
+							} );
 						}
 
 						return window.location.assign(
@@ -242,53 +253,30 @@ const designFirst: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( 'setup/design-first' ) ||
 			currentPath.endsWith( 'setup/design-first/' ) ||
 			currentPath.includes( 'setup/design-first/check-sites' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			pageTitle: translate( 'Pick a design' ),
-			locale,
-		} );
-
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/design-first/site-creation-step route which has no locale in the path so we need to
+		// /setup/design-first/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/site-creation-step/<locale> urls.
+		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				redirect( logInUrl );
-			} else if (
-				isSiteCreationStep &&
+			if (
+				isLoggedIn &&
+				isCreateSite &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
-				redirect( `/setup/design-first/site-creation-step${ window.location.search }` );
+				redirect( `/setup/design-first/create-site${ window.location.search }` );
 			}
 		}, [] );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,
