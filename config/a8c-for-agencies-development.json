@@ -42,8 +42,7 @@
 		"a4a-partner-directory": false,
 		"a4a-hosting-page-redesign": true,
 		"a4a-dev-sites": true,
-		"a4a-multi-user-support": true,
-		"hosting-server-settings-enhancements": false
+		"a4a-multi-user-support": true
 	},
 	"enable_all_sections": false,
 	"sections": {

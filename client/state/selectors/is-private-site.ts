@@ -8,7 +8,7 @@ import { AppState } from 'calypso/types';
  * @param {Object} siteId Site ID
  * @returns {boolean} True if site is private
  */
-export default function isPrivateSite( state: AppState, siteId: number ): boolean | null {
+export default function isPrivateSite( state: AppState, siteId: number | null ): boolean | null {
 	const site = getRawSite( state, siteId );
 
 	if ( site ) {

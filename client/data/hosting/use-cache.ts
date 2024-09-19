@@ -21,7 +21,7 @@ interface ClearEdgeCacheMutationVariables {
 }
 
 interface SetEdgeCacheMutationVariables {
-	siteId: number;
+	siteId: number | null;
 	active: boolean;
 }
 
@@ -34,21 +34,21 @@ interface MutationError {
 	message: string;
 }
 
-export const getEdgeCacheStatus = async ( siteId: number ) => {
+export const getEdgeCacheStatus = async ( siteId: number | null ) => {
 	return await wp.req.get( {
 		path: `/sites/${ siteId }/hosting/edge-cache/active`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
 
-export const purgeEdgeCache = async ( siteId: number ) => {
+export const purgeEdgeCache = async ( siteId: number | null ) => {
 	return await wp.req.post( {
 		path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
 
-export const useEdgeCacheQuery = ( siteId: number ) => {
+export const useEdgeCacheQuery = ( siteId: number | null ) => {
 	return useQuery< boolean, unknown, boolean >( {
 		queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
 		queryFn: () => getEdgeCacheStatus( siteId ),
@@ -130,7 +130,7 @@ export const useSetEdgeCacheMutation = (
 	const { mutate, ...rest } = mutation;
 
 	const setEdgeCache = useCallback(
-		( siteId: number, active: boolean ) => {
+		( siteId: number | null, active: boolean ) => {
 			dispatch(
 				createNotice(
 					'is-plain',
@@ -150,7 +150,7 @@ export const useSetEdgeCacheMutation = (
 	return { setEdgeCache, ...rest };
 };
 
-export const useIsSetEdgeCacheMutating = ( siteId: number ) => {
+export const useIsSetEdgeCacheMutating = ( siteId: number | null ) => {
 	const count = useIsMutating( {
 		predicate: ( mutation ) =>
 			mutation.options.mutationKey?.[ 0 ] === TOGGLE_EDGE_CACHE_MUTATION_KEY &&
@@ -161,7 +161,7 @@ export const useIsSetEdgeCacheMutating = ( siteId: number ) => {
 };
 
 export const useClearEdgeCacheMutation = (
-	siteId: number,
+	siteId: number | null,
 	options: UseMutationOptions<
 		MutationResponse,
 		MutationError,

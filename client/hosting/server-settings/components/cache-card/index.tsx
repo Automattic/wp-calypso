@@ -26,11 +26,11 @@ import './style.scss';
 type CacheCardProps = {
 	disabled: boolean;
 	shouldRateLimitCacheClear: boolean;
-	clearAtomicWordPressCache: ( siteId: number, reason: string ) => void;
+	clearAtomicWordPressCache: ( siteId: number | null, reason: string ) => void;
 	isClearingWordpressCache: boolean;
 	isPrivate: boolean | null;
 	isComingSoon: boolean;
-	siteId: number;
+	siteId: number | null;
 	siteSlug: string | null;
 	translate: LocalizeProps[ 'translate' ];
 };
@@ -60,14 +60,34 @@ export const CacheCard = ( {
 
 	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
 
-	const handleClearCache = () => {
+	const handleClearAllCache = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+			site_id: siteId,
+		} );
+
 		if ( isEdgeCacheActive ) {
-			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
-				site_id: siteId,
-			} );
 			// @ts-expect-error TODO: Fix this
 			clearEdgeCache();
 		}
+		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
+	};
+
+	const handleClearEdgeCache = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+			site_id: siteId,
+			cache_type: 'edge',
+		} );
+
+		// @ts-expect-error TODO: Fix this
+		clearEdgeCache();
+	};
+
+	const handleClearObjectCache = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+			site_id: siteId,
+			cache_type: 'object',
+		} );
+
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
 	};
 
@@ -81,6 +101,13 @@ export const CacheCard = ( {
 					},
 				}
 		  );
+
+	const disableButtons =
+		disabled ||
+		isClearingCache ||
+		shouldRateLimitCacheClear ||
+		getEdgeCacheLoading ||
+		isEdgeCacheMutating;
 
 	return (
 		<HostingCard
@@ -97,15 +124,9 @@ export const CacheCard = ( {
 					} ) }
 				</HostingCardDescription>
 				<Button
-					onClick={ handleClearCache }
+					onClick={ handleClearAllCache }
 					busy={ isClearingCache }
-					disabled={
-						disabled ||
-						isClearingCache ||
-						shouldRateLimitCacheClear ||
-						getEdgeCacheLoading ||
-						isEdgeCacheMutating
-					}
+					disabled={ disableButtons }
 					className="performance-optimization__button"
 				>
 					<span>{ translate( 'Clear all caches' ) }</span>
@@ -151,11 +172,17 @@ export const CacheCard = ( {
 							} }
 							label={ edgeCacheToggleDescription }
 						/>
-						{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-							<Button onClick={ () => {} } className="performance-optimization__button">
-								<span>{ translate( 'Clear edge cache' ) }</span>
-							</Button>
-						) }
+						{ config.isEnabled( 'hosting-server-settings-enhancements' ) &&
+							isEdgeCacheEligible &&
+							isEdgeCacheActive && (
+								<Button
+									disabled={ disableButtons }
+									onClick={ handleClearEdgeCache }
+									className="performance-optimization__button"
+								>
+									<span>{ translate( 'Clear edge cache' ) }</span>
+								</Button>
+							) }
 					</>
 				) }
 			</div>
@@ -173,7 +200,11 @@ export const CacheCard = ( {
 							}
 						) }
 					</HostingCardDescription>
-					<Button onClick={ () => {} } className="performance-optimization__button">
+					<Button
+						disabled={ disableButtons }
+						onClick={ handleClearObjectCache }
+						className="performance-optimization__button"
+					>
 						<span>{ translate( 'Clear object cache' ) }</span>
 					</Button>
 				</div>
@@ -184,7 +215,7 @@ export const CacheCard = ( {
 
 export default connect(
 	( state: IAppState ) => {
-		const siteId = getSelectedSiteId( state ) as number;
+		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const isPrivate = isPrivateSite( state, siteId );
 		const isComingSoon = isSiteComingSoon( state, siteId );
