@@ -119,7 +119,7 @@ const fixLongDateFormatForEn = ( localeSlug: string ) => {
 	}
 };
 
-const loadMomentLocale = async ( localeSlug: string, languageCode: string ) => {
+const loadMomentLocale = async ( localeSlug: string, languageCode: string, isSimple: boolean ) => {
 	return import( `moment/locale/${ localeSlug }` )
 		.catch( ( error: Error ) => {
 			debug(
@@ -141,7 +141,7 @@ const loadMomentLocale = async ( localeSlug: string, languageCode: string ) => {
 			);
 			// Fallback 2 to the default US date time format.
 			// Interestingly `en` here represents `en-us` locale.
-			fixLongDateFormatForEn( localeSlug );
+			isSimple && fixLongDateFormatForEn( localeSlug );
 			localeSlug = DEFAULT_MOMENT_LOCALE;
 		} )
 		.then( () => moment.locale( localeSlug ) );
@@ -162,7 +162,7 @@ const loadLanguageFile = ( languageFileName: string ) => {
 	} );
 };
 
-export default ( localeSlug: string ) => {
+export default ( localeSlug: string, isSimple = false ) => {
 	const languageCode = getLanguageCodeFromLocale( localeSlug );
 
 	// Load tranlation file if it's not English.
@@ -183,5 +183,5 @@ export default ( localeSlug: string ) => {
 
 	// We have to wait for moment locale to load before rendering the page, because otherwise the rendered date time wouldn't get re-rendered.
 	// This could be improved in the future with hooks.
-	return loadMomentLocale( localeSlug, languageCode );
+	return loadMomentLocale( localeSlug, languageCode, isSimple );
 };
