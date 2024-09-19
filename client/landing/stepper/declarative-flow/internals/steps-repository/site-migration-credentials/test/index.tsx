@@ -218,6 +218,18 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'shows an generic error when server doesn`t return error', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {} );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+
+		expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
+	} );
+
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
 		const submit = jest.fn();
 		const initialEntry = '/site-migration-credentials?error=ticket-creation';
