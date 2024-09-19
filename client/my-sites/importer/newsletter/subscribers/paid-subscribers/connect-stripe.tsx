@@ -5,6 +5,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
+import StartImportButton from '../start-import-button';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
@@ -28,6 +29,7 @@ export default function ConnectStripe( {
 	fromSite,
 	engine,
 	isFetchingContent,
+	selectedSite,
 }: SubscribersStepProps ) {
 	if ( isFetchingContent || cardData?.connect_url === undefined ) {
 		return null;
@@ -37,10 +39,10 @@ export default function ConnectStripe( {
 
 	return (
 		<>
-			<h2>Do you have paid subscribers?</h2>
+			<h2>Finish importing paid subscribers</h2>
 			<p>
-				To your migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
-				connecting <strong>the same Stripe account</strong> you use with Substack.
+				To migrate your paid subscribers to WordPress.com, make sure you're connecting the{ ' ' }
+				<strong>same</strong> Stripe account you use with Substack.
 			</p>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
@@ -52,6 +54,12 @@ export default function ConnectStripe( {
 				>
 					Connect <img src={ StripeLogo } className="stripe-logo" width="48px" alt="Stripe logo" />
 				</ImporterActionButton>
+				<StartImportButton
+					engine={ engine }
+					siteId={ selectedSite.ID }
+					step="summary"
+					primary={ false }
+				/>
 			</ImporterActionButtonContainer>
 		</>
 	);

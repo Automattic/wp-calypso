@@ -1,12 +1,14 @@
+import { StepId } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSubscriberImportMutation } from 'calypso/data/paid-newsletter/use-subscriber-import-mutation';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 
 type Props = {
-	step: string;
+	step: StepId;
 	engine: string;
 	siteId: number;
 	navigate?: () => void;
 	disabled?: boolean;
+	primary?: boolean;
 };
 
 export default function StartImportButton( {
@@ -15,6 +17,7 @@ export default function StartImportButton( {
 	engine,
 	navigate = () => {},
 	disabled,
+	primary = true,
 }: Props ) {
 	const { enqueueSubscriberImport } = useSubscriberImportMutation();
 
@@ -24,7 +27,7 @@ export default function StartImportButton( {
 	};
 
 	return (
-		<ImporterActionButton primary disabled={ disabled } onClick={ importSubscribers }>
+		<ImporterActionButton primary={ primary } disabled={ disabled } onClick={ importSubscribers }>
 			Continue
 		</ImporterActionButton>
 	);
