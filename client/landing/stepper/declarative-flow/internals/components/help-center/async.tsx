@@ -1,20 +1,17 @@
-import { HelpCenter } from '@automattic/data-stores';
-import { useDispatch } from '@wordpress/data';
-import { useCallback } from 'react';
-import AsyncLoad from 'calypso/components/async-load';
-
-const HELP_CENTER_STORE = HelpCenter.register();
+import HelpCenterLoader from 'calypso/components/help-center-loader';
+// import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
+// import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 
 const AsyncHelpCenter = () => {
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	// TODO: The useSite uses the `useLocation`, but we are not adding it inside the router because HelpCenter also has its own router.
+	// const site = useSite();
 
-	const handleClose = useCallback( () => {
-		setShowHelpCenter( false );
-	}, [ setShowHelpCenter ] );
+	const site = null;
 
-	return (
-		<AsyncLoad require="@automattic/help-center" placeholder={ null } handleClose={ handleClose } />
-	);
+	// const currentRoute = useCurrentRoute();
+
+	// TODO: Should we set the currentRoute prop or allow the HelpCenter get the default value from `window.location`? It would probably cause issues not updating this value. Notice that the hook `useCurrentRoute` also depends on the router because it uses the `useLocation`.
+	return <HelpCenterLoader site={ site } sectionName="stepper" loadHelpCenter />;
 };
 
 export default AsyncHelpCenter;
