@@ -193,8 +193,15 @@ const AccountEmailField = ( {
 		};
 	}, [ dispatch ] );
 
+	const emailSettingToShow =
+		isEmailChangePending &&
+		! unsavedUserSettings?.user_email &&
+		unsavedUserSettings?.user_email !== ''
+			? 'new_user_email'
+			: 'user_email';
+
 	const emailAddress = getUserSetting( {
-		settingName: isEmailChangePending ? 'new_user_email' : 'user_email',
+		settingName: emailSettingToShow,
 		unsavedUserSettings,
 		userSettings,
 	} );
