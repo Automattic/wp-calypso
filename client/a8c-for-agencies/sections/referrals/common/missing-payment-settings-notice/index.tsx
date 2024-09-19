@@ -21,7 +21,7 @@ export const MissingPaymentSettingsNotice = ( { onClose }: Props ) => {
 				{ translate( 'Please confirm your details before referring products to your clients.' ) }
 			</div>
 			<Button
-				className="referrals-overview__notice-button is-dark"
+				className="missing-payment-settings-notice__button is-dark"
 				href="/referrals/payment-settings"
 			>
 				{ translate( 'Go to payment settings' ) }
