@@ -29,23 +29,43 @@ import PlanStorageBar from './bar';
 import './style.scss';
 
 /**
- * @typedef {Object} Props
- * @property {ReactNode} children - The children to render inside the storage bar.
+ * @param {number|null} siteId
+ * @returns {boolean}
+ */
+export function useDisplayUpgradeLink( siteId ) {
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const canUserUpgrade = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
+
+	const planHasTopStorageSpace =
+		isBusinessPlan( sitePlanSlug ) ||
+		isEcommercePlan( sitePlanSlug ) ||
+		isProPlan( sitePlanSlug ) ||
+		isWooExpressMediumPlan( sitePlanSlug );
+
+	return canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+}
+
+/**
+ * @typedef {Object} PlanStorageProps
+ * @property {ReactNode} [children] - The children to render inside the storage bar.
  * @property {string} [className] - Additional class names to apply to the component.
  * @property {boolean} [hideWhenNoStorage] - Whether to return null when there is no storage data.
  * @property {number|null} [siteId] - The site ID.
- * @property {ComponentType|FC<PropsWithChildren<any>>} [StorageBarComponent] - The component to use for the storage bar.
+ * @property {ComponentType|FC<PropsWithChildren<any>>} [storageBarComponent] - The component to use for the storage bar.
  */
 
 /**
- * @param {Props} props
+ * @param {PlanStorageProps} props
  */
 export function PlanStorage( {
 	children,
 	className,
 	hideWhenNoStorage = false,
 	siteId,
-	StorageBarComponent = PlanStorageBar,
+	storageBarComponent: StorageBarComponent = PlanStorageBar,
 } ) {
 	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
@@ -53,9 +73,6 @@ export function PlanStorage( {
 	const hasStagingSite = useSelector( ( state ) => hasWpcomStagingSite( state, siteId ) );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const canUserUpgrade = useSelector( ( state ) =>
-		canCurrentUser( state, siteId, 'manage_options' )
-	);
 	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 	const translate = useTranslate();
 	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
@@ -63,6 +80,7 @@ export function PlanStorage( {
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+	const displayUpgradeLink = useDisplayUpgradeLink( siteId );
 	const tooltipAnchorRef = useRef( null );
 
 	const dispatch = useDispatch();
@@ -98,13 +116,6 @@ export function PlanStorage( {
 		}
 	}
 
-	const planHasTopStorageSpace =
-		isBusinessPlan( sitePlanSlug ) ||
-		isEcommercePlan( sitePlanSlug ) ||
-		isProPlan( sitePlanSlug ) ||
-		isWooExpressMediumPlan( sitePlanSlug );
-
-	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const hasMediaStorage = !! mediaStorage && mediaStorage.maxStorageBytes !== -1;
