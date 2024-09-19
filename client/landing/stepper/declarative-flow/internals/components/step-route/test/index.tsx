@@ -153,7 +153,9 @@ describe( 'StepRoute', () => {
 		it( 'records a page view when the step is rendered', async () => {
 			render( { step: regularStep } );
 
-			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug' );
+			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
+				flow: 'some-flow',
+			} );
 		} );
 
 		it( 'records recordStepStart when the step is rendered', async () => {

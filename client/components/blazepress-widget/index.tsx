@@ -28,6 +28,7 @@ export type BlazePressPromotionProps = {
 	isVisible: boolean;
 	siteId: string | number;
 	postId: string | number;
+	campaignId?: string;
 	keyValue: string;
 	source?: string;
 };
@@ -123,7 +124,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						jetpackVersion,
 						blazeAdsVersion,
 						dispatch,
-						dspOriginProps
+						dspOriginProps,
+						props.campaignId
 					);
 				} catch ( error ) {
 					setError( true );

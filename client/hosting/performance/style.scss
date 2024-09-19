@@ -8,6 +8,11 @@ $section-max-width: 1224px;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+
+	.notice-banner,
+	.notice-banner__title {
+		font-size: $font-body-small;
+	}
 }
 
 .site-performance-device-tab-controls__container {

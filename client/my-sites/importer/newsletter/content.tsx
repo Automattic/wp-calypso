@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { external } from '@wordpress/icons';
-import { useEffect, Dispatch, SetStateAction } from 'react';
+import { useEffect } from 'react';
 import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -13,15 +13,14 @@ import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import FileImporter from './content-upload/file-importer';
 import type { SiteDetails } from '@automattic/data-stores';
 
-type ContentProps = {
+interface ContentProps {
 	nextStepUrl: string;
 	engine: string;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
 	skipNextStep: () => void;
-	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
-};
+}
 
 export default function Content( {
 	nextStepUrl,
@@ -68,11 +67,16 @@ export default function Content( {
 		siteTitle,
 	} ).substack;
 
+	const showExportDataHint =
+		importerStatus?.importerState !== appStates.MAP_AUTHORS &&
+		importerStatus?.importerState !== appStates.IMPORTING &&
+		importerStatus?.importerState !== appStates.IMPORT_SUCCESS;
+
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
-			{ importerStatus?.importerState !== appStates.MAP_AUTHORS && (
+			{ showExportDataHint && (
 				<>
 					<h2>Step 1: Export your content from Substack</h2>
 					<p>

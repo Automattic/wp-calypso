@@ -19,7 +19,7 @@ interface FieldLabelDetails {
  * @returns A selector string to use to make a locator for the block.
  */
 export function makeSelectorFromBlockName( blockName: string ): string {
-	return `div[aria-label="Block: ${ blockName }"]`;
+	return `[aria-label="Block: ${ blockName }"]`;
 }
 
 /**

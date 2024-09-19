@@ -1,19 +1,20 @@
 import { Icon, people, currencyDollar, atSymbol } from '@wordpress/icons';
+import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
-type Props = {
-	cardData: any;
+interface SubscriberSummaryProps {
+	stepContent: SubscribersStepContent;
 	status: string;
-};
+}
 
-export default function SubscriberSummary( { cardData, status }: Props ) {
-	const paidSubscribers = cardData?.meta?.paid_subscribers_count ?? 0;
-	const hasPaidSubscribers = parseInt( paidSubscribers ) > 0;
+export default function SubscriberSummary( { stepContent, status }: SubscriberSummaryProps ) {
+	const paidSubscribers = parseInt( stepContent?.meta?.paid_subscribers_count || '0' );
+	const hasPaidSubscribers = paidSubscribers > 0;
 
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ atSymbol } /> Subscriber importing was <strong>skipped</strong>
+					<Icon icon={ atSymbol } /> You <strong>skipped</strong> subscriber importing.
 				</p>
 			</div>
 		);
@@ -23,27 +24,31 @@ export default function SubscriberSummary( { cardData, status }: Props ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ people } /> Importing subscribers...
+					<Icon icon={ people } /> <strong>We're importing your subscribers.</strong>
+					<br />
+					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
+					done.
 				</p>
 			</div>
 		);
 	}
 
 	if ( status === 'done' ) {
-		const paid_subscribers = cardData?.meta?.paid_subscribers_count ?? 0;
-		const free_subscribers = cardData?.meta?.subscribed_count - paid_subscribers;
+		const paidSubscribersCount = parseInt( stepContent.meta?.paid_subscribers_count || '0' );
+		const subscribedCount = parseInt( stepContent.meta?.subscribed_count || '0' );
+		const freeSubscribersCount = subscribedCount - paidSubscribersCount;
 
 		return (
 			<div className="summary__content">
-				<p>We migrated { cardData.meta.subscribed_count } subscribers</p>
+				<p>We migrated { subscribedCount } subscribers</p>
 				<p>
 					<Icon icon={ people } />
-					<strong>{ free_subscribers }</strong> free subscribers
+					<strong>{ freeSubscribersCount }</strong> free subscribers
 				</p>
 				{ hasPaidSubscribers && (
 					<p>
 						<Icon icon={ currencyDollar } />
-						<strong>{ cardData.meta.paid_subscribers_count }</strong> paid subscribers
+						<strong>{ paidSubscribersCount }</strong> paid subscribers
 					</p>
 				) }
 			</div>

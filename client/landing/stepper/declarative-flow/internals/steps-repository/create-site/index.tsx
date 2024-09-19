@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -188,15 +189,28 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
+	const shouldGoToCheckout = Boolean( planCartItem || mergedDomainCartItems.length );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
+			const slug = getSignupCompleteSlug();
+
+			if ( planCartItem && slug ) {
+				await addPlanToCart( slug, flow, true, theme, planCartItem );
+			}
+
 			return {
 				siteSlug: getSignupCompleteSlug(),
-				goToCheckout: true,
+				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
 			};
 		}
+
+		const siteIntent =
+			config.isEnabled( 'migration-flow/enable-white-labeled-plugin' ) &&
+			isMigrationSignupFlow( flow )
+				? 'migration'
+				: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -215,7 +229,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			mergedDomainCartItems,
 			siteUrl,
 			domainItem,
-			sourceSlug
+			sourceSlug,
+			siteIntent
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
@@ -253,7 +268,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		return {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
-			goToCheckout: Boolean( planCartItem || mergedDomainCartItems.length ),
+			goToCheckout: shouldGoToCheckout,
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
 		};

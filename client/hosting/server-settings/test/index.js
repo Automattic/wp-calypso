@@ -178,6 +178,16 @@ describe( 'Hosting Configuration', () => {
 				dispatchEvent: jest.fn(),
 			} ) ),
 		} );
+
+		// Mock `ResizeObserver`, which isn't currently supported in JSDOM
+		Object.defineProperty( global, 'ResizeObserver', {
+			writable: false,
+			value: jest.fn().mockImplementation( () => ( {
+				observe: jest.fn(),
+				unobserve: jest.fn(),
+				disconnect: jest.fn(),
+			} ) ),
+		} );
 	} );
 
 	afterAll( () => {

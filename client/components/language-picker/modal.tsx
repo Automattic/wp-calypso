@@ -137,16 +137,18 @@ const LanguagePickerModal: React.FC< Props > = ( {
 					) }
 					<div className="language-picker__modal-incomplete-locale-nudge-text">
 						<MaterialIcon icon="emoji_language" />
-						{ __( 'You can help translate WordPress.com into your language.' ) }{ ' ' }
-						<a
-							className="language-picker__modal-incomplete-locale-nudge-link"
-							href="https://translate.wordpress.com/faq/"
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ recordClick }
-						>
-							{ __( 'Learn more' ) }
-						</a>
+						<span>
+							{ __( 'You can help translate WordPress.com into your language.' ) }{ ' ' }
+							<a
+								className="language-picker__modal-incomplete-locale-nudge-link"
+								href="https://translate.wordpress.com/faq/"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ recordClick }
+							>
+								{ __( 'Learn more' ) }
+							</a>
+						</span>
 					</div>
 				</div>
 			) }

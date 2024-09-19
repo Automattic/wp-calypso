@@ -149,7 +149,8 @@ const StatsDateControl = ( {
 					overlay={ overlay }
 					displayShortcuts
 					useArrowNavigation
-					customTitle="testing custom title prop"
+					customTitle="Date Range"
+					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
 				/>
 			) : (
 				<DateControlPicker

@@ -102,15 +102,37 @@ const PrepareForLaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
-const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const SettingsItem = ( { site, recordTracks, isWpAdminInterface }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
+
+	// We call this "Site Settings" for classic sites, to differentiate from "General Settings" in wp-admin.
+	const settingsLabel = isWpAdminInterface ? __( 'Site Settings' ) : __( 'Settings' );
 
 	return (
 		<MenuItemLink
 			href={ getSettingsUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_settings_click' ) }
 		>
-			{ __( 'Settings' ) }
+			{ settingsLabel }
+		</MenuItemLink>
+	);
+};
+
+const GeneralWPAdminSettingsItem = ( {
+	recordTracks,
+	isWpAdminInterface,
+	wpAdminUrl,
+}: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+	if ( ! isWpAdminInterface ) {
+		return;
+	}
+	return (
+		<MenuItemLink
+			href={ wpAdminUrl + 'options-general.php' }
+			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_settings_click' ) }
+		>
+			{ __( 'General Settings' ) }
 		</MenuItemLink>
 	);
 };
@@ -524,6 +546,7 @@ export const SitesEllipsisMenu = ( {
 					<PrepareForLaunchItem { ...props } />
 				) }
 				<SettingsItem { ...props } />
+				<GeneralWPAdminSettingsItem { ...props } />
 				{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
 				{ site.is_wpcom_atomic && <SiteMonitoringItem { ...props } /> }
 				{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
