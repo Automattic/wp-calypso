@@ -32,7 +32,7 @@ const messages = {
 const { getByRole, getByLabelText, getByTestId, getByText, findByText } = screen;
 
 const continueButton = () => getByRole( 'button', { name: /Continue/ } );
-const siteAddressInput = () => getByLabelText( 'Site address' );
+const siteAddressInput = () => getByLabelText( 'Current site address' );
 const usernameInput = () => getByLabelText( 'WordPress admin username' );
 const passwordInput = () => getByLabelText( 'Password' );
 const backupOption = () => getByRole( 'radio', { name: 'Backup file' } );
