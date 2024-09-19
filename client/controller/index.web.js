@@ -376,7 +376,7 @@ export const setSelectedSiteIdByOrigin = ( context, next ) => {
 };
 
 /**
- * This function is only used to provide API compatibility with for the sections that use shared controllers.
+ * This function is only used to provide API compatibility for the sections that use shared controllers.
  */
 export const ssrSetupLocale = ( _context, next ) => {
 	next();
