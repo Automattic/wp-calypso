@@ -9,7 +9,7 @@ export const PaymentMethodLogos = styled.span`
 	align-items: center;
 	justify-content: flex-start;
 
-	&.credit-card__logo svg {
+	&.credit-card__logos svg {
 		display: inline-block;
 		height: 26px;
 		width: 42px;
