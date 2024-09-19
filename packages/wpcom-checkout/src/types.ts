@@ -318,7 +318,10 @@ export type CheckoutPaymentMethodSlug =
 	| 'eps'
 	| 'ideal'
 	| 'p24'
-	| 'paypal'
+	// NOTE: we cannot use the key `paypal` because composite-checkout
+	// ends up using this as an `id`, which overwrites `window.paypal`
+	// which is the namespace used by the PayPal JS SDK.
+	| 'paypal-js'
 	| 'paypal-direct'
 	| 'sofort'
 	| 'free-purchase'

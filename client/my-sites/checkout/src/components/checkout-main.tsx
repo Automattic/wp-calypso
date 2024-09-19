@@ -1,4 +1,5 @@
 import { useRazorpay } from '@automattic/calypso-razorpay';
+import { PayPalScriptProvider, ReactPayPalScriptOptions } from '@paypal/react-paypal-js';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -749,6 +750,17 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
+	// PayPalScriptProvider must be in this file and not in CheckoutMainWrapper because it needs access to the shopping cart, which is provided by that wrapper.
+	const payPalScriptOptions: ReactPayPalScriptOptions = {
+		clientId: 'AVmW-gfCD37zbDNtj7yQCeLXhnSoZ8hzmBKSMdo0MKHeM9wv9hBRqnIQteAEx4OSnYYs70uljYSMST4W',
+		components: 'buttons',
+		currency: responseCart.currency,
+		commit: true,
+		intent: 'capture', // Or should this be 'capture'?
+		//intent: 'subscription', // Or should this be 'capture'?
+		vault: true,
+	};
+
 	return (
 		<Fragment>
 			<PageViewTracker
@@ -760,49 +772,53 @@ export default function CheckoutMain( {
 					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
 				} }
 			/>
-			<CheckoutProvider
-				onPaymentComplete={ handlePaymentComplete }
-				onPaymentError={ handlePaymentError }
-				onPaymentRedirect={ handlePaymentRedirect }
-				onPageLoadError={ onPageLoadError }
-				onPaymentMethodChanged={ handlePaymentMethodChanged }
-				paymentMethods={ paymentMethods }
-				paymentProcessors={ paymentProcessors }
-				isLoading={ isCheckoutPageLoading }
-				isValidating={ isCartPendingUpdate }
-				theme={ theme }
-				selectFirstAvailablePaymentMethod
-				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
-			>
-				<CheckoutMainContent
-					loadingHeader={
-						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-					}
-					onStepChanged={ handleStepChanged }
-					customizedPreviousPath={ customizedPreviousPath }
-					isRemovingProductFromCart={ isRemovingProductFromCart }
-					areThereErrors={ areThereErrors }
-					isInitialCartLoading={ isInitialCartLoading }
-					addItemToCart={ addItemAndLog }
-					changeSelection={ changeSelection }
-					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
-					isLoggedOutCart={ !! isLoggedOutCart }
+			<PayPalScriptProvider options={ payPalScriptOptions }>
+				<CheckoutProvider
+					onPaymentComplete={ handlePaymentComplete }
+					onPaymentError={ handlePaymentError }
+					onPaymentRedirect={ handlePaymentRedirect }
 					onPageLoadError={ onPageLoadError }
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-				/>
-				{
-					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-					<JetpackProRedirectModal
-						redirectTo={ redirectTo }
-						productSourceFromUrl={ productSourceFromUrl }
+					onPaymentMethodChanged={ handlePaymentMethodChanged }
+					paymentMethods={ paymentMethods }
+					paymentProcessors={ paymentProcessors }
+					isLoading={ isCheckoutPageLoading }
+					isValidating={ isCartPendingUpdate }
+					theme={ theme }
+					selectFirstAvailablePaymentMethod
+					initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+				>
+					<CheckoutMainContent
+						loadingHeader={
+							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+						}
+						onStepChanged={ handleStepChanged }
+						customizedPreviousPath={ customizedPreviousPath }
+						isRemovingProductFromCart={ isRemovingProductFromCart }
+						areThereErrors={ areThereErrors }
+						isInitialCartLoading={ isInitialCartLoading }
+						addItemToCart={ addItemAndLog }
+						changeSelection={ changeSelection }
+						countriesList={ countriesList }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						infoMessage={
+							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+						}
+						isLoggedOutCart={ !! isLoggedOutCart }
+						onPageLoadError={ onPageLoadError }
+						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+						showErrorMessageBriefly={ showErrorMessageBriefly }
+						siteId={ updatedSiteId }
+						siteUrl={ updatedSiteSlug }
 					/>
-				}
-			</CheckoutProvider>
+					{
+						// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+						<JetpackProRedirectModal
+							redirectTo={ redirectTo }
+							productSourceFromUrl={ productSourceFromUrl }
+						/>
+					}
+				</CheckoutProvider>
+			</PayPalScriptProvider>
 		</Fragment>
 	);
 }
