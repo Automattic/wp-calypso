@@ -1,4 +1,3 @@
-import { Card } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -46,7 +45,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					) }
 				></Banner>
 			) }
-			<Card>
+			<div className="site-migration-credentials__content">
 				<AccessMethodPicker control={ control } />
 
 				<hr />
@@ -76,7 +75,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						{ translate( 'Continue' ) }
 					</NextButton>
 				</div>
-			</Card>
+			</div>
 
 			<div className="site-migration-credentials__skip">
 				<button
