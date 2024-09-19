@@ -13,6 +13,7 @@ type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
 	| 'is_deleted'
 	| 'is_coming_soon'
 	| 'is_private'
+	| 'launch_status'
 >;
 
 type SiteDetailsForSortingWithUserInteractions = Pick<
@@ -25,6 +26,7 @@ type SiteDetailsForSortingWithUserInteractions = Pick<
 	| 'is_deleted'
 	| 'is_coming_soon'
 	| 'is_private'
+	| 'launch_status'
 > &
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
@@ -324,7 +326,7 @@ function getStatus( site: SiteDetailsForSorting ): string {
 	if ( site.options?.is_redirect ) {
 		return 'redirect';
 	}
-	if ( site.is_coming_soon ) {
+	if ( site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' ) ) {
 		return 'coming-soon';
 	}
 	if ( site.is_private ) {
