@@ -98,7 +98,9 @@ export const SitePerformance = () => {
 
 	const queryParams = useSelector( getCurrentQueryArguments );
 	const [ , setQuery, query ] = useDebouncedInput();
-	const { pages, savePerformanceReportUrl } = useSitePerformancePageReports( { query } );
+	const { pages, isInitialLoading, savePerformanceReportUrl } = useSitePerformancePageReports( {
+		query,
+	} );
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -223,19 +225,25 @@ export const SitePerformance = () => {
 				/>
 				<DeviceTabControls onDeviceTabChange={ setActiveTab } value={ activeTab } />
 			</div>
-			{ ! isSitePublic ? (
-				<ReportUnavailable
-					isLaunching={ siteIsLaunching }
-					onLaunchSiteClick={ onLaunchSiteClick }
-				/>
+			{ isInitialLoading ? (
+				<p>{ translate( 'Loading pages…' ) }</p>
 			) : (
-				currentPage && (
-					<PerformanceReport
-						{ ...performanceReport }
-						pageTitle={ currentPage.label }
-						onRetestClick={ retestPage }
-					/>
-				)
+				<>
+					{ ! isSitePublic ? (
+						<ReportUnavailable
+							isLaunching={ siteIsLaunching }
+							onLaunchSiteClick={ onLaunchSiteClick }
+						/>
+					) : (
+						currentPage && (
+							<PerformanceReport
+								{ ...performanceReport }
+								pageTitle={ currentPage.label }
+								onRetestClick={ retestPage }
+							/>
+						)
+					) }
+				</>
 			) }
 		</div>
 	);

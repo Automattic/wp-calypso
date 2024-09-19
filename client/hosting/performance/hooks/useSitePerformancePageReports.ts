@@ -77,7 +77,7 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 
-	const { data } = useQuery( {
+	const { data, isLoading: isInitialLoading } = useQuery( {
 		queryKey: [ 'useSitePerformancePageReports', siteId, query ],
 		queryFn: () => getPages( siteId!, query ),
 		refetchOnWindowFocus: false,
@@ -155,5 +155,5 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 		[ siteId, dispatch ]
 	);
 
-	return { pages, savePerformanceReportUrl };
+	return { pages, isInitialLoading, savePerformanceReportUrl };
 };
