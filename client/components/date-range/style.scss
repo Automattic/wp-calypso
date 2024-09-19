@@ -112,6 +112,16 @@ $date-range-mobile-layout-switch: $break-small;
 		margin-right: 0;
 	}
 	margin-top: 10px;
+
+	@media (max-width: $date-range-mobile-layout-switch) {
+		flex-direction: column-reverse;
+		align-items: stretch;
+
+		.button {
+			height: 40px;
+			border: 0;
+		}
+	}
 }
 
 .date-range__info {
