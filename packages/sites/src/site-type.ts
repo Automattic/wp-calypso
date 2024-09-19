@@ -17,7 +17,7 @@ export interface MinimumSite {
 		is_redirect?: boolean;
 		updated_at?: string;
 	};
-	plan: {
+	plan?: {
 		product_name_short: string;
 	};
 }
