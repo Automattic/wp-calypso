@@ -75,6 +75,7 @@ const siteSortingKeys = [
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 	{ dataView: 'plan', sortKey: 'plan' },
+	{ dataView: 'status', sortKey: 'status' },
 ];
 
 const DEFAULT_PER_PAGE = 50;

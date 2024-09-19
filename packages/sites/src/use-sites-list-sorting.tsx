@@ -4,12 +4,27 @@ import { MinimumSite } from './site-type';
 
 type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'user_interactions' | 'options' | 'is_wpcom_staging_site' | 'ID' | 'plan'
+	| 'title'
+	| 'user_interactions'
+	| 'options'
+	| 'is_wpcom_staging_site'
+	| 'ID'
+	| 'plan'
+	| 'is_deleted'
+	| 'is_coming_soon'
+	| 'is_private'
 >;
 
 type SiteDetailsForSortingWithUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'options' | 'is_wpcom_staging_site' | 'ID' | 'plan'
+	| 'title'
+	| 'options'
+	| 'is_wpcom_staging_site'
+	| 'ID'
+	| 'plan'
+	| 'is_deleted'
+	| 'is_coming_soon'
+	| 'is_private'
 > &
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
@@ -17,7 +32,13 @@ export type SiteDetailsForSorting =
 	| SiteDetailsForSortingWithOptionalUserInteractions
 	| SiteDetailsForSortingWithUserInteractions;
 
-const validSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically', 'plan' ] as const;
+const validSortKeys = [
+	'lastInteractedWith',
+	'updatedAt',
+	'alphabetically',
+	'plan',
+	'status',
+] as const;
 const validSortOrders = [ 'asc', 'desc' ] as const;
 
 export type SitesSortKey = ( typeof validSortKeys )[ number ];
@@ -54,6 +75,8 @@ export function useSitesListSorting< T extends SiteDetailsForSorting >(
 				return sortSitesByLastPublish( allSites, sortOrder );
 			case 'plan':
 				return sortSitesByPlan( allSites, sortOrder );
+			case 'status':
+				return sortSitesByStatus( allSites, sortOrder );
 			default:
 				return allSites;
 		}
@@ -293,6 +316,34 @@ function sortByPlan< T extends SiteDetailsForSorting >( a: T, b: T, sortOrder: S
 	return sortOrder === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
 }
 
+function getStatus( site: SiteDetailsForSorting ): string {
+	// Sort by is_deleted, options.is_redirect, is_coming_soon, is_private, public
+	if ( site.is_deleted ) {
+		return 'deleted';
+	}
+	if ( site.options?.is_redirect ) {
+		return 'redirect';
+	}
+	if ( site.is_coming_soon ) {
+		return 'coming-soon';
+	}
+	if ( site.is_private ) {
+		return 'private';
+	}
+	return 'public';
+}
+
+function sortByStatus< T extends SiteDetailsForSorting >( a: T, b: T, sortOrder: SitesSortOrder ) {
+	const statusA = getStatus( a );
+	const statusB = getStatus( b );
+
+	if ( ! statusA || ! statusB ) {
+		return 0;
+	}
+
+	return sortOrder === 'asc' ? statusA.localeCompare( statusB ) : statusB.localeCompare( statusA );
+}
+
 function sortSitesAlphabetically< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesSortOrder
@@ -312,6 +363,13 @@ function sortSitesByPlan< T extends SiteDetailsForSorting >(
 	sortOrder: SitesSortOrder
 ): T[] {
 	return [ ...sites ].sort( ( a, b ) => sortByPlan( a, b, sortOrder ) );
+}
+
+function sortSitesByStatus< T extends SiteDetailsForSorting >(
+	sites: T[],
+	sortOrder: SitesSortOrder
+): T[] {
+	return [ ...sites ].sort( ( a, b ) => sortByStatus( a, b, sortOrder ) );
 }
 
 type SitesSortingProps = {
