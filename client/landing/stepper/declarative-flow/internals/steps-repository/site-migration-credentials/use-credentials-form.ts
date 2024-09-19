@@ -23,7 +23,6 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		control,
 		handleSubmit,
 		watch,
-		setError,
 		clearErrors,
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
@@ -74,7 +73,6 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		accessMethod,
 		isPending,
 		submitHandler,
-		setError,
 		importSiteQueryParam,
 	};
 };

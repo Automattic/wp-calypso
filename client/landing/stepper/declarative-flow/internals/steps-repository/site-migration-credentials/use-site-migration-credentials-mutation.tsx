@@ -21,12 +21,19 @@ export const useSiteMigrationCredentialsMutation = <
 	TData = AutomatedMigrationAPIResponse,
 	TError = ApiError,
 >(
-	options: UseMutationOptions< TData, TError, FormData > = {}
+	options: UseMutationOptions< TData, TError, CredentialsFormData > = {}
 ) => {
 	const siteSlug = useSiteSlugParam();
 
 	return useMutation< TData, TError, CredentialsFormData >( {
-		mutationFn: ( { from_url, username, password, notes, migrationType, backupFileLocation } ) => {
+		mutationFn: ( {
+			from_url,
+			username,
+			password,
+			notes,
+			migrationType,
+			backupFileLocation,
+		}: CredentialsFormData ) => {
 			let body: AutomatedMigrationBody = {
 				migration_type: migrationType,
 				blog_url: siteSlug ?? '',
