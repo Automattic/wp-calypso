@@ -176,7 +176,11 @@ export default function NewsletterImporter( {
 						/>
 					) }
 					{ step === 'summary' && (
-						<Summary selectedSite={ selectedSite } steps={ paidNewsletterData.steps } />
+						<Summary
+							selectedSite={ selectedSite }
+							steps={ paidNewsletterData.steps }
+							engine={ engine }
+						/>
 					) }
 				</>
 			) }
