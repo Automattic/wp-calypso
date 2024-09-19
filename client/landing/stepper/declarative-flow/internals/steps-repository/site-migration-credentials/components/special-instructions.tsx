@@ -11,7 +11,7 @@ import { ErrorMessage } from './error-message';
 
 interface Props {
 	control: Control< CredentialsFormData >;
-	errors?: any;
+	errors: any;
 }
 
 export const SpecialInstructions: React.FC< Props > = ( { control, errors } ) => {
