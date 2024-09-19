@@ -134,13 +134,20 @@ export default function PlanStorage( {
 			| React.MouseEvent< HTMLDivElement | HTMLAnchorElement >
 			| React.FocusEvent< HTMLDivElement | HTMLAnchorElement >
 	) => {
+		const relatedTarget = event.relatedTarget;
+
 		// This checks if there is a blur event caused by the displaying of the tooltip.
 		// We don't want to move focus in this case, so return the focus to the target element.
-		if ( event.type === 'blur' && event.currentTarget.closest?.( '.popover.tooltip.is-top' ) ) {
+		if (
+			event.type === 'blur' &&
+			relatedTarget instanceof HTMLElement &&
+			relatedTarget.closest( '.popover.tooltip.is-top' )
+		) {
 			event.stopPropagation();
 			event.currentTarget.focus();
 			return;
 		}
+
 		setTooltipVisible( false );
 	};
 
