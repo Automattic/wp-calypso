@@ -24,7 +24,7 @@ export function useCreateAccountMutation() {
 			} );
 		},
 		onSuccess: ( data ) => {
-			if ( 'created_account' in data && !! data?.created_account ) {
+			if ( 'isNewAccountCreated' in data && data.isNewAccountCreated ) {
 				setIsNewUser( true );
 			}
 			dispatch( {
