@@ -11,6 +11,8 @@ interface PerformanceReportProps {
 	isError: boolean;
 	onRetestClick(): void;
 	pageTitle: string;
+	filter?: string;
+	onFilterChange?( fitler: string ): void;
 }
 
 export const PerformanceReport = ( {
@@ -21,6 +23,8 @@ export const PerformanceReport = ( {
 	url,
 	hash,
 	pageTitle,
+	filter,
+	onFilterChange,
 }: PerformanceReportProps ) => {
 	if ( isError ) {
 		return <ReportError onRetestClick={ onRetestClick } />;
@@ -40,9 +44,11 @@ export const PerformanceReport = ( {
 			url={ url }
 			hash={ hash }
 			showV2
+			filter={ filter }
 			displayThumbnail={ false }
 			displayNewsletterBanner={ false }
 			displayMigrationBanner={ false }
+			onRecommendationsFilterChange={ onFilterChange }
 		/>
 	);
 };
