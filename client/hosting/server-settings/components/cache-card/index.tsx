@@ -216,6 +216,7 @@ export const CacheCard = ( {
 					<div className="performance-optimization__hr"></div>
 
 					<div className="performance-optimization__jetpack-block">
+						<div className="performance-optimization__subtitle">Elasticsearch</div>
 						<HostingCardDescription>
 							<JetpackLogo size={ 16 } />
 							<div>
