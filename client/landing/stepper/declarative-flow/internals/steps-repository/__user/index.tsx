@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -7,6 +8,7 @@ import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -30,6 +32,7 @@ const UserStepComponent: Step = function UserStep( {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
+	const { setIsNewUser } = useDataStoreDispatch( USER_STORE );
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
@@ -82,6 +85,7 @@ const UserStepComponent: Step = function UserStep( {
 						userEmail=""
 						notice={ notice }
 						isSocialFirst
+						onCreateAccountSuccess={ () => setIsNewUser( true ) }
 					/>
 					{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 						<WpcomLoginForm

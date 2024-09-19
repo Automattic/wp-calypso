@@ -12,14 +12,14 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const { domainCartItem, planCartItem, siteCount, selectedDomain, currentUser } = useSelect(
+	const { domainCartItem, planCartItem, siteCount, selectedDomain, isNewUser } = useSelect(
 		( select ) => {
 			return {
 				siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-				currentUser: ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+				isNewUser: ( select( USER_STORE ) as UserSelect ).isNewUser(),
 			};
 		},
 		[]
@@ -32,8 +32,6 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
 			const siteSlug = site?.slug ?? signupCompletionState?.siteSlug;
-
-			const isNewUser = !! currentUser?.username;
 
 			const isNew7DUserSite = !! (
 				isNewUser ||
