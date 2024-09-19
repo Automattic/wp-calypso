@@ -35,7 +35,7 @@ const TagsPageDocumentHead = () => {
 		{
 			name: 'description',
 			content: translate(
-				"Discover the most popular tags and posts on WordPress.com. For every one of your interests, there's a tag on WordPress.com."
+				'Discover the most popular tags on WordPress.com. Whatever your interests, find a tag and dive into posts that inspire and inform.'
 			),
 		},
 	];
