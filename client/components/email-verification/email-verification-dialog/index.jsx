@@ -4,12 +4,13 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import {
 	verifyEmail,
 	resetVerifyEmailState,
 } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import './style.scss';
 
 const noop = () => {};
@@ -52,6 +53,25 @@ class VerifyEmailDialog extends Component {
 		];
 	}
 
+	getEmailPreferencesComponent() {
+		const changeEmailRoute = '/me/account';
+		if ( this.props.currentRoute !== changeEmailRoute ) {
+			return <a href="/me/account" />;
+		}
+		// If we are already on /me/account, close the dialog and dispatch a signal to focus the input.
+		return (
+			<Button
+				borderless
+				plain
+				compact
+				onClick={ () => {
+					this.handleClose();
+					emailFormEventEmitter?.dispatchEvent( new Event( 'unlockEmailInput' ) );
+				} }
+			/>
+		);
+	}
+
 	render() {
 		const strings = {
 			confirmHeading: this.props.translate( 'Please verify your email address:' ),
@@ -73,7 +93,7 @@ class VerifyEmailDialog extends Component {
 						wrapper: (
 							<span className="email-verification-dialog__confirmation-dialog-email-wrapper" />
 						),
-						emailPreferences: <a href="/me/account" />,
+						emailPreferences: this.getEmailPreferencesComponent(),
 					},
 					args: {
 						email: this.props.email,
@@ -122,6 +142,7 @@ export default connect(
 	( state ) => ( {
 		email: getCurrentUserEmail( state ),
 		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		verifyEmail,

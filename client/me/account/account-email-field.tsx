@@ -161,6 +161,8 @@ const AccountEmailPendingEmailChangeNotice = ( {
 	);
 };
 
+export const emailFormEventEmitter = new EventTarget();
+
 const AccountEmailField = ( {
 	emailInputId = 'user_email',
 	emailInputName = 'user_email',
@@ -220,12 +222,27 @@ const AccountEmailField = ( {
 		inputRef.current?.focus();
 	};
 
-	// Ensure input is focused when user selects to unlock it.
+	// Ensure input is focused when it is triggered to unlock.
 	useEffect( () => {
 		if ( ! isLockedInput ) {
 			focusInput();
 		}
 	}, [ isLockedInput ] );
+
+	// Allow unlocking the email field from an external source such as the email verification dialog
+	// when it appears on this page.
+	useEffect( () => {
+		const unlockHandler = () => {
+			setIsLockedInput( false );
+			focusInput();
+		};
+
+		emailFormEventEmitter.addEventListener( 'unlockEmailInput', unlockHandler );
+
+		return () => {
+			emailFormEventEmitter.removeEventListener( 'unlockEmailInput', unlockHandler );
+		};
+	}, [] );
 
 	const unlockWrapper = (
 		<Button
