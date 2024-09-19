@@ -12,14 +12,18 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const { domainCartItem, planCartItem, siteCount, selectedDomain } = useSelect( ( select ) => {
-		return {
-			siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
-			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-			selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-		};
-	}, [] );
+	const { domainCartItem, planCartItem, siteCount, selectedDomain, currentUser } = useSelect(
+		( select ) => {
+			return {
+				siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+				currentUser: ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+			};
+		},
+		[]
+	);
 
 	const isNewishUser = useSelector( ( state ) =>
 		isUserRegistrationDaysWithinRange( state, null, 0, 7 )
@@ -29,7 +33,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		( signupCompletionState: Record< string, unknown > ) => {
 			const siteSlug = site?.slug ?? signupCompletionState?.siteSlug;
 
-			const isNewUser = ! siteCount;
+			const isNewUser = !! currentUser?.username;
 
 			const isNew7DUserSite = !! (
 				isNewUser ||
