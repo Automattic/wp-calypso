@@ -212,6 +212,7 @@ describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 			completed: false,
 			error: null,
 			detailedStatus: {
+				migrationKey: 'idle',
 				siteTransfer: 'idle',
 			},
 			migrationKey: null,
@@ -231,9 +232,37 @@ describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 			completed: false,
 			error: null,
 			detailedStatus: {
+				migrationKey: 'pending',
 				siteTransfer: 'pending',
 			},
 			migrationKey: null,
 		} );
+	} );
+
+	it( 'returns error when is not possible to get the migration key', async () => {
+		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.reply( 200, TRANSFER_COMPLETED( siteId ) )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
+			.reply( errorCaptureMigrationKey );
+
+		const { result } = render( { siteId: 123 } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: true,
+					error: expect.any( Error ),
+					detailedStatus: {
+						migrationKey: 'error',
+						siteTransfer: 'success',
+					},
+					migrationKey: null,
+				} );
+			},
+			{ timeout: 3000 }
+		);
 	} );
 } );
