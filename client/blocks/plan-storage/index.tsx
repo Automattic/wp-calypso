@@ -49,7 +49,7 @@ type PlanStorageProps = PropsWithChildren< {
 	className?: string;
 	hideWhenNoStorage?: boolean;
 	siteId: number | null;
-	storageBarComponent: React.ComponentType< StorageBarProps > | React.FC< StorageBarProps >;
+	storageBarComponent?: React.ComponentType< StorageBarProps > | React.FC< StorageBarProps >;
 } >;
 
 export default function PlanStorage( {
