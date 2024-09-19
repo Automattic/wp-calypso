@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
 
 const DATERANGE_PERIOD = {
@@ -15,14 +15,18 @@ const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
 	locked = false,
+	startDate,
+	endDate,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
 	locked?: boolean;
+	startDate?: Moment;
+	endDate?: Moment;
 } ) => {
 	const translate = useTranslate();
 
-	const getShortcutList = () => [
+	const shortcutList = [
 		{
 			id: 'last_7_days',
 			label: translate( 'Last 7 Days' ),
@@ -65,7 +69,20 @@ const DateRangePickerShortcuts = ( {
 		},
 	];
 
-	const shortcutList = getShortcutList();
+	const getShortcutForRange = ( startDate: Moment, endDate: Moment ) => {
+		// Search the shortcut array for something matching the current date range.
+		// Returns shortcut or null;
+		const today = moment().startOf( 'day' );
+		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
+
+		const shortcut = shortcutList.find( ( element ) => {
+			if ( endDate.isSame( today ) && daysInRange === element.range ) {
+				return element;
+			}
+			return null;
+		} );
+		return shortcut;
+	};
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
 		const newToDate = moment().subtract( offset, 'days' );
@@ -73,6 +90,11 @@ const DateRangePickerShortcuts = ( {
 
 		onClick( newFromDate, newToDate, id || '' );
 	};
+
+	currentShortcut =
+		currentShortcut ||
+		( startDate && endDate && getShortcutForRange( startDate, endDate )?.id ) ||
+		'custom_date_range';
 
 	return (
 		<div className="date-range-picker-shortcuts__inner">
@@ -98,6 +120,9 @@ const DateRangePickerShortcuts = ( {
 DateRangePickerShortcuts.propTypes = {
 	currentShortcut: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
+	locked: PropTypes.bool,
+	startDate: PropTypes.instanceOf( Date ),
+	endDate: PropTypes.instanceOf( Date ),
 };
 
 export default DateRangePickerShortcuts;

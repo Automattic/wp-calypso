@@ -12,8 +12,8 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
-import Layout from 'calypso/components/layout';
 import Main from 'calypso/components/main';
+import { MasonryGrid } from 'calypso/components/masonry-grid';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -118,11 +118,6 @@ const AllCards = ( {
 			type: 'advanced',
 		},
 		{
-			feature: 'web-server-settings',
-			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-			type: 'advanced',
-		},
-		{
 			feature: 'restore-plan-software',
 			content: <RestorePlanSoftwareCard />,
 			type: 'basic',
@@ -141,6 +136,12 @@ const AllCards = ( {
 			type: 'basic',
 		} );
 	}
+
+	allCards.push( {
+		feature: 'web-server-settings',
+		content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+		type: 'advanced',
+	} );
 
 	const availableTypes: CardEntry[ 'type' ][] = [];
 
@@ -259,7 +260,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
-					<Layout className="page-server-settings__layout">
+					<MasonryGrid>
 						<AllCards
 							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
@@ -267,7 +268,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 						/>
-					</Layout>
+					</MasonryGrid>
 				</WrapperComponent>
 			</>
 		);

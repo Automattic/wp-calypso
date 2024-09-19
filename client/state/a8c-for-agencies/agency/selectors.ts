@@ -41,8 +41,8 @@ export function isAgencyClientUser( state: A4AStore ): boolean {
 }
 
 export function hasAgencyCapability( state: A4AStore, capability: string ): boolean {
-	if ( ! isEnabled( 'a4a-multi-user-support' ) ) {
-		// This is always true if the feature is not enabled to bypass restrictions.
+	// If the feature is not enabled, or the user is a client user, bypass the capability check.
+	if ( ! isEnabled( 'a4a-multi-user-support' ) || isAgencyClientUser( state ) ) {
 		return true;
 	}
 

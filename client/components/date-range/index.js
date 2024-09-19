@@ -397,7 +397,7 @@ export class DateRange extends Component {
 	}
 
 	getNumberOfMonths() {
-		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
+		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
 	}
 
 	handleDateRangeChange = ( startDate, endDate, shortcutId = '' ) => {
@@ -470,6 +470,8 @@ export class DateRange extends Component {
 								currentShortcut={ this.state.currentShortcut }
 								onClick={ this.handleDateRangeChange }
 								locked={ !! this.props.overlay }
+								startDate={ this.state.startDate }
+								endDate={ this.state.endDate }
 							/>
 						</div>
 					) }

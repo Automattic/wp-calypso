@@ -6,6 +6,7 @@ const isAlipayRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ali
 const isBancontactRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-bancontact' );
 const isIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
 const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
+const isWechatPayRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-wechat' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -46,6 +47,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'sofort';
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
 			return 'stripe-three-d-secure';
+		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 		case 'WPCOM_Billing_Stripe_Source_Wechat':
 			return 'wechat';
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
@@ -111,6 +113,9 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'stripe-three-d-secure':
 			return 'WPCOM_Billing_Stripe_Source_Three_D_Secure';
 		case 'wechat':
+			if ( isWechatPayRedirectEnabled ) {
+				return 'WPCOM_Billing_Stripe_Wechat_Pay';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Wechat';
 		case 'apple-pay':
 		case 'google-pay':
@@ -137,6 +142,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Bancontact':
 		case 'WPCOM_Billing_Stripe_Ideal':
 		case 'WPCOM_Billing_Stripe_P24':
+		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':

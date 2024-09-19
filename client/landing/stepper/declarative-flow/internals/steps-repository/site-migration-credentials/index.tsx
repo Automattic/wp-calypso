@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CredentialsForm } from './components/crdentials-form';
+import { CredentialsForm } from './components/credentials-form';
 import type { Step } from '../../types';
 import './style.scss';
 
