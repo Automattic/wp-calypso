@@ -29,19 +29,19 @@ const messages = {
 		"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'.",
 };
 
-const continueButton = () => screen.getByRole( 'button', { name: /Continue/ } );
-const siteAddressInput = () => screen.getByLabelText( 'Site address' );
-const usernameInput = () => screen.getByLabelText( 'WordPress admin username' );
-const passwordInput = () => screen.getByLabelText( 'Password' );
-const backupOption = () => screen.getByRole( 'radio', { name: 'Backup file' } );
-const credentialsOption = () => screen.getByRole( 'radio', { name: 'WordPress credentials' } );
-const backupFileInput = () => screen.getByLabelText( 'Backup file location' );
+const { getByRole, getByLabelText, getByTestId, getByText, findByText } = screen;
+
+const continueButton = () => getByRole( 'button', { name: /Continue/ } );
+const siteAddressInput = () => getByLabelText( 'Site address' );
+const usernameInput = () => getByLabelText( 'WordPress admin username' );
+const passwordInput = () => getByLabelText( 'Password' );
+const backupOption = () => getByRole( 'radio', { name: 'Backup file' } );
+const credentialsOption = () => getByRole( 'radio', { name: 'WordPress credentials' } );
+const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
-const specialInstructionsInput = () => screen.getByTestId( 'special-instructions-textarea' );
-const specialInstructionsButton = () =>
-	screen.getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () =>
-	screen.getByRole( 'button', { name: /Skip, I need help providing access/ } );
+const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
+const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
+const skipButton = () => getByRole( 'button', { name: /Skip, I need help providing access/ } );
 
 const fillAllFields = async () => {
 	await userEvent.click( credentialsOption() );
@@ -89,16 +89,6 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'skips the credential creation when the user does not fill the fields', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		await userEvent.click( skipButton() );
-
-		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wpcomRequest ).not.toHaveBeenCalled();
-	} );
-
 	it( 'creates a credentials using backup file', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
@@ -128,13 +118,23 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
+	it( 'skips the credential creation when the user does not fill the fields', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await userEvent.click( skipButton() );
+
+		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
+		expect( wpcomRequest ).not.toHaveBeenCalled();
+	} );
+
 	it( 'shows errors on the required fields when the user does not fill the fields', async () => {
 		render();
 		await userEvent.click( continueButton() );
 
-		expect( screen.getByText( messages.urlError ) ).toBeInTheDocument();
-		expect( screen.getByText( messages.usernameError ) ).toBeInTheDocument();
-		expect( screen.getByText( messages.passwordError ) ).toBeInTheDocument();
+		expect( getByText( messages.urlError ) ).toBeInTheDocument();
+		expect( getByText( messages.usernameError ) ).toBeInTheDocument();
+		expect( getByText( messages.passwordError ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows error when user set invalid site address', async () => {
@@ -142,7 +142,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.type( siteAddressInput(), 'invalid-site-address' );
 		await userEvent.click( continueButton() );
 
-		expect( screen.getByText( messages.noTLDError ) ).toBeInTheDocument();
+		expect( getByText( messages.noTLDError ) ).toBeInTheDocument();
 	} );
 
 	it( 'fills the site address and disable it when the user already informed the site address on previous step', async () => {
@@ -172,9 +172,9 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await userEvent.click( continueButton() );
 		await waitFor( () => {
-			expect( screen.getByText( /Enter a valid URL/ ) ).toBeVisible();
-			expect( screen.getByText( /Enter a valid username/ ) ).toBeVisible();
-			expect( screen.getByText( /Enter a valid password/ ) ).toBeVisible();
+			expect( getByText( /Enter a valid URL/ ) ).toBeVisible();
+			expect( getByText( /Enter a valid username/ ) ).toBeVisible();
+			expect( getByText( /Enter a valid password/ ) ).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -197,7 +197,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		await waitFor( () => {
-			expect( screen.getByText( /Enter a valid URL/ ) ).toBeVisible();
+			expect( getByText( /Enter a valid URL/ ) ).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -214,7 +214,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await userEvent.click( continueButton() );
 
-		expect( screen.getByText( /Error message from backend/ ) ).toBeVisible();
+		expect( getByText( /Error message from backend/ ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
@@ -224,7 +224,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		render( { navigation: { submit } }, { initialEntry } );
 
-		const errorMessage = await screen.findByText(
+		const errorMessage = await findByText(
 			/We ran into a problem submitting your details. Please try again shortly./
 		);
 		expect( errorMessage ).toBeVisible();
