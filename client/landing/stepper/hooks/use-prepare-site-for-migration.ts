@@ -207,10 +207,17 @@ export const usePrepareSiteForMigrationWithMigrateToWPCOM = ( siteId?: number ) 
 	const siteTransferState = useSiteTransfer( siteId );
 	const transferTimingTracked = useRef( false );
 
+	const {
+		data: { migrationKey } = {},
+		error: migrationKeyError,
+		fetchStatus: migrationKeyFetchStatus,
+	} = useSiteMigrationKey( siteId );
+
 	const { siteTransferStart, siteTransferEnd } = useTransferTimeTracking( siteTransferState );
 
 	const completed = siteTransferState.completed;
-	const error = siteTransferState.error;
+	const error = siteTransferState.error || migrationKeyError;
+	const criticalError = siteTransferState.error;
 	const hasAllTimingInfo = siteTransferEnd.current !== 0;
 
 	if ( completed && hasAllTimingInfo && ! transferTimingTracked.current ) {
@@ -226,14 +233,15 @@ export const usePrepareSiteForMigrationWithMigrateToWPCOM = ( siteId?: number ) 
 
 	const detailedStatus = {
 		siteTransfer: siteTransferState.status,
+		migrationKey: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
 	};
 
-	useLogMigration( completed, siteTransferState.status, error, siteId );
+	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
 
 	return {
 		detailedStatus,
 		completed,
 		error,
-		migrationKey: null,
+		migrationKey: migrationKey ?? null,
 	};
 };
