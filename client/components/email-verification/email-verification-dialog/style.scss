@@ -28,6 +28,11 @@
 .email-verification-dialog__confirmation-dialog-email {
 	margin-bottom: 16px;
 	color: var(--color-neutral-40);
+	a,
+	button {
+		color: inherit;
+		text-decoration: underline;
+	}
 }
 
 .email-verification-dialog__confirmation-dialog-email-wrapper {
