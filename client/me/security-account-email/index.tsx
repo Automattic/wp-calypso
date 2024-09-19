@@ -45,7 +45,7 @@ const SecurityAccountEmail = ( { path }: { path: string } ) => {
 			.then( () => {
 				markSaved();
 
-				const email = ( userSettings?.new_user_email as string ) || '';
+				const email = ( unsavedUserSettings?.user_email as string ) || '';
 
 				dispatch(
 					successNotice(
