@@ -66,7 +66,7 @@ describe( 'addDayToRange', () => {
 
 	test( 'should ignore time fractions', () => {
 		const range = { from: moment( '2023-01-01 11:10' ), to: moment( '2023-01-17 12:00' ) };
-		const result = addDayToRange( moment( '2023-01-17 :13:00' ), range );
+		const result = addDayToRange( moment( '2023-01-17 13:00' ), range );
 		expect( result.from ).toEqual( range.from );
 		expect( result.to ).toBeNull();
 	} );
