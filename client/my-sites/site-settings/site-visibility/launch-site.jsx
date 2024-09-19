@@ -72,6 +72,7 @@ const LaunchSite = () => {
 	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
 	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 	const siteReferralActive = agency?.referral_status === 'active';
+	const displayReferToClient = isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
 
 	const handleLaunchSiteClick = () => {
 		if ( isDevelopmentSite && ! siteReferralActive ) {
@@ -179,7 +180,7 @@ const LaunchSite = () => {
 						{ isDevelopmentSite && ! siteReferralActive && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
-					{ isDevelopmentSite && ! siteReferralActive && (
+					{ displayReferToClient && (
 						<div className={ launchSiteClasses }>
 							<Button onClick={ handleReferToClient } disabled={ false }>
 								{ translate( 'Refer to client' ) }
