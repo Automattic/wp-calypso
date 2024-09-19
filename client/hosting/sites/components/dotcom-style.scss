@@ -128,21 +128,6 @@
 		tbody tr.dataviews-view-table__row {
 			cursor: pointer;
 		}
-
-		.dataviews-view-table {
-			td:last-child {
-				.dataviews-view-table__cell-content-wrapper {
-					justify-content: flex-end;
-				}
-			}
-			th:last-child {
-				text-align: right;
-
-				.dataviews-view-table-header-button {
-					margin-right: 0;
-				}
-			}
-		}
 	}
 
 	table.dataviews-view-table {
