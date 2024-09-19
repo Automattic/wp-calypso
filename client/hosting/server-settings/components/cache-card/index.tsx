@@ -88,102 +88,96 @@ export const CacheCard = ( {
 			headingId="cache"
 			title={ translate( 'Performance optimization' ) }
 		>
-			<div>
-				<div className="performance-optimization__all-cache-block">
-					<HostingCardDescription>
-						{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
-							components: {
-								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
-							},
-						} ) }
-					</HostingCardDescription>
-					<Button
-						onClick={ handleClearCache }
-						busy={ isClearingCache }
-						disabled={
-							disabled ||
-							isClearingCache ||
-							shouldRateLimitCacheClear ||
-							getEdgeCacheLoading ||
-							isEdgeCacheMutating
-						}
-						className="performance-optimization__button"
-					>
-						<span>{ translate( 'Clear all caches' ) }</span>
-					</Button>
+			<div className="performance-optimization__all-cache-block">
+				<HostingCardDescription>
+					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
+						components: {
+							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
+						},
+					} ) }
+				</HostingCardDescription>
+				<Button
+					onClick={ handleClearCache }
+					busy={ isClearingCache }
+					disabled={
+						disabled ||
+						isClearingCache ||
+						shouldRateLimitCacheClear ||
+						getEdgeCacheLoading ||
+						isEdgeCacheMutating
+					}
+					className="performance-optimization__button"
+				>
+					<span>{ translate( 'Clear all caches' ) }</span>
+				</Button>
+				<div className="performance-optimization__nb">
+					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
+				</div>
+				{ shouldRateLimitCacheClear && (
 					<div className="performance-optimization__nb">
-						{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
-					</div>
-					{ shouldRateLimitCacheClear && (
-						<div className="performance-optimization__nb">
-							{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
-						</div>
-					) }
-				</div>
-
-				<div className="performance-optimization__hr"></div>
-
-				<div className="performance-optimization__global-edge-cache-block">
-					{ getEdgeCacheInitialLoading ? (
-						<EdgeCacheLoadingPlaceholder />
-					) : (
-						<>
-							<div className="performance-optimization__subtitle">
-								{ translate( 'Global edge cache' ) }
-							</div>
-							<ToggleControl
-								disabled={
-									clearEdgeCacheLoading ||
-									getEdgeCacheLoading ||
-									! isEdgeCacheEligible ||
-									isEdgeCacheMutating
-								}
-								checked={ isEdgeCacheActive && isEdgeCacheEligible }
-								onChange={ ( active ) => {
-									recordTracksEvent(
-										active
-											? 'calypso_hosting_configuration_edge_cache_enable'
-											: 'calypso_hosting_configuration_edge_cache_disable',
-										{
-											site_id: siteId,
-										}
-									);
-									setEdgeCache( siteId, active );
-								} }
-								label={ edgeCacheToggleDescription }
-							/>
-							{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-								<Button onClick={ () => {} } className="performance-optimization__button">
-									<span>{ translate( 'Clear edge cache' ) }</span>
-								</Button>
-							) }
-						</>
-					) }
-				</div>
-
-				{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-					<div className="performance-optimization__global-object-cache-block">
-						<div className="performance-optimization__subtitle">
-							{ translate( 'Object cache' ) }
-						</div>
-						<HostingCardDescription>
-							{ translate(
-								'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
-								{
-									components: {
-										a: (
-											<InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />
-										),
-									},
-								}
-							) }
-						</HostingCardDescription>
-						<Button onClick={ () => {} } className="performance-optimization__button">
-							<span>{ translate( 'Clear object cache' ) }</span>
-						</Button>
+						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
 					</div>
 				) }
 			</div>
+
+			<div className="performance-optimization__hr"></div>
+
+			<div className="performance-optimization__global-edge-cache-block">
+				{ getEdgeCacheInitialLoading ? (
+					<EdgeCacheLoadingPlaceholder />
+				) : (
+					<>
+						<div className="performance-optimization__subtitle">
+							{ translate( 'Global edge cache' ) }
+						</div>
+						<ToggleControl
+							disabled={
+								clearEdgeCacheLoading ||
+								getEdgeCacheLoading ||
+								! isEdgeCacheEligible ||
+								isEdgeCacheMutating
+							}
+							checked={ isEdgeCacheActive && isEdgeCacheEligible }
+							onChange={ ( active ) => {
+								recordTracksEvent(
+									active
+										? 'calypso_hosting_configuration_edge_cache_enable'
+										: 'calypso_hosting_configuration_edge_cache_disable',
+									{
+										site_id: siteId,
+									}
+								);
+								setEdgeCache( siteId, active );
+							} }
+							label={ edgeCacheToggleDescription }
+						/>
+						{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
+							<Button onClick={ () => {} } className="performance-optimization__button">
+								<span>{ translate( 'Clear edge cache' ) }</span>
+							</Button>
+						) }
+					</>
+				) }
+			</div>
+
+			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
+				<div className="performance-optimization__global-object-cache-block">
+					<div className="performance-optimization__subtitle">{ translate( 'Object cache' ) }</div>
+					<HostingCardDescription>
+						{ translate(
+							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
+							{
+								components: {
+									a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
+								},
+							}
+						) }
+					</HostingCardDescription>
+					<Button onClick={ () => {} } className="performance-optimization__button">
+						<span>{ translate( 'Clear object cache' ) }</span>
+					</Button>
+				</div>
+			) }
 		</HostingCard>
 	);
 };
