@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -20,6 +21,7 @@ interface CredentialsFormProps {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const {
 		handleSubmit,
 		control,
@@ -83,7 +85,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					onClick={ onSkip }
 					type="button"
 				>
-					{ translate( 'Skip, I need help providing access' ) }
+					{ isEnglishLocale
+						? translate( 'I need help, please contact me' )
+						: translate( 'Skip, I need help providing access' ) }
 				</button>
 			</div>
 		</form>

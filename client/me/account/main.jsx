@@ -366,8 +366,15 @@ class Account extends Component {
 	 * @param {Object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange = ( event ) => {
+		const value = event.currentTarget.value;
+
+		if ( value === this.getUserOriginalSetting( 'user_login' ) ) {
+			this.cancelUsernameChange();
+			return;
+		}
+
 		this.validateUsername();
-		this.updateUserSetting( 'user_login', event.currentTarget.value );
+		this.updateUserSetting( 'user_login', value );
 		this.setState( { usernameAction: null } );
 	};
 
