@@ -12,10 +12,10 @@ function addDayToRange( day: Moment, range: DateRange ): DateRange {
 
 	const { from, to } = range;
 
-	if ( from?.isSame( day ) ) {
+	if ( from?.isSame( day, 'day' ) ) {
 		return { ...range, from: null };
 	}
-	if ( to?.isSame( day ) ) {
+	if ( to?.isSame( day, 'day' ) ) {
 		return { ...range, to: null };
 	}
 

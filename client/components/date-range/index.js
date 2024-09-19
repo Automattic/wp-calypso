@@ -408,12 +408,6 @@ export class DateRange extends Component {
 			textInputEndDate: this.toDateString( endDate ),
 			currentShortcut: shortcutId,
 		} );
-		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-	};
-
-	handleCalendarChange = ( startDate, endDate ) => {
-		// When the calendar or inputs change directly, set to custom range
-		this.handleDateRangeChange( startDate, endDate, 'custom_date_range' );
 	};
 
 	/**
@@ -491,7 +485,8 @@ export class DateRange extends Component {
 				lastSelectableDate={ this.props.lastSelectableDate }
 				selectedStartDate={ this.state.startDate }
 				selectedEndDate={ this.state.endDate }
-				onDateRangeChange={ this.handleCalendarChange }
+				onDateRangeChange={ this.handleDateRangeChange }
+				onDateSelect={ this.props.onDateSelect }
 				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
 				useArrowNavigation={ this.props.useArrowNavigation }
