@@ -289,7 +289,9 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
 					timeout={ 250 }
-					container={ document.querySelector< HTMLElement >( '.item-preview__content' ) }
+					container={
+						document.querySelector< HTMLElement >( '.item-preview__content' ) ?? undefined
+					}
 				/>
 			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />

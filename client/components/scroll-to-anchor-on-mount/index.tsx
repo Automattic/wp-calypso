@@ -8,7 +8,7 @@ export function ScrollToAnchorOnMount( {
 }: {
 	offset?: number;
 	timeout?: number;
-	container?: HTMLElement | null;
+	container?: HTMLElement;
 } ) {
 	useEffect( () => {
 		setTimeout( () => {
