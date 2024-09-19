@@ -33,8 +33,38 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
-const mapDispatchToProps = () => {
-	return {
+const RenderDomainsStepConnect = connect(
+	( state, { flow }: StepProps ) => {
+		const productsList = getAvailableProductsList( state );
+		const productsLoaded = ! isEmpty( productsList );
+		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
+		const userLoggedIn = isUserLoggedIn( state as object );
+		const currentUserSiteCount = getCurrentUserSiteCount( state as object );
+		const stepSectionName = window.location.pathname.includes( 'use-your-domain' )
+			? 'use-your-domain'
+			: undefined;
+
+		return {
+			designType: getDesignType( state ),
+			currentUser: getCurrentUser( state as object ),
+			productsList,
+			productsLoaded,
+			isDomainOnly: false,
+			sites: getSitesItems( state ),
+			userSiteCount: currentUserSiteCount,
+			previousStepName: 'user',
+			isPlanSelectionAvailableLaterInFlow: true,
+			userLoggedIn,
+			multiDomainDefaultPlan,
+			domainsWithPlansOnly: currentUserHasFlag( state as object, DOMAINS_WITH_PLANS_ONLY ),
+			flowName: flow,
+			path: window.location.pathname,
+			positionInFlow: 1,
+			isReskinned: true,
+			stepSectionName,
+		};
+	},
+	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
@@ -45,39 +75,8 @@ const mapDispatchToProps = () => {
 		setDesignType,
 		recordTracksEvent,
 		fetchUsernameSuggestion,
-	};
-};
-
-const RenderDomainsStepConnect = connect( ( state, { flow }: StepProps ) => {
-	const productsList = getAvailableProductsList( state );
-	const productsLoaded = ! isEmpty( productsList );
-	const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
-	const userLoggedIn = isUserLoggedIn( state as object );
-	const currentUserSiteCount = getCurrentUserSiteCount( state as object );
-	const stepSectionName = window.location.pathname.includes( 'use-your-domain' )
-		? 'use-your-domain'
-		: undefined;
-
-	return {
-		designType: getDesignType( state ),
-		currentUser: getCurrentUser( state as object ),
-		productsList,
-		productsLoaded,
-		isDomainOnly: false,
-		sites: getSitesItems( state ),
-		userSiteCount: currentUserSiteCount,
-		previousStepName: 'user',
-		isPlanSelectionAvailableLaterInFlow: true,
-		userLoggedIn,
-		multiDomainDefaultPlan,
-		domainsWithPlansOnly: currentUserHasFlag( state as object, DOMAINS_WITH_PLANS_ONLY ),
-		flowName: flow,
-		path: window.location.pathname,
-		positionInFlow: 1,
-		isReskinned: true,
-		stepSectionName,
-	};
-}, mapDispatchToProps )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
+	}
+)( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] =
