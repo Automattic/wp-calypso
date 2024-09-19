@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState, useRef } from 'react';
@@ -51,8 +50,6 @@ export default function SitesDashboard() {
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
-
 	const {
 		dataViewsState,
 		setDataViewsState,
@@ -64,8 +61,6 @@ export default function SitesDashboard() {
 		showOnlyDevelopmentSites,
 		hideListing,
 		setHideListing,
-		recentlyCreatedSiteId,
-		isRecentlyCreatedSiteDevelopment,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -250,13 +245,7 @@ export default function SitesDashboard() {
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
-						{ recentlyCreatedSiteId && (
-							<ProvisioningSiteNotification
-								siteId={ Number( recentlyCreatedSiteId ) }
-								migrationIntent={ !! migrationIntent }
-								isDevelopmentSite={ !! isRecentlyCreatedSiteDevelopment }
-							/>
-						) }
+						<ProvisioningSiteNotification />
 
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>

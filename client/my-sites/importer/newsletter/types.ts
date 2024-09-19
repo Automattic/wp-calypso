@@ -6,10 +6,10 @@ export type EngineTypes = 'substack';
 
 export type StatusType = 'initial' | 'done' | 'pending' | 'skipped' | 'importing';
 
-export type StepProps = {
+export interface SubscribersStepProps {
 	cardData: any;
 	status: StatusType;
-	engine: EngineTypes;
+	engine: 'substack';
 	fromSite: QueryArgParsed;
 	isFetchingContent: boolean;
 	nextStepUrl: string;
@@ -17,4 +17,4 @@ export type StepProps = {
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 	siteSlug: string;
 	skipNextStep: () => void;
-};
+}

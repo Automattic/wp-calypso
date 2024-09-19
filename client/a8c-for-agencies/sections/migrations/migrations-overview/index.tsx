@@ -156,7 +156,7 @@ export default function MigrationsOverview() {
 				</Card>
 				<div className="migrations-overview__tos">
 					{ translate(
-						'To be eligible for the special migration offer, you must migrate a minimum of 3 sites by July 31, 2024, to a WordPress.com or Pressable.com hosting plan. Read the full {{a}}Terms of Service{{/a}}.',
+						'To be eligible for the special migration offer, you must migrate a minimum of 3 sites by October 31, 2024, to a WordPress.com or Pressable.com hosting plan. Read the full {{a}}Terms of Service{{/a}}.',
 						{
 							components: {
 								a: (

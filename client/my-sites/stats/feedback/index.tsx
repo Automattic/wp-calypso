@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
@@ -10,6 +11,9 @@ import {
 } from '../hooks/use-notice-visibility-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import FeedbackModal from './modal';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'animate.css';
 
 import './style.scss';
 
@@ -22,6 +26,13 @@ const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months
+
+// These values control the animation of the floating panel.
+// For available animations see: https://animate.style/
+// The delay value allows the animation to run before the component is removed from the DOM.
+const FEEDBACK_PANEL_ANIMATION_NAME_ENTRY = 'animate__bounceInUp';
+const FEEDBACK_PANEL_ANIMATION_NAME_EXIT = 'animate__fadeOutDownBig';
+const FEEDBACK_PANEL_ANIMATION_DELAY_EXIT = 500;
 
 function useNoticeVisibilityHooks( siteId: number ) {
 	const {
@@ -90,9 +101,13 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 
 function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	const translate = useTranslate();
+	const [ animationClassName, setAnimationClassName ] = useState(
+		FEEDBACK_PANEL_ANIMATION_NAME_ENTRY
+	);
 
 	const handleCloseButtonClicked = () => {
 		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
+		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 	};
 
 	const clickHandlerWithAnalytics = ( action: string ) => {
@@ -108,7 +123,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	}
 
 	return (
-		<div className="stats-feedback-panel">
+		<div className={ clsx( 'stats-feedback-panel', 'animate__animated', animationClassName ) }>
 			<Button
 				className="stats-feedback-panel__close-button"
 				onClick={ handleCloseButtonClicked }
@@ -160,6 +175,13 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
+	const dismissPanelWithDelay = () => {
+		// Allows the animation to run first.
+		setTimeout( () => {
+			setIsFloatingPanelOpen( false );
+		}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
+	};
+
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
@@ -167,10 +189,8 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				setIsOpen( true );
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
-				setIsFloatingPanelOpen( false );
+				dismissPanelWithDelay();
 				updateFeedbackPanelHibernationDelay();
-
-				// stats_feedback_action_dismiss_floating_panel
 				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
 			case ACTION_LEAVE_REVIEW:

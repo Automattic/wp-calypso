@@ -50,6 +50,9 @@ const hosting: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
+
+		const query = useQuery();
+		const queryParams = Object.fromEntries( query );
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -69,6 +72,11 @@ const hosting: Flow = {
 
 					setPlanCartItem( {
 						product_slug: productSlug,
+						extra: {
+							...( queryParams?.utm_source && {
+								hideProductVariants: queryParams.utm_source === 'wordcamp',
+							} ),
+						},
 					} );
 
 					if ( isFreeHostingTrial( productSlug ) ) {

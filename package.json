@@ -200,6 +200,7 @@
 		"@wordpress/primitives": "^4.2.0",
 		"@wordpress/rich-text": "^7.2.0",
 		"@wordpress/url": "^4.2.0",
+		"animate.css": "^4.1.1",
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",

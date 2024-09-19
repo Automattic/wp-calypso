@@ -29,6 +29,7 @@ interface GetNewSiteParams {
 	siteVisibility: Site.Visibility;
 	username: string;
 	sourceSlug?: string;
+	siteIntent?: string;
 }
 
 type NewSiteParams = {
@@ -49,6 +50,7 @@ type NewSiteParams = {
 		timezone_string?: string;
 		wpcom_public_coming_soon: 0 | 1;
 		site_accent_color?: string;
+		site_intent?: string;
 	};
 	validate: boolean;
 };
@@ -105,6 +107,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		useThemeHeadstart = false,
 		siteVisibility,
 		sourceSlug,
+		siteIntent,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -127,6 +130,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( sourceSlug && { site_source_slug: sourceSlug } ),
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
+			...( siteIntent && { site_intent: siteIntent } ),
 		},
 		validate: false,
 	};
@@ -147,7 +151,8 @@ export const createSiteWithCart = async (
 	domainCartItems: MinimalRequestCartProduct[],
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
-	sourceSlug?: string
+	sourceSlug?: string,
+	siteIntent?: string
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -163,6 +168,7 @@ export const createSiteWithCart = async (
 		siteVisibility,
 		username,
 		sourceSlug,
+		siteIntent,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {

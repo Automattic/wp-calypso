@@ -379,7 +379,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		className,
 		enableFeatureTooltips,
 		enableCategorisedFeatures,
-		enableLargeFeatureTitles,
 		enableStorageAsBadge,
 		enableReducedFeatureGroupSpacing,
 		enableLogosOnlyForEnterprisePlan,
@@ -425,7 +424,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				allFeaturesList={ allFeaturesList }
 				enableFeatureTooltips={ enableFeatureTooltips }
 				enableCategorisedFeatures={ enableCategorisedFeatures }
-				enableLargeFeatureTitles={ enableLargeFeatureTitles }
 				enableStorageAsBadge={ enableStorageAsBadge }
 				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
 				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }

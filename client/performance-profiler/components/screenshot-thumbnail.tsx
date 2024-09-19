@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
+import { TabType } from './header';
 
-const Container = styled.div`
+const Container = styled.div< { activeTab: TabType } >`
+	flex: ${ ( props ) => ( props.activeTab === TabType.desktop ? '0 300px' : null ) };
 	height: 280px;
 	display: flex;
 	align-items: center;
@@ -22,11 +24,15 @@ const UnavailableScreenshot = styled.div`
 	height: 100%;
 `;
 
-export const ScreenshotThumbnail = ( props: { src: string | undefined; alt: string } ) => {
-	const { src, alt, ...rest } = props;
+export const ScreenshotThumbnail = ( props: {
+	src: string | undefined;
+	alt: string;
+	activeTab: TabType;
+} ) => {
+	const { src, alt, activeTab, ...rest } = props;
 
 	return (
-		<Container>
+		<Container activeTab={ activeTab }>
 			{ src === undefined ? (
 				<UnavailableScreenshot>{ translate( 'Screenshot unavailable' ) }</UnavailableScreenshot>
 			) : (

@@ -4,7 +4,7 @@ import { toInteger } from 'lodash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
-import { StepProps } from '../types';
+import { SubscribersStepProps } from '../types';
 import PaidSubscribers from './paid-subscribers';
 import StartImportButton from './start-import-button';
 
@@ -19,7 +19,7 @@ export default function StepPending( {
 	isFetchingContent,
 	setAutoFetchData,
 	status,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	const allEmailsCount = toInteger( cardData?.meta?.email_count ) || 0;
 
 	return (

@@ -116,6 +116,10 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
+	if ( plan.extra?.hideProductVariants ) {
+		return null;
+	}
+
 	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
 
 	if ( ! currentVariant ) {
