@@ -1,6 +1,7 @@
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
+import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
@@ -30,6 +31,7 @@ export default function ConnectStripe( {
 	engine,
 	isFetchingContent,
 	selectedSite,
+	siteSlug,
 }: SubscribersStepProps ) {
 	if ( isFetchingContent || cardData?.connect_url === undefined ) {
 		return null;
@@ -57,8 +59,12 @@ export default function ConnectStripe( {
 				<StartImportButton
 					engine={ engine }
 					siteId={ selectedSite.ID }
-					step="summary"
+					step="subscribers"
 					primary={ false }
+					navigate={ () => {
+						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+					} }
+					label="Continue free subscriber import"
 				/>
 			</ImporterActionButtonContainer>
 		</>

@@ -9,6 +9,7 @@ type Props = {
 	navigate?: () => void;
 	disabled?: boolean;
 	primary?: boolean;
+	label?: string;
 };
 
 export default function StartImportButton( {
@@ -18,6 +19,7 @@ export default function StartImportButton( {
 	navigate = () => {},
 	disabled,
 	primary = true,
+	label,
 }: Props ) {
 	const { enqueueSubscriberImport } = useSubscriberImportMutation();
 
@@ -28,7 +30,7 @@ export default function StartImportButton( {
 
 	return (
 		<ImporterActionButton primary={ primary } disabled={ disabled } onClick={ importSubscribers }>
-			Continue
+			{ label || 'Import subscribers' }
 		</ImporterActionButton>
 	);
 }
