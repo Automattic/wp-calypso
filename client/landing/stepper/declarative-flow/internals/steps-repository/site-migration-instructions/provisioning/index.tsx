@@ -11,16 +11,16 @@ export type Status = 'idle' | 'pending' | 'success' | 'error';
 interface ProvisioningProps {
 	status: {
 		siteTransfer: Status;
-		pluginInstallation: Status;
 		migrationKey: Status;
+		pluginInstallation?: Status;
 	};
 }
 
 export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 	const {
 		siteTransfer: siteTransferStatus,
-		pluginInstallation: pluginInstallationStatus,
 		migrationKey: migrationKeyStatus,
+		pluginInstallation: pluginInstallationStatus,
 	} = status;
 
 	const actions = [
