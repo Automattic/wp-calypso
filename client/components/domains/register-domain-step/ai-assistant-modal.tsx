@@ -5,19 +5,22 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
+import headerImage from 'calypso/assets/images/illustrations/business-tools.png';
+
+const HeaderImage = styled.img`
+	margin: 32px auto;
+	display: block;
+`;
 
 export const DialogContainer = styled.div`
-	padding: 24px 12px;
-	@media ( min-width: 780px ) {
-		padding: 24px;
-	}
+	padding: 0;
 `;
 
 export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
 	font-size: ${ ( { shrinkMobileFont } ) => ( shrinkMobileFont ? '22px' : '32px' ) };
-	text-aligne: center;
+	text-align: center;
 	@media ( min-width: 780px ) {
 		font-size: 32px;
 		line-height: 40px;
@@ -30,7 +33,7 @@ export const SubHeading = styled.div`
 	color: var( --studio-gray-60 );
 	font-size: 14px;
 	line-height: 20px;
-	text-aligne: center;
+	text-align: center;
 	@media ( min-width: 780px ) {
 		font-size: 16px;
 		line-height: 24px;
@@ -40,6 +43,8 @@ export const SubHeading = styled.div`
 export const ButtonContainer = styled.div`
 	display: flex;
 	flex-direction: column;
+	margin: 48px 0 0;
+	box-shadow: 0 0 70px rgba( 0, 0, 0, 0.1 );
 
 	.search-component {
 		border: 1px solid #a7aaad;
@@ -51,7 +56,7 @@ export const ButtonContainer = styled.div`
 export const Row = styled.div`
 	display: flex;
 	justify-content: space-between;
-	padding-top: 16px;
+	padding: 24px;
 	gap: 12px;
 	flex-direction: column;
 	@media ( min-width: 780px ) {
@@ -130,12 +135,16 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 			isBackdropVisible
 			isVisible={ isModalOpen }
 			onClose={ props.onClose }
+			additionalClassNames="ai-assistant-modal"
 			showCloseIcon
 			labelledby="plan-upsell-modal-title"
 			describedby="plan-upsell-modal-description"
 		>
 			<Global
 				styles={ css`
+					.ai-assistant-modal .dialog__content {
+						padding: 0;
+					}
 					.dialog__backdrop.is-full-screen {
 						background-color: rgba( 0, 0, 0, 0.6 );
 					}
@@ -146,6 +155,7 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				` }
 			/>
 			<DialogContainer>
+				<HeaderImage src={ headerImage } />
 				<Heading shrinkMobileFont>{ translate( 'Idea to online at the speed of wow.' ) }</Heading>
 				<SubHeading>
 					{ translate(
@@ -153,7 +163,6 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 					) }
 				</SubHeading>
 				<ButtonContainer>
-					<RowWithBorder></RowWithBorder>
 					<Row>
 						<Search { ...searchProps } />
 						<SearchButton onClick={ handleButtonClick }>
