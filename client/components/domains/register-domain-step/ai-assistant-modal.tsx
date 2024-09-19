@@ -4,6 +4,7 @@ import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 
 export const DialogContainer = styled.div`
 	padding: 24px 12px;
@@ -16,6 +17,7 @@ export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
 	font-size: ${ ( { shrinkMobileFont } ) => ( shrinkMobileFont ? '22px' : '32px' ) };
+	text-aligne: center;
 	@media ( min-width: 780px ) {
 		font-size: 32px;
 		line-height: 40px;
@@ -28,6 +30,7 @@ export const SubHeading = styled.div`
 	color: var( --studio-gray-60 );
 	font-size: 14px;
 	line-height: 20px;
+	text-aligne: center;
 	@media ( min-width: 780px ) {
 		font-size: 16px;
 		line-height: 24px;
@@ -37,13 +40,11 @@ export const SubHeading = styled.div`
 export const ButtonContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	margin-top: 16px;
-	@media ( min-width: 780px ) {
-		margin-top: 24px;
-		button {
-			max-width: 220px;
-			flex-basis: 196px;
-		}
+
+	.search-component {
+		border: 1px solid #a7aaad;
+		border-radius: 4px;
+		overflow: hidden;
 	}
 `;
 
@@ -51,12 +52,11 @@ export const Row = styled.div`
 	display: flex;
 	justify-content: space-between;
 	padding-top: 16px;
-	flex-wrap: wrap;
 	gap: 12px;
 	flex-direction: column;
 	@media ( min-width: 780px ) {
 		flex-direction: row;
-		align-items: center;
+		align-items: stretch;
 	}
 `;
 
@@ -80,15 +80,14 @@ const SearchButton = styled( Button )`
 	align-items: center;
 	display: flex;
 	font-weight: normal;
-	height: 100%;
 	justify-content: center;
 	padding: 0 1em;
 	transition: 0.1s all linear;
-	width: 100%;
 	color: var( --color-text );
 	background-color: var( --studio-white );
 	border: 1px solid var( --color-neutral-20 );
 	border-radius: 4px;
+	height: auto;
 `;
 
 type ModalContainerProps = {
@@ -120,12 +119,11 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		delayTimeout: 1000,
 		describedBy: 'step-header',
 		dir: 'ltr' as const,
-		inputLabel: translate( 'Type in your prompt.' ),
+		placeholder: translate( 'Type in your prompt.' ),
 		minLength: 2,
 		maxLength: 60,
+		hideOpenIcon: true,
 		onSearch: onSearch,
-		isReskinned: true,
-		childrenBeforeCloseButton: <SearchButton onClick={ handleButtonClick }>Search</SearchButton>,
 	};
 	return (
 		<Dialog
@@ -148,10 +146,8 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				` }
 			/>
 			<DialogContainer>
-				<Heading id="plan-upsell-modal-title" shrinkMobileFont>
-					{ translate( 'Idea to online at the speed of wow.' ) }
-				</Heading>
-				<SubHeading id="plan-upsell-modal-description">
+				<Heading shrinkMobileFont>{ translate( 'Idea to online at the speed of wow.' ) }</Heading>
+				<SubHeading>
 					{ translate(
 						'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
 					) }
@@ -159,7 +155,10 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				<ButtonContainer>
 					<RowWithBorder></RowWithBorder>
 					<Row>
-						<Search { ...searchProps }></Search>
+						<Search { ...searchProps } />
+						<SearchButton onClick={ handleButtonClick }>
+							<img src={ AIassistantIllustration } width={ 24 } alt={ translate( 'Submit' ) } />
+						</SearchButton>
 					</Row>
 				</ButtonContainer>
 			</DialogContainer>
