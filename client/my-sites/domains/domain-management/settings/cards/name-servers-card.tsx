@@ -14,6 +14,7 @@ import {
 } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import CustomNameserversForm from 'calypso/my-sites/domains/domain-management/name-servers/custom-nameservers-form';
 import FetchError from 'calypso/my-sites/domains/domain-management/name-servers/fetch-error';
+import { hasDefaultWpcomNameservers } from 'calypso/my-sites/domains/domain-management/settings/cards/utils';
 import { useDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -59,19 +60,6 @@ const NameServersCard = ( {
 	const [ nameServersBeforeEditing, setNameServersBeforeEditing ] = useState< string[] | null >(
 		null
 	);
-
-	const hasDefaultWpcomNameservers = ( nameserversToCheck: string[] | null = nameservers ) => {
-		if ( ! nameserversToCheck || nameserversToCheck.length === 0 ) {
-			return false;
-		}
-
-		return (
-			nameserversToCheck.length === WPCOM_DEFAULT_NAMESERVERS.length &&
-			nameserversToCheck.every( ( nameserver ) => {
-				return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
-			} )
-		);
-	};
 
 	const handleUpdateNameservers = useCallback(
 		async ( nameservers: string[] ) => {
@@ -202,7 +190,7 @@ const NameServersCard = ( {
 
 	const handleToggle = () => {
 		setIsEditingNameServers( ! isEditingNameServers );
-		if ( hasDefaultWpcomNameservers() ) {
+		if ( hasDefaultWpcomNameservers( nameservers ) ) {
 			setNameServersBeforeEditing( nameservers );
 			setNameservers( [] );
 			setIsEditingNameServers( true );
@@ -220,7 +208,7 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ hasDefaultWpcomNameservers() && ! isEditingNameServers }
+				enabled={ hasDefaultWpcomNameservers( nameservers ) && ! isEditingNameServers }
 				isSaving={ isSavingNameServers }
 			/>
 		);
@@ -256,7 +244,7 @@ const NameServersCard = ( {
 		if (
 			! nameservers ||
 			isPendingTransfer() ||
-			( hasDefaultWpcomNameservers() && ! isEditingNameServers )
+			( hasDefaultWpcomNameservers( nameservers ) && ! isEditingNameServers )
 		) {
 			return null;
 		}
