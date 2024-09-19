@@ -321,7 +321,7 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	@media (max-width: $date-range-mobile-layout-switch) {
-		flex-direction: column; // Stack items vertically on small screens
+		flex-direction: column-reverse; // Stack items vertically on small screens
 	}
 }
 
@@ -332,9 +332,8 @@ $date-range-mobile-layout-switch: $break-small;
 
 	@media (max-width: $date-range-mobile-layout-switch) {
 		border-left: 0 none;
-		border-top: 1px solid var(--gray-gray-5, #dcdcde);
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
 		display: block; // Ensure it takes full width on mobile
-		margin-bottom: 16px; // Space between shortcuts and calendar
 	}
 
 	@media (min-width: $date-range-mobile-layout-switch) {
