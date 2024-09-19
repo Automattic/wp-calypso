@@ -3,11 +3,16 @@ import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN, recordSignupComplete } from 'calypso/lib/analytics/signup';
+import { useStore } from 'calypso/state';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { useSite } from './use-site';
 import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
 
 export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
+	const store = useStore();
+	const state = store.getState();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
 	const { domainCartItem, planCartItem, siteCount, selectedDomain } = useSelect( ( select ) => {
@@ -18,16 +23,16 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 		};
 	}, [] );
+	const isNewishUser = isUserRegistrationDaysWithinRange( state, null, 0, 7 );
+	const dependencies = getSignupDependencyStore( state );
 
 	return useCallback( () => {
-		// FIXME: once moving to the Stepper version of User step,
-		// wire the value of `isNewUser()` from the user store.
-		const isNewUser = ! siteCount;
+		const isNewUser = !! ( dependencies && dependencies.username );
 
-		// FIXME:
-		// currently it's impossible to derive this data since it requires
-		// the length of registration, so I use isNewUser here as an approximation
-		const isNew7DUserSite = isNewUser;
+		const isNew7DUserSite = !! (
+			isNewUser ||
+			( isNewishUser && dependencies && dependencies?.siteSlug && siteCount && siteCount <= 1 )
+		);
 
 		// Domain product slugs can be a domain purchases like dotcom_domain or dotblog_domain or a mapping like domain_mapping
 		// When purchasing free subdomains the product_slugs is empty (since there is no actual produce being purchased)
