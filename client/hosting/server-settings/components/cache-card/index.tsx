@@ -56,9 +56,7 @@ export const CacheCard = ( {
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
 	const isEdgeCacheMutating = useIsSetEdgeCacheMutating( siteId );
-	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId );
-
-	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
+	const { clearEdgeCache, isLoading: isClearingEdgeCache } = useClearEdgeCacheMutation( siteId );
 
 	const handleClearAllCache = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
@@ -104,10 +102,11 @@ export const CacheCard = ( {
 
 	const disableButtons =
 		disabled ||
-		isClearingCache ||
 		shouldRateLimitCacheClear ||
 		getEdgeCacheLoading ||
-		isEdgeCacheMutating;
+		isEdgeCacheMutating ||
+		isClearingWordpressCache ||
+		isClearingEdgeCache;
 
 	return (
 		<HostingCard
@@ -125,8 +124,8 @@ export const CacheCard = ( {
 				</HostingCardDescription>
 				<Button
 					onClick={ handleClearAllCache }
-					busy={ isClearingCache }
 					disabled={ disableButtons }
+					busy={ isClearingWordpressCache && isClearingEdgeCache }
 					className="performance-optimization__button"
 				>
 					<span>{ translate( 'Clear all caches' ) }</span>
@@ -153,7 +152,7 @@ export const CacheCard = ( {
 						</div>
 						<ToggleControl
 							disabled={
-								clearEdgeCacheLoading ||
+								isClearingEdgeCache ||
 								getEdgeCacheLoading ||
 								! isEdgeCacheEligible ||
 								isEdgeCacheMutating
@@ -177,6 +176,7 @@ export const CacheCard = ( {
 							isEdgeCacheActive && (
 								<Button
 									disabled={ disableButtons }
+									busy={ isClearingEdgeCache }
 									onClick={ handleClearEdgeCache }
 									className="performance-optimization__button"
 								>
@@ -202,6 +202,7 @@ export const CacheCard = ( {
 					</HostingCardDescription>
 					<Button
 						disabled={ disableButtons }
+						busy={ isClearingWordpressCache }
 						onClick={ handleClearObjectCache }
 						className="performance-optimization__button"
 					>
