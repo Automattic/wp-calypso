@@ -118,13 +118,16 @@ export default function SitesDashboard() {
 		prevIsOnNeedsAttentionPageRef.current = isOnNeedsAttentionPage;
 	}, [ dataViewsState, setDataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ] );
 
+	// Temporarily set perPage to 100 on developement sites page while having problems on its pagination
+	const sitesPerPage = showOnlyDevelopmentSites ? 100 : dataViewsState.perPage;
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: dataViewsState?.search,
 		currentPage: dataViewsState.page ?? 1,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
-		perPage: dataViewsState.perPage,
+		perPage: sitesPerPage,
 		agencyId,
 	} );
 
