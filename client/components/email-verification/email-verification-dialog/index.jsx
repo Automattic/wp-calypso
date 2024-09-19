@@ -16,6 +16,15 @@ import './style.scss';
 const noop = () => {};
 
 class VerifyEmailDialog extends Component {
+	componentDidUpdate( prevProps ) {
+		// Close the dialog if the route changes. This dialog may be controlled by a parent
+		// component that persists between some routes, and we don't want it to remain open after
+		// navigation.
+		if ( prevProps.currentRoute !== this.props.currentRoute ) {
+			this.handleClose();
+		}
+	}
+
 	getResendButtonLabel() {
 		if (
 			'sent' === this.props.emailVerificationStatus ||
