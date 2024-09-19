@@ -52,7 +52,7 @@ type PlanStorageProps = PropsWithChildren< {
 	storageBarComponent: React.ComponentType< StorageBarProps > | React.FC< StorageBarProps >;
 } >;
 
-export function PlanStorage( {
+export default function PlanStorage( {
 	children,
 	className,
 	hideWhenNoStorage = false,
@@ -190,5 +190,3 @@ export function PlanStorage( {
 
 	return <div className={ clsx( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
-
-export default PlanStorage;
