@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -10,6 +11,12 @@ import {
 	usePrepareSiteForMigrationWithMigrateToWPCOM,
 } from '../use-prepare-site-for-migration';
 import { replyWithError, replyWithSuccess } from './helpers/nock';
+
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = () => '';
+	mock.isEnabled = jest.fn();
+	return mock;
+} );
 
 const TRANSFER_ACTIVE = ( siteId: number ) => ( {
 	atomic_transfer_id: '1253811',
@@ -184,7 +191,15 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 
 describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 	beforeAll( () => nock.disableNetConnect() );
-	beforeEach( () => nock.cleanAll() );
+	beforeEach( () => {
+		config.isEnabled.mockImplementation(
+			( key ) => key === 'migration-flow/enable-white-labeled-plugin'
+		);
+		nock.cleanAll();
+	} );
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
 
 	const Wrapper =
 		( queryClient: QueryClient ) =>
@@ -237,6 +252,34 @@ describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 			},
 			migrationKey: null,
 		} );
+	} );
+
+	it( 'gets the migration key after site transfer', async () => {
+		const siteId = 123;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.reply( 200, TRANSFER_COMPLETED( siteId ) )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
+			.query( { http_envelope: 1 } )
+			.reply( replyWithSuccess( { migration_key: 'some-migration-key' } ) );
+
+		const { result } = render( { siteId: 123 } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: true,
+					error: null,
+					detailedStatus: {
+						migrationKey: 'success',
+						siteTransfer: 'success',
+					},
+					migrationKey: 'some-migration-key',
+				} );
+			},
+			{ timeout: 3000 }
+		);
 	} );
 
 	it( 'returns error when is not possible to get the migration key', async () => {
