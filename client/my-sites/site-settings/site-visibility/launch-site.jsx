@@ -91,7 +91,7 @@ const LaunchSite = () => {
 		btnComponent = (
 			<Button
 				onClick={ handleLaunchSiteClick }
-				disabled={ ! isLaunchable }
+				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
 				primary={ isDevelopmentSite }
 			>
 				{ btnText }
