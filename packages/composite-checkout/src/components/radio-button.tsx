@@ -105,9 +105,10 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
-	column-gap: 5px;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: column;
+	gap: 5px;
+	justify-content: center;
+	align-items: flex-start;
 	align-content: center;
 	font-size: 14px;
 	height: fit-content;
@@ -160,6 +161,13 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			left: auto;
 		}
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 7px:
+		}
 }
 
 	${ handleLabelDisabled };
