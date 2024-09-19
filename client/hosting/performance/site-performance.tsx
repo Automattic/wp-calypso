@@ -128,7 +128,13 @@ export const SitePerformance = () => {
 		} );
 	};
 
-	const performanceReport = usePerformanceReport( wpcom_performance_report_url, activeTab );
+	const isSitePublic =
+		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+
+	const performanceReport = usePerformanceReport(
+		isSitePublic ? wpcom_performance_report_url : undefined,
+		activeTab
+	);
 
 	useEffect( () => {
 		if ( performanceReport.hash && performanceReport.hash !== wpcom_performance_report_url?.hash ) {
@@ -147,9 +153,6 @@ export const SitePerformance = () => {
 		savePerformanceReportUrl,
 		wpcom_performance_report_url?.hash,
 	] );
-
-	const isSitePublic =
-		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
 
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
