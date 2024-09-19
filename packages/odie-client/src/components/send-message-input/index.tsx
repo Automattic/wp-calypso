@@ -28,7 +28,8 @@ export const OdieSendMessageButton = ( {
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
+	const { initialUserMessage, chat, trackEvent, isLoading, messageHandler } =
+		useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 
 	useEffect( () => {
@@ -46,8 +47,11 @@ export const OdieSendMessageButton = ( {
 				role: 'user',
 				type: 'message',
 			} as Message;
-
-			await sendOdieMessage( { message } );
+			if ( messageHandler ) {
+				messageHandler( message );
+			} else {
+				await sendOdieMessage( { message } );
+			}
 
 			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {
@@ -56,7 +60,7 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	}, [ messageString, sendOdieMessage, trackEvent ] );
+	}, [ messageString, sendOdieMessage, trackEvent, messageHandler ] );
 
 	const sendMessageIfNotEmpty = useCallback( async () => {
 		if ( messageString.trim() === '' ) {

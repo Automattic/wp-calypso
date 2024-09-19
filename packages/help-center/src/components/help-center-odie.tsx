@@ -12,7 +12,7 @@ import OdieAssistantProvider, {
 } from '@automattic/odie-client';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -22,7 +22,7 @@ import { HELP_CENTER_STORE } from '../stores';
  * Internal Dependencies
  */
 import { BackButtonHeader } from './back-button';
-import { ExtraContactOptions } from './help-center-extra-contact-option';
+import { HelpCenterZendesk } from './help-center-zendesk';
 import './help-center-odie.scss';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
@@ -79,6 +79,7 @@ export function HelpCenterOdie( {
 	isUserEligible: boolean;
 	searchTerm: string;
 } ): JSX.Element {
+	const [ messageHandler, setMessageHandler ] = useState( undefined );
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligible;
@@ -135,12 +136,16 @@ export function HelpCenterOdie( {
 				logger={ trackEvent }
 				loggerEventNamePrefix="calypso_odie"
 				selectedSiteId={ site?.ID as number }
-				extraContactOptions={ <ExtraContactOptions isUserEligible={ isUserEligible } /> }
 				navigateToContactOptions={ navigateToContactOptions }
 				navigateToSupportDocs={ navigateToSupportDocs }
 				isUserEligible={ isUserEligible }
+				messageHandler={ messageHandler }
 			>
 				<div className="help-center__container-content-odie">
+					<HelpCenterZendesk
+						setMessageHandler={ setMessageHandler }
+						messageHandler={ messageHandler }
+					/>
 					<div className="help-center__container-odie-header">
 						<BackButtonHeader className="help-center__container-odie-back-button">
 							<OdieEllipsisMenu />

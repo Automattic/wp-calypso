@@ -45,3 +45,17 @@ export type MessagingMetadata = {
 };
 
 export type ZendeskAuthType = 'zendesk' | 'messenger';
+
+export type UseSmoochProps = {
+	init: boolean;
+	destroy: () => void;
+	initSmooch: ( ref: HTMLDivElement ) => void;
+	createConversation?: (
+		userfields: UserFields,
+		metadata: Conversation[ 'metadata' ]
+	) => Promise< void >;
+	getConversation?: ( chatId?: number ) => Promise< Conversation | undefined >;
+	sendMessage?: ( message: string, chatId?: number | null ) => void;
+	addMessengerListener?: ( callback: ( message: Message ) => void ) => void;
+	addUnreadCountListener?: ( callback: ( unreadCount: number ) => void ) => void;
+};

@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { HumanAvatar } from '../../assets/human-avatar';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
 import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
@@ -75,15 +76,18 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 		</>
 	) : (
 		<>
-			<img
-				src={ WapuuAvatar }
-				alt={ sprintf(
-					/* translators: %s is bot name, like Wapuu */
-					_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
-					botName
-				) }
-				className={ wapuuAvatarClasses }
-			/>
+			{ message.role === 'human' && <HumanAvatar /> }
+			{ message.role === 'bot' && (
+				<img
+					src={ WapuuAvatar }
+					alt={ sprintf(
+						/* translators: %s is bot name, like Wapuu */
+						_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
+						botName
+					) }
+					className={ wapuuAvatarClasses }
+				/>
+			) }
 			{ message.type === 'placeholder' ? (
 				<img
 					src={ WapuuThinking }

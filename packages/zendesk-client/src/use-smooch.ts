@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useCallback, useState } from 'react';
 import Smooch from 'smooch';
 import { SMOOCH_INTEGRATION_ID } from './constants';
-import { UserFields } from './types';
+import { UserFields, UseSmoochProps } from './types';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 
@@ -50,7 +50,7 @@ const addUnreadCountListener = ( callback: ( unreadCount: number ) => void ) => 
 	Smooch.on( 'unreadCount', callback );
 };
 
-export const useSmooch = () => {
+export const useSmooch = (): UseSmoochProps => {
 	const [ init, setInit ] = useState( typeof Smooch.getConversations === 'function' );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =

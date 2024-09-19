@@ -37,6 +37,7 @@ type OdieAssistantContextInterface = {
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	lastMessageInView?: boolean;
+	messageHandler?: ( message: Message ) => void;
 	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
@@ -72,6 +73,7 @@ const defaultContextInterfaceValues = {
 	isUserEligible: false,
 	lastNudge: null,
 	lastMessageRef: null,
+	messageHandler: noop,
 	navigateToContactOptions: noop,
 	navigateToSupportDocs: noop,
 	odieClientId: '',
@@ -111,6 +113,7 @@ type OdieAssistantProviderProps = {
 	isLoadingEnvironment?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
+	messageHandler?: ( message: Message ) => void;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
 	navigateToContactOptions?: () => void;
@@ -132,6 +135,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
+	messageHandler,
 	navigateToContactOptions,
 	navigateToSupportDocs,
 	selectedSiteId,
@@ -271,6 +275,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isVisible,
 				lastNudge,
 				lastMessageInView,
+				messageHandler,
 				navigateToContactOptions,
 				navigateToSupportDocs,
 				odieClientId,
