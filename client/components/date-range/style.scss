@@ -189,6 +189,14 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
+.date-picker {
+
+	display: flex;
+	justify-content: center; /* Centers horizontally */
+	align-items: center;     /* Centers vertically */
+
+}
+
 .date-range__popover .date-picker--2up {
 
 	.DayPicker-wrapper,
