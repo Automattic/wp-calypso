@@ -76,22 +76,10 @@ export default function TeamInvite() {
 		);
 	}, [ dispatch, message, sendInvite, translate, username ] );
 
-	const onUsernameChange = useCallback(
-		( value: string ) => {
-			setError( '' );
-			setUsername( value );
-			dispatch( recordTracksEvent( 'calypso_a4a_team_invite_username_change' ) );
-		},
-		[ dispatch ]
-	);
-
-	const onMessageChange = useCallback(
-		( value: string ) => {
-			setMessage( value );
-			dispatch( recordTracksEvent( 'calypso_a4a_team_invite_message_change' ) );
-		},
-		[ dispatch ]
-	);
+	const onUsernameChange = useCallback( ( value: string ) => {
+		setError( '' );
+		setUsername( value );
+	}, [] );
 
 	return (
 		<Layout className="team-invite" title={ title } wide compact>
@@ -123,6 +111,9 @@ export default function TeamInvite() {
 								placeholder={ translate( 'team-member@example.com' ) }
 								value={ username }
 								onChange={ onUsernameChange }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_a4a_team_invite_username_click' ) )
+								}
 							/>
 						</FormField>
 
@@ -132,7 +123,13 @@ export default function TeamInvite() {
 								'Optional: Include a custom message to provide more context to your team member.'
 							) }
 						>
-							<TextareaControl value={ message } onChange={ onMessageChange } />
+							<TextareaControl
+								value={ message }
+								onChange={ setMessage }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_a4a_team_invite_message_click' ) )
+								}
+							/>
 						</FormField>
 					</FormSection>
 
