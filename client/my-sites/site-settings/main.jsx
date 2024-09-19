@@ -20,7 +20,7 @@ import './style.scss';
 
 const getTitle = ( adminInterfaceIsWPAdmin ) => {
 	if ( adminInterfaceIsWPAdmin ) {
-		return translate( 'Settings' );
+		return translate( 'Site Settings' );
 	}
 	return translate( 'General Settings' );
 };

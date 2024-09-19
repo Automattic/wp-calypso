@@ -20,6 +20,11 @@ jest.mock( '../upgrade-plan-details', () => ( {
 	default: ( { children } ) => <div>{ children }</div>,
 } ) );
 
+// Mock the HelpCenter module
+jest.mock( 'calypso/components/inline-support-link', () => ( {
+	register: jest.fn(),
+} ) );
+
 jest.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
 	() => jest.fn()

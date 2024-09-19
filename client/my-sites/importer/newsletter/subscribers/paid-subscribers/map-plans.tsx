@@ -12,7 +12,7 @@ import {
 import { Product } from 'calypso/my-sites/earn/types';
 import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { StepProps } from '../../types';
+import { SubscribersStepProps } from '../../types';
 import StartImportButton from './../start-import-button';
 import { MapPlan, TierToAdd } from './map-plan';
 
@@ -54,7 +54,7 @@ export default function MapPlans( {
 	engine,
 	siteSlug,
 	fromSite,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	const [ productToAdd, setProductToAdd ] = useState< TierToAdd | null >( null );
 
 	const currentStep = 'subscribers';

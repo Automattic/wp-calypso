@@ -2,22 +2,6 @@
 @import "calypso/my-sites/patterns/mixins";
 
 .is-section-performance-profiler {
-	.layout__content {
-		padding: 0;
-		overflow: visible; // necessary for sticky CategoryPillNavigation
-
-		.masterbar {
-			// Makes sure the navigation bar header appears below the masterbar and notices
-			z-index: z-index("root", ".main") - 1;
-		}
-	}
-
-	.layout__primary {
-		.main {
-			padding-bottom: 0;
-		}
-	}
-
 	.is-logged-in {
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;

@@ -401,6 +401,7 @@ describe( `${ flow.name }`, () => {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 						from: 'http://oldsite.example.com',
+						preventTicketCreation: 'true',
 					},
 				} );
 			} );
@@ -414,7 +415,7 @@ describe( `${ flow.name }`, () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com', credentials: 'skipped' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
 		} );

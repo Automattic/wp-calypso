@@ -22,7 +22,6 @@ interface PlansGridContext {
 	 * for rendering features with categories based on available/associated feature group map.
 	 */
 	enableCategorisedFeatures?: boolean;
-	enableLargeFeatureTitles?: boolean;
 	enableStorageAsBadge?: boolean;
 	enableReducedFeatureGroupSpacing?: boolean;
 	enableLogosOnlyForEnterprisePlan?: boolean;
@@ -46,7 +45,6 @@ const PlansGridContextProvider = ( {
 	coupon,
 	enableFeatureTooltips,
 	enableCategorisedFeatures,
-	enableLargeFeatureTitles,
 	enableStorageAsBadge,
 	enableReducedFeatureGroupSpacing,
 	enableLogosOnlyForEnterprisePlan,
@@ -79,7 +77,6 @@ const PlansGridContextProvider = ( {
 				coupon,
 				enableFeatureTooltips,
 				enableCategorisedFeatures,
-				enableLargeFeatureTitles,
 				enableStorageAsBadge,
 				enableReducedFeatureGroupSpacing,
 				enableLogosOnlyForEnterprisePlan,
