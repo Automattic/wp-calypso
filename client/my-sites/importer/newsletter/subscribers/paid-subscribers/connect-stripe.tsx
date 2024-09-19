@@ -41,10 +41,10 @@ export default function ConnectStripe( {
 
 	return (
 		<>
-			<h2>Finish importing paid subscribers</h2>
+			<h2>Do you have paid subscribers?</h2>
 			<p>
-				To migrate your paid subscribers to WordPress.com, make sure you're connecting the{ ' ' }
-				<strong>same</strong> Stripe account you use with Substack.
+				To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
+				connecting the <strong>same</strong> Stripe account you use with Substack.
 			</p>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
