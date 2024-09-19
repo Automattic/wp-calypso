@@ -19,7 +19,7 @@ import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
-import { useSitePages } from './hooks/useSitePages';
+import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 
 import './style.scss';
 
@@ -98,7 +98,7 @@ export const SitePerformance = () => {
 
 	const queryParams = useSelector( getCurrentQueryArguments );
 	const [ , setQuery, query ] = useDebouncedInput();
-	const { pages, savePerformanceReportUrl } = useSitePages( { query } );
+	const { pages, savePerformanceReportUrl } = useSitePerformancePageReports( { query } );
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {

@@ -71,14 +71,14 @@ const toPerformanceReportUrl = ( { url, hash }: PerformanceReportUrl ) => {
 
 const HOME_PAGE_ID = '0';
 
-export const useSitePages = ( { query = '' } = {} ) => {
+export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 	const { __ } = useI18n();
 
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 
 	const { data } = useQuery( {
-		queryKey: [ 'useSitePages', siteId, query ],
+		queryKey: [ 'useSitePerformancePageReports', siteId, query ],
 		queryFn: () => getPages( siteId!, query ),
 		refetchOnWindowFocus: false,
 		enabled: !! siteId,
