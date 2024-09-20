@@ -118,7 +118,6 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
-			currentShortcut: '',
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -400,20 +399,14 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
 	}
 
-	handleDateRangeChange = ( startDate, endDate, shortcutId = '' ) => {
+	handleDateRangeChange = ( startDate, endDate ) => {
 		this.setState( {
 			startDate,
 			endDate,
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
-			currentShortcut: shortcutId,
 		} );
 		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-	};
-
-	handleCalendarChange = ( startDate, endDate ) => {
-		// When the calendar or inputs change directly, set to custom range
-		this.handleDateRangeChange( startDate, endDate, 'custom_date_range' );
 	};
 
 	/**
@@ -467,7 +460,6 @@ export class DateRange extends Component {
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">
 							<Shortcuts
-								currentShortcut={ this.state.currentShortcut }
 								onClick={ this.handleDateRangeChange }
 								locked={ !! this.props.overlay }
 								startDate={ this.state.startDate }
@@ -491,7 +483,7 @@ export class DateRange extends Component {
 				lastSelectableDate={ this.props.lastSelectableDate }
 				selectedStartDate={ this.state.startDate }
 				selectedEndDate={ this.state.endDate }
-				onDateRangeChange={ this.handleCalendarChange }
+				onDateRangeChange={ this.handleDateRangeChange }
 				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
 				useArrowNavigation={ this.props.useArrowNavigation }
