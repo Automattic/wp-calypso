@@ -130,9 +130,7 @@ export async function createAccount( {
 			username,
 			signupType: service ? 'social' : 'default',
 		} );
-
-		return response;
 	}
 
-	return response;
+	return { ...response, isNewAccountCreated };
 }
