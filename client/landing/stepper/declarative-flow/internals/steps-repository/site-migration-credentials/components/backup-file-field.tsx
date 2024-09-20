@@ -15,33 +15,31 @@ export const BackupFileField: React.FC< CredentialsFormFieldProps > = ( { contro
 
 	return (
 		<div className="site-migration-credentials">
-			<div className="site-migration-credentials__form">
-				<div className="site-migration-credentials__form-field">
-					<FormLabel htmlFor="backup-file">{ translate( 'Backup file location' ) }</FormLabel>
-					<Controller
-						control={ control }
-						name="backupFileLocation"
-						rules={ {
-							required: translate( 'Please enter a valid URL.' ),
-							validate: isBackupFileLocationValid,
-						} }
-						render={ ( { field } ) => (
-							<FormTextInput
-								id="backup-file"
-								type="text"
-								isError={ !! errors?.backupFileLocation }
-								placeholder={ translate( 'Enter your backup file location' ) }
-								{ ...field }
-							/>
-						) }
-					/>
-				</div>
-				<ErrorMessage error={ errors?.backupFileLocation } />
-				<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
-					{ translate(
-						"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."
+			<div className="site-migration-credentials__form-field">
+				<FormLabel htmlFor="backup-file">{ translate( 'Backup file location' ) }</FormLabel>
+				<Controller
+					control={ control }
+					name="backupFileLocation"
+					rules={ {
+						required: translate( 'Please enter a valid URL.' ),
+						validate: isBackupFileLocationValid,
+					} }
+					render={ ( { field } ) => (
+						<FormTextInput
+							id="backup-file"
+							type="text"
+							isError={ !! errors?.backupFileLocation }
+							placeholder={ translate( 'Enter your backup file location' ) }
+							{ ...field }
+						/>
 					) }
-				</div>
+				/>
+			</div>
+			<ErrorMessage error={ errors?.backupFileLocation } />
+			<div className="site-migration-credentials__form-note site-migration-credentials__backup-note">
+				{ translate(
+					"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."
+				) }
 			</div>
 		</div>
 	);
