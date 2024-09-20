@@ -4,7 +4,6 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import {
 	verifyEmail,
 	resetVerifyEmailState,
@@ -67,7 +66,7 @@ class VerifyEmailDialog extends Component {
 		if ( this.props.currentRoute !== changeEmailRoute ) {
 			return <a href="/me/account" />;
 		}
-		// If we are already on /me/account, close the dialog and dispatch a signal to focus the input.
+		// If we are already on /me/account, close the dialog.
 		return (
 			<Button
 				borderless
@@ -75,7 +74,6 @@ class VerifyEmailDialog extends Component {
 				compact
 				onClick={ () => {
 					this.handleClose();
-					emailFormEventEmitter?.dispatchEvent( new Event( 'unlockEmailInput' ) );
 				} }
 			/>
 		);

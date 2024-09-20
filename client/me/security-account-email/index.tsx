@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import type { NoticeId, NoticeOptions } from 'calypso/state/notices/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
@@ -32,6 +33,8 @@ const SecurityAccountEmail = ( { path }: { path: string } ) => {
 	const [ isNewEmailValid, setIsNewEmailValid ] = useState( true );
 	const emailValidationHandler = ( emailIsValid: boolean ): void =>
 		setIsNewEmailValid( emailIsValid );
+
+	const emailChangeIsPending = useSelector( isPendingEmailChange );
 
 	const unsavedUserSettings = useSelector( getUnsavedUserSettings ) ?? {};
 	const userSettings = useSelector( getUserSettings ) ?? {};
@@ -109,7 +112,9 @@ const SecurityAccountEmail = ( { path }: { path: string } ) => {
 
 				<Button
 					busy={ isSubmittingUpdate }
-					disabled={ isSubmittingUpdate || ! isEmailModified || ! isNewEmailValid }
+					disabled={
+						isSubmittingUpdate || emailChangeIsPending || ! isEmailModified || ! isNewEmailValid
+					}
 					onClick={ submitEmailUpdate }
 					primary
 				>
