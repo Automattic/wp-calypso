@@ -118,8 +118,8 @@ const DotcomSitesDataViews = ( {
 		() => [
 			{
 				id: 'site',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Site' ) }</span>,
+				label: __( 'Site' ),
+				header: <span>{ __( 'Site' ) }</span>,
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
@@ -129,8 +129,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'plan',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Plan' ) }</span>,
+				label: __( 'Plan' ),
+				header: <span>{ __( 'Plan' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) => (
 					<SitePlan site={ item } userId={ userId } />
 				),
@@ -150,8 +150,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Last Published' ) }</span>,
+				label: __( 'Last Published' ),
+				header: <span>{ __( 'Last Published' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
@@ -159,8 +159,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'stats',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: (
+				label: __( 'Stats' ),
+				header: (
 					<span className="sites-dataviews__stats-label">
 						<JetpackLogo size={ 16 } />
 						<span>{ __( 'Stats' ) }</span>
@@ -172,8 +172,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Actions' ) }</span>,
+				label: __( 'Actions' ),
+				header: <span>{ __( 'Actions' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
