@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
@@ -15,6 +15,26 @@ import renderHeaderSection from '../lib/header-section';
 import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
+
+const DiscoverPageDocumentHead = ( { tabTitle } ) => {
+	const translate = useTranslate();
+
+	const title = translate( 'Browse %s blogs & read articles ‹ Reader', {
+		args: [ tabTitle ],
+		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+	} );
+
+	const meta = [
+		{
+			name: 'description',
+			content: translate(
+				'Explore millions of blogs on WordPress.com. Discover posts, from food and art to travel and photography, and find popular sites that inspire and inform.'
+			),
+		},
+	];
+
+	return <DocumentHead title={ title } meta={ meta } />;
+};
 
 const exported = {
 	discover( context, next ) {
@@ -42,12 +62,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
-				<DocumentHead
-					title={ translate( 'Browse %s blogs & read articles ‹ Reader', {
-						args: [ tabTitle ],
-						comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-					} ) }
-				/>
+				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
 				<AsyncLoad
 					require="calypso/reader/discover/discover-stream"
 					key="discover-page"
@@ -73,8 +88,21 @@ const exported = {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
+
+	discoverSsr( context, next ) {
+		const state = context.store.getState();
+		if ( ! isUserLoggedIn( state ) ) {
+			context.renderHeaderSection = renderHeaderSection;
+		}
+		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
+		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		context.primary = <DiscoverPageDocumentHead tabTitle={ tabTitle } />;
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		next();
+	},
 };
 
 export default exported;
 
-export const { discover } = exported;
+export const { discover, discoverSsr } = exported;

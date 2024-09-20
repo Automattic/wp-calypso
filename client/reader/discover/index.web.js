@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
@@ -10,12 +9,14 @@ import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { discover } from './controller';
 
-export default function () {
+export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
-	page( `/${ anyLangParam }/discover`, redirectInvalidLanguage );
+	router( `/${ anyLangParam }/discover`, redirectInvalidLanguage );
 
-	page(
+	console.log( 'NON-SSR...' );
+
+	router(
 		[ '/discover', `/${ langParam }/discover` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
