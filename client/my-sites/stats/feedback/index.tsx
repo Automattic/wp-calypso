@@ -184,6 +184,16 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
+	const toggleFloatingPanel = () => {
+		if ( isFloatingPanelOpen ) {
+			setTimeout( () => {
+				setIsFloatingPanelOpen( false );
+			}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
+		} else {
+			setIsFloatingPanelOpen( true );
+		}
+	};
+
 	const presentPlugInPage = () => {
 		setIsFloatingPanelOpen( false );
 		window.open( FEEDBACK_LEAVE_REVIEW_URL );
@@ -208,7 +218,11 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
 			case ACTION_LEAVE_REVIEW:
-				presentPlugInPage();
+				if ( debug ) {
+					toggleFloatingPanel();
+				} else {
+					presentPlugInPage();
+				}
 				break;
 			// Ignore other cases.
 		}
