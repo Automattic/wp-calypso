@@ -6,6 +6,7 @@ import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
+import recordStepComplete from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
@@ -17,16 +18,17 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
-import type { NavigationControls } from '../../../types';
 import type {
 	Flow,
 	StepperStep,
 	StepProps,
+	NavigationControls,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete' );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
@@ -190,6 +192,33 @@ describe( 'StepRoute', () => {
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			expect( recordPageView ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tracks step-complete when the step is unmounted and step-start was previously recorded', () => {
+			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			const { unmount } = render( { step: regularStep } );
+
+			expect( recordStepComplete ).not.toHaveBeenCalled();
+			unmount();
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				optionalProps: {
+					intent: 'build',
+				},
+			} );
+		} );
+
+		it( 'skips tracking step-complete when the step is unmounted and step-start was not recorded', () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
+			const { unmount } = render( { step: regularStep } );
+
+			expect( recordStepStart ).not.toHaveBeenCalled();
+			unmount();
+			expect( recordStepComplete ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
