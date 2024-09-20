@@ -222,6 +222,42 @@ $blueberry-color: #3858e9;
 					align-items: center;
 					gap: 16px;
 					flex-wrap: wrap;
+
+					&.wrapped {
+						flex-basis: 100%;
+					}
+				}
+
+				.survey-form {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 16px;
+
+					button.is-primary {
+						color: #fff;
+						background-color: $blueberry-color;
+						border-radius: 4px;
+
+						&:hover:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+						}
+
+						&:focus:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+							box-shadow: none;
+						}
+					}
+
+					.feedback-textarea {
+						width: 100%;
+					}
+
+					textarea:focus,
+					textarea:focus-visible {
+						border-color: $blueberry-color;
+						box-shadow: 0 0 0 calc(1.5px - 1px)  $blueberry-color;
+					}
 				}
 
 				.options {
