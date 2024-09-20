@@ -207,7 +207,18 @@ const AccountEmailField = ( {
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const inputRef = useRef< FormTextInput >( null );
 	const [ isLockedInput, setIsLockedInput ] = useState( true );
-	const [ emailSettingToShow, setEmailSettingToShow ] = useState( 'user_email' );
+	// We manage emailSettingToShow in state to prevent jarring UX and jumping input value in edge
+	// cases. Our settings state clears unsaved settings when they are equal to saved settings. Ex.
+	// The user has a pending email change so new_user_email is shown initially. When they edit this
+	// input, it reflects the unsaved value of user_email. The user then types in the value of their
+	// previously verified email (user_email). The unsaved user_email is reset to null in settings
+	// state since it is the same as the saved setting. If we were calculating this
+	// emailSettingToShow value on every render, the input would jarringly jump from the value the
+	// user typed in back to the pending email value (new_user_email). Since we manage this in
+	// state and with effects, it remains more stable in interaction.
+	const [ emailSettingToShow, setEmailSettingToShow ] = useState(
+		isEmailChangePending ? 'new_user_email' : 'user_email'
+	);
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -226,15 +237,14 @@ const AccountEmailField = ( {
 		if ( isEmailChangePending ) {
 			setEmailSettingToShow( 'new_user_email' );
 		} else {
+			// Similarly ensure this resets when there is no longer a pending change (ex. user
+			// cancels pending change)
 			setEmailSettingToShow( 'user_email' );
 		}
 	}, [ isEmailChangePending ] );
 
 	// Once the user starts editing, ensure we show the user_email field since that is the one being
-	// updated in unsavedUserSettings. We don't want this to reset when the unsaved change renders falsy, as we want to
-	// both support the case of the empty string as well as when the unsaved settings are reset for
-	// having the same value as the saved settigns (user types in current user_email and unsaved
-	// variation gets reset to null).
+	// updated in unsavedUserSettings.
 	useEffect( () => {
 		if ( unsavedUserSettings.user_email ) {
 			setEmailSettingToShow( 'user_email' );
