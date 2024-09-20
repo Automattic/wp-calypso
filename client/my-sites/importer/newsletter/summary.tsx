@@ -8,7 +8,7 @@ import ImporterActionButtonContainer from '../importer-action-buttons/container'
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
 import { EngineTypes } from './types';
-import { getImporterStatus } from './utils';
+import { getImporterStatus, normalizeFromSite } from './utils';
 
 function getStepTitle( importerStatus: StepStatus ) {
 	if ( importerStatus === 'done' ) {
@@ -62,7 +62,7 @@ export default function Summary( { steps, selectedSite, engine, fromSite }: Summ
 					<h2>Heads up!</h2>
 					To prevent any charges from your old provider, go to your{ ' ' }
 					<a
-						href={ `https://${ fromSite }/publish/settings#payments-settings` }
+						href={ `https://${ normalizeFromSite( fromSite ) }/publish/settings#payments-settings` }
 						target="_blank"
 						rel="noreferrer"
 					>
