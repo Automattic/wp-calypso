@@ -193,7 +193,7 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		hideOpenIcon: true,
 		onSearch,
 		onSearchChange,
-		onBlur: onSearchChange,
+		onBlur: ( event: React.FocusEvent< HTMLInputElement > ) => onSearchChange( event.target.value ),
 	};
 
 	const SiteNameSuggestions = () => {
