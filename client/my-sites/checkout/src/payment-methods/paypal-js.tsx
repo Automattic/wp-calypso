@@ -3,15 +3,13 @@ import {
 	type PaymentMethod,
 	type ProcessPayment,
 } from '@automattic/composite-checkout';
-import { PaymentMethodLogos } from '../components/payment-method-logos';
 import {
 	PayPalButtons,
 	PayPalButtonsComponentProps,
 	usePayPalScriptReducer,
 } from '@paypal/react-paypal-js';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import useCartKey from '../../use-cart-key';
 import { useEffect } from 'react';
+import { PaymentMethodLogos } from '../components/payment-method-logos';
 
 export function createPayPal(): PaymentMethod {
 	return {
@@ -28,7 +26,7 @@ function PayPalLabel() {
 	return (
 		<>
 			<div>
-				<span>{ 'PayPal' }</span>
+				<span>PayPal</span>
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PayPalLogo />
@@ -39,8 +37,6 @@ function PayPalLabel() {
 
 function PayPalSubmitButton() {
 	const togglePaymentMethod = useTogglePaymentMethod();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
 	useEffect( () => {
 		if ( isResolved ) {
@@ -52,24 +48,13 @@ function PayPalSubmitButton() {
 		return <div>Loading</div>;
 	}
 
-	const createOrder: PayPalButtonsComponentProps[ 'createOrder' ] = ( data, actions ) => {
-		return actions.order.create( {
-			plan_id: 'YOUR_PLAN_ID',
-		} );
-	};
-	const createSubscription: PayPalButtonsComponentProps[ 'createSubscription' ] = (
-		data,
-		actions
-	) => {
-		return actions.subscription.create( {
-			plan_id: 'YOUR_PLAN_ID',
-		} );
+	const createOrder: PayPalButtonsComponentProps[ 'createOrder' ] = () => {
+		// FIXME: call wpcom API endpoint to create order for WPCOM and PayPal
 	};
 	return (
 		<PayPalButtons
 			style={ { layout: 'horizontal' } }
 			fundingSource="paypal"
-			message={ { amount: responseCart.total_cost } }
 			createOrder={ createOrder }
 		/>
 	);
