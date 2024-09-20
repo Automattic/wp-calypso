@@ -11,7 +11,6 @@ type Props = {
 	focusRef: React.RefObject< HTMLButtonElement >;
 	itemData: ItemData;
 	closeSitePreviewPane?: () => void;
-	sectionName?: string;
 };
 
 const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }: Props ) => {
