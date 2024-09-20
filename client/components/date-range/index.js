@@ -53,6 +53,7 @@ export class DateRange extends Component {
 		useArrowNavigation: PropTypes.bool,
 		overlay: PropTypes.node,
 		customTitle: PropTypes.string,
+		onShortcutClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -479,6 +480,7 @@ export class DateRange extends Component {
 								locked={ !! this.props.overlay }
 								startDate={ this.state.startDate }
 								endDate={ this.state.endDate }
+								onShortcutClick={ this.props.onShortcutClick } // for tracking clicks
 							/>
 						</div>
 					) }
