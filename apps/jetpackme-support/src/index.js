@@ -1,29 +1,12 @@
-import OdieAssistantProvider, {
-	OdieAssistant,
-	EllipsisMenu,
-	useOdieAssistantContext,
-} from '@automattic/odie-client';
+/**
+ * WordPress dependencies
+ */
+import { render } from '@wordpress/element';
+/**
+ * Internal dependencies
+ */
+import SupportPrompt from './support-prompt';
 
-const OdieBot = () => {
-	const { clearChat } = useOdieAssistantContext();
-	return (
-		<OdieAssistantProvider botNameSlug="jetpack-support-chat">
-			<div className="custom-class">
-				<EllipsisMenu popoverClassName="menu-class" position="bottom">
-					<span
-						role="button"
-						tabIndex={ 0 }
-						onClick={ () => clearChat() }
-						onKeyPress={ () => clearChat() }
-						className="menu-item-class"
-					>
-						Start a New Chat
-					</span>
-				</EllipsisMenu>
-			</div>
-			<OdieAssistant />
-		</OdieAssistantProvider>
-	);
+window.renderSupportPrompt = ( elementId ) => {
+	render( <SupportPrompt />, document.getElementById( elementId ) );
 };
-
-window.JetpackSupportBot = OdieBot();
