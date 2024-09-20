@@ -500,7 +500,7 @@ export class DateRange extends Component {
 				selectedEndDate={ this.state.endDate }
 				onDateRangeChange={ this.handleDateRangeChange }
 				focusedMonth={ this.state.focusedMonth }
-				numberOfMonths={ this.getNumberOfMonths() }
+				numberOfMonths={ this.state.numberOfMonths }
 				useArrowNavigation={ this.props.useArrowNavigation }
 			/>
 		);
