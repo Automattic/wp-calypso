@@ -118,7 +118,6 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
-			currentShortcut: '',
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -400,14 +399,14 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
 	}
 
-	handleDateRangeChange = ( startDate, endDate, shortcutId = '' ) => {
+	handleDateRangeChange = ( startDate, endDate, dateClicked ) => {
 		this.setState( {
 			startDate,
 			endDate,
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
-			currentShortcut: shortcutId,
 		} );
+		this.props.onDateSelect && this.props.onDateSelect( dateClicked );
 	};
 
 	/**
@@ -461,7 +460,6 @@ export class DateRange extends Component {
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">
 							<Shortcuts
-								currentShortcut={ this.state.currentShortcut }
 								onClick={ this.handleDateRangeChange }
 								locked={ !! this.props.overlay }
 								startDate={ this.state.startDate }
@@ -486,7 +484,6 @@ export class DateRange extends Component {
 				selectedStartDate={ this.state.startDate }
 				selectedEndDate={ this.state.endDate }
 				onDateRangeChange={ this.handleDateRangeChange }
-				onDateSelect={ this.props.onDateSelect }
 				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
 				useArrowNavigation={ this.props.useArrowNavigation }
