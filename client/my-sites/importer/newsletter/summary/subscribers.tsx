@@ -1,4 +1,5 @@
-import { Icon, people, currencyDollar, atSymbol } from '@wordpress/icons';
+import { ProgressBar } from '@wordpress/components';
+import { Icon, people, atSymbol, payment } from '@wordpress/icons';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 interface SubscriberSummaryProps {
@@ -7,8 +8,8 @@ interface SubscriberSummaryProps {
 }
 
 export default function SubscriberSummary( { stepContent, status }: SubscriberSummaryProps ) {
-	const paidSubscribers = parseInt( stepContent?.meta?.paid_subscribers_count || '0' );
-	const hasPaidSubscribers = paidSubscribers > 0;
+	const paidSubscribersCount = parseInt( stepContent?.meta?.paid_subscribers_count || '0' );
+	const hasPaidSubscribers = paidSubscribersCount > 0;
 
 	if ( status === 'skipped' ) {
 		return (
@@ -20,38 +21,50 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 		);
 	}
 
-	if ( status === 'importing' || status === 'pending' ) {
+	if ( status === 'importing' ) {
 		return (
-			<div className="summary__content">
+			<>
+				<div className="summary__content">
+					<p>
+						<Icon icon={ atSymbol } /> <strong>We're importing your subscribers.</strong>
+						<br />
+					</p>
+				</div>
 				<p>
-					<Icon icon={ people } /> <strong>We're importing your subscribers.</strong>
-					<br />
 					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
 					done.
 				</p>
-			</div>
+				<p>
+					<ProgressBar className="is-larger-progress-bar" />
+				</p>
+			</>
 		);
 	}
 
 	if ( status === 'done' ) {
-		const paidSubscribersCount = parseInt( stepContent.meta?.paid_subscribers_count || '0' );
 		const subscribedCount = parseInt( stepContent.meta?.subscribed_count || '0' );
 		const freeSubscribersCount = subscribedCount - paidSubscribersCount;
 
 		return (
-			<div className="summary__content">
-				<p>We migrated { subscribedCount } subscribers</p>
-				<p>
-					<Icon icon={ people } />
-					<strong>{ freeSubscribersCount }</strong> free subscribers
-				</p>
-				{ hasPaidSubscribers && (
+			<>
+				<div className="summary__content">
 					<p>
-						<Icon icon={ currencyDollar } />
-						<strong>{ paidSubscribersCount }</strong> paid subscribers
+						<Icon icon={ atSymbol } /> We imported { subscribedCount } subscribers, where:
 					</p>
-				) }
-			</div>
+				</div>
+				<div className="summary__content summary__content-indent">
+					<p>
+						<Icon icon={ people } />
+						<strong>{ freeSubscribersCount }</strong> free subscribers
+					</p>
+					{ hasPaidSubscribers && (
+						<p>
+							<Icon icon={ payment } />
+							<strong>{ paidSubscribersCount }</strong> paid subscribers
+						</p>
+					) }
+				</div>
+			</>
 		);
 	}
 }
