@@ -1,5 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useMemo } from 'react';
+import { getSiteLaunchStatus } from './site-status';
 import { MinimumSite } from './site-type';
 
 type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
@@ -318,26 +319,9 @@ function sortByPlan< T extends SiteDetailsForSorting >( a: T, b: T, sortOrder: S
 	return sortOrder === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
 }
 
-function getStatus( site: SiteDetailsForSorting ): string {
-	// Sort by is_deleted, options.is_redirect, is_coming_soon, is_private, public
-	if ( site.is_deleted ) {
-		return 'deleted';
-	}
-	if ( site.options?.is_redirect ) {
-		return 'redirect';
-	}
-	if ( site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' ) ) {
-		return 'coming-soon';
-	}
-	if ( site.is_private ) {
-		return 'private';
-	}
-	return 'public';
-}
-
 function sortByStatus< T extends SiteDetailsForSorting >( a: T, b: T, sortOrder: SitesSortOrder ) {
-	const statusA = getStatus( a );
-	const statusB = getStatus( b );
+	const statusA = getSiteLaunchStatus( a );
+	const statusB = getSiteLaunchStatus( b );
 
 	if ( ! statusA || ! statusB ) {
 		return 0;
