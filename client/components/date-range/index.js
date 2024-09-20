@@ -399,14 +399,14 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
 	}
 
-	handleDateRangeChange = ( startDate, endDate, dateClicked ) => {
+	handleDateRangeChange = ( startDate, endDate ) => {
 		this.setState( {
 			startDate,
 			endDate,
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
 		} );
-		this.props.onDateSelect && this.props.onDateSelect( dateClicked );
+		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
 	};
 
 	/**
