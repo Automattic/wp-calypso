@@ -232,6 +232,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 .date-range__date-input {
 	flex: 1;
+	max-width: 224px;
 
 	.form-label {
 		font-size: $font-body-extra-small;
