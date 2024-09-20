@@ -189,6 +189,14 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
+.date-range__popover-content .date-picker {
+
+	display: flex;
+	justify-content: center; /* Centers horizontally */
+	align-items: center;     /* Centers vertically */
+
+}
+
 .date-range__popover .date-picker--2up {
 
 	.DayPicker-wrapper,
@@ -224,6 +232,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 .date-range__date-input {
 	flex: 1;
+	max-width: 224px;
 
 	.form-label {
 		font-size: $font-body-extra-small;
