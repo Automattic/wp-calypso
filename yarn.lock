@@ -1247,8 +1247,9 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
-    "@wordpress/components": "npm:^28.2.0"
+    "@wordpress/components": "npm:^28.7.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
+    "@wordpress/element": "npm:^6.7.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
     autoprefixer: "npm:^10.4.20"
     copy-webpack-plugin: "npm:^10.2.4"
@@ -34442,7 +34443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.94.0":
+"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.91.0, webpack@npm:^5.94.0":
   version: 5.94.0
   resolution: "webpack@npm:5.94.0"
   dependencies:
