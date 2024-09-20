@@ -44,12 +44,23 @@
 		clear: both;
 		margin-bottom: 12px;
 
+		p {
+			position: relative;
+			overflow: hidden;
+			margin-bottom: 0;
+		}
+
 		svg {
 			float: left;
 			margin-right: 6px;
 			margin-top: -1px;
 			fill: var(--studio-gray-50);
 		}
+	}
+
+	.summary__content-indent {
+		margin-top: -20;
+		margin-left: 20px;
 	}
 
 	.stripe-logo {
