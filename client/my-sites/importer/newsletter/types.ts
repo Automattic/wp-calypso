@@ -11,7 +11,6 @@ export interface SubscribersStepProps {
 	status: StatusType;
 	engine: 'substack';
 	fromSite: QueryArgParsed;
-	isFetchingContent: boolean;
 	nextStepUrl: string;
 	selectedSite: SiteDetails;
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;

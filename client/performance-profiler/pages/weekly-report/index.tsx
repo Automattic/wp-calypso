@@ -83,7 +83,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 						{ args: [ siteUrl.host ], components: { strong: <strong /> } }
 					) }
 					ctaText={ translate( '← Back to speed test' ) }
-					ctaHref="/speed-test"
+					ctaHref={ `/speed-test-tool?url=${ url }&hash=${ hash }` }
 					ctaIcon="arrow-left"
 					secondaryMessage={ secondaryMessage }
 				/>

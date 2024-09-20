@@ -1,3 +1,5 @@
+import { Control, FieldErrors } from 'react-hook-form';
+
 export interface CredentialsFormData {
 	from_url: string;
 	username: string;
@@ -6,6 +8,7 @@ export interface CredentialsFormData {
 	migrationType: 'credentials' | 'backup';
 	notes: string;
 }
+
 export interface ApiFormData {
 	siteAddress: string;
 	username: string;
@@ -20,5 +23,22 @@ export interface ApiError {
 	message: string;
 	data: {
 		params?: Record< string, string >;
+    
+	};
+}
+
+export interface CredentialsFormFieldProps {
+	control: Control< CredentialsFormData >;
+	errors?: FieldErrors< CredentialsFormData >;
+}
+
+export interface MigrationError {
+	body: {
+		code: string;
+		message: string;
+		data: {
+			status: number;
+			params?: Record< string, string >;
+		};
 	};
 }

@@ -7,13 +7,19 @@
 		}
 	}
 
-	.card {
-		max-width: 500px;
-		padding: 2em;
+	&__form {
+		margin-bottom: 60px;
+	}
 
-		@media (max-width: $break-mobile) {
-			padding: 1.25em;
+	.site-migration-credentials__content,
+	.site-migration-credentials__error-banner {
+		margin: 0 auto 16px;
+		max-width: 500px;
+
+		@media (min-width: $break-mobile) {
+			margin-bottom: 16px;
 		}
+
 		hr {
 			margin-top: 1em;
 			background: var(--color-border-subtle);
@@ -120,7 +126,8 @@
 	}
 	.site-migration-credentials__error-banner {
 		border-left-color: var(--color-error);
-		&.card {
+
+		&.site-migration-credentials__content {
 			padding: 1rem;
 		}
 	}

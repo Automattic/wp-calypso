@@ -1,15 +1,11 @@
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { CredentialsFormData } from '../types';
+import { CredentialsFormFieldProps } from '../types';
 
-interface Props {
-	control: Control< CredentialsFormData >;
-}
-
-export const AccessMethodPicker: FC< Props > = ( { control } ) => {
+export const AccessMethodPicker: FC< CredentialsFormFieldProps > = ( { control } ) => {
 	const translate = useTranslate();
 
 	return (

@@ -1548,7 +1548,10 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'upgradePlanForBundledThemes';
 	}
 	// isWporgTheme is true for some free themes we offer, so we need to check the tier instead.
-	else if ( themeTier === 'community' && ! canInstallThemes ) {
+	else if (
+		( themeTier === 'community' || themeTier?.slug === 'community' ) &&
+		! canInstallThemes
+	) {
 		defaultOption = 'upgradePlanForDotOrgThemes';
 	} else {
 		defaultOption = 'activate';

@@ -1,10 +1,12 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
+import { EngineTypes } from './types';
 import { getImporterStatus } from './utils';
 
 function getStepTitle( importerStatus: StepStatus ) {
@@ -22,11 +24,15 @@ function getStepTitle( importerStatus: StepStatus ) {
 interface SummaryProps {
 	selectedSite: SiteDetails;
 	steps: Steps;
+	engine: EngineTypes;
 }
 
-export default function Summary( { steps, selectedSite }: SummaryProps ) {
+export default function Summary( { steps, selectedSite, engine }: SummaryProps ) {
+	const { resetPaidNewsletter } = useResetMutation();
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
+
+	const onButtonClick = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 
 	return (
 		<Card>
@@ -43,13 +49,20 @@ export default function Summary( { steps, selectedSite }: SummaryProps ) {
 			) }
 
 			<ImporterActionButtonContainer noSpacing>
-				<ImporterActionButton href={ '/settings/newsletter/' + selectedSite.slug } primary>
+				<ImporterActionButton
+					href={ '/settings/newsletter/' + selectedSite.slug }
+					onClick={ onButtonClick }
+					primary
+				>
 					Customize your newsletter
 				</ImporterActionButton>
-				<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
+				<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ onButtonClick }>
 					View content
 				</ImporterActionButton>
-				<ImporterActionButton href={ '/subscribers/' + selectedSite.slug }>
+				<ImporterActionButton
+					href={ '/subscribers/' + selectedSite.slug }
+					onClick={ onButtonClick }
+				>
 					Check subscribers
 				</ImporterActionButton>
 			</ImporterActionButtonContainer>

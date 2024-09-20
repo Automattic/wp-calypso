@@ -27,6 +27,10 @@ export function getSetpProgressSteps(
 	fromSite: string,
 	paidNewsletterData?: PaidNewsletterData
 ) {
+	const summaryStatus = getImporterStatus(
+		paidNewsletterData?.steps.content.status,
+		paidNewsletterData?.steps.subscribers.status
+	);
 	const result: ClickHandler[] = [
 		{
 			message: 'Content',
@@ -55,12 +59,7 @@ export function getSetpProgressSteps(
 		{
 			message: 'Summary',
 			onClick: noop,
-			indicator: getStepProgressIndicator(
-				getImporterStatus(
-					paidNewsletterData?.steps.content.status,
-					paidNewsletterData?.steps.subscribers.status
-				)
-			),
+			indicator: getStepProgressIndicator( summaryStatus === 'done' ? 'done' : 'initial' ),
 		},
 	];
 

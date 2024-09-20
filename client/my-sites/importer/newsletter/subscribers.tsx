@@ -9,7 +9,6 @@ export default function Subscribers( {
 	selectedSite,
 	fromSite,
 	status,
-	isFetchingContent,
 	siteSlug,
 	skipNextStep,
 	cardData,
@@ -35,7 +34,6 @@ export default function Subscribers( {
 			cardData={ cardData }
 			engine={ engine }
 			fromSite={ fromSite }
-			isFetchingContent={ isFetchingContent }
 			nextStepUrl={ nextStepUrl }
 			selectedSite={ selectedSite }
 			setAutoFetchData={ setAutoFetchData }

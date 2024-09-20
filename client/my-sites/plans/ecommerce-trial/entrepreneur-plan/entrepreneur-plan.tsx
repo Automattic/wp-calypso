@@ -159,7 +159,7 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 				<div>
 					{ plan.term } { plan.discountText && <span>{ plan.discountText }</span> }
 				</div>
-			),
+			 ) as unknown as string,
 		};
 	} );
 
@@ -203,6 +203,7 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 					className="period-select"
 					hideLabelFromVision
 					onChange={ onSelectChange }
+					label=""
 				/>
 			</div>
 			<Card>

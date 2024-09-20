@@ -32,7 +32,7 @@ const messages = {
 const { getByRole, getByLabelText, getByTestId, getByText, findByText } = screen;
 
 const continueButton = () => getByRole( 'button', { name: /Continue/ } );
-const siteAddressInput = () => getByLabelText( 'Site address' );
+const siteAddressInput = () => getByLabelText( 'Current site address' );
 const usernameInput = () => getByLabelText( 'WordPress admin username' );
 const passwordInput = () => getByLabelText( 'Password' );
 const backupOption = () => getByRole( 'radio', { name: 'Backup file' } );
@@ -41,7 +41,7 @@ const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /Skip, I need help providing access/ } );
+const skipButton = () => getByRole( 'button', { name: /I need help, please contact me/ } );
 
 const fillAllFields = async () => {
 	await userEvent.click( credentialsOption() );
