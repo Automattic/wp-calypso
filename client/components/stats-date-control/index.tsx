@@ -125,7 +125,8 @@ const StatsDateControl = ( {
 				<DateRange
 					selectedStartDate={ moment( dateRange.chartStart ) }
 					selectedEndDate={ moment( dateRange.chartEnd ) }
-					lastSelectableDate={ moment().toDate() }
+					lastSelectableDate={ moment() }
+					firstSelectableDate={ moment( '2010-01-01' ) }
 					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
 						startDate &&
 						endDate &&
