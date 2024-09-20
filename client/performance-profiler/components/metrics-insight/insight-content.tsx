@@ -43,18 +43,22 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 
 		if ( feedbackOpen ) {
 			return (
-				<div className="survey-form">
-					<div>{ translate( 'Thanks for the feedback! Tell us more about your experience' ) }</div>
-					<TextareaControl
-						className="feedback-textarea"
-						__nextHasNoMarginBottom
-						rows={ 4 }
-						onChange={ ( value ) => setUserFeedback( value ) }
-						value={ userFeedback }
-					/>
-					<Button variant="primary" onClick={ () => onSurveyClick( 'bad' ) }>
-						{ translate( 'Send feedback' ) }
-					</Button>
+				<div className="survey wrapped">
+					<div className="survey-form">
+						<div>
+							{ translate( 'Thanks for the feedback! Tell us more about your experience' ) }
+						</div>
+						<TextareaControl
+							className="feedback-textarea"
+							__nextHasNoMarginBottom
+							rows={ 4 }
+							onChange={ ( value ) => setUserFeedback( value ) }
+							value={ userFeedback }
+						/>
+						<Button variant="primary" onClick={ () => onSurveyClick( 'bad' ) }>
+							{ translate( 'Send feedback' ) }
+						</Button>
+					</div>
 				</div>
 			);
 		}

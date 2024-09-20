@@ -222,10 +222,13 @@ $blueberry-color: #3858e9;
 					align-items: center;
 					gap: 16px;
 					flex-wrap: wrap;
+
+					&.wrapped {
+						flex-basis: 100%;
+					}
 				}
 
 				.survey-form {
-					flex-basis: 100%;
 					display: flex;
 					flex-direction: column;
 					align-items: flex-start;
@@ -248,7 +251,6 @@ $blueberry-color: #3858e9;
 
 					.feedback-textarea {
 						width: 100%;
-						max-width: 400px;
 					}
 
 					textarea:focus,
