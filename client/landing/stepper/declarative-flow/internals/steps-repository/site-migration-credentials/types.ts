@@ -23,7 +23,6 @@ export interface ApiError {
 	message: string;
 	data: {
 		params?: Record< string, string >;
-    
 	};
 }
 
