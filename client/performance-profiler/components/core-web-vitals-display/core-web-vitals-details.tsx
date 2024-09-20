@@ -45,11 +45,12 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 
 	const { good, needsImprovement } = metricsTresholds[ activeTab ];
 
-	const formatUnit = ( value: number ) => {
+	const formatUnit = ( value: number | string ) => {
+		const num = parseFloat( value as string );
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return +( value / 1000 ).toFixed( 2 );
+			return +( num / 1000 ).toFixed( 2 );
 		}
-		return value;
+		return num;
 	};
 
 	const displayUnit = () => {
