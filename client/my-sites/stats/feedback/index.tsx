@@ -95,6 +95,15 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 					<span className="stats-feedback-content__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
+				<Button
+					variant="secondary"
+					onClick={ () => {
+						clickHandler( 'present-panel' );
+					} }
+				>
+					<span className="stats-feedback-content__emoji">🐞</span>
+					Show panel
+				</Button>
 			</div>
 		</div>
 	);
@@ -229,6 +238,9 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				} else {
 					presentPlugInPage();
 				}
+				break;
+			case 'present-panel':
+				toggleFloatingPanel();
 				break;
 			// Ignore other cases.
 		}
