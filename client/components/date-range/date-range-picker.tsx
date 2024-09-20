@@ -12,11 +12,7 @@ interface DateRangePickerProps {
 	selectedStartDate: MomentOrNull;
 	selectedEndDate: MomentOrNull;
 	moment: typeof moment;
-	onDateRangeChange?: (
-		startDate: MomentOrNull,
-		endDate: MomentOrNull,
-		dateClicked?: Moment
-	) => void;
+	onDateRangeChange?: ( startDate: MomentOrNull, endDate: MomentOrNull ) => void;
 	focusedMonth?: Date;
 	numberOfMonths?: number;
 	useArrowNavigation?: boolean;
@@ -104,7 +100,7 @@ const DateRangePicker = ( {
 		const newStartDate = ! newRange.from ? NO_DATE_SELECTED_VALUE : newRange.from;
 		const newEndDate = ! newRange.to ? NO_DATE_SELECTED_VALUE : newRange.to;
 
-		onDateRangeChange( newStartDate, newEndDate, date );
+		onDateRangeChange( newStartDate, newEndDate );
 	};
 
 	/**
