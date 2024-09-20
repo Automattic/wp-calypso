@@ -18,7 +18,7 @@ import './style.scss';
 
 interface ModalProps {
 	siteId: number;
-	onClose: ( isAfterSubmission: boolean ) => void;
+	onClose: () => void;
 }
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
@@ -54,9 +54,13 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		useSubmitProductFeedback( siteId );
 
 	const handleClose = useCallback(
-		( isAfterSubmission: boolean ) => {
+		( isDirectClose: boolean = false ) => {
 			setTimeout( () => {
-				onClose( isAfterSubmission );
+				onClose();
+
+				if ( isDirectClose ) {
+					trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
+				}
 			}, 200 );
 		},
 		[ onClose ]
@@ -67,16 +71,16 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			return;
 		}
 
-		trackStatsAnalyticsEvent( 'stats_feedback_action_submit_form', {
-			feedback: content,
-		} );
-
 		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
 		submitFeedback( {
 			source_url: sourceUrl,
 			product_name: 'Jetpack Stats',
 			feedback: content,
 			is_testing: false,
+		} );
+
+		trackStatsAnalyticsEvent( 'stats_feedback_action_submit_form', {
+			feedback: content,
 		} );
 	}, [ content, submitFeedback ] );
 
@@ -94,7 +98,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				refetchNotices();
 			} );
 
-			handleClose( true );
+			handleClose();
 		}
 	}, [
 		dispatch,
@@ -110,14 +114,14 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 		<Modal
 			className="stats-feedback-modal"
 			onRequestClose={ () => {
-				handleClose( false );
+				handleClose( true );
 			} }
 			__experimentalHideHeader
 		>
 			<Button
 				className="stats-feedback-modal__close-button"
 				onClick={ () => {
-					handleClose( false );
+					handleClose( true );
 				} }
 				icon={ close }
 				label={ translate( 'Close' ) }

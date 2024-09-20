@@ -181,14 +181,8 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	};
 
-	const onModalClose = ( isAfterSubmission: boolean ) => {
+	const onModalClose = () => {
 		setIsOpen( false );
-
-		if ( isAfterSubmission ) {
-			trackStatsAnalyticsEvent( 'stats_feedback_action_close_form_modal_after_submission' );
-		} else {
-			trackStatsAnalyticsEvent( 'stats_feedback_action_close_form_modal' );
-		}
 	};
 
 	if ( ! supportCommercialUse ) {
