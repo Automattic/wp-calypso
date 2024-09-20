@@ -213,11 +213,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		} );
 	}
 
-	const presentPlugInPage = () => {
-		setIsFloatingPanelOpen( false );
-		window.open( FEEDBACK_LEAVE_REVIEW_URL );
-	};
-
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
@@ -233,11 +228,9 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				}
 				break;
 			case ACTION_LEAVE_REVIEW:
-				if ( debug ) {
-					toggleFloatingPanel();
-				} else {
-					presentPlugInPage();
-				}
+				dismissFloatingPanel().then( () => {
+					window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				} );
 				break;
 			case 'present-panel':
 				toggleFloatingPanel();
