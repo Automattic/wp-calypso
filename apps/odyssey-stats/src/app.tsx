@@ -47,7 +47,7 @@ async function AppBoot() {
 		},
 	};
 
-	const isSmiple = isSimpleSite( initialState, siteId );
+	const isSimple = isSimpleSite( initialState, siteId );
 
 	const queryClient = new QueryClient();
 
@@ -73,7 +73,7 @@ async function AppBoot() {
 	}
 
 	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug, isSmiple ).then( () => {
+	setLocale( localeSlug, isSimple ).then( () => {
 		registerStatsPages( window.location.pathname + window.location.search );
 
 		// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
