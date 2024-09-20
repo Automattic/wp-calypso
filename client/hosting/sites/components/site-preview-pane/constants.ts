@@ -17,5 +17,5 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_HOSTING_CONFIG ]: 'hosting-config/:site',
 	[ DOTCOM_HOSTING_FEATURES ]: 'hosting-features/:site',
 	[ DOTCOM_STAGING_SITE ]: 'staging-site/:site',
-	[ DOTCOM_SITE_PERFORMANCE ]: 'site-performance/:site',
+	[ DOTCOM_SITE_PERFORMANCE ]: 'sites/performance/:site',
 };
