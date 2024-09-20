@@ -167,6 +167,15 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
 
+	// Wrap hibernation delay callback for debugging.
+	const debug = true;
+	const updateFeedbackPanelHibernationDelayWithDebug = () => {
+		if ( debug ) {
+			return;
+		}
+		updateFeedbackPanelHibernationDelay();
+	};
+
 	useEffect( () => {
 		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
@@ -190,7 +199,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissPanelWithDelay();
-				updateFeedbackPanelHibernationDelay();
+				updateFeedbackPanelHibernationDelayWithDebug();
 				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
 			case ACTION_LEAVE_REVIEW:
