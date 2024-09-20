@@ -1,11 +1,13 @@
 import { Dialog } from '@automattic/components';
-import Search from '@automattic/search';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 import headerImage from 'calypso/assets/images/illustrations/business-tools.png';
+import Search from 'calypso/components/search';
+import useAiSuggestionsMutation from './use-ai-suggestions';
 
 const HeaderImage = styled.img`
 	margin: 32px auto;
@@ -51,10 +53,11 @@ export const ButtonContainer = styled.div`
 	margin: 48px 0 0;
 	box-shadow: 0 0 70px rgba( 0, 0, 0, 0.1 );
 
-	.search-component {
+	.search {
 		border: 1px solid #a7aaad;
 		border-radius: 4px;
 		overflow: hidden;
+		margin-bottom: 0;
 	}
 	border-top: solid 1px rgba( 0, 0, 0, 0.15 );
 	box-shadow: 0 0 70px rgba( 0, 0, 0, 0.1 );
@@ -118,29 +121,47 @@ export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 export default function AIAssistantModal( props: ModalContainerProps ) {
 	const { isModalOpen } = props;
 	const translate = useTranslate();
+	const [ prompt, setPrompt ] = useState( '' );
+	const [ results, setResults ] = useState( [] );
+	const [ isLoading, setIsLoading ] = useState( false );
+	const { mutate: aiSuggestions } = useAiSuggestionsMutation();
 
 	const modalWidth = () => {
 		return '639px';
 	};
 
-	const onSearch = () => {
-		//TODO: Implement search
+	const onSearch = ( newPrompt?: string ) => {
+		const term = newPrompt || prompt;
+		if ( term ) {
+			setIsLoading( true );
+			setResults( [] );
+			aiSuggestions(
+				{ term },
+				{
+					onSuccess: ( value ) => {
+						setResults( value );
+						setIsLoading( false );
+					},
+				}
+			);
+		}
 	};
 
-	const handleButtonClick = () => {
-		// Call onSearch or perform the search action here
+	const onSearchChange = ( newPrompt: string ) => {
+		setPrompt( newPrompt );
 	};
 
 	const searchProps = {
-		delaySearch: true,
-		delayTimeout: 1000,
+		searchMode: 'on-enter' as const,
 		describedBy: 'step-header',
 		dir: 'ltr' as const,
 		placeholder: translate( 'Type in your prompt.' ),
 		minLength: 2,
 		maxLength: 60,
 		hideOpenIcon: true,
-		onSearch: onSearch,
+		onSearch,
+		onSearchChange,
+		onBlur: onSearchChange,
 	};
 	return (
 		<Dialog
@@ -173,18 +194,32 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				` }
 			/>
 			<DialogContainer>
-				<HeaderImage src={ headerImage } />
-				<Heading shrinkMobileFont>{ translate( 'Idea to online at the speed of wow.' ) }</Heading>
-				<SubHeading>
-					{ translate(
-						'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
-					) }
-				</SubHeading>
+				{ ! results.length && isLoading && <h1>loading</h1> }
+				{ ! results.length && ! isLoading && (
+					<>
+						<HeaderImage src={ headerImage } />
+						<Heading shrinkMobileFont>
+							{ translate( 'Idea to online at the speed of wow.' ) }
+						</Heading>
+						<SubHeading>
+							{ translate(
+								'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
+							) }
+						</SubHeading>
+					</>
+				) }
+				{ results.length > 0 && (
+					<>
+						{ results.map( ( result, index ) => (
+							<p key={ index }>{ JSON.stringify( result ) }</p>
+						) ) }
+					</>
+				) }
 			</DialogContainer>
 			<ButtonContainer>
 				<Row>
 					<Search { ...searchProps } />
-					<SearchButton onClick={ handleButtonClick }>
+					<SearchButton onClick={ () => onSearch( prompt ) }>
 						<img src={ AIassistantIllustration } width={ 24 } alt={ translate( 'Submit' ) } />
 					</SearchButton>
 				</Row>
