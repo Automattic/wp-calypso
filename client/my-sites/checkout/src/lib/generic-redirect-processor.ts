@@ -76,10 +76,10 @@ export default async function genericRedirectProcessor(
 
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( ( response?: WPCOMTransactionEndpointResponse ) => {
-			if ( ! response?.redirect_url ) {
-				throw new Error( 'Error during transaction' );
+			if ( ! response || ! ( 'redirect_url' in response ) || ! response.redirect_url ) {
+				throw new Error( 'Error during transaction: no redirect URL' );
 			}
-			return makeRedirectResponse( response?.redirect_url );
+			return makeRedirectResponse( response.redirect_url );
 		} )
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
