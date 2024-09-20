@@ -376,6 +376,16 @@ const siteMigration: Flow = {
 						);
 
 						urlQueryParams.delete( 'showModal' );
+						const extraQueryParams: Record< string, string > = {
+							flow_name: FLOW_NAME,
+						};
+
+						if (
+							providedDependencies?.sendIntentWhenCreatingTrial &&
+							providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
+						) {
+							extraQueryParams[ 'hosting_intent' ] = HOSTING_INTENT_MIGRATE;
+						}
 						goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
@@ -385,11 +395,7 @@ const siteMigration: Flow = {
 							cancelDestination: `/setup/${ flowPath }/${
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
 							}?${ urlQueryParams.toString() }`,
-							extraQueryParams:
-								providedDependencies?.sendIntentWhenCreatingTrial &&
-								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
-									? { hosting_intent: HOSTING_INTENT_MIGRATE }
-									: {},
+							extraQueryParams,
 						} );
 						return;
 					}

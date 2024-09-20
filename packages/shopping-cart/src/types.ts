@@ -693,6 +693,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 *
 	 */
 	hosting_intent?: string;
+	flow_name?: string;
 }
 
 export interface GSuiteProductUser {

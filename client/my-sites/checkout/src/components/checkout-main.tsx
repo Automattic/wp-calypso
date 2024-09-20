@@ -106,6 +106,7 @@ export interface CheckoutMainProps {
 	fromSiteSlug?: string;
 	adminUrl?: string;
 	hostingIntent?: string | undefined;
+	flowName?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -136,6 +137,7 @@ export default function CheckoutMain( {
 	fromSiteSlug,
 	adminUrl,
 	hostingIntent,
+	flowName,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -216,6 +218,7 @@ export default function CheckoutMain( {
 		source: productSourceFromUrl,
 		isGiftPurchase,
 		hostingIntent,
+		flowName,
 	} );
 
 	const cartKey = useCartKey();

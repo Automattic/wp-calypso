@@ -53,6 +53,7 @@ export default function usePrepareProductsForCart( {
 	source,
 	isGiftPurchase,
 	hostingIntent,
+	flowName,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -68,6 +69,7 @@ export default function usePrepareProductsForCart( {
 	source?: string;
 	isGiftPurchase?: boolean;
 	hostingIntent?: string | undefined;
+	flowName?: string | undefined;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -121,6 +123,7 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken,
 		source,
 		hostingIntent,
+		flowName,
 	} );
 	useAddProductFromBillingIntent( {
 		intentId: productAliasFromUrl,
@@ -454,6 +457,7 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken,
 	source,
 	hostingIntent,
+	flowName,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -465,6 +469,7 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	hostingIntent?: string | undefined;
+	flowName?: string | undefined;
 } ) {
 	const translate = useTranslate();
 
@@ -500,6 +505,7 @@ function useAddProductFromSlug( {
 				jetpackPurchaseToken,
 				source,
 				hostingIntent,
+				flowName,
 			} )
 		);
 
@@ -654,6 +660,7 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken,
 	source,
 	hostingIntent,
+	flowName,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -662,6 +669,7 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	hostingIntent?: string | undefined;
+	flowName?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -692,6 +700,7 @@ function createItemToAddToCart( {
 			context: 'calypstore',
 			source: source ?? undefined,
 			hosting_intent: hostingIntent,
+			flow_name: flowName,
 		},
 		...( cartMeta ? { meta: cartMeta } : {} ),
 	} );
