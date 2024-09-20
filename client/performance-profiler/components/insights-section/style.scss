@@ -240,9 +240,9 @@ $blueberry-color: #3858e9;
 							background-color: darken($blueberry-color, 10%);
 						}
 
-						&:hover {
-							color: darken($blueberry-color, 10%);
-							text-decoration: underline;
+						&:focus:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+							box-shadow: none;
 						}
 					}
 
