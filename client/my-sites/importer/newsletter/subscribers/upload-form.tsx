@@ -74,7 +74,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 				<div className="subscriber-upload-form__in-progress">
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
 					<p>Uploading...</p>
-					<ProgressBar className="subscriber-upload-form__progress-bar" />
+					<ProgressBar className="is-larger-progress-bar" />
 				</div>
 			</div>
 		);
