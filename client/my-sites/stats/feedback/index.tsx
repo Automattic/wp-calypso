@@ -184,6 +184,11 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
+	const presentPlugInPage = () => {
+		setIsFloatingPanelOpen( false );
+		window.open( FEEDBACK_LEAVE_REVIEW_URL );
+	};
+
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
 		setTimeout( () => {
@@ -203,8 +208,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
 			case ACTION_LEAVE_REVIEW:
-				setIsFloatingPanelOpen( false );
-				window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				presentPlugInPage();
 				break;
 			// Ignore other cases.
 		}
