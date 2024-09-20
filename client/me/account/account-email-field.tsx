@@ -178,10 +178,8 @@ const AccountEmailField = ( {
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const isEmailVerifified = useSelector( isCurrentUserEmailVerified );
 	const inputRef = useRef< FormTextInput >( null );
-
-	// TODO - likely move this to redux state so we can set it from the dialog modal.
 	const [ isLockedInput, setIsLockedInput ] = useState( true );
-
+	const [ emailSettingToShow, setEmailSettingToShow ] = useState( 'user_email' );
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -193,12 +191,25 @@ const AccountEmailField = ( {
 		};
 	}, [ dispatch ] );
 
-	const emailSettingToShow =
-		isEmailChangePending &&
-		! unsavedUserSettings?.user_email &&
-		unsavedUserSettings?.user_email !== ''
-			? 'new_user_email'
-			: 'user_email';
+	// If the isEmailChangePending updates to true, show the new email address field. This may
+	// happen just after initial load, as the selector may return null at first. Or this may happen
+	// after the user saves the form with an updated email address.
+	useEffect( () => {
+		if ( isEmailChangePending ) {
+			setEmailSettingToShow( 'new_user_email' );
+		}
+	}, [ isEmailChangePending ] );
+
+	// Once the user starts editing, ensure we show the user_email field since that is the one being
+	// updated in unsavedUserSettings. We don't want this to reset when the unsaved change renders falsy, as we want to
+	// both support the case of the empty string as well as when the unsaved settings are reset for
+	// having the same value as the saved settigns (user types in current user_email and unsaved
+	// variation gets reset to null).
+	useEffect( () => {
+		if ( unsavedUserSettings.user_email ) {
+			setEmailSettingToShow( 'user_email' );
+		}
+	}, [ unsavedUserSettings.user_email, setEmailSettingToShow ] );
 
 	const emailAddress = getUserSetting( {
 		settingName: emailSettingToShow,
