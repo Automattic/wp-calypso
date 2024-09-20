@@ -104,7 +104,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			if ( availableFlows[ flow ] ) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
 					if ( flowExport.default.isSignupFlow ) {
-						recordSignupComplete();
+						recordSignupComplete( { ...destinationState } );
 					}
 				} );
 			}

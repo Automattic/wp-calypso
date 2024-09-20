@@ -11,11 +11,12 @@ import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import FileImporter from './content-upload/file-importer';
+import { EngineTypes } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 interface ContentProps {
 	nextStepUrl: string;
-	engine: string;
+	engine: EngineTypes;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;

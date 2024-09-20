@@ -109,14 +109,14 @@ function NoPurchasesMessage() {
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 
 	let url;
-	if ( hasJetpackPartnerAccess ) {
+	if ( ! isJetpackCloud() ) {
+		url = selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
+	} else if ( hasJetpackPartnerAccess ) {
 		url = selectedSiteId
 			? `/partner-portal/issue-license?site_id=${ selectedSiteId }`
 			: '/partner-portal/issue-license';
-	} else if ( isJetpackCloud() ) {
-		url = selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing';
 	} else {
-		url = selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
+		url = selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing';
 	}
 
 	return isJetpackCloud() ? (

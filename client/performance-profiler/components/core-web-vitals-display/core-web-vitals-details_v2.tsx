@@ -1,5 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
-import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
+import {
+	Metrics,
+	PerformanceMetricsHistory,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	metricsNames,
@@ -7,6 +11,7 @@ import {
 	mapThresholdsToStatus,
 	metricValuations,
 	displayValue,
+	filterRecommendations,
 } from 'calypso/performance-profiler/utils/metrics';
 import HistoryChart from '../charts/history-chart';
 import { StatusIndicator } from '../status-indicator';
@@ -15,11 +20,17 @@ import { StatusSection } from '../status-section';
 type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	activeTab: Metrics | null;
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	activeTab,
 	history,
+	audits,
+	recommendationsRef,
+	onRecommendationsFilterChange,
 	...metrics
 } ) => {
 	const translate = useTranslate();
@@ -84,6 +95,10 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 		};
 	} );
 
+	const numberOfAuditsForMetric = Object.keys( audits ).filter( ( key ) =>
+		filterRecommendations( activeTab === 'overall' ? 'all' : activeTab, audits[ key ] )
+	).length;
+
 	const status = mapThresholdsToStatus( activeTab as Metrics, value );
 	const statusClass = status === 'needsImprovement' ? 'needs-improvement' : status;
 	const isPerformanceScoreSelected = activeTab === 'overall';
@@ -143,7 +158,13 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 							) }
 						</p>
 					</div>
-					<StatusSection value={ status } recommendationsQuantity={ 3 } />
+					<StatusSection
+						activeTab={ activeTab }
+						recommendationsRef={ recommendationsRef }
+						value={ status }
+						onRecommendationsFilterChange={ onRecommendationsFilterChange }
+						recommendationsQuantity={ numberOfAuditsForMetric }
+					/>
 				</div>
 				<div className="core-web-vitals-display__ranges">
 					<div className="range">

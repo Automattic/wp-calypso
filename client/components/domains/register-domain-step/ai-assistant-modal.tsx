@@ -1,5 +1,4 @@
 import { Dialog } from '@automattic/components';
-import Search from '@automattic/search';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -7,6 +6,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 import headerImage from 'calypso/assets/images/illustrations/business-tools.png';
+import Search from 'calypso/components/search';
+import useAiSuggestionsMutation from './use-ai-suggestions';
 
 const HeaderImage = styled.img`
 	margin: 32px auto;
@@ -15,6 +16,11 @@ const HeaderImage = styled.img`
 
 export const DialogContainer = styled.div`
 	padding: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 0 48px;
 `;
 
 export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
@@ -47,11 +53,19 @@ export const ButtonContainer = styled.div`
 	margin: 48px 0 0;
 	box-shadow: 0 0 70px rgba( 0, 0, 0, 0.1 );
 
-	.search-component {
+	.search {
 		border: 1px solid #a7aaad;
 		border-radius: 4px;
 		overflow: hidden;
+		margin-bottom: 0;
 	}
+	border-top: solid 1px rgba( 0, 0, 0, 0.15 );
+	box-shadow: 0 0 70px rgba( 0, 0, 0, 0.1 );
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
 `;
 
 export const Row = styled.div`
@@ -102,8 +116,8 @@ type ModalContainerProps = {
 };
 
 type SearchProps = {
-	delaySearch: boolean;
-	delayTimeout: number;
+	delaySearch?: boolean;
+	delayTimeout?: number;
 	describedBy: string;
 	dir: 'ltr' | 'rtl' | undefined;
 	inputLabel?: string;
@@ -121,7 +135,7 @@ const Loading = () => {
 	const translate = useTranslate();
 	return (
 		<div>
-			{ translate( 'Hold on tight ... your request is being processed by our AI overlords' ) }
+			{ translate( 'Hold on tight … your request is being processed by our AI overlords' ) }
 		</div>
 	);
 };
@@ -159,72 +173,90 @@ const DomainResults = ( {
 export default function AIAssistantModal( props: ModalContainerProps ) {
 	const { isModalOpen } = props;
 	const translate = useTranslate();
-	const [ isLoading, setLoading ] = useState( false );
-	const [ domainResults, setDomainResults ] = useState( [ {} ] );
+	const [ prompt, setPrompt ] = useState( '' );
+	const [ results, setResults ] = useState( [] );
+	const [ isLoading, setIsLoading ] = useState( false );
+	const { mutate: aiSuggestions } = useAiSuggestionsMutation();
 
 	const modalWidth = () => {
 		return '639px';
 	};
 
-	const onSearch = () => {
-		//TODO: Implement search
+	const onSearch = ( newPrompt?: string ) => {
+		const term = newPrompt || prompt;
+		if ( term ) {
+			setIsLoading( true );
+			setResults( [] );
+			aiSuggestions(
+				{ term },
+				{
+					onSuccess: ( value ) => {
+						setResults( value );
+						setIsLoading( false );
+					},
+				}
+			);
+		}
 	};
 
-	const handleButtonClick = () => {
-		// Call onSearch or perform the search action here
-		setLoading( true );
-		setTimeout( () => {
-			setLoading( false );
-			setDomainResults( [
-				{
-					domain_name: 'barnyardbazaar.com',
-					blog_name: 'barnyard bazaar',
-					relevance: 0.99,
-					supports_privacy: true,
-					vendor: 'donuts',
-					match_reasons: [ 'tld-common', 'exact-match' ],
-					max_reg_years: 10,
-					multi_year_reg_allowed: true,
-					product_id: 76,
-					product_slug: 'dotblog_domain',
-					cost: '\u20b91,809.00',
-					renew_cost: '\u20b91,809.00',
-					renew_raw_price: 1809,
-					raw_price: 1809,
-					currency_code: 'INR',
-					sale_cost: 180.9,
-				},
-				{
-					domain_name: 'chickenchase.co.uk',
-					blog_name: 'chicken chase',
-					relevance: 1,
-					supports_privacy: true,
-					vendor: 'donuts',
-					match_reasons: [ 'tld-common', 'similar-match' ],
-					max_reg_years: 10,
-					multi_year_reg_allowed: true,
-					product_id: 6,
-					product_slug: 'domain_reg',
-					cost: '\u20b91,086.00',
-					renew_cost: '\u20b91,086.00',
-					renew_raw_price: 1086,
-					raw_price: 1086,
-					currency_code: 'INR',
-				},
-			] );
-		}, 3000 );
+	// const handleButtonClick = () => {
+	// 	// Call onSearch or perform the search action here
+	// 	setLoading( true );
+	// 	setTimeout( () => {
+	// 		setLoading( false );
+	// 		setDomainResults( [
+	// 			{
+	// 				domain_name: 'barnyardbazaar.com',
+	// 				blog_name: 'barnyard bazaar',
+	// 				relevance: 0.99,
+	// 				supports_privacy: true,
+	// 				vendor: 'donuts',
+	// 				match_reasons: [ 'tld-common', 'exact-match' ],
+	// 				max_reg_years: 10,
+	// 				multi_year_reg_allowed: true,
+	// 				product_id: 76,
+	// 				product_slug: 'dotblog_domain',
+	// 				cost: '\u20b91,809.00',
+	// 				renew_cost: '\u20b91,809.00',
+	// 				renew_raw_price: 1809,
+	// 				raw_price: 1809,
+	// 				currency_code: 'INR',
+	// 				sale_cost: 180.9,
+	// 			},
+	// 			{
+	// 				domain_name: 'chickenchase.co.uk',
+	// 				blog_name: 'chicken chase',
+	// 				relevance: 1,
+	// 				supports_privacy: true,
+	// 				vendor: 'donuts',
+	// 				match_reasons: [ 'tld-common', 'similar-match' ],
+	// 				max_reg_years: 10,
+	// 				multi_year_reg_allowed: true,
+	// 				product_id: 6,
+	// 				product_slug: 'domain_reg',
+	// 				cost: '\u20b91,086.00',
+	// 				renew_cost: '\u20b91,086.00',
+	// 				renew_raw_price: 1086,
+	// 				raw_price: 1086,
+	// 				currency_code: 'INR',
+	// 			},
+	// 		] );
+	// 	}, 3000 );
+	const onSearchChange = ( newPrompt: string ) => {
+		setPrompt( newPrompt );
 	};
 
 	const searchProps = {
-		delaySearch: true,
-		delayTimeout: 1000,
+		searchMode: 'on-enter' as const,
 		describedBy: 'step-header',
 		dir: 'ltr' as const,
 		placeholder: translate( 'Type in your prompt.' ),
 		minLength: 2,
 		maxLength: 60,
 		hideOpenIcon: true,
-		onSearch: onSearch,
+		onSearch,
+		onSearchChange,
+		onBlur: onSearchChange,
 	};
 	return (
 		<Dialog
@@ -240,20 +272,28 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				styles={ css`
 					.ai-assistant-modal .dialog__content {
 						padding: 0;
+						height: 100%;
+						position: relative;
+						display: flex;
+						flex-direction: column;
 					}
+
 					.dialog__backdrop.is-full-screen {
 						background-color: rgba( 0, 0, 0, 0.6 );
 					}
-					.ReactModal__Content--after-open.dialog.card {
+					.ai-assistant-modal.dialog.card {
 						border-radius: 4px;
 						width: ${ modalWidth() };
+						height: 100%;
 					}
 				` }
 			/>
 			<DialogContainer>
-				{ domainResults && <DomainResults searchProps={ searchProps } isLoading={ isLoading } /> }
+				{ results.length > 0 && (
+					<DomainResults searchProps={ searchProps } isLoading={ isLoading } />
+				) }
 
-				{ ! domainResults && (
+				{ results.length === 0 && (
 					<>
 						<HeaderImage src={ headerImage } />
 						<Heading id="plan-upsell-modal-title" shrinkMobileFont>
@@ -265,37 +305,17 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 							) }
 						</SubHeading>
 						{ isLoading && <Loading /> }
-
-						<ButtonContainer>
-							<RowWithBorder></RowWithBorder>
-							<Row>
-								<Search { ...searchProps }></Search>
-							</Row>
-						</ButtonContainer>
-					</>
-				) }
-				{ ! domainResults && (
-					<>
-						<HeaderImage src={ headerImage } />
-						<Heading shrinkMobileFont>
-							{ translate( 'Idea to online at the speed of wow.' ) }
-						</Heading>
-						<SubHeading>
-							{ translate(
-								'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
-							) }
-						</SubHeading>
-						<ButtonContainer>
-							<Row>
-								<Search { ...searchProps } />
-								<SearchButton onClick={ handleButtonClick }>
-									<img src={ AIassistantIllustration } width={ 24 } alt={ translate( 'Submit' ) } />
-								</SearchButton>
-							</Row>
-						</ButtonContainer>
 					</>
 				) }
 			</DialogContainer>
+			<ButtonContainer>
+				<Row>
+					<Search { ...searchProps } />
+					<SearchButton onClick={ () => onSearch( prompt ) }>
+						<img src={ AIassistantIllustration } width={ 24 } alt={ translate( 'Submit' ) } />
+					</SearchButton>
+				</Row>
+			</ButtonContainer>
 		</Dialog>
 	);
 }
