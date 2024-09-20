@@ -14,14 +14,14 @@ const DATERANGE_PERIOD = {
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
-	onShortcutClick, // for tracking shortcut clicks
+	onShortcutClick, // Optional callback function for tracking shortcut clicks
 	locked = false,
 	startDate,
 	endDate,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
-	onShortcutClick?: ( shortcutId: string ) => void; // Optional tracking function
+	onShortcutClick?: ( shortcutId: string ) => void;
 	locked?: boolean;
 	startDate?: Moment;
 	endDate?: Moment;
