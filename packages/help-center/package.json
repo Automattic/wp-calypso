@@ -50,7 +50,7 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-backgrounds": "^7.6.19",
+		"@storybook/addon-backgrounds": "^7.6.20",
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
