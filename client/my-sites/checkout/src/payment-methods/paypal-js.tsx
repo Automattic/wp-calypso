@@ -35,7 +35,13 @@ function PayPalLabel() {
 	);
 }
 
-function PayPalSubmitButton() {
+function PayPalSubmitButton( {
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+} ) {
 	const togglePaymentMethod = useTogglePaymentMethod();
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
 	useEffect( () => {
@@ -48,11 +54,32 @@ function PayPalSubmitButton() {
 		return <div>Loading</div>;
 	}
 
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; PayPalSubmitButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
+
 	const createOrder: PayPalButtonsComponentProps[ 'createOrder' ] = () => {
-		// FIXME: call wpcom API endpoint to create order for WPCOM and PayPal
+		const payPalPromise = new Promise( () => {
+			// Intentionally do not resolve yet. We have to do this so we can
+			// use the composite-checkout transaction system (the `onClick`
+			// handler) to call the transactions endpoint and then eventually
+			// return here to trigger the PayPal popup which happens when this
+			// Promise resolves with the PayPal order ID.
+		} );
+		// FIXME: make a payment processor function which calls a wpcom API
+		// endpoint to create the order, then resolves this promise with the
+		// PayPal order ID.
+		onClick( { payPalPromise } );
+		return payPalPromise;
 	};
 	return (
 		<PayPalButtons
+			disabled={ disabled }
 			style={ { layout: 'horizontal' } }
 			fundingSource="paypal"
 			createOrder={ createOrder }
