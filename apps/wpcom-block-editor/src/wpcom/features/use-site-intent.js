@@ -6,7 +6,7 @@ const useSiteIntent = () => {
 	// permissions changes as it requires 'manage_options' to read
 	// https://github.com/Automattic/jetpack/blob/e135711f9a130946dae1bca6c9c0967350331067/projects/packages/jetpack-mu-wpcom/src/features/wpcom-endpoints/class-wpcom-rest-api-v2-endpoint-launchpad.php#L121.
 	return {
-		siteIntent: window.Jetpack_LaunchpadSaveModal?.siteIntentOption,
+		siteIntent: window.launchpadOptions?.siteIntentOption,
 		siteIntentFetched: true,
 	};
 };

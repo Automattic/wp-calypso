@@ -17,6 +17,7 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	recommendationsRef: React.RefObject< HTMLDivElement > | null;
 	showV2?: boolean;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 const MetricTabBarV2 = lazy( () => import( '../metric-tab-bar/metric-tab-bar-v2' ) );

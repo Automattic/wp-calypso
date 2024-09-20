@@ -115,8 +115,60 @@ type ModalContainerProps = {
 	onClose: () => void;
 };
 
+type SearchProps = {
+	delaySearch?: boolean;
+	delayTimeout?: number;
+	describedBy: string;
+	dir: 'ltr' | 'rtl' | undefined;
+	inputLabel?: string;
+	minLength: number;
+	maxLength: number;
+	onSearch: () => void;
+	isReskinned?: boolean;
+	childrenBeforeCloseButton?: React.ReactNode;
+};
+
 // See p2-pbxNRc-2Ri#comment-4703 for more context
 export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
+
+const Loading = () => {
+	const translate = useTranslate();
+	return (
+		<div>
+			{ translate( 'Hold on tight … your request is being processed by our AI overlords' ) }
+		</div>
+	);
+};
+
+const DomainResults = ( {
+	searchProps,
+	isLoading,
+}: {
+	searchProps: SearchProps;
+	isLoading: boolean;
+} ) => {
+	const translate = useTranslate();
+	return (
+		<>
+			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
+				{ translate( 'Idea to online at the speed of wow.' ) }
+			</Heading>
+			<SubHeading id="plan-upsell-modal-description">
+				{ translate(
+					'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
+				) }
+			</SubHeading>
+			{ isLoading && <Loading /> }
+
+			<ButtonContainer>
+				<RowWithBorder></RowWithBorder>
+				<Row>
+					<Search { ...searchProps }></Search>
+				</Row>
+			</ButtonContainer>
+		</>
+	);
+};
 
 export default function AIAssistantModal( props: ModalContainerProps ) {
 	const { isModalOpen } = props;
@@ -147,6 +199,49 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		}
 	};
 
+	// const handleButtonClick = () => {
+	// 	// Call onSearch or perform the search action here
+	// 	setLoading( true );
+	// 	setTimeout( () => {
+	// 		setLoading( false );
+	// 		setDomainResults( [
+	// 			{
+	// 				domain_name: 'barnyardbazaar.com',
+	// 				blog_name: 'barnyard bazaar',
+	// 				relevance: 0.99,
+	// 				supports_privacy: true,
+	// 				vendor: 'donuts',
+	// 				match_reasons: [ 'tld-common', 'exact-match' ],
+	// 				max_reg_years: 10,
+	// 				multi_year_reg_allowed: true,
+	// 				product_id: 76,
+	// 				product_slug: 'dotblog_domain',
+	// 				cost: '\u20b91,809.00',
+	// 				renew_cost: '\u20b91,809.00',
+	// 				renew_raw_price: 1809,
+	// 				raw_price: 1809,
+	// 				currency_code: 'INR',
+	// 				sale_cost: 180.9,
+	// 			},
+	// 			{
+	// 				domain_name: 'chickenchase.co.uk',
+	// 				blog_name: 'chicken chase',
+	// 				relevance: 1,
+	// 				supports_privacy: true,
+	// 				vendor: 'donuts',
+	// 				match_reasons: [ 'tld-common', 'similar-match' ],
+	// 				max_reg_years: 10,
+	// 				multi_year_reg_allowed: true,
+	// 				product_id: 6,
+	// 				product_slug: 'domain_reg',
+	// 				cost: '\u20b91,086.00',
+	// 				renew_cost: '\u20b91,086.00',
+	// 				renew_raw_price: 1086,
+	// 				raw_price: 1086,
+	// 				currency_code: 'INR',
+	// 			},
+	// 		] );
+	// 	}, 3000 );
 	const onSearchChange = ( newPrompt: string ) => {
 		setPrompt( newPrompt );
 	};
@@ -194,25 +289,22 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				` }
 			/>
 			<DialogContainer>
-				{ ! results.length && isLoading && <h1>loading</h1> }
-				{ ! results.length && ! isLoading && (
+				{ results.length > 0 && (
+					<DomainResults searchProps={ searchProps } isLoading={ isLoading } />
+				) }
+
+				{ results.length === 0 && (
 					<>
 						<HeaderImage src={ headerImage } />
-						<Heading shrinkMobileFont>
+						<Heading id="plan-upsell-modal-title" shrinkMobileFont>
 							{ translate( 'Idea to online at the speed of wow.' ) }
 						</Heading>
-						<SubHeading>
+						<SubHeading id="plan-upsell-modal-description">
 							{ translate(
 								'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
 							) }
 						</SubHeading>
-					</>
-				) }
-				{ results.length > 0 && (
-					<>
-						{ results.map( ( result, index ) => (
-							<p key={ index }>{ JSON.stringify( result ) }</p>
-						) ) }
+						{ isLoading && <Loading /> }
 					</>
 				) }
 			</DialogContainer>

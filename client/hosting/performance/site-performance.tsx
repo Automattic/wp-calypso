@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -18,9 +17,10 @@ import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
+import { PerformanceReportLoading } from './components/PerformanceReportLoading';
 import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
-import { getSitePagesQueryKey, useSitePages } from './hooks/useSitePages';
+import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 
 import './style.scss';
 
@@ -35,10 +35,10 @@ const statsQuery = {
 };
 
 const usePerformanceReport = (
-	wpcom_performance_url: { url: string; hash: string } | undefined,
+	wpcom_performance_report_url: { url: string; hash: string } | undefined,
 	activeTab: Tab
 ) => {
-	const { url = '', hash = '' } = wpcom_performance_url || {};
+	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
 	const { data: basicMetrics, isError } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
@@ -99,7 +99,9 @@ export const SitePerformance = () => {
 
 	const queryParams = useSelector( getCurrentQueryArguments );
 	const [ , setQuery, query ] = useDebouncedInput();
-	const pages = useSitePages( { query } );
+	const { pages, isInitialLoading, savePerformanceReportUrl } = useSitePerformancePageReports( {
+		query,
+	} );
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -110,31 +112,65 @@ export const SitePerformance = () => {
 	}, [ pages, stats ] );
 
 	const currentPageId = queryParams?.page_id?.toString() ?? '0';
+	const filter = queryParams?.filter?.toString();
+	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 	const currentPage = useMemo(
 		() => pages.find( ( page ) => page.value === currentPageId ),
 		[ pages, currentPageId ]
 	);
-	const [ wpcom_performance_url, setWpcom_performance_url ] = useState(
-		currentPage?.wpcom_performance_url
+	const [ wpcom_performance_report_url, setWpcom_performance_report_url ] = useState(
+		currentPage?.wpcom_performance_report_url
 	);
-	const queryClient = useQueryClient();
+
+	useLayoutEffect( () => {
+		setWpcom_performance_report_url( currentPage?.wpcom_performance_report_url );
+	}, [ currentPage?.wpcom_performance_report_url ] );
 
 	const retestPage = () => {
-		setWpcom_performance_url( {
+		setWpcom_performance_report_url( {
 			url: currentPage?.url ?? '',
 			hash: '',
 		} );
-
-		queryClient.invalidateQueries( {
-			queryKey: getSitePagesQueryKey( { siteId, query } ),
-			exact: true,
-		} );
 	};
 
-	const performanceReport = usePerformanceReport( wpcom_performance_url, activeTab );
+	const handleRecommendationsFilterChange = ( filter?: string ) => {
+		setRecommendationsFilter( filter );
+		const url = new URL( window.location.href );
+
+		if ( filter ) {
+			url.searchParams.set( 'filter', filter );
+		} else {
+			url.searchParams.delete( 'filter' );
+		}
+
+		window.history.replaceState( {}, '', url.toString() );
+	};
 
 	const isSitePublic =
 		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+
+	const performanceReport = usePerformanceReport(
+		isSitePublic ? wpcom_performance_report_url : undefined,
+		activeTab
+	);
+
+	useEffect( () => {
+		if ( performanceReport.hash && performanceReport.hash !== wpcom_performance_report_url?.hash ) {
+			const performanceReportUrl = {
+				url: performanceReport.url,
+				hash: performanceReport.hash,
+			};
+
+			setWpcom_performance_report_url( performanceReportUrl );
+			savePerformanceReportUrl( currentPageId, performanceReportUrl );
+		}
+	}, [
+		currentPageId,
+		performanceReport.url,
+		performanceReport.hash,
+		savePerformanceReportUrl,
+		wpcom_performance_report_url?.hash,
+	] );
 
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
@@ -205,19 +241,27 @@ export const SitePerformance = () => {
 				/>
 				<DeviceTabControls onDeviceTabChange={ setActiveTab } value={ activeTab } />
 			</div>
-			{ ! isSitePublic ? (
-				<ReportUnavailable
-					isLaunching={ siteIsLaunching }
-					onLaunchSiteClick={ onLaunchSiteClick }
-				/>
+			{ isInitialLoading ? (
+				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
-				currentPage && (
-					<PerformanceReport
-						{ ...performanceReport }
-						pageTitle={ currentPage.label }
-						onRetestClick={ retestPage }
-					/>
-				)
+				<>
+					{ ! isSitePublic ? (
+						<ReportUnavailable
+							isLaunching={ siteIsLaunching }
+							onLaunchSiteClick={ onLaunchSiteClick }
+						/>
+					) : (
+						currentPage && (
+							<PerformanceReport
+								{ ...performanceReport }
+								pageTitle={ currentPage.label }
+								onRetestClick={ retestPage }
+								onFilterChange={ handleRecommendationsFilterChange }
+								filter={ recommendationsFilter }
+							/>
+						)
+					) }
+				</>
 			) }
 		</div>
 	);

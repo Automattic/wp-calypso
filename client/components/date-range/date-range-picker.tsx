@@ -91,6 +91,8 @@ const DateRangePicker = ( {
 			return;
 		}
 
+		date = date.startOf( 'day' );
+
 		// Calculate the new Date range
 		const newRange = addDayToRange( date, { from: selectedStartDate, to: selectedEndDate } );
 
@@ -131,6 +133,10 @@ const DateRangePicker = ( {
 			onDateRangeChange?.( selectedEndDate, selectedStartDate );
 		}
 	}, [ selectedStartDate?.format(), selectedEndDate?.format() ] );
+
+	// Normalize dates to start of day
+	selectedStartDate = ! selectedStartDate ? selectedStartDate : selectedStartDate.startOf( 'day' );
+	selectedEndDate = ! selectedEndDate ? selectedEndDate : selectedEndDate.startOf( 'day' );
 
 	const fromDate = momentDateToJsDate( selectedStartDate );
 	const toDate = momentDateToJsDate( selectedEndDate );

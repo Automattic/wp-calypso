@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -9,6 +10,7 @@ import './style.scss';
 
 const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const handleSubmit = () => {
 		return navigation.submit?.();
@@ -22,7 +24,13 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Tell us about your site' ) } />
+			<DocumentHead
+				title={
+					isEnglishLocale
+						? translate( 'Tell us about your WordPress site' )
+						: translate( 'Tell us about your site' )
+				}
+			/>
 			<StepContainer
 				stepName="site-migration-credentials"
 				flowName="site-migration"
@@ -33,10 +41,20 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-credentials-header"
-						headerText={ translate( 'Tell us about your site' ) }
-						subHeaderText={ translate(
-							'Please share the following details to access your site and start your migration.'
-						) }
+						headerText={
+							isEnglishLocale
+								? translate( 'Tell us about your WordPress site' )
+								: translate( 'Tell us about your site' )
+						}
+						subHeaderText={
+							isEnglishLocale
+								? translate(
+										'Please share the following details to access your site and start your migration to WordPress.com.'
+								  )
+								: translate(
+										'Please share the following details to access your site and start your migration.'
+								  )
+						}
 						align="center"
 					/>
 				}

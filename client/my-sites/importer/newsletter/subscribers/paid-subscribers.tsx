@@ -10,7 +10,6 @@ export default function PaidSubscribers( {
 	nextStepUrl,
 	selectedSite,
 	fromSite,
-	isFetchingContent,
 	siteSlug,
 	skipNextStep,
 	cardData,
@@ -39,7 +38,6 @@ export default function PaidSubscribers( {
 					cardData={ cardData }
 					engine={ engine }
 					fromSite={ fromSite }
-					isFetchingContent={ isFetchingContent }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
 					setAutoFetchData={ setAutoFetchData }
@@ -53,7 +51,6 @@ export default function PaidSubscribers( {
 					cardData={ cardData }
 					engine={ engine }
 					fromSite={ fromSite }
-					isFetchingContent={ isFetchingContent }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
 					setAutoFetchData={ setAutoFetchData }

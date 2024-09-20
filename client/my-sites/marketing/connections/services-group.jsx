@@ -134,10 +134,10 @@ const SharingServicesGroup = ( {
 							/* Injecting the Fediverse above Twitter */
 							if ( service.ID === 'twitter' && type === 'publicize' ) {
 								return (
-									<>
-										<Components.fediverse key="fediverse" />
+									<Fragment key="fediverse">
+										<Components.fediverse />
 										<Component key={ service.ID } service={ service } />
-									</>
+									</Fragment>
 								);
 							}
 						}

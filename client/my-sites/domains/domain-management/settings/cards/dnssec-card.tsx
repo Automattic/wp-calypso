@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
 import useDisableDnssecMutation from 'calypso/data/domains/dnssec/use-disable-dnssec-mutation';
 import useEnableDnssecMutation from 'calypso/data/domains/dnssec/use-enable-dnssec-mutation';
+import { hasDefaultWpcomNameservers } from 'calypso/my-sites/domains/domain-management/settings/cards/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { disableDnssecAction, enableDnssecAction } from 'calypso/state/sites/domains/actions';
@@ -18,7 +19,19 @@ const noticeOptions = {
 	id: `dnssec-notification`,
 };
 
-export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
+interface Props {
+	domain: ResponseDomain;
+	nameservers: string[] | null;
+	isUpdatingNameservers: boolean;
+	isLoadingNameservers: boolean;
+}
+
+export default function DnssecCard( {
+	domain,
+	nameservers,
+	isUpdatingNameservers,
+	isLoadingNameservers,
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -40,6 +53,8 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 			dispatch( errorNotice( error.message, noticeOptions ) );
 		},
 	} );
+
+	const domainHasDefaultWpcomNameservers = hasDefaultWpcomNameservers( nameservers );
 
 	const { enableDnssec } = useEnableDnssecMutation( domain.name, {
 		onSuccess( success ) {
@@ -123,11 +138,15 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 	};
 
 	const renderDnssecCard = () => {
+		if ( ! nameservers || ! domainHasDefaultWpcomNameservers || isLoadingNameservers ) {
+			return null;
+		}
+
 		return (
 			<div className="domain-dnssec-card">
 				<ToggleControl
 					checked={ isEnabled }
-					disabled={ isUpdating }
+					disabled={ isUpdating || isUpdatingNameservers }
 					label={ getToggleLabel() }
 					onChange={ onToggle }
 				/>
@@ -141,18 +160,27 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 		);
 	};
 
-	const subtitle = isEnabled
+	const dnssecStatus = isEnabled
 		? translate( 'DNSSEC is enabled for this domain' )
 		: translate( 'DNSSEC is disabled for this domain' );
+
+	const subtitle = domainHasDefaultWpcomNameservers
+		? dnssecStatus
+		: translate( 'DNSSEC is only available for domains using WordPress.com nameservers' );
+
+	const expanded = ! domainHasDefaultWpcomNameservers ? false : isExpanded;
 
 	return (
 		<Accordion
 			className="domain-dnssec-card__accordion"
 			title={ translate( 'DNSSEC' ) }
 			subtitle={ subtitle }
-			expanded={ isExpanded }
+			expanded={ expanded }
 			onOpen={ () => setIsExpanded( true ) }
 			onClose={ () => setIsExpanded( false ) }
+			isDisabled={
+				! domainHasDefaultWpcomNameservers || isUpdatingNameservers || isLoadingNameservers
+			}
 		>
 			{ renderDnssecCard() }
 		</Accordion>

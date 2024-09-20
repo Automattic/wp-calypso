@@ -366,6 +366,10 @@
 		cursor: not-allowed;
 		pointer-events: none;
 	}
+
+	.global-notices {
+		z-index: 100001;
+	}
 }
 
 // New navigation will not include a masterbar

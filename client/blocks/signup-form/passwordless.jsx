@@ -169,10 +169,6 @@ class PasswordlessSignupForm extends Component {
 		const { flowName, queryArgs = {} } = this.props;
 		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
 
-		if ( this.props.onCreateAccountSuccess ) {
-			return this.props.onCreateAccountSuccess( userData );
-		}
-
 		recordRegistration( {
 			userData,
 			flow: flowName,
@@ -187,6 +183,10 @@ class PasswordlessSignupForm extends Component {
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
 		} );
+
+		if ( this.props.onCreateAccountSuccess ) {
+			return this.props.onCreateAccountSuccess( userData );
+		}
 	};
 
 	submitStep = ( data ) => {
