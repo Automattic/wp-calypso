@@ -179,6 +179,7 @@ export default function NewsletterImporter( {
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
 							engine={ engine }
+							fromSite={ fromSite }
 						/>
 					) }
 				</>
