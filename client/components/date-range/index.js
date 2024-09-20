@@ -1,6 +1,7 @@
 import { Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -118,10 +119,24 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
+			numberOfMonths: this.getNumberOfMonths(),
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = createRef();
+		this.throttledHandleResize = debounce( () => {
+			this.setState( {
+				numberOfMonths: this.getNumberOfMonths(),
+			} );
+		}, 250 );
+	}
+
+	componentDidMount() {
+		window.addEventListener( 'resize', this.throttledHandleResize );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.throttledHandleResize );
 	}
 
 	/**
