@@ -8,6 +8,7 @@ import {
 	PayPalButtonsComponentProps,
 	usePayPalScriptReducer,
 } from '@paypal/react-paypal-js';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 
@@ -35,6 +36,19 @@ function PayPalLabel() {
 	);
 }
 
+// Create a Promise that can be resolved from outside. This will be much easier
+// in ES2024 with Promise.withResolvers but until that is widely available,
+// this will work.
+function deferred< T >() {
+	let resolve: ( value: T | PromiseLike< T > ) => void = () => {};
+	let reject: ( reason?: unknown ) => void = () => {};
+	const promise = new Promise< T >( ( res, rej ) => {
+		resolve = res;
+		reject = rej;
+	} );
+	return { resolve, reject, promise };
+}
+
 function PayPalSubmitButton( {
 	disabled,
 	onClick,
@@ -42,13 +56,14 @@ function PayPalSubmitButton( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 } ) {
+	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
 	const [ { isResolved, isPending } ] = usePayPalScriptReducer();
 	useEffect( () => {
 		if ( isResolved ) {
 			togglePaymentMethod( 'paypal-js', true );
 		}
-	}, [ isResolved ] );
+	}, [ isResolved, togglePaymentMethod ] );
 
 	if ( isPending || ! isResolved ) {
 		return <div>Loading</div>;
@@ -63,26 +78,43 @@ function PayPalSubmitButton( {
 		);
 	}
 
+	const {
+		promise: payPalApprovalPromise,
+		resolve: resolvePayPalApprovalPromise,
+		reject: rejectPayPalApprovalPromise,
+	} = deferred< void >();
 	const createOrder: PayPalButtonsComponentProps[ 'createOrder' ] = () => {
-		const payPalPromise = new Promise( () => {
-			// Intentionally do not resolve yet. We have to do this so we can
-			// use the composite-checkout transaction system (the `onClick`
-			// handler) to call the transactions endpoint and then eventually
-			// return here to trigger the PayPal popup which happens when this
-			// Promise resolves with the PayPal order ID.
-		} );
-		// FIXME: make a payment processor function which calls a wpcom API
-		// endpoint to create the order, then resolves this promise with the
-		// PayPal order ID.
-		onClick( { payPalPromise } );
-		return payPalPromise;
+		// Intentionally do not resolve yet. We have to do this so we can
+		// use the composite-checkout transaction system (the `onClick`
+		// handler) to call the transactions endpoint and then eventually
+		// return here to trigger the PayPal popup which happens when this
+		// Promise resolves with the PayPal order ID.
+		const { promise: orderPromise, resolve: resolvePayPalOrderPromise } = deferred< string >();
+		onClick( { resolvePayPalOrderPromise, payPalApprovalPromise } );
+		return orderPromise;
 	};
+
+	const onApprove: PayPalButtonsComponentProps[ 'onApprove' ] = async () => {
+		// Once the user has confirmed the PayPal transaction in the popup, we
+		// want to tell the composite-checkout payment processor function to
+		// continue so we resolve the other Promise.
+		resolvePayPalApprovalPromise();
+	};
+
+	const onCancel: PayPalButtonsComponentProps[ 'onCancel' ] = async () => {
+		rejectPayPalApprovalPromise(
+			new Error( translate( 'The PayPal transaction was not approved.' ) )
+		);
+	};
+
 	return (
 		<PayPalButtons
 			disabled={ disabled }
 			style={ { layout: 'horizontal' } }
 			fundingSource="paypal"
 			createOrder={ createOrder }
+			onApprove={ onApprove }
+			onCancel={ onCancel }
 		/>
 	);
 }

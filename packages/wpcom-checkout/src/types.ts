@@ -45,9 +45,15 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	razorpay_option_recurring?: boolean;
 };
 
+export type WPCOMTransactionEndpointResponsePayPal = {
+	order_id: number | '';
+	paypal_order_id: string;
+};
+
 export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponseSuccess
 	| WPCOMTransactionEndpointResponseFailed
+	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
 
 export interface TaxVendorInfo {
