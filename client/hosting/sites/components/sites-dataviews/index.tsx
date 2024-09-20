@@ -135,14 +135,14 @@ const DotcomSitesDataViews = ( {
 					<SitePlan site={ item } userId={ userId } />
 				),
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'status',
 				label: __( 'Status' ),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 				elements: siteStatusGroups,
 				filterBy: {
 					operators: [ 'is' ],
