@@ -7,8 +7,6 @@ import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -96,68 +94,99 @@ const AccountEmailValidationNotice = ( {
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
-// TODO - remove this component
-const AccountEmailPendingEmailChangeNotice = ( {
-	unsavedUserSettings,
-	userSettings,
+const EmailFieldExplanationText = ( {
+	setIsLockedInput,
+	focusInput,
 }: {
-	unsavedUserSettings: UserSettingsType;
-	userSettings: UserSettingsType;
+	setIsLockedInput: React.Dispatch< React.SetStateAction< boolean > >;
+	focusInput: () => void;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
 	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
 	const isRequestingDomainList = useSelector( isRequestingAllDomains );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const isEmailChangePending = useSelector( isPendingEmailChange );
-
-	if ( ! isEmailChangePending ) {
-		return null;
-	}
-
-	const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
-	const email = getUserSetting( {
-		settingName: 'new_user_email',
-		unsavedUserSettings,
-		userSettings,
-	} ) as string;
-
 	const hasCustomDomainRegistration = domainsList.some( ( domain ) => {
 		return domainTypes.REGISTERED === domain.type;
 	} );
 
-	const noticeText =
-		isRequestingDomainList || ! hasCustomDomainRegistration
-			? translate(
-					'Your email change is pending. Please take a moment to check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.',
-					{
-						args: { email },
-					}
-			  )
-			: translate(
-					'Your email change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
-					{
-						args: {
-							email,
-						},
-						components: {
-							br: <br />,
-							link: <a href={ editContactInfoInBulkUrl } />,
-						},
-					}
-			  );
+	const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
 
-	return (
-		<Notice
-			className="account-email-field__change-pending"
-			showDismiss={ false }
-			status="is-info"
-			text={ noticeText }
-		>
-			<NoticeAction onClick={ () => dispatch( cancelPendingEmailChange() ) }>
-				{ translate( 'Cancel' ) }
-			</NoticeAction>
-		</Notice>
+	const unlockWrapper = (
+		<Button
+			className="account-email-field__enable-input"
+			variant="link"
+			onClick={ ( ev: React.MouseEvent< HTMLButtonElement > ) => {
+				ev.preventDefault();
+				setIsLockedInput( false );
+				// Ensure input is focused when the user clicks
+				// this, regardless of if it was previously
+				// locked or not.
+				focusInput();
+			} }
+		/>
+	);
+
+	const cancelWrapper = (
+		<Button
+			className="account-email-field__enable-input"
+			variant="link"
+			onClick={ ( ev: React.MouseEvent< HTMLButtonElement > ) => {
+				ev.preventDefault();
+				dispatch( cancelPendingEmailChange() );
+			} }
+		/>
+	);
+
+	if ( isEmailChangePending ) {
+		if ( isRequestingDomainList || ! hasCustomDomainRegistration ) {
+			// Show unverified message and cancel pending change option.
+			return translate(
+				'Your email has not been verified yet. Need to update your address? {{unlockWrapper}}Click here to update it{{/unlockWrapper}}.{{br/}} To cancel the pending email change {{cancelWrapper}}click here{{/cancelWrapper}}.',
+				{
+					components: {
+						unlockWrapper,
+						br: <br />,
+						cancelWrapper,
+					},
+				}
+			);
+		}
+		// Show unverified message, domain contact info message, and cancel pending change option.
+		return translate(
+			'Your email has not been verified yet. Need to update your address? {{unlockWrapper}}Click here to update it{{/unlockWrapper}}.{{br/}} Update contact information on your domain names if necessary {{link}}here{{/link}}.{{br/}} To cancel the pending email change {{cancelWrapper}}click here{{/cancelWrapper}}.',
+			{
+				components: {
+					unlockWrapper,
+					br: <br />,
+					cancelWrapper,
+					link: <a href={ editContactInfoInBulkUrl } />,
+				},
+			}
+		);
+	}
+
+	if ( ! isEmailVerified ) {
+		// Show unverified message.
+		return translate(
+			'Your email has not been verified yet. Need to update your address? {{unlockWrapper}}Click here to update it{{/unlockWrapper}}.',
+			{
+				components: {
+					unlockWrapper,
+				},
+			}
+		);
+	}
+
+	// Standard message.
+	return translate(
+		'Not publicly displayed, except to owners of sites you subscribe to. {{unlockWrapper}}Click here to update it{{/unlockWrapper}}.',
+		{
+			components: {
+				unlockWrapper,
+			},
+		}
 	);
 };
 
@@ -176,7 +205,6 @@ const AccountEmailField = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
-	const isEmailVerifified = useSelector( isCurrentUserEmailVerified );
 	const inputRef = useRef< FormTextInput >( null );
 	const [ isLockedInput, setIsLockedInput ] = useState( true );
 	const [ emailSettingToShow, setEmailSettingToShow ] = useState( 'user_email' );
@@ -197,6 +225,8 @@ const AccountEmailField = ( {
 	useEffect( () => {
 		if ( isEmailChangePending ) {
 			setEmailSettingToShow( 'new_user_email' );
+		} else {
+			setEmailSettingToShow( 'user_email' );
 		}
 	}, [ isEmailChangePending ] );
 
@@ -262,21 +292,6 @@ const AccountEmailField = ( {
 		};
 	}, [] );
 
-	const unlockWrapper = (
-		<Button
-			className="account-email-field__enable-input"
-			variant="link"
-			onClick={ ( ev: React.MouseEvent< HTMLButtonElement > ) => {
-				ev.preventDefault();
-				setIsLockedInput( false );
-				// Ensure input is focused when the user clicks
-				// this, regardless of if it was previously
-				// locked or not.
-				focusInput();
-			} }
-		/>
-	);
-
 	return (
 		<>
 			<QueryAllDomains />
@@ -300,23 +315,10 @@ const AccountEmailField = ( {
 				/>
 
 				<FormSettingExplanation>
-					{ isEmailVerifified && ! isEmailChangePending
-						? translate(
-								'Not publicly displayed, except to owners of sites you subscribe to. {{wrapper}}Click here to update it{{/wrapper}}.',
-								{
-									components: {
-										wrapper: unlockWrapper,
-									},
-								}
-						  )
-						: translate(
-								'Your email has not been verified yet. Need to update your address? {{wrapper}}Click here to update it{{/wrapper}}.',
-								{
-									components: {
-										wrapper: unlockWrapper,
-									},
-								}
-						  ) }
+					<EmailFieldExplanationText
+						setIsLockedInput={ setIsLockedInput }
+						focusInput={ focusInput }
+					/>
 				</FormSettingExplanation>
 			</FormFieldset>
 		</>
