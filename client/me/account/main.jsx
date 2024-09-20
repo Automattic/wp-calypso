@@ -612,7 +612,12 @@ class Account extends Component {
 			return;
 		}
 
-		const newEmail = this.getUserSetting( 'new_user_email' );
+		// We want to show an email changed message when the email changes.
+		// We want to show a general success message when other settings change.
+		const newEmail = response.new_user_email;
+		const moreThanEmailChanged = Object.keys( response )?.find(
+			( item ) => ! [ 'new_user_email', 'user_email', 'user_email_change_pending' ].includes( item )
+		);
 
 		this.setState(
 			{
@@ -623,10 +628,11 @@ class Account extends Component {
 				},
 			},
 			() => {
-				this.props.successNotice(
-					this.props.translate( 'Settings saved successfully!' ),
-					noticeOptions
-				);
+				moreThanEmailChanged &&
+					this.props.successNotice(
+						this.props.translate( 'Settings saved successfully!' ),
+						noticeOptions
+					);
 				newEmail &&
 					this.props.successNotice(
 						this.props.translate(
@@ -636,7 +642,8 @@ class Account extends Component {
 									email: newEmail || '',
 								},
 							}
-						)
+						),
+						{ ...noticeOptions, id: 'me-settings-email-change-notice' }
 					);
 			}
 		);
