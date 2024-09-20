@@ -26,7 +26,7 @@ export const metricsNames = {
 
 export const metricValuations = {
 	fcp: {
-		good: translate( 'Your site‘s First Contentful Paint is good' ),
+		good: translate( 'Your site‘s First Contentful Paint is excellent' ),
 		needsImprovement: translate( 'Your site‘s First Contentful Paint is moderate' ),
 		bad: translate( 'Your site‘s First Contentful Paint needs improvement' ),
 		heading: translate( 'What is First Contentful Paint?' ),
@@ -36,7 +36,7 @@ export const metricValuations = {
 		),
 	},
 	lcp: {
-		good: translate( 'Your site‘s Largest Contentful Paint is good' ),
+		good: translate( 'Your site‘s Largest Contentful Paint is excellent' ),
 		needsImprovement: translate( 'Your site‘s Largest Contentful Paint is moderate' ),
 		bad: translate( 'Your site‘s Largest Contentful Paint needs improvement' ),
 		heading: translate( 'What is Largest Contentful Paint?' ),
@@ -46,7 +46,7 @@ export const metricValuations = {
 		),
 	},
 	cls: {
-		good: translate( 'Your site‘s Cumulative Layout Shift is good' ),
+		good: translate( 'Your site‘s Cumulative Layout Shift is excellent' ),
 		needsImprovement: translate( 'Your site‘s Cumulative Layout Shift is moderate' ),
 		bad: translate( 'Your site‘s Cumulative Layout Shift needs improvement' ),
 		heading: translate( 'What is Cumulative Layout Shift?' ),
@@ -56,7 +56,7 @@ export const metricValuations = {
 		),
 	},
 	inp: {
-		good: translate( 'Your site‘s Interaction to Next Paint is good' ),
+		good: translate( 'Your site‘s Interaction to Next Paint is excellent' ),
 		needsImprovement: translate( 'Your site‘s Interaction to Next Paint is moderate' ),
 		bad: translate( 'Your site‘s Interaction to Next Paint needs improvement' ),
 		heading: translate( 'What is Interaction to Next Paint?' ),
@@ -66,7 +66,7 @@ export const metricValuations = {
 		),
 	},
 	ttfb: {
-		good: translate( 'Your site‘s Time to First Byte is good' ),
+		good: translate( 'Your site‘s Time to First Byte is excellent' ),
 		needsImprovement: translate( 'Your site‘s Time to First Byte is moderate' ),
 		bad: translate( 'Your site‘s Time to First Byte needs improvement' ),
 		heading: translate( 'What is Time to First Byte?' ),
@@ -76,7 +76,7 @@ export const metricValuations = {
 		),
 	},
 	tbt: {
-		good: translate( 'Your site‘s Total Blocking Time is good' ),
+		good: translate( 'Your site‘s Total Blocking Time is excellent' ),
 		needsImprovement: translate( 'Your site‘s Total Blocking Time is moderate' ),
 		bad: translate( 'Your site‘s Total Blocking Time needs improvement' ),
 		heading: translate( 'What is Total Blocking Time?' ),
@@ -86,7 +86,7 @@ export const metricValuations = {
 		),
 	},
 	overall: {
-		good: translate( 'Your site‘s Performance Score is good' ),
+		good: translate( 'Your site‘s Performance Score is excellent' ),
 		needsImprovement: translate( 'Your site‘s Performance Score is moderate' ),
 		bad: translate( 'Your site‘s Performance Score needs improvement' ),
 		heading: translate( 'What is Performance Score?' ),
