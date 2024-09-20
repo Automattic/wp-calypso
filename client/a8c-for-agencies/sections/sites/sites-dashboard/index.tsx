@@ -118,7 +118,7 @@ export default function SitesDashboard() {
 		prevIsOnNeedsAttentionPageRef.current = isOnNeedsAttentionPage;
 	}, [ dataViewsState, setDataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ] );
 
-	// Temporarily set perPage to 100 on developement sites page while having problems on its pagination
+	// Temporarily set perPage to 100 on Development sites page due to unresolved ES issue (https://github.com/Automattic/dotcom-forge/issues/8806)
 	const sitesPerPage = showOnlyDevelopmentSites ? 100 : dataViewsState.perPage;
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
