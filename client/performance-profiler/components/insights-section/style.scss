@@ -246,8 +246,9 @@ $blueberry-color: #3858e9;
 						}
 					}
 
-					textarea {
-						width: 380px;
+					.feedback-textarea {
+						width: 100%;
+						max-width: 400px;
 					}
 
 					textarea:focus,
