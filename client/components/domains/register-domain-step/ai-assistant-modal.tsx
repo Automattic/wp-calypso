@@ -3,10 +3,11 @@ import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 import headerImage from 'calypso/assets/images/illustrations/business-tools.png';
 import Search from 'calypso/components/search';
+import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 import useAiSuggestionsMutation from './use-ai-suggestions';
 
 const HeaderImage = styled.img`
@@ -45,6 +46,12 @@ export const SubHeading = styled.div`
 		font-size: 16px;
 		line-height: 24px;
 	}
+`;
+
+const Loading = styled.div`
+	text-align: center;
+	font-size: 36px;
+	text-wrap: balance;
 `;
 
 export const ButtonContainer = styled.div`
@@ -118,13 +125,39 @@ type ModalContainerProps = {
 // See p2-pbxNRc-2Ri#comment-4703 for more context
 export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
+const getTitle = ( hasDomainResults: boolean, translate ): string => {
+	return hasDomainResults
+		? translate( 'Fresh Results, Straight from the Algorithm Oven!' )
+		: translate( 'Idea to online at the speed of wow.' );
+};
+const getSubTitle = ( hasDomainResults: boolean, translate ): string => {
+	return hasDomainResults
+		? ''
+		: translate(
+				'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
+		  );
+};
+
 export default function AIAssistantModal( props: ModalContainerProps ) {
 	const { isModalOpen } = props;
 	const translate = useTranslate();
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ results, setResults ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const hasDomainResults: boolean = results.length > 0;
+	const [ title, setTitle ] = useState( getTitle( hasDomainResults, translate ) );
+	const [ subTitle, setSubTitle ] = useState( getSubTitle( hasDomainResults, translate ) );
 	const { mutate: aiSuggestions } = useAiSuggestionsMutation();
+
+	useEffect( () => {
+		const hasDomainResults: boolean = results.length > 0;
+		setTitle( getTitle( hasDomainResults, translate ) );
+		setSubTitle( getSubTitle( hasDomainResults, translate ) );
+	}, [ results, translate ] );
+
+	useEffect( () => {
+		! isModalOpen && setResults( [] );
+	}, [ isModalOpen ] );
 
 	const modalWidth = () => {
 		return '639px';
@@ -134,9 +167,8 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		const term = newPrompt || prompt;
 		if ( term ) {
 			setIsLoading( true );
-			setResults( [] );
 			aiSuggestions(
-				{ term },
+				{ prompt: term },
 				{
 					onSuccess: ( value ) => {
 						setResults( value );
@@ -163,6 +195,15 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		onSearchChange,
 		onBlur: onSearchChange,
 	};
+
+	const SiteNameSuggestions = () => {
+		if ( results.length === 0 ) {
+			return null;
+		}
+
+		return <FeaturedDomainSuggestions premiumDomains={ [] } featuredSuggestions={ results } />;
+	};
+
 	return (
 		<Dialog
 			isBackdropVisible
@@ -194,27 +235,16 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				` }
 			/>
 			<DialogContainer>
-				{ ! results.length && isLoading && <h1>loading</h1> }
-				{ ! results.length && ! isLoading && (
-					<>
-						<HeaderImage src={ headerImage } />
-						<Heading shrinkMobileFont>
-							{ translate( 'Idea to online at the speed of wow.' ) }
-						</Heading>
-						<SubHeading>
-							{ translate(
-								'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
-							) }
-						</SubHeading>
-					</>
+				{ results.length === 0 && <HeaderImage src={ headerImage } /> }
+				<Heading shrinkMobileFont>{ title }</Heading>
+				<SubHeading>{ subTitle }</SubHeading>
+				{ isLoading && (
+					<Loading>
+						{ translate( 'Hold on tight … your request is being processed by our AI overlords' ) }
+					</Loading>
 				) }
-				{ results.length > 0 && (
-					<>
-						{ results.map( ( result, index ) => (
-							<p key={ index }>{ JSON.stringify( result ) }</p>
-						) ) }
-					</>
-				) }
+
+				{ ! isLoading && <SiteNameSuggestions /> }
 			</DialogContainer>
 			<ButtonContainer>
 				<Row>
