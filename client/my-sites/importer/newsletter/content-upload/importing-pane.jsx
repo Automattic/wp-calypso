@@ -1,5 +1,4 @@
-import { ProgressBar, Spinner } from '@automattic/components';
-import clsx from 'clsx';
+import { ProgressBar, Notice } from '@wordpress/components';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,13 +6,12 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
-import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
+import { infoNotice } from 'calypso/state/notices/actions';
 import AuthorMappingPane from './author-mapping-pane';
 
 import './importing-pane.scss';
@@ -33,7 +31,7 @@ const sum = ( a, b ) => a + b;
  *     …
  * }
  */
-export const calculateProgress = ( progress ) => {
+const calculateProgress = ( progress ) => {
 	// The backend does not output the 'progress' field for all the enqueued not running imports.
 	if ( ! progress ) {
 		return 0;
@@ -57,13 +55,13 @@ export const calculateProgress = ( progress ) => {
 	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
-export const resourcesRemaining = ( progress ) =>
+const resourcesRemaining = ( progress ) =>
 	Object.keys( progress )
 		.map( ( k ) => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
-export const hasProgressInfo = ( progress ) => {
+const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
 	}
@@ -104,6 +102,7 @@ export class ImportingPane extends PureComponent {
 		sourceType: PropTypes.string.isRequired,
 		nextStepUrl: PropTypes.string.isRequired,
 		invalidateCardData: PropTypes.func,
+		infoNotice: PropTypes.func,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -112,10 +111,6 @@ export class ImportingPane extends PureComponent {
 		}
 
 		return description;
-	};
-
-	getHeadingTextProcessing = () => {
-		return this.props.translate( 'Processing your file. Please wait a few moments.' );
 	};
 
 	getSuccessText = () => {
@@ -173,7 +168,7 @@ export class ImportingPane extends PureComponent {
 		this.props.resetImport( this.props.site.ID, this.props.importerStatus.importerId );
 	};
 
-	renderActionButtons = ( sourceType ) => {
+	renderActionButtons = () => {
 		if ( this.isProcessing() || this.isMapping() ) {
 			// We either don't want to show buttons while processing
 			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
@@ -187,22 +182,25 @@ export class ImportingPane extends PureComponent {
 		const isError = this.isError();
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
 
-		// After Substack importer we nudge to view posts or
-		if ( sourceType === 'Substack' && isFinished ) {
-			return (
-				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton href={ nextStepUrl } primary>
-						{ this.props.translate( 'Continue' ) }
-					</ImporterActionButton>
-				</ImporterActionButtonContainer>
-			);
-		}
-
-		// Other importers nudge to view the site
 		return (
 			<ImporterActionButtonContainer noSpacing>
-				{ isImporting && <BusyImportingButton /> }
-				{ isFinished && <ImporterDoneButton importerStatus={ importerStatus } site={ site } /> }
+				{ isImporting && (
+					<>
+						<ImporterActionButton primary busy disabled>
+							Importing
+						</ImporterActionButton>
+						<ImporterActionButton href={ nextStepUrl }>
+							{ this.props.translate( 'Continue' ) }
+						</ImporterActionButton>
+					</>
+				) }
+				{ isFinished && (
+					<ImporterActionButtonContainer noSpacing>
+						<ImporterActionButton href={ nextStepUrl }>
+							{ this.props.translate( 'Continue' ) }
+						</ImporterActionButton>
+					</ImporterActionButtonContainer>
+				) }
 				{ showFallbackButton && (
 					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				) }
@@ -219,9 +217,6 @@ export class ImportingPane extends PureComponent {
 			invalidateCardData,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = clsx( 'importer__import-progress', {
-			'is-complete': this.isFinished(),
-		} );
 
 		let { percentComplete, statusMessage } = this.props.importerStatus;
 		const { progress } = this.props.importerStatus;
@@ -237,7 +232,6 @@ export class ImportingPane extends PureComponent {
 
 		if ( this.isFinished() ) {
 			percentComplete = 100;
-			statusMessage = this.getSuccessText();
 		}
 
 		if ( this.isImporting() && hasProgressInfo( progress ) ) {
@@ -248,12 +242,15 @@ export class ImportingPane extends PureComponent {
 
 		return (
 			<div className="importer__importing-pane">
-				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						onMap={ this.handleOnMap }
 						onStartImport={ () => {
 							this.props.startImporting( this.props.importerStatus );
+							this.props.infoNotice( 'We’re importing your content', {
+								displayOnNextPage: true,
+								duration: 5000,
+							} );
 							invalidateCardData();
 							navigate( this.props.nextStepUrl );
 						} }
@@ -266,24 +263,30 @@ export class ImportingPane extends PureComponent {
 						site={ site }
 					/>
 				) }
-				{ ( this.isImporting() || this.isProcessing() ) &&
-					( percentComplete >= 0 ? (
-						<ProgressBar className={ progressClasses } value={ percentComplete } />
-					) : (
-						<div>
-							<Spinner className="importer__import-spinner" />
-							<br />
+				{ ( this.isImporting() || this.isProcessing() ) && (
+					<>
+						<h2>Import your content to WordPress.com</h2>
+						<p>Please, wait while we import your content…</p>
+						<div className="importer__import-progress">
+							<ProgressBar className="importer__import-progress-bar" value={ percentComplete } />
+							{ blockingMessage && <p>{ blockingMessage }</p> }
 						</div>
-					) ) }
-				{ blockingMessage && (
-					<div className="importer__import-progress-message">{ blockingMessage }</div>
+					</>
 				) }
 				{ statusMessage && (
 					<div>
 						<p className="importer__status-message">{ statusMessage }</p>
 					</div>
 				) }
-				{ this.renderActionButtons( sourceType ) }
+				{ this.isFinished() && ! this.isError() && (
+					<>
+						<h2>Import your content to WordPress.com</h2>
+						<Notice status="success" className="importer__notice" isDismissible={ false }>
+							Success! Your content has been imported!
+						</Notice>
+					</>
+				) }
+				{ this.renderActionButtons() }
 			</div>
 		);
 	}
@@ -294,4 +297,5 @@ export default connect( null, {
 	recordTracksEvent,
 	resetImport,
 	startImporting,
+	infoNotice,
 } )( localize( ImportingPane ) );

@@ -1,11 +1,17 @@
 import {
 	getFeaturesList,
 	getPlanFeaturesGroupedForComparisonGrid,
+	setSimplifiedFeaturesGridExperimentVariant,
+	type SimplifiedFeaturesGridExperimentVariant,
 } from '@automattic/calypso-products';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const ComponentWrapper = ( props: Omit< ComparisonGridExternalProps, 'gridPlans' > ) => {
+const ComponentWrapper = (
+	props: Omit< ComparisonGridExternalProps, 'gridPlans' > & {
+		simplifiedFeaturesGridExperimentVariant?: SimplifiedFeaturesGridExperimentVariant;
+	}
+) => {
 	const gridPlans = useGridPlansForComparisonGrid( {
 		eligibleForFreeHostingTrial: true,
 		hasRedeemedDomainCredit: undefined,
@@ -69,6 +75,12 @@ const defaultProps = {
 const meta = {
 	title: 'ComparisonGrid',
 	component: ComponentWrapper,
+	decorators: [
+		( Story, { args: { simplifiedFeaturesGridExperimentVariant = 'control' } } ) => {
+			setSimplifiedFeaturesGridExperimentVariant( simplifiedFeaturesGridExperimentVariant );
+			return <Story />;
+		},
+	],
 } satisfies Meta< typeof ComponentWrapper >;
 
 export default meta;
@@ -87,5 +99,21 @@ export const HideUnsupportedFeatures = {
 	args: {
 		...defaultProps,
 		hideUnsupportedFeatures: true,
+	},
+} satisfies Story;
+
+export const FewerFeaturesExperimentTreatmentVariantA = {
+	name: 'Experiment [Simplified features grid]: Treatment A',
+	args: {
+		...defaultProps,
+		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
+	},
+} satisfies Story;
+
+export const FewerFeaturesExperimentTreatmentVariantB = {
+	name: 'Experiment [Simplified features grid]: Treatment B',
+	args: {
+		...defaultProps,
+		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;

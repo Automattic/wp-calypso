@@ -98,8 +98,10 @@ export const SitesSortingDropdown = ( {
 				<NavigableMenu cycle={ false }>
 					<MenuItemsChoice
 						value={ currentSortingValue }
-						onSelect={ ( value: ( typeof choices )[ 0 ][ 'value' ] ) => {
-							onSitesSortingChange( parseSitesSorting( value ) );
+						onSelect={ ( value: string ) => {
+							onSitesSortingChange(
+								parseSitesSorting( value as ( typeof choices )[ 0 ][ 'value' ] )
+							);
 							onClose();
 						} }
 						choices={ choices }

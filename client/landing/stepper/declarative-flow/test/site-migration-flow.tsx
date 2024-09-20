@@ -329,6 +329,22 @@ describe( 'Site Migration Flow', () => {
 			config.disable( 'automated-migration/collect-credentials' );
 		} );
 
+		it( 'Redirects back to the credentials step when failing to create the ticket', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug,
+				dependencies: {
+					hasError: 'ticket-creation',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com&error=ticket-creation`,
+				state: null,
+			} );
+		} );
+
 		it( 'Skipping the credentials step redirects the user to the instructions page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
@@ -340,7 +356,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&credentials=skipped`,
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
@@ -354,10 +370,8 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`,
-				state: {
-					siteSlug: 'example.wordpress.com',
-				},
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&preventTicketCreation=true`,
+				state: null,
 			} );
 		} );
 

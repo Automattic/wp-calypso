@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
-import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -12,6 +13,7 @@ import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_SITE_PERFORMANCE,
 	DOTCOM_LOGS_PHP,
 	DOTCOM_LOGS_WEB,
 	DOTCOM_GITHUB_DEPLOYMENTS,
@@ -91,6 +93,11 @@ const DotcomPreviewPane = ( {
 				label: __( 'Monitoring' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_MONITORING ],
+			},
+			{
+				label: __( 'Performance' ),
+				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
+				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),

@@ -18,6 +18,10 @@
 			text-decoration: underline;
 		}
 	}
+
+	&__external-icon {
+		vertical-align: text-bottom;
+	}
 }
 
 @include breakpoint-deprecated( ">1040px" ) {

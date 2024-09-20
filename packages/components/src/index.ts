@@ -21,6 +21,7 @@ export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { useScrollToTop } from './scroll-to-top/use-scroll-to-top';
 export { default as SelectDropdown } from './select-dropdown';
+export { default as SearchableDropdown } from './searchable-dropdown';
 export { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
@@ -49,6 +50,7 @@ export {
 	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from './highlight-cards/weekly-highlight-cards';
+export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
 export { default as ShortenedNumber } from './number-formatters';

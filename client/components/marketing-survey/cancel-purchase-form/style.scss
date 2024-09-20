@@ -71,15 +71,6 @@
 			text-wrap: pretty;
 		}
 
-		.components-checkbox-control__input[type="checkbox"]:checked {
-			background: var(--studio-black);
-			border-color: var(--studio-black);
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-black);
-		}
-
 		.components-checkbox-control__input-container,
 		.components-checkbox-control__input[type="checkbox"],
 		svg.components-checkbox-control__checked {
@@ -131,10 +122,12 @@
 .cancel-purchase-form__buttons {
 	display: flex;
 	position: relative;
+	padding: 3px;
 
 	@include break-small {
 		display: inline-block;
 	}
+
 
 	.components-button {
 		flex: 1;

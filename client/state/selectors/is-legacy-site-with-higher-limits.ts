@@ -13,10 +13,13 @@ import { AppState } from 'calypso/types';
  * Note that this does not check if the site is actually a free site *currently*
  * (it might have a paid plan and have even higher limits as a result of that).
  * @param {Object} state Global state tree
- * @param {number} siteId Site ID
+ * @param {number|null} siteId Site ID
  * @returns {boolean} True if the site is considered a legacy site
  */
-export default function isLegacySiteWithHigherLimits( state: AppState, siteId: number ): boolean {
+export default function isLegacySiteWithHigherLimits(
+	state: AppState,
+	siteId: number | null
+): boolean {
 	if ( ! siteId ) {
 		return false;
 	}

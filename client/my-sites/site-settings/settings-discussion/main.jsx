@@ -4,7 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { FediverseSettingsSection } from 'calypso/my-sites/site-settings/fediverse-settings';
+import { FediverseDeprecatedDiscussionSection } from 'calypso/my-sites/site-settings/fediverse-settings';
 import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -29,7 +29,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 		/>
 
 		<SiteSettingsNavigation site={ site } section="discussion" />
-		<FediverseSettingsSection />
+		<FediverseDeprecatedDiscussionSection />
 		<DiscussionForm />
 	</Main>
 );

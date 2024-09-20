@@ -59,9 +59,45 @@ const safeLogToLogstash = ( message: string, properties: Record< string, unknown
 	}
 };
 
+const useLogMigration = (
+	completed: boolean,
+	siteTransferStatus: Status,
+	error?: Error | null,
+	siteId?: number
+) => {
+	useEffect( () => {
+		if ( siteTransferStatus === 'pending' ) {
+			return safeLogToLogstash( 'Site migration preparation started', {
+				status: 'started',
+				site_id: siteId,
+			} );
+		}
+	}, [ siteTransferStatus, siteId ] );
+
+	useEffect( () => {
+		if ( error ) {
+			return safeLogToLogstash( 'Site migration preparation failed', {
+				status: 'error',
+				error: error.message,
+				error_type: error.name,
+				site_id: siteId,
+			} );
+		}
+	}, [ error, siteId ] );
+
+	useEffect( () => {
+		if ( completed ) {
+			return safeLogToLogstash( 'Site migration preparation completed', {
+				status: 'success',
+				site_id: siteId,
+			} );
+		}
+	}, [ completed, siteId ] );
+};
+
 const useTransferTimeTracking = (
 	siteTransferState: TransferState,
-	pluginInstallationState: TransferState
+	pluginInstallationState?: TransferState
 ): TimeTrackingResult => {
 	const siteTransferStart = useRef( 0 );
 	const siteTransferEnd = useRef( 0 );
@@ -84,6 +120,10 @@ const useTransferTimeTracking = (
 
 	// Time the plugin installation
 	useEffect( () => {
+		if ( ! pluginInstallationState ) {
+			return;
+		}
+
 		if (
 			! pluginInstallationState.completed &&
 			'pending' === pluginInstallationState.status &&
@@ -103,7 +143,7 @@ const useTransferTimeTracking = (
  *  Hook to manage the site to prepare a site for migration using Migrate Guru plugin.
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
-export const usePrepareSiteForMigration = ( siteId?: number ) => {
+export const usePrepareSiteForMigrationWithMigrateGuru = ( siteId?: number ) => {
 	const siteTransferState = useSiteTransfer( siteId );
 	const pluginInstallationState = usePluginAutoInstallation( PLUGIN, siteId, {
 		enabled: Boolean( siteTransferState.completed ),
@@ -149,34 +189,54 @@ export const usePrepareSiteForMigration = ( siteId?: number ) => {
 			: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
 	};
 
-	useEffect( () => {
-		if ( siteTransferState.status === 'pending' ) {
-			return safeLogToLogstash( 'Site migration preparation started', {
-				status: 'started',
-				site_id: siteId,
-			} );
-		}
-	}, [ siteTransferState.status, siteId ] );
+	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
 
-	useEffect( () => {
-		if ( criticalError ) {
-			return safeLogToLogstash( 'Site migration preparation failed', {
-				status: 'error',
-				error: criticalError.message,
-				error_type: criticalError.name,
-				site_id: siteId,
-			} );
-		}
-	}, [ completed, criticalError, siteTransferState, siteId ] );
+	return {
+		detailedStatus,
+		completed,
+		error,
+		migrationKey: migrationKey ?? null,
+	};
+};
 
-	useEffect( () => {
-		if ( completed ) {
-			return safeLogToLogstash( 'Site migration preparation completed', {
-				status: 'success',
-				site_id: siteId,
-			} );
-		}
-	}, [ completed, siteId ] );
+/**
+ *  Hook to manage the site to prepare a site for migration using the Migrate to WordPress.com plugin.
+ *  This hook manages the site transfer.
+ */
+export const usePrepareSiteForMigrationWithMigrateToWPCOM = ( siteId?: number ) => {
+	const siteTransferState = useSiteTransfer( siteId );
+	const transferTimingTracked = useRef( false );
+
+	const {
+		data: { migrationKey } = {},
+		error: migrationKeyError,
+		fetchStatus: migrationKeyFetchStatus,
+	} = useSiteMigrationKey( siteId );
+
+	const { siteTransferStart, siteTransferEnd } = useTransferTimeTracking( siteTransferState );
+
+	const completed = siteTransferState.completed;
+	const error = siteTransferState.error || migrationKeyError;
+	const criticalError = siteTransferState.error;
+	const hasAllTimingInfo = siteTransferEnd.current !== 0;
+
+	if ( completed && hasAllTimingInfo && ! transferTimingTracked.current ) {
+		const siteTransferElapsed = siteTransferEnd.current - siteTransferStart.current;
+
+		recordTracksEvent( 'calypso_onboarding_site_migration_transfer_timing', {
+			error,
+			migration_setup_elapsed: siteTransferElapsed,
+		} );
+
+		transferTimingTracked.current = true;
+	}
+
+	const detailedStatus = {
+		siteTransfer: siteTransferState.status,
+		migrationKey: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
+	};
+
+	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
 
 	return {
 		detailedStatus,

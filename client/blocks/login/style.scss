@@ -145,6 +145,36 @@ $breakpoint-mobile: 782px; //Mobile size.
 	margin-bottom: 0;
 }
 
+.wp-login__main .login .is-social-first .card.login__form > .social-buttons__button.button {
+	background: var(--studio-wordpress-blue, #3858e9);
+	border: none;
+
+	& > svg:not(.social-icons__mail):not(.jetpack-logo) path {
+		fill: #fff;
+	}
+
+	& > svg.social-icons__mail {
+		path,
+		rect {
+			stroke: #fff;
+		}
+	}
+
+	& > svg.jetpack-logo {
+		polygon {
+			fill: var(--studio-wordpress-blue, #3858e9);
+		}
+
+		path {
+			fill: #fff;
+		}
+	}
+
+	& > span {
+		color: #fff;
+	}
+}
+
 .login__form .login__form-userdata {
 	label {
 		color: var(--color-neutral-70);

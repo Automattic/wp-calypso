@@ -81,7 +81,6 @@ import './login-form.scss';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		shouldShowLastUsedAuthenticationMethod: PropTypes.bool,
 		accountType: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -116,6 +115,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		loginButtonText: PropTypes.string,
 	};
 
 	state = {
@@ -423,7 +423,12 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless } = this.props;
+		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless, loginButtonText } =
+			this.props;
+
+		if ( loginButtonText ) {
+			return loginButtonText;
+		}
 
 		if ( this.isUsernameOrEmailView() || isWooPasswordless ) {
 			return translate( 'Continue' );
@@ -808,7 +813,6 @@ export class LoginForm extends Component {
 
 	render() {
 		const {
-			shouldShowLastUsedAuthenticationMethod,
 			accountType,
 			oauth2Client,
 			requestError,
@@ -885,10 +889,7 @@ export class LoginForm extends Component {
 		);
 
 		const showLastUsedAuthenticationMethod =
-			shouldShowLastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod !== 'password' &&
-			isSocialFirst;
+			lastUsedAuthenticationMethod && lastUsedAuthenticationMethod !== 'password' && isSocialFirst;
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
@@ -927,6 +928,10 @@ export class LoginForm extends Component {
 			this.isPasswordView() ||
 			isFromGravatar3rdPartyApp ||
 			isGravatarFlowWithEmail;
+
+		const shouldRenderForgotPasswordLink =
+			( ! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless ) ||
+			! isPasswordHidden;
 
 		return (
 			<form
@@ -1129,7 +1134,7 @@ export class LoginForm extends Component {
 							</div>
 
 							{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
-							{ isWoo && ! isPartnerSignup && ! isWooPasswordless && this.renderLostPasswordLink() }
+							{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 							<div className="login__form-action">
 								<FormsButton
 									primary
@@ -1155,7 +1160,6 @@ export class LoginForm extends Component {
 						</>
 					) }
 				</Card>
-
 				{ shouldShowSocialLoginForm && (
 					<Fragment>
 						<FormDivider />

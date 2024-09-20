@@ -1,12 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
-.is-group-performance-profiler.is-logged-in {
-	.profiler-header {
-		padding-top: 72px; // 40px + 32px (masterbar height)
-	}
-}
-
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
@@ -223,10 +217,9 @@
 				justify-content: center;
 				align-items: center;
 				gap: 4px;
-				color: var(--studio-gray-20);
 
 				.share-icon {
-					fill: var(--studio-gray-20);
+					fill: #fff;
 					margin-bottom: -1px;
 				}
 			}

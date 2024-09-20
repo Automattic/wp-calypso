@@ -38,6 +38,7 @@ class SelectDropdown extends Component {
 				path: PropTypes.string,
 				icon: PropTypes.element,
 				secondaryIcon: PropTypes.element,
+				count: PropTypes.number,
 			} )
 		),
 		isLoading: PropTypes.bool,
@@ -197,6 +198,7 @@ class SelectDropdown extends Component {
 						path={ item.path }
 						icon={ item.icon }
 						secondaryIcon={ item.secondaryIcon }
+						count={ item.count }
 					>
 						{ item.label }
 					</DropdownItem>

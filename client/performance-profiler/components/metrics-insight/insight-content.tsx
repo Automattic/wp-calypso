@@ -1,13 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import {
+	FullPageScreenshot,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LLMMessage } from 'calypso/performance-profiler/components/llm-message';
 import { ThumbsUpIcon, ThumbsDownIcon } from 'calypso/performance-profiler/icons/thumbs';
 import { InsightDetailedContent } from './insight-detailed-content';
 
 interface InsightContentProps {
+	fullPageScreenshot: FullPageScreenshot;
 	data: PerformanceMetricsItemQueryResponse;
 	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
@@ -16,7 +20,7 @@ interface InsightContentProps {
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	const translate = useTranslate();
-	const { data, isLoading, AIGenerated } = props;
+	const { data, fullPageScreenshot, isLoading, AIGenerated } = props;
 	const { description = '' } = data ?? {};
 	const [ feedbackSent, setFeedbackSent ] = useState( false );
 	const onSurveyClick = ( rating: string ) => {
@@ -31,7 +35,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	return (
 		<div className="metrics-insight-content">
 			{ isLoading ? (
-				<LLMMessage message={ translate( 'Finding the best solution…' ) } rotate />
+				<LLMMessage message={ translate( 'Finding the best solution for your site…' ) } rotate />
 			) : (
 				<>
 					<div className="description-area">
@@ -70,7 +74,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 											>
 												<ThumbsUpIcon />
 
-												{ translate( "Good, it's helpful" ) }
+												{ translate( 'Good, it‘s helpful' ) }
 											</div>
 											<div
 												className="options bad"
@@ -91,7 +95,10 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 
 					{ data.details?.type && (
 						<div className="metrics-insight-detailed-content">
-							<InsightDetailedContent data={ data.details } />
+							<InsightDetailedContent
+								fullPageScreenshot={ fullPageScreenshot }
+								data={ data.details }
+							/>
 						</div>
 					) }
 				</>

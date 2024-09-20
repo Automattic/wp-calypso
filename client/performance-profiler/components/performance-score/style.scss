@@ -1,10 +1,12 @@
 .performance-profiler-performance-score {
+	flex: 1; // This component will grow and shrink instead of the sibling
 	display: flex;
 	padding: 24px 0;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 24px;
 	position: relative;
+	min-width: 360px;
 
 	.score-summary {
 		display: flex;
@@ -37,12 +39,27 @@
 			font-size: 26px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			line-height: 26px;
 		}
+
+		&.mobile {
+			.current-score {
+				font-size: 64px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				line-height: 64px;
+			}
+
+			.max-score {
+				font-size: $font-title-small;
+			}
+		}
 	}
 
 	.disclaimer {
 		color: var(--studio-gray-70);
 		font-size: $font-body-extra-small;
 		line-height: $font-title-small;
+		text-wrap: balance;
+		a {
+			text-wrap: nowrap;
+		}
 	}
 
 	.status {
@@ -78,8 +95,14 @@
 		}
 
 		.recommendations-text {
+			flex: 1;
+			display: flex;
+			flex-wrap: wrap;
+			white-space: nowrap;
 			a {
 				cursor: pointer;
+				font-weight: 500;
+				white-space: nowrap;
 			}
 		}
 	}

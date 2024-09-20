@@ -1,0 +1,111 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+$blueberry-color: #3858e9;
+
+.metric-tab-bar {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 250px;
+	align-self: self-start;
+
+	button {
+		color: inherit;
+	}
+}
+
+.metric-tab-bar__tab {
+	display: flex;
+	gap: 6px;
+	background: var(--studio-white);
+	border: 1.5px solid var(--studio-gray-5);
+	text-align: initial;
+	flex-grow: 1;
+	padding: 16px 22px 16px 22px;
+
+	&:not(.active) {
+		border-bottom: 1px solid var(--studio-gray-5);
+		&:not(:nth-child(-n+2)) {
+			border-top: none;
+		}
+	}
+
+	&.active {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
+		border: 1.5px solid $blueberry-color;
+		position: relative;
+
+		&::before {
+			left: -6px;
+			background-image: unset;
+		}
+
+		&::after {
+			right: -6px;
+			background-image: unset;
+		}
+
+	}
+
+	&:last-child {
+		/* stylelint-disable-next-line scales/radii */
+		border-bottom-right-radius: 6px;
+		/* stylelint-disable-next-line scales/radii */
+		border-bottom-left-radius: 6px;
+	}
+
+	&:nth-child(2) {
+		/* stylelint-disable-next-line scales/radii */
+		border-top-left-radius: 6px;
+		/* stylelint-disable-next-line scales/radii */
+		border-top-right-radius: 6px;
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: $blueberry-color;
+	}
+}
+
+.metric-tab-bar__tab-status {
+	line-height: normal;
+	display: none;
+}
+
+.metric-tab-bar__tab-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+}
+
+.metric-tab-bar__tab-header {
+	font-family: $font-sf-pro-display;
+	font-size: $font-body-small;
+	font-weight: 500;
+}
+.metric-tab-bar__tab-metric {
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header-small;
+
+
+	&.good {
+		color: #00ba37;
+	}
+
+	&.needs-improvement {
+		color: #d67709;
+	}
+
+	&.bad {
+		color: #d63638;
+	}
+}
+
+.metric-tab-bar__performance {
+	margin-bottom: 16px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+}

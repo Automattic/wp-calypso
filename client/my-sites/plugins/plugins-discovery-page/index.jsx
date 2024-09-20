@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
+import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';

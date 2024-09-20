@@ -1,0 +1,42 @@
+.status-section {
+	font-size: $font-body-small;
+	color: #000;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+
+
+	.status-badge {
+		display: flex;
+		padding: 2px 10px;
+		justify-content: center;
+		align-items: center;
+		gap: 4px;
+		border-radius: 4px;
+		font-weight: 500;
+		flex-shrink: 0;
+		width: 100%;
+
+		&.poor {
+			background: var(--studio-red-5);
+			color: var(--studio-red-80);
+		}
+
+		&.neutral {
+			background: var(--studio-orange-5);
+			color: var(--studio-orange-80);
+		}
+
+		&.good {
+			background: var(--studio-green-5);
+			color: var(--studio-green-80);
+		}
+	}
+
+	.recommendations-text {
+		a {
+			cursor: pointer;
+		}
+	}
+}

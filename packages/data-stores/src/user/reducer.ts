@@ -13,7 +13,15 @@ export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( 
 	return state;
 };
 
-const reducer = combineReducers( { currentUser } );
+const isNewUser: Reducer< boolean, Action > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'SET_IS_NEW_USER':
+			return action.isNewUser;
+	}
+	return state;
+};
+
+const reducer = combineReducers( { currentUser, isNewUser } );
 export type State = ReturnType< typeof reducer >;
 
 export default reducer;

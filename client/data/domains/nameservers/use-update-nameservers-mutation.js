@@ -18,9 +18,12 @@ function useUpdateNameserversMutation( domainName, queryOptions = {} ) {
 		},
 	} );
 
-	const { mutate } = mutation;
+	const { mutateAsync } = mutation;
 
-	const updateNameservers = useCallback( ( nameservers ) => mutate( { nameservers } ), [ mutate ] );
+	const updateNameservers = useCallback(
+		( nameservers ) => mutateAsync( { nameservers } ),
+		[ mutateAsync ]
+	);
 
 	return { updateNameservers, ...mutation };
 }

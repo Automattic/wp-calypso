@@ -7,6 +7,10 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+
+	button {
+		color: inherit;
+	}
 }
 
 .metric-tab-bar__tab {

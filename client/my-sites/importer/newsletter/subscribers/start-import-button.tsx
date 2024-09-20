@@ -1,26 +1,26 @@
-import { FormLabel } from '@automattic/components';
-import { useState } from '@wordpress/element';
-import { ChangeEvent } from 'react';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { StepId } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSubscriberImportMutation } from 'calypso/data/paid-newsletter/use-subscriber-import-mutation';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 
 type Props = {
-	step: string;
+	step: StepId;
 	engine: string;
 	siteId: number;
-	hasPaidSubscribers: boolean;
 	navigate?: () => void;
+	disabled?: boolean;
+	primary?: boolean;
+	label?: string;
 };
+
 export default function StartImportButton( {
 	siteId,
-	hasPaidSubscribers,
 	step,
 	engine,
 	navigate = () => {},
+	disabled,
+	primary = true,
+	label,
 }: Props ) {
-	const [ isDisabled, setIsDisabled ] = useState( ! hasPaidSubscribers );
-
 	const { enqueueSubscriberImport } = useSubscriberImportMutation();
 
 	const importSubscribers = () => {
@@ -28,30 +28,9 @@ export default function StartImportButton( {
 		navigate();
 	};
 
-	const onChange = ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
-		setIsDisabled( checked );
-
 	return (
-		<>
-			{ hasPaidSubscribers && (
-				<>
-					<p>
-						<strong>To prevent any unexpected actions by your old provider</strong>, go to your
-						Stripe dashboard and click “Revoke access” for any service previously associated with
-						this subscription.
-					</p>
-
-					<p>
-						<FormLabel>
-							<FormCheckbox checked={ isDisabled } onChange={ onChange } />
-							I’ve disconnected other providers from the Stripe account
-						</FormLabel>
-					</p>
-				</>
-			) }
-			<ImporterActionButton primary disabled={ ! isDisabled } onClick={ importSubscribers }>
-				Import subscribers
-			</ImporterActionButton>
-		</>
+		<ImporterActionButton primary={ primary } disabled={ disabled } onClick={ importSubscribers }>
+			{ label || 'Import subscribers' }
+		</ImporterActionButton>
 	);
 }

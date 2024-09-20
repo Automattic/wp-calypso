@@ -62,13 +62,14 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		} else {
 			page(
 				login( {
+					isJetpack: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
 					redirectTo: redirectToSanitized ?? undefined,
 				} )
 			);
 		}
-	}, [ dispatch ] );
+	}, [ dispatch, redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent ] );
 
 	useEffect( () => {
 		if ( ! hasSubmitted || isFetching ) {

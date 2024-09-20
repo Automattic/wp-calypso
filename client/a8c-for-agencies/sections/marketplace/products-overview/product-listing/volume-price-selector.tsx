@@ -12,10 +12,10 @@ const getDiscountPercentage = ( bundleSize: number ) => {
 	return {
 		1: '',
 		5: '10%',
-		10: '15%',
-		20: '20%',
-		50: '40%',
-		100: '50%',
+		10: '20%',
+		20: '40%',
+		50: '70%',
+		100: '80%',
 	}[ bundleSize ];
 };
 

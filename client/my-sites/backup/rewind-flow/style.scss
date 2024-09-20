@@ -11,9 +11,8 @@
 }
 
 .rewind-flow__header {
-	display: block;
-	justify-content: center;
-	line-height: 0;
+	align-items: center;
+	display: flex;
 	margin-bottom: 8px;
 	padding-bottom: 0;
 	padding-top: 0;
@@ -27,6 +26,17 @@
 		height: 48px;
 		width: 48px;
 	}
+}
+
+.rewind-flow__learn-about {
+	flex-grow: 1;
+	font-size: $font-body-small;
+	text-align: right;
+	text-decoration-line: underline;
+}
+
+.rewind-flow__learn-about a {
+	color: var(--studio-gray-80);
 }
 
 .rewind-flow__title {

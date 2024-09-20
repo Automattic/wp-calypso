@@ -8,7 +8,6 @@ import {
 	LineItemType,
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
-	filterAndGroupCostOverridesForDisplay,
 	isBillingInfoEmpty,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -97,8 +96,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart, translate );
+	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart );
 	const discountLineItem: LineItemType = {
 		id: 'total-discount',
 		type: 'subtotal',
@@ -113,10 +111,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label:
-			costOverridesList.length > 0
-				? translate( 'Subtotal before discounts' )
-				: translate( 'Subtotal' ),
+		label: totalDiscount > 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
 		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
@@ -131,9 +126,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			<WPOrderReviewSection>
 				<NonTotalPrices>
 					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-					{ costOverridesList.length > 0 && (
-						<NonProductLineItem subtotal lineItem={ discountLineItem } />
-					) }
+					{ totalDiscount > 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
 					{ taxLineItems.map( ( taxLineItem ) => (
 						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 					) ) }

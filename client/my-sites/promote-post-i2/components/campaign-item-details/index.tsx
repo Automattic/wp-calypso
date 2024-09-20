@@ -116,6 +116,7 @@ export default function CampaignItemDetails( props: Props ) {
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
+		campaign_id,
 		created_at,
 		format,
 		budget_cents,
@@ -142,7 +143,7 @@ export default function CampaignItemDetails( props: Props ) {
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
-		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
+		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
 		entrypoint: 'promoted_posts-campaign-details-header',
 	} );
 

@@ -6,15 +6,14 @@ export type EngineTypes = 'substack';
 
 export type StatusType = 'initial' | 'done' | 'pending' | 'skipped' | 'importing';
 
-export type StepProps = {
-	cardData: any; // TODO: Map to the backend.
+export interface SubscribersStepProps {
+	cardData: any;
 	status: StatusType;
-	engine: EngineTypes;
+	engine: 'substack';
 	fromSite: QueryArgParsed;
-	isFetchingContent: boolean;
 	nextStepUrl: string;
 	selectedSite: SiteDetails;
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 	siteSlug: string;
 	skipNextStep: () => void;
-};
+}
