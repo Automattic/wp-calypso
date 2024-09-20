@@ -72,7 +72,8 @@ export const sendLoginEmail = ( action ) => {
 					...( flow && { flow } ),
 					create_account: createAccount,
 					tos: getToSAcceptancePayload(),
-					calypso_env: config( 'env_id' ),
+					calypso_env:
+						window?.location?.host === 'wordpress.com' ? 'production' : config( 'env_id' ),
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }
