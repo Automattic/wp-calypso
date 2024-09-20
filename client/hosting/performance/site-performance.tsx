@@ -122,6 +122,12 @@ export const SitePerformance = () => {
 		}
 	}, [ pages, currentPage, currentPageId ] );
 
+	const pageOptions = useMemo( () => {
+		return currentPage
+			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
+			: orderedPages;
+	}, [ currentPage, orderedPages ] );
+
 	const [ wpcom_performance_report_url, setWpcom_performance_report_url ] = useState(
 		currentPage?.wpcom_performance_report_url
 	);
@@ -229,7 +235,8 @@ export const SitePerformance = () => {
 				/>
 				<PageSelector
 					onFilterValueChange={ setQuery }
-					options={ orderedPages }
+					allowReset={ false }
+					options={ pageOptions }
 					onChange={ ( page_id ) => {
 						const url = new URL( window.location.href );
 
