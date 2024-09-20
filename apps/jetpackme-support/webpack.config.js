@@ -3,6 +3,8 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
@@ -14,9 +16,7 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
  * @returns {Object}                                webpack config
  */
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
-	env.WP = true;
-
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	const webpackConfig = getBaseWebpackConfig( { ...env, WP: ! isDevelopment }, argv );
 
 	return {
 		...webpackConfig,
