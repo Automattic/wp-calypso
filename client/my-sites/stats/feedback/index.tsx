@@ -209,13 +209,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		window.open( FEEDBACK_LEAVE_REVIEW_URL );
 	};
 
-	const dismissPanelWithDelay = () => {
-		// Allows the animation to run first.
-		setTimeout( () => {
-			setIsFloatingPanelOpen( false );
-		}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
-	};
-
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
@@ -224,12 +217,10 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				} );
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
+				dismissFloatingPanel();
 				if ( ! debug ) {
-					dismissPanelWithDelay();
 					updateFeedbackPanelHibernationDelayWithDebug();
 					trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
-				} else {
-					dismissFloatingPanel();
 				}
 				break;
 			case ACTION_LEAVE_REVIEW:
