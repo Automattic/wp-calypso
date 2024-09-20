@@ -163,6 +163,10 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
+// TODO: Remove debug mode.
+// And toggle panel button/action support.
+const FEEDBACK_DEBUG_MODE = true;
+
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
@@ -172,15 +176,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
 		useNoticeVisibilityHooks( siteId );
-
-	// Wrap hibernation delay callback for debugging.
-	const debug = true;
-	const updateFeedbackPanelHibernationDelayWithDebug = () => {
-		if ( debug ) {
-			return;
-		}
-		updateFeedbackPanelHibernationDelay();
-	};
 
 	useEffect( () => {
 		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
@@ -222,8 +217,8 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissFloatingPanel();
-				if ( ! debug ) {
-					updateFeedbackPanelHibernationDelayWithDebug();
+				if ( ! FEEDBACK_DEBUG_MODE ) {
+					updateFeedbackPanelHibernationDelay();
 					trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				}
 				break;
