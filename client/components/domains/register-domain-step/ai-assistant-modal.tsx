@@ -14,6 +14,11 @@ const HeaderImage = styled.img`
 
 export const DialogContainer = styled.div`
 	padding: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 0 48px;
 `;
 
 export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
@@ -51,6 +56,13 @@ export const ButtonContainer = styled.div`
 		border-radius: 4px;
 		overflow: hidden;
 	}
+	border-top: solid 1px rgba( 0, 0, 0, 0.15 );
+	box-shadow: 0 0 70px rgba( 0, 0, 0, 0.1 );
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
 `;
 
 export const Row = styled.div`
@@ -144,13 +156,19 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				styles={ css`
 					.ai-assistant-modal .dialog__content {
 						padding: 0;
+						height: 100%;
+						position: relative;
+						display: flex;
+						flex-direction: column;
 					}
+
 					.dialog__backdrop.is-full-screen {
 						background-color: rgba( 0, 0, 0, 0.6 );
 					}
-					.ReactModal__Content--after-open.dialog.card {
+					.ai-assistant-modal.dialog.card {
 						border-radius: 4px;
 						width: ${ modalWidth() };
+						height: 100%;
 					}
 				` }
 			/>
@@ -162,15 +180,15 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 						'Tell us about your idea, product or service in your prompt - and let AI amaze you.'
 					) }
 				</SubHeading>
-				<ButtonContainer>
-					<Row>
-						<Search { ...searchProps } />
-						<SearchButton onClick={ handleButtonClick }>
-							<img src={ AIassistantIllustration } width={ 24 } alt={ translate( 'Submit' ) } />
-						</SearchButton>
-					</Row>
-				</ButtonContainer>
 			</DialogContainer>
+			<ButtonContainer>
+				<Row>
+					<Search { ...searchProps } />
+					<SearchButton onClick={ handleButtonClick }>
+						<img src={ AIassistantIllustration } width={ 24 } alt={ translate( 'Submit' ) } />
+					</SearchButton>
+				</Row>
+			</ButtonContainer>
 		</Dialog>
 	);
 }
