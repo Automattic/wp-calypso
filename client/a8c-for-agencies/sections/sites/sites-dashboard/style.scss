@@ -50,6 +50,33 @@
 		border-radius: 4px;
 	}
 
+	.dataviews__view-actions,
+	.dataviews-filters__container {
+		padding: 16px;
+
+		@media (min-width: $break-small) {
+			padding: 16px 64px;
+		}
+	}
+
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-left: 16px;
+
+		@media (min-width: $break-small) {
+			padding-left: 64px;
+		}
+	}
+
+	.dataviews-view-table tr td:last-child,
+	.dataviews-view-table tr th:last-child {
+		padding-right: 16px;
+
+		@media (min-width: $break-small) {
+			padding-right: 64px;
+		}
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -209,7 +236,7 @@
 				padding: 0;
 
 				.a4a-layout__viewport {
-					padding-inline: 24px;
+					padding-inline: 16px;
 				}
 
 				.a4a-layout__header-title {
@@ -454,13 +481,6 @@
 	}
 
 	&.sites-dashboard__layout {
-		.a4a-layout__viewport {
-			padding-inline: 24px;
-
-			@media (min-width: 720px) {
-				padding-inline: 48px;
-			}
-		}
 
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
