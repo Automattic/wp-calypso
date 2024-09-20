@@ -12,7 +12,6 @@ export default function StepPending( {
 	skipNextStep,
 	cardData,
 	engine,
-	isFetchingContent,
 	setAutoFetchData,
 	status,
 }: SubscribersStepProps ) {
@@ -28,7 +27,6 @@ export default function StepPending( {
 				cardData={ cardData }
 				engine={ engine }
 				fromSite={ fromSite }
-				isFetchingContent={ isFetchingContent }
 				nextStepUrl={ nextStepUrl }
 				selectedSite={ selectedSite }
 				setAutoFetchData={ setAutoFetchData }

@@ -55,7 +55,7 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
-	const { data: paidNewsletterData, isFetching: isFetchingPaidNewsletter } = usePaidNewsletterQuery(
+	const { data: paidNewsletterData } = usePaidNewsletterQuery(
 		engine,
 		step,
 		selectedSite?.ID,
@@ -171,7 +171,6 @@ export default function NewsletterImporter( {
 							cardData={ paidNewsletterData.steps[ step ]?.content }
 							engine={ engine }
 							status={ paidNewsletterData.steps[ step ]?.status || 'initial' }
-							isFetchingContent={ isFetchingPaidNewsletter }
 							setAutoFetchData={ setAutoFetchData }
 						/>
 					) }

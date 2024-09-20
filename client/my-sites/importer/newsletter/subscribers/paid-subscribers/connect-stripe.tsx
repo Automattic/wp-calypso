@@ -29,11 +29,10 @@ export default function ConnectStripe( {
 	cardData,
 	fromSite,
 	engine,
-	isFetchingContent,
 	selectedSite,
 	siteSlug,
 }: SubscribersStepProps ) {
-	if ( isFetchingContent || cardData?.connect_url === undefined ) {
+	if ( cardData?.connect_url === undefined ) {
 		return null;
 	}
 
