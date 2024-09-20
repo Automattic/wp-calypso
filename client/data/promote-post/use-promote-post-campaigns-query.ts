@@ -59,6 +59,7 @@ export type CampaignResponse = {
 		}[];
 	};
 	is_evergreen?: boolean;
+	objective: string;
 };
 
 export type Order = {

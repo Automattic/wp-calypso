@@ -569,7 +569,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__label {
 			font-size: 0.875rem;
 			font-weight: 500;
-			margin-bottom: 5px;
+			margin-bottom: 8px;
 		}
 
 		.campaign-item-details__text {
@@ -589,6 +589,17 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			color: var(--studio-gray-50);
 			font-size: 0.875rem;
 			font-weight: 400;
+
+			&.objective {
+				display: flex;
+				align-items: center;
+				text-wrap: balance;
+			}
+			&.objective svg {
+				max-width: 37px;
+				max-height: 37px;
+				margin-right: 16px;
+			}
 		}
 
 	}
