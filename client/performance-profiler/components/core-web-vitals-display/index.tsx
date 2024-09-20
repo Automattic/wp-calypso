@@ -1,6 +1,6 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import {
 	Metrics,
 	PerformanceMetricsHistory,
@@ -8,6 +8,7 @@ import {
 } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsAccordion } from '../core-web-vitals-accordion';
 import { MetricTabBar } from '../metric-tab-bar';
+import MetricTabBarV2 from '../metric-tab-bar/metric-tab-bar-v2';
 import { CoreWebVitalsDetails } from './core-web-vitals-details';
 import { CoreWebVitalsDetailsV2 } from './core-web-vitals-details_v2';
 import './style.scss';
@@ -19,8 +20,6 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	showV2?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
-
-const MetricTabBarV2 = lazy( () => import( '../metric-tab-bar/metric-tab-bar-v2' ) );
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	const defaultTab = props.showV2 ? 'overall' : 'fcp';
@@ -34,13 +33,11 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	);
 
 	const metricTabBar = props.showV2 ? (
-		<Suspense fallback={ null }>
-			<MetricTabBarV2
-				activeTab={ activeTab ?? defaultTab }
-				setActiveTab={ setActiveTab }
-				{ ...props }
-			/>
-		</Suspense>
+		<MetricTabBarV2
+			activeTab={ activeTab ?? defaultTab }
+			setActiveTab={ setActiveTab }
+			{ ...props }
+		/>
 	) : (
 		<MetricTabBar
 			activeTab={ activeTab ?? defaultTab }
