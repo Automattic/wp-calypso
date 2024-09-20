@@ -328,6 +328,7 @@ export type CheckoutPaymentMethodSlug =
 	// ends up using this as an `id`, which overwrites `window.paypal`
 	// which is the namespace used by the PayPal JS SDK.
 	| 'paypal-js'
+	| 'paypal-express'
 	| 'paypal-direct'
 	| 'sofort'
 	| 'free-purchase'
