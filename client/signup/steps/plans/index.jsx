@@ -6,7 +6,6 @@ import {
 	isTailoredSignupFlow,
 	isOnboardingGuidedFlow,
 	ONBOARDING_GUIDED_FLOW,
-	StepContainer as StepperStepContainer,
 } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
@@ -15,6 +14,7 @@ import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
@@ -25,7 +25,6 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import StartStepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -307,7 +306,8 @@ export class PlansStep extends Component {
 
 		if ( useStepperWrapper ) {
 			return (
-				<StepperStepContainer
+				<AsyncLoad
+					require="@automattic/onboarding/src/step-container"
 					flowName={ flowName }
 					stepName={ stepName }
 					formattedHeader={
@@ -329,7 +329,8 @@ export class PlansStep extends Component {
 		}
 
 		return (
-			<StartStepWrapper
+			<AsyncLoad
+				require="calypso/signup/step-wrapper"
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
