@@ -114,10 +114,20 @@ export const SitePerformance = () => {
 	const currentPageId = queryParams?.page_id?.toString() ?? '0';
 	const filter = queryParams?.filter?.toString();
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
-	const currentPage = useMemo(
-		() => pages.find( ( page ) => page.value === currentPageId ),
-		[ pages, currentPageId ]
-	);
+	const [ currentPage, setCurrentPage ] = useState< ( typeof pages )[ number ] >();
+
+	useEffect( () => {
+		if ( pages && ! currentPage ) {
+			setCurrentPage( pages.find( ( page ) => page.value === currentPageId ) );
+		}
+	}, [ pages, currentPage, currentPageId ] );
+
+	const pageOptions = useMemo( () => {
+		return currentPage
+			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
+			: orderedPages;
+	}, [ currentPage, orderedPages ] );
+
 	const [ wpcom_performance_report_url, setWpcom_performance_report_url ] = useState(
 		currentPage?.wpcom_performance_report_url
 	);
@@ -225,13 +235,16 @@ export const SitePerformance = () => {
 				/>
 				<PageSelector
 					onFilterValueChange={ setQuery }
-					options={ orderedPages }
+					allowReset={ false }
+					options={ pageOptions }
 					onChange={ ( page_id ) => {
 						const url = new URL( window.location.href );
 
 						if ( page_id ) {
+							setCurrentPage( pages.find( ( page ) => page.value === page_id ) );
 							url.searchParams.set( 'page_id', page_id );
 						} else {
+							setCurrentPage( undefined );
 							url.searchParams.delete( 'page_id' );
 						}
 

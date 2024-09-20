@@ -118,13 +118,16 @@ export default function SitesDashboard() {
 		prevIsOnNeedsAttentionPageRef.current = isOnNeedsAttentionPage;
 	}, [ dataViewsState, setDataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ] );
 
+	// Temporarily set perPage to 100 on Development sites page due to unresolved ES issue (https://github.com/Automattic/dotcom-forge/issues/8806)
+	const sitesPerPage = showOnlyDevelopmentSites ? 100 : dataViewsState.perPage;
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: dataViewsState?.search,
 		currentPage: dataViewsState.page ?? 1,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
-		perPage: dataViewsState.perPage,
+		perPage: sitesPerPage,
 		agencyId,
 	} );
 
