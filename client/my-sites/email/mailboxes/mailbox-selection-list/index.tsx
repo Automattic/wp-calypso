@@ -27,7 +27,9 @@ import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import NewMailboxUpsell from 'calypso/my-sites/email/mailboxes/new-mailbox-upsell';
 import { getMailboxesPath } from 'calypso/my-sites/email/paths';
+import { useDispatch as useCalypsoDispatch } from 'calypso/state';
 import { recordPageView, enhanceWithSiteMainProduct } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
 import ProgressLine from './progress-line';
@@ -137,6 +139,20 @@ const MailboxItem = ( { mailbox }: { mailbox: Mailbox } ) => {
 
 const MailboxItems = ( { mailboxes }: { mailboxes: Mailbox[] } ) => {
 	const translate = useTranslate();
+	const dispatch = useCalypsoDispatch();
+	useEffect( () => {
+		// Email checkoug provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com`
+		const queryParams = new URLSearchParams( window.location.search );
+		const newEmail = queryParams.get( 'new-email' );
+		if ( ! newEmail ) {
+			return;
+		}
+		dispatch(
+			successNotice( translate( 'Your new mailbox has been created.' ), {
+				duration: 5000,
+			} )
+		);
+	}, [] );
 
 	return (
 		<>
