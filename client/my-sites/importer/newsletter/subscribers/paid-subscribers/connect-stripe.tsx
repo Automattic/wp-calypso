@@ -1,10 +1,12 @@
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
+import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
+import StartImportButton from '../start-import-button';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
@@ -27,9 +29,10 @@ export default function ConnectStripe( {
 	cardData,
 	fromSite,
 	engine,
-	isFetchingContent,
+	selectedSite,
+	siteSlug,
 }: SubscribersStepProps ) {
-	if ( isFetchingContent || cardData?.connect_url === undefined ) {
+	if ( cardData?.connect_url === undefined ) {
 		return null;
 	}
 
@@ -39,8 +42,8 @@ export default function ConnectStripe( {
 		<>
 			<h2>Do you have paid subscribers?</h2>
 			<p>
-				To your migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
-				connecting <strong>the same Stripe account</strong> you use with Substack.
+				To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
+				connecting the <strong>same</strong> Stripe account you use with Substack.
 			</p>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
@@ -52,6 +55,16 @@ export default function ConnectStripe( {
 				>
 					Connect <img src={ StripeLogo } className="stripe-logo" width="48px" alt="Stripe logo" />
 				</ImporterActionButton>
+				<StartImportButton
+					engine={ engine }
+					siteId={ selectedSite.ID }
+					step="subscribers"
+					primary={ false }
+					navigate={ () => {
+						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+					} }
+					label="Continue free subscriber import"
+				/>
 			</ImporterActionButtonContainer>
 		</>
 	);
