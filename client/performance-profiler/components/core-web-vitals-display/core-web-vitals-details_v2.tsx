@@ -1,3 +1,4 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Metrics,
@@ -34,6 +35,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	...metrics
 } ) => {
 	const translate = useTranslate();
+	const isMobile = ! useDesktopBreakpoint();
 
 	if ( ! activeTab ) {
 		return null;
@@ -74,9 +76,9 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
-	// last 8 weeks only
-	metricsData = metricsData.slice( -8 );
-	dates = dates.slice( -8 );
+	const weeksToShow = isMobile ? 6 : 8;
+	metricsData = metricsData.slice( -weeksToShow );
+	dates = dates.slice( -weeksToShow );
 
 	const dataAvailable = metricsData.length > 0 && metricsData.some( ( item ) => item !== null );
 	const historicalData = metricsData.map( ( item, index ) => {
@@ -104,32 +106,24 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	const isPerformanceScoreSelected = activeTab === 'overall';
 
 	return (
-		<div
-			className="core-web-vitals-display__details"
-			style={ {
-				flexDirection: 'column',
-				borderRadius: '6px',
-				flex: 1,
-			} }
-		>
+		<div className="core-web-vitals-display__details-v2">
 			<div className="core-web-vitals-display__description">
-				<div
-					css={ {
-						display: 'flex',
-						gap: '24px',
-					} }
-				>
+				<div className="core-web-vitals-display__description-container">
 					<div
 						css={ {
 							flex: 1,
 						} }
 					>
-						<span className="core-web-vitals-display__description-subheading">{ displayName }</span>
+						{ ! isMobile && (
+							<span className="core-web-vitals-display__description-subheading">
+								{ displayName }
+							</span>
+						) }
 
 						<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
 							{ isPerformanceScoreSelected ? (
 								<div
-									className="metric-tab-bar__tab-metric"
+									className="metric-tab-bar-v2__tab-metric"
 									css={ {
 										marginTop: '16px',
 									} }
@@ -140,23 +134,6 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 								displayValue( activeTab as Metrics, value )
 							) }
 						</div>
-						<p>
-							{ metricValuations[ activeTab ].explanation }
-							&nbsp;
-							{ isPerformanceScoreSelected ? (
-								<a
-									href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-									target="_blank"
-									rel="noreferrer"
-								>
-									{ translate( 'See calculator ↗' ) }
-								</a>
-							) : (
-								<a href={ `https://web.dev/articles/${ activeTab }` }>
-									{ translate( 'Learn more ↗' ) }
-								</a>
-							) }
-						</p>
 					</div>
 					<StatusSection
 						activeTab={ activeTab }
@@ -166,7 +143,30 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 						recommendationsQuantity={ numberOfAuditsForMetric }
 					/>
 				</div>
-				<div className="core-web-vitals-display__ranges">
+				<p
+					style={ {
+						marginTop: 0,
+						marginBottom: '24px',
+						maxWidth: '496px',
+					} }
+				>
+					{ metricValuations[ activeTab ].explanation }
+					&nbsp;
+					{ isPerformanceScoreSelected ? (
+						<a
+							href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ translate( 'See calculator ↗' ) }
+						</a>
+					) : (
+						<a href={ `https://web.dev/articles/${ activeTab }` }>
+							{ translate( 'Learn more ↗' ) }
+						</a>
+					) }
+				</p>
+				<div className="core-web-vitals-display-v2__ranges">
 					<div className="range">
 						<StatusIndicator speed="good" />
 						<div className="range-heading">{ translate( 'Excellent' ) }</div>
@@ -238,7 +238,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 					] }
 					height={ 300 }
 					d3Format="%b %d"
-					isMobile={ false }
+					isMobile={ isMobile }
 				/>
 			</div>
 		</div>
