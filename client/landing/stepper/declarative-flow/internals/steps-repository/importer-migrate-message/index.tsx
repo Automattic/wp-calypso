@@ -89,7 +89,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: scheduled,
 				text: __(
-					`You'll get an update on the progress of your migration within 2-3 business days.`
+					`You'll get an update on the progress of your migration within 2–3 business days.`
 				),
 			},
 		];
@@ -114,7 +114,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: backup,
 				text: __(
-					`We'll update you on the progress of the migration, which usually takes 2-3 business days.`
+					`We'll update you on the progress of the migration, which usually takes 2–3 business days.`
 				),
 			},
 			{
