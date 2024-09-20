@@ -86,6 +86,12 @@ const StatsDateControl = ( {
 		setTimeout( () => page( generateNewLink( shortcut.period, startDate, endDate ) ), 250 );
 	};
 
+	// handler for shortcut clicks in new updated DateRange component
+	const onShortcutClickHandler = ( shortcut: DateControlPickerShortcut ) => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_clicked` );
+	};
+
 	const getShortcutForRange = () => {
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
@@ -152,6 +158,7 @@ const StatsDateControl = ( {
 					useArrowNavigation
 					customTitle="Date Range"
 					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
+					onShortcutClick={ onShortcutClickHandler } // Pass the new handler
 				/>
 			) : (
 				<DateControlPicker
