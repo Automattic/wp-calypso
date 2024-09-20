@@ -134,3 +134,10 @@
 .sites-overview__content .dataviews-wrapper .dataviews-filters__view-actions .components-h-stack button:nth-of-type(3) {
 	display: none;
 }
+
+// Style the Stats label that includes the Jetpack logo
+.sites-dataviews__stats-label {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}

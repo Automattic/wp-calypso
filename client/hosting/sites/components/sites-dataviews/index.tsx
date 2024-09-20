@@ -161,10 +161,10 @@ const DotcomSitesDataViews = ( {
 				id: 'stats',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: (
-					<>
+					<span className="sites-dataviews__stats-label">
 						<JetpackLogo size={ 16 } />
 						<span>{ __( 'Stats' ) }</span>
-					</>
+					</span>
 				),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
 				enableHiding: false,
