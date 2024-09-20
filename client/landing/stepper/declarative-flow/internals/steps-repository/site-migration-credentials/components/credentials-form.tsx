@@ -34,7 +34,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	const queryError = useQuery().get( 'error' ) || null;
 
 	return (
-		<form onSubmit={ handleSubmit( submitHandler ) }>
+		<form className="site-migration-credentials__form" onSubmit={ handleSubmit( submitHandler ) }>
 			{ queryError === 'ticket-creation' && (
 				<Banner
 					className="site-migration-credentials__error-banner"
@@ -52,15 +52,13 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
-						<div className="site-migration-credentials__form">
-							<SiteAddressField
-								control={ control }
-								errors={ errors }
-								importSiteQueryParam={ importSiteQueryParam }
-							/>
-							<UsernameField control={ control } errors={ errors } />
-							<PasswordField control={ control } errors={ errors } />
-						</div>
+						<SiteAddressField
+							control={ control }
+							errors={ errors }
+							importSiteQueryParam={ importSiteQueryParam }
+						/>
+						<UsernameField control={ control } errors={ errors } />
+						<PasswordField control={ control } errors={ errors } />
 					</div>
 				) }
 
