@@ -120,20 +120,22 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 							</span>
 						) }
 
-						<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
-							{ isPerformanceScoreSelected ? (
-								<div
-									className="metric-tab-bar-v2__tab-metric"
-									css={ {
-										marginTop: '16px',
-									} }
-								>
-									<CircularPerformanceScore score={ value } size={ 76 } />
-								</div>
-							) : (
-								displayValue( activeTab as Metrics, value )
-							) }
-						</div>
+						{ ! isMobile && (
+							<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
+								{ isPerformanceScoreSelected ? (
+									<div
+										className="metric-tab-bar-v2__tab-metric"
+										css={ {
+											marginTop: '16px',
+										} }
+									>
+										<CircularPerformanceScore score={ value } size={ 76 } />
+									</div>
+								) : (
+									displayValue( activeTab as Metrics, value )
+								) }
+							</div>
+						) }
 					</div>
 					<StatusSection
 						activeTab={ activeTab }
