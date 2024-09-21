@@ -221,7 +221,9 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await userEvent.click( continueButton() );
 
-		expect( getByText( /Error message from backend/ ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( /Error message from backend/ ) ).toBeVisible();
+		} );
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
@@ -234,7 +236,9 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await userEvent.click( continueButton() );
 
-		expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
@@ -246,6 +250,9 @@ describe( 'SiteMigrationCredentials', () => {
 		const errorMessage = await findByText(
 			/We ran into a problem submitting your details. Please try again shortly./
 		);
-		expect( errorMessage ).toBeVisible();
+
+		await waitFor( () => {
+			expect( errorMessage ).toBeVisible();
+		} );
 	} );
 } );
