@@ -58,7 +58,13 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 					<Count count={ emailAddresses.length }></Count>
 				</>
 			}
-			description={ emailAddresses.join( '\n' ) }
+			description={
+				<ul className="domain-email-info-card__email-list">
+					{ emailAddresses.map( ( email, index ) => (
+						<li key={ index }>{ email }</li>
+					) ) }
+				</ul>
+			}
 			ctaText={ translate( 'View emails' ) }
 			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
