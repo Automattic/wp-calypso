@@ -34,8 +34,6 @@ import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
 
-const isAtomicExpiredPlan = true;
-
 const BackupMultisiteBody = () => {
 	const translate = useTranslate();
 
@@ -183,63 +181,61 @@ const BackupUpsellBody = () => {
 
 	return (
 		<>
-			{ ! isRevertedWithValidBackup && isRevertedWithValidBackup !== null && (
-				<PromoCard
-					title={ preventWidows(
-						translate( 'Get time travel for your site with Jetpack VaultPress Backup' )
+			<PromoCard
+				title={ preventWidows(
+					translate( 'Get time travel for your site with Jetpack VaultPress Backup' )
+				) }
+				image={ { path: JetpackBackupSVG } }
+				isPrimary
+			>
+				<p>
+					{ preventWidows(
+						translate(
+							'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+						)
 					) }
-					image={ { path: JetpackBackupSVG } }
-					isPrimary
-				>
-					<p>
-						{ preventWidows(
-							translate(
-								'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-							)
+				</p>
+				{ ! isAdmin && (
+					<Notice
+						status="is-warning"
+						text={ translate(
+							'Only site administrators can upgrade to access VaultPress Backup.'
 						) }
-					</p>
-					{ ! isAdmin && (
-						<Notice
-							status="is-warning"
-							text={ translate(
-								'Only site administrators can upgrade to access VaultPress Backup.'
+						showDismiss={ false }
+					/>
+				) }
+				{ isAdmin && isWPcomSite && (
+					<PromoCardCTA
+						cta={ {
+							text: translate( 'Upgrade to %(planName)s Plan', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ),
+							action: {
+								url: `${ checkoutHost }/checkout/${ siteSlug }/business`,
+								onClick: onUpgradeClick,
+								selfTarget: true,
+							},
+						} }
+					/>
+				) }
+				{ isAdmin && ! isWPcomSite && (
+					<div className="backup__wpcom-ctas">
+						<Button
+							className="backup__wpcom-cta"
+							href={ addQueryArgs(
+								`${ checkoutHost }/checkout/${ siteSlug }/jetpack_backup_t1_yearly`,
+								{
+									redirect_to: postCheckoutUrl,
+								}
 							) }
-							showDismiss={ false }
-						/>
-					) }
-					{ isAdmin && isWPcomSite && (
-						<PromoCardCTA
-							cta={ {
-								text: translate( 'Upgrade to %(planName)s Plan', {
-									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-								} ),
-								action: {
-									url: `${ checkoutHost }/checkout/${ siteSlug }/business`,
-									onClick: onUpgradeClick,
-									selfTarget: true,
-								},
-							} }
-						/>
-					) }
-					{ isAdmin && ! isWPcomSite && (
-						<div className="backup__wpcom-ctas">
-							<Button
-								className="backup__wpcom-cta"
-								href={ addQueryArgs(
-									`${ checkoutHost }/checkout/${ siteSlug }/jetpack_backup_t1_yearly`,
-									{
-										redirect_to: postCheckoutUrl,
-									}
-								) }
-								onClick={ onUpgradeClick }
-								primary
-							>
-								{ translate( 'Get backups' ) }
-							</Button>
-						</div>
-					) }
-				</PromoCard>
-			) }
+							onClick={ onUpgradeClick }
+							primary
+						>
+							{ translate( 'Get backups' ) }
+						</Button>
+					</div>
+				) }
+			</PromoCard>
 			{ isRevertedWithValidBackup && backupPeriodDate && rewindId && siteSlug && siteId && (
 				<BackupDownloadFlowExpiredPlan
 					backupDisplayDate={ backupPeriodDate }
@@ -268,7 +264,6 @@ const BackupUpsellBody = () => {
 export default function WPCOMUpsellPage( { reason }: { reason: string } ) {
 	const translate = useTranslate();
 	let body;
-	reason = isAtomicExpiredPlan ? 'expired_atomic_plan' : reason;
 	switch ( reason ) {
 		case 'multisite_not_supported':
 			body = <BackupMultisiteBody />;

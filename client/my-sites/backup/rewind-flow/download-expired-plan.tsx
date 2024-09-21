@@ -15,7 +15,7 @@ import Loading from './loading';
 import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import CheckYourEmail from './rewind-flow-notice/check-your-email';
+//import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import { defaultRewindConfig, RewindConfig } from './types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -95,18 +95,15 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 	const renderConfirm = () => (
 		<>
 			<h3 className="rewind-flow__title">
-				{ translate( 'Backup available from {{strong}}%(backupDisplayDate)s{{/strong}}', {
+				{ translate( 'You have an available backup from %(backupDisplayDate)s', {
 					args: {
 						backupDisplayDate,
-					},
-					components: {
-						strong: <strong />,
 					},
 				} ) }
 			</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					"Good news! A backup of your site is ready to be downloaded. You can download the backup file now for safekeeping. To fully restore your site directly from this backup and ensure ongoing protection with automatic backups, upgrade to the Business plan today. Enjoy peace of mind with full control over your site's data and seamless recovery options."
+					'Good news! Your site backup is ready to download. For full restoration and automatic backups, upgrade to the Business plan today for complete control and easy recovery.'
 				) }
 			</p>
 			<h4 className="rewind-flow__cta">
@@ -165,9 +162,11 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
+			{ /* Backup download email notifications are not currently supposed for simple sites 
 			<CheckYourEmail
 				message={ translate( "For your convenience, we'll email you when your file is ready." ) }
 			/>
+			*/ }
 		</>
 	);
 
@@ -217,11 +216,13 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 			>
 				{ translate( 'Download file' ) } ({ downloadSize })
 			</Button>
+			{ /* Backup download email notifications are not currently supposed for simple sites 
 			<CheckYourEmail
 				message={ translate(
 					"For your convenience, we've emailed you a link to your downloadable backup file."
 				) }
 			/>
+			*/ }
 		</>
 	);
 
