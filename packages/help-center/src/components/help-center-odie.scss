@@ -3,19 +3,43 @@
 /**
  * Styles for '/odie' route.
  */
-.help-center .help-center__container .help-center__container-content .help-center__container-content-wrapper .help-center__container-content-odie {
-	display: flex;
-	height: 100%;
-	max-height: 752px;
-	flex-direction: column;
-	max-width: 410px;
-	padding: 0;
+.help-center__container-content-odie {
+	padding-bottom: 72px;
+}
 
-	.odie-chat-message-input-container {
-		border-radius: 0;
+.help-center__container-footer.chat-footer {
+	background-color: var(--studio-white);
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-top: 1px solid var(--studio-gray-5);
 
-		@media screen and (max-width: 660px) {
-			max-width: 100%;
+	.help-center__container-odie-send-button {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+
+		textarea {
+			box-sizing: border-box;
+			height: 40px;
+			padding: 10px 16px;
+			border: 1px solid var(--studio-gray-5);
+			border-radius: 2px;
+			flex: 2;
+		}
+
+		button {
+			box-sizing: border-box;
+			display: flex;
+			width: 40px;
+			height: 40px;
+			padding: 8px 10px;
+			justify-content: center;
+			align-items: center;
+			background-color: var(--studio-wordpress-blue);
+			border-radius: 2px;
 		}
 	}
 }

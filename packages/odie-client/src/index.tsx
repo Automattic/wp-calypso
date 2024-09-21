@@ -25,7 +25,7 @@ export const OdieAssistant: React.FC = () => {
 	return (
 		<div className="chatbox">
 			<div className="chat-box-message-container" ref={ containerRef } id="odie-messages-container">
-				<MessagesContainer currentUser={ currentUser } ref={ messagesContainerRef } />
+				<MessagesContainer currentUser={ currentUser } />
 			</div>
 			<OdieSendMessageButton containerReference={ messagesContainerRef } />
 		</div>
@@ -34,6 +34,8 @@ export const OdieAssistant: React.FC = () => {
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
+export { useOdieSendMessage } from './query';
 export { useSetOdieStorage, useGetOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';
 export { isOdieAllowedBot } from './utils/is-odie-allowed-bot';
+export { MessagesContainer } from './components/message/messages-container';

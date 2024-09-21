@@ -121,7 +121,18 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const supportProvider: Reducer< 'odie' | 'zendesk', HelpCenterAction > = (
+	state = 'odie',
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_SUPPORT_PROVIDER' ) {
+		return action.supportProvider;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
+	supportProvider,
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,

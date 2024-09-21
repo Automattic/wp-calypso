@@ -1,0 +1,28 @@
+.help-center__container-content-odie .chatbox-messages .odie__transfer-to-human {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+
+	button {
+		border-radius: 2px;
+		border: 1px solid var(--studio-gray-10);
+		background: var(--studio-white);
+		display: flex;
+		height: 40px;
+		padding: 8px 14px;
+		justify-content: center;
+		align-items: center;
+		gap: 4px;
+
+		&:hover {
+			border: 1px solid var(--studio-gray-20);
+			cursor: pointer;
+		}
+
+		&:focus,
+		&:active {
+			outline: none;
+		}
+	}
+}

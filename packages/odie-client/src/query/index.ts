@@ -1,3 +1,4 @@
+import { useSmooch } from '@automattic/zendesk-client';
 import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useI18n } from '@wordpress/react-i18n';
@@ -70,22 +71,19 @@ export const uuid = () => {
  * const { mutate, isLoading } = useOdieSendMessage();
  * mutate( { message: { content: 'Hello' } } );
  */
-export const useOdieSendMessage = (): UseMutationResult<
-	{ chat_id: string; messages: Message[] },
-	unknown,
-	{ message: Message },
-	{ internal_message_id: string }
-> => {
+export const useOdieSendMessage = (): any => {
 	const {
 		chat,
 		botNameSlug,
 		setIsLoading,
-		setChat,
+		addMessage,
 		updateMessage,
 		odieClientId,
 		selectedSiteId,
 		version,
+		provider,
 	} = useOdieAssistantContext();
+	const { sendMessage } = useSmooch();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 	const storeChatId = useSetOdieStorage( 'chat_id' );
@@ -103,7 +101,14 @@ export const useOdieSendMessage = (): UseMutationResult<
 		__i18n_text_domain__
 	);
 
-	return useMutation<
+	const zendeskMutation = useMutation( {
+		mutationFn: ( { message }: { message: Message } ) => {
+			addMessage( message );
+			return sendMessage?.( message.content, chat.chat_id ) ?? Promise.resolve();
+		},
+	} );
+
+	const odieMutation = useMutation<
 		{ chat_id: string; messages: Message[] },
 		{ data: { status: number; messages: Message[] } },
 		{ message: Message },
@@ -131,21 +136,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 				},
 			];
 
-			setChat( ( prevChat: Chat ) => {
-				// Normalize message to always be an array
-				const newMessages = messages;
-
-				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
-				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
-					? prevChat.messages
-					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
-
-				// Append new messages at the end
-				return {
-					chat_id: prevChat.chat_id,
-					messages: [ ...filteredMessages, ...newMessages ],
-				};
-			} );
+			addMessage( messages );
 			setIsLoading( true );
 			userMessage.current = message;
 
@@ -226,6 +217,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 			broadcastOdieMessage( message, odieClientId );
 		},
 	} );
+
+	if ( provider === 'zendesk' ) {
+		return zendeskMutation;
+	}
+
+	return odieMutation;
 };
 
 const buildGetChatMessage = (

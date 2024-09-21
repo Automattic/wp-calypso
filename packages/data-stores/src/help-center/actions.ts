@@ -93,6 +93,12 @@ export const setShowHelpCenter = function* ( show: boolean ) {
 	} as const;
 };
 
+export const setSupportProvider = ( supportProvider: 'odie' | 'zendesk' ) =>
+	( {
+		type: 'HELP_CENTER_SET_SUPPORT_PROVIDER',
+		supportProvider,
+	} ) as const;
+
 export const setSubject = ( subject: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_SUBJECT',
@@ -145,6 +151,7 @@ export type HelpCenterAction =
 	| ReturnType<
 			| typeof setShowMessagingLauncher
 			| typeof setShowMessagingWidget
+			| typeof setSupportProvider
 			| typeof setSubject
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal

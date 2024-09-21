@@ -1,48 +1,56 @@
-import { forwardRef } from 'react';
+import { useSmooch } from '@automattic/zendesk-client';
+import { useEffect, useRef } from 'react';
 import { useOdieAssistantContext } from '../../context';
+import { GetSupport } from '../get-support';
 import ChatMessage from '.';
-import type { CurrentUser } from '../../types/';
+import type { CurrentUser, MessageType } from '../../types/';
 
-interface ChatMessagesProps {
-	currentUser: CurrentUser;
-}
+export const MessagesContainer = ( { currentUser }: { currentUser: CurrentUser } ) => {
+	const { addMessengerListener } = useSmooch();
+	const { chat, provider, addMessage } = useOdieAssistantContext();
+	const containerRef = useRef< HTMLDivElement >( null );
+	const lastMessageIndex = chat.messages.length - 1;
 
-export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >(
-	( { currentUser }, ref ) => {
-		const { chat } = useOdieAssistantContext();
+	useEffect( () => {
+		if ( provider === 'zendesk' ) {
+			addMessengerListener?.( ( message ) => {
+				addMessage( { content: message.text, role: 'human', type: 'message' } );
+			} );
+		}
+	}, [ provider ] );
 
-		let lastUserMessageIndex = -1;
-		let lastFeedbackMessageIndex = -1;
-		let lastErrorMessageIndex = -1;
-
-		chat.messages.forEach( ( message, index ) => {
-			if ( message.role === 'user' ) {
-				lastUserMessageIndex = index;
+	useEffect( () => {
+		if ( chat.messages.length > 0 ) {
+			const lastMessage = containerRef.current?.querySelector( '.odie-chatbox-message-last' );
+			if ( lastMessage ) {
+				setTimeout( () => {
+					lastMessage.scrollIntoView( { behavior: 'smooth' } );
+				}, 100 );
 			}
-			if ( message.type === 'dislike-feedback' ) {
-				lastFeedbackMessageIndex = index;
-			}
-			if ( message.type === 'error' ) {
-				lastErrorMessageIndex = index;
-			}
-		} );
+		}
+	}, [ chat.messages ] );
 
-		const lastMessageIndex = chat.messages.length - 1;
+	return (
+		<div className="chatbox-messages" ref={ containerRef }>
+			{ chat.messages.map( ( message, index ) => {
+				const isLastMessage = lastMessageIndex === index;
+				const isLastOfType = ( type: MessageType ) => isLastMessage && message.type === type;
 
-		return (
-			<div className="chatbox-messages" ref={ ref }>
-				{ chat.messages.map( ( message, index ) => (
-					<ChatMessage
-						message={ message }
-						key={ index }
-						currentUser={ currentUser }
-						isLastUserMessage={ lastUserMessageIndex === index }
-						isLastFeedbackMessage={ lastFeedbackMessageIndex === index }
-						isLastErrorMessage={ lastErrorMessageIndex === index }
-						isLastMessage={ lastMessageIndex === index }
-					/>
-				) ) }
-			</div>
-		);
-	}
-);
+				return (
+					<>
+						<ChatMessage
+							message={ message }
+							key={ index }
+							currentUser={ currentUser }
+							isLastUserMessage={ isLastMessage && message.role === 'user' }
+							isLastFeedbackMessage={ isLastOfType( 'dislike-feedback' ) }
+							isLastErrorMessage={ isLastOfType( 'error' ) }
+							isLastMessage={ isLastMessage }
+						/>
+						{ isLastMessage && message?.context?.flags?.forward_to_human_support && <GetSupport /> }
+					</>
+				);
+			} ) }
+		</div>
+	);
+};

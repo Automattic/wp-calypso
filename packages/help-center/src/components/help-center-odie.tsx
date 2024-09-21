@@ -5,24 +5,31 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import OdieAssistantProvider, {
-	OdieAssistant,
 	useOdieAssistantContext,
 	EllipsisMenu,
 	isOdieAllowedBot,
+	useOdieSendMessage,
+	MessagesContainer,
 } from '@automattic/odie-client';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useCallback } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import React, {
+	useCallback,
+	useEffect,
+	useState,
+	type KeyboardEvent,
+	type MouseEvent,
+} from 'react';
+import { Navigate } from 'react-router-dom';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
+import { SendIcon } from '../icons/send';
 import { HELP_CENTER_STORE } from '../stores';
 /**
  * Internal Dependencies
  */
 import { BackButtonHeader } from './back-button';
-import { ExtraContactOptions } from './help-center-extra-contact-option';
 import './help-center-odie.scss';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
@@ -32,6 +39,53 @@ interface ProtectedRouteProps {
 	redirectPath?: string;
 	children: React.ReactNode;
 }
+
+export const HelpCenterSendButton = () => {
+	const { setSupportProvider } = useDispatch( HELP_CENTER_STORE );
+	const { provider } = useOdieAssistantContext();
+	const [ messageString, setMessageString ] = useState< string >( '' );
+	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
+
+	useEffect( () => {
+		setSupportProvider( provider );
+	}, [ provider ] );
+
+	const handleSendMessage = async (
+		event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLTextAreaElement >
+	) => {
+		const isButtonClick = event.type === 'click';
+		const isEnterKey = ( event as KeyboardEvent ).key === 'Enter' && ! event.shiftKey;
+
+		if ( messageString.trim().length > 0 && ( isEnterKey || isButtonClick ) ) {
+			event.preventDefault();
+			setMessageString( '' );
+			await sendOdieMessage( {
+				message: {
+					content: messageString as string,
+					role: 'user',
+					type: 'message',
+				},
+			} );
+		}
+	};
+
+	return (
+		<div className="help-center__container-odie-send-button">
+			<textarea
+				className="odie-send-message-input"
+				rows={ 1 }
+				value={ messageString }
+				onChange={ ( event: React.ChangeEvent< HTMLTextAreaElement > ) =>
+					setMessageString( event.currentTarget.value )
+				}
+				onKeyDown={ handleSendMessage }
+			/>
+			<button onClick={ handleSendMessage }>
+				<SendIcon />
+			</button>
+		</div>
+	);
+};
 
 // Prevent not eligible users from accessing odie/wapuu.
 const ProtectedRoute: React.FC< ProtectedRouteProps > = ( {
@@ -79,7 +133,6 @@ export function HelpCenterOdie( {
 	isUserEligible: boolean;
 	searchTerm: string;
 } ): JSX.Element {
-	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligible;
 	const { currentUser, site } = useHelpCenterContext();
@@ -97,23 +150,6 @@ export function HelpCenterOdie( {
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-
-	const navigateToSupportDocs = useCallback(
-		( blogId: string, postId: string, title: string, link: string ) => {
-			navigate(
-				`/post?blogId=${ blogId }&postId=${ postId }&title=${ title }&link=${ link }&backUrl=/odie`
-			);
-		},
-		[ navigate ]
-	);
-
-	const navigateToContactOptions = useCallback( () => {
-		if ( isUserEligible ) {
-			navigate( '/contact-options' );
-		} else {
-			navigate( '/contact-form?mode=FORUM' );
-		}
-	}, [ navigate, isUserEligible ] );
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
@@ -135,18 +171,18 @@ export function HelpCenterOdie( {
 				logger={ trackEvent }
 				loggerEventNamePrefix="calypso_odie"
 				selectedSiteId={ site?.ID as number }
-				extraContactOptions={ <ExtraContactOptions isUserEligible={ isUserEligible } /> }
-				navigateToContactOptions={ navigateToContactOptions }
-				navigateToSupportDocs={ navigateToSupportDocs }
 				isUserEligible={ isUserEligible }
 			>
+				<div className="help-center__container-odie-header">
+					<BackButtonHeader className="help-center__container-odie-back-button">
+						<OdieEllipsisMenu />
+					</BackButtonHeader>
+				</div>
 				<div className="help-center__container-content-odie">
-					<div className="help-center__container-odie-header">
-						<BackButtonHeader className="help-center__container-odie-back-button">
-							<OdieEllipsisMenu />
-						</BackButtonHeader>
-					</div>
-					<OdieAssistant />
+					<MessagesContainer currentUser={ currentUser } />
+				</div>
+				<div className="help-center__container-footer chat-footer">
+					<HelpCenterSendButton />
 				</div>
 			</OdieAssistantProvider>
 		</ProtectedRoute>

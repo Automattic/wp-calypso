@@ -20,7 +20,7 @@ export const UserMessage = ( {
 	const { extraContactOptions, isUserEligible } = useOdieAssistantContext();
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
-	const isUser = message.role === 'user';
+	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
@@ -48,14 +48,14 @@ export const UserMessage = ( {
 				{ isRequestingHumanSupport ? forwardMessage : message.content }
 			</Markdown>
 			{ showExtraContactOptions && extraContactOptions }
-			{ ! hasFeedback && ! isUser && (
+			{ ! hasFeedback && isBot && (
 				<WasThisHelpfulButtons
 					message={ message }
 					onDislike={ onDislike }
 					isDisliked={ isDisliked }
 				/>
 			) }
-			{ ! isUser && (
+			{ isBot && (
 				<>
 					{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
 					<div className="disclaimer">

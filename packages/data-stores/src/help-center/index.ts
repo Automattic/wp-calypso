@@ -19,7 +19,13 @@ export function register(): typeof STORE_KEY {
 			reducer,
 			controls: { ...controls, ...wpcomRequestControls },
 			selectors,
-			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
+			persist: [
+				'supportProvider',
+				'message',
+				'userDeclaredSite',
+				'userDeclaredSiteUrl',
+				'subject',
+			],
 		} );
 		isRegistered = true;
 	}

@@ -1,3 +1,4 @@
+import { useSmooch } from '@automattic/zendesk-client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
@@ -26,31 +27,33 @@ type OdieAssistantContextInterface = {
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
+	extraContactOptions?: ReactNode;
 	initialUserMessage: string | null | undefined;
 	isLoading: boolean;
 	isLoadingEnvironment: boolean;
 	isLoadingExistingChat: boolean;
 	isMinimized?: boolean;
-	isUserEligible: boolean;
 	isNudging: boolean;
+	isUserEligible: boolean;
 	isVisible: boolean;
-	extraContactOptions?: ReactNode;
-	lastNudge: Nudge | null;
 	lastMessageInView?: boolean;
+	lastNudge: Nudge | null;
 	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
-	sendNudge: ( nudge: Nudge ) => void;
+	provider: 'odie' | 'zendesk';
+	scrollToLastMessage: ScrollToLastMessageType | null;
 	selectedSiteId?: number | null;
+	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
-	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
-	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setContext: ( context: Context ) => void;
+	setIsLoading: ( isLoading: boolean ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
-	setIsLoading: ( isLoading: boolean ) => void;
+	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
+	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
+	setProvider: ( provider: 'odie' | 'zendesk' ) => void;
 	setScrollToLastMessage: ( scrollToLastMessage: ScrollToLastMessageType ) => void;
-	scrollToLastMessage: ScrollToLastMessageType | null;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	updateMessage: ( message: Message ) => void;
 	version?: string | null;
@@ -62,29 +65,31 @@ const defaultContextInterfaceValues = {
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	clearChat: noop,
+	currentUser: { display_name: 'Me' },
 	initialUserMessage: null,
 	isLoading: false,
 	isLoadingEnvironment: false,
 	isLoadingExistingChat: false,
 	isMinimized: false,
 	isNudging: false,
-	isVisible: false,
 	isUserEligible: false,
-	lastNudge: null,
+	isVisible: false,
 	lastMessageRef: null,
+	lastNudge: null,
 	navigateToContactOptions: noop,
 	navigateToSupportDocs: noop,
 	odieClientId: '',
-	currentUser: { display_name: 'Me' },
+	provider: 'odie' as const,
+	scrollToLastMessage: noop,
 	sendNudge: noop,
 	setChat: noop,
-	setMessageLikedStatus: noop,
 	setContext: noop,
+	setIsLoading: noop,
 	setIsNudging: noop,
 	setIsVisible: noop,
-	setIsLoading: noop,
+	setMessageLikedStatus: noop,
+	setProvider: noop,
 	setScrollToLastMessage: noop,
-	scrollToLastMessage: noop,
 	trackEvent: noop,
 	updateMessage: noop,
 };
@@ -139,9 +144,11 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
+	const { getConversation } = useSmooch();
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
+	const [ provider, setProvider ] = useState< 'odie' | 'zendesk' >( 'odie' );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
@@ -164,7 +171,28 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	useEffect( () => {
 		if ( existingChat.chat_id ) {
-			setChat( existingChat );
+			setIsLoading( true );
+
+			getConversation?.( existingChat.chat_id )
+				.then( ( conversation ) => {
+					if ( conversation ) {
+						setProvider( 'zendesk' );
+						const chatMessages = conversation.messages.map( ( message: any ) => ( {
+							content: message.text,
+							role: message.role === 'business' ? 'human' : 'user',
+							type: 'message',
+						} ) );
+						setChat( {
+							chat_id: existingChat.chat_id,
+							messages: chatMessages,
+						} );
+					} else {
+						setChat( existingChat );
+					}
+				} )
+				.finally( () => {
+					setIsLoading( false );
+				} );
 		}
 	}, [ existingChat, existingChat.chat_id ] );
 
@@ -183,6 +211,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const clearChat = useCallback( () => {
+		setProvider( 'odie' );
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
@@ -265,32 +294,34 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				currentUser,
 				extraContactOptions,
 				initialUserMessage,
-				isLoading: isLoading,
+				isLoading,
+				isLoadingEnvironment,
+				isLoadingExistingChat,
 				isMinimized,
 				isNudging,
+				isUserEligible,
 				isVisible,
-				lastNudge,
 				lastMessageInView,
+				lastNudge,
 				navigateToContactOptions,
 				navigateToSupportDocs,
 				odieClientId,
+				provider,
+				scrollToLastMessage: scrollToLastMessage ?? noop,
 				selectedSiteId,
 				sendNudge: setLastNudge,
 				setChat,
-				setMessageLikedStatus,
-				setLastMessageInView,
 				setContext: noop,
 				setIsLoading,
 				setIsNudging,
 				setIsVisible,
+				setLastMessageInView,
+				setMessageLikedStatus,
+				setProvider,
 				setScrollToLastMessage: setScrollToLastMessage ?? noop,
-				scrollToLastMessage: scrollToLastMessage ?? noop,
 				trackEvent,
 				updateMessage,
 				version: overridenVersion,
-				isLoadingEnvironment,
-				isLoadingExistingChat,
-				isUserEligible,
 			} }
 		>
 			{ children }
