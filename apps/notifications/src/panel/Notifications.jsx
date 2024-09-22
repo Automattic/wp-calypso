@@ -103,6 +103,9 @@ export class Notifications extends PureComponent {
 		store.dispatch( { type: SET_IS_SHOWING, isShowing } );
 
 		client.setVisibility( { isShowing, isVisible } );
+
+		/* Preload notifications for better UX */
+		client.main();
 	}
 
 	componentDidMount() {
