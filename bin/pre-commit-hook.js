@@ -15,6 +15,18 @@ function quotedPath( pathToQuote ) {
 	return pathToQuote;
 }
 
+/**
+ * Wraps a given path with double quotes if it contains spaces
+ *
+ * @param {string} pathToQuote path to wrap with quotes
+ */
+function quotedPath( pathToQuote ) {
+	if ( pathToQuote.includes( ' ' ) ) {
+		return `"${ pathToQuote }"`;
+	}
+	return pathToQuote;
+}
+
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
 		'under the GNU General Public License v2 (or later). All materials must have ' +
