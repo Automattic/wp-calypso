@@ -6,18 +6,48 @@ interface ApiResponse {
 	migration_key: string;
 }
 
+const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
+
 const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
 	const isWhiteLabeledPluginEnabled = config.isEnabled(
 		'migration-flow/enable-white-labeled-plugin'
 	);
 
 	if ( isWhiteLabeledPluginEnabled ) {
-		return wpcom.req.get(
-			`/sites/${ siteId }/atomic-migration-status/wpcom-migration-key?http_envelope=1`,
-			{
-				apiNamespace: 'wpcom/v2',
+		let stopPollingKey = false;
+		let pollingKeyRetry = 0;
+		const maxRetry = 10;
+		let key = null;
+
+		// Poll until key is available.
+		while ( ! stopPollingKey ) {
+			try {
+				const response = await wpcom.req.get(
+					`/sites/${ siteId }/atomic-migration-status/wpcom-migration-key?http_envelope=1`,
+					{
+						apiNamespace: 'wpcom/v2',
+					}
+				);
+
+				if ( response?.migration_key ) {
+					key = response?.migration_key;
+					stopPollingKey = true;
+					break;
+				}
+
+				pollingKeyRetry++;
+				if ( pollingKeyRetry <= maxRetry ) {
+					await wait( 5000 );
+				} else {
+					stopPollingKey = true;
+				}
+			} catch ( error ) {
+				// Pause and retry after an error
+				await wait( 3000 );
 			}
-		);
+		}
+
+		return key;
 	}
 
 	return wpcom.req.get(
