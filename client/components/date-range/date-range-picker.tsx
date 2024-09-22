@@ -87,11 +87,10 @@ const DateRangePicker = ( {
 	 * @param  {import('moment').Moment} date the newly selected date object
 	 */
 	const selectDate = ( date: Moment ) => {
+		date = date.startOf( 'day' );
 		if ( ! isValidDate( date ) ) {
 			return;
 		}
-
-		date = date.startOf( 'day' );
 
 		// Calculate the new Date range
 		const newRange = addDayToRange( date, { from: selectedStartDate, to: selectedEndDate } );
@@ -128,6 +127,10 @@ const DateRangePicker = ( {
 		return [ config ];
 	};
 
+	const normlizeDate = ( date: MomentOrNull ) => {
+		return date ? date.startOf( 'day' ) : date;
+	};
+
 	useEffect( () => {
 		if ( selectedStartDate && selectedEndDate && selectedStartDate.isAfter( selectedEndDate ) ) {
 			onDateRangeChange?.( selectedEndDate, selectedStartDate );
@@ -135,8 +138,10 @@ const DateRangePicker = ( {
 	}, [ selectedStartDate?.format(), selectedEndDate?.format() ] );
 
 	// Normalize dates to start of day
-	selectedStartDate = ! selectedStartDate ? selectedStartDate : selectedStartDate.startOf( 'day' );
-	selectedEndDate = ! selectedEndDate ? selectedEndDate : selectedEndDate.startOf( 'day' );
+	selectedStartDate = normlizeDate( selectedStartDate );
+	selectedEndDate = normlizeDate( selectedEndDate );
+	firstSelectableDate = normlizeDate( firstSelectableDate );
+	lastSelectableDate = normlizeDate( lastSelectableDate );
 
 	const fromDate = momentDateToJsDate( selectedStartDate );
 	const toDate = momentDateToJsDate( selectedEndDate );
