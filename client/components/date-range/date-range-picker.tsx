@@ -128,7 +128,7 @@ const DateRangePicker = ( {
 	};
 
 	const normlizeDate = ( date: MomentOrNull ) => {
-		return date ? date.startOf( 'day' ) : date;
+		return date ? moment( date ).startOf( 'day' ) : date;
 	};
 
 	useEffect( () => {
