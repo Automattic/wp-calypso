@@ -128,7 +128,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 			);
 			// translation example: $1 first month then $2 per month
 
-			// multiple period introductory offers (eg 3 months) there are no multi-year introductory offers
+			// multiple period introductory offers (eg 3 months)
 		} else if ( introCount > 1 ) {
 			if ( productBillingTermInMonths > 12 ) {
 				return introTerm === 'month'
