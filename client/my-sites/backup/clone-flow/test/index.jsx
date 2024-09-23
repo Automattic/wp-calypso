@@ -68,6 +68,7 @@ jest.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () =>
 );
 
 // Mock several data-fetching related selectors which may not be available.
+jest.mock( 'calypso/state/rewind/selectors/get-backup-last-backup-failed' );
 jest.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list' );
 jest.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list' );
 jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );

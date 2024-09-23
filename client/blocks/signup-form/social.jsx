@@ -40,17 +40,12 @@ class SocialSignupForm extends Component {
 	};
 
 	handleSignup = ( result ) => {
-		if ( ! result || window.sessionStorage.getItem( 'social_login_used' ) !== result.service ) {
-			return;
-		}
-
 		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
 		recordTracksEvent( 'calypso_signup_social_button_success', {
 			social_account_type: result.service,
 		} );
 
-		window.sessionStorage.removeItem( 'login_redirect_to' );
-		window.sessionStorage.removeItem( 'social_login_used' );
+		window.sessionStorage?.removeItem( 'login_redirect_to' );
 
 		handleResponse( result.service, result.access_token, result.id_token, {
 			...result,
@@ -73,8 +68,6 @@ class SocialSignupForm extends Component {
 			if ( redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
 				window.sessionStorage.setItem( 'signup_redirect_to', redirectToAfterLoginUrl );
 			}
-
-			window.sessionStorage.setItem( 'social_login_used', service );
 		} catch ( error ) {
 			showErrorNotice(
 				translate(
@@ -153,7 +146,8 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
-		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
+		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp', 'wordpress-hosting-dev-lp' ];
+		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
 
 		return {
 			recordTracksEvent: recordTracks,

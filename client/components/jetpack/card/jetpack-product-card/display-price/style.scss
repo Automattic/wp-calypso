@@ -60,7 +60,7 @@
 			color: var(--studio-gray-20);
 
 			&::before {
-				border-top: 3px solid var(--studio-pink-50);
+				border-top: 3px solid var(--studio-wordpress-blue);
 				border-radius: 3px;
 				transform: initial;
 			}
@@ -204,7 +204,7 @@
 	}
 
 	&__expiration-date {
-		color: var(--studio-pink-50);
+		color: var(--studio-red);
 	}
 
 	&__standalone-card-price {

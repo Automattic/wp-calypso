@@ -103,6 +103,7 @@
 		@include breakpoint-deprecated( ">660px" ) {
 			padding-top: 18px;
 
+			.is-section-stepper &,
 			.is-white-signup & {
 				padding-top: 0;
 				padding-bottom: 16px;
@@ -244,6 +245,7 @@ body.is-section-signup:not(.is-white-signup) {
 	}
 }
 
+body.is-section-stepper,
 body.is-section-signup.is-white-signup {
 	.domain-search-results__domain-availability .card {
 		box-shadow: none;

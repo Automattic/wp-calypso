@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
@@ -27,13 +27,30 @@ export interface AlphabeticTagsResult {
 	[ key: string ]: Tag[];
 }
 
+const TagsPageDocumentHead = () => {
+	const translate = useTranslate();
+
+	const title = translate( 'Popular Tags and Posts ‹ Reader' );
+	const meta = [
+		{
+			name: 'description',
+			content: translate(
+				'Discover the most popular tags on WordPress.com. Whatever your interests, find a tag and dive into posts that inspire and inform.'
+			),
+		},
+	];
+
+	return <DocumentHead title={ title } meta={ meta } />;
+};
+
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
+
 	context.primary = (
 		<>
-			<DocumentHead title={ translate( 'Popular Tags and Posts ‹ Reader' ) } />
+			<TagsPageDocumentHead />
 			<TagsPage
 				trendingTags={ context.params.trendingTags }
 				alphabeticTags={ context.params.alphabeticTags }
@@ -43,7 +60,9 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	next();
 };
 
-function renderHeaderSection() {
+const TagsPageHeaderSection = () => {
+	const translate = useTranslate();
+
 	return (
 		<>
 			<h1>
@@ -55,6 +74,10 @@ function renderHeaderSection() {
 			<p>{ translate( "For every one of your interests, there's a tag on WordPress.com." ) }</p>
 		</>
 	);
+};
+
+function renderHeaderSection() {
+	return <TagsPageHeaderSection />;
 }
 
 export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) => void ) => {
@@ -94,7 +117,7 @@ export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error )
 	}
 	performanceMark( context as PartialContext, 'fetchAlphabeticTags' );
 
-	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+	const currentUserLocale = getCurrentUserLocale( context.store.getState() ) || context.lang;
 
 	context.queryClient
 		.fetchQuery( {
@@ -102,7 +125,7 @@ export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error )
 			queryFn: () => {
 				return wpcom.req.get( '/read/tags/alphabetic', {
 					apiVersion: '1.2',
-					lang: currentUserLocale, // Note: undefined will be omitted by the query string builder.
+					locale: currentUserLocale, // Note: undefined will be omitted by the query string builder.
 				} );
 			},
 			staleTime: 86400000, // 24 hours

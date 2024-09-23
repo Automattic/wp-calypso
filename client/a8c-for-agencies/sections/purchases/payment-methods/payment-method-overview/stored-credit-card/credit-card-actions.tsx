@@ -22,6 +22,8 @@ export default function CreditCardActions( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const dispatch = useDispatch();
 
+	const availableActions = cardActions.filter( ( action ) => action.isEnabled );
+
 	const showActions = () => {
 		setIsOpen( true );
 		dispatch( recordTracksEvent( 'calypso_a4a_payments_card_actions_button_click' ) );
@@ -30,6 +32,10 @@ export default function CreditCardActions( {
 	const closeDropdown = () => {
 		setIsOpen( false );
 	};
+
+	if ( availableActions.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -50,17 +56,15 @@ export default function CreditCardActions( {
 				onClose={ closeDropdown }
 				position="bottom left"
 			>
-				{ cardActions
-					.filter( ( action ) => action.isEnabled )
-					.map( ( action ) => (
-						<PopoverMenuItem
-							className={ clsx( action.className ) }
-							key={ action.name }
-							onClick={ action.onClick }
-						>
-							{ action.name }
-						</PopoverMenuItem>
-					) ) }
+				{ availableActions.map( ( action ) => (
+					<PopoverMenuItem
+						className={ clsx( action.className ) }
+						key={ action.name }
+						onClick={ action.onClick }
+					>
+						{ action.name }
+					</PopoverMenuItem>
+				) ) }
 			</PopoverMenu>
 		</>
 	);

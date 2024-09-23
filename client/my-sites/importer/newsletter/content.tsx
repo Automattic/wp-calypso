@@ -1,6 +1,9 @@
-import { Card, Button, Gridicon } from '@automattic/components';
-import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
+import { Card } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
+import { external } from '@wordpress/icons';
 import { useEffect } from 'react';
+import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -8,26 +11,37 @@ import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import FileImporter from './content-upload/file-importer';
+import { EngineTypes } from './types';
+import { normalizeFromSite } from './utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
-type ContentProps = {
+interface ContentProps {
 	nextStepUrl: string;
-	selectedSite?: SiteDetails;
+	engine: EngineTypes;
+	selectedSite: SiteDetails;
 	siteSlug: string;
-	fromSite: QueryArgParsed;
-	cardData: any;
+	fromSite: string;
 	skipNextStep: () => void;
-};
+}
 
 export default function Content( {
 	nextStepUrl,
+	engine,
 	selectedSite,
 	siteSlug,
 	fromSite,
 	skipNextStep,
 }: ContentProps ) {
-	const siteTitle = selectedSite?.title;
-	const siteId = selectedSite?.ID;
+	const siteTitle = selectedSite.title;
+	const siteId = selectedSite.ID;
+
+	const queryClient = useQueryClient();
+
+	const invalidateCardData = () => {
+		queryClient.invalidateQueries( {
+			queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine ],
+		} );
+	};
 
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 
@@ -39,10 +53,6 @@ export default function Content( {
 
 	useEffect( fetchImporters, [ siteId, dispatch ] );
 	useEffect( startImporting, [ siteId, dispatch, siteImports ] );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
 
 	function startImporting() {
 		siteId && siteImports.length === 0 && dispatch( startImport( siteId ) );
@@ -59,27 +69,36 @@ export default function Content( {
 		siteTitle,
 	} ).substack;
 
-	const showStepDescriptions =
-		importerStatus?.importerState !== appStates.MAP_AUTHORS || importerStatus?.summaryModalOpen;
+	const showExportDataHint =
+		importerStatus?.importerState !== appStates.MAP_AUTHORS &&
+		importerStatus?.importerState !== appStates.IMPORTING &&
+		importerStatus?.importerState !== appStates.IMPORT_SUCCESS;
 
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
-			{ showStepDescriptions && (
+			{ showExportDataHint && (
 				<>
 					<h2>Step 1: Export your content from Substack</h2>
 					<p>
-						To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and
-						click 'Create a new export.' Once the ZIP file is downloaded, upload it in the next
-						step.
+						Generate a ZIP file of all your Substack posts. On Substack, go to Settings &gt;
+						Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the
+						next step.
 					</p>
+					<img
+						src={ exportSubstackDataImg }
+						alt="Export Substack data"
+						className="export-content"
+					/>
 					<Button
-						href={ `https://${ fromSite }/publish/settings?search=export` }
+						href={ `https://${ normalizeFromSite( fromSite ) }/publish/settings?search=export` }
 						target="_blank"
 						rel="noreferrer noopener"
+						icon={ external }
+						variant="primary"
 					>
-						Export content <Gridicon icon="external" />
+						Open Substack settings
 					</Button>
 					<hr />
 					<h2>Step 2: Import your content to WordPress.com</h2>
@@ -90,9 +109,10 @@ export default function Content( {
 					site={ selectedSite }
 					importerStatus={ importerStatus }
 					importerData={ importerData }
-					fromSite={ fromSite as string }
+					fromSite={ fromSite }
 					nextStepUrl={ nextStepUrl }
 					skipNextStep={ skipNextStep }
+					invalidateCardData={ invalidateCardData }
 				/>
 			) }
 		</Card>

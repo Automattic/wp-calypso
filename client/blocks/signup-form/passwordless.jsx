@@ -32,6 +32,7 @@ class PasswordlessSignupForm extends Component {
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
+		disableTosText: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -74,7 +75,8 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 		const { flowName, queryArgs = {} } = this.props;
-		const isDevAccount = queryArgs.ref === 'hosting-lp' || queryArgs.ref === 'developer-lp';
+		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp', 'wordpress-hosting-dev-lp' ];
+		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -167,10 +169,6 @@ class PasswordlessSignupForm extends Component {
 		const { flowName, queryArgs = {} } = this.props;
 		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
 
-		if ( this.props.onCreateAccountSuccess ) {
-			return this.props.onCreateAccountSuccess( userData );
-		}
-
 		recordRegistration( {
 			userData,
 			flow: flowName,
@@ -185,6 +183,10 @@ class PasswordlessSignupForm extends Component {
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
 		} );
+
+		if ( this.props.onCreateAccountSuccess ) {
+			return this.props.onCreateAccountSuccess( userData );
+		}
 	};
 
 	submitStep = ( data ) => {
@@ -333,7 +335,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.renderTerms?.() }
+					{ ! this.props.disableTosText && this.props.renderTerms?.() }
 					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>

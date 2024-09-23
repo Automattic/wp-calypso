@@ -26,7 +26,6 @@ body.is-mobile-app-view {
 // The WordPress.com Masterbar
 .masterbar {
 	background: var(--color-masterbar-background);
-	border-bottom: 1px solid var(--color-masterbar-border);
 	color: var(--color-masterbar-text);
 	font-size: $masterbar-font-size;
 	display: flex;
@@ -305,16 +304,7 @@ body.is-mobile-app-view {
 		}
 
 		&.masterbar__reader {
-			padding: 0 8px;
-
-			.masterbar_svg-reader {
-				padding: 0 0 0 2px;
-			}
-
-			&.is-active {
-				padding: 0 2px 0 0;
-				margin: 0 6px 0 4px;
-			}
+			padding: 0;
 		}
 	}
 
@@ -1039,6 +1029,7 @@ body.is-mobile-app-view {
 		gap: 12px;
 
 		.masterbar__item-howdy-account-gravatar {
+			border: none;
 			flex-basis: auto;
 			max-width: 50%;
 		}
@@ -1489,5 +1480,58 @@ a.masterbar__quick-language-switcher {
 
 	100% {
 		opacity: 1;
+	}
+}
+
+.popover.masterbar__reader-popover {
+	z-index: 176;
+
+	.popover__arrow::before {
+		--color-border-inverted: var(--color-neutral-100);
+	}
+
+	.popover__arrow {
+		border: 10px dashed var(--color-neutral-70) !important;
+		border-bottom-style: solid !important;
+		border-top: none !important;
+		border-left-color: transparent !important;
+		border-right-color: transparent !important;
+	}
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		border-radius: 4px !important;
+		background-color: var(--color-neutral-100) !important;
+		border: 1px solid var(--color-neutral-70) !important;
+		left: 0 !important;
+	}
+
+	.masterbar__reader-popover-heading {
+		font-size: rem(16px);
+		color: var(--color-text-inverted);
+		font-weight: 500;
+	}
+
+	.masterbar__reader-popover-description {
+		max-width: 325px;
+		margin-top: -8px;
+		margin-bottom: 0;
+		font-size: rem(13px);
+		color: var(--color-neutral-0);
+		text-align: left;
+	}
+
+	.masterbar__reader-popover-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		width: 100%;
+		button {
+			padding: 4px 8px;
+			font-size: rem(13px);
+		}
 	}
 }

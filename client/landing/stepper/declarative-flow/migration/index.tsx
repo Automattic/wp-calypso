@@ -267,18 +267,34 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			submit: ( props?: ProvidedDependencies ) => {
 				const action = getFromPropsOrUrl( 'action', props ) as 'skip' | 'submit';
 				const extraPrams = {
-					...( action === 'skip' ? { credentials: 'skipped' } : {} ),
+					...( action !== 'skip' ? { preventTicketCreation: true } : {} ),
 				};
 
 				return navigateWithQueryParams(
 					SITE_MIGRATION_ASSISTED_MIGRATION,
-					[ 'credentials' ],
+					[ 'preventTicketCreation' ],
 					{ ...props, ...extraPrams },
 					{ replaceHistory: true }
 				);
 			},
 			goBack: ( props?: ProvidedDependencies ) => {
 				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
+			},
+		},
+
+		[ SITE_MIGRATION_ASSISTED_MIGRATION.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const hasError = getFromPropsOrUrl( 'hasError', props );
+				const extraPrams = {
+					...( hasError === 'ticket-creation' ? { error: hasError } : {} ),
+				};
+
+				return navigateWithQueryParams(
+					SITE_MIGRATION_CREDENTIALS,
+					[ 'error' ],
+					{ ...props, ...extraPrams },
+					{ replaceHistory: true }
+				);
 			},
 		},
 	};
@@ -294,7 +310,7 @@ export default {
 	useStepNavigation( currentStep, navigate ) {
 		const stepHandlers = useCreateStepHandlers( navigate, this );
 
-		return stepHandlers[ currentStep ];
+		return stepHandlers[ currentStep ] || {};
 	},
 
 	useSideEffect( currentStep, navigate ) {

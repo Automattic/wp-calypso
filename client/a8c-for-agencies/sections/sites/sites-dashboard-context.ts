@@ -9,9 +9,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedSiteFeature: undefined,
 	setSelectedSiteFeature: () => {},
 
-	hideListing: undefined,
-	setHideListing: () => {},
-
 	showOnlyFavorites: undefined,
 	setShowOnlyFavorites: () => {},
 
@@ -41,9 +38,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 
 	isPopoverOpen: false,
 	setIsPopoverOpen: () => {},
-
-	recentlyCreatedSiteId: null,
-	setRecentlyCreatedSiteId: () => {},
 } );
 
 export default SitesDashboardContext;

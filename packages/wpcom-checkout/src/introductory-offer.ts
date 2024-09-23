@@ -1,6 +1,7 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import i18n from 'i18n-calypso';
+import { doesIntroductoryOfferHavePriceIncrease } from './transformations';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function getIntroductoryOfferIntervalDisplay( {
@@ -231,7 +232,7 @@ export function getItemIntroductoryOfferDisplay(
 		intervalUnit: product.introductory_offer_terms.interval_unit,
 		intervalCount: product.introductory_offer_terms.interval_count,
 		isFreeTrial,
-		isPriceIncrease: false,
+		isPriceIncrease: doesIntroductoryOfferHavePriceIncrease( product ),
 		context: 'checkout',
 		remainingRenewalsUsingOffer: product.introductory_offer_terms.transition_after_renewal_count,
 	} );

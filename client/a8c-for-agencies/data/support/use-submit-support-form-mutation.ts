@@ -7,9 +7,16 @@ interface APIResponse {
 }
 
 function mutationSubmitSupportForm( params: SubmitContactSupportParams ): Promise< APIResponse > {
+	let path = '/agency/help/zendesk/create-ticket';
+
+	if ( params.product === 'pressable' ) {
+		path = '/agency/help/pressable/support';
+	}
+
+	// Create the ticket in Zendesk
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: '/agency/help/zendesk/create-ticket',
+		path,
 		body: params,
 	} );
 }

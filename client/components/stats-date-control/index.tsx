@@ -125,7 +125,8 @@ const StatsDateControl = ( {
 				<DateRange
 					selectedStartDate={ moment( dateRange.chartStart ) }
 					selectedEndDate={ moment( dateRange.chartEnd ) }
-					lastSelectableDate={ moment().toDate() }
+					lastSelectableDate={ moment() }
+					firstSelectableDate={ moment( '2010-01-01' ) }
 					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
 						startDate &&
 						endDate &&
@@ -146,6 +147,11 @@ const StatsDateControl = ( {
 						);
 					} }
 					rootClass="stats-date-control-picker"
+					overlay={ overlay }
+					displayShortcuts
+					useArrowNavigation
+					customTitle="Date Range"
+					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
 				/>
 			) : (
 				<DateControlPicker

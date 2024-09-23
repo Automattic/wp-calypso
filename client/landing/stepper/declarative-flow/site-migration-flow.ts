@@ -311,6 +311,19 @@ const siteMigration: Flow = {
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
+							return navigate(
+								addQueryArgs(
+									{
+										siteSlug,
+										from: fromQueryParam,
+										siteId,
+									},
+									STEPS.SITE_MIGRATION_CREDENTIALS.slug
+								)
+							);
+						}
+
 						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
 							siteId,
 							siteSlug,
@@ -415,16 +428,33 @@ const siteMigration: Flow = {
 					if ( action === 'skip' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: fromQueryParam, siteSlug, credentials: 'skipped' },
+								{ siteId, from: fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
+				}
+
+				case STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug: {
+					const { hasError } = providedDependencies as {
+						hasError?: 'ticket-creation';
+					};
+
+					if ( hasError === 'ticket-creation' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, siteSlug, from: fromQueryParam, error: hasError },
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
+					}
 				}
 			}
 		}

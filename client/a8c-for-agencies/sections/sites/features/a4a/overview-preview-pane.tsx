@@ -2,10 +2,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { A4ARequestWPAdminAccess } from 'calypso/a8c-for-agencies/components/a4a-request-wp-admin-access';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import useWPAdminAccessControl from 'calypso/a8c-for-agencies/hooks/use-wp-admin-access-control';
 import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
@@ -63,6 +65,9 @@ export function OverviewPreviewPane( {
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
+	const { noWPAdminAccess } = useWPAdminAccessControl( { siteId: site.blog_id } );
+	const showNoAccess = noWPAdminAccess;
+
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
 			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
@@ -107,7 +112,11 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				)
 			),
 			createFeaturePreview(
 				JETPACK_BACKUP_ID,
@@ -115,7 +124,7 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview site={ site } />
+				showNoAccess ? <A4ARequestWPAdminAccess /> : <JetpackBackupPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -123,7 +132,7 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview site={ site } />
+				showNoAccess ? <A4ARequestWPAdminAccess /> : <JetpackScanPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_MONITOR_ID,
@@ -131,7 +140,11 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				)
 			),
 			createFeaturePreview(
 				JETPACK_PLUGINS_ID,
@@ -139,16 +152,20 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackPluginsPreview
-					link={ site.url_with_scheme + '/wp-admin/plugins.php' }
-					linkLabel={ translate( 'Manage Plugins in wp-admin' ) }
-					featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
-						args: { siteUrl: site.url },
-					} ) }
-					captionText={ translate(
-						"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
-					) }
-				/>
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackPluginsPreview
+						link={ site.url_with_scheme + '/wp-admin/plugins.php' }
+						linkLabel={ translate( 'Manage Plugins in wp-admin' ) }
+						featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
+							args: { siteUrl: site.url },
+						} ) }
+						captionText={ translate(
+							"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
+						) }
+					/>
+				)
 			),
 			createFeaturePreview(
 				JETPACK_STATS_ID,
@@ -156,7 +173,11 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackStatsPreview site={ site } trackEvent={ trackEvent } />
+				showNoAccess ? (
+					<A4ARequestWPAdminAccess />
+				) : (
+					<JetpackStatsPreview site={ site } trackEvent={ trackEvent } />
+				)
 			),
 			createFeaturePreview(
 				JETPACK_ACTIVITY_ID,
@@ -164,7 +185,7 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview site={ site } />
+				showNoAccess ? <A4ARequestWPAdminAccess /> : <JetpackActivityPreview site={ site } />
 			),
 			createFeaturePreview(
 				HOSTING_OVERVIEW_ID,
@@ -187,7 +208,15 @@ export function OverviewPreviewPane( {
 				  ]
 				: [] ),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
+		[
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			showNoAccess,
+			site,
+			trackEvent,
+			hasError,
+			translate,
+		]
 	);
 
 	const itemData: ItemData = {
@@ -207,6 +236,7 @@ export function OverviewPreviewPane( {
 			features={ showErrorPane ? errorFeatures : features }
 			className={ clsx( className, {
 				'site-error-preview': showErrorPane,
+				'site-no-wp-admin-access': showNoAccess,
 			} ) }
 			addTourDetails={ { id: 'sites-walkthrough-site-preview-tabs', tourId: 'sitesWalkthrough' } }
 		/>

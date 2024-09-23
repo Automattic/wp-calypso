@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Notice } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,10 +11,83 @@ import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-ac
 
 import './author-mapping-pane.scss';
 
+function getNoticeContent( postsNumber, pagesNumber, attachmentsNumber ) {
+	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ postsNumber } posts</strong>,{ ' ' }
+				<strong>{ pagesNumber } pages</strong>
+				and <strong>{ attachmentsNumber } media</strong> to import.
+			</>
+		);
+	}
+
+	if ( postsNumber > 0 && pagesNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ postsNumber } posts</strong> and{ ' ' }
+				<strong>{ pagesNumber } pages</strong> to import.
+			</>
+		);
+	}
+
+	if ( postsNumber > 0 && attachmentsNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ postsNumber } posts</strong> and{ ' ' }
+				<strong>{ attachmentsNumber } media</strong> to import.
+			</>
+		);
+	}
+
+	if ( pagesNumber > 0 && attachmentsNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ pagesNumber } pages</strong> and{ ' ' }
+				<strong>{ attachmentsNumber } media</strong> to import.
+			</>
+		);
+	}
+
+	if ( postsNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ postsNumber } posts</strong> to import.
+			</>
+		);
+	}
+
+	if ( pagesNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ pagesNumber } pages</strong> to import.
+			</>
+		);
+	}
+
+	if ( attachmentsNumber > 0 ) {
+		return (
+			<>
+				All set! We’ve found <strong>{ attachmentsNumber } media</strong> to import.
+			</>
+		);
+	}
+}
+
 class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {
+		importerStatus: PropTypes.shape( {
+			counts: PropTypes.shape( {
+				comments: PropTypes.number,
+				pages: PropTypes.number,
+				posts: PropTypes.number,
+			} ),
+			importerState: PropTypes.string.isRequired,
+			percentComplete: PropTypes.number,
+			statusMessage: PropTypes.string,
+		} ),
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
@@ -116,6 +190,7 @@ class AuthorMappingPane extends PureComponent {
 
 	render() {
 		const {
+			importerStatus,
 			sourceAuthors,
 			sourceTitle,
 			targetTitle,
@@ -137,6 +212,13 @@ class AuthorMappingPane extends PureComponent {
 
 		return (
 			<div className="importer__mapping-pane">
+				<Notice status="success" className="importer__notice" isDismissible={ false }>
+					{ getNoticeContent(
+						importerStatus?.customData?.postsNumber || 0,
+						importerStatus?.customData?.pagesNumber || 0,
+						importerStatus?.customData?.attachmentsNumber || 0
+					) }
+				</Notice>
 				<h2>Author mapping</h2>
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
@@ -157,8 +239,8 @@ class AuthorMappingPane extends PureComponent {
 					} ) }
 				</div>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton disabled={ ! canStartImport } onClick={ onStartImport }>
-						Continue import
+					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
+						Import
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>

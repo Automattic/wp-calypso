@@ -6,8 +6,6 @@ import * as stats from 'calypso/reader/stats';
 
 import './style.scss';
 
-const noop = () => {};
-
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = () => {
 		stats.recordAction( 'click_author' );
@@ -15,7 +13,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 		if ( post ) {
 			stats.recordTrackForPost( 'calypso_reader_author_link_clicked', post );
 		}
-		onClick();
+		onClick?.();
 	};
 
 	if ( ! siteUrl ) {
@@ -47,10 +45,6 @@ ReaderAuthorLink.propTypes = {
 	author: PropTypes.object.isRequired,
 	post: PropTypes.object, // for stats only,
 	siteUrl: PropTypes.string, // used instead of author.URL if present
-};
-
-ReaderAuthorLink.defaultProps = {
-	onClick: noop,
 };
 
 export default ReaderAuthorLink;

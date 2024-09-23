@@ -89,6 +89,8 @@ const useCalculatedDiscounts = () => {
 	}
 
 	const originalPrice = current.priceBeforeDiscounts * 2;
+	const introductoryOfferDiscount = biennial.priceBeforeDiscounts - biennial.priceInteger;
+	const multiYearDiscount = originalPrice - biennial.priceBeforeDiscounts;
 
 	const priceBreakdown: PriceBreakdown[] = [];
 
@@ -115,22 +117,17 @@ const useCalculatedDiscounts = () => {
 			// We don't show the discount for free trials (annual) in upsell if biennial plan doesn't have free trial.
 			priceBreakdown.push( {
 				label: __( 'Introductory offer*' ),
-				priceInteger: biennial.priceBeforeDiscounts - biennial.priceInteger,
+				priceInteger: introductoryOfferDiscount,
 				isDiscount: true,
 				isIntroductoryOffer: true,
 			} );
-		} else {
-			// If an annual product has a free trial and the biennial does not, show the multi-year discount instead
-			priceBreakdown.push( {
-				label: __( 'Multi-year discount' ),
-				priceInteger: originalPrice - biennial.priceInteger,
-				isDiscount: true,
-			} );
 		}
-	} else {
+	}
+
+	if ( multiYearDiscount > 0 ) {
 		priceBreakdown.push( {
 			label: __( 'Multi-year discount' ),
-			priceInteger: originalPrice - biennial.priceInteger,
+			priceInteger: multiYearDiscount,
 			isDiscount: true,
 		} );
 	}
@@ -150,8 +147,8 @@ const useCalculatedDiscounts = () => {
 		.reduce( ( sum, discount ) => sum + discount.priceInteger, 0 );
 
 	const subtotalPrice = originalPrice - allAppliedDiscounts;
-	const vatPrice =
-		( biennial.priceBeforeDiscounts - allAppliedDiscounts ) * ( product.item_tax_rate ?? 0 );
+
+	const vatPrice = ( originalPrice - allAppliedDiscounts ) * ( product.item_tax_rate ?? 0 );
 
 	priceBreakdown.push( { label: __( 'Tax' ), priceInteger: vatPrice } );
 
@@ -194,7 +191,9 @@ const UpsellEntry: FC< Omit< PriceBreakdown, 'priceInteger' > & { priceInteger?:
 			{ undefined !== priceInteger && (
 				<div className={ className }>
 					{ isDiscount ? '-' : '' }
-					{ formatCurrency( priceInteger, product?.currency ?? 'USD', { isSmallestUnit: true } ) }
+					{ formatCurrency( Math.round( priceInteger ), product?.currency ?? 'USD', {
+						isSmallestUnit: true,
+					} ) }
 				</div>
 			) }
 		</>

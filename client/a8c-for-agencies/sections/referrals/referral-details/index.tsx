@@ -47,6 +47,7 @@ export default function ReferralDetails( {
 			</div>
 		),
 		withIcon: false,
+		hideEnvDataInHeader: true,
 	};
 
 	const isDesktop = useDesktopBreakpoint();

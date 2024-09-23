@@ -1,5 +1,4 @@
-import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -10,14 +9,11 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
-import { SiteInfo } from './interfaces';
-import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { Field } from '@wordpress/dataviews';
 import type {
-	DataViewsColumn,
 	DataViewsPaginationInfo,
 	DataViewsState,
 	ItemsDataViewsType,
@@ -57,18 +53,8 @@ const DotcomSitesDataViews = ( {
 	setDataViewsState,
 }: Props ) => {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const userId = useSelector( getCurrentUserId );
-	const isWide = useBreakpoint( WIDE_BREAKPOINT );
-	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
-	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
-		if ( isWide ) {
-			return '40%';
-		}
-		if ( isDesktop ) {
-			return '50%';
-		}
-		return '70%';
-	};
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
@@ -80,6 +66,18 @@ const DotcomSitesDataViews = ( {
 		},
 		[ setDataViewsState ]
 	);
+
+	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
+	// However, each time a site is selected, the URL changes, so, the component is remounted and the current selection is lost.
+	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
+	//
+	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
+	// However, when don't need to do anything in the callback, because we already maintain dataViewsState.selectedItem.
+	// The current selection is a derived value which is [dataViewsState.selectedItem.ID].
+	// (See the `getSelection()` function below.)
+	const onSelectionChange = () => {};
+	const getSelection = ( dataViewsState: DataViewsState ) =>
+		dataViewsState.selectedItem ? [ dataViewsState.selectedItem.ID ] : undefined;
 
 	useEffect( () => {
 		// If the user clicks on a row, open the site preview pane by triggering the site button click.
@@ -116,140 +114,98 @@ const DotcomSitesDataViews = ( {
 	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
-	const fields = useMemo< DataViewsColumn[] >(
+	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
 				id: 'site',
-				header: (
-					<SiteSort
-						isSortable
-						columnKey="site"
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-					>
-						<span>{ __( 'Site' ) }</span>
-					</SiteSort>
-				),
-				width: getSiteNameColWidth( isDesktop, isWide ),
-				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
-				render: ( { item }: { item: SiteInfo } ) => {
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Site' ) }</span>,
+				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
+				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'plan',
-				header: <span>{ __( 'Plan' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Plan' ) }</span>,
+				render: ( { item }: { item: SiteExcerptData } ) => (
+					<SitePlan site={ item } userId={ userId } />
+				),
 				enableHiding: false,
-				enableSorting: false,
-				width: '100px',
+				enableSorting: true,
 			},
 			{
 				id: 'status',
-				header: <span>{ __( 'Status' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
+				label: __( 'Status' ),
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
-				enableSorting: false,
-				width: '116px',
+				enableSorting: true,
+				elements: siteStatusGroups,
+				filterBy: {
+					operators: [ 'is' ],
+				},
 			},
 			{
 				id: 'last-publish',
-				header: (
-					<SiteSort
-						isSortable
-						columnKey="last-publish"
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-					>
-						<span>{ __( 'Last Published' ) }</span>
-					</SiteSort>
-				),
-				render: ( { item }: { item: SiteInfo } ) =>
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Last Published' ) }</span>,
+				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: false,
-				width: '120px',
+				enableSorting: true,
 			},
 			{
 				id: 'stats',
-				header: (
-					<>
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
+					<span className="sites-dataviews__stats-label">
 						<JetpackLogo size={ 16 } />
 						<span>{ __( 'Stats' ) }</span>
-					</>
+					</span>
 				),
-				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
-				width: '80px',
 			},
 			{
 				id: 'actions',
-				header: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Actions' ) }</span>,
+				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
-				width: '48px',
 			},
-			// Dummy fields to allow people to sort by them on mobile.
 			{
-				id: addDummyDataViewPrefix( 'site' ),
-				header: <span>{ __( 'Site' ) }</span>,
+				id: 'last-interacted',
+				label: __( 'Last Interacted' ),
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
-			},
-			{
-				id: addDummyDataViewPrefix( 'last-publish' ),
-				header: <span>{ __( 'Last Published' ) }</span>,
-				render: () => null,
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: addDummyDataViewPrefix( 'last-interacted' ),
-				header: __( 'Last Interacted' ),
-				render: () => null,
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: addDummyDataViewPrefix( 'status' ),
-				header: __( 'Status' ),
-				render: () => null,
-				type: 'enumeration',
-				elements: siteStatusGroups,
-				filterBy: {
-					operators: [ 'in' ],
-				},
-				enableHiding: false,
-				enableSorting: false,
+				getValue: () => null,
 			},
 		],
-		[
-			__,
-			openSitePreviewPane,
-			userId,
-			dataViewsState,
-			setDataViewsState,
-			isWide,
-			isDesktop,
-			siteStatusGroups,
-		]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
 	);
+
+	const siteSearchLabel = hasEnTranslation( 'Search sites…' )
+		? __( 'Search sites…' )
+		: __( 'Search sites' );
 
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
 		items: sites,
 		itemFieldId: 'ID',
-		searchLabel: __( 'Search by name or domain…' ),
+		searchLabel: siteSearchLabel,
 		fields,
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
+		onSelectionChange,
 		pagination: paginationInfo,
+		defaultLayouts: { table: {} },
 	} );
 
 	// Update the itemData packet
@@ -261,10 +217,12 @@ const DotcomSitesDataViews = ( {
 			// actions: actions,
 			setDataViewsState,
 			dataViewsState,
+			searchLabel: siteSearchLabel,
 			selectedItem: dataViewsState.selectedItem,
+			selection: getSelection( dataViewsState ),
 			pagination: paginationInfo,
 		} ) );
-	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites ] ); // add actions when implemented
+	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites, siteSearchLabel ] ); // add actions when implemented
 
 	return (
 		<ItemsDataViews

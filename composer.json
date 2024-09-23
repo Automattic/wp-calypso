@@ -11,7 +11,7 @@
 	"require-dev": {
 		"automattic/jetpack-codesniffer": "^2.8.0",
 		"phpunit/phpunit": "^9",
-		"yoast/phpunit-polyfills": "^1.0",
+		"yoast/phpunit-polyfills": "^1.1.2",
 		"phpcsstandards/phpcsextra": "^1.0"
 	}
 }

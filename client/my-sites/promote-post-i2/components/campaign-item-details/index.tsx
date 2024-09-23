@@ -116,6 +116,7 @@ export default function CampaignItemDetails( props: Props ) {
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
+		campaign_id,
 		created_at,
 		format,
 		budget_cents,
@@ -142,7 +143,7 @@ export default function CampaignItemDetails( props: Props ) {
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
-		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
+		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
 		entrypoint: 'promoted_posts-campaign-details-header',
 	} );
 
@@ -200,6 +201,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
 	const totalFormatted = `$${ formatCents( total || 0, 2 ) }`;
 	const dailyAverageSpending = budget_cents ? `${ ( budget_cents / 100 ).toFixed( 2 ) }` : '';
+	const dailyAverageSpendingFormatted = `$${ dailyAverageSpending }`;
 	const conversionsTotalFormatted = conversions_total ? conversions_total : '-';
 	const conversionValueFormatted =
 		conversion_last_currency_found && conversion_value
@@ -223,6 +225,8 @@ export default function CampaignItemDetails( props: Props ) {
 				formatNumber( durationDays, true )
 		  )
 		: '';
+
+	const isLessThanOneWeek = ! is_evergreen && activeDays < 7;
 
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
@@ -685,22 +689,39 @@ export default function CampaignItemDetails( props: Props ) {
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
-									<div>
-										<span className="campaign-item-details__label">{ __( 'Weekly budget' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? weeklyBudgetFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? (
-												/* translators: Daily average spend. dailyAverageSpending is the budget */
-												translate( 'Daily av. spend: $%(dailyAverageSpending)s', {
-													args: { dailyAverageSpending: dailyAverageSpending },
-												} )
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
+									{ isLessThanOneWeek ? (
+										<div>
+											<span className="campaign-item-details__label">
+												{ ! isLoading ? translate( 'Daily budget' ) : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? dailyAverageSpendingFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? translate( 'Daily average spend' ) : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									) : (
+										<div>
+											<span className="campaign-item-details__label">
+												{ ! isLoading ? translate( 'Weekly budget' ) : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? weeklyBudgetFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? (
+													/* translators: Daily average spend. dailyAverageSpending is the budget */
+													translate( 'Daily av. spend: $%(dailyAverageSpending)s', {
+														args: { dailyAverageSpending: dailyAverageSpending },
+													} )
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</span>
+										</div>
+									) }
+
 									<div>
 										<span className="campaign-item-details__label">
 											{ is_evergreen ? __( 'Weekly impressions' ) : __( 'Estimated impressions' ) }

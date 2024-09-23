@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -40,13 +39,7 @@ export const requireAccessContext: Callback = ( context, next ) => {
 	const agency = getActiveAgency( state );
 	const { pathname, search, hash } = window.location;
 
-	const isMultiUserSupportEnabled = config.isEnabled( 'a4a-multi-user-support' );
-
 	if ( agency ) {
-		if ( ! isMultiUserSupportEnabled ) {
-			next();
-			return;
-		}
 		// If multi-user support is enabled, we need to check if the user has access to the current path
 		handleMultiUserSupport( agency, pathname, next );
 		return;

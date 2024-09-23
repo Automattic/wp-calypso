@@ -120,6 +120,10 @@ $videopress-background: #010101;
 		margin-left: 5px;
 	}
 
+	.button.navigation-link.is-borderless {
+		color: #fff;
+	}
+
 	.register-domain-step__search-card {
 		border-radius: 4px;
 	}
@@ -190,6 +194,10 @@ $videopress-background: #010101;
 		.domain-suggestion__content {
 			background-color: rgba(255, 255, 255, 0.2);
 		}
+	}
+
+	.step-container .featured-domain-suggestions .domain-suggestion {
+		background-color: rgba(255, 255, 255, 0.15);
 	}
 
 	.featured-domain-suggestions {

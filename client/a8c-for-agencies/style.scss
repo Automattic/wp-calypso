@@ -136,10 +136,8 @@
 		box-sizing: border-box;
 		border-radius: 4px;
 
-		background-color: var(--color-surface);
 		border-color: var(--color-accent-5);
 		fill: var(--color-accent-100);
-		color: var(--color-accent-100);
 
 		&:hover,
 		&:focus-visible {
@@ -183,6 +181,7 @@
 		}
 	}
 
+	.components-button.is-destructive,
 	.button.is-scary {
 		color: var(--color-scary-50);
 		border-color: var(--color-scary-50);
@@ -195,6 +194,7 @@
 		}
 	}
 
+	.components-button.is-primary.is-destructive,
 	.button.is-primary.is-scary {
 		background-color: var(--color-scary-50);
 		color: var(--color-text-inverted);
@@ -365,6 +365,10 @@
 		opacity: 0.5;
 		cursor: not-allowed;
 		pointer-events: none;
+	}
+
+	.global-notices {
+		z-index: 100001;
 	}
 }
 
@@ -602,21 +606,8 @@ html {
 				padding-inline-start: 16px;
 			}
 		}
-
-		th[data-field-id="actions"] {
-			text-align: right;
-			padding-inline-end: 16px;
-		}
 	}
 
-	.dataviews-view-list li {
-		cursor: pointer;
-	}
-
-	.dataviews-view-list li .components-h-stack {
-		display: block;
-		width: 100%;
-	}
 }
 
 .full-width-layout-with-table {

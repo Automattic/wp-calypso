@@ -22,7 +22,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 					<span className="discount"> { option.discountText } </span>
 				) : null }
 			</DropdownOption>
-		),
+		 ) as unknown as string,
 	} ) );
 
 	return (
@@ -35,13 +35,14 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				onChange={ ( {
 					selectedItem: { key: intervalType },
 				}: {
-					selectedItem: { key: SupportedUrlFriendlyTermType };
+					selectedItem: { key: string };
 				} ) => {
 					recordTracksEvent( 'calypso_plans_plan_type_selector_option_change', {
 						interval_type: intervalType,
 						plans_intent: intent,
 					} );
-					onPlanIntervalUpdate && onPlanIntervalUpdate( intervalType );
+					onPlanIntervalUpdate &&
+						onPlanIntervalUpdate( intervalType as SupportedUrlFriendlyTermType );
 				} }
 			/>
 		</div>

@@ -1,10 +1,18 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { Badge, Button, Gravatar, Gridicon } from '@automattic/components';
 import { Icon, moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useCallback, useRef, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import {
+	A4AConfirmationDialog,
+	Props as ConfirmationDialog,
+} from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { OWNER_ROLE } from '../../constants';
 import { TeamMember } from '../../types';
 
@@ -71,23 +79,33 @@ export const MemberColumn = ( {
 };
 
 export const DateColumn = ( { date }: { date?: string } ): ReactNode => {
-	return date ? new Date( date ).toLocaleDateString() : <Gridicon icon="minus" />;
+	const moment = useLocalizedMoment();
+	const formattedDate = Number( date );
+	return formattedDate ? (
+		moment.unix( formattedDate ).format( 'MMMM D, YYYY' )
+	) : (
+		<Gridicon icon="minus" />
+	);
 };
 
 export const ActionColumn = ( {
 	member,
 	onMenuSelected,
-	asOwner = true,
+	canRemove = true,
 }: {
 	member: TeamMember;
-	onMenuSelected?: ( action: string ) => void;
-	asOwner?: boolean;
+	onMenuSelected?: ( action: string, callback?: () => void ) => void;
+	canRemove?: boolean;
 } ): ReactNode => {
 	const translate = useTranslate();
 
 	const [ showMenu, setShowMenu ] = useState( false );
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
+
+	const [ confirmationDialog, setConfirmationDialog ] = useState< ConfirmationDialog | null >(
+		null
+	);
 
 	const onToggleMenu = useCallback( () => {
 		setShowMenu( ( current ) => ! current );
@@ -97,33 +115,125 @@ export const ActionColumn = ( {
 		setShowMenu( false );
 	}, [] );
 
-	if ( member.role === OWNER_ROLE ) {
-		return null;
-	}
+	const onSelect = useCallback(
+		( {
+			name,
+			confirmation,
+		}: {
+			name: string;
+			confirmation?: { title: string; children: ReactNode; ctaLabel: string };
+		} ) => {
+			if ( confirmation ) {
+				setConfirmationDialog( {
+					...confirmation,
+					onConfirm: () => {
+						setConfirmationDialog( ( prev ) => ( prev ? { ...prev, isLoading: true } : null ) );
+						onMenuSelected?.( name, () => setConfirmationDialog( null ) );
+					},
+					onClose: () => {
+						setConfirmationDialog( null );
+					},
+				} );
+			} else {
+				onMenuSelected?.( name );
+			}
+		},
+		[ onMenuSelected ]
+	);
 
-	const actions =
-		member.status === 'pending'
+	const currentUser = useSelector( getCurrentUser );
+
+	const agency = useSelector( getActiveAgency );
+
+	const isSelfAction = currentUser.email === member.email;
+
+	const actions = useMemo( () => {
+		return member.status === 'pending' || member.status === 'expired'
 			? [
+					{
+						name: 'resend-user-invite',
+						label: translate( 'Resend invite' ),
+						isEnabled: true,
+					},
 					{
 						name: 'cancel-user-invite',
 						label: translate( 'Cancel invite' ),
 						className: 'is-danger',
 						isEnabled: true,
+						confirmationDialog: {
+							title: translate( 'Cancel invitation' ),
+							children: translate(
+								'Are you sure you want to cancel the invitation for {{b}}%(memberName)s{{/b}}?',
+								{
+									args: { memberName: member.displayName ?? member.email },
+									components: {
+										b: <b />,
+									},
+									comment: '%(memberName)s is the member name',
+								}
+							),
+							ctaLabel: translate( 'Cancel invitation' ),
+							isDestructive: true,
+						},
 					},
 			  ]
 			: [
 					{
 						name: 'password-reset',
 						label: translate( 'Send password reset' ),
-						isEnabled: true,
+						isEnabled: false, // FIXME: Implement this action
 					},
 					{
 						name: 'delete-user',
-						label: translate( 'Delete user' ),
+						label: isSelfAction ? translate( 'Leave agency' ) : translate( 'Remove team member' ),
 						className: 'is-danger',
-						isEnabled: asOwner,
+						isEnabled: canRemove,
+						confirmationDialog: {
+							title: isSelfAction
+								? ( translate( 'Are you sure you want to leave %(agencyName)s?', {
+										args: { agencyName: agency?.name ?? '' },
+										comment: '%(agencyName)s is the agency name',
+								  } ) as string )
+								: translate( 'Remove team member' ),
+							children: isSelfAction
+								? translate(
+										"By proceeding, you'll lose management access of all sites that belong to this agency and you will be removed from this dashboard. {{br/}}The agency owner will need to re-invite you if you wish to gain access again.",
+										{
+											components: {
+												br: <br />,
+											},
+										}
+								  )
+								: translate( 'Are you sure you want to remove {{b}}%(memberName)s{{/b}}?', {
+										args: { memberName: member.displayName ?? member.email },
+										components: {
+											b: <b />,
+										},
+										comment: '%(memberName)s is the member name',
+								  } ),
+							ctaLabel: isSelfAction
+								? translate( 'Leave agency' )
+								: translate( 'Remove team member' ),
+							isDestructive: true,
+						},
 					},
 			  ];
+	}, [
+		member.status,
+		member.displayName,
+		member.email,
+		translate,
+		canRemove,
+		isSelfAction,
+		agency?.name,
+	] );
+
+	const activeActions = actions.filter( ( { isEnabled } ) => isEnabled );
+
+	// We don't show the action menu when the member is the owner of the team.
+	if ( member.role === OWNER_ROLE || activeActions.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -137,18 +247,20 @@ export const ActionColumn = ( {
 				onClose={ onCloseMenu }
 				position="bottom left"
 			>
-				{ actions
-					.filter( ( { isEnabled } ) => isEnabled )
-					.map( ( action ) => (
-						<PopoverMenuItem
-							key={ action.name }
-							onClick={ () => onMenuSelected?.( action.name ) }
-							className={ clsx( 'team-list__action-menu-item', action.className ) }
-						>
-							{ action.label }
-						</PopoverMenuItem>
-					) ) }
+				{ activeActions.map( ( action ) => (
+					<PopoverMenuItem
+						key={ action.name }
+						onClick={ () =>
+							onSelect( { name: action.name, confirmation: action.confirmationDialog } )
+						}
+						className={ clsx( 'team-list__action-menu-item', action.className ) }
+					>
+						{ action.label }
+					</PopoverMenuItem>
+				) ) }
 			</PopoverMenu>
+
+			{ confirmationDialog && <A4AConfirmationDialog { ...confirmationDialog } /> }
 		</>
 	);
 };

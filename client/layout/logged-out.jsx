@@ -146,6 +146,9 @@ const LayoutLoggedOut = ( {
 		'is-woo-passwordless': isWooPasswordless,
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
+		'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+			'woocommerce/core-profiler-passwordless-auth'
+		),
 	};
 
 	let masterbar = null;
@@ -193,19 +196,16 @@ const LayoutLoggedOut = ( {
 			'subscriptions',
 			'theme',
 			'themes',
-			'start-with',
 		].includes( sectionName ) &&
 		! isReaderTagPage &&
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
 	) {
 		const nonMonochromeSections = [ 'plugins' ];
-		const whiteNavbarSections = [ 'start-with' ];
 
 		const className = clsx( {
 			'is-style-monochrome':
 				isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName ),
-			'is-style-white': whiteNavbarSections.includes( sectionName ),
 		} );
 
 		masterbar = (
@@ -217,9 +217,6 @@ const LayoutLoggedOut = ( {
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
 					} ) }
-				{ ...( whiteNavbarSections.includes( sectionName ) && {
-					logoColor: 'black',
-				} ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),

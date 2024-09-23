@@ -45,7 +45,7 @@ export default function EnterpriseAgencyHosting() {
 						] }
 					/>
 					<Button
-						href="https://wpvip.com/contact/"
+						href="https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
 						onClick={ onRequestDemoClick }
 						target="_blank"
 						variant="primary"

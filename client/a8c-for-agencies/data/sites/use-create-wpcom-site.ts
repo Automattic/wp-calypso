@@ -5,6 +5,7 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 
 export interface APIError {
 	status: number;
+	code: string;
 }
 
 export interface CreateSiteParams {
