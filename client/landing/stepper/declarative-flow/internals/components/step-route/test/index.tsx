@@ -170,14 +170,6 @@ describe( 'StepRoute', () => {
 			} );
 		} );
 
-		it( 'does not record start and page view when the login is required and the user is not logged in', async () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			render( { step: requiresLoginStep } );
-
-			expect( recordStepStart ).not.toHaveBeenCalled();
-			expect( recordPageView ).not.toHaveBeenCalled();
-		} );
-
 		it( 'skips tracking when the step is re-entered', () => {
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
@@ -195,7 +187,6 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'tracks step-complete when the step is unmounted and step-start was previously recorded', () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep } );

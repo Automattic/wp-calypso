@@ -1,6 +1,5 @@
 //* This hook is used to track the step route in the declarative flow.
 
-import { SiteDetails } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { useEffect, useRef } from '@wordpress/element';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
@@ -21,10 +20,18 @@ import {
 import { useSelector } from 'calypso/state';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
 
-// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
-// See https://github.com/Automattic/wp-calypso/pull/82981.
-const useIsRequestingSelectedSite = ( siteSlugOrId: string | number, site: SiteDetails | null ) => {
-	return useSelector( ( state ) => site && isRequestingSite( state, siteSlugOrId ) );
+/**
+ * We wait for the site to be fetched before tracking the step route when a site ID/slug are defined in the params.
+ * This is to ensure that the site data is available for event tracking purposes.
+ * See `superProps`, `site_plan_id`, and https://github.com/Automattic/wp-calypso/pull/82981.
+ */
+const useHasRequestedSelectedSite = () => {
+	const { site, siteSlugOrId } = useSiteData();
+	const isRequestingSelectedSite = useSelector(
+		( state ) => site && isRequestingSite( state, siteSlugOrId )
+	);
+
+	return siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
 };
 
 interface Props {
@@ -46,9 +53,7 @@ export const useStepRouteTracking = ( {
 }: Props ) => {
 	const intent = useIntent();
 	const design = useSelectedDesign();
-	const { site, siteSlugOrId } = useSiteData();
-	const isRequestingSelectedSite = useIsRequestingSelectedSite( siteSlugOrId, site );
-	const hasRequestedSelectedSite = siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
+	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 
 	/**
@@ -66,7 +71,8 @@ export const useStepRouteTracking = ( {
 	}, [] );
 
 	useEffect( () => {
-		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
+		// We record the event only when the step is not empty.
+		// Additionally, we wait for the site to be fetched before tracking the step route.
 		if ( ! hasRequestedSelectedSite || skipTracking ) {
 			return;
 		}
