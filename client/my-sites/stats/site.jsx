@@ -240,6 +240,7 @@ class StatsSite extends Component {
 			supportsDevicesStatsFeature,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			supportUserFeedback,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		const isUserFeedbackEnabled = config.isEnabled( 'stats/user-feedback' );
@@ -810,7 +811,9 @@ class StatsSite extends Component {
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
-				{ isUserFeedbackEnabled && <StatsFeedbackController siteId={ siteId } /> }
+				{ isUserFeedbackEnabled && supportUserFeedback && (
+					<StatsFeedbackController siteId={ siteId } />
+				) }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
@@ -951,6 +954,7 @@ export default connect(
 			supportsUTMStats,
 			supportsDevicesStats,
 			isOldJetpack,
+			supportUserFeedback,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
 		// Determine if the default date range should be forced to 7 days.
@@ -978,6 +982,7 @@ export default connect(
 			supportsPlanUsage,
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
+			supportUserFeedback,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
 		};
