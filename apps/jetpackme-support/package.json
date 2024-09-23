@@ -13,7 +13,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "apps/help-center"
+		"directory": "apps/jetpackme-support"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -25,10 +25,10 @@
 		"teamcity:build-app": "yarn run build",
 		"build": "NODE_ENV=production yarn dev",
 		"build:app": "calypso-build",
-		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/jetpackme-support",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/help-center.pot' && build-app-languages --stringsFilePath='./dist/help-center.pot' --outputPath='./dist/languages' --outputFormat='JS'"
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/jetpackme-support.pot' && build-app-languages --stringsFilePath='./dist/jetpackme-support.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
