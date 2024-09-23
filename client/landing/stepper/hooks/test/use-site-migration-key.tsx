@@ -30,7 +30,7 @@ describe( 'useSiteMigrationKey', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'returns the migrateguru site migration key', async () => {
+	it( 'returns the migrateguru site migration key if the flag is disabled', async () => {
 		withFeatureDisabled();
 		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
@@ -49,7 +49,7 @@ describe( 'useSiteMigrationKey', () => {
 		expect( result.current.data?.migrationKey ).toEqual( 'some-migration-key' );
 	} );
 
-	it( 'returns the migration to wp.com site migration key', async () => {
+	it( 'returns the migrate to wp.com site migration key if the flag is enabled', async () => {
 		withFeatureEnabled();
 		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
