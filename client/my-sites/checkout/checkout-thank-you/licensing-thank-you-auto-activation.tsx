@@ -28,6 +28,7 @@ interface Props {
 	source?: string;
 	jetpackTemporarySiteId?: number;
 	fromSiteSlug?: string;
+	redirectTo?: string;
 }
 
 type JetpackSite = {
@@ -55,6 +56,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	source = 'onboarding-calypso-ui',
 	jetpackTemporarySiteId = 0,
 	fromSiteSlug,
+	redirectTo,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -206,6 +208,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			const thankYouCompletedUrl = addQueryArgs(
 				{
 					destinationSiteId,
+					redirect_to: redirectTo,
 				},
 				`/checkout/jetpack/thank-you/licensing-auto-activate-completed/${ productSlug }`
 			);

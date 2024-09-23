@@ -259,6 +259,7 @@ export default function getThankYouPageUrl( {
 					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 					fromSiteSlug,
 					productSlug,
+					redirect_to: redirectTo,
 				},
 				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
 			);
@@ -283,6 +284,7 @@ export default function getThankYouPageUrl( {
 			{
 				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+				redirect_to: redirectTo,
 			},
 			thankYouUrl
 		);
