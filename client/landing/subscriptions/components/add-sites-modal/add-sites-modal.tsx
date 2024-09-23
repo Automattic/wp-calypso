@@ -12,7 +12,7 @@ type AddSitesModalProps = {
 const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProps ) => {
 	const translate = useTranslate();
 
-	const modalTitle = translate( 'Add a site', {
+	const modalTitle = translate( 'Add a New Subscription', {
 		context: 'Modal title',
 	} );
 
@@ -25,6 +25,7 @@ const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProp
 			title={ modalTitle as string }
 			onRequestClose={ onClose }
 			overlayClassName="add-sites-modal"
+			focusOnMount="firstContentElement"
 		>
 			<p className="add-sites-modal__subtitle">
 				{ translate( 'Subscribe to sites, newsletters, and RSS feeds.' ) }

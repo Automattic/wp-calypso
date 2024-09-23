@@ -39,6 +39,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 				value={ {
 					category: context.params.category ?? '',
 					isGridView: !! context.query.grid,
+					section: context.hashstring,
 					patternPermalinkId: extractPatternIdFromHash(),
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
@@ -86,8 +87,8 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
-				<ReadymadeTemplateDetails id={ parseInt( context.params.id ) } />
+			<PatternsWrapper hideGetStartedCta>
+				<ReadymadeTemplateDetails slug={ context.params.slug } />
 			</PatternsWrapper>
 		);
 	}
@@ -115,7 +116,7 @@ export default function ( router: typeof clientRouter ) {
 	router( `/patterns/:type(layouts)/:category?`, ...middleware );
 
 	router(
-		'/patterns/:type(site-layouts)/:id',
+		'/patterns/:type(site-layouts)/:slug',
 		renderReadymadeTemplateDetails,
 		makeLayout,
 		clientRender

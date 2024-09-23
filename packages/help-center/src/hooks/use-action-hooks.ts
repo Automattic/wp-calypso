@@ -6,7 +6,7 @@ import { useEffect } from '@wordpress/element';
  * Add your conditions here to open the Help Center automatically when they're met.
  */
 export const useActionHooks = () => {
-	const { setShowHelpCenter, setShowSupportDoc, setInitialRoute } =
+	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
 		useDispatch( 'automattic/help-center' );
 	const queryParams = new URLSearchParams( window.location.search );
 
@@ -27,6 +27,17 @@ export const useActionHooks = () => {
 			},
 		},
 		/**
+		 * Open Help Center.
+		 */
+		{
+			condition() {
+				return queryParams.get( 'help-center' ) === 'home';
+			},
+			action() {
+				setShowHelpCenter( true );
+			},
+		},
+		/**
 		 * Open to Wapuu chat.
 		 */
 		{
@@ -34,7 +45,7 @@ export const useActionHooks = () => {
 				return queryParams.get( 'help-center' ) === 'wapuu';
 			},
 			action() {
-				setInitialRoute( '/odie' );
+				setNavigateToRoute( '/odie' );
 				setShowHelpCenter( true );
 			},
 		},

@@ -62,7 +62,6 @@ import {
 	FEATURE_LIST_UNLIMITED_PRODUCTS,
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_LOYALTY_POINTS_PROGRAMS,
-	FEATURE_LOYALTY_PROG,
 	FEATURE_MARKETING_AUTOMATION,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
 	FEATURE_MULTI_SITE,
@@ -120,7 +119,30 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	/* START: Features & groups for experiment calypso_pricing_grid_fewer_features */
+	FEATURE_GROUP_ADS,
+	FEATURE_GROUP_ANALYTICS,
+	FEATURE_GROUP_CUSTOM_PLUGINS,
+	FEATURE_GROUP_CUSTOMIZE_STYLE,
+	FEATURE_GROUP_DOMAIN,
+	FEATURE_GROUP_ENTITIES,
+	FEATURE_GROUP_SUPPORT,
+	FEATURE_GROUP_THEMES,
+	FEATURE_GROUP_WOO,
+	FEATURE_THEMES_PREMIUM_AND_STORE,
+	FEATURE_UNLIMITED_ENTITIES,
+	FEATURE_WOOCOMMERCE_HOSTING,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_CONNECT_ANALYTICS,
+	FEATURE_GROUP_DEV_TOOLS,
+	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
+import {
+	isAssignedToSimplifiedFeaturesGridExperiment,
+	isAssignedToSimplifiedFeaturesGridExperimentVariant,
+} from './experiments';
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
@@ -221,7 +243,6 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_MIN_MAX_ORDER_QUANTITY,
 			FEATURE_STOCK_NOTIFS,
 			FEATURE_DYNAMIC_UPSELLS,
-			FEATURE_LOYALTY_PROG,
 			FEATURE_CUSTOM_MARKETING_AUTOMATION,
 			FEATURE_BULK_DISCOUNTS,
 			FEATURE_INVENTORY_MGMT,
@@ -238,7 +259,9 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
 			FEATURE_STATS_PAID,
-			FEATURE_SHARES_SOCIAL_MEDIA_JP,
+			...( isAssignedToSimplifiedFeaturesGridExperiment()
+				? [ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]
+				: [ FEATURE_SHARES_SOCIAL_MEDIA_JP ] ),
 			FEATURE_SEO_JP,
 			FEATURE_VIDEOPRESS_JP,
 			FEATURE_PREMIUM_CONTENT_JP,
@@ -339,10 +362,88 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			) ]: [ FEATURE_DISCOUNTED_SHIPPING, FEATURE_PRINT_SHIPPING_LABELS ],
 		} ),
 	},
-	/* START: WooExpress Feature Groups */
+	/* START Feature groups for experiment calypso_pricing_grid_fewer_features */
+	[ FEATURE_GROUP_DOMAIN ]: {
+		slug: FEATURE_GROUP_DOMAIN,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	},
+	[ FEATURE_GROUP_SUPPORT ]: {
+		slug: FEATURE_GROUP_SUPPORT,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_FAST_SUPPORT_FROM_EXPERTS, FEATURE_PRIORITY_24_7_SUPPORT ],
+	},
+	[ FEATURE_GROUP_THEMES ]: {
+		slug: FEATURE_GROUP_THEMES,
+		getTitle: () => null,
+		getFeatures: () => [
+			FEATURE_BEAUTIFUL_THEMES,
+			FEATURE_PREMIUM_THEMES,
+			FEATURE_THEMES_PREMIUM_AND_STORE,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		],
+	},
+	[ FEATURE_GROUP_ENTITIES ]: {
+		slug: FEATURE_GROUP_ENTITIES,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
+	},
+	[ FEATURE_GROUP_ADS ]: {
+		slug: FEATURE_GROUP_ADS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_AD_FREE_EXPERIENCE ],
+	},
+	[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: {
+		slug: FEATURE_GROUP_CUSTOMIZE_STYLE,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_STYLE_CUSTOMIZATION ],
+	},
+	[ FEATURE_GROUP_ANALYTICS ]: {
+		slug: FEATURE_GROUP_ANALYTICS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_CONNECT_ANALYTICS ],
+	},
+	[ FEATURE_GROUP_WOO ]: {
+		slug: FEATURE_GROUP_WOO,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_WOOCOMMERCE_HOSTING ],
+	},
+	[ FEATURE_GROUP_CUSTOM_PLUGINS ]: {
+		slug: FEATURE_GROUP_CUSTOM_PLUGINS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS ],
+	},
+	[ FEATURE_GROUP_DEV_TOOLS ]: {
+		slug: FEATURE_GROUP_DEV_TOOLS,
+		getTitle: () => null,
+		getFeatures: () => [
+			FEATURE_DEV_TOOLS,
+			FEATURE_SITE_STAGING_SITES,
+			FEATURE_MULTI_SITE,
+			FEATURE_WP_UPDATES,
+		],
+	},
+	/* END Feature groups for experiment calypso_pricing_grid_fewer_features */
 };
 
 export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
+	if ( isAssignedToSimplifiedFeaturesGridExperimentVariant( 'simplified' ) ) {
+		return {
+			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+			[ FEATURE_GROUP_ENTITIES ]: featureGroups[ FEATURE_GROUP_ENTITIES ],
+			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
+			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
+			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
+			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
+			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
+			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
+			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
+		};
+	}
+
 	return {
 		[ FEATURE_GROUP_ALL_FEATURES ]: featureGroups[ FEATURE_GROUP_ALL_FEATURES ],
 		[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],

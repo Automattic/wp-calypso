@@ -1,4 +1,5 @@
 import { doesStringResembleDomain } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -128,4 +129,30 @@ export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 
 export function isContextSourceMyJetpack( context: Context ): boolean {
 	return context.query?.source === 'my-jetpack';
+}
+
+export function getAffiliateCouponLabel(): string {
+	// translators: The label of the coupon line item in checkout
+	return translate( 'Exclusive Offer Applied' );
+}
+
+export function getCouponLabel(
+	originalLabel: string,
+	experimentVariationName: string | null | undefined
+): string {
+	return experimentVariationName === 'treatment' ? translate( 'Offer Applied' ) : originalLabel;
+}
+
+export function isCouponBoxHidden(
+	productSlugs: string[],
+	experimentVariationName: string | null | undefined
+): boolean {
+	const ignoredProductSlugs = [ 'wp_difm_lite' ];
+	const containsIgnoredProduct = productSlugs.some( ( slug ) =>
+		ignoredProductSlugs.includes( slug )
+	);
+	if ( containsIgnoredProduct ) {
+		return false;
+	}
+	return experimentVariationName === 'treatment' ? true : false;
 }

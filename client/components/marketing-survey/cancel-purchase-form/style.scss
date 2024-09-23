@@ -68,15 +68,7 @@
 		.components-checkbox-control__label {
 			font-size: 0.875rem;
 			color: var(--studio-gray-60);
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:checked {
-			background: var(--studio-black);
-			border-color: var(--studio-black);
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-black);
+			text-wrap: pretty;
 		}
 
 		.components-checkbox-control__input-container,
@@ -86,9 +78,9 @@
 			height: 1rem;
 		}
 
-		svg.components-checkbox-control__checked {
-			left: 0;
-			top: 0;
+		.components-checkbox-control__input-container {
+			margin-top: auto;
+			margin-bottom: auto;
 		}
 	}
 }
@@ -130,10 +122,12 @@
 .cancel-purchase-form__buttons {
 	display: flex;
 	position: relative;
+	padding: 3px;
 
 	@include break-small {
 		display: inline-block;
 	}
+
 
 	.components-button {
 		flex: 1;

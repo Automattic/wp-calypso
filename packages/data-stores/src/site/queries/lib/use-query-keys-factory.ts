@@ -5,6 +5,11 @@ const useQueryKeysFactory = () => ( {
 		'site-media-storage',
 		siteIdOrSlug,
 	],
+	siteUser: ( siteId: number | null | undefined, userId: number | null | undefined ) => [
+		'site-user',
+		siteId,
+		userId,
+	],
 } );
 
 export default useQueryKeysFactory;

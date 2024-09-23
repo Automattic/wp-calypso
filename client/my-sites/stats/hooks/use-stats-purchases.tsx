@@ -1,5 +1,6 @@
 import {
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_SECURITY_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -18,11 +19,14 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchases,
 } from 'calypso/state/purchases/selectors';
-import { getPlanUsageBillableMonthlyViews } from 'calypso/state/stats/plan-usage/selectors';
-import { MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL } from './use-site-compulsory-plan-selection-qualified-check';
+import {
+	getShouldShowPaywallNotice,
+	getShouldShowPaywallAfterGracePeriod,
+} from 'calypso/state/stats/plan-usage/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
+const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
 	if ( ! ownedPurchases?.length ) {
@@ -38,6 +42,7 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
+
 const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
@@ -53,14 +58,26 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
-			( plan ) => isProductOwned( ownedPurchases, plan )
+		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS ].some( ( plan ) =>
+			isProductOwned( ownedPurchases, plan )
 		)
 	);
 };
 
 const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
+};
+
+export const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_BUSINESS_PLANS ] );
+};
+
+export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
+};
+
+export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
 };
 
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
@@ -75,16 +92,28 @@ export const hasSupportedVideoPressUse = ( state: object, siteId: number | null 
 	return isVideoPressOwned( sitePurchases );
 };
 
-export const hasReachedPaywallMonthlyViews = ( state: object, siteId: number | null ): boolean => {
-	const billableMonthlyViews = getPlanUsageBillableMonthlyViews( state, siteId );
+export const shouldShowPaywallNotice = ( state: object, siteId: number | null ): boolean => {
+	return (
+		! hasSupportedCommercialUse( state, siteId ) && getShouldShowPaywallNotice( state, siteId )
+	);
+};
 
-	return billableMonthlyViews >= MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL;
+export const shouldShowPaywallAfterGracePeriod = (
+	state: object,
+	siteId: number | null
+): boolean => {
+	// Make the paywall check more robust by checking the purchase.
+	return (
+		! hasSupportedCommercialUse( state, siteId ) &&
+		getShouldShowPaywallAfterGracePeriod( state, siteId )
+	);
 };
 
 const getPurchasesBySiteId = createSelector(
 	( state, siteId ) => getSitePurchases( state, siteId ),
 	getPurchases
 );
+
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );

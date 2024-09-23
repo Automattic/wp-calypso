@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
 import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
@@ -8,7 +9,9 @@ import {
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import RevokeLicenseDialog from '../revoke-license-dialog';
@@ -35,6 +38,10 @@ export default function LicenseDetailsActions( {
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const canRevoke = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_revoke_licenses' )
+	);
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -102,13 +109,14 @@ export default function LicenseDetailsActions( {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Manage in Pressable' ) }
+					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
 				</Button>
 			) }
 
-			{ ( isChildLicense
-				? licenseState === LicenseState.Attached
-				: licenseState !== LicenseState.Revoked ) &&
+			{ canRevoke &&
+				( isChildLicense
+					? licenseState === LicenseState.Attached
+					: licenseState !== LicenseState.Revoked ) &&
 				licenseType === LicenseType.Partner && (
 					<Button compact onClick={ openRevokeDialog } scary>
 						{ translate( 'Revoke' ) }

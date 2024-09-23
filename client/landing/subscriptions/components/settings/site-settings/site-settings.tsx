@@ -47,18 +47,11 @@ const SiteSettings = ( {
 	return (
 		<div className="settings site-settings">
 			{ isLoggedIn && (
-				<>
-					<NotifyMeOfNewPostsToggle
-						value={ notifyMeOfNewPosts }
-						onChange={ onNotifyMeOfNewPostsChange }
-						isUpdating={ updatingNotifyMeOfNewPosts }
-					/>
-					<EmailMeNewPostsToggle
-						value={ emailMeNewPosts }
-						onChange={ onEmailMeNewPostsChange }
-						isUpdating={ updatingEmailMeNewPosts }
-					/>
-				</>
+				<EmailMeNewPostsToggle
+					value={ emailMeNewPosts }
+					onChange={ onEmailMeNewPostsChange }
+					isUpdating={ updatingEmailMeNewPosts }
+				/>
 			) }
 			{ emailMeNewPosts && (
 				<DeliveryFrequencyInput
@@ -72,6 +65,13 @@ const SiteSettings = ( {
 					value={ emailMeNewComments }
 					onChange={ onEmailMeNewCommentsChange }
 					isUpdating={ updatingEmailMeNewComments }
+				/>
+			) }
+			{ isLoggedIn && (
+				<NotifyMeOfNewPostsToggle
+					value={ notifyMeOfNewPosts }
+					onChange={ onNotifyMeOfNewPostsChange }
+					isUpdating={ updatingNotifyMeOfNewPosts }
 				/>
 			) }
 		</div>

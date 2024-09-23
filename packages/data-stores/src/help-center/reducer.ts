@@ -97,9 +97,26 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const initialRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
+const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
 		return action.route;
+	}
+	return state;
+};
+
+const odieInitialPromptText: Reducer< string | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT' ) {
+		return action.text;
+	}
+	return state;
+};
+
+const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_BOT_NAME_SLUG' ) {
+		return action.odieBotNameSlug;
 	}
 	return state;
 };
@@ -115,7 +132,9 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	unreadCount,
-	initialRoute,
+	navigateToRoute,
+	odieInitialPromptText,
+	odieBotNameSlug,
 } );
 
 export type State = ReturnType< typeof reducer >;

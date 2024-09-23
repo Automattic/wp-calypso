@@ -5,6 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { trackStatsAnalyticsEvent } from '../utils';
@@ -19,10 +20,16 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 const CommercialSiteUpgradeNotice = ( {
 	siteId,
 	isOdysseyStats,
-	shouldShowPaywallNotice,
+	showPaywallNotice,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+
+	// Determine when the paywall will go into effect (if applicable).
+	// The upgrade_deadline_date is the actual date the paywall will be applied.
+	const { data } = usePlanUsageQuery( siteId );
+	// Guard against empty value in the API response.
+	const paywallUpgradeDeadlineDate = data?.upgrade_deadline_date;
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -49,12 +56,13 @@ const CommercialSiteUpgradeNotice = ( {
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
-	if ( shouldShowPaywallNotice ) {
+	if ( showPaywallNotice ) {
 		learnMoreLink = 'https://jetpack.com/support/jetpack-stats/free-or-paid/';
 	}
 
 	const sharedTranslationComponents = {
 		p: <p />,
+		b: <strong />,
 		jetpackStatsProductLink: (
 			<button
 				type="button"
@@ -74,19 +82,35 @@ const CommercialSiteUpgradeNotice = ( {
 		externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
 	};
 
-	const bannerBody = shouldShowPaywallNotice
-		? translate(
-				'{{p}}Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
-				{
-					components: sharedTranslationComponents,
-				}
-		  ) // Paywall notice content.
-		: translate(
-				'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
-				{
-					components: sharedTranslationComponents,
-				}
-		  );
+	// Banner body will show an explict paywall date if provided.
+	let bannerBody = null;
+	if ( ! showPaywallNotice ) {
+		bannerBody = translate(
+			'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+			{
+				components: sharedTranslationComponents,
+			}
+		);
+	} else if ( ! paywallUpgradeDeadlineDate ) {
+		bannerBody = translate(
+			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a Jetpack Stats Commercial license using the button below. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+			{
+				components: sharedTranslationComponents,
+			}
+		);
+	} else {
+		bannerBody = translate(
+			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a Jetpack Stats Commercial license using the button below by {{b}}%(date)s{{/b}}. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+			{
+				args: { date: paywallUpgradeDeadlineDate },
+				components: sharedTranslationComponents,
+			}
+		);
+	}
+
+	const bannerTitle = showPaywallNotice
+		? translate( 'You need to upgrade to a commercial license to continue using Jetpack Stats' )
+		: translate( 'Upgrade to Stats Commercial' );
 
 	return (
 		<div
@@ -95,8 +119,8 @@ const CommercialSiteUpgradeNotice = ( {
 			}` }
 		>
 			<NoticeBanner
-				level={ shouldShowPaywallNotice ? 'error' : 'info' }
-				title={ translate( 'Upgrade to Stats Commercial' ) }
+				level={ showPaywallNotice ? 'error' : 'info' }
+				title={ bannerTitle }
 				onClose={ () => {} }
 				hideCloseButton
 			>

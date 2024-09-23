@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components';
 import { Icon, closeSmall } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
 import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
@@ -11,23 +11,23 @@ export type Status = 'idle' | 'pending' | 'success' | 'error';
 interface ProvisioningProps {
 	status: {
 		siteTransfer: Status;
-		pluginInstallation: Status;
 		migrationKey: Status;
+		pluginInstallation?: Status;
 	};
 }
 
 export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 	const {
 		siteTransfer: siteTransferStatus,
-		pluginInstallation: pluginInstallationStatus,
 		migrationKey: migrationKeyStatus,
+		pluginInstallation: pluginInstallationStatus,
 	} = status;
 
 	const actions = [
 		{ status: siteTransferStatus, text: translate( 'Provisioning your new site' ) },
 		{ status: pluginInstallationStatus, text: translate( 'Installing the required plugins' ) },
 		{ status: migrationKeyStatus, text: translate( 'Getting the migration key' ) },
-	];
+	].filter( ( action ) => action.status );
 
 	const currentActionIndex = actions.findIndex( ( action ) => action.status !== 'success' );
 	const currentAction = actions[ currentActionIndex ];
@@ -41,7 +41,7 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 	// Error handler.
 	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
-			recordTracksEvent( 'calypso_onboarding_site_migration_instructions_error_contact_support' );
+			recordMigrationInstructionsLinkClick( 'error-contact-support' );
 		};
 
 		text = translate(

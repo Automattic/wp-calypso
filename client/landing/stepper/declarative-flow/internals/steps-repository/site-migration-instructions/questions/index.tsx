@@ -1,7 +1,7 @@
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FC } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
 import './style.scss';
 
 export const Questions: FC = () => {
@@ -18,9 +18,7 @@ export const Questions: FC = () => {
 				iconSize={ 12 }
 				target="_blank"
 				onClick={ () => {
-					recordTracksEvent(
-						'calypso_onboarding_site_migration_instructions_questions_happiness_engineer'
-					);
+					recordMigrationInstructionsLinkClick( 'questions-happiness-engineer' );
 				} }
 			>
 				{ translate( 'Ask a Happiness Engineer' ) }

@@ -10,6 +10,7 @@ import {
 	JETPACK_GET_AGENCIES_REQUEST,
 	JETPACK_GET_AGENCIES_SUCCESS,
 	JETPACK_CURRENT_AGENCY_UPDATE,
+	JETPACK_SET_AGENCY_CLIENT_USER,
 } from './action-types';
 import { getActiveAgency, isFetchingAgency } from './selectors';
 
@@ -60,6 +61,15 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 				config.enable( 'a4a-partner-directory' );
 			}
 		}
+	};
+}
+
+export function setAgencyClientUser( isClientUser: boolean ): AgencyThunkAction {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_SET_AGENCY_CLIENT_USER,
+			isClientUser,
+		} );
 	};
 }
 

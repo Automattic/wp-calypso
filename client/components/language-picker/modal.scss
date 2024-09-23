@@ -38,6 +38,10 @@
 .language-picker__modal-empathy-mode {
 	display: flex;
 	align-items: center;
+
+	.form-label:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .language-picker__modal-checkboxes {
@@ -47,13 +51,10 @@
 	text-align: left;
 }
 
-.language-picker__modal-buttons {
-	padding: 24px;
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
+.language-picker__modal-locale-notice {
+	&:not(:last-child) {
+		margin-bottom: 5px;
+	}
 }
 
 .language-picker__modal-incomplete-locale-notice {
@@ -67,11 +68,30 @@
 	}
 }
 
+.language-picker__modal-incomplete-locale-nudge-text {
+	font-weight: normal;
+	font-size: 0.875rem;
+	display: flex;
+	align-items: flex-start;
+
+	.material-icon {
+		flex: 0 0 auto;
+		width: 16px;
+		height: 16px;
+		margin: 2px 8px 0 0;
+		fill: currentColor;
+	}
+}
+
 .language-picker__modal-incomplete-locale-text {
 	margin-right: 8px;
 }
 
-.language-picker__modal-incomplete-locale-tooltip-text {
+.language-picker__modal-buttons {
+	padding: 24px;
+	width: 100%;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
 }

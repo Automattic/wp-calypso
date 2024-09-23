@@ -46,9 +46,11 @@ const getLinks = (
 			break;
 		}
 		case 'scan': {
-			// Scan link should not be available for Atomic sites.
-			if ( status !== 'inactive' && ! isAtomicSite ) {
-				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
+			if ( status !== 'inactive' ) {
+				link = isAtomicSite
+					? `https://wordpress.com/scan/history/${ siteUrlWithMultiSiteSupport }`
+					: `/scan/${ siteUrlWithMultiSiteSupport }`;
+				isExternalLink = isAtomicSite;
 			}
 			break;
 		}

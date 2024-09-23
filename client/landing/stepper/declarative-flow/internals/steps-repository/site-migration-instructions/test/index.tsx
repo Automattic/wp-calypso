@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
-import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
+import { usePrepareSiteForMigrationWithMigrateGuru } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -49,7 +49,7 @@ describe( 'SiteMigrationInstructions', () => {
 			deleteMigrationSticker: jest.fn(),
 		} );
 
-		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
 			detailedStatus: {},
 			completed: false,
 			migrationKey: 'migration-key-here',
@@ -157,5 +157,59 @@ describe( 'SiteMigrationInstructions', () => {
 		await userEvent.click( getByRole( 'button', { name: /Done/ } ) );
 
 		expect( submit ).toHaveBeenCalledWith( { destination: 'migration-started' } );
+	} );
+
+	it( 'should display a fallback in the last step when preparation completes and there is an error with the migration key', async () => {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
+			detailedStatus: { migrationKey: 'error' },
+			completed: true,
+			migrationKey: '',
+			error: null,
+		} );
+
+		const { getByRole } = render();
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect(
+			getByRole( 'link', { name: /Migrate Guru page on the new WordPress.com site/ } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'should animate skeleton when waiting for completion', async () => {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
+			detailedStatus: {},
+			completed: false,
+			migrationKey: '',
+			error: null,
+		} );
+
+		const { getByRole, container } = render();
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		const skeleton = container.querySelector( '.migration-key-skeleton' );
+
+		expect( skeleton!.classList.contains( 'migration-key-skeleton--animate' ) ).toBeTruthy();
+	} );
+
+	it( 'should not animate skeleton when error happens', async () => {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
+			detailedStatus: {},
+			completed: false,
+			migrationKey: '',
+			error: new Error(),
+		} );
+
+		const { getByRole, container } = render();
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		const skeleton = container.querySelector( '.migration-key-skeleton' );
+
+		expect( skeleton!.classList.contains( 'migration-key-skeleton--animate' ) ).toBeFalsy();
 	} );
 } );

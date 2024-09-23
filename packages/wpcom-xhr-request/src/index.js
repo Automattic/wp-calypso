@@ -76,7 +76,7 @@ const sendResponse = ( req, settings, fn ) => {
 					body = body.body;
 				}
 
-				headers.status = statusCode;
+				headers = { ...headers, status: statusCode };
 
 				if ( null !== statusCode && 2 !== Math.floor( statusCode / 100 ) ) {
 					debug( 'Error detected!' );
@@ -256,13 +256,17 @@ export default function request( options, fn ) {
 
 	// create HTTP Request instance
 	const req = superagent[ method ]( settings.url );
-
-	// querystring
 	if ( query ) {
 		req.query( query );
 		debug( 'API send URL querystring: %o', query );
+		if ( typeof query === 'string' ) {
+			settings.isEnvelopeMode = isRestAPI
+				? query.includes( 'http_envelope=1' )
+				: query.includes( '_envelope=1' );
+		} else {
+			settings.isEnvelopeMode = isRestAPI ? query.http_envelope : query._envelope;
+		}
 
-		settings.isEnvelopeMode = isRestAPI ? query.http_envelope : query._envelope;
 		debug( 'envelope mode: %o', settings.isEnvelopeMode );
 	}
 

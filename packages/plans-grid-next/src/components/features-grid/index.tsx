@@ -7,25 +7,34 @@ import {
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
+import EnterpriseFeatures from './enterprise-features';
 import MobileFreeDomain from './mobile-free-domain';
-import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
-import PlanPrice from './plan-price';
+import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
 import Table from './table';
 import TopButtons from './top-buttons';
-import type { DataResponse, FeaturesGridProps, GridPlan, PlanActionOverrides } from '../../types';
+import type {
+	DataResponse,
+	FeaturesGridExternalProps,
+	FeaturesGridProps,
+	GridPlan,
+	PlanActionOverrides,
+} from '../../types';
+
+import './style.scss';
 
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;
@@ -40,6 +49,7 @@ type MobileViewProps = {
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean;
+	enableShowAllFeaturesButton?: boolean;
 };
 
 const CardContainer = (
@@ -56,6 +66,41 @@ const CardContainer = (
 	);
 };
 
+const FeaturesContainer = ( props: {
+	children: ( featureGroupSlug: FeatureGroupSlug ) => JSX.Element;
+	featureGroups: FeatureGroupSlug[];
+	gridPlan: GridPlan;
+} ) => {
+	const { children, gridPlan, featureGroups } = props;
+	const {
+		enableCategorisedFeatures,
+		enableLogosOnlyForEnterprisePlan,
+		enableReducedFeatureGroupSpacing,
+	} = usePlansGridContext();
+
+	return (
+		<>
+			<EnterpriseFeatures
+				renderedGridPlans={ [ gridPlan ] }
+				options={ { isLogosOnly: enableLogosOnlyForEnterprisePlan } }
+			/>
+			{ ! enableCategorisedFeatures && (
+				<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
+			) }
+			{ featureGroups.map( ( featureGroupSlug: FeatureGroupSlug ) => (
+				<div
+					className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
+						'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
+					} ) }
+					key={ featureGroupSlug }
+				>
+					{ children( featureGroupSlug ) }
+				</div>
+			) ) }
+		</>
+	);
+};
+
 const MobileView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -69,9 +114,10 @@ const MobileView = ( {
 	planActionOverrides,
 	selectedFeature,
 	showUpgradeableStorage,
+	enableShowAllFeaturesButton,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const { featureGroupMap } = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
 			Object.keys( featureGroupMap ).filter(
@@ -96,6 +142,24 @@ const MobileView = ( {
 			);
 
 			const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
+			const isEnterprisePlan = isWpcomEnterpriseGridPlan( gridPlan.planSlug );
+			const featuresEl = (
+				<FeaturesContainer gridPlan={ gridPlan } featureGroups={ featureGroups }>
+					{ ( featureGroupSlug: FeatureGroupSlug ) => (
+						<PlanFeaturesList
+							renderedGridPlans={ [ gridPlan ] }
+							selectedFeature={ selectedFeature }
+							paidDomainName={ paidDomainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
+							generatedWPComSubdomain={ generatedWPComSubdomain }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+							featureGroupSlug={ featureGroupSlug }
+							onStorageAddOnClick={ onStorageAddOnClick }
+							showUpgradeableStorage={ showUpgradeableStorage }
+						/>
+					) }
+				</FeaturesContainer>
+			);
 
 			const planCardJsx = (
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
@@ -103,14 +167,14 @@ const MobileView = ( {
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
 					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
 					{ isNotFreePlan && (
-						<PlanPrice
+						<PlanPrices
 							renderedGridPlans={ [ gridPlan ] }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					{ storageFeatureGroup && (
+					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
 							<PlanFeaturesItem>
 								<h2 className="plans-grid-next-features-grid__feature-group-title">
@@ -134,41 +198,26 @@ const MobileView = ( {
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
 					/>
-					<CardContainer
-						header={ translate( 'Show all features' ) }
-						planSlug={ gridPlan.planSlug }
-						key={ `${ gridPlan.planSlug }-${ index }` }
-						className="plans-grid-next-features-grid__mobile-plan-card-foldable-container"
-						expanded={
-							selectedFeature &&
-							gridPlan.features.wpcomFeatures.some(
-								( feature ) => feature.getSlug() === selectedFeature
-							)
-						}
-					>
-						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
-						{ ! enableCategorisedFeatures && (
-							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
-						) }
-						{ featureGroups.map( ( featureGroupSlug ) => (
-							<div
-								className="plans-grid-next-features-grid__feature-group-row"
-								key={ featureGroupSlug }
-							>
-								<PlanFeaturesList
-									renderedGridPlans={ [ gridPlan ] }
-									selectedFeature={ selectedFeature }
-									paidDomainName={ paidDomainName }
-									hideUnavailableFeatures={ hideUnavailableFeatures }
-									generatedWPComSubdomain={ generatedWPComSubdomain }
-									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-									featureGroupSlug={ featureGroupSlug }
-									onStorageAddOnClick={ onStorageAddOnClick }
-									showUpgradeableStorage={ showUpgradeableStorage }
-								/>
-							</div>
-						) ) }
-					</CardContainer>
+					{ enableShowAllFeaturesButton ? (
+						<CardContainer
+							header={ translate( 'Show all features' ) }
+							planSlug={ gridPlan.planSlug }
+							key={ `${ gridPlan.planSlug }-${ index }` }
+							className="plans-grid-next-features-grid__mobile-plan-card-foldable-container"
+							expanded={
+								selectedFeature &&
+								gridPlan.features.wpcomFeatures.some(
+									( feature ) => feature.getSlug() === selectedFeature
+								)
+							}
+						>
+							{ featuresEl }
+						</CardContainer>
+					) : (
+						<div className="plans-grid-next-features-grid__mobile-plan-card-no-foldable-container">
+							{ featuresEl }
+						</div>
+					) }
 				</div>
 			);
 			return planCardJsx;
@@ -244,6 +293,9 @@ const TabletView = ( {
 	);
 };
 
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
 const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -260,6 +312,7 @@ const FeaturesGrid = ( {
 	showRefundPeriod,
 	showUpgradeableStorage,
 	stickyRowOffset,
+	enableShowAllFeaturesButton,
 }: FeaturesGridProps ) => {
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
@@ -299,7 +352,10 @@ const FeaturesGrid = ( {
 						) }
 						{ 'small' === gridSize && (
 							<div className="plan-features-2023-grid__mobile-view">
-								<MobileView { ...planFeaturesProps } />
+								<MobileView
+									{ ...planFeaturesProps }
+									enableShowAllFeaturesButton={ enableShowAllFeaturesButton }
+								/>
 							</div>
 						) }
 					</div>
@@ -309,4 +365,76 @@ const FeaturesGrid = ( {
 	);
 };
 
-export default FeaturesGrid;
+const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
+	const {
+		siteId,
+		intent,
+		gridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		useAction,
+		recordTracksEvent,
+		allFeaturesList,
+		coupon,
+		isInAdmin,
+		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		enableStorageAsBadge,
+		enableReducedFeatureGroupSpacing,
+		enableLogosOnlyForEnterprisePlan,
+		featureGroupMap = {},
+		hideFeatureGroupTitles,
+		enterpriseFeaturesList,
+	} = props;
+
+	const gridContainerRef = useRef< HTMLDivElement >( null );
+
+	const gridBreakpoints = useMemo(
+		() =>
+			new Map( [
+				[ 'small', 0 ],
+				[ 'medium', 740 ],
+				[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+			] ),
+		[ isInAdmin ]
+	);
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: gridBreakpoints,
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				coupon={ coupon }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				enableStorageAsBadge={ enableStorageAsBadge }
+				enableReducedFeatureGroupSpacing={ enableReducedFeatureGroupSpacing }
+				enableLogosOnlyForEnterprisePlan={ enableLogosOnlyForEnterprisePlan }
+				hideFeatureGroupTitles={ hideFeatureGroupTitles }
+				featureGroupMap={ featureGroupMap }
+				enterpriseFeaturesList={ enterpriseFeaturesList }
+			>
+				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedFeaturesGrid;

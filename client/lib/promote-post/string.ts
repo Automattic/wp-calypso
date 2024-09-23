@@ -137,6 +137,8 @@ const BlazePressStrings = () => {
 	translate(
 		'We created this campaign to deliver the most valuable traffic, yet you can still make changes before submitting it.'
 	);
+	translate( 'Campaign Objective' );
+	translate( 'Change' );
 	translate( 'Start Date' );
 	translate( 'Duration' );
 	translate( 'Budget' );
@@ -148,6 +150,11 @@ const BlazePressStrings = () => {
 	translate( 'Start typing country, state or city to see available options' );
 	translate( 'No results found' );
 	translate( 'Search for locations' );
+	translate( 'Good for: ' );
+	translate( 'Choose campaign objective' );
+	translate( 'Continue' );
+	translate( 'Cancel' );
+	translate( 'Save my selection for future campaigns' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
 	translate( 'Could not retrieve countries. Please try again later.' );

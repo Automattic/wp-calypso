@@ -17,12 +17,7 @@ export const BellIcon = ( { newItems, strokeWidth = 1.5 } ) => {
 					fill="var( --color-masterbar-icon )"
 					fillRule="evenodd"
 				></path>
-				<circle
-					cx="19.2759"
-					cy="8.56887"
-					fill="var( --color-masterbar-unread-dot-background )"
-					r="2.97415"
-				></circle>
+				<circle cx="19.2759" cy="8.56887" fill="#e26f56" r="2.97415"></circle>
 			</svg>
 		);
 	}

@@ -5,7 +5,9 @@ import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { BackButton } from './back-button';
+import { BackButtonHeader } from './back-button';
+
+import './help-center-third-party-cookies-notice.scss';
 
 const ThirdPartyCookiesNotice: React.FC = () => {
 	const { __ } = useI18n();
@@ -21,8 +23,9 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 
 	return (
 		<div className="help-center-third-party-cookies-notice">
-			<BackButton />
-			<div>
+			<BackButtonHeader />
+
+			<div className="help-center-third-party-cookies-notice__content">
 				<h1>{ __( 'Action needed', __i18n_text_domain__ ) }</h1>
 				<p>
 					{ __(

@@ -7,6 +7,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
+import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
@@ -16,7 +18,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
 import Followers from '../../stats-followers';
 import StatsModulePlaceholder from '../../stats-module/placeholder';
-import StatsModuleEmails from '../../stats-module-emails';
 import PageViewTracker from '../../stats-page-view-tracker';
 import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
@@ -33,6 +34,13 @@ interface StatsSubscribersPageProps {
 	};
 }
 
+type TranslationStringType = {
+	title: string;
+	item: string;
+	value: string;
+	empty: string;
+};
+
 const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const translate = useTranslate();
 	// Use hooks for Redux pulls.
@@ -44,6 +52,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
+	const moduleStrings = statsStrings().emails as TranslationStringType;
 
 	const statsModuleListClass = clsx(
 		'stats__module-list stats__module--unified',
@@ -79,6 +88,10 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// Odyssey Stats doesn't support the membership API endpoint yet.
 	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
 	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
+
+	const summaryUrl = `/stats/${ period?.period }/emails/${ siteSlug }?startDate=${ period?.startOf?.format(
+		'YYYY-MM-DD'
+	) }`;
 
 	return (
 		<Main fullWidthLayout>
@@ -124,7 +137,9 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 								{ supportsEmailStats && period && (
 									<StatsModuleEmails
 										period={ period }
-										query={ { period, date: today } }
+										moduleStrings={ moduleStrings }
+										query={ { period: period?.period, date: today } }
+										summaryUrl={ summaryUrl }
 										className={ clsx(
 											'stats__flexible-grid-item--half',
 											'stats__flexible-grid-item--full--large'

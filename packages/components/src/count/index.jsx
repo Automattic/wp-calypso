@@ -5,16 +5,18 @@ import formatNumberCompact from './format-number-compact';
 
 import './style.scss';
 
-export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...rest } ) => {
-	// Omit props passed from the `localize` higher-order component that we don't need.
-	const { translate, moment, ...inheritProps } = rest;
-
+export const Count = ( {
+	count,
+	primary = false,
+	compact = false,
+	forwardRef,
+	numberFormat,
+	translate,
+	locale,
+	...props
+} ) => {
 	return (
-		<span
-			ref={ forwardRef }
-			className={ clsx( 'count', { 'is-primary': primary } ) }
-			{ ...inheritProps }
-		>
+		<span ref={ forwardRef } className={ clsx( 'count', { 'is-primary': primary } ) } { ...props }>
 			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
 		</span>
 	);
@@ -25,12 +27,6 @@ Count.propTypes = {
 	numberFormat: PropTypes.func,
 	primary: PropTypes.bool,
 	compact: PropTypes.bool,
-	refProp: PropTypes.oneOfType( [ PropTypes.func, PropTypes.shape( { current: PropTypes.any } ) ] ),
-};
-
-Count.defaultProps = {
-	primary: false,
-	compact: false,
 };
 
 export default localize( Count );

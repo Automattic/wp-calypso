@@ -147,6 +147,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 								"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 								props.cancellationReason,
 							siteUrl: site.URL,
+							siteId: site.ID,
 						} );
 						props.closeDialog();
 					} }

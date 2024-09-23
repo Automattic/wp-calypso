@@ -9,9 +9,12 @@ import A4AWPCOMSlider from './wpcom-slider';
 
 type Props = {
 	selectedTier: DiscountTier;
-	onSelectTier: ( value: DiscountTier ) => void;
+	onSelectTier?: ( value: DiscountTier ) => void;
 	ownedPlans: number;
 	isLoading?: boolean;
+	hideOwnedPlansBadge?: boolean;
+	hideNumberInput?: boolean;
+	quantity?: number;
 };
 
 export default function WPCOMBulkSelector( {
@@ -19,6 +22,9 @@ export default function WPCOMBulkSelector( {
 	onSelectTier,
 	ownedPlans,
 	isLoading,
+	hideOwnedPlansBadge,
+	hideNumberInput,
+	quantity,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -37,7 +43,7 @@ export default function WPCOMBulkSelector( {
 
 	const onSelectOption = useCallback(
 		( option: number ) => {
-			onSelectTier( calculateTier( options, option ) );
+			onSelectTier?.( calculateTier( options, option ) );
 		},
 		[ onSelectTier, options ]
 	);
@@ -49,9 +55,11 @@ export default function WPCOMBulkSelector( {
 	const minimumQuantity = ownedPlans + 1;
 
 	useEffect( () => {
-		onSelectTier( calculateTier( options, minimumQuantity ) );
+		if ( ! hideNumberInput ) {
+			onSelectTier?.( calculateTier( options, minimumQuantity ) );
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ ownedPlans, options ] );
+	}, [ ownedPlans, options, hideNumberInput ] );
 
 	if ( isLoading ) {
 		return (
@@ -63,7 +71,7 @@ export default function WPCOMBulkSelector( {
 
 	return (
 		<div className="bulk-selection">
-			{ !! ownedPlans && (
+			{ !! ownedPlans && ! hideOwnedPlansBadge && (
 				<div className="bulk-selection__owned-plan">
 					<Icon icon={ info } size={ 24 } />
 
@@ -90,9 +98,11 @@ export default function WPCOMBulkSelector( {
 				label={ translate( 'Total sites' ) }
 				sub={ translate( 'Total discount' ) }
 				value={ selectedOption }
+				quantity={ quantity }
 				onChange={ onSelectOption }
 				options={ options }
 				minimum={ minimumQuantity }
+				hideNumberInput={ hideNumberInput }
 			/>
 		</div>
 	);

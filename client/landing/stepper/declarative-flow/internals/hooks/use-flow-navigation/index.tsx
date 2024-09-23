@@ -42,7 +42,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 	const [ currentSearchParams ] = useSearchParams();
 
 	const customNavigate = useCallback< Navigate< StepperStep[] > >(
-		( nextStep: string, extraData = {} ) => {
+		( nextStep: string, extraData = {}, replace = false ) => {
 			const hasQueryParams = nextStep.includes( '?' );
 			const queryParams = ! hasQueryParams ? currentSearchParams : null;
 
@@ -59,7 +59,7 @@ export const useFlowNavigation = (): FlowNavigation => {
 				step: nextStep,
 			} );
 
-			navigate( addQueryParams( newPath, queryParams ) );
+			navigate( addQueryParams( newPath, queryParams ), { replace } );
 		},
 		[ currentSearchParams, flow, intent, lang, navigate, setStepData, currentStepSlug ]
 	);

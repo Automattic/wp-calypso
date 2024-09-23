@@ -25,8 +25,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const { hasLoadedSitePurchases, isRequestingSitePurchases, hasAnyPlan } =
-		useStatsPurchases( siteId );
+	const { hasLoadedSitePurchases, hasAnyPlan } = useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -48,14 +47,11 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canUserManageOptions
 	);
 
-	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
+	const isLoading = ! hasLoadedSitePurchases || isLoadingNotices;
 	const { isNewSite, shouldShowPaywall } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
 		isSiteJetpackNotAtomic && ! hasAnyPlan && purchaseNotPostponed && shouldShowPaywall;
-
-	// The restricted dashboard means no more paywall!
-	const skipPaywallFlow = config.isEnabled( 'stats/restricted-dashboard' );
 
 	// TODO: If notices are not used by class components, we don't have any reasons to launch any of those actions anymore. If we do need them, we should consider refactoring them to another component.
 	const dispatch = useDispatch();
@@ -73,8 +69,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
 	// Render conditions (for readability).
+	// TODO: Determine the paywall redirection for specific routes.
 	const shouldRenderPaywall =
-		! isLoading && ! skipPaywallFlow && redirectToPurchase && siteSlug && canUserManageOptions;
+		false && ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions;
 	const shouldRenderContent = ! isLoading && ( canUserViewStats || canUserManageOptions );
 
 	// Handle possible render conditions.

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { throttle } from 'lodash';
 
@@ -89,12 +88,6 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 	}, [ previewRef ] );
 
 	const createScreenshots = ( url: string ) => {
-		const isEnabled = config.isEnabled( 'migration-flow/new-migration-instructions-step' );
-
-		if ( ! isEnabled ) {
-			return;
-		}
-
 		Object.entries( mShotConfigs ).forEach( ( mShotParams ) => {
 			const screenShotUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent(
 				url

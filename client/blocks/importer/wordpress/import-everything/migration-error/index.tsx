@@ -23,6 +23,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 interface Props {
 	sourceSiteUrl: string;
 	targetSiteUrl: string;
+	targetSiteID: string | number;
 	status: MigrationStatusError | null;
 	resetMigration: () => void;
 	goToImportCapturePage: () => void;
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export const MigrationError = ( props: Props ) => {
-	const { setShowHelpCenter, setInitialRoute, resetStore } =
+	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const {
 		sourceSiteUrl,
@@ -39,6 +40,7 @@ export const MigrationError = ( props: Props ) => {
 		resetMigration,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
+		targetSiteID,
 	} = props;
 	const translate = useTranslate();
 	const { isEligibleForChat } = useChatStatus();
@@ -59,6 +61,7 @@ export const MigrationError = ( props: Props ) => {
 		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
 			openZendeskWidget( {
 				siteUrl: targetSiteUrl,
+				siteId: targetSiteID,
 				message: `${ status }: Import onboarding flow; migration failed`,
 				onSuccess: () => {
 					resetStore();
@@ -66,7 +69,7 @@ export const MigrationError = ( props: Props ) => {
 				},
 			} );
 		} else {
-			setInitialRoute( '/contact-form?mode=CHAT' );
+			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 		}
 	}, [
@@ -75,8 +78,9 @@ export const MigrationError = ( props: Props ) => {
 		targetSiteUrl,
 		status,
 		isMessagingAvailable,
+		targetSiteID,
 		canConnectToZendeskMessaging,
-		setInitialRoute,
+		setNavigateToRoute,
 		setShowHelpCenter,
 	] );
 

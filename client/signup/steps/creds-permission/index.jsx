@@ -28,9 +28,7 @@ class CredsPermissionStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
 		this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
-		this.props.goToStep(
-			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
-		);
+		this.props.goToStep( 'rewind-were-backing' );
 	};
 
 	renderStepContent() {

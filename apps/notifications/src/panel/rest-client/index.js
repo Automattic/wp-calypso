@@ -27,6 +27,7 @@ export function Client() {
 	this.subscribing = false;
 	this.subscribed = false;
 	this.firstRender = true;
+	this.locale = null;
 	this.inbox = [];
 
 	window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
@@ -166,6 +167,7 @@ function getNotes() {
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash',
 		number: this.noteRequestLimit,
+		locale: this.locale,
 	};
 
 	const notes = getAllNotes( store.getState() );
@@ -480,7 +482,8 @@ function setVisibility( { isShowing, isVisible } ) {
 		isVisible: this.isVisible,
 	} );
 
-	if ( isVisible && isShowing ) {
+	// Fetch notification when visible for the first time or visible and showing
+	if ( isVisible && ( ! this.lastSeenTime || isShowing ) ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}

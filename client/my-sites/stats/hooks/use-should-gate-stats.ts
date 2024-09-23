@@ -1,8 +1,8 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -37,7 +37,7 @@ import {
 import {
 	hasSupportedCommercialUse,
 	hasSupportedVideoPressUse,
-	hasReachedPaywallMonthlyViews,
+	shouldShowPaywallAfterGracePeriod,
 } from './use-stats-purchases';
 
 // If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
@@ -82,6 +82,7 @@ const paidStats = [
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
 ];
 
 // Gated controls for WPCOM sites without the FEATURE_STATS_PAID feature.
@@ -117,11 +118,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
-		const restrictDashboard = config.isEnabled( 'stats/restricted-dashboard' );
-		if ( ! restrictDashboard ) {
-			return false;
-		}
-
 		if ( supportStatsCommercialUse ) {
 			return false;
 		}
@@ -134,10 +130,20 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 			return false;
 		}
 
+		// Do not paywall VIP sites.
+		// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
+		const isVip =
+			isVipSite( state as object, siteId as number ) || getSiteOption( state, siteId, 'is_vip' );
+		if ( isVip ) {
+			return false;
+		}
+
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
 		if ( isSiteCommercial ) {
-			// Paywall basic stats for commercial sites with monthly views reaching the paywall threshold.
-			if ( hasReachedPaywallMonthlyViews( state, siteId ) ) {
+			// Paywall basic stats for commercial sites with:
+			// 1. Monthly views reached the paywall threshold.
+			// 2. Current usage passed over grace period days.
+			if ( shouldShowPaywallAfterGracePeriod( state, siteId ) ) {
 				return [
 					...jetpackStatsCommercialPaywall,
 					...granularControlForJetpackStatsCommercialPaywall,

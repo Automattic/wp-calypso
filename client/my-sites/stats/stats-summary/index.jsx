@@ -53,10 +53,6 @@ class StatsSummaryChart extends Component {
 		return icon;
 	}
 
-	renderEmptyState() {
-		return <StatsEmptyState />;
-	}
-
 	buildChartData() {
 		const { data, chartType, numberFormat, sectionClass, selected, tabLabel } = this.props;
 
@@ -109,14 +105,14 @@ class StatsSummaryChart extends Component {
 			<div className={ clsx( 'is-summary-chart', { 'is-loading': isLoading } ) }>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
-					{ this.renderEmptyState() }
+					<StatsEmptyState />
 				</ElementChart>
 			</div>
 		) : (
 			<Card className={ clsx( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
-					{ this.renderEmptyState() }
+					<StatsEmptyState />
 				</ElementChart>
 				<StatsTabs>
 					<StatsTab { ...tabOptions } />

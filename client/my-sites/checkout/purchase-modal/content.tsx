@@ -190,7 +190,12 @@ function OrderReview( {
 			{ shouldDisplayTax && <dt className="purchase-modal__tax">{ translate( 'Taxes' ) }</dt> }
 			{ shouldDisplayTax && <dd className="purchase-modal__tax">{ tax }</dd> }
 
-			<dt>{ translate( 'Total' ) }</dt>
+			<dt>
+				{ translate( 'Total', {
+					context: 'The label of the total line item in checkout',
+					textOnly: true,
+				} ) }
+			</dt>
 			<dd>{ total }</dd>
 		</dl>
 	);

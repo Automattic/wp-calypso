@@ -42,11 +42,7 @@ export class InstagramBlockFlow implements BlockFlow {
 			} )
 			.click();
 
-		// @todo Remove the first option once Gutenberg v18.8.0 is deployed everywhere.
-		await Promise.race( [
-			editorCanvas.getByTitle( 'Embedded content from instagram.com' ).waitFor(),
-			editorCanvas.getByTitle( 'Embedded content from www.instagram.com' ).waitFor(),
-		] );
+		await editorCanvas.getByTitle( 'Embedded content from www.instagram.com' ).waitFor();
 	}
 
 	/**

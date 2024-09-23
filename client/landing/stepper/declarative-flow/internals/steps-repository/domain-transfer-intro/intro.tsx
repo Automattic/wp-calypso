@@ -3,6 +3,7 @@ import { IntentScreen, GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import GoogleDomainsModal from 'calypso/landing/stepper/declarative-flow/internals/components/google-domains-transfer-instructions';
 import { preventWidows } from 'calypso/lib/formatting';
 
 interface Props {
@@ -30,13 +31,9 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 									) }
 								</p>
 								{ isGoogleDomainsTransferFlow && (
-									<a
-										href="https://support.squarespace.com/hc/en-us/articles/205812338-Transferring-a-domain-away-from-Squarespace"
-										target="_blank"
-										rel="noreferrer"
-									>
+									<GoogleDomainsModal className="unlock-instructions__cta">
 										{ __( 'Show me how' ) }
-									</a>
+									</GoogleDomainsModal>
 								) }
 							</>
 						),

@@ -145,7 +145,12 @@
 	.stats-card--header-and-body {
 		display: flex;
 		flex-direction: column;
-		min-height: 100%;
+		justify-content: space-between;
+		flex-grow: 1;
+	}
+
+	.stats-card--footer {
+		margin-top: 2px;
 	}
 
 	.stats-card--body-empty {

@@ -1,8 +1,6 @@
 import { useContext, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
-import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
-import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-options';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/woocommerce-product-slug-mapping';
@@ -20,20 +18,16 @@ export const useGetProductPricingInfo = () => {
 		() => wpcomBulkOptions( wpcomProducts?.discounts?.tiers ),
 		[ wpcomProducts?.discounts?.tiers ]
 	);
-	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+	const { count } = useWPCOMOwnedSites();
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
-	const { wpcomPlans } = useProductAndPlans( {} );
-	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
 	const ownedPlans = useMemo( () => {
 		// We don't count ownded plans when referring products
 		if ( marketplaceType === 'referral' ) {
 			return 0;
 		}
-		if ( isLicenseCountsReady && creatorPlan ) {
-			const productStats = licenseCounts?.products?.[ creatorPlan.slug ];
-			return productStats?.not_revoked || 0;
-		}
-	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products, marketplaceType ] );
+
+		return count;
+	}, [ count, marketplaceType ] );
 
 	const getProductPricingInfo = (
 		userProducts: Record< string, ProductListItem >,

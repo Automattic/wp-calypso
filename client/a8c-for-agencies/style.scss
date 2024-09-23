@@ -136,10 +136,8 @@
 		box-sizing: border-box;
 		border-radius: 4px;
 
-		background-color: var(--color-surface);
 		border-color: var(--color-accent-5);
 		fill: var(--color-accent-100);
-		color: var(--color-accent-100);
 
 		&:hover,
 		&:focus-visible {
@@ -183,6 +181,7 @@
 		}
 	}
 
+	.components-button.is-destructive,
 	.button.is-scary {
 		color: var(--color-scary-50);
 		border-color: var(--color-scary-50);
@@ -195,6 +194,7 @@
 		}
 	}
 
+	.components-button.is-primary.is-destructive,
 	.button.is-primary.is-scary {
 		background-color: var(--color-scary-50);
 		color: var(--color-text-inverted);
@@ -219,6 +219,17 @@
 				fill: var(--color-primary-50);
 				margin-inline-start: 4px;
 			}
+		}
+	}
+
+	.button.is-dark,
+	.components-button.is-dark {
+		background-color: var(--color-accent-100);
+		color: var(--color-surface);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-100);
 		}
 	}
 
@@ -272,7 +283,8 @@
 	}
 
 	.components-form-token-field__input-container,
-	.components-text-control__input {
+	.components-text-control__input,
+	.components-textarea-control__input {
 		background-color: var(--color-surface);
 		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;
@@ -353,6 +365,10 @@
 		opacity: 0.5;
 		cursor: not-allowed;
 		pointer-events: none;
+	}
+
+	.global-notices {
+		z-index: 100001;
 	}
 }
 
@@ -590,21 +606,8 @@ html {
 				padding-inline-start: 16px;
 			}
 		}
-
-		th[data-field-id="actions"] {
-			text-align: right;
-			padding-inline-end: 16px;
-		}
 	}
 
-	.dataviews-view-list li {
-		cursor: pointer;
-	}
-
-	.dataviews-view-list li .components-h-stack {
-		display: block;
-		width: 100%;
-	}
 }
 
 .full-width-layout-with-table {

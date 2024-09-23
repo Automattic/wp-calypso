@@ -595,7 +595,7 @@ export class SharingService extends Component {
 					/>
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
-							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
+							'X (Twitter) is {{a}}no longer supported{{/a}}. You can still use our quick {{a2}}manual sharing{{/a2}} feature from the post editor to share to it!',
 							{
 								components: {
 									a: (
@@ -607,6 +607,16 @@ export class SharingService extends Component {
 												this.props.isJetpack || isJetpackCloud()
 													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
 													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
+											) }
+										/>
+									),
+									a2: (
+										<ExternalLink
+											target="_blank"
+											icon
+											iconSize={ 14 }
+											href={ localizeUrl(
+												'https://jetpack.com/redirect/?source=jetpack-social-manual-sharing-help'
 											) }
 										/>
 									),

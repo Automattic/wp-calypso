@@ -22,6 +22,7 @@ export const campaignStatus = {
 	CANCELED: 'canceled',
 	FINISHED: 'finished',
 	PROCESSING: 'processing',
+	SUSPENDED: 'suspended',
 };
 
 export const getPostType = ( type: string ) => {
@@ -38,6 +39,17 @@ export const getPostType = ( type: string ) => {
 		default:
 			return type;
 	}
+};
+
+export const getWidgetParams = ( keyValue: string ) => {
+	const postPartial = keyValue?.split( '_' )[ 0 ];
+	const campaignPartial = keyValue?.split( '_' )[ 1 ];
+	const selectedPostId = postPartial?.split( '-' )[ 1 ] || '';
+	const selectedCampaignId = campaignPartial?.split( '-' )[ 1 ] || '';
+	return {
+		selectedPostId,
+		selectedCampaignId,
+	};
 };
 
 export const getCampaignStatusBadgeColor = ( status?: string ) => {
@@ -62,6 +74,9 @@ export const getCampaignStatusBadgeColor = ( status?: string ) => {
 		}
 		case campaignStatus.FINISHED: {
 			return 'info-blue';
+		}
+		case campaignStatus.SUSPENDED: {
+			return 'error';
 		}
 		default:
 			return 'warning';
@@ -93,6 +108,9 @@ export const getCampaignStatus = ( status?: string ) => {
 		}
 		case campaignStatus.PROCESSING: {
 			return __( 'Creating' );
+		}
+		case campaignStatus.SUSPENDED: {
+			return __( 'Suspended' );
 		}
 		default:
 			return status;

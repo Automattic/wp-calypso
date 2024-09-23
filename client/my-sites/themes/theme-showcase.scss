@@ -13,20 +13,18 @@
 
 		.layout__content {
 			min-height: 100vh;
-			padding: calc(var(--masterbar-height) + 16px) 16px 16px var(--sidebar-width-max);
+			@media screen and (min-width: 782px) {
+				padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) var(--sidebar-width-max);
+			}
 		}
 
 		.layout__primary > * {
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
-			height: calc(100vh - var(--masterbar-height));
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
-
-			@include break-small {
-				height: calc(100vh - var(--masterbar-height) - 32px);
-			}
 		}
 
 		.navigation-header {
@@ -518,6 +516,55 @@
 	.themes__showcase {
 		@media (max-width: $break-small) {
 			padding: 0 16px;
+		}
+	}
+
+	.themes__controls.is-sticky {
+		@include break-medium {
+			position: fixed;
+			left: var(--sidebar-width-max);
+			top: var(--masterbar-height);
+			width: calc(100vw - var(--sidebar-width-max) - 16px);
+			padding: 24px 32px 8px 33px;
+			border-bottom: 1px solid var(--studio-gray-5);
+			box-sizing: border-box;
+			background: var(--studio-white);
+			z-index: 20;
+
+			.is-global-sidebar-visible & {
+				top: calc(var(--masterbar-height) + 16px);
+				width: calc(100% - var(--sidebar-width-max) - 31px);
+				padding: 40px 32px 8px;
+
+
+				// Make the scroll behavior works on the top of the fixed element.
+				pointer-events: none;
+
+				> * {
+					pointer-events: auto;
+				}
+			}
+		}
+	}
+
+	.themes__controls-placeholder {
+		.is-logged-out & {
+			display: none;
+		}
+
+		@include break-medium {
+			padding-top: 24px;
+			margin-top: -24px;
+			box-sizing: content-box;
+
+			.is-global-sidebar-visible & {
+				padding-top: 40px;
+				margin-top: -40px;
+			}
+
+			&.is-sticky {
+				height: 101px;
+			}
 		}
 	}
 }

@@ -5,7 +5,7 @@ import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	type AssertConditionResult,
@@ -16,6 +16,7 @@ import {
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
@@ -80,6 +81,12 @@ const designFirst: Flow = {
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
+		const { exitFlow } = useExitFlow();
+
+		const { postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -92,8 +99,6 @@ const designFirst: Flow = {
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'check-sites':
 					// Check for unlaunched sites
@@ -141,13 +146,20 @@ const designFirst: Flow = {
 						saveSiteSettings( siteId, {
 							launchpad_screen: 'full',
 						} );
+						initializeLaunchpadState( {
+							siteId: siteId as number,
+							siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
+						} );
 
 						if ( providedDependencies?.hasSetPreselectedTheme ) {
 							updateLaunchpadSettings( siteSlug as string, {
 								checklist_statuses: { design_completed: true },
 							} );
 
-							return navigate( `launchpad?siteSlug=${ siteSlug }` );
+							return postFlowNavigator( {
+								siteId: siteId as number,
+								siteSlug: siteSlug as string,
+							} );
 						}
 
 						return window.location.assign(

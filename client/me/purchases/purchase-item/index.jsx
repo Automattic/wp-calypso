@@ -116,7 +116,7 @@ class PurchaseItem extends Component {
 						TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case) */ }
 						<ExternalLink
 							className="purchase-item__link"
-							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
+							href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
 						>
 							{ translate( 'Learn more' ) }
 						</ExternalLink>
@@ -484,11 +484,15 @@ class PurchaseItem extends Component {
 
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
+				const paymentMethodType = purchase.payment.creditCard.displayBrand
+					? purchase.payment.creditCard.displayBrand
+					: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
+
 				return (
 					<>
 						<img
-							src={ getPaymentMethodImageURL( purchase.payment.creditCard.type ) }
-							alt={ purchase.payment.creditCard.type }
+							src={ getPaymentMethodImageURL( paymentMethodType ) }
+							alt={ paymentMethodType }
 							className="purchase-item__payment-method-card"
 						/>
 						{ purchase.payment.creditCard.number }

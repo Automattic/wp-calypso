@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
-import JetpackBlazeHeader from '../jetpack-blaze-header';
-import WooBlazeHeader from '../woo-blaze-header';
+import BlazePluginHeader from './blaze-plugin-header';
+import JetpackBlazeHeader from './jetpack-blaze-header';
 
 const GenericHeader = ( props ) => {
-	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
-	return isWooBlaze ? <WooBlazeHeader { ...props } /> : <JetpackBlazeHeader { ...props } />;
+	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
+	return isBlazePlugin ? <BlazePluginHeader { ...props } /> : <JetpackBlazeHeader { ...props } />;
 };
 export default GenericHeader;

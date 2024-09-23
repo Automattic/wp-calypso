@@ -241,6 +241,8 @@ export const getJetpackProductsShortNames = (): Record< string, React.ReactEleme
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: 'Stats (Non-commercial license)',
+		[ PRODUCT_JETPACK_STATS_FREE ]: 'Stats (Non-commercial license)',
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: 'AI',
 		[ PRODUCT_JETPACK_AI_YEARLY ]: 'AI',
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: 'AI',
@@ -501,6 +503,7 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_SEARCH_FREE ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: { default: statsTagline },
@@ -612,6 +615,15 @@ export const getJetpackProductDisclaimers = (
 		<></>
 	);
 
+	const aiAssistantDisclaimer = translate(
+		'Limits apply for high request capacity. {{link}}Learn more about it here.{{/link}}',
+		{
+			components: {
+				link: getLink(),
+			},
+		}
+	);
+
 	const monitorDisclaimer = translate( 'Limit of 20 SMS per site, each month.' );
 
 	return {
@@ -632,6 +644,9 @@ export const getJetpackProductDisclaimers = (
 		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDisclaimer,
 		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDisclaimer,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDisclaimer,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantDisclaimer,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantDisclaimer,
 	};
 };
 
@@ -1542,7 +1557,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( 'High request capacity *' ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: [
@@ -1566,7 +1581,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( 'High request capacity *' ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_YEARLY_100 ]: [
@@ -1590,7 +1605,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
-			translate( '100 monthly requests (upgradeable)' ),
+			translate( 'High request capacity *' ),
 			...aiAssistantIncludesInfo,
 		],
 		[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: [

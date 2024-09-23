@@ -172,6 +172,7 @@ export default {
 				component={ DomainManagement.DnsRecords }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
+				needsDomains
 			/>
 		);
 		next();
@@ -185,6 +186,7 @@ export default {
 				component={ DomainManagement.AddDnsRecord }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
+				needsDomains
 			/>
 		);
 		next();

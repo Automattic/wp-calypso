@@ -20,7 +20,8 @@ export interface StatsNoticeProps {
 	isCommercial?: boolean;
 	isCommercialOwned?: boolean;
 	hasPWYWPlanOnly?: boolean;
-	shouldShowPaywallNotice?: boolean;
+	showPaywallNotice?: boolean;
+	hasSignificantViews?: boolean;
 }
 
 export interface NoticeBodyProps {

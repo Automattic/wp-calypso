@@ -17,7 +17,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 	const step2Text = __(
-		'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
+		'Click on the name of the domain that you\'d like to transfer in the "Domains" section.'
 	);
 
 	return (
@@ -32,19 +32,21 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 			{ isOpen && (
 				<Modal
 					className="google-domains-transfer-instructions__modal"
-					title="How to unlock your Google domains"
+					title="How to unlock your Squarespace domains"
 					onRequestClose={ closeModal }
 				>
 					<p>
-						{ __( 'Follow these steps to transfer your domain from Google to WordPress.com:' ) }
+						{ __(
+							'Follow these steps to transfer your domain from Squarespace to WordPress.com:'
+						) }
 					</p>
 					<details open={ 1 === focusedStep }>
 						<summary>
 							{ createInterpolateElement(
-								__( 'Step 1: Visit your <a>Google Domains dashboard</a>' ),
+								__( 'Step 1: Visit your <a>Squarespace domains dashboard</a>' ),
 								{
 									a: createElement( 'a', {
-										href: 'https://domains.google.com/registrar/',
+										href: 'https://account.squarespace.com/domains/',
 										target: '_blank',
 										rel: 'noreferrer',
 									} ),
@@ -53,7 +55,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						</summary>
 						<p>
 							{ __(
-								'Log in to your Google Domains dashboard to see a list of all of your registered domains.'
+								'Log in to your Squarespace domains dashboard to see a list of all of your registered domains.'
 							) }
 						</p>
 					</details>
@@ -73,13 +75,13 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						<summary>{ __( 'Step 3: Unlock domain' ) }</summary>
 						<p>
 							{ __(
-								'In the "Registration settings" section, ensure that your domain is unlocked.'
+								"Once you've opened your domain's settings, ensure that your domain is unlocked."
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
 						<video autoPlay loop width={ 1188 } height={ 720 } style={ { aspectRatio: '1.65' } }>
 							<source
-								src="https://videos.files.wordpress.com/BoWqyRoi/step-03-720p.mp4"
+								src="https://videos.files.wordpress.com/3QODom8G/step-03-squarespace_mov_hd.mp4"
 								type="video/mp4"
 							/>
 						</video>
@@ -88,7 +90,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
-								'Click "Get auth code" and then copy the code that is shown to your clipboard.'
+								"Request your transfer code. You'll find this at the bottom of your domain's settings page. Squarespace will email you the code (may take several hours) for you to copy to your clipboard."
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
@@ -100,7 +102,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							style={ { aspectRatio: '1.64444444' } }
 						>
 							<source
-								src="https://videos.files.wordpress.com/dZY2deS5/step-04-720p.mp4"
+								src="https://videos.files.wordpress.com/4CMqAGDh/step-04-squarespace_mov_hd.mp4"
 								type="video/mp4"
 							/>
 							<track />

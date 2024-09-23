@@ -1,4 +1,4 @@
-import { PLAN_PREMIUM, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -39,7 +39,6 @@ export const Sharing = ( {
 	isVip,
 	siteSlug,
 	translate,
-	premiumPlanName,
 } ) => {
 	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
 		isAdminInterfaceWPAdmin( state, siteId )
@@ -181,10 +180,11 @@ export const Sharing = ( {
 			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
+					plan={ PLAN_PERSONAL }
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No ads with WordPress.com %(premiumPlanName)s', {
-						args: { premiumPlanName },
+					title={ translate( 'No ads with WordPress.com %(upsellPlanName)s', {
+						args: { upsellPlanName: getPlan( PLAN_PERSONAL )?.getTitle() },
 					} ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
@@ -214,7 +214,6 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle();
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
@@ -226,6 +225,5 @@ export default connect( ( state ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		isJetpack: isJetpack,
-		premiumPlanName,
 	};
 } )( localize( Sharing ) );

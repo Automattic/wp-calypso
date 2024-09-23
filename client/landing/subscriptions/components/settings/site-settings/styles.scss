@@ -1,5 +1,21 @@
+.site-settings {
+	.setting-item {
+		&.email-me-new-posts-toggle {
+			&.is-enabled {
+				margin-bottom: 16px;
+			}
+		}
+	}
+}
+
 .site-settings-popover {
+	max-width: 300px;
+
 	.site-settings {
+		.setting-item {
+			margin-bottom: 20px;
+		}
+
 		.delivery-frequency-input:not(.is-logged-in) {
 			margin-bottom: 24px;
 		}

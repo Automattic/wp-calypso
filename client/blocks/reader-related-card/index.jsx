@@ -1,6 +1,5 @@
 import { CompactCard as Card } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -186,8 +185,6 @@ export function RelatedPostCard( {
 	);
 }
 
-export const LocalizedRelatedPostCard = localize( RelatedPostCard );
-
 export default connect( ( state, ownProps ) => {
 	const { post } = ownProps;
 	const actualPost = getPostById( state, post );
@@ -198,4 +195,4 @@ export default connect( ( state, ownProps ) => {
 		site,
 		siteId,
 	};
-} )( LocalizedRelatedPostCard );
+} )( RelatedPostCard );

@@ -1,11 +1,15 @@
+import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
-import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
+import {
+	usePrepareSiteForMigrationWithMigrateGuru,
+	usePrepareSiteForMigrationWithMigrateToWPCOM,
+} from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -23,18 +27,18 @@ import './style.scss';
 interface PreparationEventsHookOptions {
 	migrationKeyStatus: Status;
 	preparationCompleted: boolean;
+	preparationError: Error | null;
 	fromUrl: string;
 	flow: string;
-	setupError: Error | null;
 	siteId: number;
 }
 
 const usePreparationEventsAndLogs = ( {
 	migrationKeyStatus,
 	preparationCompleted,
+	preparationError,
 	fromUrl,
 	flow,
-	setupError,
 	siteId,
 }: PreparationEventsHookOptions ) => {
 	useEffect( () => {
@@ -55,10 +59,10 @@ const usePreparationEventsAndLogs = ( {
 	}, [ preparationCompleted ] );
 
 	useEffect( () => {
-		if ( setupError ) {
-			const logError = setupError as unknown as { path: string; message: string };
+		if ( preparationError ) {
+			const logError = preparationError as unknown as { path: string; message: string };
 
-			captureException( setupError, {
+			captureException( preparationError, {
 				extra: {
 					message: logError?.message,
 					path: logError?.path,
@@ -72,7 +76,7 @@ const usePreparationEventsAndLogs = ( {
 				},
 			} );
 		}
-	}, [ flow, setupError, siteId ] );
+	}, [ flow, preparationError, siteId ] );
 };
 
 const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
@@ -93,15 +97,20 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const {
 		detailedStatus,
 		completed: preparationCompleted,
+		error: preparationError,
 		migrationKey,
-		error: setupError,
-	} = usePrepareSiteForMigration( siteId );
+	} = config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
+		? usePrepareSiteForMigrationWithMigrateToWPCOM( siteId ) // eslint-disable-line react-hooks/rules-of-hooks -- Temporary workaround until we completely replace the migrate guru hook.
+		: usePrepareSiteForMigrationWithMigrateGuru( siteId ); // eslint-disable-line react-hooks/rules-of-hooks
+	const migrationKeyStatus = detailedStatus.migrationKey;
+
+	// Register events and logs.
 	usePreparationEventsAndLogs( {
-		migrationKeyStatus: detailedStatus.migrationKey,
+		migrationKeyStatus,
 		preparationCompleted,
+		preparationError,
 		fromUrl,
 		flow,
-		setupError,
 		siteId,
 	} );
 
@@ -113,9 +122,15 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const onCompleteSteps = () => {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
+
+	const showMigrationKeyFallback =
+		( ! migrationKeyStatus || migrationKeyStatus === 'error' ) && preparationCompleted;
+
 	const { steps, completedSteps } = useSteps( {
 		fromUrl,
 		migrationKey: migrationKey ?? '',
+		preparationError,
+		showMigrationKeyFallback,
 		onComplete: onCompleteSteps,
 	} );
 

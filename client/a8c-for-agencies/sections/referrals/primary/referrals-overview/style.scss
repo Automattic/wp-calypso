@@ -7,21 +7,6 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
-.theme-a8c-for-agencies .button.referrals-overview__notice-button {
-	background-color: var(--color-accent-100);
-	color: var(--color-surface);
-
-	&:hover,
-	&:focus-visible {
-		background-color: var(--color-accent-100);
-	}
-}
-
-.referrals-overview__notice {
-	.button.referrals-overview__notice-button {
-		margin-block-start: 1rem;
-	}
-}
 
 .referrals-overview__button-popover {
 	.a4a-popover__content {
@@ -90,25 +75,6 @@ $data-view-border-color: #f1f1f1;
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
 			padding-inline-start: 64px;
-		}
-		.dataviews-view-table tr {
-			th:last-child,
-			td:last-child {
-				padding-inline-end: 64px;
-				width: 20px;
-				white-space: nowrap;
-				position: sticky;
-				right: 0;
-				z-index: 1;
-				background: linear-gradient(to right, transparent 0%, #fff 25%);
-			}
-
-			&:hover {
-				th:last-child,
-				td:last-child {
-					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
-				}
-			}
 		}
 	}
 
@@ -182,8 +148,6 @@ $data-view-border-color: #f1f1f1;
 		}
 
 		li:not(.section-nav-tab) {
-			margin-inline: -24px;
-			padding: 16px 24px;
 			border-bottom: 1px solid $data-view-border-color;
 		}
 
@@ -199,8 +163,7 @@ $data-view-border-color: #f1f1f1;
 			margin-block-end: 0;
 		}
 
-		.a4a-layout__top-wrapper > *,
-		.a4a-layout__body > * {
+		.a4a-layout__top-wrapper > * {
 			padding-inline: 24px;
 		}
 
@@ -239,6 +202,11 @@ $data-view-border-color: #f1f1f1;
 	flex-direction: row;
 	gap: 8px;
 	margin-block-start: 56px;
+
+	.pressable-icon {
+		width: 24px;
+		height: 24px;
+	}
 }
 
 .a4a-layout__header-actions {

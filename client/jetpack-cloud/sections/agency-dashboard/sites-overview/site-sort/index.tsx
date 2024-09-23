@@ -31,20 +31,24 @@ export default function SiteSort( {
 	const { sort } = useContext( SitesOverviewContext );
 	const dispatch = useDispatch();
 
-	const { field, direction } = sort;
+	const { field, direction } = sort ?? {};
 
 	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
 
 	const setSort = () => {
-		const updatedSort = { ...sort };
+		let updatedSort = sort;
 		if ( isDefault ) {
-			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
-			updatedSort.direction = SORT_DIRECTION_ASC;
+			updatedSort = {
+				field: SITE_COLUMN_KEY_MAP?.[ columnKey ],
+				direction: SORT_DIRECTION_ASC,
+			};
 		} else if ( direction === SORT_DIRECTION_ASC ) {
-			updatedSort.direction = SORT_DIRECTION_DESC;
+			updatedSort = {
+				field: SITE_COLUMN_KEY_MAP?.[ columnKey ],
+				direction: SORT_DIRECTION_DESC,
+			};
 		} else if ( direction === SORT_DIRECTION_DESC ) {
-			updatedSort.field = '';
-			updatedSort.direction = '';
+			updatedSort = undefined;
 		}
 
 		dispatch( updateSort( updatedSort ) );

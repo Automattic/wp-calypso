@@ -4,10 +4,11 @@
 .hosting-overview-features {
 	display: grid;
 	grid-template-columns: 1fr;
-	column-gap: 48px;
-	row-gap: 32px;
+	gap: 16px;
 
 	@include break-large {
+		column-gap: 48px;
+		row-gap: 32px;
 		grid-template-columns: 1fr 1fr;
 	}
 }
@@ -17,7 +18,6 @@
 	flex-direction: row;
 	gap: 32px;
 	align-items: center;
-
 }
 
 .hosting-overview-features__item-icon {

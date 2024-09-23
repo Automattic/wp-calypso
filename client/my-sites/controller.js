@@ -271,6 +271,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	}
 
 	const startsWithPaths = [
+		'/themes',
+		'/plugins',
 		'/checkout/',
 		`/me/purchases/${ slug }`,
 		`/purchases/add-payment-method/${ slug }`,
@@ -517,6 +519,8 @@ export function noSite( context, next ) {
 	return next();
 }
 
+const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [ '/plugins' ];
+
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
@@ -530,6 +534,8 @@ export function siteSelection( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
+	const isPathExcludedFromSingleSiteContext =
+		PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS.includes( context.path );
 
 	// Making sure non-connected users get redirected to user connection flow.
 	// Details: p9dueE-6Hf-p2
@@ -558,14 +564,14 @@ export function siteSelection( context, next ) {
 
 	/*
 	 * If the user has only one site, redirect to the single site context instead of
-	 * rendering the all-site views.
+	 * rendering the all-site views. Exclude plugins page from this behavior.
 	 *
 	 * If the primary site is not yet available in Redux state, initiate a fetch and postpone the
 	 * redirect until the fetch is complete. (while the primary site ID is a property of the
 	 * current user object and therefore always available, we need to fetch the site info in order
 	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
-	if ( hasOneSite && ! siteFragment ) {
+	if ( hasOneSite && ! siteFragment && ! isPathExcludedFromSingleSiteContext ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
@@ -863,7 +869,19 @@ export function selectSite( context ) {
 	// Logged in: Terminate the regular handler path by not calling next()
 	// and render the site selection screen, redirecting the user if they
 	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+	composeHandlers( siteSelection, selectSiteIfNotDeleted, sites, makeLayout, render )( context );
+}
+
+export function selectSiteIfNotDeleted( context, next ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && selectedSite.is_deleted ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return;
+	}
+
+	return next();
 }
 
 export function selectSiteIfLoggedIn( context, next ) {
@@ -916,7 +934,7 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+	if ( isUserLoggedIn( state ) ) {
 		navigation( context, next );
 	}
 	next();

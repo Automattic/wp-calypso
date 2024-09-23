@@ -1,9 +1,10 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -13,11 +14,11 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -71,10 +72,11 @@ const newsletter: Flow = {
 		return [ ...publicSteps, ...privateSteps ];
 	},
 	useSideEffect() {
-		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		const { setHidePlansFeatureComparison, setIntent } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setHidePlansFeatureComparison( true );
 			clearSignupDestinationCookie();
+			setIntent( Onboard.SiteIntent.Newsletter );
 		}, [] );
 	},
 	useStepNavigation( _currentStep, navigate ) {
@@ -82,7 +84,13 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
+		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
@@ -95,7 +103,6 @@ const newsletter: Flow = {
 		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
@@ -139,8 +146,17 @@ const newsletter: Flow = {
 						);
 					}
 
+					initializeLaunchpadState( {
+						siteId: providedDependencies?.siteId as number,
+						siteSlug: providedDependencies?.siteSlug as string,
+					} );
+
 					return window.location.assign(
-						`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`
+						getPostFlowUrl( {
+							flow: flowName,
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} )
 					);
 
 				case 'subscribers':

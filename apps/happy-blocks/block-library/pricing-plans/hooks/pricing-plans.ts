@@ -59,7 +59,6 @@ const usePricingPlans = () => {
 			setError( null );
 			const url = addQueryArgs( '/plans', {
 				locale: config.locale,
-				eligible_request_for_experiment: true, // Required for plan name change experiment, check pcNC1U-18h-p2
 			} );
 			try {
 				const data: ApiPricingPlan[] = await wpcomRequest( {

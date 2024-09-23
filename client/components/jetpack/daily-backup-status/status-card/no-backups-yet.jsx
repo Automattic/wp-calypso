@@ -37,7 +37,7 @@ const NoBackupsYet = () => {
 			<div className="status-card__message-head">
 				<img src={ cloudPendingIcon } alt="" role="presentation" />
 				<div>
-					{ translate( 'We are preparing to backup %s', {
+					{ translate( 'We are preparing to back up %s', {
 						args: siteName,
 						comment: '%s is the name of the site',
 					} ) }

@@ -25,7 +25,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import HelpContactUsFooter from './help-contact-us-footer';
 import HelpContactUsHeader from './help-contact-us-header';
-import HelpResult from './help-results/item';
+import HelpResultItem from './help-results/help-result-item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
 
@@ -58,7 +58,7 @@ class Help extends PureComponent {
 				image: helpWebsite,
 			},
 			{
-				link: localizeUrl( 'https://wordpress.com/support/business-plan/' ),
+				link: localizeUrl( 'https://wordpress.com/support/plan-features/creator-plan/' ),
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the %(businessPlanName)s plan.',
@@ -79,7 +79,7 @@ class Help extends PureComponent {
 				image: helpDomains,
 			},
 			{
-				link: localizeUrl( 'https://wordpress.com/support/start/' ),
+				link: localizeUrl( 'https://wordpress.com/support/getting-started-with-wordpress-com/' ),
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -87,7 +87,7 @@ class Help extends PureComponent {
 				image: helpGetStarted,
 			},
 			{
-				link: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
+				link: localizeUrl( 'https://wordpress.com/support/privacy-settings/' ),
 				title: this.props.translate( 'Privacy Settings', { context: 'Site visibility settings' } ),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
@@ -118,12 +118,12 @@ class Help extends PureComponent {
 						};
 
 						return (
-							<HelpResult
+							<HelpResultItem
 								key={ result.link }
 								helpLink={ result }
 								iconTypeDescription="book"
 								onClick={ trackClick }
-								localizedReadArticle={ this.props.translate( 'Read article' ) }
+								openInHelpCenter
 							/>
 						);
 					} ) }
@@ -241,7 +241,7 @@ class Help extends PureComponent {
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ translate( 'Support' ) }
-					subtitle={ translate( 'Get help with your WordPress.com site' ) }
+					subtitle={ translate( 'Get help with your WordPress.com site.' ) }
 				>
 					<HelpContactUsHeader />
 				</NavigationHeader>

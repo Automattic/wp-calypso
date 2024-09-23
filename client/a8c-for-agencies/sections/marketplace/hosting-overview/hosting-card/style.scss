@@ -84,13 +84,15 @@
 	.hosting-card__description {
 		@include a4a-font-body-lg;
 		margin: 0;
+		margin-block-end: 20px;
+
 		color: var(--studio-gray-80, #2c3338);
 
 		@include break-large {
-			height: 85px;
+			height: 125px;
 		}
 		@include break-huge {
-			height: 65px;
+			height: 105px;
 		}
 	}
 

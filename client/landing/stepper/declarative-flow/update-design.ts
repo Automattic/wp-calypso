@@ -1,16 +1,19 @@
-import { useLaunchpad } from '@automattic/data-stores';
+import { Onboard, useLaunchpad } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
+import { FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
@@ -26,11 +29,17 @@ const updateDesign: Flow = {
 	useSteps() {
 		return [ STEPS.DESIGN_SETUP, STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR ];
 	},
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
 
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.UpdateDesign );
+		}, [] );
+	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
+		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || FREE_FLOW;
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -48,10 +57,19 @@ const updateDesign: Flow = {
 			return navigate( 'processing' );
 		};
 
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
-			recordSubmitStep( providedDependencies, 'update-design', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'processing':
+					initializeLaunchpadState( {
+						siteId,
+						siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
+					} );
+
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
 						return navigate( 'error' );
 					}
@@ -70,7 +88,11 @@ const updateDesign: Flow = {
 					}
 
 					return window.location.assign(
-						`/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }`
+						getPostFlowUrl( {
+							flow: flowToReturnTo,
+							siteId,
+							siteSlug: siteSlug as string,
+						} )
 					);
 
 				case 'designSetup':

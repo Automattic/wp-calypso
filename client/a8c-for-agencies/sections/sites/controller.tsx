@@ -18,7 +18,6 @@ function configureSitesContext( context: Context ) {
 	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
 	const siteUrl = context.params.siteUrl;
 	const siteFeature = context.params.feature || A4A_SITES_DASHBOARD_DEFAULT_FEATURE;
-	const hideListingInitialState = !! siteUrl;
 
 	const {
 		s: search,
@@ -27,6 +26,7 @@ function configureSitesContext( context: Context ) {
 		sort_field,
 		sort_direction,
 		is_favorite,
+		is_development,
 	} = context.query;
 
 	const sort: DashboardSortInterface = {
@@ -40,9 +40,11 @@ function configureSitesContext( context: Context ) {
 			categoryInitialState={ category }
 			siteUrlInitialState={ siteUrl }
 			siteFeatureInitialState={ siteFeature }
-			hideListingInitialState={ hideListingInitialState }
 			showOnlyFavoritesInitialState={
 				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
+			showOnlyDevelopmentInitialState={
+				is_development === '' || is_development === '1' || is_development === 'true'
 			}
 			path={ context.path }
 			searchQuery={ search }
@@ -81,6 +83,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		sort_direction,
 		issue_types,
 		is_favorite,
+		is_development,
 	} = context.query;
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
@@ -98,6 +101,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		filter: {
 			issueTypes: [ issue_types ],
 			showOnlyFavorites: !! is_favorite,
+			showOnlyDevSites: !! is_development,
 		},
 	};
 

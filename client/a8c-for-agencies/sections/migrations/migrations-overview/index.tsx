@@ -31,8 +31,8 @@ export default function MigrationsOverview() {
 	const title = translate( 'Migrations' );
 
 	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
+	const { data } = useGetTipaltiPayee( true );
 
-	const { data } = useGetTipaltiPayee();
 	const accountStatus = getAccountStatus( data, translate );
 	const statusProps = {
 		children: accountStatus?.status,
@@ -61,7 +61,7 @@ export default function MigrationsOverview() {
 				</div>
 				<div className="migrations-overview__section-intro">
 					{ translate(
-						"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024."
+						"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until October 31, 2024."
 					) }
 				</div>
 				<div className="migrations-overview__section-subtitle">
@@ -156,7 +156,7 @@ export default function MigrationsOverview() {
 				</Card>
 				<div className="migrations-overview__tos">
 					{ translate(
-						'To be eligible for the special migration offer, you must migrate a minimum of 3 sites by July 31, 2024, to a WordPress.com or Pressable.com hosting plan. Read the full {{a}}Terms of Service{{/a}}.',
+						'To be eligible for the special migration offer, you must migrate a minimum of 3 sites by October 31, 2024, to a WordPress.com or Pressable.com hosting plan. Read the full {{a}}Terms of Service{{/a}}.',
 						{
 							components: {
 								a: (

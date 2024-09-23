@@ -66,7 +66,11 @@ Platform.prototype.isWindows = function () {
 };
 
 Platform.prototype.isWindows10 = function () {
-	return parseInt( os.release(), 10 ) >= 10;
+	return parseInt( os.release(), 10 ) >= 10 && parseInt( os.release(), 10 ) < 11;
+};
+
+Platform.prototype.isWindows11 = function () {
+	return parseInt( os.release(), 11 ) >= 11;
 };
 
 Platform.prototype.isLinux = function () {

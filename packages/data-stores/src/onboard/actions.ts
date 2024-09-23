@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
-import { ProfilerData } from './types';
+import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
@@ -28,6 +28,11 @@ type Language = {
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
+} );
+
+export const setSiteUrl = ( siteUrl: string ) => ( {
+	type: 'SET_SITE_URL' as const,
+	siteUrl,
 } );
 
 export interface CreateSiteBaseActionParameters {
@@ -256,6 +261,11 @@ export const setSelectedStyleVariation = (
 	selectedStyleVariation,
 } );
 
+export const setSelectedReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) => ( {
+	type: 'SET_READYMADE_TEMPLATE' as const,
+	readymadeTemplate,
+} );
+
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
@@ -407,6 +417,13 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
+export const setDomainCartItems = (
+	domainCartItems: MinimalRequestCartProduct[] | undefined
+) => ( {
+	type: 'SET_DOMAIN_CART_ITEMS' as const,
+	domainCartItems,
+} );
+
 export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
 	type: 'SET_DOMAINS_TRANSFER_DATA' as const,
 	bulkDomainsData,
@@ -453,6 +470,7 @@ export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
 	type: 'SET_PARTNER_BUNDLE' as const,
 	partnerBundle,
 } );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -478,6 +496,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
+	| typeof setSelectedReadymadeTemplate
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
@@ -495,8 +514,10 @@ export type OnboardAction = ReturnType<
 	| typeof resetSelectedDesign
 	| typeof setDomainForm
 	| typeof setDomainCartItem
+	| typeof setDomainCartItems
 	| typeof setSiteDescription
 	| typeof setSiteLogo
+	| typeof setSiteUrl
 	| typeof setSiteAccentColor
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode

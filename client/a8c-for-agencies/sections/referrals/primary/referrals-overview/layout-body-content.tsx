@@ -32,7 +32,7 @@ import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
-import type { Referral } from '../../types';
+import type { Referral, ReferralInvoice } from '../../types';
 
 interface Props {
 	isAutomatedReferral?: boolean;
@@ -41,6 +41,8 @@ interface Props {
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	referralInvoices: ReferralInvoice[];
+	isFetchingInvoices: boolean;
 }
 
 export default function LayoutBodyContent( {
@@ -50,6 +52,8 @@ export default function LayoutBodyContent( {
 	isLoading,
 	dataViewsState,
 	setDataViewsState,
+	referralInvoices,
+	isFetchingInvoices,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -117,9 +121,16 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
+				{ ! dataViewsState.selectedItem && (
+					<ConsolidatedViews
+						referrals={ referrals }
+						referralInvoices={ referralInvoices }
+						isFetchingInvoices={ isFetchingInvoices }
+					/>
+				) }
 				<ReferralList
 					referrals={ referrals }
+					referralInvoices={ referralInvoices }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
 				/>
@@ -142,7 +153,7 @@ export default function LayoutBodyContent( {
 				<div className="referrals-overview__section-icons">
 					<JetpackLogo className="jetpack-logo" size={ 24 } />
 					<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-					<img src={ pressableIcon } alt="Pressable" />
+					<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
 					<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
 				</div>
 			) }

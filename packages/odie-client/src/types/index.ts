@@ -4,6 +4,16 @@ export type Source = {
 	title: string;
 	url: string;
 	heading: string;
+	blog_id: number;
+	post_id: number;
+	content: string;
+	railcar?: {
+		ui_position: number;
+		ui_algo: string;
+		fetch_algo: string;
+		fetch_position: number;
+		railcar: string;
+	};
 };
 
 export type CurrentUser = {
@@ -101,4 +111,5 @@ export type OdieAllowedSectionNames =
 	| 'checkout'
 	| 'help-center';
 
-export type OdieAllowedBots = 'wpcom-support-chat';
+export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as const;
+export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];

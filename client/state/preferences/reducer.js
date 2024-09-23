@@ -50,7 +50,7 @@ export const localValues = ( state = {}, action ) => {
 export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_RECEIVE: {
-			const { values } = action;
+			const { values = {} } = action;
 			return values;
 		}
 	}

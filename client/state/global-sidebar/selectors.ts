@@ -13,6 +13,7 @@ const SITE_DASHBOARD_ROUTES = {
 	hosting: '/hosting-config/',
 	'github-deployments': '/github-deployments/',
 	'site-monitoring': '/site-monitoring/',
+	'site-performance': '/sites/performance/',
 	'site-logs': '/site-logs/',
 	'hosting-features': '/hosting-features/',
 	'staging-site': '/staging-site/',
@@ -45,7 +46,7 @@ export const getShouldShowSiteDashboard = (
 
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {
@@ -61,18 +62,6 @@ export const getShouldShowGlobalSidebar = (
 	);
 };
 
-interface CollapsedDataHelper {
-	shouldShowForAnimation: boolean;
-	selectedSiteId: number | null | undefined;
-	sectionGroup: string;
-}
-
-const collapsedDataHelper: CollapsedDataHelper = {
-	shouldShowForAnimation: false,
-	selectedSiteId: null,
-	sectionGroup: '',
-};
-
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
 	siteId: number | null,
@@ -82,37 +71,21 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const isSitesDashboard = sectionGroup === 'sites-dashboard';
 	const isSiteDashboard = getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName );
 
-	if ( collapsedDataHelper.sectionGroup !== sectionGroup ) {
-		if ( isSitesDashboard ) {
-			// Set or refresh the initial value when loading into the dashboard.
-			collapsedDataHelper.selectedSiteId = siteId;
-		} else {
-			// Clear this once we are off the sites dashboard.
-			collapsedDataHelper.shouldShowForAnimation = false;
-		}
-		// Keep track of section group to evaluate things when this changes.
-		collapsedDataHelper.sectionGroup = sectionGroup;
-	}
-
-	// When selected site changes on the dashboard, show for animation.
-	if (
+	// A site is just clicked and the global sidebar is in collapsing animation.
+	const isSiteJustSelectedFromSitesDashboard =
 		isSitesDashboard &&
 		!! siteId &&
-		collapsedDataHelper.selectedSiteId !== siteId &&
-		! collapsedDataHelper.shouldShowForAnimation
-	) {
-		collapsedDataHelper.shouldShowForAnimation = true;
-		collapsedDataHelper.selectedSiteId = siteId;
-	}
+		isInRoute( state, [
+			'/sites', // started collapsing when still in sites dashboard
+			...Object.values( SITE_DASHBOARD_ROUTES ), // has just stopped collapsing when in one of the paths in site dashboard
+		] );
 
 	const isPluginsScheduledUpdatesEditMode =
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
 	return (
-		collapsedDataHelper.shouldShowForAnimation ||
-		isSiteDashboard ||
-		isPluginsScheduledUpdatesEditMode
+		isSiteJustSelectedFromSitesDashboard || isSiteDashboard || isPluginsScheduledUpdatesEditMode
 	);
 };
 

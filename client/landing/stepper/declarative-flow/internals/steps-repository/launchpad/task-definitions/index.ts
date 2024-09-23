@@ -8,6 +8,7 @@ import { actions as emailActions } from './email';
 import { actions as paymentsActions } from './payments';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
+import { actions as readymadeTemplateActions } from './readymade-templates';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 import { actions as subscribersActions } from './subscribers';
@@ -28,6 +29,7 @@ const DEFINITIONS: TaskActionTable = {
 	...emailActions,
 	...subscribersActions,
 	...contentActions,
+	...readymadeTemplateActions,
 	...bioActions,
 	...paymentsActions,
 	...videoPressActions,

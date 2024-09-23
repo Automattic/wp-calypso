@@ -46,7 +46,7 @@ export function getHostingPageUrl( slug: string ) {
 		case 'wpcom-hosting':
 			return A4A_MARKETPLACE_HOSTING_WPCOM_LINK;
 		case 'vip':
-			return 'https://wpvip.com/contact/';
+			return 'https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a';
 	}
 
 	return A4A_MARKETPLACE_HOSTING_LINK;
@@ -82,7 +82,7 @@ export function getHostingLogo( slug: string, showText = true ) {
  */
 export function isPressableHostingProduct( keyOrSlug: string ) {
 	return (
-		keyOrSlug.startsWith( 'pressable-wp' ) ||
+		keyOrSlug.startsWith( 'pressable-' ) ||
 		keyOrSlug.startsWith( 'pressable-hosting' ) ||
 		keyOrSlug.startsWith( 'jetpack-pressable' )
 	);
@@ -95,4 +95,15 @@ export function isPressableHostingProduct( keyOrSlug: string ) {
  */
 export function isWPCOMHostingProduct( keyOrSlug: string ) {
 	return keyOrSlug.startsWith( 'wpcom-hosting' );
+}
+
+/*
+ * Get valid hosting section. If not valid, default to 'wpcom'
+ * @param {string} section - Hosting section
+ * @returns {'wpcom' | 'pressable' | 'vip'} - Valid hosting section
+ */
+export function getValidHostingSection( section: string ) {
+	return [ 'wpcom', 'pressable', 'vip' ].includes( section )
+		? ( section as 'wpcom' | 'pressable' | 'vip' )
+		: 'wpcom';
 }

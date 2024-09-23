@@ -1,10 +1,11 @@
 import { EmbedContainer } from '@automattic/components';
 import { SupportArticleHeader } from '@automattic/help-center/src/components/help-center-support-article-header';
-import { useSupportArticleAlternatesQuery } from '@automattic/help-center/src/hooks/use-support-article-alternates-query';
 import { useLocale } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -15,6 +16,24 @@ import './style.scss';
 import './content.scss';
 
 const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
+
+const useSupportArticleAlternatesQuery = ( blogId, postId, locale, queryOptions = {} ) => {
+	return useQuery( {
+		queryKey: [ 'support-article-alternates', blogId, postId ],
+		queryFn: () =>
+			wpcomRequest( {
+				path: `/support/alternates/${ blogId }/posts/${ postId }`,
+				apiVersion: '1.1',
+			} ),
+		...queryOptions,
+		enabled: locale !== 'en' && !! ( blogId && postId ),
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		select: ( data ) => {
+			return data[ locale ];
+		},
+	} );
+};
 
 const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 	const locale = useLocale();

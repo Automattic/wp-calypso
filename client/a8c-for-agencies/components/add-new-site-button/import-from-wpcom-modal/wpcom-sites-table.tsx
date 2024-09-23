@@ -11,6 +11,8 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 import getSites from 'calypso/state/selectors/get-sites';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
+import A4ALogo from '../../a4a-logo';
 import useManagedSitesMap from './hooks/use-managed-sites-map';
 import WPCOMSitesTableContent from './table-content';
 import WPCOMSitesTablePlaceholder from './table-placeholder';
@@ -25,9 +27,13 @@ export type SiteItem = {
 const TypeIcon = ( { siteId }: { siteId: number } ) => {
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isA4AClient = useSelector( ( state ) => isA4AClientSite( state, siteId ) );
 
 	if ( isWPCOM ) {
 		return <Icon className="wpcom-sites-table__icon" icon={ <WordPressLogo /> } />;
+	}
+	if ( isA4AClient ) {
+		return <Icon className="wpcom-sites-table__icon" icon={ <A4ALogo /> } />;
 	}
 	if ( isJetpack ) {
 		return <Icon className="wpcom-sites-table__icon" icon={ <JetpackLogo /> } />;
@@ -49,15 +55,12 @@ export default function WPCOMSitesTable( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: '',
 		currentPage: 1,
-		sort: {
-			field: '',
-			direction: '',
-		},
 		perPage: 1,
 		agencyId,
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
+			showOnlyDevelopmentSites: false,
 		},
 	} );
 
@@ -75,7 +78,7 @@ export default function WPCOMSitesTable( {
 				( site ) =>
 					site &&
 					! site.is_wpcom_staging_site &&
-					( site.is_wpcom_atomic || site.jetpack ) &&
+					( site.is_wpcom_atomic || site.jetpack || site.is_a4a_client ) &&
 					! managedSitesMap?.[ site.ID as number ]
 			)
 			.map( ( site ) =>
@@ -113,7 +116,7 @@ export default function WPCOMSitesTable( {
 				? [
 						{
 							id: 'site',
-							header: (
+							label: (
 								<div>
 									<CheckboxControl
 										label={ translate( 'Site' ).toUpperCase() }
@@ -139,7 +142,6 @@ export default function WPCOMSitesTable( {
 									<span>{ item.site }</span>
 								</div>
 							),
-							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -147,7 +149,7 @@ export default function WPCOMSitesTable( {
 				: [
 						{
 							id: 'site',
-							header: (
+							label: (
 								<div>
 									<CheckboxControl
 										label={ translate( 'Site' ).toUpperCase() }
@@ -168,26 +170,23 @@ export default function WPCOMSitesTable( {
 									disabled={ false }
 								/>
 							),
-							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
 						{
 							id: 'date',
-							header: translate( 'Date' ).toUpperCase(),
+							label: translate( 'Date' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteItem } ) =>
 								new Date( item.date ).toLocaleDateString(),
-							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
 						{
 							id: 'type',
-							header: translate( 'Type' ).toUpperCase(),
+							label: translate( 'Type' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteItem } ) => <TypeIcon siteId={ item.id } />,
-							width: '100%',
 							enableHiding: false,
 							enableSorting: false,
 						},
@@ -200,6 +199,8 @@ export default function WPCOMSitesTable( {
 			{ isPending ? (
 				<WPCOMSitesTablePlaceholder />
 			) : (
+				// @ts-expect-error the error is because field.label types do not admit JSX.Elements.
+				// To remove when this is using dataviews@4.2.0
 				<WPCOMSitesTableContent items={ items } fields={ fields } />
 			) }
 		</div>

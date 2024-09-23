@@ -2,7 +2,13 @@
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 export const SUPPORT_URL = 'https://wordpress.com/support/stats/understand-your-sites-traffic/';
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-export const JETPACK_SUPPORT_URL = 'https://jetpack.com/support/jetpack-stats/traffic-dashboard/';
+export const JETPACK_SUPPORT_URL_TRAFFIC =
+	'https://jetpack.com/support/jetpack-stats/traffic-dashboard/';
+export const JETPACK_SUPPORT_URL_INSIGHTS =
+	'https://jetpack.com/support/jetpack-stats/insights-dashboard/';
+export const JETPACK_SUPPORT_URL_SUBSCRIBERS =
+	'https://jetpack.com/support/jetpack-stats/subscribers-stats/';
+
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 export const SUBSCRIBERS_SUPPORT_URL = 'https://wordpress.com/support/subscribers/';
 export const INSIGHTS_SUPPORT_URL =
@@ -18,4 +24,6 @@ export const JETPACK_NEWSLETTER_LANDING_PAGE_URL = 'https://jetpack.com/newslett
 export const JETPACK_SUPPORT_SOCIAL_URL = 'https://jetpack.com/support/jetpack-social/';
 export const JETPACK_SOCIAL_LANDING_PAGE_URL = 'https://jetpack.com/social/';
 export const JETPACK_SUPPORT_VIDEOPRESS_URL = 'https://jetpack.com/support/jetpack-videopress/';
+export const JETPACK_SUPPORT_VIDEOPRESS_URL_STATS =
+	'https://jetpack.com/support/jetpack-videopress/add-video-block-editor/video-stats/';
 export const JETPACK_VIDEOPRESS_LANDING_PAGE_URL = 'https://jetpack.com/videopress/';

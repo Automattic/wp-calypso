@@ -1,0 +1,24 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center .help-center__container {
+	.back-button__help-center {
+		display: flex;
+		color: #000;
+		font-size: $font-body-small;
+		padding: 0;
+		gap: 4px;
+	}
+
+	.help-center-back-button__header {
+		height: 50px;
+		display: flex;
+		width: 100%;
+		position: absolute;
+		top: 50px;
+		background: var(--color-surface);
+		z-index: 99;
+		border-bottom: 1px solid var(--studio-gray-0);
+		padding: 0 16px;
+		box-sizing: border-box;
+	}
+}

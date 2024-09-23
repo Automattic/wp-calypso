@@ -1,5 +1,6 @@
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { UpdateNameServersReponse } from 'calypso/data/domains/nameservers/types';
 import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -39,9 +40,11 @@ export type SettingsPageConnectedProps = {
 
 export type SettingsPageNameServerHocProps = {
 	isLoadingNameservers: boolean;
+	isFetchingNameservers: boolean;
 	loadingNameserversError: boolean;
+	isUpdatingNameservers: boolean;
 	nameservers: string[] | null;
-	updateNameservers: ( nameServers: string[] ) => void;
+	updateNameservers: ( nameServers: string[] ) => Promise< UpdateNameServersReponse >;
 };
 
 export type SettingsPageConnectedDispatchProps = {

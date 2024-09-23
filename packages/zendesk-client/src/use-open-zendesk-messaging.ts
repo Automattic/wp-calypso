@@ -17,6 +17,7 @@ export function useOpenZendeskMessaging(
 		aiChatId,
 		message = '',
 		siteUrl = 'No site selected',
+		siteId = null,
 		onError,
 		onSuccess,
 	}: MessagingMetadata ) => {
@@ -26,6 +27,7 @@ export function useOpenZendeskMessaging(
 			messaging_initial_message: message,
 			messaging_plan: '', // Will be filled out by backend
 			messaging_url: siteUrl,
+			messaging_site_id: siteId,
 		} )
 			.then( () => {
 				onSuccess?.();

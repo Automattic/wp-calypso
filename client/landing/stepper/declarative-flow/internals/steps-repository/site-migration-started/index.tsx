@@ -6,6 +6,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
 
+const recordLinkClick = ( linkname: string ) => {
+	recordTracksEvent( 'calypso_site_migration_started_link_click', {
+		linkname,
+	} );
+};
+
 const SiteMigrationStarted: Step = function () {
 	const translate = useTranslate();
 
@@ -34,9 +40,7 @@ const SiteMigrationStarted: Step = function () {
 					className="migration-started-card__cta"
 					href="https://automattic.com/for-agencies/"
 					target="_blank"
-					onClick={ () =>
-						recordTracksEvent( 'calypso_onboarding_site_migration_started_agencies_cta_click' )
-					}
+					onClick={ () => recordLinkClick( 'discover-automattic-for-agencies' ) }
 				>
 					{ translate( 'Discover Automattic for Agencies' ) }
 				</ExternalLink>

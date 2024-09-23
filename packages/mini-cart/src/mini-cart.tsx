@@ -101,10 +101,10 @@ function TaxAddedLineItem() {
 }
 
 function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 	return (
 		<MiniCartTotalWrapper className="mini-cart__total">
-			<span>{ __( 'Total' ) }</span>
+			<span>{ _x( 'Total', 'The label of the total line item in checkout' ) }</span>
 			<span>
 				{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
 					isSmallestUnit: true,

@@ -21,6 +21,12 @@ const sections = [
 		group: 'sites-dashboard',
 	},
 	{
+		name: 'sites-dashboard',
+		paths: [ '/p2s' ],
+		module: 'calypso/hosting/sites',
+		group: 'sites-dashboard',
+	},
+	{
 		name: 'switch-site',
 		paths: [ '/switch-site' ],
 		module: 'calypso/switch-site',
@@ -218,13 +224,13 @@ const sections = [
 	{
 		name: 'hosting-overview',
 		paths: [ '/overview' ],
-		module: 'calypso/hosting-overview',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{
 		name: 'hosting-features',
 		paths: [ '/hosting-features' ],
-		module: 'calypso/hosting-features',
+		module: 'calypso/hosting/hosting-features',
 		group: 'sites',
 	},
 	{
@@ -245,15 +251,6 @@ const sections = [
 		module: 'calypso/signup',
 		enableLoggedOut: true,
 		isomorphic: true,
-	},
-	{
-		name: 'start-with',
-		paths: [ '/start-with' ],
-		module: 'calypso/start-with',
-		enableLoggedOut: true,
-		group: 'start-with',
-		isomorphic: true,
-		trackLoadPerformance: true,
 	},
 	{
 		name: 'jetpack-app',
@@ -311,6 +308,16 @@ const sections = [
 		group: 'site-profiler',
 		isomorphic: true,
 		title: 'Site Profiler',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'performance-profiler',
+		paths: [ '/speed-test-tool', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/speed-test-tool` ],
+		module: 'calypso/performance-profiler',
+		enableLoggedOut: true,
+		group: 'performance-profiler',
+		isomorphic: true,
+		title: 'Speed Test',
 		trackLoadPerformance: true,
 	},
 	{
@@ -563,7 +570,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/hosting-overview',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{
@@ -715,25 +722,31 @@ const sections = [
 	{
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring' ],
-		module: 'calypso/site-monitoring',
+		module: 'calypso/hosting/monitoring',
+		group: 'sites',
+	},
+	{
+		name: 'site-performance',
+		paths: [ '/sites/performance' ],
+		module: 'calypso/hosting/performance',
 		group: 'sites',
 	},
 	{
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
-		module: 'calypso/site-logs',
+		module: 'calypso/hosting/logs',
 		group: 'sites',
 	},
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/github-deployments',
+		module: 'calypso/hosting/deployments',
 		group: 'sites',
 	},
 	{
 		name: 'staging-site',
 		paths: [ '/staging-site' ],
-		module: 'calypso/staging-site',
+		module: 'calypso/hosting/staging-site',
 		group: 'sites',
 	},
 	{
@@ -832,6 +845,12 @@ const sections = [
 		name: 'a8c-for-agencies-partner-directory',
 		paths: [ '/partner-directory' ],
 		module: 'calypso/a8c-for-agencies/sections/partner-directory',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-team',
+		paths: [ '/team', '/team/invite' ],
+		module: 'calypso/a8c-for-agencies/sections/team',
 		group: 'a8c-for-agencies',
 	},
 	{

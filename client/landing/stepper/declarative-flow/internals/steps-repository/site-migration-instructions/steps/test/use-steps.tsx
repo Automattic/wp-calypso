@@ -8,6 +8,8 @@ describe( 'useSteps', () => {
 	const baseStepsOptions = {
 		fromUrl: 'https://mytestsite.com',
 		migrationKey: '123',
+		preparationError: null,
+		showMigrationKeyFallback: false,
 		onComplete: jest.fn(),
 	};
 

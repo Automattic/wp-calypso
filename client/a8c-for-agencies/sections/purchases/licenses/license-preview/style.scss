@@ -38,7 +38,22 @@
 }
 
 .license-preview__product-pressable-link {
-	text-decoration: underline;
+
+	&,
+	&:visited {
+		@include a4a-font-body-md($font-weight: 500);
+		display: flex;
+		flex-direction: row;
+		gap: 4px;
+		align-items: center;
+		text-decoration: underline;
+		color: var(--color-text);
+	}
+
+	.gridicon {
+		fill: var(--color-text);
+
+	}
 }
 
 .license-preview__domain {
@@ -200,4 +215,33 @@ button.button.is-borderless.license-bundle-dropdown__button {
 			max-width: 250px;
 		}
 	}
+}
+
+.license-preview__migration-badge {
+	cursor: pointer;
+}
+
+.license-preview__migration-content {
+	min-width: 200px;
+	@include a4a-font-body-md;
+
+	@include break-mobile {
+		min-width: 300px;
+	}
+
+	a,
+	a:visited {
+		display: inline-block;
+		margin-block-start: 10px;
+		color: var(--color-neutral-100);
+		text-decoration: underline;
+	}
+	a:focus {
+		outline: none;
+	}
+}
+
+.license-preview__migration-external-icon {
+	vertical-align: text-bottom;
+	margin-inline-start: 3px;
 }

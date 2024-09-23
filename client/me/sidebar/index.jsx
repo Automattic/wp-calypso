@@ -205,6 +205,14 @@ class MeSidebar extends Component {
 						icon="plans"
 						onNavigate={ this.onNavigate }
 					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/help', path ) }
+						link="/help"
+						label={ translate( 'Support' ) }
+						icon="help"
+						onNavigate={ this.onNavigate }
+					/>
 				</SidebarMenu>
 			</>
 		);

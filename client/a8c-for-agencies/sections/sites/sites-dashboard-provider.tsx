@@ -1,3 +1,5 @@
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { ReactNode, useEffect, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
@@ -9,12 +11,13 @@ import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
+import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
+import type { Filter } from '@wordpress/dataviews';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
-	hideListingInitialState?: boolean;
+	showOnlyDevelopmentInitialState?: boolean;
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
@@ -27,14 +30,14 @@ interface Props {
 	featurePreview?: ReactNode | null;
 }
 
-const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
+const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
 	const issueTypesArray = issueTypes?.split( ',' );
 
 	return (
 		issueTypesArray?.map( ( issueType ) => {
 			return {
 				field: 'status',
-				operator: 'in',
+				operator: 'is',
 				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 			};
 		} ) || []
@@ -42,8 +45,8 @@ const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
 };
 
 export const SitesDashboardProvider = ( {
-	hideListingInitialState = false,
 	showOnlyFavoritesInitialState = false,
+	showOnlyDevelopmentInitialState = false,
 	categoryInitialState,
 	siteUrlInitialState,
 	siteFeatureInitialState,
@@ -55,10 +58,12 @@ export const SitesDashboardProvider = ( {
 	sort,
 	featurePreview,
 }: Props ) => {
-	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
 	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
+	const [ showOnlyDevelopmentSites, setShowOnlyDevelopmentSites ] = useState(
+		showOnlyDevelopmentInitialState
+	);
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
@@ -81,12 +86,26 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
-	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
-	initialDataViewsState.hiddenFields = [ 'status' ];
+	// Limit fields on breakpoints smaller than 960px wide.
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const desktopFields = [
+		'url',
+		'stats',
+		'boost',
+		'backup',
+		'monitor',
+		'scan',
+		'plugins',
+		'favorite',
+		'actions',
+	];
+	const mobileFields = [ 'url', 'actions' ];
+	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+		isDesktop ? desktopFields : mobileFields;
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: getFieldsByBreakpoint( isDesktop ),
 		page: currentPage,
 		search: searchQuery,
 		sort,
@@ -94,10 +113,21 @@ export const SitesDashboardProvider = ( {
 	} );
 
 	useEffect( () => {
+		const fields = getFieldsByBreakpoint( isDesktop );
+		const fieldsForBreakpoint = [ ...fields ].sort().toString();
+		const existingFields = [ ...( dataViewsState?.fields ?? [] ) ].sort().toString();
+		// Compare the content of the arrays, not its referrences that will always be different.
+		// sort() sorts the array in place, so we need to clone them first.
+		if ( existingFields !== fieldsForBreakpoint ) {
+			setDataViewsState( ( prevState ) => ( { ...prevState, fields } ) );
+		}
+	}, [ isDesktop, dataViewsState?.fields ] );
+
+	useEffect( () => {
 		setInitialSelectedSiteUrl( siteUrlInitialState );
 		if ( ! siteUrlInitialState ) {
 			setShowOnlyFavorites( showOnlyFavoritesInitialState );
-			setHideListing( false );
+			setShowOnlyDevelopmentSites( showOnlyDevelopmentInitialState );
 		}
 
 		setDataViewsState( ( previousState ) => ( {
@@ -115,6 +145,7 @@ export const SitesDashboardProvider = ( {
 	}, [
 		setDataViewsState,
 		showOnlyFavoritesInitialState,
+		showOnlyDevelopmentInitialState,
 		searchQuery,
 		sort,
 		issueTypes,
@@ -127,10 +158,10 @@ export const SitesDashboardProvider = ( {
 		setSelectedCategory: setSelectedCategory,
 		selectedSiteFeature: selectedSiteFeature,
 		setSelectedSiteFeature: setSelectedSiteFeature,
-		hideListing: hideListing,
-		setHideListing: setHideListing,
 		showOnlyFavorites: showOnlyFavorites,
 		setShowOnlyFavorites: setShowOnlyFavorites,
+		showOnlyDevelopmentSites: showOnlyDevelopmentSites,
+		setShowOnlyDevelopmentSites: setShowOnlyDevelopmentSites,
 		path,
 		currentPage,
 		isBulkManagementActive,

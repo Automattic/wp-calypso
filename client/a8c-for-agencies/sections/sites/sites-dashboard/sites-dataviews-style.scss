@@ -20,8 +20,9 @@
 	font-weight: 500;
 	font-size: rem(14px);
 
-	.migration-badge {
-		border-radius: 2px;
+	.status-badge {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 12px;
 	}
 }
 
@@ -59,6 +60,10 @@
 		[role="menuitemradio"] {
 			border-radius: 4px;
 		}
+	}
+
+	.dataviews-filters__search-widget-listbox {
+		max-height: 195px;
 	}
 }
 

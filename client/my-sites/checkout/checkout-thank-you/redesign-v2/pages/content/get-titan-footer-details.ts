@@ -6,6 +6,8 @@ import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-manageme
 import { getTitanControlPanelRedirectPath } from 'calypso/my-sites/email/paths';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
+const TITAN_SUPPORT_PAGE_ID = 370395;
+
 export default function getTitanFooterDetails(
 	selectedSiteSlug: string | null,
 	domainName: string,
@@ -47,10 +49,15 @@ export default function getTitanFooterDetails(
 			key: 'footer-questions-email',
 			title: translate( 'Email questions? We have the answers' ),
 			description: translate(
-				'Explore our comprehensive support guides and find solutions to all your email inquiries.'
+				'Explore our comprehensive support guides and learn all about managing your mailboxes.'
 			),
-			buttonText: translate( 'Email support resources' ),
-			buttonHref: localizeUrl( 'https://wordpress.com/support/category/domains-and-email/email/' ),
+			buttonText: translate( 'Professional Email settings guide' ),
+			supportDoc: {
+				url: localizeUrl(
+					'https://wordpress.com/support/add-email/adding-professional-email-to-your-site/manage-professional-email-settings-and-mailboxes/'
+				),
+				id: TITAN_SUPPORT_PAGE_ID,
+			},
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context,

@@ -2,7 +2,7 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { READYMADE_TEMPLATE_FLOW } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import deepmerge from 'deepmerge';
 import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
@@ -17,16 +17,16 @@ import { CalypsoDispatch } from 'calypso/state/types';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
+	Navigate,
 	ProvidedDependencies,
+	StepperStep,
 } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
@@ -54,35 +54,19 @@ const readymadeTemplateFlow: Flow = {
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
+			STEPS.GENERATE_CONTENT,
 		] );
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
-		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setSelectedSite, setSelectedReadymadeTemplate } =
+			useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
-
 		const reduxDispatch = useReduxDispatch();
-
 		const selectedTheme = getAssemblerDesign().slug;
-
 		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
 		const readymadeTemplate = useReadymadeTemplate( readymadeTemplateId );
-
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
-
-			return navigate( 'processing' );
-		};
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
@@ -90,12 +74,15 @@ const readymadeTemplateFlow: Flow = {
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, SiteIntent.ReadyMadeTemplate );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
+			setSelectedReadymadeTemplate( readymadeTemplate );
 
 			setPendingAction(
 				enableAssemblerThemeAndConfigureTemplates(
 					selectedTheme,
 					selectedSiteId,
+					selectedSiteSlug,
 					readymadeTemplate,
+					navigate,
 					assembleSite,
 					reduxDispatch
 				)
@@ -108,8 +95,6 @@ const readymadeTemplateFlow: Flow = {
 			providedDependencies: ProvidedDependencies = {},
 			...results: string[]
 		) => {
-			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				/**
 				 * Check sites resets the onboarding store.
@@ -147,17 +132,7 @@ const readymadeTemplateFlow: Flow = {
 						return navigate( 'celebration-step' );
 					}
 
-					if ( providedDependencies?.goToCheckout ) {
-						// Do nothing and wait for checkout redirect
-						return;
-					}
-
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return;
 				}
 
 				case 'launchpad': {
@@ -196,6 +171,7 @@ const readymadeTemplateFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'freePostSetup':
+				case 'generateContent':
 				case 'domains': {
 					return navigate( 'launchpad' );
 				}
@@ -244,7 +220,9 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
+	siteSlug: string,
 	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
+	navigate: Navigate< StepperStep[] >,
 	assembleSite: (
 		arg0: any,
 		arg1: string,
@@ -302,15 +280,15 @@ function enableAssemblerThemeAndConfigureTemplates(
 					siteSetupOption: 'readymade-template',
 				} )
 			)
-			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) );
+			.then( () => navigate( `launchpad?siteSlug=${ siteSlug }` ) );
 }
 
-function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
+function useReadymadeTemplate( templateId: number ) {
 	const { data: readymadeTemplate } = useQuery( {
-		...options,
 		queryKey: [ 'readymade-templates', templateId ],
 		queryFn: async () =>
 			wpcom.req.get( `/themes/readymade-templates/${ templateId }`, { apiNamespace: 'wpcom/v2' } ),
+		enabled: !! templateId,
 	} );
 
 	const { data: assemblerTheme } = useThemeDetails( 'assembler' );

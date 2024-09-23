@@ -1,24 +1,20 @@
 /* eslint-disable no-restricted-imports */
 import { EmbedContainer } from '@automattic/components';
+import { useState, useCallback } from '@wordpress/element';
+import { useContentFilter } from '../hooks';
 import { ArticleContentProps } from '../types';
 import HelpCenterFeedbackForm from './help-center-feedback-form';
 import { SupportArticleHeader } from './help-center-support-article-header';
 import Placeholders from './placeholder-lines';
-import './help-center-article-content.scss';
 
-const ArticleContent = ( {
-	content = '',
-	title = '',
-	link = '',
-	postId,
-	blogId,
-	isLoading = false,
-	slug,
-	articleUrl,
-}: ArticleContentProps ) => {
-	const post = { title, link };
+const ArticleContent = ( { isLoading = false, post }: ArticleContentProps ) => {
+	const [ theRef, setTheRef ] = useState< HTMLDivElement | null >( null );
+	const articleContentRef = useCallback( ( node: HTMLDivElement | null ) => setTheRef( node ), [] );
+
+	useContentFilter( theRef );
+
 	return (
-		<article className="help-center-article-content__story">
+		<article className="help-center-article-content">
 			{ isLoading || ! post ? (
 				<Placeholders lines={ 8 } />
 			) : (
@@ -26,15 +22,16 @@ const ArticleContent = ( {
 					<SupportArticleHeader post={ post } isLoading={ false } />
 					<EmbedContainer>
 						<div
-							className="help-center-article-content__story-content"
+							className="help-center-article-content__main"
 							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: content } }
+							dangerouslySetInnerHTML={ { __html: post.content } }
+							ref={ articleContentRef }
 						/>
 						<HelpCenterFeedbackForm
-							postId={ postId }
-							blogId={ blogId }
-							slug={ slug }
-							articleUrl={ articleUrl }
+							postId={ post.ID }
+							blogId={ post.site_ID }
+							slug={ post.slug }
+							articleUrl={ post.URL }
 						/>
 					</EmbedContainer>
 				</>

@@ -264,6 +264,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 																	props.cancellationReason,
 																siteUrl: site.URL,
+																siteId: site.ID,
 															} );
 														} }
 														variant="link"
@@ -295,6 +296,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 																	props.cancellationReason,
 																siteUrl: site.URL,
+																siteId: site.ID,
 															} );
 														} }
 														variant="link"

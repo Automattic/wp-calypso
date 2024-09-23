@@ -3,8 +3,6 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import usePlanUsageQuery from './use-plan-usage-query';
 
-export const MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL = 1000;
-
 // Targeting new sites
 export const isSiteNew = ( state: object, siteId: number | null ) => {
 	const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' ) as string;
@@ -22,11 +20,11 @@ export default function useSiteCompulsoryPlanSelectionQualifiedCheck( siteId: nu
 
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const isNewSite = useSelector( ( state ) => isSiteNew( state, siteId ) );
-	const isExceedingTrafficThreshold =
-		( usageInfo?.validMonthlyViews ?? 0 ) > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting all existing sites with views higher than 1000/mth.
+	// Use the threshold check from API directly.
+	const isExceedingTrafficThreshold = usageInfo?.should_show_paywall;
 
 	// Show paywall if the site exceeds the traffic threshold. Exempt VIP sites.
-	const shouldShowPaywall = ! isVip && ! isPending && ( isNewSite || isExceedingTrafficThreshold );
+	const shouldShowPaywall = ! isVip && ! isPending && isExceedingTrafficThreshold;
 
 	return {
 		isNewSite,

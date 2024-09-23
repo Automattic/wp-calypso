@@ -53,8 +53,6 @@ object WPComTests : Project({
 	// Gutenberg Atomic Nightly
 	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-	// Gutenberg Core
-	buildType(gutenbergCoreE2eBuildType());
 
 	// E2E Tests for Jetpack Simple Deployment
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
@@ -71,128 +69,6 @@ object WPComTests : Project({
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
-
-fun gutenbergCoreE2eBuildType(): BuildType {
-	return BuildType ({
-		id("WPComTests_gutenberg_core_e2e")
-		name = "Gutenberg Core E2E Tests"
-		description = "Runs Gutenberg core E2E tests against a Dotcom environment."
-
-		artifactRules = """
-			gutenberg/artifacts => artifacts
-			logs/*.log => logs
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			// WP.com URL of the site to test against.
-			password("WP_BASE_URL", "credentialsJSON:5cc9ce44-c31a-4591-9f02-cda749351bff");
-			// WP.com username and password to use for logging in.
-			password("WP_USERNAME", "credentialsJSON:ab140672-6955-4206-9ae4-df940896992d");
-			password("WP_PASSWORD", "credentialsJSON:1b787674-1c6f-41c5-9b39-41768fa1aa0c");
-			// Calypso client ID and secret for remote logging in.
-			password("WP_CLIENT_ID", "credentialsJSON:7bcd18c5-7ebe-42ab-9f85-45abcea3f21b");
-			password("WP_CLIENT_SECRET", "credentialsJSON:87a99f9c-2bf6-43c2-bd43-903f28bec4fb");
-			// Application password for authenticating REST API requests.
-			password("WP_APP_PASSWORD", "credentialsJSON:2f191dbd-7341-4ff9-acab-f5dd0111e364");
-		}
-
-		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					# Set up the logs directory and define log file path
-					logs_dir="%system.teamcity.build.checkoutDir%/logs"
-					mkdir -p "${'$'}logs_dir"
-					exec &> "${'$'}logs_dir/prepare-environment.log"
-					set -x  # Enable debugging
-
-					echo "Starting environment preparation"
-					mkdir -p gutenberg
-					cd gutenberg
-					git init
-					git remote add origin https://github.com/WordPress/gutenberg.git
-					git fetch --depth=1 origin try/run-e2e-tests-against-wpcom
-					git checkout try/run-e2e-tests-against-wpcom
-
-					echo "Installing dependencies"
-					npm ci
-
-					echo "Building packages"
-					npm run build:packages
-
-					echo "Environment preparation complete"
-				""".trimIndent()
-				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
-				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
-			}
-
-			bashNodeScript {
-				name = "Run Playwright E2E tests"
-				scriptContent = """
-					cd gutenberg
-
-					# Export env vars
-					export WP_BASE_URL="%WP_BASE_URL%"
-					export WP_USERNAME="%WP_USERNAME%"
-					export WP_PASSWORD="%WP_PASSWORD%"
-					export WP_APP_PASSWORD="%WP_APP_PASSWORD%"
-					export WP_CLIENT_ID="%WP_CLIENT_ID%"
-					export WP_CLIENT_SECRET="%WP_CLIENT_SECRET%"
-
-					# Run suite.
-					npm run test:e2e:playwright
-				""".trimIndent()
-				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
-				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
-			}
-
-			step(ScriptBuildStep {
-				name = "Copy Docker Container Logs and Capture Script Output"
-				scriptContent = """
-					#!/bin/bash
-					# Ensure the logs directory exists
-					logs_dir="%system.teamcity.build.checkoutDir%/logs"
-					mkdir -p "${'$'}logs_dir"
-					echo "Logs directory prepared at ${'$'}logs_dir"
-
-					# Redirect all output to script-run.log
-					exec &> "${'$'}logs_dir/script-run.log"
-					set -x  # Enable debugging
-
-					echo "Attempting to copy logs for all known containers, regardless of state:"
-					docker ps -a --no-trunc | awk '{print ${'$'}1}' | tail -n +2 > container_ids.txt
-
-					if [ ! -s container_ids.txt ]; then
-						echo "No Docker containers found. No logs to copy."
-					else
-						while read id; do
-							echo "Checking logs for container ${'$'}id"
-							src_log_file="/var/lib/docker/containers/${'$'}id/${'$'}id-json.log"
-							dest_log_file="${'$'}logs_dir/${'$'}id-json.log"
-
-							if [ -f "${'$'}src_log_file" ]; then
-								cp "${'$'}src_log_file" "${'$'}dest_log_file"
-								echo "Logs copied from ${'$'}src_log_file to ${'$'}dest_log_file"
-							else
-								echo "Log file ${'$'}src_log_file does not exist"
-							fi
-						done < container_ids.txt
-					fi
-
-					echo "Appending 'foobar' to a log file to ensure file system is writable."
-					echo "foobar" >> "${'$'}logs_dir/test-foobar-log.log"
-					echo "End of Script"
-				""".trimIndent()
-				executionMode = BuildStep.ExecutionMode.ALWAYS
-			})
-		}
-	})
-}
 
 fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";

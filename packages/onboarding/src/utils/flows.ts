@@ -22,7 +22,7 @@ export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
-export const MIGRATION_FLOW = 'import-focused';
+export const MIGRATION_FLOW = 'migration';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
@@ -45,7 +45,8 @@ export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
-export const ONBOARDING_GUIDED_FLOW = 'onboarding';
+export const ONBOARDING_FLOW = 'onboarding';
+export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
 export const EMAIL_SUBSCRIPTION_FLOW = 'email-subscription';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
@@ -115,13 +116,12 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 
 export const isAnyMigrationFlow = ( flowName?: string | null ) => {
 	return Boolean(
-		flowName &&
-			[ MIGRATION_FLOW, IMPORT_FOCUSED_FLOW, IMPORT_HOSTED_SITE_FLOW ].includes( flowName )
+		flowName && [ IMPORT_FOCUSED_FLOW, IMPORT_HOSTED_SITE_FLOW ].includes( flowName )
 	);
 };
 
-export const isMigrationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
+export const isImportFocusedFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ IMPORT_FOCUSED_FLOW ].includes( flowName ) );
 };
 
 export const isCopySiteFlow = ( flowName: string | null ) => {
@@ -170,6 +170,10 @@ export const isDesignFirstFlow = ( flowName: string | null ) => {
 
 export const isBlogOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
+export const isOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };
 
 export const isOnboardingGuidedFlow = ( flowName: string | null ) => {

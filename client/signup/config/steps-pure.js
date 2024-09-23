@@ -88,8 +88,9 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideFreePlan: true,
+				deemphasizeFreePlan: true,
 				hideEnterprisePlan: true,
+				isCustomDomainAllowedOnFreePlan: true,
 			},
 		},
 
@@ -587,11 +588,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 			dependencies: [ 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo', 'domainCart' ],
 			delayApiRequestUntilComplete: true,
-		},
-
-		'creds-complete': {
-			stepName: 'creds-complete',
-			providesDependencies: [],
 		},
 
 		'creds-confirm': {

@@ -1,5 +1,6 @@
 import { MaterialIcon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ChatButton from 'calypso/components/chat-button';
@@ -20,6 +21,8 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 		submit?.();
 	};
 
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
+
 	return (
 		<StepContainer
 			flowName={ flow }
@@ -33,7 +36,11 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 					headerText={ __( 'Add your domains' ) }
 					subHeaderText={
 						<>
-							<span>{ __( 'Enter your domain names and authorization codes below.' ) }</span>
+							<span>
+								{ isGoogleDomainsTransferFlow
+									? __( 'Enter your domain names and transfer codes below.' )
+									: __( 'Enter your domain names and authorization codes below.' ) }
+							</span>
 						</>
 					}
 					align="center"

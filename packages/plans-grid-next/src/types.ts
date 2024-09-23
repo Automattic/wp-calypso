@@ -59,6 +59,7 @@ export type PlansIntent =
 	| 'plans-newsletter'
 	| 'plans-link-in-bio'
 	| 'plans-new-hosted-site'
+	| 'plans-new-hosted-site-business-only'
 	| 'plans-plugins'
 	| 'plans-jetpack-app'
 	| 'plans-jetpack-app-site-creation'
@@ -127,6 +128,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
 	showLegacyStorageFeature: boolean;
+	enableShowAllFeaturesButton?: boolean;
 }
 
 export interface ComparisonGridProps extends CommonGridProps {
@@ -145,12 +147,12 @@ export type UseActionCallback = ( {
 	cartItemForPlan?: MinimalRequestCartProduct | null;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
 	availableForPurchase?: boolean;
-} ) => () => void;
+} ) => () => Promise< void > | void;
 
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
-		callback: () => void;
+		callback: () => Promise< void > | void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
 		variant?: 'primary' | 'secondary';
@@ -197,11 +199,33 @@ export type GridContextProps = {
 	enableFeatureTooltips?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
+	enterpriseFeaturesList?: string[];
+
 	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
 	 * It is only used for showing "Everything in [previous] plus".
 	 */
 	enableCategorisedFeatures?: boolean;
+
+	/**
+	 * Display the plan storage limit as a badge like "50GB" or as plain text like "50GB storage"
+	 */
+	enableStorageAsBadge?: boolean;
+
+	/**
+	 * Reduce the vertical spacing between each feature group
+	 */
+	enableReducedFeatureGroupSpacing?: boolean;
+
+	/**
+	 * Display only the client logos for the enterprise plan
+	 */
+	enableLogosOnlyForEnterprisePlan?: boolean;
+
+	/**
+	 * Hide the titles for feature groups in the features grid
+	 */
+	hideFeatureGroupTitles?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

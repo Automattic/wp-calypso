@@ -1,0 +1,79 @@
+
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-actions__actions-large-screen {
+	cursor: pointer;
+	display: none;
+	height: 100%;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	@include break-xlarge() {
+		display: block;
+		float: right;
+		margin-inline-end: 30px;
+	}
+}
+.site-actions__actions-small-screen {
+	cursor: pointer;
+	position: absolute;
+	right: 16px;
+	display: inline;
+}
+.site-actions__all-actions {
+	vertical-align: middle;
+	display: flex;
+	color: var(--studio-gray-40);
+	margin: 0 0.1em;
+}
+.site-actions__menu-item {
+	margin: 0 -1px;
+	border-style: solid;
+	border-color: var(--studio-gray-5);
+	border-width: 0 0 1px;
+	font-size: 0.875rem;
+	height: 40px;
+	box-sizing: border-box;
+	color: var(--studio-black);
+	display: flex;
+	align-items: center;
+	padding: 0 16px;
+	min-width: 200px;
+
+	&.is-error {
+		color: var(--color-error);
+
+		svg.gridicon {
+			fill: var(--color-error);
+		}
+	}
+
+	&:last-child {
+		margin-bottom: 5px;
+		border-bottom-width: 0;
+	}
+
+	&:first-child {
+		margin-top: 5px;
+	}
+
+	&:hover,
+	&:focus {
+		border-style: solid;
+		border-color: var(--studio-gray-5);
+		border-width: 0 0 1px;
+		background: var(--studio-black);
+		cursor: pointer;
+		color: var(--studio-white);
+		&:last-child {
+			border-bottom-width: 0;
+		}
+	}
+	svg.gridicon {
+		vertical-align: middle;
+		position: absolute;
+		right: 10px;
+		top: unset;
+	}
+}

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { onEnterOnboarding } from '../flow-actions';
 
@@ -55,8 +55,8 @@ const getEmailSubscriptionFlow = () => {
 						'mailing_list',
 						'from',
 						'first_name',
-						'last_name',
 					],
+					optionalDependenciesInQuery: [ 'last_name' ],
 					hideProgressIndicator: true,
 				},
 		  ]
@@ -204,7 +204,7 @@ export function generateFlows( {
 			onEnterFlow: onEnterOnboarding,
 		},
 		{
-			name: 'onboarding_not_guided',
+			name: ONBOARDING_FLOW,
 			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
@@ -284,15 +284,6 @@ export function generateFlows( {
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
 			showRecaptcha: true,
-		},
-		{
-			name: 'pressable-nux',
-			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
-			destination: '/stats',
-			description: 'Allow new Pressable users to grant permission to server credentials',
-			lastModified: '2017-11-20',
-			disallowResume: true,
-			hideProgressIndicator: true,
 		},
 		{
 			name: 'rewind-setup',
