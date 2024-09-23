@@ -7,6 +7,7 @@ import {
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsAccordion } from '../core-web-vitals-accordion';
+import { CoreWebVitalsAccordionV2 } from '../core-web-vitals-accordion/core-web-vitals-accordion-v2';
 import { MetricTabBar } from '../metric-tab-bar';
 import MetricTabBarV2 from '../metric-tab-bar/metric-tab-bar-v2';
 import { CoreWebVitalsDetails } from './core-web-vitals-details';
@@ -26,25 +27,10 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	const [ activeTab, setActiveTab ] = useState< Metrics | null >( defaultTab );
 	const isDesktop = useDesktopBreakpoint();
 
-	const details = props.showV2 ? (
-		<CoreWebVitalsDetailsV2 activeTab={ activeTab } { ...props } />
-	) : (
-		<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
-	);
+	const MetricBar = props.showV2 ? MetricTabBarV2 : MetricTabBar;
+	const CoreWebVitalsDetail = props.showV2 ? CoreWebVitalsDetailsV2 : CoreWebVitalsDetails;
 
-	const metricTabBar = props.showV2 ? (
-		<MetricTabBarV2
-			activeTab={ activeTab ?? defaultTab }
-			setActiveTab={ setActiveTab }
-			{ ...props }
-		/>
-	) : (
-		<MetricTabBar
-			activeTab={ activeTab ?? defaultTab }
-			setActiveTab={ setActiveTab }
-			{ ...props }
-		/>
-	);
+	const Accordion = props.showV2 ? CoreWebVitalsAccordionV2 : CoreWebVitalsAccordion;
 
 	return (
 		<>
@@ -54,19 +40,19 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 						[ 'core-web-vitals-display-v2' ]: props.showV2,
 					} ) }
 				>
-					{ metricTabBar }
-					{ details }
+					<MetricBar
+						activeTab={ activeTab ?? defaultTab }
+						setActiveTab={ setActiveTab }
+						{ ...props }
+					/>
+					<CoreWebVitalsDetail activeTab={ activeTab } { ...props } />
 				</div>
 			) }
 			{ ! isDesktop && (
 				<div className="core-web-vitals-display">
-					<CoreWebVitalsAccordion
-						activeTab={ activeTab }
-						setActiveTab={ setActiveTab }
-						{ ...props }
-					>
-						<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
-					</CoreWebVitalsAccordion>
+					<Accordion activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props }>
+						<CoreWebVitalsDetail activeTab={ activeTab } { ...props } />
+					</Accordion>
 				</div>
 			) }
 		</>
