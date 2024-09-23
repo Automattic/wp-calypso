@@ -189,6 +189,10 @@ export const SitePerformance = () => {
 	);
 
 	const onLaunchSiteClick = () => {
+		if ( site?.is_a4a_dev_site ) {
+			page( `/settings/general/${ site.slug }` );
+			return;
+		}
 		dispatch( launchSite( siteId! ) );
 	};
 
@@ -278,6 +282,11 @@ export const SitePerformance = () => {
 						<ReportUnavailable
 							isLaunching={ siteIsLaunching }
 							onLaunchSiteClick={ onLaunchSiteClick }
+							ctaText={
+								site?.is_a4a_dev_site
+									? translate( 'Prepare for launch' )
+									: translate( 'Launch Site' )
+							}
 						/>
 					) : (
 						currentPage && (
