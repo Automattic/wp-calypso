@@ -243,7 +243,6 @@ class StatsSite extends Component {
 			supportUserFeedback,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
-		const isUserFeedbackEnabled = config.isEnabled( 'stats/user-feedback' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -811,9 +810,7 @@ class StatsSite extends Component {
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
-				{ isUserFeedbackEnabled && supportUserFeedback && (
-					<StatsFeedbackController siteId={ siteId } />
-				) }
+				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
