@@ -127,12 +127,14 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				>
 					{ translate( 'Clear all caches' ) }
 				</Button>
-				<div className="performance-optimization__nb">
-					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
-				</div>
-				{ shouldRateLimitCacheClear && (
+
+				{ shouldRateLimitCacheClear ? (
 					<div className="performance-optimization__nb">
 						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
+					</div>
+				) : (
+					<div className="performance-optimization__nb">
+						{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
 					</div>
 				) }
 			</div>
