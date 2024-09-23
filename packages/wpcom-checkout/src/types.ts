@@ -356,6 +356,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Sofort'
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
+	| 'WPCOM_Billing_Stripe_Wechat_Pay'
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
 	| 'WPCOM_Billing_Razorpay';

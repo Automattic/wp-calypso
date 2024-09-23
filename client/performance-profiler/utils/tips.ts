@@ -11,3 +11,20 @@ export const tips: Record< string, TipProps > = {
 		link: 'https://wordpress.com/setup/hosted-site-migration?ref=performance-profiler-dashboard',
 	},
 };
+
+const createLoggedInTip = (): TipProps => ( {
+	title: translate( 'Did you know?' ),
+	content: translate(
+		'Jetpack Boost automatically optimizes images and delivers them using a Global CDN to ensure they load lightning fast.'
+	),
+	linkText: translate( 'Get Jetpack Boost' ),
+	link: 'https://wordpress.com/plugins/jetpack-boost',
+} );
+
+export const loggedInTips: Record< string, TipProps > = {
+	'uses-responsive-images': createLoggedInTip(),
+	'uses-long-cache-ttl': createLoggedInTip(),
+	'server-response-time': createLoggedInTip(),
+	'render-blocking-resources': createLoggedInTip(),
+	'unminified-css': createLoggedInTip(),
+};

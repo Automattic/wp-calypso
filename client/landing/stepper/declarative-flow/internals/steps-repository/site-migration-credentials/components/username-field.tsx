@@ -1,16 +1,11 @@
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Controller, Control } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { CredentialsFormData } from '../types';
+import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
 
-interface Props {
-	control: Control< CredentialsFormData >;
-	errors: any;
-}
-
-export const UsernameField: React.FC< Props > = ( { control, errors } ) => {
+export const UsernameField: React.FC< CredentialsFormFieldProps > = ( { control, errors } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -26,7 +21,7 @@ export const UsernameField: React.FC< Props > = ( { control, errors } ) => {
 					<FormTextInput
 						id="username"
 						type="text"
-						isError={ !! errors.username }
+						isError={ !! errors?.username }
 						placeholder={ translate( 'Enter your Admin username' ) }
 						{ ...field }
 						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => {
@@ -40,7 +35,7 @@ export const UsernameField: React.FC< Props > = ( { control, errors } ) => {
 					/>
 				) }
 			/>
-			<ErrorMessage error={ errors.username } />
+			<ErrorMessage error={ errors?.username } />
 		</div>
 	);
 };

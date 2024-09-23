@@ -77,6 +77,7 @@ import LinkCard from 'calypso/components/link-card/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
+import { MasonryGridExample } from 'calypso/components/masonry-grid/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
 import NavigationHeader from 'calypso/components/navigation-header/docs/example';
 import Notices from 'calypso/components/notice/docs/example';
@@ -284,6 +285,7 @@ export default class DesignAssets extends Component {
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
+					<MasonryGridExample readmeFilePath="masonry-grid" />
 				</Collection>
 			</Main>
 		);

@@ -16,7 +16,6 @@ import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getPluginTitle, getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
@@ -1025,54 +1024,34 @@ class Login extends Component {
 			);
 		}
 
-		let shouldShowLastUsedAuthenticationMethod = false;
-
 		return (
-			<ProvideExperimentData
-				name="wpcom_login_page_last_used_label_v1"
-				options={ { isEligible: config.isEnabled( 'login/last-used-method' ) } }
-			>
-				{ ( isLoadingExperiment, experimentAssignment ) => {
-					if ( isLoadingExperiment ) {
-						return null;
-					}
-
-					if ( experimentAssignment?.variationName === 'treatment' ) {
-						shouldShowLastUsedAuthenticationMethod = true;
-					}
-
-					return (
-						<LoginForm
-							shouldShowLastUsedAuthenticationMethod={ shouldShowLastUsedAuthenticationMethod }
-							disableAutoFocus={ disableAutoFocus }
-							onSuccess={ this.handleValidLogin }
-							privateSite={ privateSite }
-							socialService={ socialService }
-							socialServiceResponse={ socialServiceResponse }
-							domain={ domain }
-							isP2Login={ isP2Login }
-							locale={ locale }
-							userEmail={ userEmail }
-							handleUsernameChange={ handleUsernameChange }
-							signupUrl={ signupUrl }
-							hideSignupLink={ isGravPoweredClient || isBlazePro }
-							isSignupExistingAccount={ isSignupExistingAccount }
-							sendMagicLoginLink={ this.sendMagicLoginLink }
-							isSendingEmail={ this.props.isSendingEmail }
-							isSocialFirst={ isSocialFirst }
-							isJetpack={ isJetpack }
-							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-							loginButtonText={
-								config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-								isWooCoreProfilerFlow &&
-								this.props.initialQuery?.lostpassword_flow === 'true'
-									? translate( 'Log in' )
-									: null
-							}
-						/>
-					);
-				} }
-			</ProvideExperimentData>
+			<LoginForm
+				disableAutoFocus={ disableAutoFocus }
+				onSuccess={ this.handleValidLogin }
+				privateSite={ privateSite }
+				socialService={ socialService }
+				socialServiceResponse={ socialServiceResponse }
+				domain={ domain }
+				isP2Login={ isP2Login }
+				locale={ locale }
+				userEmail={ userEmail }
+				handleUsernameChange={ handleUsernameChange }
+				signupUrl={ signupUrl }
+				hideSignupLink={ isGravPoweredClient || isBlazePro }
+				isSignupExistingAccount={ isSignupExistingAccount }
+				sendMagicLoginLink={ this.sendMagicLoginLink }
+				isSendingEmail={ this.props.isSendingEmail }
+				isSocialFirst={ isSocialFirst }
+				isJetpack={ isJetpack }
+				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+				loginButtonText={
+					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+					isWooCoreProfilerFlow &&
+					this.props.initialQuery?.lostpassword_flow === 'true'
+						? translate( 'Log in' )
+						: null
+				}
+			/>
 		);
 	}
 

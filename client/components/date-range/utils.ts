@@ -10,7 +10,11 @@ function addDayToRange( day: Moment, range: DateRange ): DateRange {
 		return range;
 	}
 
-	const { from, to } = range;
+	let { from, to } = range;
+
+	from = from?.startOf( 'day' ) ?? null;
+	to = to?.startOf( 'day' ) ?? null;
+	day = day.startOf( 'day' );
 
 	if ( from?.isSame( day ) ) {
 		return { ...range, from: null };

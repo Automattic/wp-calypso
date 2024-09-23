@@ -50,13 +50,16 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	}, [ dataViewsState.filters, showOnlyFavorites, showOnlyDevelopmentSites ] );
 	const search = dataViewsState.search;
 
+	// Temporarily set perPage to 100 on Development sites page due to unresolved ES issue (https://github.com/Automattic/dotcom-forge/issues/8806)
+	const sitesPerPage = showOnlyDevelopmentSites ? 100 : dataViewsState.perPage;
+
 	const queryKey = [
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
 		filter,
 		dataViewsState.sort,
-		dataViewsState.perPage,
+		sitesPerPage,
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 

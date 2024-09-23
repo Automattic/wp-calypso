@@ -3,17 +3,19 @@
 
 $blueberry-color: #3858e9;
 
-.metric-tab-bar {
+.metric-tab-bar-v2 {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	min-width: 250px;
+	align-self: self-start;
 
 	button {
 		color: inherit;
 	}
 }
 
-.metric-tab-bar__tab {
+.metric-tab-bar-v2__tab {
 	display: flex;
 	gap: 6px;
 	background: var(--studio-white);
@@ -24,7 +26,7 @@ $blueberry-color: #3858e9;
 
 	&:not(.active) {
 		border-bottom: 1px solid var(--studio-gray-5);
-		&:not(:first-child) {
+		&:not(:nth-child(-n+2)) {
 			border-top: none;
 		}
 	}
@@ -54,7 +56,7 @@ $blueberry-color: #3858e9;
 		border-bottom-left-radius: 6px;
 	}
 
-	&:first-child {
+	&:nth-child(2) {
 		/* stylelint-disable-next-line scales/radii */
 		border-top-left-radius: 6px;
 		/* stylelint-disable-next-line scales/radii */
@@ -67,24 +69,24 @@ $blueberry-color: #3858e9;
 	}
 }
 
-.metric-tab-bar__tab-status {
+.metric-tab-bar-v2__tab-status {
 	line-height: normal;
 	display: none;
 }
 
-.metric-tab-bar__tab-text {
+.metric-tab-bar-v2__tab-text {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 
 }
 
-.metric-tab-bar__tab-header {
+.metric-tab-bar-v2__tab-header {
 	font-family: $font-sf-pro-display;
 	font-size: $font-body-small;
 	font-weight: 500;
 }
-.metric-tab-bar__tab-metric {
+.metric-tab-bar-v2__tab-metric {
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header-small;
 
@@ -100,4 +102,10 @@ $blueberry-color: #3858e9;
 	&.bad {
 		color: #d63638;
 	}
+}
+
+.metric-tab-bar-v2__performance {
+	margin-bottom: 16px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 }

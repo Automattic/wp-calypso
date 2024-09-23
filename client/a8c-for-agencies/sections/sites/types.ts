@@ -14,9 +14,6 @@ export interface SitesDashboardContextInterface {
 	dataViewsState: DataViewsState;
 	setDataViewsState: React.Dispatch< React.SetStateAction< DataViewsState > >;
 
-	hideListing?: boolean;
-	setHideListing: ( hideListing: boolean ) => void;
-
 	showOnlyFavorites?: boolean;
 	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
 
@@ -44,10 +41,4 @@ export interface SitesDashboardContextInterface {
 	setIsPopoverOpen: Dispatch< SetStateAction< boolean > >;
 
 	featurePreview: ReactNode | null;
-
-	recentlyCreatedSiteId: number | null;
-	setRecentlyCreatedSiteId: ( value: number ) => void;
-
-	isRecentlyCreatedSiteDevelopment: boolean;
-	setIsRecentlyCreatedSiteDevelopment: ( value: boolean ) => void;
 }

@@ -196,7 +196,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
-	useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
+	useSignUpStartTracking( { flow } );
 
 	return (
 		<Boot fallback={ <StepperLoader /> }>
@@ -209,6 +209,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
 						element={
 							<StepRoute
+								key={ step.slug }
 								step={ step }
 								flow={ flow }
 								showWooLogo={ isWooExpressFlow( flow.name ) }
