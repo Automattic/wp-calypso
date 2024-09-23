@@ -8,7 +8,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import SitePreviewLink from 'calypso/components/site-preview-link';
+import SitePreviewLinks from 'calypso/components/site-preview-links';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -144,7 +144,7 @@ const SiteSettingPrivacyForm = ( {
 							</FormSettingExplanation>
 							{ showPreviewLink && selectedSite && (
 								<div className="site-settings__visibility-label is-checkbox">
-									<SitePreviewLink
+									<SitePreviewLinks
 										siteUrl={ selectedSite.URL }
 										siteId={ siteId }
 										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }

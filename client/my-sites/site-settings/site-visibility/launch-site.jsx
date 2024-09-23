@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import SitePreviewLink from 'calypso/components/site-preview-link';
+import SitePreviewLinks from 'calypso/components/site-preview-links';
 import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -192,7 +192,7 @@ const LaunchSite = () => {
 			</LaunchCard>
 			{ showPreviewLink && (
 				<Card>
-					<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
+					<SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
 				</Card>
 			) }
 
