@@ -700,7 +700,7 @@ function createItemToAddToCart( {
 			context: 'calypstore',
 			source: source ?? undefined,
 			hosting_intent: hostingIntent,
-			flow_name: flowName,
+			signup_flow: flowName,
 		},
 		...( cartMeta ? { meta: cartMeta } : {} ),
 	} );
