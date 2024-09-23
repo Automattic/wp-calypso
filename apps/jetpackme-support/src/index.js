@@ -1,4 +1,8 @@
 /**
+ * External dependencies
+ */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+/**
  * WordPress dependencies
  */
 import { render } from '@wordpress/element';
@@ -8,5 +12,12 @@ import { render } from '@wordpress/element';
 import SupportPrompt from './support-prompt';
 
 window.renderSupportPrompt = ( elementId ) => {
-	render( <SupportPrompt />, document.getElementById( elementId ) );
+	const queryClient = new QueryClient();
+
+	render(
+		<QueryClientProvider client={ queryClient }>
+			<SupportPrompt />
+		</QueryClientProvider>,
+		document.getElementById( elementId )
+	);
 };
