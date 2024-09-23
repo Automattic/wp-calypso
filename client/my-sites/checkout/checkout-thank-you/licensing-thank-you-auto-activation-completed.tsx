@@ -101,7 +101,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 									} )
 								)
 							}
-							// Need to ensure redirectTo is either wp.com or wp admin of the site.
+							// TODO: Need to ensure redirectTo is either wp.com or wp admin of the site.
 							href={ redirectTo ?? productConfirmationInfo.buttonUrl }
 						>
 							{ translate( 'Go to Dashboard' ) }
