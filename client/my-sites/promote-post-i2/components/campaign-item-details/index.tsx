@@ -20,6 +20,7 @@ import {
 	Order,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import usePromotePostCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-posts-campaigns-objectives-query';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
@@ -221,6 +222,8 @@ export default function CampaignItemDetails( props: Props ) {
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
+	const { data: campaignObjectives, isLoading: campaignObjectivesIsLoading } =
+		usePromotePostCampaignsStatsQuery( siteId ?? 0 );
 
 	const {
 		audience_list,
@@ -308,66 +311,51 @@ export default function CampaignItemDetails( props: Props ) {
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
-	const objectiveFormatted = ( () => {
-		switch ( objective ) {
-			case 'traffic':
-				return (
-					<>
-						<span> { trafficIcon() } </span>
-						<span>
-							{ translate( 'Traffic' ) }
-							{ ' - ' }
-							{ translate( 'Aims to drive more visitors and increase page views.' ) }
-						</span>
-					</>
-				);
-			case 'sales':
-				return (
-					<>
-						<span> { salesIcon() } </span>
-						<span>
-							{ translate( 'Sales' ) }
-							{ ' - ' }
-							{ translate( 'Converts potential customers into buyers by encouraging purchase.' ) }
-						</span>
-					</>
-				);
-			case 'awareness':
-				return (
-					<>
-						<span> { awarenessIcon() } </span>
-						<span>
-							{ translate( 'Awareness' ) }
-							{ ' - ' }
-							{ translate( 'New businesses, brands launching new products.' ) }
-						</span>
-					</>
-				);
-			case 'engagement':
-				return (
-					<>
-						<span> { engagementIcon() } </span>
-						<span>
-							{ translate( 'Engagement' ) }
-							{ ' - ' }
-							{ translate(
-								'Influencers and community builders looking for followers of the same interest.'
-							) }
-						</span>
-					</>
-				);
-			default: // if no objective is found we default to traffic
-				return (
-					<>
-						<span> { trafficIcon() } </span>
-						<span>
-							{ translate( 'Traffic' ) }
-							{ ' - ' }
-							{ translate( 'Aims to drive more visitors and increase page views.' ) }
-						</span>
-					</>
-				);
+
+	const getObjectiveDetailsById = ( id: string ) => {
+		if ( Array.isArray( campaignObjectives ) && campaignObjectives.length > 0 ) {
+			const objective = campaignObjectives.find( ( obj ) => obj.id === id );
+			if ( objective ) {
+				return {
+					title: objective.title,
+					description: objective.description,
+				};
+			}
 		}
+		// Return null or handle the case when the array is not present or no match is found
+		return {
+			title: translate( 'Traffic' ),
+			description: translate( 'Aims to drive more visitors and increase page views.' ),
+		};
+	};
+
+	const objectiveFormatted = ( () => {
+		const objectiveDetails = getObjectiveDetailsById( objective ?? '' );
+		const icon = ( () => {
+			switch ( objective ) {
+				case 'traffic':
+					return <span> { trafficIcon() } </span>;
+				case 'sales':
+					return <span> { salesIcon() } </span>;
+				case 'awareness':
+					return <span> { awarenessIcon() } </span>;
+				case 'engagement':
+					return <span> { engagementIcon() } </span>;
+				default: // if no objective is found we default to traffic
+					return <span> { trafficIcon() } </span>;
+			}
+		} )();
+
+		return (
+			<>
+				<span> { icon } </span>
+				<span>
+					<span className="title">{ objectiveDetails.title }</span>
+					{ ' - ' }
+					{ objectiveDetails.description }
+				</span>
+			</>
+		);
 	} )();
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const durationDateFormatted = getCampaignDurationFormatted(
@@ -939,7 +927,11 @@ export default function CampaignItemDetails( props: Props ) {
 											{ translate( 'Campaign objective' ) }
 										</span>
 										<span className="campaign-item-details__details objective">
-											{ ! isLoading ? objectiveFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading && ! campaignObjectivesIsLoading ? (
+												objectiveFormatted
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 									</div>
 									<div>

@@ -594,6 +594,11 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				display: flex;
 				align-items: center;
 				text-wrap: balance;
+
+
+				.title {
+					color: var(--studio-gray-100);
+				}
 			}
 			&.objective svg {
 				max-width: 37px;

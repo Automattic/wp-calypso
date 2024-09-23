@@ -103,3 +103,14 @@ export type CampaignQueryResult = {
 	page: number;
 	has_more_pages: boolean;
 };
+
+export type CampaignObjective = {
+	id: string;
+	title: string;
+	description: string;
+	suitable_for_description: string;
+};
+
+export type CampaignObjectiveQueryResult = {
+	objectives: CampaignObjective[];
+};
