@@ -1,9 +1,9 @@
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
-
-const isDevelopment = process.env.NODE_ENV !== 'production';
 
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
@@ -16,7 +16,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @returns {Object}                                webpack config
  */
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
-	const webpackConfig = getBaseWebpackConfig( { ...env, WP: ! isDevelopment }, argv );
+	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
 
 	return {
 		...webpackConfig,
@@ -33,7 +33,16 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			concatenateModules: false,
 		},
 		plugins: [
-			...webpackConfig.plugins,
+			...webpackConfig.plugins.filter(
+				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+			),
+			new webpack.DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'default' ),
+			} ),
+			new DependencyExtractionWebpackPlugin( {
+				injectPolyfill: true,
+				outputFormat: 'json',
+			} ),
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( './dist/chunks-map.json' ),
 			} ),
