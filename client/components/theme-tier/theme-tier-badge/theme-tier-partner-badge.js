@@ -27,9 +27,6 @@ export default function ThemeTierPartnerBadge() {
 
 	const isEcommerceTrialMonthly = planSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 	const planTooltipName = isEcommerceTrialMonthly ? 'ecommerce' : 'business';
-	const planTooltipTitle = isEcommerceTrialMonthly
-		? getPlan( PLAN_ECOMMERCE )?.getTitle()
-		: getPlan( PLAN_BUSINESS )?.getTitle();
 
 	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
 	const isPartnerThemePurchased = useSelector( ( state ) =>
@@ -45,11 +42,22 @@ export default function ThemeTierPartnerBadge() {
 		: translate( 'Upgrade and Subscribe' );
 
 	const getTooltipMessage = () => {
-		if ( isPartnerThemePurchased && ! isThemeAllowed ) {
+		if ( isPartnerThemePurchased && ! isThemeAllowed && ! isEcommerceTrialMonthly ) {
 			return createInterpolateElement(
 				translate(
-					'You have a subscription for this theme, but it will only be usable if you have the <link>%(planName)s plan</link> on your site.',
-					{ args: { planName: planTooltipTitle ?? '' } }
+					'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> or higher on your site.',
+					{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+				),
+				{
+					Link: <ThemeTierBadgeCheckoutLink plan={ planTooltipName } />,
+				}
+			);
+		}
+		if ( isPartnerThemePurchased && ! isThemeAllowed && isEcommerceTrialMonthly ) {
+			return createInterpolateElement(
+				translate(
+					"You have a subscription for this theme, but it's not usable on a trial plan site. Please upgrade your <link>%(ecommercePlanName)s plan</link> on your site.",
+					{ args: { ecommercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' } }
 				),
 				{
 					Link: <ThemeTierBadgeCheckoutLink plan={ planTooltipName } />,
@@ -68,16 +76,34 @@ export default function ThemeTierPartnerBadge() {
 				}
 			);
 		}
-		if ( ! isPartnerThemePurchased && ! isThemeAllowed ) {
+		if ( ! isPartnerThemePurchased && ! isThemeAllowed && ! isEcommerceTrialMonthly ) {
 			return createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(planName)s plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
 							monthlyPrice: subscriptionPrices.month ?? '',
-							planName: planTooltipTitle ?? '',
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+						},
+					}
+				),
+				{
+					Link: <ThemeTierBadgeCheckoutLink plan={ planTooltipName } />,
+				}
+			);
+		}
+		if ( ! isPartnerThemePurchased && ! isThemeAllowed && isEcommerceTrialMonthly ) {
+			return createInterpolateElement(
+				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
+				translate(
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and cannot be purchased in a trial plan site. Please upgraed your <Link>%(ecommercePlanName)s plan</Link> on your site.',
+					{
+						args: {
+							annualPrice: subscriptionPrices.year ?? '',
+							monthlyPrice: subscriptionPrices.month ?? '',
+							businessPlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
 						},
 					}
 				),
