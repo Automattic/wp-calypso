@@ -324,7 +324,7 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const { selectedStyleVariation, shouldLimitGlobalStyles, theme } = this.props;
+		const { selectedStyleVariation, shouldLimitGlobalStyles, theme, siteSlug } = this.props;
 
 		const isPremiumTheme = theme.theme_tier?.slug === PREMIUM_THEME;
 
@@ -334,7 +334,13 @@ export class Theme extends Component {
 			shouldLimitGlobalStyles,
 		} );
 
-		return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
+		return (
+			<ThemeTierBadge
+				themeId={ theme.id }
+				isLockedStyleVariation={ isLocked }
+				showUpgradeBadge={ !! siteSlug }
+			/>
+		);
 	};
 
 	render() {
