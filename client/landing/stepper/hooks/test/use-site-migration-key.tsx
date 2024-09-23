@@ -28,7 +28,7 @@ describe( 'useSiteMigrationKey', () => {
 
 	afterEach( () => jest.resetAllMocks() );
 
-	it( 'returns the migrateguru site migration key if the flag is disabled', async () => {
+	it( 'returns the migrateguru site migration key from the old endpoint if the flag is disabled', async () => {
 		withFeatureDisabled();
 		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (

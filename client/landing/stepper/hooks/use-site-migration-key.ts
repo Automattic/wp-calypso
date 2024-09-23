@@ -6,12 +6,12 @@ interface ApiResponse {
 	migration_key: string;
 }
 
-const isWhiteLabeledPluginEnabled = config.isEnabled(
-	'migration-flow/enable-white-labeled-plugin'
-);
+const isWhiteLabeledPluginEnabled = () => {
+	return config.isEnabled( 'migration-flow/enable-white-labeled-plugin' );
+};
 
 const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
-	if ( isWhiteLabeledPluginEnabled ) {
+	if ( isWhiteLabeledPluginEnabled() ) {
 		return wpcom.req.get(
 			`/sites/${ siteId }/atomic-migration-status/wpcom-migration-key?http_envelope=1`,
 			{
