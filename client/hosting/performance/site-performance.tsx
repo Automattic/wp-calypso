@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
@@ -15,6 +16,7 @@ import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MobileHeader } from './components/MobileHeader';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
@@ -190,69 +192,83 @@ export const SitePerformance = () => {
 		dispatch( launchSite( siteId! ) );
 	};
 
+	const isMobile = ! useDesktopBreakpoint();
+
+	const pageSelector = (
+		<PageSelector
+			onFilterValueChange={ setQuery }
+			allowReset={ false }
+			options={ pageOptions }
+			onChange={ ( page_id ) => {
+				const url = new URL( window.location.href );
+
+				if ( page_id ) {
+					setCurrentPage( pages.find( ( page ) => page.value === page_id ) );
+					url.searchParams.set( 'page_id', page_id );
+				} else {
+					setCurrentPage( undefined );
+					url.searchParams.delete( 'page_id' );
+				}
+
+				page.replace( url.pathname + url.search );
+			} }
+			value={ currentPageId }
+		/>
+	);
+
 	return (
 		<div className="site-performance">
 			<div className="site-performance-device-tab-controls__container">
-				<NavigationHeader
-					className="site-performance__navigation-header"
-					title={ translate( 'Performance' ) }
-					subtitle={
-						performanceReport.performanceReport
-							? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
-									args: {
-										testedDate: moment( performanceReport.performanceReport.timestamp ).format(
-											'MMMM Do, YYYY h:mm:ss A'
-										),
-									},
-									components: {
-										button: (
-											<Button
-												css={ {
-													textDecoration: 'none !important',
-													':hover': {
-														textDecoration: 'underline !important',
-													},
-													fontSize: 'inherit',
-													whiteSpace: 'nowrap',
-												} }
-												variant="link"
-												onClick={ retestPage }
-											/>
-										),
-									},
-							  } )
-							: translate(
-									'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-									{
-										components: {
-											link: (
-												<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
+				{ isMobile ? (
+					<MobileHeader pageTitle={ currentPage?.label ?? '' } pageSelector={ pageSelector } />
+				) : (
+					<NavigationHeader
+						className="site-performance__navigation-header"
+						title={ translate( 'Performance' ) }
+						subtitle={
+							performanceReport.performanceReport
+								? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
+										args: {
+											testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+												'MMMM Do, YYYY h:mm:ss A'
 											),
 										},
-									}
-							  )
-					}
-				/>
-				<PageSelector
-					onFilterValueChange={ setQuery }
-					allowReset={ false }
-					options={ pageOptions }
-					onChange={ ( page_id ) => {
-						const url = new URL( window.location.href );
-
-						if ( page_id ) {
-							setCurrentPage( pages.find( ( page ) => page.value === page_id ) );
-							url.searchParams.set( 'page_id', page_id );
-						} else {
-							setCurrentPage( undefined );
-							url.searchParams.delete( 'page_id' );
+										components: {
+											button: (
+												<Button
+													css={ {
+														textDecoration: 'none !important',
+														':hover': {
+															textDecoration: 'underline !important',
+														},
+														fontSize: 'inherit',
+														whiteSpace: 'nowrap',
+													} }
+													variant="link"
+													onClick={ retestPage }
+												/>
+											),
+										},
+								  } )
+								: translate(
+										'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+										{
+											components: {
+												link: (
+													<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
+												),
+											},
+										}
+								  )
 						}
-
-						page.replace( url.pathname + url.search );
-					} }
-					value={ currentPageId }
+					/>
+				) }
+				{ ! isMobile && pageSelector }
+				<DeviceTabControls
+					showTitle={ ! isMobile }
+					onDeviceTabChange={ setActiveTab }
+					value={ activeTab }
 				/>
-				<DeviceTabControls onDeviceTabChange={ setActiveTab } value={ activeTab } />
 			</div>
 			{ isInitialLoading ? (
 				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
