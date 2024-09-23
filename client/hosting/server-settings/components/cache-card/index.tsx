@@ -177,7 +177,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 									onClick={ handleClearEdgeCache }
 									className="performance-optimization__button"
 								>
-									<span>{ translate( 'Clear edge cache' ) }</span>
+									{ translate( 'Clear edge cache' ) }
 								</Button>
 							) }
 					</>
@@ -203,7 +203,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						onClick={ handleClearObjectCache }
 						className="performance-optimization__button"
 					>
-						<span>{ translate( 'Clear object cache' ) }</span>
+						{ translate( 'Clear object cache' ) }
 					</Button>
 				</div>
 			) }
