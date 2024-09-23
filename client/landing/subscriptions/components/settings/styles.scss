@@ -1,14 +1,11 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 
-$setting-item-margin-bottom: 20px;
-
 .settings {
 	.setting-item {
-		margin-bottom: $setting-item-margin-bottom;
+		margin-bottom: 24px;
 
 		&__hint {
-			margin-top: 8px;
 			color: $studio-gray-50;
 			font-size: $font-body-extra-small;
 			text-align: left;
@@ -29,6 +26,35 @@ $setting-item-margin-bottom: 20px;
 
 		.components-toggle-control {
 			margin: 0;
+		}
+
+		&__app-hint {
+			margin: 16px 0 8px;
+			padding: 16px;
+			background-color: $studio-gray-0;
+			font-size: $font-body-extra-small;
+			text-align: left;
+			display: flex;
+
+			.jetpack-logo {
+				display: inline-block;
+				vertical-align: middle;
+				margin-right: 8px;
+			}
+
+			p {
+				margin: 0;
+			}
+
+			a {
+				color: $studio-gray-90;
+				text-decoration: underline;
+			}
+		}
+
+		.segmented-control__item.is-selected .segmented-control__link {
+			background-color: $studio-gray-90;
+			color: $studio-white;
 		}
 	}
 }

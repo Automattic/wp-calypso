@@ -4,4 +4,7 @@
 	padding: 48px;
 	text-align: left;
 	overflow-y: auto;
+	overflow-x: hidden;
+	display: flex;
+	justify-content: center;
 }

@@ -5,8 +5,8 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
@@ -19,6 +19,8 @@ import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plug
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { setLastVisitedPlugin } from 'calypso/state/plugins/last-visited/actions';
+import { isLastVisitedPlugin as getIsLastVisitedPlugin } from 'calypso/state/plugins/last-visited/selectors';
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	isSaasProduct as isSaasProductSelector,
@@ -43,9 +45,11 @@ const PluginsBrowserListElement = ( props ) => {
 		currentSites,
 	} = props;
 
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const { localizePath } = useLocalizedPlugins();
+	const cardRef = useRef( null );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -107,6 +111,12 @@ const PluginsBrowserListElement = ( props ) => {
 		}
 	}, [ site, plugin, selectedSite, props.listName ] );
 
+	const onClickItem = useCallback( () => {
+		dispatch( setLastVisitedPlugin( plugin.slug, props.listName ) );
+
+		trackPluginLinkClick();
+	}, [ trackPluginLinkClick, dispatch, plugin.slug, props.listName ] );
+
 	const isWpcomPreinstalled = useMemo( () => {
 		if ( plugin.isPreinstalled ) {
 			return true;
@@ -151,6 +161,16 @@ const PluginsBrowserListElement = ( props ) => {
 
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	}, [ selectedSite, plugin ] );
+
+	const isLastVisitedPlugin = useSelector( ( state ) =>
+		getIsLastVisitedPlugin( state, plugin.slug, props.listName )
+	);
+
+	useEffect( () => {
+		if ( isLastVisitedPlugin && cardRef.current ) {
+			cardRef.current.scrollIntoView( { behavior: 'auto', block: 'center' } );
+		}
+	}, [ isLastVisitedPlugin ] );
 
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
@@ -197,19 +217,21 @@ const PluginsBrowserListElement = ( props ) => {
 			<a
 				href={ localizePath( pluginLink ) }
 				className="plugins-browser-item__link"
-				onClick={ trackPluginLinkClick }
+				onClick={ onClickItem }
 			>
-				<div className="plugins-browser-item__info">
-					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">{ plugin.name }</div>
-					{ variant === PluginsBrowserElementVariant.Extended && (
-						<>
-							<div className="plugins-browser-item__author">
-								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
-							</div>
-						</>
-					) }
+				<div className="plugins-browser-item__info" ref={ isLastVisitedPlugin ? cardRef : null }>
+					<div className="plugins-browser-item__header">
+						<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+						<div className="plugins-browser-item__title">{ plugin.name }</div>
+						{ variant === PluginsBrowserElementVariant.Extended && (
+							<>
+								<div className="plugins-browser-item__author">
+									{ translate( 'by ' ) }
+									<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+								</div>
+							</>
+						) }
+					</div>
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
 				{ isUntestedVersion && (
@@ -414,9 +436,11 @@ function Placeholder( { variant } ) {
 		<li className={ clsx( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
-					<PluginIcon isPlaceholder />
-					<div className="plugins-browser-item__title">…</div>
-					<div className="plugins-browser-item__author">…</div>
+					<div className="plugins-browser-item__header">
+						<PluginIcon isPlaceholder />
+						<div className="plugins-browser-item__title">…</div>
+						<div className="plugins-browser-item__author">…</div>
+					</div>
 					<div className="plugins-browser-item__description">…</div>
 				</div>
 			</span>

@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
+import { Icon, calendar } from '@wordpress/icons';
+import { Moment } from 'moment';
 import qs from 'qs';
+import { RefObject } from 'react';
+import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControlPicker from './stats-date-control-picker';
@@ -8,6 +13,7 @@ import { StatsDateControlProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
+const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
 
 const StatsDateControl = ( {
 	slug,
@@ -69,16 +75,6 @@ const StatsDateControl = ( {
 	// Handler for shortcut selection.
 	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		if ( shortcut.isGated && onGatedHandler ) {
-			const events = [
-				{ name: `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_gated_clicked` },
-				{
-					name: 'jetpack_stats_upsell_clicked',
-					params: { stat_type: shortcut.statType, source: event_from },
-				},
-			];
-			return onGatedHandler( events, event_from, shortcut.statType );
-		}
 		// Generate new dates.
 		const anchor = moment().subtract( shortcut.offset, 'days' );
 		const endDate = anchor.format( 'YYYY-MM-DD' );
@@ -125,15 +121,50 @@ const StatsDateControl = ( {
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			<DateControlPicker
-				buttonLabel={ getButtonLabel() }
-				dateRange={ dateRange }
-				shortcutList={ shortcutList }
-				selectedShortcut={ getShortcutForRange()?.id }
-				onShortcut={ onShortcutHandler }
-				onApply={ onApplyButtonHandler }
-				overlay={ overlay }
-			/>
+			{ isCalendarEnabled ? (
+				<DateRange
+					selectedStartDate={ moment( dateRange.chartStart ) }
+					selectedEndDate={ moment( dateRange.chartEnd ) }
+					lastSelectableDate={ moment() }
+					firstSelectableDate={ moment( '2010-01-01' ) }
+					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
+						startDate &&
+						endDate &&
+						onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )
+					}
+					renderTrigger={ ( {
+						onTriggerClick,
+						buttonRef,
+					}: {
+						onTriggerClick: () => void;
+						buttonRef: RefObject< typeof Button >;
+					} ) => {
+						return (
+							<Button onClick={ onTriggerClick } ref={ buttonRef }>
+								{ getButtonLabel() }
+								<Icon className="gridicon" icon={ calendar } />
+							</Button>
+						);
+					} }
+					rootClass="stats-date-control-picker"
+					overlay={ overlay }
+					displayShortcuts
+					useArrowNavigation
+					customTitle="Date Range"
+					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
+				/>
+			) : (
+				<DateControlPicker
+					buttonLabel={ getButtonLabel() }
+					dateRange={ dateRange }
+					shortcutList={ shortcutList }
+					selectedShortcut={ getShortcutForRange()?.id }
+					onShortcut={ onShortcutHandler }
+					onApply={ onApplyButtonHandler }
+					onGatedHandler={ onGatedHandler }
+					overlay={ overlay }
+				/>
+			) }
 		</div>
 	);
 };

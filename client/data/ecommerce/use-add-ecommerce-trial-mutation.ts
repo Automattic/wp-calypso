@@ -7,8 +7,16 @@ interface Variables {
 }
 
 export default function useAddEcommerceTrialMutation(
+	partnerBundle: string | null,
 	options: UseMutationOptions< unknown, unknown, Variables > = {}
 ) {
+	const partnerData = partnerBundle
+		? {
+				woocommerce_onboarding_profile: {
+					partner: partnerBundle,
+				},
+		  }
+		: undefined;
 	const mutation = useMutation( {
 		mutationFn: async ( { siteId }: Variables ) => {
 			await wp.req.post(
@@ -18,6 +26,7 @@ export default function useAddEcommerceTrialMutation(
 				},
 				{
 					is_entrepreneur_signup: 1,
+					wpcom_woocommerce_onboarding: partnerData,
 				}
 			);
 		},

@@ -10,11 +10,12 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
+import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { setSelectedSiteId } from 'calypso/state/ui/actions/index';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -24,8 +25,7 @@ const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	isSignupFlow: true,
 	useSteps() {
-		return [
-			{ slug: 'user', asyncComponent: () => import( './internals/steps-repository/user' ) },
+		return stepsWithRequiredLogin( [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
@@ -39,7 +39,7 @@ const hosting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
-		];
+		] );
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
@@ -59,8 +59,6 @@ const hosting: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'user': {
 					// the ? removes the OAuth query params.
@@ -126,6 +124,7 @@ const hosting: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const dispatch = reduxUseDispatch();
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
@@ -154,6 +153,7 @@ const hosting: Flow = {
 				if ( currentStepSlug === undefined ) {
 					resetOnboardStore();
 				}
+				dispatch( setSelectedSiteId( null ) );
 			},
 			// We only need to reset the store and/or check the `campaign` param when the flow is mounted.
 			// eslint-disable-next-line react-hooks/exhaustive-deps

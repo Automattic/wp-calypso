@@ -26,7 +26,7 @@ import {
 	PurchasesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount, getNewPlanName } from '../shared';
+import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
@@ -37,7 +37,6 @@ declare const browser: Browser;
  */
 describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Personal';
-	const newPlanName = getNewPlanName( planName );
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
 	} );
@@ -84,7 +83,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 
 		it( 'See secure payment', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` );
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 		} );
 
 		it( 'Prices are shown in GBP', async function () {
@@ -232,7 +231,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
-				`WordPress.com ${ newPlanName }`,
+				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
 			await purchasesPage.purchaseAction( 'Cancel plan' );

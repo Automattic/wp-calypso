@@ -1,0 +1,5 @@
+@import "variables.scss";
+
+.stats-widget-content {
+	@include jetpack-theme-for-odyssey-stats;
+}

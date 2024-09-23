@@ -26,6 +26,7 @@ export interface ItemData {
 	isDotcomSite?: boolean;
 	adminUrl?: string;
 	withIcon?: boolean;
+	hideEnvDataInHeader?: boolean;
 }
 
 export interface PreviewPaneProps {
@@ -38,6 +39,7 @@ export interface PreviewPaneProps {
 	hasError?: boolean;
 	addTourDetails?: { id: string; tourId: string };
 	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
+	hideNavIfSingleTab?: boolean;
 }
 
 export interface ItemPreviewPaneHeaderExtraProps {
@@ -48,4 +50,5 @@ export interface ItemPreviewPaneHeaderExtraProps {
 		itemData: ItemData;
 		closeSitePreviewPane: () => void;
 	} >;
+	subtitleExtra?: string | React.ComponentType;
 }

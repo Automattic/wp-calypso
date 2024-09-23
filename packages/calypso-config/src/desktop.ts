@@ -15,6 +15,7 @@ const config = {
 const features = {
 	desktop: true,
 	'desktop-promo': false,
+	'login/last-used-method': false,
 	'login/social-first': false,
 	'sign-in-with-apple': false,
 	// Note: there is also a sign-in-with-apple/redirect flag

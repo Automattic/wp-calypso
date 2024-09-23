@@ -7,7 +7,6 @@ export { getSitePlanSlug } from './get-site-plan-slug';
 export { hasDomainCredit } from './has-domain-credit';
 export { isCurrentPlanExpiring } from './is-current-plan-expiring';
 export { isCurrentUserCurrentPlanOwner } from './is-current-user-current-plan-owner';
-export { isIntroductoryOfferAppliedToPlanPrice } from './is-introductory-offer-applied-to-plan-price';
 export { default as isPlanAvailableForPurchase } from './is-plan-available-for-purchase';
 export { isRequestingSitePlans, hasLoadedSitePlansFromServer } from './is-requesting-site-plans';
 export { default as isSiteOnMigrationTrial } from './trials/is-site-on-migration-trial';

@@ -42,14 +42,14 @@ function queryClientProducts(): Promise< APIProductFamily[] > {
 		} );
 }
 
-export default function useFetchClientProducts(): UseQueryResult<
-	APIProductFamilyProduct[],
-	unknown
-> {
+export default function useFetchClientProducts(
+	isEnabled = true
+): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	return useQuery( {
 		queryKey: [ 'a4a-client-products' ],
 		queryFn: queryClientProducts,
 		select: selectAlphabeticallySortedProductOptions,
 		refetchOnWindowFocus: false,
+		enabled: isEnabled,
 	} );
 }

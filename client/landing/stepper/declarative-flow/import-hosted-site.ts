@@ -12,7 +12,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { useSite } from '../hooks/use-site';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -44,7 +44,7 @@ const importHostedSiteFlow: Flow = {
 			resetOnboardStore();
 		}, [] );
 
-		return [
+		return stepsWithRequiredLogin( [
 			{ slug: 'import', component: Import },
 			{ slug: 'importReady', component: ImportReady },
 			{ slug: 'importReadyNot', component: ImportReadyNot },
@@ -58,7 +58,7 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: MigrationError },
 			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
-		];
+		] );
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -291,25 +291,10 @@ const importHostedSiteFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 	useSideEffect( currentStep ) {
-		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
-		} );
-
 		const urlQueryParams = useQuery();
 		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
 
 		useLayoutEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				window.location.assign( logInUrl );
-			}
-
 			if ( restoreFlowQueryParam === null ) {
 				localStorageHelper.set( 'site-migration-url', window.location.href );
 				return;
@@ -326,7 +311,7 @@ const importHostedSiteFlow: Flow = {
 				window.location.assign( storedUrlString );
 				return;
 			}
-		}, [ userIsLoggedIn, currentStep, restoreFlowQueryParam ] );
+		}, [ currentStep, restoreFlowQueryParam ] );
 	},
 };
 

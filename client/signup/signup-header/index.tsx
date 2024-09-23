@@ -4,8 +4,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
-import useRefundPeriodInSignupHeaderBanner from './hooks/use-refund-period-in-signup-header-banner';
-import { SignupHeaderOverlayBannerWithRefundPeriod } from './overlay-banner';
 
 interface ProgressBarData {
 	flowName?: string;
@@ -43,21 +41,13 @@ const SignupHeader = ( {
 	);
 	const showProgressBar = progressBar.flowName !== FREE_FLOW;
 
-	const refundPeriodInSignupHeaderBanner = useRefundPeriodInSignupHeaderBanner( {
-		flowName: progressBar.flowName,
-		stepName: progressBar.stepName,
-		shouldShowLoadingScreen,
-	} ).result;
-
 	const logoClasses = clsx( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
-		'is-dark-background': refundPeriodInSignupHeaderBanner,
 	} );
 
 	return (
 		<>
 			<div className="signup-header" role="banner" aria-label="banner">
-				{ refundPeriodInSignupHeaderBanner && <SignupHeaderOverlayBannerWithRefundPeriod /> }
 				{ flowProgress &&
 					! shouldShowLoadingScreen &&
 					showProgressBar &&

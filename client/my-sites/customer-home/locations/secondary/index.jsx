@@ -1,5 +1,5 @@
+import { DotPager } from '@automattic/components';
 import { createElement, useEffect } from 'react';
-import DotPager from 'calypso/components/dot-pager';
 import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
@@ -88,9 +88,6 @@ const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
 							onPageSelected={ trackInnerCardImpression }
 						>
 							{ card.map( ( innerCard, innerIndex ) => {
-								if ( CARD_COMPONENTS[ innerCard ].isDisabled === true ) {
-									return null;
-								}
 								return (
 									<SecondaryCard
 										key={ 'my_home_secondary_pager_' + index + '_' + card + '_' + innerIndex }

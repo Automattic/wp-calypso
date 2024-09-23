@@ -1,13 +1,8 @@
 @import "~@automattic/color-studio/dist/color-variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
 @import "@wordpress/base-styles/breakpoints";
 
 $brand-display: "SF Pro Display", sans-serif;
-
-.plugins-update-manager:not(.plugins-update-manager-multisite) {
-	.empty-state {
-		max-width: 80%;
-	}
-}
 
 .plugins-update-manager,
 .plugins-update-manager-multisite {
@@ -80,7 +75,6 @@ $brand-display: "SF Pro Display", sans-serif;
 	}
 
 	.empty-state {
-		max-width: 50%;
 		text-align: left;
 		padding: 0;
 
@@ -171,21 +165,10 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 	}
 
+	@include search-control-wpcom-styles;
+
 	.components-search-control {
 		max-width: 300px;
 		margin-bottom: 1.5rem;
-
-		.components-input-control__container {
-			border: solid 1px var(--studio-gray-10);
-			background-color: var(--studio-white);
-		}
-
-		.components-base-control__field {
-			display: block !important;
-		}
-
-		.components-input-control__suffix svg {
-			fill: var(--studio-gray-30);
-		}
 	}
 }

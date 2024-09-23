@@ -28,6 +28,38 @@ $heading-font-family: "SF Pro Display", $sans;
 		}
 	}
 
+	// Styles with multiple classes needed to override the default button style with high specificities
+	.unlock-instructions__cta.google-domains-transfer-instructions__button {
+		font-size: rem(14px);
+		color: var(--color-link);
+
+		&:hover {
+			color: var(--color-link);
+		}
+
+		&,
+		&:hover,
+		&:visited {
+			text-decoration: none;
+		}
+
+		&:focus {
+			outline: thin dotted;
+		}
+
+		&:active,
+		&:focus:active,
+		&:hover {
+			outline: 0;
+			box-shadow: none;
+		}
+
+		&:hover:not(:disabled):not(.disabled),
+		&:focus:not(:disabled):not(.disabled) {
+			color: var(--color-link);
+		}
+	}
+
 	&.intro {
 		padding: 0;
 

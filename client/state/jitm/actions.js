@@ -93,7 +93,7 @@ export const openHelpCenterFromJITM =
 	( { route } ) =>
 	( dispatch ) => {
 		const HELP_CENTER_STORE = HelpCenter.register();
-		dataStoreDispatch( HELP_CENTER_STORE ).setInitialRoute( route );
+		dataStoreDispatch( HELP_CENTER_STORE ).setNavigateToRoute( route );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
 		dispatch( {
 			type: JITM_OPEN_HELP_CENTER,

@@ -73,18 +73,20 @@ export const useSiteInterfaceMutation = (
 			if ( ! data?.interface || ! site ) {
 				throw new Error( 'Invalid response from hosting/admin-interface' );
 			}
-			if ( data.interface === 'wp-admin' && siteAdminUrl ) {
-				navigate( addQueryArgs( siteAdminUrl, { 'admin-interface-changed': true } ) );
-			} else {
-				dispatch( requestAdminMenu( siteId ) );
-				setHasSuccessfullyFinished( true );
-			}
+
 			const newOptions = {
 				...( site.options || {} ),
 				wpcom_admin_interface: data.interface,
 			};
 			// Apply the new interface option to the site on redux store
 			dispatch( receiveSite( { ...site, options: newOptions } ) );
+
+			if ( data.interface === 'wp-admin' && siteAdminUrl ) {
+				navigate( addQueryArgs( siteAdminUrl, { 'admin-interface-changed': true } ) );
+			} else {
+				dispatch( requestAdminMenu( siteId ) );
+				setHasSuccessfullyFinished( true );
+			}
 		},
 		onMutate: options?.onMutate,
 		onError( _err: MutationError, _newActive: string, prevValue: unknown ) {

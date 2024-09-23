@@ -22,10 +22,12 @@ class NavTabs extends Component {
 		label: PropTypes.string,
 		hasSiblingControls: PropTypes.bool,
 		hasHorizontalScroll: PropTypes.bool,
+		enforceTabsView: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		hasSiblingControls: false,
+		enforceTabsView: false,
 	};
 
 	state = {
@@ -68,8 +70,10 @@ class NavTabs extends Component {
 			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
+		const isDropdownEnabled = ! this.props.enforceTabsView && this.state.isDropdown;
+
 		const tabsClassName = clsx( 'section-nav-tabs', {
-			'is-dropdown': this.state.isDropdown,
+			'is-dropdown': isDropdownEnabled,
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 
@@ -82,6 +86,7 @@ class NavTabs extends Component {
 					'section-nav-group': true,
 					'has-horizontal-scroll':
 						this.props.hasHorizontalScroll && innerWidth > MOBILE_PANEL_THRESHOLD,
+					'enforce-tabs-view': this.props.enforceTabsView,
 				} ) }
 				ref={ this.navGroupRef }
 			>
@@ -91,7 +96,7 @@ class NavTabs extends Component {
 						{ tabs }
 					</ul>
 
-					{ this.state.isDropdown && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
+					{ isDropdownEnabled && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
 				</div>
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -7,8 +7,15 @@ import type { AppState } from 'calypso/types';
 export const getPluginActionStatuses = ( state: AppState ) => {
 	const inProgressStatuses = getPluginStatusesByType( state, 'inProgress' );
 	const completedStatuses = getPluginStatusesByType( state, 'completed' );
+	const incompletedStatuses = getPluginStatusesByType( state, 'incompleted' );
 	const errorStatuses = getPluginStatusesByType( state, 'error' );
 	const uptoDateStatuses = getPluginStatusesByType( state, 'up-to-date' );
 
-	return [ ...inProgressStatuses, ...completedStatuses, ...errorStatuses, ...uptoDateStatuses ];
+	return [
+		...inProgressStatuses,
+		...completedStatuses,
+		...errorStatuses,
+		...incompletedStatuses,
+		...uptoDateStatuses,
+	];
 };

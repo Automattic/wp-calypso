@@ -33,6 +33,7 @@ export const SubscribePostEndSetting = ( {
 		return addQueryArgs( siteEditorUrl, {
 			postType: 'wp_template',
 			postId: `${ themeSlug }//single`,
+			canvas: 'edit',
 		} );
 	};
 
@@ -47,10 +48,10 @@ export const SubscribePostEndSetting = ( {
 			disabled={ disabled }
 			label={
 				<>
-					{ translate( 'Add the Subscribe Block at the end of each post' ) }
+					{ translate( 'Add the Subscribe Block at the end of each post.' ) }
 					{ showEditLink && (
 						<>
-							{ '. ' }
+							{ ' ' }
 							<ExternalLink href={ getEditUrl() } onClick={ onEditClick }>
 								{ translate( 'Preview and edit' ) }
 							</ExternalLink>

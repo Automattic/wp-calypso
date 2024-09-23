@@ -13,7 +13,7 @@ export const MastodonLinkPreview: React.FC< MastodonPreviewProps > = ( props ) =
 		<div className="mastodon-preview__post">
 			<MastodonPostHeader user={ user } />
 			<MastonPostBody { ...props } />
-			<MastodonPostCard { ...props } />
+			<MastodonPostCard { ...props } customImage="" />
 			<MastodonPostActions />
 		</div>
 	);

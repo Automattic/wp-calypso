@@ -1,0 +1,46 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.how-to-migrate {
+	max-width: 620px;
+	padding: 0 12px;
+
+	.onboarding-title {
+		font-size: 2.75rem;
+		text-align: center;
+	}
+
+	.onboarding-subtitle {
+		color: var(--studio-gray-50, #646970);
+		font-size: 1rem;
+		letter-spacing: -0.32px;
+		line-height: 1.5;
+		text-align: center;
+	}
+
+	.how-to-migrate__list {
+		text-align: center;
+
+		.flow-question {
+			max-width: none;
+			width: 100%;
+		}
+	}
+
+	#how-to-migrate-header {
+		.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+
+	.how-to-migrate__name {
+		color: var(--studio-gray-100);
+		font-size: 1.25rem;
+		font-weight: 500;
+		margin-right: 8px;
+	}
+
+	.how-to-migrate__description {
+		color: var(--studio-gray-60);
+	}
+}

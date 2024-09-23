@@ -25,7 +25,7 @@ export interface Fields {
 
 interface SiteSettingPrivacyProps {
 	fields: Fields;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	updateFields: ( fields: Fields ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
@@ -58,7 +58,6 @@ const SiteSettingPrivacy = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="site-privacy-settings"
 				disabled={ isRequestingSettings || isSavingSettings }

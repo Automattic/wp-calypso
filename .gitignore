@@ -73,7 +73,6 @@ cached-requests.json
 /desktop/.cache/
 /apps/*/release-files/
 /apps/**/*/build_meta.json
-/apps/editing-toolkit/editing-toolkit-plugin/README.md
 
 # webpack assets
 /assets*.json

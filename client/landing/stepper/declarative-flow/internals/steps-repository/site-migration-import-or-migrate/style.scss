@@ -3,7 +3,10 @@
 
 .import-or-migrate {
 	max-width: 602px;
-	padding: 0 12px;
+
+	&.site-migration-import-or-migrate.step-container .step-container__header {
+		padding: 36px;
+	}
 
 	.onboarding-title {
 		font-size: 2.75rem;
@@ -19,28 +22,22 @@
 	}
 
 	.import-or-migrate__list {
-		margin-top: 50px;
 		padding-bottom: 108px;
+		display: flex;
+		flex-direction: column;
 
 		@include break-mobile {
-			margin-top: 80px;
 			padding-bottom: revert;
 		}
 
-		.card {
-			svg {
-				fill: #1e1e1e;
+		.flow-question {
+			max-width: none;
+			margin: 0 0 18px;
+			&__heading {
+				flex-wrap: wrap-reverse;
+				min-width: min-content;
+				white-space: nowrap;
 			}
-		}
-	}
-
-	.import-or-migrate__header {
-		align-items: center;
-		margin-bottom: 8px;
-
-		@include break-mobile {
-			display: flex;
-			margin-bottom: 0;
 		}
 	}
 
@@ -49,6 +46,10 @@
 		font-size: 1.25rem;
 		font-weight: 500;
 		margin-right: 8px;
+	}
+
+	#how-to-migrate-header .formatted-header__subtitle {
+		text-align: center;
 	}
 
 	.import-or-migrate__description {

@@ -18,7 +18,10 @@ import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-not
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import {
+	isCurrentUserCurrentPlanOwner,
+	isRequestingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
@@ -31,6 +34,7 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isCurrentUserCurrentPlanOwner: jest.fn(),
+	isRequestingSitePlans: jest.fn(),
 	getCurrentPlan: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
@@ -64,6 +68,9 @@ const mIsCurrentPlanPaid = isCurrentPlanPaid as jest.MockedFunction< typeof isCu
 const mIsCurrentUserCurrentPlanOwner = isCurrentUserCurrentPlanOwner as jest.MockedFunction<
 	typeof isCurrentUserCurrentPlanOwner
 >;
+const mIsRequestingSitePlans = isRequestingSitePlans as jest.MockedFunction<
+	typeof isRequestingSitePlans
+>;
 const mUsePlanUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable as jest.MockedFunction<
 	typeof usePlanUpgradeCreditsApplicable
 >;
@@ -95,15 +102,16 @@ describe( '<PlanNotice /> Tests', () => {
 		mUseMarketingMessage.mockImplementation( () => [ false, [], () => ( {} ) ] );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
+		mIsRequestingSitePlans.mockImplementation( () => true );
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
 		mGetDiscountByName.mockImplementation( () => discount );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => false );
 
@@ -124,7 +132,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => discount );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 1 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -141,7 +149,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => false );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 10000 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -152,7 +160,7 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'You have $100.00 in upgrade credits available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
+			'You have $100.00 in upgrade credits(opens in a new tab) available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
 		);
 	} );
 

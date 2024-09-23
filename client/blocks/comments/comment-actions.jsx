@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowReblog } from 'calypso/blocks/reader-share/helper';
 import { useSelector } from 'calypso/state';
@@ -9,13 +9,10 @@ import CommentLikeButtonContainer from './comment-likes';
 
 import './comment-actions.scss';
 
-const noop = () => {};
-
 const CommentActions = ( {
 	post,
 	comment,
 	comment: { isPlaceholder },
-	translate,
 	activeReplyCommentId,
 	commentId,
 	handleReply,
@@ -24,6 +21,7 @@ const CommentActions = ( {
 	onReadMore,
 	onLikeToggle,
 } ) => {
+	const translate = useTranslate();
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const hasSites = !! useSelector( getPrimarySiteId );
@@ -80,8 +78,4 @@ const CommentActions = ( {
 	);
 };
 
-CommentActions.defaultProps = {
-	onReadMore: noop,
-};
-
-export default localize( CommentActions );
+export default CommentActions;

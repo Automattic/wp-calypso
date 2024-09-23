@@ -3,6 +3,14 @@ import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import ui from './ui/reducer';
 
+export const gravatarClientData = {
+	id: 1854,
+	name: 'gravatar',
+	title: 'Gravatar',
+	icon: 'https://gravatar.com/images/grav-logo-blue.svg',
+	favicon: 'https://gravatar.com/favicon.ico',
+};
+
 export const initialClientsData = {
 	930: {
 		id: 930,
@@ -22,13 +30,7 @@ export const initialClientsData = {
 		title: 'Crowdsignal',
 		icon: 'https://app.crowdsignal.com/images/logo-white.png',
 	},
-	1854: {
-		id: 1854,
-		name: 'gravatar',
-		title: 'Gravatar',
-		icon: 'https://gravatar.com/images/grav-logo-blue.svg',
-		favicon: 'https://gravatar.com/favicon.ico',
-	},
+	1854: gravatarClientData,
 	90057: {
 		id: 90057,
 		name: 'wpjobmanager',

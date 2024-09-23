@@ -37,6 +37,28 @@ describe( 'index', () => {
 				expect( getFixedDomainSearch( search ) ).toEqual( search );
 			} );
 		} );
+
+		test( 'should allow accent characters on domain search', () => {
+			const searches = [
+				{
+					search: 'alimentaçãosaudável.com.br',
+					expected: 'alimentaçãosaudável.com.br',
+				},
+				{
+					search: 'meudomínioação.com',
+					expected: 'meudomínioação.com',
+				},
+				{
+					// Should still remove & and * characteres
+					search: 'meudomínioação&*ê.com',
+					expected: 'meudomínioaçãoê.com',
+				},
+			];
+
+			forEach( searches, ( search ) => {
+				expect( getFixedDomainSearch( search.search ) ).toEqual( search.expected );
+			} );
+		} );
 	} );
 
 	describe( '#getDomainSuggestionSearch', () => {

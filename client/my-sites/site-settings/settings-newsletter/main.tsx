@@ -13,9 +13,11 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
+import { BylineSettings } from './BylineSettings';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
+import { PaidNewsletterSection } from './PaidNewsletterSection';
 import { ReplyToSetting } from './ReplyToSetting';
 import { SenderNameSetting } from './SenderNameSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
@@ -25,6 +27,7 @@ import { SubscribeOverlaySetting } from './SubscribeOverlaySetting';
 import { SubscribePostEndSetting } from './SubscribePostEndSetting';
 import { SubscriberLoginNavigationSetting } from './SubscriberLoginNavigationSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
+import './style.scss';
 
 const defaultNewsletterCategoryIds: number[] = [];
 
@@ -48,6 +51,10 @@ type Fields = {
 	jetpack_subscriptions_subscribe_navigation_enabled?: boolean;
 	jetpack_subscriptions_login_navigation_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
+	jetpack_gravatar_in_email?: boolean;
+	jetpack_author_in_email?: boolean;
+	jetpack_post_date_in_email?: boolean;
+	date_format?: string;
 };
 
 const getFormSettings = ( settings?: Fields ) => {
@@ -69,6 +76,10 @@ const getFormSettings = ( settings?: Fields ) => {
 		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
+		jetpack_gravatar_in_email,
+		jetpack_author_in_email,
+		jetpack_post_date_in_email,
+		date_format,
 	} = settings;
 
 	return {
@@ -88,6 +99,10 @@ const getFormSettings = ( settings?: Fields ) => {
 		jetpack_subscriptions_login_navigation_enabled:
 			!! jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
+		jetpack_gravatar_in_email: !! jetpack_gravatar_in_email,
+		jetpack_author_in_email: !! jetpack_author_in_email,
+		jetpack_post_date_in_email: !! jetpack_post_date_in_email,
+		date_format: date_format || '',
 	};
 };
 
@@ -125,6 +140,10 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		jetpack_subscriptions_subscribe_navigation_enabled,
 		jetpack_subscriptions_login_navigation_enabled,
 		jetpack_verbum_subscription_modal,
+		jetpack_gravatar_in_email,
+		jetpack_author_in_email,
+		jetpack_post_date_in_email,
+		date_format,
 	} = fields;
 
 	const isSubscriptionModuleInactive = useSelector( ( state ) => {
@@ -164,7 +183,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	return (
 		<form onSubmit={ handleSubmitForm }>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="subscriptions"
@@ -212,7 +231,13 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					</>
 				) }
 			</Card>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+
+			<SettingsSectionHeader
+				disabled={ disabled }
+				id="paid-newsletter"
+				title={ translate( 'Paid Newsletter' ) }
+			/>
+			<PaidNewsletterSection />
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="email-settings"
@@ -226,6 +251,16 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					handleToggle={ handleToggle }
 					value={ wpcom_featured_image_in_email }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<BylineSettings
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					showAvatarValue={ jetpack_gravatar_in_email }
+					showAuthorValue={ jetpack_author_in_email }
+					showDateValue={ jetpack_post_date_in_email }
+					dateFormat={ date_format }
 				/>
 			</Card>
 			<Card className="site-settings__card">
@@ -250,8 +285,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					value={ jetpack_subscriptions_reply_to }
 				/>
 			</Card>
-
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
@@ -267,8 +300,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				handleToggle={ handleToggle }
 				updateFields={ updateFields }
 			/>
-
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="messages"
@@ -292,9 +323,15 @@ const NewsletterSettings = () => {
 	const translate = useTranslate();
 
 	return (
-		<Main>
+		<Main className="site-settings">
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Newsletter Settings' ) }
+				subtitle={ translate(
+					'Transform your blog posts into newsletters to easily reach your subscribers.'
+				) }
+			/>
 			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
 		</Main>

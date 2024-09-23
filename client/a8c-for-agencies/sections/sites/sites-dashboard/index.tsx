@@ -1,9 +1,8 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useContext, useEffect, useCallback, useState } from 'react';
+import { useContext, useEffect, useCallback, useState, useRef } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import {
 	DATAVIEWS_LIST,
@@ -21,8 +20,8 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
@@ -39,21 +38,17 @@ import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
-import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
 import './sites-dataviews-style.scss';
-
 export default function SitesDashboard() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
 
 	const agencyId = useSelector( getActiveAgencyId );
-
-	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
 
 	const {
 		dataViewsState,
@@ -63,8 +58,7 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
-		hideListing,
-		setHideListing,
+		showOnlyDevelopmentSites,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -80,6 +74,7 @@ export default function SitesDashboard() {
 	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
+		showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 	} );
 
 	useEffect( () => {
@@ -88,25 +83,55 @@ export default function SitesDashboard() {
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
+			showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 		} );
-	}, [ dataViewsState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
+	}, [
+		dataViewsState.filters,
+		setAgencyDashboardFilter,
+		showOnlyFavorites,
+		showOnlyDevelopmentSites,
+	] );
+
+	// Reset back to page one when entering Needs Attention, Favourites, or Development page.
+	const selectedFilters = getSelectedFilters( dataViewsState.filters );
+	const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
+	const prevIsOnFavouritesPageRef = useRef( showOnlyFavorites );
+	const prevIsOnDevelopmentPageRef = useRef( showOnlyDevelopmentSites );
+	const prevIsOnNeedsAttentionPageRef = useRef( isOnNeedsAttentionPage );
+
+	useEffect( () => {
+		const selectedFilters = getSelectedFilters( dataViewsState.filters );
+		const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
+
+		if (
+			prevIsOnFavouritesPageRef.current !== showOnlyFavorites ||
+			prevIsOnDevelopmentPageRef.current !== showOnlyDevelopmentSites ||
+			prevIsOnNeedsAttentionPageRef.current !== isOnNeedsAttentionPage
+		) {
+			setDataViewsState( { ...dataViewsState, page: 1 } );
+		}
+
+		prevIsOnFavouritesPageRef.current = showOnlyFavorites;
+		prevIsOnDevelopmentPageRef.current = showOnlyDevelopmentSites;
+		prevIsOnNeedsAttentionPageRef.current = isOnNeedsAttentionPage;
+	}, [ dataViewsState, setDataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ] );
+
+	// Temporarily set perPage to 100 on Development sites page due to unresolved ES issue (https://github.com/Automattic/dotcom-forge/issues/8806)
+	const sitesPerPage = showOnlyDevelopmentSites ? 100 : dataViewsState.perPage;
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
-		searchQuery: dataViewsState.search,
-		currentPage: dataViewsState.page,
+		searchQuery: dataViewsState?.search,
+		currentPage: dataViewsState.page ?? 1,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
-		perPage: dataViewsState.perPage,
+		perPage: sitesPerPage,
 		agencyId,
 	} );
-
-	const noActiveSite = useNoActiveSite();
 
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			setHideListing( false );
 			return;
 		}
 
@@ -128,11 +153,11 @@ export default function SitesDashboard() {
 		}
 		// Omitting sitesViewState to prevent infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState, setHideListing ] );
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState ] );
 
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( hideListing && ! dataViewsState.selectedItem ) {
+		if ( ! dataViewsState.selectedItem ) {
 			return;
 		}
 
@@ -143,13 +168,14 @@ export default function SitesDashboard() {
 		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
-			filters: dataViewsState.filters,
+			filters: dataViewsState.filters ?? [],
 			selectedSite: dataViewsState.selectedItem,
 			selectedSiteFeature: selectedSiteFeature,
-			search: dataViewsState.search,
-			currentPage: dataViewsState.page,
+			search: dataViewsState.search ?? '',
+			currentPage: dataViewsState.page ?? 1,
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
+			showOnlyDevelopmentSites,
 		} );
 		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
 			page.show( updatedUrl );
@@ -164,16 +190,15 @@ export default function SitesDashboard() {
 		dataViewsState.search,
 		dataViewsState.page,
 		showOnlyFavorites,
+		showOnlyDevelopmentSites,
 		dataViewsState.sort,
-		hideListing,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			setHideListing( false );
 		}
-	}, [ dataViewsState, setDataViewsState, setHideListing ] );
+	}, [ dataViewsState, setDataViewsState ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -205,10 +230,6 @@ export default function SitesDashboard() {
 		tourId = 'addSiteStep1';
 	}
 
-	if ( noActiveSite ) {
-		return <EmptyState />;
-	}
-
 	return (
 		<Layout
 			className={ clsx(
@@ -219,59 +240,54 @@ export default function SitesDashboard() {
 			wide
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
-			{ ! hideListing && (
-				<LayoutColumn className="sites-overview" wide>
-					<LayoutTop withNavigation={ navItems.length > 1 }>
-						{ recentlyCreatedSite && (
-							<ProvisioningSiteNotification siteId={ Number( recentlyCreatedSite ) } />
-						) }
+			<LayoutColumn className="sites-overview" wide>
+				<LayoutTop withNavigation={ navItems.length > 1 }>
+					<ProvisioningSiteNotification />
 
-						<LayoutHeader>
-							<Title>{ translate( 'Sites' ) }</Title>
-							<Actions>
-								<MobileSidebarNavigation />
-								<SitesHeaderActions />
-							</Actions>
-						</LayoutHeader>
-						{ navItems.length > 1 && (
-							<LayoutNavigation { ...selectedItemProps }>
-								<NavigationTabs { ...selectedItemProps } items={ navItems } />
-							</LayoutNavigation>
-						) }
-					</LayoutTop>
+					<LayoutHeader>
+						<Title>{ translate( 'Sites' ) }</Title>
+						<Actions>
+							<MobileSidebarNavigation />
+							<SitesHeaderActions onWPCOMImport={ () => refetch() } />
+						</Actions>
+					</LayoutHeader>
+					{ navItems.length > 1 && (
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					) }
+				</LayoutTop>
 
-					<SiteNotifications />
-					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-
-					<DashboardDataContext.Provider
-						value={ {
-							verifiedContacts: {
-								emails: verifiedContacts?.emails ?? [],
-								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-								refetchIfFailed: () => {
-									if ( fetchContactFailed ) {
-										refetchContacts();
-									}
-									return;
-								},
+				<SiteNotifications />
+				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
+				<QueryReaderTeams />
+				<DashboardDataContext.Provider
+					value={ {
+						verifiedContacts: {
+							emails: verifiedContacts?.emails ?? [],
+							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+							refetchIfFailed: () => {
+								if ( fetchContactFailed ) {
+									refetchContacts();
+								}
+								return;
 							},
-							products: products ?? [],
-							isLargeScreen: isLargeScreen || false,
-						} }
-					>
-						<JetpackSitesDataViews
-							className={ clsx( 'sites-overview__content', {
-								'is-hiding-navigation': navItems.length <= 1,
-							} ) }
-							data={ data }
-							isLoading={ isLoading }
-							isLargeScreen={ isLargeScreen || false }
-							setDataViewsState={ setDataViewsState }
-							dataViewsState={ dataViewsState }
-						/>
-					</DashboardDataContext.Provider>
-				</LayoutColumn>
-			) }
+						},
+						products: products ?? [],
+						isLargeScreen: isLargeScreen || false,
+					} }
+				>
+					<JetpackSitesDataViews
+						className={ clsx( 'sites-overview__content' ) }
+						data={ data }
+						isLoading={ isLoading }
+						isLargeScreen={ isLargeScreen || false }
+						setDataViewsState={ setDataViewsState }
+						dataViewsState={ dataViewsState }
+						onRefetchSite={ refetch }
+					/>
+				</DashboardDataContext.Provider>
+			</LayoutColumn>
 
 			{ dataViewsState.selectedItem && (
 				<LayoutColumn className="site-preview-pane" wide>
@@ -280,6 +296,7 @@ export default function SitesDashboard() {
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }
+						onRefetchSite={ refetch }
 					/>
 				</LayoutColumn>
 			) }

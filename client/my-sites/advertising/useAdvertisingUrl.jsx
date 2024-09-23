@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { getSiteAdminUrl, isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const useAdvertisingUrl = () => {
@@ -8,11 +8,11 @@ const useAdvertisingUrl = () => {
 	const siteAdminUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'tools.php?page=advertising' )
 	);
-	const globalSiteViewEnabled = useSelector( ( state ) =>
-		isGlobalSiteViewEnabled( state, siteId )
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
 	);
 
-	return globalSiteViewEnabled ? siteAdminUrl : `/advertising/${ selectedSiteSlug }`;
+	return adminInterfaceIsWPAdmin ? siteAdminUrl : `/advertising/${ selectedSiteSlug }`;
 };
 
 export default useAdvertisingUrl;

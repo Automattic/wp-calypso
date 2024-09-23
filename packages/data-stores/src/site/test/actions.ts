@@ -433,7 +433,6 @@ describe( 'Site Actions', () => {
 			template: 'zoologist',
 			theme: 'zoologist',
 			categories: [ { slug: 'featured', name: 'Featured' } ],
-			is_premium: false,
 			features: [],
 			recipe: mockedRecipe,
 		};

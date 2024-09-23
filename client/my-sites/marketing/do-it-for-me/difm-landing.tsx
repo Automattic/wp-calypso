@@ -33,6 +33,8 @@ import {
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
+import './difm-landing.scss';
+
 const Placeholder = styled.span`
 	padding: 0 60px;
 	animation: loading-fade 800ms ease-in-out infinite;
@@ -55,12 +57,14 @@ const Placeholder = styled.span`
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
-	gap: 96px;
 	padding: 12px;
+	max-width: 1040px;
+	margin: 0 auto;
 `;
 
 const ContentSection = styled.div`
 	flex: 1;
+	padding-right: 10px;
 `;
 
 const ImageSection = styled.div`
@@ -76,9 +80,16 @@ const ImageSection = styled.div`
 `;
 
 const Header = styled( FormattedHeader )`
+	margin: 0 0 24px 0 !important;
 	.formatted-header__title {
-		font-size: 2.25rem;
+		font-size: 2.75rem;
 		line-height: 3rem;
+		@media ( min-width: 400px ) {
+			text-wrap: nowrap;
+		}
+	}
+	.formatted-header__subtitle {
+		font-size: 1rem;
 	}
 `;
 
@@ -189,6 +200,7 @@ const CTASectionWrapper = styled.div`
 const StepContainer = styled.div`
 	display: flex;
 	gap: 20px;
+	margin-top: 0;
 `;
 
 const ProgressLine = styled.div`
@@ -296,7 +308,7 @@ export default function DIFMLanding( {
 	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
-	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
+	const planStorageSlug = planObject?.getStorageFeature?.();
 	const planStorageString = planStorageSlug ? getFeatureByKey( planStorageSlug )?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );

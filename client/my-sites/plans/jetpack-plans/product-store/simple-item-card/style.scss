@@ -99,9 +99,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 	font-size: $font-body;
 	min-width: 5.7rem;
 	border-width: 0;
+	white-space: nowrap;
+
 	.gridicon.gridicons-checkmark {
 		transform: rotate(-8.37deg);
 		margin-right: 11.46px;

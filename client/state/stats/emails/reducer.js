@@ -30,7 +30,7 @@ export const requests = ( state = {}, action ) => {
 					case EMAIL_STATS_RECEIVE:
 						return { requesting: false, status: 'success' };
 					case EMAIL_STATS_REQUEST_FAILURE:
-						return { requesting: true, status: 'error' };
+						return { requesting: false, status: 'error' };
 				}
 			} )();
 

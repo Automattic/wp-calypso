@@ -8,6 +8,7 @@ import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import { isFormDisabled } from 'calypso/state/login/selectors';
+import { getUxMode, getRedirectUri } from './utils';
 
 import './style.scss';
 
@@ -19,14 +20,13 @@ const noop = () => {};
 
 class AppleLoginButton extends Component {
 	static propTypes = {
-		clientId: PropTypes.string.isRequired,
 		isFormDisabled: PropTypes.bool,
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
+		isLogin: PropTypes.bool,
 		scope: PropTypes.string,
-		uxMode: PropTypes.oneOf( [ 'redirect', 'popup' ] ),
+		uxMode: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
-		originalUrlPath: PropTypes.string,
 		queryString: PropTypes.string,
 	};
 
@@ -34,18 +34,21 @@ class AppleLoginButton extends Component {
 		onClick: noop,
 		scope: 'name email',
 		uxMode: 'popup',
-		originalUrlPath: null,
 		queryString: null,
 	};
 
 	appleClient = null;
+
+	getUxMode() {
+		return config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : this.props.uxMode;
+	}
 
 	componentDidMount() {
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return;
 		}
 
-		if ( this.props.uxMode === 'redirect' ) {
+		if ( this.getUxMode() === 'redirect' ) {
 			this.props.socialServiceResponse &&
 				this.handleSocialResponseFromRedirect( this.props.socialServiceResponse );
 			this.loadAppleClient();
@@ -53,24 +56,24 @@ class AppleLoginButton extends Component {
 	}
 
 	handleSocialResponseFromRedirect( socialServiceResponse ) {
-		if ( socialServiceResponse.client_id !== config( 'apple_oauth_client_id' ) ) {
+		const { client_id, state, user_email, user_name, id_token } = socialServiceResponse;
+
+		if ( client_id !== config( 'apple_oauth_client_id' ) ) {
 			return;
 		}
 
 		const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
 		window.sessionStorage.removeItem( 'siwa_state' );
 
-		if ( socialServiceResponse.state !== storedOauth2State ) {
+		if ( state !== storedOauth2State ) {
 			return;
 		}
 
-		const user = {
-			email: socialServiceResponse.user_email,
-			name: socialServiceResponse.user_name,
-		};
 		this.props.responseHandler( {
-			id_token: socialServiceResponse.id_token,
-			user: user,
+			service: 'apple',
+			id_token: id_token,
+			user_name: user_name,
+			user_email: user_email,
 		} );
 	}
 
@@ -87,12 +90,12 @@ class AppleLoginButton extends Component {
 		window.sessionStorage.setItem( 'siwa_state', oauth2State );
 
 		window.AppleID.auth.init( {
-			clientId: this.props.clientId,
+			clientId: config( 'apple_oauth_client_id' ),
 			scope: this.props.scope,
 			redirectURI: this.props.redirectUri,
 			state: JSON.stringify( {
 				oauth2State,
-				originalUrlPath: this.props.originalUrlPath,
+				originalUrlPath: this.props.isLogin ? null : window?.location?.pathname,
 				queryString: this.props.queryString,
 			} ),
 		} );
@@ -109,12 +112,14 @@ class AppleLoginButton extends Component {
 			this.props.onClick( event );
 		}
 
-		if ( this.props.uxMode === 'popup' ) {
-			requestExternalAccess( connectUrlPopupFLow, this.props.responseHandler );
+		if ( this.getUxMode() === 'popup' ) {
+			requestExternalAccess( connectUrlPopupFLow, ( result ) =>
+				this.props.responseHandler( { service: 'apple', ...result } )
+			);
 			return;
 		}
 
-		if ( this.props.uxMode === 'redirect' ) {
+		if ( this.getUxMode() === 'redirect' ) {
 			this.loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
 			return;
 		}
@@ -143,7 +148,8 @@ class AppleLoginButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ clsx( 'social-buttons__button button apple', { disabled: isDisabled } ) }
+						data-social-service="apple"
 						onClick={ this.handleClick }
 					>
 						<AppleIcon
@@ -167,8 +173,10 @@ class AppleLoginButton extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	( state, ownProps ) => ( {
 		isFormDisabled: isFormDisabled( state ),
+		uxMode: getUxMode( state ),
+		redirectUri: getRedirectUri( 'apple', state, ownProps.isLogin ),
 	} ),
 	null
 )( localize( AppleLoginButton ) );

@@ -1058,6 +1058,17 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
+		// Skips availability check for the Gravatar flow - so TLDs that are
+		// available but not eligible for Gravatar won't be displayed
+		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			// Also, we want to error messages for unavailable TLDs in Gravatar.
+			// Since only .link is enabled for now, we show the message for all other TLDs.
+			if ( getTld( domain ) !== 'link' ) {
+				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
+			}
+			return;
+		}
+
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },

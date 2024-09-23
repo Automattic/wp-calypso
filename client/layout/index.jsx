@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
-import { shouldLoadInlineHelp } from '@automattic/help-center';
+import { useLocale } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
@@ -27,14 +27,16 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { onboardingUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { getAdminColor } from 'calypso/state/admin-color/selectors';
+import { useSelector } from 'calypso/state';
 import { isOffline } from 'calypso/state/application/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
@@ -42,23 +44,27 @@ import {
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getSelectedSite,
 	getSelectedSiteId,
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+import { getColorScheme, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
+import { shouldLoadInlineHelp, handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -136,6 +142,13 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 		setShowHelpCenter( false );
 	}, [ setShowHelpCenter ] );
 
+	const locale = useLocale();
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const user = useSelector( getCurrentUser );
+	const selectedSite = useSelector( getSelectedSite );
+	const primarySiteSlug = useSelector( getPrimarySiteSlug );
+	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
@@ -146,8 +159,15 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }
+			locale={ locale }
+			sectionName={ sectionName }
+			site={ selectedSite || primarySite }
+			currentUser={ user }
+			hasPurchases={ hasPurchases }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
+			onboardingUrl={ onboardingUrl() }
+			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 		/>
 	);
 }
@@ -224,96 +244,24 @@ class Layout extends Component {
 			this.setState( { isDesktop } );
 		} );
 
-		this.refreshColorScheme( undefined, this.props.colorScheme );
-		this.addSidebarClassToBody();
+		refreshColorScheme( undefined, this.props.colorScheme );
 	}
 
-	/**
-	 * Refresh the color scheme if
-	 * - the color scheme has changed
-	 * - the global sidebar is visible and the color scheme is not `modern`
-	 * - the global sidebar was visible and is now hidden and the color scheme is not `modern`
-	 * @param prevProps object
-	 */
 	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.colorScheme !== this.props.colorScheme ||
-			( this.props.isGlobalSidebarVisible && this.props.colorScheme !== 'modern' ) ||
-			( prevProps.isGlobalSidebarVisible &&
-				! this.props.isGlobalSidebarVisible &&
-				this.props.colorScheme !== 'modern' )
-		) {
-			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
-		}
-
-		if (
-			prevProps.isGlobalSidebarVisible !== this.props.isGlobalSidebarVisible ||
-			prevProps.isGlobalSidebarCollapsed !== this.props.isGlobalSidebarCollapsed
-		) {
-			this.addSidebarClassToBody();
-		}
-	}
-
-	addSidebarClassToBody() {
-		if ( typeof document === 'undefined' ) {
-			return;
-		}
-
-		if ( this.props.isGlobalSidebarVisible ) {
-			document.querySelector( 'body' ).classList.add( 'has-global-sidebar' );
-		} else {
-			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar' );
-		}
-
-		if ( this.props.isGlobalSidebarCollapsed ) {
-			document.querySelector( 'body' ).classList.add( 'has-global-sidebar-collapsed' );
-		} else {
-			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar-collapsed' );
-		}
-	}
-
-	refreshColorScheme( prevColorScheme, nextColorScheme ) {
-		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
-			return;
-		}
-
-		if ( typeof document !== 'undefined' ) {
-			const classList = document.querySelector( 'body' ).classList;
-			const globalColorScheme = 'modern';
-
-			if ( this.props.isGlobalSidebarVisible ) {
-				// Force the global color scheme when the global sidebar is visible.
-				nextColorScheme = globalColorScheme;
-			} else {
-				// Revert back to user's color scheme when the global sidebar is gone.
-				prevColorScheme = globalColorScheme;
-			}
-
-			classList.remove( `is-${ prevColorScheme }` );
-			classList.add( `is-${ nextColorScheme }` );
-
-			const themeColor = getComputedStyle( document.body )
-				.getPropertyValue( '--color-masterbar-background' )
-				.trim();
-			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
-			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
-			if ( themeColorMeta && themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
-				themeColorMeta.content = themeColor;
-			}
-		}
-
-		// intentionally don't remove these in unmount
+		refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
-		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
+		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
 			return (
 				<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
 			);
+		}
+		if ( this.props.isBlazePro ) {
+			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -331,18 +279,18 @@ class Layout extends Component {
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 			/>
 		);
 	}
 
 	render() {
-		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
+			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -355,6 +303,10 @@ class Layout extends Component {
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
+			'is-blaze-pro': this.props.isBlazePro,
+			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+				'woocommerce/core-profiler-passwordless-auth'
+			),
 		} );
 
 		const optionalBodyProps = () => {
@@ -412,9 +364,7 @@ class Layout extends Component {
 				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ this.props.isUnifiedSiteSidebarVisible && (
-					<QuerySiteAdminColor siteId={ this.props.siteId } />
-				) }
+				<QuerySiteAdminColor siteId={ this.props.siteId } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
@@ -496,6 +446,7 @@ export default withCurrentRoute(
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
+		const isBlazePro = getIsBlazePro( state );
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			siteId,
@@ -522,7 +473,9 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			( ! isWooCoreProfilerFlow &&
+				! isBlazePro &&
+				[ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
 		const masterbarIsHidden =
@@ -551,12 +504,16 @@ export default withCurrentRoute(
 			'comments',
 		].includes( sectionName );
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
+		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
+
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
 
-		const calypsoColorScheme = getPreference( state, 'colorScheme' );
-		const siteColorScheme = getAdminColor( state, siteId ) ?? calypsoColorScheme;
-		const colorScheme = shouldShowUnifiedSiteSidebar ? siteColorScheme : calypsoColorScheme;
+		const colorScheme = getColorScheme( {
+			state,
+			sectionName,
+			isGlobalSidebarVisible,
+		} );
 
 		return {
 			masterbarIsHidden,
@@ -569,6 +526,7 @@ export default withCurrentRoute(
 			isWooCoreProfilerFlow,
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
+			isBlazePro,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn: isUserLoggedIn( state ),
@@ -589,7 +547,7 @@ export default withCurrentRoute(
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
 			currentRoute,
-			isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
+			isGlobalSidebarVisible,
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),

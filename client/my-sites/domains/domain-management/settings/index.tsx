@@ -35,6 +35,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import DnssecCard from 'calypso/my-sites/domains/domain-management/settings/cards/dnssec-card';
 import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
@@ -71,7 +72,6 @@ import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
 import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
-import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -80,8 +80,10 @@ const Settings = ( {
 	currentRoute,
 	domain,
 	domains,
+	isFetchingNameservers,
 	isLoadingPurchase,
 	isLoadingNameservers,
+	isUpdatingNameservers,
 	loadingNameserversError,
 	nameservers,
 	dns,
@@ -146,9 +148,7 @@ const Settings = ( {
 		if ( ! domain ) {
 			return null;
 		}
-		if ( ! isSecuredWithUs( domain ) ) {
-			return null;
-		}
+
 		if (
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.type === domainTypes.TRANSFER ||
@@ -158,27 +158,22 @@ const Settings = ( {
 		}
 
 		return (
-			<Accordion
-				title={ translate( 'Domain security', { textOnly: true } ) }
-				subtitle={ getSslReadableStatus( domain ) }
-				key="security"
+			<DomainSecurityDetails
+				domain={ domain }
+				sslStatus={ domain.sslStatus }
+				selectedSite={ selectedSite }
+				purchase={ purchase }
+				isLoadingPurchase={ isLoadingPurchase }
 				isDisabled={ domain.isMoveToNewSitePending }
-			>
-				<DomainSecurityDetails
-					domain={ domain }
-					selectedSite={ selectedSite }
-					purchase={ purchase }
-					isLoadingPurchase={ isLoadingPurchase }
-				/>
-			</Accordion>
+			/>
 		);
 	};
 
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			domain.type === domainTypes.TRANSFER ||
-			domain.isGravatarDomain
+			domain?.type === domainTypes.TRANSFER ||
+			domain?.isGravatarDomain
 		) {
 			return null;
 		}
@@ -703,6 +698,27 @@ const Settings = ( {
 		return <GlueRecordsCard domain={ domain } />;
 	};
 
+	const renderDnssecSection = () => {
+		if (
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.isSubdomain ||
+			! domain.isDnssecSupported ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return (
+			<DnssecCard
+				domain={ domain }
+				nameservers={ nameservers }
+				isUpdatingNameservers={ isUpdatingNameservers }
+				isLoadingNameservers={ isLoadingNameservers || isFetchingNameservers }
+			/>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
@@ -730,6 +746,7 @@ const Settings = ( {
 				{ renderForwardingSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
+				{ renderDnssecSection() }
 				{ renderDomainSecuritySection() }
 				{ renderDomainGlueRecordsSection() }
 			</>

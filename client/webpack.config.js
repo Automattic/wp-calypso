@@ -17,6 +17,7 @@ const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+const Dotenv = require( 'dotenv-webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
@@ -294,6 +295,7 @@ const webpackConfig = {
 	},
 	node: false,
 	plugins: [
+		new Dotenv(),
 		new webpack.DefinePlugin( {
 			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
@@ -304,6 +306,9 @@ const webpackConfig = {
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
+			fingerprintJsVersion: JSON.stringify(
+				require( '../packages/fingerprintjs/package.json' ).version
+			),
 			global: 'window',
 		} ),
 		// Node polyfills

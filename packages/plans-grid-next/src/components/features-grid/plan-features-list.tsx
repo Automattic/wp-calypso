@@ -3,9 +3,9 @@ import {
 	isWpcomEnterpriseGridPlan,
 	FEATURE_GROUP_STORAGE,
 	FEATURE_GROUP_ALL_FEATURES,
-	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
@@ -14,7 +14,7 @@ import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
-import { StorageFeature } from '../shared/storage';
+import { PlanStorage } from '../shared/storage';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
@@ -37,8 +37,7 @@ type PlanFeaturesListProps = {
 		isTableCell?: boolean;
 	};
 	featureGroupSlug?: FeatureGroupSlug;
-	intervalType: string;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 };
 
@@ -51,13 +50,12 @@ const PlanFeaturesList = ( {
 	renderedGridPlans,
 	selectedFeature,
 	featureGroupSlug,
-	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage = false,
 }: PlanFeaturesListProps ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { featureGroupMap } = usePlansGridContext();
+	const { featureGroupMap, hideFeatureGroupTitles } = usePlansGridContext();
 	const featureGroup = featureGroupSlug && featureGroupMap[ featureGroupSlug ];
 
 	/**
@@ -90,16 +88,17 @@ const PlanFeaturesList = ( {
 						isTableCell={ options?.isTableCell }
 						className="plan-features-2023-grid__table-item"
 					>
+						{ ! hideFeatureGroupTitles && (
+							<PlanFeaturesItem>
+								<h2 className="plans-grid-next-features-grid__feature-group-title">
+									{ featureGroup?.getTitle() }
+								</h2>
+							</PlanFeaturesItem>
+						) }
 						<PlanFeaturesItem>
-							<h2 className="plans-grid-next-features-grid__feature-group-title">
-								{ featureGroup?.getTitle() }
-							</h2>
-						</PlanFeaturesItem>
-						<PlanFeaturesItem>
-							<StorageFeature
+							<PlanStorage
 								planSlug={ planSlug }
 								options={ { isTableCell: true } }
-								intervalType={ intervalType }
 								onStorageAddOnClick={ onStorageAddOnClick }
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
@@ -135,10 +134,10 @@ const PlanFeaturesList = ( {
 					isTableCell={ options?.isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					{ featureGroup?.getTitle() && (
+					{ ! hideFeatureGroupTitles && featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
 							<h2 className="plans-grid-next-features-grid__feature-group-title">
-								{ featureGroup?.getTitle() }
+								{ featureGroup.getTitle() }
 							</h2>
 						</PlanFeaturesItem>
 					) }

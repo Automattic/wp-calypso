@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { onEnterOnboarding } from '../flow-actions';
 
@@ -38,8 +38,32 @@ const getP2Flows = () => {
 		: [];
 };
 
+const getEmailSubscriptionFlow = () => {
+	return isEnabled( 'signup/email-subscription-flow' )
+		? [
+				{
+					name: 'email-subscription',
+					steps: [ 'subscribe' ],
+					destination: ( dependencies ) => `${ dependencies.redirect }`,
+					description:
+						'Signup flow that subscripes user to guides appointments for email campaigns',
+					lastModified: '2024-06-17',
+					showRecaptcha: true,
+					providesDependenciesInQuery: [
+						'user_email',
+						'redirect_to',
+						'mailing_list',
+						'from',
+						'first_name',
+					],
+					optionalDependenciesInQuery: [ 'last_name' ],
+					hideProgressIndicator: true,
+				},
+		  ]
+		: [];
+};
+
 export function generateFlows( {
-	getSiteDestination = noop,
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
@@ -53,9 +77,11 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 	getEntrepreneurFlowDestination = noop,
+	getGuidedOnboardingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
+	const emailSubscriptionFlow = getEmailSubscriptionFlow();
 
 	const flows = [
 		{
@@ -127,24 +153,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'pro',
-			steps: [ userSocialStep, 'domains', 'plans-pro' ],
-			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the pro plan to the users cart.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'starter',
-			steps: [ userSocialStep, 'domains', 'plans-starter' ],
-			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the starter plan to the users cart.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'free',
 			steps: [ userSocialStep, 'domains' ],
 			destination: getSignupDestination,
@@ -184,8 +192,20 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'onboarding',
-			steps: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+			name: ONBOARDING_GUIDED_FLOW,
+			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
+			destination: getGuidedOnboardingFlowDestination,
+			description: 'Choose what brings them to WordPress.com',
+			lastModified: '2024-06-19',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
+		},
+		{
+			name: ONBOARDING_FLOW,
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
@@ -204,15 +224,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'onboarding-2023-pricing-grid',
-			steps: [ userSocialStep, 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -257,16 +268,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'with-add-ons',
-			steps: [ userSocialStep, 'domains', 'plans', 'add-ons' ],
-			destination: getSignupDestination,
-			description:
-				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-with-email',
 			steps: [ userSocialStep, 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
 			destination: getEmailSignupFlowDestination,
@@ -283,32 +284,6 @@ export function generateFlows( {
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
 			showRecaptcha: true,
-		},
-		{
-			name: 'desktop',
-			steps: [ 'user' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for desktop app',
-			lastModified: '2021-03-26',
-			showRecaptcha: true,
-		},
-		{
-			name: 'pressable-nux',
-			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
-			destination: '/stats',
-			description: 'Allow new Pressable users to grant permission to server credentials',
-			lastModified: '2017-11-20',
-			disallowResume: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'rewind-switch',
-			steps: [ 'rewind-migrate', 'rewind-were-backing' ],
-			destination: '/activity-log',
-			description:
-				'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
-			lastModified: '2018-01-27',
-			disallowResume: true,
 		},
 		{
 			name: 'rewind-setup',
@@ -446,14 +421,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'plan-no-domain',
-			steps: [ 'user', 'site', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Allow users to select a plan without a domain',
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		{
 			name: 'launch-only',
 			steps: [ 'launch' ],
 			destination: getLaunchDestination,
@@ -566,8 +533,9 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-05-16',
+			lastModified: '2024-06-14',
 			enablePresales: false,
+			enableHotjar: true,
 		},
 
 		{
@@ -577,8 +545,9 @@ export function generateFlows( {
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2023-10-11',
+			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
+			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',
@@ -593,26 +562,6 @@ export function generateFlows( {
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},
-
-		{
-			name: 'ecommerce-2y',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-2y' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'ecommerce-3y',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-3y' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2024-04-17',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-
 		{
 			name: 'business-2y',
 			steps: [ userSocialStep, 'domains', 'plans-business-2y' ],
@@ -675,23 +624,14 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: ONBOARDING_GUIDED_FLOW,
-			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Choose what brings them to WordPress.com',
-			lastModified: '2024-05-15',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'entrepreneur',
 			steps: [ userSocialStep ],
 			destination: getEntrepreneurFlowDestination,
 			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
 			lastModified: '2024-05-29',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
+			providesDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
+			optionalDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -704,7 +644,9 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			enableHotjar: true,
 		},
+		...emailSubscriptionFlow,
 	];
 
 	// convert the array to an object keyed by `name`

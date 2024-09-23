@@ -2,7 +2,8 @@ import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -26,10 +27,14 @@ import {
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
+import useFetchReferralInvoices from '../../hooks/use-fetch-referral-invoices';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import { getAccountStatus } from '../../lib/get-account-status';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
+import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
 
@@ -43,7 +48,13 @@ export default function ReferralsOverview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		layout: {
+			primaryField: 'client',
+		},
+	} );
+	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
@@ -51,16 +62,30 @@ export default function ReferralsOverview( {
 
 	const isDesktop = useDesktopBreakpoint();
 
+	const selectedItem = dataViewsState.selectedItem;
+
 	const title =
-		isAutomatedReferral && isDesktop
+		isAutomatedReferral && isDesktop && ! selectedItem
 			? translate( 'Your referrals and commissions' )
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	const accountStatus = getAccountStatus( tipaltiData, translate );
+
+	const isPayable = !! tipaltiData?.IsPayable;
+	const [ showPopover, setShowPopover ] = useState( false );
+	const wrapperRef = useRef< HTMLButtonElement | null >( null );
+
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
 
+	const { data: referralInvoices, isFetching: isFetchingReferralInvoices } =
+		useFetchReferralInvoices( isAutomatedReferral );
+
 	const hasReferrals = !! referrals?.length;
+
+	const actionRequiredNotice =
+		hasReferrals && accountStatus?.actionRequired && ! requiredNoticeClose;
 
 	const makeAReferral = useCallback( () => {
 		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
@@ -69,13 +94,11 @@ export default function ReferralsOverview( {
 
 	const isLoading = isFetching || isFetchingReferrals;
 
-	const selectedItem = dataViewsState.selectedItem;
-
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
 				'referrals-layout--automated': isAutomatedReferral,
-				'referrals-layout--full-width': isAutomatedReferral && hasReferrals,
+				'full-width-layout-with-table': isAutomatedReferral && hasReferrals,
 				'referrals-layout--has-selected': selectedItem,
 			} ) }
 			title={ title }
@@ -91,15 +114,56 @@ export default function ReferralsOverview( {
 							onClose={ () => setReferralEmail( '' ) }
 						/>
 					) }
+					{ actionRequiredNotice && (
+						<div className="referrals-overview__notice">
+							<MissingPaymentSettingsNotice onClose={ () => setRequiredNoticeClosed( true ) } />
+						</div>
+					) }
+
+					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
-								<Button primary href={ A4A_MARKETPLACE_PRODUCTS_LINK } onClick={ makeAReferral }>
-									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
-								</Button>
+								<span
+									onMouseEnter={ () => {
+										! isPayable && setShowPopover( true );
+									} }
+								>
+									<Button
+										primary
+										href={ A4A_MARKETPLACE_PRODUCTS_LINK }
+										onClick={ makeAReferral }
+										disabled={ ! isPayable }
+										ref={ wrapperRef }
+									>
+										{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
+									</Button>
+									{ showPopover && (
+										<A4APopover
+											className="referrals-overview__button-popover"
+											title={ translate( 'Your payment settings require action' ) }
+											offset={ 12 }
+											position="bottom left"
+											wrapperRef={ wrapperRef }
+											onFocusOutside={ () => setShowPopover( false ) }
+										>
+											<div className="referrals-overview__button-popover-description">
+												{ translate(
+													'Please confirm your details before referring products to your clients.'
+												) }
+											</div>
+											<Button
+												className="referrals-overview__notice-button is-dark"
+												href="/referrals/payment-settings"
+											>
+												{ translate( 'Go to payment settings' ) }
+											</Button>
+										</A4APopover>
+									) }
+								</span>
 							</Actions>
 						) }
 					</LayoutHeader>
@@ -113,6 +177,8 @@ export default function ReferralsOverview( {
 						isLoading={ isLoading }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
+						referralInvoices={ referralInvoices ?? [] }
+						isFetchingInvoices={ isFetchingReferralInvoices }
 					/>
 					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
@@ -121,6 +187,7 @@ export default function ReferralsOverview( {
 				<LayoutColumn wide>
 					<ReferralDetails
 						referral={ dataViewsState.selectedItem }
+						referralInvoices={ referralInvoices ?? [] }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {
 								...dataViewsState,

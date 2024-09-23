@@ -20,8 +20,7 @@ import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect, useLayoutEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -31,8 +30,6 @@ import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from '@automattic/plans-grid-next';
@@ -42,11 +39,9 @@ interface Props {
 	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
-	selectedSiteId: number | null;
-	setSelectedSiteId: ( siteId: number ) => void;
 }
 
-function getPlansIntent( flowName: string | null ): PlansIntent | null {
+function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
@@ -56,6 +51,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case LINK_IN_BIO_FLOW:
 			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
+			if ( isWordCampPromo ) {
+				return 'plans-new-hosted-site-business-only';
+			}
 			return 'plans-new-hosted-site';
 		default:
 			return null;
@@ -67,31 +65,27 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		hideFreePlan: reduxHideFreePlan,
 		domainCartItem,
 		hidePlansFeatureComparison,
+		couponCode,
 	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
 			hidePlansFeatureComparison: (
 				select( ONBOARD_STORE ) as OnboardSelect
 			 ).getHidePlansFeatureComparison(),
+			couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 		};
 	}, [] );
-	const { flowName, selectedSiteId, setSelectedSiteId } = props;
+	const { flowName } = props;
 
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
-	const siteId = site?.ID;
 	const currentPath = window.location.pathname + window.location.search;
 
 	useSaveHostingFlowPathStep( flowName, currentPath );
-
-	useEffect( () => {
-		if ( ! selectedSiteId && siteId ) {
-			setSelectedSiteId( siteId );
-		}
-	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
 	const [ planIntervalPath, setPlanIntervalPath ] = useState< string >( '' );
 	const { __ } = useI18n();
@@ -99,11 +93,17 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isDesktop = useDesktopBreakpoint();
 	const navigate = useNavigate();
 	const location = useLocation();
+
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
-	const plansIntent = getPlansIntent( flowName );
+	/**
+	 * isWordCampPromo is temporary
+	 */
+	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
+	const plansIntent = getPlansIntent( flowName, isWordCampPromo );
+
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
@@ -182,13 +182,15 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
-					hidePlansFeatureComparison={ hidePlansFeatureComparison }
+					hidePlansFeatureComparison={ hidePlansFeatureComparison || isWordCampPromo }
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					hidePlanTypeSelector={ isWordCampPromo }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
+					coupon={ couponCode }
 				/>
 			</div>
 		);
@@ -284,13 +286,4 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	);
 };
 
-export default connect(
-	( state ) => {
-		return {
-			selectedSiteId: getSelectedSiteId( state ),
-		};
-	},
-	{
-		setSelectedSiteId: setSelectedSiteId,
-	}
-)( localize( PlansWrapper ) );
+export default localize( PlansWrapper );

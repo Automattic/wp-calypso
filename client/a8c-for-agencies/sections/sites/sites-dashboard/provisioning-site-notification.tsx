@@ -2,29 +2,68 @@ import { Button } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { A4A_SITES_LINK_DEVELOPMENT } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
+import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
+import { addQueryArgs } from 'calypso/lib/url';
 
-type Props = {
+type BannerProps = {
 	siteId: number;
+	migration?: boolean;
+	development?: boolean;
+	onDismiss?: () => void;
 };
 
-export default function ProvisioningSiteNotification( { siteId }: Props ) {
+function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
 	const translate = useTranslate();
 
-	const wpOverviewUrl = `https://wordpress.com/overview/${ site?.url?.replace(
-		/(^\w+:|^)\/\//,
-		''
-	) }`;
+	const siteSlug = site?.url?.replace( /(^\w+:|^)\/\//, '' );
+	const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
+	const wpMigrationUrl = addQueryArgs(
+		{
+			siteId: site?.features.wpcom_atomic.blog_id,
+			siteSlug,
+		},
+		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
+	);
+
+	const readySiteMessage = development
+		? translate(
+				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below. Before the site launches, you will be able to find it under {{developmentTabLink}}Development{{/developmentTabLink}}.',
+				{
+					args: { siteURL: site?.url ?? '' },
+					components: {
+						a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
+						developmentTabLink: <a href={ A4A_SITES_LINK_DEVELOPMENT } rel="noreferrer" />,
+					},
+					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
+				}
+		  )
+		: translate(
+				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below.',
+				{
+					args: { siteURL: site?.url ?? '' },
+					components: {
+						a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
+					},
+					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
+				}
+		  );
+
+	const onClose = () => {
+		setShowBanner( false );
+		onDismiss?.();
+	};
 
 	return (
 		showBanner && (
 			<NoticeBanner
 				level={ isReady ? 'success' : 'warning' }
 				hideCloseButton={ ! isReady }
-				onClose={ () => setShowBanner( false ) }
+				onClose={ onClose }
 				title={
 					isReady
 						? translate( 'Your WordPress.com site is ready!' )
@@ -33,28 +72,41 @@ export default function ProvisioningSiteNotification( { siteId }: Props ) {
 				actions={
 					isReady
 						? [
-								<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
-									{ translate( 'Set up your site' ) }
-								</Button>,
+								migration ? (
+									<Button href={ wpMigrationUrl } target="_blank" rel="noreferrer" primary>
+										{ translate( 'Migrate to this site' ) }
+									</Button>
+								) : (
+									<Button href={ wpOverviewUrl } target="_blank" rel="noreferrer" primary>
+										{ translate( 'Set up your site' ) }
+									</Button>
+								),
 						  ]
 						: undefined
 				}
 			>
 				{ isReady
-					? translate(
-							'{{a}}%(siteURL)s{{/a}} is now ready. Get started by configuring your new site. It may take a few minutes for it to show up in the site list below.',
-							{
-								args: { siteURL: site?.url ?? '' },
-								components: {
-									a: <a href={ wpOverviewUrl } target="_blank" rel="noreferrer" />,
-								},
-								comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
-							}
-					  )
+					? readySiteMessage
 					: translate(
 							"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 					  ) }
 			</NoticeBanner>
 		)
 	);
+}
+
+export default function ProvisioningSiteNotification() {
+	const { provisioningSites, untrackSiteId } = useTrackProvisioningSites();
+
+	return provisioningSites.map( ( { id, migration, development } ) => {
+		return (
+			<Banner
+				key={ `provisioning_site_banner_${ id }` }
+				siteId={ id }
+				migration={ migration }
+				development={ development }
+				onDismiss={ () => untrackSiteId( id ) }
+			/>
+		);
+	} );
 }

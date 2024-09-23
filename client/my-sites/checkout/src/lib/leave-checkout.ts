@@ -1,5 +1,9 @@
-import { isTailoredSignupFlow } from '@automattic/onboarding';
-import { getQueryArg } from '@wordpress/url';
+import {
+	isTailoredSignupFlow,
+	MIGRATION_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+} from '@automattic/onboarding';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
@@ -38,19 +42,23 @@ export const leaveCheckout = ( {
 	const launchpadURLRegex = /^\/setup\/[a-z][a-z\-_]*[a-z]\/launchpad\b/g;
 	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
 
-	if ( siteSlug && sendMessageToOpener( siteSlug, 'checkoutCancelled' ) ) {
+	if (
+		siteSlug &&
+		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
+		! [ HOSTED_SITE_MIGRATION_FLOW, MIGRATION_FLOW ].includes( signupFlowName )
+	) {
 		return;
 	}
 
 	if ( isTailoredSignupFlow( signupFlowName ) ) {
-		const urlFromCookie = retrieveSignupDestination();
+		const urlFromCookie = addQueryArgs( retrieveSignupDestination(), { skippedCheckout: 1 } );
 		if ( urlFromCookie ) {
 			window.location.assign( urlFromCookie );
 		}
 	}
 
 	if ( redirectToParam && launchpadURLRegexMatch ) {
-		const launchpadUrl = redirectToParam?.toString();
+		const launchpadUrl = addQueryArgs( redirectToParam?.toString(), { skippedCheckout: 1 } );
 		window.location.assign( launchpadUrl );
 		return;
 	}

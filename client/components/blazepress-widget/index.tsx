@@ -28,6 +28,7 @@ export type BlazePressPromotionProps = {
 	isVisible: boolean;
 	siteId: string | number;
 	postId: string | number;
+	campaignId?: string;
 	keyValue: string;
 	source?: string;
 };
@@ -53,6 +54,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const previousRoute = useSelector( getPreviousRoute );
 	const selectedSite = useSelector( getSelectedSite );
 	const jetpackVersion = selectedSite?.options?.jetpack_version;
+	const blazeAdsVersion = selectedSite?.options?.blaze_ads_version;
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSite?.ID ) );
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
@@ -120,8 +122,10 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						handleShowTopBar,
 						localeSlug,
 						jetpackVersion,
+						blazeAdsVersion,
 						dispatch,
-						dspOriginProps
+						dspOriginProps,
+						props.campaignId
 					);
 				} catch ( error ) {
 					setError( true );

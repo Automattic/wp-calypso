@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .reauth-required__send-sms-throttled {
 	margin-bottom: 1em;
 }
@@ -16,4 +18,31 @@
 
 .reauth-required__logout {
 	margin-top: 1em;
+}
+
+// Let the left section of the masterbar be on top of the dialog during reauth.
+.reauth-required__dialog-body {
+	.masterbar {
+		position: inherit;
+		transition: none;
+		margin-bottom: -46px;
+
+		@media (max-width: $break-small) {
+			margin-bottom: 0;
+		}
+
+		@media (min-width: $break-medium) {
+			margin-bottom: -32px;
+		}
+
+		.masterbar__section--left {
+			z-index: z-index("root", ".reauth-required__dialog-body .masterbar__section--left");
+		}
+	}
+	.layout__content {
+		@media (max-width: $break-small) {
+			padding-top: 16px !important;
+			transition: none !important;
+		}
+	}
 }

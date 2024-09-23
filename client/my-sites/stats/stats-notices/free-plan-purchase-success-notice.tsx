@@ -73,7 +73,7 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 									onClick={ ( e ) =>
 										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats )
 									}
-									className="notice-banner__action-link"
+									className="notice-banner__action-link notice-banner__action-link--inline"
 									href={ getStatsPurchaseURL( siteId ) }
 									target="_blank"
 									rel="noreferrer"

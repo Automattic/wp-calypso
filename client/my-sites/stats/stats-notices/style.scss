@@ -10,6 +10,11 @@
 		display: inline-block;
 	}
 
+	a,
+	a:visited {
+		color: var(--studio-gray-80);
+	}
+
 	&.inner-notice-container--calypso {
 		p,
 		button,

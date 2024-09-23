@@ -1,5 +1,8 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, ReactNode, useState } from 'react';
+import { useMemo, ReactNode, useState, useCallback } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -9,18 +12,24 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
-import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
-import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
-import { getSubscriptionStatus } from '../../lib/get-subscription-status';
+import {
+	SubscriptionAction,
+	SubscriptionPrice,
+	SubscriptionPurchase,
+	SubscriptionStatus,
+} from './field-content';
+import SubscriptionsListMobileView from './mobile-view';
 import type { Subscription } from '../../types';
 
 import './style.scss';
 
 export default function SubscriptionsList() {
 	const translate = useTranslate();
+
+	const isDesktop = useDesktopBreakpoint();
+
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
 	const { data, isFetching, refetch } = useFetchClientSubscriptions();
@@ -28,67 +37,71 @@ export default function SubscriptionsList() {
 
 	const title = translate( 'Your subscriptions' );
 
+	const onCancelSubscription = useCallback( () => {
+		refetch();
+	}, [ refetch ] );
+
 	const fields = useMemo(
 		() => [
 			{
 				id: 'purchase',
-				header: translate( 'Purchase' ).toUpperCase(),
+				label: translate( 'Purchase' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const product = products?.find( ( product ) => product.product_id === item.product_id );
-					return isFetchingProducts ? <TextPlaceholder /> : product?.name;
+					return <SubscriptionPurchase isFetching={ isFetchingProducts } name={ product?.name } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'price',
-				header: translate( 'Price' ).toUpperCase(),
+				label: translate( 'Price' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const product = products?.find( ( product ) => product.product_id === item.product_id );
-					return isFetchingProducts ? <TextPlaceholder /> : `$${ product?.amount }`;
+					return <SubscriptionPrice isFetching={ isFetchingProducts } amount={ product?.amount } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'subscription-status',
-				header: translate( 'Subscription Status' ).toUpperCase(),
+				label: translate( 'Subscription Status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
-					const { children, type } = getSubscriptionStatus( item.status, translate );
-					return children ? <StatusBadge statusProps={ { children, type } } /> : '-';
+					return <SubscriptionStatus status={ item.status } translate={ translate } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'actions',
-				header: translate( 'Actions' ).toUpperCase(),
+				label: translate( 'Actions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
-					const status = item.status;
-					const isActive = status === 'active';
-					return isActive ? (
-						<CancelSubscriptionAction
+					return (
+						<SubscriptionAction
 							subscription={ item }
-							onCancelSubscription={ () => refetch() }
+							onCancelSubscription={ onCancelSubscription }
 						/>
-					) : (
-						'-'
 					);
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ isFetchingProducts, products, refetch, translate ]
+		[ isFetchingProducts, onCancelSubscription, products, translate ]
 	);
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data ?? [], dataViewsState, fields );
+	}, [ data, dataViewsState, fields ] );
 
 	return (
 		<Layout
-			className="subscriptions-list__layout"
+			className={ clsx( 'subscriptions-list__layout full-width-layout-with-table', {
+				'is-mobile-view': ! isDesktop,
+			} ) }
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
@@ -101,24 +114,32 @@ export default function SubscriptionsList() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<div className="redesigned-a8c-table">
-					<ItemsDataViews
-						data={ {
-							items: data || [],
-							pagination: {
-								totalItems: 1,
-								totalPages: 1,
-							},
-							itemFieldId: 'id',
-							enableSearch: false,
-							fields: fields,
-							actions: [],
-							setDataViewsState: setDataViewsState,
-							dataViewsState: dataViewsState,
-						} }
-						isLoading={ isFetching }
+				{ isDesktop ? (
+					<div className="redesigned-a8c-table">
+						<ItemsDataViews
+							data={ {
+								items,
+								pagination: paginationInfo,
+								itemFieldId: 'id',
+								enableSearch: false,
+								fields: fields,
+								actions: [],
+								setDataViewsState: setDataViewsState,
+								dataViewsState: dataViewsState,
+								defaultLayouts: { table: {} },
+							} }
+							isLoading={ isFetching }
+						/>
+					</div>
+				) : (
+					<SubscriptionsListMobileView
+						subscriptions={ data }
+						title={ title }
+						onCancelSubscription={ onCancelSubscription }
+						isFetchingProducts={ isFetchingProducts }
+						products={ products }
 					/>
-				</div>
+				) }
 			</LayoutBody>
 		</Layout>
 	);

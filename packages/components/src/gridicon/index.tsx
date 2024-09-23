@@ -17,10 +17,47 @@ interface Props {
 
 type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
+function isCrossOrigin( url: string ) {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	return new URL( url, window.location.href ).origin !== window.location.origin;
+}
+
+/**
+ * Fetches the SVG file and creates a proxy URL for it.
+ * @param url the original cross-origin URL
+ * @returns the proxied URL.
+ */
+function useProxiedURL( url: string ) {
+	const [ urlProxy, setUrlProxy ] = React.useState( () =>
+		isCrossOrigin( url ) ? undefined : url
+	);
+	React.useEffect( () => {
+		if ( isCrossOrigin( url ) ) {
+			setUrlProxy( undefined );
+			fetch( url )
+				.then( ( res ) => res.blob() )
+				.then( ( blob ) => {
+					const urlProxy = URL.createObjectURL( blob );
+					setUrlProxy( urlProxy );
+				} )
+				.catch( () => {} );
+		} else {
+			setUrlProxy( url );
+		}
+	}, [ url ] );
+
+	return urlProxy;
+}
+
 const Gridicon = React.memo(
 	React.forwardRef< SVGSVGElement, AllProps >( ( props: AllProps, ref ) => {
 		const { size = 24, icon, className, title, ...otherProps } = props;
 		const isModulo18 = size % 18 === 0;
+
+		// Proxy URL to support cross-origin SVGs.
+		const proxiedSpritePath = useProxiedURL( spritePath );
 
 		// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
 		// This means we don't need to perform any checks on the icon name.
@@ -43,7 +80,7 @@ const Gridicon = React.memo(
 				{ ...otherProps }
 			>
 				{ title && <title>{ title }</title> }
-				<use xlinkHref={ `${ spritePath }#${ iconName }` } />
+				{ proxiedSpritePath && <use xlinkHref={ `${ proxiedSpritePath }#${ iconName }` } /> }
 			</svg>
 		);
 	} )

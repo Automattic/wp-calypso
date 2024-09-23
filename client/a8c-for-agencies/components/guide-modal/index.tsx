@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
+import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -15,9 +16,10 @@ type GuideModalStep = {
 export type GuideModalProps = {
 	steps?: GuideModalStep[];
 	onClose: () => void;
+	dismissable?: boolean;
 };
 
-const GuideModal = ( { onClose, steps }: GuideModalProps ) => {
+const GuideModal = ( { onClose, steps, dismissable }: GuideModalProps ) => {
 	const [ step, setStep ] = useState( 0 );
 	const translate = useTranslate();
 
@@ -46,6 +48,17 @@ const GuideModal = ( { onClose, steps }: GuideModalProps ) => {
 	return (
 		<Modal onRequestClose={ onClose } className="guide-modal__wrapper" __experimentalHideHeader>
 			<div className="guide-modal__content">
+				{ dismissable && (
+					<Button
+						className="guide-modal__dismiss-button"
+						onClick={ onClose }
+						plain
+						aria-label={ translate( 'close' ) }
+					>
+						<Icon className="gridicon" icon={ close } />
+					</Button>
+				) }
+
 				<div className="guide-modal__header">{ steps[ step ].preview }</div>
 				<div className="guide-modal__main">
 					<div className="guide-modal__body">

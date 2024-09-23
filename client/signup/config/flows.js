@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getPlan, TYPE_ECOMMERCE, TYPE_BUSINESS } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -7,14 +8,27 @@ import {
 	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
-import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
-function getCheckoutUrl( dependencies, localeSlug, flowName ) {
+function constructBackUrlFromPath( path ) {
+	if ( config( 'env' ) !== 'production' ) {
+		const protocol = config( 'protocol' ) ?? 'https';
+		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
+		const hostName = config( 'hostname' );
+
+		return `${ protocol }://${ hostName }${ port }${ path }`;
+	}
+
+	return `https://${ config( 'hostname' ) }${ path }`;
+}
+
+function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	// Append the locale slug for the userless checkout page.
@@ -22,24 +36,26 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
-	let checkoutBackUrl = `https://${ config( 'hostname' ) }/start/${ flowName }/domain-only`;
-	if ( config( 'env' ) !== 'production' ) {
-		const protocol = config( 'protocol' ) ?? 'https';
-		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
-		const hostName = config( 'hostname' );
+	const isDomainOnly = [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 
-		checkoutBackUrl = `${ protocol }://${ hostName }${ port }/start/${ flowName }/domain-only`;
-	}
+	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
+	// Due to historical reason, `destination` can be either a path or a complete URL.
+	// Thus, if it is determined as not an URL, we assume it as a path here. We can surely make it more comprehensive,
+	// but the required effort and computation cost might outweigh the gain.
+	//
+	// TODO:
+	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
+	const checkoutBackUrl = isURL( destination )
+		? destination
+		: constructBackUrlFromPath( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
 
 	return addQueryArgs(
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
-			...( [ 'domain', 'domain-for-gravatar' ].includes( flowName ) && {
-				isDomainOnly: 1,
-				checkoutBackUrl,
-			} ),
+			...( isDomainOnly && { isDomainOnly: 1 } ),
+			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl ),
 		},
 		checkoutURL
 	);
@@ -49,21 +65,6 @@ function dependenciesContainCartItem( dependencies ) {
 	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
 	// dependencies.domainItem once all steps and flows have been updated to use cartItems
 	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
-}
-
-function getSiteDestination( dependencies ) {
-	let protocol = 'https';
-
-	/**
-	 * It is possible that non-wordpress.com sites are not HTTPS ready.
-	 *
-	 * Redirect them
-	 */
-	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
-		protocol = 'http';
-	}
-
-	return protocol + '://' + dependencies.siteSlug;
 }
 
 function getRedirectDestination( dependencies ) {
@@ -254,12 +255,68 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
-function getEntrepreneurFlowDestination() {
-	return '/setup/entrepreneur/trialAcknowledge';
+function getEntrepreneurFlowDestination( { redirect_to } ) {
+	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
+}
+
+function getGuidedOnboardingFlowDestination( dependencies ) {
+	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
+
+	if ( ! onboardingSegment ) {
+		return getSignupDestination( dependencies );
+	}
+
+	if ( 'no-site' === siteSlug ) {
+		return '/home';
+	}
+
+	let queryParams = { siteSlug, siteId };
+
+	if ( domainItem ) {
+		queryParams = { siteId };
+	}
+
+	if ( refParameter ) {
+		queryParams.ref = refParameter;
+	}
+
+	const planSlug = getPlanCartItem( cartItems )?.product_slug;
+	const planType = getPlan( planSlug )?.type;
+
+	// Blog and Merchant setup without Entrepreneur/Ecommerce Plan
+	if (
+		( onboardingSegment === 'blogger' || onboardingSegment === 'merchant' ) &&
+		planType !== TYPE_ECOMMERCE
+	) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
+	}
+
+	// Not Blog, Merchant, nor Developer/Agency without Entrepreneur/Ecommerce Plan
+	if (
+		onboardingSegment !== 'blogger' &&
+		onboardingSegment !== 'merchant' &&
+		onboardingSegment !== 'developer-or-agency' &&
+		planType !== TYPE_ECOMMERCE
+	) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
+	}
+
+	// Entrepreneur/Ecommerce Plan
+	if ( planType === TYPE_ECOMMERCE ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
+
+	// Developer or Agency with Creator/Business Plan
+	if ( onboardingSegment === 'developer-or-agency' && planType === TYPE_BUSINESS ) {
+		queryParams.initiate_transfer_context = 'guided';
+		queryParams.redirect_to = `/home/${ siteSlug }`;
+		return addQueryArgs( queryParams, '/setup/transferring-hosted-site' );
+	}
+
+	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
 }
 
 const flows = generateFlows( {
-	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
@@ -274,6 +331,7 @@ const flows = generateFlows( {
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,
 	getEntrepreneurFlowDestination,
+	getGuidedOnboardingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -308,7 +366,7 @@ function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	}
 
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies, localeSlug, flowName );
+		return getCheckoutUrl( dependencies, localeSlug, flowName, destination );
 	}
 
 	return destination;
@@ -342,14 +400,10 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			const urlParams = new URLSearchParams( window.location.search );
-			const param = urlParams.get( 'user_completed' );
 			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
 
-			// Remove the user step unless the user has just completed the step
-			// and then clicked the back button.
-			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
-			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
+			// Remove the user step unless it is the only step in the whole flow, e.g., `/start/account`
+			if ( ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}

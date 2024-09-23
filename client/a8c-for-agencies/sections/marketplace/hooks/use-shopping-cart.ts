@@ -64,20 +64,21 @@ export default function useShoppingCart() {
 		if ( data && !! selectedItemsCache.length ) {
 			const loadedItems: ShoppingCartItem[] = [];
 
-			data.forEach( ( product ) => {
-				const match = selectedItemsCache.find( ( { slug, quantity } ) => {
-					return (
-						product.slug === slug &&
-						( quantity === 1 ||
-							product.supported_bundles.map( ( bundle ) => bundle.quantity ).includes( quantity ) ||
-							product.family_slug === 'wpcom-hosting' )
-					);
-				} );
+			selectedItemsCache.forEach( ( { slug, quantity } ) => {
+				const match =
+					quantity === 1 || slug.startsWith( 'wpcom-hosting' )
+						? data.find( ( product ) => product.slug === slug )
+						: data.find(
+								( product ) =>
+									product.slug === slug &&
+									product.supported_bundles.some( ( bundle ) => bundle.quantity === quantity )
+						  );
 
 				if ( match ) {
-					loadedItems.push( { ...product, quantity: match.quantity } );
+					loadedItems.push( { ...match, quantity } );
 				}
 			} );
+
 			setSelectedCartItems( loadedItems );
 		} else if ( ! selectedItemsCache.length ) {
 			setSelectedCartItems( [] );

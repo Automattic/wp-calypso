@@ -9,7 +9,7 @@ import { flowQuestionComponentMap } from 'calypso/components/survey-container/co
 import { QuestionConfiguration } from 'calypso/components/survey-container/types';
 import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY } from './constants';
+import { GUIDED_FLOW_SEGMENTATION_SURVEY_KEY, GUIDED_ONBOARDING_FLOW_REFERRER } from './constants';
 import { SurveyData } from './types';
 import './styles.scss';
 
@@ -17,12 +17,15 @@ interface Props {
 	flowName: string;
 	stepName: string;
 	goToNextStep: () => void;
+	goToStep: ( stepName: string, stepSectionName: number ) => void;
 	submitSignupStep: ( step: any, deps: any ) => void;
 	signupDependencies: {
 		segmentationSurveyAnswers: SurveyData;
 		onboardingSegment: string;
+		trailMapExperimentVariant: string;
 	};
-	progress: Record< string, any >;
+	initialContext: { [ key: string ]: any };
+	stepSectionName: string | undefined;
 }
 
 const QUESTION_CONFIGURATION: QuestionConfiguration = {
@@ -38,14 +41,22 @@ const QUESTION_CONFIGURATION: QuestionConfiguration = {
 };
 
 export default function InitialIntentStep( props: Props ) {
-	const { submitSignupStep, stepName, signupDependencies, flowName, progress } = props;
-	const currentPage = progress[ stepName ]?.stepSectionName ?? 1;
+	const {
+		submitSignupStep,
+		stepName,
+		signupDependencies,
+		flowName,
+		stepSectionName: currentPageString,
+		initialContext,
+	} = props;
+	const currentPage = currentPageString ? Number( currentPageString ) : 1;
 	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
 	const translate = useTranslate();
 	const headerText = translate( 'What brings you to WordPress.com?' );
 	const subHeaderText = translate(
 		'This will help us tailor your onboarding experience to your needs.'
 	);
+	const trailMapExperimentVariant = initialContext?.trailMapExperimentVariant;
 
 	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
 		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
@@ -58,21 +69,20 @@ export default function InitialIntentStep( props: Props ) {
 	}, [] );
 
 	const getRedirectForAnswers = ( _answerKeys: string[] ): string => {
-		const referrer = 'guided-onboarding';
 		let redirect = '';
 
 		if ( _answerKeys.includes( 'import' ) ) {
 			redirect = `/setup/${ HOSTED_SITE_MIGRATION_FLOW }`;
-		} else if ( _answerKeys.includes( 'newsletter' ) ) {
-			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		} else if ( _answerKeys.includes( 'sell' ) && _answerKeys.includes( 'difm' ) ) {
 			redirect = '/start/do-it-for-me-store';
 		} else if ( _answerKeys.includes( 'difm' ) ) {
 			redirect = '/start/do-it-for-me';
+		} else if ( _answerKeys.includes( 'newsletter' ) && _answerKeys.length === 1 ) {
+			redirect = `/setup/${ NEWSLETTER_FLOW }/newsletterSetup`;
 		}
 
 		if ( redirect ) {
-			return `${ redirect }?ref=${ referrer }`;
+			return `${ redirect }?ref=${ GUIDED_ONBOARDING_FLOW_REFERRER }`;
 		}
 
 		return redirect;
@@ -104,6 +114,7 @@ export default function InitialIntentStep( props: Props ) {
 			{
 				segmentationSurveyAnswers: updatedAnswers,
 				onboardingSegment: segment,
+				trailMapExperimentVariant,
 			}
 		);
 
@@ -136,14 +147,16 @@ export default function InitialIntentStep( props: Props ) {
 					skipNextNavigation={ skipNextNavigation }
 					questionConfiguration={ QUESTION_CONFIGURATION }
 					questionComponentMap={ flowQuestionComponentMap }
-					onGoToPage={ ( stepSectionName: number ) =>
-						submitSignupStep( { flowName, stepName, stepSectionName }, {} )
-					}
+					onGoToPage={ ( stepSectionName: number ) => {
+						submitSignupStep( { flowName, stepName, stepSectionName }, {} );
+						props.goToStep( stepName, stepSectionName );
+					} }
 					providedPage={ currentPage }
 				/>
 			}
 			align="center"
 			hideSkip
+			hideBack
 			{ ...props }
 		/>
 	);

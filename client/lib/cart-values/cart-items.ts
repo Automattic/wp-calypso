@@ -354,7 +354,7 @@ export function siteRedirect( properties: {
 export function domainTransfer( properties: {
 	domain: string;
 	source?: string;
-	extra: RequestCartProductExtra;
+	extra?: RequestCartProductExtra;
 } ): MinimalRequestCartProduct {
 	return {
 		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),

@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { Badge, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
@@ -596,7 +595,7 @@ export class SharingService extends Component {
 					/>
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
-							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
+							'X (Twitter) is {{a}}no longer supported{{/a}}. You can still use our quick {{a2}}manual sharing{{/a2}} feature from the post editor to share to it!',
 							{
 								components: {
 									a: (
@@ -608,6 +607,16 @@ export class SharingService extends Component {
 												this.props.isJetpack || isJetpackCloud()
 													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
 													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
+											) }
+										/>
+									),
+									a2: (
+										<ExternalLink
+											target="_blank"
+											icon
+											iconSize={ 14 }
+											href={ localizeUrl(
+												'https://jetpack.com/redirect/?source=jetpack-social-manual-sharing-help'
 											) }
 										/>
 									),
@@ -637,7 +646,7 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.props.isMastodonEligible && this.props.service.ID === 'mastodon'
+						this.props.service.ID === 'mastodon'
 							? cloneElement( action, { isExpanded: true } )
 							: action
 					}
@@ -726,7 +735,6 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
 				hasMultiConnections: siteHasFeature( state, siteId, 'social-multi-connections' ),
-				isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},

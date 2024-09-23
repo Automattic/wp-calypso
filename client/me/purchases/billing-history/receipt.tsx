@@ -39,6 +39,7 @@ import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
+	renderDomainTransactionVolumeSummary,
 	transactionIncludesTax,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
@@ -211,7 +212,9 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	} else if ( 'XXXX' !== transaction.cc_num ) {
 		text = translate( '%(cardType)s ending in %(cardNum)s', {
 			args: {
-				cardType: transaction.cc_type.toUpperCase(),
+				cardType:
+					transaction.cc_display_brand?.replace( '_', ' ' ).toUpperCase() ??
+					transaction.cc_type.toUpperCase(),
 				cardNum: transaction.cc_num,
 			},
 		} );
@@ -533,6 +536,7 @@ function ReceiptLineItem( {
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
+					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(

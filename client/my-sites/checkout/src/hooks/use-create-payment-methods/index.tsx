@@ -5,8 +5,6 @@ import {
 	createGooglePayMethod,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
-	createGiropayMethod,
-	createGiropayPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
 	createEpsMethod,
@@ -67,6 +65,7 @@ export function useCreatePayPal( {
 }
 
 export function useCreateCreditCard( {
+	currency,
 	isStripeLoading,
 	stripeLoadingError,
 	shouldUseEbanx,
@@ -76,6 +75,7 @@ export function useCreateCreditCard( {
 	allowUseForAllSubscriptions,
 	hasExistingCardMethods,
 }: {
+	currency: string | null;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	shouldUseEbanx: boolean;
@@ -98,6 +98,7 @@ export function useCreateCreditCard( {
 		() =>
 			shouldLoadStripeMethod
 				? createCreditCardMethod( {
+						currency,
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
 						shouldShowTaxFields,
@@ -107,6 +108,7 @@ export function useCreateCreditCard( {
 				  } )
 				: null,
 		[
+			currency,
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
 			shouldUseEbanx,
@@ -187,27 +189,6 @@ function useCreateBancontact( {
 		() =>
 			shouldLoad
 				? createBancontactMethod( {
-						store: paymentMethodStore,
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore ]
-	);
-}
-
-function useCreateGiropay( {
-	isStripeLoading,
-	stripeLoadingError,
-}: {
-	isStripeLoading: boolean;
-	stripeLoadingError: StripeLoadingError;
-} ): PaymentMethod | null {
-	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createGiropayPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			shouldLoad
-				? createGiropayMethod( {
 						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
@@ -422,7 +403,7 @@ export default function useCreatePaymentMethods( {
 } ): PaymentMethod[] {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-
+	const { currency } = responseCart;
 	const paypalMethod = useCreatePayPal( {} );
 
 	const idealMethod = useCreateIdeal( {
@@ -443,11 +424,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const bancontactMethod = useCreateBancontact( {
-		isStripeLoading,
-		stripeLoadingError,
-	} );
-
-	const giropayMethod = useCreateGiropay( {
 		isStripeLoading,
 		stripeLoadingError,
 	} );
@@ -487,6 +463,7 @@ export default function useCreatePaymentMethods( {
 	// in the credit card form instead.
 	const shouldShowTaxFields = contactDetailsType === 'none';
 	const stripeMethod = useCreateCreditCard( {
+		currency,
 		shouldShowTaxFields,
 		isStripeLoading,
 		stripeLoadingError,
@@ -530,7 +507,6 @@ export default function useCreatePaymentMethods( {
 		freePaymentMethod,
 		paypalMethod,
 		idealMethod,
-		giropayMethod,
 		sofortMethod,
 		netbankingMethod,
 		pixMethod,

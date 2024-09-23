@@ -10,6 +10,7 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -33,9 +34,10 @@ type Props = {
 	siteId?: string;
 	suggestedProduct?: string;
 	productBrand: string;
+	searchQuery?: string;
 };
 
-function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
+function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery }: Props ) {
 	const translate = useTranslate();
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
@@ -85,6 +87,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 			compact
 		>
 			<LayoutTop withNavigation>
+				<PendingPaymentNotification />
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Breadcrumb
 						items={ [
@@ -123,6 +126,7 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 						selectedSite={ selectedSite }
 						suggestedProduct={ suggestedProduct }
 						productBrand={ productBrand }
+						searchQuery={ searchQuery }
 					/>
 				</ShoppingCartContext.Provider>
 			</LayoutBody>

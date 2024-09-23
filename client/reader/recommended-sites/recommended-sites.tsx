@@ -1,10 +1,10 @@
 import { Railcar } from '@automattic/calypso-analytics';
+import { DotPager } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import DotPager from 'calypso/components/dot-pager';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import {

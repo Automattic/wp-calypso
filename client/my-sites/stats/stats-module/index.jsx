@@ -45,6 +45,7 @@ class StatsModule extends Component {
 		gateStats: PropTypes.bool,
 		gateDownloads: PropTypes.bool,
 		hasNoBackground: PropTypes.bool,
+		skipQuery: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -132,6 +133,8 @@ class StatsModule extends Component {
 			gateStats,
 			gateDownloads,
 			hasNoBackground,
+			skipQuery,
+			titleNodes,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -148,7 +151,7 @@ class StatsModule extends Component {
 
 		return (
 			<>
-				{ siteId && statType && (
+				{ ! skipQuery && siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<StatsListCard
@@ -157,6 +160,7 @@ class StatsModule extends Component {
 					data={ data }
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
+					titleNodes={ titleNodes }
 					emptyMessage={ moduleStrings.empty }
 					metricLabel={ metricLabel }
 					showMore={
@@ -176,7 +180,9 @@ class StatsModule extends Component {
 					}
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+					heroElement={
+						path === 'countryviews' && <Geochart query={ query } skipQuery={ skipQuery } />
+					}
 					additionalColumns={ additionalColumns }
 					splitHeader={ !! additionalColumns }
 					mainItemLabel={ mainItemLabel }
@@ -206,6 +212,7 @@ class StatsModule extends Component {
 								path={ path }
 								borderless
 								period={ period }
+								skipQuery={ skipQuery }
 							/>
 						) }
 					</div>

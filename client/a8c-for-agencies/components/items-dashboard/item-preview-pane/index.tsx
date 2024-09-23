@@ -4,6 +4,7 @@ import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import ItemPreviewPaneContent from './item-preview-pane-content';
 import ItemPreviewPaneHeader from './item-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
@@ -38,6 +39,7 @@ export default function ItemPreviewPane( {
 	itemData,
 	addTourDetails,
 	itemPreviewPaneHeaderExtraProps,
+	hideNavIfSingleTab,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -78,6 +80,10 @@ export default function ItemPreviewPane( {
 		);
 	} );
 
+	const isMobileApp = isWpMobileApp();
+
+	const shouldHideNav = ( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp;
+
 	return (
 		<div className={ clsx( 'item-preview__pane', className ) }>
 			<ItemPreviewPaneHeader
@@ -87,7 +93,10 @@ export default function ItemPreviewPane( {
 				extraProps={ itemPreviewPaneHeaderExtraProps }
 			/>
 			<div ref={ setNavRef }>
-				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+				<SectionNav
+					className={ clsx( 'preview-pane__navigation', { 'is-hidden': shouldHideNav } ) }
+					selectedText={ selectedFeature.tab.label }
+				>
 					{ navItems && navItems.length > 0 ? (
 						<NavTabs hasHorizontalScroll>{ navItems }</NavTabs>
 					) : null }

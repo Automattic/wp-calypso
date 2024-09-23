@@ -98,8 +98,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		screenshot,
 		theme_tier,
 	} = design;
-	const is_premium =
-		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
 	const is_externally_managed = design.theme_type === 'managed-external';
 	const is_bundled_with_woo = ( design.software_sets || [] ).some(
@@ -112,12 +110,11 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		description,
 		recipe,
 		categories,
-		is_premium,
 		is_externally_managed,
 		is_bundled_with_woo,
 		price,
 		software_sets,
-		design_type: design_type ?? ( is_premium ? 'premium' : 'standard' ),
+		design_type: design_type ?? ( theme_tier?.slug === 'free' ? 'standard' : 'premium' ),
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		...( preview_data && { preview_data } ),

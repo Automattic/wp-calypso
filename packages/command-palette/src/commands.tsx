@@ -669,6 +669,13 @@ export function useCommands() {
 			openJetpackStats: {
 				name: 'openJetpackStats',
 				label: __( 'Open Jetpack Stats', __i18n_text_domain__ ),
+				searchLabel: [
+					_x(
+						'see jetpack stats',
+						'Keyword for the Open Jetpack Stats command',
+						__i18n_text_domain__
+					),
+				].join( KEYWORD_SEPARATOR ),
 				callback: ( params ) =>
 					commandNavigation(
 						siteUsesWpAdminInterface( params.site )
@@ -1187,6 +1194,7 @@ export function useCommands() {
 					_x( 'activate theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					_x( 'install theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					_x( 'delete theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
+					_x( 'change theme', 'Keyword for the Manage themes command', __i18n_text_domain__ ),
 					'wp theme*', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
 				callback: ( params ) =>
@@ -1240,11 +1248,15 @@ export function useCommands() {
 				label: __( 'Manage plugins', __i18n_text_domain__ ),
 				searchLabel: [
 					_x( 'manage plugins', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
-					_x( 'activate plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
-					_x( 'deactivate plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
-					_x( 'install plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
-					_x( 'delete plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
-					_x( 'update plugin', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+					_x( 'activate plugins', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+					_x(
+						'deactivate plugins',
+						'Keyword for the Manage plugins command',
+						__i18n_text_domain__
+					),
+					_x( 'install plugins', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+					_x( 'delete plugins', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
+					_x( 'update plugins', 'Keyword for the Manage plugins command', __i18n_text_domain__ ),
 					'wp plugin*', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
 				callback: ( params ) =>

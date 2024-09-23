@@ -1,12 +1,14 @@
-import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useCallback, useMemo } from 'react';
+import FormTokenFieldWrapper from './form-token-field-wrapper';
 import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
-	setServices: ( services: ( string | TokenItem )[] ) => void;
-	selectedServices: ( string | TokenItem )[];
+	setServices: ( services: string[] ) => void;
+	selectedServices: string[];
 };
+
+const MAX_SERVICES = 5;
 
 const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	const { availableServices } = useFormSelectors();
@@ -18,9 +20,10 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	);
 
 	// Get the selected services by label
-	const selectedServicesByLabel = selectedServices.map( ( slug ) => {
+	const selectedServicesByLabel = selectedServices.flatMap( ( slug ) => {
 		const key = slug as string;
-		return availableServices[ key ];
+		const value = availableServices[ key ];
+		return value ? [ value ] : [];
 	} );
 
 	// Set the selected services by slug
@@ -37,14 +40,11 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	);
 
 	return (
-		<FormTokenField
-			__experimentalAutoSelectFirstMatch
-			__experimentalExpandOnFocus
-			__experimentalShowHowTo={ false }
-			__nextHasNoMarginBottom
-			label=""
+		<FormTokenFieldWrapper
 			onChange={ onServiceLabelsSelected }
-			suggestions={ Object.values( availableServices ) }
+			suggestions={
+				selectedServices.length >= MAX_SERVICES ? [] : Object.values( availableServices ).sort()
+			}
 			value={ selectedServicesByLabel }
 		/>
 	);

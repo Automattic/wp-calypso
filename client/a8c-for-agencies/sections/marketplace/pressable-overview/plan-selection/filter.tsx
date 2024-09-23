@@ -8,7 +8,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { FILTER_TYPE_INSTALL, FILTER_TYPE_VISITS } from '../constants';
-import getPressablePlan from '../lib/get-pressable-plan';
+import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
 
@@ -16,6 +16,7 @@ type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	plans: APIProductFamilyProduct[];
 	existingPlan?: APIProductFamilyProduct | null;
+	pressablePlan?: PressablePlan | null;
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 	isLoading?: boolean;
 };
@@ -25,6 +26,7 @@ export default function PlanSelectionFilter( {
 	plans,
 	onSelectPlan,
 	existingPlan,
+	pressablePlan,
 	isLoading,
 }: Props ) {
 	const translate = useTranslate();
@@ -83,9 +85,22 @@ export default function PlanSelectionFilter( {
 			: 'a4a-pressable-filter-wrapper-visits';
 	const wrapperClass = clsx( additionalWrapperClass, 'pressable-overview-plan-selection__filter' );
 
-	const minimum = existingPlan
-		? options.findIndex( ( { value } ) => value === existingPlan.slug ) + 1
-		: 0;
+	const minimum = useMemo( () => {
+		if ( ! pressablePlan ) {
+			return 0;
+		}
+
+		const allAvailablePlans = plans
+			.map( ( plan ) => getPressablePlan( plan.slug ) )
+			.sort( ( a, b ) => a.install - b.install );
+
+		for ( let i = 0; i < allAvailablePlans.length; i++ ) {
+			if ( pressablePlan.install < allAvailablePlans[ i ].install ) {
+				return i;
+			}
+		}
+		return allAvailablePlans.length;
+	}, [ plans, pressablePlan ] );
 
 	if ( isLoading ) {
 		return (
@@ -125,7 +140,7 @@ export default function PlanSelectionFilter( {
 				<div className="pressable-overview-plan-selection__filter-buttons">
 					<Button
 						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-selected': filterType === FILTER_TYPE_INSTALL,
+							'is-dark': filterType === FILTER_TYPE_INSTALL,
 						} ) }
 						onClick={ onSelectInstallFilterType }
 					>
@@ -134,7 +149,7 @@ export default function PlanSelectionFilter( {
 
 					<Button
 						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-selected': filterType === FILTER_TYPE_VISITS,
+							'is-dark': filterType === FILTER_TYPE_VISITS,
 						} ) }
 						onClick={ onSelectVisitFilterType }
 					>

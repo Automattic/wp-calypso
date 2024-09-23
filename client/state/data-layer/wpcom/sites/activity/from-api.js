@@ -62,6 +62,8 @@ export function processItem( item ) {
 			activityDescription: parseBlock( item.content ),
 			activityMedia: get( item, 'image' ),
 			activityMeta,
+			baseRewindId: item.base_rewind_id,
+			rewindStepCount: item.rewind_step_count,
 		},
 		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },

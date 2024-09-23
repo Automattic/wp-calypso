@@ -373,7 +373,7 @@ function PluginDetails( props ) {
 			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
-				sites={ sitesWithPlugins }
+				sites={ selectedOrAllSites }
 				plugins={ [ fullPlugin ] }
 			/>
 			{ isSiteConnected === false && (
@@ -509,7 +509,7 @@ function PluginDetails( props ) {
 									<Button
 										href={ `https://downloads.wordpress.org/plugin/${
 											fullPlugin?.slug || ''
-										}.zip` }
+										}.latest-stable.zip` }
 										rel="nofollow"
 									>
 										{ translate( 'Download' ) }

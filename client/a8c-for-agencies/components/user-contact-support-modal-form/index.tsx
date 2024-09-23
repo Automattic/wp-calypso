@@ -3,11 +3,13 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, FormEventHandler, useCallback, useEffect, useState } from 'react';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -33,15 +35,19 @@ export default function UserContactSupportModalForm( {
 	const dispatch = useDispatch();
 
 	const user = useSelector( getCurrentUser );
+	const agency = useSelector( getActiveAgency );
 
 	const [ name, setName ] = useState( user?.display_name );
 	const [ email, setEmail ] = useState( user?.email );
 	const [ product, setProduct ] = useState( DEFAULT_PRODUCT_VALUE );
+	const [ pressableContactType, setPressableContactType ] = useState( 'sales' );
 	const [ site, setSite ] = useState( '' );
 	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
-	const hasCompletedForm = !! message && !! name && !! email && !! product && ! isPressableSelected;
+	const isClient = isClientView();
+	const hasCompletedForm =
+		!! message && !! name && !! email && !! product && ( !! agency || isClient );
 
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
 
@@ -93,6 +99,13 @@ export default function UserContactSupportModalForm( {
 		[]
 	);
 
+	const onPressableContactTypeChange: FormEventHandler = useCallback(
+		( event: ChangeEvent< HTMLSelectElement > ) => {
+			setPressableContactType( event.currentTarget.value );
+		},
+		[]
+	);
+
 	const onMessageChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setMessage( event.currentTarget.value );
 	}, [] );
@@ -108,8 +121,31 @@ export default function UserContactSupportModalForm( {
 			} )
 		);
 
-		submit( { message, name, email, product, site } );
-	}, [ hasCompletedForm, dispatch, message, submit, name, email, product, site ] );
+		const pressable_id = agency?.third_party?.pressable?.pressable_id;
+
+		const formData = {
+			message,
+			name,
+			email,
+			product,
+			...( site && { site } ),
+			...( pressableContactType && { contact_type: pressableContactType } ),
+			...( pressable_id && { pressable_id } ),
+		};
+
+		submit( formData );
+	}, [
+		hasCompletedForm,
+		dispatch,
+		message,
+		submit,
+		name,
+		email,
+		product,
+		site,
+		pressableContactType,
+		agency,
+	] );
 
 	useEffect( () => {
 		if ( show ) {
@@ -137,7 +173,9 @@ export default function UserContactSupportModalForm( {
 					<Icon size={ 24 } icon={ close } />
 				</Button>
 
-				<h1 className="a4a-contact-support-modal-form__title">{ translate( 'Contact sales' ) }</h1>
+				<h1 className="a4a-contact-support-modal-form__title">
+					{ isClient ? translate( 'Contact support' ) : translate( 'Contact sales & support' ) }
+				</h1>
 
 				<FormFieldset>
 					<FormLabel htmlFor="name">{ translate( 'Your name' ) }</FormLabel>
@@ -194,39 +232,48 @@ export default function UserContactSupportModalForm( {
 					</FormSelect>
 				</FormFieldset>
 
+				{ isPressableSelected && (
+					<>
+						<FormFieldset>
+							<FormLabel htmlFor="product">
+								{ translate( 'Would you like help with Pressable sales or support?' ) }
+							</FormLabel>
+							<FormSelect
+								name="pressable_contact"
+								id="product"
+								value={ pressableContactType }
+								onChange={ onPressableContactTypeChange }
+							>
+								<option value="sales">{ translate( 'Sales' ) }</option>
+								<option value="support">{ translate( 'Support' ) }</option>
+							</FormSelect>
+						</FormFieldset>
+						<div className="form-field-description">
+							{ translate(
+								'Your request will be routed directly to a Pressable support specialist to chat about your needs.'
+							) }
+						</div>
+					</>
+				) }
+
 				<FormFieldset>
 					<FormLabel htmlFor="message">{ translate( 'How can we help?' ) }</FormLabel>
-					{ ! isPressableSelected ? (
-						<FormTextarea
-							name="message"
-							id="message"
-							placeholder="Add your message here"
-							value={ message }
-							onChange={ onMessageChange }
-							onClick={ () =>
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_user_contact_support_form_message_click' )
-								)
-							}
-						/>
-					) : (
-						<p>
-							{ translate(
-								'For help with Pressable, please {{a}}login to your Pressable account{{/a}} and request help using the chat widget on the bottom right of the page.',
-								{
-									components: {
-										a: (
-											<a
-												href="https://my.pressable.com/login"
-												target="_blank"
-												rel="noreferrer noopener"
-											/>
-										),
-									},
-								}
-							) }
-						</p>
-					) }
+					<FormTextarea
+						name="message"
+						id="message"
+						placeholder={
+							isPressableSelected
+								? translate(
+										'Please provide the team with a detailed explanation of the issue you’re facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.'
+								  )
+								: translate( 'Add your message here' )
+						}
+						value={ message }
+						onChange={ onMessageChange }
+						onClick={ () =>
+							dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_message_click' ) )
+						}
+					/>
 				</FormFieldset>
 			</div>
 

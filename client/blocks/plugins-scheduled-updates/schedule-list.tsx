@@ -16,10 +16,7 @@ import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
-import {
-	getSiteAdminUrl,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
-} from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
@@ -47,8 +44,8 @@ export const ScheduleList = ( props: Props ) => {
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
 	);
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -130,7 +127,7 @@ export const ScheduleList = ( props: Props ) => {
 					{ ! isLoading && showScheduleListEmpty && (
 						<ScheduleListEmpty
 							pluginsUrl={
-								isGlobalSiteViewEnabled
+								adminInterfaceIsWPAdmin
 									? `${ siteAdminUrl }plugin-install.php`
 									: `/plugins/${ siteSlug }`
 							}

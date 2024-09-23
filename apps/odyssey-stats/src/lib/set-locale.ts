@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import moment, { LongDateFormatKey } from 'moment';
-import { phpToMomentMapping } from 'calypso/my-sites/site-settings/date-time-format/utils';
 const debug = debugFactory( 'apps:odyssey' );
 
 const DEFAULT_LANGUAGE = 'en';
@@ -9,6 +8,57 @@ const DEFAULT_MOMENT_LOCALE = 'en';
 // Only Simple Site has the default locale as 'en'. For atomic/jetpack sites the default locale is 'en-us'.
 const SIMPLE_SITE_DEFAULT_LOCALE = 'en';
 const ALWAYS_LOAD_WITH_LOCALE = [ 'pt', 'zh' ];
+/**
+ * inlined from 'calypso/my-sites/site-settings/date-time-format/utils' as the module import the whole moment-timezone library, which is 755k before gzip.
+ */
+export const phpToMomentMapping = {
+	d: 'DD',
+	D: 'ddd',
+	j: 'D',
+	l: 'dddd',
+	N: 'E',
+	// "S" is andled via custom check
+	//S: '',
+	w: 'd',
+	// Moment.js equivalent of "z" (0 based) is "DDD" (1 based), so it must be adjusted
+	//z: 'DDD',
+	W: 'W',
+	F: 'MMMM',
+	m: 'MM',
+	M: 'MMM',
+	n: 'M',
+	// Moment.js has no "t" token equivalent, but a `moment().daysInMonth()` function
+	//t: '',
+	// Moment.js has no "L" token equivalent, but a `moment().isLeapYear()` function
+	//L: '',
+	o: 'Y',
+	Y: 'YYYY',
+	y: 'YY',
+	a: 'a',
+	A: 'A',
+	// Moment.js has no "B" token equivalent, but can be generated nonetheless
+	//B: '',
+	g: 'h',
+	G: 'H',
+	h: 'hh',
+	H: 'HH',
+	i: 'mm',
+	s: 'ss',
+	u: 'SSSSSS',
+	v: 'SSS',
+	e: 'z',
+	// Moment.js has no "I" token, but a `moment().isDST()` function
+	//I: '',
+	O: 'ZZ',
+	P: 'Z',
+	// Moment.js has no "T" token equivalent, but is similar enough to "z"
+	T: 'z',
+	// Moment.js has no "Z" token equivalent, but can be generated nonetheless
+	//Z: '',
+	c: 'YYYY-MM-DDTHH:mm-ssZ',
+	r: 'ddd, DD MMM YYYY HH:mm:ss ZZ',
+	U: 'X',
+};
 
 const getLanguageCodeFromLocale = ( localeSlug: string ) => {
 	debug( localeSlug );
@@ -69,7 +119,7 @@ const fixLongDateFormatForEn = ( localeSlug: string ) => {
 	}
 };
 
-const loadMomentLocale = async ( localeSlug: string, languageCode: string ) => {
+const loadMomentLocale = async ( localeSlug: string, languageCode: string, isSimple: boolean ) => {
 	return import( `moment/locale/${ localeSlug }` )
 		.catch( ( error: Error ) => {
 			debug(
@@ -91,7 +141,7 @@ const loadMomentLocale = async ( localeSlug: string, languageCode: string ) => {
 			);
 			// Fallback 2 to the default US date time format.
 			// Interestingly `en` here represents `en-us` locale.
-			fixLongDateFormatForEn( localeSlug );
+			isSimple && fixLongDateFormatForEn( localeSlug );
 			localeSlug = DEFAULT_MOMENT_LOCALE;
 		} )
 		.then( () => moment.locale( localeSlug ) );
@@ -112,7 +162,7 @@ const loadLanguageFile = ( languageFileName: string ) => {
 	} );
 };
 
-export default ( localeSlug: string ) => {
+export default ( localeSlug: string, isSimple = false ) => {
 	const languageCode = getLanguageCodeFromLocale( localeSlug );
 
 	// Load tranlation file if it's not English.
@@ -133,5 +183,5 @@ export default ( localeSlug: string ) => {
 
 	// We have to wait for moment locale to load before rendering the page, because otherwise the rendered date time wouldn't get re-rendered.
 	// This could be improved in the future with hooks.
-	return loadMomentLocale( localeSlug, languageCode );
+	return loadMomentLocale( localeSlug, languageCode, isSimple );
 };

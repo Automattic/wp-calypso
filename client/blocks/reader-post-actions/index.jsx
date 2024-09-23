@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
@@ -13,8 +13,14 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 import './style.scss';
 
-const ReaderPostActions = ( props ) => {
-	const { post, site, onCommentClick, iconSize, className, fullPost } = props;
+const ReaderPostActions = ( {
+	post,
+	site,
+	onCommentClick,
+	iconSize = 20,
+	className,
+	fullPost,
+} ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
 
@@ -23,11 +29,8 @@ const ReaderPostActions = ( props ) => {
 	const showComments = shouldShowComments( post );
 	const showLikes = shouldShowLikes( post );
 
-	const listClassnames = clsx( className, {
-		'reader-post-actions': true,
-	} );
+	const listClassnames = clsx( 'reader-post-actions', className );
 
-	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
 		<ul className={ listClassnames }>
 			{ showShare && (
@@ -61,7 +64,7 @@ const ReaderPostActions = ( props ) => {
 						post={ post }
 						onClick={ onCommentClick }
 						tagName="button"
-						icon={ ReaderCommentIcon( { iconSize: iconSize } ) }
+						icon={ ReaderCommentIcon( { iconSize } ) }
 						defaultLabel={ translate( 'Comment' ) }
 					/>
 				</li>
@@ -86,23 +89,14 @@ const ReaderPostActions = ( props ) => {
 			) }
 		</ul>
 	);
-	/* eslint-enable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 };
 
 ReaderPostActions.propTypes = {
 	post: PropTypes.object.isRequired,
 	site: PropTypes.object,
 	onCommentClick: PropTypes.func,
-	showFollow: PropTypes.bool,
 	iconSize: PropTypes.number,
-	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
 };
 
-ReaderPostActions.defaultProps = {
-	showFollow: true,
-	showVisit: false,
-	iconSize: 20,
-};
-
-export default localize( ReaderPostActions );
+export default ReaderPostActions;

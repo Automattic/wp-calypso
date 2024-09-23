@@ -1,6 +1,6 @@
 import { set } from 'lodash';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
-import { isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
+import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 import type { AnyAction } from 'redux';
@@ -17,7 +17,7 @@ import type { AnyAction } from 'redux';
 export function enhanceWithGlobalSiteViewEnabled( action: AnyAction, getState: () => AppState ) {
 	const siteId = getSelectedSiteId( getState() );
 
-	const isNewNavEnabled = isGlobalSiteViewEnabled( getState(), siteId );
+	const isNewNavEnabled = isAdminInterfaceWPAdmin( getState(), siteId );
 
 	const enabledValue = isNewNavEnabled ? '1' : '0';
 

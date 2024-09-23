@@ -25,7 +25,7 @@ interface APIFetchOptions {
  * Get the "whats new" announcements
  * @returns Returns the result of querying the "whats new" list endpoint
  */
-export const useWhatsNewAnnouncementsQuery = ( siteId: string ) => {
+export const useWhatsNewAnnouncementsQuery = ( siteId: string | number | undefined ) => {
 	const locale = useLocale();
 
 	return useQuery< WhatsNewAnnouncement[] >( {
@@ -40,6 +40,7 @@ export const useWhatsNewAnnouncementsQuery = ( siteId: string ) => {
 						global: true,
 						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }&site_id=${ siteId }`,
 				  } as APIFetchOptions ),
+		enabled: !! siteId,
 		refetchOnWindowFocus: false,
 	} );
 };

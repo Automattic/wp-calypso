@@ -1,208 +1,150 @@
 @import "@wordpress/base-styles/variables";
-@import "@automattic/onboarding/styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "components/variables";
 
-$head-foot-height: 50px;
+/**
+ * Help Center GENERAL Styles
+ *
+ * This file contains the general styles for the Help Center.
+ *
+ * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
+ */
+.help-center > div.help-center__container {
+	background-color: #fff;
+	z-index: $help-center-z-index;
+	cursor: default;
+	transition: max-height 0.5s;
+	animation: 0.25s ease-out 0s 1 normal none running slideIn;
+	position: fixed;
 
-.help-center {
-	.components-card.help-center__container {
-		position: fixed;
-		background-color: #fff;
-		color: #000;
-		z-index: 9999;
-		cursor: default;
-		transition: max-height 0.5s;
+	/**
+	 * Generic Stylings
+	 */
+	font-size: $font-body-small;
+	font-family:
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		Oxygen-Sans,
+		Ubuntu,
+		Cantarell,
+		"Helvetica Neue",
+		sans-serif;
+	font-weight: inherit;
+	color: var(--studio-gray-100);
 
-		button.button-primary,
-		button.button-secondary {
-			font-size: $font-title-small;
+	button.button-primary,
+	button.button-secondary {
+		font-size: $font-title-small;
+	}
+
+	.button {
+		text-decoration: none;
+		font-size: $font-body-small;
+	}
+
+	& > div {
+		display: flex;
+		flex-direction: column;
+	}
+
+	button,
+	a {
+		&:focus {
+			box-shadow: none;
+			outline: var(--color-link, --studio-blue-30) solid 2px;
 		}
 
-		.button {
-			font-size: $font-body-small;
+		&:hover {
+			color: var(--color-link-dark, --studio-blue-70);
+			border-color: inherit;
+		}
+	}
+
+	.help-center__section-title {
+		font-size: $font-body-small;
+		font-weight: 500;
+		color: var(--studio-gray-100);
+		margin: 1em 0;
+	}
+
+	/**
+	 * Used on loading screens across Help Center
+	 */
+	.help-center__loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+
+		.spinner__outer {
+			border-top-color: var(--wp-admin-theme-color);
 		}
 
-		& > div {
-			display: flex;
-			flex-direction: column;
+		.spinner__inner {
+			border-top-color: var(--wp-admin-theme-color);
+			border-right-color: var(--wp-admin-theme-color);
 		}
+	}
 
-		.help-center__container-header {
-			height: $head-foot-height;
-			padding: 16px 8px 16px 16px;
+	/**
+	 * Desktop
+	 */
+	&.is-desktop {
+		width: 410px;
+		height: 80vh;
+		max-height: 800px;
+		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
 
-			.help-center-header__maximize,
-			.help-center-header__minimize,
-			.help-center-header__close {
-				&:focus {
-					outline: var(--color-primary-light) solid 2px;
-				}
+		&.is-minimized {
+			min-height: $head-foot-height;
+			max-height: $head-foot-height;
+			top: unset;
+			right: 50px;
+			bottom: calc(#{$header-height} + 16px);
+
+			.help-center__container-header {
+				cursor: pointer;
 			}
 
-			// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
-			// We can remove this when the bug is fixed
-			.help-center-header__minimize svg {
-				transform: scale(0.7, 1);
-				transform-origin: center;
-			}
-
-			.help-center-header__text {
-				max-width: 300px;
-				font-size: $font-body-small;
-				font-weight: 500;
-				display: flex;
-				align-items: center;
-
-				svg {
-					margin-right: 3px;
-				}
-
-				.help-center-header__article-title {
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					max-width: 200px;
-				}
-			}
-		}
-
-		.help-center__container-content-wrapper {
-			height: 100%;
-		}
-
-		.help-center__container-content {
-			overflow-y: auto;
-			padding: 16px;
-
-			.search-card div.has-focus[role="search"] {
-				outline: var(--color-primary-light) solid 2px;
-				transition: none;
-			}
-
-			.help-center-search-results__results .help-center-search-results__item,
-			.inline-help__more-resources .inline-help__resource-item {
-				a:focus,
-				button:focus {
-					outline: var(--color-primary-light) solid 2px;
-					outline-offset: 2px;
-				}
-			}
-		}
-
-		.help-center__container-footer {
-			height: auto;
-			padding: 16px;
-
-			// hide when empty
-			&:empty {
+			.help-center__container-content {
 				display: none;
 			}
 		}
+	}
 
-		&.is-desktop {
-			top: calc(#{$header-height} + 16px);
-			right: 16px;
-			width: 410px;
-			height: 80vh;
-			max-height: 800px;
-			box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
+	/**
+	 * Mobile
+	 */
+	&.is-mobile {
+		bottom: 0;
+		left: 0;
+		right: 0;
+		// If the masterbar is there, don't cover it, if not, go to the top.
+		top: var(--masterbar-height, 0);
+		max-height: calc(100% - 45px);
+		height: calc(100% - var(--masterbar-height, 0));
+		animation: 0.25s ease-out 0s 1 normal none running fadeIn;
 
-			.help-center__container-header {
-				cursor: move;
-			}
-
-			.help-center__container-content {
-				flex-grow: 1;
-				height: calc(80vh - #{$head-foot-height} * 2);
-			}
-
-			&.is-minimized {
-				min-height: $head-foot-height;
-				top: unset;
-				bottom: calc(#{$header-height} + 16px);
-
-				.help-center__container-header {
-					cursor: pointer;
-				}
-			}
+		.help-center__container-footer {
+			margin-bottom: 0;
 		}
 
-		&.is-mobile {
-			bottom: 0;
-			left: 0;
-			right: 0;
-			max-height: calc(100% - 45px);
-			height: 100%;
-
-			.help-center__container-content {
-				flex: auto;
-			}
-
-			.help-center__container-footer {
-				margin-bottom: 0;
-			}
-
-			&.is-minimized {
-				min-height: $head-foot-height;
-				top: calc(100vh - #{$head-foot-height});
-
-				@supports ( height: 100dvh ) {
-					top: calc(100dvh - #{$head-foot-height});
-				}
-			}
-		}
-
-		.components-button {
-			&:hover {
-				box-shadow: none;
-				color: inherit;
-			}
-		}
-
-		&.is-mobile.is-minimized,
-		&.is-desktop.is-minimized {
+		&.is-minimized {
+			min-height: $head-foot-height;
 			max-height: $head-foot-height;
-		}
+			top: calc(100vh - #{$head-foot-height});
 
-		.help-center-header__unread-count {
-			display: inline-block;
-			margin-left: 8px;
-			padding: 2px 8px;
-			background: var(--studio-pink-50);
-			border-radius: 50%;
-			font-size: $font-body-extra-small;
-			color: #fff;
-		}
-
-		.help-center-header__a8c-only-badge {
-			display: inline-block;
-			margin-left: 8px;
-			padding: 2px 6px;
-			background: #d3d3d3;
-			border-radius: 4px;
-			font-size: $font-body-extra-small;
-			color: var(--studio-gray-50);
-			text-transform: uppercase;
+			@supports (height: 100dvh) {
+				top: calc(100dvh - #{$head-foot-height});
+			}
 		}
 	}
 
-	.ticket-success-screen__help-center {
-		text-align: center;
-
-		.ticket-success-screen__help-center-heading {
-			font-size: $font-title-small;
-			color: $studio-gray-100;
-			margin: 16px;
-			font-weight: 400;
-		}
-		.ticket-success-screen__help-center-message {
-			font-size: $font-body-small;
-			color: $studio-gray-50;
-			margin: 0;
-		}
-	}
-
+	/**
+	* Animations
+	*/
 	@keyframes fadeIn {
 		0% {
 			opacity: 0;
@@ -213,329 +155,59 @@ $head-foot-height: 50px;
 		}
 	}
 
-	@keyframes fadeOut {
+	@keyframes slideIn {
 		0% {
-			opacity: 1;
+			opacity: 0;
+			transform: scale(0);
 		}
 
 		100% {
-			opacity: 0;
-		}
-	}
-
-	.back-button__help-center {
-		display: flex;
-		color: #000;
-		font-size: $font-body-small;
-		padding: 0 4px 0 0;
-
-		&:focus {
-			color: #043959;
-			box-shadow: none;
-			outline: var(--color-primary-light) solid 2px;
-			border-color: inherit;
-		}
-
-		svg {
-			margin-top: 1px;
-			margin-right: 3px;
-		}
-
-		&:hover {
-			svg {
-				margin-left: -2px;
-				margin-right: 5px;
-			}
-		}
-	}
-
-	.help-center__container-content-odie {
-		display: flex;
-		height: 100%;
-		max-height: 752px;
-		flex-direction: column;
-		max-width: 410px;
-
-		.help-center__container-odie-header {
-			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-			height: 69px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 16px;
-			box-sizing: border-box;
-
-			.odie-button-default:focus {
-				border-radius: 2px;
-				outline: var(--color-primary-light) solid 2px;
-			}
-		}
-	}
-
-	.help-center__container-content {
-		padding: 0 !important;
-
-		> div > *:not(iframe):not(.help-center__container-content-odie) {
-			padding: 16px;
-			box-sizing: border-box;
-		}
-	}
-
-	.help-center-articles__list {
-		list-style: none;
-		box-sizing: border-box;
-		padding: 0;
-		margin: 0;
-
-		> li {
-			padding: 0;
-
-			> a {
-				display: flex;
-				align-items: center;
-				text-decoration: none;
-				color: var(--studio-gray-100);
-				margin-bottom: 16px;
-				font-size: $font-body-small;
-
-				&:hover {
-					background: var(--color-neutral-0);
-				}
-
-				> svg:last-child {
-					margin-left: auto;
-					margin-right: 0;
-					background: unset;
-				}
-			}
-		}
-
-		svg:first-child {
-			margin-right: 15px;
-			border-radius: 2px;
-			display: block;
-			padding: 8px;
-			background: var(--studio-gray-0);
-			fill: var(--studio-blue-50);
-			flex-shrink: 0;
-		}
-
-		svg:last-child {
-			fill: var(--studio-gray-20);
-		}
-	}
-
-	.help-center-search-results__title,
-	.help-center__section-title {
-		font-size: $font-body-small;
-		font-weight: 500;
-		color: var(--studio-gray-100);
-		margin: 1em 0;
-	}
-
-	.help-center-articles__container,
-	.help-center-gpt__container {
-		padding: 0 0 10px;
-		flex: 1;
-	}
-
-	.help-center-gpt-error,
-	.help-center-gpt-response {
-		font-size: $font-body-small;
-		color: var(--color-neutral-80);
-
-		.help-center-gpt-response__loading {
-			min-height: 20px;
-			line-height: 20px;
-			margin-left: 5px;
-			font-style: italic;
-		}
-
-		.help-center-gpt-response__continue {
-			margin-top: 10px;
-		}
-
-		.help-center-gpt-response__content,
-		.help-center-gpt-response__continue_quote {
-			border-left: 1px solid var(--color-neutral-5);
-			margin-left: 5px;
-			padding-left: 10px;
-		}
-
-		.help-center-gpt-response__actions {
-			button {
-				padding: 2px 5px;
-				margin-right: 5px;
-			}
-		}
-
-		.help-center-gpt-response__feedback {
-			color: var(--studio-green-50);
-		}
-
-		.help-center-gpt-response__content p:last-child {
-			margin-bottom: 0.5em;
-
-		}
-	}
-
-	.help-center-container__loading,
-	.help-center-contact-form__loading,
-	.help-center-contact-page__loading {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-
-		.spinner__outer {
-			border-top-color: var(--wp-admin-theme-color);
-		}
-		.spinner__inner {
-			border-top-color: var(--wp-admin-theme-color);
-			border-right-color: var(--wp-admin-theme-color);
-		}
-	}
-
-	.help-center-contact-page__staging-notice {
-		margin: 5px 0;
-		.components-notice__content {
-			display: flex;
-			justify-content: space-between;
-			margin: 0;
-
-			.components-notice__action {
-				margin: 0;
-				font-weight: bold;
-			}
-		}
-	}
-
-	body[class*="is-section-"],
-	body[class^="is-section-"] {
-		.help-center {
-			button,
-			input,
-			textarea,
-			select {
-				box-sizing: border-box;
-			}
-
-			h1 {
-				font-weight: 600;
-				margin: 0.67em 0;
-
-				&.site-picker__site-title {
-					font-weight: 400;
-					margin: 0;
-				}
-			}
-
-			h2,
-			h3 {
-				color: #1d2327;
-				margin: 1em 0;
-			}
-
-			label {
-				cursor: pointer;
-			}
-
-			.help-center__container.is-desktop {
-				top: calc(var(--masterbar-height) + 16px);
-			}
-
-			.search-card {
-				.search {
-					border: none;
-				}
-			}
-		}
-	}
-
-	.help-center-contact-form {
-		.button:not(.back-button__help-center) {
-			line-height: 2.71428571;
-			min-height: 40px;
-			margin-bottom: 4px;
-			vertical-align: middle;
-		}
-	}
-
-	.help-center-contact-form__label,
-	.site-picker__label {
-		font-size: $font-body-small;
-	}
-
-	.help-center-header__text {
-		margin: 1em 0;
-	}
-
-	.wp-block-embed__wrapper {
-		position: relative;
-
-		&::before {
-			content: "";
-			display: block;
-			padding-top: 56.25%;
-		}
-
-		iframe {
-			bottom: 0;
-			height: 100%;
-			left: 0;
-			position: absolute;
-			right: 0;
-			top: 0;
-			width: 100%;
-		}
-	}
-
-	.components-base-control__label {
-		color: var(--studio-gray-60);
-	}
-}
-
-.help-center__promotion-popover {
-	width: 350px;
-	max-width: 100%;
-	animation: fadeIn 0.2s;
-}
-
-.help-center__promotion-popover-inner {
-	text-align: initial;
-	padding: 16px;
-	box-sizing: border-box;
-	h1 {
-		font-weight: 500;
-		font-size: $font-body;
-		margin: 5px 0;
-	}
-	p {
-		font-size: $font-body-small;
-		margin-top: 4px;
-	}
-	.help-center__promotion-popover-actions {
-		display: flex;
-		justify-content: flex-end;
-		margin-top: 24px;
-		.button {
-			font-size: $font-body-small;
+			opacity: 1;
+			transform: scale(1);
 		}
 	}
 }
 
-.help-center__container-header-menu {
-	z-index: 99999;
+/**
+ * Popover component
+ * Fixes broken popover component on frontend.
+ */
+.popover.help-center {
+	z-index: $help-center-z-index +1;
+
+	.popover__arrow {
+		z-index: 1;
+	}
+
 	.popover__menu {
+		// Odie Chat Menu
 		.help-center__container-header-menu-item {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
+
+			&:hover,
+			&:focus {
+				svg {
+					fill: var(--color-text-inverted);
+				}
+			}
 		}
 	}
-}
 
+	// Contact Form URL privacy popover
+	.popover__inner {
+		.help-center-contact-form__site-picker-forum-privacy-popover {
+			display: inline-block;
+			max-width: 200px;
+			padding: 5px;
+		}
 
-.help-center__promotion-popover.is-bottom-left {
-	right: 16px;
+		.help-center-contact-form__site-picker-forum-privacy-info {
+			padding: 0;
+			margin: 0;
+			background: none;
+			border: none;
+		}
+	}
 }

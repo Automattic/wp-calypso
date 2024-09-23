@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
+import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -29,6 +30,7 @@ import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
+import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
@@ -58,8 +60,9 @@ import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	CheckoutPageErrorCallback,
 	PaymentEventCallbackArguments,
+	PaymentMethod,
 } from '@automattic/composite-checkout';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
@@ -141,7 +144,10 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
+	const isSiteless =
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'marketplace';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -222,7 +228,11 @@ export default function CheckoutMain( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
+		reloadFromServer,
 	} = useShoppingCart( cartKey );
+
+	const { shouldSetMigrationSticker, isLoading: isStickerLoading } =
+		useCheckoutMigrationIntroductoryOfferSticker( siteId, reloadFromServer );
 
 	// For site-less checkouts, get the blog ID from the cart response
 	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
@@ -498,8 +508,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'p24', transactionData, dataForProcessor ),
 			bancontact: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
-			giropay: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
 			netbanking: ( transactionData: unknown ) =>
@@ -528,9 +536,9 @@ export default function CheckoutMain( {
 				primaryOver: colors[ 'Jetpack Green 60' ],
 				success: colors[ 'Jetpack Green' ],
 				discount: colors[ 'Jetpack Green' ],
-				highlight: colors[ 'Blue 50' ],
-				highlightBorder: colors[ 'Blue 80' ],
-				highlightOver: colors[ 'Blue 60' ],
+				highlight: colors[ 'WordPress Blue 50' ],
+				highlightBorder: colors[ 'WordPress Blue 80' ],
+				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
@@ -562,6 +570,14 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
 	];
+
+	if ( shouldSetMigrationSticker ) {
+		checkoutLoadingConditions.push( {
+			name: translate( 'Setting introductory offer' ),
+			isLoading: isStickerLoading,
+		} );
+	}
+
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
 	);
@@ -728,6 +744,11 @@ export default function CheckoutMain( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	const initiallySelectedPaymentMethodId = getInitiallySelectedPaymentMethodId(
+		responseCart,
+		paymentMethods
+	);
+
 	return (
 		<Fragment>
 			<PageViewTracker
@@ -751,6 +772,7 @@ export default function CheckoutMain( {
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
+				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
 			>
 				<CheckoutMainContent
 					loadingHeader={
@@ -837,4 +859,24 @@ function getAnalyticsPath(
 	}
 
 	return { analyticsPath, analyticsProps };
+}
+
+function getInitiallySelectedPaymentMethodId(
+	responseCart: ResponseCart,
+	paymentMethods: PaymentMethod[]
+): string | undefined {
+	const firstRenewalWithPaymentMethod = responseCart.products.find( ( product ) =>
+		Boolean( product.stored_details_id )
+	);
+	if ( ! firstRenewalWithPaymentMethod ) {
+		return undefined;
+	}
+	const matchingCheckoutPaymentMethod = paymentMethods.find(
+		( method ) =>
+			method.id === `${ existingCardPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
+	);
+	if ( matchingCheckoutPaymentMethod ) {
+		return matchingCheckoutPaymentMethod.id;
+	}
+	return undefined;
 }

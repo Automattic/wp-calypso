@@ -93,9 +93,9 @@
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	.reader-related-card__meta {
-		display: flex;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
 		height: 38px;
-		justify-content: flex-start;
 		margin-bottom: 13px;
 		z-index: z-index(".reader-related-card.card", ".reader-related-card__meta");
 		width: 100%;
@@ -229,7 +229,6 @@
 	font-size: $font-body-small;
 	margin-top: 4px;
 	min-height: 38px;
-	width: calc(100% - 70px);
 	overflow: hidden;
 	white-space: nowrap;
 }

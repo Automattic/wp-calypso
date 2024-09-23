@@ -1,5 +1,6 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
 
 .domains-table-mobile-cards-controls-bulk-toggle {
 	.components-base-control.components-toggle-control {
@@ -13,6 +14,8 @@
 }
 
 .domains-table-filter {
+	@include search-control-wpcom-styles;
+
 	display: flex;
 	justify-content: space-between;
 
@@ -24,12 +27,5 @@
 
 	> button {
 		width: 100%;
-	}
-
-	&__search {
-		--color-surface: var(--studio-white);
-		box-sizing: border-box;
-		overflow: hidden;
-		border: 1px solid #c3c4c7;
 	}
 }

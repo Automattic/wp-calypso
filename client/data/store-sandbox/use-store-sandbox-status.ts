@@ -1,15 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 interface useStoreSandboxStatusQueryResponse {
 	sandbox_status: boolean;
+	is_editable: boolean;
+	reason_not_editable: string;
 }
 
-function mapResult( response: useStoreSandboxStatusQueryResponse ): boolean {
-	return response.sandbox_status;
-}
-
-export default function useStoreSandboxStatusQuery() {
+export default function useStoreSandboxStatusQuery(): UseQueryResult< useStoreSandboxStatusQueryResponse > {
 	return useQuery( {
 		queryKey: [ 'store-sandbox' ],
 		queryFn: () =>
@@ -17,7 +15,6 @@ export default function useStoreSandboxStatusQuery() {
 				path: '/store-sandbox/status',
 				apiNamespace: 'wpcom/v2',
 			} ),
-		select: mapResult,
 		retry: false,
 		refetchOnWindowFocus: true,
 	} );

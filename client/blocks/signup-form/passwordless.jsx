@@ -14,6 +14,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,10 +28,11 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLoadingLabel: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		userEmail: PropTypes.string,
 		labelText: PropTypes.string,
-		isInviteLoggedOutForm: PropTypes.bool,
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
+		onCreateAccountSuccess: PropTypes.func,
+		disableTosText: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,7 +75,8 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 		const { flowName, queryArgs = {} } = this.props;
-		const isDevAccount = queryArgs.ref === 'hosting-lp' || queryArgs.ref === 'developer-lp';
+		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp', 'wordpress-hosting-dev-lp' ];
+		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -128,16 +131,20 @@ class PasswordlessSignupForm extends Component {
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
-		if ( ! [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+		if ( ! isExistingAccountError( error.error ) ) {
 			this.setState( {
 				errorMessages: [
 					this.props.translate(
 						'Sorry, something went wrong when trying to create your account. Please try again.'
 					),
 				],
-				isSubmitting: false,
 			} );
 		}
+
+		this.setState( {
+			isSubmitting: false,
+		} );
+
 		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 
@@ -176,10 +183,15 @@ class PasswordlessSignupForm extends Component {
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
 		} );
+
+		if ( this.props.onCreateAccountSuccess ) {
+			return this.props.onCreateAccountSuccess( userData );
+		}
 	};
 
 	submitStep = ( data ) => {
-		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
+		const { flowName, stepName, goToNextStep, submitCreateAccountStep, passDataToNextStep } =
+			this.props;
 		submitCreateAccountStep(
 			{
 				flowName,
@@ -192,7 +204,11 @@ class PasswordlessSignupForm extends Component {
 			data
 		);
 		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
-		goToNextStep();
+		if ( passDataToNextStep ) {
+			goToNextStep( data );
+		} else {
+			goToNextStep();
+		}
 	};
 
 	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {
@@ -270,21 +286,8 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 
-	userCreationComplete() {
-		return this.props.step && 'completed' === this.props.step.status;
-	}
-
 	formFooter() {
 		const { isSubmitting } = this.state;
-		if ( this.userCreationComplete() ) {
-			return (
-				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
-				</LoggedOutFormFooter>
-			);
-		}
 		const submitButtonText = isSubmitting
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
@@ -305,18 +308,6 @@ class PasswordlessSignupForm extends Component {
 
 	getLabelText() {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
-	}
-
-	getFormButtonAndToS() {
-		return this.props.isInviteLoggedOutForm ? (
-			<>
-				{ this.formFooter() } { this.props.renderTerms?.() }
-			</>
-		) : (
-			<>
-				{ this.props.renderTerms?.() } { this.formFooter() }
-			</>
-		);
 	}
 
 	render() {
@@ -344,7 +335,8 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.getFormButtonAndToS() }
+					{ ! this.props.disableTosText && this.props.renderTerms?.() }
+					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
 		);

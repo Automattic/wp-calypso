@@ -90,21 +90,12 @@ const SearchCategories: FC< {
 	searchRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
-	stickySearchBoxRef: RefObject< HTMLDivElement >;
 	width: number;
-} > = ( {
-	category,
-	isSearching,
-	isSticky,
-	searchRef,
-	searchTerm,
-	searchTerms,
-	stickySearchBoxRef,
-	width,
-} ) => {
+} > = ( { category, isSearching, isSticky, searchRef, searchTerm, searchTerms, width } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
+
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
 		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
@@ -157,7 +148,7 @@ const SearchCategories: FC< {
 					</div>
 				) }
 			</div>
-			<div className="search-categories__sticky-ref" ref={ stickySearchBoxRef } />
+			{ isSticky && <div className="search-categories__sticky-placeholder" /> }
 		</>
 	);
 };

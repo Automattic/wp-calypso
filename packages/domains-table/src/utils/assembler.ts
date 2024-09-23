@@ -4,6 +4,7 @@ import { getDomainType } from './get-domain-type';
 import { getGdprConsentStatus } from './get-gdpr-consent-status';
 import { getTransferStatus } from './get-transfer-status';
 import {
+	DnssecRecords,
 	DomainType,
 	GDPRConsentStatus,
 	GoogleEmailSubscription,
@@ -40,6 +41,17 @@ function assembleCurrentUserCannotAddEmailReason( reason: {
 		return null;
 	}
 	return errorDetails[ 0 ];
+}
+
+function assembleDnssecRecords( dnssecRecords?: DnssecRecords ) {
+	if ( ! dnssecRecords ) {
+		return {};
+	}
+
+	return {
+		dnskey: dnssecRecords.dnskey,
+		dsData: dnssecRecords.dsData,
+	};
 }
 
 export const createSiteDomainObject = ( domain: DomainData ) => {
@@ -89,6 +101,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 			domain.current_user_cannot_add_email_reason
 		),
 		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
+		dnssecRecords: assembleDnssecRecords( domain.dnssec_records ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: domain.domain_registration_agreement_url ?? null,
@@ -103,9 +116,12 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		titanMailSubscription: assembleGoogleAppsSubscription(
 			domain.titan_mail_subscription
 		) as TitanEmailSubscription,
+		hasPendingContactUpdate: Boolean( domain.has_pending_contact_update ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isDnssecEnabled: Boolean( domain.is_dnssec_enabled ),
+		isDnssecSupported: Boolean( domain.is_dnssec_supported ),
 		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
@@ -117,6 +133,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 				? Boolean( domain.is_icann_verification_suspended )
 				: null,
 		isMappedToAtomicSite: Boolean( domain.is_mapped_to_atomic_site ),
+		isMoveToNewSitePending: Boolean( domain.is_move_to_new_site_pending ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPendingRenewal: Boolean( domain.pending_renewal ),
 		isPremium: Boolean( domain.is_premium ),
@@ -138,6 +155,8 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		owner: domain.owner,
 		partnerDomain: Boolean( domain.partner_domain ),
 		pendingRegistration: Boolean( domain.pending_registration ),
+		pendingRegistrationAtRegistry: Boolean( domain.pending_registration_at_registry ),
+		pendingRegistrationAtRegistryUrl: String( domain.pending_registration_at_registry_url ?? '' ),
 		pendingRegistrationTime: String( domain.pending_registration_time ),
 		pendingTransfer: domain.pending_transfer,
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
@@ -147,6 +166,8 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		registrationDate: String( domain.registration_date ),
 		renewableUntil: String( domain.renewable_until ),
 		redeemableUntil: String( domain.redeemable_until ),
+		registeredViaTrustee: Boolean( domain.registered_via_trustee ),
+		registeredViaTrusteeUrl: String( domain.registered_via_trustee_url ?? '' ),
 		registryExpiryDate: String( domain.registry_expiry_date ?? '' ),
 		sslStatus: domain.ssl_status,
 		subdomainPart: String( domain.subdomain_part ),

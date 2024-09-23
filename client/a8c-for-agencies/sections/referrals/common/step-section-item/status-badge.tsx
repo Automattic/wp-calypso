@@ -1,4 +1,5 @@
 import { Badge, Tooltip } from '@automattic/components';
+import clsx from 'clsx';
 import { useRef, useState, ComponentProps } from 'react';
 
 import './style.scss';
@@ -6,20 +7,28 @@ import './style.scss';
 export default function StatusBadge( {
 	statusProps,
 }: {
-	statusProps?: ComponentProps< typeof Badge > & { tooltip?: string };
+	statusProps?: ComponentProps< typeof Badge > & {
+		tooltip?: string | JSX.Element;
+		isRounded?: boolean;
+	};
 } ) {
 	const [ showPopover, setShowPopover ] = useState( false );
 
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 
-	const { tooltip, ...badgeProps } = statusProps || {};
+	const { tooltip, isRounded, ...badgeProps } = statusProps || {};
+
+	const badge = (
+		<Badge
+			className={ clsx( 'step-section-item__status', {
+				'step-section-item__status--rounded': isRounded,
+			} ) }
+			{ ...badgeProps }
+		/>
+	);
 
 	if ( ! tooltip ) {
-		return (
-			<span className="step-section-item__status-wrapper">
-				<Badge className="step-section-item__status" { ...badgeProps } />
-			</span>
-		);
+		return <span className="step-section-item__status-wrapper">{ badge }</span>;
 	}
 
 	return (
@@ -32,7 +41,7 @@ export default function StatusBadge( {
 			tabIndex={ 0 }
 			ref={ wrapperRef }
 		>
-			<Badge className="step-section-item__status" { ...badgeProps } />
+			{ badge }
 
 			<Tooltip context={ wrapperRef.current } isVisible={ showPopover } position="bottom">
 				{ tooltip }

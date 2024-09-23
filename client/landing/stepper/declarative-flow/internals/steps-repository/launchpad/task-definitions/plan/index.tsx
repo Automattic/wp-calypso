@@ -52,8 +52,14 @@ const getPlanTaskSubtitle = (
 };
 
 export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
-	const { siteSlug, displayGlobalStylesWarning, globalStylesMinimumPlan, planCartItem, site } =
-		context;
+	const {
+		siteSlug,
+		displayGlobalStylesWarning,
+		globalStylesMinimumPlan,
+		planCartItem,
+		site,
+		hasSkippedCheckout,
+	} = context;
 
 	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
 
@@ -79,7 +85,7 @@ export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => 
 					: FEATURE_STYLE_CUSTOMIZATION,
 			} ),
 		} ),
-		completed: task.completed && ! isVideoPressFlowWithUnsupportedPlan,
+		completed: task.completed && ! hasSkippedCheckout && ! isVideoPressFlowWithUnsupportedPlan,
 		subtitle: getPlanTaskSubtitle( task, flow, context, displayGlobalStylesWarning ),
 		useCalypsoPath: true,
 	};

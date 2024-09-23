@@ -16,7 +16,7 @@ export const PrimaryDomainLabel = () => {
 			onMouseEnter={ () => setShowPrimaryDomainInfo( true ) }
 			onMouseLeave={ () => setShowPrimaryDomainInfo( false ) }
 		>
-			{ __( 'Primary domain', __i18n_text_domain__ ) }
+			{ __( 'Primary site address', __i18n_text_domain__ ) }
 			<Gridicon size={ 16 } icon="info-outline" />
 			<Popover
 				className="domains-table__primary-domain-label-popover"
@@ -25,7 +25,7 @@ export const PrimaryDomainLabel = () => {
 				isVisible={ showPrimaryDomainInfo }
 			>
 				<div className="domains-table__primary-domain-label-popover-content">
-					{ __( 'Your other domains will redirect to this primary domain.', __i18n_text_domain__ ) }
+					{ __( 'Your other domains will redirect to this domain.', __i18n_text_domain__ ) }
 				</div>
 			</Popover>
 		</Badge>

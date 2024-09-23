@@ -44,7 +44,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		};
 
 		componentDidMount() {
-			this.props.replaceFields( getFormSettings( this.props.settings ) );
+			this.props.replaceFields( getFormSettings( this.props.settings, this.props ) );
 
 			// Check if site_title task is completed
 			fetchLaunchpad( this.props.siteSlug, 'intent-build' ).then( ( { checklist_statuses } ) => {
@@ -124,7 +124,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 		updateDirtyFields() {
 			const currentFields = this.props.fields;
-			const persistedFields = getFormSettings( this.props.settings );
+			const persistedFields = getFormSettings( this.props.settings, this.props );
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
@@ -207,6 +207,12 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					case 'jetpack_subscriptions_subscribe_post_end_enabled':
 						trackTracksEvent( 'calypso_settings_subscribe_post_end_updated', {
 							value: fields.jetpack_subscriptions_subscribe_post_end_enabled,
+							path,
+						} );
+						break;
+					case 'jetpack_verbum_subscription_modal':
+						trackTracksEvent( 'calypso_settings_verbum_subscription_modal_updated', {
+							value: fields.jetpack_verbum_subscription_modal,
 							path,
 						} );
 						break;

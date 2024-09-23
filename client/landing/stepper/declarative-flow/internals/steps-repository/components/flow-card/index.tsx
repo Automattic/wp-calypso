@@ -1,5 +1,7 @@
+import { Badge } from '@automattic/components';
 import { Flex, FlexBlock, FlexItem, Card, CardBody, Icon } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
+import type { BadgeType } from '@automattic/components';
 import './style.scss';
 
 interface FlowCardProps {
@@ -8,9 +10,13 @@ interface FlowCardProps {
 	text: string;
 	title: string;
 	disabled?: boolean;
+	badge?: {
+		type: BadgeType;
+		text: string;
+	};
 }
 
-const FlowCard = ( { icon, onClick, text, title, disabled = false }: FlowCardProps ) => {
+const FlowCard = ( { icon, onClick, text, title, disabled = false, badge }: FlowCardProps ) => {
 	return (
 		<Card
 			className="flow-question"
@@ -27,7 +33,10 @@ const FlowCard = ( { icon, onClick, text, title, disabled = false }: FlowCardPro
 						</FlexItem>
 					) }
 					<FlexBlock>
-						<h3 className="flow-question__heading">{ title }</h3>
+						<h3 className="flow-question__heading">
+							{ title }
+							{ badge && <Badge type={ badge.type }>{ badge.text }</Badge> }
+						</h3>
 						<p className="flow-question__description">{ text }</p>
 					</FlexBlock>
 					<FlexItem>

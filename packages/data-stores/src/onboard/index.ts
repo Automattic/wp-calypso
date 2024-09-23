@@ -48,6 +48,7 @@ export function register(): typeof STORE_KEY {
 			'selectedDesign',
 			'selectedFeatures',
 			'selectedSite',
+			'readymadeTemplate',
 			'siteTitle',
 			'siteDescription',
 			'siteLogo',

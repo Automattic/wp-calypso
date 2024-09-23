@@ -17,3 +17,4 @@ export { HorizontalBarList };
 export { default as HorizontalBarListItem } from './horizontal-bar-grid-item';
 export { default as StatsCard } from './stats-card';
 export { default as StatsCardAvatar } from './sideElements/avatar';
+export { default as StatsCardTitleExtras } from './title-extras';

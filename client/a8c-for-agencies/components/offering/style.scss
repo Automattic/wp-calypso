@@ -6,16 +6,12 @@
 	padding-block-start: 16px;
 
 	.a4a-offering-card__title {
-		font-weight: 500;
-		font-size: 1rem;
-		line-height: 1.5;
+		@include a4a-font-heading-md;
 		color: var(--color-neutral-100);
 	}
 
 	.a4a-offering-card__description {
-		font-weight: 400;
-		font-size: rem(14px);
-		line-height: 1.25;
+		@include a4a-font-body-md;
 		color: var(--color-neutral-60);
 		margin-block-end: 16px;
 	}
@@ -29,18 +25,14 @@
 
 			.a4a-offering-item__title {
 				color: var(--color-neutral-100);
-				font-weight: 500;
-				font-size: rem(16px);
-				line-height: 1.25;
+				@include a4a-font-heading-md;
 				margin-inline-start: 10px;
 			}
 		}
 
 		.a4a-offering-item__description {
 			color: var(--color-neutral-60);
-			font-weight: 400;
-			font-size: rem(14px);
-			line-height: 1.25;
+			@include a4a-font-body-md;
 		}
 
 		.foldable-card__header {
@@ -88,8 +80,7 @@
 		color: var(--color-neutral-80);
 		display: flex;
 		align-items: flex-start;
-		font-size: 0.875rem;
-		line-height: 20px;
+		@include a4a-font-body-md;
 	}
 
 	.a4a-offering-item__icon-container {

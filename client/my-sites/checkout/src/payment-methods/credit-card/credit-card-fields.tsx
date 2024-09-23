@@ -111,7 +111,7 @@ export default function CreditCardFields( {
 
 	const stripeElementStyle = {
 		base: {
-			fontSize: '16px',
+			fontSize: '14px',
 			color: theme.colors.textColor,
 			fontFamily: theme.fonts.body,
 			fontWeight: theme.weights.normal,

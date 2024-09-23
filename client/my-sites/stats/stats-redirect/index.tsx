@@ -25,13 +25,15 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const { hasLoadedSitePurchases, isRequestingSitePurchases, hasAnyPlan } =
-		useStatsPurchases( siteId );
+	const { hasLoadedSitePurchases, hasAnyPlan } = useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	// TODO: Consolidate permissions checks.
+	// This same code is in LoadStatsPage (which calls this component) so
+	// it might not be necessary here.
 	const canUserManageOptions = useSelector( ( state ) =>
 		canCurrentUser( state, siteId, 'manage_options' )
 	);
@@ -45,7 +47,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canUserManageOptions
 	);
 
-	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
+	const isLoading = ! hasLoadedSitePurchases || isLoadingNotices;
 	const { isNewSite, shouldShowPaywall } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
@@ -66,8 +68,20 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		}
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
-	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions ) {
+	// Render conditions (for readability).
+	// TODO: Determine the paywall redirection for specific routes.
+	const shouldRenderPaywall =
+		false && ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions;
+	const shouldRenderContent = ! isLoading && ( canUserViewStats || canUserManageOptions );
+
+	// Handle possible render conditions.
+	// Based on render conditions, loading state takes priority.
+	if ( isLoading ) {
+		return <StatsLoader />;
+	}
+
+	// Paywall is dependant on site age, type, & plan as well as user permissions.
+	if ( shouldRenderPaywall ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
@@ -90,12 +104,18 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isLoading && ( canUserViewStats || canUserManageOptions ) ) {
-		return <>{ children }</>;
-	} else if ( isLoading ) {
-		return <StatsLoader />;
 	}
 
+	// Default is to show the user some stats.
+	// There are permissions considerations though, in which case we fall
+	// through and show nothing. Feels broken.
+	if ( shouldRenderContent ) {
+		return <>{ children }</>;
+	}
+
+	// TODO: Render a proper error message.
+	// Should indicate user does not have permissions to view stats.
+	// See note above regarding permissions.
 	return null;
 };
 

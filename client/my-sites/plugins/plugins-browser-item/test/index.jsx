@@ -19,6 +19,9 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
 	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
 );
+jest.mock( 'calypso/state/plugins/last-visited/selectors', () => ( {
+	isLastVisitedPlugin: () => {},
+} ) );
 
 describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 	test( 'should render the incompatible plugin message on Simple Sites', () => {

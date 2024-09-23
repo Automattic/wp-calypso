@@ -8,8 +8,7 @@ import {
 	LineItemType,
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
-	filterAndGroupCostOverridesForDisplay,
-	hasCheckoutVersion,
+	isBillingInfoEmpty,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -68,8 +67,27 @@ const NonTotalPrices = styled.div`
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
-	padding: 16px 0;
+	padding: 16px 0 6px;
 `;
+
+const TaxNotCalculatedLineItemWrapper = styled.div`
+	font-size: 14px;
+	text-wrap: pretty;
+	line-height: 1em;
+	color: ${ ( { theme } ) => theme.colors.textColorLight };
+	margin-bottom: 8px;
+`;
+
+export function TaxNotCalculatedLineItem() {
+	const translate = useTranslate();
+	return (
+		<TaxNotCalculatedLineItemWrapper>
+			{ translate( 'Tax: to be calculated', {
+				textOnly: true,
+			} ) }
+		</TaxNotCalculatedLineItemWrapper>
+	);
+}
 
 export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
@@ -78,8 +96,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
-	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart, translate );
+	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart );
 	const discountLineItem: LineItemType = {
 		id: 'total-discount',
 		type: 'subtotal',
@@ -94,43 +111,34 @@ export default function BeforeSubmitCheckoutHeader() {
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label:
-			costOverridesList.length > 0
-				? translate( 'Subtotal before discounts' )
-				: translate( 'Subtotal' ),
+		label: totalDiscount > 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
 		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
 	};
 
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
-
 	return (
 		<>
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
-
-			{ ! shouldUseCheckoutV2 && (
-				<WPOrderReviewSection>
-					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						{ costOverridesList.length > 0 && (
-							<NonProductLineItem subtotal lineItem={ discountLineItem } />
-						) }
-						{ taxLineItems.map( ( taxLineItem ) => (
-							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-						) ) }
-						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-						) }
-					</NonTotalPrices>
-					<TotalPrice>
-						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-					</TotalPrice>
-				</WPOrderReviewSection>
-			) }
+			<WPOrderReviewSection>
+				<NonTotalPrices>
+					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+					{ totalDiscount > 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
+					{ taxLineItems.map( ( taxLineItem ) => (
+						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+					) ) }
+					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+					) }
+				</NonTotalPrices>
+				<TotalPrice>
+					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+				</TotalPrice>
+				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
+			</WPOrderReviewSection>
 		</>
 	);
 }

@@ -235,23 +235,44 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		setUserHasRequestedRestore( true );
 
 		// Track the restore confirmation event.
-		dispatch( recordTracksEvent( 'calypso_jetpack_granular_restore_confirm' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_granular_restore_confirm', {
+				has_credentials: hasCredentials,
+			} )
+		);
 	}, [
 		isPreflightEnabled,
 		credentialsAreValid,
 		dispatch,
+		hasCredentials,
 		preflightCheck,
 		siteId,
 		refetchPreflightStatus,
 	] );
 
 	const onCancel = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_granular_restore_cancel' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_granular_restore_cancel', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const onGoBack = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_granular_restore_goback' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_granular_restore_goback', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onViewSiteClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_granular_restore_complete_view_site', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -520,11 +541,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				target="_blank"
 				href={ siteUrl }
 				className="rewind-flow__primary-button"
-				onClick={ () =>
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_backup_granular_restore_complete_view_site' )
-					)
-				}
+				onClick={ onViewSiteClick }
 			>
 				{ translate( 'View your website {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
@@ -568,10 +585,21 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		}
 
 		if ( isFinished && userHasRequestedRestore ) {
-			dispatch( recordTracksEvent( 'calypso_jetpack_backup_granular_restore_completed' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_backup_granular_restore_completed', {
+					has_credentials: hasCredentials,
+				} )
+			);
 			setUserHasRequestedRestore( false );
 		}
-	}, [ dispatch, inProgressRewindStatus, isFinished, isInProgress, userHasRequestedRestore ] );
+	}, [
+		dispatch,
+		hasCredentials,
+		inProgressRewindStatus,
+		isFinished,
+		isInProgress,
+		userHasRequestedRestore,
+	] );
 
 	const render = () => {
 		if ( loading ) {

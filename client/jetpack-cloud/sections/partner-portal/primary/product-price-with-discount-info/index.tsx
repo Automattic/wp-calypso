@@ -49,7 +49,7 @@ export default function ProductPriceWithDiscount( {
 							) }
 
 							<span className="product-price-with-discount__price-discount">
-								{ translate( 'Save %(discountPercentage)s%', {
+								{ translate( 'Save %(discountPercentage)s%%', {
 									args: {
 										discountPercentage,
 									},
@@ -69,13 +69,11 @@ export default function ProductPriceWithDiscount( {
 			</div>
 			<div className="product-price-with-discount__price-interval">
 				{ isDailyPricing &&
-					( isBundle
-						? translate( '/USD per bundle per day' )
-						: translate( '/USD per license per day' ) ) }
+					( isBundle ? translate( 'per bundle per day' ) : translate( 'per license per day' ) ) }
 				{ product.price_interval === 'month' &&
 					( isBundle
-						? translate( '/USD per bundle per month' )
-						: translate( '/USD per license per month' ) ) }
+						? translate( 'per bundle per month' )
+						: translate( 'per license per month' ) ) }
 			</div>
 		</div>
 	);

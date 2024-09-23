@@ -1,8 +1,19 @@
 /* Overide very specific css on an attribute */
 .sidebar {
+	.accessible-focus div.global-sidebar & {
+		.sidebar-streams__conversations .sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			&:focus {
+				border-radius: 2px;
+				z-index: 1;
+			}
+		}
+	}
+
 	li.sidebar-streams__search {
 		margin-top: 8px;
 	}
+
 	li.reader-sidebar-tags__list {
 		margin-bottom: 8px;
 	}
@@ -15,8 +26,7 @@
 	.reader-sidebar-tags__text-input {
 		background-color: transparent;
 		border: 0;
-		padding-left: 8px;
-		padding-right: 8px;
+		padding: 0 10px 8px;
 		box-shadow: none;
 
 		.form-text-input {
@@ -47,7 +57,6 @@
 	}
 
 	.reader-sidebar-tags__all-tags-link {
-		color: var(--color-link);
 		margin-bottom: 2px;
 	}
 }
@@ -55,26 +64,30 @@
 html {
 	overflow-y: auto;
 }
+
 body.is-reader-page,
 .is-reader-page .layout,
 .layout.is-section-reader,
 .layout.is-section-reader .layout__content,
-.is-section-reader:not(.is-reader-full-post) {
+.is-section-reader {
 	background: initial;
 }
-body.is-section-reader:not(.is-reader-full-post) {
+
+body.is-section-reader {
 	background: var(--studio-gray-0);
 
 	&.rtl .layout__content {
-		padding: 16px calc(var(--sidebar-width-max)) 16px 16px;
+		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;
 	}
 
 	.layout__content {
 		// Add border around everything
 		overflow: hidden;
 		min-height: 100vh;
+		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
+		padding-bottom: var(--content-padding-bottom);
 		@media only screen and (min-width: 782px) {
-			padding: 16px 16px 16px calc(var(--sidebar-width-max)) !important;
+			padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) calc(var(--sidebar-width-max)) !important;
 		}
 		.layout_primary > div {
 			padding-bottom: 0;
@@ -86,7 +99,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 	}
 
 	.has-no-masterbar .layout__content .main {
-		padding-top: 16px;
+		padding-top: var(--content-padding-top);
 	}
 
 	@media only screen and (max-width: 600px) {
@@ -104,7 +117,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 			background: var(--color-surface);
 			margin: 0;
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			height: calc(100vh - 46px);
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 		}
 	}
 
@@ -139,6 +152,8 @@ body.is-section-reader:not(.is-reader-full-post) {
 		position: relative;
 		flex-shrink: 0;
 		top: 0;
+		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
+		font-weight: normal;
 		margin-left: auto;
 		box-sizing: border-box;
 		padding: 4px 6px;
@@ -158,8 +173,8 @@ body.is-section-reader:not(.is-reader-full-post) {
 
 	.selected .sidebar__menu-link .count {
 		background: transparent;
-		color: var(--color-sidebar-menu-selected-text);
 		border-color: var(--color-sidebar-menu-selected-text);
+		color: var(--color-sidebar-menu-selected-text);
 	}
 
 	.sidebar__menu-item-siteicon {
@@ -170,8 +185,8 @@ body.is-section-reader:not(.is-reader-full-post) {
 
 	.sidebar__menu-item-last-updated {
 		display: block;
+		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-style: italic;
-		font-size: $font-body-extra-small;
 		color: var(--color-sidebar-text-alternative);
 	}
 
@@ -180,11 +195,12 @@ body.is-section-reader:not(.is-reader-full-post) {
 	}
 
 	.sidebar__menu-item-sitename {
+		line-height: 14px;
 		max-width: 80%;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		margin-right: 4px;
+		margin-right: 8px;
 	}
 
 	.sidebar-streams__following-load-more {

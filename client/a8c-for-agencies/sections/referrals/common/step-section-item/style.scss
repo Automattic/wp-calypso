@@ -71,6 +71,15 @@
 		}
 	}
 
+	&.step-section-item__status--rounded {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 24px;
+		height: 24px;
+		padding: 0;
+	}
+
 	.step-section-item__status-wrapper {
 		margin-left: auto;
 	}
@@ -130,7 +139,7 @@
 	font-size: rem(12px);
 	font-weight: 600;
 	text-align: center;
-	width: 20px;
+	min-width: 20px;
 	height: 20px;
 	border-radius: 50%;
 	border: 2px solid var(--color-accent);

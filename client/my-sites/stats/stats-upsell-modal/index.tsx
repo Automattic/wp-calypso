@@ -4,15 +4,14 @@ import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
+import formatCurrency from '@automattic/format-currency';
 import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
-import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
@@ -23,20 +22,18 @@ import './style.scss';
 export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const planMonthly = Plans.usePricingMetaForGridPlans( {
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const plans = Plans.usePlans( { coupon: undefined } );
+	const plan = plans?.data?.[ PLAN_PREMIUM ];
+	const pricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
 		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
-	} );
-
-	const pricing = planMonthly?.[ PLAN_PREMIUM ];
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const planName = plan?.product_name_short ?? '';
-	const isLoading = ! plan || ! planMonthly;
+	} )?.[ PLAN_PREMIUM ];
+	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	const isSimpleClassic = useSelector( ( state ) =>
@@ -61,7 +58,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 			checkoutProductUrl.searchParams.set( 'redirect_to', window.location.href );
 			window.open( checkoutProductUrl, '_self' );
 		} else {
-			page( `/checkout/${ siteSlug }/${ plan?.path_slug ?? 'premium' }` );
+			page( `/checkout/${ siteSlug }/${ plan?.pathSlug ?? 'premium' }` );
 		}
 	};
 
@@ -73,7 +70,6 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 					stat_type: statType,
 				} }
 			/>
-			<QueryPlans />
 			<Button
 				className="stats-upsell-modal__close-button"
 				onClick={ closeModal }
@@ -94,21 +90,25 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 						onClick={ onClick }
 						disabled={ isLoading }
 					>
-						{ isLoading
+						{ ! plan?.productNameShort
 							? translate( 'Upgrade plan' )
-							: translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
+							: translate( 'Upgrade to %(planName)s', {
+									args: { planName: plan.productNameShort },
+							  } ) }
 					</Button>
 				</div>
 				<div className="stats-upsell-modal__right">
 					<h2 className="stats-upsell-modal__plan">
-						{ isLoading ? '' : translate( '%(planName)s plan', { args: { planName } } ) }
+						{ ! plan?.productNameShort
+							? ''
+							: translate( '%(planName)s plan', { args: { planName: plan.productNameShort } } ) }
 					</h2>
-					{ ! isLoading && (
+					{ pricing && (
 						<div className="stats-upsell-modal__price-amount">
 							<PlanPrice
 								className="screen-upsell__plan-price"
-								currencyCode={ pricing?.currencyCode }
-								rawPrice={ pricing?.originalPrice?.monthly }
+								currencyCode={ pricing.currencyCode }
+								rawPrice={ pricing.discountedPrice.monthly ?? pricing.originalPrice.monthly }
 								displayPerMonthNotation={ false }
 								isLargeCurrency
 								isSmallestUnit
@@ -116,10 +116,19 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 						</div>
 					) }
 					<div className="stats-upsell-modal__price-per-month">
-						{ isLoading
+						{ ! pricing
 							? ''
 							: translate( 'per month, %(planPrice)s billed yearly', {
-									args: { planPrice: plan?.formatted_price ?? '' },
+									args: {
+										planPrice: formatCurrency(
+											pricing.discountedPrice.full ?? pricing.originalPrice.full ?? 0,
+											pricing.currencyCode ?? '',
+											{
+												stripZeros: true,
+												isSmallestUnit: true,
+											}
+										),
+									},
 							  } ) }
 					</div>
 					<div className="stats-upsell-modal__features">
@@ -153,7 +162,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
 								{ translate( 'All %(planName)s plan features', {
-									args: { planName },
+									args: { planName: plan?.productNameShort ?? '' },
 								} ) }
 							</div>
 						</div>

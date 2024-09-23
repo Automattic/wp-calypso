@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
 	AI_ASSEMBLER_FLOW,
-	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -13,11 +12,14 @@ import {
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
+	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
+	IMPORT_FOCUSED_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
+	ONBOARDING_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -33,7 +35,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	newsletter: () =>
 		import( /* webpackChunkName: "newsletter-flow" */ '../declarative-flow/newsletter' ),
 
-	'import-focused': () =>
+	[ IMPORT_FOCUSED_FLOW ]: () =>
 		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
 
 	videopress: () =>
@@ -41,16 +43,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
-
-	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "link-in-bio-flow-domain" */ '../declarative-flow/link-in-bio-domain'
-		),
-
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
-
-	podcasts: () => import( /* webpackChunkName: "podcasts-flow" */ '../declarative-flow/podcasts' ),
 
 	'link-in-bio-post-setup': () =>
 		import(
@@ -82,6 +76,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
+	'readymade-template': () =>
+		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
 
 	[ AI_ASSEMBLER_FLOW ]: () =>
 		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
@@ -135,6 +132,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ GOOGLE_TRANSFER ]: () =>
 		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
 
+	[ ONBOARDING_FLOW ]: () => import( /* webpackChunkName: "onboarding-flow" */ './onboarding' ),
+
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
 
@@ -153,6 +152,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
+	[ MIGRATION_FLOW ]: () =>
+		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(

@@ -1,15 +1,15 @@
 import {
-	TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGroupedForComparisonGrid,
-	setTrailMapExperiment,
+	setSimplifiedFeaturesGridExperimentVariant,
+	type SimplifiedFeaturesGridExperimentVariant,
 } from '@automattic/calypso-products';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const ComponentWrapper = (
 	props: Omit< ComparisonGridExternalProps, 'gridPlans' > & {
-		trailMapVariant?: TrailMapVariantType;
+		simplifiedFeaturesGridExperimentVariant?: SimplifiedFeaturesGridExperimentVariant;
 	}
 ) => {
 	const gridPlans = useGridPlansForComparisonGrid( {
@@ -56,7 +56,6 @@ const defaultProps = {
 	isInSignup: true,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
-	planUpgradeCreditsApplicable: undefined,
 	recordTracksEvent: () => {},
 	showRefundPeriod: false,
 	showUpgradeableStorage: true,
@@ -77,8 +76,8 @@ const meta = {
 	title: 'ComparisonGrid',
 	component: ComponentWrapper,
 	decorators: [
-		( Story, { args: { trailMapVariant } } ) => {
-			trailMapVariant && setTrailMapExperiment( trailMapVariant );
+		( Story, { args: { simplifiedFeaturesGridExperimentVariant = 'control' } } ) => {
+			setSimplifiedFeaturesGridExperimentVariant( simplifiedFeaturesGridExperimentVariant );
 			return <Story />;
 		},
 	],
@@ -88,40 +87,33 @@ export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-export const Start = {
-	name: '/start',
+export const DefaultComparisonGrid = {
+	name: 'Default',
 	args: {
 		...defaultProps,
-		intent: 'plans-default-wpcom',
 	},
 } satisfies Story;
 
-export const TrailMapControl = {
+export const HideUnsupportedFeatures = {
+	name: 'Hide unsupported features',
 	args: {
-		...Start.args,
-		trailMapVariant: 'control',
-	},
-} satisfies Story;
-
-export const TrailMapStructure = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_structure',
+		...defaultProps,
 		hideUnsupportedFeatures: true,
 	},
 } satisfies Story;
 
-export const TrailMapCopy = {
+export const FewerFeaturesExperimentTreatmentVariantA = {
+	name: 'Experiment [Simplified features grid]: Treatment A',
 	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy',
+		...defaultProps,
+		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
 	},
 } satisfies Story;
 
-export const TrailMapCopyAndStructure = {
+export const FewerFeaturesExperimentTreatmentVariantB = {
+	name: 'Experiment [Simplified features grid]: Treatment B',
 	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy_and_structure',
-		hideUnsupportedFeatures: true,
+		...defaultProps,
+		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;

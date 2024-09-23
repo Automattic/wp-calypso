@@ -2,6 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
 
+export const NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK = 'able_to_submit_user_feedback';
+export const NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL = 'show_floating_user_feedback_panel';
+
 const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
 	traffic_page_highlights_module_settings: false,
@@ -11,6 +14,9 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	focus_jetpack_purchase: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
+	gdpr_cookie_consent: false,
+	[ NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK ]: true,
+	[ NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL ]: true,
 };
 const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
 	client_paid_plan_purchase_success: true,
@@ -28,10 +34,13 @@ export type NoticeIdType = keyof Notices;
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 	settings_tool_tips: [ 'traffic_page_settings', 'traffic_page_highlights_module_settings' ],
 	dashboard_notices: [
+		// Set the highest priority to prevent blocking Stats under any circumstances.
+		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
+		// TODO: Check if the current usage is over the tier limit inside the isVisibleFunc.
 		'tier_upgrade',
 	],
 };

@@ -502,6 +502,13 @@ export interface ResponseCartProduct {
 	 */
 	is_included_for_100yearplan: boolean;
 
+	/**
+	 * If set, this is the ID of the payment method attached to the existing
+	 * subscription for this product. This will only be set for renewals and
+	 * only if the renewal has a payment method attached.
+	 */
+	stored_details_id?: string;
+
 	product_variants: ResponseCartProductVariant[];
 }
 
@@ -610,6 +617,7 @@ export interface ResponseCartProductExtra {
 	receipt_for_domain?: number;
 	domain_registration_agreement_url?: string;
 	legal_agreements?: never[] | DomainLegalAgreements;
+	is_gravatar_domain?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -637,6 +645,16 @@ export interface ResponseCartProductExtra {
 	is_marketplace_product?: boolean;
 	product_slug?: string;
 	product_type?: 'marketplace_plugin' | 'marketplace_theme' | 'saas_plugin';
+
+	/**
+	 * True when:
+	 * - the product has variants ( e.g. annual plan vs. monthly plan vs. multi-year plan )
+	 * - we only want to show the single product selected by the user
+	 * - we want to prevent the user from switching to a variant
+	 *
+	 * This will hide product variant UI elements in checkout ( line item variant dropdown or variant upsells )
+	 */
+	hideProductVariants?: boolean;
 }
 
 export interface ResponseCartGiftDetails {

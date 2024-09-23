@@ -1,7 +1,7 @@
+import { Icon, close as closeIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useCallback } from 'react';
 import Modal from 'react-modal';
-import Gridicon from '../gridicon';
 import ButtonBar from './button-bar';
 import type { BaseButton } from './button-bar';
 import type { PropsWithChildren } from 'react';
@@ -25,6 +25,7 @@ type Props = {
 	shouldCloseOnOverlayClick?: boolean;
 	labelledby?: string;
 	describedby?: string;
+	bodyOpenClassName?: string;
 };
 
 const Dialog = ( {
@@ -45,6 +46,7 @@ const Dialog = ( {
 	shouldCloseOnOverlayClick = true,
 	labelledby,
 	describedby,
+	bodyOpenClassName,
 }: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
@@ -81,6 +83,7 @@ const Dialog = ( {
 			role="dialog"
 			shouldCloseOnEsc={ shouldCloseOnEsc }
 			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
+			bodyOpenClassName={ bodyOpenClassName }
 		>
 			{ showCloseIcon && (
 				<button
@@ -88,7 +91,7 @@ const Dialog = ( {
 					className="dialog__action-buttons-close"
 					onClick={ () => onClose?.( this ) }
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<Icon icon={ closeIcon } size={ 24 } />
 				</button>
 			) }
 			<div className={ contentClassName } tabIndex={ -1 }>

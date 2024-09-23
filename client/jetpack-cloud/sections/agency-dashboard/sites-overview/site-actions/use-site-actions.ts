@@ -1,8 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -10,11 +8,13 @@ import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selector
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
-export default function useSiteActions(
-	site: SiteNode,
-	isLargeScreen: boolean,
-	siteError?: boolean
-) {
+type Props = {
+	site: SiteNode;
+	isLargeScreen: boolean;
+	siteError?: boolean;
+};
+
+export default function useSiteActions( { site, isLargeScreen, siteError }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
@@ -31,9 +31,7 @@ export default function useSiteActions(
 
 		let issueLicenseURL = undefined;
 
-		if ( isA8CForAgencies() ) {
-			issueLicenseURL = A4A_MARKETPLACE_LINK;
-		} else if ( partnerCanIssueLicense ) {
+		if ( partnerCanIssueLicense ) {
 			issueLicenseURL = `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`;
 		}
 
@@ -45,8 +43,7 @@ export default function useSiteActions(
 		};
 
 		const isWPCOMAtomicSiteCreationEnabled =
-			( isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) || isA8CForAgencies() ) &&
-			is_atomic;
+			isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && is_atomic;
 
 		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 
@@ -77,11 +74,7 @@ export default function useSiteActions(
 				href: issueLicenseURL,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled:
-					( partnerCanIssueLicense || isA8CForAgencies() ) &&
-					! siteError &&
-					! is_atomic &&
-					! isUrlOnly,
+				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),

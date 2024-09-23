@@ -3,16 +3,15 @@ import { Subscription } from 'calypso/a8c-for-agencies/sections/client/types';
 import wpcom from 'calypso/lib/wp';
 
 interface Params {
-	subscriptionId: number;
+	licenseKey: string;
 }
 
-// FIXME: This is not the final endpoint but a temporary one. Will replace this once we figure out the correct endpoint.
-function mutationCancelClientSubscription( { subscriptionId }: Params ): Promise< Subscription > {
+function mutationCancelClientSubscription( { licenseKey }: Params ): Promise< Subscription > {
 	return wpcom.req.post( {
 		method: 'DELETE',
 		apiNamespace: 'wpcom/v2',
-		path: '/agency-client/referrals',
-		body: { license_key: subscriptionId },
+		path: '/agency-client/license',
+		body: { license_key: licenseKey },
 	} );
 }
 

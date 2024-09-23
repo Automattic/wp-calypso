@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
@@ -40,7 +39,6 @@ const StatsPurchasePage = ( {
 	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
 } ) => {
 	const translate = useTranslate();
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -123,18 +121,15 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	// Redirect to commercial is there is the query param is set and the site doesn't have commercial license yet
-	const redirectToCommercial = ! isTierUpgradeSliderEnabled
-		? query?.productType === 'commercial' && ! supportCommercialUse
-		: query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
+	const redirectToCommercial = query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
 	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
 	const redirectToPersonal =
 		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
 	// Whether it's forced to redirect to a product
 	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
-	const allowCommercialTierUpgrade =
-		isTierUpgradeSliderEnabled && isCommercialOwned && ! isLegacyCommercialLicense;
+	// Legacy commercial licenses don't have limits.
+	const allowCommercialTierUpgrade = isCommercialOwned && ! isLegacyCommercialLicense;
 
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
 	// VIP sites are exempt from being shown this page.

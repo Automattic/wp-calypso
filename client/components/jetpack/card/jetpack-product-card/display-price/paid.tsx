@@ -107,6 +107,9 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 	} = props;
 	const finalPrice = ( isNumber( discountedPrice ) ? discountedPrice : originalPrice ) as number;
 	const isDiscounted = !! ( isNumber( finalPrice ) && originalPrice && finalPrice < originalPrice );
+	const discountPercentage = isDiscounted
+		? Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 )
+		: 0;
 
 	// Placeholder (while prices are loading)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
@@ -146,6 +149,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		<>
 			<PriceAriaLabel
 				{ ...props }
+				discountPercentage={ discountPercentage }
 				currencyCode={ currencyCode }
 				finalPrice={ finalPrice }
 				isDiscounted={ isDiscounted }
@@ -167,6 +171,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 							<TimeFrame
 								billingTerm={ billingTerm }
 								discountedPriceDuration={ discountedPriceDuration }
+								discountPercentage={ discountPercentage }
 								formattedOriginalPrice={ formattedOriginalPrice }
 								isDiscounted={ isDiscounted }
 								finalPrice={ finalPrice }

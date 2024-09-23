@@ -33,6 +33,7 @@ export class FormPatternsFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Form';
+	blockTestName = 'Form (Patterns)';
 	blockEditorSelector = makeSelectorFromBlockName( 'Form' );
 
 	/**

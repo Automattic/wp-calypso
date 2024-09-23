@@ -1,8 +1,10 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { getContextResults } from '@automattic/data-stores';
+import { useHelpSearchQuery } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -10,7 +12,6 @@ import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
@@ -79,7 +80,6 @@ function HelpSearchResults( {
 	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
 		searchQuery,
 		getLocaleSlug(),
-		{},
 		sectionName
 	);
 
@@ -106,31 +106,39 @@ function HelpSearchResults( {
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
 
+	const { setShowSupportDoc } = useDataStoreDispatch( 'automattic/help-center' );
+
 	const onLinkClickHandler = ( event, result, type ) => {
-		const { link } = result;
-		// check and catch admin section links.
-		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-			// record track-event.
-			dispatch(
-				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
-					link: link,
-					search_term: searchQuery,
-					location,
-					section: sectionName,
-				} )
-			);
-
-			// push state only if it's internal link.
-			if ( ! /^http/.test( link ) ) {
-				event.preventDefault();
-				openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
-				onAdminSectionSelect( event );
-			}
-
+		const { link, post_id: postId, blog_id: blogId } = result;
+		if ( ! link ) {
+			onSelect( event, result );
 			return;
 		}
 
-		onSelect( event, result );
+		if ( type !== SUPPORT_TYPE_ADMIN_SECTION ) {
+			if ( type === SUPPORT_TYPE_API_HELP ) {
+				event.preventDefault();
+
+				setShowSupportDoc( link, postId, blogId );
+			}
+			onSelect( event, result );
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+				link: link,
+				search_term: searchQuery,
+				location,
+				section: sectionName,
+			} )
+		);
+
+		if ( ! /^http/.test( link ) ) {
+			event.preventDefault();
+			openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
+			onAdminSectionSelect( event );
+		}
 	};
 
 	const renderHelpLink = ( result, type ) => {

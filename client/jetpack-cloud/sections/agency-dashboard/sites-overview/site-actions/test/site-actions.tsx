@@ -46,6 +46,9 @@ describe( '<SiteActions>', () => {
 					},
 				},
 			},
+			a8cForAgencies: {
+				agencies: {},
+			},
 		};
 		const store = mockStore( initialState );
 
@@ -96,6 +99,11 @@ describe( '<SiteActions>', () => {
 					current: {
 						can_issue_licenses: false,
 					},
+				},
+			},
+			a8cForAgencies: {
+				agencies: {
+					activeAgency: 1,
 				},
 			},
 		};

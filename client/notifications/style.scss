@@ -178,13 +178,13 @@ div.reader-notifications__panel {
 				left: 0;
 			}
 			@media only screen and (min-width: 783px) {
-				top: 24px;
-				height: calc(100vh - 40px);
+				top: calc(var(--masterbar-height) + 20px);
+				height: calc(100vh - var(--masterbar-height) - 36px);
 				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
 			}
 			@media only screen and (min-width: 601px) and (max-width: 783px) {
 				top: calc(var(--masterbar-height) + 24px);
-				height: calc(100vh - 48px - var(--masterbar-height));
+				height: calc(100vh - 50px - var(--masterbar-height));
 				left: 24px;
 				border-top-left-radius: 8px; /* stylelint-disable-line scales/radii */
 				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */

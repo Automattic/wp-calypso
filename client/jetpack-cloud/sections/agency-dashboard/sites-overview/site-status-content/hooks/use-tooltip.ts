@@ -1,10 +1,12 @@
 import { TranslateResult, translate as RawTranslateFn, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import {
 	AllowedStatusTypes as AllowedStatusType,
 	AllowedTypes as AllowedRowType,
 	SiteData,
 } from '../../types';
+import useHasManagedPlugins from './use-has-managed-plugins';
 import useIsMultisiteSupported from './use-is-multisite-supported';
 
 type TooltipGetter = Partial<
@@ -54,6 +56,10 @@ const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | u
 	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
 	const isMultisiteSupported = useIsMultisiteSupported( rows?.site?.value, type );
 
+	// Display a different message when there are plugin updates that are managed by the host
+	// and cannot be updated by the user.
+	const hasManagedPlugins = useHasManagedPlugins( rows.site?.value );
+
 	const translate = useTranslate();
 
 	return useMemo( () => {
@@ -62,8 +68,13 @@ const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | u
 			return translate( 'Not supported on multisite' );
 		}
 
+		// Display different message only for A4A. Jetpack Manage filters out the plugins.
+		if ( type === 'plugin' && isA8CForAgencies() && hasManagedPlugins ) {
+			return translate( 'Some plugins are managed by the host and cannot be autoupdated' );
+		}
+
 		return ALL_TOOLTIPS[ type ]?.[ row?.status ]?.( translate );
-	}, [ isMultisiteSupported, rows, translate, type ] );
+	}, [ isMultisiteSupported, hasManagedPlugins, rows, translate, type ] );
 };
 
 export default useTooltip;

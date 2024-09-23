@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
@@ -9,10 +10,17 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_OVERVIEW_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgency,
+	isFetchingAgency,
+	hasFetchedAgency,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AgencyDetailsForm from './agency-details';
 import AgencyExpertise from './agency-expertise';
 import {
@@ -43,6 +51,8 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	const title = translate( 'Partner Directory' );
 
 	const agency = useSelector( getActiveAgency );
+	const hasAgency = useSelector( hasFetchedAgency );
+	const isFetching = useSelector( isFetchingAgency );
 
 	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
 	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
@@ -86,6 +96,18 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 
 		return sections;
 	}, [ translate, agencyDetailsData, applicationData ] );
+
+	// Wait until the agency is fetched
+	if ( ! hasAgency || isFetching ) {
+		return null;
+	}
+
+	// Check if the Partner Directory is allowed for the agency
+	if ( ! agency?.partner_directory_allowed ) {
+		// Redirect user to the Overview page
+		page.redirect( A4A_OVERVIEW_LINK );
+		return;
+	}
 
 	// Set the selected section
 	const section: Section = sections[ selectedSection ];

@@ -1,11 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
+import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useExperiment } from 'calypso/lib/explat';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
@@ -17,7 +20,11 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import {
+	useLaunchpadDecider,
+	getLaunchpadStateBasedOnExperiment,
+	LAUNCHPAD_EXPERIMENT_NAME,
+} from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -35,7 +42,6 @@ import type {
 } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
-const { goalsToIntent } = Onboard.utils;
 
 type ExitFlowOptions = {
 	skipLaunchpad?: boolean;
@@ -61,25 +67,6 @@ const siteSetupFlow: Flow = {
 				navigate( 'goals' );
 			}
 		}, [] );
-
-		const { site } = useSiteData();
-		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
-
-		const goals = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-			[]
-		);
-
-		useEffect( () => {
-			if ( goals.length ) {
-				return;
-			}
-
-			if ( site?.options?.site_goals?.length ) {
-				setIntent( goalsToIntent( site.options.site_goals ) );
-				setGoals( site.options.site_goals );
-			}
-		}, [ site, setIntent, setGoals, goals ] );
 	},
 
 	useSteps() {
@@ -113,7 +100,6 @@ const siteSetupFlow: Flow = {
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const stepData = useSelect(
 			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
 			[]
@@ -153,6 +139,7 @@ const siteSetupFlow: Flow = {
 		const from = urlQueryParams.get( 'from' );
 		const backToStep = urlQueryParams.get( 'backToStep' );
 		const backToFlow = urlQueryParams.get( 'backToFlow' );
+		const skippedCheckout = urlQueryParams.get( 'skippedCheckout' );
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -167,10 +154,47 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
+
+		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+
+		const isDesignChoicesStepEnabled =
+			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
+
 		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
+
+		const [ isLoadingLaunchpadExperiment, launchpadExperimentAssigment ] =
+			useExperiment( LAUNCHPAD_EXPERIMENT_NAME );
+
+		const getLaunchpadScreenValue = (
+			intent: string,
+			shouldSkip: boolean
+		): 'full' | 'skipped' | 'off' => {
+			if ( ! isLaunchpadIntent( intent ) || isLaunched ) {
+				return 'off';
+			}
+
+			const launchpadState = getLaunchpadStateBasedOnExperiment(
+				isLoadingLaunchpadExperiment,
+				launchpadExperimentAssigment,
+				shouldSkip
+			);
+
+			if ( launchpadState ) {
+				return launchpadState;
+			}
+
+			// We shouldn't get here, but match the default/existing behaviour
+			if ( shouldSkip ) {
+				return 'skipped';
+			}
+
+			return 'full';
+		};
 
 		const goToFlow = ( fullStepPath: string ) => {
 			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
@@ -212,21 +236,23 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						let launchpadScreen;
-						if ( ! options.skipLaunchpad ) {
-							launchpadScreen = isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
-						} else {
-							launchpadScreen = 'skipped';
-						}
-
-						settings.launchpad_screen = launchpadScreen;
+						settings.launchpad_screen = getLaunchpadScreenValue(
+							siteIntent,
+							options.skipLaunchpad ?? false
+						);
 					}
 
 					let redirectionUrl = to;
 
 					// Forcing cache invalidation to retrieve latest launchpad_screen option value
 					if ( isLaunchpadIntent( siteIntent ) ) {
-						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+						redirectionUrl = addQueryArgs(
+							{
+								showLaunchpad: true,
+								...( skippedCheckout && { skippedCheckout: 1 } ),
+							},
+							to
+						);
 					}
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
@@ -251,9 +277,12 @@ const siteSetupFlow: Flow = {
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 		};
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
+		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
@@ -324,11 +353,11 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
-						const url = siteId
-							? `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`
-							: `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+						initializeLaunchpadState( { siteId, siteSlug } );
+						const url = getPostFlowUrl( { flow: intent, siteId, siteSlug } );
 						return exitFlow( url );
 					}
+
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
@@ -366,7 +395,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -459,12 +488,17 @@ const siteSetupFlow: Flow = {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );
 					}
-
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
+						case 'customized-action-go-to-flow': {
+							const customizedActionGoToFlow = urlQueryParams.get( 'customizedActionGoToFlow' );
+							if ( customizedActionGoToFlow ) {
+								return goToFlow( customizedActionGoToFlow );
+							}
+						}
 						default:
 							return navigate( providedDependencies?.url as string );
 					}
@@ -509,7 +543,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );
@@ -543,6 +577,9 @@ const siteSetupFlow: Flow = {
 				case 'importerMedium':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
+						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
+							return goToFlow( backToFlow );
+						}
 						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
 					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
@@ -574,6 +611,10 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
+					if ( backToFlow && urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
+						return goToFlow( backToFlow );
+					}
+
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':

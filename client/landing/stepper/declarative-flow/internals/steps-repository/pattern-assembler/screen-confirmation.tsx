@@ -91,11 +91,7 @@ const ScreenConfirmation = ( {
 					) ) }
 				</VStack>
 				{ ! surveyDismissed && isEnglishLocale && (
-					<Survey
-						eventName="assembler-january-2024"
-						eventUrl="https://automattic.survey.fm/assembler-simple-survey"
-						setSurveyDismissed={ setSurveyDismissed }
-					/>
+					<Survey setSurveyDismissed={ setSurveyDismissed } />
 				) }
 			</div>
 			<div className="screen-container__footer">

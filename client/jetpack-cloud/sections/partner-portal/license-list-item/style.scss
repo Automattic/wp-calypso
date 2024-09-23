@@ -167,6 +167,11 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 	.license-preview__product-small {
 		font-size: 1rem;
 	}
+
+	.license-preview__unassigned {
+		display: flex;
+		align-items: center;
+	}
 }
 
 .license-preview__bundle {

@@ -21,6 +21,10 @@ $business-plan-color: #7f54b3;
 		}
 	}
 
+	.notice.is-reskinned {
+		padding-right: 16px;
+	}
+
 	.import__upgrade-plan-features-container {
 		background: #fff;
 		border: solid var(--studio-gray-5) 1px;
@@ -41,6 +45,8 @@ $business-plan-color: #7f54b3;
 			margin-right: 0;
 			margin-left: 0;
 			width: 352px;
+			gap: 1.5rem;
+			padding: 3em 1.5em;
 		}
 	}
 
@@ -113,6 +119,7 @@ $business-plan-color: #7f54b3;
 			font-weight: inherit;
 		}
 
+
 		.plan-time-frame {
 			color: var(--studio-gray-50);
 
@@ -120,6 +127,50 @@ $business-plan-color: #7f54b3;
 				display: block;
 			}
 		}
+	}
+
+	.import__upgrade-plan-price-group {
+		justify-content: flex-end;
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: baseline;
+		gap: 4px;
+
+		.plan-price.is-original {
+			font-size: 1.25rem;
+
+			&::before {
+				border-top: 2px solid var(--color-neutral-light);
+				transform: rotate(0deg);
+			}
+
+			.plan-price__currency-symbol {
+				font-size: 0.75rem;
+				vertical-align: text-top;
+			}
+
+			.plan-price__integer {
+				font-size: 1.25rem;
+			}
+		}
+		.improt__upgrade-plan-price-discounted {
+			.plan-price__fraction {
+				line-height: 1;
+				font-size: 2.75rem;
+				font-weight: inherit;
+				vertical-align: unset;
+			}
+		}
+	}
+
+	.import__upgrade-plan-price-badge {
+		font-size: 0.75rem;
+		border-radius: 4px;
+		width: fit-content;
+		font-weight: 500;
+		background-color: #e6d1ff;
+		color: #350e63;
+		margin-bottom: 0.75rem;
 	}
 
 	.import__upgrade-plan-cta {
@@ -174,8 +225,22 @@ $business-plan-color: #7f54b3;
 	}
 
 	.import__upgrade-plan-details {
-		margin-top: 2.5rem;
 		margin-bottom: 2.5rem;
+
+		&.import__upgrade-plan-details--loading {
+			.import__upgrade-plan-features-container,
+			.import__upgrade-plan-hosting-details .import__upgrade-plan-hosting-details-card-container {
+				gap: 0;
+			}
+		}
+	}
+
+	.import__upgrade-plan-refund-sub-text {
+		color: $business-plan-color;
+		font-size: 0.75rem;
+		font-weight: 500;
+		margin-top: 0.6rem;
+		text-align: center;
 	}
 
 	.import__upgrade-plan-features-list {
@@ -250,7 +315,7 @@ $business-plan-color: #7f54b3;
 			display: flex;
 			flex-direction: column;
 			margin-bottom: 0;
-			width: 352px;
+			width: 372px;
 		}
 
 		.import__upgrade-plan-hosting-details-card-container {
@@ -317,10 +382,6 @@ $business-plan-color: #7f54b3;
 					&:last-child {
 						margin-bottom: 0;
 					}
-				}
-
-				.import__upgrade-plan-hosting-details-list-loading {
-					flex-direction: column;
 				}
 
 				.import__upgrade-plan-hosting-details-list-icon {

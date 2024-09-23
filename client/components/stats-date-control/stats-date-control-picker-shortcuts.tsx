@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, check, lock } from '@wordpress/icons';
 import clsx from 'clsx';
-import React from 'react';
 import { DateControlPickerShortcutsProps } from './types';
 
 const DateControlPickerShortcuts = ( {

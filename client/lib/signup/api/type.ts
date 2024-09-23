@@ -9,6 +9,7 @@ export type AccountCreationAPIResponse =
 			oauth2_redirect?: string;
 			marketing_price_group?: string;
 			created_account?: boolean;
+			isNewAccountCreated?: boolean;
 	  }
 	| {
 			error: 'user_exists';
@@ -32,9 +33,10 @@ export type CreateAccountParams = {
 	userData: PreSignUpUserData | null;
 	flowName: string;
 	lastKnownFlow: string;
-	service: string;
-	access_token: string;
-	id_token: string | null;
+	service?: string;
+	access_token?: string;
+	id_token?: string | null;
+	isPasswordless?: boolean;
 	recaptchaDidntLoad: boolean;
 	recaptchaFailed: boolean;
 	recaptchaToken: string;
@@ -42,7 +44,12 @@ export type CreateAccountParams = {
 
 export type CreateWPCOMAccountParams = Pick<
 	CreateAccountParams,
-	'userData' | 'flowName' | 'recaptchaDidntLoad' | 'recaptchaFailed' | 'recaptchaToken'
+	| 'userData'
+	| 'flowName'
+	| 'isPasswordless'
+	| 'recaptchaDidntLoad'
+	| 'recaptchaFailed'
+	| 'recaptchaToken'
 >;
 export type CreateSocialAccountParams = Pick<
 	CreateAccountParams,

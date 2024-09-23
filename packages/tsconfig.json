@@ -27,6 +27,7 @@
 		{ "path": "./domains-table" },
 		{ "path": "./explat-client" },
 		{ "path": "./explat-client-react-helpers" },
+		{ "path": "./fingerprintjs" },
 		{ "path": "./format-currency" },
 		{ "path": "./generate-password" },
 		{ "path": "./global-styles" },
@@ -60,6 +61,7 @@
 		{ "path": "./whats-new" },
 		{ "path": "./wpcom-checkout" },
 		{ "path": "./verbum-block-editor" },
-		{ "path": "./wpcom-template-parts" }
+		{ "path": "./wpcom-template-parts" },
+		{ "path": "./zendesk-client" }
 	]
 }

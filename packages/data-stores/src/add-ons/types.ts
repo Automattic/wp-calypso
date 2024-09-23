@@ -1,7 +1,9 @@
 import { TranslateResult } from 'i18n-calypso';
+import { STORAGE_ADD_ONS, ADD_ONS } from './constants';
 import type { StoreProductSlug } from '../products-list';
 
 export interface AddOnMeta {
+	addOnSlug: AddOnSlug;
 	productSlug: StoreProductSlug;
 	featureSlugs?: string[] | null;
 	icon: JSX.Element;
@@ -21,3 +23,6 @@ export interface AddOnMeta {
 	checkoutLink?: string;
 	exceedsSiteStorageLimits?: boolean;
 }
+
+export type AddOnSlug = ( typeof ADD_ONS )[ number ];
+export type StorageAddOnSlug = ( typeof STORAGE_ADD_ONS )[ number ];

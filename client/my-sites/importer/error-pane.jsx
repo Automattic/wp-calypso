@@ -79,7 +79,7 @@ class ImporterError extends PureComponent {
 		}
 
 		return this.props.translate(
-			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
+			'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
 			{
 				args: {
 					errorDescription: description.length ? description : defaultError,

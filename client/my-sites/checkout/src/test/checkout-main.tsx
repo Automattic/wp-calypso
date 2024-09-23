@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
+import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -115,8 +116,27 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
-	it( 'renders the total amount', async () => {
+	it( 'renders the total estimated amount when no billing info has been added', async () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'Total' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
+		} );
+	} );
+
+	it( 'renders the total amount when billing info has been added', async () => {
+		const cart: ResponseCart = {
+			...initialCart,
+			tax: {
+				display_taxes: true,
+				location: {
+					country_code: 'US',
+					postal_code: '90210',
+				},
+			},
+		};
+		render( <MockCheckout initialCart={ cart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'Total' )

@@ -121,7 +121,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 
 		// If this starts failing, check whether Premium or higher plan is enabled.
-		it( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
+		// 2024-09-16: Skipping. This has been failing all year, seems to be a problem with the backend and the way the test sites get cleaned up. p1707923887553869-slack-C034JEXD1RD
+		it.skip( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
 			await editorPage.addBlockFromSidebar(
 				VideoPressBlock.blockName,
 				VideoPressBlock.blockEditorSelector,
@@ -140,8 +141,13 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 	describe( 'Validate published post', function () {
 		it( `Image with reserved characters in filename is visible`, async function () {
-			await ImageBlock.validatePublishedContent( page, [
-				testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+			await Promise.any( [
+				// WP < 6.6
+				ImageBlock.validatePublishedContent( page, [
+					testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+				] ),
+				// WP 6.6+, see https://github.com/WordPress/wordpress-develop/commit/2358de1767168232ff0e7c17e550b8a99f96002e
+				ImageBlock.validatePublishedContent( page, [ testFiles.imageReservedName.filename ] ),
 			] );
 		} );
 
@@ -157,7 +163,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			await FileBlock.validatePublishedContent( page, [ testFiles.audio.filename ] );
 		} );
 
-		it( `VideoPress block is visible`, async function () {
+		// Skipped above.
+		it.skip( `VideoPress block is visible`, async function () {
 			await VideoPressBlock.validatePublishedContent( page );
 		} );
 	} );

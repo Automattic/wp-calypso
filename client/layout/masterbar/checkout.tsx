@@ -93,7 +93,7 @@ const CheckoutMasterbar = ( {
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
 					<Item
-						icon="chevron-left"
+						icon="cross"
 						className="masterbar__close-button"
 						onClick={ clickClose }
 						tooltip={ String( translate( 'Close Checkout' ) ) }

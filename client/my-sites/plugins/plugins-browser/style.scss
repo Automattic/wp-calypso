@@ -50,8 +50,8 @@
 		padding-top: 0;
 	}
 }
-.plugins-browser__main-container {
-	display: contents;
+.has-no-sidebar .plugins-browser__main-container {
+	position: relative;
 
 	&::before {
 		box-sizing: border-box;
@@ -63,6 +63,11 @@
 		left: -100vw;
 		z-index: -1;
 	}
+
+}
+
+.plugins-browser__main-container .plugins-browser-list:last-of-type {
+	padding-bottom: 32px;
 }
 
 .plugins-browser__upgrade-banner {
@@ -72,10 +77,6 @@
 	.banner.card {
 		margin: 48px 0 0;
 	}
-}
-
-.plugins-browser__marketplace-footer {
-	margin-top: 60px;
 }
 
 body.is-section-plugins #primary .main.is-logged-out {

@@ -1,8 +1,9 @@
 import {
-	TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGroupedForFeaturesGrid,
-	setTrailMapExperiment,
+	getPlanFeaturesGroupedForComparisonGrid,
+	setSimplifiedFeaturesGridExperimentVariant,
+	type SimplifiedFeaturesGridExperimentVariant,
 } from '@automattic/calypso-products';
 import {
 	FeaturesGrid,
@@ -14,7 +15,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 const ComponentWrapper = (
 	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
-		trailMapVariant?: TrailMapVariantType;
+		simplifiedFeaturesGridExperimentVariant?: SimplifiedFeaturesGridExperimentVariant;
 	}
 ) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
@@ -46,6 +47,8 @@ const ComponentWrapper = (
 		isSpotlightOnCurrentPlan: true,
 	} );
 
+	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid();
+
 	return (
 		gridPlans && (
 			<FeaturesGrid
@@ -54,7 +57,7 @@ const ComponentWrapper = (
 				gridPlanForSpotlight={
 					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
 				}
-				featureGroupMap={ getPlanFeaturesGroupedForFeaturesGrid() }
+				featureGroupMap={ featureGroupMap }
 			/>
 		)
 	);
@@ -69,13 +72,11 @@ const defaultProps = {
 		result: { domain_name: 'zzz.wordpress.com' },
 	},
 	hideUnavailableFeatures: false,
-	intervalType: 'yearly',
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
 	isInSignup: true,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
-	planUpgradeCreditsApplicable: undefined,
 	recordTracksEvent: () => {},
 	showLegacyStorageFeature: false,
 	showRefundPeriod: false,
@@ -97,8 +98,8 @@ const meta = {
 	title: 'FeaturesGrid',
 	component: ComponentWrapper,
 	decorators: [
-		( Story, { args: { trailMapVariant } } ) => {
-			trailMapVariant && setTrailMapExperiment( trailMapVariant );
+		( Story, { args: { simplifiedFeaturesGridExperimentVariant = 'control' } } ) => {
+			setSimplifiedFeaturesGridExperimentVariant( simplifiedFeaturesGridExperimentVariant );
 			return <Story />;
 		},
 	],
@@ -108,8 +109,8 @@ export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-export const Plans = {
-	name: '/plans',
+export const PlansInAdmin = {
+	name: 'Default in admin',
 	args: {
 		...defaultProps,
 		intent: 'plans-default-wpcom',
@@ -119,41 +120,56 @@ export const Plans = {
 	},
 } satisfies Story;
 
-export const Newsletter = {
-	name: '/setup/newsletter',
+export const PlansInSignup = {
+	name: 'Default in signup',
+	args: {
+		...defaultProps,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+	},
+} satisfies Story;
+
+export const CategorizedFeatures = {
+	name: 'Categorized features grid',
+	args: {
+		...PlansInSignup.args,
+		gridPlanForSpotlight: undefined,
+
+		// to better show the effect of the categories, here we use the one from the comparison grid instead
+		featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
+		enableCategorisedFeatures: true,
+	},
+} satisfies Story;
+
+export const CuratedPlanMixByIntent = {
+	name: 'Curated plan mix configured by intent',
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',
 	},
 } satisfies Story;
 
-export const TrailMapControl = {
+export const FewerFeaturesExperimentTreatmentVariantA = {
+	name: 'Experiment [Simplified features grid]: Treatment A',
 	args: {
-		...Plans.args,
-		trailMapVariant: 'control',
-		gridPlanForSpotlight: undefined,
+		...PlansInSignup.args,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+		simplifiedFeaturesGridExperimentVariant: 'fix_inaccuracies',
 	},
 } satisfies Story;
 
-export const TrailMapStructure = {
+export const FewerFeaturesExperimentTreatmentVariantB = {
+	name: 'Experiment [Simplified features grid]: Treatment B',
 	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_structure',
+		...PlansInSignup.args,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
 		enableCategorisedFeatures: true,
-	},
-} satisfies Story;
-
-export const TrailMapCopy = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy',
-	},
-} satisfies Story;
-
-export const TrailMapCopyAndStructure = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy_and_structure',
-		enableCategorisedFeatures: true,
+		enableStorageAsBadge: false,
+		enableReducedFeatureGroupSpacing: true,
+		enableLogosOnlyForEnterprisePlan: true,
+		hideFeatureGroupTitles: true,
+		simplifiedFeaturesGridExperimentVariant: 'simplified',
 	},
 } satisfies Story;

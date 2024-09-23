@@ -9,11 +9,11 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedSiteFeature: undefined,
 	setSelectedSiteFeature: () => {},
 
-	hideListing: undefined,
-	setHideListing: () => {},
-
 	showOnlyFavorites: undefined,
 	setShowOnlyFavorites: () => {},
+
+	showOnlyDevelopmentSites: undefined,
+	setShowOnlyDevelopmentSites: () => {},
 
 	dataViewsState: initialDataViewsState,
 	setDataViewsState: () => {},

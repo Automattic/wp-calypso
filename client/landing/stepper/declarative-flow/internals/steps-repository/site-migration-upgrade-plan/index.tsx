@@ -7,6 +7,7 @@ import {
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { type FC } from 'react';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,11 +16,26 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
-import type { Step } from '../../types';
+import type { StepProps } from '../../types';
 
-const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
+type StepContainerProps = React.ComponentProps< typeof StepContainer >;
+
+interface Props extends StepProps {
+	skipLabelText?: StepContainerProps[ 'skipLabelText' ];
+	onSkip?: StepContainerProps[ 'goNext' ];
+	skipPosition?: StepContainerProps[ 'skipButtonAlign' ];
+	headerText?: string;
+	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
+}
+
+const SiteMigrationUpgradePlan: FC< Props > = ( {
+	navigation,
+	data,
+	customizedActionButtons,
+	...props
+} ) => {
+	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -34,8 +50,6 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const plan = selectedPlanPathSlug
 		? getPlanByPathSlug( selectedPlanPathSlug )
 		: getPlan( PLAN_BUSINESS );
-
-	usePresalesChat( 'wpcom', true, true );
 
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
@@ -90,9 +104,16 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				} }
 				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
 				trackingEventsProps={ customTracksEventProps }
+				visiblePlan={ plan.getStoreSlug() }
 			/>
 		</>
 	);
+
+	const headerText =
+		props.headerText ??
+		( hasEnTranslation( 'Upgrade your plan' )
+			? translate( 'Upgrade your plan' )
+			: translate( 'Upgrade your plan to migrate your site' ) );
 
 	return (
 		<>
@@ -102,23 +123,22 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-upgrade-plan"
 				goBack={ navigation.goBack }
-				hideSkip
+				skipLabelText={ skipLabelText }
+				skipButtonAlign={ skipPosition }
+				goNext={ onSkip }
+				hideSkip={ ! onSkip }
+				customizedActionButtons={ customizedActionButtons }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
-						headerText={ translate( 'Take your site to the next level' ) }
+						headerText={ headerText }
 						subHeaderText={
-							hasEnTranslation(
-								'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
-							)
-								? translate(
-										'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
-										{
-											args: {
-												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-											},
-										}
-								  )
+							hasEnTranslation( 'Migrations are exclusive to the %(planName)s plan.' )
+								? translate( 'Migrations are exclusive to the %(planName)s plan.', {
+										args: {
+											planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+										},
+								  } )
 								: translate(
 										'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 								  )

@@ -22,7 +22,6 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
-	shouldUseCheckoutV2,
 }: {
 	type?: string;
 	id: string;
@@ -41,7 +40,6 @@ export default function Field( {
 	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
-	shouldUseCheckoutV2?: boolean;
 } ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
@@ -77,7 +75,6 @@ export default function Field( {
 					isError={ isError }
 					autoComplete={ autoComplete }
 					disabled={ disabled }
-					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -105,7 +102,6 @@ const Label = styled.label< { disabled?: boolean } >`
 const Input = styled.input< {
 	isError?: boolean;
 	icon?: ReactNode;
-	shouldUseCheckoutV2?: boolean;
 } >`
 	display: block;
 	width: 100%;
@@ -114,8 +110,7 @@ const Input = styled.input< {
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 7px 10px;
 	line-height: 1.5;
-
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 14px;` : `font-size: 16px;` ) }
+	font-size: 14px;
 
 	.rtl & {
 		padding: 7px 10px 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };

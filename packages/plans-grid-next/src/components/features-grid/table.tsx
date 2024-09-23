@@ -1,3 +1,5 @@
+import { type FeatureGroupSlug } from '@automattic/calypso-products';
+import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -5,28 +7,25 @@ import { usePlansGridContext } from '../../grid-context';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
 import { StickyContainer } from '../sticky-container';
 import BillingTimeframes from './billing-timeframes';
-import PartnerLogos from './partner-logos';
+import EnterpriseFeatures from './enterprise-features';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
-import PlanPrice from './plan-price';
+import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import TopButtons from './top-buttons';
-import type { FeatureGroupSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 
 type TableProps = {
 	currentSitePlanSlug?: string | null;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showRefundPeriod?: boolean;
@@ -42,13 +41,11 @@ const Table = ( {
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
 	showRefundPeriod,
@@ -56,11 +53,17 @@ const Table = ( {
 	stickyRowOffset,
 }: TableProps ) => {
 	const translate = useTranslate();
-	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const {
+		featureGroupMap,
+		enableCategorisedFeatures,
+		enableLogosOnlyForEnterprisePlan,
+		enableReducedFeatureGroupSpacing,
+	} = usePlansGridContext();
 	const featureGroups = useMemo(
 		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
 		[ featureGroupMap ]
 	);
+
 	// Do not render the spotlight plan if it exists
 	const gridPlansWithoutSpotlight = useMemo(
 		() =>
@@ -109,10 +112,9 @@ const Table = ( {
 					/>
 				</tr>
 				<tr>
-					<PlanPrice
+					<PlanPrices
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
-						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						currentSitePlanSlug={ currentSitePlanSlug }
 					/>
 				</tr>
@@ -140,9 +142,9 @@ const Table = ( {
 					) }
 				</StickyContainer>
 				<tr>
-					<PartnerLogos
+					<EnterpriseFeatures
 						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
+						options={ { isTableCell: true, isLogosOnly: enableLogosOnlyForEnterprisePlan } }
 					/>
 				</tr>
 				{ ! enableCategorisedFeatures && (
@@ -157,6 +159,7 @@ const Table = ( {
 					<tr
 						className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
 							'is-first-feature-group-row': featureGroupIndex === 0,
+							'is-reduced-feature-group-spacing': enableReducedFeatureGroupSpacing,
 						} ) }
 						key={ featureGroupSlug }
 					>
@@ -169,7 +172,6 @@ const Table = ( {
 							generatedWPComSubdomain={ generatedWPComSubdomain }
 							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 							featureGroupSlug={ featureGroupSlug }
-							intervalType={ intervalType }
 							onStorageAddOnClick={ onStorageAddOnClick }
 							showUpgradeableStorage={ showUpgradeableStorage }
 						/>

@@ -9,6 +9,7 @@ import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
+import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -58,6 +59,7 @@ import {
 	shouldSelectSite,
 } from './helpers';
 import PatternAssemblerButton from './pattern-assembler-button';
+import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
@@ -94,12 +96,14 @@ class ThemeShowcase extends Component {
 	state = {
 		isDesignThemeModalVisible: false,
 		isSiteSelectorModalVisible: false,
+		shouldThemeControlsSticky: false,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
+		this.showcaseRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -243,6 +247,14 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// Scroll to the top of the showcase
+		if ( this.showcaseRef.current ) {
+			this.showcaseRef.current.scrollIntoView( {
+				behavior: 'instant',
+				block: 'start',
+			} );
+		}
+
 		let y = 0;
 
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
@@ -591,6 +603,10 @@ class ThemeShowcase extends Component {
 		window.scrollTo( { top: 0 } );
 	};
 
+	onShouldThemeControlsStickyChange = ( inView ) => {
+		this.setState( { shouldThemeControlsSticky: this.props.isLoggedIn && ! inView } );
+	};
+
 	render() {
 		const {
 			siteId,
@@ -602,6 +618,7 @@ class ThemeShowcase extends Component {
 			pathName,
 			featureStringFilter,
 			filterString,
+			isJetpackSite,
 			isMultisite,
 			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
@@ -648,6 +665,9 @@ class ThemeShowcase extends Component {
 			'is-collection-view': isCollectionView,
 		} );
 
+		const showThemeErrors =
+			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
+
 		return (
 			<div className={ classnames }>
 				<PageViewTracker
@@ -676,57 +696,78 @@ class ThemeShowcase extends Component {
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
 					{ ! isCollectionView && (
-						<div className="themes__controls">
-							<div className="theme__search">
-								<div className="theme__search-input">
-									{ isSearchV2 ? (
-										<SearchThemesV2
-											query={ featureStringFilter + search }
-											onSearch={ this.doSearch }
-										/>
-									) : (
-										<SearchThemes
-											query={ filterString + search }
-											onSearch={ this.doSearch }
-											recordTracksEvent={ this.recordSearchThemesTracksEvent }
-										/>
-									) }
-								</div>
-								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-									<>
-										<SelectDropdown
-											className="section-nav-tabs__dropdown"
-											onSelect={ this.onTierSelectFilter }
-											selectedText={ translate( 'View: %s', {
-												args: getOptionLabel( tiers, tier ) || '',
-											} ) }
-											options={ tiers }
-											initialSelected={ tier }
-										></SelectDropdown>
-									</>
-								) }
-							</div>
+						<>
+							{ isLoggedIn && (
+								<InView
+									rootMargin="-32px 0px 0px 0px"
+									threshold={ 1 }
+									fallbackInView
+									onChange={ this.onShouldThemeControlsStickyChange }
+								>
+									<div
+										className={ clsx( 'themes__controls-placeholder', {
+											'is-sticky': this.state.shouldThemeControlsSticky,
+										} ) }
+										ref={ this.showcaseRef }
+									/>
+								</InView>
+							) }
 							<div
-								className={ clsx( 'themes__filters', {
-									'is-woo-express': isSiteWooExpress,
+								className={ clsx( 'themes__controls', {
+									'is-sticky': this.state.shouldThemeControlsSticky,
 								} ) }
 							>
-								{ tabFilters && ! isSiteECommerceFreeTrial && (
-									<ThemesToolbarGroup
-										items={ Object.values( tabFilters ) }
-										selectedKey={ this.getSelectedTabFilter().key }
-										onSelect={ ( key ) =>
-											this.onFilterClick(
-												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-											)
-										}
-									/>
-								) }
-								{ ! isLoggedIn && tabFilters && (
-									<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
-								) }
+								<div className="theme__search">
+									<div className="theme__search-input">
+										{ isSearchV2 ? (
+											<SearchThemesV2
+												query={ featureStringFilter + search }
+												onSearch={ this.doSearch }
+											/>
+										) : (
+											<SearchThemes
+												query={ filterString + search }
+												onSearch={ this.doSearch }
+												recordTracksEvent={ this.recordSearchThemesTracksEvent }
+											/>
+										) }
+									</div>
+									{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+										<>
+											<SelectDropdown
+												className="section-nav-tabs__dropdown"
+												onSelect={ this.onTierSelectFilter }
+												selectedText={ translate( 'View: %s', {
+													args: getOptionLabel( tiers, tier ) || '',
+												} ) }
+												options={ tiers }
+												initialSelected={ tier }
+											></SelectDropdown>
+										</>
+									) }
+								</div>
+								<div
+									className={ clsx( 'themes__filters', {
+										'is-woo-express': isSiteWooExpress,
+									} ) }
+								>
+									{ tabFilters && ! isSiteECommerceFreeTrial && (
+										<ThemesToolbarGroup
+											items={ Object.values( tabFilters ) }
+											selectedKey={ this.getSelectedTabFilter().key }
+											onSelect={ ( key ) =>
+												this.onFilterClick(
+													Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+												)
+											}
+										/>
+									) }
+									{ ! isLoggedIn && tabFilters && (
+										<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
+									) }
+								</div>
 							</div>
-						</div>
+						</>
 					) }
 					{ isCollectionView && (
 						<ThemeCollectionViewHeader
@@ -743,6 +784,7 @@ class ThemeShowcase extends Component {
 						/>
 					) }
 					<div className="themes__showcase">
+						{ showThemeErrors && <ThemeErrors siteId={ siteId } /> }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>

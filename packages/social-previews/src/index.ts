@@ -5,6 +5,7 @@ export * from './tumblr-preview';
 export * from './facebook-preview';
 export * from './mastodon-preview';
 export * from './nextdoor-preview';
+export * from './threads-preview';
 export * from './constants';
 export * from './instagram-preview';
 export * from './types';

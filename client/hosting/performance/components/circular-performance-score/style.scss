@@ -1,0 +1,38 @@
+@import "@automattic/components/src/styles/typography";
+
+.circular-performance-bar {
+	position: relative;
+	display: inline-block;
+
+	&.good {
+		color: #00ba37;
+		.circular__progress-bar .circular__progress-bar-fill-circle {
+			stroke: #00ba37;
+		}
+	}
+
+	&.needs-improvement {
+		color: #d67709;
+		.circular__progress-bar .circular__progress-bar-fill-circle {
+			stroke: #d67709;
+		}
+	}
+
+	&.poor {
+		color: #d63638;
+		.circular__progress-bar .circular__progress-bar-fill-circle {
+			stroke: #d63638;
+		}
+	}
+}
+
+.circular-performance-score {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header-small;
+	font-weight: 400;
+}
+

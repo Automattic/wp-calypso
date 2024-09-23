@@ -82,6 +82,7 @@
 	}
 }
 
+.components-button,
 .button {
 	color: var(--color-accent);
 	background: var(--studio-white);
@@ -114,6 +115,7 @@
 	}
 }
 
+.components-button.is-primary,
 .button.is-primary {
 	background-color: var(--studio-jetpack-green-50);
 	border-color: var(--studio-jetpack-green-50);

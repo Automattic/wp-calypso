@@ -53,6 +53,11 @@ class Sites extends Component {
 		if ( hasJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
+
+		if ( site.is_deleted ) {
+			return false;
+		}
+
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.

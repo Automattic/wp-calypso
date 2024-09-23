@@ -15,7 +15,6 @@
 	.breadcrumbs {
 		li {
 			color: var(--studio-gray-60, #50575e);
-			font-family: "SF Pro Text", $sans;
 			font-size: $font-body-small;
 			font-style: normal;
 			font-weight: 400;
@@ -58,7 +57,6 @@
 	}
 
 	.formatted-header__title {
-		font-family: "SF Pro Display", $sans;
 		font-size: $font-title-small;
 		font-weight: 500;
 		line-height: 26px;

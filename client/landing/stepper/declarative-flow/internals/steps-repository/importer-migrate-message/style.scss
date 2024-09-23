@@ -2,8 +2,16 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-hosted-site,
-.site-migration,
+.migration :not(:has(.list__wrapper)):not(.site-migration-instructions--launchpad),
+.site-migration :not(.site-migration-instructions--launchpad),
 .import-focused.migrate-message {
+	.step-container__header {
+		margin: auto;
+		max-width: 720px;
+		padding: 24px;
+		width: auto;
+	}
+
 	.step-container__content {
 		margin: auto;
 		max-width: 720px;
@@ -21,7 +29,6 @@
 		}
 
 		.feature {
-
 			.icon {
 				display: flex;
 				min-width: 36px;
@@ -41,7 +48,6 @@
 				margin-bottom: 14px;
 				gap: 12px;
 			}
-
 		}
 
 		svg {
@@ -53,5 +59,19 @@
 		display: block;
 		margin: auto;
 		padding: 8px 0;
+	}
+
+	.migration-message__actions {
+		display: flex;
+		justify-content: center;
+		margin: 32px -10px 0;
+		flex-direction: column;
+
+		@include break-small {
+			flex-direction: row;
+			.flow-question {
+				width: 50%;
+			}
+		}
 	}
 }

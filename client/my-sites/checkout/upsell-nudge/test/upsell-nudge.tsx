@@ -3,6 +3,7 @@
  */
 
 import page from '@automattic/calypso-router';
+import { Plans, ProductsList } from '@automattic/data-stores';
 import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
@@ -28,10 +29,58 @@ import UpsellNudge, { BUSINESS_PLAN_UPGRADE_UPSELL, PROFESSIONAL_EMAIL_UPSELL } 
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	ProductsList: {
+		...jest.requireActual( '@automattic/data-stores' ).ProductsList,
+		useProducts: jest.fn(),
+	},
+	Plans: {
+		...jest.requireActual( '@automattic/data-stores' ).Plans,
+		usePlans: jest.fn(),
+		useCurrentPlan: jest.fn(),
+		usePricingMetaForGridPlans: jest.fn(),
+	},
+} ) );
 
 const mockCountries: CountryListItem[] = [
 	{ code: 'US', has_postal_codes: true, name: 'United States', vat_supported: false },
 ];
+
+const mockDataStorePlans = {
+	'business-bundle': {
+		planSlug: 'business-bundle',
+		pricing: {
+			currencyCode: 'USD',
+			billPeriod: 365,
+			originalPrice: {
+				full: 30000,
+				monthly: 30000,
+			},
+			discountedPrice: {
+				full: 30000,
+				monthly: 30000,
+			},
+		},
+	},
+};
+
+const mockDataStoreProducts = {
+	'business-bundle': {
+		id: 1008,
+		productSlug: 'business-bundle',
+	},
+
+	wp_titan_mail_yearly: {
+		id: 401,
+		productSlug: 'wp_titan_mail_yearly',
+	},
+
+	wp_titan_mail_monthly: {
+		id: 400,
+		productSlug: 'wp_titan_mail_monthly',
+	},
+};
 
 const mockProducts = {
 	'business-bundle': {
@@ -199,6 +248,21 @@ describe( 'UpsellNudge', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/products?type=all' )
 			.reply( 200, () => mockProducts );
+		Plans.useCurrentPlan.mockImplementation( () => ( {
+			[ 'business-bundle' ]: mockDataStorePlans[ 'business-bundle' ],
+		} ) );
+		Plans.usePlans.mockImplementation( () => ( {
+			data: {
+				[ 'business-bundle' ]: mockDataStorePlans,
+			},
+		} ) );
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ 'business-bundle' ]: {
+				...mockDataStorePlans[ 'business-bundle' ].pricing,
+				billingPeriod: mockDataStorePlans[ 'business-bundle' ].pricing.billPeriod,
+			},
+		} ) );
+		ProductsList.useProducts.mockImplementation( () => ( { data: mockDataStoreProducts } ) );
 	} );
 
 	afterAll( () => {

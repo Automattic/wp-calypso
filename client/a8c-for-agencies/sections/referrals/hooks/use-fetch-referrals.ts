@@ -9,28 +9,32 @@ export const getReferralsQueryKey = ( agencyId?: number ) => {
 };
 
 const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
-	const clients = referrals.reduce< { [ key: string ]: Referral } >( ( acc, referral ) => {
+	const sortedReferrals = referrals.slice().reverse();
+	const clientReferrals = sortedReferrals.map( ( referral ) => {
 		const purchases = referral.products.map( ( product ) => ( {
 			...product,
-			status: referral.status,
+			referral_id: referral.id,
 		} ) );
-		if ( ! acc[ referral.client.id ] ) {
-			acc[ referral.client.id ] = {
-				id: referral.id,
-				client: referral.client,
-				purchases: [ ...purchases ],
-				commissions: referral.commission,
-				statuses: [ referral.status ],
-			};
+		return {
+			id: referral.client.id,
+			client: referral.client,
+			purchases,
+			purchaseStatuses: purchases.map( ( purchase ) => purchase.status ),
+			referralStatuses: [ referral.status ],
+		};
+	} );
+
+	return clientReferrals.reduce( ( acc: Referral[], current ) => {
+		const existing = acc.find( ( item ) => item.id === current.id );
+		if ( existing ) {
+			existing.purchases.push( ...current.purchases );
+			existing.purchaseStatuses.push( ...current.purchaseStatuses );
+			existing.referralStatuses.push( ...current.referralStatuses );
 		} else {
-			acc[ referral.client.id ].purchases.push( ...purchases );
-			acc[ referral.client.id ].commissions += referral.commission;
-			acc[ referral.client.id ].statuses.push( referral.status );
+			acc.push( current );
 		}
 		return acc;
-	}, {} );
-
-	return Object.values( clients );
+	}, [] );
 };
 
 export default function useFetchReferrals( isEnabled: boolean ) {

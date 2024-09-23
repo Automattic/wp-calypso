@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -12,12 +12,15 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MissingPaymentSettingsNotice from '../../referrals/common/missing-payment-settings-notice';
+import useGetTipaltiPayee from '../../referrals/hooks/use-get-tipalti-payee';
 import withMarketplaceType, {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REGULAR,
 } from '../hoc/with-marketplace-type';
 import useRequestClientPaymentMutation from '../hooks/use-request-client-payment-mutation';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import NoticeSummary from './notice-summary';
 import type { ShoppingCartItem } from '../types';
 
 interface Props {
@@ -35,6 +38,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+	const [ tipaltiActionRequiredVisible, setTipaltiActionRequiredVisible ] = useState( false );
 
 	const { onClearCart } = useShoppingCart();
 
@@ -53,9 +57,26 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	const hasCompletedForm = !! email && !! message;
 
-	const learnMoreLink = ''; //FIXME: Add link for A4A;
-
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
+
+	const licenses = useMemo(
+		() =>
+			checkoutItems
+				.filter( ( item ) => item.licenseId )
+				.map( ( item ) => ( {
+					product_id: item.product_id,
+					license_id: item.licenseId as number,
+				} ) ),
+		[ checkoutItems ]
+	);
+
+	const { data: tipaltiData } = useGetTipaltiPayee();
+
+	useEffect( () => {
+		if ( ! tipaltiData.IsPayable ) {
+			setTipaltiActionRequiredVisible( true );
+		}
+	}, [ tipaltiData ] );
 
 	const handleRequestPayment = useCallback( () => {
 		if ( ! hasCompletedForm ) {
@@ -68,12 +89,22 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 		);
-		requestPayment( { client_email: email, client_message: message, product_ids: productIds } );
-	}, [ dispatch, email, hasCompletedForm, message, productIds, requestPayment, translate ] );
-
-	const onClickLearnMore = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_learn_more_click' ) );
-	}, [ dispatch ] );
+		requestPayment( {
+			client_email: email,
+			client_message: message,
+			product_ids: productIds,
+			licenses: licenses,
+		} );
+	}, [
+		dispatch,
+		email,
+		hasCompletedForm,
+		licenses,
+		message,
+		productIds,
+		requestPayment,
+		translate,
+	] );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
@@ -89,6 +120,13 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	return (
 		<>
+			{ tipaltiActionRequiredVisible && (
+				<div className="checkout__tipalti-action-required-notice">
+					<MissingPaymentSettingsNotice
+						onClose={ () => setTipaltiActionRequiredVisible( false ) }
+					/>
+				</div>
+			) }
 			<div className="checkout__client-referral-form">
 				<FormFieldset>
 					<FormLabel htmlFor="email">{ translate( 'Client’s email address' ) }</FormLabel>
@@ -100,6 +138,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_email_click' ) )
 						}
+						disabled={ ! tipaltiData.IsPayable }
 					/>
 					<div
 						className={ clsx( 'checkout__client-referral-form-footer-error', {
@@ -121,9 +160,13 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_message_click' ) )
 						}
+						disabled={ ! tipaltiData.IsPayable }
 					/>
 				</FormFieldset>
 			</div>
+
+			<NoticeSummary type="request-client-payment" />
+
 			<div className="checkout__aside-actions">
 				<Button
 					primary
@@ -135,19 +178,13 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				</Button>
 			</div>
 
-			<div className="checkout__summary-notice margin-top">
+			<div className="checkout__summary-notice-item">
 				{ translate(
-					'The client will be billed at the end of every month. The first month may be less than the above amount. {{a}}Learn more{{/a}}',
+					'{{b}}Important:{{/b}} Your referral order link is only valid for {{u}}12 hours{{/u}}. Please notify your client to complete the payment within this timeframe to avoid expiration.',
 					{
 						components: {
-							a: (
-								<a
-									href={ learnMoreLink }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ onClickLearnMore }
-								/>
-							),
+							b: <b />,
+							u: <u />,
 						},
 					}
 				) }

@@ -6,6 +6,7 @@ import {
 } from '@automattic/design-picker';
 import { getVariationTitle, getVariationType } from '@automattic/global-styles';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
+import { THEME_TIER_PREMIUM } from 'calypso/components/theme-tier/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
@@ -113,7 +114,7 @@ export function getDesignEventProps( {
 		theme_style: design.recipe?.stylesheet + variationSlugSuffix,
 		design_type: design.design_type,
 		...( design?.design_tier && { design_tier: design.design_tier } ),
-		is_premium: design.is_premium,
+		is_premium: design?.design_tier === THEME_TIER_PREMIUM,
 		is_externally_managed: design?.is_externally_managed,
 		is_bundled_with_woo: design?.is_bundled_with_woo,
 		has_style_variations: ( design.style_variations || [] ).length > 0,

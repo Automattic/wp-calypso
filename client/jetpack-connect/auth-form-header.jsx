@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { Icon, globe } from '@wordpress/icons';
@@ -8,6 +9,7 @@ import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getPluginTitle } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -27,6 +29,7 @@ export class AuthFormHeader extends Component {
 		// Connected props
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object,
+		disableSiteCard: PropTypes.bool,
 	};
 
 	getState() {
@@ -163,13 +166,7 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			const pluginNames = {
-				'jetpack-ai': 'Jetpack AI',
-				'jetpack-boost': 'Jetpack Boost',
-				default: 'Jetpack',
-			};
-
-			const pluginName = pluginNames[ this.props.authQuery.plugin_name ] || pluginNames.default;
+			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			const translateParams = {
 				components: {
 					br: <br />,
@@ -190,10 +187,15 @@ export class AuthFormHeader extends Component {
 
 			switch ( currentState ) {
 				case 'logged-out':
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-						translateParams
-					);
+					return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						? translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  )
+						: translate(
+								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+								translateParams
+						  );
 				default:
 					return translate(
 						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
@@ -214,7 +216,7 @@ export class AuthFormHeader extends Component {
 						return translate(
 							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments'
 						);
-					} else if ( wooDnaConfig.getFlowName() === 'woodna:woo-blaze' ) {
+					} else if ( wooDnaConfig.getFlowName() === 'woodna:blaze-ads-on-woo' ) {
 						const pluginName = wooDnaConfig.getServiceName();
 						/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 						return translate(
@@ -299,7 +301,7 @@ export class AuthFormHeader extends Component {
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }
 				/>
-				{ this.getSiteCard() }
+				{ ! this.props.disableSiteCard && this.getSiteCard() }
 			</div>
 		);
 	}

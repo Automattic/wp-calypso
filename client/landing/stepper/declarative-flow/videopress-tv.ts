@@ -1,9 +1,9 @@
 import { SiteSelect } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { VIDEOPRESS_TV_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
@@ -40,7 +40,7 @@ const videopressTv: Flow = {
 
 		const name = this.name;
 		const { createVideoPressTvSite, setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
-		const locale = useLocale();
+		const locale = useFlowLocale();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]

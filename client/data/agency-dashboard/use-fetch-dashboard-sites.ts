@@ -20,10 +20,15 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 		...( filter.showOnlyFavorites && { show_only_favorites: true } ),
 		...( filter.isNotMultisite && { not_multisite: true } ),
 		...( filter?.showOnlyFavorites && { show_only_favorites: true } ),
+		...( filter?.showOnlyDevelopmentSites && { show_only_dev_sites: true } ),
 	};
 };
 
-const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
+const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
+	if ( ! sort ) {
+		return;
+	}
+
 	return {
 		...( sort?.field && { sort_field: sort.field } ),
 		...( sort?.direction && { sort_direction: sort.direction } ),
@@ -32,10 +37,10 @@ const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
 
 export interface FetchDashboardSitesArgsInterface {
 	isPartnerOAuthTokenLoaded: boolean;
-	searchQuery: string;
+	searchQuery: string | undefined;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
-	sort: DashboardSortInterface;
+	sort?: DashboardSortInterface;
 	perPage?: number;
 	agencyId?: number;
 }
@@ -97,6 +102,7 @@ const useFetchDashboardSites = ( {
 				sites: data.sites,
 				total: data.total,
 				perPage: data.per_page,
+				totalDevelopmentSites: data.total_dev_sites,
 				totalFavorites: data.total_favorites,
 			};
 		},

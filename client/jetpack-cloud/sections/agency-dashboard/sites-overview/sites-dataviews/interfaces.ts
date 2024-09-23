@@ -1,9 +1,11 @@
-import { type DashboardSortInterface, Site, SiteData } from '../types';
+import { type Site } from '../types';
+import type { View } from '@wordpress/dataviews';
 
 export interface SitesDataResponse {
 	sites: Array< Site >;
 	total: number;
 	perPage: number;
+	totalDevelopmentSites: number;
 	totalFavorites: number;
 }
 
@@ -17,24 +19,6 @@ export interface SitesDataViewsProps {
 	sitesViewState: SitesViewState;
 }
 
-export interface Filter {
-	field: string;
-	operator: string;
-	value: number;
-}
-
-export interface SitesViewState {
-	type: 'table' | 'list' | 'grid';
-	perPage: number;
-	page: number;
-	sort: DashboardSortInterface;
-	search: string;
-	filters: Filter[];
-	hiddenFields: string[];
-	layout: object;
+export type SitesViewState = View & {
 	selectedSite?: Site | undefined;
-}
-
-export interface SiteInfo extends SiteData {
-	id: number;
-}
+};

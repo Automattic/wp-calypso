@@ -7,6 +7,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -57,6 +58,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
@@ -199,9 +201,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
 				file_type: item.type,
+				has_credentials: hasCredentials,
 			} )
 		);
-	}, [ dispatch, item.type, path, rewindId, siteId, siteSlug ] );
+	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {

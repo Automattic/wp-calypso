@@ -97,6 +97,12 @@
 .featured-item-card--price {
 	margin-top: 0.25rem;
 	margin-bottom: 0.5rem;
+
+	.item-price > .display-price:not(.is-placeholder) {
+		flex-direction: column;
+		align-items: flex-start;
+		padding-top: 0.5rem;
+	}
 }
 
 .featured-item-card--desc {

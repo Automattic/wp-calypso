@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { CHANGE_NAME_SERVERS } from '@automattic/urls';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
@@ -14,6 +14,7 @@ import {
 } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import CustomNameserversForm from 'calypso/my-sites/domains/domain-management/name-servers/custom-nameservers-form';
 import FetchError from 'calypso/my-sites/domains/domain-management/name-servers/fetch-error';
+import { hasDefaultWpcomNameservers } from 'calypso/my-sites/domains/domain-management/settings/cards/utils';
 import { useDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -55,8 +56,29 @@ const NameServersCard = ( {
 	const [ nameservers, setNameservers ] = useState( nameserversProps || null );
 	const [ shouldPersistNameServers, setShouldPersistNameServers ] = useState( false );
 	const [ isEditingNameServers, setIsEditingNameServers ] = useState( false );
+	const [ isSavingNameServers, setSavingNameServers ] = useState( false );
 	const [ nameServersBeforeEditing, setNameServersBeforeEditing ] = useState< string[] | null >(
 		null
+	);
+
+	const handleUpdateNameservers = useCallback(
+		async ( nameservers: string[] ) => {
+			setSavingNameServers( true );
+			setShouldPersistNameServers( false );
+			try {
+				await updateNameservers( nameservers );
+				setIsEditingNameServers( false );
+			} catch ( error ) {
+				// Assume we shouldn't default to the previous nameservers if
+				// there was an error when editing the custom nameservers.
+				if ( ! hasDefaultWpcomNameservers( nameserversProps || null ) ) {
+					setNameservers( nameserversProps || null );
+				}
+			} finally {
+				setSavingNameServers( false );
+			}
+		},
+		[ updateNameservers, nameserversProps ]
 	);
 
 	useEffect( () => {
@@ -65,22 +87,21 @@ const NameServersCard = ( {
 
 	useEffect( () => {
 		if ( shouldPersistNameServers ) {
-			updateNameservers( nameservers || [] );
-			setShouldPersistNameServers( false );
+			handleUpdateNameservers( nameservers || [] );
 		}
-	}, [ shouldPersistNameServers, nameservers ] );
+	}, [ shouldPersistNameServers, nameservers, handleUpdateNameservers ] );
 
 	const hasWpcomNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
 
-		return nameservers.every( ( nameserver ) => {
+		return nameservers.some( ( nameserver ) => {
 			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 		} );
 	};
 
-	const hasCloudflareNameservers = () => {
+	const onlyCloudflareNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
@@ -108,8 +129,7 @@ const NameServersCard = ( {
 
 	const warning = () => {
 		if (
-			hasWpcomNameservers() ||
-			hasCloudflareNameservers() ||
+			! isEditingNameServers ||
 			isPendingTransfer() ||
 			needsVerification() ||
 			! nameservers ||
@@ -126,34 +146,51 @@ const NameServersCard = ( {
 				onClick={ handleLearnMoreClick }
 			/>
 		);
-		const notice = translate(
-			'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
-			{ components: { link } }
-		);
+
+		let notice;
+		if ( hasWpcomNameservers() ) {
+			notice = translate(
+				'Please do not set WordPress.com name servers manually, toggle that on with the switch above. {{link}}Learn more{{/link}}',
+				{ components: { link } }
+			);
+		} else if ( ! onlyCloudflareNameservers() ) {
+			notice = translate(
+				'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
+				{ components: { link } }
+			);
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div className="custom-name-servers-notice">
-				<Icon
-					icon={ info }
-					size={ 18 }
-					className="custom-name-servers-notice__icon gridicon"
-					viewBox="2 2 20 20"
-				/>
-				<div className="custom-name-servers-notice__message">{ notice }</div>
-			</div>
-		);
+		if ( notice ) {
+			return (
+				<div className="custom-name-servers-notice">
+					<Icon
+						icon={ info }
+						size={ 18 }
+						className="custom-name-servers-notice__icon gridicon"
+						viewBox="2 2 20 20"
+					/>
+					<div className="custom-name-servers-notice__message">{ notice }</div>
+				</div>
+			);
+		}
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
 	const resetToWpcomNameservers = () => {
 		setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-		setShouldPersistNameServers( true );
+		// Only persist the changes if we had custom nameservers previously.
+		// Otherwise, we'd be switching from default nameservers to default nameservers
+		// a no-op probably coming from toggling the switch on and off.
+		if ( ! hasDefaultWpcomNameservers( nameserversProps ) ) {
+			setShouldPersistNameServers( true );
+		}
 		setIsEditingNameServers( false );
 	};
 
 	const handleToggle = () => {
-		if ( hasWpcomNameservers() ) {
+		setIsEditingNameServers( ! isEditingNameServers );
+		if ( hasDefaultWpcomNameservers( nameservers ) ) {
 			setNameServersBeforeEditing( nameservers );
 			setNameservers( [] );
 			setIsEditingNameServers( true );
@@ -171,7 +208,8 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ hasWpcomNameservers() && ! isEditingNameServers }
+				enabled={ hasDefaultWpcomNameservers( nameservers ) && ! isEditingNameServers }
+				isSaving={ isSavingNameServers }
 			/>
 		);
 	};
@@ -189,8 +227,7 @@ const NameServersCard = ( {
 	};
 
 	const handleSubmit = () => {
-		updateNameservers( nameservers || [] );
-		setIsEditingNameServers( false );
+		handleUpdateNameservers( nameservers || [] );
 	};
 
 	const editCustomNameServers = () => {
@@ -204,7 +241,11 @@ const NameServersCard = ( {
 	};
 
 	const renderCustomNameserversForm = () => {
-		if ( ! nameservers || hasWpcomNameservers() || isPendingTransfer() ) {
+		if (
+			! nameservers ||
+			isPendingTransfer() ||
+			( hasDefaultWpcomNameservers( nameservers ) && ! isEditingNameServers )
+		) {
 			return null;
 		}
 
@@ -228,7 +269,8 @@ const NameServersCard = ( {
 					onCancel={ handleCancel }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
-					submitDisabled={ isLoading() }
+					isSaving={ isSavingNameServers }
+					submitDisabled={ isLoading() || hasWpcomNameservers() }
 					notice={ warning() }
 					redesign
 				/>

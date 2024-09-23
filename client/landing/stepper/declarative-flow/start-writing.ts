@@ -3,7 +3,7 @@ import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	type AssertConditionResult,
@@ -11,22 +11,23 @@ import {
 	type Flow,
 	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	get title() {
-		return translate( 'Blog' );
+		return translate( 'Start writing' );
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		//TODO: Migrate to use the STEPS from the steps.ts file
+		return stepsWithRequiredLogin( [
 			{
 				slug: 'check-sites',
 				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
@@ -72,14 +73,14 @@ const startWriting: Flow = {
 				slug: 'celebration-step',
 				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
-		];
+		] );
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
+		const { exitFlow } = useExitFlow();
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -91,9 +92,12 @@ const startWriting: Flow = {
 			}
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
+		const { getPostFlowUrl, postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'check-sites':
 					// Check for unlaunched sites
@@ -121,7 +125,13 @@ const startWriting: Flow = {
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
+								`&postFlowUrl=${ getPostFlowUrl( {
+									flow: START_WRITING_FLOW,
+									siteId: providedDependencies?.siteId as string,
+									siteSlug: providedDependencies?.siteSlug as string,
+								} ) }`
 						);
 					}
 				}
@@ -138,10 +148,21 @@ const startWriting: Flow = {
 							} ),
 						] );
 
+						initializeLaunchpadState( {
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} );
+
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
+								`&postFlowUrl=${ getPostFlowUrl( {
+									flow: START_WRITING_FLOW,
+									siteId: providedDependencies?.siteId as string,
+									siteSlug: providedDependencies?.siteSlug as string,
+								} ) }`
 						);
 					}
 
@@ -156,7 +177,7 @@ const startWriting: Flow = {
 						return;
 					}
 
-					return navigate( 'launchpad' );
+					return postFlowNavigator( { siteId, siteSlug } );
 				}
 				case 'domains':
 					if ( siteId ) {
@@ -233,35 +254,15 @@ const startWriting: Flow = {
 			currentPath.includes( 'setup/start-writing/check-sites' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		const locale = useFlowLocale();
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
-			pageTitle: translate( 'Start writing' ),
-			locale,
-		} );
-		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/start-writing/create-site route which has no locale in the path so we need to
-		// redirect off of the first render.
-		// This effects both /setup/start-writing/<locale> starting points and /setup/start-writing/create-site/<locale> urls.
-		// The double call also hapens on urls without locale.
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				redirect( logInUrl );
-			} else if ( isCreateSite && ! userAlreadyHasSites ) {
+			if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 				redirect( '/setup/start-writing/create-site' );
 			}
 		}, [] );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isCreateSite && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

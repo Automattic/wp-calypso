@@ -12,7 +12,10 @@ import {
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
 
-export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunchpadStrings {
+export function getLaunchpadTranslations(
+	flow: string | null,
+	hasSkippedCheckout = false
+): TranslatedLaunchpadStrings {
 	const translatedStrings: TranslatedLaunchpadStrings = {
 		flowName: translate( 'WordPress.com' ),
 		title: translate( 'Your website is ready!' ),
@@ -53,8 +56,13 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case WRITE_FLOW:
 		case BUILD_FLOW:
-			translatedStrings.title = translate( "Let's get ready to launch!" );
-			translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
+			if ( hasSkippedCheckout ) {
+				translatedStrings.title = translate( 'Get started with WordPress.com' );
+				translatedStrings.launchTitle = translate( 'Get started with WordPress.com' );
+			} else {
+				translatedStrings.title = translate( "Let's get ready to launch!" );
+				translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
+			}
 			translatedStrings.subtitle = translate( "Here's what to do next." );
 	}
 

@@ -33,6 +33,7 @@ function mutationSubmitPartnerDirectoryApplication(
 				note,
 			} ) ),
 			feedback_url: application.feedbackUrl,
+			is_published: application.isPublished,
 		},
 	} );
 }

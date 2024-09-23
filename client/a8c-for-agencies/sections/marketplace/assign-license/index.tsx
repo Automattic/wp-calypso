@@ -84,6 +84,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
+			showOnlyDevelopmentSites: false,
 			...( filterOutMultisites && { isNotMultisite: true } ),
 		},
 		sort: {

@@ -7,6 +7,24 @@ $brand-display: "SF Pro Display", sans-serif;
 		margin: 1rem;
 	}
 
+	&__header {
+		@media screen and (max-width: $break-large) {
+			padding-top: 24px;
+		}
+	}
+
+	&__header-main {
+		display: flex;
+		margin: 0 auto;
+		justify-content: space-between;
+		box-sizing: border-box;
+		column-gap: 10px;
+		flex: 1;
+		button {
+			padding: 8px 14px;
+		}
+	}
+
 	&.plugins-update-manager-multisite-edit,
 	&.plugins-update-manager-multisite-create {
 		h1 {
@@ -23,6 +41,29 @@ $brand-display: "SF Pro Display", sans-serif;
 		}
 	}
 
+	.plugins-update-manager-multisite-filters,
+	.plugins-update-manager-multisite-table-container {
+		@media screen and (min-width: $break-xhuge) {
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+		@media screen and (min-width: $break-large) {
+			td:last-child,
+			th:last-child {
+				padding-right: 64px;
+				text-align: right;
+			}
+			td.menu button {
+				padding: 0;
+				justify-content: end;
+			}
+		}
+		@media screen and (max-width: $break-small) {
+			.empty-state {
+				padding-inline: 0 !important;
+			}
+		}
+	}
 	.plugins-update-manager-multisite-filter {
 		margin-top: 1.25rem;
 		margin-bottom: 1.25rem;
@@ -126,6 +167,17 @@ $brand-display: "SF Pro Display", sans-serif;
 
 		.validation-msg {
 			width: 100%;
+		}
+	}
+}
+
+main.scheduled-updates-list {
+	.plugins-update-manager-multisite {
+		&__header-main {
+			@media screen and (min-width: $break-xhuge) {
+				max-width: 1400px;
+				padding-inline: 64px;
+			}
 		}
 	}
 }

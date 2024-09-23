@@ -13,16 +13,19 @@ import type { Step } from '../../types';
 const SiteIntent = Onboard.SiteIntent;
 
 const LaunchBigSky: Step = function () {
-	const isBigSkyEligible = useIsBigSkyEligible();
-	if ( ! isBigSkyEligible ) {
-		window.location.assign( '/start' );
-	}
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const { siteSlug, siteId, site } = useSiteData();
+	const { isEligible, isLoading } = useIsBigSkyEligible();
 	const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } = useDispatch( SITE_STORE );
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
 	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
+
+	useEffect( () => {
+		if ( ! isLoading && ! isEligible ) {
+			window.location.assign( '/start' );
+		}
+	}, [ isLoading, isEligible ] );
 
 	const exitFlow = async ( selectedSiteId: string, selectedSiteSlug: string ) => {
 		if ( ! selectedSiteId || ! selectedSiteSlug ) {
@@ -77,7 +80,7 @@ const LaunchBigSky: Step = function () {
 	};
 
 	useEffect( () => {
-		if ( isError ) {
+		if ( isError || ! isEligible || isLoading ) {
 			return;
 		}
 		const syntheticEvent = {
@@ -87,7 +90,7 @@ const LaunchBigSky: Step = function () {
 			},
 		} as unknown as FormEvent;
 		onSubmit( syntheticEvent );
-	}, [ isError ] );
+	}, [ isError, isEligible, isLoading ] );
 
 	function LaunchingBigSky() {
 		return (
@@ -103,6 +106,10 @@ const LaunchBigSky: Step = function () {
 				</div>
 			</div>
 		);
+	}
+
+	if ( isLoading || ! isEligible ) {
+		return null;
 	}
 
 	return (
