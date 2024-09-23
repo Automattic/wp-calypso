@@ -104,11 +104,13 @@ export default function LicensePreview( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
+	const isClientLicense = isAutomatedReferralsEnabled && referral;
+
 	const assign = useCallback( () => {
 		const redirectUrl = isWPCOMLicense
 			? A4A_SITES_LINK_NEEDS_SETUP
 			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired ) {
+		if ( paymentMethodRequired && ! isClientLicense ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
@@ -131,7 +133,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, translate, dispatch ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, isClientLicense, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -257,7 +259,7 @@ export default function LicensePreview( {
 				<div>
 					<span className="license-preview__product">
 						{ productTitle }
-						{ isAutomatedReferralsEnabled && referral && (
+						{ isClientLicense && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
 							</div>
