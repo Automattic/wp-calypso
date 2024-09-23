@@ -203,6 +203,7 @@ export const SitePerformance = () => {
 			onFilterValueChange={ setQuery }
 			allowReset={ false }
 			options={ pageOptions }
+			disabled={ isInitialLoading || performanceReport.isLoading }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
 
