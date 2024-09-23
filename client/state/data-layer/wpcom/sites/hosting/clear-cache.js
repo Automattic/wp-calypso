@@ -39,7 +39,7 @@ export const hostingClearWordPressCacheTracking = ( result ) =>
 const clearWordPressCacheSuccess = () => {
 	return [
 		hostingClearWordPressCacheTracking( true ),
-		successNotice( translate( 'Successfully cleared WordPress cache.' ), {
+		successNotice( translate( 'Successfully cleared object cache.' ), {
 			id: updateNoticeId,
 			duration: 5000,
 		} ),
@@ -49,7 +49,7 @@ const clearWordPressCacheSuccess = () => {
 const clearWordPressCacheError = () => {
 	return [
 		hostingClearWordPressCacheTracking( false ),
-		errorNotice( translate( 'Failed to clear WordPress cache.' ), {
+		errorNotice( translate( 'Failed to clear object cache.' ), {
 			id: updateNoticeId,
 		} ),
 	];

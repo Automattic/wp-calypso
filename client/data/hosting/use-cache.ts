@@ -6,10 +6,11 @@ import {
 	useIsMutating,
 } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { createNotice } from 'calypso/state/notices/actions';
+import { createNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 export const EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID = 'edge-cache-enable-disable-notice';
 export const USE_EDGE_CACHE_QUERY_KEY = 'edge-cache-key';
@@ -168,10 +169,23 @@ export const useClearEdgeCacheMutation = (
 		ClearEdgeCacheMutationVariables
 	> = {}
 ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const mutation = useMutation( {
 		mutationFn: async () => purgeEdgeCache( siteId ),
 		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
+		onSuccess() {
+			dispatch(
+				successNotice( translate( 'Successfully cleared edge cache.' ), {
+					duration: 5000,
+				} )
+			);
+		},
+		onError() {
+			dispatch( errorNotice( translate( 'Failed to clear edge cache.' ) ) );
+		},
 	} );
 
 	const { mutate } = mutation;
