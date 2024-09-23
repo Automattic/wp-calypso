@@ -34,20 +34,20 @@ export const SiteAddressField: React.FC< Props > = ( {
 
 	return (
 		<div className="site-migration-credentials__form-field">
-			<FormLabel htmlFor="site-address">
+			<FormLabel htmlFor="from_url">
 				{ isEnglishLocale ? translate( 'Current site address' ) : translate( 'Site address' ) }
 			</FormLabel>
 			<Controller
 				control={ control }
-				name="siteAddress"
+				name="from_url"
 				rules={ {
 					required: translate( 'Please enter your WordPress site address.' ),
 					validate: validateSiteAddress,
 				} }
 				render={ ( { field } ) => (
 					<FormTextInput
-						id="site-address"
-						isError={ !! errors?.siteAddress }
+						id="from_url"
+						isError={ !! errors?.from_url }
 						placeholder={ placeholder }
 						readOnly={ !! importSiteQueryParam }
 						disabled={ !! importSiteQueryParam }
@@ -56,7 +56,7 @@ export const SiteAddressField: React.FC< Props > = ( {
 					/>
 				) }
 			/>
-			<ErrorMessage error={ errors?.siteAddress } />
+			<ErrorMessage error={ errors?.from_url } />
 		</div>
 	);
 };
