@@ -8,7 +8,6 @@ export const usePhpVersions = () => {
 	// 10% of sites will have a recommended PHP version of 8.2.
 	const is10Percent = siteId % 10 === 0;
 	const recommendedValue = is10Percent ? '8.2' : '8.1';
-	console.log( siteId, recommendedValue );
 	const label = translate( '%s (recommended)', {
 		args: recommendedValue,
 		comment: 'PHP Version for a version switcher',
