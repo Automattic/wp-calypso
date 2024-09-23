@@ -31,7 +31,6 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 	useStepRouteTracking( {
 		flowName: flow.name,
 		stepSlug: step.slug,
-		skipTracking: ! stepContent,
 		flowVariantSlug: flow.variantSlug,
 	} );
 

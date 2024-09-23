@@ -179,13 +179,6 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 		} );
 
-		it( 'skips trackings when the renderStep returns null', () => {
-			render( { step: regularStep, renderStep: () => null } );
-
-			expect( recordStepStart ).not.toHaveBeenCalled();
-			expect( recordPageView ).not.toHaveBeenCalled();
-		} );
-
 		it( 'tracks step-complete when the step is unmounted and step-start was previously recorded', () => {
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );

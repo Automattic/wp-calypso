@@ -37,20 +37,13 @@ const useHasRequestedSelectedSite = () => {
 interface Props {
 	flowName: string;
 	stepSlug: string;
-	// If true, the tracking event will not be recorded
-	skipTracking: boolean;
 	flowVariantSlug?: string;
 }
 
 /**
  * Hook to track the step route in the declarative flow.
  */
-export const useStepRouteTracking = ( {
-	flowName,
-	stepSlug,
-	skipTracking,
-	flowVariantSlug,
-}: Props ) => {
+export const useStepRouteTracking = ( { flowName, stepSlug, flowVariantSlug }: Props ) => {
 	const intent = useIntent();
 	const design = useSelectedDesign();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
@@ -73,7 +66,7 @@ export const useStepRouteTracking = ( {
 	useEffect( () => {
 		// We record the event only when the step is not empty.
 		// Additionally, we wait for the site to be fetched before tracking the step route.
-		if ( ! hasRequestedSelectedSite || skipTracking ) {
+		if ( ! hasRequestedSelectedSite ) {
 			return;
 		}
 
@@ -121,5 +114,5 @@ export const useStepRouteTracking = ( {
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug ] );
 };
