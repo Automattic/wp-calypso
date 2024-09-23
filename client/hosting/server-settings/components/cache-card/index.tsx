@@ -35,18 +35,18 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
 
-	const shouldRateLimitCacheClear = useSelector( ( state ) =>
+	const shouldRateLimitObjectCacheClear = useSelector( ( state ) =>
 		shouldRateLimitAtomicCacheClear( state, siteId )
 	);
-	const isClearingWordpressCache = useSelector( ( state ) => {
+	const isClearingObjectCache = useSelector( ( state ) => {
 		const request = getRequest( state, clearWordPressCache( siteId ) );
 		return request?.isLoading ?? false;
 	} );
 
 	const {
-		isLoading: getEdgeCacheLoading,
+		isLoading: isEdgeCacheLoading,
 		data: isEdgeCacheActive,
-		isInitialLoading: getEdgeCacheInitialLoading,
+		isInitialLoading: isEdgeCacheInitialLoading,
 	} = useEdgeCacheQuery( siteId );
 
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
@@ -97,14 +97,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				}
 		  );
 
-	const disableButtons =
-		disabled ||
-		shouldRateLimitCacheClear ||
-		getEdgeCacheLoading ||
-		isEdgeCacheMutating ||
-		isClearingWordpressCache ||
-		isClearingEdgeCache;
-
 	return (
 		<HostingCard
 			className="cache-card"
@@ -121,14 +113,21 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				</HostingCardDescription>
 				<Button
 					onClick={ handleClearAllCache }
-					disabled={ disableButtons }
-					busy={ isClearingWordpressCache && isClearingEdgeCache }
+					disabled={
+						disabled ||
+						shouldRateLimitObjectCacheClear ||
+						isEdgeCacheLoading ||
+						isEdgeCacheMutating ||
+						isClearingObjectCache ||
+						isClearingEdgeCache
+					}
+					busy={ isClearingObjectCache && isClearingEdgeCache }
 					className="performance-optimization__button"
 				>
 					{ translate( 'Clear all caches' ) }
 				</Button>
 
-				{ shouldRateLimitCacheClear ? (
+				{ shouldRateLimitObjectCacheClear ? (
 					<div className="performance-optimization__nb">
 						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
 					</div>
@@ -142,7 +141,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			<div className="performance-optimization__hr"></div>
 
 			<div className="performance-optimization__global-edge-cache-block">
-				{ getEdgeCacheInitialLoading ? (
+				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
@@ -152,7 +151,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						<ToggleControl
 							disabled={
 								isClearingEdgeCache ||
-								getEdgeCacheLoading ||
+								isEdgeCacheLoading ||
 								! isEdgeCacheEligible ||
 								isEdgeCacheMutating
 							}
@@ -174,7 +173,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							isEdgeCacheEligible &&
 							isEdgeCacheActive && (
 								<Button
-									disabled={ disableButtons }
+									disabled={ disabled || isEdgeCacheLoading || isEdgeCacheMutating }
 									busy={ isClearingEdgeCache }
 									onClick={ handleClearEdgeCache }
 									className="performance-optimization__button"
@@ -200,8 +199,13 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						) }
 					</HostingCardDescription>
 					<Button
-						disabled={ disableButtons }
-						busy={ isClearingWordpressCache }
+						disabled={
+							disabled ||
+							shouldRateLimitObjectCacheClear ||
+							isClearingObjectCache ||
+							isClearingEdgeCache
+						}
+						busy={ isClearingObjectCache }
 						onClick={ handleClearObjectCache }
 						className="performance-optimization__button"
 					>
