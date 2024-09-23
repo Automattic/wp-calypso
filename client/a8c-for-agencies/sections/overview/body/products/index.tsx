@@ -74,7 +74,7 @@ const OverviewBodyProducts = () => {
 				'Product Bundles: Offer personalized bundles, bulk discounts, and assembled products.'
 			),
 			translate( 'Subscriptions: Enable weekly, monthly, or annual subscriptions.' ),
-			translate( 'WooPayments Referrals. {{a}}Learn more.{{/a}}', {
+			translate( 'WooPayments Referrals. {{a}}Learn more ↗{{/a}}', {
 				components: {
 					a: (
 						<a
