@@ -22,13 +22,11 @@ const withFeatureDisabled = () =>
 	);
 
 describe( 'useSiteMigrationKey', () => {
-	beforeEach( () => {
-		nock.cleanAll();
-	} );
+	beforeAll( () => nock.disableNetConnect() );
 
-	afterEach( () => {
-		jest.resetAllMocks();
-	} );
+	beforeEach( () => nock.cleanAll() );
+
+	afterEach( () => jest.resetAllMocks() );
 
 	it( 'returns the migrateguru site migration key if the flag is disabled', async () => {
 		withFeatureDisabled();
