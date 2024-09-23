@@ -64,8 +64,7 @@ export const useStepRouteTracking = ( { flowName, stepSlug, flowVariantSlug }: P
 	}, [] );
 
 	useEffect( () => {
-		// We record the event only when the step is not empty.
-		// Additionally, we wait for the site to be fetched before tracking the step route.
+		// We wait for the site to be fetched before tracking the step route.
 		if ( ! hasRequestedSelectedSite ) {
 			return;
 		}
