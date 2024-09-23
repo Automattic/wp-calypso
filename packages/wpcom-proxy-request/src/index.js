@@ -505,6 +505,7 @@ function reject( xhr, err, headers ) {
 // taken from wpcom-proxy-request (rest-proxy/provider-v2.0.js)
 const wpcomAllowedOrigins = [
 	'https://wordpress.com',
+	'https://jetpack.com', // Odie bot on contact-support page.
 	'https://cloud.jetpack.com',
 	'https://agencies.automattic.com',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
