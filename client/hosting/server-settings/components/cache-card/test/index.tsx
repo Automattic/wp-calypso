@@ -1,8 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { Provider, useDispatch } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import {
 	useEdgeCacheQuery,
@@ -10,11 +12,18 @@ import {
 	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
-import { CacheCard } from '..';
+import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
+import { clearWordPressCache } from 'calypso/state/hosting/actions';
+import getRequest from 'calypso/state/selectors/get-request';
+import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 
 const INITIAL_STATE = {
 	sites: {
 		items: {},
+	},
+	siteSettings: { items: {} },
+	ui: {
+		selectedSiteId: 1,
 	},
 	options: {
 		onError: () => {},
@@ -23,19 +32,16 @@ const INITIAL_STATE = {
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
 
-const mockUseDispatch = jest.fn();
+jest.mock( 'calypso/components/inline-support-link', () => {
+	return () => {
+		<>InlineSupportLink</>;
+	};
+} );
+
 jest.mock( 'react-redux', () => ( {
 	__esModule: true,
 	...jest.requireActual( 'react-redux' ),
-	useDispatch: () => mockUseDispatch,
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	__esModule: true,
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQueryClient: () => ( {
-		invalidateQueries: jest.fn(),
-	} ),
+	useDispatch: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/data/hosting/use-cache', () => ( {
@@ -59,41 +65,20 @@ jest.mock( 'calypso/data/hosting/use-cache', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	__esModule: true,
-	recordTracksEvent: jest.fn(),
-} ) );
+jest.mock( 'calypso/state/selectors/get-request' );
+getRequest.mockReturnValue( { isLoading: false } );
 
-jest.mock( 'calypso/state/hosting/actions', () => ( {
-	__esModule: true,
-	clearWordPressCache: jest.fn(),
-} ) );
+jest.mock( 'calypso/state/selectors/should-rate-limit-atomic-cache-clear' );
+shouldRateLimitAtomicCacheClear.mockReturnValue( false );
 
-const defaultProps = {
-	translate: ( text ) => text,
+jest.mock( 'calypso/state/hosting/actions' );
+
+const defaultProps: React.ComponentProps< typeof CacheCard > = {
 	disabled: false,
-	shouldRateLimitCacheClear: false,
-	clearAtomicWordPressCache: jest.fn(),
-	isClearingWordpressCache: false,
-	siteId: 1,
 };
 
 describe( 'CacheCard component', () => {
 	beforeAll( () => {
-		// Mock the missing `window.matchMedia` function that's not even in JSDOM
-		Object.defineProperty( window, 'matchMedia', {
-			writable: true,
-			value: jest.fn().mockImplementation( ( query ) => ( {
-				matches: false,
-				media: query,
-				onchange: null,
-				addListener: jest.fn(), // deprecated
-				removeListener: jest.fn(), // deprecated
-				addEventListener: jest.fn(),
-				removeEventListener: jest.fn(),
-				dispatchEvent: jest.fn(),
-			} ) ),
-		} );
 		jest.clearAllMocks();
 	} );
 
@@ -112,42 +97,57 @@ describe( 'CacheCard component', () => {
 		screen.getByRole( 'checkbox' ).click();
 		expect( useSetEdgeCacheMutation().setEdgeCache ).toHaveBeenCalledWith( 1, true );
 	} );
+
 	it( 'displays rate limit message when shouldRateLimitCacheClear prop is true', () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );
+		shouldRateLimitAtomicCacheClear.mockReturnValueOnce( true );
 
 		render(
 			<Provider store={ store }>
-				<CacheCard { ...{ ...defaultProps, shouldRateLimitCacheClear: true } } />
+				<CacheCard { ...defaultProps } />
 			</Provider>
 		);
 		expect( screen.getByText( /you cleared the cache recently/i ) ).toBeInTheDocument();
 	} );
+
 	it( 'disables "Clear cache" button when isClearingCache prop is true', () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );
+		getRequest.mockReturnValueOnce( { isLoading: true } );
 
 		render(
 			<Provider store={ store }>
-				<CacheCard { ...{ ...defaultProps, isClearingWordpressCache: true } } />
+				<CacheCard { ...defaultProps } />
 			</Provider>
 		);
-		expect( screen.getByRole( 'button' ) ).toBeDisabled();
+		expect( screen.queryByText( 'Clear all caches' ) ).toBeDisabled();
 	} );
-	it( 'clears cache', () => {
+
+	it( 'clears cache', async () => {
 		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: false } );
-		useClearEdgeCacheMutation.mockReturnValue( {
+
+		const mutationMock = {
 			clearEdgeCache: jest.fn(),
 			isLoading: false,
-		} );
+		};
+		useClearEdgeCacheMutation.mockReturnValue( mutationMock );
+
+		const mockedDispatch = jest.fn();
+		useDispatch.mockReturnValueOnce( mockedDispatch );
 
 		render(
 			<Provider store={ store }>
-				<CacheCard { ...{ ...defaultProps } } />
+				<CacheCard { ...defaultProps } />
 			</Provider>
 		);
-		fireEvent.click( screen.getByRole( 'button' ) );
-		expect( useClearEdgeCacheMutation().clearEdgeCache ).toHaveBeenCalledTimes( 1 );
-		expect( defaultProps.clearAtomicWordPressCache ).toHaveBeenCalledTimes( 1 );
+
+		await userEvent.click( screen.queryByText( 'Clear all caches' ) );
+
+		expect( mutationMock.clearEdgeCache ).toHaveBeenCalledTimes( 1 );
+		expect( mockedDispatch ).toHaveBeenCalledWith(
+			clearWordPressCache( 1, 'Manually clearing again.' )
+		);
 	} );
+
 	it( 'shows the Clear Cache button', () => {
 		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: true } );
 		useClearEdgeCacheMutation.mockReturnValue( {
@@ -156,11 +156,10 @@ describe( 'CacheCard component', () => {
 		} );
 		render(
 			<Provider store={ store }>
-				<CacheCard { ...{ ...defaultProps } } />
+				<CacheCard { ...defaultProps } />
 			</Provider>
 		);
-		expect( screen.queryByRole( 'button' ) ).toBeTruthy();
-		expect( screen.queryByRole( 'button' ) ).toBeDisabled();
-		fireEvent.click( screen.getByRole( 'button' ) );
+		expect( screen.queryByText( 'Clear all caches' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Clear all caches' ) ).toBeDisabled();
 	} );
 } );

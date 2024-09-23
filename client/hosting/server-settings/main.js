@@ -18,6 +18,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
+import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
@@ -42,7 +43,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import CacheCard from './components/cache-card';
 import { HostingUpsellNudge } from './components/hosting-upsell-nudge';
 import PhpMyAdminCard from './components/phpmyadmin-card';
 import RestorePlanSoftwareCard from './components/restore-plan-software-card';
