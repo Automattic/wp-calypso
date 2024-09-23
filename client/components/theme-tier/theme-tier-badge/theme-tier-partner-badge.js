@@ -98,7 +98,7 @@ export default function ThemeTierPartnerBadge() {
 			return createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and cannot be purchased in a trial plan site. Please upgraed your <Link>%(ecommercePlanName)s plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and cannot be purchased in a trial plan site. Please upgrade your <Link>%(ecommercePlanName)s plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
