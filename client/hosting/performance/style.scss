@@ -13,6 +13,18 @@ $section-max-width: 1224px;
 	.notice-banner__title {
 		font-size: $font-body-small;
 	}
+
+	@media (max-width: $break-medium) {
+		gap: 0;
+	}
+
+	.performance-profiler-content .container {
+		padding-top: 0;
+
+		@media (max-width: $break-medium) {
+			padding-top: 24px;
+		}
+	}
 }
 
 .site-performance-device-tab-controls__container {
