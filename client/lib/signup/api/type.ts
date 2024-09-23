@@ -56,19 +56,19 @@ export type CreateSocialAccountParams = Pick<
 	'service' | 'access_token' | 'id_token' | 'userData'
 >;
 
-export type AccountCreateReturn =
-	| {
-			error: 'user_exists';
-			message: string;
-			data: {
-				email: string;
-			};
-	  }
-	| {
-			username?: string;
-			marketing_price_group?: string | undefined;
-			bearer_token?: string | undefined;
-	  };
+export type AccountCreateError = {
+	error: 'user_exists';
+	message: string;
+	data: {
+		email: string;
+	};
+};
+
+export type AccountCreateResponse = {
+	username?: string;
+	marketing_price_group?: string | undefined;
+	bearer_token?: string | undefined;
+};
 
 export type SocialAuthParams = {
 	service?: string;
