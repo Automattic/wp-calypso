@@ -14,11 +14,11 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 const withFeatureEnabled = () =>
 	( config.isEnabled as jest.Mock ).mockImplementation(
-		( key ) => key === 'migration-flow/enable-white-labeled-plugin'
+		( feature ) => feature === 'migration-flow/enable-white-labeled-plugin'
 	);
 const withFeatureDisabled = () =>
 	( config.isEnabled as jest.Mock ).mockImplementation(
-		( key ) => key !== 'migration-flow/enable-white-labeled-plugin'
+		( feature ) => feature !== 'migration-flow/enable-white-labeled-plugin'
 	);
 
 describe( 'useSiteMigrationKey', () => {
