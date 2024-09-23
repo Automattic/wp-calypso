@@ -17,10 +17,6 @@ export const USE_EDGE_CACHE_QUERY_KEY = 'edge-cache-key';
 export const TOGGLE_EDGE_CACHE_MUTATION_KEY = 'set-edge-site-mutation-key';
 export const CLEAR_EDGE_CACHE_MUTATION_KEY = 'clear-edge-site-mutation-key';
 
-interface ClearEdgeCacheMutationVariables {
-	name: string;
-}
-
 interface SetEdgeCacheMutationVariables {
 	siteId: number | null;
 	active: boolean;
@@ -163,17 +159,13 @@ export const useIsSetEdgeCacheMutating = ( siteId: number | null ) => {
 
 export const useClearEdgeCacheMutation = (
 	siteId: number | null,
-	options: UseMutationOptions<
-		MutationResponse,
-		MutationError,
-		ClearEdgeCacheMutationVariables
-	> = {}
+	options: UseMutationOptions< MutationResponse, MutationError > = {}
 ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const mutation = useMutation( {
-		mutationFn: async () => purgeEdgeCache( siteId ),
+		mutationFn: () => purgeEdgeCache( siteId ),
 		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
 		onSuccess() {
@@ -188,13 +180,10 @@ export const useClearEdgeCacheMutation = (
 		},
 	} );
 
-	const { mutate } = mutation;
 	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
 	// the provided key. This is preserved across different pages, while isLoading it's not.
 	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
 	const isLoading = useIsMutating( { mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ] } ) > 0;
 
-	const clearEdgeCache = useCallback( mutate, [ mutate ] );
-
-	return { clearEdgeCache, isLoading };
+	return { clearEdgeCache: mutation.mutate, isLoading };
 };

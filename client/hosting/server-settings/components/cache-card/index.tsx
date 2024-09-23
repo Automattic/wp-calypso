@@ -61,7 +61,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		} );
 
 		if ( isEdgeCacheActive ) {
-			// @ts-expect-error TODO: Fix this
 			clearEdgeCache();
 		}
 		dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
@@ -73,7 +72,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			cache_type: 'edge',
 		} );
 
-		// @ts-expect-error TODO: Fix this
 		clearEdgeCache();
 	};
 
@@ -125,7 +123,9 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					}
 					onClick={ handleClearAllCache }
 				>
-					{ translate( 'Clear all caches' ) }
+					{ config.isEnabled( 'hosting-server-settings-enhancements' )
+						? translate( 'Clear cache' )
+						: translate( 'Clear all caches' ) }
 				</Button>
 
 				{ shouldRateLimitObjectCacheClear ? (
