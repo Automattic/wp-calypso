@@ -20,21 +20,18 @@ export const MobileHeader = ( { pageTitle, pageSelector }: MobileHeaderProps ) =
 		<>
 			<NavigationHeader
 				className="site-performance__navigation-header"
-				title={
-					<div className="navigation-header-title">
-						{ translate( 'Performance' ) }
-						<Button
-							variant="tertiary"
-							onClick={ togglePageSelector }
-							aria-expanded={ isPageSelectorVisible }
-						>
-							<ScreenReaderText>{ translate( 'toggle page selector' ) }</ScreenReaderText>
-							<Gridicon icon="cog" />
-						</Button>
-					</div>
-				}
+				title={ <div className="navigation-header-title">{ translate( 'Performance' ) }</div> }
 				subtitle={ pageTitle }
-			/>
+			>
+				<Button
+					variant="tertiary"
+					onClick={ togglePageSelector }
+					aria-expanded={ isPageSelectorVisible }
+				>
+					<ScreenReaderText>{ translate( 'toggle page selector' ) }</ScreenReaderText>
+					<Gridicon icon="cog" />
+				</Button>
+			</NavigationHeader>
 
 			{ isPageSelectorVisible && (
 				<div
