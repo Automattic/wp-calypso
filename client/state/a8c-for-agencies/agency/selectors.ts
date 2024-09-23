@@ -1,6 +1,5 @@
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
-import { isEnabled } from '@automattic/calypso-config';
 import { A4AStore, APIError, Agency } from '../types';
 
 export function getActiveAgency( state: A4AStore ): Agency | null {
@@ -41,8 +40,8 @@ export function isAgencyClientUser( state: A4AStore ): boolean {
 }
 
 export function hasAgencyCapability( state: A4AStore, capability: string ): boolean {
-	// If the feature is not enabled, or the user is a client user, bypass the capability check.
-	if ( ! isEnabled( 'a4a-multi-user-support' ) || isAgencyClientUser( state ) ) {
+	// If the user is a client user, bypass the capability check.
+	if ( isAgencyClientUser( state ) ) {
 		return true;
 	}
 

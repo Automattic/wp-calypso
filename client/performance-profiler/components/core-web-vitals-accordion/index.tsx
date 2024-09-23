@@ -51,40 +51,42 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 
 	return (
 		<div className="core-web-vitals-accordion">
-			{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
-				if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
-					return null;
-				}
+			{ Object.entries( metricsNames )
+				.filter( ( [ name ] ) => name !== 'overall' )
+				.map( ( [ key, { name: displayName } ] ) => {
+					if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
+						return null;
+					}
 
-				// Only display TBT if INP is not available
-				if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
-					return null;
-				}
+					// Only display TBT if INP is not available
+					if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
+						return null;
+					}
 
-				return (
-					<FoldableCard
-						className="core-web-vitals-accordion__card"
-						key={ key }
-						header={
-							<CardHeader
-								displayName={ displayName }
-								metricKey={ key as Metrics }
-								metricValue={ props[ key as Metrics ] }
-							/>
-						}
-						hideSummary
-						screenReaderText={ translate( 'More' ) }
-						compact
-						clickableHeader
-						smooth
-						iconSize={ 18 }
-						onClick={ () => onClick( key as Metrics ) }
-						expanded={ key === activeTab }
-					>
-						{ children }
-					</FoldableCard>
-				);
-			} ) }
+					return (
+						<FoldableCard
+							className="core-web-vitals-accordion__card"
+							key={ key }
+							header={
+								<CardHeader
+									displayName={ displayName }
+									metricKey={ key as Metrics }
+									metricValue={ props[ key as Metrics ] }
+								/>
+							}
+							hideSummary
+							screenReaderText={ translate( 'More' ) }
+							compact
+							clickableHeader
+							smooth
+							iconSize={ 18 }
+							onClick={ () => onClick( key as Metrics ) }
+							expanded={ key === activeTab }
+						>
+							{ children }
+						</FoldableCard>
+					);
+				} ) }
 		</div>
 	);
 };

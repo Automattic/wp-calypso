@@ -72,11 +72,7 @@ export async function maybeRedirect( context, next ) {
 			'calypso_onboarding_launchpad_removal_test_2024_08'
 		);
 
-		const shouldShowLaunchpad =
-			'treatment' !== experimentAssignment?.variationName &&
-			// for testing/development purposes we can use sessionStorage to force the treatment
-			'treatment' !==
-				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' );
+		const shouldShowLaunchpad = 'treatment' !== experimentAssignment?.variationName;
 
 		if (
 			shouldShowLaunchpad &&

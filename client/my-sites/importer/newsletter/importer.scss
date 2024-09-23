@@ -99,6 +99,7 @@
 
 	/* Step specific */
 	&.newsletter-importer__step-summary {
+		.importer__notice,
 		.importer-action-buttons__container {
 			margin-top: 30px;
 		}

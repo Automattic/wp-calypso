@@ -178,6 +178,15 @@ $button-border: 4px;
 			order: 1;
 		}
 	}
+
+	.theme__sheet-demo-button,
+	.theme__sheet-preview-demo-site {
+		svg {
+			vertical-align: text-bottom;
+			margin-left: 4px;
+			fill: currentColor;
+		}
+	}
 }
 
 .theme__sheet-columns.is-removed {
@@ -245,14 +254,6 @@ $button-border: 4px;
 			right: auto;
 			top: auto;
 			margin-right: 0 !important;
-		}
-
-		.theme__sheet-demo-button {
-			svg {
-				vertical-align: text-bottom;
-				margin-left: 4px;
-				fill: currentColor;
-			}
 		}
 	}
 

@@ -206,8 +206,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	const onModalClose = () => {
 		setIsOpen( false );
-
-		trackStatsAnalyticsEvent( 'stats_feedback_action_close_form_modal' );
 	};
 
 	if ( ! supportCommercialUse ) {
