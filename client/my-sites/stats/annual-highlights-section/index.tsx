@@ -25,15 +25,6 @@ type Insights = {
 	} >;
 };
 
-type Followers = {
-	subscribers: Array< object >;
-	total_email: number;
-	total_wpcom: number;
-	total: number;
-};
-
-const FOLLOWERS_QUERY = { type: 'all', max: 0 };
-
 // Meant to replace annual-site-stats section
 export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
 	// In January show the previous year.
@@ -44,9 +35,6 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 	const insights = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
 	) as Insights;
-	const followers = useSelector( ( state ) =>
-		getSiteStatsNormalizedData( state, siteId, 'statsFollowers', FOLLOWERS_QUERY )
-	) as Followers;
 	const counts = useMemo( () => {
 		const hasYearsData = Array.isArray( insights?.years );
 		const currentYearData = insights?.years?.find( ( y ) => y.year === year.toString() );
@@ -57,9 +45,8 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 			likes: currentYearData?.total_likes ?? ( hasYearsData ? 0 : null ),
 			posts: currentYearData?.total_posts ?? ( hasYearsData ? 0 : null ),
 			words: currentYearData?.total_words ?? ( hasYearsData ? 0 : null ),
-			followers: year === currentYear ? followers?.total ?? null : null,
 		};
-	}, [ year, followers, insights, currentYear ] );
+	}, [ year, insights ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
@@ -98,7 +85,6 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 			{ siteId && (
 				<>
 					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
-					<QuerySiteStats siteId={ siteId } statType="statsFollowers" query={ FOLLOWERS_QUERY } />
 				</>
 			) }
 			<AnnualHighlightCards
