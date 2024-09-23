@@ -2,8 +2,6 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { activateContext } from 'calypso/my-sites/hosting/activate-context';
-import { HostingErrorStatus } from 'calypso/my-sites/hosting/hosting-error-status';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
@@ -15,6 +13,8 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import { activateContext } from './components/activate-context';
+import { HostingErrorStatus } from './components/hosting-error-status';
 import './style.scss';
 
 interface HostingActivateStatusProps {

@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
-import { activateContext } from 'calypso/my-sites/hosting/activate-context';
+import { activateContext } from './activate-context';
 
 interface HostingErrorStatusProps {
 	context: activateContext;
