@@ -7,18 +7,14 @@ import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
 	cancelPendingEmailChange,
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
 
@@ -97,15 +93,8 @@ const AccountEmailValidationNotice = ( {
 const EmailFieldExplanationText = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
-	const isRequestingDomainList = useSelector( isRequestingAllDomains );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const isEmailChangePending = useSelector( isPendingEmailChange );
-	const hasCustomDomainRegistration = domainsList.some( ( domain ) => {
-		return domainTypes.REGISTERED === domain.type;
-	} );
-
-	const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
 
 	const cancelWrapper = (
 		<Button
@@ -119,25 +108,12 @@ const EmailFieldExplanationText = () => {
 	);
 
 	if ( isEmailChangePending ) {
-		if ( isRequestingDomainList || ! hasCustomDomainRegistration ) {
-			// Show unverified message and cancel pending change option.
-			return translate(
-				'Your email has not been verified yet. To cancel the pending email change {{cancelWrapper}}click here{{/cancelWrapper}}.',
-				{
-					components: {
-						cancelWrapper,
-					},
-				}
-			);
-		}
-		// Show unverified message, domain contact info message, and cancel pending change option.
+		// Show unverified message and cancel pending change option.
 		return translate(
-			'Your email has not been verified yet. To cancel the pending email change {{cancelWrapper}}click here{{/cancelWrapper}}.{{br/}} Update contact information on your domain names if necessary {{link}}here{{/link}}.',
+			'Your email has not been verified yet. To cancel the pending email change {{cancelWrapper}}click here{{/cancelWrapper}}.',
 			{
 				components: {
-					br: <br />,
 					cancelWrapper,
-					link: <a href={ editContactInfoInBulkUrl } />,
 				},
 			}
 		);
