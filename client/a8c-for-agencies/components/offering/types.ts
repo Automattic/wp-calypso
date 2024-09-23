@@ -9,7 +9,7 @@ export type OfferingItemProps = {
 	title: string;
 	titleIcon: JSX.Element;
 	description: string;
-	highlights: string[];
+	highlights: React.ReactNode[];
 	expanded?: boolean;
 	clickableHeader?: boolean;
 	buttonTitle: string;
