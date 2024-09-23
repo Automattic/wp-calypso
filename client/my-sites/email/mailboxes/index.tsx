@@ -139,6 +139,7 @@ const MailboxesManagement = ( {
 					selectedIntervalLength={ selectedIntervalLength }
 					showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
 					source={ MAILBOXES_SOURCE }
+					enableSetupRedirects={ false }
 				/>
 			</>
 		</CalypsoShoppingCartProvider>

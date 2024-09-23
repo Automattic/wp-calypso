@@ -212,6 +212,7 @@ export default {
 					selectedDomainName={ pageContext.params.domain }
 					selectedEmailProviderSlug={ pageContext.query.provider }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+					enableSetupRedirects
 				/>
 			</CalypsoShoppingCartProvider>
 		);

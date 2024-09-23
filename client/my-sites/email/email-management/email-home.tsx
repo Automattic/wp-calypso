@@ -71,6 +71,7 @@ interface EmailManagementHomeProps {
 	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
+	enableSetupRedirects: boolean;
 }
 
 const domainHasEmail = ( domain: ResponseDomain ) =>
@@ -85,6 +86,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		selectedIntervalLength,
 		sectionHeaderLabel,
 		source,
+		enableSetupRedirects = true,
 	} = props;
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -177,7 +179,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		);
 	}
 
-	if ( isSingleDomainThatHasEmail ) {
+	if ( isSingleDomainThatHasEmail && enableSetupRedirects ) {
 		if (
 			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
 			getConfiguredTitanMailboxCount( domainsWithEmail[ 0 ] ) === 0
