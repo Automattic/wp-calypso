@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -111,8 +111,10 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						},
 					} ) }
 				</HostingCardDescription>
+
 				<Button
-					onClick={ handleClearAllCache }
+					className="performance-optimization__button"
+					busy={ isClearingObjectCache && isClearingEdgeCache }
 					disabled={
 						disabled ||
 						shouldRateLimitObjectCacheClear ||
@@ -121,8 +123,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						isClearingObjectCache ||
 						isClearingEdgeCache
 					}
-					busy={ isClearingObjectCache && isClearingEdgeCache }
-					className="performance-optimization__button"
+					onClick={ handleClearAllCache }
 				>
 					{ translate( 'Clear all caches' ) }
 				</Button>
@@ -173,10 +174,10 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							isEdgeCacheEligible &&
 							isEdgeCacheActive && (
 								<Button
-									disabled={ disabled || isEdgeCacheLoading || isEdgeCacheMutating }
-									busy={ isClearingEdgeCache }
-									onClick={ handleClearEdgeCache }
 									className="performance-optimization__button"
+									busy={ isClearingEdgeCache }
+									disabled={ disabled || isEdgeCacheLoading || isEdgeCacheMutating }
+									onClick={ handleClearEdgeCache }
 								>
 									{ translate( 'Clear edge cache' ) }
 								</Button>
@@ -198,19 +199,31 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							}
 						) }
 					</HostingCardDescription>
-					<Button
-						disabled={
-							disabled ||
-							shouldRateLimitObjectCacheClear ||
-							isClearingObjectCache ||
-							isClearingEdgeCache
+
+					<Tooltip
+						placement="top"
+						text={
+							shouldRateLimitObjectCacheClear
+								? translate( 'You cleared the cache recently. Please wait a minute and try again.' )
+								: ''
 						}
-						busy={ isClearingObjectCache }
-						onClick={ handleClearObjectCache }
-						className="performance-optimization__button"
 					>
-						{ translate( 'Clear object cache' ) }
-					</Button>
+						<div className="performance-optimization__button-wrapper">
+							<Button
+								className="performance-optimization__button"
+								busy={ isClearingObjectCache }
+								disabled={
+									disabled ||
+									shouldRateLimitObjectCacheClear ||
+									isClearingObjectCache ||
+									isClearingEdgeCache
+								}
+								onClick={ handleClearObjectCache }
+							>
+								{ translate( 'Clear object cache' ) }
+							</Button>
+						</div>
+					</Tooltip>
 				</div>
 			) }
 		</HostingCard>
