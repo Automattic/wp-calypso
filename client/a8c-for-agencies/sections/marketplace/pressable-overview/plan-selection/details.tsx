@@ -115,6 +115,13 @@ export default function PlanSelectionDetails( {
 							) }
 						</div>
 					) }
+					{ isReferMode && (
+						<div className="pressable-overview-plan-selection__details-card-header-price">
+							<strong className="pressable-overview-plan-selection__details-card-header-comming-soon">
+								{ translate( 'Coming soon' ) }
+							</strong>
+						</div>
+					) }
 				</div>
 
 				{ ! isRegularOwnership && ! isReferMode && (
