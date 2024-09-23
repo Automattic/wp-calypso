@@ -66,6 +66,7 @@ export interface Agency {
 		role: 'a4a_administrator' | 'a4a_manager';
 		capabilities: string[];
 	};
+	can_issue_licenses: boolean;
 }
 
 export interface AgencyStore {

@@ -6,6 +6,8 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
+	isJetpackPlan,
+	isJetpackProduct,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -15,9 +17,12 @@ import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
+import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -44,6 +49,8 @@ import {
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
+import { getSite } from 'calypso/state/sites/selectors';
 import {
 	isTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
@@ -519,7 +526,7 @@ class PurchaseItem extends Component {
 	}
 
 	getSiteIcon = () => {
-		const { site, isDisconnectedSite, purchase } = this.props;
+		const { site, isDisconnectedSite, purchase, iconUrl } = this.props;
 
 		if ( isAkismetTemporarySitePurchase( purchase ) ) {
 			return (
@@ -537,6 +544,16 @@ class PurchaseItem extends Component {
 			return (
 				<div className="purchase-item__disconnected-icon">
 					<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
+				</div>
+			);
+		}
+
+		const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+
+		if ( ! iconUrl && isJetpackPurchase ) {
+			return (
+				<div className="purchase-item__static-icon">
+					<img src={ jetpackIcon } alt="Jetpack icon" />;
 				</div>
 			);
 		}
@@ -654,4 +671,16 @@ PurchaseItem.propTypes = {
 	isBackupMethodAvailable: PropTypes.bool,
 };
 
-export default localize( withLocalizedMoment( PurchaseItem ) );
+export default connect( ( state, { site } ) => {
+	const stateSite = getSite( state, get( site, 'ID' ) );
+
+	if ( ! stateSite ) {
+		return {
+			iconUrl: site?.icon?.img,
+		};
+	}
+
+	return {
+		iconUrl: getSiteIconUrl( state, stateSite.ID ),
+	};
+} )( localize( withLocalizedMoment( PurchaseItem ) ) );

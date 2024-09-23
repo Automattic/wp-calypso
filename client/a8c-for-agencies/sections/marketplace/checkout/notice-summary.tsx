@@ -88,7 +88,12 @@ export default function NoticeSummary( { type }: Props ) {
 						}
 					),
 					translate(
-						'You will be billed on the first of every month. Your first bill will include a prorated amount for the current month, depending on which day you purchased these products. '
+						"{{strong}}You won't be billed today.{{/strong}} Invoices are sent on the first of every month and are based on the number of days your product licenses were active in the previous month. Your first invoice will be prorated.",
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
 					),
 				];
 			case 'request-client-payment':

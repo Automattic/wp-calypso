@@ -310,6 +310,9 @@ function LineItemWrapper( {
 		if ( has100YearPlanProduct ) {
 			return false;
 		}
+		if ( product.extra?.hideProductVariants ) {
+			return false;
+		}
 
 		return true;
 	} )();

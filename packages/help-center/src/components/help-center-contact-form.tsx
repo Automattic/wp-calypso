@@ -7,7 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
@@ -69,16 +69,11 @@ const isLocaleNotSupportedInEmailSupport = ( locale: string ) => {
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
-type HelpCenterContactFormProps = {
-	onSubmit?: () => void;
-};
-
-export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
+export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
-	const { onSubmit } = props;
 	const overflow = params.get( 'overflow' ) === 'true';
 	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
 	const navigate = useNavigate();
@@ -184,6 +179,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const skipResources = params.get( 'skip-resources' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
+	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const redirectToArticle = useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
@@ -217,7 +213,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 			navigate( `/post/?${ params }` );
 		},
-		[ mode, showingGPTResponse, debouncedMessage, navigate ]
+		[ debouncedMessage, navigate ]
 	);
 
 	// this indicates the user was happy with the GPT response
@@ -274,10 +270,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		if ( wapuuFlow ) {
 			params.set( 'disable-gpt', 'true' );
 			params.set( 'show-gpt', 'false' );
-
-			if ( onSubmit ) {
-				onSubmit();
-			}
+			setOdieStorage( null ); // clear the chat id
 		}
 
 		// Domain only sites don't have plans.

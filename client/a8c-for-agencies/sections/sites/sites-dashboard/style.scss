@@ -50,6 +50,33 @@
 		border-radius: 4px;
 	}
 
+	.dataviews__view-actions,
+	.dataviews-filters__container {
+		padding: 16px;
+
+		@media (min-width: $break-small) {
+			padding: 16px 64px;
+		}
+	}
+
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-left: 16px;
+
+		@media (min-width: $break-small) {
+			padding-left: 64px;
+		}
+	}
+
+	.dataviews-view-table tr td:last-child,
+	.dataviews-view-table tr th:last-child {
+		padding-right: 16px;
+
+		@media (min-width: $break-small) {
+			padding-right: 64px;
+		}
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 

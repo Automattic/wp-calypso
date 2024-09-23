@@ -8,7 +8,6 @@ const PlaceholderGroup = styled.div( {
 } );
 
 const ParagraphPlaceholder = styled( LoadingPlaceholder )( {
-	width: 560,
 	maxWidth: '100%',
 } );
 const LinkPlaceholder = styled( ParagraphPlaceholder )( { width: 290, marginBottom: 30 } );

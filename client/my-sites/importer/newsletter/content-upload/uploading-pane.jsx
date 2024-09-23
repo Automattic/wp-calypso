@@ -1,4 +1,3 @@
-import { FormInputValidation, FormLabel } from '@automattic/components';
 import { ProgressBar } from '@wordpress/components';
 import { Icon, cloudUpload } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -9,8 +8,6 @@ import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
 import DropZone from 'calypso/components/drop-zone';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import TextInput from 'calypso/components/forms/form-text-input';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import {
@@ -93,9 +90,6 @@ export class UploadingPane extends PureComponent {
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
-				if ( this.state.fileToBeUploaded ) {
-					return <p>{ this.state?.fileToBeUploaded?.name?.substring?.( 0, 100 ) }</p>;
-				}
 				return (
 					<p>
 						{ this.props.translate(
@@ -106,6 +100,7 @@ export class UploadingPane extends PureComponent {
 						) }
 					</p>
 				);
+
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
@@ -120,11 +115,12 @@ export class UploadingPane extends PureComponent {
 				return (
 					<div className="content-upload-form__in-progress">
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar className="content-upload-form__in-progress-bar" />
+						<ProgressBar className="content-upload-form__in-progress-bar is-larger-progress-bar" />
 					</div>
 				);
 			}
-			case appStates.UPLOAD_SUCCESS:
+
+			case appStates.UPLOAD_SUCCESS: {
 				if ( importerFileType === 'playground' ) {
 					return (
 						<div className="importer-upload-warning">
@@ -147,11 +143,9 @@ export class UploadingPane extends PureComponent {
 						</div>
 					);
 				}
-				return (
-					<div>
-						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
-					</div>
-				);
+
+				return <p>{ this.props.translate( 'Success! File uploaded.' ) }</p>;
+			}
 		}
 	};
 
@@ -233,17 +227,12 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { importerStatus, fromSite, acceptedFileTypes, nextStepUrl, skipNextStep } = this.props;
+		const { importerStatus, acceptedFileTypes, nextStepUrl, skipNextStep } = this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
 			this.props.importerStatus.importerState
 		);
-		const hasEnteredUrl = this.state.urlInput && this.state.urlInput !== '';
-		const isValidUrl = this.validateUrl( this.state.urlInput );
-		const urlDescription = isValidUrl
-			? this.props?.optionalUrl?.description
-			: this.props?.optionalUrl?.invalidDescription;
 		const skipButtonDisabled = importerStatus.importerState === appStates.UPLOAD_PROCESSING;
 
 		return (
@@ -270,24 +259,6 @@ export class UploadingPane extends PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
-				{ this.props.optionalUrl && ! fromSite && (
-					<div className="importer__uploading-pane-url-input">
-						<FormLabel>
-							{ this.props.optionalUrl.title }
-							<TextInput
-								label={ this.props.optionalUrl.title }
-								onChange={ this.setUrl }
-								value={ this.state.urlInput }
-								placeholder="https://newsletter.substack.com/"
-							/>
-						</FormLabel>
-						{ hasEnteredUrl ? (
-							<FormInputValidation isError={ ! isValidUrl }>{ urlDescription }</FormInputValidation>
-						) : (
-							<FormSettingExplanation>{ urlDescription }</FormSettingExplanation>
-						) }
-					</div>
-				) }
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
 						href={ nextStepUrl }

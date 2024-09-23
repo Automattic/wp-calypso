@@ -135,14 +135,14 @@ const DotcomSitesDataViews = ( {
 					<SitePlan site={ item } userId={ userId } />
 				),
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'status',
 				label: __( 'Status' ),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 				elements: siteStatusGroups,
 				filterBy: {
 					operators: [ 'is' ],
@@ -161,10 +161,10 @@ const DotcomSitesDataViews = ( {
 				id: 'stats',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: (
-					<>
+					<span className="sites-dataviews__stats-label">
 						<JetpackLogo size={ 16 } />
 						<span>{ __( 'Stats' ) }</span>
-					</>
+					</span>
 				),
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
 				enableHiding: false,

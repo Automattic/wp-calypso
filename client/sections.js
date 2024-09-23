@@ -727,7 +727,7 @@ const sections = [
 	},
 	{
 		name: 'site-performance',
-		paths: [ '/site-performance' ],
+		paths: [ '/sites/performance' ],
 		module: 'calypso/hosting/performance',
 		group: 'sites',
 	},

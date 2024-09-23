@@ -118,7 +118,7 @@ const StorageDropdown = ( {
 					price={ getStorageOptionPrice( storageAddOns, slug ) }
 					storageSlug={ slug }
 				/>
-			),
+			 ) as unknown as string,
 		};
 	} );
 
@@ -133,12 +133,12 @@ const StorageDropdown = ( {
 				isLargeCurrency={ isLargeCurrency }
 				priceOnSeparateLine={ priceOnSeparateLine }
 			/>
-		),
+		 ) as unknown as string,
 	};
 
 	const handleOnChange = useCallback(
-		( { selectedItem }: { selectedItem: { key: AddOns.StorageAddOnSlug } } ) => {
-			const addOnSlug = selectedItem?.key;
+		( { selectedItem }: { selectedItem: { key: string } } ) => {
+			const addOnSlug = selectedItem?.key as AddOns.StorageAddOnSlug;
 
 			if ( addOnSlug ) {
 				onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
@@ -152,9 +152,10 @@ const StorageDropdown = ( {
 		<>
 			<CustomSelectControl
 				hideLabelFromVision
-				options={ selectControlOptions }
+				options={ selectControlOptions || [] }
 				value={ selectedOption }
 				onChange={ handleOnChange }
+				label=""
 			/>
 			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
 				<div className="plans-grid-next-storage-dropdown__addon-offset-price-container">

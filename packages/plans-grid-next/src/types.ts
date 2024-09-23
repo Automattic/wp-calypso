@@ -59,6 +59,7 @@ export type PlansIntent =
 	| 'plans-newsletter'
 	| 'plans-link-in-bio'
 	| 'plans-new-hosted-site'
+	| 'plans-new-hosted-site-business-only'
 	| 'plans-plugins'
 	| 'plans-jetpack-app'
 	| 'plans-jetpack-app-site-creation'
@@ -127,6 +128,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
 	showLegacyStorageFeature: boolean;
+	enableShowAllFeaturesButton?: boolean;
 }
 
 export interface ComparisonGridProps extends CommonGridProps {
@@ -204,11 +206,6 @@ export type GridContextProps = {
 	 * It is only used for showing "Everything in [previous] plus".
 	 */
 	enableCategorisedFeatures?: boolean;
-
-	/**
-	 * Display the feature titles with a slightly larger font size
-	 */
-	enableLargeFeatureTitles?: boolean;
 
 	/**
 	 * Display the plan storage limit as a badge like "50GB" or as plain text like "50GB storage"

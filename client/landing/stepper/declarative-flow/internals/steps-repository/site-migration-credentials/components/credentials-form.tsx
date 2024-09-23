@@ -1,7 +1,9 @@
-import { Card } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
+import Banner from 'calypso/components/banner';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useCredentialsForm } from '../use-credentials-form';
 import { AccessMethodPicker } from './access-method-picker';
 import { BackupFileField } from './backup-file-field';
@@ -18,6 +20,7 @@ interface CredentialsFormProps {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const {
 		handleSubmit,
 		control,
@@ -28,24 +31,34 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		importSiteQueryParam,
 	} = useCredentialsForm( onSubmit );
 
+	const queryError = useQuery().get( 'error' ) || null;
+
 	return (
-		<form onSubmit={ handleSubmit( submitHandler ) }>
-			<Card>
+		<form className="site-migration-credentials__form" onSubmit={ handleSubmit( submitHandler ) }>
+			{ queryError === 'ticket-creation' && (
+				<Banner
+					className="site-migration-credentials__error-banner"
+					showIcon={ false }
+					title=""
+					description={ translate(
+						'We ran into a problem submitting your details. Please try again shortly.'
+					) }
+				></Banner>
+			) }
+			<div className="site-migration-credentials__content">
 				<AccessMethodPicker control={ control } />
 
 				<hr />
 
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
-						<div className="site-migration-credentials__form">
-							<SiteAddressField
-								control={ control }
-								errors={ errors }
-								importSiteQueryParam={ importSiteQueryParam }
-							/>
-							<UsernameField control={ control } errors={ errors } />
-							<PasswordField control={ control } errors={ errors } />
-						</div>
+						<SiteAddressField
+							control={ control }
+							errors={ errors }
+							importSiteQueryParam={ importSiteQueryParam }
+						/>
+						<UsernameField control={ control } errors={ errors } />
+						<PasswordField control={ control } errors={ errors } />
 					</div>
 				) }
 
@@ -60,7 +73,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						{ translate( 'Continue' ) }
 					</NextButton>
 				</div>
-			</Card>
+			</div>
 
 			<div className="site-migration-credentials__skip">
 				<button
@@ -69,7 +82,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					onClick={ onSkip }
 					type="button"
 				>
-					{ translate( 'Skip, I need help providing access' ) }
+					{ isEnglishLocale
+						? translate( 'I need help, please contact me' )
+						: translate( 'Skip, I need help providing access' ) }
 				</button>
 			</div>
 		</form>

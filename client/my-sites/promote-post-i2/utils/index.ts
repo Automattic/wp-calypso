@@ -41,6 +41,17 @@ export const getPostType = ( type: string ) => {
 	}
 };
 
+export const getWidgetParams = ( keyValue: string ) => {
+	const postPartial = keyValue?.split( '_' )[ 0 ];
+	const campaignPartial = keyValue?.split( '_' )[ 1 ];
+	const selectedPostId = postPartial?.split( '-' )[ 1 ] || '';
+	const selectedCampaignId = campaignPartial?.split( '-' )[ 1 ] || '';
+	return {
+		selectedPostId,
+		selectedCampaignId,
+	};
+};
+
 export const getCampaignStatusBadgeColor = ( status?: string ) => {
 	switch ( status ) {
 		case campaignStatus.SCHEDULED: {

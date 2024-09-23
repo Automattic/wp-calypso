@@ -645,6 +645,16 @@ export interface ResponseCartProductExtra {
 	is_marketplace_product?: boolean;
 	product_slug?: string;
 	product_type?: 'marketplace_plugin' | 'marketplace_theme' | 'saas_plugin';
+
+	/**
+	 * True when:
+	 * - the product has variants ( e.g. annual plan vs. monthly plan vs. multi-year plan )
+	 * - we only want to show the single product selected by the user
+	 * - we want to prevent the user from switching to a variant
+	 *
+	 * This will hide product variant UI elements in checkout ( line item variant dropdown or variant upsells )
+	 */
+	hideProductVariants?: boolean;
 }
 
 export interface ResponseCartGiftDetails {

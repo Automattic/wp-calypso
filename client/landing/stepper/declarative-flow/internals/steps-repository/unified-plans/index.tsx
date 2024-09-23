@@ -56,16 +56,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
-	const onPlanIntervalUpdate = ( path: string ) => {
-		const intervalType = getIntervalType( path );
-		setPlanInterval( intervalType );
-	};
-
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
 	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
 	 */
 	let mostRecentState: ProvidedDependencies;
+
+	const onPlanIntervalUpdate = ( path: string ) => {
+		const intervalType = getIntervalType( path );
+		setPlanInterval( intervalType );
+	};
 
 	return (
 		<LocalizedPlanStep
@@ -85,25 +85,27 @@ export default function PlansStepAdaptor( props: StepProps ) {
 					}
 				} else {
 					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
-					props.navigation.submit?.(
-						( mostRecentState = { ...stepState, ...state, ...mostRecentState } )
-					);
 				}
 			} }
-			goToNextStep={ () => props.navigation.submit?.( { ...stepState, ...mostRecentState } ) }
+			goToNextStep={ () => {
+				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
+			} }
 			step={ stepState }
 			customerType={ customerType }
 			errorNotice={ ( message: string ) => dispatch( errorNotice( message ) ) }
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
+			recordTracksEvent={ ( name: string, props: unknown ) => {
+				dispatch( recordTracksEvent( name, props ) );
+			} }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
 				hideBack: isMobile,
 				goBack: props.navigation.goBack,
-				recordTracksEvent: ( event: unknown ) => dispatch( recordTracksEvent( event ) ),
+				recordTracksEvent: ( name: string, props: unknown ) =>
+					dispatch( recordTracksEvent( name, props ) ),
 				isFullLayout: true,
 				isExtraWideLayout: false,
 			} }

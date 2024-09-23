@@ -1,27 +1,18 @@
 import { SearchableDropdown } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ComponentProps } from 'react';
 
 export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown > ) => {
+	const translate = useTranslate();
+
 	return (
-		<div
-			css={ {
-				display: 'flex',
-				alignItems: 'center',
-				flexGrow: 1,
-				justifyContent: 'flex-end',
-				gap: '10px',
-			} }
-		>
-			<div>{ translate( 'Page' ) }</div>
+		<div className="site-performance__page-selector">
+			<div css={ { alignSelf: 'stretch', display: 'flex', alignItems: 'center' } }>
+				{ translate( 'Page' ) }
+			</div>
 			<SearchableDropdown
 				{ ...props }
-				css={ {
-					maxWidth: '240px',
-					minWidth: '240px',
-					'.components-form-token-field__suggestions-list': { maxHeight: 'initial !important' },
-					'.components-form-token-field__suggestions-list li': { padding: '0 !important' },
-				} }
+				className="site-performance__page-selector-drowdown"
 				__experimentalRenderItem={ ( { item } ) => (
 					<div
 						aria-label={ item.label }
@@ -33,7 +24,7 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 						} }
 					>
 						<span>{ item.label }</span>
-						<span>{ item.url }</span>
+						<span>{ item.path }</span>
 					</div>
 				) }
 			/>

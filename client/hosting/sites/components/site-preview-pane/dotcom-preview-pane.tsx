@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -33,7 +34,6 @@ interface Props {
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
-	sectionName?: string;
 }
 
 const OVERLAY_MODAL_SELECTORS = [
@@ -41,12 +41,6 @@ const OVERLAY_MODAL_SELECTORS = [
 	'#wpnc-panel.wpnt-open',
 	'div.help-center__container:not(.is-minimized)',
 ];
-
-type HeaderButtonsProps = {
-	focusRef: React.RefObject< HTMLButtonElement >;
-	itemData: ItemData;
-	closeSitePreviewPane: () => void;
-};
 
 const DotcomPreviewPane = ( {
 	site,
@@ -95,7 +89,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: false,
+				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
 				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
@@ -199,9 +193,7 @@ const DotcomPreviewPane = ( {
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
-				headerButtons: ( props: HeaderButtonsProps ) => (
-					<PreviewPaneHeaderButtons { ...props } sectionName={ selectedSiteFeature } />
-				),
+				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () =>
 					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
 						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
