@@ -263,7 +263,20 @@ export default function SiteConfigurationsModal( {
 											),
 										},
 									}
-								) }
+								) }{ ' ' }
+								{ translate( '{{a}}Learn more.{{/a}}', {
+									components: {
+										a: (
+											<a
+												target="_blank"
+												href={ localizeUrl(
+													'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+												) }
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								} ) }
 							</label>
 						) : (
 							<>
