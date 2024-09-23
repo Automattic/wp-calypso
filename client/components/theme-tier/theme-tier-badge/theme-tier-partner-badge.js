@@ -103,7 +103,7 @@ export default function ThemeTierPartnerBadge() {
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
 							monthlyPrice: subscriptionPrices.month ?? '',
-							businessPlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+							ecommercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
 						},
 					}
 				),
