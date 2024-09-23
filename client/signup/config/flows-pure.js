@@ -38,31 +38,6 @@ const getP2Flows = () => {
 		: [];
 };
 
-const getEmailSubscriptionFlow = () => {
-	return isEnabled( 'signup/email-subscription-flow' )
-		? [
-				{
-					name: 'email-subscription',
-					steps: [ 'subscribe' ],
-					destination: ( dependencies ) => `${ dependencies.redirect }`,
-					description:
-						'Signup flow that subscripes user to guides appointments for email campaigns',
-					lastModified: '2024-06-17',
-					showRecaptcha: true,
-					providesDependenciesInQuery: [
-						'user_email',
-						'redirect_to',
-						'mailing_list',
-						'from',
-						'first_name',
-					],
-					optionalDependenciesInQuery: [ 'last_name' ],
-					hideProgressIndicator: true,
-				},
-		  ]
-		: [];
-};
-
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
@@ -81,7 +56,6 @@ export function generateFlows( {
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
-	const emailSubscriptionFlow = getEmailSubscriptionFlow();
 
 	const flows = [
 		{
@@ -646,7 +620,23 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 			enableHotjar: true,
 		},
-		...emailSubscriptionFlow,
+		{
+			name: 'email-subscription',
+			steps: [ 'subscribe' ],
+			destination: ( dependencies ) => `${ dependencies.redirect }`,
+			description: 'Signup flow that subscripes user to guides appointments for email campaigns',
+			lastModified: '2024-06-17',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [
+				'user_email',
+				'redirect_to',
+				'mailing_list',
+				'from',
+				'first_name',
+			],
+			optionalDependenciesInQuery: [ 'last_name' ],
+			hideProgressIndicator: true,
+		},
 	];
 
 	// convert the array to an object keyed by `name`
