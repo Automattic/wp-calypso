@@ -6,48 +6,18 @@ interface ApiResponse {
 	migration_key: string;
 }
 
-const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
+const isWhiteLabeledPluginEnabled = config.isEnabled(
+	'migration-flow/enable-white-labeled-plugin'
+);
 
 const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
-	const isWhiteLabeledPluginEnabled = config.isEnabled(
-		'migration-flow/enable-white-labeled-plugin'
-	);
-
 	if ( isWhiteLabeledPluginEnabled ) {
-		let stopPollingKey = false;
-		let pollingKeyRetry = 0;
-		const maxRetry = 10;
-		let key = null;
-
-		// Poll until key is available.
-		while ( ! stopPollingKey ) {
-			try {
-				const response = await wpcom.req.get(
-					`/sites/${ siteId }/atomic-migration-status/wpcom-migration-key?http_envelope=1`,
-					{
-						apiNamespace: 'wpcom/v2',
-					}
-				);
-
-				if ( response?.migration_key ) {
-					key = response?.migration_key;
-					stopPollingKey = true;
-					break;
-				}
-
-				pollingKeyRetry++;
-				if ( pollingKeyRetry <= maxRetry ) {
-					await wait( 5000 );
-				} else {
-					stopPollingKey = true;
-				}
-			} catch ( error ) {
-				// Pause and retry after an error
-				await wait( 3000 );
+		return wpcom.req.get(
+			`/sites/${ siteId }/atomic-migration-status/wpcom-migration-key?http_envelope=1`,
+			{
+				apiNamespace: 'wpcom/v2',
 			}
-		}
-
-		return key;
+		);
 	}
 
 	return wpcom.req.get(
@@ -64,7 +34,7 @@ export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 	return useQuery( {
 		queryKey: [ 'site-migration-key', siteId ],
 		queryFn: () => getMigrationKey( siteId! ),
-		retry: false,
+		retry: isWhiteLabeledPluginEnabled ? true : false,
 		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
 		refetchOnWindowFocus: false,
