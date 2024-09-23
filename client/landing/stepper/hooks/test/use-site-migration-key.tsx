@@ -8,49 +8,65 @@ import nock from 'nock';
 import React from 'react';
 import { useSiteMigrationKey } from '../use-site-migration-key';
 
-describe( 'useSiteMigrationKey', () => {
-	const isWhiteLabeledPluginEnabled = config.isEnabled(
-		'migration-flow/enable-white-labeled-plugin'
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn(),
+} ) );
+
+const withFeatureEnabled = () =>
+	( config.isEnabled as jest.Mock ).mockImplementation(
+		( key ) => key === 'migration-flow/enable-white-labeled-plugin'
 	);
-	if ( ! isWhiteLabeledPluginEnabled ) {
-		it( 'returns the migrateguru site migration key', async () => {
-			const queryClient = new QueryClient();
-			const wrapper = ( { children } ) => (
-				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-			);
+const withFeatureDisabled = () =>
+	( config.isEnabled as jest.Mock ).mockImplementation(
+		( key ) => key !== 'migration-flow/enable-white-labeled-plugin'
+	);
 
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/sites/123/atomic-migration-status/migrate-guru-key' )
-				.query( { http_envelope: 1 } )
-				.once()
-				.reply( 200, { migration_key: 'some-migration-key' } );
+describe( 'useSiteMigrationKey', () => {
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
 
-			const { result } = renderHook( () => useSiteMigrationKey( 123 ), { wrapper } );
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
 
-			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-			expect( result.current.data?.migrationKey ).toEqual( 'some-migration-key' );
-		} );
-	}
+	it( 'returns the migrateguru site migration key', async () => {
+		withFeatureDisabled();
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
 
-	if ( isWhiteLabeledPluginEnabled ) {
-		it( 'returns the migration to wp.com site migration key', async () => {
-			const queryClient = new QueryClient();
-			const wrapper = ( { children } ) => (
-				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-			);
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/sites/123/atomic-migration-status/migrate-guru-key' )
+			.query( { http_envelope: 1 } )
+			.once()
+			.reply( 200, { migration_key: 'some-migration-key' } );
 
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/sites/123/atomic-migration-status/wpcom-migration-key' )
-				.query( { http_envelope: 1 } )
-				.once()
-				.reply( 200, { migration_key: 'some-migration-key' } );
+		const { result } = renderHook( () => useSiteMigrationKey( 123 ), { wrapper } );
 
-			const { result } = renderHook( () => useSiteMigrationKey( 123 ), { wrapper } );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.migrationKey ).toEqual( 'some-migration-key' );
+	} );
 
-			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-			expect( result.current.data?.migrationKey ).toEqual( 'some-migration-key' );
-		} );
-	}
+	it( 'returns the migration to wp.com site migration key', async () => {
+		withFeatureEnabled();
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/sites/123/atomic-migration-status/wpcom-migration-key' )
+			.query( { http_envelope: 1 } )
+			.once()
+			.reply( 200, { migration_key: 'some-migration-key' } );
+
+		const { result } = renderHook( () => useSiteMigrationKey( 123 ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.migrationKey ).toEqual( 'some-migration-key' );
+	} );
 
 	it( 'skip the request when the siteId is not available', async () => {
 		const queryClient = new QueryClient();
