@@ -57,7 +57,7 @@ const ThreatItem: React.FC< Props > = ( {
 			// entire ThreatItem element as well
 			const onClickHandler = ( e: React.MouseEvent< HTMLElement > ) => {
 				e.stopPropagation();
-				onFixThreat && onFixThreat( threat );
+				onFixThreat && onFixThreat();
 			};
 			return (
 				<Button
@@ -70,7 +70,7 @@ const ThreatItem: React.FC< Props > = ( {
 				</Button>
 			);
 		},
-		[ isFixing, onFixThreat, threat ]
+		[ isFixing, onFixThreat ]
 	);
 
 	const getFix = React.useCallback( (): TranslateResult | undefined => {
