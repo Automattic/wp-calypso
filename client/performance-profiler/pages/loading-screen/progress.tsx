@@ -100,26 +100,34 @@ const LoadingProgressContainer = styled.div`
 const useLoadingSteps = ( {
 	isSavedReport,
 	pageTitle,
+	isLoadingPages,
 }: {
 	isSavedReport: boolean;
 	pageTitle?: string;
+	isLoadingPages?: boolean;
 } ) => {
 	const translate = useTranslate();
 
 	const [ step, setStep ] = useState( 0 );
 
-	const steps = isSavedReport
-		? [ translate( 'Getting your report…' ) ]
-		: [
-				pageTitle
-					? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
-					: translate( 'Loading your site' ),
-				translate( 'Measuring Core Web Vitals' ),
-				translate( 'Taking screenshots' ),
-				translate( 'Fetching historic data' ),
-				translate( 'Identifying performance improvements' ),
-				translate( 'Finalizing your results' ),
-		  ];
+	let steps = [];
+
+	if ( isLoadingPages ) {
+		steps = [ translate( 'Getting your site pages' ) ];
+	} else {
+		steps = isSavedReport
+			? [ translate( 'Getting your report…' ) ]
+			: [
+					pageTitle
+						? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
+						: translate( 'Loading your site' ),
+					translate( 'Measuring Core Web Vitals' ),
+					translate( 'Taking screenshots' ),
+					translate( 'Fetching historic data' ),
+					translate( 'Identifying performance improvements' ),
+					translate( 'Finalizing your results' ),
+			  ];
+	}
 
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
@@ -152,13 +160,19 @@ const useLoadingSteps = ( {
 export const PerformanceReportLoadingProgress = ( {
 	pageTitle,
 	isSavedReport,
+	isLoadingPages,
 	className,
 }: {
 	isSavedReport: boolean;
 	pageTitle?: string;
 	className?: string;
+	isLoadingPages?: boolean;
 } ) => {
-	const { step, steps, stepStatus } = useLoadingSteps( { isSavedReport, pageTitle } );
+	const { step, steps, stepStatus } = useLoadingSteps( {
+		isSavedReport,
+		pageTitle,
+		isLoadingPages,
+	} );
 
 	return (
 		<LoadingProgressContainer className={ className }>

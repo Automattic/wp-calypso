@@ -12,7 +12,7 @@ export function sitePerformance( context: PageJSContext, next: () => void ) {
 
 	context.primary = (
 		<>
-			<PageViewTracker path="/site-performance/:site" title="Site Performance" />
+			<PageViewTracker path="/sites/performance/:site" title="Site Performance" />
 			<SitePerformance />
 		</>
 	);

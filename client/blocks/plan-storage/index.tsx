@@ -14,8 +14,7 @@ import { Tooltip } from '@automattic/components';
 import { Site } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { ComponentType, FC, PropsWithChildren, ReactNode, useRef, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
+import { PropsWithChildren, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -28,34 +27,44 @@ import PlanStorageBar from './bar';
 
 import './style.scss';
 
-/**
- * @typedef {Object} Props
- * @property {ReactNode} children - The children to render inside the storage bar.
- * @property {string} [className] - Additional class names to apply to the component.
- * @property {boolean} [hideWhenNoStorage] - Whether to return null when there is no storage data.
- * @property {number|null} [siteId] - The site ID.
- * @property {ComponentType|FC<PropsWithChildren<any>>} [StorageBarComponent] - The component to use for the storage bar.
- */
+export function useDisplayUpgradeLink( siteId: number | null ) {
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) ?? '';
+	const canUserUpgrade = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
 
-/**
- * @param {Props} props
- */
-export function PlanStorage( {
+	const planHasTopStorageSpace =
+		isBusinessPlan( sitePlanSlug ) ||
+		isEcommercePlan( sitePlanSlug ) ||
+		isProPlan( sitePlanSlug ) ||
+		isWooExpressMediumPlan( sitePlanSlug );
+
+	return canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+}
+
+type StorageBarProps = PropsWithChildren< any >;
+
+type PlanStorageProps = PropsWithChildren< {
+	className?: string;
+	hideWhenNoStorage?: boolean;
+	siteId: number | null;
+	storageBarComponent?: React.ComponentType< StorageBarProps > | React.FC< StorageBarProps >;
+} >;
+
+export default function PlanStorage( {
 	children,
 	className,
 	hideWhenNoStorage = false,
 	siteId,
-	StorageBarComponent = PlanStorageBar,
-} ) {
+	storageBarComponent: StorageBarComponent = PlanStorageBar,
+}: PlanStorageProps ) {
 	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 	const hasStagingSite = useSelector( ( state ) => hasWpcomStagingSite( state, siteId ) );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const canUserUpgrade = useSelector( ( state ) =>
-		canCurrentUser( state, siteId, 'manage_options' )
-	);
 	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 	const translate = useTranslate();
 	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
@@ -63,6 +72,7 @@ export function PlanStorage( {
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+	const displayUpgradeLink = useDisplayUpgradeLink( siteId );
 	const tooltipAnchorRef = useRef( null );
 
 	const dispatch = useDispatch();
@@ -98,13 +108,6 @@ export function PlanStorage( {
 		}
 	}
 
-	const planHasTopStorageSpace =
-		isBusinessPlan( sitePlanSlug ) ||
-		isEcommercePlan( sitePlanSlug ) ||
-		isProPlan( sitePlanSlug ) ||
-		isWooExpressMediumPlan( sitePlanSlug );
-
-	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const hasMediaStorage = !! mediaStorage && mediaStorage.maxStorageBytes !== -1;
@@ -122,16 +125,29 @@ export function PlanStorage( {
 		</StorageBarComponent>
 	);
 
-	const showTooltip = () => setTooltipVisible( true );
-	const hideTooltip = ( event ) => {
-		const relatedTarget = event?.relatedTarget;
+	const showTooltip = () => {
+		setTooltipVisible( true );
+	};
+
+	const hideTooltip = (
+		event:
+			| React.MouseEvent< HTMLDivElement | HTMLAnchorElement >
+			| React.FocusEvent< HTMLDivElement | HTMLAnchorElement >
+	) => {
+		const relatedTarget = event.relatedTarget;
+
 		// This checks if there is a blur event caused by the displaying of the tooltip.
 		// We don't want to move focus in this case, so return the focus to the target element.
-		if ( event?.type === 'blur' && relatedTarget?.closest?.( '.popover.tooltip.is-top' ) ) {
+		if (
+			event.type === 'blur' &&
+			relatedTarget instanceof HTMLElement &&
+			relatedTarget.closest( '.popover.tooltip.is-top' )
+		) {
 			event.stopPropagation();
-			event.target.focus();
+			event.currentTarget.focus();
 			return;
 		}
+
 		setTooltipVisible( false );
 	};
 
@@ -181,10 +197,3 @@ export function PlanStorage( {
 
 	return <div className={ clsx( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
-
-PlanStorage.propTypes = {
-	className: PropTypes.string,
-	siteId: PropTypes.number,
-};
-
-export default PlanStorage;

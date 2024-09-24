@@ -1,7 +1,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { CredentialsFormData } from './types';
+import { ApiError, CredentialsFormData } from './types';
 
 interface AutomatedMigrationAPIResponse {
 	success: boolean;
@@ -18,33 +18,32 @@ interface AutomatedMigrationBody {
 }
 
 export const useSiteMigrationCredentialsMutation = <
-	TData = AutomatedMigrationAPIResponse | unknown,
-	TError = unknown,
-	TContext = unknown,
+	TData = AutomatedMigrationAPIResponse,
+	TError = ApiError,
 >(
-	options: UseMutationOptions< TData, TError, CredentialsFormData, TContext > = {}
+	options: UseMutationOptions< TData, TError, CredentialsFormData > = {}
 ) => {
 	const siteSlug = useSiteSlugParam();
 
-	const { mutate, ...rest } = useMutation( {
+	return useMutation< TData, TError, CredentialsFormData >( {
 		mutationFn: ( {
-			siteAddress,
+			from_url,
 			username,
 			password,
 			notes,
-			howToAccessSite,
+			migrationType,
 			backupFileLocation,
-		} ) => {
+		}: CredentialsFormData ) => {
 			let body: AutomatedMigrationBody = {
-				migration_type: howToAccessSite,
+				migration_type: migrationType,
 				blog_url: siteSlug ?? '',
 				notes,
 			};
 
-			if ( howToAccessSite === 'credentials' ) {
+			if ( migrationType === 'credentials' ) {
 				body = {
 					...body,
-					from_url: siteAddress,
+					from_url,
 					username,
 					password,
 				};
@@ -66,9 +65,4 @@ export const useSiteMigrationCredentialsMutation = <
 		},
 		...options,
 	} );
-
-	return {
-		requestAutomatedMigration: mutate,
-		...rest,
-	};
 };

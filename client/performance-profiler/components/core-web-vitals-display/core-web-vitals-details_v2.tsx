@@ -1,5 +1,10 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
+import {
+	Metrics,
+	PerformanceMetricsHistory,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	metricsNames,
@@ -7,6 +12,7 @@ import {
 	mapThresholdsToStatus,
 	metricValuations,
 	displayValue,
+	filterRecommendations,
 } from 'calypso/performance-profiler/utils/metrics';
 import HistoryChart from '../charts/history-chart';
 import { StatusIndicator } from '../status-indicator';
@@ -15,14 +21,21 @@ import { StatusSection } from '../status-section';
 type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	activeTab: Metrics | null;
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	activeTab,
 	history,
+	audits,
+	recommendationsRef,
+	onRecommendationsFilterChange,
 	...metrics
 } ) => {
 	const translate = useTranslate();
+	const isMobile = ! useDesktopBreakpoint();
 
 	if ( ! activeTab ) {
 		return null;
@@ -63,9 +76,9 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	let metricsData: number[] = history?.metrics[ activeTab ] ?? [];
 	let dates = history?.collection_period ?? [];
 
-	// last 8 weeks only
-	metricsData = metricsData.slice( -8 );
-	dates = dates.slice( -8 );
+	const weeksToShow = isMobile ? 6 : 8;
+	metricsData = metricsData.slice( -weeksToShow );
+	dates = dates.slice( -weeksToShow );
 
 	const dataAvailable = metricsData.length > 0 && metricsData.some( ( item ) => item !== null );
 	const historicalData = metricsData.map( ( item, index ) => {
@@ -84,68 +97,78 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 		};
 	} );
 
+	const numberOfAuditsForMetric = Object.keys( audits ).filter( ( key ) =>
+		filterRecommendations( activeTab === 'overall' ? 'all' : activeTab, audits[ key ] )
+	).length;
+
 	const status = mapThresholdsToStatus( activeTab as Metrics, value );
 	const statusClass = status === 'needsImprovement' ? 'needs-improvement' : status;
 	const isPerformanceScoreSelected = activeTab === 'overall';
 
 	return (
-		<div
-			className="core-web-vitals-display__details"
-			style={ {
-				flexDirection: 'column',
-				borderRadius: '6px',
-				flex: 1,
-			} }
-		>
+		<div className="core-web-vitals-display__details-v2">
 			<div className="core-web-vitals-display__description">
-				<div
-					css={ {
-						display: 'flex',
-						gap: '24px',
-					} }
-				>
+				<div className="core-web-vitals-display__description-container">
 					<div
 						css={ {
 							flex: 1,
 						} }
 					>
-						<span className="core-web-vitals-display__description-subheading">{ displayName }</span>
+						{ ! isMobile && (
+							<span className="core-web-vitals-display__description-subheading">
+								{ displayName }
+							</span>
+						) }
 
-						<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
-							{ isPerformanceScoreSelected ? (
-								<div
-									className="metric-tab-bar__tab-metric"
-									css={ {
-										marginTop: '16px',
-									} }
-								>
-									<CircularPerformanceScore score={ value } size={ 76 } />
-								</div>
-							) : (
-								displayValue( activeTab as Metrics, value )
-							) }
-						</div>
-						<p>
-							{ metricValuations[ activeTab ].explanation }
-							&nbsp;
-							{ isPerformanceScoreSelected ? (
-								<a
-									href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-									target="_blank"
-									rel="noreferrer"
-								>
-									{ translate( 'See calculator ↗' ) }
-								</a>
-							) : (
-								<a href={ `https://web.dev/articles/${ activeTab }` }>
-									{ translate( 'Learn more ↗' ) }
-								</a>
-							) }
-						</p>
+						{ ! isMobile && (
+							<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
+								{ isPerformanceScoreSelected ? (
+									<div
+										className="metric-tab-bar-v2__tab-metric"
+										css={ {
+											marginTop: '16px',
+										} }
+									>
+										<CircularPerformanceScore score={ value } size={ 76 } />
+									</div>
+								) : (
+									displayValue( activeTab as Metrics, value )
+								) }
+							</div>
+						) }
 					</div>
-					<StatusSection value={ status } recommendationsQuantity={ 3 } />
+					<StatusSection
+						activeTab={ activeTab }
+						recommendationsRef={ recommendationsRef }
+						value={ status }
+						onRecommendationsFilterChange={ onRecommendationsFilterChange }
+						recommendationsQuantity={ numberOfAuditsForMetric }
+					/>
 				</div>
-				<div className="core-web-vitals-display__ranges">
+				<p
+					style={ {
+						marginTop: 0,
+						marginBottom: '24px',
+						maxWidth: '496px',
+					} }
+				>
+					{ metricValuations[ activeTab ].explanation }
+					&nbsp;
+					{ isPerformanceScoreSelected ? (
+						<a
+							href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ translate( 'See calculator ↗' ) }
+						</a>
+					) : (
+						<a href={ `https://web.dev/articles/${ activeTab }` }>
+							{ translate( 'Learn more ↗' ) }
+						</a>
+					) }
+				</p>
+				<div className="core-web-vitals-display-v2__ranges">
 					<div className="range">
 						<StatusIndicator speed="good" />
 						<div className="range-heading">{ translate( 'Excellent' ) }</div>
@@ -217,7 +240,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 					] }
 					height={ 300 }
 					d3Format="%b %d"
-					isMobile={ false }
+					isMobile={ isMobile }
 				/>
 			</div>
 		</div>

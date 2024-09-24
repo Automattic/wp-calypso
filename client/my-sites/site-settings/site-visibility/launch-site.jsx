@@ -63,8 +63,20 @@ const LaunchSite = () => {
 		dispatch( launchSite( site.ID ) );
 	};
 
+	const {
+		data: agency,
+		error: agencyError,
+		isLoading: agencyLoading,
+	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
+	const agencyName = agency?.name;
+	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
+	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
+	const siteReferralActive = agency?.referral_status === 'active';
+	const shouldShowReferToClientButton =
+		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
+
 	const handleLaunchSiteClick = () => {
-		if ( isDevelopmentSite ) {
+		if ( isDevelopmentSite && ! siteReferralActive ) {
 			openLaunchConfirmationModal();
 		} else {
 			dispatchSiteLaunch();
@@ -80,8 +92,7 @@ const LaunchSite = () => {
 		btnComponent = (
 			<Button
 				onClick={ handleLaunchSiteClick }
-				disabled={ ! isLaunchable }
-				primary={ isDevelopmentSite }
+				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
 			>
 				{ btnText }
 			</Button>
@@ -106,15 +117,6 @@ const LaunchSite = () => {
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
-
-	const {
-		data: agency,
-		error: agencyError,
-		isLoading: agencyLoading,
-	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
-	const agencyName = agency?.name;
-	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
-	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
@@ -175,10 +177,10 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ isDevelopmentSite && <i>{ agencyBillingMessage }</i> }
+						{ shouldShowReferToClientButton && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
-					{ isDevelopmentSite && (
+					{ shouldShowReferToClientButton && (
 						<div className={ launchSiteClasses }>
 							<Button onClick={ handleReferToClient } disabled={ false }>
 								{ translate( 'Refer to client' ) }

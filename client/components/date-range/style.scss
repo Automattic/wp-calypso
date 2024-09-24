@@ -50,7 +50,6 @@ $date-range-mobile-layout-switch: $break-small;
 	flex-direction: column;
 	padding: 15px;
 	margin: 0 auto;
-	// max-width: 90%;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 300px;
@@ -75,6 +74,9 @@ $date-range-mobile-layout-switch: $break-small;
 			justify-content: center;
 			align-items: center;
 		}
+	}
+	.DayPicker-Week {
+		border-bottom: 4px solid var(--color-surface);
 	}
 }
 
@@ -189,6 +191,14 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
+.date-range__popover-content .date-picker {
+
+	display: flex;
+	justify-content: center; /* Centers horizontally */
+	align-items: center;     /* Centers vertically */
+
+}
+
 .date-range__popover .date-picker--2up {
 
 	.DayPicker-wrapper,
@@ -224,6 +234,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 .date-range__date-input {
 	flex: 1;
+	max-width: 224px;
 
 	.form-label {
 		font-size: $font-body-extra-small;
