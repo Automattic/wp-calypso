@@ -60,10 +60,10 @@ export type CampaignResponse = {
 	};
 	is_evergreen?: boolean;
 	objective?: string;
-	objective_data: {
-		title?: string;
-		description?: string;
-		suitable_for_description?: string;
+	objective_data?: {
+		title: string;
+		description: string;
+		suitable_for_description: string;
 	};
 };
 

@@ -209,7 +209,7 @@ export default function CampaignItemDetails( props: Props ) {
 	} )();
 
 	const objectiveFormatted = ( () => {
-		if ( ! objectiveIcon || ! objective_data?.title || ! objective_data?.description ) {
+		if ( ! objectiveIcon || ! objective_data ) {
 			return null;
 		}
 		return (
