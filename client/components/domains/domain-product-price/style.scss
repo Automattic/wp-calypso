@@ -134,23 +134,3 @@
 		}
 	}
 }
-
-.featured-domain-suggestions {
-	.domain-suggestion__content {
-		flex-wrap: wrap;
-		.domain-registration-suggestion__title-info {
-			width: 100%;
-		}
-	}
-
-	.domain-product-price {
-		align-items: baseline;
-		.is-section-domains & {
-			padding-left: 0;
-		}
-
-		&.is-free-domain {
-			padding-left: 0;
-		}
-	}
-}
