@@ -35,15 +35,11 @@ export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 		queryKey: [ 'site-migration-key', siteId ],
 		queryFn: () => getMigrationKey( siteId! ),
 		retry: ( failureCount: number, error: Error ) => {
-			if ( ! isWhiteLabeledPluginEnabled() ) {
-				return false;
-			}
-
-			if ( failureCount >= 20 ) {
+			if ( isWhiteLabeledPluginEnabled() && failureCount >= 20 ) {
 				throw error;
 			}
 
-			return true;
+			return false;
 		},
 		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
