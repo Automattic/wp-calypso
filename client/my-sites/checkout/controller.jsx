@@ -480,7 +480,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug, postActivationUrl } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -498,7 +498,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
 				fromSiteSlug={ fromSiteSlug }
-				redirectTo={ redirect_to }
+				postActivationUrl={ postActivationUrl }
 			/>
 		);
 	}
@@ -507,13 +507,13 @@ export function licensingThankYouAutoActivation( context, next ) {
 }
 
 export function licensingThankYouAutoActivationCompleted( context, next ) {
-	const { destinationSiteId, redirect_to } = context.query;
+	const { destinationSiteId, postActivationUrl } = context.query;
 
 	context.primary = (
 		<LicensingThankYouAutoActivationCompleted
 			productSlug={ context.params.product }
 			destinationSiteId={ destinationSiteId }
-			redirectTo={ redirect_to }
+			postActivationUrl={ postActivationUrl }
 		/>
 	);
 

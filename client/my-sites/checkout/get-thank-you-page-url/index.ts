@@ -109,6 +109,7 @@ export interface PostCheckoutUrlArguments {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	postActivationUrl?: string;
 }
 
 /**
@@ -147,6 +148,7 @@ export default function getThankYouPageUrl( {
 	domains,
 	connectAfterCheckout,
 	fromSiteSlug,
+	postActivationUrl,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -259,7 +261,7 @@ export default function getThankYouPageUrl( {
 					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 					fromSiteSlug,
 					productSlug,
-					redirect_to: redirectTo,
+					postActivationUrl,
 				},
 				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
 			);
@@ -284,7 +286,7 @@ export default function getThankYouPageUrl( {
 			{
 				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
-				redirect_to: redirectTo,
+				postActivationUrl,
 			},
 			thankYouUrl
 		);

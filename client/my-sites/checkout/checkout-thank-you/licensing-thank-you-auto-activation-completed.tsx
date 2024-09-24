@@ -16,13 +16,13 @@ import useGetJetpackActivationConfirmationInfo from './use-get-jetpack-activatio
 interface Props {
 	productSlug: string;
 	destinationSiteId: number;
-	redirectTo?: string;
+	postActivationUrl?: string;
 }
 
 const LicensingActivationThankYouCompleted: FC< Props > = ( {
 	productSlug = 'no_product',
 	destinationSiteId = 0,
-	redirectTo,
+	postActivationUrl,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 								)
 							}
 							// TODO: Need to ensure redirectTo is either wp.com or wp admin of the site.
-							href={ redirectTo ?? productConfirmationInfo.buttonUrl }
+							href={ postActivationUrl ?? productConfirmationInfo.buttonUrl }
 						>
 							{ translate( 'Go to Dashboard' ) }
 						</Button>

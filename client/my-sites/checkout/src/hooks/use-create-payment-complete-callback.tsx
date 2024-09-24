@@ -115,6 +115,7 @@ export default function useCreatePaymentCompleteCallback( {
 			// created site in the Thank You page URL.
 			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId: string | undefined;
+			let postActivationUrl: string | undefined;
 			if (
 				sitelessCheckoutType === 'jetpack' &&
 				! siteSlug &&
@@ -123,6 +124,7 @@ export default function useCreatePaymentCompleteCallback( {
 				transactionResult.purchases
 			) {
 				jetpackTemporarySiteId = Object.keys( transactionResult.purchases ).pop();
+				postActivationUrl = redirectTo;
 			}
 
 			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
@@ -143,6 +145,7 @@ export default function useCreatePaymentCompleteCallback( {
 				domains,
 				connectAfterCheckout,
 				fromSiteSlug,
+				postActivationUrl,
 			};
 
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
