@@ -12,7 +12,7 @@
 
 .pressable-overview-plan-selection__details {
 	margin-block-start: 32px;
-	margin-block-end: 64px;
+	margin-block-end: 8px;
 	display: flex;
 	flex-direction: column;
 	gap: 32px;
@@ -27,6 +27,11 @@
 	@include break-large {
 		flex-direction: row;
 	}
+}
+
+.pressable-overview-plan-selection__hint {
+	@include a4a-font-body-md;
+	margin-block-end: 64px;
 }
 
 .pressable-overview-plan-selection__details-card {
