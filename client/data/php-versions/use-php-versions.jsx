@@ -6,7 +6,8 @@ export const usePhpVersions = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	// 10% of sites will have a recommended PHP version of 8.2.
-	const is10Percent = siteId % 10 === 0;
+	// 237292101 is the first site of the list.
+	const is10Percent = siteId % 10 === 0 && siteId >= 237292101;
 	const recommendedValue = is10Percent ? '8.2' : '8.1';
 	const label = translate( '%s (recommended)', {
 		args: recommendedValue,
