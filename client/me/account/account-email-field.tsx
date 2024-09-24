@@ -110,7 +110,7 @@ const EmailFieldExplanationText = () => {
 	if ( isEmailChangePending ) {
 		// Show unverified message and cancel pending change option.
 		return translate(
-			'Your email has not been verified yet. To cancel the pending email change {{cancelWrapper}}click here{{/cancelWrapper}}.',
+			'Your email has not been verified yet. {{cancelWrapper}}Cancel the pending email change{{/cancelWrapper}}.',
 			{
 				components: {
 					cancelWrapper,
