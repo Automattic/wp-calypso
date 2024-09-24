@@ -1,6 +1,6 @@
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, redirectInvalidLanguage, ssrSetupLocale } from 'calypso/controller';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { updateLastRoute } from 'calypso/reader/controller';
 import { discoverSsr } from './controller';
 
 export default function ( router ) {
@@ -14,7 +14,6 @@ export default function ( router ) {
 		[ '/discover', `/${ langParam }/discover` ],
 		ssrSetupLocale,
 		updateLastRoute,
-		sidebar,
 		discoverSsr,
 		makeLayout
 	);
