@@ -95,6 +95,15 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 					<span className="stats-feedback-content__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
+				<Button
+					variant="secondary"
+					onClick={ () => {
+						clickHandler( 'present-panel' );
+					} }
+				>
+					<span className="stats-feedback-content__emoji">🐞</span>
+					Show panel
+				</Button>
 			</div>
 		</div>
 	);
@@ -154,6 +163,10 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
+// TODO: Remove debug mode.
+// And toggle panel button/action support.
+const FEEDBACK_DEBUG_MODE = true;
+
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
@@ -171,6 +184,18 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
 	}, [ isPending, isError, shouldShowFeedbackPanel ] );
+
+	const toggleFloatingPanel = () => {
+		if ( isFloatingPanelOpen ) {
+			setAnimationName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
+			setTimeout( () => {
+				setIsFloatingPanelOpen( false );
+			}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
+		} else {
+			setIsFloatingPanelOpen( true );
+			setAnimationName( FEEDBACK_PANEL_ANIMATION_NAME_ENTRY );
+		}
+	};
 
 	function dismissFloatingPanel() {
 		const delay = isFloatingPanelOpen ? FEEDBACK_PANEL_ANIMATION_DELAY_EXIT : 0;
@@ -192,14 +217,20 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissFloatingPanel();
-				updateFeedbackPanelHibernationDelay();
-				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
+				if ( ! FEEDBACK_DEBUG_MODE ) {
+					updateFeedbackPanelHibernationDelay();
+					trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
+				}
 				break;
 			case ACTION_LEAVE_REVIEW:
 				dismissFloatingPanel().then( () => {
 					window.open( FEEDBACK_LEAVE_REVIEW_URL );
 				} );
 				break;
+			case 'present-panel':
+				toggleFloatingPanel();
+				break;
+
 			// Ignore other cases.
 		}
 	};
