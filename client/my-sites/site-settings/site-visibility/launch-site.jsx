@@ -1,6 +1,7 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -140,7 +141,9 @@ const LaunchSite = () => {
 							a: (
 								<a
 									className="site-settings__general-settings-launch-site-agency-learn-more"
-									href="https://agencieshelp.automattic.com/knowledge-base/the-marketplace/"
+									href={ localizeUrl(
+										'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+									) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
