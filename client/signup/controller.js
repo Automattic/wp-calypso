@@ -13,6 +13,7 @@ import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -37,7 +38,6 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-
 /**
  * Constants
  */
@@ -305,6 +305,16 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
+		// If the user entered the signup flow from the checkout page, submit the domains step
+		// to allow the user to return to the plans page.
+		if ( isManageSiteFlow ) {
+			const stepData = {
+				stepName: 'domains',
+				suggestion: undefined,
+				domainCart: {},
+			};
+			context.store.dispatch( submitSignupStep( stepData, { domainCart: {} } ) );
+		}
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
