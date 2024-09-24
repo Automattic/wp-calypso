@@ -87,6 +87,8 @@ const fetchStatus = ( action ) => {
 
 const POOL_EVERY_MILLISECONDS = 5000;
 
+const MAX_RETRY_COUNT = 3;
+
 const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 	[
 		{
@@ -106,6 +108,7 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 				type: JETPACK_SCAN_REQUEST,
 				siteId: action.siteId,
 				pooling: true,
+				retryCount: action.retryCount || 0,
 			} );
 		}, POOL_EVERY_MILLISECONDS );
 	}
@@ -115,11 +118,19 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 		( threat ) => threat.fixerStatus === 'in_progress'
 	);
 	if ( action.pooling && scan.state === 'idle' && threatsFixedInProgress.length > 0 ) {
+		if ( action.retryCount >= MAX_RETRY_COUNT ) {
+			dispatch( {
+				type: JETPACK_SCAN_REQUEST_FAILURE,
+				siteId: action.siteId,
+			} );
+			return;
+		}
 		return setTimeout( () => {
 			dispatch( {
 				type: JETPACK_SCAN_REQUEST,
 				siteId: action.siteId,
 				pooling: true,
+				retryCount: ( action.retryCount || 0 ) + 1,
 			} );
 		}, POOL_EVERY_MILLISECONDS );
 	}
