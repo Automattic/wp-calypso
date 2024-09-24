@@ -6,32 +6,13 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 	const translate = useTranslate();
 
 	return (
-		<div
-			css={ {
-				display: 'flex',
-				alignItems: 'flex-start',
-				flexGrow: 1,
-				justifyContent: 'flex-end',
-				gap: '10px',
-				maxHeight: '40px',
-			} }
-		>
+		<div className="site-performance__page-selector">
 			<div css={ { alignSelf: 'stretch', display: 'flex', alignItems: 'center' } }>
 				{ translate( 'Page' ) }
 			</div>
 			<SearchableDropdown
 				{ ...props }
-				css={ {
-					maxWidth: '240px',
-					minWidth: '240px',
-					'.components-combobox-control__suggestions-container': {
-						position: 'relative',
-						zIndex: 1,
-						background: 'var(--color-surface)',
-					},
-					'.components-form-token-field__suggestions-list': { maxHeight: 'initial !important' },
-					'.components-form-token-field__suggestions-list li': { padding: '0 !important' },
-				} }
+				className="site-performance__page-selector-drowdown"
 				__experimentalRenderItem={ ( { item } ) => (
 					<div
 						aria-label={ item.label }

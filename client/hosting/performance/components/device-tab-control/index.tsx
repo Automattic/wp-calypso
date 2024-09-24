@@ -8,9 +8,14 @@ export type Tab = 'mobile' | 'desktop';
 type DeviceTabControlsProps = {
 	onDeviceTabChange: ( tab: Tab ) => void;
 	value: Tab;
+	showTitle?: boolean;
 };
 
-export const DeviceTabControls = ( { onDeviceTabChange, value }: DeviceTabControlsProps ) => {
+export const DeviceTabControls = ( {
+	onDeviceTabChange,
+	value,
+	showTitle,
+}: DeviceTabControlsProps ) => {
 	const translate = useTranslate();
 
 	const options = [
@@ -26,7 +31,9 @@ export const DeviceTabControls = ( { onDeviceTabChange, value }: DeviceTabContro
 
 	return (
 		<div className="site-performance-device-tab__container">
-			<div className="site-performance-device-tab__heading">{ translate( 'Device' ) }</div>
+			{ showTitle && (
+				<div className="site-performance-device-tab__heading">{ translate( 'Device' ) }</div>
+			) }
 			<SegmentedControl className="site-performance-device-tab__controls">
 				{ options.map( ( option ) => {
 					return (

@@ -161,8 +161,7 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-team' ) &&
-			config.isEnabled( 'a4a-multi-user-support' )
+			...( isSectionNameEnabled( 'a8c-for-agencies-team' )
 				? [
 						{
 							icon: people,
@@ -177,10 +176,7 @@ const useMainMenuItems = ( path: string ) => {
 				: [] ),
 		]
 			.map( ( item ) => createItem( item, path ) )
-			.filter( ( item ) =>
-				// If multi-user support is enabled, we need to check if the user has access to the current path
-				config.isEnabled( 'a4a-multi-user-support' ) ? isPathAllowed( item.link, agency ) : true
-			);
+			.filter( ( item ) => isPathAllowed( item.link, agency ) );
 	}, [ agency, path, translate ] );
 	return menuItems;
 };

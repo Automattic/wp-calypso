@@ -2004,6 +2004,15 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		.login form.two-factor-authentication__verification-code-form-wrapper {
+			margin-top: 15px;
+			margin-bottom: 0;
+			.two-factor-authentication__actions {
+				padding-bottom: 8px;
+				margin-bottom: 0;
+			}
+		}
+
 		.two-factor-authentication__verification-code-form-wrapper {
 			button.is-primary {
 				font-size: rem(14px);
