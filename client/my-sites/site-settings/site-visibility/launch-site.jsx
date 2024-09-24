@@ -15,6 +15,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getIsSiteLaunchInProgress } from 'calypso/state/sites/launch/selectors';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
@@ -50,6 +51,7 @@ const LaunchSite = () => {
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId )
 	);
 	const isUnlaunchedSite = useSelector( ( state ) => getIsUnlaunchedSite( state, siteId ) );
+	const isLaunchInProgress = useSelector( ( state ) => getIsSiteLaunchInProgress( state, siteId ) );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 
@@ -58,7 +60,7 @@ const LaunchSite = () => {
 	} );
 	const btnText = translate( 'Launch site' );
 
-	const isDevelopmentSite = site?.is_a4a_dev_site || false;
+	const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
 
 	const dispatchSiteLaunch = () => {
 		dispatch( launchSite( site.ID ) );
@@ -93,6 +95,7 @@ const LaunchSite = () => {
 		btnComponent = (
 			<Button
 				onClick={ handleLaunchSiteClick }
+				busy={ isLaunchInProgress }
 				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
 			>
 				{ btnText }
@@ -185,7 +188,7 @@ const LaunchSite = () => {
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{ shouldShowReferToClientButton && (
 						<div className={ launchSiteClasses }>
-							<Button onClick={ handleReferToClient } disabled={ false }>
+							<Button onClick={ handleReferToClient } disabled={ isLaunchInProgress }>
 								{ translate( 'Refer to client' ) }
 							</Button>
 						</div>
