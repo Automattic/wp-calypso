@@ -1,4 +1,3 @@
-import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { Dispatch, SetStateAction } from 'react';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -10,7 +9,7 @@ export interface SubscribersStepProps {
 	cardData: any;
 	status: StatusType;
 	engine: 'substack';
-	fromSite: QueryArgParsed;
+	fromSite: string;
 	nextStepUrl: string;
 	selectedSite: SiteDetails;
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;

@@ -5,6 +5,7 @@ import type { SiteId } from 'calypso/types';
 export interface PreviewLink {
 	code: string;
 	created_at: string;
+	expires_at?: string;
 	isCreating?: boolean;
 	isRemoving?: boolean;
 }

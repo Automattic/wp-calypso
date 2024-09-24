@@ -37,9 +37,24 @@ export class FormAiFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		const aiInputParentLocator = await context.editorPage.getEditorCanvas();
-		const aiInputReadyLocator =
-			await aiInputParentLocator.getByPlaceholder( 'Ask Jetpack AI to edit…' );
-		const aiInputBusyLocator = await aiInputParentLocator.getByRole( 'button', {
+
+		const possiblePlaceholders = [
+			// New random placeholders.
+			'Example: a contact form with name, email, and message fields',
+			'Example: a pizza ordering form with name, address, phone number and toppings',
+			'Example: a survey form with multiple choice questions',
+			// Old placeholder. Can remove once new code is deployed everywhere.
+			'Ask Jetpack AI to edit…',
+		];
+		const aiInputReadyLocator = await Promise.any(
+			possiblePlaceholders.map( async ( placeholder ) => {
+				const locator = aiInputParentLocator.getByPlaceholder( placeholder );
+				await locator.waitFor();
+				return locator;
+			} )
+		);
+
+		const aiInputBusyLocator = aiInputParentLocator.getByRole( 'button', {
 			name: 'Stop request',
 		} );
 		const sendButtonLocator = aiInputParentLocator.getByRole( 'button', {

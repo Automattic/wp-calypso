@@ -5,9 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 export const ReportUnavailable = ( {
 	isLaunching,
 	onLaunchSiteClick,
+	ctaText,
 }: {
 	isLaunching: boolean;
 	onLaunchSiteClick(): void;
+	ctaText: string;
 } ) => {
 	const translate = useTranslate();
 
@@ -24,7 +26,7 @@ export const ReportUnavailable = ( {
 					variant="primary"
 					onClick={ onLaunchSiteClick }
 				>
-					{ translate( 'Launch your site' ) }
+					{ ctaText }
 				</Button>,
 			] }
 		>

@@ -4,10 +4,9 @@ import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { trailingslashit } from 'calypso/lib/route';
 import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import ClipboardButtonInput from '../clipboard-button-input';
+import SitePreviewLink from './site-preview-link';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
 import { useDeleteSitePreviewLink } from './use-delete-site-preview-link';
 import { useSitePreviewLinks } from './use-site-preview-links';
@@ -18,23 +17,6 @@ const InputPlaceholder = styled( LoadingPlaceholder )( {
 	width: 120,
 	height: 22,
 	marginBottom: 12,
-} );
-
-interface SitePreviewLinkProps {
-	siteId: SiteId;
-	siteUrl: string;
-	source: 'launch-settings' | 'privacy-settings' | 'smp-modal';
-	disabled?: boolean;
-	forceOff?: boolean;
-}
-
-const HelpText = styled.p( {
-	display: 'block',
-	margin: '5px 0',
-	fontSize: '0.875rem',
-	fontStyle: 'italic',
-	fontWeight: 400,
-	color: 'var(--color-text-subtle)',
 } );
 
 const NOTICE_OPTIONS = {
@@ -50,13 +32,21 @@ function useDispatchNotice() {
 	};
 }
 
-export default function SitePreviewLink( {
+interface SitePreviewLinksProps {
+	siteId: SiteId;
+	siteUrl: string;
+	source: 'launch-settings' | 'privacy-settings' | 'smp-modal';
+	disabled?: boolean;
+	forceOff?: boolean;
+}
+
+export default function SitePreviewLinks( {
 	siteId,
 	siteUrl,
 	disabled = false,
 	forceOff = false,
 	source,
-}: SitePreviewLinkProps ) {
+}: SitePreviewLinksProps ) {
 	const translate = useTranslate();
 	const { showSuccessNotice, showErrorNotice } = useDispatchNotice();
 	const [ checked, setChecked ] = useState( false );
@@ -135,24 +125,14 @@ export default function SitePreviewLink( {
 						{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
 					/>
 					{ ! forceOff &&
-						previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
-							let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
-							if ( isCreating ) {
-								linkValue = translate( 'Loading…' );
-							} else if ( isRemoving ) {
-								linkValue = translate( 'Disabling…' );
-							}
-							return (
-								<ClipboardButtonInput
-									key={ code }
-									value={ linkValue }
-									disabled={ isBusy || disabled }
-								/>
-							);
-						} ) }
-					{ checkedAndEnabled && (
-						<HelpText>{ translate( 'Anyone with the link can view your site.' ) }</HelpText>
-					) }
+						previewLinks?.map( ( link ) => (
+							<SitePreviewLink
+								key={ link.code }
+								{ ...link }
+								disabled={ disabled || isBusy }
+								siteUrl={ siteUrl }
+							/>
+						) ) }
 				</>
 			) }
 		</div>

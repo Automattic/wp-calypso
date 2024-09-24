@@ -34,7 +34,6 @@ interface Props {
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
-	sectionName?: string;
 }
 
 const OVERLAY_MODAL_SELECTORS = [
@@ -42,12 +41,6 @@ const OVERLAY_MODAL_SELECTORS = [
 	'#wpnc-panel.wpnt-open',
 	'div.help-center__container:not(.is-minimized)',
 ];
-
-type HeaderButtonsProps = {
-	focusRef: React.RefObject< HTMLButtonElement >;
-	itemData: ItemData;
-	closeSitePreviewPane: () => void;
-};
 
 const DotcomPreviewPane = ( {
 	site,
@@ -200,9 +193,7 @@ const DotcomPreviewPane = ( {
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
-				headerButtons: ( props: HeaderButtonsProps ) => (
-					<PreviewPaneHeaderButtons { ...props } sectionName={ selectedSiteFeature } />
-				),
+				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () =>
 					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
 						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />

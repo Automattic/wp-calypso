@@ -337,3 +337,29 @@
 	}
 }
 
+.checkout__aside-actions-wrapper {
+	display: grid;
+}
+
+.checkout__button-popover {
+	.components-popover__content {
+		width: 300px;
+
+		@include break-large {
+			width: 350px;
+		}
+	}
+
+	.a4a-popover__content {
+		width: 100%;
+
+		.a4a-popover__title {
+			@include a4a-font-heading-md;
+			color: var(--studio-gray-80);
+		}
+
+		.checkout__button-popover-description {
+			@include a4a-font-body-md;
+		}
+	}
+}

@@ -40,6 +40,10 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
+import AwarenessIcon from '../campaign-objective-icons/AwarenessIcon';
+import EngagementIcon from '../campaign-objective-icons/EngagementIcon';
+import SalesIcon from '../campaign-objective-icons/SalesIcon';
+import TrafficIcon from '../campaign-objective-icons/TrafficIcon';
 import TargetLocations from './target-locations';
 
 interface Props {
@@ -113,6 +117,8 @@ export default function CampaignItemDetails( props: Props ) {
 		status,
 		ui_status,
 		campaign_stats,
+		objective,
+		objective_data,
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
@@ -186,6 +192,38 @@ export default function CampaignItemDetails( props: Props ) {
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
+
+	const objectiveIcon = ( () => {
+		switch ( objective ) {
+			case 'traffic':
+				return <span> { TrafficIcon() } </span>;
+			case 'sales':
+				return <span> { SalesIcon() } </span>;
+			case 'awareness':
+				return <span> { AwarenessIcon() } </span>;
+			case 'engagement':
+				return <span> { EngagementIcon() } </span>;
+			default:
+				return null;
+		}
+	} )();
+
+	const objectiveFormatted = ( () => {
+		if ( ! objectiveIcon || ! objective_data ) {
+			return null;
+		}
+		return (
+			<>
+				<span> { objectiveIcon } </span>
+				<span>
+					<span className="title">{ objective_data?.title }</span>
+					{ ' - ' }
+					{ objective_data?.description }
+				</span>
+			</>
+		);
+	} )();
+
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const durationDateFormatted = getCampaignDurationFormatted(
 		start_date,
@@ -751,6 +789,17 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 
 								<div className="campaign-item-details__secondary-stats-row">
+									{ objective && objectiveFormatted && (
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Campaign objective' ) }
+											</span>
+											<span className="campaign-item-details__details objective">
+												{ ! isLoading ? objectiveFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									) }
+
 									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Audience' ) }

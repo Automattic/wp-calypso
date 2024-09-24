@@ -92,3 +92,12 @@ export function getImporterStatus(
 
 	return 'initial';
 }
+
+export function normalizeFromSite( fromSite: string ) {
+	const result = fromSite.match( /\/@(?<slug>\w+)$/ );
+	if ( result?.groups?.slug ) {
+		return result.groups.slug + '.substack.com';
+	}
+
+	return fromSite;
+}
