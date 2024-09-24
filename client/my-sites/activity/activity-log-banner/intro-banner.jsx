@@ -6,12 +6,11 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import activityImage from 'calypso/assets/images/illustrations/site-activity.svg';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import CardHeading from 'calypso/components/card-heading';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import ExternalLink from 'calypso/components/external-link';
 import { preventWidows } from 'calypso/lib/formatting';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -107,30 +106,26 @@ class IntroBanner extends Component {
 	}
 
 	render() {
-		const { siteId, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
-			<Fragment>
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
-
-				<DismissibleCard
-					preferenceName="activity-introduction-banner"
-					className="activity-log-banner__intro"
-					onClick={ this.recordDismiss }
-				>
-					<div className="activity-log-banner__intro-description">
-						<CardHeading tagName="h1" size={ 24 }>
-							{ translate( 'Welcome to your site’s activity' ) }
-						</CardHeading>
-						{ this.renderCardContent() }
-					</div>
-					<img
-						className="activity-log-banner__intro-image"
-						src={ activityImage }
-						alt={ translate( 'A site’s activity listed on a vertical timeline.' ) }
-					/>
-				</DismissibleCard>
-			</Fragment>
+			<DismissibleCard
+				preferenceName="activity-introduction-banner"
+				className="activity-log-banner__intro"
+				onClick={ this.recordDismiss }
+			>
+				<div className="activity-log-banner__intro-description">
+					<CardHeading tagName="h1" size={ 24 }>
+						{ translate( 'Welcome to your site’s activity' ) }
+					</CardHeading>
+					{ this.renderCardContent() }
+				</div>
+				<img
+					className="activity-log-banner__intro-image"
+					src={ activityImage }
+					alt={ translate( 'A site’s activity listed on a vertical timeline.' ) }
+				/>
+			</DismissibleCard>
 		);
 	}
 }
@@ -138,7 +133,6 @@ class IntroBanner extends Component {
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),

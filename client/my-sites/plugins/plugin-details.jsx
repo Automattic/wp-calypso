@@ -10,7 +10,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import MainComponent from 'calypso/components/main';
@@ -366,7 +365,6 @@ function PluginDetails( props ) {
 			/>
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />

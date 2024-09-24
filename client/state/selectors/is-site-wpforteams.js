@@ -1,4 +1,5 @@
-import { get } from 'lodash';
+import getRawSite from './get-raw-site';
+
 /**
  * Returns true if site is a WP for Teams site, false if not and null if unknown
  * @param  {Object|unknown}   state  Global state tree
@@ -6,5 +7,6 @@ import { get } from 'lodash';
  * @returns {?boolean}        Whether site is a WP for Teams site
  */
 export default function isSiteWPForTeams( state, siteId ) {
-	return get( state, [ 'sites', 'items', siteId, 'options', 'is_wpforteams_site' ], null );
+	const site = getRawSite( state, siteId );
+	return site?.options?.is_wpforteams_site ?? null;
 }

@@ -20,14 +20,13 @@ import { sprintf } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ComponentType, useEffect, useMemo, useState } from 'react';
+import { ComponentType, useMemo, useState } from 'react';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import {
@@ -191,17 +190,6 @@ const ManagePluginsItem = ( {
 	);
 };
 
-function useSafeSiteHasFeature( siteId: number, feature: string ) {
-	const dispatch = useReduxDispatch();
-	useEffect( () => {
-		dispatch( fetchSiteFeatures( siteId ) );
-	}, [ dispatch, siteId ] );
-
-	return useSelector( ( state: AppState ) => {
-		return siteHasFeature( state, siteId, feature );
-	} );
-}
-
 const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -213,9 +201,8 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		openModal();
 	};
 
-	const hasSitePreviewLinksFeature = useSafeSiteHasFeature(
-		site.ID,
-		WPCOM_FEATURES_SITE_PREVIEW_LINKS
+	const hasSitePreviewLinksFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
 
 	if ( ! hasSitePreviewLinksFeature ) {
@@ -303,7 +290,9 @@ const siteDropdownMenuPopoverClassName = css( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
+	const hasStagingSitesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
+	);
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
@@ -349,7 +338,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && ! site?.plan?.expired;
+	const hasFeatureSFTP =
+		useSelector( ( state ) => siteHasFeature( state, site.ID, FEATURE_SFTP ) ) &&
+		! site?.plan?.expired;
 	const displayUpsell = ! hasFeatureSFTP;
 	const shouldLinkToHostingPromo = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );

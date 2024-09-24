@@ -13,7 +13,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -144,7 +143,6 @@ function AdminContent( { selectedDate } ) {
 	return (
 		<>
 			<QuerySiteSettings siteId={ siteId } />
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<QuerySiteCredentials siteId={ siteId } />
 			<QueryRewindPolicies
 				siteId={ siteId } /* The policies inform the max visible limit for backups */

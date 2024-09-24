@@ -1,13 +1,5 @@
-import { initialSiteState } from 'calypso/state/sites/features/reducer';
+import getRawSite from './get-raw-site';
 
-export default function getFeaturesBySiteId( state, siteId ) {
-	if ( ! siteId ) {
-		return initialSiteState.data;
-	}
-
-	if ( ! state.sites.features?.[ siteId ] ) {
-		return null;
-	}
-
-	return state.sites.features[ siteId ].data || initialSiteState.data;
+export default function getSiteFeatures( state, siteId ) {
+	return getRawSite( state, siteId )?.plan?.features ?? null;
 }

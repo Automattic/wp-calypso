@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -53,7 +52,6 @@ export const SiteSettingsSecurity = ( {
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<DocumentHead title={ translate( 'Security Settings' ) } />
 			<JetpackDevModeNotice />
 			<NavigationHeader

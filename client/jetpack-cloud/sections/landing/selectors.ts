@@ -19,8 +19,7 @@ export const isSiteEligibleForJetpackCloud = ( state: AppState, siteId: number )
 	( ( isJetpackSite( state, siteId ) ||
 		isBackupPluginActive( state, siteId ) ||
 		isSearchPluginActive( state, siteId ) ) &&
-		( isSiteAtomic( state, siteId ) ||
-			( ! isSiteAtomic( state, siteId ) && ! isJetpackSiteMultiSite( state, siteId ) ) ) );
+		( isSiteAtomic( state, siteId ) || ! isJetpackSiteMultiSite( state, siteId ) ) );
 
 export const getLandingPath = ( state: AppState, siteId: number | null ) => {
 	// Landing requires a site ID;

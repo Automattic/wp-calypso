@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
@@ -82,7 +81,6 @@ export default function PluginDetailsV2( {
 				<QueryAllJetpackSitesPlugins />
 			) }
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QueryJetpackSitesFeatures />
 			<QueryProductsList persist />
 			<NavigationHeader className="plugin-details-v2__header" navigationItems={ breadcrumbs } />
 			<div className="plugin-details-v2__top-container">

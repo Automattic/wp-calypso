@@ -17,7 +17,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
@@ -196,6 +195,7 @@ const useMenuItems = ( {
 			path,
 			shouldShowPurchases,
 			shouldShowSettings,
+			showScanHistory,
 			siteSlug,
 			translate,
 		]
@@ -212,7 +212,6 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 
 	return (
 		<>
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			{ siteId && <QueryScanState siteId={ siteId } /> }
 			<NewSidebar
 				path="/"
