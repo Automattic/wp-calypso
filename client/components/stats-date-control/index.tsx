@@ -149,7 +149,7 @@ const StatsDateControl = ( {
 							<Button
 								onClick={ () => {
 									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-									recordTracksEvent( `${ event_from }_stats_date_picker_trigger_clicked` ); // Tracking event
+									recordTracksEvent( `${ event_from }_stats_date_picker_trigger_clicked` );
 									onTriggerClick();
 								} }
 								ref={ buttonRef }
