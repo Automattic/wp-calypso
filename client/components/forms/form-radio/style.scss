@@ -1,6 +1,6 @@
 @import "@automattic/typography/styles/variables";
 // stylelint-disable-next-line scss/load-no-partial-leading-underscore
-@import "calypso/assets/stylesheets/shared/_extends-forms.scss";
+@import "calypso/assets/stylesheets/shared/_extends-forms";
 
 .form-radio {
 	@extend %form-field;

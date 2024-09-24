@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 
-@import "./styles/layout.scss";
-@import "./styles/wp-admin.scss";
-@import "./styles/promote-widget.scss";
-@import "./styles/typography.scss";
+@import "./styles/layout";
+@import "./styles/wp-admin";
+@import "./styles/promote-widget";
+@import "./styles/typography";
 
 // Specific Jetpack Blaze styles
 .jp-blaze-dashboard {
