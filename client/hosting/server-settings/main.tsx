@@ -4,9 +4,9 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { Fragment, useState, useCallback } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import React, { Fragment, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
@@ -19,14 +19,20 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
+import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
+import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
+import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
+import SFTPCard from 'calypso/hosting/server-settings/components/sftp-card';
+import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';
+import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
@@ -34,26 +40,35 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnBusinessTrial, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { HostingUpsellNudge } from './components/hosting-upsell-nudge';
-import PhpMyAdminCard from './components/phpmyadmin-card';
-import RestorePlanSoftwareCard from './components/restore-plan-software-card';
-import SFTPCard from './components/sftp-card';
-import WebServerSettingsCard from './components/web-server-settings-card';
-import HostingActivateStatus from './hosting-activate-status';
+
 import './style.scss';
 
 const HEADING_OFFSET = 30;
 
-const ShowEnabledFeatureCards = ( { availableTypes, cards, showDisabledCards = true } ) => {
+type CardEntry = {
+	feature: string;
+	content: React.ReactElement;
+	type: 'basic' | 'advanced';
+};
+
+type ShowEnabledFeatureCardsProps = {
+	availableTypes: CardEntry[ 'type' ][];
+	cards: CardEntry[];
+	showDisabledCards?: boolean;
+};
+
+const ShowEnabledFeatureCards = ( {
+	availableTypes,
+	cards,
+	showDisabledCards = true,
+}: ShowEnabledFeatureCardsProps ) => {
 	const enabledCards = cards.filter(
 		( card ) => ! card.type || availableTypes.includes( card.type )
 	);
@@ -77,8 +92,21 @@ const ShowEnabledFeatureCards = ( { availableTypes, cards, showDisabledCards = t
 	);
 };
 
-const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, siteSlug } ) => {
-	const allCards = [
+type AllCardsProps = {
+	isAdvancedHostingDisabled?: boolean;
+	isBasicHostingDisabled?: boolean;
+	isBusinessTrial?: boolean;
+	siteId: number | null;
+	siteSlug: string | null;
+};
+
+const AllCards = ( {
+	isAdvancedHostingDisabled,
+	isBasicHostingDisabled,
+	siteId,
+	siteSlug,
+}: AllCardsProps ) => {
+	const allCards: CardEntry[] = [
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -91,7 +119,7 @@ const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, 
 		},
 		{
 			feature: 'restore-plan-software',
-			content: <RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />,
+			content: <RestorePlanSoftwareCard />,
 			type: 'basic',
 		},
 		{
@@ -99,71 +127,81 @@ const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, 
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
-		siteId && {
+	];
+
+	if ( siteId ) {
+		allCards.push( {
 			feature: 'wp-admin',
 			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
-		},
-		{
-			feature: 'web-server-settings',
-			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
-			type: 'advanced',
-		},
-	].filter( ( card ) => card !== null );
+		} );
+	}
 
-	const availableTypes = [
-		! isAdvancedHostingDisabled ? 'advanced' : null,
-		! isBasicHostingDisabled ? 'basic' : null,
-	].filter( ( type ) => type !== null );
+	allCards.push( {
+		feature: 'web-server-settings',
+		content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
+		type: 'advanced',
+	} );
+
+	const availableTypes: CardEntry[ 'type' ][] = [];
+
+	if ( ! isAdvancedHostingDisabled ) {
+		availableTypes.push( 'advanced' );
+	}
+	if ( ! isBasicHostingDisabled ) {
+		availableTypes.push( 'basic' );
+	}
 
 	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
-const ServerSettings = ( props ) => {
-	const {
-		clickActivate,
-		isECommerceTrial,
-		isBusinessTrial,
-		isWpcomStagingSite,
-		siteId,
-		siteSlug,
-		translate,
-		isLoadingSftpData,
-		hasAtomicFeature,
-		hasSftpFeature,
-		isJetpack,
-		isEligibleForHostingTrial,
-		fetchUpdatedData,
-		isSiteAtomic,
-		transferState,
-	} = props;
+type ServerSettingsProps = {
+	fetchUpdatedData: () => void;
+};
+
+const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const clickActivate = () =>
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
+
+	const siteId = useSelector( getSelectedSiteId );
+	const hasAtomicFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
+	);
+	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
+	const site = useSelector( getSelectedSite );
+	const isEligibleForHostingTrial =
+		useSelector( isUserEligibleForFreeHostingTrial ) && site && site.plan?.is_free;
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isECommerceTrial = useSelector( ( state ) => isSiteOnECommerceTrial( state, siteId ) );
+	const isBusinessTrial = useSelector( ( state ) => isSiteOnBusinessTrial( state, siteId ) );
+	const transferState = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+	const isLoadingSftpData = useSelector( ( state ) =>
+		getAtomicHostingIsLoadingSftpData( state, siteId )
+	);
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
-		transferState &&
-			! [
-				transferStates.NONE,
-				transferStates.INQUIRING,
-				transferStates.ERROR,
-				transferStates.COMPLETED,
-				transferStates.COMPLETE,
-				transferStates.REVERTED,
-			].includes( transferState )
+		!! transferState &&
+			transferState !== transferStates.NONE &&
+			transferState !== transferStates.INQUIRING &&
+			transferState !== transferStates.ERROR &&
+			transferState !== transferStates.COMPLETED &&
+			transferState !== transferStates.COMPLETE &&
+			transferState !== transferStates.REVERTED
 	);
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
 
-	const setOpenModal = ( isOpen ) => {
-		setIsTrialAcknowledgeModalOpen( isOpen );
-	};
-
-	const trialRequested = () => {
-		setHasTransferring( true );
-	};
-
 	const requestUpdatedSiteData = useCallback(
-		( isTransferring, wasTransferring, isTransferCompleted ) => {
+		( isTransferring?: boolean, wasTransferring?: boolean, isTransferCompleted?: boolean ) => {
 			if ( isTransferring && ! hasTransfer ) {
 				setHasTransferring( true );
 			}
@@ -220,7 +258,7 @@ const ServerSettings = ( props ) => {
 		return (
 			<>
 				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
-				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
 					<MasonryGrid>
 						<AllCards
@@ -251,7 +289,9 @@ const ServerSettings = ( props ) => {
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
 					timeout={ 250 }
-					container={ document.querySelector( '.item-preview__content' ) }
+					container={
+						document.querySelector< HTMLElement >( '.item-preview__content' ) ?? undefined
+					}
 				/>
 			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
@@ -280,44 +320,18 @@ const ServerSettings = ( props ) => {
 			) }
 			{ getContent() }
 			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
-				<TrialAcknowledgeModal setOpenModal={ setOpenModal } trialRequested={ trialRequested } />
+				<TrialAcknowledgeModal
+					setOpenModal={ ( isOpen ) => {
+						setIsTrialAcknowledgeModalOpen( isOpen );
+					} }
+					trialRequested={ () => {
+						setHasTransferring( true );
+					} }
+				/>
 			) }
 			<QueryReaderTeams />
 		</Main>
 	);
 };
 
-const clickActivate = () => recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
-
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
-		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
-		const site = getSelectedSite( state );
-		const isEligibleForHostingTrial =
-			isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
-		const isSiteAtomic = isSiteWpcomAtomic( state, siteId );
-
-		return {
-			teams: getReaderTeams( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
-			isBusinessTrial: isSiteOnBusinessTrial( state, siteId ),
-			transferState: getAutomatedTransferStatus( state, siteId ),
-			hasSftpFeature,
-			hasAtomicFeature,
-			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
-			siteId,
-			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-			isEligibleForHostingTrial,
-			isSiteAtomic,
-		};
-	},
-	{
-		clickActivate,
-		fetchAutomatedTransferStatus,
-		requestSiteById: requestSite,
-	}
-)( localize( WithOnclickTrialRequest( ServerSettings ) ) );
+export default WithOnclickTrialRequest( ServerSettings );
