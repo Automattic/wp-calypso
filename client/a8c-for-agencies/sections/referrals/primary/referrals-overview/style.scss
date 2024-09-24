@@ -7,11 +7,6 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
-.referrals-overview__notice {
-	.button.referrals-overview__notice-button {
-		margin-block-start: 1rem;
-	}
-}
 
 .referrals-overview__button-popover {
 	.a4a-popover__content {
@@ -80,17 +75,6 @@ $data-view-border-color: #f1f1f1;
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
 			padding-inline-start: 64px;
-		}
-		.dataviews-view-table tr {
-			th:last-child,
-			td:last-child {
-				padding-inline-end: 64px;
-				width: 20px;
-				white-space: nowrap;
-				position: sticky;
-				right: 0;
-				z-index: 1;
-			}
 		}
 	}
 

@@ -562,5 +562,7 @@ module.exports = {
 		// @TODO remove these lines once we fixed the warnings so
 		// they'll become errors for new code added to the codebase
 		'@tanstack/query/exhaustive-deps': 'warn',
+		'@wordpress/i18n-no-flanking-whitespace': 'warn',
+		'@wordpress/i18n-hyphenated-range': 'warn',
 	},
 };

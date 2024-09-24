@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useSetOdieStorage } from '@automattic/odie-client';
 import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { hasTranslation } from '@wordpress/i18n';
@@ -37,6 +38,7 @@ const HelpCenterContactSupportOption = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
 
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
 		sectionName,
@@ -80,6 +82,9 @@ const HelpCenterContactSupportOption = ( {
 			siteId: site?.ID,
 			onError: () => setHasSubmittingError( true ),
 			onSuccess: () => {
+				// Reset Odie chat after passing to support
+				setWapuuChatId( null );
+
 				resetStore();
 				setShowHelpCenter( false );
 			},

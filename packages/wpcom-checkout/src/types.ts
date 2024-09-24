@@ -344,6 +344,10 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
+	| 'WPCOM_Billing_Stripe_Alipay'
+	| 'WPCOM_Billing_Stripe_Bancontact'
+	| 'WPCOM_Billing_Stripe_Ideal'
+	| 'WPCOM_Billing_Stripe_P24'
 	| 'WPCOM_Billing_Stripe_Source_Alipay'
 	| 'WPCOM_Billing_Stripe_Source_Bancontact'
 	| 'WPCOM_Billing_Stripe_Source_Eps'
@@ -352,6 +356,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Sofort'
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
+	| 'WPCOM_Billing_Stripe_Wechat_Pay'
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
 	| 'WPCOM_Billing_Razorpay';

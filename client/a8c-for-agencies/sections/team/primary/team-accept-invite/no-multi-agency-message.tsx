@@ -7,7 +7,9 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/sections/referrals/common/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item';
+import { useDispatch } from 'calypso/state';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type Props = {
 	currentAgency: Agency;
@@ -16,6 +18,19 @@ type Props = {
 
 export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const onLearnMoreClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_joining_agency_click' ) );
+	};
+
+	const onContactSupportClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_contact_support_click' ) );
+	};
+
+	const onCurrentAgencyLinkClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_current_agency_link_click' ) );
+	};
 
 	return (
 		<>
@@ -58,6 +73,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 										href={ A4A_TEAM_LINK }
 										target="_blank"
 										rel="noreferrer"
+										onClick={ onCurrentAgencyLinkClick }
 									/>
 								),
 							},
@@ -89,7 +105,8 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					className="team-accept-invite__learn-more-button"
 					variant="link"
 					target="_blank"
-					href="#" // FIXME: Add link to the KB article
+					href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#accepting-an-invitation-a-team-member-s-guide"
+					onClick={ onLearnMoreClick }
 				>
 					{ translate( 'Team members Knowledge Base article' ) }
 					<Icon icon={ external } size={ 18 } />
@@ -100,6 +117,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					variant="link"
 					target="_blank"
 					href={ `${ A4A_OVERVIEW_LINK }#contact-support` }
+					onClick={ onContactSupportClick }
 				>
 					{ translate( 'Contact support' ) }
 					<Icon icon={ external } size={ 18 } />

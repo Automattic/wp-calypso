@@ -253,12 +253,7 @@
 	--color-jetpack-plan-premium: var(--studio-jetpack-green-30);
 	--color-jetpack-plan-professional: var(--studio-purple-30);
 
-	--color-masterbar-background: #101517;
-	--color-masterbar-border: #333;
-	--color-masterbar-text: #f0f0f1; /* Direct from wp-admin */
-	--color-masterbar-icon: rgba(240, 246, 252, 0.6); /* Direct from wp-admin */
-	--color-masterbar-highlight: #72aee6; /* Direct from wp-admin */
-	--color-masterbar-item-hover-background: #333;
+	--color-masterbar-item-hover-background: #2c3338; /* $menu-submenu-background: darken( $base-color, 7% ) */
 	--color-masterbar-item-active-background: #23282d;
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
 	--color-masterbar-item-new-editor-hover-background: var(--studio-gray-40);
@@ -335,15 +330,24 @@
 	--color-wp-admin-button-border: #006799;
 
 	/* WP Admin Default Theme */
-	--theme-text-color: #fff; /* Direct from wp-admin */
-	--theme-text-color-rgb: 255, 255, 255;
-	--theme-base-color: #23282d; /* Direct from wp-admin */
-	--theme-base-color-rgb: 35, 40, 45;
-	--theme-submenu-background-color: #131619; /* darken( $base-color, 7% ) */
-	--theme-icon-color: #e1eaf2; /* hsl( hue( $base-color ), 7%, 95% )*/
-	--theme-highlight-color: #0073aa; /* Direct from wp-admin */
-	--theme-highlight-color-rgb: 0, 115, 170;
+	--theme-text-color: #f0f0f1; /* Direct from wp-admin */
+	--theme-text-color-rgb: 240, 240, 241;
+	--theme-base-color: #1d2327; /* Direct from wp-admin */
+	--theme-base-color-rgb: 29, 35, 39;
+	--theme-submenu-background-color: #131619; /* $menu-submenu-background */
+	--theme-submenu-text-color: #c3c4c7; /* $menu-submenu-text */
+	--theme-icon-color: rgba(240, 246, 252, 0.6); /* $icon-color */
+	--theme-highlight-color: #72aee6; /* $highlight-color */
+	--theme-highlight-color-rgb: 114, 174, 230;
 	--theme-notification-color: #d54e21; /* Direct from wp-admin */
+
+	/* Masterbar */
+	--color-masterbar-background: var(--theme-base-color);
+	--color-masterbar-border: #8c8f94; /* $adminbar-avatar-frame */
+	--color-masterbar-text: var(--theme-text-color);
+	--color-masterbar-submenu-text: var(--theme-submenu-text-color);
+	--color-masterbar-icon: var(--theme-icon-color);
+	--color-masterbar-highlight: var(--theme-highlight-color);
 
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: var(--studio-blue-0);

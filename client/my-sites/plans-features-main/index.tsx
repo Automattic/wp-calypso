@@ -74,6 +74,7 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSimplifiedFeaturesGridExperiment from './hooks/use-simplified-features-grid-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -326,6 +327,17 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
+
+	const {
+		isLoading: isLoadingSimplifiedFeaturesGridExperiment,
+		isTargetedView: isTargetedViewForSimplifiedFeaturesGridExperiment,
+		variant: simplifiedFeaturesGridExperimentVariant,
+		setVariantOverride: setSimplifiedFeaturesGridExperimentVariantOverride,
+	} = useSimplifiedFeaturesGridExperiment( {
+		flowName,
+		isInSignup,
+		intent,
+	} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -624,8 +636,10 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+			! gridPlansForComparisonGrid ||
+			isLoadingSimplifiedFeaturesGridExperiment
 	);
+
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();
@@ -672,6 +686,55 @@ const PlansFeaturesMain = ( {
 		}
 		return translate( 'Compare plans' );
 	};
+
+	const enterpriseFeaturesList = useMemo(
+		() => [
+			translate( 'Multifaceted security' ),
+			translate( 'Generative AI' ),
+			translate( 'Integrated content analytics' ),
+			translate( '24/7 support' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Professional services' ) ]
+				: [ translate( 'FedRAMP certification' ) ] ),
+			translate( 'API mesh and node hosting' ),
+			translate( 'Containerized environment' ),
+			translate( 'Global infrastructure' ),
+			translate( 'Dynamic autoscaling' ),
+			translate( 'Integrated CDN' ),
+			translate( 'Integrated code repository' ),
+			translate( 'Staging environments' ),
+			translate( 'Management dashboard' ),
+			translate( 'Command line interface (CLI)' ),
+			translate( 'Efficient multi-site management' ),
+			translate( 'Advanced access controls' ),
+			translate( 'Single sign-on (SSO)' ),
+			translate( 'DDoS protection and mitigation' ),
+			translate( 'Plugin and theme vulnerability scanning' ),
+			translate( 'Automated plugin upgrade' ),
+			translate( 'Integrated enterprise search' ),
+			...( simplifiedFeaturesGridExperimentVariant === 'control'
+				? [ translate( 'Integrated APM' ) ]
+				: [] ),
+		],
+		[ simplifiedFeaturesGridExperimentVariant, translate ]
+	);
+
+	const viewAllPlansButton = (
+		<div className="plans-features-main__escape-hatch">
+			<Button
+				borderless
+				onClick={ () => {
+					if ( ! isTargetedViewForSimplifiedFeaturesGridExperiment ) {
+						setSimplifiedFeaturesGridExperimentVariantOverride( 'control' );
+					}
+
+					setForceDefaultPlans( true );
+				} }
+			>
+				{ translate( 'View all plans' ) }
+			</Button>
+		</div>
+	);
 
 	return (
 		<>
@@ -745,6 +808,7 @@ const PlansFeaturesMain = ( {
 						<div
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
 								'is-scrollable': plansWithScroll,
+								'is-plan-type-selector-visible': ! hidePlanSelector,
 							} ) }
 							data-e2e-plans="wpcom"
 						>
@@ -776,28 +840,35 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
+										enterpriseFeaturesList={ enterpriseFeaturesList }
+										enableShowAllFeaturesButton={
+											simplifiedFeaturesGridExperimentVariant !== 'simplified'
+										}
+										enableCategorisedFeatures={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableStorageAsBadge={
+											simplifiedFeaturesGridExperimentVariant !== 'simplified'
+										}
+										enableReducedFeatureGroupSpacing={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										enableLogosOnlyForEnterprisePlan={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
+										hideFeatureGroupTitles={
+											simplifiedFeaturesGridExperimentVariant === 'simplified'
+										}
 									/>
 								) }
-								{ showEscapeHatch && hidePlansFeatureComparison && (
-									<div className="plans-features-main__escape-hatch">
-										<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
-											{ translate( 'View all plans' ) }
-										</Button>
-									</div>
-								) }
+								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
 								{ ! hidePlansFeatureComparison && (
 									<>
 										<ComparisonGridToggle
 											onClick={ toggleShowPlansComparisonGrid }
 											label={ getComparisonGridToggleLabel() }
 										/>
-										{ showEscapeHatch && (
-											<div className="plans-features-main__escape-hatch">
-												<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
-													{ translate( 'View all plans' ) }
-												</Button>
-											</div>
-										) }
+										{ showEscapeHatch && viewAllPlansButton }
 										<div
 											ref={ plansComparisonGridRef }
 											className={ comparisonGridContainerClasses }
@@ -853,13 +924,7 @@ const PlansFeaturesMain = ( {
 												onClick={ toggleShowPlansComparisonGrid }
 												label={ translate( 'Hide comparison' ) }
 											/>
-											{ showEscapeHatch && (
-												<div className="plans-features-main__escape-hatch">
-													<Button borderless onClick={ () => setForceDefaultPlans( true ) }>
-														{ translate( 'View all plans' ) }
-													</Button>
-												</div>
-											) }
+											{ showEscapeHatch && viewAllPlansButton }
 										</div>
 									</>
 								) }

@@ -38,7 +38,6 @@ import {
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
-import { useInitializeDataViewsSelectedItem } from '../hooks/use-initialize-dataviews-selected-item';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
 import { useSyncSelectedSite } from '../hooks/use-sync-selected-site';
@@ -75,6 +74,8 @@ const siteSortingKeys = [
 	{ dataView: 'site', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
+	{ dataView: 'plan', sortKey: 'plan' },
+	{ dataView: 'status', sortKey: 'status' },
 ];
 
 const DEFAULT_PER_PAGE = 50;
@@ -94,7 +95,6 @@ const SitesDashboard = ( {
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
-	sectionName,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -180,19 +180,19 @@ const SitesDashboard = ( {
 					width: getSiteNameColWidth( isDesktop, isWide ),
 				},
 				plan: {
-					width: '100px',
+					width: '126px',
 				},
 				status: {
-					width: '116px',
+					width: '142px',
 				},
 				'last-publish': {
-					width: '120px',
+					width: '146px',
 				},
 				stats: {
-					width: '80px',
+					width: '106px',
 				},
 				actions: {
-					width: '48px',
+					width: '74px',
 				},
 			},
 		},
@@ -300,7 +300,6 @@ const SitesDashboard = ( {
 	const onboardingTours = useOnboardingTours();
 
 	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
-	useInitializeDataViewsSelectedItem( { selectedSite, paginatedSites } );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
@@ -444,7 +443,6 @@ const SitesDashboard = ( {
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
 							changeSitePreviewPane={ changeSitePreviewPane }
-							sectionName={ sectionName }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />

@@ -1,15 +1,52 @@
+@import "@wordpress/base-styles/breakpoints";
+
 $blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
+	width: 100%;
+	scroll-margin-top: 80px;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 32px;
+		flex-wrap: wrap;
+		gap: 16px;
+	}
+
 	.title {
 		font-size: $font-title-small;
 		font-weight: 500;
+		margin-bottom: 8px;
 	}
 
 	.subtitle {
 		color: var(--studio-gray-70);
 		font-size: $font-body;
-		margin-bottom: 32px;
+		margin-bottom: 0;
+	}
+
+	$wp-blue-50: #3858e9;
+	.filter {
+		.select-dropdown__item {
+			background-color: var(--studio-white);
+			color: $wp-blue-50;
+
+			&.is-selected {
+				background-color: $wp-blue-50;
+				color: var(--studio-white);
+
+				&:hover {
+					background-color: $wp-blue-50;
+				}
+			}
+
+			&:hover {
+				background-color: transparent;
+				color: initial;
+			}
+		}
 	}
 
 	.metrics-insight-item.foldable-card {
@@ -44,6 +81,21 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.insight-header-container {
+				display: flex;
+				align-items: baseline;
+
+				p {
+					margin: 0;
+					line-height: 26px;
+				}
+
+				div {
+					width: 100%;
+				}
+
+			}
+
 			.counter {
 				&.fail {
 					color: var(--studio-red-50);
@@ -64,6 +116,19 @@ $blueberry-color: #3858e9;
 				&.warning {
 					color: var(--studio-orange-40);
 				}
+
+				&.is-mobile {
+					padding-top: 5px;
+				}
+			}
+
+			.md-code {
+				border: 1px solid var(--studio-gray-5);
+				background: var(--studio-gray-0);
+				padding: 2px 4px;
+				border-radius: 4px;
+				font-family: monospace;
+				font-size: $font-body-small;
 			}
 
 			.header-code {
@@ -122,13 +187,32 @@ $blueberry-color: #3858e9;
 				align-items: flex-start;
 				gap: 32px;
 				align-self: stretch;
+				flex-wrap: wrap;
+
+				.content {
+					flex: 1 1 500px;
+
+					&:only-child {
+						flex: 0 1 700px;
+						max-width: 700px; // If elements are wider, e.g. code blocks, there will be a horizontal scroll
+					}
+				}
 
 				p {
 					line-height: 24px;
 				}
+
+				ul {
+					margin: 0 0 1.5em 3em;
+				}
+
+				.performance-profiler-tip {
+					max-width: 300px;
+					min-width: unset;
+				}
 			}
 
-			.generated-with-ia {
+			.generated-with-ai {
 				font-weight: 500;
 			}
 
@@ -138,6 +222,42 @@ $blueberry-color: #3858e9;
 					align-items: center;
 					gap: 16px;
 					flex-wrap: wrap;
+
+					&.wrapped {
+						flex-basis: 100%;
+					}
+				}
+
+				.survey-form {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 16px;
+
+					button.is-primary {
+						color: #fff;
+						background-color: $blueberry-color;
+						border-radius: 4px;
+
+						&:hover:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+						}
+
+						&:focus:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+							box-shadow: none;
+						}
+					}
+
+					.feedback-textarea {
+						width: 100%;
+					}
+
+					textarea:focus,
+					textarea:focus-visible {
+						border-color: $blueberry-color;
+						box-shadow: 0 0 0 calc(1.5px - 1px)  $blueberry-color;
+					}
 				}
 
 				.options {
@@ -160,11 +280,54 @@ $blueberry-color: #3858e9;
 
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
+				width: 100%;
+				overflow-x: auto;
+
+				.element-screenshot__overlay {
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					z-index: 2000;
+					background: rgba(0, 0, 0, 0.3);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					cursor: zoom-out;
+				}
+
+				.element-screenshot {
+
+					.element-screenshot__image {
+						position: relative;
+						cursor: zoom-in;
+						overflow: hidden;
+					}
+
+					.element-screenshot__mask {
+						position: absolute;
+						background-color: var(--studio-gray-60);
+						opacity: 0.8;
+
+						svg {
+							width: 0;
+							height: 0;
+						}
+					}
+
+					.element-screenshot__element-marker {
+						position: absolute;
+						border: 2px solid var(--studio-yellow-20);
+						box-sizing: border-box;
+					}
+				}
 
 				table {
-					table-layout: fixed;
+					table-layout: auto;
 					width: 100%;
 					margin-bottom: 0;
+					min-width: $break-small;
 
 					th,
 					td {
@@ -172,6 +335,8 @@ $blueberry-color: #3858e9;
 						word-break: break-word;
 						font-size: $font-body-small;
 						border-bottom: 1px solid var(--studio-gray-5);
+						min-width: 100px;
+						vertical-align: middle;
 					}
 
 					tr.sub {

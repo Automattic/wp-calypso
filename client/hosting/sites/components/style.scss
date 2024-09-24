@@ -41,17 +41,10 @@
 	.sites-dataviews__site {
 		.button {
 			flex-shrink: 0;
-			@include breakpoint-deprecated("<480px") {
-				width: 90px;
-			}
 		}
 		.sites-dataviews__site-name {
 			padding: 0;
 		}
-	}
-	th[data-field-id="actions"] {
-		padding-inline-end: 16px;
-		text-align: end;
 	}
 	@media (min-width: $break-large) {
 		background: inherit;
@@ -70,27 +63,6 @@
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
 			display: none;
 		}
-
-		.dataviews-view-table tr th:first-child,
-		.dataviews-view-table tr td:first-child {
-			padding-left: 26px;
-		}
-		.dataviews-view-table tr th:last-child,
-		.dataviews-view-table tr td:last-child {
-			padding-right: 26px;
-			width: 20px;
-			white-space: nowrap;
-		}
-	}
-	@media (min-width: $break-huge) {
-		.dataviews-view-table tr th:first-child,
-		.dataviews-view-table tr td:first-child {
-			padding-left: 64px;
-		}
-		.dataviews-view-table tr th:last-child,
-		.dataviews-view-table tr td:last-child {
-			padding-right: 64px;
-		}
 	}
 
 	@media (max-width: 660px) {
@@ -107,10 +79,6 @@
 		&.sites-dashboard__layout {
 			.sites-overview {
 				overflow: hidden;
-
-				.a4a-layout__viewport {
-					padding-inline: 16px;
-				}
 
 				.sites-overview__page-title-container {
 					display: flex;
@@ -153,15 +121,6 @@
 			}
 		}
 
-		.dataviews-view-table tr th:first-child,
-		.dataviews-view-table tr td:first-child {
-			padding: 8px 16px 8px 16px;
-		}
-		.dataviews-view-table tr td:last-child {
-			padding: 0;
-			padding-inline-end: 16px;
-		}
-
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
 			min-width: 40px;
 		}
@@ -190,14 +149,6 @@
 		.sites-dataviews__favorite-btn-wrapper,
 		.sites-overview__boost-score {
 			display: none;
-		}
-
-		tr td:first-child {
-			padding-inline-start: 8px;
-		}
-
-		tr td:last-child {
-			padding-inline-end: 8px;
 		}
 
 		.item-preview__content {
@@ -236,10 +187,6 @@
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
-
-				.a4a-layout__viewport {
-					padding-inline: 16px;
-				}
 
 				.a4a-layout__header-title {
 					font-size: rem(20px);

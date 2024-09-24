@@ -38,31 +38,6 @@ const getP2Flows = () => {
 		: [];
 };
 
-const getEmailSubscriptionFlow = () => {
-	return isEnabled( 'signup/email-subscription-flow' )
-		? [
-				{
-					name: 'email-subscription',
-					steps: [ 'subscribe' ],
-					destination: ( dependencies ) => `${ dependencies.redirect }`,
-					description:
-						'Signup flow that subscripes user to guides appointments for email campaigns',
-					lastModified: '2024-06-17',
-					showRecaptcha: true,
-					providesDependenciesInQuery: [
-						'user_email',
-						'redirect_to',
-						'mailing_list',
-						'from',
-						'first_name',
-					],
-					optionalDependenciesInQuery: [ 'last_name' ],
-					hideProgressIndicator: true,
-				},
-		  ]
-		: [];
-};
-
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
@@ -81,7 +56,6 @@ export function generateFlows( {
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
-	const emailSubscriptionFlow = getEmailSubscriptionFlow();
 
 	const flows = [
 		{
@@ -284,15 +258,6 @@ export function generateFlows( {
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
 			showRecaptcha: true,
-		},
-		{
-			name: 'pressable-nux',
-			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
-			destination: '/stats',
-			description: 'Allow new Pressable users to grant permission to server credentials',
-			lastModified: '2017-11-20',
-			disallowResume: true,
-			hideProgressIndicator: true,
 		},
 		{
 			name: 'rewind-setup',
@@ -655,7 +620,23 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 			enableHotjar: true,
 		},
-		...emailSubscriptionFlow,
+		{
+			name: 'email-subscription',
+			steps: [ 'subscribe' ],
+			destination: ( dependencies ) => `${ dependencies.redirect }`,
+			description: 'Signup flow that subscripes user to guides appointments for email campaigns',
+			lastModified: '2024-06-17',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [
+				'user_email',
+				'redirect_to',
+				'mailing_list',
+				'from',
+				'first_name',
+			],
+			optionalDependenciesInQuery: [ 'last_name' ],
+			hideProgressIndicator: true,
+		},
 	];
 
 	// convert the array to an object keyed by `name`

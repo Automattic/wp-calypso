@@ -18,6 +18,9 @@ export default function useFetchAgencyFromBlog(
 			return {
 				id: data?.id,
 				name: data?.name,
+				existing_wpcom_license_count: data?.existing_wpcom_license_count,
+				prices: data?.prices,
+				referral_status: data?.referral_status,
 			};
 		},
 		enabled: !! blogId && enabled,

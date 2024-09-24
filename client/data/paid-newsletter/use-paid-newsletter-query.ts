@@ -1,12 +1,30 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
-export type StepId = 'content' | 'subscribers' | 'paid-subscribers' | 'summary';
+export type StepId = 'content' | 'subscribers' | 'summary';
 export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
 
-export interface ContentStepContent {}
+interface ContentStepContentProgress {
+	completed: number;
+	total: number;
+}
+
+// FIXME We're actually not using this data in the importing content step...
+export interface ContentStepContent {
+	progress: {
+		attachment: ContentStepContentProgress;
+		comment: ContentStepContentProgress;
+		page: ContentStepContentProgress;
+		post: ContentStepContentProgress;
+	};
+}
 
 export interface SubscribersStepContent {
+	available_tiers?: Product[];
+	connect_url?: string;
+	is_connected_stripe: boolean;
+	map_plans?: Record< string, string >;
+	plans?: Plan[];
 	meta?: {
 		email_count: string;
 		id: number;
@@ -38,14 +56,6 @@ export interface Plan {
 	product_id: string;
 }
 
-export interface PaidSubscribersStepContent {
-	available_tiers: Product[];
-	connect_url?: string;
-	is_connected_stripe: boolean;
-	map_plans: Record< string, string >;
-	plans: Plan[];
-}
-
 export interface SummaryStepContent {}
 
 interface Step< T > {
@@ -53,14 +63,13 @@ interface Step< T > {
 	content?: T;
 }
 
-interface Steps {
+export interface Steps {
 	content: Step< ContentStepContent >;
 	subscribers: Step< SubscribersStepContent >;
-	'paid-subscribers': Step< PaidSubscribersStepContent >;
 	summary: Step< SummaryStepContent >;
 }
 
-interface PaidNewsletterData {
+export interface PaidNewsletterData {
 	current_step: StepId;
 	steps: Steps;
 }

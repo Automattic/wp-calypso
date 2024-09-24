@@ -3,8 +3,14 @@ import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import {
+	NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
+	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
+	useNoticeVisibilityQuery,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useSubmitProductFeedback from './use-submit-product-feedback';
 
@@ -15,39 +21,68 @@ interface ModalProps {
 	onClose: () => void;
 }
 
+const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
+const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 12; // 12 months
+const FEEDBACK_THROTTLE_SUBMISSION_DELAY = 60 * 5; // 5 minutes
+
 const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ content, setContent ] = useState( '' );
 
+	const {
+		data: isAbleToSubmitFeedback,
+		isFetching: isCheckingAbilityToSubmitFeedback,
+		refetch: refetchNotices,
+	} = useNoticeVisibilityQuery( siteId, NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK );
+
+	const { mutateAsync: disableFeedbackSubmission } = useNoticeVisibilityMutation(
+		siteId,
+		NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
+		'postponed',
+		FEEDBACK_THROTTLE_SUBMISSION_DELAY
+	);
+
+	const { mutateAsync: updateFeedbackHibernationPeriod } = useNoticeVisibilityMutation(
+		siteId,
+		FEEDBACK_SHOULD_SHOW_PANEL_API_KEY,
+		'postponed',
+		FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY
+	);
+
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
 
-	const handleClose = useCallback( () => {
-		setTimeout( () => {
-			onClose();
-		}, 200 );
-	}, [ onClose ] );
+	const handleClose = useCallback(
+		( isDirectClose: boolean = false ) => {
+			setTimeout( () => {
+				onClose();
+
+				if ( isDirectClose ) {
+					trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
+				}
+			}, 200 );
+		},
+		[ onClose ]
+	);
 
 	const onFormSubmit = useCallback( () => {
 		if ( ! content ) {
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_stats_user_feedback_form_submit', {
-				feedback: content,
-			} )
-		);
-
 		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
 		submitFeedback( {
 			source_url: sourceUrl,
 			product_name: 'Jetpack Stats',
 			feedback: content,
-			is_testing: true,
+			is_testing: false,
 		} );
-	}, [ dispatch, content, submitFeedback ] );
+
+		trackStatsAnalyticsEvent( 'stats_feedback_action_submit_form', {
+			feedback: content,
+		} );
+	}, [ content, submitFeedback ] );
 
 	useEffect( () => {
 		if ( isSubmissionSuccessful ) {
@@ -58,15 +93,36 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
+			updateFeedbackHibernationPeriod();
+			disableFeedbackSubmission().then( () => {
+				refetchNotices();
+			} );
+
 			handleClose();
 		}
-	}, [ dispatch, isSubmissionSuccessful, handleClose, translate ] );
+	}, [
+		dispatch,
+		isSubmissionSuccessful,
+		handleClose,
+		translate,
+		disableFeedbackSubmission,
+		updateFeedbackHibernationPeriod,
+		refetchNotices,
+	] );
 
 	return (
-		<Modal className="stats-feedback-modal" onRequestClose={ handleClose } __experimentalHideHeader>
+		<Modal
+			className="stats-feedback-modal"
+			onRequestClose={ () => {
+				handleClose( true );
+			} }
+			__experimentalHideHeader
+		>
 			<Button
 				className="stats-feedback-modal__close-button"
-				onClick={ handleClose }
+				onClick={ () => {
+					handleClose( true );
+				} }
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
@@ -88,13 +144,27 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					name="content"
 					value={ content }
 					onChange={ setContent }
+					disabled={ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback }
 				/>
 				<div className="stats-feedback-modal__button">
+					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
+						<strong>
+							<em>
+								{ translate( 'Feedback submission is currently limited to one per 5 minutes.' ) }
+							</em>
+						</strong>
+					) }
 					<StatsButton
 						primary
 						onClick={ onFormSubmit }
 						busy={ isSubmittingFeedback }
-						disabled={ isSubmittingFeedback || isSubmissionSuccessful || ! content }
+						disabled={
+							isCheckingAbilityToSubmitFeedback ||
+							! isAbleToSubmitFeedback ||
+							isSubmittingFeedback ||
+							isSubmissionSuccessful ||
+							! content
+						}
 					>
 						{ translate( 'Submit' ) }
 					</StatsButton>

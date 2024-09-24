@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -22,6 +23,7 @@ import {
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
 	isReadymadeFlow,
+	isOnboardingFlow,
 	setThemeOnSite,
 	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
@@ -69,11 +71,6 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const partnerBundle = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPartnerBundle(),
-		[]
-	);
-	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
 
@@ -84,29 +81,37 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		planCartItem,
 		selectedSiteTitle,
 		productCartItems,
+		siteUrl,
+		progress,
+		partnerBundle,
 	} = useSelect(
-		( select ) => ( {
-			domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-			domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
-			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-			selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		( select: ( arg: string ) => OnboardSelect ) => ( {
+			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
+			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+			domainCartItems: select( ONBOARD_STORE ).getDomainCartItems(),
+			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
+			selectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
+			progress: select( ONBOARD_STORE ).getProgress(),
+			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 		} ),
 		[]
 	);
 
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
+
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
-	const mergedDomainCartItems = domainCartItems.slice( 0 );
+	const mergedDomainCartItems = Array.isArray( domainCartItems ) ? domainCartItems.slice( 0 ) : [];
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
 
 	const username = useSelector( getCurrentUserName );
 
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -144,14 +149,9 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	}
 
 	const isPaidDomainItem = Boolean(
-		domainCartItem?.product_slug || domainCartItems?.some( ( el ) => el.product_slug )
+		domainCartItem?.product_slug ||
+			( Array.isArray( domainCartItems ) && domainCartItems.some( ( el ) => el.product_slug ) )
 	);
-
-	const progress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
-		[]
-	);
-	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
@@ -159,6 +159,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// These flows default to "Coming Soon"
 	if (
+		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isLinkInBioFlow( flow ) ||
@@ -188,15 +189,28 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
+	const shouldGoToCheckout = Boolean( planCartItem || mergedDomainCartItems.length );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
+			const slug = getSignupCompleteSlug();
+
+			if ( planCartItem && slug ) {
+				await addPlanToCart( slug, flow, true, theme, planCartItem );
+			}
+
 			return {
 				siteSlug: getSignupCompleteSlug(),
-				goToCheckout: true,
+				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
 			};
 		}
+
+		const siteIntent =
+			config.isEnabled( 'migration-flow/enable-white-labeled-plugin' ) &&
+			isMigrationSignupFlow( flow )
+				? 'migration'
+				: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -213,8 +227,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			useThemeHeadstart,
 			username,
 			mergedDomainCartItems,
+			siteUrl,
 			domainItem,
-			sourceSlug
+			sourceSlug,
+			siteIntent
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
@@ -252,7 +268,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		return {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
-			goToCheckout: Boolean( planCartItem || mergedDomainCartItems.length ),
+			goToCheckout: shouldGoToCheckout,
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
 		};

@@ -82,7 +82,6 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
-
 import './style.scss';
 
 export class RenderDomainsStep extends Component {
@@ -374,7 +373,7 @@ export class RenderDomainsStep extends Component {
 		const { suggestion } = this.props.step;
 
 		if ( previousState ) {
-			this.removeDomain( suggestion );
+			await this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );
 			this.props.setDesignType( this.getDesignType() );
@@ -856,27 +855,26 @@ export class RenderDomainsStep extends Component {
 			? SIGNUP_DOMAIN_ORIGIN.CUSTOM
 			: SIGNUP_DOMAIN_ORIGIN.FREE;
 
-		this.props.submitSignupStep(
-			Object.assign(
-				{
-					stepName: this.props.stepName,
-					domainItem,
-					isPurchasingItem,
-					siteUrl,
-					stepSectionName: this.props.stepSectionName,
-					domainCart,
-				},
-				this.getThemeArgs()
-			),
-			Object.assign(
-				{ domainItem, domainCart },
-				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {},
-				{ siteUrl: suggestion?.domain_name },
-				lastDomainSearched ? { lastDomainSearched } : {},
-				{ domainCart }
-			)
+		const stepDependencies = Object.assign(
+			{
+				stepName: this.props.stepName,
+				domainItem,
+				isPurchasingItem,
+				siteUrl,
+				stepSectionName: this.props.stepSectionName,
+				domainCart,
+			},
+			this.getThemeArgs()
 		);
+		const providedDependencies = Object.assign(
+			{ domainItem, domainCart },
+			useThemeHeadstartItem,
+			signupDomainOrigin ? { signupDomainOrigin } : {},
+			{ siteUrl: suggestion?.domain_name },
+			lastDomainSearched ? { lastDomainSearched } : {},
+			{ domainCart }
+		);
+		this.props.submitSignupStep( stepDependencies, providedDependencies );
 
 		const productToRemove = cart.products.find(
 			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug

@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import styled from '@emotion/styled';
 import { Button, IconType } from '@wordpress/components';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
@@ -16,6 +17,12 @@ type Props = {
 	ctaIcon?: string;
 	isErrorMessage?: boolean;
 };
+
+export const ErrorSecondLine = styled.span`
+	color: var( --studio-red-5 );
+	font-weight: 400;
+	line-height: 20px;
+`;
 
 export const MessageDisplay = ( {
 	displayBadge = false,

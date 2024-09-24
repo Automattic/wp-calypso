@@ -1,15 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.theme-a8c-for-agencies .button.client-email-button {
-	max-width: 215px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	display: block;
-
-	@include break-medium {
-		max-width: unset;
-
-	}
+.a4a-referrals-client {
+	font-size: 0.875rem;
+	color: var(--color-accent-80);
 }

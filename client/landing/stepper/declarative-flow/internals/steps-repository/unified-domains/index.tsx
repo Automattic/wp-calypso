@@ -1,8 +1,9 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { usePersistedState } from '@automattic/onboarding';
+import { useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
+import { useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
@@ -29,14 +30,13 @@ import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependenc
 import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ProvidedDependencies, StepProps } from '../../types';
+import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
 const RenderDomainsStepConnect = connect(
 	( state, { flow }: StepProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
-		const selectedSite = getSelectedSite( state );
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 		const userLoggedIn = isUserLoggedIn( state as object );
 		const currentUserSiteCount = getCurrentUserSiteCount( state as object );
@@ -49,7 +49,6 @@ const RenderDomainsStepConnect = connect(
 			currentUser: getCurrentUser( state as object ),
 			productsList,
 			productsLoaded,
-			selectedSite,
 			isDomainOnly: false,
 			sites: getSitesItems( state ),
 			userSiteCount: currentUserSiteCount,
@@ -80,22 +79,33 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
-	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
+	const [ stepState, setStepState ] =
+		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
+	const managedSiteFlowProps = useIsManagedSiteFlowProps();
+
+	const mostRecentStateRef = useRef< ProvidedDependencies | undefined >( undefined );
+
+	const updateSignupStepState = useCallback(
+		( state: ProvidedDependencies, providedDependencies: ProvidedDependencies ) => {
+			setStepState(
+				( mostRecentStateRef.current = { ...stepState, ...providedDependencies, ...state } )
+			);
+		},
+		[ stepState, setStepState ]
+	);
 
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
 				{ ...props }
+				{ ...managedSiteFlowProps }
 				page={ ( url: string ) => window.location.assign( url ) }
-				saveSignupStep={ ( state: ProvidedDependencies ) =>
-					setStepState( { ...stepState, ...state } )
-				}
-				submitSignupStep={ ( state: ProvidedDependencies ) => {
-					setStepState( { ...stepState, ...state } );
+				saveSignupStep={ updateSignupStepState }
+				submitSignupStep={ updateSignupStepState }
+				goToNextStep={ ( state: ProvidedDependencies ) => {
+					const { domainForm, suggestion, ...rest } = mostRecentStateRef.current ?? {};
+					props.navigation.submit?.( { ...rest, ...state } );
 				} }
-				goToNextStep={ ( state: ProvidedDependencies ) =>
-					props.navigation.submit?.( { ...stepState, ...state } )
-				}
 				step={ stepState }
 				flowName={ props.flow }
 				useStepperWrapper

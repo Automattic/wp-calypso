@@ -72,7 +72,6 @@ export default function useJetpackFreeButtonProps(
 		: recommendationsUrl;
 
 	if (
-		! siteWpAdminUrl &&
 		urlQueryArgs?.redirect_to &&
 		urlQueryArgs.redirect_to.toLowerCase().includes( 'wp-admin/admin.php?page=my-jetpack' )
 	) {

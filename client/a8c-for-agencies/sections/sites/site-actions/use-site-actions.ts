@@ -45,9 +45,16 @@ export default function useSiteActions( {
 	const isWPCOMSimpleSite = ! isJetpack && ! isA4AClient;
 	const isWPCOMSite = isWPCOMSimpleSite || isWPCOMAtomicSite;
 
-	const canRemove = useSelector( ( state: A4AStore ) =>
+	const hasRemoveManagedSitesCapability = useSelector( ( state: A4AStore ) =>
 		hasAgencyCapability( state, 'a4a_remove_managed_sites' )
 	);
+
+	// Whether to enable the Remove site action. The action will remove the site from the A4A dashboard but the site and its license will still exist.
+	const canRemove = ! isDevSite && hasRemoveManagedSitesCapability;
+
+	// Whether to enable the Delete site action. The action will remove the site from the A4A dashboard and delete the site and its license.
+	// We are temporarily forcing canDelete to false to hide the option while the feature is not working as expected.
+	const canDelete = isDevSite && hasRemoveManagedSitesCapability && false;
 
 	return useMemo( () => {
 		if ( ! siteValue ) {
@@ -170,8 +177,16 @@ export default function useSiteActions( {
 				className: 'is-error',
 				isEnabled: canRemove,
 			},
+			{
+				name: translate( 'Delete site' ),
+				onClick: () => handleClickMenuItem( 'delete_site' ),
+				icon: 'trash',
+				className: 'is-error',
+				isEnabled: canDelete,
+			},
 		];
 	}, [
+		canDelete,
 		canRemove,
 		dispatch,
 		isDevSite,

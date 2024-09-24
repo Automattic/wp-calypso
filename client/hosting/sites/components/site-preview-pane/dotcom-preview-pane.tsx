@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
-import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -12,6 +13,7 @@ import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_SITE_PERFORMANCE,
 	DOTCOM_LOGS_PHP,
 	DOTCOM_LOGS_WEB,
 	DOTCOM_GITHUB_DEPLOYMENTS,
@@ -32,7 +34,6 @@ interface Props {
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
-	sectionName?: string;
 }
 
 const OVERLAY_MODAL_SELECTORS = [
@@ -40,12 +41,6 @@ const OVERLAY_MODAL_SELECTORS = [
 	'#wpnc-panel.wpnt-open',
 	'div.help-center__container:not(.is-minimized)',
 ];
-
-type HeaderButtonsProps = {
-	focusRef: React.RefObject< HTMLButtonElement >;
-	itemData: ItemData;
-	closeSitePreviewPane: () => void;
-};
 
 const DotcomPreviewPane = ( {
 	site,
@@ -91,6 +86,11 @@ const DotcomPreviewPane = ( {
 				label: __( 'Monitoring' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_MONITORING ],
+			},
+			{
+				label: __( 'Performance' ),
+				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
+				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
@@ -193,9 +193,7 @@ const DotcomPreviewPane = ( {
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
-				headerButtons: ( props: HeaderButtonsProps ) => (
-					<PreviewPaneHeaderButtons { ...props } sectionName={ selectedSiteFeature } />
-				),
+				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () =>
 					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
 						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
