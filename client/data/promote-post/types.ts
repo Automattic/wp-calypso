@@ -94,6 +94,7 @@ export type PostQueryResult = {
 	page: number;
 	pages: [];
 	pageParams: [];
+	warnings?: string[];
 };
 
 export type CampaignQueryResult = {
@@ -102,4 +103,5 @@ export type CampaignQueryResult = {
 	total_pages: number;
 	page: number;
 	has_more_pages: boolean;
+	warnings?: string[];
 };
