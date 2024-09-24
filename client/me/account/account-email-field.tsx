@@ -195,7 +195,7 @@ const AccountEmailField = ( {
 		// We need to bump the scroll call to the back of the callstack, since the dialog that
 		// triggers this on close can influence the scroll window.
 		setTimeout( () => {
-			inputRef.current?.scrollIntoView( true );
+			inputRef.current?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 		} );
 	}, [ isEmailChangePending ] );
 
