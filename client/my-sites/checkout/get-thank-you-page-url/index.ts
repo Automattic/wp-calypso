@@ -109,7 +109,6 @@ export interface PostCheckoutUrlArguments {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
-	postActivationUrl?: string;
 }
 
 /**
@@ -148,7 +147,6 @@ export default function getThankYouPageUrl( {
 	domains,
 	connectAfterCheckout,
 	fromSiteSlug,
-	postActivationUrl,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -261,7 +259,6 @@ export default function getThankYouPageUrl( {
 					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 					fromSiteSlug,
 					productSlug,
-					postActivationUrl,
 				},
 				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
 			);
@@ -271,7 +268,6 @@ export default function getThankYouPageUrl( {
 					redirect_after_auth: redirectAfterAuthUrl,
 					from: 'connect-after-checkout',
 					...( config( 'env_id' ) === 'development' && { calypso_env: 'development' } ),
-					postActivationUrl,
 				},
 				`${ adminUrl }${ jetpackSiteAuthPath }`
 			);
@@ -287,7 +283,6 @@ export default function getThankYouPageUrl( {
 			{
 				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
-				postActivationUrl,
 			},
 			thankYouUrl
 		);
