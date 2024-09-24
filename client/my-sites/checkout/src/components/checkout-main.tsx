@@ -280,6 +280,7 @@ export default function CheckoutMain( {
 		connectAfterCheckout,
 		adminUrl,
 		fromSiteSlug,
+		postActivationUrl: redirectTo,
 	} );
 
 	const getThankYouUrl = useCallback( () => {

@@ -39,6 +39,7 @@ export default function useGetThankYouUrl( {
 	connectAfterCheckout,
 	adminUrl: wpAdminUrl,
 	fromSiteSlug,
+	postActivationUrl,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( getSelectedSite );
 
@@ -60,6 +61,7 @@ export default function useGetThankYouUrl( {
 			domains,
 			connectAfterCheckout,
 			fromSiteSlug,
+			postActivationUrl,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -107,4 +109,5 @@ export interface GetThankYouUrlProps {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	postActivationUrl?: string;
 }
