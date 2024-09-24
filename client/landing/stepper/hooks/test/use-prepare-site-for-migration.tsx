@@ -10,6 +10,7 @@ import {
 	usePrepareSiteForMigrationWithMigrateGuru,
 	usePrepareSiteForMigrationWithMigrateToWPCOM,
 } from '../use-prepare-site-for-migration';
+import { useSiteMigrationKey } from '../use-site-migration-key';
 import { replyWithError, replyWithSuccess } from './helpers/nock';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -288,22 +289,17 @@ describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.reply( 200, TRANSFER_COMPLETED( siteId ) )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/migrate-guru-key?http_envelope=1` )
 			.reply( errorCaptureMigrationKey );
 
-		const { result } = render( { siteId: 123 } );
+		const { result } = renderHook( () => useSiteMigrationKey( siteId ), {
+			wrapper: Wrapper( new QueryClient() ),
+		} );
 
 		await waitFor(
 			() => {
-				expect( result.current ).toEqual( {
-					completed: true,
-					error: expect.any( Error ),
-					detailedStatus: {
-						migrationKey: 'error',
-						siteTransfer: 'success',
-					},
-					migrationKey: null,
-				} );
+				expect( result.current.isError ).toBe( true );
+				expect( result.current.error ).toEqual( expect.any( Error ) );
 			},
 			{ timeout: 3000 }
 		);
