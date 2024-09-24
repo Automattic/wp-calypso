@@ -19,11 +19,6 @@ class EmailUnverifiedNotice extends Component {
 		noticeStatus: PropTypes.string,
 	};
 
-	static defaultProps = {
-		noticeText: null,
-		noticeStatus: '',
-	};
-
 	handleDismiss = () => {
 		this.setState( { error: null, emailSent: false } );
 	};

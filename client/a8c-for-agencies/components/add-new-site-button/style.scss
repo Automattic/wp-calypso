@@ -86,6 +86,11 @@
 		background-color: var(--color-neutral-0);
 	}
 
+	&.disabled {
+		cursor: not-allowed;
+		background-color: var(--color-neutral-0);
+	}
+
 	@include break-large {
 		display: flex;
 		gap: 8px;
@@ -97,6 +102,7 @@
 		flex-direction: column;
 		padding-top: 0;
 		gap: 4px;
+		background-color: var(--color-neutral-0);
 
 		@include break-large {
 			padding: 16px;

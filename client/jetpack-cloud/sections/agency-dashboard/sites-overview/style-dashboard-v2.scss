@@ -146,23 +146,6 @@
 		tr td:last-child {
 			padding-right: 8px;
 		}
-
-		.dataviews-view-table-wrapper {
-			table {
-				width: 100%;
-				max-width: 100vw;
-			}
-
-			th[data-field-id="stats"],
-			th[data-field-id="boost"],
-			th[data-field-id="backup"],
-			th[data-field-id="monitor"],
-			th[data-field-id="scan"],
-			th[data-field-id="plugins"],
-			th[data-field-id="favorite"] {
-				display: none;
-			}
-		}
 	}
 
 	@media (max-width: $break-wide) {

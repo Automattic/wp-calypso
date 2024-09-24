@@ -15,12 +15,7 @@ import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
-import {
-	displaySiteUrl,
-	isNotAtomicJetpack,
-	isStagingSite,
-	MEDIA_QUERIES,
-} from 'calypso/sites-dashboard/utils';
+import { displaySiteUrl, isNotAtomicJetpack, isStagingSite } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -35,22 +30,12 @@ type Props = {
 const SiteListTile = styled( ListTile )`
 	gap: 0;
 	margin-inline-end: 0;
-	width: 295px;
+	width: 280px;
 
 	.preview-hidden & {
 		gap: 12px;
 		max-width: 500px;
 		width: 100%;
-	}
-
-	${ MEDIA_QUERIES.hideTableRows } {
-		margin-inline-end: 12px;
-	}
-`;
-
-const ListTileLeading = styled( ThumbnailLink )`
-	${ MEDIA_QUERIES.hideTableRows } {
-		margin-inline-end: 12px;
 	}
 `;
 
@@ -106,14 +91,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						borderless
 						disabled={ site.is_deleted }
 					>
-						<ListTileLeading title={ title }>
+						<ThumbnailLink title={ title }>
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
 								fallback="first-grapheme"
 								size={ 56 }
 							/>
-						</ListTileLeading>
+						</ThumbnailLink>
 					</Button>
 				}
 				title={

@@ -11,7 +11,6 @@ export const VerticalMenuExample = () => (
 			<SocialItem service="facebook" />
 			<SocialItem service="wordpress" />
 			<SocialItem service="linkedin" />
-			<SocialItem service="twitter" />
 		</VerticalMenu>
 	</div>
 );

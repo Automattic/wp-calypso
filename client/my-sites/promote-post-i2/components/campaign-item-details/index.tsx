@@ -9,6 +9,7 @@ import { Icon, chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
+import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -39,6 +40,10 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
+import AwarenessIcon from '../campaign-objective-icons/AwarenessIcon';
+import EngagementIcon from '../campaign-objective-icons/EngagementIcon';
+import SalesIcon from '../campaign-objective-icons/SalesIcon';
+import TrafficIcon from '../campaign-objective-icons/TrafficIcon';
 import TargetLocations from './target-locations';
 
 interface Props {
@@ -112,9 +117,12 @@ export default function CampaignItemDetails( props: Props ) {
 		status,
 		ui_status,
 		campaign_stats,
+		objective,
+		objective_data,
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
+		campaign_id,
 		created_at,
 		format,
 		budget_cents,
@@ -135,13 +143,13 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const { card_name, payment_method, credits, total, orders } = billing_data || {};
+	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
-		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
+		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }_campaign-${ campaign_id }`,
 		entrypoint: 'promoted_posts-campaign-details-header',
 	} );
 
@@ -184,6 +192,38 @@ export default function CampaignItemDetails( props: Props ) {
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
+
+	const objectiveIcon = ( () => {
+		switch ( objective ) {
+			case 'traffic':
+				return <span> { TrafficIcon() } </span>;
+			case 'sales':
+				return <span> { SalesIcon() } </span>;
+			case 'awareness':
+				return <span> { AwarenessIcon() } </span>;
+			case 'engagement':
+				return <span> { EngagementIcon() } </span>;
+			default:
+				return null;
+		}
+	} )();
+
+	const objectiveFormatted = ( () => {
+		if ( ! objectiveIcon || ! objective_data ) {
+			return null;
+		}
+		return (
+			<>
+				<span> { objectiveIcon } </span>
+				<span>
+					<span className="title">{ objective_data?.title }</span>
+					{ ' - ' }
+					{ objective_data?.description }
+				</span>
+			</>
+		);
+	} )();
+
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const durationDateFormatted = getCampaignDurationFormatted(
 		start_date,
@@ -199,6 +239,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
 	const totalFormatted = `$${ formatCents( total || 0, 2 ) }`;
 	const dailyAverageSpending = budget_cents ? `${ ( budget_cents / 100 ).toFixed( 2 ) }` : '';
+	const dailyAverageSpendingFormatted = `$${ dailyAverageSpending }`;
 	const conversionsTotalFormatted = conversions_total ? conversions_total : '-';
 	const conversionValueFormatted =
 		conversion_last_currency_found && conversion_value
@@ -222,6 +263,8 @@ export default function CampaignItemDetails( props: Props ) {
 				formatNumber( durationDays, true )
 		  )
 		: '';
+
+	const isLessThanOneWeek = ! is_evergreen && activeDays < 7;
 
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
@@ -478,8 +521,47 @@ export default function CampaignItemDetails( props: Props ) {
 					</Notice>
 				) }
 
+				{ status === 'suspended' && payment_links && payment_links.length > 0 && (
+					<>
+						<Notice
+							isReskinned
+							showDismiss={ false }
+							status="is-error"
+							icon="notice-outline"
+							className="promote-post-notice campaign-item-details__notice campaign-suspended"
+							text={ translate(
+								'Your campaigns are suspended due to exceeding the credit limit. Please complete the payments using the provided links to resume your campaigns.'
+							) }
+						/>
+					</>
+				) }
+
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
+						{ status === 'suspended' && payment_links && payment_links.length > 0 && (
+							<div className="campaign-item-details__payment-links-container">
+								<div className="campaign-item-details__payment-links">
+									<div className="campaign-item-details__payment-link-row">
+										<div className="payment-link__label">{ translate( 'Date' ) }</div>
+										<div className="payment-link__label">{ translate( 'Amount' ) }</div>
+										<div>&nbsp;</div>
+									</div>
+									{ payment_links.map( ( info, index ) => (
+										<div key={ index } className="campaign-item-details__payment-link-row">
+											<div>{ moment( info.date ).format( 'MMMM DD, YYYY' ) }</div>
+											<div>${ formatNumber( info.amount ) }</div>
+											<div className="payment-link__link">
+												<ExternalLink href={ info.url } target="_blank">
+													{ translate( 'Pay' ) }
+													{ getExternalLinkIcon() }
+												</ExternalLink>
+											</div>
+										</div>
+									) ) }
+								</div>
+							</div>
+						) }
+
 						<div className="campaign-item-details__main-stats-container">
 							{ shouldShowStats && (
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
@@ -645,22 +727,39 @@ export default function CampaignItemDetails( props: Props ) {
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
-									<div>
-										<span className="campaign-item-details__label">{ __( 'Weekly budget' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? weeklyBudgetFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? (
-												/* translators: Daily average spend. dailyAverageSpending is the budget */
-												translate( 'Daily av. spend: $%(dailyAverageSpending)s', {
-													args: { dailyAverageSpending: dailyAverageSpending },
-												} )
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
+									{ isLessThanOneWeek ? (
+										<div>
+											<span className="campaign-item-details__label">
+												{ ! isLoading ? translate( 'Daily budget' ) : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? dailyAverageSpendingFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? translate( 'Daily average spend' ) : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									) : (
+										<div>
+											<span className="campaign-item-details__label">
+												{ ! isLoading ? translate( 'Weekly budget' ) : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? weeklyBudgetFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? (
+													/* translators: Daily average spend. dailyAverageSpending is the budget */
+													translate( 'Daily av. spend: $%(dailyAverageSpending)s', {
+														args: { dailyAverageSpending: dailyAverageSpending },
+													} )
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</span>
+										</div>
+									) }
+
 									<div>
 										<span className="campaign-item-details__label">
 											{ is_evergreen ? __( 'Weekly impressions' ) : __( 'Estimated impressions' ) }
@@ -690,6 +789,17 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 
 								<div className="campaign-item-details__secondary-stats-row">
+									{ objective && objectiveFormatted && (
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Campaign objective' ) }
+											</span>
+											<span className="campaign-item-details__details objective">
+												{ ! isLoading ? objectiveFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									) }
+
 									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Audience' ) }

@@ -38,6 +38,7 @@ export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
 export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
 export const A4A_TEAM_LINK = '/team';
 export const A4A_TEAM_INVITE_LINK = '/team/invite';
+export const A4A_TEAM_ACCEPT_INVITE_LINK = '/team/invite/accept';
 export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
 
 // Client
@@ -48,3 +49,4 @@ export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHOD
 export const A4A_CLIENT_CHECKOUT = '/client/checkout';
 export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
 	'https://agencieshelp.automattic.com/knowledge-base/client-billing/';
+export const EXTERNAL_WPCOM_ACCOUNT_URL = 'https://wordpress.com/me/';

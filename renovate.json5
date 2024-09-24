@@ -77,12 +77,7 @@
 			enabled: false,
 		},
 	],
-	ignoreDeps: [
-		'electron-builder',
-		// We're intentionally locking to v0.4.1, see https://github.com/Automattic/wp-calypso/pull/87956
-		// @TODO: Remove once updated to use the latest version
-		'@wordpress/dataviews',
-	],
+	ignoreDeps: [ 'electron-builder' ],
 	regexManagers: [
 		// Update the renovate-version in the action itself.
 		// See also https://github.com/renovatebot/github-action/issues/756

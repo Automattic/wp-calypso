@@ -7,7 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
@@ -38,7 +38,7 @@ import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SearchResult } from '../types';
-import { BackButton } from './back-button';
+import { BackButtonHeader } from './back-button';
 import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
@@ -69,16 +69,11 @@ const isLocaleNotSupportedInEmailSupport = ( locale: string ) => {
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
-type HelpCenterContactFormProps = {
-	onSubmit?: () => void;
-};
-
-export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
+export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
-	const { onSubmit } = props;
 	const overflow = params.get( 'overflow' ) === 'true';
 	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
 	const navigate = useNavigate();
@@ -184,6 +179,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const skipResources = params.get( 'skip-resources' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
+	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const redirectToArticle = useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
@@ -217,7 +213,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 			navigate( `/post/?${ params }` );
 		},
-		[ mode, showingGPTResponse, debouncedMessage, navigate ]
+		[ debouncedMessage, navigate ]
 	);
 
 	// this indicates the user was happy with the GPT response
@@ -274,10 +270,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		if ( wapuuFlow ) {
 			params.set( 'disable-gpt', 'true' );
 			params.set( 'show-gpt', 'false' );
-
-			if ( onSubmit ) {
-				onSubmit();
-			}
+			setOdieStorage( null ); // clear the chat id
 		}
 
 		// Domain only sites don't have plans.
@@ -433,7 +426,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 					<Icon icon={ info } size={ 18 } />
 				</button>
 				<Popover
-					className="help-center-contact-form__site-picker-privacy-popover"
+					className="help-center"
 					isVisible={ isOpen }
 					context={ ref.current }
 					position="top left"
@@ -536,7 +529,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	if ( isLoadingChatStatus ) {
 		return (
-			<div className="help-center-contact-form__loading">
+			<div className="help-center__loading">
 				<Spinner baseClassName="" />
 			</div>
 		);
@@ -548,161 +541,182 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
-			<div className="help-center__articles-page">
-				<BackButton onClick={ () => navigate( -1 ) } />
-				<HelpCenterGPT
-					redirectToArticle={ redirectToArticle }
-					onResponseReceived={ setGptResponse }
-				/>
-				<section className="contact-form-submit">
-					<Button
-						isBusy={ isFetchingGPTResponse }
-						disabled={ isCTADisabled() }
-						onClick={ handleCTA }
-						variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
-						className="help-center-contact-form__site-picker-cta"
-					>
-						{ getCTALabel() }
-					</Button>
-					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
-						<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
-							{ __( 'Close', __i18n_text_domain__ ) }
-						</Button>
-					) }
-					{ isFetchingGPTResponse && ! isGPTError && (
-						<Button variant="secondary" onClick={ handleGPTCancel }>
-							{ __( 'Cancel', __i18n_text_domain__ ) }
-						</Button>
-					) }
-					{ hasSubmittingError && (
-						<FormInputValidation
-							isError
-							text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+			<>
+				<BackButtonHeader />
+				<div className="help-center-contact-form__wrapper">
+					<div className="help-center__articles-page">
+						<HelpCenterGPT
+							redirectToArticle={ redirectToArticle }
+							onResponseReceived={ setGptResponse }
 						/>
-					) }
-				</section>
-				{ ! isFetchingGPTResponse &&
-					showingGPTResponse &&
-					[ 'CHAT', 'EMAIL' ].includes( mode ) &&
-					getHEsTraySection() }
-			</div>
+						<section className="contact-form-submit">
+							<Button
+								isBusy={ isFetchingGPTResponse }
+								disabled={ isCTADisabled() }
+								onClick={ handleCTA }
+								variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
+								className="help-center-contact-form__site-picker-cta"
+							>
+								{ getCTALabel() }
+							</Button>
+							{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
+								<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
+									{ __( 'Close', __i18n_text_domain__ ) }
+								</Button>
+							) }
+							{ isFetchingGPTResponse && ! isGPTError && (
+								<Button variant="secondary" onClick={ handleGPTCancel }>
+									{ __( 'Cancel', __i18n_text_domain__ ) }
+								</Button>
+							) }
+							{ hasSubmittingError && (
+								<FormInputValidation
+									isError
+									text={ __(
+										'Something went wrong, please try again later.',
+										__i18n_text_domain__
+									) }
+								/>
+							) }
+						</section>
+						{ ! isFetchingGPTResponse &&
+							showingGPTResponse &&
+							[ 'CHAT', 'EMAIL' ].includes( mode ) &&
+							getHEsTraySection() }
+					</div>
+				</div>
+			</>
 		);
 	}
 
-	return showingSearchResults ? (
-		<div className="help-center__articles-page">
-			<BackButton />
-			<HelpCenterSearchResults
-				onSelect={ redirectToArticle }
-				searchQuery={ message || '' }
-				openAdminInNewTab
-				placeholderLines={ 4 }
-				location="help-center-contact-form"
-			/>
-			<section className="contact-form-submit">
-				<Button
-					disabled={ isCTADisabled() }
-					onClick={ handleCTA }
-					variant="primary"
-					className="help-center-contact-form__site-picker-cta"
-				>
-					{ getCTALabel() }
-				</Button>
-				{ hasSubmittingError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
-			</section>
-			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
-		</div>
-	) : (
-		<main className="help-center-contact-form">
-			<BackButton />
-			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
-
-			{ formTitles.formDisclaimer && (
-				<p className="help-center-contact-form__site-picker-form-warning">
-					{ formTitles.formDisclaimer }
-				</p>
-			) }
-
-			<HelpCenterSitePicker
-				ownershipResult={ ownershipResult }
-				isSelfDeclaredSite={ isSelfDeclaredSite }
-				onSelfDeclaredSite={ setIsSelfDeclaredSite }
-			/>
-
-			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
-				<section>
-					<TextControl
-						className="help-center-contact-form__subject"
-						label={ __( 'Subject', __i18n_text_domain__ ) }
-						value={ subject ?? '' }
-						onChange={ setSubject }
-					/>
-				</section>
-			) }
-
-			<section>
-				<label
-					className="help-center-contact-form__label"
-					htmlFor="help-center-contact-form__message"
-				>
-					{ __( 'How can we help you today?', __i18n_text_domain__ ) }
-				</label>
-				<textarea
-					id="help-center-contact-form__message"
-					rows={ 10 }
-					value={ message ?? '' }
-					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
-					className="help-center-contact-form__message"
-				/>
-			</section>
-
-			{ mode === 'FORUM' && (
-				<section>
-					<div className="help-center-contact-form__domain-sharing">
-						<CheckboxControl
-							checked={ hideSiteInfo }
-							label={ __( 'Don’t display my site’s URL publicly', __i18n_text_domain__ ) }
-							help={ <InfoTip /> }
-							onChange={ ( value ) => setHideSiteInfo( value ) }
+	return (
+		<>
+			<BackButtonHeader />
+			<div className="help-center-contact-form__wrapper">
+				{ showingSearchResults ? (
+					<div className="help-center__articles-page">
+						<HelpCenterSearchResults
+							onSelect={ redirectToArticle }
+							searchQuery={ message || '' }
+							openAdminInNewTab
+							placeholderLines={ 4 }
+							location="help-center-contact-form"
 						/>
+						<section className="contact-form-submit">
+							<Button
+								disabled={ isCTADisabled() }
+								onClick={ handleCTA }
+								variant="primary"
+								className="help-center-contact-form__site-picker-cta"
+							>
+								{ getCTALabel() }
+							</Button>
+							{ hasSubmittingError && (
+								<FormInputValidation
+									isError
+									text={ __(
+										'Something went wrong, please try again later.',
+										__i18n_text_domain__
+									) }
+								/>
+							) }
+						</section>
+						{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 					</div>
-				</section>
-			) }
+				) : (
+					<div className="help-center-contact-form">
+						<main>
+							<h1 className="help-center-contact-form__site-picker-title">
+								{ formTitles.formTitle }
+							</h1>
 
-			<section className="contact-form-submit">
-				<Button
-					disabled={ isCTADisabled() }
-					onClick={ handleCTA }
-					variant="primary"
-					className="help-center-contact-form__site-picker-cta"
-				>
-					{ getCTALabel() }
-				</Button>
-				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
-					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+							{ formTitles.formDisclaimer && (
+								<p className="help-center-contact-form__site-picker-form-warning">
+									{ formTitles.formDisclaimer }
+								</p>
+							) }
+
+							<HelpCenterSitePicker
+								ownershipResult={ ownershipResult }
+								isSelfDeclaredSite={ isSelfDeclaredSite }
+								onSelfDeclaredSite={ setIsSelfDeclaredSite }
+							/>
+
+							{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
+								<section>
+									<TextControl
+										className="help-center-contact-form__subject"
+										label={ __( 'Subject', __i18n_text_domain__ ) }
+										value={ subject ?? '' }
+										onChange={ setSubject }
+									/>
+								</section>
+							) }
+
+							<section>
+								<label
+									className="help-center-contact-form__label"
+									htmlFor="help-center-contact-form__message"
+								>
+									{ __( 'How can we help you today?', __i18n_text_domain__ ) }
+								</label>
+								<textarea
+									id="help-center-contact-form__message"
+									rows={ 10 }
+									value={ message ?? '' }
+									onInput={ ( event ) => setMessage( event.currentTarget.value ) }
+									className="help-center-contact-form__message"
+								/>
+							</section>
+
+							{ mode === 'FORUM' && (
+								<section>
+									<div className="help-center-contact-form__domain-sharing">
+										<CheckboxControl
+											checked={ hideSiteInfo }
+											label={ __( 'Don’t display my site’s URL publicly', __i18n_text_domain__ ) }
+											help={ <InfoTip /> }
+											onChange={ ( value ) => setHideSiteInfo( value ) }
+										/>
+									</div>
+								</section>
+							) }
+						</main>
+						<div className="contact-form-submit">
+							<Button
+								disabled={ isCTADisabled() }
+								onClick={ handleCTA }
+								variant="primary"
+								className="help-center-contact-form__site-picker-cta"
+							>
+								{ getCTALabel() }
+							</Button>
+							{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
+								<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+							) }
+							{ hasSubmittingError && (
+								<FormInputValidation
+									isError
+									text={ __(
+										'Something went wrong, please try again later.',
+										__i18n_text_domain__
+									) }
+								/>
+							) }
+						</div>
+						{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+						{ ! [ 'FORUM' ].includes( mode ) && (
+							<HelpCenterSearchResults
+								onSelect={ redirectToArticle }
+								searchQuery={ message || '' }
+								openAdminInNewTab
+								placeholderLines={ 4 }
+								location="help-center-contact-form"
+							/>
+						) }
+					</div>
 				) }
-				{ hasSubmittingError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
-			</section>
-			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
-			{ ! [ 'FORUM' ].includes( mode ) && (
-				<HelpCenterSearchResults
-					onSelect={ redirectToArticle }
-					searchQuery={ message || '' }
-					openAdminInNewTab
-					placeholderLines={ 4 }
-					location="help-center-contact-form"
-				/>
-			) }
-		</main>
+			</div>
+		</>
 	);
 };

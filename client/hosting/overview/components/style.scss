@@ -16,6 +16,118 @@ $blueberry-color: #3858e9;
 	grid-template-rows: auto auto;
 	grid-column-gap: 16px;
 	grid-row-gap: 16px;
+
+	&__plan-card-header {
+		.hosting-overview__development-site-badge {
+			align-self: center;
+		}
+	}
+
+	&__actions-list {
+		list-style: none;
+		margin: 0;
+
+		.hosting-overview__action {
+			border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+			padding: $grid-unit-15 0;
+
+			svg {
+				color: var(--studio-gray-30);
+				margin-right: 8px;
+				width: 20px;
+				height: 20px;
+			}
+
+			a.hosting-overview__action-button,
+			button.hosting-overview__action-button {
+				display: flex;
+				justify-content: space-between;
+				color: var(--studio-gray-100);
+				font-family: "SF Pro Text", $sans;
+				font-size: $font-body-small;
+				line-height: 20px;
+				letter-spacing: -0.15px;
+				width: 100%;
+
+				&:visited,
+				&:hover,
+				&:active,
+				&:focus {
+					color: var(--studio-gray-100);
+					text-decoration: none;
+				}
+
+				&:not([disabled]) {
+					cursor: pointer; // Required to specify explicitly for times when no href is present but onClick is
+				}
+				&[disabled] {
+					opacity: 0.5;
+					cursor: not-allowed;
+				}
+			}
+
+			.hosting-overview__action-text {
+				display: flex;
+				align-items: center;
+
+				.hosting-overview__dashicon {
+					color: var(--studio-gray-30);
+					margin-right: 8px;
+				}
+			}
+
+			&:last-child {
+				border-bottom: none;
+			}
+
+			&:hover {
+				svg {
+					color: var(--color-primary-60);
+					fill: var(--color-primary-60);
+				}
+
+				.hosting-overview__action-button:not([disabled]) {
+					.hosting-overview__action-text,
+					.hosting-overview__dashicon {
+						color: var(--color-primary-60);
+						svg {
+							color: var(--color-primary-60);
+							fill: var(--color-primary-60);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&__development-site-badge {
+		border-radius: 4px;
+		font-family: "SF Pro", $sans;
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+		line-height: $font-size-header-small;
+	}
+
+	&__development-site-ctas {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+
+		.hosting-overview__development-site-cta-wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.hosting-overview__development-site-cta {
+				min-width: 140px;
+			}
+
+			p {
+				margin: 0;
+			}
+		}
+	}
+
 }
 
 .hosting-overview__navigation-header {
@@ -262,11 +374,11 @@ $blueberry-color: #3858e9;
 }
 
 .hosting-overview__plan-storage-footer {
-	text-align: left;
-}
-
-.hosting-overview__link-button {
 	color: var(--color-link);
+
+	a:hover {
+		color: var(--color-link-dark);
+	}
 }
 
 .hosting-overview__plan-storage-value,
@@ -295,80 +407,6 @@ $blueberry-color: #3858e9;
 	.hosting-overview__plan-storage {
 		gap: 16px;
 		margin-top: 16px;
-	}
-}
-
-.hosting-overview__actions-list {
-	list-style: none;
-	margin: 0;
-}
-
-a.hosting-overview__action-button,
-button.hosting-overview__action-button {
-	display: flex;
-	justify-content: space-between;
-	color: var(--studio-gray-100);
-	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-small;
-	line-height: 20px;
-	letter-spacing: -0.15px;
-	width: 100%;
-
-	&:visited,
-	&:hover,
-	&:active,
-	&:focus {
-		color: var(--studio-gray-100);
-		text-decoration: none;
-	}
-
-	&[disabled] {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-}
-
-.hosting-overview__action-text {
-	display: flex;
-	align-items: center;
-
-	.hosting-overview__dashicon {
-		color: var(--studio-gray-30);
-		margin-right: 8px;
-	}
-}
-
-.hosting-overview__action {
-	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
-	padding: $grid-unit-15 0;
-
-	svg {
-		color: var(--studio-gray-30);
-		margin-right: 8px;
-		width: 20px;
-		height: 20px;
-	}
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	&:hover {
-		svg {
-			color: var(--color-primary-60);
-			fill: var(--color-primary-60);
-		}
-
-		.hosting-overview__action-button:not([disabled]) {
-			.hosting-overview__action-text,
-			.hosting-overview__dashicon {
-				color: var(--color-primary-60);
-				svg {
-					color: var(--color-primary-60);
-					fill: var(--color-primary-60);
-				}
-			}
-		}
 	}
 }
 

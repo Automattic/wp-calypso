@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+# This gem is required to prevent a CircleCI-specific failure:
+# https://app.circleci.com/pipelines/github/Automattic/wp-calypso/240250/workflows/b9a0ebfa-a95c-49c7-bc02-9d673e2dc6e7/jobs/1161442
+#
+# See discussion at:
+# https://github.com/fastlane/fastlane/issues/21794#issuecomment-2021331335
+gem 'rb-readline'
+gem 'fastlane', '~> 2.221'

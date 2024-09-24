@@ -153,6 +153,9 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-new-hosted-site':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-new-hosted-site-business-only':
+			planTypes = [ TYPE_BUSINESS ];
+			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
@@ -228,7 +231,6 @@ const useGridPlans: UseGridPlansType = ( {
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
-	forceDefaultIntent,
 	highlightLabelOverrides,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -248,7 +250,7 @@ const useGridPlans: UseGridPlansType = ( {
 	} );
 	const planSlugsForIntent = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
-			intent: forceDefaultIntent ? 'plans-default-wpcom' : intent,
+			intent,
 			selectedPlan,
 			siteId,
 			hiddenPlans,

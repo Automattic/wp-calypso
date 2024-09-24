@@ -1,6 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-sidebar-menu-selected-background);
+}
+
 .checkout .a4a-layout__body,
 .checkout .a4a-layout__body-wrapper {
 	/* stylelint-disable-next-line scales/radii */
@@ -97,6 +102,10 @@
 		padding: 0;
 		border: none;
 	}
+}
+
+.checkout__tipalti-action-required-notice {
+	padding-top: 24px;
 }
 
 .checkout__summary-pricing {
@@ -250,10 +259,30 @@
 		margin-block: 4px 0;
 		color: var(--color-neutral-70);
 	}
+
+	.product-info__site-url {
+		@include a4a-font-body-md;
+		margin-block: 4px 0;
+		color: var(--color-neutral-40);
+	}
+}
+
+.product-info__placeholder {
+	@include loading-effect();
+
+	width: 100%;
+	height: 48px;
+	background-color: var(--color-neutral-0);
+	border-radius: 4px;
 }
 
 .checkout__client-referral-form {
 	padding-block-start: 48px;
+
+	input[type="text"].form-text-input:disabled,
+	.form-textarea:disabled {
+		border-color: var(--color-neutral-10);
+	}
 }
 
 .checkout__aside--client {
@@ -308,3 +337,29 @@
 	}
 }
 
+.checkout__aside-actions-wrapper {
+	display: grid;
+}
+
+.checkout__button-popover {
+	.components-popover__content {
+		width: 300px;
+
+		@include break-large {
+			width: 350px;
+		}
+	}
+
+	.a4a-popover__content {
+		width: 100%;
+
+		.a4a-popover__title {
+			@include a4a-font-heading-md;
+			color: var(--studio-gray-80);
+		}
+
+		.checkout__button-popover-description {
+			@include a4a-font-body-md;
+		}
+	}
+}

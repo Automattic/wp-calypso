@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Context, type Callback } from '@automattic/calypso-router';
 import { sitesContext } from 'calypso/a8c-for-agencies/sections/sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { addQueryArgs } from 'calypso/lib/url';
 import { JETPACK_BACKUP_ID } from '../../features';
 import {
 	backupClone,
@@ -156,7 +157,8 @@ function handleJetpackCloudRedirections() {
 	page( `/backup/:site`, ( context, next ) => {
 		const { site } = context.params;
 		//todo: get the current selected feature family instead of the hardcoded 'overview'
-		page.replace( `/sites/overview/${ site }/${ JETPACK_BACKUP_ID }`, context.state, true, true );
+		const path = addQueryArgs( context.query, `/sites/overview/${ site }/${ JETPACK_BACKUP_ID }` );
+		page.replace( path, context.state, true, true );
 		next();
 	} );
 }

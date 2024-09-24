@@ -24,6 +24,8 @@ $breakpoint-mobile: 660px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
 	$gray-60: #50575e;
 	$gray-50: #646970;
+	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
+	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
 
 	background: #fff;
 	min-height: 100%;
@@ -363,7 +365,7 @@ $breakpoint-mobile: 660px;
 
 		button.social-buttons__button.button {
 			border: 0;
-			text-align: left;
+			text-align: center;
 			padding-bottom: 0;
 			padding-left: 0;
 			padding-right: 0;
@@ -588,6 +590,10 @@ $breakpoint-mobile: 660px;
 
 	.login__form-signup-link {
 		display: none;
+	}
+
+	.login__form-password {
+		margin-top: 8px;
 	}
 
 	.auth-form__separator::before,
@@ -895,6 +901,14 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
+			.login form,
+			.signup-form {
+				max-width: 327px;
+				margin: 48px auto;
+			}
+		}
+
 		.login__form-userdata label.form-label {
 			line-height: 16px;
 		}
@@ -1051,8 +1065,44 @@ $breakpoint-mobile: 660px;
 			padding-top: 24px;
 		}
 
-		button.social-buttons__button.button {
+		.auth-form__social-buttons {
 			width: 100%;
+			.auth-form__social-buttons-container {
+				width: 100%;
+			}
+		}
+
+		.wp-login__container .is-jetpack .auth-form__social,
+		.signup-form .auth-form__social {
+			padding-left: 0;
+			padding-right: 0;
+			padding-top: 40px;
+
+			button.social-buttons__button.button {
+				width: 100%;
+				border: 1px solid var(--studio-gray-50, #646970);
+				border-radius: 2px;
+				border-color: #ccc;
+				padding: 4px 16px;
+				display: flex;
+				justify-content: stretch;
+				align-items: center;
+				align-self: center;
+				margin: 0;
+				svg {
+					margin-right: auto;
+					border: 0;
+				}
+				span {
+					text-align: center;
+					margin-left: -44px;
+					margin-right: auto;
+					font-weight: 400;
+				}
+				&:last-child {
+					margin-bottom: 16px;
+				}
+			}
 		}
 
 		// Log in link on signup page
@@ -1101,8 +1151,33 @@ $breakpoint-mobile: 660px;
 		.login__lostpassword-subtitle a {
 			line-height: inherit;
 		}
-	}
 
+		.auth-form__social-buttons-container {
+			width: 100%;
+		}
+
+		.jetpack-connect__authorize-form .jetpack-connect__logged-in-content {
+			.jetpack-connect__logged-in-bottom {
+				@media (max-width: $break-mobile) {
+					position: initial;
+					max-width: 100%;
+					padding-right: 0;
+				}
+			}
+		}
+
+		&.two-factor-auth-enabled {
+			.two-factor-authentication__verification-code-form-wrapper {
+				fieldset,
+				button,
+				.auth-form__separator,
+				.two-factor-authentication__actions,
+				.login__two-factor-footer {
+					max-width: 327px;
+				}
+			}
+		}
+	}
 
 	&.is-woo-passwordless {
 		$max-width: 327px;
@@ -1347,7 +1422,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.auth-form__social-buttons-tos {
-				margin: 0;
+				margin: 24px 0 0 0;
 
 				@media (max-width: $break-medium) {
 					max-width: $max-width;
@@ -1406,6 +1481,7 @@ $breakpoint-mobile: 660px;
 						background: var(--studio-gray-0, #f6f7f7);
 					}
 				}
+
 
 				.social-buttons__service-name {
 					font-size: 1rem;
@@ -1763,6 +1839,283 @@ $breakpoint-mobile: 660px;
 
 			@media (max-width: $break-mobile) {
 				align-items: center;
+			}
+		}
+		// /log-in/jetpack/link styles
+		.magic-login__main-content-woo-core-profiler {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			max-width: 327px;
+			margin: auto;
+			h1.magic-login__form-header {
+				font-size: rem(32px);
+				margin-bottom: 15px;
+			}
+
+			p.email-sent {
+				text-align: center;
+				font-size: rem(16px);
+				color: #757575;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 24px; /* 150% */
+			}
+
+			p.email-resend {
+				text-align: center;
+				font-size: rem(13px);
+				color: #757575;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 20px; /* 153.846% */
+				button {
+					color: var(--wp-admin-theme-color);
+					cursor: pointer;
+					&:disabled {
+						opacity: 0.5; // Reduce intensity
+						cursor: not-allowed; // Optional: change the cursor to indicate it's disabled
+					}
+				}
+			}
+
+			.magic-login__emails-list {
+				display: contents;
+				ul {
+					width: 100%;
+					li {
+						border-radius: 2px;
+						border: 1px solid #a7aaad;
+					}
+				}
+			}
+
+			svg {
+				margin: 48px 0 48px 0;
+			}
+		}
+
+	}
+
+	// Core Profiler + Passwordless
+	&.is-woocommerce-core-profiler-flow.is-woo-passwordless {
+		* {
+			font-family: $woo-sfpro-text-font;
+			font-weight: 400;
+		}
+
+		h3,
+		h1.formatted-header__title,
+		h1.magic-login__form-header {
+			font-family: $woo-sfpro-display-font;
+			font-weight: 500;
+			margin-bottom: 15px;
+		}
+
+		.login__lost-password-link {
+			color: var(--wp-admin-theme-color);
+		}
+
+		.login__form-forgot-password {
+			font-size: rem(12px);
+			text-underline-offset: 2px;
+			margin-bottom: 24px;
+		}
+
+		.login__form-account-tip {
+			display: none;
+		}
+
+		button.button.is-primary {
+			background-color: var(--wp-admin-theme-color);
+			font-family: inherit;
+			border-radius: 2px;
+			&:hover:not(:disabled) {
+				background-color: var(--wp-admin-theme-color);
+			}
+		}
+
+		.signup-form {
+			max-width: 327px;
+			margin-top: 48px;
+			label.form-label {
+				font-size: rem(11px);
+			}
+			input {
+				font-size: rem(13px);
+			}
+		}
+
+		.login__form-header-wrapper {
+			max-width: 615px;
+			text-align: center;
+		}
+
+		.jetpack-connect__main-logo {
+			@media (max-width: $break-mobile) {
+				padding-top: 0;
+			}
+		}
+
+		.formatted-header__subtitle,
+		.login__header-subtitle {
+			color: #757575;
+			text-align: center;
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 24px; /* 150% */
+			a {
+				font-weight: inherit;
+				font-size: inherit;
+				color: var(--wp-admin-theme-color);
+			}
+
+			@media (max-width: $break-mobile) {
+				text-align: start;
+				br {
+					display: none;
+				}
+			}
+		}
+
+		input[type="text"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="tel"].form-text-input {
+			border-radius: 2px;
+			border: 1px solid var(--Gutenberg-Gray-500, #bbb);
+			background: var(--Gutenberg-White, #fff);
+			&:hover,
+			&:focus {
+				border: 2px solid var(--Gutenberg-Gray-500, #bbb);
+			}
+		}
+
+		.verification-code-form__help-text,
+		.security-key-form__help-text {
+			font-size: 1rem;
+		}
+
+		.wp-login__main-footer {
+			.login__lost-password-link {
+				font-weight: inherit;
+				font-size: rem(13px);
+			}
+		}
+
+		.login form.two-factor-authentication__verification-code-form-wrapper {
+			margin-top: 15px;
+			margin-bottom: 0;
+			.two-factor-authentication__actions {
+				padding-bottom: 8px;
+				margin-bottom: 0;
+			}
+		}
+
+		.two-factor-authentication__verification-code-form-wrapper {
+			button.is-primary {
+				font-size: rem(14px);
+			}
+
+			.two-factor-authentication__actions.card {
+				padding: 36px 0 40px;
+				button {
+					color: var(--wp-admin-theme-color);
+				}
+
+				@media screen and (max-width: $break-mobile) {
+					margin-bottom: 40px;
+				}
+			}
+
+			.security-key-form__help-text {
+				p {
+					line-height: 24px;
+
+					&:first-child {
+						margin-bottom: 0;
+					}
+				}
+			}
+		}
+
+		.auth-form__social-buttons-tos {
+			color: #757575;
+			a {
+				color: var(--wp-admin-theme-color);
+				font-family: inherit;
+				line-height: 18px;
+				text-underline-offset: 2px;
+			}
+		}
+
+		.main {
+			.auth-form__social {
+				.auth-form__social-buttons .social-buttons__button.button {
+					border-radius: 2px;
+					border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
+					background: var(--black-white-white, #fff);
+					span {
+						font-size: 0.875rem;
+						letter-spacing: 0.32px;
+						font-family: $woo-sfpro-display-font;
+						font-weight: 500;
+						margin-left: 0;
+					}
+				}
+			}
+		}
+
+		.login__form-action,
+		.logged-out-form {
+			button.is-primary {
+				font-size: rem(14px);
+			}
+		}
+
+		.wp-login__container {
+			@media screen and (max-width: $break-mobile) {
+				padding-top: 24px;
+			}
+		}
+
+		.magic-login__main-content-woo-core-profiler {
+			h1 {
+				@media screen and (max-width: $break-mobile) {
+					font-weight: 500;
+				}
+			}
+			.magic-login__emails-list {
+				ul li a p {
+					font-size: rem(14px);
+				}
+			}
+		}
+
+		.login__two-factor-footer {
+			@media screen and (max-width: $break-mobile) {
+				max-width: 327px;
+				padding-left: 0;
+				padding-right: 0;
+				margin: 0 auto 0 auto;
+				align-items: baseline;
+			}
+		}
+
+		.auth-form__social {
+			.auth-form__social-buttons-container {
+				width: 100%;
+			}
+
+			.auth-form__social-buttons .social-buttons__button.button {
+				border-radius: 2px;
+				border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
+				background: var(--black-white-white, #fff);
+				span {
+					font-size: 0.875rem;
+					letter-spacing: 0.32px;
+				}
 			}
 		}
 	}

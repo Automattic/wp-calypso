@@ -1,172 +1,60 @@
-import { useTranslate } from 'i18n-calypso';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { useState } from 'react';
-import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
 import {
-	metricsNames,
-	metricsTresholds,
-	mapThresholdsToStatus,
-	metricValuations,
-} from 'calypso/performance-profiler/utils/metrics';
-import HistoryChart from '../charts/history-chart';
-import { MetricScale } from '../metric-scale';
+	Metrics,
+	PerformanceMetricsHistory,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
+import { CoreWebVitalsAccordion } from '../core-web-vitals-accordion';
+import { CoreWebVitalsAccordionV2 } from '../core-web-vitals-accordion/core-web-vitals-accordion-v2';
 import { MetricTabBar } from '../metric-tab-bar';
-import { StatusIndicator } from '../status-indicator';
+import MetricTabBarV2 from '../metric-tab-bar/metric-tab-bar-v2';
+import { CoreWebVitalsDetails } from './core-web-vitals-details';
+import { CoreWebVitalsDetailsV2 } from './core-web-vitals-details_v2';
 import './style.scss';
 
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	showV2?: boolean;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
-	const translate = useTranslate();
-	const [ activeTab, setActiveTab ] = useState< Metrics >( 'fcp' );
+	const defaultTab = props.showV2 ? 'overall' : 'fcp';
+	const [ activeTab, setActiveTab ] = useState< Metrics | null >( defaultTab );
+	const isDesktop = useDesktopBreakpoint();
 
-	const { displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
-	const value = props[ activeTab ];
-	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, value );
+	const MetricBar = props.showV2 ? MetricTabBarV2 : MetricTabBar;
+	const CoreWebVitalsDetail = props.showV2 ? CoreWebVitalsDetailsV2 : CoreWebVitalsDetails;
 
-	const { good, needsImprovement } = metricsTresholds[ activeTab as keyof typeof metricsTresholds ];
-	const formatUnit = ( value: number ) => {
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return +( value / 1000 ).toFixed( 2 );
-		}
-
-		return value;
-	};
-
-	const displayUnit = () => {
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return translate( 's', { comment: 'Used for displaying a time range in seconds, eg. 1-2s' } );
-		}
-
-		if ( [ 'inp' ].includes( activeTab ) ) {
-			return translate( 'ms', {
-				comment: 'Used for displaying a range in milliseconds, eg. 100-200ms',
-			} );
-		}
-
-		return '';
-	};
-
-	const { history } = props;
-	let metrics: number[] = history?.metrics[ activeTab ] ?? [];
-	let dates = history?.collection_period ?? [];
-
-	// last 8 weeks only
-	metrics = metrics.slice( -8 );
-	dates = dates.slice( -8 );
-
-	// the comparison is inverse here because the last value is the most recent
-	const positiveTendency = metrics[ metrics.length - 1 ] < metrics[ 0 ];
-
-	const dataAvailable = metrics.length > 0 && metrics.some( ( item ) => item !== null );
-	const historicalData = metrics.map( ( item, index ) => {
-		let formattedDate: unknown;
-		const date = dates[ index ];
-		if ( 'string' === typeof date ) {
-			formattedDate = date; // this is to ensure compability with reports before https://code.a8c.com/D159137
-		} else {
-			const { year, month, day } = date;
-			formattedDate = `${ year }-${ month }-${ day }`;
-		}
-
-		return {
-			date: formattedDate,
-			value: formatUnit( item ),
-		};
-	} );
+	const Accordion = props.showV2 ? CoreWebVitalsAccordionV2 : CoreWebVitalsAccordion;
 
 	return (
-		<div className="core-web-vitals-display">
-			<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
-			<div className="core-web-vitals-display__details">
-				<div className="core-web-vitals-display__description">
-					<span className="core-web-vitals-display__description-subheading">
-						{ metricValuations[ activeTab ][ valuation ] }
-					</span>
-					<MetricScale metricName={ activeTab } value={ value } valuation={ valuation } />
-					<div className="core-web-vitals-display__ranges">
-						<div className="range">
-							<StatusIndicator speed="good" />
-							<div className="range-description">
-								<div className="range-heading">{ translate( 'Fast' ) }</div>
-								<div className="range-subheading">
-									{ translate( '0–%(to)s%(unit)s', {
-										args: { to: formatUnit( good ), unit: displayUnit() },
-										comment: 'Displaying a time range, eg. 0-1s',
-									} ) }
-								</div>
-							</div>
-						</div>
-						<div className="range">
-							<StatusIndicator speed="needsImprovement" />
-							<div className="range-description">
-								<div className="range-heading">{ translate( 'Moderate' ) }</div>
-								<div className="range-subheading">
-									{ translate( '%(from)s–%(to)s%(unit)s', {
-										args: {
-											from: formatUnit( good ),
-											to: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										},
-										comment: 'Displaying a time range, eg. 2-3s',
-									} ) }
-								</div>
-							</div>
-						</div>
-						<div className="range">
-							<StatusIndicator speed="bad" />
-							<div className="range-description">
-								<div className="range-heading">{ translate( 'Slow' ) }</div>
-								<div className="range-subheading">
-									{ translate( '>%(from)s%(unit)s', {
-										args: {
-											from: formatUnit( needsImprovement ),
-											unit: displayUnit(),
-										},
-										comment: 'Displaying a time range, eg. >2s',
-									} ) }
-								</div>
-							</div>
-						</div>
-					</div>
-					<span className="core-web-vitals-display__description-subheading">
-						{ metricValuations[ activeTab ].heading }&nbsp;
-					</span>
-					<span className="core-web-vitals-display__description-aka">
-						{ metricValuations[ activeTab ].aka }
-					</span>
-					<p>
-						{ metricValuations[ activeTab ].explanation }
-						&nbsp;
-						<a href={ `https://web.dev/articles/${ activeTab }` }>
-							{ translate( 'Learn more ↗' ) }
-						</a>
-					</p>
-				</div>
-				<div className="core-web-vitals-display__history-graph">
-					{ dataAvailable && (
-						<span className="core-web-vitals-display__description-subheading">
-							{ positiveTendency
-								? translate( '%s has improved over the past eight weeks', {
-										args: [ displayName ],
-								  } )
-								: translate( '%s has declined over the past eight weeks', {
-										args: [ displayName ],
-								  } ) }
-						</span>
-					) }
-					<HistoryChart
-						data={ dataAvailable && historicalData }
-						range={ [
-							formatUnit( metricsTresholds[ activeTab ].good ),
-							formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
-						] }
-						width={ 550 }
-						height={ 300 }
+		<>
+			{ isDesktop && (
+				<div
+					className={ clsx( 'core-web-vitals-display', {
+						[ 'core-web-vitals-display-v2' ]: props.showV2,
+					} ) }
+				>
+					<MetricBar
+						activeTab={ activeTab ?? defaultTab }
+						setActiveTab={ setActiveTab }
+						{ ...props }
 					/>
+					<CoreWebVitalsDetail activeTab={ activeTab } { ...props } />
 				</div>
-			</div>
-		</div>
+			) }
+			{ ! isDesktop && (
+				<div className="core-web-vitals-display">
+					<Accordion activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props }>
+						<CoreWebVitalsDetail activeTab={ activeTab } { ...props } />
+					</Accordion>
+				</div>
+			) }
+		</>
 	);
 };

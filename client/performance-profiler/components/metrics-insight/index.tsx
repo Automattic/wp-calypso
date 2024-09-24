@@ -3,18 +3,27 @@ import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { useSelector } from 'react-redux';
+import {
+	FullPageScreenshot,
+	PerformanceMetricsItemQueryResponse,
+} from 'calypso/data/site-profiler/types';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
-import { tips } from 'calypso/performance-profiler/utils/tips';
+import { loggedInTips, tips } from 'calypso/performance-profiler/utils/tips';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
 
 interface MetricsInsightProps {
 	insight: PerformanceMetricsItemQueryResponse;
+	fullPageScreenshot: FullPageScreenshot;
 	onClick?: () => void;
 	index: number;
 	url?: string;
+	isWpcom: boolean;
+	hash: string;
 }
 
 const Card = styled( FoldableCard )`
@@ -34,6 +43,7 @@ const Header = styled.div`
 	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
+	width: 100%;
 
 	p {
 		display: inline;
@@ -48,31 +58,67 @@ const Header = styled.div`
 		}
 	}
 
+	.impact {
+		padding: 4px 10px;
+		border-radius: 14px;
+		border: 1px solid transparent;
+		float: right;
+		font-size: 14px;
+		color: var( --studio-black );
+
+		&.fail {
+			background-color: var( --studio-red-5 );
+		}
+
+		&.is-mobile {
+			float: none;
+			display: inline-block;
+			margin-top: 8px;
+		}
+	}
+
 	.counter {
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
+		width: 15px;
+		text-align: right;
 	}
 `;
 
 const Content = styled.div`
-	padding: 24px;
+	padding: 15px 22px;
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index } = props;
+	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash } = props;
+	// Creates a list of URLs from the insight details to be used as context for the LLM query.
+	const insightDetailsContext = insight?.details?.items?.reduce( ( context, item ) => {
+		context += `* '${ item.url }' `;
+		return context;
+	}, '' );
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
-		insight.description ?? '',
+		insight.title ?? '',
+		insightDetailsContext ?? '',
+		hash,
+		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
-	const tip = tips[ insight.id ];
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const site = useSelector( getSelectedSite );
 
-	if ( props.url && tip ) {
+	const tip = isLoggedIn && isWpcom ? loggedInTips[ insight.id ] : tips[ insight.id ];
+
+	if ( props.url && tip && ! isWpcom ) {
 		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+	}
+
+	if ( tip && isWpcom && ! site?.is_wpcom_atomic ) {
+		tip.link = '';
 	}
 
 	return (
@@ -92,12 +138,14 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		>
 			<Content>
 				<InsightContent
+					fullPageScreenshot={ fullPageScreenshot }
 					data={ {
 						...insight,
 						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
 					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
+					AIGenerated={ isEnabled( 'performance-profiler/llm' ) }
 				/>
 			</Content>
 		</Card>

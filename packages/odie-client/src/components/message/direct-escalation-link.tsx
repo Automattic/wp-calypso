@@ -2,9 +2,9 @@ import { __ } from '@wordpress/i18n';
 import { useOdieAssistantContext } from '../../context';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
-	const { navigateToContactOptions, trackEvent, isUserElegible } = useOdieAssistantContext();
+	const { navigateToContactOptions, trackEvent, isUserEligible } = useOdieAssistantContext();
 
-	if ( ! isUserElegible ) {
+	if ( ! isUserEligible ) {
 		return (
 			<div className="disclaimer">
 				{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
@@ -12,7 +12,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 					onClick={ () => {
 						trackEvent( 'chat_message_direct_escalation_link_click', {
 							message_id: messageId,
-							is_user_elegible: false,
+							is_user_eligible: false,
 						} );
 						if ( navigateToContactOptions ) {
 							navigateToContactOptions();
@@ -33,7 +33,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 				onClick={ () => {
 					trackEvent( 'chat_message_direct_escalation_link_click', {
 						message_id: messageId,
-						is_user_elegible: true,
+						is_user_eligible: true,
 					} );
 					if ( navigateToContactOptions ) {
 						navigateToContactOptions();

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
@@ -6,7 +5,10 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useExperiment } from 'calypso/lib/explat';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
@@ -18,6 +20,11 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
+import {
+	useLaunchpadDecider,
+	getLaunchpadStateBasedOnExperiment,
+	LAUNCHPAD_EXPERIMENT_NAME,
+} from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -147,10 +154,47 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
+
+		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+
+		const isDesignChoicesStepEnabled =
+			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
+
 		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
+
+		const [ isLoadingLaunchpadExperiment, launchpadExperimentAssigment ] =
+			useExperiment( LAUNCHPAD_EXPERIMENT_NAME );
+
+		const getLaunchpadScreenValue = (
+			intent: string,
+			shouldSkip: boolean
+		): 'full' | 'skipped' | 'off' => {
+			if ( ! isLaunchpadIntent( intent ) || isLaunched ) {
+				return 'off';
+			}
+
+			const launchpadState = getLaunchpadStateBasedOnExperiment(
+				isLoadingLaunchpadExperiment,
+				launchpadExperimentAssigment,
+				shouldSkip
+			);
+
+			if ( launchpadState ) {
+				return launchpadState;
+			}
+
+			// We shouldn't get here, but match the default/existing behaviour
+			if ( shouldSkip ) {
+				return 'skipped';
+			}
+
+			return 'full';
+		};
 
 		const goToFlow = ( fullStepPath: string ) => {
 			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
@@ -192,14 +236,10 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						let launchpadScreen;
-						if ( ! options.skipLaunchpad ) {
-							launchpadScreen = isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
-						} else {
-							launchpadScreen = 'skipped';
-						}
-
-						settings.launchpad_screen = launchpadScreen;
+						settings.launchpad_screen = getLaunchpadScreenValue(
+							siteIntent,
+							options.skipLaunchpad ?? false
+						);
 					}
 
 					let redirectionUrl = to;
@@ -236,6 +276,11 @@ const siteSetupFlow: Flow = {
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 		};
+
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			switch ( currentStep ) {
@@ -308,11 +353,11 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
-						const url = siteId
-							? `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`
-							: `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+						initializeLaunchpadState( { siteId, siteSlug } );
+						const url = getPostFlowUrl( { flow: intent, siteId, siteSlug } );
 						return exitFlow( url );
 					}
+
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
@@ -350,7 +395,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -498,7 +543,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );

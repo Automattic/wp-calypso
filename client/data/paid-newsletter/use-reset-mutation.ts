@@ -6,11 +6,12 @@ import {
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
+import { StepId } from './use-paid-newsletter-query';
 
 interface MutationVariables {
 	siteId: number;
 	engine: string;
-	currentStep: string;
+	currentStep: StepId;
 }
 
 export const useResetMutation = (
@@ -38,10 +39,9 @@ export const useResetMutation = (
 		},
 		...options,
 		onSuccess( ...args ) {
-			const [ , { siteId, engine, currentStep } ] = args;
-			queryClient.invalidateQueries( {
-				queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
-			} );
+			const [ data, { siteId, engine } ] = args;
+
+			queryClient.setQueryData( [ 'paid-newsletter-importer', siteId, engine ], data );
 			options.onSuccess?.( ...args );
 		},
 	} );
@@ -49,7 +49,7 @@ export const useResetMutation = (
 	const { mutate } = mutation;
 
 	const resetPaidNewsletter = useCallback(
-		( siteId: number, engine: string, currentStep: string ) =>
+		( siteId: number, engine: string, currentStep: StepId ) =>
 			mutate( { siteId, engine, currentStep } ),
 		[ mutate ]
 	);

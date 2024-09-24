@@ -37,6 +37,7 @@ const SiteLaunchNagLink = styled.a( {
 	fontSize: '12px',
 	lineHeight: '16px',
 	whiteSpace: 'nowrap',
+	color: 'var(--color-link) !important',
 } );
 
 const SiteLaunchNagText = styled.span( {

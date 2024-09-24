@@ -161,6 +161,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-details__notice {
 			margin-bottom: 24px;
+
+			&.campaign-suspended {
+				margin-bottom: 16px;
+			}
 		}
 
 		.campaign-item-details__wrapper {
@@ -170,7 +174,39 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				color: var(--studio-gray-100);
 				line-height: 1.25;
 			}
+		}
 
+		.campaign-item-details__payment-links {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			padding: 16px;
+
+			.campaign-item-details__payment-link-row {
+				display: grid;
+				grid-template-columns: 40% 40% 20%;
+
+				.payment-link__label {
+					font-size: 0.875rem;
+					font-weight: 500;
+				}
+
+				.payment-link__link {
+					justify-self: flex-end;
+					a {
+						display: flex;
+						align-items: center;
+						gap: 2px;
+
+
+						svg {
+							path {
+								fill: var(--color-primary);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -214,6 +250,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 		.campaign-item-details__main-stats-container,
+		.campaign-item-details__payment-links-container,
 		.campaign-item-details__payment-container {
 			border: 1px solid #ddd;
 			border-radius: 4px;
@@ -256,6 +293,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					}
 				}
 			}
+		}
+		.campaign-item-details__payment-links-container {
+			background: var(--studio-gray-0);
+			border: none;
 		}
 
 		.campaign-item-details__main-stats-row {
@@ -528,7 +569,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__label {
 			font-size: 0.875rem;
 			font-weight: 500;
-			margin-bottom: 5px;
+			margin-bottom: 8px;
 		}
 
 		.campaign-item-details__text {
@@ -548,6 +589,22 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			color: var(--studio-gray-50);
 			font-size: 0.875rem;
 			font-weight: 400;
+
+			&.objective {
+				display: flex;
+				align-items: center;
+				text-wrap: balance;
+
+
+				.title {
+					color: var(--studio-gray-100);
+				}
+			}
+			&.objective svg {
+				max-width: 37px;
+				max-height: 37px;
+				margin-right: 16px;
+			}
 		}
 
 	}
@@ -883,6 +940,13 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-details .campaign-item-details__notice {
 			margin-bottom: 32px;
+
+			&.campaign-suspended {
+				margin-bottom: 0;
+				border-bottom: 1px solid #ddd;
+				border-bottom-left-radius: 0;
+				border-bottom-right-radius: 0;
+			}
 		}
 
 		.campaign-item-details__secondary-stats-interests-mobile {

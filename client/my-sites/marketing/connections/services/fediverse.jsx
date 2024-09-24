@@ -15,12 +15,12 @@ function FediverseHeader() {
 	return (
 		<div>
 			<SocialLogo icon="fediverse" size={ 48 } className="sharing-service__logo" />
-			<div class="sharing-service__name">
+			<div className="sharing-service__name">
 				<h2>
 					{ translate( 'Fediverse' ) }
 					<Badge className="service__new-badge">{ translate( 'New' ) }</Badge>
 				</h2>
-				<p class="sharing-service__description">
+				<p className="sharing-service__description">
 					{ translate( 'Mastodon today, Threads tomorrow. Enter the Fediverse with ActivityPub.' ) }
 				</p>
 			</div>

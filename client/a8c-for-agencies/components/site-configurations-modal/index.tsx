@@ -6,19 +6,23 @@ import { check, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
-import useCreateWPCOMDevSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-dev-site';
+import useCreateWPCOMDevSiteMutation, {
+	APIError,
+} from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-dev-site';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { useSiteName } from './use-site-name';
 
 import './style.scss';
 
 type SiteConfigurationsModalProps = {
 	closeModal: () => void;
-	onCreateSiteSuccess: ( id: number ) => void;
+	onCreateSiteSuccess: ( id: number, isDevSite?: boolean ) => void;
 	randomSiteName: string;
 	isRandomSiteNameLoading: boolean;
 	siteId?: number;
@@ -42,6 +46,7 @@ export default function SiteConfigurationsModal( {
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();
+	const dispatch = useDispatch();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -83,6 +88,7 @@ export default function SiteConfigurationsModal( {
 			php_version: phpVersion,
 			primary_data_center: primaryDataCenter,
 			is_fully_managed_agency_site: ! allowClientsToUseSiteHelpCenter,
+			is_dev_site: isDevSite,
 		};
 		const params = {
 			...trackingParams,
@@ -92,18 +98,30 @@ export default function SiteConfigurationsModal( {
 
 		recordTracksEvent( 'calypso_a4a_create_site_config_submit', trackingParams );
 
+		const handleAPIError = async ( error: APIError ) => {
+			if ( error.status === 400 ) {
+				await siteName.revalidateCurrentSiteName();
+			} else if ( error.code === 'partner_key_disabled' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'Your account is blocked from creating new developer sites. Please get in touch with our support team for assistance.'
+						)
+					)
+				);
+			} else {
+				dispatch( errorNotice( translate( 'Something went wrong. Please try again.' ) ) );
+			}
+			setIsSubmitting( false );
+		};
+
 		if ( isDevSite ) {
 			createWPCOMDevSite( params, {
 				onSuccess: ( response ) => {
-					onCreateSiteSuccess( response.site.id );
+					onCreateSiteSuccess( response.site.id, true );
 					closeModal();
 				},
-				onError: async ( error ) => {
-					if ( error.status === 400 ) {
-						await siteName.revalidateCurrentSiteName();
-						setIsSubmitting( false );
-					}
-				},
+				onError: handleAPIError,
 			} );
 		} else {
 			createWPCOMSite(
@@ -112,12 +130,7 @@ export default function SiteConfigurationsModal( {
 					onSuccess: () => {
 						onCreateSiteSuccess( siteId );
 					},
-					onError: async ( error ) => {
-						if ( error.status === 400 ) {
-							await siteName.revalidateCurrentSiteName();
-							setIsSubmitting( false );
-						}
-					},
+					onError: handleAPIError,
 				}
 			);
 		}
@@ -224,43 +237,85 @@ export default function SiteConfigurationsModal( {
 				</FormField>
 				<FormField label="">
 					<div className="configure-your-site-modal-form__allow-clients-to-use-help-center">
-						<CheckboxControl
-							id="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
-							onChange={ toggleAllowClientsToUseSiteHelpCenter }
-							checked={ allowClientsToUseSiteHelpCenter }
-							name="is_fully_managed_agency_site"
-							disabled={ isDevSite || isSubmitting }
-						/>
-						<label
-							className={ isDevSite ? 'disabled-label' : '' }
-							htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
-						>
-							{ translate(
-								'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
-								{
+						{ isDevSite ? (
+							<label className="dev-sites-label">
+								{ translate(
+									'Clients can’t access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.',
+									{
+										components: {
+											HcLink: (
+												<a
+													target="_blank"
+													href={ localizeUrl(
+														'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+													) }
+													rel="noreferrer"
+												/>
+											),
+											HfLink: (
+												<a
+													target="_blank"
+													href={ localizeUrl(
+														'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+													) }
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+								) }{ ' ' }
+								{ translate( '{{a}}Learn more.{{/a}}', {
 									components: {
-										HcLink: (
+										a: (
 											<a
 												target="_blank"
 												href={ localizeUrl(
-													'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+													'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
 												) }
-												rel="noreferrer"
-											/>
-										),
-										HfLink: (
-											<a
-												target="_blank"
-												href={ localizeUrl(
-													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
-												) }
-												rel="noreferrer"
+												rel="noopener noreferrer"
 											/>
 										),
 									},
-								}
-							) }
-						</label>
+								} ) }
+							</label>
+						) : (
+							<>
+								<CheckboxControl
+									id="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
+									onChange={ toggleAllowClientsToUseSiteHelpCenter }
+									checked={ allowClientsToUseSiteHelpCenter }
+									name="is_fully_managed_agency_site"
+									disabled={ isSubmitting }
+								/>
+								<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
+									{ translate(
+										'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+										{
+											components: {
+												HcLink: (
+													<a
+														target="_blank"
+														href={ localizeUrl(
+															'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+														) }
+														rel="noreferrer"
+													/>
+												),
+												HfLink: (
+													<a
+														target="_blank"
+														href={ localizeUrl(
+															'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+														) }
+														rel="noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</label>
+							</>
+						) }
 					</div>
 				</FormField>
 				<div className="configure-your-site-modal-form__footer">

@@ -72,7 +72,6 @@ import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
 import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
-import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -81,8 +80,10 @@ const Settings = ( {
 	currentRoute,
 	domain,
 	domains,
+	isFetchingNameservers,
 	isLoadingPurchase,
 	isLoadingNameservers,
+	isUpdatingNameservers,
 	loadingNameserversError,
 	nameservers,
 	dns,
@@ -147,9 +148,7 @@ const Settings = ( {
 		if ( ! domain ) {
 			return null;
 		}
-		if ( ! isSecuredWithUs( domain ) ) {
-			return null;
-		}
+
 		if (
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.type === domainTypes.TRANSFER ||
@@ -159,20 +158,14 @@ const Settings = ( {
 		}
 
 		return (
-			<Accordion
-				title={ translate( 'Domain security', { textOnly: true } ) }
-				subtitle={ getSslReadableStatus( domain ) }
-				key="security"
+			<DomainSecurityDetails
+				domain={ domain }
+				sslStatus={ domain.sslStatus }
+				selectedSite={ selectedSite }
+				purchase={ purchase }
+				isLoadingPurchase={ isLoadingPurchase }
 				isDisabled={ domain.isMoveToNewSitePending }
-				expanded={ queryParams.get( 'ssl-open' ) === 'true' }
-			>
-				<DomainSecurityDetails
-					domain={ domain }
-					selectedSite={ selectedSite }
-					purchase={ purchase }
-					isLoadingPurchase={ isLoadingPurchase }
-				/>
-			</Accordion>
+			/>
 		);
 	};
 
@@ -716,7 +709,14 @@ const Settings = ( {
 			return null;
 		}
 
-		return <DnssecCard domain={ domain } />;
+		return (
+			<DnssecCard
+				domain={ domain }
+				nameservers={ nameservers }
+				isUpdatingNameservers={ isUpdatingNameservers }
+				isLoadingNameservers={ isLoadingNameservers || isFetchingNameservers }
+			/>
+		);
 	};
 
 	const renderMainContent = () => {

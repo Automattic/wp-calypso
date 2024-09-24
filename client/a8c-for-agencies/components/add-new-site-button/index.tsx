@@ -71,6 +71,7 @@ export default function AddNewSiteButton( {
 		heading,
 		description,
 		isBanner,
+		disabled,
 		buttonProps,
 		extraContent,
 	}: {
@@ -79,13 +80,17 @@ export default function AddNewSiteButton( {
 		heading: string;
 		description: string | TranslateResult;
 		isBanner?: boolean;
+		disabled?: boolean;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
 		return (
 			<Button
 				{ ...buttonProps }
-				className={ clsx( 'site-selector-and-importer__popover-button', { banner: isBanner } ) }
+				className={ clsx( 'site-selector-and-importer__popover-button', {
+					banner: isBanner,
+					disabled,
+				} ) }
 				borderless
 			>
 				<div className={ clsx( 'site-selector-and-importer__popover-button-icon', iconClassName ) }>
@@ -202,15 +207,16 @@ export default function AddNewSiteButton( {
 			{ devSitesEnabled && (
 				<div className="site-selector-and-importer__popover-column">
 					{ menuItem( {
-						icon: <img src={ devSiteBanner } alt="WordPress.com Development Site" />,
-						heading: translate( 'WordPress.com Development Site' ),
+						icon: <img src={ devSiteBanner } alt="Start Building for Free" />,
+						heading: translate( 'Start Building for Free' ),
 						description: translate(
-							'Try our hosting for free indefinitely.{{br/}}Only pay when you launch.',
+							'Develop up to 5 WordPress.com sites at{{nbsp/}}once with free development licenses.{{br/}}Only pay when you launch!',
 							{
-								components: { br: <br /> },
-								comment: 'br is a line break',
+								components: { br: <br />, nbsp: <>&nbsp;</> },
+								comment: 'br is a line break, nbsp is a non-breaking space character',
 							}
 						),
+						disabled: ! hasAvailableDevSites,
 						isBanner: true,
 						buttonProps: {
 							onClick: () => {
@@ -231,17 +237,12 @@ export default function AddNewSiteButton( {
 						extraContent: (
 							<div>
 								<div className="site-selector-and-importer__popover-site-count">
-									{ translate(
-										'%(pendingSites)d site available',
-										'%(pendingSites)d sites available',
-										{
-											args: {
-												pendingSites: availableDevSites,
-											},
-											count: availableDevSites,
-											comment: '%(pendingSites)s is the number of sites available.',
-										}
-									) }
+									{ translate( '%(pendingSites)d of 5 free licenses available', {
+										args: {
+											pendingSites: availableDevSites,
+										},
+										comment: '%(pendingSites)s is the number of free licenses available.',
+									} ) }
 								</div>
 								<div
 									className={ clsx( 'site-selector-and-importer__popover-development-site-cta', {

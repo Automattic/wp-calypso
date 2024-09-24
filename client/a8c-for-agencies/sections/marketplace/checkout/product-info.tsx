@@ -16,6 +16,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 		productInfo?.productSlug && getProductIcon( { productSlug: productInfo?.productSlug } );
 	let productTitle = title;
 	let productDescription = productInfo?.lightboxDescription || productInfo?.tagline;
+	let siteUrls;
 
 	if ( product.family_slug === 'pressable-hosting' ) {
 		const presablePlan = getPressablePlan( product.slug );
@@ -58,6 +59,21 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 				comment: 'The `install` are the count of WordPress installs.',
 			}
 		);
+
+		const formattedSiteUrls = product.siteUrls?.map( ( siteUrl ) =>
+			siteUrl.replace( /^https?:\/\//, '' )
+		);
+
+		siteUrls = product.siteUrls?.length
+			? translate( 'Site: %(sitesList)s', 'Sites: %(sitesList)s', {
+					count: product.siteUrls.length,
+					args: {
+						sitesList: formattedSiteUrls?.join( ',' ) ?? '',
+					},
+					context: 'site URLs in the plan description',
+					comment: 'The `sitesList` is the list of site URLs in the plan description.',
+			  } )
+			: '';
 	}
 
 	if ( ! productDescription ) {
@@ -93,6 +109,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					<span className="product-info__count">{ countInfo }</span>
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
+				{ product.licenseId && siteUrls && <p className="product-info__site-url">{ siteUrls }</p> }
 			</div>
 		</div>
 	);

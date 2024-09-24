@@ -21,10 +21,6 @@
 		color: var(--color-jetpack-50);
 	}
 
-	.dataviews-view-table__actions-column {
-		display: none;
-	}
-
 	thead {
 		th.sites-dataviews__site {
 			background: var(--color-light-backdrop);
@@ -56,8 +52,6 @@
 		}
 
 		&:hover {
-			background: var(--color-neutral-0);
-
 			.site-set-favorite__favorite-icon,
 			.components-checkbox-control__input {
 				opacity: 1;
@@ -219,38 +213,5 @@
 			width: unset !important;
 			margin-right: 0 !important;
 		}
-	}
-}
-
-
-.dataviews-wrapper {
-	.dataviews-no-results,
-	.dataviews-loading {
-		padding-top: 1rem;
-		text-align: center;
-	}
-
-	.spinner-wrapper {
-		display: none;
-	}
-
-}
-
-.dataviews-wrapper:has(.dataviews-loading) {
-	.spinner-wrapper {
-		display: block;
-	}
-	.dataviews-loading p {
-		display: none;
-	}
-
-	.dataviews-view-table-wrapper {
-		height: 0 !important;
-	}
-}
-
-.dataviews-wrapper:has(.dataviews-no-results) {
-	.spinner-wrapper {
-		display: none;
 	}
 }

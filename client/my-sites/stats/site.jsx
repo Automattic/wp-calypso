@@ -58,6 +58,7 @@ import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import StatsModuleVideos from './features/modules/stats-videos';
+import StatsFeedbackController from './feedback';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -239,6 +240,7 @@ class StatsSite extends Component {
 			supportsDevicesStatsFeature,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			supportUserFeedback,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -808,6 +810,7 @@ class StatsSite extends Component {
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+				{ supportUserFeedback && <StatsFeedbackController siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
@@ -948,6 +951,7 @@ export default connect(
 			supportsUTMStats,
 			supportsDevicesStats,
 			isOldJetpack,
+			supportUserFeedback,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
 		// Determine if the default date range should be forced to 7 days.
@@ -975,6 +979,7 @@ export default connect(
 			supportsPlanUsage,
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
+			supportUserFeedback,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
 		};

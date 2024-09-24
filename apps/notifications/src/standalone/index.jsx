@@ -33,7 +33,7 @@ let store = { dispatch: () => {}, getState: () => {} };
 const customEnhancer = ( next ) => ( reducer, initialState ) =>
 	( store = next( reducer, initialState ) );
 
-const customMiddleware = {
+const ACTION_HANDLERS = {
 	APP_IS_READY: [ () => sendMessage( { action: 'iFrameReady' } ) ],
 	APP_RENDER_NOTES: [
 		( st, { latestType, newNoteCount } ) =>
@@ -163,7 +163,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	return (
 		<Notifications
 			customEnhancer={ customEnhancer }
-			customMiddleware={ customMiddleware }
+			actionHandlers={ ACTION_HANDLERS }
 			isShowing={ isShowing }
 			isVisible={ isVisible }
 			locale={ locale }

@@ -53,6 +53,7 @@ class DatePicker extends PureComponent {
 		onDayTouchEnd: PropTypes.func,
 		onDayTouchMove: PropTypes.func,
 		rootClassNames: PropTypes.object,
+		useArrowNavigation: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -71,6 +72,7 @@ class DatePicker extends PureComponent {
 		onDayTouchEnd: noop,
 		onDayTouchMove: noop,
 		rootClassNames: {},
+		useArrowNavigation: false,
 	};
 
 	isSameDay( d0, d1 ) {
@@ -247,7 +249,7 @@ class DatePicker extends PureComponent {
 				localeUtils={ this.getLocaleUtils() }
 				onMonthChange={ this.props.onMonthChange }
 				showOutsideDays={ this.props.showOutsideDays }
-				navbarElement={ <DatePickerNavBar /> }
+				navbarElement={ <DatePickerNavBar useArrowNavigation={ this.props.useArrowNavigation } /> }
 				selectedDays={ this.props.selectedDays }
 				numberOfMonths={ this.props.numberOfMonths }
 			/>

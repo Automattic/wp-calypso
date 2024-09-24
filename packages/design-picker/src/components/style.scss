@@ -310,20 +310,18 @@
 	}
 
 	.theme-card {
-		&:hover,
-		&:focus-within {
-			.theme-card__image-container {
-				border-color: #a7aaad;
+		.theme-card--is-active {
+			&:hover,
+			&:focus-within {
+				.theme-card__image-container {
+					border-color: #a7aaad;
+				}
 			}
-		}
-
-		.theme-card__image-container {
-			border-color: rgba(0, 0, 0, 0.12);
 		}
 	}
 
 	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after,
-	.theme-card .theme-card__image:hover::after {
+	.theme-card--is-actionable .theme-card__image:hover::after {
 		background-color: rgba(255, 255, 255, 0.72);
 	}
 }

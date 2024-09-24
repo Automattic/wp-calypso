@@ -1,22 +1,17 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-import {
-	A4A_MARKETPLACE_PRODUCTS_LINK,
-	A4A_SITES_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
-import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import SitesDashboardContext from '../sites-dashboard-context';
 
 import './style.scss';
 
@@ -28,8 +23,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
-	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
-	const { refetch: refetchPendingSites } = useFetchPendingSites();
+	const { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName } = useRandomSiteName();
 
 	const [ tourStepRef, setTourStepRef ] = useState< HTMLElement | null >( null );
 	const [ showConfigurationModal, setShowConfigurationModal ] = useState( false );
@@ -38,16 +32,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 		setShowConfigurationModal( ! showConfigurationModal );
 	}, [ showConfigurationModal ] );
 
-	const { setRecentlyCreatedSiteId } = useContext( SitesDashboardContext );
-
-	const onCreateSiteSuccess = useCallback(
-		( id: number ) => {
-			refetchPendingSites();
-			setRecentlyCreatedSiteId( id );
-			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
-		},
-		[ refetchPendingSites ]
-	);
+	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 

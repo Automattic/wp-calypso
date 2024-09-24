@@ -7,7 +7,7 @@ import { Card } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
-import { useState, useRef, useEffect, useCallback, FC } from 'react';
+import { useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -48,39 +48,16 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}, [] );
 
 	const nodeRef = useRef< HTMLDivElement >( null );
-
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
-	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
 
 	const onDismiss = useCallback( () => {
-		setIsVisible( false );
+		handleClose();
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setIsVisible ] );
-
-	const toggleVisible = () => {
-		if ( ! isVisible ) {
-			handleClose();
-			// after calling handleClose, reset the visibility state to default
-			setIsVisible( true );
-		}
-	};
-
-	const animationProps = {
-		style: {
-			animation: isMobile
-				? `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`
-				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
-			// These are overwritten by the openingCoordinates.
-			// They are set to avoid Help Center from not loading on the page.
-			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
-			...openingCoordinates,
-		},
-		onAnimationEnd: toggleVisible,
-	};
+	}, [ handleClose ] );
 
 	const focusReturnRef = useFocusReturn();
 
@@ -116,7 +93,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
+					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }

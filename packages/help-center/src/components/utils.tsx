@@ -4,13 +4,13 @@ import type { ContactOption } from '../types';
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
 	contactOptionEventName?: string,
-	isUserElegible?: boolean
+	isUserEligible?: boolean
 ) => {
 	if ( contactOptionEventName ) {
 		recordTracksEvent( contactOptionEventName, {
 			location: 'help-center',
 			contact_option: contactOption,
-			is_user_elegible: isUserElegible,
+			is_user_eligible: isUserEligible,
 		} );
 	}
 };

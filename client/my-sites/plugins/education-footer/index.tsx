@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -29,13 +30,21 @@ const EducationFooterContainer = styled.div`
 
 	> div:first-child {
 		padding: 0;
+		margin-bottom: 18px;
+
+		@media ( max-width: 660px ) {
+			padding: 0 16px;
+		}
 
 		.wp-brand-font {
 			font-size: var( --scss-font-title-medium );
 		}
+	}
 
-		> div:first-child {
-			margin-bottom: 24px;
+	.plugin-how-to-guides {
+		@media ( min-width: 1280px ) {
+			justify-content: flex-start;
+			gap: 18px;
 		}
 	}
 
@@ -43,10 +52,22 @@ const EducationFooterContainer = styled.div`
 		display: flex;
 		width: calc( 33% - 10px );
 
-		@media ( max-width: 660px ) {
-			display: block;
+		@media ( max-width: 960px ) {
 			width: 100%;
 			margin-top: 10px;
+
+			> div:first-child {
+				padding: 16px;
+			}
+		}
+
+		> div:first-child:hover {
+			border-color: var( --studio-gray-30 );
+		}
+
+		div {
+			width: 100%;
+			text-wrap: pretty;
 		}
 	}
 `;
@@ -135,15 +156,27 @@ const EducationFooter = () => {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
 	const dispatch = useDispatch();
+	const { openArticleInHelpCenter } = useOpenArticleInHelpCenter();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const onClickLinkCard = useCallback(
-		( content_type: string ) => {
+		( content_type: string, url: string ) => ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_educational_content_click', { content_type } )
 			);
+			if ( isLoggedIn ) {
+				e.preventDefault();
+				openArticleInHelpCenter( url );
+			}
 		},
-		[ dispatch ]
+		[ dispatch, openArticleInHelpCenter, isLoggedIn ]
 	);
+
+	const links = {
+		websiteBuilding: localizeUrl( 'https://wordpress.com/support/plugins/' ),
+		customization: localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ),
+		seo: localizeUrl( 'https://wordpress.com/support/plugins/find-and-choose-plugins/' ),
+	};
 
 	return (
 		<EducationFooterContainer>
@@ -151,54 +184,44 @@ const EducationFooter = () => {
 				title={ __( 'Get started with plugins' ) }
 				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
 			/>
-			<ThreeColumnContainer>
+			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard
-					external
-					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+							{ __( 'What Are WordPress Plugins? Everything You Need to Know as a Beginner' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
-					) }
+					url={ links.websiteBuilding }
 					border="var(--studio-gray-5)"
-					onClick={ () => onClickLinkCard( 'website_building' ) }
+					onClick={ onClickLinkCard( 'website_building', links.websiteBuilding ) }
 				/>
 				<LinkCard
-					external
-					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
+							{ __(
+								"How to Install Plugins on Your WordPress.com site: The Complete Beginner's Guide"
+							) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
-					) }
+					url={ links.customization }
 					border="var(--studio-gray-5)"
-					onClick={ () => onClickLinkCard( 'customization' ) }
+					onClick={ onClickLinkCard( 'customization', links.customization ) }
 				/>
 				<LinkCard
-					external
-					target="_blank"
 					title={
 						<CardText color="var(--studio-gray-100)">
-							{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+							{ __( 'How to Find and Choose the Best WordPress Plugins (Useful for All Sites)' ) }
 						</CardText>
 					}
 					titleMarginBottom="16px"
 					cta={ <ReadMoreLink /> }
-					url={ localizeUrl(
-						'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
-					) }
+					url={ links.seo }
 					border="var(--studio-gray-5)"
-					onClick={ () => onClickLinkCard( 'seo' ) }
+					onClick={ onClickLinkCard( 'seo', links.seo ) }
 				/>
 			</ThreeColumnContainer>
 		</EducationFooterContainer>
@@ -208,12 +231,7 @@ const EducationFooter = () => {
 function ReadMoreLink() {
 	const { __ } = useI18n();
 
-	return (
-		<CardText color="var(--studio-blue-50)">
-			{ __( 'Read More' ) }
-			<Gridicon icon="external" size={ 12 } />
-		</CardText>
-	);
+	return <CardText color="var(--studio-blue-50)">{ __( 'Learn more' ) }</CardText>;
 }
 
 export default EducationFooter;

@@ -1,15 +1,21 @@
 import styled from '@emotion/styled';
 
 export const PaymentMethodLogos = styled.span`
+	display: flex;
 	flex: 1;
-	transform: translateY( 3px );
-	text-align: right;
+	flex-wrap: wrap;
+	gap: 5px;
+	text-align: end;
+	align-items: center;
+	justify-content: flex-start;
 
-	.rtl & {
-		text-align: left;
+	&.credit-card__logos svg {
+		display: inline-block;
+		height: 26px;
+		width: 42px;
 	}
 
-	svg {
-		display: inline-block;
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+		justify-content: flex-end;
 	}
 `;

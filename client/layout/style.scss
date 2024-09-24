@@ -73,10 +73,10 @@ body.command-palette-modal-open {
 		margin: 0;
 	}
 
-	// Themes sets it own padding/margin
-	.is-section-theme &,
+	// Themes sets its own padding/margin when there is no sidebar
+	.is-section-theme.has-no-sidebar &,
 	.is-section-themes.has-no-sidebar &,
-	.theme-default .layout.is-section-theme &,
+	.theme-default .layout.is-section-theme.has-no-sidebar &,
 	.theme-default .layout.is-section-themes.has-no-sidebar &,
 	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
 		padding: 0;
@@ -117,7 +117,7 @@ body.command-palette-modal-open {
 			padding-left: 24px;
 		}
 
-		.is-section-theme &,
+		.is-section-theme.has-no-sidebar &,
 		.is-section-themes.has-no-sidebar & {
 			padding: 0;
 			margin: 0;

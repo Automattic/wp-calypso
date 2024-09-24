@@ -305,7 +305,7 @@ export function redirectToHostingPromoIfNotAtomic( context, next ) {
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
-	if ( ! isAtomicSite ) {
+	if ( ! isAtomicSite || site.plan?.expired ) {
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
@@ -372,5 +372,12 @@ export const setSelectedSiteIdByOrigin = ( context, next ) => {
 		context.store.dispatch( setSelectedSiteId( originSiteId ) );
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
 	}
+	next();
+};
+
+/**
+ * This function is only used to provide API compatibility for the sections that use shared controllers.
+ */
+export const ssrSetupLocale = ( _context, next ) => {
 	next();
 };

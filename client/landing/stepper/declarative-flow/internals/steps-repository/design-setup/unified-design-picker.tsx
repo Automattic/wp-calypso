@@ -44,7 +44,8 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
@@ -127,6 +128,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
+
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-picker' );
+
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
 
@@ -922,6 +927,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
 			oldHighResImageLoading={ oldHighResImageLoading }
+			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
+			siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
+			showActiveThemeBadge={ intent !== 'build' }
 		/>
 	);
 
@@ -936,7 +944,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ handleBackClick }
+			goBack={ intent === 'update-design' ? submit : handleBackClick }
 		/>
 	);
 };

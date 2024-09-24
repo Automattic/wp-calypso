@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -18,6 +17,8 @@ import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-co
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
+import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
 import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
@@ -41,7 +42,7 @@ type NeedsSetupSite = {
 };
 
 export default function NeedSetup( { licenseKey }: Props ) {
-	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
+	const { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName } = useRandomSiteName();
 	const translate = useTranslate();
 	const [ currentSiteConfigurationId, setCurrentSiteConfigurationId ] = useState< number | null >(
 		null
@@ -56,6 +57,8 @@ export default function NeedSetup( { licenseKey }: Props ) {
 	const { data: pendingSites, isFetching, refetch: refetchPendingSites } = useFetchPendingSites();
 
 	const { mutate: createWPCOMSite, isPending: isCreatingSite } = useCreateWPCOMSiteMutation();
+
+	const { trackSiteId } = useTrackProvisioningSites();
 
 	const allAvailableSites =
 		pendingSites?.filter(
@@ -135,13 +138,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 				features.wpcom_atomic.state === 'provisioning' && !! features.wpcom_atomic.license_key
 		);
 
-	const onCreateSiteSuccess = useCallback(
-		( id: number ) => {
-			refetchPendingSites();
-			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
-		},
-		[ refetchPendingSites ]
-	);
+	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
 
 	const onCreateSiteWithConfig = useCallback(
 		( id: number ) => {
@@ -158,12 +155,13 @@ export default function NeedSetup( { licenseKey }: Props ) {
 				{
 					onSuccess: () => {
 						refetchPendingSites();
-						page( addQueryArgs( A4A_SITES_LINK, { created_site: id, migration: true } ) );
+						trackSiteId( id, { migration: true } );
+						page( A4A_SITES_LINK );
 					},
 				}
 			);
 		},
-		[ createWPCOMSite, refetchPendingSites ]
+		[ createWPCOMSite, refetchPendingSites, trackSiteId ]
 	);
 
 	return (

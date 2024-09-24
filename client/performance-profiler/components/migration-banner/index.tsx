@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import MigrationBannerImg from 'calypso/assets/images/performance-profiler/migration-banner-img.png';
@@ -6,8 +7,9 @@ import { LogoBar } from '../logo-bar';
 
 import './style.scss';
 
-export const MigrationBanner = ( props: { url: string } ) => {
+export const MigrationBanner = ( props: { url: string; onClick: () => void } ) => {
 	const translate = useTranslate();
+	const isDesktop = useDesktopBreakpoint();
 
 	return (
 		<div className="performance-profiler-migration-banner">
@@ -19,16 +21,18 @@ export const MigrationBanner = ( props: { url: string } ) => {
 							<div className="title">
 								{ translate( 'Scale without Limits, Perform without Compromise' ) }
 							</div>
-							<div className="subtitle">
-								{ translate(
-									'Managed WordPress hosting designed for scalable, lightning-fast speed anywhere in the world, whatever you throw at it.'
-								) }
-							</div>
-							<div className="subtitle">
-								{ translate(
-									'Get {{span}}50% off our Business plan{{/span}} for an entire year when you migrate your site.',
-									{ components: { span: <span className="highlight" /> } }
-								) }
+							<div className="subtitles">
+								<div className="subtitle">
+									{ translate(
+										'Managed WordPress hosting designed for scalable, lightning-fast speed anywhere in the world, whatever you throw at it.'
+									) }
+								</div>
+								<div className="subtitle">
+									{ translate(
+										'Get {{span}}50% off our Business plan{{/span}} for an entire year when you migrate your site.',
+										{ components: { span: <span className="highlight" /> } }
+									) }
+								</div>
 							</div>
 						</div>
 						<div className="features">
@@ -49,6 +53,7 @@ export const MigrationBanner = ( props: { url: string } ) => {
 							<Button
 								variant="primary"
 								href={ `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard` }
+								onClick={ props.onClick }
 							>
 								{ translate( 'Migrate your site' ) }
 							</Button>
@@ -62,15 +67,17 @@ export const MigrationBanner = ( props: { url: string } ) => {
 							</Button>
 						</div>
 					</div>
-					<div className="illustration">
-						<img
-							src={ MigrationBannerImg }
-							width={ 514 }
-							alt={ translate(
-								'Image showing WordPress.com connecting sections of the web world'
-							) }
-						/>
-					</div>
+					{ isDesktop && (
+						<div className="illustration">
+							<img
+								src={ MigrationBannerImg }
+								width={ 514 }
+								alt={ translate(
+									'Image showing WordPress.com connecting sections of the web world'
+								) }
+							/>
+						</div>
+					) }
 				</div>
 				<p className="trusted-by">{ translate( 'Trusted by 160 million worldwide' ) }</p>
 			</div>

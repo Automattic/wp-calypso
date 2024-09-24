@@ -46,7 +46,8 @@ import getBootstrappedUser from 'calypso/server/user-bootstrap';
 import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
@@ -603,6 +604,12 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 	if ( Array.isArray( section.links ) ) {
 		section.links.forEach( ( link ) => req.context.store.dispatch( setDocumentHeadLink( link ) ) );
+	}
+
+	if ( Array.isArray( section.meta ) ) {
+		// Append section specific meta tags.
+		const meta = getDocumentHeadMeta( req.context.store.getState() ).concat( section.meta );
+		req.context.store.dispatch( setDocumentHeadMeta( meta ) );
 	}
 	next();
 };

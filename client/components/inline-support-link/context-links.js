@@ -8,8 +8,8 @@ const contextLinks = {
 		post_id: 80368,
 	},
 	'admin-interface-style': {
-		link: 'https://wordpress.com/support/dashboard/#set-the-admin-interface-style',
-		post_id: 137,
+		link: 'https://wordpress.com/support/set-your-admin-interface-style/',
+		post_id: 386651,
 	},
 	advertising: {
 		link: 'https://wordpress.com/support/promote-a-post/',
@@ -356,6 +356,10 @@ const contextLinks = {
 	'hosting-configuration': {
 		link: 'https://wordpress.com/support/hosting-configuration/',
 		post_id: 160841,
+	},
+	'site-icons': {
+		link: 'https://wordpress.com/support/site-icons/',
+		post_id: 1327,
 	},
 };
 
