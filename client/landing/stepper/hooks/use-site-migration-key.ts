@@ -10,6 +10,16 @@ const isWhiteLabeledPluginEnabled = () => {
 	return config.isEnabled( 'migration-flow/enable-white-labeled-plugin' );
 };
 
+const migrationKeyRetry = ( failureCount, error ) => {
+	if ( ! isWhiteLabeledPluginEnabled() ) {
+		return false;
+	}
+
+	if ( failureCount >= 20 ) {
+		throw error;
+	}
+};
+
 const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
 	if ( isWhiteLabeledPluginEnabled() ) {
 		return wpcom.req.get(
@@ -34,7 +44,7 @@ export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 	return useQuery( {
 		queryKey: [ 'site-migration-key', siteId ],
 		queryFn: () => getMigrationKey( siteId! ),
-		retry: isWhiteLabeledPluginEnabled ? true : false,
+		retry: migrationKeyRetry,
 		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
 		refetchOnWindowFocus: false,
