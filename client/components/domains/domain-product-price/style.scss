@@ -6,7 +6,6 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-	justify-content: end;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-end;
@@ -137,7 +136,15 @@
 }
 
 .featured-domain-suggestions {
+	.domain-suggestion__content {
+		flex-wrap: wrap;
+		.domain-registration-suggestion__title-info {
+			width: 100%;
+		}
+	}
+
 	.domain-product-price {
+		align-items: baseline;
 		.is-section-domains & {
 			padding-left: 0;
 		}

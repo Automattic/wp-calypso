@@ -67,9 +67,11 @@
 		display: flex;
 		flex-basis: auto;
 		flex-direction: column;
-		justify-content: center;
 		flex-grow: 1;
 		margin-top: 0;
+		@media (min-width: 660px) {
+			flex-direction: row;
+		}
 	}
 
 	.domain-registration-suggestion__title,
@@ -78,7 +80,6 @@
 	.domain-registration-suggestion__match-reasons {
 		flex: 0 0 auto;
 		align-self: flex-start;
-		width: 100%;
 	}
 
 	.domain-registration-suggestion__title {
@@ -112,17 +113,12 @@
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		margin: 0;
-		justify-content: flex-start;
-
+		flex-grow: 1;
 		body.is-section-signup.is-white-signup & {
 			align-items: flex-start;
 			margin-top: 12px;
 		}
 
-		body.is-section-stepper & {
-			align-items: flex-start;
-			margin-top: 12px;
-		}
 	}
 
 	.domain-registration-suggestion__badges {
@@ -184,7 +180,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	background: #fff;
 	border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 	padding: 16px 20px;
-
+	flex-direction: column-reverse;
 	@include break-mobile {
 		border-radius: 4px;
 		margin-bottom: 12px;

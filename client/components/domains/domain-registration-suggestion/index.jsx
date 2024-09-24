@@ -277,7 +277,6 @@ class DomainRegistrationSuggestion extends Component {
 
 		return (
 			<div className="domain-registration-suggestion__title-info">
-				{ this.renderBadges() }
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
@@ -454,6 +453,7 @@ class DomainRegistrationSuggestion extends Component {
 				showStrikedOutPrice={ showStrikedOutPrice }
 				isReskinned={ isReskinned }
 			>
+				{ this.renderBadges() }
 				{ this.renderDomain() }
 				{ this.renderMatchReason() }
 			</DomainSuggestion>
