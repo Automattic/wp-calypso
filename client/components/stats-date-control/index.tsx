@@ -146,7 +146,14 @@ const StatsDateControl = ( {
 						buttonRef: RefObject< typeof Button >;
 					} ) => {
 						return (
-							<Button onClick={ onTriggerClick } ref={ buttonRef }>
+							<Button
+								onClick={ () => {
+									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+									recordTracksEvent( `${ event_from }_stats_date_picker_trigger_clicked` ); // Tracking event
+									onTriggerClick();
+								} }
+								ref={ buttonRef }
+							>
 								{ getButtonLabel() }
 								<Icon className="gridicon" icon={ calendar } />
 							</Button>
