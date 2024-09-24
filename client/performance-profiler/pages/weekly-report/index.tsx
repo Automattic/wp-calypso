@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useLeadMutation } from 'calypso/data/site-profiler/use-lead-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	MessageDisplay,
 	ErrorSecondLine,
@@ -20,6 +21,15 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 	useEffect( () => {
 		mutate();
 	}, [ mutate ] );
+
+	useEffect( () => {
+		if ( isSuccess ) {
+			recordTracksEvent( 'calypso_performance_profiler_emails_subscribe', {
+				url,
+				hash,
+			} );
+		}
+	}, [ isSuccess, url, hash ] );
 
 	const secondaryMessage = translate(
 		'You can stop receiving performance reports at any time by clicking the Unsubscribe link in the email footer.'
@@ -73,7 +83,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 						{ args: [ siteUrl.host ], components: { strong: <strong /> } }
 					) }
 					ctaText={ translate( '← Back to speed test' ) }
-					ctaHref="/speed-test"
+					ctaHref={ `/speed-test-tool?url=${ url }&hash=${ hash }` }
 					ctaIcon="arrow-left"
 					secondaryMessage={ secondaryMessage }
 				/>

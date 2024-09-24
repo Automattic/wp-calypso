@@ -1,29 +1,38 @@
-import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
-import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { PerformanceReport as PerformanceReportObject } from 'calypso/data/site-profiler/types';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
-import { Tab } from './device-tab-control';
+import { PerformanceReportLoading } from './PerformanceReportLoading';
+import { ReportError } from './ReportError';
 
 interface PerformanceReportProps {
-	wpcom_performance_url?: { url: string; hash: string };
-	activeTab: Tab;
+	performanceReport?: PerformanceReportObject;
+	url: string;
+	hash: string;
+	isLoading: boolean;
+	isError: boolean;
+	onRetestClick(): void;
+	pageTitle: string;
+	filter?: string;
+	onFilterChange?( fitler: string ): void;
 }
 
 export const PerformanceReport = ( {
-	wpcom_performance_url,
-	activeTab,
+	isLoading,
+	isError,
+	onRetestClick,
+	performanceReport,
+	url,
+	hash,
+	pageTitle,
+	filter,
+	onFilterChange,
 }: PerformanceReportProps ) => {
-	const { url = '', hash = '' } = wpcom_performance_url || {};
+	if ( isError ) {
+		return <ReportError onRetestClick={ onRetestClick } />;
+	}
 
-	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
-	const { final_url: finalUrl } = basicMetrics || {};
-	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
-
-	const mobileReport =
-		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
-	const desktopReport =
-		typeof performanceInsights?.desktop === 'string' ? undefined : performanceInsights?.desktop;
-
-	const performanceReport = activeTab === 'mobile' ? mobileReport : desktopReport;
+	if ( isLoading ) {
+		return <PerformanceReportLoading isSavedReport={ !! hash } pageTitle={ pageTitle } />;
+	}
 
 	if ( ! performanceReport ) {
 		return null;
@@ -32,11 +41,14 @@ export const PerformanceReport = ( {
 	return (
 		<PerformanceProfilerDashboardContent
 			performanceReport={ performanceReport }
-			url={ finalUrl ?? url }
+			url={ url }
 			hash={ hash }
+			showV2
+			filter={ filter }
 			displayThumbnail={ false }
 			displayNewsletterBanner={ false }
 			displayMigrationBanner={ false }
+			onRecommendationsFilterChange={ onFilterChange }
 		/>
 	);
 };

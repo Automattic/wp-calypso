@@ -1,8 +1,14 @@
-import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	getPlan,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
@@ -18,20 +24,39 @@ export default function ThemeTierCommunityBadge() {
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 
+	const planSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
+	const isEcommerceTrialMonthly = planSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const planTooltipName = isEcommerceTrialMonthly ? 'ecommerce' : 'business';
+
+	const getTooltipMessage = () => {
+		if ( ! isEcommerceTrialMonthly ) {
+			return createInterpolateElement(
+				translate(
+					'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
+					{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+				),
+				{
+					Link: <ThemeTierBadgeCheckoutLink plan={ planTooltipName } />,
+				}
+			);
+		}
+		if ( isEcommerceTrialMonthly ) {
+			return createInterpolateElement(
+				translate(
+					"This theme can't be installed on a trial site. Please upgrade to the <Link>%(ecommercePlanName)s plan</Link> to install this theme.",
+					{ args: { ecommercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' } }
+				),
+				{
+					Link: <ThemeTierBadgeCheckoutLink plan={ planTooltipName } />,
+				}
+			);
+		}
+	};
+
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-message">
-				{ createInterpolateElement(
-					translate(
-						'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
-						{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
-					),
-					{
-						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
-					}
-				) }
-			</div>
+			<div data-testid="upsell-message">{ getTooltipMessage() }</div>
 		</>
 	);
 

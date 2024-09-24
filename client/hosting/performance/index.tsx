@@ -10,10 +10,10 @@ import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { sitePerformance } from './controller';
 
 export default function () {
-	page( '/site-performance', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/performance', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/site-performance/:site',
+		'/sites/performance/:site',
 		siteSelection,
 		redirectToHostingPromoIfNotAtomic,
 		navigation,

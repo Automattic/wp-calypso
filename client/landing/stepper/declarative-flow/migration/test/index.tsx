@@ -401,6 +401,7 @@ describe( `${ flow.name }`, () => {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 						from: 'http://oldsite.example.com',
+						preventTicketCreation: 'true',
 					},
 				} );
 			} );
@@ -414,7 +415,31 @@ describe( `${ flow.name }`, () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com', credentials: 'skipped' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_INSTRUCTIONS_STEP', () => {
+			it( 'redirects users from SITE_MIGRATION_ASSISTED_MIGRATION to SITE_MIGRATION_CREDENTIALS when hasError is ticket-creation', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+					dependencies: { hasError: 'ticket-creation' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+						error: 'ticket-creation',
+					},
 				} );
 			} );
 		} );

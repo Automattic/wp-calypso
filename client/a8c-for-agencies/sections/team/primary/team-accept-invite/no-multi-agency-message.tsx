@@ -24,6 +24,14 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_joining_agency_click' ) );
 	};
 
+	const onContactSupportClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_contact_support_click' ) );
+	};
+
+	const onCurrentAgencyLinkClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_team_current_agency_link_click' ) );
+	};
+
 	return (
 		<>
 			<div className="team-accept-invite__heading">
@@ -65,6 +73,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 										href={ A4A_TEAM_LINK }
 										target="_blank"
 										rel="noreferrer"
+										onClick={ onCurrentAgencyLinkClick }
 									/>
 								),
 							},
@@ -108,6 +117,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					variant="link"
 					target="_blank"
 					href={ `${ A4A_OVERVIEW_LINK }#contact-support` }
+					onClick={ onContactSupportClick }
 				>
 					{ translate( 'Contact support' ) }
 					<Icon icon={ external } size={ 18 } />

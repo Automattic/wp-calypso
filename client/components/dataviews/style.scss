@@ -116,13 +116,6 @@
 			text-transform: uppercase;
 		}
 
-		svg {
-			&:not(:last-child) {
-				margin-right: 4px;
-				vertical-align: middle;
-			}
-		}
-
 		.dataviews-view-table-header-button {
 			color: inherit;
 		}

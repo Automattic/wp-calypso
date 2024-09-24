@@ -428,16 +428,33 @@ const siteMigration: Flow = {
 					if ( action === 'skip' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: fromQueryParam, siteSlug, credentials: 'skipped' },
+								{ siteId, from: fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
+				}
+
+				case STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug: {
+					const { hasError } = providedDependencies as {
+						hasError?: 'ticket-creation';
+					};
+
+					if ( hasError === 'ticket-creation' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, siteSlug, from: fromQueryParam, error: hasError },
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
+					}
 				}
 			}
 		}

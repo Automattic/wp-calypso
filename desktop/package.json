@@ -45,9 +45,9 @@
 		"lodash": "^4.17.21",
 		"playwright": "^1.37",
 		"postcss": "^8.4.5",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"webpack": "^5.91.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"webpack": "^5.94.0",
 		"webpack-cli": "^4.10.0"
 	},
 	"dependencies": {

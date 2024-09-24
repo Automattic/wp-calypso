@@ -15,6 +15,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isWooOAuth2Client,
+	isA4AOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -178,6 +179,7 @@ class HandleEmailedLinkForm extends Component {
 			activate,
 			wccomFrom,
 			isWoo,
+			isA4A,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
@@ -206,6 +208,8 @@ class HandleEmailedLinkForm extends Component {
 			buttonLabel = translate( 'Continue to Woo Express' );
 		} else if ( isWoo ) {
 			buttonLabel = translate( 'Continue to Woo.com' );
+		} else if ( isA4A ) {
+			buttonLabel = translate( 'Continue to Automattic for Agencies' );
 		} else {
 			buttonLabel = translate( 'Continue to WordPress.com' );
 		}
@@ -225,6 +229,8 @@ class HandleEmailedLinkForm extends Component {
 			title = translate( 'Update your payment details and renew your subscription' );
 		} else if ( isWooDna ) {
 			title = wooDnaConfig( initialQuery ).getServiceName();
+		} else if ( isA4A ) {
+			title = translate( 'Finish sign up using your WordPress.com account' );
 		} else {
 			title =
 				this.props.clientId === config( 'wpcom_signup_id' )
@@ -319,6 +325,7 @@ const mapState = ( state ) => {
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		isWoo: isWooOAuth2Client( oauth2Client ),
+		isA4A: isA4AOAuth2Client( oauth2Client ),
 		wccomFrom: getWccomFrom( state ),
 		oauth2Client,
 	};

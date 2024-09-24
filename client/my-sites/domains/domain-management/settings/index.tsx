@@ -80,8 +80,10 @@ const Settings = ( {
 	currentRoute,
 	domain,
 	domains,
+	isFetchingNameservers,
 	isLoadingPurchase,
 	isLoadingNameservers,
+	isUpdatingNameservers,
 	loadingNameserversError,
 	nameservers,
 	dns,
@@ -707,7 +709,14 @@ const Settings = ( {
 			return null;
 		}
 
-		return <DnssecCard domain={ domain } />;
+		return (
+			<DnssecCard
+				domain={ domain }
+				nameservers={ nameservers }
+				isUpdatingNameservers={ isUpdatingNameservers }
+				isLoadingNameservers={ isLoadingNameservers || isFetchingNameservers }
+			/>
+		);
 	};
 
 	const renderMainContent = () => {

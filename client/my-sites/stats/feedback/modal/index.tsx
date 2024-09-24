@@ -9,8 +9,8 @@ import {
 	NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL,
 	useNoticeVisibilityQuery,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useSubmitProductFeedback from './use-submit-product-feedback';
 
@@ -53,31 +53,36 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
 
-	const handleClose = useCallback( () => {
-		setTimeout( () => {
-			onClose();
-		}, 200 );
-	}, [ onClose ] );
+	const handleClose = useCallback(
+		( isDirectClose: boolean = false ) => {
+			setTimeout( () => {
+				onClose();
+
+				if ( isDirectClose ) {
+					trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
+				}
+			}, 200 );
+		},
+		[ onClose ]
+	);
 
 	const onFormSubmit = useCallback( () => {
 		if ( ! content ) {
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_stats_user_feedback_form_submit', {
-				feedback: content,
-			} )
-		);
-
 		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
 		submitFeedback( {
 			source_url: sourceUrl,
 			product_name: 'Jetpack Stats',
 			feedback: content,
-			is_testing: true,
+			is_testing: false,
 		} );
-	}, [ dispatch, content, submitFeedback ] );
+
+		trackStatsAnalyticsEvent( 'stats_feedback_action_submit_form', {
+			feedback: content,
+		} );
+	}, [ content, submitFeedback ] );
 
 	useEffect( () => {
 		if ( isSubmissionSuccessful ) {
@@ -106,10 +111,18 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	] );
 
 	return (
-		<Modal className="stats-feedback-modal" onRequestClose={ handleClose } __experimentalHideHeader>
+		<Modal
+			className="stats-feedback-modal"
+			onRequestClose={ () => {
+				handleClose( true );
+			} }
+			__experimentalHideHeader
+		>
 			<Button
 				className="stats-feedback-modal__close-button"
-				onClick={ handleClose }
+				onClick={ () => {
+					handleClose( true );
+				} }
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>

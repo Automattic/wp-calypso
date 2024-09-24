@@ -27,7 +27,7 @@ interface HostingUpsellNudgeTargetPlan {
 }
 
 interface HostingUpsellNudgeProps {
-	siteId: number;
+	siteId: number | null;
 	targetPlan?: HostingUpsellNudgeTargetPlan;
 	secondaryCallToAction?: string;
 	secondaryOnClick?: () => void;
