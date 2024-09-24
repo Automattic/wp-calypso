@@ -220,7 +220,13 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+		const {
+			translate,
+			useEmailOnboardingSubheader,
+			signupDependencies,
+			flowName,
+			deemphasizeFreePlan,
+		} = this.props;
 
 		const { segmentationSurveyAnswers } = signupDependencies;
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
@@ -256,6 +262,14 @@ export class PlansStep extends Component {
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
 			);
+		}
+
+		/**
+		 * If deemphasizeFreePlan is shown, we already show a subheader.
+		 * Returning null here hides the default subheader and prevents two subheaders from being shown.
+		 */
+		if ( deemphasizeFreePlan ) {
+			return null;
 		}
 	}
 
