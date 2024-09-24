@@ -43,7 +43,7 @@ export default function ThemeTierCommunityBadge() {
 		if ( isEcommerceTrialMonthly ) {
 			return createInterpolateElement(
 				translate(
-					'This community theme cannot be installed in a trial plan site. Please upgrade your <Link>%(ecommercePlanName)s plan</Link> on your site.',
+					"This theme can't be installed on a trial site. Please upgrade to the <Link>%(ecommercePlanName)s plan</Link> to install this theme.",
 					{ args: { ecommercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' } }
 				),
 				{

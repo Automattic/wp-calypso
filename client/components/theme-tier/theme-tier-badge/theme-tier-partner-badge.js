@@ -53,10 +53,11 @@ export default function ThemeTierPartnerBadge() {
 				}
 			);
 		}
+
 		if ( isPartnerThemePurchased && ! isThemeAllowed && isEcommerceTrialMonthly ) {
 			return createInterpolateElement(
 				translate(
-					"You have a subscription for this theme, but it's not usable on a trial plan site. Please upgrade your <link>%(ecommercePlanName)s plan</link> on your site.",
+					"You have a subscription for this theme, but it isn't usable on a trial plan site. Please upgrade to the <link>%(ecommercePlanName)s plan</link> to install this theme.",
 					{ args: { ecommercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' } }
 				),
 				{
@@ -98,7 +99,7 @@ export default function ThemeTierPartnerBadge() {
 			return createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and cannot be purchased in a trial plan site. Please upgrade your <Link>%(ecommercePlanName)s plan</Link> on your site.',
+					"This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can't be purchased on a trial site. Please upgrade to the <Link>%(ecommercePlanName)s plan</Link> to install this theme.",
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
