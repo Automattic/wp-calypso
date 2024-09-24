@@ -39,8 +39,13 @@ export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 				throw error;
 			}
 
+			if ( isWhiteLabeledPluginEnabled() ) {
+				return true;
+			}
+
 			return false;
 		},
+		retryDelay: 5000,
 		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
 		refetchOnWindowFocus: false,
