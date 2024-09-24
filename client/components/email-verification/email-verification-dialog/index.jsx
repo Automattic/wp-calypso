@@ -12,10 +12,18 @@ import {
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import './style.scss';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
+import { setUserSetting } from 'calypso/state/user-settings/actions';
+import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 
 const noop = () => {};
 
 class VerifyEmailDialog extends Component {
+	state = {
+		resendPendingStatus: false,
+	};
+
 	componentDidUpdate( prevProps ) {
 		// Close the dialog if the route changes. This dialog may be controlled by a parent
 		// component that persists between some routes, and we don't want it to remain open after
@@ -26,13 +34,13 @@ class VerifyEmailDialog extends Component {
 	}
 
 	getResendButtonLabel() {
-		if (
-			'sent' === this.props.emailVerificationStatus ||
-			'error' === this.props.emailVerificationStatus
-		) {
+		const statusToCheck = this.props.isPendingEmailChange
+			? this.state.resendPendingStatus
+			: this.props.emailVerificationStatus;
+		if ( 'sent' === statusToCheck || 'error' === statusToCheck ) {
 			return this.props.translate( 'Email Sent' );
 		}
-		if ( 'requesting' === this.props.emailVerificationStatus ) {
+		if ( 'requesting' === statusToCheck ) {
 			return <Spinner className="email-verification-dialog__confirmation-dialog-spinner" />;
 		}
 		return this.props.translate( 'Resend Email' );
@@ -43,16 +51,33 @@ class VerifyEmailDialog extends Component {
 		this.props.onClose();
 	};
 
+	verifyEmail = async () => {
+		if ( this.props.isPendingEmailChange ) {
+			// This is a hack to resend the pending change email. We resave the setting for the new
+			// pending email with its current value which will trigger the email.
+			this.props.setUserSetting( 'user_email', this.props.userSettings?.new_user_email );
+			try {
+				this.setState( { resendPendingStatus: 'requesting' } );
+				await this.props.saveUnsavedUserSettings( [ 'user_email' ] );
+				this.setState( { resendPendingStatus: 'sent' } );
+			} catch ( error ) {
+				this.setState( { resendPendingStatus: 'error' } );
+			}
+		} else {
+			this.props.verifyEmail();
+		}
+	};
+
 	getDialogButtons() {
 		return [
 			<Button
 				key="resend"
 				primary={ false }
-				disabled={ includes(
-					[ 'requesting', 'sent', 'error' ],
-					this.props.emailVerificationStatus
-				) }
-				onClick={ this.props.verifyEmail }
+				disabled={
+					includes( [ 'requesting', 'sent', 'error' ], this.props.emailVerificationStatus ) ||
+					includes( [ 'requesting', 'sent', 'error' ], this.state.resendPendingStatus )
+				}
+				onClick={ this.verifyEmail }
 			>
 				{ this.getResendButtonLabel() }
 			</Button>,
@@ -152,9 +177,13 @@ export default connect(
 		email: getCurrentUserEmail( state ),
 		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
 		currentRoute: getCurrentRoute( state ),
+		isPendingEmailChange: isPendingEmailChange( state ),
+		userSettings: getUserSettings( state ),
 	} ),
 	{
 		verifyEmail,
 		resetVerifyEmailState,
+		setUserSetting,
+		saveUnsavedUserSettings,
 	}
 )( localize( VerifyEmailDialog ) );

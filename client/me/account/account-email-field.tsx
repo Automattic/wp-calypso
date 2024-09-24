@@ -202,7 +202,6 @@ const AccountEmailField = ( {
 	// Listen for an event signalling to focus and scroll to the email field or button.
 	useEffect( () => {
 		emailFormEventEmitter.addEventListener( 'highlightInput', scrollAndFocus );
-
 		return () => {
 			emailFormEventEmitter.removeEventListener( 'highlightInput', scrollAndFocus );
 		};
