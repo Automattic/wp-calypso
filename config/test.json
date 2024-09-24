@@ -124,7 +124,6 @@
 		"settings/security/monitor": true,
 		"signup/social": true,
 		"signup/social-first": true,
-		"signup/email-subscription-flow": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
 		"stats/date-picker-calendar": true,
