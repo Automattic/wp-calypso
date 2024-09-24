@@ -328,10 +328,9 @@ $image-height: 47px;
 	.login .button.is-primary {
 		// Note: Matches primary button to `button.signup-form__submit`
 		background-color: #117ac9;
-		border-color: #0e64a5;
 		color: var(--color-text-inverted);
 		box-shadow: none;
-		border: 0;
+		border: 0 #0e64a5;
 		font-weight: 500;
 		letter-spacing: 0.32px;
 		line-height: 17px;

@@ -308,7 +308,7 @@
 		"source-map": "^0.7.3",
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",
-		"stylelint": "^14.16.1",
+		"stylelint": "^16.8.2",
 		"tslib": "^2.3.0",
 		"typescript": "^5.3.3",
 		"v8-profiler-next": "^1.10.0",
