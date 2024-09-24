@@ -2,7 +2,6 @@ import { FEATURE_SIMPLE_PAYMENTS, FEATURE_WOOP } from '@automattic/calypso-produ
 import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
@@ -89,14 +88,11 @@ export default function StoreFeaturesStep( props: Props ) {
 			fallbackSubHeaderText={ subHeaderText }
 			headerImageUrl={ null }
 			stepContent={
-				<>
-					<QuerySiteFeatures siteIds={ [ props.siteId ] } />
-					<SelectItems
-						items={ intents }
-						onSelect={ submitStoreFeatures }
-						preventWidows={ preventWidows }
-					/>
-				</>
+				<SelectItems
+					items={ intents }
+					onSelect={ submitStoreFeatures }
+					preventWidows={ preventWidows }
+				/>
 			}
 			align="left"
 			hideSkip

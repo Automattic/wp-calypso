@@ -5,7 +5,7 @@ import { requestProducts } from 'calypso/state/memberships/product-list/actions'
 
 class QueryMemberships extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestProducts: PropTypes.func,
 	};
 

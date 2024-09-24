@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
@@ -19,7 +18,6 @@ import {
 	getCouponsAndGiftsEnabledForSiteId,
 	getIsConnectedForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
-import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsCouponAddEditModal from '../components/add-edit-coupon-modal';
@@ -43,8 +41,6 @@ function CouponsList() {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ coupon, setCoupon ] = useState< Product | null >( null );
 	const site = useSelector( getSelectedSite );
-	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
-	const hasLoadedFeatures = features?.active.length > 0;
 	const coupons: Coupon[] = useSelector( ( state ) => getCouponsForSiteId( state, site?.ID ) );
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, site?.ID )
@@ -152,96 +148,84 @@ function CouponsList() {
 			<div className="memberships__products-list">
 				<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 				<QueryMembershipsCoupons siteId={ site?.ID ?? 0 } />
-				{ hasLoadedFeatures && hasStripeFeature && hasConnectedAccount && (
+				{ hasStripeFeature && hasConnectedAccount && (
 					<SectionHeader label={ translate( 'Manage coupons' ) }>
 						<Button primary compact onClick={ () => openAddEditDialog() }>
 							{ translate( 'Add a new coupon' ) }
 						</Button>
 					</SectionHeader>
 				) }
-				{ hasLoadedFeatures &&
-					coupons.map( function ( currentCoupon: Coupon ) {
-						return (
-							<CompactCard className="memberships__products-product-card" key={ currentCoupon?.ID }>
-								<div className="memberships__products-product-details">
-									<div className="memberships__products-product-title">
-										{ currentCoupon?.coupon_code }
-									</div>
-									<sub className="memberships__products-product-amount"></sub>
-									{ currentCoupon?.end_date && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">
-												{ translate( 'Expires on %s', { args: [ currentCoupon.end_date ] } ) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="warning-clear">
-												{ getDiscountBadge(
-													currentCoupon?.duration || '',
-													currentCoupon?.discount_type,
-													currentCoupon?.discount_percentage || 0
-												) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="warning-clear">
-												{ getDiscountBadge(
-													currentCoupon?.duration || '',
-													currentCoupon?.discount_type,
-													currentCoupon?.discount_value || 0,
-													currentCoupon?.discount_currency || 'USD'
-												) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.cannot_be_combined && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info-blue">
-												{ translate( 'Cannot be combined with other coupons' ) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.first_time_purchase_only && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info-green">{ translate( 'First-time order only' ) }</Badge>
-										</div>
-									) }
-									{ ( currentCoupon?.email_allow_list?.length ?? 0 ) > 0 && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info-purple">
-												{ translate( 'Limited to specific emails' ) }
-											</Badge>
-										</div>
-									) }
-									{ ( currentCoupon?.plan_ids_allow_list?.length ?? 0 ) > 0 && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info-purple">
-												{ translate( 'Limited to specific products' ) }
-											</Badge>
-										</div>
-									) }
+				{ coupons.map( ( currentCoupon: Coupon ) => (
+					<CompactCard className="memberships__products-product-card" key={ currentCoupon?.ID }>
+						<div className="memberships__products-product-details">
+							<div className="memberships__products-product-title">
+								{ currentCoupon?.coupon_code }
+							</div>
+							<sub className="memberships__products-product-amount"></sub>
+							{ currentCoupon?.end_date && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="info">
+										{ translate( 'Expires on %s', { args: [ currentCoupon.end_date ] } ) }
+									</Badge>
 								</div>
-								{ currentCoupon && currentCoupon.ID && renderEllipsisMenu( currentCoupon.ID ) }
-							</CompactCard>
-						);
-					} ) }
-				{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && hasConnectedAccount && (
+							) }
+							{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="warning-clear">
+										{ getDiscountBadge(
+											currentCoupon?.duration || '',
+											currentCoupon?.discount_type,
+											currentCoupon?.discount_percentage || 0
+										) }
+									</Badge>
+								</div>
+							) }
+							{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="warning-clear">
+										{ getDiscountBadge(
+											currentCoupon?.duration || '',
+											currentCoupon?.discount_type,
+											currentCoupon?.discount_value || 0,
+											currentCoupon?.discount_currency || 'USD'
+										) }
+									</Badge>
+								</div>
+							) }
+							{ currentCoupon?.cannot_be_combined && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="info-blue">
+										{ translate( 'Cannot be combined with other coupons' ) }
+									</Badge>
+								</div>
+							) }
+							{ currentCoupon?.first_time_purchase_only && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="info-green">{ translate( 'First-time order only' ) }</Badge>
+								</div>
+							) }
+							{ ( currentCoupon?.email_allow_list?.length ?? 0 ) > 0 && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="info-purple">{ translate( 'Limited to specific emails' ) }</Badge>
+								</div>
+							) }
+							{ ( currentCoupon?.plan_ids_allow_list?.length ?? 0 ) > 0 && (
+								<div className="memberships__coupons-coupon-badge">
+									<Badge type="info-purple">{ translate( 'Limited to specific products' ) }</Badge>
+								</div>
+							) }
+						</div>
+						{ currentCoupon && currentCoupon.ID && renderEllipsisMenu( currentCoupon.ID ) }
+					</CompactCard>
+				) ) }
+				{ showAddEditDialog && hasStripeFeature && hasConnectedAccount && (
 					<RecurringPaymentsCouponAddEditModal
 						closeDialog={ closeDialog }
 						coupon={ Object.assign( coupon ?? {}, {} ) }
 					/>
 				) }
-				{ hasLoadedFeatures && showDeleteDialog && coupon && (
+				{ showDeleteDialog && coupon && (
 					<RecurringPaymentsCouponDeleteModal closeDialog={ closeDialog } coupon={ coupon } />
-				) }
-				{ ! hasLoadedFeatures && (
-					<div className="memberships__loading">
-						<LoadingEllipsis />
-					</div>
 				) }
 			</div>
 		)

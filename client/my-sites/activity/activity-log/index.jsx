@@ -16,7 +16,6 @@ import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -479,7 +478,6 @@ class ActivityLog extends Component {
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
 				<QuerySiteSettings siteId={ siteId } />
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<QueryRewindBackups siteId={ siteId } />
 				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
@@ -603,7 +601,6 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindPolicies siteId={ siteId } /> }

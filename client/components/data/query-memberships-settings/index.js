@@ -5,7 +5,7 @@ import { requestSettings } from 'calypso/state/memberships/settings/actions';
 
 class QueryMembershipsSettings extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestEarnings: PropTypes.func,
 		source: PropTypes.string,
 	};

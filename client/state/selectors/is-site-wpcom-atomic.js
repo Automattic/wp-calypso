@@ -1,10 +1,12 @@
-import { get } from 'lodash';
+import getRawSite from './get-raw-site';
 
 /**
  * Retruns true if the questioned site is a WPCOM Atomic site.
  * @param {Object} state the global state tree
- * @param {number} siteId the questioned site ID.
+ * @param {number|undefined} siteId the questioned site ID.
  * @returns {boolean} Whether the site is a WPCOM Atomic site.
  */
-export default ( state, siteId ) =>
-	get( state, [ 'sites', 'items', siteId, 'options', 'is_wpcom_atomic' ], false );
+export default function isSiteWpcomAtomic( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	return site?.options?.is_wpcom_atomic ?? false;
+}

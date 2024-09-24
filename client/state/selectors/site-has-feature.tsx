@@ -21,5 +21,5 @@ export default function siteHasFeature(
 		return false;
 	}
 
-	return siteFeatures.active.indexOf( featureSlug ) >= 0;
+	return siteFeatures.active.includes( featureSlug );
 }

@@ -18,7 +18,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -883,9 +882,6 @@ class StatsSite extends Component {
 
 		return (
 			<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
-				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
-					<QuerySiteFeatures siteIds={ [ siteId ] } />
-				) }
 				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

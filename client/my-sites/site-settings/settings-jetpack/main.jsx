@@ -7,7 +7,6 @@ import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import BackupRetentionManagement from 'calypso/components/backup-retention-management';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -54,7 +53,6 @@ const SiteSettingsJetpack = ( {
 	return (
 		<Main className="settings-jetpack site-settings">
 			<QueryRewindState siteId={ siteId } />
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Settings' ) } />

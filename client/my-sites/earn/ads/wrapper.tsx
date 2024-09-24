@@ -13,7 +13,6 @@ import { ReactNode } from 'react';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ActionCard from 'calypso/components/action-card';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import EmptyContent from 'calypso/components/empty-content';
@@ -348,7 +347,6 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	return (
 		<div>
 			<QuerySites siteId={ site?.ID } />
-			<QuerySiteFeatures siteIds={ [ site?.ID ] } />
 			<QueryWordadsStatus siteId={ site?.ID } />
 			{ getComponentAndNotice().notice }
 			{ getComponentAndNotice().component }

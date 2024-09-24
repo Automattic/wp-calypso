@@ -3,7 +3,6 @@ import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import {
 	settingsPath,
@@ -52,7 +51,6 @@ export default ( { path } ) => {
 
 	return (
 		<>
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<JetpackSidebarMenuItems
 				path={ path }
 				showIcons

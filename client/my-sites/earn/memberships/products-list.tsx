@@ -11,15 +11,13 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import { Product } from '../types';
 import {
@@ -41,20 +39,19 @@ function ProductsList() {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
 	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
-	const site = useSelector( getSelectedSite );
-	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
-	const hasLoadedFeatures = features?.active.length > 0;
-	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
 	const hasProducts = products.length > 0;
 
 	const hasDonationsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
+		siteHasFeature( state, siteId, FEATURE_DONATIONS )
 	);
 	const hasPremiumContentFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, FEATURE_PREMIUM_CONTENT_CONTAINER )
+		siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER )
 	);
 	const hasRecurringPaymentsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, FEATURE_RECURRING_PAYMENTS )
+		siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS )
 	);
 
 	const hasStripeFeature =
@@ -144,14 +141,14 @@ function ProductsList() {
 
 	return (
 		<div className="memberships__products-list">
-			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
-			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
-			{ hasLoadedFeatures && ! hasStripeFeature && (
+			<QueryMembershipsSettings siteId={ siteId } />
+			<QueryMembershipProducts siteId={ siteId } />
+			{ ! hasStripeFeature && (
 				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
 				<UpsellNudge
 					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
-					href={ '/plans/' + site?.slug }
+					href={ '/plans/' + siteSlug }
 					showIcon
 					onClick={ () => trackUpgrade() }
 					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
@@ -163,14 +160,14 @@ function ProductsList() {
 				/>
 			) }
 
-			{ hasLoadedFeatures && hasStripeFeature && (
+			{ hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>
 			) }
-			{ hasLoadedFeatures && hasStripeFeature && ! hasProducts && (
+			{ hasStripeFeature && ! hasProducts && (
 				<Card className="memberships__products-card">
 					<div className="memberships__products-card-content">
 						<div className="memberships__products-card-title">
@@ -179,56 +176,50 @@ function ProductsList() {
 					</div>
 				</Card>
 			) }
-			{ hasLoadedFeatures &&
-				products
-					.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
-					.map( function ( currentProduct: Product ) {
-						const currentAnnualProduct = products.find(
-							( _prod: Product ) => _prod.tier === currentProduct.ID
+			{ products
+				.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
+				.map( ( currentProduct: Product ) => {
+					const currentAnnualProduct = products.find(
+						( _prod: Product ) => _prod.tier === currentProduct.ID
+					);
+					const price = formatCurrency(
+						currentProduct?.price || 0,
+						currentProduct?.currency || ''
+					);
+					let annualPrice = '';
+					if ( currentAnnualProduct ) {
+						annualPrice = formatCurrency(
+							currentAnnualProduct?.price || 0,
+							currentAnnualProduct?.currency || ''
 						);
-						const price = formatCurrency(
-							currentProduct?.price || 0,
-							currentProduct?.currency || ''
-						);
-						let annualPrice = '';
-						if ( currentAnnualProduct ) {
-							annualPrice = formatCurrency(
-								currentAnnualProduct?.price || 0,
-								currentAnnualProduct?.currency || ''
-							);
-						}
-						return (
-							<CompactCard
-								className="memberships__products-product-card"
-								key={ currentProduct?.ID }
-							>
-								<div className="memberships__products-product-details">
-									<div className="memberships__products-product-title">
-										{ currentProduct?.title }
+					}
+					return (
+						<CompactCard className="memberships__products-product-card" key={ currentProduct?.ID }>
+							<div className="memberships__products-product-details">
+								<div className="memberships__products-product-title">{ currentProduct?.title }</div>
+								<sub className="memberships__products-product-price">
+									{ getPriceFromProduct( currentProduct, price ) }
+									{ currentAnnualProduct &&
+										translate( ' (%s)', {
+											args: getPriceFromProduct( currentAnnualProduct, annualPrice ),
+										} ) }
+								</sub>
+								{ currentProduct.type === TYPE_TIER && (
+									<div className="memberships__products-product-badge">
+										<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
 									</div>
-									<sub className="memberships__products-product-price">
-										{ getPriceFromProduct( currentProduct, price ) }
-										{ currentAnnualProduct &&
-											translate( ' (%s)', {
-												args: getPriceFromProduct( currentAnnualProduct, annualPrice ),
-											} ) }
-									</sub>
-									{ currentProduct.type === TYPE_TIER && (
-										<div className="memberships__products-product-badge">
-											<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
-										</div>
-									) }
-									{ currentProduct?.type === 'donation' && (
-										<div className="memberships__products-product-badge">
-											<Badge type="info">{ translate( 'Donation' ) }</Badge>
-										</div>
-									) }
-								</div>
-								{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
-							</CompactCard>
-						);
-					} ) }
-			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && (
+								) }
+								{ currentProduct?.type === 'donation' && (
+									<div className="memberships__products-product-badge">
+										<Badge type="info">{ translate( 'Donation' ) }</Badge>
+									</div>
+								) }
+							</div>
+							{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
+						</CompactCard>
+					);
+				} ) }
+			{ showAddEditDialog && hasStripeFeature && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
@@ -237,17 +228,12 @@ function ProductsList() {
 					annualProduct={ annualProduct }
 				/>
 			) }
-			{ hasLoadedFeatures && showDeleteDialog && product && (
+			{ showDeleteDialog && product && (
 				<RecurringPaymentsPlanDeleteModal
 					closeDialog={ closeDialog }
 					product={ product }
 					annualProduct={ annualProduct }
 				/>
-			) }
-			{ ! hasLoadedFeatures && (
-				<div className="memberships__loading">
-					<LoadingEllipsis />
-				</div>
 			) }
 		</div>
 	);

@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -1275,7 +1274,6 @@ export class JetpackAuthorize extends Component {
 					} ) }
 				>
 					<div className="jetpack-connect__logged-in-form">
-						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
 						<QueryUserConnection
 							siteId={ authSiteId }

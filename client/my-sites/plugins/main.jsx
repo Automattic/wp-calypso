@@ -13,9 +13,7 @@ import { capitalize, find, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Search from 'calypso/components/search';
@@ -471,11 +469,6 @@ export class PluginsMain extends Component {
 			<>
 				<DocumentHead title={ pageTitle } />
 				<QueryPlugins siteId={ selectedSite?.ID } />
-				{ this.props.siteIds && 1 === this.props.siteIds.length ? (
-					<QuerySiteFeatures siteIds={ this.props.siteIds } />
-				) : (
-					<QueryJetpackSitesFeatures />
-				) }
 				{ this.renderPageViewTracking() }
 				<div className="plugin-management-wrapper">
 					{ ! isJetpackCloud && (

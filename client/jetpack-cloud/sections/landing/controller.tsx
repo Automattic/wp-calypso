@@ -4,7 +4,6 @@ import debugModule from 'debug';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import ManageSelectedSiteSidebar from '../sidebar-navigation/manage-selected-site';
 import Landing from './main';
@@ -29,8 +28,7 @@ const landForSiteId = ( siteId: number | null, context: Context, next: () => voi
 	// if this info isn't present, dip into an empty React page
 	// that will fetch it and then redirect using the same logic
 	const isEligible = isSiteEligibleForJetpackCloud( state, siteId as number );
-	const siteFeatures = getFeaturesBySiteId( state, siteId );
-	if ( isEligible === null || ! siteFeatures ) {
+	if ( isEligible === null ) {
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
 
 		// To make the UI feel seamless transition, we want to have the sidebar appear on the interstitial page

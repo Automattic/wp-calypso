@@ -1,44 +1,25 @@
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useMemo, useCallback } from 'react';
+import { useDispatch } from '@wordpress/data';
+import { useCallback } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 	getUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import getSiteFeatures from 'calypso/state/selectors/get-site-features';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
-import type { SiteSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface SiteCopyOptions {
 	enabled: boolean;
-}
-
-function useSafeSiteHasFeature( siteId: number | undefined, feature: string, enabled = true ) {
-	const dispatch = useReduxDispatch();
-	useEffect( () => {
-		if ( ! siteId || ! enabled ) {
-			return;
-		}
-		dispatch( fetchSiteFeatures( siteId ) );
-	}, [ dispatch, siteId, enabled ] );
-
-	return useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return false;
-		}
-		return siteHasFeature( state, siteId, feature );
-	} );
 }
 
 function getMarketplaceProducts( purchases: Purchase[] | null, siteId: number ) {
@@ -60,20 +41,10 @@ export const useSiteCopy = (
 	options: SiteCopyOptions = { enabled: true }
 ) => {
 	const userId = useSelector( getCurrentUserId );
-	const hasCopySiteFeature = useSafeSiteHasFeature(
-		site?.ID,
-		WPCOM_FEATURES_COPY_SITE,
-		options.enabled
+	const hasCopySiteFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site?.ID, WPCOM_FEATURES_COPY_SITE )
 	);
-	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
-		const siteFeatures = getSiteFeatures( state, site?.ID );
-		return siteFeatures ? siteFeatures : { isRequesting: true };
-	} );
-	const isAtomic = useSelect(
-		( select ) =>
-			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
-		[ site, options.enabled ]
-	);
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, site?.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
@@ -86,9 +57,13 @@ export const useSiteCopy = (
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
-	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
+	const shouldShowSiteCopyItem =
+		options.enabled &&
+		hasCopySiteFeature &&
+		isSiteOwner &&
+		plan &&
+		isAtomic &&
+		! isLoadingPurchases;
 
 	const startSiteCopy = useCallback( () => {
 		if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
@@ -123,21 +98,12 @@ export const useSiteCopy = (
 		[ plan, purchases, shouldShowSiteCopyItem, site?.ID ]
 	);
 
-	return useMemo(
-		() => ( {
-			shouldShowSiteCopyItem,
-			startSiteCopy,
-			resumeSiteCopy,
-			isFetching: isLoadingPurchases || isRequestingSiteFeatures,
-		} ),
-		[
-			isLoadingPurchases,
-			isRequestingSiteFeatures,
-			resumeSiteCopy,
-			shouldShowSiteCopyItem,
-			startSiteCopy,
-		]
-	);
+	return {
+		shouldShowSiteCopyItem,
+		startSiteCopy,
+		resumeSiteCopy,
+		isFetching: isLoadingPurchases,
+	};
 };
 
 export const withSiteCopy = createHigherOrderComponent(
