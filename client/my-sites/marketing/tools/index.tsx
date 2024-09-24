@@ -32,7 +32,7 @@ export const MarketingTools: FunctionComponent = () => {
 	const currentDate = new Date();
 	const shouldShowFacebook =
 		( currentDate.getFullYear() === 2024 && currentDate.getMonth() === 9 ) ||
-		config.isEnabled( 'marketing-force-facebook-display' ); // October 2024 only.
+		config.isEnabled( 'marketing-force-facebook-display' ); // October 2024 only OR if the feature flag is enabled ( dev, calypso, stage ).
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
