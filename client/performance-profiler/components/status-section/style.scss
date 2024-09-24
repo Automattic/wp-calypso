@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+
+
 .status-section {
 	font-size: $font-body-small;
 	color: #000;
@@ -17,6 +20,10 @@
 		font-weight: 500;
 		flex-shrink: 0;
 		width: 100%;
+
+		@media (max-width: $break-mobile) {
+			width: unset;
+		}
 
 		&.poor {
 			background: var(--studio-red-5);
@@ -38,5 +45,10 @@
 		a {
 			cursor: pointer;
 		}
+	}
+
+	@media (max-width: $break-mobile) {
+		flex-direction: row;
+		margin-bottom: 24px;
 	}
 }

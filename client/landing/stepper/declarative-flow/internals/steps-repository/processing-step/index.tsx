@@ -8,6 +8,7 @@ import {
 	isWooExpressFlow,
 	isTransferringHostedSiteCreationFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
+	isAnyHostingFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,8 +19,10 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
@@ -113,6 +116,13 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				submit?.( { ...destinationState, ...props.data }, ProcessingResult.SUCCESS );
 				return;
 			}
+
+			const { previousStep = '' } = props.data || {};
+
+			recordSignupProcessingScreen( flow, previousStep, {
+				is_in_hosting_flow: isAnyHostingFlow( flow ),
+				wccom_from: getWccomFrom( destinationState ),
+			} );
 
 			// Default processing handler.
 			submit?.( destinationState, ProcessingResult.SUCCESS );

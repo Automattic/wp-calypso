@@ -17,18 +17,13 @@
 	.a4a-layout__top-wrapper,
 	.a4a-layout__body {
 		> * {
-			padding-inline: 8px;
+			padding-inline: 48px;
+			max-width: none;
+			max-width: 1400px !important;
+			margin-inline: auto !important;
 
-			@include breakpoint-deprecated(">660px") {
-				padding-inline: 8px;
-			}
-
-			@include breakpoint-deprecated(">960px") {
-				padding-inline: 26px;
-			}
-
-			@include break-huge {
-				padding-inline: 64px;
+			@media (max-width: 402px) {
+				padding-inline: 24px;
 			}
 		}
 	}
@@ -555,20 +550,19 @@
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
-	@media (min-width: $break-xhuge) {
-		div.a4a-layout__viewport {
-			margin: 0 auto;
-			max-width: 1400px;
-			box-sizing: border-box;
-		}
-		.dataviews-wrapper {
-			margin: 0 auto;
-			max-width: 1400px;
-			box-sizing: border-box;
-		}
+	.dataviews-wrapper {
+		margin: 0 auto;
+		max-width: 1400px;
+		box-sizing: border-box;
+	}
+	div.a4a-layout__viewport {
+		margin: 0 auto;
+		max-width: 1400px;
+		box-sizing: border-box;
 	}
 
 	.a4a-layout-column__container {
+		margin: 0 -14px;
 		.dataviews-wrapper {
 			.dataviews-pagination {
 				@include break-large {

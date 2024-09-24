@@ -181,10 +181,10 @@
 		"prop-types": "^15.7.2",
 		"qrcode.react": "^3.1.0",
 		"qs": "^6.9.1",
-		"react": "^18.2.0",
+		"react": "^18.3.1",
 		"react-click-outside": "^3.0.1",
 		"react-day-picker": "^7.4.10",
-		"react-dom": "^18.2.0",
+		"react-dom": "^18.3.1",
 		"react-element-to-jsx-string": "^15.0.0",
 		"react-intersection-observer": "^9.4.3",
 		"react-live": "^4.1.1",
@@ -242,7 +242,7 @@
 		"ignore-loader": "^0.1.2",
 		"pkg-dir": "^5.0.0",
 		"react-router": "^6.23.1",
-		"react-test-renderer": "^18.2.0",
+		"react-test-renderer": "^18.3.1",
 		"redux-mock-store": "^1.5.4",
 		"stream-browserify": "^3.0.0"
 	}

@@ -121,8 +121,8 @@ DateRangePickerShortcuts.propTypes = {
 	currentShortcut: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 	locked: PropTypes.bool,
-	startDate: PropTypes.instanceOf( Date ),
-	endDate: PropTypes.instanceOf( Date ),
+	startDate: PropTypes.object,
+	endDate: PropTypes.object,
 };
 
 export default DateRangePickerShortcuts;

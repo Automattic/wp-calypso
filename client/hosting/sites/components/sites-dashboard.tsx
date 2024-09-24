@@ -74,6 +74,8 @@ const siteSortingKeys = [
 	{ dataView: 'site', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
+	{ dataView: 'plan', sortKey: 'plan' },
+	{ dataView: 'status', sortKey: 'status' },
 ];
 
 const DEFAULT_PER_PAGE = 50;
@@ -93,7 +95,6 @@ const SitesDashboard = ( {
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
-	sectionName,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -442,7 +443,6 @@ const SitesDashboard = ( {
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
 							changeSitePreviewPane={ changeSitePreviewPane }
-							sectionName={ sectionName }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />

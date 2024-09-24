@@ -13,7 +13,7 @@ export const PerformanceReportLoading = ( {
 	const { __ } = useI18n();
 
 	return (
-		<div css={ { display: 'flex', flexDirection: 'column', gap: '64px' } }>
+		<div className="site-performance__loader">
 			<PerformanceReportLoadingProgress
 				css={ {
 					span: {

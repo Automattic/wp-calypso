@@ -2,9 +2,12 @@
 
 import { SiteDetails } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { useEffect } from 'react';
+import { useEffect, useRef } from '@wordpress/element';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
+import recordStepComplete, {
+	type RecordStepCompleteProps,
+} from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
@@ -46,6 +49,21 @@ export const useStepRouteTracking = ( {
 	const { site, siteSlugOrId } = useSiteData();
 	const isRequestingSelectedSite = useIsRequestingSelectedSite( siteSlugOrId, site );
 	const hasRequestedSelectedSite = siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
+	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
+
+	/**
+	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
+	 * This is to ensure that the event is recorded when the user navigates away from the step.
+	 * We only record this if step-start event gets recorded and `stepCompleteEventPropsRef.current` is populated (as a result).
+	 */
+	useEffect( () => {
+		return () => {
+			if ( stepCompleteEventPropsRef.current ) {
+				recordStepComplete( stepCompleteEventPropsRef.current );
+			}
+		};
+		// IMPORTANT: Do not add dependencies to this effect, as it should only record when the component unmounts.
+	}, [] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
@@ -66,6 +84,13 @@ export const useStepRouteTracking = ( {
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 			} );
+
+			// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
+			stepCompleteEventPropsRef.current = {
+				flow: flowName,
+				step: stepSlug,
+				optionalProps: { intent },
+			};
 
 			const stepOldSlug = getStepOldSlug( stepSlug );
 

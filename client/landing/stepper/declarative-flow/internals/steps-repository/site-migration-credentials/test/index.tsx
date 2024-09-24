@@ -128,13 +128,20 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( wpcomRequest ).not.toHaveBeenCalled();
 	} );
 
-	it( 'shows errors on the required fields when the user does not fill the fields', async () => {
+	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {
 		render();
 		await userEvent.click( continueButton() );
+		await userEvent.click( credentialsOption() );
+		expect( getByText( messages.urlError ) ).toBeVisible();
+		expect( getByText( messages.usernameError ) ).toBeVisible();
+		expect( getByText( messages.passwordError ) ).toBeVisible();
+	} );
 
-		expect( getByText( messages.urlError ) ).toBeInTheDocument();
-		expect( getByText( messages.usernameError ) ).toBeInTheDocument();
-		expect( getByText( messages.passwordError ) ).toBeInTheDocument();
+	it( 'shows errors on the required fields when the user does not fill the fields when user select backup option', async () => {
+		render();
+		await userEvent.click( backupOption() );
+		await userEvent.click( continueButton() );
+		expect( getByText( /Please enter a valid URL/ ) ).toBeVisible();
 	} );
 
 	it( 'shows error when user set invalid site address', async () => {
@@ -142,7 +149,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.type( siteAddressInput(), 'invalid-site-address' );
 		await userEvent.click( continueButton() );
 
-		expect( getByText( messages.noTLDError ) ).toBeInTheDocument();
+		expect( getByText( messages.noTLDError ) ).toBeVisible();
 	} );
 
 	it( 'fills the site address and disable it when the user already informed the site address on previous step', async () => {
@@ -214,8 +221,24 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await userEvent.click( continueButton() );
 
-		expect( getByText( /Error message from backend/ ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( /Error message from backend/ ) ).toBeVisible();
+		} );
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'shows an generic error when server doesn`t return error', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {} );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
@@ -227,6 +250,9 @@ describe( 'SiteMigrationCredentials', () => {
 		const errorMessage = await findByText(
 			/We ran into a problem submitting your details. Please try again shortly./
 		);
-		expect( errorMessage ).toBeVisible();
+
+		await waitFor( () => {
+			expect( errorMessage ).toBeVisible();
+		} );
 	} );
 } );

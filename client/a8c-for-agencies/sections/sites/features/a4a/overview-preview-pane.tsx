@@ -65,9 +65,8 @@ export function OverviewPreviewPane( {
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
-	const isMultiUserSupportEnabled = isEnabled( 'a4a-multi-user-support' );
 	const { noWPAdminAccess } = useWPAdminAccessControl( { siteId: site.blog_id } );
-	const showNoAccess = isMultiUserSupportEnabled && noWPAdminAccess;
+	const showNoAccess = noWPAdminAccess;
 
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
