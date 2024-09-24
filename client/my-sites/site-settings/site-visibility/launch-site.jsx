@@ -93,7 +93,6 @@ const LaunchSite = () => {
 			<Button
 				onClick={ handleLaunchSiteClick }
 				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
-				primary={ isDevelopmentSite }
 			>
 				{ btnText }
 			</Button>
