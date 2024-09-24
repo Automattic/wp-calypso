@@ -84,13 +84,14 @@ class GoogleSocialButton extends Component {
 
 					return;
 				}
-				this.handleAuthorizationCode( { auth_code: response.credential, state: response.state } );
+				this.handleAuthorizationCode( { auth_code: response.credential, state } );
 			},
+			use_fedcm_for_prompt: true,
 		} );
 
 		googleSignIn.renderButton(
 			this.buttonRef.current,
-			{ theme: 'outline' } // customization attributes
+			{ theme: 'outline', locale: getLocaleSlug() } // customization attributes
 		);
 
 		const iframe = this.buttonRef.current.querySelector( 'iframe' );
@@ -167,8 +168,7 @@ class GoogleSocialButton extends Component {
 		} );
 
 		const { access_token, id_token } = response.body.data;
-
-		this.props.responseHandler( { access_token, id_token } );
+		this.props.responseHandler( { access_token, id_token, service: 'google' } );
 	}
 
 	async fetchNonceAndInitializeGoogleSignIn() {
