@@ -118,6 +118,9 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			<FormSection title={ translate( 'Agency information' ) }>
 				<FormField
 					label={ translate( 'Company name' ) }
+					description={ translate(
+						'Include only your company name; save any descriptors for the Company bio section.'
+					) }
 					error={ validationError.name }
 					field={ formData.name }
 					checks={ [ validateNonEmpty() ] }
