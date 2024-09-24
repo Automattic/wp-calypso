@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import moment from 'moment';
 import { trailingslashit } from 'calypso/lib/route';
 import ClipboardButtonInput from '../clipboard-button-input';
 import { PreviewLink } from './use-site-preview-links';
@@ -14,28 +14,58 @@ const HelpText = styled.p( {
 	color: 'var(--color-text-subtle)',
 } );
 
-/**
- * Calculate the time until a given date
- * @param {string} dateString The target date string
- * @returns {Array} An array containing the days and hours until the target date. Example for 2 days and 3 hours: [2, 3]
- */
-const timeUntil = ( dateString: string ) => {
-	// Parse the target date from the input string
-	const targetDate = new Date( dateString );
+type LinkExpiryCopyProps = {
+	expiresAt: string;
+};
 
-	// Get the current date
-	const currentDate = new Date();
+const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
+	const translate = useTranslate();
 
-	// Calculate the difference in milliseconds
-	const diffInMs = targetDate.getTime() - currentDate.getTime();
+	const now = moment();
+	const expiryDate = moment( expiresAt );
 
-	// Convert milliseconds to total hours and days
-	const totalHours = Math.floor( diffInMs / ( 1000 * 60 * 60 ) );
-	const days = Math.floor( totalHours / 24 );
-	const hours = totalHours % 24;
+	const difference = expiryDate.diff( now );
 
-	// Return the result as an object or string
-	return [ days, hours ];
+	if ( difference < 0 ) {
+		return translate( 'Expired.' );
+	}
+
+	const duration = moment.duration( difference );
+	if ( duration.asDays() < 1 || duration.hours() === 0 ) {
+		// Less than 1 day left, or more than 1 day left but no hours need to be appended
+		// We can utilize moment.js to get the duration string
+		const durationString = expiryDate.toNow( true );
+		return translate( 'Expires in %(durationString)s.', {
+			args: { durationString },
+			comment:
+				'Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".',
+		} );
+	}
+
+	// Unfortunately, moment.js does not provide a way to get the duration string for more than 1 day in our desired format, i.e. e.g.:"%{d} days, %{h} hours".
+
+	duration.add( 1, 'hour' ); // Add 1 hour to the duration to round up the day for case where the user just created the link, e.g.: we prefer to show "Expires in 3 days", instead of "Expires in 2 days, 23 hours".
+	const days = Math.floor( duration.asDays() );
+	const hours = duration.hours();
+	const hasHours = hours > 0; // Despite previous check whether hours are 0, we need to check again after we round up the hours
+	return (
+		<>
+			{ translate( 'Expires in %(days)d day', 'Expires in %(days)d days', {
+				count: days,
+				args: { days },
+				comment:
+					'%(days) is the number of days until the link expires. We know it is at least 1 day.',
+			} ) }
+			{ hasHours && ', ' }
+			{ hasHours &&
+				translate( '%(hours)d hour', '%(hours)d hours', {
+					count: hours,
+					args: { hours },
+					comment: '%{hours} is the number of hours until the link expires, in the range of 1-23.',
+				} ) }
+			.
+		</>
+	);
 };
 
 type SitePreviewLinkProps = {
@@ -61,22 +91,13 @@ const SitePreviewLink = ( {
 	}
 
 	const hasExpiration = expires_at && expires_at.length > 0;
-	let linkExpiryCopy: ReactNode = '';
-	if ( hasExpiration ) {
-		const [ days, hours ] = timeUntil( expires_at );
-		linkExpiryCopy = translate( 'Expires in %(days)d days, %(hours)d hours.', {
-			args: { days, hours },
-			comment:
-				'%(days)d is the number of days until the link expires. %(hours)d is the number of hours until the link expires.',
-		} );
-	}
-
 	return (
 		<>
 			<ClipboardButtonInput key={ code } value={ linkValue } disabled={ disabled } />
 			<HelpText>
-				{ translate( 'Anyone with the link can view your site.' ) +
-					( hasExpiration ? ' • ' + linkExpiryCopy : '' ) }
+				{ translate( 'Anyone with the link can view your site.' ) }
+				{ hasExpiration && ' • ' }
+				{ hasExpiration && <LinkExpiryCopy expiresAt={ expires_at } /> }
 			</HelpText>
 		</>
 	);
