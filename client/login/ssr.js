@@ -14,6 +14,12 @@ const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
  * @param {Function} next     Next middleware in the running sequence
  */
 export function setShouldServerSideRenderLogin( context, next ) {
+	/**
+	 * To align with other localized sections, server-side rendering is restricted to the English and Mag-16 locales.
+	 * However, since the login section has good translation coverage for non-Mag-16 locales,
+	 * we'd prefer to maintain client-side rendering as a fallback,
+	 * rather than redirecting non-Mag-16 locales to English, as is done for other sections.
+	 */
 	const isLocaleValidForSSR =
 		isDefaultLocale( context.lang ) ||
 		config( 'magnificent_non_en_locales' ).includes( context.lang );
