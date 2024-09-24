@@ -6,6 +6,7 @@ import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
@@ -34,7 +35,6 @@ export default async function ( context, next ) {
 export async function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
-
 	if ( ! canCurrentUserUseCustomerHome( state ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
@@ -42,13 +42,32 @@ export async function maybeRedirect( context, next ) {
 
 	const { verified, courseSlug } = getQueryArgs() || {};
 
+	const siteId = getSelectedSiteId( state );
+	const status = getSiteMigrationStatus( state, siteId );
+
+	if ( status === 'pending' ) {
+		page.redirect(
+			`/setup/site-migration/site-migration-how-to-migrate?siteSlug=${ slug }&siteId=${ siteId }`
+		);
+		return;
+	} else if ( status === 'pending-difm' ) {
+		page.redirect(
+			`/setup/site-migration/site-migration-credentials?siteSlug=${ slug }&siteId=${ siteId }`
+		);
+		return;
+	} else if ( status === 'pending-diy' || status === 'inactive' ) {
+		page.redirect(
+			`/setup/site-migration/site-migration-instructions?siteSlug=${ slug }&siteId=${ siteId }`
+		);
+		return;
+	}
+
 	// The courseSlug is to display pages with onboarding videos for learning,
 	// so we should not redirect the page to launchpad.
 	if ( courseSlug ) {
 		return next();
 	}
 
-	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	let fetchPromise;
