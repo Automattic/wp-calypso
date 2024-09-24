@@ -10,7 +10,7 @@ const isWhiteLabeledPluginEnabled = () => {
 	return config.isEnabled( 'migration-flow/enable-white-labeled-plugin' );
 };
 
-const migrationKeyRetry = ( failureCount, error ) => {
+const migrationKeyRetry = ( failureCount: number, error: Error ): boolean | Error => {
 	if ( ! isWhiteLabeledPluginEnabled() ) {
 		return false;
 	}
