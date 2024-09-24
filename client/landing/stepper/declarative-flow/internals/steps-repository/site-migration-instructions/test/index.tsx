@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
-import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
+import { usePrepareSiteForMigrationWithMigrateGuru } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -49,7 +49,7 @@ describe( 'SiteMigrationInstructions', () => {
 			deleteMigrationSticker: jest.fn(),
 		} );
 
-		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
 			detailedStatus: {},
 			completed: false,
 			migrationKey: 'migration-key-here',
@@ -160,7 +160,7 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should display a fallback in the last step when preparation completes and there is an error with the migration key', async () => {
-		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
 			detailedStatus: { migrationKey: 'error' },
 			completed: true,
 			migrationKey: '',
@@ -178,7 +178,7 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should animate skeleton when waiting for completion', async () => {
-		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
 			detailedStatus: {},
 			completed: false,
 			migrationKey: '',
@@ -196,7 +196,7 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should not animate skeleton when error happens', async () => {
-		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
+		( usePrepareSiteForMigrationWithMigrateGuru as jest.Mock ).mockReturnValue( {
 			detailedStatus: {},
 			completed: false,
 			migrationKey: '',

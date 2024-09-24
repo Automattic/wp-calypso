@@ -83,6 +83,17 @@ $blueberry-color: #3858e9;
 
 			.insight-header-container {
 				display: flex;
+				align-items: baseline;
+
+				p {
+					margin: 0;
+					line-height: 26px;
+				}
+
+				div {
+					width: 100%;
+				}
+
 			}
 
 			.counter {
@@ -183,6 +194,7 @@ $blueberry-color: #3858e9;
 
 					&:only-child {
 						flex: 0 1 700px;
+						max-width: 700px; // If elements are wider, e.g. code blocks, there will be a horizontal scroll
 					}
 				}
 
@@ -210,6 +222,42 @@ $blueberry-color: #3858e9;
 					align-items: center;
 					gap: 16px;
 					flex-wrap: wrap;
+
+					&.wrapped {
+						flex-basis: 100%;
+					}
+				}
+
+				.survey-form {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 16px;
+
+					button.is-primary {
+						color: #fff;
+						background-color: $blueberry-color;
+						border-radius: 4px;
+
+						&:hover:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+						}
+
+						&:focus:not(:disabled) {
+							background-color: darken($blueberry-color, 10%);
+							box-shadow: none;
+						}
+					}
+
+					.feedback-textarea {
+						width: 100%;
+					}
+
+					textarea:focus,
+					textarea:focus-visible {
+						border-color: $blueberry-color;
+						box-shadow: 0 0 0 calc(1.5px - 1px)  $blueberry-color;
+					}
 				}
 
 				.options {

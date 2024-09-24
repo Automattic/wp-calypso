@@ -81,7 +81,6 @@ import './login-form.scss';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		shouldShowLastUsedAuthenticationMethod: PropTypes.bool,
 		accountType: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -814,7 +813,6 @@ export class LoginForm extends Component {
 
 	render() {
 		const {
-			shouldShowLastUsedAuthenticationMethod,
 			accountType,
 			oauth2Client,
 			requestError,
@@ -891,10 +889,7 @@ export class LoginForm extends Component {
 		);
 
 		const showLastUsedAuthenticationMethod =
-			shouldShowLastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod !== 'password' &&
-			isSocialFirst;
+			lastUsedAuthenticationMethod && lastUsedAuthenticationMethod !== 'password' && isSocialFirst;
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (

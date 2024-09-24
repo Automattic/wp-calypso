@@ -35,6 +35,7 @@ interface SignupFormSocialFirst {
 			extra: { first_name: string; last_name: string; username_hint: string };
 		} | null
 	) => void;
+	onCreateAccountSuccess?: ( data: AccountCreateReturn ) => void;
 	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
@@ -69,6 +70,7 @@ const SignupFormSocialFirst = ( {
 	logInUrl,
 	socialServiceResponse,
 	handleSocialResponse,
+	onCreateAccountSuccess,
 	queryArgs,
 	userEmail,
 	notice,
@@ -175,6 +177,7 @@ const SignupFormSocialFirst = ( {
 								);
 							}
 						} }
+						onCreateAccountSuccess={ onCreateAccountSuccess }
 						{ ...gravatarProps }
 					/>
 					<Button

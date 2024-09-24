@@ -12,7 +12,7 @@ import {
 import { Product } from 'calypso/my-sites/earn/types';
 import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { StepProps } from '../../types';
+import { SubscribersStepProps } from '../../types';
 import StartImportButton from './../start-import-button';
 import { MapPlan, TierToAdd } from './map-plan';
 
@@ -23,13 +23,13 @@ function formatCurrencyFloat( amount: number, currency: string ) {
 	return parseFloat( formattedCurrency );
 }
 
-function shouldShowButton( cardData: any ) {
-	// Show the button if
+function shouldEnableImporting( cardData: any ) {
+	// Enable the button if
 	if ( ! cardData?.is_connected_stripe ) {
 		return true;
 	}
 
-	// show the button if we have mapped all the
+	// Enable the button if we have mapped all the
 	const plans = cardData?.plans ?? [];
 	const map_plans = cardData?.map_plans ?? {};
 
@@ -54,7 +54,7 @@ export default function MapPlans( {
 	engine,
 	siteSlug,
 	fromSite,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	const [ productToAdd, setProductToAdd ] = useState< TierToAdd | null >( null );
 
 	const currentStep = 'subscribers';
@@ -137,7 +137,7 @@ export default function MapPlans( {
 		},
 	};
 
-	const showButton = shouldShowButton( cardData );
+	const isImportButtonDisabled = ! shouldEnableImporting( cardData ) || isSavingPlanMapping;
 
 	const onProductSelect = ( stripePlanId: string, productId: string ) => {
 		mapStripePlanToProduct( selectedSite.ID, engine, currentStep, stripePlanId, productId );
@@ -181,19 +181,15 @@ export default function MapPlans( {
 				} ) }
 			</div>
 
-			{ showButton && ! isSavingPlanMapping && (
-				<StartImportButton
-					engine={ engine }
-					siteId={ selectedSite.ID }
-					hasPaidSubscribers
-					step={ currentStep }
-					navigate={ () => {
-						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
-					} }
-				/>
-			) }
-			{ showButton && isSavingPlanMapping && <p>Saving selection...</p> }
-			{ ! showButton && <p>Map plans on WordPress.com to continue...</p> }
+			<StartImportButton
+				engine={ engine }
+				siteId={ selectedSite.ID }
+				step={ currentStep }
+				navigate={ () => {
+					navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+				} }
+				disabled={ isImportButtonDisabled }
+			/>
 
 			{ productToAdd && (
 				<RecurringPaymentsPlanAddEditModal

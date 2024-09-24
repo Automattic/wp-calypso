@@ -6,19 +6,16 @@ import {
 	useIsMutating,
 } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { createNotice } from 'calypso/state/notices/actions';
+import { createNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 export const EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID = 'edge-cache-enable-disable-notice';
 export const USE_EDGE_CACHE_QUERY_KEY = 'edge-cache-key';
 export const TOGGLE_EDGE_CACHE_MUTATION_KEY = 'set-edge-site-mutation-key';
 export const CLEAR_EDGE_CACHE_MUTATION_KEY = 'clear-edge-site-mutation-key';
-
-interface ClearEdgeCacheMutationVariables {
-	name: string;
-}
 
 interface SetEdgeCacheMutationVariables {
 	siteId: number | null;
@@ -162,25 +159,31 @@ export const useIsSetEdgeCacheMutating = ( siteId: number | null ) => {
 
 export const useClearEdgeCacheMutation = (
 	siteId: number | null,
-	options: UseMutationOptions<
-		MutationResponse,
-		MutationError,
-		ClearEdgeCacheMutationVariables
-	> = {}
+	options: UseMutationOptions< MutationResponse, MutationError > = {}
 ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const mutation = useMutation( {
-		mutationFn: async () => purgeEdgeCache( siteId ),
+		mutationFn: () => purgeEdgeCache( siteId ),
 		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
+		onSuccess() {
+			dispatch(
+				successNotice( translate( 'Successfully cleared edge cache.' ), {
+					duration: 5000,
+				} )
+			);
+		},
+		onError() {
+			dispatch( errorNotice( translate( 'Failed to clear edge cache.' ) ) );
+		},
 	} );
 
-	const { mutate } = mutation;
 	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
 	// the provided key. This is preserved across different pages, while isLoading it's not.
 	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
 	const isLoading = useIsMutating( { mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ] } ) > 0;
 
-	const clearEdgeCache = useCallback( mutate, [ mutate ] );
-
-	return { clearEdgeCache, isLoading };
+	return { clearEdgeCache: mutation.mutate, isLoading };
 };

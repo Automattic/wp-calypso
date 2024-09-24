@@ -600,9 +600,16 @@ class ThemeSheet extends Component {
 	}
 
 	renderScreenshot() {
-		const { isWpcomTheme, name: themeName, demoUrl, translate } = this.props;
+		const {
+			isWpcomTheme,
+			name: themeName,
+			demoUrl,
+			translate,
+			isExternallyManagedTheme,
+		} = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
+		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
 		// Photon may return null, allow fallbacks
 		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
@@ -632,6 +639,7 @@ class ThemeSheet extends Component {
 					{ this.shouldRenderPreviewButton() && (
 						<Button className="theme__sheet-preview-demo-site">
 							{ translate( 'Preview demo site' ) }
+							{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
 						</Button>
 					) }
 					{ img }
@@ -649,6 +657,7 @@ class ThemeSheet extends Component {
 						} }
 					>
 						{ translate( 'Preview demo site' ) }
+						{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
 					</Button>
 				) }
 				{ img }
@@ -1502,7 +1511,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isPremium,
 		isThemePurchased,
 		isStandaloneJetpack,
-		isWporg,
 		demoUrl,
 		showTryAndCustomize,
 		isThemeInstalled,
@@ -1514,7 +1522,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isThemeBundleWooCommerce,
 	} = props;
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, props.themeId );
-
+	const themeTier = useThemeTierForTheme( props.themeId );
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
@@ -1547,13 +1555,16 @@ const ThemeSheetWithOptions = ( props ) => {
 		! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce )
 	) {
 		defaultOption = 'upgradePlanForBundledThemes';
-	} else if ( isWporg && ! canInstallThemes ) {
+	}
+	// isWporgTheme is true for some free themes we offer, so we need to check the tier instead.
+	else if (
+		( themeTier === 'community' || themeTier?.slug === 'community' ) &&
+		! canInstallThemes
+	) {
 		defaultOption = 'upgradePlanForDotOrgThemes';
 	} else {
 		defaultOption = 'activate';
 	}
-
-	const themeTier = useThemeTierForTheme( props.themeId );
 
 	return (
 		<ConnectedThemeSheet

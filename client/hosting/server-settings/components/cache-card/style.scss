@@ -1,4 +1,8 @@
-.performance-optimization__button.button {
+.performance-optimization__button-wrapper {
+	display: inline-block;
+}
+
+.performance-optimization__button {
 	margin-bottom: 12px;
 }
 

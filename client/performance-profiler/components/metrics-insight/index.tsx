@@ -3,13 +3,16 @@ import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	FullPageScreenshot,
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
-import { tips } from 'calypso/performance-profiler/utils/tips';
+import { loggedInTips, tips } from 'calypso/performance-profiler/utils/tips';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
 
@@ -41,10 +44,6 @@ const Header = styled.div`
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
 	width: 100%;
-
-	.insight-header-container > div {
-		width: 100%;
-	}
 
 	p {
 		display: inline;
@@ -109,13 +108,16 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		isWpcom,
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
-	const tip = tips[ insight.id ];
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const site = useSelector( getSelectedSite );
 
-	if ( props.url && tip ) {
+	const tip = isLoggedIn && isWpcom ? loggedInTips[ insight.id ] : tips[ insight.id ];
+
+	if ( props.url && tip && ! isWpcom ) {
 		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
 	}
 
-	if ( tip && isWpcom ) {
+	if ( tip && isWpcom && ! site?.is_wpcom_atomic ) {
 		tip.link = '';
 	}
 

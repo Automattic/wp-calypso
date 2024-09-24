@@ -4,17 +4,12 @@ import { seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { Controller, Control } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { CredentialsFormData } from '../types';
+import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
 
-interface Props {
-	control: Control< CredentialsFormData >;
-	errors: any;
-}
-
-export const PasswordField: React.FC< Props > = ( { control, errors } ) => {
+export const PasswordField: React.FC< CredentialsFormFieldProps > = ( { control, errors } ) => {
 	const translate = useTranslate();
 	const [ passwordHidden, setPasswordHidden ] = useState( true );
 	const toggleVisibilityClasses = clsx( {
@@ -38,7 +33,7 @@ export const PasswordField: React.FC< Props > = ( { control, errors } ) => {
 							autoComplete="off"
 							id="site-migration-credentials__password"
 							type={ passwordHidden ? 'password' : 'text' }
-							isError={ !! errors.password }
+							isError={ !! errors?.password }
 							placeholder={ translate( 'Enter your Admin password' ) }
 							{ ...field }
 						/>
@@ -52,7 +47,7 @@ export const PasswordField: React.FC< Props > = ( { control, errors } ) => {
 					</div>
 				) }
 			/>
-			<ErrorMessage error={ errors.password } />
+			<ErrorMessage error={ errors?.password } />
 		</div>
 	);
 };

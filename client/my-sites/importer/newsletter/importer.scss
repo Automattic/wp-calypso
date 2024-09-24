@@ -44,12 +44,23 @@
 		clear: both;
 		margin-bottom: 12px;
 
+		p {
+			position: relative;
+			overflow: hidden;
+			margin-bottom: 0;
+		}
+
 		svg {
 			float: left;
 			margin-right: 6px;
 			margin-top: -1px;
 			fill: var(--studio-gray-50);
 		}
+	}
+
+	.summary__content-indent {
+		margin-top: -20;
+		margin-left: 20px;
 	}
 
 	.stripe-logo {
@@ -81,15 +92,14 @@
 		display: block;
 		margin: 24px 0;
 	}
-
-	.subscriber-upload-form__progress-bar,
-	.content-upload-form__in-progress-bar {
+	.is-larger-progress-bar {
 		height: 5px;
 		border-radius: 3px;
 	}
 
 	/* Step specific */
 	&.newsletter-importer__step-summary {
+		.importer__notice,
 		.importer-action-buttons__container {
 			margin-top: 30px;
 		}

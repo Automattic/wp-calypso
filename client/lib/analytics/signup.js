@@ -176,7 +176,7 @@ export function recordRegistration( { userData, flow, type } ) {
  * Records loading of the processing screen
  * @param {string} flow Signup flow name
  * @param {string} previousStep The step before the processing screen
- * @param {string} optionalProps Extra properties to record
+ * @param {Object} optionalProps Extra properties to record
  */
 export function recordSignupProcessingScreen( flow, previousStep, optionalProps ) {
 	const device = resolveDeviceTypeByViewPort();

@@ -41,8 +41,7 @@
 		"a4a-automated-referrals": true,
 		"a4a-partner-directory": false,
 		"a4a-hosting-page-redesign": true,
-		"a4a-dev-sites": true,
-		"a4a-multi-user-support": true
+		"a4a-dev-sites": true
 	},
 	"enable_all_sections": false,
 	"sections": {

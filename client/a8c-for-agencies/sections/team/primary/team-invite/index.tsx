@@ -14,6 +14,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useSendTeamMemberInvite from 'calypso/a8c-for-agencies/data/team/use-send-team-member-invite';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { TAB_INVITED_MEMBERS } from '../../constants';
 
@@ -35,8 +36,19 @@ export default function TeamInvite() {
 
 		if ( ! username ) {
 			setError( translate( 'Please enter a valid email or WordPress.com username.' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_team_invite_error', {
+					error: 'empty_username',
+				} )
+			);
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_team_invite_submit', {
+				has_message: !! message,
+			} )
+		);
 
 		sendInvite(
 			{ username, message },
@@ -48,11 +60,17 @@ export default function TeamInvite() {
 							duration: 5000,
 						} )
 					);
+					dispatch( recordTracksEvent( 'calypso_a4a_team_invite_success' ) );
 					page( `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }` );
 				},
 
 				onError: ( error ) => {
 					dispatch( errorNotice( error.message ) );
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_team_invite_error', {
+							error: 'api_error',
+						} )
+					);
 				},
 			}
 		);
@@ -93,6 +111,9 @@ export default function TeamInvite() {
 								placeholder={ translate( 'team-member@example.com' ) }
 								value={ username }
 								onChange={ onUsernameChange }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_a4a_team_invite_username_click' ) )
+								}
 							/>
 						</FormField>
 
@@ -102,7 +123,13 @@ export default function TeamInvite() {
 								'Optional: Include a custom message to provide more context to your team member.'
 							) }
 						>
-							<TextareaControl value={ message } onChange={ setMessage } />
+							<TextareaControl
+								value={ message }
+								onChange={ setMessage }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_a4a_team_invite_message_click' ) )
+								}
+							/>
 						</FormField>
 					</FormSection>
 
