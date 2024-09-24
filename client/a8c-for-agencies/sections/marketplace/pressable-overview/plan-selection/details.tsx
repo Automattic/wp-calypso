@@ -117,7 +117,7 @@ export default function PlanSelectionDetails( {
 					) }
 					{ isReferMode && (
 						<div className="pressable-overview-plan-selection__details-card-header-price">
-							<strong className="pressable-overview-plan-selection__details-card-header-comming-soon">
+							<strong className="pressable-overview-plan-selection__details-card-header-coming-soon">
 								{ translate( 'Coming soon' ) }
 							</strong>
 						</div>
