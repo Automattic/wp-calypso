@@ -88,7 +88,7 @@ const OverviewBodyProducts = () => {
 						nbsp: <>&nbsp;</>,
 					},
 				}
-			),
+			) as string,
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'View all WooCommerce products' ),
