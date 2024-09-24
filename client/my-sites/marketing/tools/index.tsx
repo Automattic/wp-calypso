@@ -8,6 +8,7 @@ import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
+import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -27,6 +28,11 @@ export const MarketingTools: FunctionComponent = () => {
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
+	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
+	const currentDate = new Date();
+	const shouldShowFacebook =
+		( currentDate.getFullYear() === 2024 && currentDate.getMonth() === 9 ) ||
+		config.isEnabled( 'marketing-force-facebook-display' ); // October 2024 only.
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -38,6 +44,12 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_earn_button_click' );
 
 		page( `/earn/${ selectedSiteSlug }` );
+	};
+
+	const handleFacebookClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
+
+		page( `/plugins/official-facebook-pixel/${ selectedSiteSlug }` );
 	};
 
 	const handleBuiltByWpClick = () => {
@@ -65,8 +77,6 @@ export const MarketingTools: FunctionComponent = () => {
 	const handleSEOCourseClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_seo_course_button_click' );
 	};
-
-	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 
 	return (
 		<Fragment>
@@ -102,6 +112,26 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
 				</MarketingToolsFeature>
+
+				{ shouldShowFacebook && (
+					<MarketingToolsFeature
+						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
+						description={ translate(
+							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							{
+								components: {
+									em: <em />,
+								},
+							}
+						) }
+						imagePath={ facebookLogo }
+						imageAlt={ translate( 'Facebook Logo' ) }
+					>
+						<Button onClick={ handleFacebookClick }>
+							{ translate( 'Add Facebook for WordPress.com' ) }
+						</Button>
+					</MarketingToolsFeature>
+				) }
 
 				<MarketingToolsFeature
 					title={ translate( 'Fiverr logo maker' ) }
