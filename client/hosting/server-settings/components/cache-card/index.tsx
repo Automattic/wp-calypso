@@ -24,7 +24,7 @@ import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 import './style.scss';
 
 type CacheCardProps = {
-	disabled: boolean;
+	disabled?: boolean;
 };
 
 export default function CacheCard( { disabled }: CacheCardProps ) {
