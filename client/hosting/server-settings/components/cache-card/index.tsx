@@ -124,8 +124,8 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					onClick={ handleClearAllCache }
 				>
 					{ config.isEnabled( 'hosting-server-settings-enhancements' )
-						? translate( 'Clear cache' )
-						: translate( 'Clear all caches' ) }
+						? translate( 'Clear all caches' )
+						: translate( 'Clear cache' ) }
 				</Button>
 
 				{ shouldRateLimitObjectCacheClear ? (
