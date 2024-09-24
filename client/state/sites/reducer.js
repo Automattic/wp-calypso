@@ -29,6 +29,7 @@ import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
 import introOffers from './intro-offers/reducer';
+import launch from './launch/reducers';
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
@@ -427,4 +428,5 @@ export default combineReducers( {
 	hasAllSitesList,
 	jetpackSiteDisconnected,
 	isRequestingJetpackSitesFeatures,
+	launch,
 } );
