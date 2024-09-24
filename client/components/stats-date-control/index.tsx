@@ -165,7 +165,7 @@ const StatsDateControl = ( {
 					useArrowNavigation
 					customTitle="Date Range"
 					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
-					onShortcutClick={ onShortcutClickHandler } // Pass the new handler
+					onShortcutClick={ onShortcutClickHandler }
 				/>
 			) : (
 				<DateControlPicker
