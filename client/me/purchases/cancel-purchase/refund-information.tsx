@@ -11,9 +11,7 @@ import {
 } from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import i18n from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useCallback } from 'react';
-import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
@@ -23,12 +21,22 @@ import {
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
+import { useSelector } from 'calypso/state';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import './style.scss';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const ContactSupportLink = ( { siteUrl, siteId, purchase } ) => {
+const ContactSupportLink = ( {
+	siteUrl,
+	siteId,
+	purchase,
+}: {
+	siteUrl: string;
+	siteId: number;
+	purchase: Purchase;
+} ) => {
 	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { isEligibleForChat } = useChatStatus();
@@ -83,7 +91,7 @@ const ContactSupportLink = ( { siteUrl, siteId, purchase } ) => {
 							components: {
 								contactLink: (
 									<Button
-										borderless="true"
+										borderless
 										onClick={ onClick }
 										className="cancel-purchase__support-information support-link"
 										disabled={ isOpeningZendeskWidget }
@@ -98,7 +106,7 @@ const ContactSupportLink = ( { siteUrl, siteId, purchase } ) => {
 							components: {
 								contactLink: (
 									<Button
-										borderless="true"
+										borderless
 										onClick={ onClick }
 										className="cancel-purchase__support-information support-link"
 										disabled={ isOpeningZendeskWidget }
@@ -111,8 +119,19 @@ const ContactSupportLink = ( { siteUrl, siteId, purchase } ) => {
 	);
 };
 
-const CancelPurchaseRefundInformation = ( { purchase, isGravatarDomain, isJetpackPurchase } ) => {
-	const { refundPeriodInDays } = purchase;
+const CancelPurchaseRefundInformation = ( {
+	purchase,
+	isJetpackPurchase,
+}: {
+	purchase: Purchase;
+	isJetpackPurchase: boolean;
+} ) => {
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, purchase.siteId ) );
+	const selectedDomainName = getName( purchase );
+	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+	const isGravatarDomain = selectedDomain?.isGravatarDomain;
+
+	const { siteId, siteUrl, refundPeriodInDays } = purchase;
 	let text;
 
 	if ( isRefundable( purchase ) ) {
@@ -231,20 +250,4 @@ const CancelPurchaseRefundInformation = ( { purchase, isGravatarDomain, isJetpac
 	);
 };
 
-CancelPurchaseRefundInformation.propTypes = {
-	purchase: PropTypes.object.isRequired,
-	isJetpackPurchase: PropTypes.bool.isRequired,
-	cancelBundledDomain: PropTypes.bool,
-	confirmCancelBundledDomain: PropTypes.bool,
-	onCancelConfirmationStateChange: PropTypes.func,
-};
-
-export default connect( ( state, props ) => {
-	const domains = getDomainsBySiteId( state, props.purchase.siteId );
-	const selectedDomainName = getName( props.purchase );
-	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
-
-	return {
-		isGravatarDomain: selectedDomain?.isGravatarDomain,
-	};
-} )( CancelPurchaseRefundInformation );
+export default CancelPurchaseRefundInformation;
