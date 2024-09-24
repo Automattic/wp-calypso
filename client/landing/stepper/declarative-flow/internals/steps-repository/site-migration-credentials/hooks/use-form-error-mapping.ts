@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { FieldErrors } from 'react-hook-form';
@@ -16,6 +17,7 @@ export const useFormErrorMapping = (
 	variables?: CredentialsFormData | null
 ): FieldErrors< CredentialsFormData > | undefined => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const fieldMapping: Record< string, { type: string; message: string } | null > = useMemo(
 		() => ( {
@@ -24,6 +26,32 @@ export const useFormErrorMapping = (
 			password: { type: 'manual', message: translate( 'Enter a valid password.' ) },
 			backupFileLocation: { type: 'manual', message: translate( 'Enter a valid URL.' ) },
 		} ),
+		[ translate ]
+	);
+
+	const getCredentialsErrorMessage = useCallback(
+		( errorCode: any ) => {
+			switch ( errorCode ) {
+				case 404:
+					return {
+						from_url: {
+							type: 'manual',
+							message: translate( 'Check your site address' ),
+						},
+					};
+				default:
+					return {
+						username: {
+							type: 'manual',
+							message: translate( 'Check your username' ),
+						},
+						password: {
+							type: 'manual',
+							message: translate( 'Check your password' ),
+						},
+					};
+			}
+		},
 		[ translate ]
 	);
 
@@ -52,6 +80,22 @@ export const useFormErrorMapping = (
 				};
 			}
 
+			if (
+				isEnglishLocale &&
+				code === 'automated_migration_tools_login_and_get_cookies_test_failed'
+			) {
+				const errors = {
+					root: {
+						type: 'special',
+						message: translate(
+							'We could not verify your credentials. Can you double check your account information and try again?'
+						),
+					},
+					...getCredentialsErrorMessage( data?.response_code ),
+				};
+				return errors;
+			}
+
 			if ( code !== 'rest_invalid_param' || ! data?.params ) {
 				return { root: { type: 'manual', message } };
 			}
@@ -69,7 +113,7 @@ export const useFormErrorMapping = (
 				{} as Record< string, { type: string; message: string } >
 			);
 		},
-		[ getTranslatedMessage, translate ]
+		[ getTranslatedMessage, translate, getCredentialsErrorMessage, isEnglishLocale ]
 	);
 
 	return useMemo( () => {
