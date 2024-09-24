@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
@@ -111,7 +112,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				</HostingCardDescription>
 
 				<Button
-					className="performance-optimization__button"
 					busy={ isClearingObjectCache && isClearingEdgeCache }
 					disabled={
 						disabled ||
@@ -150,13 +150,14 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							{ translate( 'Global edge cache' ) }
 						</div>
 						<ToggleControl
+							className="performance-optimization__edge-cache-toggle"
+							checked={ isEdgeCacheActive && isEdgeCacheEligible }
 							disabled={
 								isClearingEdgeCache ||
 								isEdgeCacheLoading ||
 								! isEdgeCacheEligible ||
 								isEdgeCacheMutating
 							}
-							checked={ isEdgeCacheActive && isEdgeCacheEligible }
 							onChange={ ( active ) => {
 								recordTracksEvent(
 									active
@@ -174,7 +175,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							isEdgeCacheEligible &&
 							isEdgeCacheActive && (
 								<Button
-									className="performance-optimization__button"
 									busy={ isClearingEdgeCache }
 									disabled={ disabled || isEdgeCacheLoading || isEdgeCacheMutating }
 									onClick={ handleClearEdgeCache }
@@ -210,7 +210,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					>
 						<div className="performance-optimization__button-wrapper">
 							<Button
-								className="performance-optimization__button"
 								busy={ isClearingObjectCache }
 								disabled={
 									disabled ||
