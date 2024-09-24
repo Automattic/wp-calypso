@@ -47,6 +47,7 @@ const incompatiblePlugins = new Set( [
 	'wpmu-database-reset',
 	'wps-hide-login',
 	'z-inventory-manager',
+	'wp-downgrade',
 
 	// backup
 	'backup-wd',
