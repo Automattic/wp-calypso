@@ -196,8 +196,20 @@
 	}
 }
 
+.featured-domain-suggestions__site-name-suggestion {
+	display: flex;
+	gap: 10px;
+	font-size: 1.75rem;
+	margin-bottom: 10px;
+}
+
+.ai-assistant-modal .featured-domain-suggestions__wrapper {
+	margin-bottom: 20px;
+}
+
 body.is-section-stepper .step-container .featured-domain-suggestion.card,
-body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
+body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card,
+body.is-section-signup.is-white-signup .ai-assistant-modal .featured-domain-suggestion.card {
 	border: none;
 	border-radius: 0;
 	margin: 0;

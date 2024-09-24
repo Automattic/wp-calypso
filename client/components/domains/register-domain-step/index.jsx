@@ -646,7 +646,41 @@ class RegisterDomainStep extends Component {
 					</Button>
 				</div>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
-				<AIAssistantModal isModalOpen={ this.state.isModalOpen } onClose={ toggleModal } />
+				<AIAssistantModal
+					isModalOpen={ this.state.isModalOpen }
+					onClose={ toggleModal }
+					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.isCartPendingUpdate }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					onClickResult={ this.onAddDomain }
+					isDomainOnly={ this.props.isDomainOnly }
+					fetchAlgo={ this.getFetchAlgo() }
+					isSignupStep={ this.props.isSignupStep }
+					showStrikedOutPrice={
+						this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+					}
+					premiumDomains={ this.state.premiumDomains }
+					lastDomainSearched={ this.state.lastDomainSearched }
+					railcarId={ this.state.railcarId }
+					selectedSite={ this.props.selectedSite }
+					pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
+					unavailableDomains={ this.state.unavailableDomains }
+					isReskinned={ this.props.isReskinned }
+					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+					useProvidedProductsList={ this.props.useProvidedProductsList }
+					products={ this.props.products }
+					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+					temporaryCart={ this.props.temporaryCart }
+					domainRemovalQueue={ this.props.domainRemovalQueue }
+					wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
+					flowName={ this.props.flowName }
+					removeDomainClickHandler={ this.props.removeDomainClickHandler }
+					isMiniCartContinueButtonBusy={ this.props.isMiniCartContinueButtonBusy }
+					goToNext={ this.props.goToNext }
+					handleSkip={ this.props.handleSkip }
+					freeDomainRemoveClickHandler={ this.props.freeDomainRemoveClickHandler }
+					cartIsLoading={ this.props.cartIsLoading }
+				/>
 			</>
 		);
 	}

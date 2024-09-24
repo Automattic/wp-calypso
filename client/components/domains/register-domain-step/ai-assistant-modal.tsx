@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 import headerImage from 'calypso/assets/images/illustrations/business-tools.png';
 import Search from 'calypso/components/search';
+import { getDomainsInCart } from 'calypso/lib/cart-values/cart-items';
+import DomainsMiniCart from 'calypso/signup/steps/domains/domains-mini-cart';
 import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 import useAiSuggestionsMutation from './use-ai-suggestions';
 
@@ -29,6 +31,8 @@ export const Heading = styled.div< { shrinkMobileFont?: boolean } >`
 	color: var( --studio-gray-100 );
 	font-size: ${ ( { shrinkMobileFont } ) => ( shrinkMobileFont ? '22px' : '32px' ) };
 	text-align: center;
+	padding: 32px;
+	text-wrap: balance;
 	@media ( min-width: 780px ) {
 		font-size: 32px;
 		line-height: 40px;
@@ -117,9 +121,35 @@ const SearchButton = styled( Button )`
 	height: auto;
 `;
 
+const ResultsWrapper = styled.div`
+	display: flex;
+	grid-gap: 40px;
+`;
+
 type ModalContainerProps = {
 	isModalOpen: boolean;
 	onClose: () => void;
+	onClickResult: () => void;
+	// isCartPendingUpdate,
+	// 	domainsWithPlansOnly,
+	// 	isDomainOnly,
+	// 	fetchAlgo,
+	// 	isSignupStep,
+	// 	showStrikedOutPrice,
+	// 	onClickResult,
+	// 	premiumDomains,
+	// 	lastDomainSearched,
+	// 	railcarId,
+	// 	selectedSite,
+	// 	pendingCheckSuggestion,
+	// 	unavailableDomains,
+	// 	isReskinned,
+	// 	domainAndPlanUpsellFlow,
+	// 	useProvidedProductsList,
+	// 	products,
+	// 	isCartPendingUpdateDomain,
+	// 	temporaryCart,
+	// 	domainRemovalQueue,
 };
 
 // See p2-pbxNRc-2Ri#comment-4703 for more context
@@ -139,7 +169,38 @@ const getSubTitle = ( hasDomainResults: boolean, translate ): string => {
 };
 
 export default function AIAssistantModal( props: ModalContainerProps ) {
-	const { isModalOpen } = props;
+	const {
+		isModalOpen,
+		cart,
+		isCartPendingUpdate,
+		domainsWithPlansOnly,
+		isDomainOnly,
+		fetchAlgo,
+		isSignupStep,
+		showStrikedOutPrice,
+		onClickResult,
+		premiumDomains,
+		lastDomainSearched,
+		railcarId,
+		selectedSite,
+		pendingCheckSuggestion,
+		unavailableDomains,
+		isReskinned,
+		domainAndPlanUpsellFlow,
+		useProvidedProductsList,
+		products,
+		isCartPendingUpdateDomain,
+		temporaryCart,
+		domainRemovalQueue,
+		wpcomSubdomainSelected,
+		cartIsLoading,
+		flowName,
+		removeDomainClickHandler,
+		isMiniCartContinueButtonBusy,
+		goToNext,
+		handleSkip,
+		freeDomainRemoveClickHandler,
+	} = props;
 	const translate = useTranslate();
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ results, setResults ] = useState( [] );
@@ -155,18 +216,15 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		setSubTitle( getSubTitle( hasDomainResults, translate ) );
 	}, [ results, translate ] );
 
-	useEffect( () => {
-		! isModalOpen && setResults( [] );
-	}, [ isModalOpen ] );
-
 	const modalWidth = () => {
-		return '639px';
+		return '924px';
 	};
 
 	const onSearch = ( newPrompt?: string ) => {
 		const term = newPrompt || prompt;
 		if ( term ) {
 			setIsLoading( true );
+
 			aiSuggestions(
 				{ prompt: term },
 				{
@@ -174,6 +232,7 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 						setResults( value );
 						setIsLoading( false );
 					},
+					onError: () => {},
 				}
 			);
 		}
@@ -182,6 +241,18 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 	const onSearchChange = ( newPrompt: string ) => {
 		setPrompt( newPrompt );
 	};
+	const domainsInCart = getDomainsInCart( cart );
+	const additionalDomains = temporaryCart
+		.map( ( cartDomain ) => {
+			return domainsInCart.find( ( domain ) => domain.meta === cartDomain.meta )
+				? null
+				: cartDomain;
+		} )
+		.filter( Boolean );
+
+	if ( additionalDomains.length > 0 ) {
+		domainsInCart.push( ...additionalDomains );
+	}
 
 	const searchProps = {
 		searchMode: 'on-enter' as const,
@@ -201,7 +272,51 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 			return null;
 		}
 
-		return <FeaturedDomainSuggestions premiumDomains={ [] } featuredSuggestions={ results } />;
+		return (
+			<ResultsWrapper>
+				<FeaturedDomainSuggestions
+					buttonStyles={ { primary: true } }
+					cart={ cart }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					domainsWithPlansOnly={ domainsWithPlansOnly }
+					isDomainOnly={ isDomainOnly }
+					fetchAlgo={ fetchAlgo }
+					isSignupStep={ isSignupStep }
+					showStrikedOutPrice={ showStrikedOutPrice }
+					key="featured"
+					onButtonClick={ onClickResult }
+					premiumDomains={ premiumDomains }
+					featuredSuggestions={ results }
+					query={ lastDomainSearched }
+					railcarId={ railcarId }
+					selectedSite={ selectedSite }
+					pendingCheckSuggestion={ pendingCheckSuggestion }
+					unavailableDomains={ unavailableDomains }
+					isReskinned={ isReskinned }
+					domainAndPlanUpsellFlow={ domainAndPlanUpsellFlow }
+					products={ useProvidedProductsList ? products : undefined }
+					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
+					temporaryCart={ temporaryCart }
+					domainRemovalQueue={ domainRemovalQueue }
+					shouldShowAISuggestedSiteName
+				/>
+				{ domainsInCart.length > 0 || wpcomSubdomainSelected ? (
+					<DomainsMiniCart
+						domainsInCart={ domainsInCart }
+						temporaryCart={ temporaryCart }
+						domainRemovalQueue={ domainRemovalQueue }
+						cartIsLoading={ cartIsLoading }
+						flowName={ flowName }
+						removeDomainClickHandler={ removeDomainClickHandler }
+						isMiniCartContinueButtonBusy={ isMiniCartContinueButtonBusy }
+						goToNext={ goToNext }
+						handleSkip={ handleSkip }
+						wpcomSubdomainSelected={ wpcomSubdomainSelected }
+						freeDomainRemoveClickHandler={ freeDomainRemoveClickHandler }
+					/>
+				) : null }
+			</ResultsWrapper>
+		);
 	};
 
 	return (
@@ -236,8 +351,12 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 			/>
 			<DialogContainer>
 				{ results.length === 0 && <HeaderImage src={ headerImage } /> }
-				<Heading shrinkMobileFont>{ title }</Heading>
-				<SubHeading>{ subTitle }</SubHeading>
+				{ ! isLoading && (
+					<>
+						<Heading shrinkMobileFont>{ title }</Heading>
+						<SubHeading>{ subTitle }</SubHeading>
+					</>
+				) }
 				{ isLoading && (
 					<Loading>
 						{ translate( 'Hold on tight … your request is being processed by our AI overlords' ) }
