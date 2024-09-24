@@ -3,6 +3,7 @@
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -72,6 +73,7 @@ describe( 'useSignUpTracking', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
+				device: resolveDeviceTypeByViewPort(),
 			} );
 		} );
 
@@ -88,6 +90,7 @@ describe( 'useSignUpTracking', () => {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
 				extra: 'props',
+				device: resolveDeviceTypeByViewPort(),
 			} );
 		} );
 
@@ -103,6 +106,7 @@ describe( 'useSignUpTracking', () => {
 				flow: 'sign-up-flow',
 				flow_variant: 'variant-slug',
 				ref: '',
+				device: resolveDeviceTypeByViewPort(),
 			} );
 		} );
 	} );
