@@ -78,6 +78,7 @@ class DomainSuggestion extends Component {
 			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
 		} );
 
+		const [ badges, domainContent, matchReason ] = children;
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
@@ -90,18 +91,21 @@ class DomainSuggestion extends Component {
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
+				{ badges }
 				<div className={ contentClassName }>
-					{ children }
+					{ domainContent }
+					{ matchReason }
 					{ ( isReskinned || ! isFeatured ) && this.renderPrice() }
+					{ ! isReskinned && isFeatured && (
+						<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
+					) }
+					<div className="domain-suggestion__action-container">
+						<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
+							{ this.props.buttonContent }
+						</Button>
+					</div>
 				</div>
-				{ ! isReskinned && isFeatured && (
-					<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
-				) }
-				<div className="domain-suggestion__action-container">
-					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
-						{ this.props.buttonContent }
-					</Button>
-				</div>
+
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }
