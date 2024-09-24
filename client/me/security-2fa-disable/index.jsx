@@ -102,7 +102,7 @@ class Security2faDisable extends Component {
 							components: {
 								changephonelink: (
 									<InlineSupportLink
-										supportPostId={ 39178 } // This is the post ID for the two-step authentication support article
+										supportPostId={ 39178 }
 										supportLink={ localizeUrl(
 											'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
 										) }
