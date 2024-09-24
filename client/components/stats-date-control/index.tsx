@@ -87,9 +87,9 @@ const StatsDateControl = ( {
 	};
 
 	// handler for shortcut clicks in new updated DateRange component
-	const onShortcutClickHandler = ( shortcut: DateControlPickerShortcut ) => {
+	const onShortcutClickHandler = ( shortcutId: string ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_clicked` );
+		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcutId }_clicked` );
 	};
 
 	const getShortcutForRange = () => {
