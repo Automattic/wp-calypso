@@ -28,7 +28,7 @@ describe( 'SiteMigrationAlreadyWordPress', () => {
 		render( { navigation: { submit } }, { initialEntry: '/some-path?from=https://example.com' } );
 
 		await userEvent.click( continueButton() );
-		expect( await screen.findByText( 'Please select an option' ) ).toBeVisible();
+		expect( await screen.findByText( /Please select an option/ ) ).toBeVisible();
 	} );
 
 	it( 'shows an error when the user selects other but does not provide details', async () => {
@@ -36,7 +36,7 @@ describe( 'SiteMigrationAlreadyWordPress', () => {
 		userEvent.click( intentByName( 'Other' ) );
 		await userEvent.click( continueButton() );
 
-		expect( await screen.findByText( 'Please describe your needs' ) ).toBeVisible();
+		expect( await screen.findByText( /Please, provide more details/ ) ).toBeVisible();
 	} );
 
 	it( 'navigate to next step when the submits an intent', async () => {

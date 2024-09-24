@@ -105,7 +105,9 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			alert( 'Success!' );
+			if ( process.env.NODE_ENV !== 'development' ) {
+				alert( 'Success!' );
+			}
 			onComplete();
 		}
 	}, [ isSuccess, onComplete ] );
