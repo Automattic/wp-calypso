@@ -282,10 +282,9 @@ export const requestDSP = async < T >(
 	siteId: number,
 	apiUri: string,
 	method = 'GET',
-	dspVersion = 'v1',
 	body: Record< string, any > | undefined = undefined
 ): Promise< T > => {
-	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/${ dspVersion }`;
+	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
 	const path = `${ URL_BASE }${ apiUri }`;
 
 	const params = {

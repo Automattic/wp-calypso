@@ -20,7 +20,6 @@ import {
 	Order,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
-import usePromotePostCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-posts-campaigns-objectives-query';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
@@ -105,8 +104,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
-	const { data: campaignObjectives, isLoading: campaignObjectivesIsLoading } =
-		usePromotePostCampaignsStatsQuery( siteId ?? 0 );
 
 	const {
 		audience_list,
@@ -121,6 +118,7 @@ export default function CampaignItemDetails( props: Props ) {
 		ui_status,
 		campaign_stats,
 		objective,
+		objective_data,
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
@@ -195,51 +193,37 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 
-	const getObjectiveDetailsById = ( id: string ) => {
-		if ( Array.isArray( campaignObjectives ) && campaignObjectives.length > 0 ) {
-			const objective = campaignObjectives.find( ( obj ) => obj.id === id );
-			if ( objective ) {
-				return {
-					title: objective.title,
-					description: objective.description,
-				};
-			}
+	const objectiveIcon = ( () => {
+		switch ( objective ) {
+			case 'traffic':
+				return <span> { TrafficIcon() } </span>;
+			case 'sales':
+				return <span> { SalesIcon() } </span>;
+			case 'awareness':
+				return <span> { AwarenessIcon() } </span>;
+			case 'engagement':
+				return <span> { EngagementIcon() } </span>;
+			default:
+				return null;
 		}
-		// Return null or handle the case when the array is not present or no match is found
-		return {
-			title: translate( 'Traffic' ),
-			description: translate( 'Aims to drive more visitors and increase page views.' ),
-		};
-	};
+	} )();
 
 	const objectiveFormatted = ( () => {
-		const objectiveDetails = getObjectiveDetailsById( objective ?? '' );
-		const icon = ( () => {
-			switch ( objective ) {
-				case 'traffic':
-					return <span> { TrafficIcon() } </span>;
-				case 'sales':
-					return <span> { SalesIcon() } </span>;
-				case 'awareness':
-					return <span> { AwarenessIcon() } </span>;
-				case 'engagement':
-					return <span> { EngagementIcon() } </span>;
-				default: // if no objective is found we default to traffic
-					return <span> { TrafficIcon() } </span>;
-			}
-		} )();
-
+		if ( ! objectiveIcon || ! objective_data?.title || ! objective_data?.description ) {
+			return null;
+		}
 		return (
 			<>
-				<span> { icon } </span>
+				<span> { objectiveIcon } </span>
 				<span>
-					<span className="title">{ objectiveDetails.title }</span>
+					<span className="title">{ objective_data?.title }</span>
 					{ ' - ' }
-					{ objectiveDetails.description }
+					{ objective_data?.description }
 				</span>
 			</>
 		);
 	} )();
+
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const durationDateFormatted = getCampaignDurationFormatted(
 		start_date,
@@ -805,18 +789,17 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 
 								<div className="campaign-item-details__secondary-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Campaign objective' ) }
-										</span>
-										<span className="campaign-item-details__details objective">
-											{ ! isLoading && ! campaignObjectivesIsLoading ? (
-												objectiveFormatted
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
+									{ objective && objectiveFormatted && (
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Campaign objective' ) }
+											</span>
+											<span className="campaign-item-details__details objective">
+												{ ! isLoading ? objectiveFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									) }
+
 									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Audience' ) }
