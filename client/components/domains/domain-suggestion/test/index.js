@@ -19,11 +19,7 @@ describe( 'Domain Suggestion', () => {
 					isAdded={ false }
 					onButtonClick={ noop }
 					priceRule="PRICE"
-				>
-					<span>Fake Child Element</span>
-					<span>Fake Child Element</span>
-					<span>Fake Child Element</span>
-				</DomainSuggestion>
+				/>
 			);
 
 			expect( container.firstChild ).toHaveAttribute( 'data-e2e-domain', 'example.com' );
