@@ -89,6 +89,7 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
 	StepChangedCallback,
+	PaymentMethod,
 } from '@automattic/composite-checkout';
 import type {
 	RemoveProductFromCart,
@@ -291,6 +292,7 @@ export default function CheckoutMainContent( {
 	infoMessage,
 	isLoggedOutCart,
 	onPageLoadError,
+	paymentMethods,
 	removeProductFromCart,
 	showErrorMessageBriefly,
 	siteId,
@@ -311,6 +313,7 @@ export default function CheckoutMainContent( {
 	infoMessage?: JSX.Element;
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
+	paymentMethods: PaymentMethod[];
 	removeProductFromCart: RemoveProductFromCart;
 	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
@@ -508,6 +511,18 @@ export default function CheckoutMainContent( {
 	}
 
 	const nextStepButtonText = translate( 'Continue to payment', { textOnly: true } );
+	const canEditStep = () => {
+		if ( ! paymentMethods ) {
+			return false;
+		}
+		const containsFreeOrCreditMethod = paymentMethods.filter(
+			( method ) => method.id === 'free-purchase'
+		);
+		if ( paymentMethods.length < 2 && containsFreeOrCreditMethod ) {
+			return false;
+		}
+		return true;
+	};
 
 	return (
 		<WPCheckoutWrapper>
@@ -694,6 +709,7 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
+						canEditStep={ canEditStep() }
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
