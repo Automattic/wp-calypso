@@ -291,6 +291,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 
+	SITE_MIGRATION_ALREADY_WORDPRESS: {
+		slug: 'already-wordpress',
+		asyncComponent: () => import( './steps-repository/site-migration-already-wordpress' ),
+	},
+
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),

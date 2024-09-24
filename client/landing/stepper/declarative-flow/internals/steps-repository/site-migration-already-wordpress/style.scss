@@ -1,0 +1,58 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.site-migration-already-wordpress__form-title--error,
+.site-migration-already-wordpress__form-error {
+	color: var(--color-error);
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.site-migration-already-wordpress__form-container {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	justify-content: center;
+}
+
+
+.site-migration-already-wordpress__form {
+	width: 520px;
+	padding: 0 2.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	box-sizing: border-box;
+}
+
+.site-migration-already-wordpress__form .components-checkbox-control__label {
+	font-size: 0.875rem;
+	font-weight: 400;
+}
+
+.site-migration-already-wordpress__form-title-container {
+	display: flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.site-migration-already-wordpress__form-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	margin-bottom: 0;
+
+}
+
+.site-migration-already-wordpress__form-textarea-container {
+	margin-top: 1.5rem;
+}
+
+.site-migration-already-wordpress__form-textarea {
+	width: 100%;
+}
+
+.site-migration-already-wordpress__form-textarea--error {
+	border-color: var(--color-error);
+}

@@ -35,6 +35,7 @@ const {
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 	SITE_MIGRATION_CREDENTIALS,
+	SITE_MIGRATION_ALREADY_WORDPRESS,
 } = STEPS;
 
 const steps = [
@@ -48,6 +49,7 @@ const steps = [
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 	SITE_MIGRATION_CREDENTIALS,
+	SITE_MIGRATION_ALREADY_WORDPRESS,
 ];
 
 const plans: { [ key: string ]: string } = {
@@ -281,7 +283,6 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
 			},
 		},
-
 		[ SITE_MIGRATION_ASSISTED_MIGRATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const hasError = getFromPropsOrUrl( 'hasError', props );
