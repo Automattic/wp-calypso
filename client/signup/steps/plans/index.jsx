@@ -27,6 +27,7 @@ import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-i
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StartStepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -151,7 +152,7 @@ export class PlansStep extends Component {
 		 * `paidDomainName` to the value of the domain-only site's domain.
 		 */
 		if ( ! paidDomainName && isDomainOnlySite && selectedSite.URL ) {
-			paidDomainName = selectedSite.URL;
+			paidDomainName = getDomainFromUrl( selectedSite.URL );
 		}
 
 		let freeWPComSubdomain;
@@ -430,7 +431,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, siteId, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -438,7 +439,8 @@ export default connect(
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-		isDomainOnlySite: siteSlug ? isDomainOnlySiteSelector( state, siteSlug ) : false,
+		isDomainOnlySite:
+			siteId || siteSlug ? isDomainOnlySiteSelector( state, siteId || siteSlug ) : false,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
