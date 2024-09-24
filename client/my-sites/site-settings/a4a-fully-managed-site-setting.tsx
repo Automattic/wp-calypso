@@ -75,7 +75,20 @@ export function A4AFullyManagedSiteSetting( {
 							{
 								components: translationComponents,
 							}
-						) }
+						) }{ ' ' }
+						{ translate( '{{a}}Learn more.{{/a}}', {
+							components: {
+								a: (
+									<a
+										target="_blank"
+										href={ localizeUrl(
+											'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+										) }
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
 					</p>
 				) : (
 					<ToggleControl
