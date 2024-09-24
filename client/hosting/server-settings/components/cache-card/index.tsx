@@ -229,10 +229,12 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
 				<>
-					<div className="performance-optimization__hr"></div>
+					<div className="performance-optimization__hr" />
 
 					<div className="performance-optimization__jetpack-block">
-						<div className="performance-optimization__subtitle">Elasticsearch</div>
+						<div className="performance-optimization__subtitle">
+							{ translate( 'Elasticsearch' ) }
+						</div>
 						<HostingCardDescription>
 							<JetpackLogo size={ 16 } />
 							<div>
@@ -242,7 +244,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 										components: {
 											a: (
 												<InlineSupportLink
-													supportContext="hosting-clear-cache"
+													supportContext="hosting-elasticsearch"
 													showIcon={ false }
 												/>
 											),

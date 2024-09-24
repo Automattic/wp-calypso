@@ -124,6 +124,10 @@ const contextLinks = {
 		post_id: 99378,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'hosting-elasticsearch': {
+		link: 'https://wordpress.com/support/jetpack-search/',
+		post_id: 146645,
+	},
 	import: {
 		link: 'https://wordpress.com/support/import/',
 		post_id: 41,
