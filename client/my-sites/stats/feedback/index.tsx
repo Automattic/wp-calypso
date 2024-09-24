@@ -209,7 +209,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
 				dismissFloatingPanel();
-				setIsOpen( true );
+				setTimeout( () => setIsOpen( true ), FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissFloatingPanel();
@@ -220,7 +220,10 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				break;
 			case ACTION_LEAVE_REVIEW:
 				dismissFloatingPanel();
-				window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				setTimeout(
+					() => window.open( FEEDBACK_LEAVE_REVIEW_URL ),
+					FEEDBACK_PANEL_ANIMATION_DELAY_EXIT
+				);
 				break;
 			case 'present-panel':
 				toggleFloatingPanel();
