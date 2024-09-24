@@ -376,8 +376,16 @@ const siteMigration: Flow = {
 						);
 
 						urlQueryParams.delete( 'showModal' );
+
+						const how = urlQueryParams.get( 'how' );
+
+						let flow_name = FLOW_NAME;
+
+						if ( how ) {
+							flow_name = `${ FLOW_NAME }-${ how }`;
+						}
 						const extraQueryParams: Record< string, string > = {
-							flow_name: FLOW_NAME,
+							flow_name,
 						};
 
 						if (
