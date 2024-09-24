@@ -105,6 +105,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
+			alert( 'Success!' );
 			onComplete();
 		}
 	}, [ isSuccess, onComplete ] );
