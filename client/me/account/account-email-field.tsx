@@ -2,7 +2,7 @@ import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -90,7 +90,11 @@ const AccountEmailValidationNotice = ( {
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
-const EmailFieldExplanationText = () => {
+const EmailFieldExplanationText = ( {
+	unlockRef,
+}: {
+	unlockRef: React.RefObject< HTMLButtonElement >;
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -104,6 +108,7 @@ const EmailFieldExplanationText = () => {
 				ev.preventDefault();
 				dispatch( cancelPendingEmailChange() );
 			} }
+			ref={ unlockRef }
 		/>
 	);
 
@@ -128,6 +133,8 @@ const EmailFieldExplanationText = () => {
 	return translate( 'Not publicly displayed, except to owners of sites you subscribe to.' );
 };
 
+export const emailFormEventEmitter = new EventTarget();
+
 const AccountEmailField = ( {
 	emailInputId = 'user_email',
 	emailInputName = 'user_email',
@@ -138,6 +145,8 @@ const AccountEmailField = ( {
 	unsavedUserSettings = {},
 	userSettings = {},
 }: AccountEmailFieldProps ) => {
+	const inputRef = useRef< HTMLInputElement >( null );
+	const unlockRef = useRef< HTMLButtonElement >( null );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
@@ -177,6 +186,28 @@ const AccountEmailField = ( {
 		dispatch( setUserSetting( 'user_email', value ) );
 	};
 
+	const scrollAndFocus = useCallback( () => {
+		if ( isEmailChangePending ) {
+			unlockRef.current?.focus();
+		} else {
+			inputRef.current?.focus();
+		}
+		// We need to bump the scroll call to the back of the callstack, since the dialog that
+		// triggers this on close can influence the scroll window.
+		setTimeout( () => {
+			inputRef.current?.scrollIntoView( true );
+		} );
+	}, [ isEmailChangePending ] );
+
+	// Listen for an event signalling to focus and scroll to the email field or button.
+	useEffect( () => {
+		emailFormEventEmitter.addEventListener( 'highlightInput', scrollAndFocus );
+
+		return () => {
+			emailFormEventEmitter.removeEventListener( 'highlightInput', scrollAndFocus );
+		};
+	}, [ scrollAndFocus ] );
+
 	return (
 		<>
 			<QueryAllDomains />
@@ -190,6 +221,7 @@ const AccountEmailField = ( {
 					onFocus={ onFocus }
 					value={ emailAddress }
 					onChange={ onEmailAddressChange }
+					inputRef={ inputRef }
 				/>
 
 				<AccountEmailValidationNotice
@@ -199,7 +231,7 @@ const AccountEmailField = ( {
 				/>
 
 				<FormSettingExplanation>
-					<EmailFieldExplanationText />
+					<EmailFieldExplanationText unlockRef={ unlockRef } />
 				</FormSettingExplanation>
 			</FormFieldset>
 		</>

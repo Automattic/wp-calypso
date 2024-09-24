@@ -4,6 +4,7 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import {
 	verifyEmail,
 	resetVerifyEmailState,
@@ -66,13 +67,14 @@ class VerifyEmailDialog extends Component {
 		if ( this.props.currentRoute !== changeEmailRoute ) {
 			return <a href="/me/account" />;
 		}
-		// If we are already on /me/account, close the dialog.
+		// If we are already on /me/account, close the dialog and dispatch an event to highlight the input.
 		return (
 			<Button
 				borderless
 				plain
 				compact
 				onClick={ () => {
+					emailFormEventEmitter?.dispatchEvent( new Event( 'highlightInput' ) );
 					this.handleClose();
 				} }
 			/>
