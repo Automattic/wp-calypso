@@ -104,6 +104,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	const [ animationClassName, setAnimationClassName ] = useState(
 		FEEDBACK_PANEL_ANIMATION_NAME_ENTRY
 	);
+	const [ isPanelOpen, setIsPanelOpen ] = useState( false );
 
 	const handleCloseButtonClicked = () => {
 		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
@@ -118,7 +119,19 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 		clickHandler( action );
 	};
 
-	if ( ! isOpen ) {
+	useEffect( () => {
+		if ( isOpen ) {
+			setIsPanelOpen( true );
+			setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_ENTRY );
+		} else {
+			setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
+			setTimeout( () => {
+				setIsPanelOpen( false );
+			}, 500 );
+		}
+	}, [ isOpen ] );
+
+	if ( ! isPanelOpen ) {
 		return null;
 	}
 
@@ -168,11 +181,11 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		useNoticeVisibilityHooks( siteId );
 
 	useEffect( () => {
-		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
-			setTimeout( () => {
-				setIsFloatingPanelOpen( true );
-			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
-		}
+		// if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
+		setTimeout( () => {
+			setIsFloatingPanelOpen( true );
+		}, FEEDBACK_PANEL_PRESENTATION_DELAY );
+		// }
 	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
 	const dismissPanelWithDelay = () => {
@@ -186,7 +199,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
 				setIsFloatingPanelOpen( false );
-				setIsOpen( true );
+				setTimeout( () => setIsOpen( true ), 500 );
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissPanelWithDelay();
@@ -205,9 +218,9 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		setIsOpen( false );
 	};
 
-	if ( ! supportCommercialUse ) {
-		return null;
-	}
+	// if ( ! supportCommercialUse ) {
+	// 	return null;
+	// }
 
 	return (
 		<div className="stats-feedback-container">
