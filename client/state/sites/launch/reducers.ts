@@ -12,6 +12,7 @@ const addInProgressSiteLaunch = ( state: number[], siteId: number ) => {
 const removeInProgressSiteLaunch = ( state: number[], siteId: number ) => {
 	return state.filter( ( id ) => id !== siteId );
 };
+
 export const siteLaunchesInProgress = ( state: number[] = [], action: AnyAction ) => {
 	switch ( action.type ) {
 		case SITE_LAUNCH:
