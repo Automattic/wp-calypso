@@ -74,7 +74,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 						<TextPlaceholder />
 					) : (
 						translate(
-							'{{b}}%(productName)s{{/b}} will stop recommending products to your customers. This action cannot be undone.',
+							'{{b}}%(productName)s{{/b}} will be canceled, and you will no longer have access to it. Are you sure you want to cancel?',
 							{
 								args: {
 									productName,

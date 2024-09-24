@@ -189,6 +189,10 @@ export const SitePerformance = () => {
 	);
 
 	const onLaunchSiteClick = () => {
+		if ( site?.is_a4a_dev_site ) {
+			page( `/settings/general/${ site.slug }` );
+			return;
+		}
 		dispatch( launchSite( siteId! ) );
 	};
 
@@ -199,6 +203,7 @@ export const SitePerformance = () => {
 			onFilterValueChange={ setQuery }
 			allowReset={ false }
 			options={ pageOptions }
+			disabled={ isInitialLoading || performanceReport.isLoading }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
 
@@ -278,6 +283,11 @@ export const SitePerformance = () => {
 						<ReportUnavailable
 							isLaunching={ siteIsLaunching }
 							onLaunchSiteClick={ onLaunchSiteClick }
+							ctaText={
+								site?.is_a4a_dev_site
+									? translate( 'Prepare for launch' )
+									: translate( 'Launch Site' )
+							}
 						/>
 					) : (
 						currentPage && (

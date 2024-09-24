@@ -100,3 +100,13 @@ export function isInstallInProgress( state, siteId ) {
 export function isTransferComplete( state, siteId ) {
 	return get( state.themes.uploadTheme.isTransferComplete, siteId, false );
 }
+
+/**
+ * Returns true if a transfer is in progress.
+ * @param {Object} state -- Global state tree
+ * @param {number} siteId -- Site ID
+ * @returns {boolean} -- True if transfer is in progress.
+ */
+export function isTransferInProgress( state, siteId ) {
+	return get( state.themes.uploadTheme.isTransferInProgress, siteId, false );
+}
