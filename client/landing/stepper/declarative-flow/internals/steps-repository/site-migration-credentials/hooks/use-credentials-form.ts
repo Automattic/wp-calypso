@@ -86,7 +86,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	};
 
 	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && isPending ) {
+		if ( isEnglishLocale && isPending && ! requestInAnywayMode ) {
 			return translate( 'Verifying credentials' );
 		}
 
