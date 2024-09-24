@@ -1,0 +1,32 @@
+.defensive-mode-card__edge-cache-required {
+	color: var(--color-text-subtle);
+	font-style: italic;
+}
+
+.defensive-mode-card__enabled-description {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.defensive-mode-card__enabled-indicator {
+	background-color: var(--color-accent);
+	border-radius: 100%;
+	flex-shrink: 0;
+	height: 10px;
+	width: 10px;
+}
+
+.defensive-mode-card__ttl-select {
+	display: block;
+	margin-bottom: 1.5em;
+	width: 100%;
+}
+
+.defensive-mode-card__button {
+	margin-top: 1.5em;
+}

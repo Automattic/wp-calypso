@@ -44,6 +44,7 @@
 		"cookie-banner": false,
 		"google-my-business": false,
 		"help": true,
+		"hosting-server-settings-enhancements": true,
 		"importers/newsletter": true,
 		"importers/substack": true,
 		"individual-subscriber-stats": false,
