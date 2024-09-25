@@ -10,6 +10,7 @@ import {
 	useEdgeCacheDefensiveModeQuery,
 	useEdgeCacheQuery,
 } from 'calypso/data/hosting/use-cache';
+import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -48,7 +49,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 	const siteId = useSelector( getSelectedSiteId );
 	const [ ttl, setTtl ] = useState( availableTtls[ 0 ].value );
 
-	const { data: isEdgeCacheActive } = useEdgeCacheQuery( siteId );
+	const { data: isEdgeCacheActive, isLoading: isLoadingEdgeCache } = useEdgeCacheQuery( siteId );
 	const { data: defensiveModeData } = useEdgeCacheDefensiveModeQuery( siteId );
 	const { mutate, isPending: isEnabling } = useEdgeCacheDefensiveModeMutation( siteId );
 
@@ -67,7 +68,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 				) }
 			</HostingCardDescription>
 
-			{ ! isEdgeCacheActive && (
+			{ isLoadingEdgeCache && <EdgeCacheLoadingPlaceholder /> }
+
+			{ ! isEdgeCacheActive && ! isLoadingEdgeCache && (
 				<HostingCardDescription>
 					<span className="defensive-mode-card__edge-cache-required">
 						{ translate( 'Defensive mode requires {{a}}global edge cache{{/a}} to be enabled.', {
