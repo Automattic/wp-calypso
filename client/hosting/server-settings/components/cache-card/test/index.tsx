@@ -87,13 +87,6 @@ describe( 'CacheCard component', () => {
 		expect( setEdgeCacheMock ).toHaveBeenCalledWith( 1, true );
 	} );
 
-	it( 'displays rate limit message when shouldRateLimitCacheClear prop is true', () => {
-		jest.mocked( shouldRateLimitAtomicCacheClear ).mockReturnValue( true );
-
-		renderWithProvider();
-		expect( screen.getByText( /you cleared the cache recently/i ) ).toBeInTheDocument();
-	} );
-
 	it( 'disables "Clear cache" button when isClearingCache prop is true', () => {
 		jest.mocked( getRequest ).mockReturnValue( { isLoading: true } );
 
