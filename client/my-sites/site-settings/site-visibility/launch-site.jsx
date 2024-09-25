@@ -81,6 +81,7 @@ const LaunchSite = () => {
 		isDevelopmentSite &&
 		! siteReferralActive &&
 		! agencyLoading;
+	const shouldShowAgencyBillingMessage = isDevelopmentSite && ! agencyLoading;
 
 	const handleLaunchSiteClick = () => {
 		if ( isDevelopmentSite && ! siteReferralActive ) {
@@ -187,7 +188,7 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ shouldShowReferToClientButton && <i>{ agencyBillingMessage }</i> }
+						{ shouldShowAgencyBillingMessage && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{ shouldShowReferToClientButton && (
