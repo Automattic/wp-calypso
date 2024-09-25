@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
@@ -24,24 +24,19 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName } = useRandomSiteName();
 
 	const [ tourStepRef, setTourStepRef ] = useState< HTMLElement | null >( null );
-	const [ showConfigurationModal, setShowConfigurationModal ] = useState( false );
+
+	const shouldAutoOpenDevSiteConfigModal = Boolean(
+		getQueryArg( window.location.href, 'add_new_dev_site' )
+	);
+	const [ showConfigurationModal, setShowConfigurationModal ] = useState(
+		shouldAutoOpenDevSiteConfigModal
+	);
 
 	const toggleDevSiteConfigurationsModal = useCallback( () => {
 		setShowConfigurationModal( ! showConfigurationModal );
 	}, [ showConfigurationModal ] );
 
 	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
-
-	const shouldAutoOpenDevSiteConfigModal = getQueryArg( window.location.href, 'add_new_dev_site' );
-	useEffect( () => {
-		if ( shouldAutoOpenDevSiteConfigModal && ! showConfigurationModal ) {
-			toggleDevSiteConfigurationsModal?.();
-		}
-	}, [
-		shouldAutoOpenDevSiteConfigModal,
-		showConfigurationModal,
-		toggleDevSiteConfigurationsModal,
-	] );
 
 	return (
 		<div className="sites-header__actions">
