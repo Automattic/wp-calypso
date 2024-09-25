@@ -8,8 +8,8 @@ import YearNavigation from './year-navigation';
 
 type Insights = {
 	day?: string;
-	hour?: string;
 	hourPercent?: number;
+	hour?: string;
 	hourlyViews?: object;
 	years?: Array< {
 		avg_comments: number;
