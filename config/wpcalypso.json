@@ -105,6 +105,7 @@
 		"login/social-first": true,
 		"logmein": true,
 		"mailchimp": true,
+		"marketing-force-facebook-display": true,
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
