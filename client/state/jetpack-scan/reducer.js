@@ -40,7 +40,7 @@ const requestStatusRetryCount = keyedReducer( 'siteId', ( state, { type, retryCo
 			return retryCount;
 	}
 
-	return state || 0;
+	return state;
 } );
 
 export default combineReducers( {
