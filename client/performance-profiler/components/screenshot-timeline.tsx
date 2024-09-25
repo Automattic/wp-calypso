@@ -4,6 +4,9 @@ import { ScreenShotsTimeLine } from 'calypso/data/site-profiler/types';
 
 const Container = styled.div`
 	max-width: 100%;
+	border: 1px solid var( --studio-gray-5 );
+	padding: 24px;
+	border-radius: 4px;
 `;
 
 const Timeline = styled.div`
@@ -17,7 +20,8 @@ const Timeline = styled.div`
 
 const H2 = styled.h2`
 	font-weight: 500;
-	font-size: 1.25rem;
+	font-size: 1rem;
+	margin-bottom: 8px;
 `;
 
 const Thumbnail = styled.img`
