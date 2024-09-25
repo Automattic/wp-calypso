@@ -7,6 +7,8 @@
  *   2. Display coords (DC suffix): that match the CSS pixel coordinate space of the LH report's page.
  */
 
+import { Modal } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 
 type Size = {
@@ -202,6 +204,7 @@ export const InsightScreenshotWithOverlay = ( {
 	elementRectSC,
 	maxRenderSizeDC,
 }: InsightScreenshotProps ) => {
+	const { __ } = useI18n();
 	const [ overlayOpen, setOverlayOpen ] = useState( false );
 
 	const maxLightboxSize = {
@@ -212,10 +215,9 @@ export const InsightScreenshotWithOverlay = ( {
 	return (
 		<>
 			{ overlayOpen && (
-				<div
-					className="element-screenshot__overlay"
-					onClick={ () => setOverlayOpen( false ) }
-					aria-hidden="true"
+				<Modal
+					onRequestClose={ () => setOverlayOpen( false ) }
+					contentLabel={ __( 'Image preview' ) }
 				>
 					<InsightScreenshot
 						nodeId={ nodeId + '-overlay' }
@@ -223,7 +225,7 @@ export const InsightScreenshotWithOverlay = ( {
 						elementRectSC={ elementRectSC }
 						maxRenderSizeDC={ maxLightboxSize }
 					/>
-				</div>
+				</Modal>
 			) }
 			<InsightScreenshot
 				onClick={ () => setOverlayOpen( true ) }
