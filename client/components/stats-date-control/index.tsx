@@ -24,6 +24,7 @@ const eventNames = {
 		last_year: 'jetpack_odyssey_stats_date_picker_shortcut_last_year_click',
 		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_click',
 		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_click',
+		trigger_button: 'jetpack_odyssey_stats_date_picker_trigger_click',
 	},
 	calypso: {
 		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_click',
@@ -32,6 +33,7 @@ const eventNames = {
 		last_year: 'calypso_stats_date_picker_shortcut_last_year_click',
 		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_click',
 		apply_button: 'calypso_stats_date_picker_apply_button_click',
+		trigger_button: 'calypso_stats_date_picker_trigger_click',
 	},
 };
 
@@ -169,7 +171,7 @@ const StatsDateControl = ( {
 							<Button
 								onClick={ () => {
 									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-									recordTracksEvent( `${ event_from }_stats_date_picker_trigger_clicked` );
+									recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
 									onTriggerClick();
 								} }
 								ref={ buttonRef }
