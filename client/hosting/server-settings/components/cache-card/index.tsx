@@ -10,9 +10,12 @@ import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
+	clearEdgeCacheSuccessNoticeId,
 } from 'calypso/data/hosting/use-cache';
 import { useDispatch, useSelector } from 'calypso/state';
+import { clearObjectCacheSuccessNoticeId } from 'calypso/state/data-layer/wpcom/sites/hosting/clear-cache';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -59,6 +62,13 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	useEffect( () => {
 		if ( isClearingAllCaches && ! isClearingObjectCache && ! isClearingEdgeCache ) {
 			setIsClearingAllCaches( false );
+			dispatch( removeNotice( clearObjectCacheSuccessNoticeId ) );
+			dispatch( removeNotice( clearEdgeCacheSuccessNoticeId ) );
+			dispatch(
+				successNotice( translate( 'Successfully cleared all caches.' ), {
+					duration: 5000,
+				} )
+			);
 		}
 	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches ] );
 

@@ -10,7 +10,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-const updateNoticeId = 'hosting-clear-wordpress-cache';
+export const clearObjectCacheSuccessNoticeId = 'hosting-clear-wordpress-cache';
 
 const clearWordPressCache = ( action ) =>
 	http(
@@ -40,7 +40,7 @@ const clearWordPressCacheSuccess = () => {
 	return [
 		hostingClearWordPressCacheTracking( true ),
 		successNotice( translate( 'Successfully cleared object cache.' ), {
-			id: updateNoticeId,
+			id: clearObjectCacheSuccessNoticeId,
 			duration: 5000,
 		} ),
 	];
@@ -50,7 +50,7 @@ const clearWordPressCacheError = () => {
 	return [
 		hostingClearWordPressCacheTracking( false ),
 		errorNotice( translate( 'Failed to clear object cache.' ), {
-			id: updateNoticeId,
+			id: clearObjectCacheSuccessNoticeId,
 		} ),
 	];
 };

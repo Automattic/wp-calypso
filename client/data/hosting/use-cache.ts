@@ -141,6 +141,8 @@ export const useSetEdgeCacheMutation = (
 	return { setEdgeCache, ...rest };
 };
 
+export const clearEdgeCacheSuccessNoticeId = 'hosting-clear-edge-cache';
+
 export const useClearEdgeCacheMutation = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError > = {}
@@ -150,11 +152,11 @@ export const useClearEdgeCacheMutation = (
 
 	return useMutation( {
 		mutationFn: () => purgeEdgeCache( siteId ),
-		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
 		onSuccess() {
 			dispatch(
 				successNotice( translate( 'Successfully cleared edge cache.' ), {
+					id: clearEdgeCacheSuccessNoticeId,
 					duration: 5000,
 				} )
 			);
@@ -162,5 +164,6 @@ export const useClearEdgeCacheMutation = (
 		onError() {
 			dispatch( errorNotice( translate( 'Failed to clear edge cache.' ) ) );
 		},
+		...options,
 	} );
 };
