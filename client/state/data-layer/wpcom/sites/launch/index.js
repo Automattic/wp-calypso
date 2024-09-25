@@ -8,6 +8,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { updateSiteSettings } from 'calypso/state/site-settings/actions';
 import { receiveSite } from 'calypso/state/sites/actions';
+import { launchSiteFailure, launchSiteSuccess } from 'calypso/state/sites/launch/actions';
 
 const handleLaunchSiteRequest = dispatchRequest( {
 	fetch: ( action ) => [
@@ -31,8 +32,11 @@ const handleLaunchSiteRequest = dispatchRequest( {
 				duration: 5000,
 			}
 		),
+		launchSiteSuccess( data.ID ),
 	],
-	onError: ( action, data ) => errorNotice( data.message, { duration: 5000 } ),
+	onError: ( action, data ) => {
+		return [ errorNotice( data.message, { duration: 5000 } ), launchSiteFailure( action.siteId ) ];
+	},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/launch/index.js', {

@@ -8,8 +8,8 @@ const contextLinks = {
 		post_id: 80368,
 	},
 	'admin-interface-style': {
-		link: 'https://wordpress.com/support/dashboard/#set-the-admin-interface-style',
-		post_id: 137,
+		link: 'https://wordpress.com/support/set-your-admin-interface-style/',
+		post_id: 386651,
 	},
 	advertising: {
 		link: 'https://wordpress.com/support/promote-a-post/',
