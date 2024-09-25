@@ -24,6 +24,7 @@ import { isReskinnedFlow } from './is-flow';
 import SignupComponent from './main';
 import {
 	retrieveSignupDestination,
+	retrieveSignupDependencies,
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
@@ -305,16 +306,13 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// If the user entered the signup flow from the checkout page, submit the domains step
-		// to allow the user to return to the plans page.
-		if ( isManageSiteFlow ) {
-			const stepData = {
-				stepName: 'domains',
-				suggestion: undefined,
-				domainCart: {},
-			};
-			context.store.dispatch( submitSignupStep( stepData, { domainCart: {} } ) );
+		// Hydrate the store with signup dependencies from cookie.
+		const signupDependencies = retrieveSignupDependencies();
+		if ( signupDependencies && isManageSiteFlow ) {
+			const parsedDependencies = JSON.parse( signupDependencies );
+			context.store.dispatch( submitSignupStep( { stepName: 'domains', ...parsedDependencies } ) );
 		}
+
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&

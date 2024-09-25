@@ -83,6 +83,7 @@ import { addP2SignupClassName } from './controller';
 import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
+	persistSignupDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -404,6 +405,9 @@ class Signup extends Component {
 			persistSignupDestination( destination );
 			setSignupCompleteSlug( dependencies.siteSlug );
 			setSignupCompleteFlowName( this.props.flowName );
+
+			// Persist dependencyStore data.
+			persistSignupDependencies( dependencies );
 		}
 
 		this.handleFlowComplete( dependencies, filteredDestination );
