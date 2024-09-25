@@ -33,5 +33,9 @@
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header-small;
 	font-weight: 400;
+
+	&--large {
+		font-size: 1.75rem;
+	}
 }
 
