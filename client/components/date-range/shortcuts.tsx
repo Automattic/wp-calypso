@@ -11,6 +11,8 @@ const DATERANGE_PERIOD = {
 	MONTH: 'month',
 };
 
+type MomentOrNull = Moment | null;
+
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
@@ -21,10 +23,18 @@ const DateRangePickerShortcuts = ( {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
 	locked?: boolean;
-	startDate?: Moment;
-	endDate?: Moment;
+	startDate?: MomentOrNull;
+	endDate?: MomentOrNull;
 } ) => {
 	const translate = useTranslate();
+
+	const normalizeDate = ( date: MomentOrNull ) => {
+		return date ? date.startOf( 'day' ) : date;
+	};
+
+	// Normalize dates to start of day
+	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
+	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
 
 	const shortcutList = [
 		{
@@ -69,12 +79,14 @@ const DateRangePickerShortcuts = ( {
 		},
 	];
 
-	const getShortcutForRange = ( startDate: Moment, endDate: Moment ) => {
+	const getShortcutForRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
+		if ( ! startDate || ! endDate ) {
+			return null;
+		}
 		// Search the shortcut array for something matching the current date range.
 		// Returns shortcut or null;
 		const today = moment().startOf( 'day' );
 		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
-
 		const shortcut = shortcutList.find( ( element ) => {
 			if ( endDate.isSame( today ) && daysInRange === element.range ) {
 				return element;
@@ -85,15 +97,16 @@ const DateRangePickerShortcuts = ( {
 	};
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
-		const newToDate = moment().subtract( offset, 'days' );
-		const newFromDate = moment().subtract( offset + range, 'days' );
-
+		const newToDate = moment().startOf( 'day' ).subtract( offset, 'days' );
+		const newFromDate = moment()
+			.startOf( 'day' )
+			.subtract( offset + range, 'days' );
 		onClick( newFromDate, newToDate, id || '' );
 	};
 
 	currentShortcut =
 		currentShortcut ||
-		( startDate && endDate && getShortcutForRange( startDate, endDate )?.id ) ||
+		getShortcutForRange( normalizedStartDate, normalizedEndDate )?.id ||
 		'custom_date_range';
 
 	return (
