@@ -31,6 +31,24 @@
 	width: 10px;
 }
 
+.defensive-mode-card__a11n-description {
+	align-items: start;
+	background-color: var(--studio-wordpress-blue-5);
+	border-radius: 4px;
+	display: flex;
+	gap: 12px;
+	margin-top: 24px;
+	padding: 16px;
+}
+.defensive-mode-card__a11n-text {
+	p {
+		margin: 0;
+	}
+	p + p {
+		margin-top: 4px;
+	}
+}
+
 .defensive-mode-card__ttl-select {
 	display: block;
 	margin-bottom: 1.5em;

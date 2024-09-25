@@ -1,4 +1,6 @@
 import { Button, FormLabel } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -48,7 +50,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 	const siteId = useSelector( getSelectedSiteId );
 	const [ ttl, setTtl ] = useState( availableTtls[ 0 ].value );
 
-	const { data: isEdgeCacheActive } = useEdgeCacheQuery( siteId );
+	const { data: isEdgeCacheActive, isLoading: isLoadingEdgeCache } = useEdgeCacheQuery( siteId );
 	const { data: defensiveModeData } = useEdgeCacheDefensiveModeQuery( siteId );
 	const { mutate, isPending: isEnabling } = useEdgeCacheDefensiveModeMutation( siteId );
 
@@ -67,7 +69,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 				) }
 			</HostingCardDescription>
 
-			{ ! isEdgeCacheActive && (
+			{ ! isEdgeCacheActive && ! isLoadingEdgeCache && (
 				<HostingCardDescription>
 					<span className="defensive-mode-card__edge-cache-required">
 						{ translate( 'Defensive mode requires {{a}}global edge cache{{/a}} to be enabled.', {
@@ -97,16 +99,52 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						</HostingCardDescription>
 					</div>
 
-					<Button
-						className="defensive-mode-card__button"
-						busy={ isEnabling }
-						disabled={ disabled || isEnabling }
-						onClick={ () => {
-							mutate( { active: false } );
-						} }
-					>
-						{ translate( 'Disable defensive mode' ) }
-					</Button>
+					{ ! defensiveModeData.enabled_by_a11n && (
+						<Button
+							className="defensive-mode-card__button"
+							busy={ isEnabling }
+							disabled={ disabled || isEnabling }
+							onClick={ () => {
+								mutate( { active: false } );
+							} }
+						>
+							{ translate( 'Disable defensive mode' ) }
+						</Button>
+					) }
+
+					{ defensiveModeData.enabled_by_a11n && (
+						<div className="defensive-mode-card__a11n-description">
+							<div>
+								<Icon icon={ info } size={ 24 } />
+							</div>
+
+							<div className="defensive-mode-card__a11n-text">
+								<p>
+									<strong>
+										{ translate(
+											'Defensive mode was enabled on your behalf to protect your site.'
+										) }
+									</strong>
+								</p>
+								<p>
+									{ translate(
+										'Please {{a}}contact support{{/a}} if you need to disable defensive mode.',
+										{
+											components: {
+												a: (
+													<a
+														href="https://wordpress.com/help/contact"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</p>
+							</div>
+						</div>
+					) }
 				</>
 			) }
 
