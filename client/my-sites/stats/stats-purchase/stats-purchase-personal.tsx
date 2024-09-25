@@ -5,6 +5,7 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
@@ -50,6 +51,7 @@ const PersonalPurchase = ( {
 	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId );
 
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
@@ -83,6 +85,7 @@ const PersonalPurchase = ( {
 			redirectUri,
 			price: subscriptionValue / MIN_STEP_SPLITS,
 			isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
+			isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
 		} );
 	};
 
@@ -193,7 +196,14 @@ const PersonalPurchase = ( {
 							! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
 						}
 						onClick={ () =>
-							gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+							gotoCheckoutPage( {
+								from,
+								type: 'free',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								isSiteFullyConnected: connectionStatus?.isSiteFullyConnected,
+							} )
 						}
 					>
 						{ translate( 'Continue with Jetpack Stats for free' ) }
