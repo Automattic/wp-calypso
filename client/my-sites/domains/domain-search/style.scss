@@ -40,6 +40,21 @@
 		.domain-product-price {
 			flex-grow: 1;
 		}
+		.domain-registration-suggestion__badges {
+			margin-left: 0;
+			margin-bottom: 4px;
+
+			.badge {
+				border-radius: 4px;
+				font-size: 0.75rem;
+				font-weight: 500;
+				white-space: nowrap;
+			}
+
+			@include break-wide {
+				flex: 1;
+			}
+		}
 	}
 }
 
