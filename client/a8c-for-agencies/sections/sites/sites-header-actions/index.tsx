@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
@@ -12,7 +11,6 @@ import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-co
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
 import './style.scss';
 
 type Props = {
@@ -34,15 +32,16 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
 
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-
-	const addNewDevSite = getQueryArg( window.location.href, 'add_new_dev_site' );
-
+	const shouldAutoOpenDevSiteConfigModal = getQueryArg( window.location.href, 'add_new_dev_site' );
 	useEffect( () => {
-		if ( devSitesEnabled && addNewDevSite ) {
+		if ( shouldAutoOpenDevSiteConfigModal && ! showConfigurationModal ) {
 			toggleDevSiteConfigurationsModal?.();
 		}
-	}, [ addNewDevSite, devSitesEnabled, toggleDevSiteConfigurationsModal ] );
+	}, [
+		shouldAutoOpenDevSiteConfigModal,
+		showConfigurationModal,
+		toggleDevSiteConfigurationsModal,
+	] );
 
 	return (
 		<div className="sites-header__actions">
