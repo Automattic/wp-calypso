@@ -14,8 +14,8 @@ import Month from './month';
 
 import './style.scss';
 
-class PostTrends extends Component {
-	static displayName = 'PostTrends';
+class PostingActivitySection extends Component {
+	static displayName = 'PostingActivitySection';
 
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -88,4 +88,4 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 export default connect( mapStateToProps, null, null, {
 	areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
-} )( localize( withLocalizedMoment( PostTrends ) ) );
+} )( localize( withLocalizedMoment( PostingActivitySection ) ) );
