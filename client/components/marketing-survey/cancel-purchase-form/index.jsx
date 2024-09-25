@@ -48,7 +48,13 @@ import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
-import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP } from './steps';
+import {
+	ATOMIC_REVERT_STEP,
+	FEEDBACK_STEP,
+	UPSELL_STEP,
+	NEXT_ADVENTURE_STEP,
+	REMOVE_PLAN_STEP,
+} from './steps';
 
 import './style.scss';
 
@@ -96,6 +102,10 @@ class CancelPurchaseForm extends Component {
 
 		if ( willAtomicSiteRevert ) {
 			steps.push( ATOMIC_REVERT_STEP );
+		}
+
+		if ( skipSurvey && steps.length === 0 ) {
+			steps.push( REMOVE_PLAN_STEP );
 		}
 
 		return steps;
@@ -335,6 +345,7 @@ class CancelPurchaseForm extends Component {
 			flowType,
 		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
+		const { productName } = purchase;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -515,6 +526,48 @@ class CancelPurchaseForm extends Component {
 							</ExternalLink>
 						</div>
 					) }
+				</div>
+			);
+		}
+
+		if ( surveyStep === REMOVE_PLAN_STEP ) {
+			return (
+				<div className="cancel-purchase-form__remove-plan">
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Sorry to see you go' ) }
+						subHeaderText={
+							<>
+								<span className="cancel-purchase-form__remove-plan-text">
+									{
+										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business"
+										translate(
+											'If you remove your subscription, you will lose access to the features of the %(planName)s plan.',
+											{
+												args: {
+													planName: productName,
+												},
+											}
+										)
+									}
+								</span>
+								<span className="cancel-purchase-form__remove-plan-text">
+									{
+										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
+										translate(
+											'If you keep your subscription, you will be able to continue using your %(planName)s plan features until %(purchaseRenewalDate)s.',
+											{
+												args: {
+													planName: productName,
+													purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+												},
+											}
+										)
+									}
+								</span>
+							</>
+						}
+					/>
 				</div>
 			);
 		}

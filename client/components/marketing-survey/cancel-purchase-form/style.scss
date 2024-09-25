@@ -22,7 +22,8 @@
 }
 
 .cancel-purchase-form__feedback,
-.cancel-purchase-form__atomic-revert {
+.cancel-purchase-form__atomic-revert,
+.cancel-purchase-form__remove-plan {
 	max-width: 730px;
 	margin: 0 auto 2rem;
 }
@@ -346,5 +347,13 @@
 
 	li {
 		margin: 0.75rem 0;
+	}
+}
+
+.cancel-purchase-form__remove-plan-text {
+	display: block;
+
+	&:not(:last-child) {
+		margin-bottom: 1rem;
 	}
 }
