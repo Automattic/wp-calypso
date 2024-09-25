@@ -46,6 +46,7 @@ $blueberry-color: #3858e9;
 
 			&:not(.is-expanded) {
 				border-bottom: 1px solid var(--studio-gray-5);
+
 				&:not(:nth-child(-n+2)) {
 					border-top: none;
 				}
@@ -59,6 +60,10 @@ $blueberry-color: #3858e9;
 					font-size: 1rem;
 					font-weight: 500;
 				}
+			}
+
+			&.is-expanded:not(:nth-child(-n+2)) {
+				border-top: none;
 			}
 		}
 		.core-web-vitals-display__details {
