@@ -41,6 +41,7 @@
 		{ "path": "./launchpad" },
 		{ "path": "./launchpad-navigator" },
 		{ "path": "./mini-cart" },
+		{ "path": "./nps" },
 		{ "path": "./odie-client" },
 		{ "path": "./onboarding" },
 		{ "path": "./page-pattern-modal" },
