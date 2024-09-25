@@ -78,7 +78,10 @@ class DomainSuggestion extends Component {
 			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
 		} );
 
-		const [ badges, domainContent, matchReason ] = children;
+		const [ badges = null, domainContent = null, matchReason = null ] = Array.isArray( children )
+			? children
+			: [];
+
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
