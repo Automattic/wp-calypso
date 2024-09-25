@@ -44,6 +44,10 @@ is hovered over.
 
 The children to render inside of the `PopoverMenuItem`.
 
+#### `localizeUrl { bool } - default: true`
+
+If set to false, the `href` will not be localized.
+
 ### `Popover` Usage
 
 ```jsx

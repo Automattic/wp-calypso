@@ -19,6 +19,7 @@ export default class PopoverMenuItem extends Component {
 		onMouseOver: PropTypes.func,
 		isExternalLink: PropTypes.bool,
 		itemComponent: PropTypes.elementType,
+		localizeUrl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -26,6 +27,7 @@ export default class PopoverMenuItem extends Component {
 		focusOnHover: true,
 		onMouseOver: noop,
 		itemComponent: 'button',
+		localizeUrl: true,
 	};
 
 	handleMouseOver = ( event ) => {
