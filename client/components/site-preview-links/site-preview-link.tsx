@@ -35,7 +35,7 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 		// Less than 1 day left, or more than 1 day left but no hours need to be appended
 		// We can utilize moment.js to get the duration string
 		const durationString = expiryDate.toNow( true );
-		return translate( 'Expires in %(durationString)s.', {
+		return translate( 'Expires in %(durationString)s', {
 			args: { durationString },
 			comment:
 				'Duration until the link expires. It is certain that the duration is less than 1 day. The duration string is localized by moment.js. Example: "30 minutes", "32 seconds", "21 hours".',
@@ -63,7 +63,6 @@ const LinkExpiryCopy = ( { expiresAt }: LinkExpiryCopyProps ) => {
 					args: { hours },
 					comment: '%{hours} is the number of hours until the link expires, in the range of 1-23.',
 				} ) }
-			.
 		</>
 	);
 };
@@ -95,7 +94,7 @@ const SitePreviewLink = ( {
 		<>
 			<ClipboardButtonInput key={ code } value={ linkValue } disabled={ disabled } />
 			<HelpText>
-				{ translate( 'Anyone with the link can view your site.' ) }
+				{ translate( 'Anyone with the link can view your site' ) }
 				{ hasExpiration && ' • ' }
 				{ hasExpiration && <LinkExpiryCopy expiresAt={ expires_at } /> }
 			</HelpText>
