@@ -81,7 +81,8 @@ const LaunchSite = () => {
 		isDevelopmentSite &&
 		! siteReferralActive &&
 		! agencyLoading;
-	const shouldShowAgencyBillingMessage = isDevelopmentSite && ! agencyLoading;
+	const shouldShowAgencyBillingMessage =
+		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
 
 	const handleLaunchSiteClick = () => {
 		if ( isDevelopmentSite && ! siteReferralActive ) {
