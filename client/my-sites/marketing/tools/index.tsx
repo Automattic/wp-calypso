@@ -117,7 +117,7 @@ export const MarketingTools: FunctionComponent = () => {
 					<MarketingToolsFeature
 						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
 						description={ translate(
-							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and Commerce plans{{/em}}.',
 							{
 								components: {
 									em: <em />,
