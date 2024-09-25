@@ -16,9 +16,11 @@ import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage'
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { LaunchIcon, ShareLinkIcon } from 'calypso/hosting/overview/components/icons';
 import { PlanBandwidth } from 'calypso/hosting/overview/components/plan-bandwidth';
 import { PlanSiteVisits } from 'calypso/hosting/overview/components/plan-site-visits';
 import PlanStorageBar from 'calypso/hosting/overview/components/plan-storage-bar';
+import { Action } from 'calypso/hosting/overview/components/quick-actions-card';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -31,8 +33,6 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import { LaunchIcon, ShareLinkIcon } from './icons';
-import { Action } from './quick-actions-card';
 
 const DevelopmentSiteActions = () => {
 	const translate = useTranslate();

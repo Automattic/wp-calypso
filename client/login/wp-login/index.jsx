@@ -619,7 +619,14 @@ export class Login extends Component {
 					<DocumentHead
 						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
+						meta={ [
+							{
+								name: 'description',
+								content: translate(
+									'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
+								),
+							},
+						] }
 					/>
 
 					{ isSocialFirst && this.renderLoginHeaderNavigation() }
