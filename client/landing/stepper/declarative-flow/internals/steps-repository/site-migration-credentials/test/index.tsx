@@ -286,32 +286,101 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows "Continue anyways" on the Continue button for verification error and shows error message', async () => {
+	it.each( [
+		{
+			response_code: 404,
+			errorMessage: 'Check your site address.',
+		},
+		{
+			response_code: 401,
+			errorMessage: 'Check your username.',
+		},
+		{
+			response_code: 401,
+			errorMessage: 'Check your password.',
+		},
+	] )(
+		'shows error message for %p verification error',
+		async ( { response_code, errorMessage } ) => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+
+			( wpcomRequest as jest.Mock ).mockRejectedValue( {
+				code: 'automated_migration_tools_login_and_get_cookies_test_failed',
+				data: {
+					response_code,
+				},
+			} );
+
+			await fillAllFields();
+			userEvent.click( continueButton() );
+
+			await waitFor( () => {
+				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+			} );
+
+			await waitFor( () => {
+				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+				expect(
+					getByText(
+						'We could not verify your credentials. Can you double check your account information and try again?'
+					)
+				).toBeVisible();
+				expect( getByText( errorMessage ) ).toBeVisible();
+			} );
+		}
+	);
+
+	it( 'creates a credentials ticket by Continue anyways button', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
+
+		await userEvent.click( credentialsOption() );
+		await userEvent.type( siteAddressInput(), 'site-url.com' );
+		await userEvent.type( usernameInput(), 'username' );
+		await userEvent.type( passwordInput(), 'password' );
+
+		await userEvent.click( specialInstructionsButton() );
+		await userEvent.type( specialInstructionsInput(), 'notes' );
 
 		( wpcomRequest as jest.Mock ).mockRejectedValue( {
 			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
 			data: {
-				response_code: 404,
+				response_code: 401,
 			},
 		} );
 
-		await fillAllFields();
-		userEvent.click( continueButton() );
+		await userEvent.click( continueButton() );
 
 		await waitFor( () => {
 			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
 		} );
 
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		await userEvent.click( continueButton( /Continue anyways/ ) );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'sites/site-url.wordpress.com/automated-migration',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				migration_type: 'credentials',
+				blog_url: 'site-url.wordpress.com',
+				bypass_verification: true,
+				notes: 'notes',
+				from_url: 'site-url.com',
+				username: 'username',
+				password: 'password',
+			},
+		} );
+
 		await waitFor( () => {
-			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-			expect(
-				getByText(
-					'We could not verify your credentials. Can you double check your account information and try again?'
-				)
-			).toBeVisible();
-			expect( getByText( 'Check your site address.' ) ).toBeVisible();
+			expect( submit ).toHaveBeenCalled();
 		} );
 	} );
 } );
