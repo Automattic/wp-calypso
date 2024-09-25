@@ -127,6 +127,7 @@ const gotoCheckoutPage = ( {
 	price,
 	quantity,
 	isUpgrade = false,
+	isSiteFullyConnected = true,
 }: {
 	from: string;
 	type: 'pwyw' | 'free' | 'commercial';
@@ -136,6 +137,7 @@ const gotoCheckoutPage = ( {
 	price?: number;
 	quantity?: number;
 	isUpgrade?: boolean;
+	isSiteFullyConnected?: boolean;
 } ) => {
 	let eventName = '';
 	let product: string;

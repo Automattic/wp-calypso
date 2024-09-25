@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
@@ -146,6 +147,7 @@ const StatsCommercialPurchase = ( {
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -209,6 +211,7 @@ const StatsCommercialPurchase = ( {
 							price: undefined,
 							quantity: purchaseTierQuantity,
 							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
+							isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
 						} )
 					}
 				>
