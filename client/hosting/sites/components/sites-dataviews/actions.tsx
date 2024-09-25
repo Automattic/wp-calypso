@@ -3,6 +3,7 @@ import {
 	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -50,7 +51,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				id: 'prepare-for-launch',
 				label: __( 'Prepare for launch' ),
 				callback: ( sites ) => {
-					window.location.href = `https://wordpress.com/settings/general/${ sites[ 0 ].ID }`;
+					page( `/settings/general/${ sites[ 0 ].ID }` );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' )
 					);
@@ -68,7 +69,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				id: 'settings',
 				label: __( 'Site settings' ),
 				callback: ( sites ) => {
-					window.location.href = getSettingsUrl( sites[ 0 ].slug );
+					page( getSettingsUrl( sites[ 0 ].slug ) );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
 				},
 			},
@@ -98,10 +99,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 					const site = sites[ 0 ];
 					const hasHosting =
 						site.plan?.features.active.includes( FEATURE_SFTP ) && ! site?.plan?.expired;
-
-					window.location.href = hasHosting
-						? `hosting-config/${ site.slug }`
-						: `/hosting-features/${ site.slug }`;
+					page( hasHosting ? `hosting-config/${ site.slug }` : `/hosting-features/${ site.slug }` );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_click' ) );
 				},
 				isEligible: ( site ) => {
@@ -114,7 +112,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				id: 'site-monitoring',
 				label: __( 'Monitoring' ),
 				callback: ( sites ) => {
-					window.location.href = getSiteMonitoringUrl( sites[ 0 ].slug );
+					page( getSiteMonitoringUrl( sites[ 0 ].slug ) );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_site_monitoring_click' )
 					);
@@ -132,11 +130,11 @@ export function useActions(): Action< SiteExcerptData >[] {
 					const wpAdminUrl = getSiteAdminUrl( site );
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
-
-					window.location.href = isWpAdminInterface
-						? `${ wpAdminUrl }plugins.php`
-						: getPluginsUrl( site.slug );
-
+					if ( isWpAdminInterface ) {
+						window.location.href = `${ wpAdminUrl }plugins.php`;
+					} else {
+						page( getPluginsUrl( site.slug ) );
+					}
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_plugins_click' ) );
 				},
 				isEligible: ( site ) => {
@@ -169,9 +167,11 @@ export function useActions(): Action< SiteExcerptData >[] {
 				label: __( 'Copy site' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					window.location.href = addQueryArgs( `/setup/copy-site`, {
-						sourceSlug: site.slug,
-					} );
+					page(
+						addQueryArgs( `/setup/copy-site`, {
+							sourceSlug: site.slug,
+						} )
+					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
 				},
 				isEligible: ( site ) => {
@@ -190,9 +190,11 @@ export function useActions(): Action< SiteExcerptData >[] {
 					const wpAdminUrl = getSiteAdminUrl( site );
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
-					window.location.href = isWpAdminInterface
-						? `${ wpAdminUrl }options-general.php?page=page-optimize`
-						: `/settings/performance/${ site.slug }`;
+					if ( isWpAdminInterface ) {
+						window.location.href = `${ wpAdminUrl }options-general.php?page=page-optimize`;
+					} else {
+						page( `/settings/performance/${ site.slug }` );
+					}
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_performance_settings_click' )
 					);
@@ -210,7 +212,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				label: __( 'Privacy settings' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					window.location.href = `/settings/general/${ site.slug }#site-privacy-settings`;
+					page( `/settings/general/${ site.slug }#site-privacy-settings` );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
 					);
@@ -226,7 +228,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				label: __( 'Domains and DNS' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					window.location.href = `/domains/manage/${ site.slug }/dns/${ site.slug }`;
+					page( `/domains/manage/${ site.slug }/dns/${ site.slug }` );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_domains_and_dns_click' )
 					);
