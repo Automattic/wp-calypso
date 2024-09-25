@@ -19,7 +19,7 @@ $blueberry-color: #3858e9;
 	display: flex;
 	gap: 6px;
 	background: var(--studio-white);
-	border: 1.5px solid var(--studio-gray-5);
+	border: 1px solid var(--studio-gray-5);
 	text-align: initial;
 	flex-grow: 1;
 	padding: 16px 22px 16px 22px;
@@ -27,14 +27,15 @@ $blueberry-color: #3858e9;
 	&:not(.active) {
 		border-bottom: 1px solid var(--studio-gray-5);
 		&:not(:nth-child(-n+2)) {
-			border-top: none;
+			border-top-color: transparent;
 		}
 	}
 
 	&.active {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
-		border: 1.5px solid $blueberry-color;
+		border-color: transparent;
+		outline: 1.5px solid $blueberry-color;
 		position: relative;
 
 		&::before {
