@@ -1,7 +1,12 @@
+import {
+	FEATURE_SFTP,
+	WPCOM_FEATURES_COPY_SITE,
+	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
+} from '@automattic/calypso-products';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
-import SitePreviewLink from 'calypso/components/site-preview-link';
+import SitePreviewLink from 'calypso/components/site-preview-links';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -74,7 +79,7 @@ export function useActions(): Action< SiteExcerptData >[] {
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					const hasHosting =
-						/* useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && */ ! site?.plan?.expired;
+						site.plan?.features.active.includes( FEATURE_SFTP ) && ! site?.plan?.expired;
 
 					window.location.href = hasHosting
 						? `hosting-config/${ site.slug }`
@@ -89,7 +94,6 @@ export function useActions(): Action< SiteExcerptData >[] {
 
 			{
 				id: 'site-monitoring',
-				// The label here used to change depending on whether the site uses WPAdmin or not.
 				label: __( 'Monitoring' ),
 				callback: ( sites ) => {
 					window.location.href = getSiteMonitoringUrl( sites[ 0 ].slug );
@@ -130,14 +134,13 @@ export function useActions(): Action< SiteExcerptData >[] {
 					return <SitePreviewLink siteUrl={ site.URL } siteId={ site.ID } source="smp-modal" />;
 				},
 				isEligible: ( site ) => {
-					/* const hasSitePreviewLinksFeature = useSafeSiteHasFeature(
-						site.ID,
+					const hasSitePreviewLinksFeature = site.plan?.features.active.includes(
 						WPCOM_FEATURES_SITE_PREVIEW_LINKS
 					);
 
 					if ( ! hasSitePreviewLinksFeature ) {
 						return false;
-					} */
+					}
 
 					return !! site.is_coming_soon;
 				},
@@ -155,13 +158,9 @@ export function useActions(): Action< SiteExcerptData >[] {
 				},
 				isEligible: ( site ) => {
 					const isWpcomStagingSite = site.is_wpcom_staging_site;
-
-					/* const shouldShowSiteCopyItem = useSafeSiteHasFeature(
-						site?.ID,
-						WPCOM_FEATURES_COPY_SITE
-					);
-					return ! isWpcomStagingSite && shouldShowSiteCopyItem; */
-					return ! isWpcomStagingSite;
+					const shouldShowSiteCopyItem =
+						!! site.plan?.features.active.includes( WPCOM_FEATURES_COPY_SITE );
+					return ! isWpcomStagingSite && shouldShowSiteCopyItem;
 				},
 			},
 
