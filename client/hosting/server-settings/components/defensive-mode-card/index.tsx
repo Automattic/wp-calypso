@@ -19,33 +19,34 @@ type DefensiveModeCardProps = {
 	disabled?: boolean;
 };
 
-const AVAILABLE_TTLS = [
-	{
-		label: '1h',
-		value: 3600,
-	},
-	{
-		label: '12h',
-		value: 43200,
-	},
-	{
-		label: '24h',
-		value: 86400,
-	},
-	{
-		label: '2d',
-		value: 172800,
-	},
-	{
-		label: '7d',
-		value: 604800,
-	},
-];
-
 export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps ) {
 	const translate = useTranslate();
+
+	const availableTtls = [
+		{
+			label: translate( '1 hour' ),
+			value: 3600,
+		},
+		{
+			label: translate( '12 hours' ),
+			value: 43200,
+		},
+		{
+			label: translate( '24 hours' ),
+			value: 86400,
+		},
+		{
+			label: translate( '2 days' ),
+			value: 172800,
+		},
+		{
+			label: translate( '7 days' ),
+			value: 604800,
+		},
+	];
+
 	const siteId = useSelector( getSelectedSiteId );
-	const [ ttl, setTtl ] = useState( AVAILABLE_TTLS[ 0 ].value );
+	const [ ttl, setTtl ] = useState( availableTtls[ 0 ].value );
 
 	const { data: isEdgeCacheActive } = useEdgeCacheQuery( siteId );
 	const { data: defensiveModeData } = useEdgeCacheDefensiveModeQuery( siteId );
@@ -122,7 +123,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						onChange={ ( event ) => setTtl( Number( event.currentTarget.value ) ) }
 						value={ ttl }
 					>
-						{ AVAILABLE_TTLS.map( ( option ) => (
+						{ availableTtls.map( ( option ) => (
 							<option value={ option.value } key={ option.value }>
 								{ option.label }
 							</option>
