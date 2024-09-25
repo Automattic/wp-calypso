@@ -191,7 +191,7 @@ const LaunchSite = () => {
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{ shouldShowReferToClientButton && (
-						<div className={ launchSiteClasses }>
+						<div className="site-settings__general-settings-refer-to-client-button">
 							<Button onClick={ handleReferToClient } disabled={ isLaunchInProgress }>
 								{ translate( 'Refer to client' ) }
 							</Button>
