@@ -13,6 +13,34 @@
 			color: var(--studio-gray-50);
 		}
 	}
+	.domain-search-results {
+		.domain-suggestion__content {
+			gap: 8px;
+		}
+		.featured-domain-suggestion {
+			flex-direction: column-reverse;
+			.domain-registration-suggestion__match-reasons {
+				order: 1;
+				flex-grow: 1;
+			}
+			.domain-suggestion__price-container {
+				order: 2;
+			}
+			.domain-suggestion__action-container {
+				order: 3;
+			}
+			.domain-product-price {
+				padding-right: 0;
+				align-items: flex-end;
+			}
+		}
+		.domain-suggestion:not(.featured-domain-suggestion) {
+			flex-direction: column;
+		}
+		.domain-product-price {
+			flex-grow: 1;
+		}
+	}
 }
 
 .domain-search-page-wrapper h2 {
