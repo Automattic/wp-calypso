@@ -9,7 +9,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
-import StatsHeatMapLegend from '../stats-heap-map/legend';
+import StatsHeatMapLegend from '../../stats-heap-map/legend';
 import Month from './month';
 
 import './style.scss';
