@@ -116,6 +116,13 @@ export default function PlanSelectionDetails( {
 								) }
 							</div>
 						) }
+						{ isReferMode && (
+							<div className="pressable-overview-plan-selection__details-card-header-price">
+								<strong className="pressable-overview-plan-selection__details-card-header-coming-soon">
+									{ translate( 'Coming soon' ) }
+								</strong>
+							</div>
+						) }
 					</div>
 
 					{ ! isRegularOwnership && ! isReferMode && (
@@ -246,13 +253,6 @@ export default function PlanSelectionDetails( {
 							) }
 						</>
 					) }
-					{ isReferMode && (
-						<div className="pressable-overview-plan-selection__details-card-header-price">
-							<strong className="pressable-overview-plan-selection__details-card-header-coming-soon">
-								{ translate( 'Coming soon' ) }
-							</strong>
-						</div>
-					) }
 				</div>
 
 				{ isNewHostingPage ? (
@@ -303,7 +303,7 @@ export default function PlanSelectionDetails( {
 
 			<div className="pressable-overview-plan-selection__hint">
 				{ translate(
-					'*We charge {{b}}$0.5{{/b}} per month per GB over their Storage limit, and {{b}}$8{{/b}} per 10k Visits per month over their Traffic limit.',
+					"If you exceed your plan's storage or traffic limits, you will be charged {{b}}$0.50{{/b}} per GB and {{b}}$8{{/b}} per 10K visits per month.",
 					{
 						components: {
 							b: <b />,
