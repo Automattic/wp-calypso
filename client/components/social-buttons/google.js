@@ -6,7 +6,9 @@ import PropTypes from 'prop-types';
 import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
+import GoogleOneTapButton from 'calypso/components/social-buttons/google-one-tap';
 import GoogleIcon from 'calypso/components/social-icons/google';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
@@ -222,7 +224,7 @@ class GoogleSocialButton extends Component {
 	}
 }
 
-export default connect(
+const ConnectedGoogleSocialButton = connect(
 	( state, ownProps ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
@@ -237,3 +239,31 @@ export default connect(
 		showErrorNotice: errorNotice,
 	}
 )( localize( GoogleSocialButton ) );
+
+const GoogleSocialButtonExperiment = ( props ) => {
+	return (
+		<ProvideExperimentData
+			name="wpcom_login_page_google_one_tap_v1"
+			options={ { isEligible: config.isEnabled( 'google_one_tap' ) && ! props.children } }
+		>
+			{ ( isLoadingExperiment, experimentAssignment ) => {
+				if ( isLoadingExperiment ) {
+					return null;
+				}
+
+				if ( experimentAssignment?.variationName === 'treatment' ) {
+					return <ConnectedGoogleSocialButton { ...props } />;
+				}
+
+				return (
+					<>
+						<GoogleOneTapButton { ...props } />
+						<ConnectedGoogleSocialButton { ...props } />
+					</>
+				);
+			} }
+		</ProvideExperimentData>
+	);
+};
+
+export default GoogleSocialButtonExperiment;

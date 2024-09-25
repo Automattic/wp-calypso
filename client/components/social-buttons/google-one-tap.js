@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -11,17 +11,11 @@ import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/uti
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import './style.scss';
-import { OneTapLoading } from './one-tap-loading';
 
 const noop = () => {};
 
 class GoogleSocialButton extends Component {
-	buttonRef = createRef();
-	state = {
-		googleOneTapLoaded: false,
-	};
 	static propTypes = {
-		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
 		isFormDisabled: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -40,6 +34,10 @@ class GoogleSocialButton extends Component {
 		onClick: noop,
 	};
 	componentDidMount() {
+		if ( this.props.isFormDisabled ) {
+			return;
+		}
+
 		if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
 			this.handleAuthorizationCode( {
 				auth_code: this.props.authCodeFromRedirect,
@@ -68,7 +66,7 @@ class GoogleSocialButton extends Component {
 		}
 
 		this.client = googleSignIn.initialize( {
-			client_id: this.props.clientId,
+			client_id: config( 'google_oauth_client_id' ),
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
@@ -89,33 +87,7 @@ class GoogleSocialButton extends Component {
 			use_fedcm_for_prompt: true,
 		} );
 
-		googleSignIn.renderButton(
-			this.buttonRef.current,
-			{ theme: 'outline', locale: getLocaleSlug() } // customization attributes
-		);
-
-		const iframe = this.buttonRef.current.querySelector( 'iframe' );
-
-		// Google One Tap size is not configurable, so we have to do some shenanigans to make it fit the button.
-		const resizeObserver = new ResizeObserver( ( entries ) => {
-			for ( const entry of entries ) {
-				const { width, height } = entry.contentRect;
-				if ( width > 0 && height > 0 ) {
-					setTimeout( () => {
-						const buttonSize = this.buttonRef.current.getBoundingClientRect();
-						const ratio = buttonSize.width / ( width - 20 );
-						iframe.style.transform = `scale(${ ratio })`;
-						iframe.style.marginLeft = `${ Math.floor( -10 * ratio ) }px`;
-						iframe.style.marginBottom = '20px';
-						setTimeout( () => {
-							this.setState( { googleOneTapLoaded: true } );
-						}, 100 );
-					}, 20 );
-				}
-			}
-		} );
-
-		resizeObserver.observe( iframe );
+		googleSignIn.prompt();
 	}
 
 	async loadGoogleIdentityServicesAPI() {
@@ -192,25 +164,7 @@ class GoogleSocialButton extends Component {
 	}
 
 	render() {
-		const isDisabled = Boolean( this.props.isFormDisabled );
-		const { googleOneTapLoaded } = this.state;
-
-		return (
-			<>
-				<div
-					ref={ this.buttonRef }
-					className="google__one-tap-sign-in-container"
-					data-type="standard"
-					data-disabled={ isDisabled }
-					data-theme="outline"
-					data-text="sign_up_with"
-					data-shape="rectangular"
-					data-locale={ getLocaleSlug() }
-					data-logo_alignment="left"
-				></div>
-				{ ! googleOneTapLoaded && <OneTapLoading /> }
-			</>
-		);
+		return null;
 	}
 }
 
