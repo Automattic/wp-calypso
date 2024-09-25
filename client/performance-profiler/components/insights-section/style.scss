@@ -54,10 +54,10 @@
 
 	.metrics-insight-item.foldable-card {
 		box-shadow: none;
-		border-top: 1px solid var(--studio-gray-5);
+		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 
 		&:last-child {
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 		}
 
 		.foldable-card__header {
