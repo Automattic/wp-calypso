@@ -148,8 +148,8 @@ const SitesDashboard = ( {
 	};
 
 	// Limit fields on breakpoints smaller than 960px wide.
-	const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats', 'actions' ];
-	const mobileFields = [ 'site', 'actions' ];
+	const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
+	const mobileFields = [ 'site' ];
 
 	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
 		isDesktop ? desktopFields : mobileFields;
@@ -190,9 +190,6 @@ const SitesDashboard = ( {
 				},
 				stats: {
 					width: '106px',
-				},
-				actions: {
-					width: '74px',
 				},
 			},
 		},
