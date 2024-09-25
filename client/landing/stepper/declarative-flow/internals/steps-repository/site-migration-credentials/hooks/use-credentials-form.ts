@@ -10,7 +10,7 @@ import { useSiteMigrationCredentialsMutation } from './use-site-migration-creden
 
 export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
-	const [ requestInAnywayMode, setRequestInAnywayMode ] = useState( false );
+	const [ canBypassVerification, setCanBypassVerification ] = useState( false );
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
@@ -66,14 +66,14 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		const anywayModeErrors = [ 'automated_migration_tools_login_and_get_cookies_test_failed' ];
 
 		if ( anywayModeErrors.includes( code ) ) {
-			setRequestInAnywayMode( true );
+			setCanBypassVerification( true );
 		}
 	}, [ error ] );
 
 	useEffect( () => {
 		const { unsubscribe } = watch( () => {
 			clearErrors( 'root' );
-			setRequestInAnywayMode( false );
+			setCanBypassVerification( false );
 		} );
 		return () => unsubscribe();
 	}, [ watch, clearErrors ] );
@@ -81,21 +81,21 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const submitHandler = ( data: CredentialsFormData ) => {
 		requestAutomatedMigration( {
 			...data,
-			bypassVerification: requestInAnywayMode || ! isEnglishLocale,
+			bypassVerification: canBypassVerification || ! isEnglishLocale,
 		} );
 	};
 
 	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && isPending && ! requestInAnywayMode ) {
+		if ( isEnglishLocale && isPending && ! canBypassVerification ) {
 			return translate( 'Verifying credentials' );
 		}
 
-		if ( isEnglishLocale && requestInAnywayMode ) {
+		if ( isEnglishLocale && canBypassVerification ) {
 			return translate( 'Continue anyways' );
 		}
 
 		return translate( 'Continue' );
-	}, [ isPending, requestInAnywayMode, isEnglishLocale, translate ] );
+	}, [ isPending, canBypassVerification, isEnglishLocale, translate ] );
 
 	return {
 		formState: { errors },
