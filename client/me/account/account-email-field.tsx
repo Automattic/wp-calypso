@@ -1,5 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { removeQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -199,8 +200,18 @@ const AccountEmailField = ( {
 		} );
 	}, [ isEmailChangePending ] );
 
-	// Listen for an event signalling to focus and scroll to the email field or button.
 	useEffect( () => {
+		// Check for query param used to indicate a need to scroll to the input, this is added when
+		// redirecting to this page for the purpose of email change.
+		const urlQueryParams = new URL( window.location.href )?.searchParams;
+		const focusEmail = urlQueryParams.get( 'focusEmail' );
+		if ( focusEmail ) {
+			scrollAndFocus();
+			window.history.replaceState( {}, '', removeQueryArgs( window.location.href, 'focusEmail' ) );
+		}
+		// Listen for an event signalling to focus and scroll to the email field or button. This
+		// happens when we are already on a page with the input and need to trigger the
+		// functionality.
 		emailFormEventEmitter.addEventListener( 'highlightInput', scrollAndFocus );
 		return () => {
 			emailFormEventEmitter.removeEventListener( 'highlightInput', scrollAndFocus );

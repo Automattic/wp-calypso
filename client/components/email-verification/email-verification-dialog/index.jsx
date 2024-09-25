@@ -90,7 +90,7 @@ class VerifyEmailDialog extends Component {
 	getEmailPreferencesComponent() {
 		const changeEmailRoute = '/me/account';
 		if ( this.props.currentRoute !== changeEmailRoute ) {
-			return <a href="/me/account" />;
+			return <a href="/me/account?focusEmail=1" />;
 		}
 		// If we are already on /me/account, close the dialog and dispatch an event to highlight the input.
 		return (
