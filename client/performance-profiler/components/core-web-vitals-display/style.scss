@@ -178,7 +178,7 @@ $blueberry-color: #3858e9;
 	display: flex;
 	gap: 24px;
 
-	@media (max-width: $break-mobile) {
+	@media (max-width: $break-large) {
 		flex-direction: column;
 		gap: 0;
 	}
