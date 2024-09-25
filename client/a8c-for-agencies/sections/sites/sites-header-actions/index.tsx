@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
@@ -34,15 +33,13 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	const onCreateSiteSuccess = useSiteCreatedCallback( refetchRandomSiteName );
 
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-
 	const addNewDevSite = getQueryArg( window.location.href, 'add_new_dev_site' );
 
 	useEffect( () => {
-		if ( devSitesEnabled && addNewDevSite ) {
+		if ( addNewDevSite ) {
 			toggleDevSiteConfigurationsModal?.();
 		}
-	}, [ addNewDevSite, devSitesEnabled, toggleDevSiteConfigurationsModal ] );
+	}, [ addNewDevSite, toggleDevSiteConfigurationsModal ] );
 
 	return (
 		<div className="sites-header__actions">
