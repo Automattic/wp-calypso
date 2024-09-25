@@ -10,6 +10,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import {
 	cancelPendingEmailChange,
@@ -151,6 +152,7 @@ const AccountEmailField = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
+	const currentQuery = useSelector( getCurrentQueryArguments );
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -203,11 +205,14 @@ const AccountEmailField = ( {
 	useEffect( () => {
 		// Check for query param used to indicate a need to scroll to the input, this is added when
 		// redirecting to this page for the purpose of email change.
-		const urlQueryParams = new URL( window.location.href )?.searchParams;
-		const focusEmail = urlQueryParams.get( 'focusEmail' );
+		const focusEmail = currentQuery?.focusEmail;
 		if ( focusEmail ) {
 			scrollAndFocus();
-			window.history.replaceState( {}, '', removeQueryArgs( window.location.href, 'focusEmail' ) );
+			// Timeout to ensure this happens after the window url is updated, as this can run
+			// before that.
+			setTimeout( () =>
+				window.history.replaceState( {}, '', removeQueryArgs( window.location.href, 'focusEmail' ) )
+			);
 		}
 		// Listen for an event signalling to focus and scroll to the email field or button. This
 		// happens when we are already on a page with the input and need to trigger the
@@ -216,7 +221,7 @@ const AccountEmailField = ( {
 		return () => {
 			emailFormEventEmitter.removeEventListener( 'highlightInput', scrollAndFocus );
 		};
-	}, [ scrollAndFocus ] );
+	}, [ scrollAndFocus, currentQuery ] );
 
 	return (
 		<>
