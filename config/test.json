@@ -22,6 +22,7 @@
 	"facebook_api_key": "249643311490",
 	"features": {
 		"ad-tracking": false,
+		"a4a-dev-sites": true,
 		"a4a-dev-sites-referral": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
