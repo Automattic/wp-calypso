@@ -20,7 +20,7 @@ function Portfolios( {
 	const portfolioDescription = isAtomic
 		? translate(
 				'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
-					'you can display them using the shortcode [portfolio]. If your theme does support portfolio projects, portfolio projects will remain active regardless of toggle state.',
+					'you can display them using the shortcode [portfolio]. If your theme does support portfolio projects, these will remain active regardless of toggle state.',
 				{
 					components: {
 						link: <InlineSupportLink supportContext="portfolios" />,
