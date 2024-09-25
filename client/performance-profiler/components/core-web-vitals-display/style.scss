@@ -41,7 +41,7 @@ $blueberry-color: #3858e9;
 }
 
 .core-web-vitals-display__details {
-	border: 1.5px solid var(--studio-gray-5);
+	border: 1px solid var(--studio-gray-5);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 0 0 6px 6px;
 	padding: 24px;
@@ -50,7 +50,7 @@ $blueberry-color: #3858e9;
 	column-gap: 48px;
 	min-height: 360px;
 	flex-wrap: wrap;
-	margin-top: -1.5px;
+	margin-top: -1px;
 
 	& > div {
 		flex-grow: 1;
