@@ -34,16 +34,14 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 	const queryError = useQuery().get( 'error' ) || null;
 
-	let errorMessage =
-		queryError === 'ticket-creation'
-			? translate( 'We ran into a problem submitting your details. Please try again shortly.' )
-			: null;
-
-	errorMessage =
-		isEnglishLocale && errors.root && errors.root.type !== 'manual' && errors.root.message
-			? errors.root.message
-			: errorMessage;
-
+	let errorMessage;
+	if ( isEnglishLocale && errors.root && errors.root.type !== 'manual' && errors.root.message ) {
+		errorMessage = errors.root.message;
+	} else if ( queryError === 'ticket-creation' ) {
+		errorMessage = translate(
+			'We ran into a problem submitting your details. Please try again shortly.'
+		);
+	}
 	return (
 		<form className="site-migration-credentials__form" onSubmit={ handleSubmit( submitHandler ) }>
 			{ errorMessage && (
