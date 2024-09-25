@@ -59,6 +59,10 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	const { mutate: clearEdgeCache, isPending: isClearingEdgeCache } =
 		useClearEdgeCacheMutation( siteId );
 
+	const rateLimitCacheClearTooltip = translate(
+		'You cleared the cache recently. Please wait a minute and try again.'
+	);
+
 	useEffect( () => {
 		if ( isClearingAllCaches && ! isClearingObjectCache && ! isClearingEdgeCache ) {
 			setIsClearingAllCaches( false );
@@ -70,7 +74,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				} )
 			);
 		}
-	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches ] );
+	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches, dispatch, translate ] );
 
 	const handleClearAllCache = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
@@ -119,7 +123,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			headingId="cache"
 			title={ translate( 'Performance optimization' ) }
 		>
-			<div className="performance-optimization__all-cache-block">
+			<div className="cache-card__all-cache-block">
 				<HostingCardDescription>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
 						components: {
@@ -128,45 +132,44 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					} ) }
 				</HostingCardDescription>
 
-				<Button
-					busy={ isClearingAllCaches }
-					disabled={
-						disabled ||
-						shouldRateLimitObjectCacheClear ||
-						isEdgeCacheLoading ||
-						isClearingObjectCache ||
-						isClearingEdgeCache
-					}
-					onClick={ handleClearAllCache }
+				<Tooltip
+					placement="top"
+					text={ shouldRateLimitObjectCacheClear ? rateLimitCacheClearTooltip : '' }
 				>
-					{ config.isEnabled( 'hosting-server-settings-enhancements' )
-						? translate( 'Clear all caches' )
-						: translate( 'Clear cache' ) }
-				</Button>
+					<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+						<Button
+							busy={ isClearingAllCaches }
+							disabled={
+								disabled ||
+								shouldRateLimitObjectCacheClear ||
+								isEdgeCacheLoading ||
+								isClearingObjectCache ||
+								isClearingEdgeCache
+							}
+							onClick={ handleClearAllCache }
+						>
+							{ config.isEnabled( 'hosting-server-settings-enhancements' )
+								? translate( 'Clear all caches' )
+								: translate( 'Clear cache' ) }
+						</Button>
+					</div>
+				</Tooltip>
 
-				{ shouldRateLimitObjectCacheClear ? (
-					<div className="performance-optimization__nb">
-						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
-					</div>
-				) : (
-					<div className="performance-optimization__nb">
-						{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
-					</div>
-				) }
+				<div className="cache-card__nb">
+					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
+				</div>
 			</div>
 
-			<div className="performance-optimization__hr"></div>
+			<div className="cache-card__hr"></div>
 
-			<div className="performance-optimization__global-edge-cache-block">
+			<div className="cache-card__global-edge-cache-block">
 				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
-						<div className="performance-optimization__subtitle">
-							{ translate( 'Global edge cache' ) }
-						</div>
+						<div className="cache-card__subtitle">{ translate( 'Global edge cache' ) }</div>
 						<ToggleControl
-							className="performance-optimization__edge-cache-toggle"
+							className="cache-card__edge-cache-toggle"
 							checked={ isEdgeCacheActive && isEdgeCacheEligible }
 							disabled={ isClearingEdgeCache || isEdgeCacheLoading || ! isEdgeCacheEligible }
 							onChange={ ( active ) => {
@@ -198,8 +201,8 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			</div>
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-				<div className="performance-optimization__global-object-cache-block">
-					<div className="performance-optimization__subtitle">{ translate( 'Object cache' ) }</div>
+				<div className="cache-card__global-object-cache-block">
+					<div className="cache-card__subtitle">{ translate( 'Object cache' ) }</div>
 					<HostingCardDescription>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
@@ -213,13 +216,9 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 					<Tooltip
 						placement="top"
-						text={
-							shouldRateLimitObjectCacheClear
-								? translate( 'You cleared the cache recently. Please wait a minute and try again.' )
-								: ''
-						}
+						text={ shouldRateLimitObjectCacheClear ? rateLimitCacheClearTooltip : '' }
 					>
-						<div className="performance-optimization__button-wrapper">
+						<div className="cache-card__button-wrapper">
 							<Button
 								busy={ isClearingObjectCache && ! isClearingAllCaches }
 								disabled={

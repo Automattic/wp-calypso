@@ -1,36 +1,40 @@
-.performance-optimization__button-wrapper {
+.cache-card__button-wrapper {
 	display: inline-block;
 	margin-top: 16px;
 }
 
-.performance-optimization__nb {
+.cache-card__button-wrapper__clear-all {
+	margin-top: 3px;
+}
+
+.cache-card__nb {
 	color: #646970;
 	font-style: italic;
 	margin-top: 12px;
 }
 
-.performance-optimization__hr {
+.cache-card__hr {
 	border-top: 1px solid #e0e0e0;
 }
 
-.performance-optimization__subtitle {
+.cache-card__subtitle {
 	font-weight: 500;
 	margin-bottom: 6px;
 }
 
-.performance-optimization__edge-cache-toggle label {
+.cache-card__edge-cache-toggle label {
 	font-size: 0.875rem;
 	font-weight: 400;
 	line-height: 20px;
 }
 
-.performance-optimization__hr,
-.performance-optimization__global-edge-cache-block,
-.performance-optimization__global-object-cache-block {
+.cache-card__hr,
+.cache-card__global-edge-cache-block,
+.cache-card__global-object-cache-block {
 	margin-top: 24px;
 }
 
-.performance-optimization__global-object-cache-block {
+.cache-card__global-object-cache-block {
 	.hosting-card__description {
 		margin: 0;
 	}
