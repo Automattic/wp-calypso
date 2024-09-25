@@ -50,13 +50,6 @@
 		}
 	}
 
-	strong.is-highlighted {
-		background-color: var(--studio-yellow-5);
-		padding: 0.25rem 0.5rem;
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
-		color: var(--stugio-gray-80);
-	}
-
 	.components-base-control__field {
 		background-color: var(--studio-white);
 		padding: 0.8125rem 1.25rem;
@@ -83,6 +76,16 @@
 			margin-top: auto;
 			margin-bottom: auto;
 		}
+	}
+}
+
+.cancel-purchase-form__atomic-revert,
+.cancel-purchase-form__remove-plan {
+	strong.is-highlighted {
+		background-color: var(--studio-yellow-5);
+		padding: 0.25rem 0.5rem;
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
+		color: var(--stugio-gray-80);
 	}
 }
 
