@@ -9,7 +9,6 @@ import configureStore from 'redux-mock-store';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
-	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
 import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
@@ -58,10 +57,9 @@ describe( 'CacheCard component', () => {
 		jest.mocked( useSetEdgeCacheMutation ).mockReturnValue( {
 			toggleEdgeCache: jest.fn(),
 		} );
-		jest.mocked( useIsSetEdgeCacheMutating ).mockReturnValue( false );
 		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( {
-			clearEdgeCache: jest.fn(),
-			isLoading: false,
+			mutate: jest.fn(),
+			isPending: false,
 		} );
 		jest.mocked( getRequest ).mockReturnValue( { isLoading: false } );
 		jest.mocked( shouldRateLimitAtomicCacheClear ).mockReturnValue( false );
@@ -80,7 +78,6 @@ describe( 'CacheCard component', () => {
 		jest
 			.mocked( useSetEdgeCacheMutation )
 			.mockReturnValue( { setEdgeCache: setEdgeCacheMock, isLoading: false } );
-		jest.mocked( useIsSetEdgeCacheMutating ).mockReturnValue( false );
 
 		renderWithProvider();
 		expect( setEdgeCacheMock ).not.toHaveBeenCalled();
@@ -107,7 +104,7 @@ describe( 'CacheCard component', () => {
 	it( 'clears all caches', async () => {
 		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
 
-		const mutationMock = { clearEdgeCache: jest.fn(), isLoading: false };
+		const mutationMock = { mutate: jest.fn(), isPending: false };
 		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
 
 		const mockedDispatch = jest.fn();
@@ -117,7 +114,7 @@ describe( 'CacheCard component', () => {
 
 		await userEvent.click( screen.getByText( 'Clear all caches' ) );
 
-		expect( mutationMock.clearEdgeCache ).toHaveBeenCalledTimes( 1 );
+		expect( mutationMock.mutate ).toHaveBeenCalledTimes( 1 );
 		expect( mockedDispatch ).toHaveBeenCalledWith(
 			clearWordPressCache( 1, 'Manually clearing again.' )
 		);
@@ -127,7 +124,7 @@ describe( 'CacheCard component', () => {
 		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: true } );
 		jest
 			.mocked( useClearEdgeCacheMutation )
-			.mockReturnValue( { clearEdgeCache: jest.fn(), isLoading: false } );
+			.mockReturnValue( { mutate: jest.fn(), isPending: false } );
 
 		renderWithProvider();
 
@@ -138,7 +135,7 @@ describe( 'CacheCard component', () => {
 	it( 'clears object cache', async () => {
 		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
 
-		const mutationMock = { clearEdgeCache: jest.fn(), isLoading: false };
+		const mutationMock = { mutate: jest.fn(), isPending: false };
 		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
 
 		const mockedDispatch = jest.fn();
@@ -148,7 +145,7 @@ describe( 'CacheCard component', () => {
 
 		await userEvent.click( screen.getByText( 'Clear object cache' ) );
 
-		expect( mutationMock.clearEdgeCache ).not.toHaveBeenCalled();
+		expect( mutationMock.mutate ).not.toHaveBeenCalled();
 		expect( mockedDispatch ).toHaveBeenCalledWith(
 			clearWordPressCache( 1, 'Manually clearing again.' )
 		);
@@ -157,7 +154,7 @@ describe( 'CacheCard component', () => {
 	it( 'clears edge cache', async () => {
 		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
 
-		const mutationMock = { clearEdgeCache: jest.fn(), isLoading: false };
+		const mutationMock = { mutate: jest.fn(), isPending: false };
 		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
 
 		const mockedDispatch = jest.fn();
@@ -167,7 +164,7 @@ describe( 'CacheCard component', () => {
 
 		await userEvent.click( screen.getByText( 'Clear edge cache' ) );
 
-		expect( mutationMock.clearEdgeCache ).toHaveBeenCalledTimes( 1 );
+		expect( mutationMock.mutate ).toHaveBeenCalledTimes( 1 );
 		expect( mockedDispatch ).not.toHaveBeenCalledWith(
 			clearWordPressCache( 1, 'Manually clearing again.' )
 		);
