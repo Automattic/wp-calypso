@@ -12,6 +12,7 @@ import {
 	useEdgeCacheDefensiveModeQuery,
 	useEdgeCacheQuery,
 } from 'calypso/data/hosting/use-cache';
+import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -68,6 +69,8 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 					}
 				) }
 			</HostingCardDescription>
+
+			{ isLoadingEdgeCache && <EdgeCacheLoadingPlaceholder /> }
 
 			{ ! isEdgeCacheActive && ! isLoadingEdgeCache && (
 				<HostingCardDescription>
