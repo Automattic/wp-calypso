@@ -15,6 +15,26 @@ import './style.scss';
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
 
+// Hardcoding event names ensures consistency, searchability, and prevents errors per Tracks naming conventions.
+const eventNames = {
+	jetpack_odyssey: {
+		last_7_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_7_days_click',
+		last_30_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_30_days_click',
+		last_3_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_months_click',
+		last_year: 'jetpack_odyssey_stats_date_picker_shortcut_last_year_click',
+		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_click',
+		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_click',
+	},
+	calypso: {
+		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_click',
+		last_30_days: 'calypso_stats_date_picker_shortcut_last_30_days_click',
+		last_3_months: 'calypso_stats_date_picker_shortcut_last_3_months_click',
+		last_year: 'calypso_stats_date_picker_shortcut_last_year_click',
+		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_click',
+		apply_button: 'calypso_stats_date_picker_apply_button_click',
+	},
+};
+
 const StatsDateControl = ( {
 	slug,
 	queryParams,
@@ -66,7 +86,7 @@ const StatsDateControl = ( {
 		const period = bestPeriodForDays( rangeInDays );
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_date_picker_apply_button_clicked` );
+		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
 
 		// Update chart via routing.
 		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
@@ -80,7 +100,7 @@ const StatsDateControl = ( {
 		const endDate = anchor.format( 'YYYY-MM-DD' );
 		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
 
-		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_clicked` );
+		recordTracksEvent( eventNames[ event_from ][ shortcut.id ] );
 
 		// Update chart via routing.
 		setTimeout( () => page( generateNewLink( shortcut.period, startDate, endDate ) ), 250 );
@@ -89,7 +109,7 @@ const StatsDateControl = ( {
 	// handler for shortcut clicks in new updated DateRange component
 	const onShortcutClickHandler = ( shortcutId: string ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcutId }_clicked` );
+		recordTracksEvent( eventNames[ event_from ][ shortcutId ] );
 	};
 
 	const getShortcutForRange = () => {
