@@ -38,12 +38,18 @@ interface Props {
 	flowName: string;
 	stepSlug: string;
 	flowVariantSlug?: string;
+	skipStepRender?: boolean;
 }
 
 /**
  * Hook to track the step route in the declarative flow.
  */
-export const useStepRouteTracking = ( { flowName, stepSlug, flowVariantSlug }: Props ) => {
+export const useStepRouteTracking = ( {
+	flowName,
+	stepSlug,
+	flowVariantSlug,
+	skipStepRender,
+}: Props ) => {
 	const intent = useIntent();
 	const design = useSelectedDesign();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
@@ -81,13 +87,14 @@ export const useStepRouteTracking = ( { flowName, stepSlug, flowVariantSlug }: P
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
+				skip_step_render: Boolean( skipStepRender ),
 			} );
 
 			// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
 			stepCompleteEventPropsRef.current = {
 				flow: flowName,
 				step: stepSlug,
-				optionalProps: { intent },
+				optionalProps: { intent, skip_step_render: Boolean( skipStepRender ) },
 			};
 
 			const stepOldSlug = getStepOldSlug( stepSlug );
@@ -98,6 +105,7 @@ export const useStepRouteTracking = ( { flowName, stepSlug, flowVariantSlug }: P
 					is_in_hosting_flow: isAnyHostingFlow( flowName ),
 					...( design && { assembler_source: getAssemblerSource( design ) } ),
 					...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
+					skip_step_render: Boolean( skipStepRender ),
 				} );
 			}
 		}
@@ -107,6 +115,7 @@ export const useStepRouteTracking = ( { flowName, stepSlug, flowVariantSlug }: P
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
 		const params = {
 			flow: flowName,
+			skip_step_render: Boolean( skipStepRender ),
 		};
 		recordPageView( pathname, pageTitle, params );
 
