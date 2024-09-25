@@ -18,6 +18,7 @@
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
 	"features": {
 		"ad-tracking": false,
+		"a4a-dev-sites-referral": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
 		"calypso/ai-blogging-prompts": true,
@@ -160,7 +161,6 @@
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
-
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,

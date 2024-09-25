@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -76,6 +77,11 @@ const LaunchSite = () => {
 	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 	const siteReferralActive = agency?.referral_status === 'active';
 	const shouldShowReferToClientButton =
+		config.isEnabled( 'a4a-dev-sites-referral' ) &&
+		isDevelopmentSite &&
+		! siteReferralActive &&
+		! agencyLoading;
+	const shouldShowAgencyBillingMessage =
 		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
 
 	const handleLaunchSiteClick = () => {
@@ -183,11 +189,11 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ shouldShowReferToClientButton && <i>{ agencyBillingMessage }</i> }
+						{ shouldShowAgencyBillingMessage && <i>{ agencyBillingMessage }</i> }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{ shouldShowReferToClientButton && (
-						<div className={ launchSiteClasses }>
+						<div className="site-settings__general-settings-refer-to-client-button">
 							<Button onClick={ handleReferToClient } disabled={ isLaunchInProgress }>
 								{ translate( 'Refer to client' ) }
 							</Button>
