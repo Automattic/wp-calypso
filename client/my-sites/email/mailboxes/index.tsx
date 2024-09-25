@@ -112,7 +112,7 @@ const MailboxesManagement = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	// Email checkoug provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
+	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
 	const queryParams = new URLSearchParams( window.location.search );
 	const newEmail = queryParams.get( 'new-email' );
 
@@ -147,10 +147,10 @@ const MailboxesManagement = ( {
 		return <MailboxSelectionList domains={ nonWPCOMDomains } />;
 	}
 
-	if ( selectedSiteId && ! hasAtLeastOneMailbox( nonWPCOMDomains ) && newEmail ) {
+	if ( selectedSiteId && newEmail ) {
 		return (
 			<>
-				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				<QuerySiteDomains siteId={ selectedSiteId } />
 				<ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />
 			</>
 		);
