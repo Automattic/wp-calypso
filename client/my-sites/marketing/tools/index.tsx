@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, getPlan, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { Fragment, FunctionComponent } from 'react';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
@@ -51,6 +53,16 @@ export const MarketingTools: FunctionComponent = () => {
 
 		page( `/plugins/official-facebook-pixel/${ selectedSiteSlug }` );
 	};
+
+	const facebookDescription = translate(
+		'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. <em>Available on %(businessPlanName)s and %(commercePlanName)s plans</em>.',
+		{
+			args: {
+				businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+				commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+			},
+		}
+	) as string;
 
 	const handleBuiltByWpClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_built_by_wp_button_click' );
@@ -116,14 +128,9 @@ export const MarketingTools: FunctionComponent = () => {
 				{ shouldShowFacebook && (
 					<MarketingToolsFeature
 						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
-						description={ translate(
-							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and Commerce plans{{/em}}.',
-							{
-								components: {
-									em: <em />,
-								},
-							}
-						) }
+						description={ createInterpolateElement( facebookDescription, {
+							em: <em />,
+						} ) }
 						imagePath={ facebookLogo }
 						imageAlt={ translate( 'Facebook Logo' ) }
 					>
