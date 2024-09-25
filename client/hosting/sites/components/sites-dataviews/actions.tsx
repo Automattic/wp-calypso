@@ -74,6 +74,24 @@ export function useActions(): Action< SiteExcerptData >[] {
 			},
 
 			{
+				id: 'general-settings',
+				label: __( 'General settings' ),
+				isEligible: ( site ) => {
+					const adminInterface = getAdminInterface( site );
+					const isWpAdminInterface = adminInterface === 'wp-admin';
+					return isWpAdminInterface;
+				},
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					const wpAdminUrl = getSiteAdminUrl( site );
+					window.location.href = wpAdminUrl + 'options-general.php';
+					dispatch(
+						recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_settings_click' )
+					);
+				},
+			},
+
+			{
 				id: 'hosting',
 				label: __( 'Hosting' ),
 				callback: ( sites ) => {
