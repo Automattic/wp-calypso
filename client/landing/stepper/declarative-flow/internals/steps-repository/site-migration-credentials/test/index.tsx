@@ -31,7 +31,7 @@ const messages = {
 
 const { getByRole, getByLabelText, getByTestId, getByText, findByText } = screen;
 
-const continueButton = () => getByRole( 'button', { name: /Continue/ } );
+const continueButton = ( name = /Continue/ ) => getByRole( 'button', { name } );
 const siteAddressInput = () => getByLabelText( 'Current site address' );
 const usernameInput = () => getByLabelText( 'WordPress admin username' );
 const passwordInput = () => getByLabelText( 'Password' );
@@ -55,6 +55,10 @@ describe( 'SiteMigrationCredentials', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
+	afterEach( () => {
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
+	} );
 
 	it( 'creates a credentials ticket', async () => {
 		const submit = jest.fn();
@@ -77,6 +81,7 @@ describe( 'SiteMigrationCredentials', () => {
 			body: {
 				migration_type: 'credentials',
 				blog_url: 'site-url.wordpress.com',
+				bypass_verification: false,
 				notes: 'notes',
 				from_url: 'site-url.com',
 				username: 'username',
@@ -227,7 +232,7 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'shows an generic error when server doesn`t return error', async () => {
+	it( 'shows an generic error when server doesn`t return error and shows normal Continue button', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
@@ -238,6 +243,10 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await waitFor( () => {
 			expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
+		} );
+
+		await waitFor( () => {
+			expect( continueButton() ).toBeVisible();
 		} );
 	} );
 
@@ -253,6 +262,56 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await waitFor( () => {
 			expect( errorMessage ).toBeVisible();
+		} );
+	} );
+
+	it( 'shows "Verifying credentials" on the Continue button during submission', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockImplementation(
+			() =>
+				new Promise( ( resolve ) => {
+					setTimeout( resolve, 2000 );
+				} )
+		);
+
+		await fillAllFields();
+		jest.useFakeTimers();
+		userEvent.click( continueButton() );
+		jest.advanceTimersByTime( 1000 );
+
+		await waitFor( () => {
+			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
+		} );
+	} );
+
+	it( 'shows "Continue anyways" on the Continue button for verification error and shows error message', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
+			data: {
+				response_code: 404,
+			},
+		} );
+
+		await fillAllFields();
+		userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+		} );
+
+		await waitFor( () => {
+			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+			expect(
+				getByText(
+					'We could not verify your credentials. Can you double check your account information and try again?'
+				)
+			).toBeVisible();
+			expect( getByText( 'Check your site address.' ) ).toBeVisible();
 		} );
 	} );
 } );

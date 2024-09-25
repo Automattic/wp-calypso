@@ -36,18 +36,18 @@ export const useFormErrorMapping = (
 					return {
 						from_url: {
 							type: 'manual',
-							message: translate( 'Check your site address' ),
+							message: translate( 'Check your site address.' ),
 						},
 					};
 				default:
 					return {
 						username: {
 							type: 'manual',
-							message: translate( 'Check your username' ),
+							message: translate( 'Check your username.' ),
 						},
 						password: {
 							type: 'manual',
-							message: translate( 'Check your password' ),
+							message: translate( 'Check your password.' ),
 						},
 					};
 			}
