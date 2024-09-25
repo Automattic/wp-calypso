@@ -6,12 +6,6 @@ interface ConfigurationData {
 }
 
 const blockParentSelector = '[aria-label*="Block: YouTube"]:has-text("YouTube")';
-const selectors = {
-	embedUrlInput: `${ blockParentSelector } input`,
-	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	editorYouTubeIframe: 'iframe[title="Embedded content from www.youtube.com"]',
-	publishedYouTubeIframe: 'iframe[title="Getting started on @wordpressdotcom"]',
-};
 
 /**
  * Class representing the flow of using a YouTube block in the editor.
@@ -32,6 +26,13 @@ export class YouTubeBlockFlow implements BlockFlow {
 	blockTestFallBackName = 'YouTube';
 	blockEditorSelector = blockParentSelector;
 
+	selectors = {
+		embedUrlInput: `${ blockParentSelector } input`,
+		embedButton: `${ blockParentSelector } button:has-text("Embed")`,
+		editorYouTubeIframe: 'iframe[title="Embedded content from www.youtube.com"]',
+		publishedYouTubeIframe: `iframe[title="${ this.configurationData.expectedVideoTitle }"]`,
+	};
+
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor.
 	 *
@@ -40,14 +41,14 @@ export class YouTubeBlockFlow implements BlockFlow {
 	async configure( context: EditorContext ): Promise< void > {
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 
-		const urlInputLocator = editorCanvas.locator( selectors.embedUrlInput );
+		const urlInputLocator = editorCanvas.locator( this.selectors.embedUrlInput );
 		await urlInputLocator.fill( this.configurationData.embedUrl );
 
-		const embedButtonLocator = editorCanvas.locator( selectors.embedButton );
+		const embedButtonLocator = editorCanvas.locator( this.selectors.embedButton );
 		await embedButtonLocator.click();
 
 		// We should make sure the actual Iframe loads, because it takes a second.
-		const youTubeIframeLocator = editorCanvas.locator( selectors.editorYouTubeIframe );
+		const youTubeIframeLocator = editorCanvas.locator( this.selectors.editorYouTubeIframe );
 		await youTubeIframeLocator.waitFor();
 	}
 
@@ -57,10 +58,7 @@ export class YouTubeBlockFlow implements BlockFlow {
 	 * @param context The current context for the published post at the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedVideoTitleLocator = context.page
-			.frameLocator( selectors.publishedYouTubeIframe )
-			.locator( `text=${ this.configurationData.expectedVideoTitle }` )
-			.first(); // The video title may be multiple places in the frame.
+		const expectedVideoTitleLocator = context.page.locator( this.selectors.publishedYouTubeIframe );
 
 		await expectedVideoTitleLocator.waitFor();
 	}
