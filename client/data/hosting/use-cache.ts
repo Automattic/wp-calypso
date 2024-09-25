@@ -1,10 +1,4 @@
-import {
-	useQuery,
-	useMutation,
-	UseMutationOptions,
-	useQueryClient,
-	useIsMutating,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -147,16 +141,6 @@ export const useSetEdgeCacheMutation = (
 	return { setEdgeCache, ...rest };
 };
 
-export const useIsSetEdgeCacheMutating = ( siteId: number | null ) => {
-	const count = useIsMutating( {
-		predicate: ( mutation ) =>
-			mutation.options.mutationKey?.[ 0 ] === TOGGLE_EDGE_CACHE_MUTATION_KEY &&
-			mutation.state.variables?.siteId === siteId,
-	} );
-
-	return count > 0;
-};
-
 export const useClearEdgeCacheMutation = (
 	siteId: number | null,
 	options: UseMutationOptions< MutationResponse, MutationError > = {}
@@ -164,7 +148,7 @@ export const useClearEdgeCacheMutation = (
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const mutation = useMutation( {
+	return useMutation( {
 		mutationFn: () => purgeEdgeCache( siteId ),
 		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
@@ -179,11 +163,4 @@ export const useClearEdgeCacheMutation = (
 			dispatch( errorNotice( translate( 'Failed to clear edge cache.' ) ) );
 		},
 	} );
-
-	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
-	// the provided key. This is preserved across different pages, while isLoading it's not.
-	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
-	const isLoading = useIsMutating( { mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ] } ) > 0;
-
-	return { clearEdgeCache: mutation.mutate, isLoading };
 };

@@ -3,13 +3,12 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
-	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -35,6 +34,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
+	const [ isClearingAllCaches, setIsClearingAllCaches ] = useState( false );
 
 	const shouldRateLimitObjectCacheClear = useSelector( ( state ) =>
 		shouldRateLimitAtomicCacheClear( state, siteId )
@@ -53,8 +53,14 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
-	const isEdgeCacheMutating = useIsSetEdgeCacheMutating( siteId );
-	const { clearEdgeCache, isLoading: isClearingEdgeCache } = useClearEdgeCacheMutation( siteId );
+	const { mutate: clearEdgeCache, isPending: isClearingEdgeCache } =
+		useClearEdgeCacheMutation( siteId );
+
+	useEffect( () => {
+		if ( isClearingAllCaches && ! isClearingObjectCache && ! isClearingEdgeCache ) {
+			setIsClearingAllCaches( false );
+		}
+	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches ] );
 
 	const handleClearAllCache = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
@@ -65,6 +71,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			clearEdgeCache();
 		}
 		dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
+		setIsClearingAllCaches( true );
 	};
 
 	const handleClearEdgeCache = () => {
@@ -112,12 +119,11 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				</HostingCardDescription>
 
 				<Button
-					busy={ isClearingObjectCache && isClearingEdgeCache }
+					busy={ isClearingAllCaches }
 					disabled={
 						disabled ||
 						shouldRateLimitObjectCacheClear ||
 						isEdgeCacheLoading ||
-						isEdgeCacheMutating ||
 						isClearingObjectCache ||
 						isClearingEdgeCache
 					}
@@ -152,12 +158,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						<ToggleControl
 							className="performance-optimization__edge-cache-toggle"
 							checked={ isEdgeCacheActive && isEdgeCacheEligible }
-							disabled={
-								isClearingEdgeCache ||
-								isEdgeCacheLoading ||
-								! isEdgeCacheEligible ||
-								isEdgeCacheMutating
-							}
+							disabled={ isClearingEdgeCache || isEdgeCacheLoading || ! isEdgeCacheEligible }
 							onChange={ ( active ) => {
 								recordTracksEvent(
 									active
@@ -175,8 +176,8 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							isEdgeCacheEligible &&
 							isEdgeCacheActive && (
 								<Button
-									busy={ isClearingEdgeCache }
-									disabled={ disabled || isEdgeCacheLoading || isEdgeCacheMutating }
+									busy={ isClearingEdgeCache && ! isClearingAllCaches }
+									disabled={ disabled || isEdgeCacheLoading || isClearingEdgeCache }
 									onClick={ handleClearEdgeCache }
 								>
 									{ translate( 'Clear edge cache' ) }
@@ -210,7 +211,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					>
 						<div className="performance-optimization__button-wrapper">
 							<Button
-								busy={ isClearingObjectCache }
+								busy={ isClearingObjectCache && ! isClearingAllCaches }
 								disabled={
 									disabled ||
 									shouldRateLimitObjectCacheClear ||
