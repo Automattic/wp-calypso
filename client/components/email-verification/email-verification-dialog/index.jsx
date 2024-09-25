@@ -142,6 +142,7 @@ class VerifyEmailDialog extends Component {
 				buttons={ this.getDialogButtons() }
 				isVisible
 				label="Email Verification Dialog"
+				onClose={ this.handleClose }
 			>
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
 					{ strings.confirmHeading }
