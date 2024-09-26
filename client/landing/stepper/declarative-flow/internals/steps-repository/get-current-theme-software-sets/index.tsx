@@ -1,6 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
@@ -11,6 +12,7 @@ import {
 	getActiveTheme,
 	getCanonicalTheme,
 	isRequestingActiveTheme as getIsRequestingActiveTheme,
+	isRequestingTheme as getIsRequestingTheme,
 } from 'calypso/state/themes/selectors';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../../../../hooks/use-site';
@@ -55,13 +57,19 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	const isRequestingActiveTheme: boolean = useSelector( ( state ) =>
 		getIsRequestingActiveTheme( state, site?.ID || -1 )
 	);
+	const isRequestingTheme: boolean = useSelector( ( state ) =>
+		currentThemeId ? getIsRequestingTheme( state, 'wpcom', currentThemeId ) : true
+	);
 	const { setBundledPluginSlug } = useDispatch( SITE_STORE );
+
+	useQueryTheme( 'wpcom', currentThemeId );
+
 	useEffect( () => {
 		debug(
 			'Deciding to redirect, proceed, or wait',
 			JSON.stringify( { hasRequested, isRequestingActiveTheme, currentThemeId: currentTheme?.id } )
 		);
-		if ( hasRequested && ! isRequestingActiveTheme && currentTheme ) {
+		if ( hasRequested && ! isRequestingActiveTheme && ! isRequestingTheme && currentTheme ) {
 			const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
 			if ( theme_software_set && siteSlug ) {
 				setBundledPluginSlug( siteSlug, theme_software_set[ 0 ].slug ); // only install first software set
@@ -83,12 +91,13 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 						siteSlug,
 					} )
 				);
+
 				// Current theme has no bundled plugins; they shouldn't be in this flow
 				window.location.replace( `/home/${ siteSlug }` );
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ currentTheme?.id, hasRequested, isRequestingActiveTheme ] );
+	}, [ currentTheme?.id, hasRequested, isRequestingActiveTheme, isRequestingTheme ] );
 
 	useEffect( () => {
 		if (
