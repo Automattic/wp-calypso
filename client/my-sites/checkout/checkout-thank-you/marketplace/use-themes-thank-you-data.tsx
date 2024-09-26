@@ -73,9 +73,11 @@ export function useThemesThankYouData(
 
 	useEffect( () => {
 		if ( isActive && continueWithPluginBundle ) {
-			page( `/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteSlug=${ siteSlug }` );
+			page(
+				`/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteId=${ siteId }&siteSlug=${ siteSlug }`
+			);
 		}
-	}, [ isActive, continueWithPluginBundle, siteSlug ] );
+	}, [ isActive, continueWithPluginBundle, siteId, siteSlug ] );
 
 	const themesSection = themesList
 		.filter( ( theme ) => theme )

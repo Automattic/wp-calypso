@@ -36,14 +36,14 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	const reduxDispatch = useReduxDispatch();
 	const { goNext } = navigation;
 	useEffect( () => {
-		if ( site?.ID ) {
+		if ( site?.ID && ! hasRequested ) {
 			debug( 'Dispatching requests for active theme and features' );
 			reduxDispatch( requestActiveTheme( site?.ID || -1 ) );
 			reduxDispatch( fetchSiteFeatures( site?.ID || -1 ) );
 			setHasRequested( true );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ site?.ID ] );
+	}, [ site?.ID, hasRequested ] );
 	const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 	const currentTheme = useSelector( ( state ) =>
 		getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -93,7 +93,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 				);
 
 				// Current theme has no bundled plugins; they shouldn't be in this flow
-				window.location.replace( `/home/${ siteSlug }` );
+				// window.location.replace( `/home/${ siteSlug }` );
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
