@@ -14,6 +14,13 @@ const HelpText = styled.p( {
 	color: 'var(--color-text-subtle)',
 } );
 
+const Separator = styled.span( {
+	'::before': {
+		content: '"•"',
+		margin: '0 8px',
+	},
+} );
+
 type LinkExpiryCopyProps = {
 	expiresAt: string;
 };
@@ -94,9 +101,15 @@ const SitePreviewLink = ( {
 		<>
 			<ClipboardButtonInput key={ code } value={ linkValue } disabled={ disabled } />
 			<HelpText>
-				{ translate( 'Anyone with the link can view your site' ) }
-				{ hasExpiration && ' • ' }
-				{ hasExpiration && <LinkExpiryCopy expiresAt={ expires_at } /> }
+				{ hasExpiration ? (
+					<>
+						{ translate( 'Anyone with the link can view your site' ) }
+						<Separator />
+						<LinkExpiryCopy expiresAt={ expires_at } />
+					</>
+				) : (
+					translate( 'Anyone with the link can view your site.' )
+				) }
 			</HelpText>
 		</>
 	);
