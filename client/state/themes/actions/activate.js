@@ -30,13 +30,21 @@ import 'calypso/state/themes/init';
 export function activate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
 		const { source, purchased, skipActivationModal } = options || {};
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
+
+		// The DotOrg themes will be handled by the marketplace install page later.
+		const shouldAtomicTransfer =
+			isExternallyManagedTheme( getState(), themeId ) ||
+			( isDotComTheme && hasThemeBundleSoftwareSet );
 
 		/**
 		 * Make sure to show the Atomic transfer dialog if the theme requires
 		 * an Atomic site. If the dialog has been accepted, we can continue.
 		 */
 		if (
-			isExternallyManagedTheme( getState(), themeId ) &&
+			shouldAtomicTransfer &&
 			! isJetpackSite( getState(), siteId ) &&
 			! isSiteAtomic( getState(), siteId ) &&
 			! wasAtomicTransferDialogAccepted( getState(), themeId )
@@ -51,10 +59,7 @@ export function activate( themeId, siteId, options ) {
 			return dispatch( showActivationModal( themeId ) );
 		}
 
-		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
-		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		const siteSlug = getSiteSlug( getState(), siteId );
-		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
 		const hasRedirection = ( isDotComTheme && hasThemeBundleSoftwareSet ) || isDotOrgTheme;
 		const dispatchActivateAction = activateOrInstallThenActivate( themeId, siteId, {
 			source,
