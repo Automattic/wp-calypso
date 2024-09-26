@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
@@ -11,7 +10,6 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
 import {
@@ -48,11 +46,9 @@ const ThemeSectionImage = styled.img`
 export const ThankYouThemeSection = ( {
 	theme,
 	isOnboardingFlow,
-	continueWithPluginBundle,
 }: {
 	theme: any;
 	isOnboardingFlow: boolean;
-	continueWithPluginBundle: boolean | null;
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -69,8 +65,6 @@ export const ThankYouThemeSection = ( {
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 	const themeOptions = useSelector( getThemePreviewThemeOptions );
 
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-
 	const themeStyleVariation =
 		themeOptions && themeOptions.themeId === theme.id ? themeOptions.styleVariation : undefined;
 
@@ -85,12 +79,6 @@ export const ThankYouThemeSection = ( {
 		},
 		[ siteId, theme ]
 	);
-
-	useEffect( () => {
-		if ( isActive && continueWithPluginBundle ) {
-			page( `/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteSlug=${ siteSlug }` );
-		}
-	}, [ isActive, continueWithPluginBundle, siteSlug ] );
 
 	const handleActivateTheme = useCallback( () => {
 		if ( isActive ) {

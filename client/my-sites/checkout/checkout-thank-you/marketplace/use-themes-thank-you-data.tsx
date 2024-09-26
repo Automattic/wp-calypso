@@ -22,6 +22,7 @@ type ThankYouThemeData = [
 	string[],
 	boolean,
 	React.ReactElement | null,
+	boolean,
 ];
 
 export function useThemesThankYouData(
@@ -31,8 +32,10 @@ export function useThemesThankYouData(
 ): ThankYouThemeData {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const themeSlug = useSelector( ( state ) => getSiteOption( state, siteId, 'theme_slug' ) );
+	const isActive = themeSlugs.includes( themeSlug );
 
 	// texts
 	const title = translate( 'Congrats on your new theme!' );
@@ -68,6 +71,12 @@ export function useThemesThankYouData(
 		};
 	}, [ dispatch, siteId ] );
 
+	useEffect( () => {
+		if ( isActive && continueWithPluginBundle ) {
+			page( `/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteSlug=${ siteSlug }` );
+		}
+	}, [ isActive, continueWithPluginBundle, siteSlug ] );
+
 	const themesSection = themesList
 		.filter( ( theme ) => theme )
 		.map( ( theme: any ) => {
@@ -76,7 +85,6 @@ export function useThemesThankYouData(
 					key={ `theme_${ theme.id }` }
 					theme={ theme }
 					isOnboardingFlow={ isOnboardingFlow }
-					continueWithPluginBundle={ continueWithPluginBundle }
 				/>
 			);
 		} );
@@ -127,5 +135,8 @@ export function useThemesThankYouData(
 		thankyouSteps,
 		isAtomicNeeded,
 		null,
+		// Always display the loading screen if the theme has plugin bundle because the page will
+		// be redirected to the plugin-bundle flow immediately after the theme is activated.
+		! continueWithPluginBundle,
 	];
 }
