@@ -1,7 +1,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ApiError, CredentialsFormData } from './types';
+import { ApiError, CredentialsFormData } from '../types';
 
 interface AutomatedMigrationAPIResponse {
 	success: boolean;
@@ -15,6 +15,7 @@ interface AutomatedMigrationBody {
 	password?: string;
 	backup_file_location?: string;
 	notes?: string;
+	bypass_verification?: boolean;
 }
 
 export const useSiteMigrationCredentialsMutation = <
@@ -33,6 +34,7 @@ export const useSiteMigrationCredentialsMutation = <
 			notes,
 			migrationType,
 			backupFileLocation,
+			bypassVerification,
 		}: CredentialsFormData ) => {
 			let body: AutomatedMigrationBody = {
 				migration_type: migrationType,
@@ -46,6 +48,7 @@ export const useSiteMigrationCredentialsMutation = <
 					from_url,
 					username,
 					password,
+					bypass_verification: bypassVerification,
 				};
 			} else {
 				// In case of backup, we need to send the backup file location.
