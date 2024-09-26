@@ -8,12 +8,10 @@ import { RefObject } from 'react';
 import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import DateControlPicker from './stats-date-control-picker';
-import { StatsDateControlProps, DateControlPickerShortcut } from './types';
+import { StatsDateControlProps } from './types';
 import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
-const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
 
 // Define the event name keys for tracking events
 type EventNameKey =
@@ -59,7 +57,6 @@ const StatsDateControl = ( {
 	dateRange,
 	shortcutList,
 	overlay,
-	onGatedHandler,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
@@ -110,21 +107,7 @@ const StatsDateControl = ( {
 		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
 	};
 
-	// Handler for shortcut selection.
-	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		// Generate new dates.
-		const anchor = moment().subtract( shortcut.offset, 'days' );
-		const endDate = anchor.format( 'YYYY-MM-DD' );
-		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
-
-		recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
-
-		// Update chart via routing.
-		setTimeout( () => page( generateNewLink( shortcut.period, startDate, endDate ) ), 250 );
-	};
-
-	// handler for shortcut clicks in new updated DateRange component
+	// handler for shortcut clicks
 	const onShortcutClickHandler = ( shortcutId: EventNameKey ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ shortcutId ] );
@@ -165,58 +148,45 @@ const StatsDateControl = ( {
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			{ isCalendarEnabled ? (
-				<DateRange
-					selectedStartDate={ moment( dateRange.chartStart ) }
-					selectedEndDate={ moment( dateRange.chartEnd ) }
-					lastSelectableDate={ moment() }
-					firstSelectableDate={ moment( '2010-01-01' ) }
-					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
-						startDate &&
-						endDate &&
-						onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )
-					}
-					renderTrigger={ ( {
-						onTriggerClick,
-						buttonRef,
-					}: {
-						onTriggerClick: () => void;
-						buttonRef: RefObject< typeof Button >;
-					} ) => {
-						return (
-							<Button
-								onClick={ () => {
-									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-									recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
-									onTriggerClick();
-								} }
-								ref={ buttonRef }
-							>
-								{ getButtonLabel() }
-								<Icon className="gridicon" icon={ calendar } />
-							</Button>
-						);
-					} }
-					rootClass="stats-date-control-picker"
-					overlay={ overlay }
-					displayShortcuts
-					useArrowNavigation
-					customTitle="Date Range"
-					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
-					onShortcutClick={ onShortcutClickHandler }
-				/>
-			) : (
-				<DateControlPicker
-					buttonLabel={ getButtonLabel() }
-					dateRange={ dateRange }
-					shortcutList={ shortcutList }
-					selectedShortcut={ getShortcutForRange()?.id }
-					onShortcut={ onShortcutHandler }
-					onApply={ onApplyButtonHandler }
-					onGatedHandler={ onGatedHandler }
-					overlay={ overlay }
-				/>
-			) }
+			<DateRange
+				selectedStartDate={ moment( dateRange.chartStart ) }
+				selectedEndDate={ moment( dateRange.chartEnd ) }
+				lastSelectableDate={ moment() }
+				firstSelectableDate={ moment( '2010-01-01' ) }
+				onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
+					startDate &&
+					endDate &&
+					onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )
+				}
+				renderTrigger={ ( {
+					onTriggerClick,
+					buttonRef,
+				}: {
+					onTriggerClick: () => void;
+					buttonRef: RefObject< typeof Button >;
+				} ) => {
+					return (
+						<Button
+							onClick={ () => {
+								const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+								recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+								onTriggerClick();
+							} }
+							ref={ buttonRef }
+						>
+							{ getButtonLabel() }
+							<Icon className="gridicon" icon={ calendar } />
+						</Button>
+					);
+				} }
+				rootClass="stats-date-control-picker"
+				overlay={ overlay }
+				displayShortcuts
+				useArrowNavigation
+				customTitle="Date Range"
+				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
+				onShortcutClick={ onShortcutClickHandler }
+			/>
 		</div>
 	);
 };
