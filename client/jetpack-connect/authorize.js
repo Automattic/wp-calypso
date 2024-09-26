@@ -456,8 +456,9 @@ export class JetpackAuthorize extends Component {
 		return 'woocommerce-onboarding' === from;
 	}
 
-	isWooCoreProfiler() {
-		return this.props.isWooCoreProfiler;
+	isWooCoreProfiler( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'woocommerce-core-profiler' === from || this.props.isWooCoreProfiler;
 	}
 
 	getWooDnaConfig( props = this.props ) {
