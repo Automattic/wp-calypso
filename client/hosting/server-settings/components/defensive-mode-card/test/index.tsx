@@ -94,7 +94,10 @@ describe( 'DefensiveModeCard component', () => {
 
 		renderWithProvider();
 
-		await userEvent.selectOptions( screen.getByLabelText( 'Duration' ), screen.getByText( '12h' ) );
+		await userEvent.selectOptions(
+			screen.getByLabelText( 'Duration' ),
+			screen.getByText( '12 hours' )
+		);
 		await userEvent.click( screen.getByText( 'Enable defensive mode' ) );
 
 		expect( mutateFnMock ).toHaveBeenCalledWith( { active: true, ttl: 43200 } );
