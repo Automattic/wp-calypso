@@ -4,6 +4,7 @@ export interface AgencyDetailsPayload {
 	agencyName: string;
 	agencyUrl: string;
 	managedSites?: string;
+	userType: string;
 	servicesOffered: string[];
 	productsOffered: string[];
 	city: string;

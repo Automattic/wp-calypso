@@ -29,7 +29,13 @@ export const CircularPerformanceScore = ( {
 				numberOfSteps={ steps }
 				showProgressText={ false }
 			/>
-			<div className="circular-performance-score">{ score }</div>
+			<div
+				className={ `circular-performance-score ${
+					size > 48 && 'circular-performance-score--large'
+				} ` }
+			>
+				{ score }
+			</div>
 		</div>
 	);
 };
