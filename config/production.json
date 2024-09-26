@@ -21,6 +21,8 @@
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
 	"features": {
 		"ad-tracking": true,
+		"a4a-dev-sites": true,
+		"a4a-dev-sites-referral": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
 		"calypso/ai-blogging-prompts": false,
@@ -183,7 +185,6 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/date-picker-calendar": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,

@@ -129,7 +129,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 											marginTop: '16px',
 										} }
 									>
-										<CircularPerformanceScore score={ value } size={ 76 } />
+										<CircularPerformanceScore score={ value } size={ 72 } />
 									</div>
 								) : (
 									displayValue( activeTab as Metrics, value )
