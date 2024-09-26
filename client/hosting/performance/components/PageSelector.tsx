@@ -1,4 +1,6 @@
-import { Gridicon, SearchableDropdown } from '@automattic/components';
+import { SearchableDropdown } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { search } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ComponentProps } from 'react';
 
@@ -41,12 +43,15 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 						alignSelf: 'start',
 						zIndex: 2,
 						height: '100%',
-						marginTop: '10px',
+						marginTop: '6px',
 						pointerEvents: 'none',
-						color: 'var(--color-neutral-50)',
 					} }
 				>
-					<Gridicon icon="search" size={ 16 } css={ { transform: 'scaleX(-1)' } } />
+					<Icon
+						icon={ search }
+						size={ 24 }
+						style={ { fill: props.disabled ? 'var(--studio-gray-20)' : 'var(--color-neutral-50)' } }
+					/>
 				</div>
 			</div>
 		</div>
