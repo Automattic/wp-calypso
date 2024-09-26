@@ -33,6 +33,7 @@ type OdieAssistantContextInterface = {
 	isMinimized?: boolean;
 	isUserEligible: boolean;
 	isNudging: boolean;
+	isTest: boolean;
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
@@ -70,6 +71,7 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	isUserEligible: false,
+	isTest: false,
 	lastNudge: null,
 	lastMessageRef: null,
 	navigateToContactOptions: noop,
@@ -109,6 +111,7 @@ type OdieAssistantProviderProps = {
 	isUserEligible?: boolean;
 	isMinimized?: boolean;
 	isLoadingEnvironment?: boolean;
+	isTest?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
@@ -128,6 +131,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	isMinimized = false,
 	isLoadingEnvironment = false,
 	isUserEligible = true,
+	isTest = false,
 	extraContactOptions,
 	enabled = true,
 	logger,
@@ -291,6 +295,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isLoadingEnvironment,
 				isLoadingExistingChat,
 				isUserEligible,
+				isTest,
 			} }
 		>
 			{ children }
