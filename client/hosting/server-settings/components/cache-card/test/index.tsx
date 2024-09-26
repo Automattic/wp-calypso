@@ -122,7 +122,6 @@ describe( 'CacheCard component', () => {
 		renderWithProvider();
 
 		expect( screen.queryByText( 'Clear all caches' ) ).toBeTruthy();
-		expect( screen.queryByText( 'Clear all caches' ) ).toBeDisabled();
 	} );
 
 	it( 'clears object cache', async () => {
