@@ -14,8 +14,6 @@ export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 	router( `/${ anyLangParam }/discover`, redirectInvalidLanguage );
 
-	console.log( 'NON-SSR...' );
-
 	router(
 		[ '/discover', `/${ langParam }/discover` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,

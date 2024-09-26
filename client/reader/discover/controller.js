@@ -8,6 +8,7 @@ import {
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -102,6 +103,7 @@ const exported = {
 			<>
 				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
 				<DiscoverHeader selectedTab={ selectedTab } />
+				<PostPlaceholder />
 			</>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
