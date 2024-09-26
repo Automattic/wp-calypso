@@ -109,7 +109,7 @@ export async function pixProcessor(
 
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
-			if ( ! response?.redirect_url ) {
+			if ( ! response || ! ( 'redirect_url' in response ) || ! response.redirect_url ) {
 				// eslint-disable-next-line no-console
 				console.error( 'Transaction response was missing required redirect url' );
 				throw new Error( genericErrorMessage );

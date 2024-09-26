@@ -5156,6 +5156,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@paypal/paypal-js@npm:^8.1.2":
+  version: 8.1.2
+  resolution: "@paypal/paypal-js@npm:8.1.2"
+  dependencies:
+    promise-polyfill: "npm:^8.3.0"
+  checksum: 85dc39a50a085011276193ec43a15bfbbbda7f563a34a3589a225ae17a148857820274cbfb070d0de98e81068d3eeb1a5cdfaf40a761d6c31a252a8145d30a42
+  languageName: node
+  linkType: hard
+
+"@paypal/react-paypal-js@npm:^8.7.0":
+  version: 8.7.0
+  resolution: "@paypal/react-paypal-js@npm:8.7.0"
+  dependencies:
+    "@paypal/paypal-js": "npm:^8.1.2"
+    "@paypal/sdk-constants": "npm:^1.0.122"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: cab40d633e8e3bce41a2fdc9a654424f1c25720b9cf8d5e1f6614fa5befc6edae204c2b50914cc178cefa4d3a84b3f824804f31571cb4ca58a2c72fd88708ebe
+  languageName: node
+  linkType: hard
+
+"@paypal/sdk-constants@npm:^1.0.122":
+  version: 1.0.149
+  resolution: "@paypal/sdk-constants@npm:1.0.149"
+  dependencies:
+    hi-base32: "npm:^0.5.0"
+  checksum: e72639743697fb9eff766e883bd8d2ae38cfb64e7c9b5b317a2e2f56d9703f28da8741baf4241b304f54fa90caaa3986688243f0880f146bec6c6cfe8a0b567a
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -19793,6 +19824,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hi-base32@npm:^0.5.0":
+  version: 0.5.1
+  resolution: "hi-base32@npm:0.5.1"
+  checksum: 45adb99249b04108fd689cb344f4b625b49d0518327117c34c403dbaf4723aaefb2a1bde6d7a0288ff0f835970d0f844a3ae103534dc237c99b8552a0e689177
+  languageName: node
+  linkType: hard
+
 "highlight-words-core@npm:^1.2.2":
   version: 1.2.2
   resolution: "highlight-words-core@npm:1.2.2"
@@ -27653,6 +27691,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"promise-polyfill@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "promise-polyfill@npm:8.3.0"
+  checksum: 97141f07a31a6be135ec9ed53700a3423a771cabec0ba5e08fcb2bf8cfda855479ff70e444fceb938f560be42b450cd032c14f4a940ed2ad1e5b4dcb78368dce
+  languageName: node
+  linkType: hard
+
 "promise-retry@npm:^2.0.1":
   version: 2.0.1
   resolution: "promise-retry@npm:2.0.1"
@@ -34735,6 +34780,7 @@ __metadata:
     "@babel/register": "npm:^7.23.7"
     "@babel/runtime": "npm:^7.24.5"
     "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
+    "@paypal/react-paypal-js": "npm:^8.7.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.13"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/cli": "npm:^7.6.19"

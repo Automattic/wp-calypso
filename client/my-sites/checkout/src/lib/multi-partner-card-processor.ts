@@ -159,11 +159,14 @@ async function stripeCardProcessor(
 			}
 			return stripeResponse;
 		} )
-		.then( ( stripeResponse ) => {
-			if ( stripeResponse.redirect_url && ! doesTransactionResponseRequire3DS( stripeResponse ) ) {
-				return makeRedirectResponse( stripeResponse.redirect_url );
+		.then( ( response ) => {
+			if ( ! response || ! ( 'redirect_url' in response ) || ! response.redirect_url ) {
+				return makeSuccessResponse( response );
 			}
-			return makeSuccessResponse( stripeResponse );
+			if ( ! doesTransactionResponseRequire3DS( response ) ) {
+				return makeRedirectResponse( response.redirect_url );
+			}
+			return makeSuccessResponse( response );
 		} )
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );

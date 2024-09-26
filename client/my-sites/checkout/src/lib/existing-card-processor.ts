@@ -119,13 +119,14 @@ export default async function existingCardProcessor(
 			}
 			return stripeResponse;
 		} )
-		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url && ! doesTransactionResponseRequire3DS( stripeResponse ) ) {
-				debug( 'transaction requires redirect' );
-				return makeRedirectResponse( stripeResponse.redirect_url );
+		.then( ( response ) => {
+			if ( ! response || ! ( 'redirect_url' in response ) || ! response.redirect_url ) {
+				return makeSuccessResponse( response );
 			}
-			debug( 'transaction was successful' );
-			return makeSuccessResponse( stripeResponse );
+			if ( ! doesTransactionResponseRequire3DS( response ) ) {
+				return makeRedirectResponse( response.redirect_url );
+			}
+			return makeSuccessResponse( response );
 		} )
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
