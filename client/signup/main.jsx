@@ -407,22 +407,23 @@ class Signup extends Component {
 			setSignupCompleteFlowName( this.props.flowName );
 		}
 
-		// Persist current domains data.
-		setSignupDependencies( {
-			step: {
-				stepName: 'domains',
-				domainItem: dependencies.domainItem,
-				siteUrl: dependencies.siteUrl,
-				isPurchasingItem: true,
-				stepSectionName: this.props.stepSectionName,
-				domainCart: dependencies.domainCart,
-			},
-			dependencies: {
-				domainItem: dependencies.domainItem,
-				siteUrl: dependencies.siteUrl,
-				domainCart: dependencies.domainCart,
-			},
-		} );
+		// Persist current domains data in the onboarding flow.
+		if ( this.props.flowName === 'onboarding' ) {
+			const { domainItem, siteUrl, domainCart } = dependencies;
+			const { stepSectionName } = this.props;
+
+			setSignupDependencies( {
+				step: {
+					stepName: 'domains',
+					domainItem,
+					siteUrl,
+					isPurchasingItem: true,
+					stepSectionName,
+					domainCart,
+				},
+				dependencies: { domainItem, siteUrl, domainCart },
+			} );
+		}
 
 		this.handleFlowComplete( dependencies, filteredDestination );
 

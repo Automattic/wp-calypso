@@ -306,14 +306,17 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// Hydrate the store with domains dependencies from session storage.
+		// Hydrate the store with domains dependencies from session storage,
+		// only in the onboarding flow.
 		const signupDependencies = getSignupDependencies();
 		if ( signupDependencies && isManageSiteFlow && flowName === 'onboarding' ) {
-			const parsedDependenciesJSON = JSON.parse( signupDependencies );
-			const parsedStep = { ...parsedDependenciesJSON.step };
-			const parsedDependencies = { ...parsedDependenciesJSON.dependencies };
-			context.store.dispatch( submitSignupStep( parsedStep, parsedDependencies ) );
+			const { step, dependencies } = JSON.parse( signupDependencies );
+			if ( step && dependencies ) {
+				context.store.dispatch( submitSignupStep( step, dependencies ) );
+			}
 		}
+
+		// ... existing code ...
 
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
