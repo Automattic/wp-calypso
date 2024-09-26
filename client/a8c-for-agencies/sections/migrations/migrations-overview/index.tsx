@@ -172,22 +172,6 @@ export default function MigrationsOverview() {
 						</div>
 					</div>
 				</Card>
-				<div className="migrations-overview__tos">
-					{ translate(
-						'To be eligible for the special migration offer, you must migrate a minimum of 3 sites by October 31, 2024, to a WordPress.com or Pressable.com hosting plan. Read the full {{a}}Terms of Service{{/a}}.',
-						{
-							components: {
-								a: (
-									<a
-										href="https://automattic.com/for-agencies/program-incentives/"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</div>
 			</LayoutBody>
 		</Layout>
 	);
