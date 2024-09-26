@@ -11,10 +11,11 @@ import OdieAssistantProvider, {
 	isOdieAllowedBot,
 } from '@automattic/odie-client';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate, Navigate } from 'react-router-dom';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
@@ -122,10 +123,6 @@ export function HelpCenterOdie( {
 		[]
 	);
 
-	const isTestUser = useMemo( () => {
-		return currentUser?.username?.startsWith( 'e2eflowtesting' ) ?? false;
-	}, [ currentUser?.username ] );
-
 	return (
 		<ProtectedRoute condition={ preventOdieAccess }>
 			<OdieAssistantProvider
@@ -143,7 +140,7 @@ export function HelpCenterOdie( {
 				navigateToContactOptions={ navigateToContactOptions }
 				navigateToSupportDocs={ navigateToSupportDocs }
 				isUserEligible={ isUserEligible }
-				isTest={ isTestUser }
+				isTest={ isE2ETest() }
 			>
 				<div className="help-center__container-content-odie">
 					<div className="help-center__container-odie-header">
