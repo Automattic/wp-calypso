@@ -13,3 +13,5 @@ export const hasUnsavedNotificationSettingsChanges = ( state, source ) =>
 		getNotificationSettingsClean( state, source ),
 		getNotificationSettings( state, source )
 	);
+
+export const isFetchingNotificationsSettings = ( state ) => state.notificationSettings?.isFetching;
