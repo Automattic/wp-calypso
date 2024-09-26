@@ -12,7 +12,7 @@ type Props = {
 const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 	const translate = useTranslate();
 	const title = translate(
-		'Limited time offer: Migrate your sites to Pressable or Wordpress.com and earn up to $10,000!'
+		'Limited time offer: Migrate your sites to Pressable or WordPress.com and earn up to $10,000!'
 	);
 	return (
 		<div className="a4a-migration-offer__title">
@@ -27,7 +27,7 @@ const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 const MigrationOfferBody = () => {
 	const translate = useTranslate();
 	const description = translate(
-		"From now until the end of 2024, you'll receive up to $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you're a WP Engine customer, we'll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}",
+		'From now until the end of 2024, you’ll receive up to $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
 		{
 			components: {
 				a: (
@@ -45,7 +45,7 @@ const MigrationOfferBody = () => {
 		<>
 			<p className="a4a-migration-offer__description">{ description }</p>
 			<Button href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } primary>
-				{ translate( 'Contact us for more information' ) }
+				{ translate( 'Contact us to learn more' ) }
 				<Icon icon={ external } size={ 18 } />
 			</Button>
 			<p className="a4a-migration-offer__asterisk">
