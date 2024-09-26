@@ -42,7 +42,7 @@ export default function DisconnectedSite() {
 							</svg>
 						</div>
 						<div>
-							<h4>{ translate( 'Connect your store' ) }</h4>
+							<h4>{ translate( 'Connect your site' ) }</h4>
 							<p>
 								{ translate(
 									"You'll need to connect your WordPress.com account to integrate Blaze Ads with your site. Don’t have an account? Not to worry - we’ll help you create one!"
