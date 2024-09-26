@@ -39,7 +39,7 @@ const getStatsCheckoutURL = (
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
 	// Add more required params for siteless checkout.
-	if ( checkoutType === 'jetpack' ) {
+	if ( checkoutType === 'jetpack' && siteSlug ) {
 		! isSiteFullyConnected && setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
 		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
 		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
