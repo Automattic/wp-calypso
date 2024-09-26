@@ -432,3 +432,19 @@
 	}
 }
 
+.performance-profiler-insight-screenshot__overlay {
+	border-radius: 0;
+	max-height: initial;
+
+	.components-modal__content {
+		padding: 0;
+		margin-top: 0;
+	}
+
+	.components-modal__header {
+		button {
+			filter: invert(100%) contrast(130%);
+		}
+	}
+}
+

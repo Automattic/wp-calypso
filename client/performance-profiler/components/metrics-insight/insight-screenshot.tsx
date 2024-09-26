@@ -218,6 +218,7 @@ export const InsightScreenshotWithOverlay = ( {
 				<Modal
 					onRequestClose={ () => setOverlayOpen( false ) }
 					contentLabel={ __( 'Image preview' ) }
+					className="performance-profiler-insight-screenshot__overlay"
 				>
 					<InsightScreenshot
 						nodeId={ nodeId + '-overlay' }
