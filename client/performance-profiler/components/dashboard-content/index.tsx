@@ -115,7 +115,7 @@ export const PerformanceProfilerDashboardContent = ( {
 			</div>
 
 			<Disclaimer />
-			{ displayMigrationBanner && ! is_wpcom && (
+			{ displayMigrationBanner && (
 				<MigrationBanner
 					url={ url }
 					onClick={ () => {
