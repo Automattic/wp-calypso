@@ -15,7 +15,6 @@ import './style.scss';
 
 interface Props {
 	filter: FilterValue;
-	showNavigation?: boolean;
 }
 
 export default function ScanHistoryPage( { filter }: Props ) {
