@@ -34,8 +34,6 @@ export function activate(
 	skipActivationModal = false
 ) {
 	return ( dispatch, getState ) => {
-		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
-
 		/**
 		 * Make sure to show the Atomic transfer dialog if the theme requires
 		 * an Atomic site. If the dialog has been accepted, we can continue.
@@ -62,6 +60,7 @@ export function activate(
 		 */
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const siteSlug = getSiteSlug( getState(), siteId );
+		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
 		const dispatchActivateAction = activateOrInstallThenActivate(
 			themeId,
 			siteId,
@@ -69,10 +68,8 @@ export function activate(
 			purchased
 		);
 
-		// This happens only when activating theme from the onboarding flow,
-		// so it's fine to keep going to the thank-you page for now.
-		const continueWithPluginBundle = isWooTheme && skipActivationModal;
-		if ( isDotComTheme && continueWithPluginBundle ) {
+		// Redirect to the thank-you page if the theme has bundle-plugins.
+		if ( isDotComTheme && hasThemeBundleSoftwareSet ) {
 			dispatchActivateAction( dispatch, getState );
 
 			return page(
@@ -86,8 +83,6 @@ export function activate(
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
-		// Themes should only be either dotCom or dotOrg so this line should never be reached.
-		// Leaving it to prevent potential regression issues.
 		return dispatchActivateAction( dispatch, getState );
 	};
 }
