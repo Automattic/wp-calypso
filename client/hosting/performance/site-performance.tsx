@@ -274,6 +274,7 @@ export const SitePerformance = () => {
 				<DeviceTabControls
 					showTitle={ ! isMobile }
 					onDeviceTabChange={ setActiveTab }
+					disabled={ performanceReport.isLoading || isInitialLoading }
 					value={ activeTab }
 				/>
 			</div>

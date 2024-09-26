@@ -18,6 +18,23 @@
 	@include break-medium {
 		max-width: 329px;
 	}
+
+	&.disabled {
+		.segmented-control__item {
+			pointer-events: none;
+			.segmented-control__link {
+				color: var(--studio-gray-20);
+				border-color: var(--studio-gray-20);
+			}
+
+			&.is-selected .segmented-control__link {
+				background-color: transparent;
+				color: var(--studio-gray-20);
+				border-color: var(--studio-gray-20);
+				border-right: unset;
+			}
+		}
+	}
 }
 
 .site-performance-device-tab__container {
