@@ -22,6 +22,9 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 			address_country: details.country,
 			address_state: details.state,
 			address_postal_code: details.postalCode,
+			phone_country_code: details.phoneCountryCode,
+			phone_country_numeric_code: details.phoneCountryNumericCode,
+			phone_number: details.phoneNumber,
 			referral_status: details.referer,
 		},
 	} );

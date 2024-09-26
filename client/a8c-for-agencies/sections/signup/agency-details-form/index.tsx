@@ -5,10 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
+import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -57,12 +60,22 @@ export default function AgencyDetailsForm( {
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
 
+	const countriesList = useGetSupportedSMSCountries();
+	const noCountryList = countriesList.length === 0;
+
 	const [ countryValue, setCountryValue ] = useState( initialValues?.country ?? '' );
 	const [ city, setCity ] = useState( initialValues?.city ?? '' );
 	const [ line1, setLine1 ] = useState( initialValues?.line1 ?? '' );
 	const [ line2, setLine2 ] = useState( initialValues?.line2 ?? '' );
 	const [ postalCode, setPostalCode ] = useState( initialValues?.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues?.state ?? '' );
+	const [ phoneCountryCode, setPhoneCountryCode ] = useState(
+		initialValues?.phoneCountryCode ?? ''
+	);
+	const [ phoneCountryNumericCode, setPhoneCountryNumericCode ] = useState(
+		initialValues?.phoneCountryNumericCode ?? ''
+	);
+	const [ phoneNumber, setPhoneNumber ] = useState( initialValues?.phoneNumber ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues?.agencyName ?? '' );
 	const [ firstName, setFirstName ] = useState( initialValues?.firstName ?? '' );
 	const [ lastName, setLastName ] = useState( initialValues?.lastName ?? '' );
@@ -99,6 +112,9 @@ export default function AgencyDetailsForm( {
 			postalCode,
 			state: addressState,
 			referer,
+			phoneCountryCode,
+			phoneCountryNumericCode,
+			phoneNumber,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
@@ -117,6 +133,9 @@ export default function AgencyDetailsForm( {
 			postalCode,
 			addressState,
 			referer,
+			phoneCountryCode,
+			phoneCountryNumericCode,
+			phoneNumber,
 			includeTermsOfService,
 		]
 	);
@@ -184,6 +203,21 @@ export default function AgencyDetailsForm( {
 
 	const handleSetProductsOffered = ( products: ChangeList< string > ) => {
 		setProductsOffered( products.value );
+	};
+
+	const handlePhoneInputChange = ( {
+		phoneNumber,
+		countryData,
+	}: {
+		phoneNumber: string;
+		countryData: {
+			code: string;
+			numeric_code: string;
+		};
+	} ) => {
+		setPhoneNumber( phoneNumber );
+		setPhoneCountryCode( countryData.code );
+		setPhoneCountryNumericCode( countryData.numeric_code );
 	};
 
 	const isUserSiteOwner = userType === 'site_owner';
@@ -457,6 +491,27 @@ export default function AgencyDetailsForm( {
 									setPostalCode( event.target.value )
 								}
 								disabled={ isLoading }
+							/>
+						</FormFieldset>
+
+						{ noCountryList && <QuerySmsCountries /> }
+						<FormFieldset>
+							<FormLabel optional htmlFor="postalCode">
+								{ translate( 'Phone number' ) }
+							</FormLabel>
+							<FormPhoneInput
+								countrySelectProps={ {
+									'data-testid': 'country-code-select',
+								} }
+								phoneInputProps={ {
+									'data-testid': 'phone-number-input',
+								} }
+								isDisabled={ noCountryList }
+								countriesList={ countriesList }
+								initialCountryCode={ phoneCountryCode }
+								initialPhoneNumber={ phoneNumber }
+								onChange={ handlePhoneInputChange }
+								className="company-details-form__phone-input"
 							/>
 						</FormFieldset>
 						{ includeTermsOfService && (
