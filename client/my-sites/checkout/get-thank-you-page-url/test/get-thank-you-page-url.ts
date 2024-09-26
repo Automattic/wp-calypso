@@ -1702,9 +1702,11 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: undefined,
 				cart,
 				sitelessCheckoutType: 'jetpack',
+				redirectTo: 'https://foo.bar/some-path?with-args=yes',
+				fromSiteSlug: 'foo.bar',
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId&fromSiteSlug=foo.bar&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes'
 			);
 		} );
 
@@ -1724,9 +1726,11 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
+				redirectTo: 'https://foo.bar/some-path?with-args=yes',
+				fromSiteSlug: 'foo.bar',
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&fromSiteSlug=foo.bar&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes'
 			);
 		} );
 
@@ -1854,9 +1858,10 @@ describe( 'getThankYouPageUrl', () => {
 				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
 				jetpackTemporarySiteId: '123456789',
+				redirectTo: 'https://my.site/wp-admin/',
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789&redirect_to=https%3A%2F%2Fmy.site%2Fwp-admin%2F'
 			);
 		} );
 
