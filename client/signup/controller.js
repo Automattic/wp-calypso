@@ -230,7 +230,7 @@ export default {
 		const lang = localeFromParams ?? localeFromStore;
 		if ( isOnboardingFlow && lang && lang.toLowerCase() !== 'en' ) {
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_stepper_v1'
+				'calypso_signup_onboarding_flow_stepper'
 			);
 			if ( stepperOnboardingExperimentAssignment.variationName === 'treatment' ) {
 				window.location.replace(
