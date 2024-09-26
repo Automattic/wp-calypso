@@ -10,16 +10,14 @@ import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
-	clearEdgeCacheSuccessNoticeId,
 } from 'calypso/data/hosting/use-cache';
 import { useDispatch, useSelector } from 'calypso/state';
-import { clearObjectCacheSuccessNoticeId } from 'calypso/state/data-layer/wpcom/sites/hosting/clear-cache';
-import { clearWordPressCache } from 'calypso/state/hosting/actions';
-import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { clearEdgeCacheSuccess, clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
+import { shouldRateLimitEdgeCacheClear } from 'calypso/state/selectors/should-rate-limit-edge-cache-clear';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 
@@ -35,17 +33,22 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
-	const [ isClearingAllCaches, setIsClearingAllCaches ] = useState( false );
+	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
-	const shouldRateLimitObjectCacheClear = useSelector( ( state ) =>
-		shouldRateLimitAtomicCacheClear( state, siteId )
-	);
+	const [ isClearingAllCaches, setIsClearingAllCaches ] = useState( false );
 	const isClearingObjectCache = useSelector( ( state ) => {
 		const request = getRequest( state, clearWordPressCache( siteId ) );
 		return request?.isLoading ?? false;
 	} );
+	const isObjectCacheClearRateLimited = useSelector( ( state ) =>
+		shouldRateLimitAtomicCacheClear( state, siteId )
+	);
+	const isEdgeCacheClearRateLimited = useSelector( ( state ) =>
+		shouldRateLimitEdgeCacheClear( state, siteId )
+	);
 
 	const {
 		isLoading: isEdgeCacheLoading,
@@ -53,11 +56,15 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		isInitialLoading: isEdgeCacheInitialLoading,
 	} = useEdgeCacheQuery( siteId );
 
-	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
-
 	const { setEdgeCache } = useSetEdgeCacheMutation();
-	const { mutate: clearEdgeCache, isPending: isClearingEdgeCache } =
-		useClearEdgeCacheMutation( siteId );
+	const { mutate: clearEdgeCache, isPending: isClearingEdgeCache } = useClearEdgeCacheMutation(
+		siteId,
+		{
+			onSuccess() {
+				dispatch( clearEdgeCacheSuccess( siteId ) );
+			},
+		}
+	);
 
 	const rateLimitCacheClearTooltip = translate(
 		'You cleared the cache recently. Please wait a minute and try again.'
@@ -66,25 +73,20 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	useEffect( () => {
 		if ( isClearingAllCaches && ! isClearingObjectCache && ! isClearingEdgeCache ) {
 			setIsClearingAllCaches( false );
-			dispatch( removeNotice( clearObjectCacheSuccessNoticeId ) );
-			dispatch( removeNotice( clearEdgeCacheSuccessNoticeId ) );
-			dispatch(
-				successNotice( translate( 'Successfully cleared all caches.' ), {
-					duration: 5000,
-				} )
-			);
 		}
-	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches, dispatch, translate ] );
+	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches ] );
 
 	const handleClearAllCache = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
 			site_id: siteId,
 		} );
 
-		if ( isEdgeCacheActive ) {
+		if ( isEdgeCacheActive && ! isEdgeCacheClearRateLimited ) {
 			clearEdgeCache();
 		}
-		dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
+		if ( ! isObjectCacheClearRateLimited ) {
+			dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
+		}
 		setIsClearingAllCaches( true );
 	};
 
@@ -134,15 +136,14 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 				<Tooltip
 					placement="top"
-					text={ shouldRateLimitObjectCacheClear ? rateLimitCacheClearTooltip : '' }
+					text={ isObjectCacheClearRateLimited ? rateLimitCacheClearTooltip : '' }
 				>
 					<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
 						<Button
 							busy={ isClearingAllCaches }
 							disabled={
 								disabled ||
-								shouldRateLimitObjectCacheClear ||
-								isEdgeCacheLoading ||
+								( isEdgeCacheClearRateLimited && isObjectCacheClearRateLimited ) ||
 								isClearingObjectCache ||
 								isClearingEdgeCache
 							}
@@ -185,16 +186,29 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							} }
 							label={ edgeCacheToggleDescription }
 						/>
+
 						{ config.isEnabled( 'hosting-server-settings-enhancements' ) &&
 							isEdgeCacheEligible &&
 							isEdgeCacheActive && (
-								<Button
-									busy={ isClearingEdgeCache && ! isClearingAllCaches }
-									disabled={ disabled || isEdgeCacheLoading || isClearingEdgeCache }
-									onClick={ handleClearEdgeCache }
+								<Tooltip
+									placement="top"
+									text={ isObjectCacheClearRateLimited ? rateLimitCacheClearTooltip : '' }
 								>
-									{ translate( 'Clear edge cache' ) }
-								</Button>
+									<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+										<Button
+											busy={ isClearingEdgeCache && ! isClearingAllCaches }
+											disabled={
+												disabled ||
+												isEdgeCacheClearRateLimited ||
+												isEdgeCacheLoading ||
+												isClearingEdgeCache
+											}
+											onClick={ handleClearEdgeCache }
+										>
+											{ translate( 'Clear edge cache' ) }
+										</Button>
+									</div>
+								</Tooltip>
 							) }
 					</>
 				) }
@@ -216,17 +230,12 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 					<Tooltip
 						placement="top"
-						text={ shouldRateLimitObjectCacheClear ? rateLimitCacheClearTooltip : '' }
+						text={ isObjectCacheClearRateLimited ? rateLimitCacheClearTooltip : '' }
 					>
 						<div className="cache-card__button-wrapper">
 							<Button
 								busy={ isClearingObjectCache && ! isClearingAllCaches }
-								disabled={
-									disabled ||
-									shouldRateLimitObjectCacheClear ||
-									isClearingObjectCache ||
-									isClearingEdgeCache
-								}
+								disabled={ disabled || isObjectCacheClearRateLimited || isClearingObjectCache }
 								onClick={ handleClearObjectCache }
 							>
 								{ translate( 'Clear object cache' ) }

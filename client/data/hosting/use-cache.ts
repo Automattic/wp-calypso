@@ -153,17 +153,19 @@ export const useClearEdgeCacheMutation = (
 	return useMutation( {
 		mutationFn: () => purgeEdgeCache( siteId ),
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
-		onSuccess() {
+		...options,
+		onSuccess( data, variables, context ) {
 			dispatch(
 				successNotice( translate( 'Successfully cleared edge cache.' ), {
 					id: clearEdgeCacheSuccessNoticeId,
 					duration: 5000,
 				} )
 			);
+			options?.onSuccess?.( data, variables, context );
 		},
-		onError() {
+		onError( error, variables, context ) {
 			dispatch( errorNotice( translate( 'Failed to clear edge cache.' ) ) );
+			options?.onError?.( error, variables, context );
 		},
-		...options,
 	} );
 };
