@@ -69,14 +69,14 @@ export function activate(
 			purchased
 		);
 
-		if ( isDotComTheme ) {
+		// This happens only when activating theme from the onboarding flow,
+		// so it's fine to keep going to the thank-you page for now.
+		const continueWithPluginBundle = isWooTheme && skipActivationModal;
+		if ( isDotComTheme && continueWithPluginBundle ) {
 			dispatchActivateAction( dispatch, getState );
 
-			const continueWithPluginBundle =
-				isWooTheme && skipActivationModal ? `&continueWithPluginBundle=true` : '';
-
 			return page(
-				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }${ continueWithPluginBundle }`
+				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
 			);
 		}
 

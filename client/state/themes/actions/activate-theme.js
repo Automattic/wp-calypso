@@ -6,7 +6,8 @@ import {
 	productsReinstallNotStarted,
 } from 'calypso/state/marketplace/products-reinstall/actions';
 import { requestedReinstallProducts } from 'calypso/state/marketplace/products-reinstall/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
 import {
@@ -55,6 +56,20 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 				dispatch(
 					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
 				);
+				dispatch(
+					successNotice(
+						translate( 'The %(themeName)s theme is activated successfully', {
+							args: { themeName: theme.name },
+						} ),
+						{
+							button: translate( 'View site' ),
+							href: getSiteUrl( getState(), siteId ),
+							duration: 10000,
+							showDismiss: false,
+						}
+					)
+				);
+
 				return themeStylesheet;
 			} )
 			.catch( ( error ) => {
