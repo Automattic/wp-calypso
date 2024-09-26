@@ -18,7 +18,7 @@ function queryJetpackConnectionStatus(
 			isUserConnected: true,
 		} );
 	}
-
+	// The following code only runs on Jetpack self-hosted sites.
 	return wpcom.req.get( {
 		apiNamespace: 'jetpack/v4',
 		path: `/connection`,
