@@ -39,7 +39,7 @@
 		"@wordpress/element": "^6.7.0",
 		"@wordpress/hooks": "^4.7.0",
 		"@wordpress/i18n": "^5.7.0",
-		"@wordpress/icons": "^10.7.0",
+		"@wordpress/icons": "^10.8.0",
 		"@wordpress/is-shallow-equal": "^5.7.0",
 		"@wordpress/plugins": "^7.7.0",
 		"@wordpress/private-apis": "^1.7.0",
