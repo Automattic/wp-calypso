@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Tabs from 'calypso/my-sites/stats/stats-tabs';
-import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
+import Tabs from 'calypso/my-sites/stats/components/stats-tabs';
+import Tab from 'calypso/my-sites/stats/components/stats-tabs/tab';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,

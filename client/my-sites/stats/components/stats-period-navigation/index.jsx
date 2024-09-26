@@ -28,9 +28,9 @@ import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/anal
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NavigationArrows from '../components/navigation-arrows';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { withStatsPurchases } from '../hooks/use-stats-purchases';
-import NavigationArrows from '../navigation-arrows';
 import StatsCardUpsell from '../stats-card-upsell';
 
 import './style.scss';

@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
+import StatsTabs from '../components/stats-tabs';
+import StatsTab from '../components/stats-tabs/tab';
 
 import './style.scss';
 

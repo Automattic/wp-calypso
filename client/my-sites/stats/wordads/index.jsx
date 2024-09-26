@@ -27,10 +27,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import PromoCards from '../promo-cards';
-import DatePicker from '../stats-date-picker';
+import PromoCards from '../components/promo-cards';
+import DatePicker from '../components/stats-date-picker';
+import StatsPeriodHeader from '../components/stats-period-header';
 import PageViewTracker from '../stats-page-view-tracker';
-import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import WordAdsEarnings from './earnings';

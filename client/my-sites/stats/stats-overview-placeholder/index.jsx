@@ -2,8 +2,8 @@ import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
+import StatsTabs from '../components/stats-tabs';
+import StatsTab from '../components/stats-tabs/tab';
 
 class StatsOverviewPlaceholder extends Component {
 	static displayName = 'StatsOverviewPlaceholder';

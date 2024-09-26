@@ -16,10 +16,10 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatTabs from '../components/stats-tabs';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatTabs from '../stats-tabs';
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
