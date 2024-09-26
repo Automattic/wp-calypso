@@ -22,7 +22,8 @@ const getStatsCheckoutURL = (
 	checkoutBackUrl: string,
 	from?: string,
 	adminUrl?: string,
-	isUpgrade?: boolean
+	isUpgrade?: boolean,
+	isSiteFullyConnected?: boolean
 ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
@@ -36,6 +37,13 @@ const getStatsCheckoutURL = (
 	// Add redirect_to parameter
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
+
+	// TODO: temporary param for testing.
+	setUrlParam(
+		checkoutProductUrl,
+		'isSiteFullyConnected',
+		isSiteFullyConnected ? 'true' : 'false'
+	);
 
 	// Add more required params for siteless checkout.
 	if ( checkoutType === 'jetpack' && siteSlug ) {
@@ -183,7 +191,8 @@ const gotoCheckoutPage = ( {
 				checkoutBackUrl,
 				from,
 				adminUrl,
-				isUpgrade
+				isUpgrade,
+				isSiteFullyConnected
 			) ),
 		250
 	);
