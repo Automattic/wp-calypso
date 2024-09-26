@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 
 $section-max-width: 1224px;
@@ -34,6 +35,26 @@ $section-max-width: 1224px;
 
 		@media (max-width: $break-medium) {
 			margin-top: 24px;
+		}
+	}
+
+	.notice-banner.is-info {
+		border: none;
+		background-color: $studio-wordpress-blue-5;
+		color: $studio-wordpress-blue-80;
+
+		.notice-banner__icon {
+			fill: $studio-wordpress-blue-80;
+		}
+	}
+
+	.notice-banner.is-warning {
+		border: none;
+		background-color: $studio-red-0;
+		color: $studio-red-80;
+
+		.notice-banner__icon {
+			fill: $studio-red-80;
 		}
 	}
 }

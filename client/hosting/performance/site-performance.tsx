@@ -288,7 +288,7 @@ export const SitePerformance = () => {
 							ctaText={
 								site?.is_a4a_dev_site
 									? translate( 'Prepare for launch' )
-									: translate( 'Launch Site' )
+									: translate( 'Launch your site' )
 							}
 						/>
 					) : (
