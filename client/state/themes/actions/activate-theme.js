@@ -19,14 +19,17 @@ import { activateStyleVariation } from './activate-style-variation';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
- * @param {string}  themeId            Theme ID
- * @param {number}  siteId             Site ID
- * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
- * @param {boolean} purchased          Whether the theme has been purchased prior to activation
- * @returns {Function}                 Action thunk
+ * @param {string}  themeId   Theme ID
+ * @param {number}  siteId    Site ID
+ * @param {Object}  [options] The options
+ * @param {string}  [options.source]     The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} [options.purchased]  Whether the theme has been purchased prior to activation
+ * @param {boolean} [options.showSuccessNotice]  Whether the theme has been purchased prior to activation
+ * @returns {Function}        Action thunk
  */
-export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
+export function activateTheme( themeId, siteId, options = {} ) {
 	return ( dispatch, getState ) => {
+		const { source = 'unknown', purchased = false, showSuccessNotice = false } = options || {};
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
 			themeOptions && themeOptions.themeId === themeId
@@ -56,19 +59,22 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 				dispatch(
 					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
 				);
-				dispatch(
-					successNotice(
-						translate( 'The %(themeName)s theme is activated successfully', {
-							args: { themeName: theme.name },
-						} ),
-						{
-							button: translate( 'View site' ),
-							href: getSiteUrl( getState(), siteId ),
-							duration: 10000,
-							showDismiss: false,
-						}
-					)
-				);
+
+				if ( showSuccessNotice ) {
+					dispatch(
+						successNotice(
+							translate( 'The %(themeName)s theme is activated successfully', {
+								args: { themeName: theme.name },
+							} ),
+							{
+								button: translate( 'View site' ),
+								href: getSiteUrl( getState(), siteId ),
+								duration: 10000,
+								showDismiss: false,
+							}
+						)
+					);
+				}
 
 				return themeStylesheet;
 			} )
