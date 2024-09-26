@@ -147,7 +147,7 @@ const StatsCommercialPurchase = ( {
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
-	const { data: connectionStatus } = useJetpackConnectionStatus( siteId );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isWPCOMSite );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
