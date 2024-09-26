@@ -47,7 +47,7 @@
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/data": "^10.7.0",
 		"@wordpress/element": "^6.7.0",
-		"@wordpress/icons": "^10.7.0",
+		"@wordpress/icons": "^10.8.0",
 		"@wordpress/primitives": "^4.7.0",
 		"@wordpress/url": "^4.7.0",
 		"@wordpress/warning": "^3.7.0",

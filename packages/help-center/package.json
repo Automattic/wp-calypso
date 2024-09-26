@@ -40,7 +40,7 @@
 		"@wordpress/base-styles": "^5.7.0",
 		"@wordpress/components": "^28.7.0",
 		"@wordpress/i18n": "^5.7.0",
-		"@wordpress/icons": "^10.7.0",
+		"@wordpress/icons": "^10.8.0",
 		"@wordpress/primitives": "^4.7.0",
 		"clsx": "^2.1.1",
 		"react": "^18.3.1",

@@ -34,7 +34,7 @@
 		"@automattic/onboarding": "workspace:^",
 		"@wordpress/components": "^28.7.0",
 		"@wordpress/compose": "^7.7.0",
-		"@wordpress/icons": "^10.7.0",
+		"@wordpress/icons": "^10.8.0",
 		"@wordpress/react-i18n": "^4.7.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.3.0"

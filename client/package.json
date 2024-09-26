@@ -101,7 +101,7 @@
 		"@wordpress/element": "^6.7.0",
 		"@wordpress/html-entities": "^4.7.0",
 		"@wordpress/i18n": "^5.7.0",
-		"@wordpress/icons": "^10.7.0",
+		"@wordpress/icons": "^10.8.0",
 		"@wordpress/is-shallow-equal": "^5.7.0",
 		"@wordpress/react-i18n": "^4.7.0",
 		"@wordpress/url": "^4.7.0",
