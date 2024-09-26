@@ -308,7 +308,7 @@ export default {
 
 		// Hydrate the store with domains dependencies from session storage.
 		const signupDependencies = getSignupDependencies();
-		if ( signupDependencies && isManageSiteFlow ) {
+		if ( signupDependencies && isManageSiteFlow && flowName === 'onboarding' ) {
 			const parsedDependenciesJSON = JSON.parse( signupDependencies );
 			const parsedStep = { ...parsedDependenciesJSON.step };
 			const parsedDependencies = { ...parsedDependenciesJSON.dependencies };
