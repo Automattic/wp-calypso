@@ -26,7 +26,7 @@ const MigrationOfferV2 = () => {
 			<div className="a4a-migration-offer-v2__main">
 				<h3 className="a4a-migration-offer-v2__title">
 					{ translate(
-						'Limited time offer: Migrate your sites to Pressable or WordPress.com and earn up to $10,000!'
+						'Limited time offer: Migrate your sites to Pressable and earn up to $10,000!'
 					) }
 
 					<Button className="a4a-migration-offer-v2__view-toggle-mobile" onClick={ onToggleView }>
@@ -38,7 +38,7 @@ const MigrationOfferV2 = () => {
 					<div className="a4a-migration-offer-v2__body">
 						<p className="a4a-migration-offer-v2__description">
 							{ translate(
-								'From now until the end of 2024, you’ll receive up to $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
+								'From now until the end of 2024, you’ll receive up to $100 for each migrated site to Pressable, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
 								{
 									components: {
 										a: (
