@@ -1,4 +1,6 @@
 .guided-tour__popover {
+	z-index: 9999999;
+
 	.popover__inner {
 		display: flex;
 		gap: 16px;
