@@ -11,10 +11,10 @@ import type { AppState } from 'calypso/types';
  * @returns {?boolean}        Whether the user reached Calypso via the WooCommerce Core Profiler flow
  */
 export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
-	const allowed_from = [ 'woocommerce-core-profiler', 'woocommerce-payments' ];
+	const allowedFrom = [ 'woocommerce-core-profiler', 'woocommerce-payments' ];
 	return (
-		allowed_from.includes( get( getInitialQueryArguments( state ), 'from' ) as string ) ||
-		allowed_from.includes( get( getCurrentQueryArguments( state ), 'from' ) as string ) ||
+		allowedFrom.includes( get( getInitialQueryArguments( state ), 'from' ) as string ) ||
+		allowedFrom.includes( get( getCurrentQueryArguments( state ), 'from' ) as string ) ||
 		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
 			new URLSearchParams( state.login?.redirectTo?.original ).get( 'from' ) ===
 				'woocommerce-core-profiler' )
