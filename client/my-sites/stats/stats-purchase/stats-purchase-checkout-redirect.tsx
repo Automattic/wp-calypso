@@ -38,16 +38,9 @@ const getStatsCheckoutURL = (
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
-	// TODO: temporary param for testing.
-	setUrlParam(
-		checkoutProductUrl,
-		'isSiteFullyConnected',
-		isSiteFullyConnected ? 'true' : 'false'
-	);
-
 	// Add more required params for siteless checkout.
-	if ( checkoutType === 'jetpack' && siteSlug ) {
-		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
+	if ( checkoutType === 'jetpack' ) {
+		isSiteFullyConnected && setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
 		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
 		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
 	}

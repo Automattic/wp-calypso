@@ -5,14 +5,14 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isExternal } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { filterAllowedRedirect } from '../src/lib/pending-page';
 import useGetJetpackActivationConfirmationInfo from './use-get-jetpack-activation-confirmation-info';
 
 interface Props {
@@ -56,11 +56,11 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 		productSlug
 	);
 
-	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, destinationSiteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, destinationSiteId ) );
 
-	redirectTo = filterRedirectTo(
-		adminUrl ?? undefined,
-		redirectTo,
+	redirectTo = filterAllowedRedirect(
+		redirectTo ?? '',
+		siteSlug ?? '',
 		productConfirmationInfo.buttonUrl
 	);
 
@@ -121,23 +121,5 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 		</>
 	);
 };
-
-function filterRedirectTo( adminUrl?: string, redirectTo?: string, buttonUrl?: string ) {
-	// Default to My Jetpack.
-	adminUrl = `${ adminUrl }admin.php?page=jetpack`;
-
-	if ( ! redirectTo && buttonUrl ) {
-		return buttonUrl;
-	}
-
-	if (
-		( redirectTo && ! isExternal( redirectTo ) ) ||
-		( redirectTo && adminUrl && redirectTo?.startsWith( adminUrl ) )
-	) {
-		return redirectTo;
-	}
-
-	return adminUrl;
-}
 
 export default LicensingActivationThankYouCompleted;
