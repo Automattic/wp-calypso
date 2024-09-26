@@ -57,13 +57,31 @@ export default function MigrationsOverview() {
 
 			<LayoutBody>
 				<div className="migrations-overview__section-heading">
-					{ translate( 'Special limited-time migration offer for our partners' ) }
+					{ translate(
+						'Limited time offer: Migrate your sites to Pressable or Wordpress.com and earn up to $10,000!'
+					) }
 				</div>
 				<div className="migrations-overview__section-intro">
 					{ translate(
-						"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until October 31, 2024."
+						"From now until the end of 2024, you'll receive up to $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you're a WP Engine customer, we'll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}",
+						{
+							components: {
+								a: (
+									<a
+										href="https://automattic.com/for-agencies/program-incentives"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
 					) }
 				</div>
+				<p className="migrations-overview__asterisk">
+					{ translate(
+						'* The $10k limit is for migrations from WP Engine to Pressable only. For migrations from other hosts the limit is $3k.'
+					) }
+				</p>
 				<div className="migrations-overview__section-subtitle">
 					{ translate( 'How do I migrate my clients’ sites?' ) }
 				</div>

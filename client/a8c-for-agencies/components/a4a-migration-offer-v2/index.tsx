@@ -25,7 +25,9 @@ const MigrationOfferV2 = () => {
 
 			<div className="a4a-migration-offer-v2__main">
 				<h3 className="a4a-migration-offer-v2__title">
-					{ translate( 'Special limited time migration offer' ) }
+					{ translate(
+						'Limited time offer: Migrate your sites to Pressable or Wordpress.com and earn up to $10,000!'
+					) }
 
 					<Button className="a4a-migration-offer-v2__view-toggle-mobile" onClick={ onToggleView }>
 						<Icon icon={ chevronDown } size={ 24 } />
@@ -36,7 +38,7 @@ const MigrationOfferV2 = () => {
 					<div className="a4a-migration-offer-v2__body">
 						<p className="a4a-migration-offer-v2__description">
 							{ translate(
-								'Migrate your clients’ sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You’ll also receive an additional $100 for each migrated site—up to $3,000 until October 31, 2024. {{a}}See details{{/a}}',
+								"From now until the end of 2024, you'll receive up to $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you're a WP Engine customer, we'll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}",
 								{
 									components: {
 										a: (
@@ -60,6 +62,11 @@ const MigrationOfferV2 = () => {
 						</Button>
 					</div>
 				) }
+				<p className="a4a-migration-offer-v2__asterisk">
+					{ translate(
+						'* The $10k limit is for migrations from WP Engine to Pressable only. For migrations from other hosts the limit is $3k.'
+					) }
+				</p>
 			</div>
 
 			<Button className="a4a-migration-offer-v2__view-toggle" onClick={ onToggleView }>
