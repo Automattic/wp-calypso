@@ -48,6 +48,8 @@ export const setSignupDependencies = ( dependencies ) => {
 };
 export const getSignupDependencies = () =>
 	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_signup_dependencies' ) );
+export const clearSignupDependencies = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.removeItem( 'wpcom_signup_dependencies' ) );
 export const wasSignupCheckoutPageUnloaded = () =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.getItem( 'was_signup_checkout_page_unloaded' )

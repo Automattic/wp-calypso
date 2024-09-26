@@ -51,7 +51,6 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import { setSignupDependencies } from 'calypso/signup/storageUtils';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	isUserLoggedIn,
@@ -84,6 +83,8 @@ import { addP2SignupClassName } from './controller';
 import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
+	setSignupDependencies,
+	clearSignupDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -269,7 +270,7 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -315,6 +316,16 @@ class Signup extends Component {
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
 			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
+		}
+
+		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
+
+		if (
+			flowName === 'onboarding' &&
+			stepName === 'domains' &&
+			signupDependencies.domainItem !== prevDomainItem
+		) {
+			clearSignupDependencies();
 		}
 	}
 
