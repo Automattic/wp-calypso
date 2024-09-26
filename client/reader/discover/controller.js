@@ -1,22 +1,19 @@
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { sectionify } from 'calypso/lib/route';
-import withDimensions from 'calypso/lib/with-dimensions';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
-import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
-import { getSelectedTabTitle, DEFAULT_TAB, FIRST_POSTS_TAB } from './helper';
+import { DiscoverHeader } from './discover-stream';
+import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -39,34 +36,6 @@ const DiscoverPageDocumentHead = ( { tabTitle } ) => {
 
 	return <DocumentHead title={ title } meta={ meta } />;
 };
-
-const DiscoverHeaderFn = ( props ) => {
-	const translate = useTranslate();
-
-	const { selectedTab } = props;
-	const tabTitle = getSelectedTabTitle( selectedTab );
-	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-		args: [ tabTitle ],
-		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-	} );
-	if ( selectedTab === FIRST_POSTS_TAB ) {
-		subHeaderText = translate(
-			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
-		);
-	}
-
-	return (
-		<NavigationHeader
-			navigationItems={ [] }
-			title={ translate( 'Discover' ) }
-			subtitle={ subHeaderText }
-			className={ clsx( 'discover-stream-header', {
-				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-			} ) }
-		/>
-	);
-};
-const DiscoverHeader = withDimensions( DiscoverHeaderFn );
 
 const exported = {
 	discover( context, next ) {
@@ -95,7 +64,6 @@ const exported = {
 		context.primary = (
 			<>
 				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
-				<DiscoverHeader selectedTab={ selectedTab } />
 				<AsyncLoad
 					require="calypso/reader/discover/discover-stream"
 					key="discover-page"

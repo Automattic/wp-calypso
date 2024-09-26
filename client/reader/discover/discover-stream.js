@@ -1,11 +1,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import NavigationHeader from 'calypso/components/navigation-header';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
-import Stream from 'calypso/reader/stream';
+import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import ReaderPopularSitesSidebar from 'calypso/reader/stream/reader-popular-sites-sidebar';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { useSelector } from 'calypso/state';
@@ -15,10 +17,38 @@ import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import DiscoverNavigation from './discover-navigation';
 import {
 	getDiscoverStreamTags,
+	getSelectedTabTitle,
 	DEFAULT_TAB,
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
 } from './helper';
+
+export const DiscoverHeader = ( props ) => {
+	const translate = useTranslate();
+
+	const { selectedTab } = props;
+	const tabTitle = getSelectedTabTitle( selectedTab );
+	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+		args: [ tabTitle ],
+		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+	} );
+	if ( selectedTab === FIRST_POSTS_TAB ) {
+		subHeaderText = translate(
+			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
+		);
+	}
+
+	return (
+		<NavigationHeader
+			navigationItems={ [] }
+			title={ translate( 'Discover' ) }
+			subtitle={ subHeaderText }
+			className={ clsx( 'discover-stream-header', {
+				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
+			} ) }
+		/>
+	);
+};
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
@@ -103,15 +133,14 @@ const DiscoverStream = ( props ) => {
 	};
 
 	return (
-		<>
-			<Stream { ...streamProps }>
-				<DiscoverNavigation
-					width={ props.width }
-					selectedTab={ selectedTab }
-					recommendedTags={ interestTags }
-				/>
-			</Stream>
-		</>
+		<Stream { ...streamProps }>
+			<DiscoverHeader selectedTab={ selectedTab } width={ props.width } />
+			<DiscoverNavigation
+				width={ props.width }
+				selectedTab={ selectedTab }
+				recommendedTags={ interestTags }
+			/>
+		</Stream>
 	);
 };
 
