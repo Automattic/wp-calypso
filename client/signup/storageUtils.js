@@ -20,25 +20,6 @@ export const clearSignupDestinationCookie = () => {
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
 
-export const persistSignupDependencies = ( dependencies ) => {
-	const DAY_IN_SECONDS = 3600 * 24;
-	const expirationDate = new Date( new Date().getTime() + DAY_IN_SECONDS * 1000 );
-	const options = {
-		expires: expirationDate,
-		path: '/',
-	};
-	document.cookie = cookie.serialize(
-		'wpcom_signup_dependencies',
-		JSON.stringify( dependencies ),
-		options
-	);
-};
-
-export const retrieveSignupDependencies = () => {
-	const cookies = cookie.parse( document.cookie );
-	return cookies.wpcom_signup_dependencies;
-};
-
 /**
  * Ignore fatals when trying to access window.sessionStorage so that we do not
  * see them logged in Sentry. Please don't use this for anything else.
@@ -60,6 +41,13 @@ export const setSignupCompleteSlug = ( value ) =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value )
 	);
+export const setSignupDependencies = ( dependencies ) => {
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage.setItem( 'wpcom_signup_dependencies', JSON.stringify( dependencies ) )
+	);
+};
+export const getSignupDependencies = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_signup_dependencies' ) );
 export const wasSignupCheckoutPageUnloaded = () =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.getItem( 'was_signup_checkout_page_unloaded' )

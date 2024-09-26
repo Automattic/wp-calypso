@@ -51,6 +51,7 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
+import { setSignupDependencies } from 'calypso/signup/storageUtils';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	isUserLoggedIn,
@@ -83,7 +84,6 @@ import { addP2SignupClassName } from './controller';
 import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
-	persistSignupDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -405,10 +405,24 @@ class Signup extends Component {
 			persistSignupDestination( destination );
 			setSignupCompleteSlug( dependencies.siteSlug );
 			setSignupCompleteFlowName( this.props.flowName );
-
-			// Persist dependencyStore data.
-			persistSignupDependencies( dependencies );
 		}
+
+		// Persist current domains data.
+		setSignupDependencies( {
+			step: {
+				stepName: 'domains',
+				domainItem: dependencies.domainItem,
+				siteUrl: dependencies.siteUrl,
+				isPurchasingItem: true,
+				stepSectionName: this.props.stepSectionName,
+				domainCart: dependencies.domainCart,
+			},
+			dependencies: {
+				domainItem: dependencies.domainItem,
+				siteUrl: dependencies.siteUrl,
+				domainCart: dependencies.domainCart,
+			},
+		} );
 
 		this.handleFlowComplete( dependencies, filteredDestination );
 
