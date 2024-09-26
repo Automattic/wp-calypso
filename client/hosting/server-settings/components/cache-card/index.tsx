@@ -66,10 +66,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		}
 	);
 
-	const rateLimitCacheClearTooltip = translate(
-		'You cleared the cache recently. Please wait a minute and try again.'
-	);
-
 	useEffect( () => {
 		if ( isClearingAllCaches && ! isClearingObjectCache && ! isClearingEdgeCache ) {
 			setIsClearingAllCaches( false );
@@ -136,7 +132,11 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 				<Tooltip
 					placement="top"
-					text={ isObjectCacheClearRateLimited ? rateLimitCacheClearTooltip : '' }
+					text={
+						isObjectCacheClearRateLimited
+							? translate( 'You cleared all caches recently. Please wait a minute and try again.' )
+							: ''
+					}
 				>
 					<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
 						<Button
@@ -192,7 +192,13 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							isEdgeCacheActive && (
 								<Tooltip
 									placement="top"
-									text={ isObjectCacheClearRateLimited ? rateLimitCacheClearTooltip : '' }
+									text={
+										isObjectCacheClearRateLimited
+											? translate(
+													'You cleared the edge cache recently. Please wait a minute and try again.'
+											  )
+											: ''
+									}
 								>
 									<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
 										<Button
@@ -230,7 +236,13 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 					<Tooltip
 						placement="top"
-						text={ isObjectCacheClearRateLimited ? rateLimitCacheClearTooltip : '' }
+						text={
+							isObjectCacheClearRateLimited
+								? translate(
+										'You cleared the object cache recently. Please wait a minute and try again.'
+								  )
+								: ''
+						}
 					>
 						<div className="cache-card__button-wrapper">
 							<Button
