@@ -236,6 +236,26 @@ body.is-section-stepper .domains__step-content,
 	&.domains {
 		&.step-route {
 			padding: 48px 0 0;
+			.step-container {
+				.step-container__header {
+					margin: 36px 0 24px 0;
+					@include break-mobile {
+						margin: 48px 0 40px;
+					}
+				}
+			}
+			.formatted-header__title {
+				font-size: 2rem;
+				@include break-mobile {
+					font-size: 2.75rem;
+				}
+			}
+			.formatted-header__subtitle {
+				margin-top: 8px;
+			}
+			.register-domain-step__search-domain-step {
+				padding-bottom: 16px;
+			}
 		}
 	}
 }
