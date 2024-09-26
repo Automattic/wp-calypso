@@ -197,13 +197,14 @@ export const SitePerformance = () => {
 	};
 
 	const isMobile = ! useDesktopBreakpoint();
+	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
 
 	const pageSelector = (
 		<PageSelector
 			onFilterValueChange={ setQuery }
 			allowReset={ false }
 			options={ pageOptions }
-			disabled={ isInitialLoading || performanceReport.isLoading }
+			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
 
@@ -274,7 +275,7 @@ export const SitePerformance = () => {
 				<DeviceTabControls
 					showTitle={ ! isMobile }
 					onDeviceTabChange={ setActiveTab }
-					disabled={ performanceReport.isLoading || isInitialLoading }
+					disabled={ disableControls }
 					value={ activeTab }
 				/>
 			</div>
