@@ -16,6 +16,7 @@ import {
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
+	PromotePostWarning,
 } from 'calypso/data/promote-post/types';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
@@ -67,7 +68,7 @@ export type PagedBlazeContentData = {
 	has_more_pages: boolean;
 	total_items?: number;
 	items?: BlazePagedItem[];
-	warnings?: string[];
+	warnings?: PromotePostWarning[];
 };
 
 export type PagedBlazeSearchResponse = {
@@ -232,7 +233,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	};
 
-	const renderWarningNotices = ( warnings?: string[] ) => {
+	const renderWarningNotices = ( warnings?: PromotePostWarning[] ) => {
 		const content = [];
 
 		for ( const item of warnings ?? [] ) {

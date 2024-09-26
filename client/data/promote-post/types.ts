@@ -86,6 +86,8 @@ export type BlazablePost = {
 
 export type BlazePagedItem = BlazablePost | Campaign;
 
+export type PromotePostWarning = 'sync_in_progress';
+
 export type PostQueryResult = {
 	posts?: BlazablePost[];
 	has_more_pages: boolean;
@@ -94,7 +96,7 @@ export type PostQueryResult = {
 	page: number;
 	pages: [];
 	pageParams: [];
-	warnings?: string[];
+	warnings?: PromotePostWarning[];
 };
 
 export type CampaignQueryResult = {
@@ -103,5 +105,5 @@ export type CampaignQueryResult = {
 	total_pages: number;
 	page: number;
 	has_more_pages: boolean;
-	warnings?: string[];
+	warnings?: PromotePostWarning[];
 };
