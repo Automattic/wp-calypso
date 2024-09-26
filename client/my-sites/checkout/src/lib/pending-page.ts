@@ -304,7 +304,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
  * security hole that could go anywhere. This function will disallow a URL
  * which is absolute and on an unknown host, returning the `fallbackUrl` instead.
  */
-function filterAllowedRedirect(
+export function filterAllowedRedirect(
 	url: string,
 	siteSlug: string | undefined,
 	fallbackUrl: string
