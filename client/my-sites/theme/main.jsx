@@ -55,7 +55,6 @@ import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -1432,7 +1431,6 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
 				<NavigationHeader
 					navigationItems={ navigationItems }
