@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -17,6 +17,7 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 	showUpdatePrimaryDomainSuccessNotice,
 } from 'calypso/state/domains/management/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -116,6 +117,27 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			}
 		}
 	};
+
+	// Domain purhcases provide a new domain flag on checkout completion
+	// e.g. /domains/manage/example.wordpress.com?new-domains=2
+	const queryParams = new URLSearchParams( window.location.search );
+	const newDomains = queryParams.get( 'new-domains' );
+	useEffect( () => {
+		if ( newDomains ) {
+			dispatch(
+				successNotice(
+					translate(
+						'Your domain is being setup. We’ll notify you when it’s ready.',
+						'Your domains are being set up. We’ll notify you when they are ready.',
+						{ count: parseInt( newDomains ) }
+					),
+					{
+						duration: 5000,
+					}
+				)
+			);
+		}
+	}, [ newDomains, dispatch, translate ] );
 
 	return (
 		<>

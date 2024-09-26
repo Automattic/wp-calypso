@@ -19,6 +19,7 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	is100Year,
+	isDomainProduct,
 	isValidFeatureKey,
 } from '@automattic/calypso-products';
 import {
@@ -624,6 +625,12 @@ function getFallbackDestination( {
 			},
 			`/marketplace/thank-you/${ siteSlug }`
 		);
+	}
+
+	const domainItems = cart?.products?.filter( ( product ) => isDomainProduct( product ) );
+	if ( domainItems && domainItems.length > 0 && domainItems.length === cart?.products?.length ) {
+		debug( 'site with domain product' );
+		return `/domains/manage/${ siteSlug }?new-domains=${ domainItems.length }`;
 	}
 
 	debug( 'simple thank-you page' );
