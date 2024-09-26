@@ -69,13 +69,7 @@ export default function AgencyDetailsForm( {
 	const [ line2, setLine2 ] = useState( initialValues?.line2 ?? '' );
 	const [ postalCode, setPostalCode ] = useState( initialValues?.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues?.state ?? '' );
-	const [ phoneCountryCode, setPhoneCountryCode ] = useState(
-		initialValues?.phoneCountryCode ?? ''
-	);
-	const [ phoneCountryNumericCode, setPhoneCountryNumericCode ] = useState(
-		initialValues?.phoneCountryNumericCode ?? ''
-	);
-	const [ phoneNumber, setPhoneNumber ] = useState( initialValues?.phoneNumber ?? '' );
+	const [ phone, setPhone ] = useState( initialValues?.phone ?? {} );
 	const [ agencyName, setAgencyName ] = useState( initialValues?.agencyName ?? '' );
 	const [ firstName, setFirstName ] = useState( initialValues?.firstName ?? '' );
 	const [ lastName, setLastName ] = useState( initialValues?.lastName ?? '' );
@@ -112,9 +106,7 @@ export default function AgencyDetailsForm( {
 			postalCode,
 			state: addressState,
 			referer,
-			phoneCountryCode,
-			phoneCountryNumericCode,
-			phoneNumber,
+			phone,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
@@ -133,9 +125,7 @@ export default function AgencyDetailsForm( {
 			postalCode,
 			addressState,
 			referer,
-			phoneCountryCode,
-			phoneCountryNumericCode,
-			phoneNumber,
+			phone,
 			includeTermsOfService,
 		]
 	);
@@ -206,18 +196,26 @@ export default function AgencyDetailsForm( {
 	};
 
 	const handlePhoneInputChange = ( {
+		phoneNumberFull,
 		phoneNumber,
 		countryData,
 	}: {
+		phoneNumberFull: string;
 		phoneNumber: string;
 		countryData: {
 			code: string;
 			numeric_code: string;
 		};
+		isValid: boolean;
+		validation: {
+			message: string;
+		};
 	} ) => {
-		setPhoneNumber( phoneNumber );
-		setPhoneCountryCode( countryData.code );
-		setPhoneCountryNumericCode( countryData.numeric_code );
+		setPhone( {
+			phoneNumber,
+			countryCode: countryData.code,
+			phoneNumberFull,
+		} );
 	};
 
 	const isUserSiteOwner = userType === 'site_owner';
@@ -508,8 +506,8 @@ export default function AgencyDetailsForm( {
 								} }
 								isDisabled={ noCountryList }
 								countriesList={ countriesList }
-								initialCountryCode={ phoneCountryCode }
-								initialPhoneNumber={ phoneNumber }
+								initialCountryCode={ phone.countryCode }
+								initialPhoneNumber={ phone.phoneNumber }
 								onChange={ handlePhoneInputChange }
 								className="company-details-form__phone-input"
 							/>
