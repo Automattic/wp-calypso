@@ -232,6 +232,14 @@ body.is-section-stepper .domains__step-content,
 	}
 }
 
+.onboarding {
+	&.domains {
+		&.step-route {
+			padding: 48px 0 0;
+		}
+	}
+}
+
 /**
  * Styles for design reskin
  * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
