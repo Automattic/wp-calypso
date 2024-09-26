@@ -511,11 +511,11 @@ export default function CheckoutMainContent( {
 	}
 
 	const nextStepButtonText = translate( 'Continue to payment', { textOnly: true } );
-	const canEditStep = () => {
+	const canEditPaymentStep = () => {
 		if ( ! paymentMethods ) {
 			return false;
 		}
-		const containsFreeOrCreditMethod = paymentMethods.filter(
+		const containsFreeOrCreditMethod = paymentMethods.some(
 			( method ) => method.id === 'free-purchase'
 		);
 		if ( paymentMethods.length < 2 && containsFreeOrCreditMethod ) {
@@ -709,7 +709,7 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
-						canEditStep={ canEditStep() }
+						canEditStep={ canEditPaymentStep() }
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
