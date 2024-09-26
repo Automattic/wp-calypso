@@ -316,8 +316,6 @@ export default {
 			}
 		}
 
-		// ... existing code ...
-
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
