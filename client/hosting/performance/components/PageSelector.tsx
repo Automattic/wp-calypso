@@ -36,7 +36,7 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 				<div
 					css={ {
 						position: 'absolute',
-						right: '16px',
+						right: '10px',
 						top: '50%',
 						transform: 'translateY(-50%)',
 						display: 'flex',
