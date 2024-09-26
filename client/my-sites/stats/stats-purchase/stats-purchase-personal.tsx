@@ -51,9 +51,8 @@ const PersonalPurchase = ( {
 	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
-	const { data: connectionStatus } = useJetpackConnectionStatus( siteId );
-
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isWPCOMSite );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 
