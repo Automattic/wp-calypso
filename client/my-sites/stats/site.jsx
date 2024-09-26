@@ -287,17 +287,28 @@ class StatsSite extends Component {
 			customChartRange.chartStart = moment().subtract( daysInRange, 'days' ).format( 'YYYY-MM-DD' );
 		}
 
+		//TODO: We need to align the start day of week from the backend.
 		// Calculate diff between requested start and end in `priod` units.
 		// Move end point (most recent) to the end of period to account for partial periods
 		// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
+		const adjustedChartStartDate =
+			period === 'day'
+				? moment( customChartRange.chartStart )
+				: moment( customChartRange.chartStart ).startOf( period === 'week' ? 'isoWeek' : period );
+
 		const adjustedChartEndDate =
 			period === 'day'
 				? moment( customChartRange.chartEnd )
-				: moment( customChartRange.chartEnd ).endOf( period );
+				: moment( customChartRange.chartEnd ).endOf( period === 'week' ? 'isoWeek' : period );
 
 		let customChartQuantity = Math.ceil(
-			adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+			adjustedChartEndDate.diff( adjustedChartStartDate, period, true )
 		);
+
+		// The above calculation is not accurate for the day period which always needs a plus one.
+		if ( period === 'day' ) {
+			customChartQuantity += 1;
+		}
 
 		customChartRange.daysInRange = daysInRange;
 
