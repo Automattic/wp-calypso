@@ -20,6 +20,7 @@ import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hook
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import tipaltiLogo from 'calypso/a8c-for-agencies/sections/referrals/lib/tipalti-logo';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -57,8 +58,10 @@ export default function MigrationsOverview() {
 
 			<LayoutBody>
 				<div className="migrations-overview__section-heading">
-					{ translate(
-						'Limited time offer: Migrate your sites to Pressable and earn up to $10,000!'
+					{ preventWidows(
+						translate(
+							'Limited time offer: Migrate your sites to Pressable and earn up to $10,000!'
+						)
 					) }
 				</div>
 				<div className="migrations-overview__section-intro">
