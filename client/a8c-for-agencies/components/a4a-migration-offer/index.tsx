@@ -19,7 +19,6 @@ const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 			{ withIcon && (
 				<img className="a4a-migration-offer__icon" src={ MigrationOfferIcon } alt="" />
 			) }
-			{ /* { withIcon && <Icon icon={ reusableBlock } size={ 32 } /> } */ }
 			<h3>{ title }</h3>
 		</div>
 	);
