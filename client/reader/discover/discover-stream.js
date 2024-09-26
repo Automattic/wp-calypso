@@ -17,8 +17,8 @@ import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import DiscoverNavigation from './discover-navigation';
 import {
 	getDiscoverStreamTags,
-	getSelectedTabTitle,
 	DEFAULT_TAB,
+	getSelectedTabTitle,
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
 } from './helper';
