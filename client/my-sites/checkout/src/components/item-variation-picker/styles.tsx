@@ -145,6 +145,7 @@ export const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
 	font-size: 14px;
+	color: var( --studio-black );
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
