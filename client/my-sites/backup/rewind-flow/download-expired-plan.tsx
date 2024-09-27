@@ -105,7 +105,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 					},
 				} ) }
 			</h2>
-			<p className="action-panel__body">
+			<p>
 				{ translate(
 					'Good news! Your site backup is ready to download. For full restoration and automatic backups, upgrade to the Business plan today for complete control and easy recovery.'
 				) }
@@ -138,15 +138,15 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 
 	const renderInProgress = ( percent: number ) => (
 		<>
-			<h3 className="rewind-flow__title">
+			<h2 className="action-panel__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
-			</h3>
+			</h2>
 			<ProgressBar
 				isReady={ ! isDownloadURLNotReady }
 				percent={ percent }
 				initializationMessage={ translate( 'Initializing the download process' ) }
 			/>
-			<p className="action-panel__body">
+			<p>
 				{ translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
 					{
@@ -195,10 +195,10 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 	const trackFileDownload = useTrackCallback( noop, 'calypso_jetpack_backup_file_download' );
 	const renderReady = () => (
 		<>
-			<h3 className="rewind-flow__title">
+			<h2 className="action-panel__title">
 				{ translate( 'Your backup is now available for download.' ) }
-			</h3>
-			<p className="action-panel__body">{ getReadyCopy() }</p>
+			</h2>
+			<p>{ getReadyCopy() }</p>
 			<Button
 				href={ downloadUrl ?? '#' }
 				className="rewind-flow-expired__primary-button"
@@ -224,7 +224,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 				comment: '%s is a time/date string',
 			} ) }
 		>
-			<p className="action-panel__body">
+			<p>
 				{ translate(
 					'An error occurred while creating your downloadable backup. Please {{button}}try your download again{{/button}} or contact our support team to resolve the issue.',
 					{
