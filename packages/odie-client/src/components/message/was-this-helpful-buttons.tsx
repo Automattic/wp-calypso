@@ -6,7 +6,8 @@ import { useOdieSendMessageFeedback } from '../../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
 import type { Message } from '../../types/';
 
-import './style.scss';
+// import './style.scss';
+import './style-v2.scss';
 
 const WasThisHelpfulButtons = ( {
 	message,

@@ -7,7 +7,7 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage, useOdieAssistantContext } from '@automattic/odie-client';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -186,11 +186,13 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { url, isLoading } = useStillNeedHelpURL();
+	const { clearChat } = useOdieAssistantContext();
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {
+		// clearChat();
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
@@ -212,7 +214,7 @@ export const HelpCenterContactButton: FC = () => {
 			className="button help-center-contact-page__button"
 		>
 			<Icon icon={ comment } />
-			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
+			<span>{ __( 'Start new conversation', __i18n_text_domain__ ) }</span>
 		</Link>
 	);
 };

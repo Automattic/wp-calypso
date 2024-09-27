@@ -8,7 +8,7 @@
 	font-size: $font-body;
 	line-height: 1.4;
 	color: #000;
-	flex-direction: column;
+	flex-direction: row;
 	padding: 16px;
 	gap: 8px;
 	width: 100%;
@@ -31,8 +31,13 @@
 
 	.disclaimer {
 		color: var(--studio-gray-50);
-		font-size: $font-body-extra-small;
-		text-align: right;
+		// font-size: $font-body-extra-small;
+		text-align: left;
+		gap: 4px;
+		// text-align: right;
+		p {
+			font-size: 0.75rem;
+		}
 	}
 }
 
@@ -62,10 +67,18 @@
 
 .odie-chatbox-message.odie-chatbox-message-user {
 	// background-color: var(--studio-gray-0);
+	//
+	justify-content: right;
 }
 
 .odie-chatbox-message.odie-chatbox-message-user p {
-	font-size: 1rem;
+	border: 1px solid #000;
+	border-radius: 2px;
+	// font-size: 1rem;
+	font-size: 0.875rem;
+	padding: 16px;
+	background-color: var(--color-primary);
+	color: #fff;
 }
 
 .odie-chatbox-message.odie-chatbox-message-user > :last-child {
@@ -77,13 +90,24 @@
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu p {
-	font-size: 1rem;
+	font-size: 0.875rem;
+}
+
+.odie-chatbox-message.odie-chatbox-message-wapuu.odie-chatbox-message-message {
+	flex-direction: column;
 }
 
 .odie-introduction-message-content {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	.odie-chatbox-introduction-message {
+		// border: 1px solid black;
+		background-color: #f7f7f7;
+		padding: 16px;
+		font-size: 0.875rem;
+	}
 }
 
 .odie-chatbox-message-avatar {
@@ -91,12 +115,14 @@
 	height: 32px;
 	justify-content: center;
 	align-items: center;
+	border-radius: 50%;
 }
 
 .message-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	width: 100%;
+	flex: 0 0 32px;
 	gap: 8px;
 
 	.user {
