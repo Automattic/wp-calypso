@@ -119,8 +119,8 @@ function FeedbackPanel( {
 	);
 
 	const handleDismissPanel = () => {
-		onDismissPanel(); // xxx
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
+		onDismissPanel();
 	};
 
 	const handleLeaveReviewFromPanel = () => {
