@@ -71,11 +71,6 @@ interface FeedbackProps {
 	siteId: number;
 }
 
-interface FeedbackPropsInternal {
-	clickHandler: ( action: string ) => void;
-	isOpen?: boolean;
-}
-
 interface FeedbackContentProps {
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
@@ -105,25 +100,37 @@ function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProp
 	);
 }
 
-function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
+interface FeedbackPanelProps {
+	isOpen: boolean;
+	onDismissPanel: () => void;
+	onLeaveReview: () => void;
+	onSendFeedback: () => void;
+}
+
+function FeedbackPanel( {
+	isOpen,
+	onDismissPanel,
+	onLeaveReview,
+	onSendFeedback,
+}: FeedbackPanelProps ) {
 	const translate = useTranslate();
 	const [ animationClassName, setAnimationClassName ] = useState(
 		FEEDBACK_PANEL_ANIMATION_NAME_ENTRY
 	);
 
 	const handleDismissPanel = () => {
-		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
+		onDismissPanel(); // xxx
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 	};
 
 	const handleLeaveReviewFromPanel = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL );
-		clickHandler( ACTION_LEAVE_REVIEW );
+		onLeaveReview();
 	};
 
 	const handleSendFeedbackFromPanel = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL );
-		clickHandler( ACTION_SEND_FEEDBACK );
+		onSendFeedback();
 	};
 
 	if ( ! isOpen ) {
@@ -221,6 +228,9 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	};
 
+	const handleDismissPanel = () => {
+		handleButtonClick( ACTION_DISMISS_FLOATING_PANEL );
+	};
 	const handleLeaveReview = () => {
 		handleButtonClick( ACTION_LEAVE_REVIEW );
 	};
@@ -239,7 +249,12 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	return (
 		<div className="stats-feedback-container">
 			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
-			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
+			<FeedbackPanel
+				isOpen={ isFloatingPanelOpen }
+				onDismissPanel={ handleDismissPanel }
+				onLeaveReview={ handleLeaveReview }
+				onSendFeedback={ handleSendFeedback }
+			/>
 			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
 		</div>
 	);
