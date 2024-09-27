@@ -15,7 +15,7 @@ import {
 	getVideoPressPlaysComplete,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../components/stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';

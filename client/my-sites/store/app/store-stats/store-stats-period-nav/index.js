@@ -6,7 +6,7 @@ import { Fragment } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import DatePicker from 'calypso/my-sites/stats/components/stats-date-picker';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import { getWidgetPath } from '../utils';
 

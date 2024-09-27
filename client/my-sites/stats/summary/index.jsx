@@ -23,6 +23,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModuleUTM from '../features/modules/stats-utm';
+import VideoPressStatsModule from '../features/modules/videopress-stats-module';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
 import AllTimeNav from '../stats-module/all-time-nav';
@@ -31,7 +32,6 @@ import statsStringsFactory from '../stats-strings';
 import StatsUpsellModal from '../stats-upsell-modal';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
-import VideoPressStatsModule from '../videopress-stats-module';
 
 import './style.scss';
 

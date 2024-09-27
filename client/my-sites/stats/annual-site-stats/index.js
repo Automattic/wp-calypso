@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
-import PromoCards from 'calypso/my-sites/stats/promo-cards';
+import PromoCards from 'calypso/my-sites/stats/components/promo-cards';
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

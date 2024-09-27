@@ -1,4 +1,4 @@
-import NavigationArrows from '../navigation-arrows';
+import NavigationArrows from '../components/navigation-arrows';
 
 type SubscribersNavigationProps = {
 	date: Date;

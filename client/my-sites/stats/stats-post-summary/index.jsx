@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
-import DatePicker from '../stats-date-picker';
-import StatsPeriodHeader from '../stats-period-header';
+import DatePicker from '../components/stats-date-picker';
+import StatsPeriodHeader from '../components/stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 

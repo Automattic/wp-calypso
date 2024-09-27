@@ -1,5 +1,5 @@
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import NavigationArrows from '../navigation-arrows';
+import NavigationArrows from '../components/navigation-arrows';
 
 import './style.scss';
 

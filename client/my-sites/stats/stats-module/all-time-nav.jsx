@@ -9,6 +9,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DatePicker from '../components/stats-date-picker';
 import {
 	STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
 	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
@@ -18,7 +19,6 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 } from '../constants';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
-import DatePicker from '../stats-date-picker';
 
 import './summary-nav.scss';
 

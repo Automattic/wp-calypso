@@ -9,10 +9,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import StatsTabs from '../components/stats-tabs';
+import StatsTab from '../components/stats-tabs/tab';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
 
 class StatsSummaryChart extends Component {
 	static propTypes = {
