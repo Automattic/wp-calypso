@@ -69,7 +69,7 @@
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/react-slider": "^1.3.6",
 		"debug": "^4.3.3",
-		"postcss": "^8.4.5",
+		"postcss": "^8.4.47",
 		"qrcode.react": "^3.1.0",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
