@@ -24,7 +24,7 @@ import { isReskinnedFlow } from './is-flow';
 import SignupComponent from './main';
 import {
 	retrieveSignupDestination,
-	getSignupDependencies,
+	getDomainsDependencies,
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
@@ -308,9 +308,14 @@ export default {
 
 		// Hydrate the store with domains dependencies from session storage,
 		// only in the onboarding flow.
-		const signupDependencies = getSignupDependencies();
-		if ( signupDependencies && isManageSiteFlow && flowName === 'onboarding' ) {
-			const { step, dependencies } = JSON.parse( signupDependencies );
+		const domainsDependencies = getDomainsDependencies();
+		if (
+			domainsDependencies &&
+			isManageSiteFlow &&
+			flowName === 'onboarding' &&
+			stepName !== 'domains'
+		) {
+			const { step, dependencies } = JSON.parse( domainsDependencies );
 			if ( step && dependencies ) {
 				context.store.dispatch( submitSignupStep( step, dependencies ) );
 			}

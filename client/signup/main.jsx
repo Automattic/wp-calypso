@@ -83,8 +83,8 @@ import { addP2SignupClassName } from './controller';
 import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
-	setSignupDependencies,
-	clearSignupDependencies,
+	setDomainsDependencies,
+	clearDomainsDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -320,12 +320,9 @@ class Signup extends Component {
 
 		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
 
-		if (
-			flowName === 'onboarding' &&
-			stepName === 'domains' &&
-			signupDependencies.domainItem !== prevDomainItem
-		) {
-			clearSignupDependencies();
+		// Clear domains dependencies when the domains data is updated.
+		if ( stepName === 'domains' && signupDependencies.domainItem !== prevDomainItem ) {
+			clearDomainsDependencies();
 		}
 	}
 
@@ -423,7 +420,7 @@ class Signup extends Component {
 			const { domainItem, siteUrl, domainCart } = dependencies;
 			const { stepSectionName } = this.props;
 
-			setSignupDependencies( {
+			setDomainsDependencies( {
 				step: {
 					stepName: 'domains',
 					domainItem,

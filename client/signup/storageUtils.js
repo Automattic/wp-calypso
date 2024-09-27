@@ -41,15 +41,15 @@ export const setSignupCompleteSlug = ( value ) =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value )
 	);
-export const setSignupDependencies = ( dependencies ) => {
+export const setDomainsDependencies = ( dependencies ) => {
 	ignoreFatalsForSessionStorage( () =>
-		sessionStorage.setItem( 'wpcom_signup_dependencies', JSON.stringify( dependencies ) )
+		sessionStorage.setItem( 'wpcom_domains_dependencies', JSON.stringify( dependencies ) )
 	);
 };
-export const getSignupDependencies = () =>
-	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_signup_dependencies' ) );
-export const clearSignupDependencies = () =>
-	ignoreFatalsForSessionStorage( () => sessionStorage?.removeItem( 'wpcom_signup_dependencies' ) );
+export const getDomainsDependencies = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_domains_dependencies' ) );
+export const clearDomainsDependencies = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.removeItem( 'wpcom_domains_dependencies' ) );
 export const wasSignupCheckoutPageUnloaded = () =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.getItem( 'was_signup_checkout_page_unloaded' )
