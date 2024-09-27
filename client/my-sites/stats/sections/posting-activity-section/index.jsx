@@ -9,13 +9,13 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
-import StatsHeatMapLegend from '../stats-heap-map/legend';
+import StatsHeatMapLegend from '../../stats-heap-map/legend';
 import Month from './month';
 
 import './style.scss';
 
-class PostTrends extends Component {
-	static displayName = 'PostTrends';
+class PostingActivitySection extends Component {
+	static displayName = 'PostingActivitySection';
 
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -88,4 +88,4 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 export default connect( mapStateToProps, null, null, {
 	areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
-} )( localize( withLocalizedMoment( PostTrends ) ) );
+} )( localize( withLocalizedMoment( PostingActivitySection ) ) );

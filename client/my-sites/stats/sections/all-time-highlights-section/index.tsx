@@ -26,9 +26,9 @@ import {
 	STAT_TYPE_INSIGHTS_ALL_TIME_STATS,
 	STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME,
 	STAT_TYPE_INSIGHTS_MOST_POPULAR_DAY,
-} from '../constants';
-import { useShouldGateStats } from '../hooks/use-should-gate-stats';
-import StatsCardUpsell from '../stats-card-upsell';
+} from '../../constants';
+import { useShouldGateStats } from '../../hooks/use-should-gate-stats';
+import StatsCardUpsell from '../../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
@@ -212,6 +212,7 @@ export default function AllTimeHighlightsSection( {
 	);
 }
 
+// TODO: Move these types and component into a separate file.
 type InfoItem = {
 	id: string;
 	icon: JSX.Element;
@@ -264,6 +265,7 @@ function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 	);
 }
 
+// TODO: Move these types and component into a separate file.
 type CardInfoItem = {
 	id: string;
 	header: string;
