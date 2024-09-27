@@ -132,7 +132,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 						{ count: parseInt( newDomains ) }
 					),
 					{
-						duration: 5000,
+						duration: 10000,
 					}
 				)
 			);
