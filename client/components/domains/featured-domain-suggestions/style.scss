@@ -6,8 +6,13 @@
 	flex-direction: column;
 	flex-wrap: wrap;
 	border-top: 1px solid rgba(220, 220, 222, 0.64);
+
 	@include break-mobile {
 		border-top: none;
+		margin: 0 20px;
+	}
+	@include break-xlarge {
+		margin: 0;
 	}
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
