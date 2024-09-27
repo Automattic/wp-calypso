@@ -17,10 +17,6 @@ import 'animate.css';
 
 import './style.scss';
 
-const ACTION_LEAVE_REVIEW = 'action_redirect_to_plugin_review_page';
-const ACTION_SEND_FEEDBACK = 'action_open_form_modal';
-const ACTION_DISMISS_FLOATING_PANEL = 'action_dismiss_floating_panel';
-
 const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
 const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
@@ -211,32 +207,19 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
 	};
 
-	const handleButtonClick = ( action: string ) => {
-		switch ( action ) {
-			case ACTION_SEND_FEEDBACK:
-				setIsFloatingPanelOpen( false );
-				setIsFeedbackModalOpen( true );
-				break;
-			case ACTION_DISMISS_FLOATING_PANEL:
-				dismissPanelWithDelay();
-				updateFeedbackPanelHibernationDelay();
-				break;
-			case ACTION_LEAVE_REVIEW:
-				setIsFloatingPanelOpen( false );
-				window.open( FEEDBACK_LEAVE_REVIEW_URL );
-				break;
-			// Ignore other cases.
-		}
+	const handleDismissPanel = () => {
+		dismissPanelWithDelay();
+		updateFeedbackPanelHibernationDelay();
 	};
 
-	const handleDismissPanel = () => {
-		handleButtonClick( ACTION_DISMISS_FLOATING_PANEL );
-	};
 	const handleLeaveReview = () => {
-		handleButtonClick( ACTION_LEAVE_REVIEW );
+		setIsFloatingPanelOpen( false );
+		window.open( FEEDBACK_LEAVE_REVIEW_URL );
 	};
+
 	const handleSendFeedback = () => {
-		handleButtonClick( ACTION_SEND_FEEDBACK );
+		setIsFloatingPanelOpen( false );
+		setIsFeedbackModalOpen( true );
 	};
 
 	const handleCloseModalDialog = () => {
