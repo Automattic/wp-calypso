@@ -6,11 +6,13 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import SiteMigrationCredentials from '..';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
+jest.mock( 'calypso/data/site-profiler/use-analyze-url-query' );
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
@@ -50,10 +52,37 @@ const fillAllFields = async () => {
 	await userEvent.type( passwordInput(), 'password' );
 };
 
+const fillNoteField = async () => {
+	await userEvent.click( specialInstructionsButton() );
+	await userEvent.type( specialInstructionsInput(), 'notes' );
+};
+
+const requestPayload = {
+	path: 'sites/site-url.wordpress.com/automated-migration',
+	apiNamespace: 'wpcom/v2/',
+	apiVersion: '2',
+	method: 'POST',
+	body: {
+		migration_type: 'credentials',
+		blog_url: 'site-url.wordpress.com',
+		bypass_verification: true,
+		notes: 'notes',
+		from_url: 'site-url.com',
+		username: 'username',
+		password: 'password',
+	},
+};
+
 describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
+		( useAnalyzeUrlQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				url: 'site-url.wordpress.com',
+			},
+			isLoading: false,
+		} );
 	} );
 	afterEach( () => {
 		jest.runOnlyPendingTimers();
@@ -317,10 +346,6 @@ describe( 'SiteMigrationCredentials', () => {
 
 			await waitFor( () => {
 				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-			} );
-
-			await waitFor( () => {
-				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
 				expect(
 					getByText(
 						'We could not verify your credentials. Can you double check your account information and try again?'
@@ -340,8 +365,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.type( usernameInput(), 'username' );
 		await userEvent.type( passwordInput(), 'password' );
 
-		await userEvent.click( specialInstructionsButton() );
-		await userEvent.type( specialInstructionsInput(), 'notes' );
+		await fillNoteField();
 
 		( wpcomRequest as jest.Mock ).mockRejectedValue( {
 			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
@@ -381,6 +405,128 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'creates a credentials ticket even when the siteinfo request faces an error', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+		await fillAllFields();
+		await fillNoteField();
+
+		( useAnalyzeUrlQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				url: 'site-url.wordpress.com',
+			},
+			isError: false,
+			isLoading: false,
+		} );
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		await userEvent.click( continueButton() );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			...requestPayload,
+			body: {
+				...requestPayload.body,
+				bypass_verification: false,
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'Shows Continue anyways button and an already on WPCOM error if site is already on WPCOM', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+		await fillAllFields();
+		await fillNoteField();
+		// Mock ( useAnalyzeUrlQuery as jest.Mock ) to return a proper payload when called with the site URL test.com, otherwise, return null
+		( useAnalyzeUrlQuery as jest.Mock ).mockImplementation( ( url: string ) => {
+			if ( url === 'site-url.com' ) {
+				return {
+					data: {
+						url: 'site-url.wordpress.com',
+						platform_data: {
+							is_wpcom: true,
+						},
+					},
+					isError: false,
+					isLoading: false,
+				};
+			}
+			return {};
+		} );
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+			expect( getByText( 'Your site is already on WordPress.com.' ) ).toBeVisible();
+		} );
+
+		await userEvent.click( continueButton( /Continue anyways/ ) );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			...requestPayload,
+			body: {
+				...requestPayload.body,
+				bypass_verification: true,
+			},
+		} );
+	} );
+
+	it( 'shows "Verifying credentials" on the Continue button during site info verification', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await fillAllFields();
+		( wpcomRequest as jest.Mock ).mockImplementation(
+			() =>
+				new Promise( ( resolve ) => {
+					setTimeout( resolve, 2000 );
+				} )
+		);
+		( useAnalyzeUrlQuery as jest.Mock ).mockImplementation( ( url: string ) => {
+			if ( url === 'site-url.com' ) {
+				return {
+					data: {
+						url: 'site-url.wordpress.com',
+						platform_data: {
+							is_wpcom: true,
+						},
+					},
+					isError: false,
+					isLoading: true,
+				};
+			}
+			return {
+				data: {
+					url: 'site-url1.wordpress.com',
+					platform_data: {
+						is_wpcom: false,
+					},
+				},
+				isError: false,
+				isLoading: false,
+			};
+		} );
+
+		userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
 		} );
 	} );
 } );
