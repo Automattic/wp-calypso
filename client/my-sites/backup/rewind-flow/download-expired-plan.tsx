@@ -1,6 +1,9 @@
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
+import JetpackDownloadReadySVG from 'calypso/assets/images/illustrations/jetpack-cloud-download-ready-alt.svg';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -85,6 +88,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 		downloadRewindId !== rewindId || ( downloadId !== 0 && requestedBackup !== downloadId );
 	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
 	const isDownloadURLNotReady = downloadUrl === undefined || downloadUrl === '';
+	const [ downloadFlowImageSrc, setDownloadFlowImageSrc ] = useState( JetpackBackupSVG );
 
 	useEffect( () => {
 		if ( ! isDownloadURLNotReady ) {
@@ -94,14 +98,14 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 
 	const renderConfirm = () => (
 		<>
-			<h3 className="rewind-flow__title">
+			<h2 className="action-panel__title">
 				{ translate( 'You have an available backup from %(backupDisplayDate)s', {
 					args: {
 						backupDisplayDate,
 					},
 				} ) }
-			</h3>
-			<p className="rewind-flow__info">
+			</h2>
+			<p className="action-panel__body">
 				{ translate(
 					'Good news! Your site backup is ready to download. For full restoration and automatic backups, upgrade to the Business plan today for complete control and easy recovery.'
 				) }
@@ -117,14 +121,13 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 				link="https://jetpack.com/support/backup"
 			/>
 			<Button
-				className="rewind-flow__primary-button"
-				primary
+				className="rewind-flow-expired__primary-button"
 				onClick={ trackedRequestDownload }
 				disabled={
 					isOtherDownloadInProgress ||
 					Object.values( rewindConfig ).every( ( setting ) => ! setting )
 				}
-				busy={ isOtherDownloadInProgress }
+				isBusy={ isOtherDownloadInProgress }
 			>
 				{ isOtherDownloadInProgress
 					? translate( 'Another downloadable file is being created' )
@@ -135,12 +138,6 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 
 	const renderInProgress = ( percent: number ) => (
 		<>
-			<div className="rewind-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-cloud-download-ready.svg"
-					alt="jetpack cloud download ready"
-				/>
-			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
 			</h3>
@@ -149,7 +146,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 				percent={ percent }
 				initializationMessage={ translate( 'Initializing the download process' ) }
 			/>
-			<p className="rewind-flow__info">
+			<p className="action-panel__body">
 				{ translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
 					{
@@ -162,7 +159,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			{ /* Backup download email notifications are not currently supposed for simple sites 
+			{ /* Backup download email notifications are not currently supported for simple sites 
 			<CheckYourEmail
 				message={ translate( "For your convenience, we'll email you when your file is ready." ) }
 			/>
@@ -198,25 +195,18 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 	const trackFileDownload = useTrackCallback( noop, 'calypso_jetpack_backup_file_download' );
 	const renderReady = () => (
 		<>
-			<div className="rewind-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-cloud-download-success.svg"
-					alt="jetpack cloud download success"
-				/>
-			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Your backup is now available for download.' ) }
 			</h3>
-			<p className="rewind-flow__info">{ getReadyCopy() }</p>
+			<p className="action-panel__body">{ getReadyCopy() }</p>
 			<Button
-				href={ downloadUrl }
-				primary
-				className="rewind-flow__primary-button"
+				href={ downloadUrl ?? '#' }
+				className="rewind-flow-expired__primary-button"
 				onClick={ trackFileDownload }
 			>
 				{ translate( 'Download file' ) } ({ downloadSize })
 			</Button>
-			{ /* Backup download email notifications are not currently supposed for simple sites 
+			{ /* Backup download email notifications are not currently supported for simple sites 
 			<CheckYourEmail
 				message={ translate(
 					"For your convenience, we've emailed you a link to your downloadable backup file."
@@ -234,7 +224,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 				comment: '%s is a time/date string',
 			} ) }
 		>
-			<p className="rewind-flow__info">
+			<p className="action-panel__body">
 				{ translate(
 					'An error occurred while creating your downloadable backup. Please {{button}}try your download again{{/button}} or contact our support team to resolve the issue.',
 					{
@@ -242,7 +232,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 							button: (
 								<Button
 									className="rewind-flow__error-retry-button"
-									onClick={ trackedRequestDownload }
+									onClaction-panel__bodyick={ trackedRequestDownload }
 								/>
 							),
 						},
@@ -263,6 +253,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 		} else if ( downloadProgress !== undefined && isDownloadURLNotReady ) {
 			if ( ! userRequestedDownload ) {
 				setUserRequestedDownload( true );
+				setDownloadFlowImageSrc( JetpackDownloadReadySVG );
 			}
 			return renderInProgress( downloadProgress );
 		} else if ( ! isDownloadURLNotReady ) {
@@ -277,7 +268,12 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 				downloadId={ downloadProgress !== undefined ? downloadId : undefined }
 				siteId={ siteId }
 			/>
-			<Card className="rewind-flow__expired">{ render() }</Card>
+			<Card className="promo-card rewind-flow__expired is-primary">
+				<div className="action-panel__figure align-left">
+					<img src={ downloadFlowImageSrc } alt="" />
+				</div>
+				<div className="action-panel-body">{ render() }</div>
+			</Card>
 		</>
 	);
 };
