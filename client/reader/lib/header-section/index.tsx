@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 
-const ReaderHeaderSection = () => {
+const ReaderHeader = () => {
 	const translate = useTranslate();
 
 	return (
@@ -17,6 +17,6 @@ const ReaderHeaderSection = () => {
 	);
 };
 
-const renderHeaderSection = () => <ReaderHeaderSection />;
+const renderHeaderSection = () => <ReaderHeader />;
 
 export default renderHeaderSection;
