@@ -37,7 +37,6 @@ const useHasRequestedSelectedSite = () => {
 interface Props {
 	flowName: string;
 	stepSlug: string;
-	pathname: string;
 	flowVariantSlug?: string;
 	skipStepRender?: boolean;
 }
@@ -48,7 +47,6 @@ interface Props {
 export const useStepRouteTracking = ( {
 	flowName,
 	stepSlug,
-	pathname,
 	flowVariantSlug,
 	skipStepRender,
 }: Props ) => {
@@ -56,6 +54,7 @@ export const useStepRouteTracking = ( {
 	const design = useSelectedDesign();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
+	const pathname = window.location.pathname;
 
 	/**
 	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
@@ -122,6 +121,8 @@ export const useStepRouteTracking = ( {
 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
+		// We also leave out pathname. The respective event (calypso_page_view) is recorded behind a timeout and we don't want to trigger it again.
+		//     - window.location.pathname called inside the effect keeps referring to the previous path on a redirect. So we moved it outside.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender, pathname ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender ] );
 };

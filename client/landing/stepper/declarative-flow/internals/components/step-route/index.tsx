@@ -33,7 +33,6 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 		stepSlug: step.slug,
 		flowVariantSlug: flow.variantSlug,
 		skipStepRender: shouldSkipRender,
-		pathname: window.location.pathname,
 	} );
 
 	useEffect( () => {
