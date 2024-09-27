@@ -23,6 +23,8 @@ import {
 	FIRST_POSTS_TAB,
 } from './helper';
 
+const DISCOVER_HEADER_NAVIGATION_ITEMS = [];
+
 export const DiscoverHeader = ( props ) => {
 	const translate = useTranslate();
 
@@ -40,7 +42,7 @@ export const DiscoverHeader = ( props ) => {
 
 	return (
 		<NavigationHeader
-			navigationItems={ [] }
+			navigationItems={ DISCOVER_HEADER_NAVIGATION_ITEMS }
 			title={ translate( 'Discover' ) }
 			subtitle={ subHeaderText }
 			className={ clsx( 'discover-stream-header', {
