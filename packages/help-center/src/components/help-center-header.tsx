@@ -1,9 +1,17 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
+import {
+	backup,
+	closeSmall,
+	chevronUp,
+	lineSolid,
+	commentContent,
+	page,
+	Icon,
+} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
@@ -58,7 +66,9 @@ const SupportModeTitle = () => {
 
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
+	const navigate = useNavigate();
 	const { pathname, key } = useLocation();
+	const shouldDisplayChatHistoryButton = pathname !== '/chat-history';
 	const isHelpCenterHome = key === 'default';
 
 	const headerText =
@@ -72,6 +82,16 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 			<span id="header-text" role="presentation" className="help-center-header__text">
 				{ headerText }
 			</span>
+			{ shouldDisplayChatHistoryButton && (
+				<Button
+					className="help-center-header__chat-history"
+					label={ __( 'Chat history', __i18n_text_domain__ ) }
+					icon={ backup }
+					tooltipPosition="top left"
+					onClick={ () => navigate( '/chat-history' ) }
+					onTouchStart={ () => navigate( '/chat-history' ) }
+				/>
+			) }
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
