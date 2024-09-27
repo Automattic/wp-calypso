@@ -98,14 +98,6 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 		return false;
 	}
 
-	// Admins can access all paths
-	const role = agency?.user?.role;
-	// For some cases, the role isn't set, so we default to 'a4a_administrator'
-	// FIXME: This should be removed after the role is set for all users
-	if ( ! role || role === 'a4a_administrator' ) {
-		return true;
-	}
-
 	// Everyone can access the landing page and the overview page
 	if ( [ A4A_LANDING_LINK, A4A_OVERVIEW_LINK ].includes( pathname ) ) {
 		return true;
