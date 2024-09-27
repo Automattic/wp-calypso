@@ -39,6 +39,8 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 
 	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
+	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
+
 	const {
 		formState: { errors, isSubmitting },
 		control,
