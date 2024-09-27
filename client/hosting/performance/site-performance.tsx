@@ -87,6 +87,9 @@ export const SitePerformance = () => {
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 
+	const isSitePublic =
+		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
 	) as { id: number; value: number }[];
@@ -117,6 +120,10 @@ export const SitePerformance = () => {
 	const filter = queryParams?.filter?.toString();
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 	const [ currentPage, setCurrentPage ] = useState< ( typeof pages )[ number ] >();
+
+	useEffect( () => {
+		setCurrentPage( undefined );
+	}, [ siteId ] );
 
 	useEffect( () => {
 		if ( pages && ! currentPage ) {
@@ -157,9 +164,6 @@ export const SitePerformance = () => {
 
 		window.history.replaceState( {}, '', url.toString() );
 	};
-
-	const isSitePublic =
-		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
 
 	const performanceReport = usePerformanceReport(
 		isSitePublic ? wpcom_performance_report_url : undefined,
@@ -277,7 +281,7 @@ export const SitePerformance = () => {
 					value={ activeTab }
 				/>
 			</div>
-			{ isInitialLoading ? (
+			{ isInitialLoading && isSitePublic ? (
 				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
 				<>
