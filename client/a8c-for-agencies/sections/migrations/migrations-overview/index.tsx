@@ -60,13 +60,13 @@ export default function MigrationsOverview() {
 				<div className="migrations-overview__section-heading">
 					{ preventWidows(
 						translate(
-							'Limited time offer: Migrate your sites to Pressable and earn up to $10,000!'
+							'Limited time offer: Migrate your sites to Pressable or WordPress.com and earn up to $10,000!'
 						)
 					) }
 				</div>
 				<div className="migrations-overview__section-intro">
 					{ translate(
-						'From now until the end of 2024, you’ll receive $100 for each migrated site to Pressable, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
+						'From now until the end of 2024, you’ll receive $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
 						{
 							components: {
 								a: (
