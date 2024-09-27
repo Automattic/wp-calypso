@@ -67,6 +67,11 @@ export interface Agency {
 		capabilities: string[];
 	};
 	can_issue_licenses: boolean;
+	tier: {
+		id?: string;
+		label?: string;
+		features?: string[];
+	};
 }
 
 export interface AgencyStore {

@@ -66,10 +66,16 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_REFERRALS_DASHBOARD ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_PAYMENT_SETTINGS ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_FAQ ]: [ 'a4a_read_referrals' ],
-	[ A4A_PARTNER_DIRECTORY_LINK ]: [ 'a4a_read_partner_directory' ],
-	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_read_partner_directory' ],
-	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_read_partner_directory' ],
-	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_LINK ]: [ 'partner_directory', 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'partner_directory', 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [
+		'partner_directory',
+		'a4a_read_partner_directory',
+	],
+	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [
+		'partner_directory',
+		'a4a_read_partner_directory',
+	],
 	[ A4A_PURCHASES_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_BILLING_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_INVOICES_LINK ]: [ 'a4a_jetpack_licensing' ],
@@ -103,20 +109,23 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 		return true;
 	}
 
-	// Check if the user has the required capability to access the current path
-	const capabilities = agency?.user?.capabilities;
+	// Check path permissions against the agency's tier and user capabilities.
+	const agencyFeatures = agency?.tier?.features || [];
+	const userCapabilities = agency?.user?.capabilities || [];
+	const capabilities = [ ...agencyFeatures, ...userCapabilities ];
+
 	if ( capabilities ) {
 		const permissions = MEMBER_ACCESSIBLE_PATHS?.[ pathname ];
 		if ( permissions ) {
-			return capabilities.some( ( capability: string ) => permissions?.includes( capability ) );
+			return permissions.every( ( permission: string ) => capabilities.includes( permission ) );
 		}
 
 		// Check dynamic path patterns
 		for ( const [ key, pattern ] of Object.entries( DYNAMIC_PATH_PATTERNS ) ) {
 			if ( pattern.test( pathname ) ) {
 				const dynamicPermissions = MEMBER_ACCESSIBLE_DYNAMIC_PATHS[ key ];
-				return capabilities.some(
-					( capability: string ) => dynamicPermissions?.includes( capability )
+				return dynamicPermissions.every( ( permission: string ) =>
+					capabilities.includes( permission )
 				);
 			}
 		}
