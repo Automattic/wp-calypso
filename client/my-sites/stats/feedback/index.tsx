@@ -153,17 +153,19 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
-function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
-	// TODO: Refactor props to be more explicit.
+interface FeedbackCardProps {
+	onLeaveReview: () => void;
+	onSendFeedback: () => void;
+}
 
+function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 	const handleLeaveReviewFromCard = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
-		clickHandler( ACTION_LEAVE_REVIEW );
+		onLeaveReview();
 	};
-
 	const handleSendFeedbackFromCard = () => {
 		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD );
-		clickHandler( ACTION_SEND_FEEDBACK );
+		onSendFeedback();
 	};
 
 	return (
@@ -219,6 +221,13 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	};
 
+	const handleLeaveReview = () => {
+		handleButtonClick( ACTION_LEAVE_REVIEW );
+	};
+	const handleSendFeedback = () => {
+		handleButtonClick( ACTION_SEND_FEEDBACK );
+	};
+
 	const onModalClose = () => {
 		setIsOpen( false );
 	};
@@ -229,7 +238,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	return (
 		<div className="stats-feedback-container">
-			<FeedbackCard clickHandler={ handleButtonClick } />
+			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
 			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
 			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
 		</div>
