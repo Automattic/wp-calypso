@@ -13,6 +13,7 @@ $section-max-width: 1224px;
 	.notice-banner,
 	.notice-banner__title {
 		font-size: $font-body-small;
+		margin-bottom: 4px;
 	}
 
 	@media (max-width: $break-medium) {
@@ -32,6 +33,24 @@ $section-max-width: 1224px;
 		display: flex;
 		flex-direction: column;
 		gap: 64px;
+
+		@media (max-width: $break-medium) {
+			margin-top: 24px;
+		}
+	}
+
+	.notice-banner {
+		box-shadow: none;
+		padding: 16px;
+
+		.notice-banner__icon-wrapper {
+			margin-right: 8px;
+			position: unset;
+		}
+
+		.notice-banner__action-bar {
+			margin-top: 12px;
+		}
 
 		@media (max-width: $break-medium) {
 			margin-top: 24px;
