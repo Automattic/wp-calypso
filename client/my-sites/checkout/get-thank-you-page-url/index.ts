@@ -16,6 +16,7 @@ import {
 	findFirstSimilarPlanKey,
 	getPlan,
 	isPlan,
+	isWpComPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
 	is100Year,
@@ -613,6 +614,12 @@ function getFallbackDestination( {
 			},
 			`/marketplace/thank-you/${ siteSlug }`
 		);
+	}
+
+	const planItems = cart?.products?.filter( ( product ) => isWpComPlan( product.product_slug ) );
+	if ( planItems && planItems.length > 0 && planItems.length === cart?.products?.length ) {
+		debug( 'site with plan product' );
+		return `/plans/${ siteSlug }?success=${ planItems[ 0 ].product_slug }`;
 	}
 
 	debug( 'simple thank-you page' );

@@ -58,6 +58,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import ThankYouNotice from './thank-you-notice';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
@@ -451,6 +452,7 @@ class Plans extends Component {
 				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
 					<DomainUpsellDialog domain={ selectedSite.slug } />
 				) }
+				<ThankYouNotice />
 				{ canAccessPlans && (
 					<div>
 						{ ! isDomainAndPlanPackageFlow && (
