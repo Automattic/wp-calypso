@@ -3,15 +3,14 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { Icon } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
-	useEdgeCacheQuery,
 } from 'calypso/data/hosting/use-cache';
 import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
 import { useSelector } from 'calypso/state';
@@ -25,6 +24,7 @@ type DefensiveModeCardProps = {
 
 export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const availableTtls = [
 		{
@@ -52,18 +52,26 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 	const siteId = useSelector( getSelectedSiteId );
 	const [ ttl, setTtl ] = useState( availableTtls[ 0 ].value );
 
-	const { data: isEdgeCacheActive, isLoading: isLoadingEdgeCache } = useEdgeCacheQuery( siteId );
-	const { data: defensiveModeData } = useEdgeCacheDefensiveModeQuery( siteId );
+	const { data: defensiveModeData, isLoading: isLoadingDefensiveMode } =
+		useEdgeCacheDefensiveModeQuery( siteId );
 	const { mutate, isPending: isEnabling } = useEdgeCacheDefensiveModeMutation( siteId );
 
-	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 );
+	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 ).local();
 
 	return (
-		<HostingCard className="defensive-mode-card" title={ translate( 'Defensive mode' ) }>
+		<HostingCard
+			className="defensive-mode-card"
+			title={ translate( 'Defensive mode', {
+				comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+				textOnly: true,
+			} ) }
+		>
 			<HostingCardDescription>
 				{ translate(
 					'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. {{a}}Learn more{{/a}}',
 					{
+						comment:
+							'Explains what "Defensive mode" is. Defensive mode is a feature to protect against DDoS attacks.',
 						components: {
 							a: <InlineSupportLink supportContext="hosting-defensive-mode" showIcon={ false } />,
 						},
@@ -71,31 +79,19 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 				) }
 			</HostingCardDescription>
 
-			{ isLoadingEdgeCache && <EdgeCacheLoadingPlaceholder /> }
+			{ isLoadingDefensiveMode && <EdgeCacheLoadingPlaceholder /> }
 
-			{ ! isEdgeCacheActive && ! isLoadingEdgeCache && (
-				<HostingCardDescription>
-					<span className="defensive-mode-card__edge-cache-required">
-						{ translate( 'Defensive mode requires {{a}}global edge cache{{/a}} to be enabled.', {
-							components: {
-								a: <InlineSupportLink supportContext="hosting-edge-cache" showIcon={ false } />,
-							},
-						} ) }
-					</span>
-				</HostingCardDescription>
-			) }
-
-			{ isEdgeCacheActive && defensiveModeData?.enabled && (
+			{ ! isLoadingDefensiveMode && defensiveModeData?.enabled && (
 				<>
 					<div className="defensive-mode-card__enabled-description">
 						<div className="defensive-mode-card__enabled-indicator" />
 
 						<HostingCardDescription>
-							{ translate( '{{b}}Defensive mode is enabled{{/b}} until %(time)s on %(date)s.', {
+							{ translate( '{{b}}Defensive mode is enabled{{/b}} until %(date)s.', {
 								args: {
-									date: enabledUntil.format( 'LL' ),
-									time: enabledUntil.format( 'LT' ),
+									date: enabledUntil.format( 'LLL' ),
 								},
+								comment: 'Defensive mode is a feature to protect against DDoS attacks.',
 								components: {
 									b: <strong />,
 								},
@@ -151,7 +147,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 				</>
 			) }
 
-			{ isEdgeCacheActive && ! defensiveModeData?.enabled && (
+			{ ! isLoadingDefensiveMode && ! defensiveModeData?.enabled && (
 				<>
 					<FormLabel htmlFor="defensive-mode-card__ttl-select">
 						{ translate( 'Duration' ) }
@@ -179,7 +175,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 							mutate( { active: true, ttl } );
 						} }
 					>
-						{ translate( 'Enable defensive mode' ) }
+						{ translate( 'Enable defensive mode', {
+							comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+						} ) }
 					</Button>
 				</>
 			) }

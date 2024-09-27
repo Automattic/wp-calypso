@@ -3,7 +3,6 @@ import {
 	useMutation,
 	UseMutationOptions,
 	useQueryClient,
-	useIsMutating,
 	DefaultError,
 } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
@@ -19,12 +18,8 @@ export const TOGGLE_EDGE_CACHE_MUTATION_KEY = 'set-edge-site-mutation-key';
 export const CLEAR_EDGE_CACHE_MUTATION_KEY = 'clear-edge-site-mutation-key';
 export const EDGE_CACHE_DEFENSIVE_MODE_QUERY_KEY = 'edge-cache-defensive-mode-key';
 
-interface ClearEdgeCacheMutationVariables {
-	name: string;
-}
-
 interface SetEdgeCacheMutationVariables {
-	siteId: number;
+	siteId: number | null;
 	active: boolean;
 }
 
@@ -37,14 +32,14 @@ interface MutationError {
 	message: string;
 }
 
-export const getEdgeCacheStatus = async ( siteId: number ) => {
+export const getEdgeCacheStatus = async ( siteId: number | null ) => {
 	return await wp.req.get( {
 		path: `/sites/${ siteId }/hosting/edge-cache/active`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
 
-export const purgeEdgeCache = async ( siteId: number ) => {
+export const purgeEdgeCache = async ( siteId: number | null ) => {
 	return await wp.req.post( {
 		path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 		apiNamespace: 'wpcom/v2',
@@ -133,7 +128,7 @@ export const useSetEdgeCacheMutation = (
 	const { mutate, ...rest } = mutation;
 
 	const setEdgeCache = useCallback(
-		( siteId: number, active: boolean ) => {
+		( siteId: number | null, active: boolean ) => {
 			dispatch(
 				plainNotice( active ? __( 'Enabling edge cache…' ) : __( 'Disabling edge cache…' ), {
 					duration: 5000,
@@ -149,39 +144,33 @@ export const useSetEdgeCacheMutation = (
 	return { setEdgeCache, ...rest };
 };
 
-export const useIsSetEdgeCacheMutating = ( siteId: number ) => {
-	const count = useIsMutating( {
-		predicate: ( mutation ) =>
-			mutation.options.mutationKey?.[ 0 ] === TOGGLE_EDGE_CACHE_MUTATION_KEY &&
-			mutation.state.variables?.siteId === siteId,
-	} );
-
-	return count > 0;
-};
+export const clearEdgeCacheSuccessNoticeId = 'hosting-clear-edge-cache';
 
 export const useClearEdgeCacheMutation = (
-	siteId: number,
-	options: UseMutationOptions<
-		MutationResponse,
-		MutationError,
-		ClearEdgeCacheMutationVariables
-	> = {}
+	siteId: number | null,
+	options: UseMutationOptions< MutationResponse, MutationError > = {}
 ) => {
-	const mutation = useMutation( {
-		mutationFn: async () => purgeEdgeCache( siteId ),
-		...options,
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	return useMutation( {
+		mutationFn: () => purgeEdgeCache( siteId ),
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
+		...options,
+		onSuccess( data, variables, context ) {
+			dispatch(
+				successNotice( translate( 'Successfully cleared edge cache.' ), {
+					id: clearEdgeCacheSuccessNoticeId,
+					duration: 5000,
+				} )
+			);
+			options?.onSuccess?.( data, variables, context );
+		},
+		onError( error, variables, context ) {
+			dispatch( errorNotice( translate( 'Failed to clear edge cache.' ) ) );
+			options?.onError?.( error, variables, context );
+		},
 	} );
-
-	const { mutate } = mutation;
-	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
-	// the provided key. This is preserved across different pages, while isLoading it's not.
-	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
-	const isLoading = useIsMutating( { mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ] } ) > 0;
-
-	const clearEdgeCache = useCallback( mutate, [ mutate ] );
-
-	return { clearEdgeCache, isLoading };
 };
 
 function getEdgeCacheDefensiveModeQueryKey( siteId: number | null ) {
@@ -203,7 +192,6 @@ export function useEdgeCacheDefensiveModeQuery( siteId: number | null ) {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: siteId !== null,
-		staleTime: 5 * 60 * 1000,
 	} );
 }
 

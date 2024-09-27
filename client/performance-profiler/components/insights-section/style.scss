@@ -1,10 +1,13 @@
+@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
-
-$blueberry-color: #3858e9;
 
 .performance-profiler-insights-section {
 	width: 100%;
+	box-sizing: border-box;
 	scroll-margin-top: 80px;
+	border: 1px solid var(--studio-gray-5);
+	padding: 24px;
+	border-radius: 4px;
 
 	.header {
 		display: flex;
@@ -16,7 +19,7 @@ $blueberry-color: #3858e9;
 	}
 
 	.title {
-		font-size: $font-title-small;
+		font-size: 1rem;
 		font-weight: 500;
 		margin-bottom: 8px;
 	}
@@ -51,10 +54,10 @@ $blueberry-color: #3858e9;
 
 	.metrics-insight-item.foldable-card {
 		box-shadow: none;
-		border-top: 1px solid var(--studio-gray-5);
+		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 
 		&:last-child {
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 		}
 
 		.foldable-card__header {
@@ -236,15 +239,15 @@ $blueberry-color: #3858e9;
 
 					button.is-primary {
 						color: #fff;
-						background-color: $blueberry-color;
+						background-color: $studio-wordpress-blue-50;
 						border-radius: 4px;
 
 						&:hover:not(:disabled) {
-							background-color: darken($blueberry-color, 10%);
+							background-color: darken($studio-wordpress-blue-50, 10%);
 						}
 
 						&:focus:not(:disabled) {
-							background-color: darken($blueberry-color, 10%);
+							background-color: darken($studio-wordpress-blue-50, 10%);
 							box-shadow: none;
 						}
 					}
@@ -255,8 +258,8 @@ $blueberry-color: #3858e9;
 
 					textarea:focus,
 					textarea:focus-visible {
-						border-color: $blueberry-color;
-						box-shadow: 0 0 0 calc(1.5px - 1px)  $blueberry-color;
+						border-color: $studio-wordpress-blue-50;
+						box-shadow: 0 0 0 calc(1.5px - 1px)  $studio-wordpress-blue-50;
 					}
 				}
 
@@ -282,46 +285,6 @@ $blueberry-color: #3858e9;
 				margin-top: 24px;
 				width: 100%;
 				overflow-x: auto;
-
-				.element-screenshot__overlay {
-					position: fixed;
-					top: 0;
-					left: 0;
-					right: 0;
-					bottom: 0;
-					z-index: 2000;
-					background: rgba(0, 0, 0, 0.3);
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					cursor: zoom-out;
-				}
-
-				.element-screenshot {
-
-					.element-screenshot__image {
-						position: relative;
-						cursor: zoom-in;
-						overflow: hidden;
-					}
-
-					.element-screenshot__mask {
-						position: absolute;
-						background-color: var(--studio-gray-60);
-						opacity: 0.8;
-
-						svg {
-							width: 0;
-							height: 0;
-						}
-					}
-
-					.element-screenshot__element-marker {
-						position: absolute;
-						border: 2px solid var(--studio-yellow-20);
-						box-sizing: border-box;
-					}
-				}
 
 				table {
 					table-layout: auto;
@@ -350,7 +313,7 @@ $blueberry-color: #3858e9;
 					}
 
 					code {
-						color: $blueberry-color;
+						color: $studio-wordpress-blue-50;
 					}
 
 					.score {
@@ -442,3 +405,50 @@ $blueberry-color: #3858e9;
 		}
 	}
 }
+
+.element-screenshot {
+
+	.element-screenshot__image {
+		position: relative;
+		cursor: zoom-in;
+		overflow: hidden;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.element-screenshot__mask {
+		position: absolute;
+		background-color: var(--studio-gray-60);
+		opacity: 0.8;
+
+		svg {
+			width: 0;
+			height: 0;
+		}
+	}
+
+	.element-screenshot__element-marker {
+		position: absolute;
+		border: 2px solid var(--studio-yellow-20);
+		box-sizing: border-box;
+	}
+}
+
+@media (min-width: $break-small) {
+	.performance-profiler-insight-screenshot__overlay {
+		border-radius: 0;
+		max-height: initial;
+
+		.components-modal__content {
+			padding: 0;
+			margin-top: 0;
+		}
+
+		.components-modal__header {
+			button {
+				filter: invert(100%) contrast(130%);
+			}
+		}
+	}
+}
+

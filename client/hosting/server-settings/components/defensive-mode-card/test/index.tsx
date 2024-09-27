@@ -7,7 +7,6 @@ import React from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import {
-	useEdgeCacheQuery,
 	useEdgeCacheDefensiveModeQuery,
 	useEdgeCacheDefensiveModeMutation,
 } from 'calypso/data/hosting/use-cache';
@@ -48,10 +47,6 @@ describe( 'DefensiveModeCard component', () => {
 		jest.clearAllMocks();
 
 		jest.mocked( useDispatch ).mockReturnValue( jest.fn() );
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( {
-			data: true,
-			isLoading: false,
-		} );
 		jest.mocked( useEdgeCacheDefensiveModeQuery ).mockReturnValue( {
 			data: { enabled: false, enabled_until: 0 },
 			isLoading: false,
@@ -70,8 +65,10 @@ describe( 'DefensiveModeCard component', () => {
 		);
 	}
 
-	it( 'does not display controls when edge cache is disabled', () => {
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: false, isLoading: false } );
+	it( 'does not display controls when defensive mode is disabled', () => {
+		jest
+			.mocked( useEdgeCacheDefensiveModeQuery )
+			.mockReturnValue( { data: null, isLoading: true } );
 
 		renderWithProvider();
 
