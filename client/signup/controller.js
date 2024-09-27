@@ -227,12 +227,12 @@ export default {
 		store.set( 'signup-locale', localeFromParams );
 
 		const isOnboardingFlow = flowName === 'onboarding';
-		const lang = localeFromParams ?? localeFromStore;
-		if ( isOnboardingFlow && lang && lang.toLowerCase() !== 'en' ) {
+		if ( isOnboardingFlow ) {
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_flow_stepper'
 			);
 			if ( stepperOnboardingExperimentAssignment.variationName === 'treatment' ) {
+				const lang = localeFromParams ?? localeFromStore;
 				window.location.replace(
 					window.location.origin + `/setup/onboarding/${ lang }` + window.location.search
 				);
