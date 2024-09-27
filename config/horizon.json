@@ -45,6 +45,7 @@
 		"google-my-business": false,
 		"help": true,
 		"home/layout-dev": true,
+		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,
