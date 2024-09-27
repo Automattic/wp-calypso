@@ -30,7 +30,8 @@
 
 .cache-card__hr,
 .cache-card__global-edge-cache-block,
-.cache-card__global-object-cache-block {
+.cache-card__global-object-cache-block,
+.cache-card__jetpack-block {
 	margin-top: 24px;
 }
 
@@ -40,16 +41,12 @@
 	}
 }
 
-.cache-card__jetpack-block {
-	margin-bottom: 2px;
+.cache-card__jetpack-description {
+	align-items: center;
+	display: flex;
+	gap: 10px;
 
-	.hosting-card__description {
-		margin-bottom: 0;
-		display: flex;
-		align-items: center;
-
-		svg {
-			margin-right: 6px;
-		}
+	p {
+		margin: 0;
 	}
 }

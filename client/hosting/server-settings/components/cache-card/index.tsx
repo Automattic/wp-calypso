@@ -286,9 +286,9 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 					<div className="cache-card__jetpack-block">
 						<div className="cache-card__subtitle">{ translate( 'Elasticsearch' ) }</div>
-						<HostingCardDescription>
+						<div className="cache-card__jetpack-description">
 							<JetpackLogo size={ 16 } />
-							<div>
+							<HostingCardDescription>
 								{ translate(
 									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
 									{
@@ -302,8 +302,8 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 										},
 									}
 								) }
-							</div>
-						</HostingCardDescription>
+							</HostingCardDescription>
+						</div>
 					</div>
 				</>
 			) }
