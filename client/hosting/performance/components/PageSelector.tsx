@@ -33,20 +33,7 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 						</div>
 					) }
 				/>
-				<div
-					css={ {
-						position: 'absolute',
-						right: '10px',
-						top: '50%',
-						transform: 'translateY(-50%)',
-						display: 'flex',
-						alignSelf: 'start',
-						zIndex: 2,
-						height: '100%',
-						marginTop: '6px',
-						pointerEvents: 'none',
-					} }
-				>
+				<div className="site-performance__page-selector-search-icon">
 					<Icon
 						icon={ search }
 						size={ 24 }

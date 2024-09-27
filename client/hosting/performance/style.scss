@@ -78,6 +78,19 @@ $section-max-width: 1224px;
 		align-items: center;
 		justify-content: space-between;
 	}
+
+	.site-performance__page-selector-search-icon {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		display: flex;
+		align-self: start;
+		z-index: 2;
+		height: 100%;
+		margin-top: 6px;
+		pointer-events: none;
+	}
 }
 
 .site-performance__navigation-header.navigation-header {
