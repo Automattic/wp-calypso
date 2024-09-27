@@ -21,6 +21,10 @@ const ACTION_LEAVE_REVIEW = 'action_redirect_to_plugin_review_page';
 const ACTION_SEND_FEEDBACK = 'action_open_form_modal';
 const ACTION_DISMISS_FLOATING_PANEL = 'action_dismiss_floating_panel';
 
+const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
+	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
+const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
+	'stats_feedback_action_open_form_modal_from_persistent_section';
 const TRACKS_EVENT_LEAVE_REVIEW =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel';
 const TRACKS_EVENT_SEND_FEEDBACK = 'stats_feedback_action_open_form_modal_from_floating_panel';
@@ -149,20 +153,16 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 }
 
 function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
-	const clickHandlerWithAnalytics = ( action: string ) => {
-		// stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section
-		// stats_feedback_action_open_form_modal_from_persistent_section
-		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_persistent_section` );
-
-		clickHandler( action );
-	};
+	// TODO: Refactor props to be more explicit.
 
 	const handleLeaveReviewFromCard = () => {
-		clickHandlerWithAnalytics( ACTION_LEAVE_REVIEW );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
+		clickHandler( ACTION_LEAVE_REVIEW );
 	};
 
 	const handleSendFeedbackFromCard = () => {
-		clickHandlerWithAnalytics( ACTION_SEND_FEEDBACK );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD );
+		clickHandler( ACTION_SEND_FEEDBACK );
 	};
 
 	return (
