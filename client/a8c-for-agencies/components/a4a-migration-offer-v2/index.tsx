@@ -38,7 +38,7 @@ const MigrationOfferV2 = () => {
 					<div className="a4a-migration-offer-v2__body">
 						<p className="a4a-migration-offer-v2__description">
 							{ translate(
-								'From now until the end of 2024, you’ll receive $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
+								'From now until the end of 2024, you’ll receive $100 for each migrated site, up to $10,000*. If you’re a WP Engine customer, we’ll also cover any costs of breaking your contract. {{a}}Full Terms ↗{{/a}}',
 								{
 									components: {
 										a: (
@@ -64,7 +64,7 @@ const MigrationOfferV2 = () => {
 				) }
 				<p className="a4a-migration-offer-v2__asterisk">
 					{ translate(
-						'* The $10k limit is for migrations from WP Engine to Pressable only. For migrations from other hosts the limit is $3k.'
+						'* The $10k limit applies to migrations from WP Engine only; it is $3k for migrations from other hosts.'
 					) }
 				</p>
 			</div>
