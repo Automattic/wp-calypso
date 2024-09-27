@@ -90,10 +90,8 @@ const exported = {
 	},
 
 	discoverSsr( context, next ) {
-		const state = context.store.getState();
-		if ( ! isUserLoggedIn( state ) ) {
-			context.renderHeaderSection = renderHeaderSection;
-		}
+		context.renderHeaderSection = renderHeaderSection;
+
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
 		const tabTitle = getSelectedTabTitle( selectedTab );
 		context.primary = (
