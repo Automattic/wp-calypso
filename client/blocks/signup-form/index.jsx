@@ -42,6 +42,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
@@ -128,7 +129,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		disableTosText: PropTypes.bool,
-
+		currentQuery: PropTypes.object,
 		// Connected props
 		oauth2Client: PropTypes.object,
 		sectionName: PropTypes.string,
@@ -622,7 +623,31 @@ class SignupForm extends Component {
 												onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
 											/>
 										),
-										pwdResetLink: <a href={ lostPassword( this.props.locale ) } />,
+										pwdResetLink: isReactLostPasswordScreenEnabled() ? (
+											<a
+												className="login__form-forgot-password"
+												href="/"
+												onClick={ ( event ) => {
+													event.preventDefault();
+													recordTracksEvent( 'calypso_login_reset_password_link_click' );
+													page(
+														login( {
+															redirectTo: this.props.redirectToAfterLoginUrl,
+															locale: this.props.locale,
+															action: this.props.isWooCoreProfilerFlow
+																? 'jetpack/lostpassword'
+																: 'lostpassword',
+															oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+															from: get( this.props.currentQuery, 'from' ),
+														} )
+													);
+												} }
+											>
+												{ this.props.translate( 'Forgot password?' ) }
+											</a>
+										) : (
+											<a href={ lostPassword( this.props.locale ) } />
+										),
 									},
 								}
 							) }
@@ -1422,6 +1447,7 @@ export default connect(
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			isBlazePro: getIsBlazePro( state ),
+			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},
 	{
