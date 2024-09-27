@@ -13,6 +13,7 @@ $blueberry-color: #3858e9;
 	button {
 		color: inherit;
 	}
+
 }
 
 .metric-tab-bar-v2__tab {
@@ -22,25 +23,33 @@ $blueberry-color: #3858e9;
 	flex-grow: 1;
 	padding: 16px 22px 16px 22px;
 	width: 100%;
-
+	border: 1px solid transparent;
 	&:not(.active) {
 		border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 
-		&:last-child {
-			border-bottom: unset;
+		&:not(:nth-child(-n+2)) {
+			border-top-color: transparent;
 		}
+
+		&:last-child {
+			border-bottom-color: transparent;
+		}
+
+		&.metric-tab-bar-v2__performance {
+			border-bottom-color: transparent;
+		}
+
 	}
 
 	&.active {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
-		border: 1.5px solid $blueberry-color;
+		border-color: transparent;
+		outline: 1.5px solid $blueberry-color;
 		position: relative;
-		margin-left: -1px;
-		width: 101%;
 
 		& + .metric-tab-bar-v2__tab {
-			border-top: none;
+			border-top-color: transparent;
 		}
 	}
 
@@ -87,14 +96,7 @@ $blueberry-color: #3858e9;
 	margin-bottom: 16px;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
-	border: 1px solid var(--studio-gray-5);
-	&:not(.active) {
-		border-color: var(--studio-gray-5);
-	}
-	&.active {
-		width: 100%;
-		margin-left: unset;
-	}
+	outline: 1px solid var(--studio-gray-5);
 }
 
 .metric-tab-bar-v2__tab-container {
@@ -103,6 +105,6 @@ $blueberry-color: #3858e9;
 	border-radius: 6px;
 
 	.metric-tab-bar-v2__tab:has(+ .metric-tab-bar-v2__tab.active) {
-		border-bottom: none;
+		border-bottom-color: transparent;
 	}
 }
