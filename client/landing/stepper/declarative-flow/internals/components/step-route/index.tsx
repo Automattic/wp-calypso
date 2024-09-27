@@ -25,15 +25,14 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 	const loginUrl = useLoginUrlForFlow( { flow } );
 	const shouldAuthUser = step.requiresLoggedInUser && ! userIsLoggedIn;
 	const shouldSkipRender = shouldAuthUser || ! stepContent;
-	const skipTracking = shouldAuthUser || ! stepContent;
 
 	const useBuiltItInAuth = flow.__experimentalUseBuiltinAuth;
 
 	useStepRouteTracking( {
 		flowName: flow.name,
 		stepSlug: step.slug,
-		skipTracking,
 		flowVariantSlug: flow.variantSlug,
+		skipStepRender: shouldSkipRender,
 	} );
 
 	useEffect( () => {
