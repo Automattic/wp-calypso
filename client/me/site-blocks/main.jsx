@@ -68,9 +68,7 @@ class SiteBlockList extends Component {
 							showIcon={ false }
 							supportPostId={ 32011 }
 							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }
-						>
-							{ translate( 'Learn more' ) }
-						</InlineSupportLink>
+						/>
 					</p>
 
 					{ hasNoBlocks && (
