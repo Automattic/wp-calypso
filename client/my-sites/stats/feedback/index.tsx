@@ -67,30 +67,27 @@ interface FeedbackPropsInternal {
 	isOpen?: boolean;
 }
 
-function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
+interface FeedbackContentProps {
+	onLeaveReview: () => void;
+	onSendFeedback: () => void;
+}
+
+function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProps ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
 	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
-	const handleLeaveReview = () => {
-		clickHandler( ACTION_LEAVE_REVIEW );
-	};
-
-	const handleSendFeedback = () => {
-		clickHandler( ACTION_SEND_FEEDBACK );
-	};
-
 	return (
 		<div className="stats-feedback-content">
 			<div className="stats-feedback-content__cta">{ ctaText }</div>
 			<div className="stats-feedback-content__actions">
-				<Button variant="secondary" onClick={ handleLeaveReview }>
+				<Button variant="secondary" onClick={ onLeaveReview }>
 					<span className="stats-feedback-content__emoji">😍</span>
 					{ primaryButtonText }
 				</Button>
-				<Button variant="secondary" onClick={ handleSendFeedback }>
+				<Button variant="secondary" onClick={ onSendFeedback }>
 					<span className="stats-feedback-content__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
@@ -118,6 +115,14 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 		clickHandler( action );
 	};
 
+	const handleLeaveReviewFromPanel = () => {
+		clickHandlerWithAnalytics( ACTION_LEAVE_REVIEW );
+	};
+
+	const handleSendFeedbackFromPanel = () => {
+		clickHandlerWithAnalytics( ACTION_SEND_FEEDBACK );
+	};
+
 	if ( ! isOpen ) {
 		return null;
 	}
@@ -130,7 +135,10 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
-			<FeedbackContent clickHandler={ clickHandlerWithAnalytics } />
+			<FeedbackContent
+				onLeaveReview={ handleLeaveReviewFromPanel }
+				onSendFeedback={ handleSendFeedbackFromPanel }
+			/>
 			<Button
 				className="stats-feedback-panel__dismiss-button"
 				onClick={ handleCloseButtonClicked }
@@ -151,9 +159,20 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 		clickHandler( action );
 	};
 
+	const handleLeaveReviewFromCard = () => {
+		clickHandlerWithAnalytics( ACTION_LEAVE_REVIEW );
+	};
+
+	const handleSendFeedbackFromCard = () => {
+		clickHandlerWithAnalytics( ACTION_SEND_FEEDBACK );
+	};
+
 	return (
 		<div className="stats-feedback-card">
-			<FeedbackContent clickHandler={ clickHandlerWithAnalytics } />
+			<FeedbackContent
+				onLeaveReview={ handleLeaveReviewFromCard }
+				onSendFeedback={ handleSendFeedbackFromCard }
+			/>
 		</div>
 	);
 }
