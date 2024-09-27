@@ -122,7 +122,10 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		<HostingCard
 			className="cache-card"
 			headingId="cache"
-			title={ translate( 'Performance optimization' ) }
+			title={ translate( 'Performance optimization', {
+				comment: 'Heading text for a card on the Server Settings page',
+				textOnly: true,
+			} ) }
 		>
 			<div className="cache-card__all-cache-block">
 				<HostingCardDescription>
@@ -164,14 +167,18 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				</div>
 			</div>
 
-			<div className="cache-card__hr"></div>
+			<div className="cache-card__hr" />
 
 			<div className="cache-card__global-edge-cache-block">
 				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
-						<div className="cache-card__subtitle">{ translate( 'Global edge cache' ) }</div>
+						<div className="cache-card__subtitle">
+							{ translate( 'Global edge cache', {
+								comment: 'Edge cache is a type of CDN that stores generated HTML pages',
+							} ) }
+						</div>
 						<ToggleControl
 							className="cache-card__edge-cache-toggle"
 							checked={ isEdgeCacheActive && isEdgeCacheEligible }
@@ -198,7 +205,11 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 									text={
 										isObjectCacheClearRateLimited
 											? translate(
-													'You cleared the edge cache recently. Please wait a minute and try again.'
+													'You cleared the edge cache recently. Please wait a minute and try again.',
+													{
+														comment: 'Edge cache is a type of CDN that stores generated HTML pages',
+														textOnly: true,
+													}
 											  )
 											: ''
 									}
@@ -214,7 +225,9 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 											}
 											onClick={ handleClearEdgeCache }
 										>
-											{ translate( 'Clear edge cache' ) }
+											{ translate( 'Clear edge cache', {
+												comment: 'Edge cache is a type of CDN that stores generated HTML pages',
+											} ) }
 										</Button>
 									</div>
 								</Tooltip>
@@ -225,11 +238,16 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
 				<div className="cache-card__global-object-cache-block">
-					<div className="cache-card__subtitle">{ translate( 'Object cache' ) }</div>
+					<div className="cache-card__subtitle">
+						{ translate( 'Object cache', {
+							comment: 'Object cache stores database lookups and some network requests',
+						} ) }
+					</div>
 					<HostingCardDescription>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
 							{
+								comment: 'Explanation for how object cache works',
 								components: {
 									a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 								},
@@ -253,7 +271,9 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 								disabled={ disabled || isObjectCacheClearRateLimited || isClearingObjectCache }
 								onClick={ handleClearObjectCache }
 							>
-								{ translate( 'Clear object cache' ) }
+								{ translate( 'Clear object cache', {
+									comment: 'Object cache stores database lookups and some network requests',
+								} ) }
 							</Button>
 						</div>
 					</Tooltip>
