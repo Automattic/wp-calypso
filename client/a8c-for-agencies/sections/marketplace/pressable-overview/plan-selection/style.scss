@@ -14,7 +14,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-auto-rows: auto;
-	margin-block-end: 64px;
+	margin-block: 32px 64px;
 	row-gap: 32px;
 
 	@include break-large {
