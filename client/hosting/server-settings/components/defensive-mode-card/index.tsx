@@ -13,7 +13,8 @@ import {
 	useEdgeCacheDefensiveModeQuery,
 } from 'calypso/data/hosting/use-cache';
 import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -24,6 +25,7 @@ type DefensiveModeCardProps = {
 
 export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 
 	const availableTtls = [
@@ -105,6 +107,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 							busy={ isEnabling }
 							disabled={ disabled || isEnabling }
 							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_configuration_defensive_mode_disable' )
+								);
 								mutate( { active: false } );
 							} }
 						>
@@ -172,6 +177,11 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						busy={ isEnabling }
 						disabled={ disabled || isEnabling }
 						onClick={ () => {
+							dispatch(
+								recordTracksEvent( 'calypso_hosting_configuration_defensive_mode_enable', {
+									ttl,
+								} )
+							);
 							mutate( { active: true, ttl } );
 						} }
 					>
