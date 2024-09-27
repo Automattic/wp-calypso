@@ -106,7 +106,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 		FEEDBACK_PANEL_ANIMATION_NAME_ENTRY
 	);
 
-	const handleCloseButtonClicked = () => {
+	const handleDismissPanel = () => {
 		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 	};
@@ -129,7 +129,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 		<div className={ clsx( 'stats-feedback-panel', 'animate__animated', animationClassName ) }>
 			<Button
 				className="stats-feedback-panel__close-button"
-				onClick={ handleCloseButtonClicked }
+				onClick={ handleDismissPanel }
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
@@ -139,7 +139,7 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 			/>
 			<Button
 				className="stats-feedback-panel__dismiss-button"
-				onClick={ handleCloseButtonClicked }
+				onClick={ handleDismissPanel }
 				variant="link"
 			>
 				{ translate( 'Dismiss' ) }
