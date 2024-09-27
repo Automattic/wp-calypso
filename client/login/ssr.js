@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import { ssrSetupLocale } from 'calypso/controller';
+import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 
 const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
 
@@ -61,6 +63,42 @@ export function ssrSetupLocaleLogin( context, next ) {
 	if ( context.serverSideRender ) {
 		ssrSetupLocale( context, next );
 		return;
+	}
+
+	next();
+}
+
+export function setMetaTags( context, next ) {
+	const pathSegments = context.pathname.replace( /^[/]|[/]$/g, '' ).split( '/' );
+	const hasQueryString = Object.keys( context.query ).length > 0;
+	const hasMag16LocaleParam = config( 'magnificent_non_en_locales' ).includes(
+		context.params?.lang
+	);
+
+	/**
+	 * Only the main `/log-in` and `/log-in/[locale]` routes should be indexed.
+	 */
+	if (
+		hasQueryString ||
+		pathSegments.length > 2 ||
+		( pathSegments.length === 2 && ! hasMag16LocaleParam )
+	) {
+		const meta = getDocumentHeadMeta( context.store.getState() );
+		const noIndexMetaExists = meta.some(
+			( tag ) => tag.name === 'robots' && tag.content === 'noindex'
+		);
+
+		// Set the noindex meta only if it's not already set.
+		if ( ! noIndexMetaExists ) {
+			context.store.dispatch(
+				setDocumentHeadMeta(
+					meta.concat( {
+						name: 'robots',
+						content: 'noindex',
+					} )
+				)
+			);
+		}
 	}
 
 	next();
