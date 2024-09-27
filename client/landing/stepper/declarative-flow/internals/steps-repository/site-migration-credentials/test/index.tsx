@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
 import SiteMigrationCredentials from '..';
