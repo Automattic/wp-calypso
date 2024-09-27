@@ -202,7 +202,6 @@ export function useEdgeCacheDefensiveModeQuery( siteId: number | null ) {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: siteId !== null,
-		staleTime: 5 * 60 * 1000,
 	} );
 }
 

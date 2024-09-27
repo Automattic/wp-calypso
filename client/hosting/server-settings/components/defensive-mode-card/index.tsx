@@ -8,7 +8,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
-	useEdgeCacheQuery,
 } from 'calypso/data/hosting/use-cache';
 import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
 import { useSelector } from 'calypso/state';
@@ -49,8 +48,8 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 	const siteId = useSelector( getSelectedSiteId );
 	const [ ttl, setTtl ] = useState( availableTtls[ 0 ].value );
 
-	const { data: isEdgeCacheActive, isLoading: isLoadingEdgeCache } = useEdgeCacheQuery( siteId );
-	const { data: defensiveModeData } = useEdgeCacheDefensiveModeQuery( siteId );
+	const { data: defensiveModeData, isLoading: isLoadingDefensiveMode } =
+		useEdgeCacheDefensiveModeQuery( siteId );
 	const { mutate, isPending: isEnabling } = useEdgeCacheDefensiveModeMutation( siteId );
 
 	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 );
@@ -68,21 +67,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 				) }
 			</HostingCardDescription>
 
-			{ isLoadingEdgeCache && <EdgeCacheLoadingPlaceholder /> }
+			{ isLoadingDefensiveMode && <EdgeCacheLoadingPlaceholder /> }
 
-			{ ! isEdgeCacheActive && ! isLoadingEdgeCache && (
-				<HostingCardDescription>
-					<span className="defensive-mode-card__edge-cache-required">
-						{ translate( 'Defensive mode requires {{a}}global edge cache{{/a}} to be enabled.', {
-							components: {
-								a: <InlineSupportLink supportContext="hosting-edge-cache" showIcon={ false } />,
-							},
-						} ) }
-					</span>
-				</HostingCardDescription>
-			) }
-
-			{ isEdgeCacheActive && defensiveModeData?.enabled && (
+			{ ! isLoadingDefensiveMode && defensiveModeData?.enabled && (
 				<>
 					<div className="defensive-mode-card__enabled-description">
 						<div className="defensive-mode-card__enabled-indicator" />
@@ -113,7 +100,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 				</>
 			) }
 
-			{ isEdgeCacheActive && ! defensiveModeData?.enabled && (
+			{ ! isLoadingDefensiveMode && ! defensiveModeData?.enabled && (
 				<>
 					<FormLabel htmlFor="defensive-mode-card__ttl-select">
 						{ translate( 'Duration' ) }
