@@ -71,6 +71,7 @@ export const Mastodon: React.FC< Props > = ( {
 	const setInstanceToConnectURL = () => {
 		const url = new URL( service.connect_URL );
 		url.searchParams.set( 'instance', instance );
+		// TODO: Fix this to avoid mutating props
 		service.connect_URL = url.toString();
 	};
 
@@ -87,7 +88,7 @@ export const Mastodon: React.FC< Props > = ( {
 	return (
 		<div className="sharing-service-distributed-example">
 			<form onSubmit={ handleSubmit }>
-				<div className="sharing-service-example">
+				<div>
 					<FormLabel htmlFor="instance">{ translate( 'Enter your Mastodon username' ) }</FormLabel>
 					<InstanceContainer>
 						<FormTextInput
@@ -101,19 +102,17 @@ export const Mastodon: React.FC< Props > = ( {
 							onChange={ handleInstanceChange }
 							placeholder="@mastodon@mastodon.social"
 						/>
-						{ isConnecting && <Spinner /> }
 					</InstanceContainer>
 					{ showError && <FormInputValidation isError text={ error } /> }
 				</div>
-				<div className="sharing-service-example">
+				<div>
 					<FormsButton
 						primary
 						type="submit"
 						disabled={ ! isValidUsername( instance ) || showError || isConnecting }
 					>
-						{ connections.length >= 1
-							? translate( 'Connect one more account' )
-							: translate( 'Connect account' ) }
+						{ translate( 'Connect account' ) }
+						{ isConnecting && <Spinner /> }
 					</FormsButton>
 				</div>
 			</form>
