@@ -105,7 +105,7 @@ function WpcomOverview() {
 	const WPCOM_PRICING_PAGE_LINK = 'https://wordpress.com/pricing/';
 
 	return (
-		<Layout className="wpcom-overview" title={ translate( 'WordPress.com hosting' ) } wide compact>
+		<Layout className="wpcom-overview" title={ translate( 'WordPress.com hosting' ) } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb

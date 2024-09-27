@@ -20,7 +20,7 @@ export default function Overview() {
 	const title = translate( 'Agency Overview' );
 
 	return (
-		<Layout title={ title } compact wide>
+		<Layout title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>

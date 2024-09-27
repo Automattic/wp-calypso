@@ -219,7 +219,6 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 			title={ title }
 			wide
 			withBorder={ ! isClient }
-			compact
 			sidebarNavigation={ ! isClient && <MobileSidebarNavigation /> }
 		>
 			{ isClient ? null : (
