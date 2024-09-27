@@ -188,7 +188,7 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 }
 
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
 	const { supportCommercialUse } = useStatsPurchases( siteId );
@@ -215,7 +215,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
 				setIsFloatingPanelOpen( false );
-				setIsOpen( true );
+				setIsFeedbackModalOpen( true );
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissPanelWithDelay();
@@ -240,7 +240,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	};
 
 	const onModalClose = () => {
-		setIsOpen( false );
+		setIsFeedbackModalOpen( false );
 	};
 
 	if ( ! supportCommercialUse ) {
@@ -256,7 +256,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				onLeaveReview={ handleLeaveReview }
 				onSendFeedback={ handleSendFeedback }
 			/>
-			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
+			{ isFeedbackModalOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
 		</div>
 	);
 }
