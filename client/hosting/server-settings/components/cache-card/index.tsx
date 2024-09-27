@@ -49,6 +49,9 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	const isEdgeCacheClearRateLimited = useSelector( ( state ) =>
 		shouldRateLimitEdgeCacheClear( state, siteId )
 	);
+	const areAllCachesClearRateLimited = config.isEnabled( 'hosting-server-settings-enhancements' )
+		? isObjectCacheClearRateLimited && isEdgeCacheClearRateLimited
+		: isObjectCacheClearRateLimited;
 
 	const {
 		isLoading: isEdgeCacheLoading,
@@ -133,7 +136,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 				<Tooltip
 					placement="top"
 					text={
-						isObjectCacheClearRateLimited
+						areAllCachesClearRateLimited
 							? translate( 'You cleared all caches recently. Please wait a minute and try again.' )
 							: ''
 					}
@@ -143,7 +146,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							busy={ isClearingAllCaches }
 							disabled={
 								disabled ||
-								( isEdgeCacheClearRateLimited && isObjectCacheClearRateLimited ) ||
+								areAllCachesClearRateLimited ||
 								isClearingObjectCache ||
 								isClearingEdgeCache
 							}
