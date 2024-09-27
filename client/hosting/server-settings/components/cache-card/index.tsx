@@ -292,6 +292,8 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 								{ translate(
 									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
 									{
+										comment:
+											'Refers to how Jetpack Search uses Elasticsearch to index posts and pages on some WordPress.com sites',
 										components: {
 											a: (
 												<InlineSupportLink
