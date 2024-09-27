@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
@@ -26,38 +27,37 @@ const HundredYearPlanFlow: Flow = {
 			[]
 		);
 
-		if ( currentUser?.site_count ) {
-			return stepsWithRequiredLogin( [
-				{
-					slug: 'new-or-existing-site',
-					asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
-				},
-				{
-					slug: 'site-picker',
-					asyncComponent: () =>
-						import( './internals/steps-repository/hundred-year-plan-site-picker' ),
-				},
-				{
-					slug: 'setup',
-					asyncComponent: () => import( './internals/steps-repository/hundred-year-plan-setup' ),
-				},
-				{
-					slug: 'domains',
-					asyncComponent: () => import( './internals/steps-repository/domains' ),
-				},
-				{
-					slug: 'processing',
-					asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-				},
+		const isVipFeatureEnabled = config.isEnabled( '100year/vip' );
+		const hasSite = !! currentUser?.site_count;
 
-				{
-					slug: 'createSite',
-					asyncComponent: () => import( './internals/steps-repository/create-site' ),
-				},
-			] );
-		}
+		const steps = [
+			// VIP step (conditional)
+			...( isVipFeatureEnabled
+				? [
+						{
+							slug: 'diy-or-difm',
+							asyncComponent: () =>
+								import( './internals/steps-repository/hundred-year-plan-diy-or-difm' ),
+						},
+				  ]
+				: [] ),
 
-		return stepsWithRequiredLogin( [
+			// Has site steps (conditional)
+			...( hasSite
+				? [
+						{
+							slug: 'new-or-existing-site',
+							asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
+						},
+						{
+							slug: 'site-picker',
+							asyncComponent: () =>
+								import( './internals/steps-repository/hundred-year-plan-site-picker' ),
+						},
+				  ]
+				: [] ),
+
+			// Common steps (always included)
 			{
 				slug: 'setup',
 				asyncComponent: () => import( './internals/steps-repository/hundred-year-plan-setup' ),
@@ -70,12 +70,13 @@ const HundredYearPlanFlow: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
-
 			{
 				slug: 'createSite',
 				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
-		] );
+		];
+
+		return stepsWithRequiredLogin( steps );
 	},
 	useSideEffect() {
 		useEffect( () => {
@@ -85,6 +86,11 @@ const HundredYearPlanFlow: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const currentUser = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+			[]
+		);
+		const hasSite = !! currentUser?.site_count;
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const updateCartForExistingSite = async () => {
@@ -110,6 +116,12 @@ const HundredYearPlanFlow: Flow = {
 			};
 
 			switch ( _currentStep ) {
+				case 'diy-or-difm':
+					if ( 'diy' === providedDependencies?.diyOrDifmChoice ) {
+						return navigate( hasSite ? 'site-picker' : 'setup' );
+					}
+					// TODO: VIP flow
+					return navigate( hasSite ? 'site-picker' : 'setup' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
 						return navigate( 'setup' );
