@@ -18,6 +18,7 @@
 	"zendesk_presales_chat_key_jp_checkout": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
 	"features": {
+		"100-year-plan/vip": false,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
 		"a4a-dev-sites-referral": false,
