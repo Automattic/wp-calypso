@@ -499,10 +499,10 @@ export default function AgencyDetailsForm( {
 							</FormLabel>
 							<FormPhoneInput
 								countrySelectProps={ {
-									'data-testid': 'country-code-select',
+									'data-testid': 'a4a-signup-country-code-select',
 								} }
 								phoneInputProps={ {
-									'data-testid': 'phone-number-input',
+									'data-testid': 'a4a-signup-phone-number-input',
 								} }
 								isDisabled={ noCountryList }
 								countriesList={ countriesList }
