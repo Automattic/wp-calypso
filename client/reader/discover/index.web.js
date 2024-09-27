@@ -1,4 +1,4 @@
-import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
+import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
 	redirectInvalidLanguage,
@@ -10,12 +10,11 @@ import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { discover } from './controller';
 
 export default function ( router ) {
-	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
-	router( `/${ anyLangParam }/discover`, redirectInvalidLanguage );
 
 	router(
-		[ '/discover', `/${ langParam }/discover` ],
+		[ '/discover', `/${ anyLangParam }/discover` ],
+		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		updateLastRoute,
