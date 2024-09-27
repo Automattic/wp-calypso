@@ -1,4 +1,5 @@
 import { Button, FormLabel } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { Icon } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -111,7 +112,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 								mutate( { active: false } );
 							} }
 						>
-							{ translate( 'Disable defensive mode' ) }
+							{ translate( 'Disable defensive mode', {
+								comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+							} ) }
 						</Button>
 					) }
 
@@ -125,7 +128,8 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 								<p>
 									<strong>
 										{ translate(
-											'Defensive mode was enabled on your behalf to protect your site.'
+											'Defensive mode was enabled on your behalf to protect your site.',
+											{ comment: 'Defensive mode is a feature to protect against DDoS attacks.' }
 										) }
 									</strong>
 								</p>
@@ -133,14 +137,10 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 									{ translate(
 										'Please {{a}}contact support{{/a}} if you need to disable defensive mode.',
 										{
+											comment:
+												'Defensive mode is a feature to protect against DDoS attacks. This text is dislayed when defensive mode was enabled on behalf of users.',
 											components: {
-												a: (
-													<a
-														href="https://wordpress.com/help/contact"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
+												a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
 											},
 										}
 									) }
