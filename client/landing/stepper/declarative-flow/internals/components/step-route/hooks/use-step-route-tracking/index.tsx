@@ -37,6 +37,7 @@ const useHasRequestedSelectedSite = () => {
 interface Props {
 	flowName: string;
 	stepSlug: string;
+	pathname: string;
 	flowVariantSlug?: string;
 	skipStepRender?: boolean;
 }
@@ -47,6 +48,7 @@ interface Props {
 export const useStepRouteTracking = ( {
 	flowName,
 	stepSlug,
+	pathname,
 	flowVariantSlug,
 	skipStepRender,
 }: Props ) => {
@@ -111,7 +113,6 @@ export const useStepRouteTracking = ( {
 		}
 
 		// Also record page view for data and analytics
-		const pathname = window.location.pathname;
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
 		const params = {
 			flow: flowName,
@@ -122,5 +123,5 @@ export const useStepRouteTracking = ( {
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender, pathname ] );
 };
