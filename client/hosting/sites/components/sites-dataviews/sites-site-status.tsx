@@ -127,7 +127,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 					<TransferNoticeWrapper { ...result } />
 				) : (
 					<>
-						{ /* Hide status badge during DIFM for cleaner UI, as the user cannot access their site */ }
+						{ /* Hide status/checklist during DIFM for cleaner UI, as the user cannot access their site */ }
 						{ isDIFMInProgress ? (
 							<div>
 								{ translatedStatus }
