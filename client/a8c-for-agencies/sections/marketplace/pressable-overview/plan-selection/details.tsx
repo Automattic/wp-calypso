@@ -142,14 +142,14 @@ export default function PlanSelectionDetails( {
 											}
 									  )
 									: translate( 'Custom WordPress installs' ),
-								translate( '{{b}}%(count)s{{/b}} visits per month', {
+								translate( '{{b}}%(count)s{{/b}} visits per month*', {
 									args: {
 										count: info ? formatNumber( info.visits ) : customString,
 									},
 									components: { b: <b /> },
 									comment: '%(count)s is the number of visits per month.',
 								} ),
-								translate( '{{b}}%(size)s{{/b}} storage per month', {
+								translate( '{{b}}%(size)s{{/b}} storage per month*', {
 									args: {
 										size: info ? `${ info.storage }GB` : customString,
 									},
