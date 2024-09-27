@@ -61,7 +61,6 @@ const exported = {
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
 		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
 				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
@@ -87,7 +86,6 @@ const exported = {
 				/>
 			</>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
 
@@ -98,7 +96,6 @@ const exported = {
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
 		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
 				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
@@ -106,7 +103,6 @@ const exported = {
 				<PostPlaceholder />
 			</>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
 };
