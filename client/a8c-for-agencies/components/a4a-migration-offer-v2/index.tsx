@@ -64,7 +64,7 @@ const MigrationOfferV2 = () => {
 				) }
 				<p className="a4a-migration-offer-v2__asterisk">
 					{ translate(
-						'* The $10k limit applies to migrations from WP Engine only; it is $3k for migrations from other hosts.'
+						'* The migration limit is $10,000 for WP Engine and $3,000 for other hosts.'
 					) }
 				</p>
 			</div>

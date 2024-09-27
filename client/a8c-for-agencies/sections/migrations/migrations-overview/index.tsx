@@ -82,7 +82,7 @@ export default function MigrationsOverview() {
 				</div>
 				<p className="migrations-overview__asterisk">
 					{ translate(
-						'* The $10k limit is for migrations from WP Engine to Pressable only. For migrations from other hosts the limit is $3k.'
+						'* The migration limit is $10,000 for WP Engine and $3,000 for other hosts.'
 					) }
 				</p>
 				<div className="migrations-overview__section-subtitle">
