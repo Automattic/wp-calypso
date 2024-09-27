@@ -290,7 +290,7 @@ export default function DomainForwardingCard( {
 					a: (
 						<a
 							href={ localizeUrl(
-								'https://wordpress.com/support/domains/custom-dns/#default-records'
+								'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/'
 							) }
 						/>
 					),

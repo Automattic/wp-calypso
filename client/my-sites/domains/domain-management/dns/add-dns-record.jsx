@@ -45,7 +45,15 @@ class AddDnsRecord extends Component {
 		const recordBeingEdited = this.getRecordBeingEdited();
 		const dnsSupportPageLink = (
 			<ExternalLink
-				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
+				href={
+					recordBeingEdited
+						? localizeUrl(
+								'https://wordpress.com/support/domains/custom-dns/edit-or-delete-dns-records/'
+						  )
+						: localizeUrl(
+								'https://wordpress.com/support/domains/custom-dns/add-a-new-dns-record/'
+						  )
+				}
 				target="_blank"
 				icon={ false }
 			/>
