@@ -34,7 +34,7 @@ export const CircularPerformanceScore = ( {
 					size > 48 && 'circular-performance-score--large'
 				} ` }
 			>
-				{ score }
+				{ Math.floor( score ) }
 			</div>
 		</div>
 	);
