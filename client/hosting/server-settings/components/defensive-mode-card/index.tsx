@@ -55,11 +55,19 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 );
 
 	return (
-		<HostingCard className="defensive-mode-card" title={ translate( 'Defensive mode' ) }>
+		<HostingCard
+			className="defensive-mode-card"
+			title={ translate( 'Defensive mode', {
+				comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+				textOnly: true,
+			} ) }
+		>
 			<HostingCardDescription>
 				{ translate(
 					'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. {{a}}Learn more{{/a}}',
 					{
+						comment:
+							'Explains what "Defensive mode" is. Defensive mode is a feature to protect against DDoS attacks.',
 						components: {
 							a: <InlineSupportLink supportContext="hosting-defensive-mode" showIcon={ false } />,
 						},
@@ -80,6 +88,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 									date: enabledUntil.format( 'LL' ),
 									time: enabledUntil.format( 'LT' ),
 								},
+								comment: 'Defensive mode is a feature to protect against DDoS attacks.',
 								components: {
 									b: <strong />,
 								},
@@ -95,7 +104,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 							mutate( { active: false } );
 						} }
 					>
-						{ translate( 'Disable defensive mode' ) }
+						{ translate( 'Disable defensive mode', {
+							comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+						} ) }
 					</Button>
 				</>
 			) }
@@ -128,7 +139,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 							mutate( { active: true, ttl } );
 						} }
 					>
-						{ translate( 'Enable defensive mode' ) }
+						{ translate( 'Enable defensive mode', {
+							comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+						} ) }
 					</Button>
 				</>
 			) }
