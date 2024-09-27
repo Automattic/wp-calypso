@@ -20,6 +20,7 @@ $section-max-width: 1224px;
 
 	.performance-profiler-content .container {
 		padding-top: 0;
+		gap: 16px;
 
 		@media (max-width: $break-medium) {
 			padding-top: 24px;

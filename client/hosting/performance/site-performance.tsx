@@ -221,51 +221,53 @@ export const SitePerformance = () => {
 		/>
 	);
 
+	const subtitle = performanceReport.performanceReport
+		? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
+				args: {
+					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+						'MMMM Do, YYYY h:mm:ss A'
+					),
+				},
+				components: {
+					button: (
+						<Button
+							css={ {
+								textDecoration: 'none !important',
+								':hover': {
+									textDecoration: 'underline !important',
+								},
+								fontSize: 'inherit',
+								whiteSpace: 'nowrap',
+							} }
+							variant="link"
+							onClick={ retestPage }
+						/>
+					),
+				},
+		  } )
+		: translate(
+				'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+				{
+					components: {
+						link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
+					},
+				}
+		  );
+
 	return (
 		<div className="site-performance">
 			<div className="site-performance-device-tab-controls__container">
 				{ isMobile ? (
-					<MobileHeader pageTitle={ currentPage?.label ?? '' } pageSelector={ pageSelector } />
+					<MobileHeader
+						pageTitle={ currentPage?.label ?? '' }
+						pageSelector={ pageSelector }
+						subtitle={ subtitle }
+					/>
 				) : (
 					<NavigationHeader
 						className="site-performance__navigation-header"
 						title={ translate( 'Performance' ) }
-						subtitle={
-							performanceReport.performanceReport
-								? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
-										args: {
-											testedDate: moment( performanceReport.performanceReport.timestamp ).format(
-												'MMMM Do, YYYY h:mm:ss A'
-											),
-										},
-										components: {
-											button: (
-												<Button
-													css={ {
-														textDecoration: 'none !important',
-														':hover': {
-															textDecoration: 'underline !important',
-														},
-														fontSize: 'inherit',
-														whiteSpace: 'nowrap',
-													} }
-													variant="link"
-													onClick={ retestPage }
-												/>
-											),
-										},
-								  } )
-								: translate(
-										'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-										{
-											components: {
-												link: (
-													<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
-												),
-											},
-										}
-								  )
-						}
+						subtitle={ subtitle }
 					/>
 				) }
 				{ ! isMobile && pageSelector }

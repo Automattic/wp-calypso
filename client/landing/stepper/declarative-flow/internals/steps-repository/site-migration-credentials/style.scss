@@ -11,11 +11,19 @@
 		margin-bottom: 60px;
 	}
 
-	.site-migration-credentials__content,
-	.site-migration-credentials__error-banner {
+	&__error-notice.notice .notice__icon-wrapper svg.notice__icon {
+		fill: var(--color-text-inverted);
+	}
+
+	&__error-notice,
+	&__content,
+	&__error-banner {
 		margin: 0 auto 16px;
 		max-width: 500px;
+	}
 
+	.site-migration-credentials__content,
+	.site-migration-credentials__error-banner {
 		@media (min-width: $break-mobile) {
 			margin-bottom: 16px;
 		}

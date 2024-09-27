@@ -30,6 +30,7 @@
 	"zendesk_support_chat_key": "715f17a8-4a28-4a7f-8447-0ef8f06c70d7",
 	"features": {
 		"ad-tracking": false,
+		"a4a-dev-sites": true,
 		"a4a-dev-sites-referral": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
@@ -138,6 +139,7 @@
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
+		"marketing-force-facebook-display": true,
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
@@ -214,7 +216,6 @@
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"ssr/prefetch-timebox": false,
-		"stats/date-picker-calendar": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,

@@ -57,4 +57,4 @@ A function that gets executed when the cancel button is clicked.
 
 ### `onConfirmation`
 
-A function that gets executed when the confirmation button is clicked. Either the "Ignore threat" or "Fix threat" button was clicked.
+A function that gets executed when the confirmation button is clicked. Either the "Ignore threat", "Unignore threat" or "Fix threat" button was clicked.
