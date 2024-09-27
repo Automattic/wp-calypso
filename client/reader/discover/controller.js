@@ -60,7 +60,7 @@ const exported = {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
-		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
+		const tabTitle = getSelectedTabTitle( selectedTab );
 		context.primary = (
 			<>
 				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
@@ -95,7 +95,7 @@ const exported = {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
-		const tabTitle = getSelectedTabTitle( selectedTab ) || '';
+		const tabTitle = getSelectedTabTitle( selectedTab );
 		context.primary = (
 			<>
 				<DiscoverPageDocumentHead tabTitle={ tabTitle } />
