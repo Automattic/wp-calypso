@@ -25,8 +25,7 @@ export const DeveloperFeatures = () => {
 			'how-to-create-a-staging-site',
 			'code',
 			'https-ssl',
-			'restore',
-			'support-options',
+			'help-support-options',
 		];
 
 		if (

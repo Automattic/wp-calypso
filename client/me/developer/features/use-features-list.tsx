@@ -91,7 +91,7 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl( 'https://wordpress.com/support/domains/https-ssl' ),
 		},
 		{
-			id: 'support-options',
+			id: 'help-support-options',
 			title: translate( '24/7 expert support', {
 				comment: 'Feature title',
 			} ),
