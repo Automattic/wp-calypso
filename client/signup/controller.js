@@ -231,7 +231,7 @@ export default {
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
 				'calypso_signup_onboarding_flow_stepper'
 			);
-			if ( stepperOnboardingExperimentAssignment.variationName === 'treatment' ) {
+			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
 				const lang = localeFromParams ?? localeFromStore;
 				window.location.replace(
 					window.location.origin + `/setup/onboarding/${ lang }` + window.location.search
