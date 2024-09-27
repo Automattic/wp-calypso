@@ -46,7 +46,7 @@ export const DiscoverHeader = ( props ) => {
 			title={ translate( 'Discover' ) }
 			subtitle={ subHeaderText }
 			className={ clsx( 'discover-stream-header', {
-				'reader-dual-column': Number.isInteger( props.width ) && props.width > WIDE_DISPLAY_CUTOFF,
+				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 			} ) }
 		/>
 	);
