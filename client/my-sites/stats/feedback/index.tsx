@@ -29,6 +29,7 @@ const TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL =
 	'stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel';
 const TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL =
 	'stats_feedback_action_open_form_modal_from_floating_panel';
+const TRACKS_EVENT_DISMISS_FLOATING_PANEL = 'stats_feedback_action_dismiss_floating_panel';
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
@@ -119,6 +120,7 @@ function FeedbackPanel( {
 	);
 
 	const handleDismissPanel = () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL );
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 		onDismissPanel();
 	};
@@ -218,7 +220,6 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 			case ACTION_DISMISS_FLOATING_PANEL:
 				dismissPanelWithDelay();
 				updateFeedbackPanelHibernationDelay();
-				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
 			case ACTION_LEAVE_REVIEW:
 				setIsFloatingPanelOpen( false );
