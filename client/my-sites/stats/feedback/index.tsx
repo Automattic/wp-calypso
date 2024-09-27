@@ -239,7 +239,7 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		handleButtonClick( ACTION_SEND_FEEDBACK );
 	};
 
-	const onModalClose = () => {
+	const handleCloseModalDialog = () => {
 		setIsFeedbackModalOpen( false );
 	};
 
@@ -256,7 +256,9 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 				onLeaveReview={ handleLeaveReview }
 				onSendFeedback={ handleSendFeedback }
 			/>
-			{ isFeedbackModalOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
+			{ isFeedbackModalOpen && (
+				<FeedbackModal siteId={ siteId } onClose={ handleCloseModalDialog } />
+			) }
 		</div>
 	);
 }
