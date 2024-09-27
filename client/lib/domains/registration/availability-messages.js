@@ -236,6 +236,25 @@ function getAvailabilityNotice(
 				}
 			);
 			break;
+		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s.' +
+					' {{a}}Register it to the connected site.{{/a}}',
+				{
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								target={ linksTarget }
+								rel="noopener noreferrer"
+								href={ domainAddNew( site, domain ) }
+							/>
+						),
+					},
+				}
+			);
+			break;
 		case domainAvailability.MAPPED_OTHER_SITES_SAME_USER_REGISTRABLE:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. {{a}}Register it via the connected site here.{{/a}}',
@@ -648,7 +667,7 @@ function getAvailabilityNotice(
 
 		default:
 			message = translate(
-				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
+				'HAHAHAHAHAH Sorry, there was a problem processing your request. Please try again in a few minutes.'
 			);
 	}
 
