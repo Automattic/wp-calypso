@@ -2,6 +2,7 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CredentialsFormData } from '../types';
@@ -13,6 +14,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const [ canBypassVerification, setCanBypassVerification ] = useState( false );
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
+	const [ formData, setFormData ] = useState< CredentialsFormData | null >( null );
 
 	const {
 		isPending,
@@ -20,9 +22,16 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		error,
 		isSuccess,
 		variables,
+		reset,
 	} = useSiteMigrationCredentialsMutation();
 
-	const serverSideError = useFormErrorMapping( error, variables );
+	const {
+		data: siteInfo,
+		isError: isPlatformVerificationError,
+		isLoading: isSiteInfoLoading,
+	} = useAnalyzeUrlQuery( formData?.from_url ?? '', !! formData && ! canBypassVerification );
+
+	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
 	const {
 		formState: { errors },
@@ -33,7 +42,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
-		disabled: isPending,
+		disabled: isPending || isSiteInfoLoading,
 		defaultValues: {
 			from_url: importSiteQueryParam,
 			username: '',
@@ -48,6 +57,31 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const accessMethod = watch( 'migrationType' );
 
 	useEffect( () => {
+		if ( ! formData || isSiteInfoLoading || ( ! siteInfo && ! isPlatformVerificationError ) ) {
+			return;
+		}
+
+		if ( ! canBypassVerification && siteInfo?.platform_data?.is_wpcom ) {
+			setFormData( null );
+			setCanBypassVerification( true );
+			return;
+		}
+
+		requestAutomatedMigration( {
+			...formData,
+			bypassVerification: canBypassVerification || ! isEnglishLocale,
+		} );
+	}, [
+		siteInfo,
+		formData,
+		canBypassVerification,
+		isPlatformVerificationError,
+		isSiteInfoLoading,
+		isEnglishLocale,
+		requestAutomatedMigration,
+	] );
+
+	useEffect( () => {
 		if ( isSuccess ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
 			onSubmit();
@@ -58,6 +92,8 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		if ( ! error ) {
 			return;
 		}
+
+		setFormData( null );
 
 		recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 
@@ -74,19 +110,19 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		const { unsubscribe } = watch( () => {
 			clearErrors( 'root' );
 			setCanBypassVerification( false );
+			setFormData( null );
 		} );
 		return () => unsubscribe();
 	}, [ watch, clearErrors ] );
 
 	const submitHandler = ( data: CredentialsFormData ) => {
-		requestAutomatedMigration( {
-			...data,
-			bypassVerification: canBypassVerification || ! isEnglishLocale,
-		} );
+		reset();
+		clearErrors();
+		setFormData( data );
 	};
 
 	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && isPending && ! canBypassVerification ) {
+		if ( isEnglishLocale && ( isPending || isSiteInfoLoading ) && ! canBypassVerification ) {
 			return translate( 'Verifying credentials' );
 		}
 
@@ -95,7 +131,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		}
 
 		return translate( 'Continue' );
-	}, [ isPending, canBypassVerification, isEnglishLocale, translate ] );
+	}, [ isPending, canBypassVerification, isEnglishLocale, translate, isSiteInfoLoading ] );
 
 	return {
 		formState: { errors },
@@ -107,5 +143,8 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		submitHandler,
 		importSiteQueryParam,
 		getContinueButtonText,
+		siteInfo,
+		isPlatformVerificationError,
+		isSiteInfoLoading,
 	};
 };
