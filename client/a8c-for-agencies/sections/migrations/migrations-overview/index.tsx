@@ -82,7 +82,7 @@ export default function MigrationsOverview() {
 				</div>
 				<p className="migrations-overview__asterisk">
 					{ translate(
-						'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts.g'
+						'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts.'
 					) }
 				</p>
 				<div className="migrations-overview__section-subtitle">
