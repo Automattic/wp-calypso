@@ -1,7 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-@import "client/landing/subscriptions/components/settings/styles";
+@import "client/landing/subscriptions/components/settings/styles.scss";
 
 .site-subscription-page {
 	.loading-container {

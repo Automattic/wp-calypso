@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "./grid-mixins";
-@import "./woocommerce-box";
+@import "./grid-mixins.scss";
+@import "./woocommerce-box.scss";
 
 .is-section-plugins .main {
 

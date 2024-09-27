@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "../mixins";
+@import "../mixins.scss";
 
 .products-overview__select-license {
 	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.

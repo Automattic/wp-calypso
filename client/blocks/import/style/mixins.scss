@@ -1,4 +1,4 @@
-@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/mixins.scss";
 
 @mixin onboarding-import-heading-text {
 	@include onboarding-font-recoleta;

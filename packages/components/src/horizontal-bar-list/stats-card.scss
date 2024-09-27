@@ -2,8 +2,8 @@
 // Horizontal bar list
 // ==========================================================================
 @import "@wordpress/base-styles/breakpoints";
-@import "../styles/typography";
-@import "./stats-variables";
+@import "../styles/typography.scss";
+@import "./stats-variables.scss";
 
 .stats-card {
 	border: 1px solid var(--studio-gray-5);

@@ -1,9 +1,9 @@
-@import "@automattic/onboarding/styles/base-styles";
-@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/base-styles.scss";
+@import "@automattic/onboarding/styles/mixins.scss";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "./mixins";
-@import "./components";
+@import "./mixins.scss";
+@import "./components.scss";
 
 .import__onboarding-page {
 	.components-button.action-buttons__next {

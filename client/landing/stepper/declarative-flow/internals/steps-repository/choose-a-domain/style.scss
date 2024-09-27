@@ -1,6 +1,6 @@
-@import "../../videopress-constants";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import "../../videopress-constants.scss";
+@import "@wordpress/base-styles/breakpoints.scss";
+@import "@wordpress/base-styles/mixins.scss";
 
 $videopress-mobile-layout-width: 1200px;
 $videopress-link-color: #c377ff;

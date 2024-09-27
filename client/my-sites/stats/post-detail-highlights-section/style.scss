@@ -1,6 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 @import "@wordpress/base-styles/mixins";
 
 .stats__post-detail-highlights-section {

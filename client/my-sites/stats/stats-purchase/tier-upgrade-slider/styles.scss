@@ -1,6 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography";
+@import "@automattic/components/src/styles/typography.scss";
 
 $slider-height: 40px;
 $slider-bg-color: var(--studio-white);

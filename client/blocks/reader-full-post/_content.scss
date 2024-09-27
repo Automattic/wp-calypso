@@ -1,16 +1,16 @@
-/* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
-@import "calypso/assets/stylesheets/shared/_rendered-blocks";
+/* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
+@import "calypso/assets/stylesheets/shared/_rendered-blocks.scss";
 
 // Style tiled galleries.
-@import "tiled-gallery";
+@import "tiled-gallery.scss";
 
 // Import styles for Jetpack Story block.
 // This is a copy of Jetpack's extensions/blocks/story/player/style.scss, with
 // some unnecessary styles removed.
-@import "story";
+@import "story.scss";
 
 // Import styles for carousel blocks (Newspack Post Carousel, Jetpack Slideshow).
-@import "carousel";
+@import "carousel.scss";
 
 .reader-full-post__story-content {
 	@extend %rendered-block-content;

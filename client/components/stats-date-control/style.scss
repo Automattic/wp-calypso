@@ -1,5 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography";
+@import "@automattic/components/src/styles/typography.scss";
 
 $date-control-shortcut-min-width: 140px;
 $date-control-mobile-layout-switch: $break-small;

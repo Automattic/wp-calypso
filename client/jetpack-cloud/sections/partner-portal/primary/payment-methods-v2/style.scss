@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "calypso/jetpack-cloud/sections/partner-portal/mixins";
+@import "calypso/jetpack-cloud/sections/partner-portal/mixins.scss";
 
 .payment-method-list-v2 {
 	@include breakpoint-deprecated( "<660px" ) {

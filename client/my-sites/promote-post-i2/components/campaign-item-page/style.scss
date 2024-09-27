@@ -1,7 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/components/src/styles/typography";
 
-@import "../../style";
+@import "../../style.scss";
 
 .notouch .promote-post-i2 .section-nav-tab__link:hover {
 	background-color: transparent;

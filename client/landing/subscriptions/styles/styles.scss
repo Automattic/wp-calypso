@@ -7,8 +7,8 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "calypso/assets/stylesheets/shared/loading";
-@import "./search-component";
-@import "calypso/assets/stylesheets/style";
+@import "./search-component.scss";
+@import "calypso/assets/stylesheets/style.scss";
 
 body {
 	background-color: $studio-white;
