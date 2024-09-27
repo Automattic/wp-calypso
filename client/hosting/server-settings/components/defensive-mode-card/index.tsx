@@ -1,10 +1,10 @@
 import { Button, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
@@ -21,6 +21,7 @@ type DefensiveModeCardProps = {
 
 export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const availableTtls = [
 		{
@@ -52,7 +53,7 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 		useEdgeCacheDefensiveModeQuery( siteId );
 	const { mutate, isPending: isEnabling } = useEdgeCacheDefensiveModeMutation( siteId );
 
-	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 );
+	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 ).local();
 
 	return (
 		<HostingCard
@@ -83,10 +84,9 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						<div className="defensive-mode-card__enabled-indicator" />
 
 						<HostingCardDescription>
-							{ translate( '{{b}}Defensive mode is enabled{{/b}} until %(time)s on %(date)s.', {
+							{ translate( '{{b}}Defensive mode is enabled{{/b}} until %(date)s.', {
 								args: {
-									date: enabledUntil.format( 'LL' ),
-									time: enabledUntil.format( 'LT' ),
+									date: enabledUntil.format( 'LLL' ),
 								},
 								comment: 'Defensive mode is a feature to protect against DDoS attacks.',
 								components: {
