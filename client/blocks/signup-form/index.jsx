@@ -129,7 +129,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		disableTosText: PropTypes.bool,
-		currentQuery: PropTypes.object,
+
 		// Connected props
 		oauth2Client: PropTypes.object,
 		sectionName: PropTypes.string,
@@ -625,7 +625,6 @@ class SignupForm extends Component {
 										),
 										pwdResetLink: isReactLostPasswordScreenEnabled() ? (
 											<a
-												className="login__form-forgot-password"
 												href="/"
 												onClick={ ( event ) => {
 													event.preventDefault();
@@ -638,13 +637,11 @@ class SignupForm extends Component {
 																? 'jetpack/lostpassword'
 																: 'lostpassword',
 															oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-															from: get( this.props.currentQuery, 'from' ),
+															from: this.props.from,
 														} )
 													);
 												} }
-											>
-												{ this.props.translate( 'Forgot password?' ) }
-											</a>
+											/>
 										) : (
 											<a href={ lostPassword( this.props.locale ) } />
 										),
@@ -1447,7 +1444,6 @@ export default connect(
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			isBlazePro: getIsBlazePro( state ),
-			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},
 	{
