@@ -15,7 +15,8 @@ const buildSendChatMessage = async (
 	botNameSlug: OdieAllowedBots,
 	chat_id?: number | null,
 	version?: string | null,
-	selectedSiteId?: number | null
+	selectedSiteId?: number | null,
+	isTest?: boolean
 ) => {
 	const baseApiPath = '/help-center/odie/chat/';
 	const wpcomBaseApiPath = '/odie/chat/';
@@ -31,11 +32,16 @@ const buildSendChatMessage = async (
 			: `${ wpcomBaseApiPath }${ botNameSlug }`;
 
 	return canAccessWpcomApis()
-		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version, selectedSiteId )
+		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version, selectedSiteId, isTest )
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message: message.content, version, context: { selectedSiteId } },
+				data: {
+					message: message.content,
+					version,
+					context: { selectedSiteId },
+					test: isTest,
+				},
 		  } );
 };
 
@@ -43,12 +49,13 @@ function odieWpcomSendSupportMessage(
 	message: Message,
 	path: string,
 	version?: string | null,
-	selectedSiteId?: number | null
+	selectedSiteId?: number | null,
+	isTest?: boolean
 ) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content, version, context: { selectedSiteId } },
+		body: { message: message.content, version, context: { selectedSiteId }, test: isTest },
 	} );
 }
 
@@ -85,6 +92,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 		odieClientId,
 		selectedSiteId,
 		version,
+		isTest,
 	} = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
@@ -116,7 +124,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 				botNameSlug,
 				chat.chat_id,
 				version,
-				selectedSiteId
+				selectedSiteId,
+				isTest
 			);
 		},
 		onMutate: ( { message } ) => {
