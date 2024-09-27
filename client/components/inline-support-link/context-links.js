@@ -109,8 +109,18 @@ const contextLinks = {
 		post_id: 99381,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'hosting-edge-cache': {
+		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/',
+		post_id: 99415,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	'hosting-clear-cache': {
 		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/#1-clear-your-site-s-cache',
+		post_id: 99415,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'hosting-defensive-mode': {
+		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/',
 		post_id: 99415,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
@@ -122,6 +132,11 @@ const contextLinks = {
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
 		post_id: 99378,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'hosting-elasticsearch': {
+		link: 'https://developer.wordpress.com/docs/elasticsearch/elasticsearch-queries/',
+		post_id: 99387,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	import: {

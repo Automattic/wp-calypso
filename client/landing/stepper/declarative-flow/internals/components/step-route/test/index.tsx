@@ -152,7 +152,7 @@ describe( 'StepRoute', () => {
 	} );
 
 	describe( 'tracking', () => {
-		it( 'records a page view when the step is rendered', async () => {
+		it( 'records a page view', async () => {
 			render( { step: regularStep } );
 
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
@@ -160,7 +160,7 @@ describe( 'StepRoute', () => {
 			} );
 		} );
 
-		it( 'records recordStepStart when the step is rendered', async () => {
+		it( 'records recordStepStart', async () => {
 			render( { step: regularStep } );
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
@@ -168,14 +168,6 @@ describe( 'StepRoute', () => {
 				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 			} );
-		} );
-
-		it( 'does not record start and page view when the login is required and the user is not logged in', async () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			render( { step: requiresLoginStep } );
-
-			expect( recordStepStart ).not.toHaveBeenCalled();
-			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 
 		it( 'skips tracking when the step is re-entered', () => {
@@ -187,15 +179,7 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 		} );
 
-		it( 'skips trackings when the renderStep returns null', () => {
-			render( { step: regularStep, renderStep: () => null } );
-
-			expect( recordStepStart ).not.toHaveBeenCalled();
-			expect( recordPageView ).not.toHaveBeenCalled();
-		} );
-
-		it( 'tracks step-complete when the step is unmounted and step-start was previously recorded', () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		it( 'records step-complete when the step is unmounted and step-start was previously recorded', () => {
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep } );
@@ -211,7 +195,7 @@ describe( 'StepRoute', () => {
 			} );
 		} );
 
-		it( 'skips tracking step-complete when the step is unmounted and step-start was not recorded', () => {
+		it( 'skips recording step-complete when the step is unmounted and step-start was not recorded', () => {
 			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
 			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
 			const { unmount } = render( { step: regularStep } );
@@ -219,6 +203,64 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 			unmount();
 			expect( recordStepComplete ).not.toHaveBeenCalled();
+		} );
+
+		it( 'records skip_step_render on start, complete and page view when the login is required and the user is not logged in', async () => {
+			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+
+			const { unmount } = render( { step: requiresLoginStep } );
+
+			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
+				intent: 'build',
+				assembler_source: 'premium',
+				is_in_hosting_flow: false,
+				skip_step_render: true,
+			} );
+			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
+				flow: 'some-flow',
+				skip_step_render: true,
+			} );
+
+			unmount();
+
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				optionalProps: {
+					intent: 'build',
+					skip_step_render: true,
+				},
+			} );
+		} );
+
+		it( 'records skip_step_render on start, complete and page view when renderStep returns null', async () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			const { unmount } = render( { step: regularStep, renderStep: () => null } );
+
+			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
+				intent: 'build',
+				assembler_source: 'premium',
+				is_in_hosting_flow: false,
+				skip_step_render: true,
+			} );
+			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
+				flow: 'some-flow',
+				skip_step_render: true,
+			} );
+
+			unmount();
+
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				optionalProps: {
+					intent: 'build',
+					skip_step_render: true,
+				},
+			} );
 		} );
 	} );
 } );

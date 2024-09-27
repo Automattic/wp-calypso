@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 
 $section-max-width: 1224px;
@@ -12,6 +13,7 @@ $section-max-width: 1224px;
 	.notice-banner,
 	.notice-banner__title {
 		font-size: $font-body-small;
+		margin-bottom: 4px;
 	}
 
 	@media (max-width: $break-medium) {
@@ -34,6 +36,44 @@ $section-max-width: 1224px;
 
 		@media (max-width: $break-medium) {
 			margin-top: 24px;
+		}
+	}
+
+	.notice-banner {
+		box-shadow: none;
+		padding: 16px;
+
+		.notice-banner__icon-wrapper {
+			margin-right: 8px;
+			position: unset;
+		}
+
+		.notice-banner__action-bar {
+			margin-top: 12px;
+		}
+
+		@media (max-width: $break-medium) {
+			margin-top: 24px;
+		}
+	}
+
+	.notice-banner.is-info {
+		border: none;
+		background-color: $studio-wordpress-blue-5;
+		color: $studio-wordpress-blue-80;
+
+		.notice-banner__icon {
+			fill: $studio-wordpress-blue-80;
+		}
+	}
+
+	.notice-banner.is-warning {
+		border: none;
+		background-color: $studio-red-0;
+		color: $studio-red-80;
+
+		.notice-banner__icon {
+			fill: $studio-red-80;
 		}
 	}
 }

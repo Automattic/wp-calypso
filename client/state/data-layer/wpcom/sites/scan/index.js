@@ -87,6 +87,8 @@ const fetchStatus = ( action ) => {
 
 const POOL_EVERY_MILLISECONDS = 5000;
 
+const MAX_RETRY_COUNT = 2;
+
 const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 	[
 		{
@@ -115,11 +117,20 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 		( threat ) => threat.fixerStatus === 'in_progress'
 	);
 	if ( action.pooling && scan.state === 'idle' && threatsFixedInProgress.length > 0 ) {
+		// Stop pooling after MAX_RETRY_COUNT to prevent infinite rerendering
+		if ( action.retryCount >= MAX_RETRY_COUNT ) {
+			dispatch( {
+				type: JETPACK_SCAN_REQUEST_FAILURE,
+				siteId: action.siteId,
+			} );
+			return;
+		}
 		return setTimeout( () => {
 			dispatch( {
 				type: JETPACK_SCAN_REQUEST,
 				siteId: action.siteId,
 				pooling: true,
+				retryCount: ( action.retryCount || 0 ) + 1,
 			} );
 		}, POOL_EVERY_MILLISECONDS );
 	}
