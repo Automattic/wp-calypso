@@ -2,7 +2,11 @@
 @import "@wordpress/base-styles/mixins";
 
 .plugins-navigation-header.navigation-header {
-	padding-inline: 34px;
+	padding-inline: 16px;
+
+	@media (min-width: 403px) {
+		padding-inline: 34px;
+	}
 
 	.navigation-header__main {
 		align-items: center;

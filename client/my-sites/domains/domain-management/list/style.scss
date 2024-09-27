@@ -146,7 +146,11 @@
 	overflow: auto;
 	.main {
 		.navigation-header {
-			padding-inline: 34px;
+			padding-inline: 16px;
+
+			@media (min-width: 403px) {
+				padding-inline: 34px;
+			}
 
 			@include break-xhuge {
 				max-width: 100%;

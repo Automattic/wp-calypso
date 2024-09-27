@@ -28,8 +28,12 @@
 		}
 
 		.navigation-header {
+			padding-inline: 16px;
 			padding-top: 24px;
-			padding-inline: 34px;
+
+			@media (min-width: 403px) {
+				padding-inline: 34px;
+			}
 
 			.navigation-header__main {
 				align-items: center;
