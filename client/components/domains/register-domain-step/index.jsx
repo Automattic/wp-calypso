@@ -1083,6 +1083,7 @@ class RegisterDomainStep extends Component {
 						AVAILABLE_PREMIUM,
 						MAPPED,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
+						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
@@ -1118,7 +1119,11 @@ class RegisterDomainStep extends Component {
 					let availabilityStatus = status;
 
 					// Mapped status always overrides other statuses, unless the domain is owned by the current user.
-					if ( isDomainMapped && status !== REGISTERED_OTHER_SITE_SAME_USER ) {
+					if (
+						isDomainMapped &&
+						status !== REGISTERED_OTHER_SITE_SAME_USER &&
+						status !== MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE
+					) {
 						availabilityStatus = mappable;
 					}
 

@@ -44,6 +44,7 @@ export const domainAvailability = {
 	MAPPABLE: 'mappable',
 	MAPPED: 'mapped_domain',
 	MAPPED_OTHER_SITE_SAME_USER: 'mapped_to_other_site_same_user',
+	MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE: 'mapped_to_other_site_same_user_registrable',
 	MAPPED_SAME_SITE_NOT_TRANSFERRABLE: 'mapped_to_same_site_not_transferrable',
 	MAPPED_SAME_SITE_TRANSFERRABLE: 'mapped_to_same_site_transferrable',
 	NOT_AVAILABLE: 'not_available',

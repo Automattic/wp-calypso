@@ -15,6 +15,7 @@ import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import SetAsPrimaryLink from 'calypso/my-sites/domains/domain-management/settings/set-as-primary/link';
 import {
+	domainAddNew,
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
 	domainMapping,
@@ -229,6 +230,24 @@ function getAvailabilityNotice(
 								target={ linksTarget }
 								rel="noopener noreferrer"
 								href={ CALYPSO_HELP_WITH_HELP_CENTER }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.MAPPED_OTHER_SITES_SAME_USER_REGISTRABLE:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. {{a}}Register it via the connected site here.{{/a}}',
+				{
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								target={ linksTarget }
+								rel="noopener noreferrer"
+								href={ domainAddNew( site, domain ) }
 							/>
 						),
 					},
