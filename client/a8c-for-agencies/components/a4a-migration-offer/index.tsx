@@ -27,7 +27,7 @@ const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 const MigrationOfferBody = () => {
 	const translate = useTranslate();
 	const description = translate(
-		'From now until the end of 2024, you’ll receive $100 for each migrated site, up to $10,000*. If you’re a WP\u00A0Engine customer, we’ll also cover any costs of breaking your contract. {{a}}Full Terms ↗{{/a}}',
+		'From now until the end of 2024, you’ll receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000*. If you’re a WP\u00A0Engine customer, we’ll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}',
 		{
 			components: {
 				a: (
