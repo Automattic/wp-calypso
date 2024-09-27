@@ -3,27 +3,28 @@ import config from '@automattic/calypso-config';
 import { Button, JetpackLogo } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useState } from 'react';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
-	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
 import { useDispatch, useSelector } from 'calypso/state';
-import { clearWordPressCache } from 'calypso/state/hosting/actions';
+import { clearEdgeCacheSuccess, clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
+import { shouldRateLimitEdgeCacheClear } from 'calypso/state/selectors/should-rate-limit-edge-cache-clear';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 
 import './style.scss';
 
 type CacheCardProps = {
-	disabled: boolean;
+	disabled?: boolean;
 };
 
 export default function CacheCard( { disabled }: CacheCardProps ) {
@@ -32,16 +33,25 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
+	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
-	const shouldRateLimitObjectCacheClear = useSelector( ( state ) =>
-		shouldRateLimitAtomicCacheClear( state, siteId )
-	);
+	const [ isClearingAllCaches, setIsClearingAllCaches ] = useState( false );
 	const isClearingObjectCache = useSelector( ( state ) => {
 		const request = getRequest( state, clearWordPressCache( siteId ) );
 		return request?.isLoading ?? false;
 	} );
+	const isObjectCacheClearRateLimited = useSelector( ( state ) =>
+		shouldRateLimitAtomicCacheClear( state, siteId )
+	);
+	const isEdgeCacheClearRateLimited = useSelector( ( state ) =>
+		shouldRateLimitEdgeCacheClear( state, siteId )
+	);
+	const areAllCachesClearRateLimited = config.isEnabled( 'hosting-server-settings-enhancements' )
+		? isObjectCacheClearRateLimited && isEdgeCacheClearRateLimited
+		: isObjectCacheClearRateLimited;
 
 	const {
 		isLoading: isEdgeCacheLoading,
@@ -49,21 +59,34 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		isInitialLoading: isEdgeCacheInitialLoading,
 	} = useEdgeCacheQuery( siteId );
 
-	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
-
 	const { setEdgeCache } = useSetEdgeCacheMutation();
-	const isEdgeCacheMutating = useIsSetEdgeCacheMutating( siteId );
-	const { clearEdgeCache, isLoading: isClearingEdgeCache } = useClearEdgeCacheMutation( siteId );
+	const { mutate: clearEdgeCache, isPending: isClearingEdgeCache } = useClearEdgeCacheMutation(
+		siteId,
+		{
+			onSuccess() {
+				dispatch( clearEdgeCacheSuccess( siteId ) );
+			},
+		}
+	);
+
+	useEffect( () => {
+		if ( isClearingAllCaches && ! isClearingObjectCache && ! isClearingEdgeCache ) {
+			setIsClearingAllCaches( false );
+		}
+	}, [ isClearingObjectCache, isClearingEdgeCache, isClearingAllCaches ] );
 
 	const handleClearAllCache = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
 			site_id: siteId,
 		} );
 
-		if ( isEdgeCacheActive ) {
+		if ( isEdgeCacheActive && ! isEdgeCacheClearRateLimited ) {
 			clearEdgeCache();
 		}
-		dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
+		if ( ! isObjectCacheClearRateLimited ) {
+			dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
+		}
+		setIsClearingAllCaches( true );
 	};
 
 	const handleClearEdgeCache = () => {
@@ -99,9 +122,12 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		<HostingCard
 			className="cache-card"
 			headingId="cache"
-			title={ translate( 'Performance optimization' ) }
+			title={ translate( 'Performance optimization', {
+				comment: 'Heading text for a card on the Server Settings page',
+				textOnly: true,
+			} ) }
 		>
-			<div className="performance-optimization__all-cache-block">
+			<div className="cache-card__all-cache-block">
 				<HostingCardDescription>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
 						components: {
@@ -110,53 +136,53 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					} ) }
 				</HostingCardDescription>
 
-				<Button
-					className="performance-optimization__button"
-					busy={ isClearingObjectCache && isClearingEdgeCache }
-					disabled={
-						disabled ||
-						shouldRateLimitObjectCacheClear ||
-						isEdgeCacheLoading ||
-						isEdgeCacheMutating ||
-						isClearingObjectCache ||
-						isClearingEdgeCache
+				<Tooltip
+					placement="top"
+					text={
+						areAllCachesClearRateLimited
+							? translate( 'You cleared all caches recently. Please wait a minute and try again.' )
+							: ''
 					}
-					onClick={ handleClearAllCache }
 				>
-					{ config.isEnabled( 'hosting-server-settings-enhancements' )
-						? translate( 'Clear all caches' )
-						: translate( 'Clear cache' ) }
-				</Button>
+					<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+						<Button
+							busy={ isClearingAllCaches }
+							disabled={
+								disabled ||
+								areAllCachesClearRateLimited ||
+								isClearingObjectCache ||
+								isClearingEdgeCache
+							}
+							onClick={ handleClearAllCache }
+						>
+							{ config.isEnabled( 'hosting-server-settings-enhancements' )
+								? translate( 'Clear all caches' )
+								: translate( 'Clear cache' ) }
+						</Button>
+					</div>
+				</Tooltip>
 
-				{ shouldRateLimitObjectCacheClear ? (
-					<div className="performance-optimization__nb">
-						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
-					</div>
-				) : (
-					<div className="performance-optimization__nb">
-						{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
-					</div>
-				) }
+				<div className="cache-card__nb">
+					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
+				</div>
 			</div>
 
-			<div className="performance-optimization__hr"></div>
+			<div className="cache-card__hr" />
 
-			<div className="performance-optimization__global-edge-cache-block">
+			<div className="cache-card__global-edge-cache-block">
 				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
-						<div className="performance-optimization__subtitle">
-							{ translate( 'Global edge cache' ) }
+						<div className="cache-card__subtitle">
+							{ translate( 'Global edge cache', {
+								comment: 'Edge cache is a type of CDN that stores generated HTML pages',
+							} ) }
 						</div>
 						<ToggleControl
-							disabled={
-								isClearingEdgeCache ||
-								isEdgeCacheLoading ||
-								! isEdgeCacheEligible ||
-								isEdgeCacheMutating
-							}
+							className="cache-card__edge-cache-toggle"
 							checked={ isEdgeCacheActive && isEdgeCacheEligible }
+							disabled={ isClearingEdgeCache || isEdgeCacheLoading || ! isEdgeCacheEligible }
 							onChange={ ( active ) => {
 								recordTracksEvent(
 									active
@@ -170,29 +196,58 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							} }
 							label={ edgeCacheToggleDescription }
 						/>
+
 						{ config.isEnabled( 'hosting-server-settings-enhancements' ) &&
 							isEdgeCacheEligible &&
 							isEdgeCacheActive && (
-								<Button
-									className="performance-optimization__button"
-									busy={ isClearingEdgeCache }
-									disabled={ disabled || isEdgeCacheLoading || isEdgeCacheMutating }
-									onClick={ handleClearEdgeCache }
+								<Tooltip
+									placement="top"
+									text={
+										isObjectCacheClearRateLimited
+											? translate(
+													'You cleared the edge cache recently. Please wait a minute and try again.',
+													{
+														comment: 'Edge cache is a type of CDN that stores generated HTML pages',
+														textOnly: true,
+													}
+											  )
+											: ''
+									}
 								>
-									{ translate( 'Clear edge cache' ) }
-								</Button>
+									<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+										<Button
+											busy={ isClearingEdgeCache && ! isClearingAllCaches }
+											disabled={
+												disabled ||
+												isEdgeCacheClearRateLimited ||
+												isEdgeCacheLoading ||
+												isClearingEdgeCache
+											}
+											onClick={ handleClearEdgeCache }
+										>
+											{ translate( 'Clear edge cache', {
+												comment: 'Edge cache is a type of CDN that stores generated HTML pages',
+											} ) }
+										</Button>
+									</div>
+								</Tooltip>
 							) }
 					</>
 				) }
 			</div>
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-				<div className="performance-optimization__global-object-cache-block">
-					<div className="performance-optimization__subtitle">{ translate( 'Object cache' ) }</div>
+				<div className="cache-card__global-object-cache-block">
+					<div className="cache-card__subtitle">
+						{ translate( 'Object cache', {
+							comment: 'Object cache stores database lookups and some network requests',
+						} ) }
+					</div>
 					<HostingCardDescription>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
 							{
+								comment: 'Explanation for how object cache works',
 								components: {
 									a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 								},
@@ -203,24 +258,22 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					<Tooltip
 						placement="top"
 						text={
-							shouldRateLimitObjectCacheClear
-								? translate( 'You cleared the cache recently. Please wait a minute and try again.' )
+							isObjectCacheClearRateLimited
+								? translate(
+										'You cleared the object cache recently. Please wait a minute and try again.'
+								  )
 								: ''
 						}
 					>
-						<div className="performance-optimization__button-wrapper">
+						<div className="cache-card__button-wrapper">
 							<Button
-								className="performance-optimization__button"
-								busy={ isClearingObjectCache }
-								disabled={
-									disabled ||
-									shouldRateLimitObjectCacheClear ||
-									isClearingObjectCache ||
-									isClearingEdgeCache
-								}
+								busy={ isClearingObjectCache && ! isClearingAllCaches }
+								disabled={ disabled || isObjectCacheClearRateLimited || isClearingObjectCache }
 								onClick={ handleClearObjectCache }
 							>
-								{ translate( 'Clear object cache' ) }
+								{ translate( 'Clear object cache', {
+									comment: 'Object cache stores database lookups and some network requests',
+								} ) }
 							</Button>
 						</div>
 					</Tooltip>
@@ -229,12 +282,10 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
 				<>
-					<div className="performance-optimization__hr" />
+					<div className="cache-card__hr" />
 
-					<div className="performance-optimization__jetpack-block">
-						<div className="performance-optimization__subtitle">
-							{ translate( 'Elasticsearch' ) }
-						</div>
+					<div className="cache-card__jetpack-block">
+						<div className="cache-card__subtitle">{ translate( 'Elasticsearch' ) }</div>
 						<HostingCardDescription>
 							<JetpackLogo size={ 16 } />
 							<div>

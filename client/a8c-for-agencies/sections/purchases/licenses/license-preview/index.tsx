@@ -238,8 +238,7 @@ export default function LicensePreview( {
 		? translate( 'WordPress.com Site' )
 		: product;
 
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-	const isDevelopmentSite = devSitesEnabled && Boolean( meta?.isDevSite );
+	const isDevelopmentSite = Boolean( meta?.isDevSite );
 
 	return (
 		<div

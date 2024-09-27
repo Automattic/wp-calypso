@@ -5,7 +5,7 @@ import { AppState } from 'calypso/types';
 /**
  * Returns true if the site is private
  * @param {Object} state Global state tree
- * @param {Object} siteId Site ID
+ * @param {number|null} siteId Site ID
  * @returns {boolean} True if site is private
  */
 export default function isPrivateSite( state: AppState, siteId: number | null ): boolean | null {

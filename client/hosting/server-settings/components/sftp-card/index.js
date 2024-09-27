@@ -227,18 +227,16 @@ export const SftpCard = ( {
 		>
 			{ ! hasSftpFeatureAndIsLoading && (
 				<HostingCardDescription>
-					<p>
-						{ username
-							? translate(
-									'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
-									{
-										components: {
-											a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
-										},
-									}
-							  )
-							: featureExplanation }
-					</p>
+					{ username
+						? translate(
+								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+								{
+									components: {
+										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
+									},
+								}
+						  )
+						: featureExplanation }
 				</HostingCardDescription>
 			) }
 			{ displayQuestionsAndButton && (
