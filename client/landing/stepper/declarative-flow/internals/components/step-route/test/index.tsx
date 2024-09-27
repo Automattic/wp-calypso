@@ -157,7 +157,6 @@ describe( 'StepRoute', () => {
 
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
-				skip_step_render: false,
 			} );
 		} );
 
@@ -168,7 +167,6 @@ describe( 'StepRoute', () => {
 				intent: 'build',
 				assembler_source: 'premium',
 				is_in_hosting_flow: false,
-				skip_step_render: false,
 			} );
 		} );
 
@@ -193,7 +191,6 @@ describe( 'StepRoute', () => {
 				flow: 'some-flow',
 				optionalProps: {
 					intent: 'build',
-					skip_step_render: false,
 				},
 			} );
 		} );
