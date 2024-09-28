@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, FormInputValidation, FormLabel } from '@automattic/components';
+import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
@@ -28,7 +28,6 @@ import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -94,6 +93,7 @@ class Account extends Component {
 
 	state = {
 		redirect: false,
+		showConfirmUsernameForm: false,
 		submittingForm: false,
 		formsSubmitting: {},
 		usernameAction: 'new',
@@ -103,6 +103,19 @@ class Account extends Component {
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
+		}
+	}
+
+	componentDidMount() {
+		const params = new URLSearchParams( window.location.search );
+		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
+			this.props.successNotice( this.props.translate( 'Username changed successfully!' ), {
+				duration: 5000,
+			} );
+
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.delete( 'usernameChangeSuccess' );
+			window.history.replaceState( {}, '', currentUrl.toString() );
 		}
 	}
 
@@ -423,11 +436,15 @@ class Account extends Component {
 		}
 	};
 
+	toggleConfirmUsernameForm = () => {
+		this.setState( { showConfirmUsernameForm: ! this.state.showConfirmUsernameForm } );
+	};
+
 	submitUsernameForm = async () => {
 		const username = this.getUserSetting( 'user_login' );
 		const action = this.state.usernameAction ? this.state.usernameAction : 'none';
 
-		this.setState( { submittingForm: true } );
+		this.setState( { submittingForm: true, showConfirmUsernameForm: false } );
 
 		try {
 			await wpcom.req.post( '/me/username', { username, action } );
@@ -437,7 +454,9 @@ class Account extends Component {
 
 			// We reload here to refresh cookies, user object, and user settings.
 			// @TODO: Do not require reload here.
-			window.location.reload();
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.set( 'usernameChangeSuccess', 'true' );
+			window.location.href = currentUrl.toString();
 		} catch ( error ) {
 			this.setState( { submittingForm: false, validationResult: error } );
 			this.props.errorNotice( error.message );
@@ -494,9 +513,7 @@ class Account extends Component {
 		}
 
 		return this.isUsernameValid()
-			? translate( '%(username)s is a valid username.', {
-					args: { username: this.getValidatedUsername() },
-			  } )
+			? translate( 'Nice username!' )
 			: this.getUsernameValidationFailureMessage();
 	}
 
@@ -686,7 +703,7 @@ class Account extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Would you like a matching blog address too?' ) }</FormLegend>
+				<FormLabel>{ translate( 'Would you like a matching blog address too?' ) }</FormLabel>
 				{
 					// message is translated in the API
 					map( actions, ( message, key ) => (
@@ -706,11 +723,79 @@ class Account extends Component {
 		);
 	}
 
+	renderConfirmUsernameDialog() {
+		const { currentUserDisplayName, currentUserName, translate } = this.props;
+
+		const buttons = [
+			{ action: 'cancel', label: translate( 'Cancel' ), onClick: this.toggleConfirmUsernameForm },
+			{
+				action: 'confirm',
+				label: translate( 'Change username' ),
+				isPrimary: true,
+				additionalClassNames: 'is-scary',
+				onClick: this.submitUsernameForm,
+			},
+		];
+
+		return (
+			<Dialog
+				isVisible={ this.state.showConfirmUsernameForm }
+				additionalClassNames="account__confirm-username-dialog"
+				buttons={ buttons }
+				showCloseIcon
+				onClose={ this.toggleConfirmUsernameForm }
+			>
+				<FormLabel>{ translate( 'Confirm username change' ) }</FormLabel>
+				<p>
+					{ translate(
+						'You are about to change your username, {{strong}}%(username)s{{/strong}}. ' +
+							'Once changed, you will not be able to revert it.',
+						{
+							args: {
+								username: currentUserName,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }{ ' ' }
+					{ translate(
+						'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'If you just want to change your display name, {{strong}}%(displayName)s{{/strong}}, ' +
+							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
+						{
+							args: {
+								displayName: currentUserDisplayName,
+							},
+							components: {
+								myProfileLink: (
+									<a
+										href="/me"
+										onClick={ this.getClickHandler(
+											'My Profile Link in Username Change',
+											this.props.markSaved
+										) }
+									/>
+								),
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+			</Dialog>
+		);
+	}
+
 	/*
 	 * These form fields are displayed when a username change is in progress.
 	 */
 	renderUsernameFields() {
-		const { currentUserDisplayName, currentUserName, translate } = this.props;
+		const { translate } = this.props;
 
 		const isSaveButtonDisabled =
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
@@ -742,54 +827,16 @@ class Account extends Component {
 				</FormFieldset>
 
 				{ this.renderBlogActionFields() }
-
-				<Notice status="is-warning" showDismiss={ false }>
-					{ translate(
-						'You are about to change your username, which is currently {{strong}}%(username)s{{/strong}}. ' +
-							'You will not be able to change your username back.',
-						{
-							args: {
-								username: currentUserName,
-							},
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</Notice>
-
-				<p className="account__change-username-text">
-					{ translate(
-						'If you just want to change your display name, which is currently {{strong}}%(displayName)s{{/strong}}, ' +
-							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
-						{
-							args: {
-								displayName: currentUserDisplayName,
-							},
-							components: {
-								myProfileLink: (
-									<a
-										href="/me"
-										onClick={ this.getClickHandler(
-											'My Profile Link in Username Change',
-											this.props.markSaved
-										) }
-									/>
-								),
-								strong: <strong />,
-							},
-						}
-					) }{ ' ' }
-					{ translate(
-						'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
-					) }
-				</p>
+				{ this.renderConfirmUsernameDialog() }
 
 				<FormButtonsBar>
 					<FormButton
 						disabled={ isSaveButtonDisabled }
 						type="button"
-						onClick={ this.getClickHandler( 'Change Username Button', this.submitUsernameForm ) }
+						onClick={ this.getClickHandler(
+							'Change Username Button',
+							this.toggleConfirmUsernameForm
+						) }
 					>
 						{ translate( 'Save username' ) }
 					</FormButton>
