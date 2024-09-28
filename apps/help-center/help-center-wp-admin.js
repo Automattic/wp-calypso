@@ -3,16 +3,44 @@ import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 const queryClient = new QueryClient();
 import './help-center.scss';
 
 function AdminHelpCenterContent() {
-	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+	const { setShowHelpCenter } = useDataStoreDispatch( 'automattic/help-center' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
+
+	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
+
+	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
+		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
+		if (
+			masterbarNotificationsButton?.classList?.contains( 'wpnt-show' ) &&
+			helpCenterContainerIsVisible
+		) {
+			setShowHelpCenter( false );
+		}
+	}, [ masterbarNotificationsButton.classList, setShowHelpCenter ] );
+
+	useEffect( () => {
+		if ( masterbarNotificationsButton ) {
+			masterbarNotificationsButton.addEventListener( 'click', () => {
+				closeHelpCenterWhenNotificationsPanelIsOpened();
+			} );
+		}
+
+		return () => {
+			if ( masterbarNotificationsButton ) {
+				masterbarNotificationsButton.removeEventListener( 'click', () => {
+					closeHelpCenterWhenNotificationsPanelIsOpened();
+				} );
+			}
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( show ) {

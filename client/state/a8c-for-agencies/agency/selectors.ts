@@ -30,3 +30,21 @@ export function hasAgency( state: A4AStore ): boolean {
 	const agencies = state.a8cForAgencies.agencies.agencies;
 	return Array.isArray( agencies ) && agencies.length > 0;
 }
+
+export function isAgencyOwner( state: A4AStore ): boolean {
+	return getActiveAgency( state )?.user?.role === 'a4a_administrator';
+}
+
+export function isAgencyClientUser( state: A4AStore ): boolean {
+	return state.a8cForAgencies.agencies.isAgencyClientUser;
+}
+
+export function hasAgencyCapability( state: A4AStore, capability: string ): boolean {
+	// If the user is a client user, bypass the capability check.
+	if ( isAgencyClientUser( state ) ) {
+		return true;
+	}
+
+	const agency = getActiveAgency( state );
+	return agency?.user?.capabilities?.includes( capability ) ?? false;
+}

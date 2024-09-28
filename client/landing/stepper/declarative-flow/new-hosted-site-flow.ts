@@ -15,7 +15,6 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -51,6 +50,9 @@ const hosting: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
+
+		const query = useQuery();
+		const queryParams = Object.fromEntries( query );
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -63,8 +65,6 @@ const hosting: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
@@ -72,6 +72,11 @@ const hosting: Flow = {
 
 					setPlanCartItem( {
 						product_slug: productSlug,
+						extra: {
+							...( queryParams?.utm_source && {
+								hideProductVariants: queryParams.utm_source === 'wordcamp',
+							} ),
+						},
 					} );
 
 					if ( isFreeHostingTrial( productSlug ) ) {
@@ -136,14 +141,14 @@ const hosting: Flow = {
 			[]
 		);
 
+		const queryParams = Object.fromEntries( query );
+
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
+			redirectTo: addQueryArgs( `/setup/${ flowName }`, { ...queryParams } ),
 		} );
 
 		useLayoutEffect( () => {
-			const queryParams = Object.fromEntries( query );
-
 			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
 
 			if ( ! userIsLoggedIn ) {
@@ -158,7 +163,7 @@ const hosting: Flow = {
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
 				window.location.assign( urlWithQueryParams );
 			}
-		}, [ userIsLoggedIn, isEligible, currentStepSlug, query ] );
+		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, logInUrl ] );
 
 		useEffect(
 			() => {

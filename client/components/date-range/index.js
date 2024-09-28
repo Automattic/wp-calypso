@@ -1,14 +1,16 @@
-import { Button, Popover, Gridicon } from '@automattic/components';
+import { Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import { DateUtils } from 'react-day-picker';
-import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import DateRangePicker from './date-range-picker';
+import DateRangeFooter from './footer';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
+import Shortcuts from './shortcuts';
 import DateRangeTrigger from './trigger';
 
 import './style.scss';
@@ -44,7 +46,14 @@ export class DateRange extends Component {
 		showTriggerClear: PropTypes.bool,
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
+		renderFooter: PropTypes.func,
 		renderInputs: PropTypes.func,
+		displayShortcuts: PropTypes.bool,
+		rootClass: PropTypes.string,
+		useArrowNavigation: PropTypes.bool,
+		overlay: PropTypes.node,
+		customTitle: PropTypes.string,
+		onShortcutClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -55,7 +64,13 @@ export class DateRange extends Component {
 		showTriggerClear: true,
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
+		renderFooter: ( props ) => <DateRangeFooter { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		displayShortcuts: false,
+		rootClass: '',
+		useArrowNavigation: false,
+		overlay: null,
+		customTitle: '',
 	};
 
 	constructor( props ) {
@@ -105,10 +120,24 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
+			numberOfMonths: this.getNumberOfMonths(),
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = createRef();
+		this.throttledHandleResize = debounce( () => {
+			this.setState( {
+				numberOfMonths: this.getNumberOfMonths(),
+			} );
+		}, 250 );
+	}
+
+	componentDidMount() {
+		window.addEventListener( 'resize', this.throttledHandleResize );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.throttledHandleResize );
 	}
 
 	/**
@@ -166,39 +195,6 @@ export class DateRange extends Component {
 	};
 
 	/**
-	 * Ensure dates are valid according to standard rules
-	 * and special configuration component config props
-	 * @param  {moment}  date MomentJS date object
-	 * @returns {boolean}      whether date is considered valid or not
-	 */
-	isValidDate( date ) {
-		const { firstSelectableDate, lastSelectableDate } = this.props;
-
-		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
-
-		// By default check
-		// 1. Looks like a valid date
-		// 2. after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
-		if ( ! date.isValid() || ! date.isSameOrAfter( epoch ) ) {
-			return false;
-		}
-
-		// Check not before the first selectable date
-		// https://momentjs.com/docs/#/query/is-same-or-before/
-		if ( firstSelectableDate && date.isBefore( firstSelectableDate ) ) {
-			return false;
-		}
-
-		// Check not before the last selectable date
-		// https://momentjs.com/docs/#/query/is-same-or-before/
-		if ( lastSelectableDate && date.isAfter( lastSelectableDate ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	 * Updates the state when the date text inputs are blurred
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
@@ -222,8 +218,17 @@ export class DateRange extends Component {
 		if ( isSameDate ) {
 			return;
 		}
+		// Should we juggle the dates more??
+		if ( ! this.state.startDate ) {
+			this.setState( {
+				startDate: date,
+			} );
+			return;
+		}
 
-		this.onSelectDate( date );
+		this.setState( {
+			[ stateKey ]: date,
+		} );
 	};
 
 	/**
@@ -257,84 +262,6 @@ export class DateRange extends Component {
 		this.setState( {
 			focusedMonth: date.toDate(),
 		} );
-	};
-
-	/**
-	 * Converts moment dates to a DateRange
-	 * as required by Day Picker DateUtils
-	 * @param  {import('moment').Moment} startDate the start date for the range
-	 * @param  {import('moment').Moment} endDate   the end date for the range
-	 * @returns {Object}           the date range object
-	 */
-	toDateRange( startDate, endDate ) {
-		return {
-			from: this.momentDateToJsDate( startDate ),
-			to: this.momentDateToJsDate( endDate ),
-		};
-	}
-
-	/**
-	 * Handles selection (only) of new dates persisting
-	 * the values to state. Note that if the user does not
-	 * commit the dates (eg: clicking "Apply") then the `revertDates`
-	 * method is triggered which restores the previous ("stale") dates.
-	 *
-	 * Dates are only persisted via the commitDates method.
-	 * @param  {import('moment').Moment} date the newly selected date object
-	 */
-	onSelectDate = ( date ) => {
-		if ( ! this.isValidDate( date ) ) {
-			return;
-		}
-
-		// DateUtils requires a range object with this shape
-		const range = this.toDateRange( this.state.startDate, this.state.endDate );
-
-		const rawDay = this.momentDateToJsDate( date );
-
-		// Calculate the new Date range
-		const newRange = DateUtils.addDayToRange( rawDay, range );
-
-		// Update state to reflect new date range for
-		// calendar and text inputs
-		this.setState(
-			( previousState ) => {
-				// Update to date or `null` which means "not date"
-				const newStartDate =
-					newRange.from === null
-						? NO_DATE_SELECTED_VALUE
-						: this.nativeDateToMoment( newRange.from );
-				const newEndDate =
-					newRange.to === null ? NO_DATE_SELECTED_VALUE : this.nativeDateToMoment( newRange.to );
-
-				// Update start/end state values
-				let newState = {
-					startDate: newStartDate,
-					endDate: newEndDate,
-					textInputStartDate: this.toDateString( newStartDate ),
-					textInputEndDate: this.toDateString( newEndDate ),
-				};
-
-				// For first date selection only: "cache" previous dates
-				// just in case user doesn't "Apply" and we need to revert
-				// to the original dates
-				if ( ! previousState.staleDatesSaved ) {
-					newState = {
-						...newState,
-						staleStartDate: previousState.startDate,
-						staleEndDate: previousState.endDate,
-						staleDatesSaved: true, // marks that we have saved stale dates
-					};
-				}
-
-				return newState;
-			},
-			() => {
-				// Trigger callback prop to allow parent components to consume
-				// this components state
-				this.props.onDateSelect( this.state.startDate, this.state.endDate );
-			}
-		);
 	};
 
 	/**
@@ -429,24 +356,6 @@ export class DateRange extends Component {
 	};
 
 	/**
-	 * Converts a moment date to a native JS Date object
-	 * @param  {import('moment').Moment} momentDate a momentjs date object to convert
-	 * @returns {Date}            the converted JS Date object
-	 */
-	momentDateToJsDate( momentDate ) {
-		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
-	}
-
-	/**
-	 * Converts a native JS Date object to a MomentJS Date object
-	 * @param  {Date} nativeDate date to be converted
-	 * @returns {import('moment').Moment}            the converted Date
-	 */
-	nativeDateToMoment( nativeDate ) {
-		return this.props.moment( nativeDate );
-	}
-
-	/**
 	 * Formats a given date to the appropriate format for the
 	 * current locale
 	 * @param  {import('moment').Moment | Date} date the date to be converted
@@ -502,74 +411,19 @@ export class DateRange extends Component {
 		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
 	}
 
-	/**
-	 * Builds an appropriate disabledDays prop for DatePicker
-	 * based on firstSelectableDate and lastSelectableDate
-	 * config props
-	 *
-	 * See:
-	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
-	 * http://react-day-picker.js.org/docs/matching-days
-	 * @returns {Array} configuration to be passed to DatePicker as disabledDays prop
-	 */
-	getDisabledDaysConfig() {
-		const { firstSelectableDate, lastSelectableDate } = this.props;
-
-		const config = {};
-
-		if ( firstSelectableDate ) {
-			config.before = this.momentDateToJsDate( firstSelectableDate ); // disable all days before today
-		}
-
-		if ( lastSelectableDate ) {
-			config.after = this.momentDateToJsDate( lastSelectableDate ); // disable all days before today
-		}
-
-		// Requires a wrapping Array
-		return [ config ];
-	}
-
 	getNumberOfMonths() {
-		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
+		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
 	}
 
-	renderDateHelp() {
-		const { startDate, endDate } = this.state;
-
-		return (
-			<div className="date-range__info" role="status" aria-live="polite">
-				{ ! startDate &&
-					! endDate &&
-					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
-						components: {
-							icon: <Gridicon aria-hidden="true" icon="info" />,
-							em: <em />,
-						},
-					} ) }
-				{ startDate &&
-					! endDate &&
-					this.props.translate( '{{icon/}} Please select the {{em}}last{{/em}} day.', {
-						components: {
-							icon: <Gridicon aria-hidden="true" icon="info" />,
-							em: <em />,
-						},
-					} ) }
-				{ startDate && endDate && (
-					<Button
-						className="date-range__info-btn"
-						borderless
-						compact
-						onClick={ this.resetDates }
-						aria-label={ this.props.translate( 'Reset selected dates' ) }
-					>
-						{ this.props.translate( '{{icon/}} reset selected dates', {
-							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },
-						} ) }
-					</Button>
-				) }
-			</div>
-		);
-	}
+	handleDateRangeChange = ( startDate, endDate ) => {
+		this.setState( {
+			startDate,
+			endDate,
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
+		} );
+		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
+	};
 
 	/**
 	 * Renders the Popover component
@@ -577,6 +431,13 @@ export class DateRange extends Component {
 	 */
 	renderPopover() {
 		const headerProps = {
+			customTitle: this.props.customTitle,
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
+			resetDates: this.resetDates,
+		};
+
+		const footerProps = {
 			onApplyClick: this.commitDates,
 			onCancelClick: this.closePopoverAndRevert,
 		};
@@ -597,13 +458,32 @@ export class DateRange extends Component {
 				position="bottom"
 				onClose={ this.closePopoverAndCommit }
 			>
-				<div className="date-range__popover-inner">
-					<div className="date-range__controls">
+				<div className="date-range__popover-content">
+					<div
+						className={ clsx( 'date-range__popover-inner', {
+							'date-range__popover-inner__hasoverlay': !! this.props.overlay,
+						} ) }
+					>
+						{ this.props.overlay && (
+							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
+						) }
 						{ this.props.renderHeader( headerProps ) }
-						{ this.renderDateHelp() }
+						{ this.props.renderInputs( inputsProps ) }
+						{ this.renderDatePicker() }
+						{ this.props.renderFooter( footerProps ) }
 					</div>
-					{ this.props.renderInputs( inputsProps ) }
-					{ this.renderDatePicker() }
+					{ /* Render shortcuts to the right of the calendar */ }
+					{ this.props.displayShortcuts && (
+						<div className="date-range-picker-shortcuts">
+							<Shortcuts
+								onClick={ this.handleDateRangeChange }
+								locked={ !! this.props.overlay }
+								startDate={ this.state.startDate }
+								endDate={ this.state.endDate }
+								onShortcutClick={ this.props.onShortcutClick } // for tracking shortcut clicks
+							/>
+						</div>
+					) }
 				</div>
 			</Popover>
 		);
@@ -614,55 +494,16 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the DatePicker component
 	 */
 	renderDatePicker() {
-		const fromDate = this.momentDateToJsDate( this.state.startDate );
-		const toDate = this.momentDateToJsDate( this.state.endDate );
-
-		// Add "Range" modifier classes to Day component
-		// within Date Picker to aid "range" styling
-		// http://react-day-picker.js.org/api/DayPicker/#modifiers
-		const modifiers = {
-			start: fromDate,
-			end: toDate,
-			'range-start': fromDate,
-			'range-end': toDate,
-			range: {
-				from: fromDate,
-				to: toDate,
-			},
-		};
-
-		// Dates to be "selected" in Picker
-		const selected = [
-			fromDate,
-			{
-				from: fromDate,
-				to: toDate,
-			},
-		];
-
-		const rootClassNames = {
-			'date-range__picker': true,
-		};
-
-		const calendarInitialDate =
-			this.props.firstSelectableDate ||
-			( this.props.lastSelectableDate &&
-				moment( this.props.lastSelectableDate ).subtract( 1, 'month' ) ) ||
-			this.state.startDate;
-
 		return (
-			<DatePicker
-				calendarViewDate={ this.state.focusedMonth }
-				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) ?? null }
-				rootClassNames={ rootClassNames }
-				modifiers={ modifiers }
-				showOutsideDays={ false }
-				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
-				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
-				onSelectDay={ this.onSelectDate }
-				selectedDays={ selected }
-				numberOfMonths={ this.getNumberOfMonths() }
-				disabledDays={ this.getDisabledDaysConfig() }
+			<DateRangePicker
+				firstSelectableDate={ this.props.firstSelectableDate }
+				lastSelectableDate={ this.props.lastSelectableDate }
+				selectedStartDate={ this.state.startDate }
+				selectedEndDate={ this.state.endDate }
+				onDateRangeChange={ this.handleDateRangeChange }
+				focusedMonth={ this.state.focusedMonth }
+				numberOfMonths={ this.state.numberOfMonths }
+				useArrowNavigation={ this.props.useArrowNavigation }
 			/>
 		);
 	}
@@ -672,10 +513,13 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the DateRange component
 	 */
 	render() {
-		const rootClassNames = clsx( {
-			'date-range': true,
-			'toggle-visible': this.state.popoverVisible,
-		} );
+		const rootClassNames = clsx(
+			{
+				'date-range': true,
+				'toggle-visible': this.state.popoverVisible,
+			},
+			this.props.rootClass
+		);
 
 		const triggerProps = {
 			startDate: this.state.startDate,

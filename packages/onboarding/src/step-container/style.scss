@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "../../styles/mixins.scss";
+@import "../../styles/mixins";
 
 /**
  *	General
@@ -71,8 +71,8 @@
 	 *	Header
 	 */
 	.step-container__header {
+		margin-top: 32px;
 		margin-bottom: 32px;
-		margin-top: 0;
 		display: block;
 		justify-content: space-between;
 		align-items: center;

@@ -348,6 +348,7 @@
 
 	.payment-logo {
 		margin-right: 5px;
+		border-radius: 2px;
 	}
 
 	a {
@@ -360,7 +361,7 @@
 	}
 
 	&.is-expiring .manage-purchase__detail-date-span {
-		color: var(--studio-pink-50);
+		color: var(--studio-red);
 	}
 }
 
@@ -469,6 +470,15 @@
 		padding: 0.5rem;
 		margin: 0 16px;
 		width: 200px;
+	}
+}
+
+.manage-purchase__license-clipboard-link {
+	margin-block-start: 8px;
+
+	@include breakpoint-deprecated(">480px") {
+		margin-block-start: 0;
+		margin-inline-start: 16px;
 	}
 }
 

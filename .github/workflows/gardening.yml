@@ -46,4 +46,5 @@ jobs:
          slack_quality_channel: ${{ secrets.SLACK_QUALITY_CHANNEL }}
          triage_projects_token: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
          project_board_url: ${{ secrets.PROJECT_BOARD_URL }}
+         openai_api_key: ${{ secrets.OPENAI_API_KEY }}
          tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageIssues,gatherSupportReferences,replyToCustomersReminder,updateBoard'

@@ -16,7 +16,7 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -67,9 +67,12 @@ const free: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+		const { getPostFlowUrl, postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			switch ( _currentStep ) {
 				case 'freeSetup':
 					return navigate( 'create-site' );
@@ -101,20 +104,26 @@ const free: Flow = {
 					}
 
 					if ( selectedDesign ) {
-						return navigate( `launchpad?siteSlug=${ siteSlug }` );
+						return postFlowNavigator( { siteId, siteSlug } );
 					}
 
 					return navigate( `designSetup?siteSlug=${ providedDependencies?.siteSlug }` );
 
 				case 'designSetup':
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+						const destination = getPostFlowUrl( {
+							flow: flowName,
+							siteId,
+							siteSlug: providedDependencies.siteSlug as string,
+						} );
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies?.siteSlug }`
-						);
+						initializeLaunchpadState( {
+							siteId,
+							siteSlug: providedDependencies.siteSlug as string,
+						} );
+						const returnUrl = encodeURIComponent( destination );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(

@@ -8,8 +8,8 @@ const contextLinks = {
 		post_id: 80368,
 	},
 	'admin-interface-style': {
-		link: 'https://wordpress.com/support/dashboard/#set-the-admin-interface-style',
-		post_id: 137,
+		link: 'https://wordpress.com/support/set-your-admin-interface-style/',
+		post_id: 386651,
 	},
 	advertising: {
 		link: 'https://wordpress.com/support/promote-a-post/',
@@ -109,8 +109,18 @@ const contextLinks = {
 		post_id: 99381,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'hosting-edge-cache': {
+		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/',
+		post_id: 99415,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	'hosting-clear-cache': {
 		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/#1-clear-your-site-s-cache',
+		post_id: 99415,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'hosting-defensive-mode': {
+		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/',
 		post_id: 99415,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
@@ -122,6 +132,11 @@ const contextLinks = {
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
 		post_id: 99378,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'hosting-elasticsearch': {
+		link: 'https://developer.wordpress.com/docs/elasticsearch/elasticsearch-queries/',
+		post_id: 99387,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	import: {
@@ -149,8 +164,8 @@ const contextLinks = {
 		post_id: 147777,
 	},
 	'importers-wordpress': {
-		link: 'https://wordpress.com/support/export/',
-		post_id: 2087,
+		link: 'https://wordpress.com/support/import/import-a-sites-content/#step-1-obtain-an-export-file',
+		post_id: 194757,
 	},
 	'introduction-to-woocommerce': {
 		link: 'https://wordpress.com/support/introduction-to-woocommerce/',
@@ -356,6 +371,14 @@ const contextLinks = {
 	'hosting-configuration': {
 		link: 'https://wordpress.com/support/hosting-configuration/',
 		post_id: 160841,
+	},
+	'site-icons': {
+		link: 'https://wordpress.com/support/site-icons/',
+		post_id: 1327,
+	},
+	'site-performance': {
+		link: 'https://wordpress.com/support/check-your-sites-performance/',
+		post_id: 386816,
 	},
 };
 

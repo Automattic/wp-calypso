@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgency, isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const pressableUrl = 'https://my.pressable.com/agency/auth';
@@ -50,6 +50,8 @@ const PressableOffering = () => {
 		</div>
 	);
 
+	const isOwner = useSelector( isAgencyOwner );
+
 	return (
 		<FoldableCard
 			className="a4a-oferring-item-pressable a4a-offering-item__card"
@@ -76,16 +78,18 @@ const PressableOffering = () => {
 					{ translate( 'Explore Pressable' ) }
 				</Button>
 			) : (
-				<Button
-					className="a4a-offering-item__button"
-					primary
-					target="_blank"
-					rel="norefferer nooppener"
-					href={ pressableUrl }
-				>
-					{ translate( 'View your dashboard' ) }
-					<Icon icon={ external } size={ 18 } />
-				</Button>
+				isOwner && (
+					<Button
+						className="a4a-offering-item__button"
+						primary
+						target="_blank"
+						rel="norefferer nooppener"
+						href={ pressableUrl }
+					>
+						{ translate( 'View your dashboard' ) }
+						<Icon icon={ external } size={ 18 } />
+					</Button>
+				)
 			) }
 		</FoldableCard>
 	);

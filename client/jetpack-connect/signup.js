@@ -43,6 +43,7 @@ import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
@@ -65,6 +66,7 @@ export class JetpackSignup extends Component {
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		isWooCoreProfiler: PropTypes.bool,
 	};
 
 	state = {
@@ -129,7 +131,7 @@ export class JetpackSignup extends Component {
 
 	isWooCoreProfiler( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from;
+		return 'woocommerce-core-profiler' === from || this.props.isWooCoreProfiler;
 	}
 
 	getWooDnaConfig() {
@@ -399,7 +401,7 @@ export class JetpackSignup extends Component {
 					subHeader = translate(
 						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments'
 					);
-				} else if ( wooDna.getFlowName() === 'woodna:blaze-ads' ) {
+				} else if ( wooDna.getFlowName() === 'woodna:blaze-ads-on-woo' ) {
 					/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 					subHeader = translate(
 						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by %(pluginName)s',
@@ -510,9 +512,23 @@ export class JetpackSignup extends Component {
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+						disableSiteCard={
+							isWooCoreProfiler && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+						}
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
+						isPasswordless={
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+						}
+						disableTosText={
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+						}
+						labelText={
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+								? this.props.translate( 'Your Email' )
+								: null
+						}
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
@@ -537,7 +553,7 @@ export class JetpackSignup extends Component {
 				{ isWooCoreProfiler && this.props.authQuery.installedExtSuccess && (
 					<WooInstallExtSuccessNotice />
 				) }
-				{ isWooCoreProfiler && (
+				{ ! isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler && (
 					<div className="jetpack-connect__jetpack-logo-wrapper">
 						<JetpackLogo monochrome size={ 18 } />{ ' ' }
 						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
@@ -554,6 +570,7 @@ const connectComponent = connect(
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
+		isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
 	} ),
 	{
 		createAccount: createAccountAction,

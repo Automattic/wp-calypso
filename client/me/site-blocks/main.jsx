@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';
 import InfiniteList from 'calypso/components/infinite-list';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -63,9 +64,11 @@ class SiteBlockList extends Component {
 						{ translate(
 							'Blocked sites will not appear in your Reader and will not be recommended to you.'
 						) }{ ' ' }
-						<a href={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }>
-							{ translate( 'Learn more' ) }
-						</a>
+						<InlineSupportLink
+							showIcon={ false }
+							supportPostId={ 32011 }
+							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }
+						/>
 					</p>
 
 					{ hasNoBlocks && (

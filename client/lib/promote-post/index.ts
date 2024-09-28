@@ -47,6 +47,7 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
+				campaignId?: string;
 				origin: string;
 				originProps?: DSPOriginProps;
 				onLoaded?: () => void;
@@ -61,6 +62,7 @@ declare global {
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
 				source?: string;
+				isRunningInBlazePlugin?: boolean;
 				isRunningInWooBlaze?: boolean;
 				isRunningInJetpack?: boolean;
 				jetpackXhrParams?: {
@@ -68,6 +70,7 @@ declare global {
 					headerNonce: string;
 				};
 				jetpackVersion?: string;
+				blazeAdsVersion?: string;
 				hotjarSiteSettings?: object;
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
@@ -132,6 +135,8 @@ export const getDSPOrigin = ( originProps: DSPOriginProps | undefined ) => {
 	// We need to check for Woo first, because Woo Blaze is also running in Jetpack (At least in this iteration)
 	if ( config.isEnabled( 'is_running_in_woo_site' ) ) {
 		return 'wc-blaze-plugin';
+	} else if ( config.isEnabled( 'is_running_in_blaze_plugin' ) ) {
+		return 'wp-blaze-plugin';
 	} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 		return isAtomic ? 'jetpack-atomic' : 'jetpack';
 	} else if ( isWpMobileApp() ) {
@@ -156,8 +161,10 @@ export async function showDSP(
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
 	jetpackVersion?: string,
+	blazeAdsVersion?: string,
 	dispatch?: Dispatch,
-	dspOriginProps?: DSPOriginProps
+	dspOriginProps?: DSPOriginProps,
+	campaignId?: string
 ): Promise< boolean > {
 	const origin = getDSPOrigin( dspOriginProps ?? {} );
 
@@ -177,6 +184,7 @@ export async function showDSP(
 		try {
 			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 			const isRunningInWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+			const isRunningInBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 			const isMobileApp = isWpMobileApp() || isWcMobileApp();
 
 			window.BlazePress.render( {
@@ -201,11 +209,13 @@ export async function showDSP(
 				localizeUrlFn: localizeUrlFn,
 				locale,
 				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
+				campaignId: campaignId && campaignId !== '0' ? campaignId : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isMobileApp ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isMobileApp, // Don't show the GetStartedMessage in the mobile app.
 				source: source,
+				isRunningInBlazePlugin,
 				isRunningInWooBlaze,
 				isRunningInJetpack,
 				jetpackXhrParams: isRunningInJetpack
@@ -215,6 +225,7 @@ export async function showDSP(
 					  }
 					: undefined,
 				jetpackVersion,
+				blazeAdsVersion,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch, dspOriginProps ) : undefined,
 				options: getWidgetOptions(),
@@ -267,14 +278,31 @@ export function getRecordDSPEventHandler( dispatch: Dispatch, dspOriginProps?: D
 	};
 }
 
+type SupportedDSPMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
 export const requestDSP = async < T >(
 	siteId: number,
 	apiUri: string,
-	method = 'GET',
-	body: Record< string, any > | undefined = undefined
+	method: SupportedDSPMethods = 'GET',
+	body: Record< string, unknown > | undefined = undefined
 ): Promise< T > => {
 	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
-	const path = `${ URL_BASE }${ apiUri }`;
+
+	let requestBody = body;
+	let path = `${ URL_BASE }${ apiUri }`;
+
+	// Merges the query params into the requestBody, and removes them from the path variable
+	// Query params in the path causes problems on Jetpack sites using plain permalinks
+	if ( path.indexOf( '?' ) > 0 ) {
+		const search = path.substring( path.indexOf( '?' ) );
+		path = path.substring( 0, path.indexOf( '?' ) );
+
+		const queryParams = Object.fromEntries( new URLSearchParams( search ) );
+		requestBody = {
+			...requestBody,
+			...queryParams,
+		};
+	}
 
 	const params = {
 		path,
@@ -282,44 +310,40 @@ export const requestDSP = async < T >(
 		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
 			? 'jetpack/v4/blaze-app'
 			: 'wpcom/v2',
-		body,
 	};
 
 	switch ( method ) {
 		case 'POST':
-			return await wpcom.req.post( params );
+			return await wpcom.req.post( params, requestBody );
 		case 'PUT':
-			return await wpcom.req.put( params );
+			return await wpcom.req.put( params, requestBody );
 		case 'DELETE':
-			return await wpcom.req.del( params );
+			return await wpcom.req.del( params, requestBody );
 		default:
-			return await wpcom.req.get( params );
+			return await wpcom.req.get( params, requestBody );
 	}
 };
 
-const handleDSPError = async < T >(
-	error: DSPError,
+export const requestDSPHandleErrors = async < T >(
 	siteId: number,
-	currentURL: string
+	apiUri: string,
+	method: SupportedDSPMethods = 'GET',
+	body: Record< string, unknown > | undefined = undefined
 ): Promise< T > => {
-	if ( error.errorCode === DSP_ERROR_NO_LOCAL_USER ) {
-		const createUserQuery = await requestDSP< NewDSPUserResult >(
-			siteId,
-			DSP_URL_CHECK_UPSERT_USER
-		);
-		if ( createUserQuery.new_dsp_user ) {
-			// then we should retry the original query
-			return await requestDSP< T >( siteId, currentURL );
-		}
-	}
-	throw error;
-};
-
-export const requestDSPHandleErrors = async < T >( siteId: number, url: string ): Promise< T > => {
 	try {
-		return await requestDSP( siteId, url );
-	} catch ( e ) {
-		return await handleDSPError( e as DSPError, siteId, url );
+		return await requestDSP( siteId, apiUri, method, body );
+	} catch ( error ) {
+		if ( ( error as DSPError ).errorCode === DSP_ERROR_NO_LOCAL_USER ) {
+			const createUserQuery = await requestDSP< NewDSPUserResult >(
+				siteId,
+				DSP_URL_CHECK_UPSERT_USER
+			);
+			if ( createUserQuery.new_dsp_user ) {
+				// then we should retry the original query
+				return await requestDSP( siteId, apiUri, method, body );
+			}
+		}
+		throw error;
 	}
 };
 

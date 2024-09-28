@@ -427,7 +427,6 @@ export const FEATURE_PRODUCT_ADD_ONS = 'product-add-ons';
 export const FEATURE_ASSEMBLED_KITS = 'assembled-kits';
 export const FEATURE_STOCK_NOTIFS = 'stock-notifs';
 export const FEATURE_DYNAMIC_UPSELLS = 'dynamic-upsells';
-export const FEATURE_LOYALTY_PROG = 'loyalty-prog';
 export const FEATURE_CUSTOM_MARKETING_AUTOMATION = 'custom-marketing-automation';
 export const FEATURE_BULK_DISCOUNTS = 'bulk-discounts';
 export const FEATURE_INVENTORY_MGMT = 'inventory-mgmt';
@@ -487,3 +486,18 @@ export const FEATURE_TYPE_JETPACK_SOCIAL = 'jetpack_social';
 export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
 export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
 export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
+
+/* START: Features for experiment calypso_pricing_grid_fewer_features */
+export const FEATURE_THEMES_PREMIUM_AND_STORE = 'feature-themes-premium-and-store';
+export const FEATURE_UNLIMITED_ENTITIES = 'feature-unlimited-entities';
+export const FEATURE_WOO_THEMES = 'feature-woo-themes';
+export const FEATURE_WOO_SOCIAL_MEDIA_INTEGRATIONS = 'feature-woo-social-media-integrations';
+export const FEATURE_WOO_PAYMENTS = 'feature-woo-payments';
+export const FEATURE_WOO_SHIPPING_TRACKING = 'feature-woo-shipping-tracking';
+export const FEATURE_WOO_TAX_SOLUTIONS = 'feature-woo-tax-solutions';
+export const FEATURE_WOO_BRANDS = 'feature-woo-brands';
+export const FEATURE_WOO_AUTOMATE = 'feature-woo-automate';
+export const FEATURE_GOOGLE_LISTING_ADS = 'feature-google-listing-ads';
+export const FEATURE_CONNECT_ANALYTICS = 'feature-connect-analytics';
+export const FEATURE_LIMITED_SITE_ACTIVITY_LOG = 'feature-limited-site-activity-log';
+/* END: Features for experiment calypso_pricing_grid_fewer_features */

@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "../mixins.scss";
+@import "../mixins";
 
 .products-overview__select-license {
 	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
@@ -70,5 +70,18 @@
 .products-overview {
 	.a4a-layout__top-wrapper {
 		z-index: 10;
+	}
+
+	.select-dropdown__item-text {
+		.content svg {
+			position: relative;
+			top: 5px;
+			margin-inline-end: 4px;
+		}
+	}
+
+	.section-nav.a4a-layout__navigation .select-dropdown__header .count {
+		top: 8.5px;
+		margin-inline-end: 8px;
 	}
 }

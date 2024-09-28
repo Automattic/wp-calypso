@@ -24,6 +24,11 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Sell;
 	}
 
+	// Prioritize Build over Write
+	if ( goals.includes( SiteGoal.Promote ) ) {
+		return SiteIntent.Build;
+	}
+
 	const intentDecidingGoal = ( goals as IntentDecidingGoal[] ).find( ( goal ) =>
 		INTENT_DECIDING_GOALS.includes( goal )
 	);

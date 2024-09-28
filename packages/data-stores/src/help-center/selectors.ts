@@ -11,3 +11,5 @@ export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
+export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
+export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;

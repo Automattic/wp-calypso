@@ -45,12 +45,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			hasPWYWPlanOnly,
 			showPaywallNotice,
 		}: StatsNoticeProps ) => {
-			// Show the notice only if the site is commercial.
-			if ( ! isCommercial ) {
-				return false;
-			}
-
-			if ( isVip ) {
+			if ( ! isCommercial || isVip ) {
 				return false;
 			}
 
@@ -67,11 +62,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				return true;
 			}
 
-			return !! (
-				( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				! isVip
+			return (
+				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
 		disabled: false,
@@ -88,8 +80,10 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			hasPaidStats,
 			isSiteJetpackNotAtomic,
 			isCommercial,
+			hasSignificantViews,
 		}: StatsNoticeProps ) => {
-			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+			const showUpgradeNoticeForWpcomSites =
+				isWpcom && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;

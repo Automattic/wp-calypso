@@ -17,12 +17,12 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
+import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
@@ -80,7 +80,7 @@ export default function useGenerateActionHook( {
 	const isPlanExpired = currentPlanExpiryDate
 		? currentPlanExpiryDate.getTime() < Date.now()
 		: false;
-	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+
 	const sitePlanSlug = currentPlan?.planSlug;
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -89,6 +89,8 @@ export default function useGenerateActionHook( {
 			: null
 	);
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
+
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	// TODO: Remove this hook call and inline the logic into respective functions
 	const getActionCallback = useGenerateActionCallback( {
@@ -99,7 +101,7 @@ export default function useGenerateActionHook( {
 		intent: plansIntent,
 		showModalAndExit,
 		sitePlanSlug,
-		siteSlug,
+		siteId,
 		withDiscount,
 	} );
 
@@ -186,6 +188,8 @@ export default function useGenerateActionHook( {
 			isPlanExpired,
 			currentPlanBillingPeriod,
 			billingPeriod,
+			setIsLoading,
+			isLoading,
 		} );
 	};
 
@@ -353,6 +357,8 @@ function getLoggedInPlansAction( {
 	isPlanExpired,
 	currentPlanBillingPeriod,
 	billingPeriod,
+	isLoading,
+	setIsLoading,
 }: {
 	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
@@ -361,6 +367,8 @@ function getLoggedInPlansAction( {
 	domainFromHomeUpsellFlow: string | null;
 	isPlanExpired: boolean;
 	canUserManageCurrentPlan: boolean | null;
+	isLoading: boolean;
+	setIsLoading: ( value: boolean ) => void;
 } & UseActionHookProps ): GridAction {
 	const current = sitePlanSlug === planSlug;
 	const isTrialPlan =
@@ -373,13 +381,22 @@ function getLoggedInPlansAction( {
 		variant: GridAction[ 'primary' ][ 'variant' ] = 'primary'
 	) => ( {
 		primary: {
-			callback: getActionCallback( {
-				planSlug,
-				cartItemForPlan,
-				selectedStorageAddOn,
-				availableForPurchase,
-			} ),
-			status: 'enabled' as GridAction[ 'primary' ][ 'status' ],
+			callback: async () => {
+				// FIXME:
+				// This callback is utilizing the implict knowledge that we know the only true async
+				// action happening in the logged-in plans grid. Once `useGenerateActionHook` and `UseGenerateActionCallback` are merged
+				// as described by Automattic/martech#3170, we will be able to clean this up.
+				setIsLoading( true );
+				await getActionCallback( {
+					planSlug,
+					cartItemForPlan,
+					selectedStorageAddOn,
+					availableForPurchase,
+				} )();
+				setIsLoading( false );
+				return;
+			},
+			status: ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ],
 			text,
 			variant,
 		},
@@ -398,10 +415,10 @@ function getLoggedInPlansAction( {
 		}
 
 		if ( canUserManageCurrentPlan ) {
-			return createLoggedInPlansAction( translate( 'Manage plan' ) );
+			return createLoggedInPlansAction( translate( 'Manage plan' ), 'secondary' );
 		}
 
-		return createLoggedInPlansAction( translate( 'View plan' ) );
+		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
 	}
 
 	// Downgrade action if the plan is not available for purchase
@@ -422,7 +439,10 @@ function getLoggedInPlansAction( {
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod
 	) {
-		return createLoggedInPlansAction( translate( 'Contact support', { context: 'verb' } ) );
+		return createLoggedInPlansAction(
+			translate( 'Contact support', { context: 'verb' } ),
+			'secondary'
+		);
 	}
 
 	/**

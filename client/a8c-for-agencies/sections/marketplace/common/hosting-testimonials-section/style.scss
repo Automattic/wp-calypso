@@ -14,13 +14,19 @@
 .hosting-testimonials__item {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 16px;
 
 	border-radius: 4px;
 	border: 1px solid var(--color-neutral-5);
 	background-color: var(--color-neutral-0);
-	padding: 32px;
+	padding: 16px;
 	justify-content: space-between;
+
+
+	@include break-medium {
+		gap: 24px;
+		padding: 32px;
+	}
 }
 
 .hosting-testimonials__item-message {

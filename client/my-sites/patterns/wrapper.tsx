@@ -7,16 +7,23 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-type PatternsWrapperProps = React.PropsWithChildren< unknown >;
+type PatternsWrapperProps = React.PropsWithChildren< { hideGetStartedCta?: boolean } >;
 
-export const PatternsWrapper = ( { children }: PatternsWrapperProps ) => {
+export const PatternsWrapper = ( {
+	hideGetStartedCta = false,
+	children,
+}: PatternsWrapperProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const locale = useLocale();
 
 	return (
 		<>
 			{ isLoggedIn && (
-				<UniversalNavbarHeader isLoggedIn startUrl={ getOnboardingUrl( locale, isLoggedIn ) } />
+				<UniversalNavbarHeader
+					hideGetStartedCta={ hideGetStartedCta }
+					isLoggedIn
+					startUrl={ getOnboardingUrl( locale, isLoggedIn ) }
+				/>
 			) }
 
 			<Main fullWidthLayout>{ children }</Main>

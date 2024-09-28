@@ -42,7 +42,17 @@
 
 	.odie-chatbox-message-sources-container {
 		width: 100%;
+
+		&:last-of-type > .odie-chatbox-message-sources-container {
+			margin-bottom: 64px;
+		}
 	}
+}
+
+.odie-chatbox-message-dislike-feedback {
+	min-height: 235px;
+	gap: 18px;
+	justify-content: flex-start;
 }
 
 .chat-box-message-container {
@@ -72,8 +82,9 @@
 .odie-chat-message-input-container {
 	z-index: 10;
 	position: fixed;
-	width: 100%;
 	bottom: 0;
+	left: 0;
+	right: 0;
 	max-width: 410px;
 	flex-shrink: 0;
 	box-sizing: border-box;

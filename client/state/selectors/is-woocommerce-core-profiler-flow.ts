@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -10,9 +11,13 @@ import type { AppState } from 'calypso/types';
  * @returns {?boolean}        Whether the user reached Calypso via the WooCommerce Core Profiler flow
  */
 export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
+	const allowedFrom = [ 'woocommerce-core-profiler', 'woocommerce-payments' ];
 	return (
-		'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ) ||
-		'woocommerce-core-profiler' === get( getInitialQueryArguments( state ), 'from' )
+		allowedFrom.includes( get( getInitialQueryArguments( state ), 'from' ) as string ) ||
+		allowedFrom.includes( get( getCurrentQueryArguments( state ), 'from' ) as string ) ||
+		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
+			new URLSearchParams( state.login?.redirectTo?.original ).get( 'from' ) ===
+				'woocommerce-core-profiler' )
 	);
 };
 

@@ -35,16 +35,17 @@ export const Option = styled.li< OptionProps >`
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	cursor: pointer;
 	flex-direction: row;
-	justify-content: space-between; align-items: center;
+	justify-content: space-between;
+	align-items: center;
 	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 
 	&:hover {
-		var( --studio-blue-0 );
+		background: var( --studio-wordpress-blue-5 );
 	}
 
 	&.item-variant-option--selected {
-		background: #055d9c;
+		background: var( --studio-wordpress-blue-50 );
 		color: #fff;
 	}
 `;
@@ -144,6 +145,11 @@ export const Label = styled.span`
 	display: flex;
 	white-space: nowrap;
 	font-size: 14px;
+	color: var( --studio-black );
+
+	.item-variant-option--selected & {
+		color: var( --studio-white );
+	}
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {

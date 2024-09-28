@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { loadScript } from '@automattic/load-script';
 import { useTranslate } from 'i18n-calypso';
@@ -31,8 +30,7 @@ export default function SignupForm() {
 	const queryParams = new URLSearchParams( window.location.search );
 	const referer = queryParams.get( 'ref' );
 	const userLoggedIn = useSelector( isUserLoggedIn );
-	const isA4ALoggedOutSignup = isEnabled( 'a4a-logged-out-signup' );
-	const shouldRedirectToWPCOM = ! userLoggedIn && isA4ALoggedOutSignup;
+	const shouldRedirectToWPCOM = ! userLoggedIn;
 	const handleWPCOMRedirect = useHandleWPCOMRedirect();
 
 	const createAgency = useCreateAgencyMutation( {
@@ -62,6 +60,7 @@ export default function SignupForm() {
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
 					managed_sites: payload.managedSites,
+					user_type: payload.userType,
 					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
 					products_offered: ( payload.productsOffered || [] ).join( ',' ),
 					city: payload.city,

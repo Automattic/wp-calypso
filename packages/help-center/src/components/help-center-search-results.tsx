@@ -24,7 +24,6 @@ import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
-import { useDebounce } from 'use-debounce';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
@@ -32,6 +31,8 @@ import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
+
+import './help-center-search-results.scss';
 
 type HelpLinkProps = {
 	result: SearchResult;
@@ -79,8 +80,8 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 
 	return (
 		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
-			<li className="help-center-search-results__item">
-				<div className="help-center-search-results__cell">
+			<li className="help-center-search-results__item help-center-link__item">
+				<div className="help-center-search-results__cell help-center-link__cell">
 					<a
 						href={ localizeUrl( link ) }
 						onClick={ ( event ) => {
@@ -123,7 +124,11 @@ const noop = () => {
 	return;
 };
 
-function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
+function debounceSpeak( {
+	message = '',
+	priority = 'polite' as 'polite' | 'assertive',
+	timeout = 800,
+} ) {
 	return debounce( () => {
 		speak( message, priority );
 	}, timeout );
@@ -200,17 +205,12 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute, locale );
-
-	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
+	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || contextSearch, // If there's a query, we don't context search
+		searchQuery || contextSearch, // If there's a query, we don't context search
 		locale,
-		sectionName,
-		debouncedQuery
-			? undefined // If there's a query, we don't need tailored articles
-			: tailoredArticles
+		currentRoute
 	);
 
 	const searchResults = searchData ?? [];
@@ -272,9 +272,10 @@ function HelpSearchResults( {
 			section: sectionName,
 		};
 
-		const eventName = tailoredArticles?.post_ids.includes( post_id ?? 0 )
-			? 'calypso_inlinehelp_tailored_article_select'
-			: 'calypso_inlinehelp_article_select';
+		const eventName =
+			! contextSearch && ! searchQuery
+				? 'calypso_inlinehelp_tailored_article_select'
+				: 'calypso_inlinehelp_article_select';
 
 		recordTracksEvent( eventName, eventData );
 		onSelect( event, result );
@@ -291,7 +292,7 @@ function HelpSearchResults( {
 		return condition ? (
 			<Fragment key={ id }>
 				{ title ? (
-					<h3 id={ id } className="help-center-search-results__title">
+					<h3 id={ id } className="help-center-search-results__title help-center__section-title">
 						{ title }
 					</h3>
 				) : null }
@@ -340,7 +341,7 @@ function HelpSearchResults( {
 		: __( 'Helpful resources for this section', __i18n_text_domain__ );
 
 	return (
-		<>
+		<div className="help-center-search-results" aria-label={ resultsLabel }>
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<p className="help-center-search-results__empty-results">
@@ -351,10 +352,8 @@ function HelpSearchResults( {
 				</p>
 			) : null }
 
-			<div className="help-center-search-results__results" aria-label={ resultsLabel }>
-				{ sections }
-			</div>
-		</>
+			{ sections }
+		</div>
 	);
 }
 

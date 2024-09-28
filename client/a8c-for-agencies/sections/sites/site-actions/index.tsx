@@ -3,18 +3,20 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
+import { DevSiteDeleteConfirmationDialog } from 'calypso/a8c-for-agencies/sections/sites/dev-site-delete-confirmation-dialog';
+import useSiteActions from 'calypso/a8c-for-agencies/sections/sites/site-actions/use-site-actions';
 import { SiteRemoveConfirmationDialog } from 'calypso/a8c-for-agencies/sections/sites/site-remove-confirmation-dialog';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import useSiteActions from './use-site-actions';
 import type { AllowedActionTypes, SiteNode } from '../types';
 
 import './style.scss';
 
 interface Props {
 	isLargeScreen?: boolean;
+	isDevSite?: boolean;
 	site: SiteNode;
 	siteError: boolean | undefined;
 	onRefetchSite?: () => Promise< unknown >;
@@ -22,6 +24,7 @@ interface Props {
 
 export default function SiteActions( {
 	isLargeScreen = false,
+	isDevSite,
 	site,
 	siteError,
 	onRefetchSite,
@@ -30,8 +33,10 @@ export default function SiteActions( {
 	const dispatch = useDispatch();
 
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ showDeleteDevSiteDialog, setShowDeleteDevSiteDialog ] = useState( false );
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
 	const [ isPendingRefetch, setIsPendingRefetch ] = useState( false );
+	const { a4a_site_id: siteId, url: siteDomain } = site.value || { siteDomain: '' };
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
@@ -44,40 +49,60 @@ export default function SiteActions( {
 	}, [] );
 
 	const onSelectAction = useCallback( ( action: AllowedActionTypes ) => {
-		if ( action === 'remove_site' ) {
-			setShowRemoveSiteDialog( true );
+		switch ( action ) {
+			case 'delete_site':
+				setShowDeleteDevSiteDialog( true );
+				break;
+			case 'remove_site':
+				setShowRemoveSiteDialog( true );
+				break;
 		}
 	}, [] );
 
 	const siteActions = useSiteActions( {
 		site,
 		isLargeScreen,
+		isDevSite,
 		siteError,
 		onSelect: onSelectAction,
 	} );
 
-	const { mutate: removeSite, isPending } = useRemoveSiteMutation();
+	const { mutate: removeSite, isPending: isRemovingSite } = useRemoveSiteMutation();
 
 	const onRemoveSite = useCallback( () => {
-		if ( site.value?.a4a_site_id ) {
-			removeSite(
-				{ siteId: site.value?.a4a_site_id },
-				{
-					onSuccess: () => {
-						setIsPendingRefetch( true );
-						// Add 1 second delay to refetch sites to give time for site profile to be reindexed properly.
-						setTimeout( () => {
-							onRefetchSite?.()?.then( () => {
-								setIsPendingRefetch( false );
-								setShowRemoveSiteDialog( false );
-								dispatch( successNotice( translate( 'The site has been successfully removed.' ) ) );
-							} );
-						}, 1000 );
-					},
-				}
-			);
+		if ( ! siteId ) {
+			return;
 		}
-	}, [ dispatch, onRefetchSite, removeSite, site.value?.a4a_site_id, translate ] );
+
+		removeSite(
+			{ siteId },
+			{
+				onSuccess: () => {
+					setIsPendingRefetch( true );
+					// Add 1 second delay to refetch sites to give time for site profile to be reindexed properly.
+					setTimeout( () => {
+						onRefetchSite?.()?.then( () => {
+							setIsPendingRefetch( false );
+							setShowRemoveSiteDialog( false );
+							dispatch( successNotice( translate( 'The site has been successfully removed.' ) ) );
+						} );
+					}, 1000 );
+				},
+			}
+		);
+	}, [ dispatch, onRefetchSite, removeSite, siteId, translate ] );
+
+	const onDeleteSite = useCallback( () => {
+		setIsPendingRefetch( true );
+		// Add 1 second delay to refetch sites to give time for site profile to be reindexed properly.
+		setTimeout( () => {
+			onRefetchSite?.()?.then( () => {
+				setIsPendingRefetch( false );
+				setShowDeleteDevSiteDialog( false );
+				dispatch( successNotice( translate( 'The site has been successfully deleted.' ) ) );
+			} );
+		}, 1000 );
+	}, [ dispatch, onRefetchSite, translate ] );
 
 	return (
 		<>
@@ -106,6 +131,7 @@ export default function SiteActions( {
 						<PopoverMenuItem
 							key={ action.name }
 							isExternalLink={ action.isExternalLink }
+							localizeUrl={ false }
 							onClick={ action.onClick }
 							href={ action.href }
 							className={ clsx( 'site-actions__menu-item', action.className ) }
@@ -118,10 +144,19 @@ export default function SiteActions( {
 
 			{ showRemoveSiteDialog && (
 				<SiteRemoveConfirmationDialog
-					siteName={ site.value?.url || '' }
+					siteName={ siteDomain }
 					onClose={ () => setShowRemoveSiteDialog( false ) }
 					onConfirm={ onRemoveSite }
-					busy={ isPending || isPendingRefetch }
+					busy={ isRemovingSite || isPendingRefetch }
+				/>
+			) }
+			{ showDeleteDevSiteDialog && (
+				<DevSiteDeleteConfirmationDialog
+					siteId={ siteId || 0 }
+					siteDomain={ siteDomain }
+					onClose={ () => setShowDeleteDevSiteDialog( false ) }
+					onSiteDeleted={ onDeleteSite }
+					busy={ isPendingRefetch }
 				/>
 			) }
 		</>

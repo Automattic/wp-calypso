@@ -1,6 +1,8 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { ReactNode } from 'react';
-import './style.scss';
 import { SectionBackground } from './backgrounds';
+
+import './style.scss';
 
 export type HostingSectionProps = {
 	children: ReactNode;
@@ -19,12 +21,14 @@ export default function HostingSection( {
 	children,
 	background,
 }: HostingSectionProps ) {
+	const isNarrowView = useBreakpoint( '<960px' );
+
 	return (
-		<div
+		<section
 			className="hosting-section-wrapper"
 			style={ {
 				backgroundColor: background?.color,
-				backgroundImage: background?.image,
+				backgroundImage: isNarrowView ? undefined : background?.image,
 				backgroundSize: background?.size,
 			} }
 		>
@@ -43,6 +47,6 @@ export default function HostingSection( {
 				</div>
 				{ children }
 			</div>
-		</div>
+		</section>
 	);
 }

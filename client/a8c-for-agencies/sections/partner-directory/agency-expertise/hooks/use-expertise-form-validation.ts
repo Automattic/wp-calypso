@@ -33,6 +33,11 @@ const useExpertiseFormValidation = () => {
 				newValidationError.directories = translate( `Directories can't be empty` );
 			} else {
 				payload.directories.forEach( ( directory ) => {
+					if ( directory.status === 'approved' ) {
+						// If the directory has already been approved. We do not need to validate the URLs
+						return;
+					}
+
 					if ( directory.urls.length < 1 ) {
 						newValidationError.clientSites = translate( `Client sites can't be empty` );
 						return;

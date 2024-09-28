@@ -99,7 +99,13 @@ let windowOpenSpy;
 // If feature flag is jetpack/magic-link-signup then false, else true
 beforeEach( () => {
 	windowOpenSpy = jest.spyOn( global.window, 'open' ).mockImplementation( jest.fn() );
-	config.isEnabled.mockImplementation( ( flag ) => flag !== 'jetpack/magic-link-signup' );
+	config.isEnabled.mockImplementation( ( flag ) => {
+		const disabledFlags = [
+			'jetpack/magic-link-signup',
+			'woocommerce/core-profiler-passwordless-auth',
+		];
+		return ! disabledFlags.includes( flag );
+	} );
 } );
 
 afterEach( () => {
@@ -375,28 +381,6 @@ describe( 'JetpackAuthorize', () => {
 			global.window.location = originalWindowLocation;
 		} );
 
-		test( 'should redirect to pressable if partnerSlug is "pressable"', async () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...DEFAULT_PROPS }
-					authQuery={ {
-						...DEFAULT_PROPS.authQuery,
-						alreadyAuthorized: true,
-					} }
-					partnerSlug="pressable"
-					isAlreadyOnSitesList
-					isFetchingSites
-				/>
-			);
-
-			await userEvent.click( screen.getByText( 'Return to your site' ) );
-
-			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }`,
-				expect.any( String )
-			);
-		} );
-
 		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', async () => {
 			renderWithRedux(
 				<JetpackAuthorize
@@ -464,7 +448,7 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
 				expect.any( String )
@@ -487,7 +471,7 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
 				expect.any( String )
@@ -514,7 +498,7 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
 				expect.any( String )

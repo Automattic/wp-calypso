@@ -30,6 +30,7 @@ import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
+import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
@@ -59,8 +60,9 @@ import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	CheckoutPageErrorCallback,
 	PaymentEventCallbackArguments,
+	PaymentMethod,
 } from '@automattic/composite-checkout';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
@@ -534,9 +536,9 @@ export default function CheckoutMain( {
 				primaryOver: colors[ 'Jetpack Green 60' ],
 				success: colors[ 'Jetpack Green' ],
 				discount: colors[ 'Jetpack Green' ],
-				highlight: colors[ 'Blue 50' ],
-				highlightBorder: colors[ 'Blue 80' ],
-				highlightOver: colors[ 'Blue 60' ],
+				highlight: colors[ 'WordPress Blue 50' ],
+				highlightBorder: colors[ 'WordPress Blue 80' ],
+				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
@@ -742,6 +744,11 @@ export default function CheckoutMain( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	const initiallySelectedPaymentMethodId = getInitiallySelectedPaymentMethodId(
+		responseCart,
+		paymentMethods
+	);
+
 	return (
 		<Fragment>
 			<PageViewTracker
@@ -765,6 +772,7 @@ export default function CheckoutMain( {
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
+				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
 			>
 				<CheckoutMainContent
 					loadingHeader={
@@ -782,6 +790,7 @@ export default function CheckoutMain( {
 					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
+					paymentMethods={ paymentMethods }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }
@@ -851,4 +860,24 @@ function getAnalyticsPath(
 	}
 
 	return { analyticsPath, analyticsProps };
+}
+
+function getInitiallySelectedPaymentMethodId(
+	responseCart: ResponseCart,
+	paymentMethods: PaymentMethod[]
+): string | undefined {
+	const firstRenewalWithPaymentMethod = responseCart.products.find( ( product ) =>
+		Boolean( product.stored_details_id )
+	);
+	if ( ! firstRenewalWithPaymentMethod ) {
+		return undefined;
+	}
+	const matchingCheckoutPaymentMethod = paymentMethods.find(
+		( method ) =>
+			method.id === `${ existingCardPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
+	);
+	if ( matchingCheckoutPaymentMethod ) {
+		return matchingCheckoutPaymentMethod.id;
+	}
+	return undefined;
 }

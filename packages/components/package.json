@@ -34,10 +34,10 @@
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@wordpress/base-styles": "^5.2.0",
-		"@wordpress/components": "^28.2.0",
-		"@wordpress/icons": "^10.2.0",
-		"@wordpress/react-i18n": "^4.2.0",
+		"@wordpress/base-styles": "^5.8.0",
+		"@wordpress/components": "^28.8.0",
+		"@wordpress/icons": "^10.8.0",
+		"@wordpress/react-i18n": "^4.8.0",
 		"canvas-confetti": "^1.6.0",
 		"clsx": "^2.1.1",
 		"gridicons": "^3.4.2",
@@ -51,9 +51,9 @@
 		"uuid": "^9.0.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.2.0",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"@wordpress/data": "^10.8.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
@@ -73,7 +73,7 @@
 		"qrcode.react": "^3.1.0",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.91.0"
+		"webpack": "^5.94.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

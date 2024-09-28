@@ -60,6 +60,20 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-tooltip-background: var(--color-sidebar-menu-hover-background);
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
 		--color-masterbar-unread-dot-background: #e65054;
+		--color-masterbar-background: var(--studio-gray-90);
+		--color-masterbar-text: var(--studio-gray-10);
+		--color-masterbar-icon: var(--studio-gray-10);
+		--color-masterbar-submenu-text: var(--color-sidebar-text);
+		--color-masterbar-submenu-hover-text: var(--color-accent);
+		--color-global-masterbar-submenu-background: var(--studio-white);
+		--color-global-masterbar-submenu-hover-background: var(--studio-white);
+		--content-padding-top: 16px;
+		--content-padding-bottom: 16px;
+
+		&.focus-content .layout__content {
+			padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
+			padding-bottom: var(--content-padding-bottom);
+		}
 	}
 
 	.is-global-sidebar-collapsed {
@@ -511,11 +525,18 @@ $font-size: rem(14px);
 			border-radius: 4px;
 
 			&:hover {
-				background-color: var(--color-sidebar-menu-hover-background);
-				color: var(--color-sidebar-menu-hover-text);
-
 				.sidebar__expandable-arrow {
 					fill: var(--color-sidebar-menu-hover-text);
+				}
+			}
+		}
+
+		.sidebar__menu.is-togglable {
+			.sidebar__heading,
+			.sidebar__menu-link {
+				&:hover {
+					background-color: var(--color-sidebar-menu-hover-background);
+					color: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
@@ -541,6 +562,7 @@ $font-size: rem(14px);
 		.sidebar__expandable-content {
 			border-radius: 4px;
 			margin: 0 12px;
+			padding: 0;
 		}
 
 		.sidebar__expandable-title {
@@ -557,6 +579,7 @@ $font-size: rem(14px);
 
 		.selected .sidebar__menu-link {
 			color: var(--color-sidebar-menu-selected-text);
+			font-weight: normal;
 		}
 
 		.selected .sidebar__menu-link::after {
@@ -1000,11 +1023,6 @@ $font-size: rem(14px);
 					overflow: initial;
 				}
 			}
-			.is-section-theme {
-				.layout__secondary {
-					transform: translateX(-100%);
-				}
-			}
 		}
 
 		.sidebar__menu.is-togglable:not(.is-toggle-open).hovered {
@@ -1122,7 +1140,7 @@ $font-size: rem(14px);
 		}
 
 		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
-			padding-top: 46px;
+			padding-top: 62px;
 			padding-bottom: 0;
 		}
 

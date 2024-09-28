@@ -1,10 +1,13 @@
+import { SiteSelect } from '@automattic/data-stores';
+import { SITE_STORE } from '@automattic/launchpad/src/launchpad';
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -27,17 +30,32 @@ const transferringHostedSite: Flow = {
 		setProgress( 0 );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const siteId = useSiteIdParam();
-		const dispatch = useReduxDispatch();
-
+		const site = useSelect(
+			( select ) => ( siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ) ) || null,
+			[ siteId ]
+		);
+		const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+			isAdminInterfaceWPAdmin( state, parseInt( siteId! ) )
+		);
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
+		const dispatch = useReduxDispatch();
+
+		const getRedirectTo = ( providedDependencies: ProvidedDependencies ) => {
+			if ( providedDependencies?.redirectTo ) {
+				return providedDependencies.redirectTo as string;
+			}
+
+			if ( adminInterfaceIsWPAdmin ) {
+				return site?.options?.admin_url as string;
+			}
+
+			return `/home/${ siteId }`;
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
@@ -48,10 +66,7 @@ const transferringHostedSite: Flow = {
 
 					dispatch( requestAdminMenu( siteId ) );
 
-					const redirectTo = providedDependencies?.redirectTo
-						? providedDependencies?.redirectTo
-						: `/home/${ siteId }`;
-					return exitFlow( redirectTo as string );
+					return exitFlow( getRedirectTo( providedDependencies ) );
 				}
 
 				case 'waitForAtomic': {

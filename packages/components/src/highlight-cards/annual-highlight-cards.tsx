@@ -1,8 +1,9 @@
-import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
+import { comment, Icon, paragraph, postContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
-import CountComparisonCard from './count-comparison-card';
+import CountCard from './count-card';
+import HighlightCardsHeading from './highlight-cards-heading';
 import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
@@ -12,7 +13,6 @@ type AnnualHighlightCounts = {
 	likes: number | null;
 	posts: number | null;
 	words: number | null;
-	followers: number | null;
 };
 
 type AnnualHighlightsProps = {
@@ -27,54 +27,32 @@ type AnnualHighlightCardsProps = {
 	navigation?: React.ReactNode;
 };
 
-function AnnualHighlightsMobile( { counts }: AnnualHighlightsProps ) {
-	const translate = useTranslate();
-
-	const highlights = [
+function getCardProps( counts: AnnualHighlightCounts ) {
+	return [
 		{ heading: translate( 'Posts' ), count: counts?.posts, icon: postContent },
 		{ heading: translate( 'Words' ), count: counts?.words, icon: paragraph },
 		{ heading: translate( 'Likes' ), count: counts?.likes, icon: starEmpty },
 		{ heading: translate( 'Comments' ), count: counts?.comments, icon: comment },
-		{ heading: translate( 'Subscribers' ), count: counts?.followers, icon: people },
 	];
+}
 
-	return <MobileHighlightCardListing highlights={ highlights } />;
+function AnnualHighlightsMobile( { counts }: AnnualHighlightsProps ) {
+	return <MobileHighlightCardListing highlights={ getCardProps( counts ) } />;
 }
 
 function AnnualHighlightsStandard( { counts }: AnnualHighlightsProps ) {
-	const translate = useTranslate();
+	const props = getCardProps( counts );
 	return (
 		<div className="highlight-cards-list">
-			<CountComparisonCard
-				heading={ translate( 'Posts' ) }
-				icon={ <Icon icon={ postContent } /> }
-				count={ counts?.posts ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Words' ) }
-				icon={ <Icon icon={ paragraph } /> }
-				count={ counts?.words ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Likes' ) }
-				icon={ <Icon icon={ starEmpty } /> }
-				count={ counts?.likes ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Comments' ) }
-				icon={ <Icon icon={ comment } /> }
-				count={ counts?.comments ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Subscribers' ) }
-				icon={ <Icon icon={ people } /> }
-				count={ counts?.followers ?? null }
-				showValueTooltip
-			/>
+			{ props.map( ( { count, heading, icon }, index ) => (
+				<CountCard
+					key={ index }
+					heading={ heading }
+					value={ count }
+					icon={ <Icon icon={ icon } /> }
+					showValueTooltip
+				/>
+			) ) }
 		</div>
 	);
 }
@@ -89,7 +67,7 @@ export default function AnnualHighlightCards( {
 	const translate = useTranslate();
 
 	const header = (
-		<h3 className="highlight-cards-heading">
+		<HighlightCardsHeading>
 			{ year != null && Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
 				: translate( 'Year in review' ) }{ ' ' }
@@ -100,7 +78,7 @@ export default function AnnualHighlightCards( {
 					</a>
 				</small>
 			) : null }
-		</h3>
+		</HighlightCardsHeading>
 	);
 
 	return (

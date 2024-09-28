@@ -14,15 +14,12 @@ export default function useManagedSitesMap( { size = 100 }: Props ) {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: '',
 		currentPage: 1,
-		sort: {
-			field: '',
-			direction: '',
-		},
 		perPage: size,
 		agencyId,
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
+			showOnlyDevelopmentSites: false,
 		},
 	} );
 

@@ -100,7 +100,6 @@ const SVG_IGNORE_PATHS = [
 	/ninja-joy\.svg$/,
 
 	// Specific images directories
-	/^apps\/editing-toolkit\/editing-toolkit-plugin/,
 	/^static\/images\/marketing/,
 	/^static\/images\/me/,
 	/^static\/images\/illustrations\/illustration-woo-magic-link.svg/,

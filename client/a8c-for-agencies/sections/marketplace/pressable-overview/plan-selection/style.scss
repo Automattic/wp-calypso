@@ -54,8 +54,22 @@
 	font-weight: 600;
 }
 
+.pressable-overview-plan-selection__details-card-header-coming-soon {
+	@include a4a-font-heading-md($font-weight: 400);
+}
+
 .pressable-overview-plan-selection__details-card-header-subtitle {
 	@include a4a-font-body-md;
+
+	&.is-regular-ownership {
+		padding-block-start: 32px;
+	}
+
+	&.is-refer-mode {
+		@include a4a-font-body-sm;
+		padding-block-end: 16px;
+	}
+
 }
 
 .pressable-overview-plan-selection__details-card-header-price {
@@ -256,4 +270,21 @@
 	.pressable-overview-plan-selection__details > * {
 		gap: 24px;
 	}
+
+	&.is-slider-hidden {
+		.pressable-overview-plan-selection__details {
+			margin-block-start: 24px;
+		}
+	}
+}
+
+.pressable-overview-plan-selection__manage-account-button-container {
+	&,
+	a.button {
+		width: 100%;
+	}
+}
+
+.pressable-overview-plan-selection__tooltip {
+	max-width: 400px;
 }

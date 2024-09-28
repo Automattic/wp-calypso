@@ -10,7 +10,11 @@ import './blaze-pro.scss';
 
 const BlazeProOauthMasterbar = () => {
 	function onClick() {
-		window.history.back();
+		if ( document.referrer ) {
+			window.location.href = document.referrer;
+		} else {
+			window.history.back();
+		}
 	}
 
 	const backNav = (

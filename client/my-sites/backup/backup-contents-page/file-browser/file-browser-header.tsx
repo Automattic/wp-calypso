@@ -8,6 +8,7 @@ import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -29,6 +30,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
 
 	const onDownloadClick = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -39,7 +41,11 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files', {
+				has_credentials: hasCredentials,
+			} )
+		);
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
 	// When the checkbox is clicked, we'll update the check state in the state

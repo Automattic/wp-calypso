@@ -1,41 +1,45 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Card, Button } from '@automattic/components';
-import { AddSubscriberForm } from '@automattic/subscriber';
-import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
-import { useIsEligibleSubscriberImporter } from 'calypso/landing/stepper/hooks/use-is-eligible-subscriber-importer';
-import type { SiteDetails } from '@automattic/data-stores';
-type Props = {
-	nextStepUrl: string;
-	selectedSite?: SiteDetails;
-	newsletterUrl: QueryArgParsed;
-};
+import StepDone from './subscribers/step-done';
+import StepImporting from './subscribers/step-importing';
+import StepInitial from './subscribers/step-initial';
+import StepPending from './subscribers/step-pending';
+import { SubscribersStepProps } from './types';
 
-export default function Subscribers( { nextStepUrl, selectedSite, newsletterUrl }: Props ) {
-	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
-
-	if ( ! selectedSite ) {
-		return null;
+export default function Subscribers( {
+	nextStepUrl,
+	selectedSite,
+	fromSite,
+	status,
+	siteSlug,
+	skipNextStep,
+	cardData,
+	engine,
+	setAutoFetchData,
+}: SubscribersStepProps ) {
+	// The default step
+	let Step = StepInitial;
+	switch ( status ) {
+		case 'pending':
+			Step = StepPending;
+			break;
+		case 'importing':
+			Step = StepImporting;
+			break;
+		case 'done':
+			Step = StepDone;
+			break;
 	}
+
 	return (
-		<Card>
-			<h2>Step 1: Export your subscribers from Substack</h2>
-			<p>
-				To generate a CSV file of all your Substack subscribers, go to the Subscribers tab and click
-				'Export.' Once the CSV file is downloaded, upload it in the next step.
-			</p>
-			<Button href={ `https://${ newsletterUrl }/publish/subscribers` }>Export subscribers</Button>
-			<hr />
-			<h2>Step 2: Import your subscribers to WordPress.com</h2>
-			<AddSubscriberForm
-				siteId={ selectedSite.ID }
-				showTitle={ false }
-				manualListEmailInviting={ ! isUserEligibleForSubscriberImporter }
-				showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
-			/>
-			<Button href={ nextStepUrl } primary>
-				Continue
-			</Button>{ ' ' }
-			<Button href={ nextStepUrl }>Skip for now</Button>
-		</Card>
+		<Step
+			cardData={ cardData }
+			engine={ engine }
+			fromSite={ fromSite }
+			nextStepUrl={ nextStepUrl }
+			selectedSite={ selectedSite }
+			setAutoFetchData={ setAutoFetchData }
+			siteSlug={ siteSlug }
+			skipNextStep={ skipNextStep }
+			status={ status }
+		/>
 	);
 }

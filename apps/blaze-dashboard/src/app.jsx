@@ -27,9 +27,17 @@ import themes from './themes';
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
+function getAppTheme() {
+	if ( isEnabled( 'is_running_in_woo_site' ) ) {
+		return 'woo';
+	}
+
+	return isEnabled( 'is_running_in_blaze_plugin' ) ? 'wpcom' : 'jetpack';
+}
+
 async function AppBoot() {
 	// Load the App theme
-	const theme = themes( isEnabled( 'is_running_in_woo_site' ) ? 'woo' : 'jetpack' );
+	const theme = themes( getAppTheme() );
 	Object.entries( theme ).forEach( ( [ key, value ] ) => {
 		document.documentElement.style.setProperty( key, value );
 	} );

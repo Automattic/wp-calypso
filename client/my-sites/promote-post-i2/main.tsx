@@ -16,6 +16,7 @@ import {
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
+	PromotePostWarning,
 } from 'calypso/data/promote-post/types';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
@@ -24,7 +25,9 @@ import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
-import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
+import PostsList, {
+	postsNotReadyErrorMessage,
+} from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
 import {
 	SORT_OPTIONS_DEFAULT,
@@ -34,10 +37,10 @@ import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils'
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
+import BlazePluginBanner from './components/blaze-plugin-banner';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
-import WooBanner from './components/woo-banner';
 import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
@@ -65,6 +68,7 @@ export type PagedBlazeContentData = {
 	has_more_pages: boolean;
 	total_items?: number;
 	items?: BlazePagedItem[];
+	warnings?: PromotePostWarning[];
 };
 
 export type PagedBlazeSearchResponse = {
@@ -145,10 +149,11 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postsIsLoadingNewContent = postsIsLoading || postIsRefetching;
 
-	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
-		'posts',
-		postsData
-	);
+	const {
+		has_more_pages: postsHasMorePages,
+		items: posts,
+		warnings: postsWarnings,
+	} = getPagedBlazeSearchData( 'posts', postsData );
 
 	const tabs: TabOption[] = [
 		{
@@ -200,6 +205,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
+	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 
 	const headerSubtitle = ( isMobile: boolean ) => {
@@ -227,6 +233,33 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	};
 
+	const renderWarningNotices = ( warnings?: PromotePostWarning[] ) => {
+		const content = [];
+
+		for ( const item of warnings ?? [] ) {
+			switch ( item ) {
+				case 'sync_in_progress':
+					content.push(
+						<Notice
+							key={ item }
+							className="promote-post-notice"
+							status="is-info"
+							showDismiss={ false }
+						>
+							{ postsNotReadyErrorMessage }
+						</Notice>
+					);
+					break;
+			}
+		}
+
+		return content.length ? (
+			<div className="promote-post-i2__warnings-wrapper promote-post-i2__aux-wrapper">
+				{ content }
+			</div>
+		) : null;
+	};
+
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
@@ -238,9 +271,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
-					headerText={
-						isWooBlaze ? translate( 'Blaze for WooCommerce' ) : translate( 'Advertising' )
-					}
+					headerText={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }
 					align="left"
 				/>
 
@@ -262,7 +293,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			</div>
 			{ headerSubtitle( true ) /* for mobile */ }
 
-			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
+			{ showBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
 
 			{
 				// TODO: Uncomment when DebtNotifier is implemented
@@ -330,6 +361,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
+					{ renderWarningNotices( postsWarnings ) }
+
 					<BlazePageViewTracker
 						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
 						title="Advertising > Ready to Promote"

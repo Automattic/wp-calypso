@@ -1,5 +1,6 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
+import { STEPPER_TRACKS_EVENTS } from '../../constants';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -62,7 +63,7 @@ export type AsyncStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	slug: string;
+	slug: Exclude< string, 'user' >;
 	/**
 	 * Does the step require a logged-in user?
 	 */
@@ -75,7 +76,14 @@ export type AsyncStepperStep = {
 	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
 };
 
-export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
+export interface AsyncUserStep extends AsyncStepperStep {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: 'user';
+}
+
+export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
@@ -106,7 +114,19 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	navigate: Navigate< FlowSteps >
 ) => void;
 
+/**
+ * Used for overriding props recorded by the default Tracks event loggers.
+ * Can pass any properties that should be recorded for the respective events.
+ */
+export type UseTracksEventPropsHook = () => {
+	[ key in ( typeof STEPPER_TRACKS_EVENTS )[ number ] ]?: Record< string, string | number | null >;
+};
+
 export type Flow = {
+	/**
+	 * If this flag is set to true, the flow will login the user without leaving Stepper.
+	 */
+	__experimentalUseBuiltinAuth?: boolean;
 	name: string;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
@@ -139,6 +159,12 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+	useTracksEventProps?: UseTracksEventPropsHook;
+	/**
+	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
+	 * IMPORTANT: This hook will be removed in the future.
+	 */
+	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
 export type StepProps = {
@@ -151,6 +177,11 @@ export type StepProps = {
 	variantSlug?: string;
 	data?: StepperInternal.State[ 'stepData' ];
 	children?: React.ReactNode;
+	/**
+	 * These two prop are used internally by the Stepper to redirect the user from the user step.
+	 */
+	redirectTo?: string;
+	signupUrl?: string;
 };
 
 export type Step = React.FC< StepProps >;

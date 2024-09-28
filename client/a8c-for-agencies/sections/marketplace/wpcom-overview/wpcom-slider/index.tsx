@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import {
 	mapOptionsToSliderOptions,
 	sliderPosToValue,
@@ -21,6 +21,8 @@ type Props = {
 	label?: string;
 	sub?: string;
 	minimum?: number;
+	hideNumberInput?: boolean;
+	quantity?: number;
 };
 
 export default function A4AWPCOMSlider( {
@@ -31,6 +33,8 @@ export default function A4AWPCOMSlider( {
 	label,
 	sub,
 	minimum = 0,
+	hideNumberInput,
+	quantity,
 }: Props ) {
 	const total = ( options.length + 1 ) * 20;
 	const mappedOptions = useMemo(
@@ -46,6 +50,15 @@ export default function A4AWPCOMSlider( {
 	const [ currentSliderPos, setCurrentSliderPos ] = useState(
 		valueToSliderPos( defaultValue, mappedOptions )
 	);
+
+	useEffect( () => {
+		if ( hideNumberInput && quantity ) {
+			// Update the slider position if the value is changed from outside
+			const next = isNaN( quantity ) || quantity < minimum ? minimum : quantity;
+			setCurrentValue( next ); // We do not want to override the value with next here to avoid disrupting user input.
+			setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
+		}
+	}, [ hideNumberInput, mappedOptions, minimum, quantity ] );
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onSliderChange = ( event: any ) => {
@@ -149,13 +162,15 @@ export default function A4AWPCOMSlider( {
 					} ) }
 				</div>
 			</div>
-			<input
-				type="number"
-				className="a4a-slider__number-input"
-				value={ currentValue }
-				onChange={ onNumberInputChange }
-				onBlur={ onNumberInputBlur }
-			></input>
+			{ ! hideNumberInput && (
+				<input
+					type="number"
+					className="a4a-slider__number-input"
+					value={ currentValue }
+					onChange={ onNumberInputChange }
+					onBlur={ onNumberInputBlur }
+				></input>
+			) }
 		</div>
 	);
 }

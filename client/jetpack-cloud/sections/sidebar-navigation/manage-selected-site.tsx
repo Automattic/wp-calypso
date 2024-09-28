@@ -42,7 +42,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
 	JETPACK_CLOUD_MONETIZE_LINK,
-	JETPACK_CLOUD_SCAN_HISTORY_LINK,
+	JETPACK_CLOUD_SCAN_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
 	JETPACK_CLOUD_SUBSCRIBERS_LINK,
@@ -108,7 +108,7 @@ const useMenuItems = ( {
 					icon: cloud,
 					path: '/',
 					link: backupPath( siteSlug ),
-					title: translate( 'Backup' ),
+					title: translate( 'VaultPress Backup' ),
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
 					enabled: isAdmin && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, backupPath( siteSlug ) ),
@@ -126,11 +126,11 @@ const useMenuItems = ( {
 				{
 					icon: shield,
 					path: '/',
-					link: `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }`,
+					link: `${ JETPACK_CLOUD_SCAN_LINK }/${ siteSlug }`,
 					title: translate( 'Scan' ),
-					trackEventName: 'calypso_jetpack_sidebar_scan_history_clicked',
+					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
 					enabled: isAdmin && showScanHistory && ! isWPForTeamsSite,
-					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }` ),
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: search,

@@ -12,10 +12,7 @@ export default function useNoActiveSite() {
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
-		},
-		sort: {
-			field: '',
-			direction: '',
+			showOnlyDevelopmentSites: false,
 		},
 		agencyId,
 	} );

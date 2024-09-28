@@ -15,6 +15,7 @@ type Site = {
 		};
 	};
 };
+
 export default function useIsSiteReady( { siteId }: Props ) {
 	const [ site, setSite ] = useState< Site | null >( null );
 	const { data } = useFetchActiveSites( { autoRefresh: ! site } );
@@ -26,6 +27,8 @@ export default function useIsSiteReady( { siteId }: Props ) {
 
 		if ( match ) {
 			setSite( match );
+		} else {
+			setSite( null );
 		}
 	}, [ data, site, siteId ] );
 

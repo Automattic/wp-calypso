@@ -10,10 +10,12 @@ import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {
 	isGravPoweredOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isWooOAuth2Client,
+	isA4AOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -54,7 +56,7 @@ class HandleEmailedLinkForm extends Component {
 		activate: PropTypes.string,
 
 		// Connected props
-		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		authError: PropTypes.object,
 		currentUser: PropTypes.object,
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
@@ -109,7 +111,7 @@ class HandleEmailedLinkForm extends Component {
 
 		// To customize the login experience for Gravatar-powered clients in the backend, e.g. SMS messages
 		const flow = isGravPoweredOAuth2Client( this.props.oauth2Client )
-			? this.props.oauth2Client.name
+			? getGravatarOAuth2Flow( this.props.oauth2Client )
 			: null;
 
 		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );
@@ -177,6 +179,7 @@ class HandleEmailedLinkForm extends Component {
 			activate,
 			wccomFrom,
 			isWoo,
+			isA4A,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
@@ -186,7 +189,6 @@ class HandleEmailedLinkForm extends Component {
 
 			return (
 				<EmailedLoginLinkExpired
-					isGravPoweredClient={ isGravPoweredClient }
 					redirectTo={ redirectTo }
 					transition={ transition }
 					token={ token }
@@ -206,6 +208,8 @@ class HandleEmailedLinkForm extends Component {
 			buttonLabel = translate( 'Continue to Woo Express' );
 		} else if ( isWoo ) {
 			buttonLabel = translate( 'Continue to Woo.com' );
+		} else if ( isA4A ) {
+			buttonLabel = translate( 'Continue to Automattic for Agencies' );
 		} else {
 			buttonLabel = translate( 'Continue to WordPress.com' );
 		}
@@ -225,6 +229,8 @@ class HandleEmailedLinkForm extends Component {
 			title = translate( 'Update your payment details and renew your subscription' );
 		} else if ( isWooDna ) {
 			title = wooDnaConfig( initialQuery ).getServiceName();
+		} else if ( isA4A ) {
+			title = translate( 'Finish sign up using your WordPress.com account' );
 		} else {
 			title =
 				this.props.clientId === config( 'wpcom_signup_id' )
@@ -268,7 +274,7 @@ class HandleEmailedLinkForm extends Component {
 						'grav-powered-magic-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<img src={ oauth2Client.icon } width={ 32 } height={ 32 } alt={ oauth2Client.title } />
 					<EmptyContent
 						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
 						illustration=""
@@ -319,6 +325,7 @@ const mapState = ( state ) => {
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		isWoo: isWooOAuth2Client( oauth2Client ),
+		isA4A: isA4AOAuth2Client( oauth2Client ),
 		wccomFrom: getWccomFrom( state ),
 		oauth2Client,
 	};

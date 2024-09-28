@@ -40,7 +40,6 @@ const tscPackages = withTscInfo( {
 } );
 
 const tscCommands = [
-	{ cmd: 'tsc --noEmit --project apps/editing-toolkit/tsconfig.json', id: 'type_check_etk' },
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
 	{ cmd: 'tsc --noEmit --project test/e2e/tsconfig.json', id: 'type_check_tests' },
 ].map( withTscInfo );

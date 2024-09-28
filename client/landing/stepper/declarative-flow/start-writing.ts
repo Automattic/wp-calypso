@@ -3,7 +3,7 @@ import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	type AssertConditionResult,
@@ -15,6 +15,7 @@ import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
@@ -76,10 +77,10 @@ const startWriting: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
+		const { exitFlow } = useExitFlow();
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -91,9 +92,12 @@ const startWriting: Flow = {
 			}
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
+		const { getPostFlowUrl, postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'check-sites':
 					// Check for unlaunched sites
@@ -121,7 +125,13 @@ const startWriting: Flow = {
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
+								`&postFlowUrl=${ getPostFlowUrl( {
+									flow: START_WRITING_FLOW,
+									siteId: providedDependencies?.siteId as string,
+									siteSlug: providedDependencies?.siteSlug as string,
+								} ) }`
 						);
 					}
 				}
@@ -138,10 +148,21 @@ const startWriting: Flow = {
 							} ),
 						] );
 
+						initializeLaunchpadState( {
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} );
+
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
+								`&postFlowUrl=${ getPostFlowUrl( {
+									flow: START_WRITING_FLOW,
+									siteId: providedDependencies?.siteId as string,
+									siteSlug: providedDependencies?.siteSlug as string,
+								} ) }`
 						);
 					}
 
@@ -156,7 +177,7 @@ const startWriting: Flow = {
 						return;
 					}
 
-					return navigate( 'launchpad' );
+					return postFlowNavigator( { siteId, siteSlug } );
 				}
 				case 'domains':
 					if ( siteId ) {

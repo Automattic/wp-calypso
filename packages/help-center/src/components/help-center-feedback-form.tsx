@@ -11,7 +11,7 @@ import HelpCenterContactSupportOption from './help-center-contact-support-option
 import './help-center-feedback-form.scss';
 interface HelpCenterFeedbackFormProps {
 	postId: number;
-	blogId?: string | null;
+	blogId?: number | null;
 	slug?: string;
 	articleUrl?: string | null | undefined;
 }

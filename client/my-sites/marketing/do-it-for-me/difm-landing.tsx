@@ -33,6 +33,8 @@ import {
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
+import './difm-landing.scss';
+
 const Placeholder = styled.span`
 	padding: 0 60px;
 	animation: loading-fade 800ms ease-in-out infinite;
@@ -55,16 +57,24 @@ const Placeholder = styled.span`
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
-	gap: 96px;
-	padding: 12px;
+	padding: 32px;
+	max-width: 1040px;
+	margin: 0 auto;
+
+	.difmStartingPoint & {
+		padding: 12px;
+	}
 `;
 
 const ContentSection = styled.div`
 	flex: 1;
+	padding-right: 10px;
+	width: 50%;
 `;
 
 const ImageSection = styled.div`
-	width: 540px;
+	min-width: 540px;
+	width: 50%;
 	height: 562px;
 	padding-top: 75px;
 	display: flex;
@@ -76,9 +86,14 @@ const ImageSection = styled.div`
 `;
 
 const Header = styled( FormattedHeader )`
+	margin: 0 0 24px 0 !important;
 	.formatted-header__title {
-		font-size: 2.25rem;
+		font-size: 2.75rem !important;
+		margin-bottom: 16px !important;
 		line-height: 3rem;
+	}
+	.formatted-header__subtitle {
+		font-size: 1rem;
 	}
 `;
 
@@ -189,6 +204,7 @@ const CTASectionWrapper = styled.div`
 const StepContainer = styled.div`
 	display: flex;
 	gap: 20px;
+	margin-top: 0;
 `;
 
 const ProgressLine = styled.div`
@@ -349,7 +365,6 @@ export default function DIFMLanding( {
 		components: {
 			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
 			sup: <sup />,
-			br: <br />,
 		},
 		args: {
 			displayCost,
@@ -358,11 +373,11 @@ export default function DIFMLanding( {
 	};
 	const headerText = isStoreFlow
 		? translate(
-				'Let us build your store{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 				headerTextTranslateArgs
 		  )
 		: translate(
-				'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 				headerTextTranslateArgs
 		  );
 

@@ -1,7 +1,7 @@
 @import "@wordpress/components/build-style/style";
 @import "@automattic/onboarding/styles/mixins";
-@import "@wordpress/base-styles/breakpoints.scss";
-@import "@wordpress/base-styles/mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 $gray-100: #101517;
 $gray-60: #50575e;
@@ -643,11 +643,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 // Free flow
 .update-design.design-setup,
 .free.design-setup {
-	.step-container:not(.design-setup__preview) {
-		.navigation-link {
-			display: none;
-		}
-	}
 	.step-container__navigation {
 		.step-container__skip-wrapper {
 			button.step-container__navigation-link {

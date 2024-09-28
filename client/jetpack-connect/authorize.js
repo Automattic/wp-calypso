@@ -7,6 +7,7 @@ import {
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -53,6 +54,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
@@ -123,6 +125,7 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
+		isWooCoreProfiler: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteHasJetpackPaidProduct: PropTypes.bool,
 		retryAuth: PropTypes.func.isRequired,
@@ -187,6 +190,7 @@ export class JetpackAuthorize extends Component {
 			this.isFromJpo( nextProps ) ||
 			this.isFromJetpackBoost( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
+			this.isFromBlazeAdsPlugin( nextProps ) ||
 			this.props.isVip
 		) {
 			if ( authorizeSuccess ) {
@@ -310,7 +314,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
 			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
-			this.isFromAutomatticForAgenciesPlugin()
+			this.isFromAutomatticForAgenciesPlugin() ||
+			this.isFromBlazeAdsPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -453,7 +458,7 @@ export class JetpackAuthorize extends Component {
 
 	isWooCoreProfiler( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from;
+		return 'woocommerce-core-profiler' === from || this.props.isWooCoreProfiler;
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -473,6 +478,11 @@ export class JetpackAuthorize extends Component {
 	isFromAutomatticForAgenciesPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'automattic-for-agencies-client' );
+	}
+
+	isFromBlazeAdsPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'blaze-ads' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -851,7 +861,12 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isWooCoreProfiler() ) {
-			return (
+			return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ? (
+				<>
+					<strong>{ this.props.user.display_name }</strong>
+					<small>{ this.props.user.email }</small>
+				</>
+			) : (
 				<>
 					{ translate( 'Connecting as %(user)s', {
 						args: { user: this.props.user.display_name },
@@ -941,18 +956,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
-
-		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		if ( 'pressable' === partnerSlug ) {
-			const pressableTarget = `/start/pressable-nux?blogid=${ clientId }`;
-			debug(
-				'authorization-form: getRedirectionTarget -> This is a Pressable site, redirection target is: %s',
-				pressableTarget
-			);
-			return pressableTarget;
-		}
+		const { homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
 		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
@@ -993,7 +998,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const jpcTarget = addQueryArgs(
-			{ redirect: redirectAfterAuth },
+			{ redirect_to: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
 		debug( 'authorization-form: getRedirectionTarget -> Redirection target is: %s', jpcTarget );
@@ -1030,7 +1035,6 @@ export class JetpackAuthorize extends Component {
 					translate( 'Spelling and grammar correction' ),
 				];
 			}
-
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
@@ -1052,16 +1056,20 @@ export class JetpackAuthorize extends Component {
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
-							<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
+							{ ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
+								<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
+							) }
 							<Disclaimer
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
 							/>
-							<div className="jetpack-connect__jetpack-logo-wrapper">
-								<JetpackLogo monochrome size={ 18 } />{ ' ' }
-								<span>{ translate( 'Jetpack powered' ) }</span>
-							</div>
+							{ ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
+								<div className="jetpack-connect__jetpack-logo-wrapper">
+									<JetpackLogo monochrome size={ 18 } />{ ' ' }
+									<span>{ translate( 'Jetpack powered' ) }</span>
+								</div>
+							) }
 						</div>
 					</div>
 					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
@@ -1261,7 +1269,13 @@ export class JetpackAuthorize extends Component {
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
 			>
-				<div className="jetpack-connect__authorize-form">
+				<div
+					className={ clsx( 'jetpack-connect__authorize-form', {
+						'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
+							'woocommerce/core-profiler-passwordless-auth'
+						),
+					} ) }
+				>
 					<div className="jetpack-connect__logged-in-form">
 						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
@@ -1310,6 +1324,7 @@ const connectComponent = connect(
 			isRequestingSitePurchases: isFetchingSitePurchases( state ),
 			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
+			isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),

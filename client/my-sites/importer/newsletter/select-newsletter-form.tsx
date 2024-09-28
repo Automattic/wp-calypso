@@ -5,41 +5,60 @@ import { useState } from 'react';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
-type Props = {
-	nextStepUrl: string;
-};
-export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
-	const [ hasError, setHasError ] = useState( false );
+interface SelectNewsletterFormProps {
+	redirectUrl: string;
+	value: string;
+	isLoading: boolean;
+	isError: boolean;
+}
 
-	const handleAction = ( newsletterUrl: string ) => {
-		if ( ! isValidUrl( newsletterUrl ) ) {
-			setHasError( true );
+export default function SelectNewsletterForm( {
+	redirectUrl,
+	value,
+	isLoading,
+	isError,
+}: SelectNewsletterFormProps ) {
+	const [ isUrlInvalid, setIsUrlInvalid ] = useState( false );
+
+	const handleAction = ( fromSite: string ) => {
+		if ( ! isValidUrl( fromSite ) ) {
+			setIsUrlInvalid( true );
 			return;
 		}
 
-		const { hostname } = parseUrl( newsletterUrl );
-		page( addQueryArgs( nextStepUrl, { newsletter: hostname } ) );
-		return;
+		const { hostname, pathname } = parseUrl( fromSite );
+		const from = pathname.match( /^\/@\w+$/ ) ? hostname + pathname : hostname;
+
+		page( addQueryArgs( redirectUrl, { from } ) );
 	};
 
+	if ( isLoading ) {
+		return (
+			<Card className="select-newsletter-form">
+				<div className="is-loading" />
+			</Card>
+		);
+	}
+
+	const hasError = isUrlInvalid || isError;
+
 	return (
-		<Card>
-			<div className="select-newsletter-form">
-				<FormTextInputWithAction
-					onAction={ handleAction }
-					placeholder="http://example.substack.com"
-					action="Continue"
-					isError={ hasError }
-				/>
-				{ hasError && (
-					<p className="select-newsletter-form__help is-error">Please enter a valid URL.</p>
-				) }
-				{ ! hasError && (
-					<p className="select-newsletter-form__help">
-						Enter the URL of the substack newsletter that you wish to import.
-					</p>
-				) }
-			</div>
+		<Card className="select-newsletter-form">
+			<FormTextInputWithAction
+				onAction={ handleAction }
+				placeholder="https://example.substack.com"
+				action="Continue"
+				isError={ hasError }
+				defaultValue={ value }
+			/>
+			{ hasError && (
+				<p className="select-newsletter-form__help is-error">Please enter a valid Substack URL.</p>
+			) }
+			{ ! hasError && (
+				<p className="select-newsletter-form__help">
+					Enter the URL of the Substack newsletter that you wish to import.
+				</p>
+			) }
 		</Card>
 	);
 }

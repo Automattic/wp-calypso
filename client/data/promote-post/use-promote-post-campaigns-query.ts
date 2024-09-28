@@ -51,8 +51,20 @@ export type CampaignResponse = {
 		total: number;
 		card_name: string;
 		orders: Order[];
+		debt_amount?: number;
+		payment_links?: {
+			date: string;
+			amount: number;
+			url: string;
+		}[];
 	};
 	is_evergreen?: boolean;
+	objective?: string;
+	objective_data?: {
+		title: string;
+		description: string;
+		suitable_for_description: string;
+	};
 };
 
 export type Order = {

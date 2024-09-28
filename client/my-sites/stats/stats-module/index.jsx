@@ -212,6 +212,7 @@ class StatsModule extends Component {
 								path={ path }
 								borderless
 								period={ period }
+								skipQuery={ skipQuery }
 							/>
 						) }
 					</div>

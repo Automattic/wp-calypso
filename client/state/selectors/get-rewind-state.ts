@@ -5,6 +5,7 @@ import 'calypso/state/rewind/init';
 
 const uninitialized = {
 	state: 'uninitialized',
+	canAutoconfigure: false,
 };
 
 /**

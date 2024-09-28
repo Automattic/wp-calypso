@@ -1,53 +1,56 @@
-import { Button } from '@wordpress/components';
+import { Button, Flex, FlexItem } from '@wordpress/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useNavigate, useLocation } from 'react-router-dom';
-import '../styles.scss';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 
-export type Props = { onClick?: () => void; backToRoot?: boolean; className?: string };
+import './back-button.scss';
 
-export const BackButton = ( { onClick, backToRoot = false, className }: Props ) => {
+export type BackButtonProps = {
+	onClick?: () => void;
+	backToRoot?: boolean;
+	className?: string;
+	children?: React.ReactNode;
+};
+
+export const BackButton = ( { onClick, backToRoot = false, className }: BackButtonProps ) => {
 	const { __ } = useI18n();
-	const location = useLocation();
+	const { key } = useLocation();
 	const navigate = useNavigate();
+	const [ searchParams ] = useSearchParams();
 	const buttonClassName = clsx( 'back-button__help-center', className );
-	const queryParams = new URLSearchParams( location.search );
-	const backUrl = queryParams.get( 'backUrl' );
 
-	function handleOnClick() {
-		const currentPath = location.pathname;
-		if ( currentPath === '/odie' ) {
+	function defaultOnClick() {
+		if ( backToRoot ) {
 			navigate( '/' );
-			return;
-		}
-
-		if ( backUrl ) {
-			navigate( backUrl );
-			return;
-		}
-		if ( onClick ) {
-			onClick();
-			return;
-		}
-		if ( backToRoot || location.key === 'default' ) {
+		} else if ( key === 'default' ) {
 			// Workaround to detect when we don't have prior history
 			// https://github.com/remix-run/react-router/discussions/9922#discussioncomment-4722480
 			navigate( '/' );
+		} else if ( searchParams.get( 'query' ) ) {
+			navigate( `/?query=${ searchParams.get( 'query' ) }` );
 		} else {
 			navigate( -1 );
 		}
 	}
 
 	return (
-		<Button
-			className={ buttonClassName }
-			/* eslint-disable-next-line jsx-a11y/no-autofocus */
-			autoFocus
-			onClick={ handleOnClick }
-		>
+		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
 			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }
 		</Button>
+	);
+};
+
+export const BackButtonHeader = ( { children, className }: BackButtonProps ) => {
+	return (
+		<div className={ clsx( 'help-center-back-button__header', className ) }>
+			<Flex justify="space-between">
+				<FlexItem>
+					<BackButton />
+				</FlexItem>
+				{ children }
+			</Flex>
+		</div>
 	);
 };

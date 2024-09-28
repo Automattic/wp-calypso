@@ -1,9 +1,3 @@
-import {
-	isBiennially,
-	isJetpackPlan,
-	isJetpackProduct,
-	isJetpackSocialAdvancedSlug,
-} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
 import { getContactDetailsType } from './get-contact-details-type';
@@ -300,25 +294,41 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 }
 
 function doesIntroductoryOfferCostOverrideHavePriceIncrease(
+	product: ResponseCartProduct,
 	costOverride: ResponseCartCostOverride
 ): boolean {
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ) {
 		return false;
 	}
-	if ( costOverride.old_subtotal_integer >= costOverride.new_subtotal_integer ) {
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return false;
+	}
+
+	const priceBeforeOverride = costOverride.old_subtotal_integer;
+	const priceAfterOverride = costOverride.new_subtotal_integer;
+	const monthsForProductBeforeOverride = product.months_per_bill_period ?? 1;
+	const priceBeforeOverrideMonthly = priceBeforeOverride / monthsForProductBeforeOverride;
+	const monthsForProductAfterOverride = getBillPeriodMonthsForIntroductoryOfferInterval(
+		product.introductory_offer_terms.interval_unit
+	);
+	const priceAfterOverrideMonthly = priceAfterOverride / monthsForProductAfterOverride;
+
+	// If you will pay less per month for the subscription in the cart with the
+	// offer than without the offer, this is not a price increase.
+	if ( priceBeforeOverrideMonthly >= priceAfterOverrideMonthly ) {
 		return false;
 	}
 	return true;
 }
 
 export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
-	const introOffer = product.cost_overrides?.find(
-		doesIntroductoryOfferCostOverrideHavePriceIncrease
-	);
-	if ( ! introOffer ) {
+	if ( ! product.introductory_offer_terms?.enabled ) {
 		return false;
 	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	const hasIntroOfferOverrideWithPriceIncrease = product.cost_overrides?.some( ( override ) =>
+		doesIntroductoryOfferCostOverrideHavePriceIncrease( product, override )
+	);
+	if ( ! hasIntroOfferOverrideWithPriceIncrease ) {
 		return false;
 	}
 	return true;
@@ -390,87 +400,6 @@ export function filterCostOverridesForLineItem(
 }
 
 /**
- * Returns cost overrides (typically discounts) for display in checkout.
- *
- * Cost overrides are applied to shopping-cart line items, but they are
- * displayed as if they applied to the entire cart. For example, we may have
- * two items which have a "Coupon code" discount, but we will only display one
- * "Coupon code" discount line which shows the savings from both of those items
- * combined.
- *
- * This function therefore merges the discounts for each line item in the cart
- * by the item's human-readable reason.
- *
- * In most cases, the human-readable reasons are provided directly by the
- * shopping-cart, but each cost override also includes a unique code which
- * identifies it and we can use those codes to perform special behaviors for
- * certain discounts. For example we rename Sale Coupon discounts to mention
- * the item on sale.
- *
- * This function also removes original cost overrides since they are never
- * displayed to users (they represent a change to the product's base price
- * rather than a discount).
- *
- * Finally, this adds a fake "multi-year" pseudo-discount in some cases (see
- * `canDisplayMultiYearDiscountForProduct()`). In that case, the cart item's
- * total will also need to be increased by this amount for the discount to be
- * subtracted without messing up the math. See
- * `getMultiYearDiscountForProduct()`,
- * `getSubtotalWithoutDiscountsForProduct()`, and
- * `getSubtotalWithoutDiscounts().`
- */
-export function filterAndGroupCostOverridesForDisplay(
-	responseCart: ResponseCart,
-	translate: ReturnType< typeof useTranslate >
-): CostOverrideForDisplay[] {
-	// Collect cost overrides from each line item and group them by type so we
-	// can show them all together after the line item list.
-	const costOverridesGrouped = responseCart.products.reduce<
-		Record< string, CostOverrideForDisplay >
-	>( ( grouped: Record< string, CostOverrideForDisplay >, product ) => {
-		const costOverrides = product?.cost_overrides ?? [];
-
-		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
-			// Remove intro offers which increase the cost because they are not
-			// discounts and will have their terms displayed elsewhere.
-			.filter(
-				( costOverride ) => ! doesIntroductoryOfferCostOverrideHavePriceIncrease( costOverride )
-			)
-			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
-			.map( ( costOverride ) =>
-				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, false )
-			)
-			.forEach( ( costOverride ) => {
-				// Group discounts by human_readable_reason.
-				const discountAmount = grouped[ costOverride.human_readable_reason ]?.discountAmount ?? 0;
-				grouped[ costOverride.human_readable_reason ] = {
-					humanReadableReason: costOverride.human_readable_reason,
-					overrideCode: costOverride.override_code,
-					discountAmount: discountAmount + getDiscountForCostOverrideForDisplay( costOverride ),
-				};
-			} );
-
-		// Add a fake "multi-year" discount if applicable. These are not real
-		// discounts in terms of our billing system; they are just the
-		// difference in cost between a multi-year version of a product and
-		// that product's yearly version multiplied by the number of years.
-		const multiYearDiscount = getMultiYearDiscountForProduct( product );
-		if ( multiYearDiscount > 0 ) {
-			const discountAmount = grouped[ 'multi-year-discount' ]?.discountAmount ?? 0;
-			grouped[ 'multi-year-discount' ] = {
-				humanReadableReason: translate( 'Multi-year discount' ),
-				overrideCode: 'multi-year-discount',
-				discountAmount: discountAmount + multiYearDiscount,
-			};
-		}
-		return grouped;
-	}, {} );
-
-	return Object.values( costOverridesGrouped );
-}
-
-/**
  * Even though a user might have a number of credits available, that number may
  * be greater than the cart's total. This function returns the number of
  * credits actually being used by a cart.
@@ -483,87 +412,19 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
 }
 
-function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
-	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
-}
-
-/**
- * The idea of a multi-year discount is conceptual; it is not a true discount
- * in terms of our billing system. Purchases of different product renewal
- * intervals have different prices set and the amount they save depends on what
- * you compare them to.
- *
- * This function allows us to control which store product IDs will be
- * considered for a multi-year discount by `getMultiYearDiscountForProduct()`.
- */
-function canDisplayMultiYearDiscountForProduct( product: ResponseCartProduct ): boolean {
-	const isJetpack = isJetpackProduct( product ) || isJetpackPlan( product );
-	if (
-		isJetpack &&
-		isBiennially( product ) &&
-		! isJetpackSocialAdvancedSlug( product.product_slug )
-	) {
-		return true;
-	}
-	return false;
-}
-
-/**
- * We want to be able to display a discount for a multi-year purchase, although
- * this is not a true discount; purchases of different product renewal
- * intervals have different prices set and the amount they save depends on what
- * you compare them to.
- *
- * In this case we will ignore monthly intervals and only concern ourselves
- * with the discount of the currently selected product compared to the yearly
- * version of that product multiplied by the number of years, if such a product
- * exists. In order to display the difference in the multi-year price versus
- * the yearly price as a discount, we need to INCREASE the subtotal of the
- * product by the same amount.
- *
- * This function returns the amount by which we'd need to increase that price,
- * which is also the amount of the pseudo-discount.
- *
- * Note that this function returns the cost in the currency's smallest unit.
- */
-function getMultiYearDiscountForProduct( product: ResponseCartProduct ): number {
-	if ( ! product.months_per_bill_period || ! canDisplayMultiYearDiscountForProduct( product ) ) {
-		return 0;
-	}
-
-	const oneYearVariant = getYearlyVariantFromProduct( product );
-	if ( oneYearVariant ) {
-		const numberOfYears = product.months_per_bill_period / 12;
-		const expectedMultiYearPrice = oneYearVariant.price_before_discounts_integer * numberOfYears;
-		const actualMultiYearPrice = product.item_original_cost_integer;
-		const multiYearDiscount = expectedMultiYearPrice - actualMultiYearPrice;
-		if ( multiYearDiscount > 0 ) {
-			return multiYearDiscount;
-		}
-	}
-
-	return 0;
-}
-
 /**
  * Return a shopping-cart line item's cost before any discounts are applied.
  *
  * Note that this function returns the cost in the currency's smallest unit.
  */
 export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProduct ): number {
-	// If there is a fake multi-year pseudo-discount being displayed for this
-	// line item, we need to increase the total of the line item by that amount
-	// so that the math for the discount makes sense. See
-	// `getMultiYearDiscountForProduct()`.
-	const multiYearDiscount = getMultiYearDiscountForProduct( product );
-
 	// Return the last original cost override's new price.
 	const originalCostOverrides =
 		product.cost_overrides?.filter( ( override ) => override.does_override_original_cost ) ?? [];
 	if ( originalCostOverrides.length > 0 ) {
 		const lastOriginalCostOverride = originalCostOverrides.pop();
 		if ( lastOriginalCostOverride ) {
-			return lastOriginalCostOverride.new_subtotal_integer + multiYearDiscount;
+			return lastOriginalCostOverride.new_subtotal_integer;
 		}
 	}
 
@@ -572,11 +433,11 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 	// "Subtotal before discounts" as lower than the "Subtotal". The details of
 	// the price increase will be displayed elsewhere.
 	if ( doesIntroductoryOfferHavePriceIncrease( product ) ) {
-		const introOffer = product.cost_overrides?.find(
-			( offer ) => offer.override_code === 'introductory-offer'
+		const introOffer = product.cost_overrides?.find( ( offer ) =>
+			isOverrideCodeIntroductoryOffer( offer.override_code )
 		);
 		if ( introOffer ) {
-			return introOffer.new_subtotal_integer + multiYearDiscount;
+			return introOffer.new_subtotal_integer;
 		}
 	}
 
@@ -585,13 +446,13 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
 		const firstOverride = product.cost_overrides[ 0 ];
 		if ( firstOverride ) {
-			return firstOverride.old_subtotal_integer + multiYearDiscount;
+			return firstOverride.old_subtotal_integer;
 		}
 	}
 
 	// If there are no cost overrides, return the item's cost, since it has no
 	// discounts.
-	return product.item_subtotal_integer + multiYearDiscount;
+	return product.item_subtotal_integer;
 }
 
 /**
@@ -612,21 +473,29 @@ export function getSubtotalWithoutDiscounts( responseCart: ResponseCart ): numbe
 /**
  * Return the total savings from shopping-cart item discounts.
  *
- * This includes fake "multi-year" pseudo-discounts. See
- * `getMultiYearDiscountForProduct()`.
- *
  * This does not include credits which are not a discount; they reduce the
  * final price after taxes.
  *
  * Note that this function returns the cost in the currency's smallest unit.
  */
-export function getTotalDiscountsWithoutCredits(
-	responseCart: ResponseCart,
-	translate: ReturnType< typeof useTranslate >
-): number {
-	const filteredOverrides = filterAndGroupCostOverridesForDisplay( responseCart, translate );
+export function getTotalDiscountsWithoutCredits( responseCart: ResponseCart ): number {
+	const filteredOverrides = responseCart.products.reduce< ResponseCartCostOverride[] >(
+		( overrides, product ) => {
+			product.cost_overrides.forEach( ( override ) => {
+				if ( override.does_override_original_cost ) {
+					return;
+				}
+				if ( doesIntroductoryOfferCostOverrideHavePriceIncrease( product, override ) ) {
+					return;
+				}
+				overrides.push( override );
+			} );
+			return overrides;
+		},
+		[]
+	);
 	return -filteredOverrides.reduce( ( total, override ) => {
-		total = total + override.discountAmount;
+		total = total + ( override.old_subtotal_integer - override.new_subtotal_integer );
 		return total;
 	}, 0 );
 }

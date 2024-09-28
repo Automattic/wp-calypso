@@ -5,7 +5,7 @@ interface ConfigurationData {
 	expectedVideoTitle: string;
 }
 
-const blockParentSelector = '[aria-label="Block: YouTube"]:has-text("YouTube URL")';
+const blockParentSelector = '[aria-label*="Block: YouTube"]:has-text("YouTube")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
@@ -28,7 +28,8 @@ export class YouTubeBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'YouTube';
+	blockSidebarName = 'YouTube Embed';
+	blockTestFallBackName = 'YouTube';
 	blockEditorSelector = blockParentSelector;
 
 	/**

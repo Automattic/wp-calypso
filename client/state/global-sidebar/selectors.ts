@@ -13,6 +13,7 @@ const SITE_DASHBOARD_ROUTES = {
 	hosting: '/hosting-config/',
 	'github-deployments': '/github-deployments/',
 	'site-monitoring': '/site-monitoring/',
+	'site-performance': '/sites/performance/',
 	'site-logs': '/site-logs/',
 	'hosting-features': '/hosting-features/',
 	'staging-site': '/staging-site/',
@@ -45,7 +46,7 @@ export const getShouldShowSiteDashboard = (
 
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {

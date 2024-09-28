@@ -7,6 +7,7 @@ import {
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -349,6 +350,7 @@ function PurchaseJetpackUserLicense( { purchaseId }: { purchaseId: number } ) {
 			size={ licenseKeyInputSize }
 			value={ licenseKey }
 			loading={ isLoading || isInitialLoading }
+			activationUrl="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
 		/>
 	);
 }
@@ -371,6 +373,7 @@ function PurchaseAkismetApiKey() {
 				size={ keyInputSize }
 				value={ akismetApiKey }
 				loading={ isLoading }
+				activationUrl="https://akismet.com/support/getting-started/api-key/"
 			/>
 		</>
 	);
@@ -381,11 +384,13 @@ function PurchaseClipboardCard( {
 	value,
 	size,
 	loading = false,
+	activationUrl,
 }: {
 	label: string;
 	value: string;
 	size: number;
 	loading?: boolean;
+	activationUrl: string;
 } ) {
 	const translate = useTranslate();
 	const [ isCopied, setCopied ] = useState( false );
@@ -419,6 +424,9 @@ function PurchaseClipboardCard( {
 					</>
 				) }
 			</div>
+			<ExternalLink className="manage-purchase__license-clipboard-link" href={ activationUrl }>
+				{ translate( 'How to activate' ) }
+			</ExternalLink>
 		</Card>
 	);
 }

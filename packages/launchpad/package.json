@@ -33,7 +33,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/components": "^28.2.0",
+		"@wordpress/components": "^28.8.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
@@ -49,19 +49,19 @@
 		"msw": "^2.1.7",
 		"msw-storybook-addon": "2.0.2",
 		"postcss": "^8.4.5",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"redux": "^4.2.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.91.0"
+		"webpack": "^5.94.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.2.0",
-		"@wordpress/element": "^6.2.0",
-		"@wordpress/i18n": "^5.2.0",
+		"@wordpress/data": "^10.8.0",
+		"@wordpress/element": "^6.8.0",
+		"@wordpress/i18n": "^5.8.0",
 		"debug": "^4.3.3",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"redux": "^4.2.1"
 	}
 }

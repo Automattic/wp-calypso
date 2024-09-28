@@ -89,6 +89,7 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
 	StepChangedCallback,
+	PaymentMethod,
 } from '@automattic/composite-checkout';
 import type {
 	RemoveProductFromCart,
@@ -291,6 +292,7 @@ export default function CheckoutMainContent( {
 	infoMessage,
 	isLoggedOutCart,
 	onPageLoadError,
+	paymentMethods,
 	removeProductFromCart,
 	showErrorMessageBriefly,
 	siteId,
@@ -311,6 +313,7 @@ export default function CheckoutMainContent( {
 	infoMessage?: JSX.Element;
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
+	paymentMethods: PaymentMethod[];
 	removeProductFromCart: RemoveProductFromCart;
 	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
@@ -508,6 +511,18 @@ export default function CheckoutMainContent( {
 	}
 
 	const nextStepButtonText = translate( 'Continue to payment', { textOnly: true } );
+	const canEditPaymentStep = () => {
+		if ( ! paymentMethods ) {
+			return false;
+		}
+		const containsFreeOrCreditMethod = paymentMethods.some(
+			( method ) => method.id === 'free-purchase'
+		);
+		if ( paymentMethods.length < 2 && containsFreeOrCreditMethod ) {
+			return false;
+		}
+		return true;
+	};
 
 	return (
 		<WPCheckoutWrapper>
@@ -694,6 +709,7 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
+						canEditStep={ canEditPaymentStep() }
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
@@ -905,10 +921,14 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	padding: 32px 20px 0 24px;
+	padding: 24px;
 	width: 100%;
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 12px 20px 0 40px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-top: 50px;
+		padding-bottom: 0;
+		padding-inline-start: 40px;
+		padding-inline-end: 0;
 	}
 `;
 
@@ -1144,6 +1164,10 @@ const WPCheckoutMainContent = styled.div`
 			padding: 0 24px 0 64px;
 		}
 	}
+
+	.editor-checkout-modal & {
+		margin-top: 20px;
+	}
 `;
 
 const WPCheckoutSidebarContent = styled.div`
@@ -1161,6 +1185,14 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
+		}
+	}
+
+	.editor-checkout-modal & {
+		padding: 68px 24px 144px 64px;
+
+		.rtl & {
+			padding: 68px 64px 0 24px;
 		}
 	}
 `;

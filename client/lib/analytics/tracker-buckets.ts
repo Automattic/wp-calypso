@@ -60,8 +60,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	googleAds: Bucket.ADVERTISING,
 	googleTagManager: Bucket.ADVERTISING,
 	logrocket: Bucket.ADVERTISING,
-	outbrain: Bucket.ADVERTISING,
-	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 	reddit: Bucket.ADVERTISING,
@@ -79,6 +77,8 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	quora: null,
 	adroll: null,
 	clarity: null,
+	outbrain: null,
+	pinterest: null,
 };
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;

@@ -104,6 +104,23 @@ const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const odieInitialPromptText: Reducer< string | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT' ) {
+		return action.text;
+	}
+	return state;
+};
+
+const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_BOT_NAME_SLUG' ) {
+		return action.odieBotNameSlug;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -116,6 +133,8 @@ const reducer = combineReducers( {
 	isMinimized,
 	unreadCount,
 	navigateToRoute,
+	odieInitialPromptText,
+	odieBotNameSlug,
 } );
 
 export type State = ReturnType< typeof reducer >;

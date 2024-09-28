@@ -65,10 +65,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { A4AFullyManagedSiteSetting } from './a4a-fully-managed-site-setting';
 import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
-import SiteAdminInterfaceExperiment from './site-admin-interface/experiment';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -558,17 +558,14 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site, siteSlug, isSimple } = this.props;
-		if ( isSimple ) {
-			return <SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />;
-		}
-
+		const { site, siteSlug } = this.props;
 		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
 	}
 
 	render() {
 		const {
 			customizerUrl,
+			fields,
 			handleSubmitForm,
 			hasNoWpcomBranding,
 			isRequestingSettings,
@@ -625,6 +622,14 @@ export class SiteSettingsFormGeneral extends Component {
 				) : (
 					this.privacySettings()
 				) }
+				<A4AFullyManagedSiteSetting
+					site={ site }
+					isFullyManagedAgencySite={ fields.is_fully_managed_agency_site }
+					onChange={ this.props.handleToggle( 'is_fully_managed_agency_site' ) }
+					isSaving={ isSavingSettings }
+					onSaveSetting={ handleSubmitForm }
+					disabled={ isRequestingSettings || isSavingSettings }
+				/>
 				{ this.enhancedOwnershipSettings() }
 				<DIFMUpsell
 					site={ site }
@@ -753,6 +758,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
 		admin_url: '',
+		is_fully_managed_agency_site: true,
 	};
 
 	if ( ! settings ) {
@@ -766,6 +772,8 @@ const getFormSettings = ( settings ) => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
+
+		is_fully_managed_agency_site: settings.is_fully_managed_agency_site,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,

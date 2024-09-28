@@ -6,6 +6,7 @@ import type {
 	ProfilerData,
 	DomainTransferNames,
 	DomainTransferAuthCodes,
+	ReadymadeTemplate,
 } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
@@ -37,6 +38,16 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const siteUrl: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_URL' ) {
+		return action.siteUrl;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -117,6 +128,22 @@ const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction
 		return undefined;
 	}
 	return state;
+};
+
+const readymadeTemplate: Reducer< ReadymadeTemplate | undefined, OnboardAction > = (
+	state = undefined, // Initial state is set to undefined
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_READYMADE_TEMPLATE':
+			return action.readymadeTemplate;
+
+		case 'RESET_ONBOARD_STORE':
+			return undefined;
+
+		default:
+			return state;
+	}
 };
 
 const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
@@ -438,6 +465,20 @@ const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAct
 	return state;
 };
 
+const domainCartItems: Reducer< MinimalRequestCartProduct[] | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_DOMAIN_CART_ITEMS' ) {
+		return action.domainCartItems;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_IS_MIGRATE_FROM_WP' ) {
 		return action.isMigrateFromWp;
@@ -563,6 +604,7 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	domainForm,
+	siteUrl,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
@@ -591,6 +633,7 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
+	readymadeTemplate,
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
@@ -599,6 +642,7 @@ const reducer = combineReducers( {
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,
+	domainCartItems,
 	pluginsToVerify,
 	profilerData,
 	paidSubscribers,

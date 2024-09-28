@@ -1,21 +1,9 @@
-@import "../shared-style.scss";
+@import "../shared-style";
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing,
 .is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing {
 
 	@include jetpack-cloud-sections-shared-styles();
-
-	// On cloud.jetpack.com, we want to override the primary color, used on
-	// the featured product card, with --studio-pink-50.
-	.jetpack-product-card.is-featured {
-		.jetpack-product-card__header {
-			background-color: var(--studio-pink-50);
-		}
-
-		.jetpack-product-card__body {
-			border: solid 2px var(--studio-pink-50);
-		}
-	}
 
 	.layout__content {
 		overflow: clip;

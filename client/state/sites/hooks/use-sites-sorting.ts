@@ -1,4 +1,5 @@
 import { SitesSortOptions, SitesSortKey, SitesSortOrder, isValidSorting } from '@automattic/sites';
+import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
@@ -41,18 +42,23 @@ export const stringifySitesSorting = ( sorting: Required< SitesSortOptions > ): 
 export const useSitesSorting = () => {
 	const siteCount = useSelector( getCurrentUserSiteCount );
 
-	const [ sitesSorting, onSitesSortingChange ] = useAsyncPreference< SitesSorting >( {
+	const [ sitesSorting, setSitesSorting ] = useAsyncPreference< SitesSorting >( {
 		defaultValue: stringifySitesSorting(
 			siteCount && siteCount > 6 ? MAGIC_SORTING : ALPHABETICAL_SORTING
 		),
 		preferenceName: 'sites-sorting',
 	} );
 
+	const onSitesSortingChange = useCallback(
+		( newSorting: Required< SitesSortOptions > ) => {
+			setSitesSorting( stringifySitesSorting( newSorting ) );
+		},
+		[ setSitesSorting ]
+	);
+
 	return {
 		hasSitesSortingPreferenceLoaded: sitesSorting !== 'none',
 		sitesSorting: parseSitesSorting( sitesSorting ),
-		onSitesSortingChange: ( newSorting: Required< SitesSortOptions > ) => {
-			onSitesSortingChange( stringifySitesSorting( newSorting ) );
-		},
+		onSitesSortingChange,
 	};
 };

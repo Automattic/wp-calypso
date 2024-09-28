@@ -74,8 +74,8 @@ const ReaderSiteSubscriptions = () => {
 	return (
 		<>
 			<SiteSubscriptionsListActionsBar />
-			{ ! searchTerm && <RecommendedSites /> }
 			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
+			{ ! searchTerm && <RecommendedSites /> }
 
 			{ hasSomeSubscriptions && hasSomeUnsubscribedSearchResults ? (
 				<div className="site-subscriptions__search-recommendations-label">

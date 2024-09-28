@@ -77,6 +77,7 @@ import LinkCard from 'calypso/components/link-card/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
+import { MasonryGridExample } from 'calypso/components/masonry-grid/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
 import NavigationHeader from 'calypso/components/navigation-header/docs/example';
 import Notices from 'calypso/components/notice/docs/example';
@@ -121,7 +122,6 @@ import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 import SitesGridItemExample from 'calypso/sites-dashboard/components/sites-grid-item/docs/example';
-import SitesGridItemSelectExample from 'calypso/sites-dashboard/components/sites-grid-item-select/docs/example';
 
 export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
@@ -267,7 +267,6 @@ export default class DesignAssets extends Component {
 					<Spotlight />
 					<SiteThumbnail readmeFilePath="/packages/components/src/site-thumbnail" />
 					<SitesGridItemExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item" />
-					<SitesGridItemSelectExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item-select" />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
@@ -286,6 +285,7 @@ export default class DesignAssets extends Component {
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
+					<MasonryGridExample readmeFilePath="masonry-grid" />
 				</Collection>
 			</Main>
 		);

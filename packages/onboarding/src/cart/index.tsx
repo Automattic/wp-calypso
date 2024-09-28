@@ -9,7 +9,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
-	isMigrationFlow,
+	isImportFocusedFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
 } from '../';
@@ -29,6 +29,7 @@ interface GetNewSiteParams {
 	siteVisibility: Site.Visibility;
 	username: string;
 	sourceSlug?: string;
+	siteIntent?: string;
 }
 
 type NewSiteParams = {
@@ -49,6 +50,7 @@ type NewSiteParams = {
 		timezone_string?: string;
 		wpcom_public_coming_soon: 0 | 1;
 		site_accent_color?: string;
+		site_intent?: string;
 	};
 	validate: boolean;
 };
@@ -63,7 +65,7 @@ const getBlogNameGenerationParams = ( {
 	if ( siteUrl ) {
 		const blog_name = siteUrl.replace( '.wordpress.com', '' );
 
-		if ( isMigrationFlow( flowToCheck ) ) {
+		if ( isImportFocusedFlow( flowToCheck ) ) {
 			return {
 				blog_name,
 				find_available_url: true,
@@ -105,6 +107,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		useThemeHeadstart = false,
 		siteVisibility,
 		sourceSlug,
+		siteIntent,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -127,6 +130,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( sourceSlug && { site_source_slug: sourceSlug } ),
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
+			...( siteIntent && { site_intent: siteIntent } ),
 		},
 		validate: false,
 	};
@@ -144,11 +148,13 @@ export const createSiteWithCart = async (
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
+	domainCartItems: MinimalRequestCartProduct[],
+	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
-	domainCartItem?: MinimalRequestCartProduct,
-	sourceSlug?: string
+	sourceSlug?: string,
+	siteIntent?: string
 ) => {
-	const siteUrl = domainItem?.domain_name;
+	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	const newSiteParams = getNewSiteParams( {
@@ -162,6 +168,7 @@ export const createSiteWithCart = async (
 		siteVisibility,
 		username,
 		sourceSlug,
+		siteIntent,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -213,14 +220,18 @@ export const createSiteWithCart = async (
 		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 
-	await processItemCart(
-		siteSlug,
-		isFreeThemePreselected,
-		themeSlugWithRepo,
-		flowName,
-		userIsLoggedIn,
-		domainCartItem
-	);
+	if ( domainCartItems.length ) {
+		for ( const domainCartItem of domainCartItems ) {
+			await processItemCart(
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo,
+				flowName,
+				userIsLoggedIn,
+				domainCartItem
+			);
+		}
+	}
 
 	return providedDependencies;
 };

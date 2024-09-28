@@ -127,6 +127,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		disableTosText: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1045,7 +1046,7 @@ class SignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
-				{ this.termsOfServiceLink() }
+				{ ! this.props.disableTosText && this.termsOfServiceLink() }
 				<FormButton
 					className={ clsx(
 						'signup-form__submit',
@@ -1161,7 +1162,6 @@ class SignupForm extends Component {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
-				'socialService',
 				'socialServiceResponse',
 			] );
 
@@ -1228,7 +1228,6 @@ class SignupForm extends Component {
 						{ this.props.isSocialSignupEnabled && (
 							<SocialSignupForm
 								handleResponse={ this.handleWooCommerceSocialConnect }
-								socialService={ this.props.socialService }
 								socialServiceResponse={ this.props.socialServiceResponse }
 								redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							/>
@@ -1248,7 +1247,6 @@ class SignupForm extends Component {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
 				'handleSocialResponse',
-				'socialService',
 				'socialServiceResponse',
 			] );
 
@@ -1277,9 +1275,7 @@ class SignupForm extends Component {
 					goToNextStep={ this.props.goToNextStep }
 					logInUrl={ logInUrl }
 					handleSocialResponse={ this.props.handleSocialResponse }
-					socialService={ this.props.socialService }
 					socialServiceResponse={ this.props.socialServiceResponse }
-					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					queryArgs={ this.props.queryArgs }
 					userEmail={ this.getEmailValue() }
@@ -1332,6 +1328,7 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						disableTosText={ this.props.disableTosText }
 						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
@@ -1356,9 +1353,7 @@ class SignupForm extends Component {
 							{ this.props.isSocialSignupEnabled && (
 								<SocialSignupForm
 									handleResponse={ this.props.handleSocialResponse }
-									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
-									isReskinned={ this.props.isReskinned }
 									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 									compact={ this.props.isWoo }
 								/>
@@ -1376,9 +1371,9 @@ class SignupForm extends Component {
 					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>
-				{ this.getNotice() }
-
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
+					{ this.getNotice() }
+
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
@@ -1393,9 +1388,7 @@ class SignupForm extends Component {
 				{ this.props.isSocialSignupEnabled && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						isReskinned={ this.props.isReskinned }
 						flowName={ this.props.flowName }
 						compact={ this.props.isWoo }
 						redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }

@@ -5,6 +5,7 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -108,6 +109,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2ClientId: oauth2Client.id,
 			redirectTo: redirectTo,
 			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
 		} );
 	}
 
@@ -234,8 +236,13 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const isRecognizedLogin = () => {
-	const cookies = getCookies();
+export const getPluginTitle = ( pluginName, translate ) => {
+	const pluginNames = {
+		'jetpack-ai': translate( 'Jetpack' ),
+		'woocommerce-payments': translate( 'Jetpack and WooPayments' ),
+		'order-attribution': translate( 'Jetpack and Order Attribution' ),
+		default: translate( 'Jetpack' ),
+	};
 
-	return Boolean( cookies.recognized_logins );
+	return pluginNames[ pluginName ] || pluginNames.default;
 };

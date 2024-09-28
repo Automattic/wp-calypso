@@ -53,13 +53,13 @@ function odieWpcomSendSupportMessage(
 }
 
 // Internal helper function to generate a uuid
-function uuid() {
+export const uuid = () => {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
 		const r = ( Math.random() * 16 ) | 0;
 		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
 		return v.toString( 16 );
 	} );
-}
+};
 
 /**
  * It will post a new message using the current chat_id.
@@ -105,7 +105,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
-		unknown,
+		{ data: { status: number; messages: Message[] } },
 		{ message: Message },
 		{ internal_message_id: string }
 	>( {
@@ -211,8 +211,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 				throw new Error( 'Context is undefined' );
 			}
 
-			const { data } = response as { data: { status: number } };
-			const isRateLimitError = data.status === 429;
+			const isRateLimitError =
+				response && response.data && response.data.status === 429 ? true : false;
 
 			const { internal_message_id } = context;
 			const message = {
@@ -277,6 +277,8 @@ export const useOdieGetChat = (
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
+		// 4 hours (we update the messages when a new message is sent, so cache is not stale while we are chatting)
+		staleTime: 4 * 60 * 60 * 1000,
 	} );
 };
 
@@ -322,7 +324,6 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 		},
 		onSuccess: ( _, { rating_value, message } ) => {
 			const queryKey = [ 'chat', botNameSlug, chat.chat_id, 1, 30, true ];
-
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return;
@@ -331,7 +332,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 				return {
 					...currentChatCache,
 					messages: currentChatCache.messages.map( ( m ) =>
-						m.internal_message_id === message.internal_message_id ? { ...m, rating_value } : m
+						m.message_id === message.message_id ? { ...m, rating_value } : m
 					),
 				};
 			} );
