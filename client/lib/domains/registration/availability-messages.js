@@ -219,7 +219,7 @@ function getAvailabilityNotice(
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. If you want to connect it to this site ' +
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site). If you want to connect it to this site ' +
 					'instead, we will be happy to help you do that. {{a}}Contact us.{{/a}}',
 				{
 					args: { domain, site },
@@ -236,28 +236,22 @@ function getAvailabilityNotice(
 				}
 			);
 			break;
-		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE:
+		case domainAvailability.MAPPED_SAME_SITE_REGISTRABLE:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s.' +
-					' {{a}}Register it to the connected site.{{/a}}',
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s and also available for registration.',
 				{
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: (
-							<a
-								target={ linksTarget }
-								rel="noopener noreferrer"
-								href={ domainAddNew( site, domain ) }
-							/>
-						),
+						a: <a target={ linksTarget } rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
 					},
 				}
 			);
 			break;
-		case domainAvailability.MAPPED_OTHER_SITES_SAME_USER_REGISTRABLE:
+		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. {{a}}Register it via the connected site here.{{/a}}',
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site).' +
+					' {{a}}Register it to the connected site.{{/a}}',
 				{
 					args: { domain, site },
 					components: {
@@ -667,7 +661,7 @@ function getAvailabilityNotice(
 
 		default:
 			message = translate(
-				'HAHAHAHAHAH Sorry, there was a problem processing your request. Please try again in a few minutes.'
+				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
 			);
 	}
 

@@ -1084,13 +1084,18 @@ class RegisterDomainStep extends Component {
 						MAPPED,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
 						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+						MAPPED_SAME_SITE_REGISTRABLE,
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
 
-					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
+					const availableDomainStatuses = [
+						AVAILABLE,
+						UNKNOWN,
+						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+					];
 
 					if ( error ) {
 						resolve( null );
@@ -1122,7 +1127,8 @@ class RegisterDomainStep extends Component {
 					if (
 						isDomainMapped &&
 						status !== REGISTERED_OTHER_SITE_SAME_USER &&
-						status !== MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE
+						status !== MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
+						status !== MAPPED_SAME_SITE_REGISTRABLE
 					) {
 						availabilityStatus = mappable;
 					}
