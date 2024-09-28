@@ -12,8 +12,6 @@ import UsAddressFieldset from './us-address-fieldset';
 import type { FieldProps } from '../managed-contact-details-form-fields';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
-const noop = () => {};
-
 export interface RegionAddressFieldsetsProps {
 	countryCode: string;
 	shouldAutoFocusAddressField?: boolean;
@@ -33,7 +31,6 @@ export class RegionAddressFieldsets extends Component<
 	RegionAddressFieldsetsProps & LocalizeProps
 > {
 	static defaultProps = {
-		getFieldProps: noop,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		arePostalCodesSupported: true,
@@ -67,7 +64,7 @@ export class RegionAddressFieldsets extends Component<
 			<div>
 				<div>
 					<Input
-						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
+						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : undefined }
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
 						{ ...getFieldProps( 'address-1', {

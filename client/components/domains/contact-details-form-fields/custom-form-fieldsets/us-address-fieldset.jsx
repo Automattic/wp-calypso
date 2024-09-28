@@ -1,13 +1,16 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { StateSelect, Input } from 'calypso/my-sites/domains/components/form';
 import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils';
 
-const noop = () => {};
+const UsAddressFieldset = ( {
+	getFieldProps,
+	countryCode = 'US',
+	contactDetailsErrors,
+	arePostalCodesSupported = true,
+} ) => {
+	const translate = useTranslate();
 
-const UsAddressFieldset = ( props ) => {
-	const { getFieldProps, translate, countryCode, contactDetailsErrors, arePostalCodesSupported } =
-		props;
 	return (
 		<div className="custom-form-fieldsets__address-fields us-address-fieldset">
 			<Input
@@ -37,16 +40,8 @@ const UsAddressFieldset = ( props ) => {
 
 UsAddressFieldset.propTypes = {
 	countryCode: PropTypes.string,
-	getFieldProps: PropTypes.func,
-	translate: PropTypes.func,
 	contactDetailsErrors: PropTypes.object,
 	arePostalCodesSupported: PropTypes.bool,
 };
 
-UsAddressFieldset.defaultProps = {
-	countryCode: 'US',
-	getFieldProps: noop,
-	arePostalCodesSupported: true,
-};
-
-export default localize( UsAddressFieldset );
+export default UsAddressFieldset;

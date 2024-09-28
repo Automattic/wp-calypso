@@ -20,7 +20,7 @@ describe( 'uk-form', () => {
 				contactDetailsValidationErrors: {
 					extra: {
 						uk: {
-							registrationNumber: [ { errorMessage: 'Test error message.' } ],
+							registrationNumber: [ { errorCode: 'test', errorMessage: 'Test error message.' } ],
 						},
 					},
 				},
@@ -38,10 +38,10 @@ describe( 'uk-form', () => {
 					extra: {
 						uk: {
 							registrationNumber: [
-								{ errorMessage: 'Test error message 1.' },
-								{ errorMessage: 'Test error message 2.' },
+								{ errorCode: 'test-1', errorMessage: 'Test error message 1.' },
+								{ errorCode: 'test-2', errorMessage: 'Test error message 2.' },
 							],
-							tradingName: [ { errorMessage: 'Test Error Message 3.' } ],
+							tradingName: [ { errorCode: 'test-3', errorMessage: 'Test Error Message 3.' } ],
 						},
 					},
 				},
