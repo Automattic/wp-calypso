@@ -188,8 +188,12 @@
 				}
 
 				.performance-profiler-tip {
-					max-width: 300px;
-					min-width: unset;
+					max-width: unset;
+					flex: 1;
+					margin-bottom: 32px;
+					& p {
+						max-width: 300px;
+					}
 				}
 			}
 
