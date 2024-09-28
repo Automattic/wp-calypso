@@ -7,7 +7,7 @@
 	}
 
 	p {
-		color: var(--color-neutral-40);
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 	}
 
@@ -25,7 +25,6 @@
 	}
 
 	p {
-		color: var(--color-text-subtle);
 		display: block;
 		font-size: $font-body-small;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
