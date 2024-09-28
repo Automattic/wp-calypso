@@ -63,7 +63,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedDate from 'calypso/components/formatted-date';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import Notice from 'calypso/components/notice';
@@ -642,44 +641,18 @@ class ManagePurchase extends Component<
 	renderRefundText() {
 		const { purchase, translate } = this.props;
 
+		if ( ! purchase ) {
+			return null;
+		}
+
 		// Hide if refund window has lapsed.
 		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
 			return;
 		}
 
-		const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
-		const lastRenewalDate = new Date( purchase.mostRecentRenewDate );
-		const refundPeriodEndDate = new Date(
-			lastRenewalDate.getTime() + purchase.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
+		return (
+			<span className="manage-purchase__refund-text">{ translate( 'Refund available' ) }</span>
 		);
-
-		// We use relative timing when the subscription expires that day for added clarity.
-		const today = new Date();
-		refundPeriodEndDate.setHours( 0, 0, 0, 0 );
-
-		today.setHours( 0, 0, 0, 0 );
-		refundPeriodEndDate.setHours( 0, 0, 0, 0 );
-
-		let refundText;
-
-		if ( today.getTime() === refundPeriodEndDate.getTime() ) {
-			refundText = translate( 'Refund window ends today', {
-				args: {
-					refundAmount: purchase.refundText,
-				},
-			} );
-		} else if ( today < refundPeriodEndDate ) {
-			refundText = translate( 'Refund available until {{refundDate/}}', {
-				components: {
-					refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
-				},
-				args: {
-					refundAmount: purchase.refundText,
-				},
-			} );
-		}
-
-		return <span className="manage-purchase__refund-text">{ refundText }</span>;
 	}
 
 	renderRemovePurchaseNavItem() {
