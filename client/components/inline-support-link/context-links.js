@@ -376,6 +376,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/site-icons/',
 		post_id: 1327,
 	},
+	'site-performance': {
+		link: 'https://wordpress.com/support/check-your-sites-performance/',
+		post_id: 386816,
+	},
 };
 
 export default contextLinks;
