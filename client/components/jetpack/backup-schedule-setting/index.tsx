@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { SelectControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
 // Helper function to generate all time slots
@@ -17,19 +18,21 @@ const generateTimeSlots = (): { label: string; value: string }[] => {
 };
 
 const BackupScheduleSetting: FunctionComponent = () => {
+	const translate = useTranslate();
 	const options = generateTimeSlots();
 
 	return (
 		<div className="backup-schedule-setting">
 			<Card compact className="setting-title">
-				<h3>Backup schedule</h3>
+				<h3>{ translate( 'Backup schedule' ) }</h3>
 			</Card>
 			<Card className="setting-content">
 				<p>
-					Pick a timeframe for your backup to run. Some site owners prefer scheduling backups at
-					specific times for better control.
+					{ translate(
+						'Pick a timeframe for your backup to run. Some site owners prefer scheduling backups at specific times for better control'
+					) }
 				</p>
-				<SelectControl options={ options } help="Default time" />
+				<SelectControl options={ options } help={ translate( 'Default time' ) } />
 			</Card>
 		</div>
 	);
