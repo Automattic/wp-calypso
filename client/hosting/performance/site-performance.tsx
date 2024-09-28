@@ -254,7 +254,7 @@ export const SitePerformance = () => {
 				'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
+						link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
 					},
 				}
 		  );
