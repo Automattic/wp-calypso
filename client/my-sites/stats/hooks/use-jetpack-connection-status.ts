@@ -8,16 +8,7 @@ interface ConnectionInfo {
 	isSiteFullyConnected?: boolean;
 }
 
-function queryJetpackConnectionStatus(
-	siteId: number | null,
-	isWpcomSite = false
-): Promise< ConnectionInfo > {
-	if ( isWpcomSite ) {
-		return Promise.resolve( {
-			isRegistered: true,
-			isUserConnected: true,
-		} );
-	}
+function queryJetpackConnectionStatus(): Promise< ConnectionInfo > {
 	// The following code only runs on Jetpack self-hosted sites.
 	return wpcom.req.get( {
 		apiNamespace: 'jetpack/v4',
@@ -25,11 +16,16 @@ function queryJetpackConnectionStatus(
 	} );
 }
 
-export function useJetpackConnectionStatus( siteId: number | null, isWpcomSite = false ) {
+export function useJetpackConnectionStatus( siteId: number | null, isSimpleSites = false ) {
 	return useQuery( {
 		...getDefaultQueryParams< ConnectionInfo >(),
-		queryKey: [ 'stats', 'jetpack-connnection-status', siteId, isWpcomSite ],
-		queryFn: () => queryJetpackConnectionStatus( siteId, isWpcomSite ),
+		queryKey: [ 'stats', 'jetpack-connnection-status', siteId, isSimpleSites ],
+		queryFn: () => {
+			if ( ! isSimpleSites ) {
+				return queryJetpackConnectionStatus();
+			}
+			return { isRegistered: true, isUserConnected: true };
+		},
 		select: ( data ) => ( {
 			...data,
 			isSiteFullyConnected: data.isRegistered && data.isUserConnected,
