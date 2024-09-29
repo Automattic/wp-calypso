@@ -8,7 +8,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteAdminUrl,
+	getSiteOption,
+	getIsSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
@@ -147,7 +152,8 @@ const StatsCommercialPurchase = ( {
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
-	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isWPCOMSite );
+	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
