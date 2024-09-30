@@ -16,15 +16,33 @@ interface CalendlyWidgetProps {
 	url: string;
 	id?: string;
 	prefill?: PrefillData;
+	onSchedule?: () => void;
 }
 
 const CALENDLY_SCRIPT_URL = 'https://assets.calendly.com/assets/external/widget.js';
 
-const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill } ) => {
+function isCalendlyEvent( e: MessageEvent ): boolean {
+	return (
+		e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf( 'calendly.' ) === 0
+	);
+}
+
+const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill, onSchedule } ) => {
 	const widgetId = useMemo(
 		() => id || `calendly-widget-${ Math.random().toString( 36 ).substr( 2, 9 ) }`,
 		[ id ]
 	);
+
+	useEffect( () => {
+		const handleMessage = ( e: MessageEvent ) => {
+			if ( isCalendlyEvent( e ) && e.data.event === 'calendly.event_scheduled' ) {
+				onSchedule?.();
+			}
+		};
+
+		window.addEventListener( 'message', handleMessage );
+		return () => window.removeEventListener( 'message', handleMessage );
+	}, [ onSchedule ] );
 
 	useEffect( () => {
 		// Check if the script is already loaded
@@ -36,20 +54,21 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill } )
 		}
 
 		const loadCalendly = async () => {
-			while ( typeof window.Calendly === 'undefined' ) {
+			while ( typeof window.Calendly === 'undefined' || ! url ) {
 				await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
 			}
 
-			if ( typeof document.getElementById( widgetId ) !== 'undefined' ) {
-				document.getElementById( widgetId ).innerHTML = '';
+			const element = document.getElementById( widgetId );
+			if ( element ) {
+				// Clear out the container div when props change.
+				element.innerHTML = '';
+				window.Calendly.initInlineWidget( {
+					url: `https://calendly.com/${ url }`,
+					parentElement: document.getElementById( widgetId ),
+					prefill: prefill || {},
+					utm: {},
+				} );
 			}
-
-			window.Calendly.initInlineWidget( {
-				url: `https://calendly.com/${ url }`,
-				parentElement: document.getElementById( widgetId ),
-				prefill: prefill || {},
-				utm: {},
-			} );
 		};
 
 		loadCalendly();
@@ -63,7 +82,7 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill } )
 		};
 	}, [ url, widgetId, prefill ] );
 
-	return <div id={ widgetId } style={ { minWidth: '320px', height: '630px' } } />;
+	return <div id={ widgetId } className="calendly-widget" />;
 };
 
 export default CalendlyWidget;

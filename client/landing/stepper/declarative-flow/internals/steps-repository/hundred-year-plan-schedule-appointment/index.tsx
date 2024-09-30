@@ -40,7 +40,14 @@ const HundredYearPlanScheduleAppointment: Step = function HundredYearPlanSchedul
 					<div className="hundred-year-plan-schedule-appointment-content__right-pane">
 						<CalendlyWidget
 							url={ CALENDLY_ID }
-							prefill={ { name: currentUser?.display_name, email: currentUser?.email } }
+							prefill={
+								currentUser
+									? { name: currentUser?.display_name, email: currentUser?.email }
+									: undefined
+							}
+							onSchedule={ () => {
+								submit?.();
+							} }
 						/>
 					</div>
 				</div>
