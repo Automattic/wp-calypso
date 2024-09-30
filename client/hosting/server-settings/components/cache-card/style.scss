@@ -1,0 +1,52 @@
+.cache-card__button-wrapper {
+	display: inline-block;
+	margin-top: 16px;
+}
+
+.cache-card__button-wrapper__clear-all {
+	margin-top: 3px;
+}
+
+.cache-card__nb {
+	color: #646970;
+	font-style: italic;
+	margin-top: 12px;
+}
+
+.cache-card__hr {
+	border-top: 1px solid #e0e0e0;
+}
+
+.cache-card__subtitle {
+	font-weight: 500;
+	margin-bottom: 6px;
+}
+
+.cache-card__edge-cache-toggle label {
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 20px;
+}
+
+.cache-card__hr,
+.cache-card__global-edge-cache-block,
+.cache-card__global-object-cache-block,
+.cache-card__jetpack-block {
+	margin-top: 24px;
+}
+
+.cache-card__global-object-cache-block {
+	.hosting-card__description {
+		margin: 0;
+	}
+}
+
+.cache-card__jetpack-description {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+
+	p {
+		margin: 0;
+	}
+}
