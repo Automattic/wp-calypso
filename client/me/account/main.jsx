@@ -20,10 +20,8 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
@@ -489,22 +487,6 @@ class Account extends Component {
 		}
 	};
 
-	renderJoinDate() {
-		const { currentUserDate, translate, moment } = this.props;
-		const dateMoment = moment( currentUserDate );
-
-		return (
-			<span>
-				{ translate( 'Joined %(month)s %(year)s', {
-					args: {
-						month: dateMoment.format( 'MMMM' ),
-						year: dateMoment.format( 'YYYY' ),
-					},
-				} ) }
-			</span>
-		);
-	}
-
 	renderUsernameValidation() {
 		const { translate } = this.props;
 
@@ -512,24 +494,17 @@ class Account extends Component {
 			return null;
 		}
 
-		return this.isUsernameValid()
-			? translate( 'Nice username!' )
-			: this.getUsernameValidationFailureMessage();
-	}
-
-	renderUsernameConfirmNotice() {
-		const { translate } = this.props;
-		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
-		const status = usernameMatch ? 'is-success' : 'is-error';
-		const text = usernameMatch
-			? translate( 'Thanks for confirming your new username!' )
-			: translate( 'Please re-enter your new username to confirm it.' );
-
-		if ( ! this.isUsernameValid() ) {
+		if ( ! this.isUsernameValid() && null === this.getUsernameValidationFailureMessage() ) {
 			return null;
 		}
 
-		return <Notice showDismiss={ false } status={ status } text={ text } />;
+		return (
+			<FormInputValidation isError={ ! this.isUsernameValid() }>
+				{ this.isUsernameValid()
+					? translate( 'Nice username!' )
+					: this.getUsernameValidationFailureMessage() }
+			</FormInputValidation>
+		);
 	}
 
 	renderPrimarySite() {
@@ -801,7 +776,9 @@ class Account extends Component {
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
 			! this.isUsernameValid() ||
 			this.state.submittingForm;
-		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
+		const usernameMatch =
+			this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm &&
+			this.state.userLoginConfirm.length > 0;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
@@ -912,18 +889,7 @@ class Account extends Component {
 									renderUsernameForm && null !== this.getUsernameValidationFailureMessage()
 								}
 							/>
-							{ renderUsernameForm &&
-								( this.isUsernameValid() ||
-									null !== this.getUsernameValidationFailureMessage() ) && (
-									<FormInputValidation isError={ ! this.isUsernameValid() }>
-										{ this.isUsernameValid()
-											? translate( '%(username)s is a valid username.', {
-													args: { username: this.getValidatedUsername() },
-											  } )
-											: this.getUsernameValidationFailureMessage() }
-									</FormInputValidation>
-								) }
-							<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
+							{ renderUsernameForm && this.renderUsernameValidation() }
 						</FormFieldset>
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
@@ -999,7 +965,6 @@ class Account extends Component {
 
 export default compose(
 	localize,
-	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
 	connect(
