@@ -72,7 +72,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 		'a4a_read_partner_directory',
 	],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [
-		'partner_directory',
+		'a4a_feature_partner_directory',
 		'a4a_read_partner_directory',
 	],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [
