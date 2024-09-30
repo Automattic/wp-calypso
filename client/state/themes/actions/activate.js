@@ -34,10 +34,11 @@ export function activate( themeId, siteId, options ) {
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
 
-		// The DotOrg themes will be handled by the marketplace install page later.
+		// The DotOrg themes will be handled by the marketplace install page.
+		// The theme with the plugin bundle will be handled by the plugin bundle flow.
 		const shouldAtomicTransfer =
 			isExternallyManagedTheme( getState(), themeId ) ||
-			( isDotComTheme && hasThemeBundleSoftwareSet );
+			( isDotComTheme && hasThemeBundleSoftwareSet && ! isOnboardingFlow );
 
 		/**
 		 * Make sure to show the Atomic transfer dialog if the theme requires
@@ -68,6 +69,7 @@ export function activate( themeId, siteId, options ) {
 		} );
 
 		// Redirect to the thank-you page if the theme has plugin bundle and is being activated in the onboarding flow.
+		// The thank-you page will continue to the plugin bundle flow and display the atomic transfer at the last step.
 		if ( isDotComTheme && hasThemeBundleSoftwareSet && isOnboardingFlow ) {
 			dispatchActivateAction( dispatch, getState );
 
