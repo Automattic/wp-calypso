@@ -34,7 +34,9 @@ export function useThemesThankYouData(
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const themeSlug = useSelector( ( state ) => getSiteOption( state, siteId, 'theme_slug' ) );
+	const themeSlug = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'theme_slug' )
+	) as string;
 	const isActive = themeSlugs.includes( themeSlug );
 
 	// texts
