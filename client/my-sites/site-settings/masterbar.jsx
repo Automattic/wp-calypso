@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
@@ -11,17 +11,19 @@ import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const Masterbar = ( {
-	isRequestingSettings,
-	isSavingSettings,
-	selectedSiteId,
-	masterbarModuleUnavailable,
-	translate,
-} ) => {
+const Masterbar = ( { isRequestingSettings = false, isSavingSettings = false } ) => {
+	const translate = useTranslate();
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const masterbarModuleUnavailable = useSelector( ( state ) => {
+		return (
+			isJetpackSiteInDevelopmentMode( state, selectedSiteId ) &&
+			isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'masterbar' )
+		);
+	} );
+
 	return (
 		<div>
 			<QueryJetpackConnection siteId={ selectedSiteId } />
-
 			<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
 			<Card className="masterbar__card site-settings__security-settings">
 				<FormFieldset>
@@ -50,27 +52,9 @@ const Masterbar = ( {
 	);
 };
 
-Masterbar.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-};
-
 Masterbar.propTypes = {
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 };
 
-export default connect( ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-		state,
-		selectedSiteId,
-		'masterbar'
-	);
-
-	return {
-		selectedSiteId,
-		masterbarModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-	};
-} )( localize( Masterbar ) );
+export default Masterbar;
