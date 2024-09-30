@@ -127,13 +127,11 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 					<TransferNoticeWrapper { ...result } />
 				) : (
 					<>
-						{ /* Hide status/checklist during DIFM for cleaner UI, as the user cannot access their site */ }
-						{ isDIFMInProgress ? (
-							<div>
-								{ translatedStatus }
-								<SiteLaunchNag site={ site } />
-							</div>
-						) : (
+						<div>
+							{ translatedStatus }
+							<SiteLaunchNag site={ site } />
+						</div>
+						{ isDIFMInProgress && (
 							<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 						) }
 					</>
