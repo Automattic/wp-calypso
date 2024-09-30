@@ -5,6 +5,15 @@
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
+	border-top: 1px solid rgba(220, 220, 222, 0.64);
+
+	@include break-small {
+		border-top: none;
+		margin: 0 20px;
+	}
+	@include break-large {
+		margin: 0;
+	}
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
@@ -128,6 +137,12 @@
 		}
 		&.is-free-domain {
 			padding-left: 0;
+			margin-top: 12px;
+			display: flex;
+			flex-direction: column-reverse;
+			@include break-mobile {
+				flex-direction: column;
+			}
 		}
 	}
 
