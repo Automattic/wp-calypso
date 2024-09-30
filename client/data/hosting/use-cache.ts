@@ -180,6 +180,7 @@ function getEdgeCacheDefensiveModeQueryKey( siteId: number | null ) {
 type EdgeCacheDefensiveModeQueryData = {
 	enabled: boolean;
 	enabled_until: number;
+	enabled_by_a11n: boolean;
 };
 
 export function useEdgeCacheDefensiveModeQuery( siteId: number | null ) {
