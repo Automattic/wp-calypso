@@ -64,7 +64,7 @@ function setupMetaTags( context, next ) {
 	);
 
 	/**
-	 * Prevent the sub-pages of `/start` from indexing, except for the localized main pages. See 3065-gh-Automattic/martech.
+	 * Only the main `/start` and `/start/[mag-16-locale]` pages should be indexed. See 3065-gh-Automattic/martech.
 	 */
 	if ( hasQueryString || pathSegments.length > ( hasMag16LocaleParam ? 2 : 1 ) ) {
 		meta.push( {
