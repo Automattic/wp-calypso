@@ -1,5 +1,9 @@
-import config from '@automattic/calypso-config';
-import { getLanguage, getLanguageRouteParam, isDefaultLocale } from '@automattic/i18n-utils';
+import {
+	getLanguage,
+	getLanguageRouteParam,
+	isDefaultLocale,
+	isMagnificentLocale,
+} from '@automattic/i18n-utils';
 import defaultI18n from 'i18n-calypso';
 import { ssrSetupLocale } from 'calypso/controller';
 import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
@@ -28,8 +32,7 @@ function setUpLocale( context, next ) {
 	}
 
 	const shouldSetupLocaleData =
-		isDefaultLocale( context.lang ) ||
-		config( 'magnificent_non_en_locales' ).includes( context.lang );
+		isDefaultLocale( context.lang ) || isMagnificentLocale( context.lang );
 
 	if ( shouldSetupLocaleData ) {
 		return ssrSetupLocale( context, next );
@@ -59,9 +62,7 @@ function setupMetaTags( context, next ) {
 
 	const pathSegments = context.pathname.replace( /^[/]|[/]$/g, '' ).split( '/' );
 	const hasQueryString = Object.keys( context.query ).length > 0;
-	const hasMag16LocaleParam = config( 'magnificent_non_en_locales' ).includes(
-		context.params?.lang
-	);
+	const hasMag16LocaleParam = isMagnificentLocale( context.params?.lang );
 
 	/**
 	 * Only the main `/start` and `/start/[mag-16-locale]` pages should be indexed. See 3065-gh-Automattic/martech.
