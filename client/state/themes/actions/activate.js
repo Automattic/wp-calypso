@@ -24,12 +24,12 @@ import 'calypso/state/themes/init';
  * @param  {Object}   [options] The options
  * @param  {string}   [options.source]    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  [options.purchased] Whether the theme has been purchased prior to activation
- * @param  {boolean}  [options.skipActivationModal] Skip the Activation Modal to be shown even if needed on flows that don't require it
+ * @param  {boolean}  [options.isOnboardingFlow] Whether the activation happens in the onboarding flow
  * @returns {Function}          Action thunk
  */
 export function activate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
-		const { source, purchased, skipActivationModal } = options || {};
+		const { source, purchased, isOnboardingFlow } = options || {};
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
@@ -55,7 +55,7 @@ export function activate( themeId, siteId, options ) {
 		/**
 		 * Check whether the user has confirmed the activation or is in a flow that doesn't require acceptance.
 		 */
-		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! skipActivationModal ) {
+		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! isOnboardingFlow ) {
 			return dispatch( showActivationModal( themeId ) );
 		}
 
@@ -67,8 +67,8 @@ export function activate( themeId, siteId, options ) {
 			showSuccessNotice: ! hasRedirection,
 		} );
 
-		// Redirect to the thank-you page if the theme has bundle-plugins.
-		if ( isDotComTheme && hasThemeBundleSoftwareSet ) {
+		// Redirect to the thank-you page if the theme has plugin bundle and is being activated in the onboarding flow.
+		if ( isDotComTheme && hasThemeBundleSoftwareSet && isOnboardingFlow ) {
 			dispatchActivateAction( dispatch, getState );
 
 			return page(

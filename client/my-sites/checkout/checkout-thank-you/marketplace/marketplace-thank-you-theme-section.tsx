@@ -88,7 +88,7 @@ export const ThankYouThemeSection = ( {
 		dispatch(
 			activate( theme.id, siteId, {
 				source: 'marketplace-thank-you',
-				skipActivationModal: isOnboardingFlow,
+				isOnboardingFlow,
 			} )
 		);
 	}, [ theme.id, siteId, isOnboardingFlow, dispatch, isActive, sendTrackEvent ] );
