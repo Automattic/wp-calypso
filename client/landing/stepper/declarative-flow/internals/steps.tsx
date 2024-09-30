@@ -292,8 +292,8 @@ export const STEPS = {
 	},
 
 	SITE_MIGRATION_ALREADY_WORDPRESS: {
-		slug: 'already-wordpress',
-		asyncComponent: () => import( './steps-repository/site-migration-already-wordpress' ),
+		slug: 'already-wpcom',
+		asyncComponent: () => import( './steps-repository/site-migration-already-wpcom' ),
 	},
 
 	PICK_SITE: {
