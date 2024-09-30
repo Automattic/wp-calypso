@@ -83,6 +83,8 @@ import { addP2SignupClassName } from './controller';
 import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
+	setDomainsDependencies,
+	clearDomainsDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -268,7 +270,7 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -314,6 +316,13 @@ class Signup extends Component {
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
 			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
+		}
+
+		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
+
+		// Clear domains dependencies when the domains data is updated.
+		if ( stepName === 'domains' && signupDependencies.domainItem !== prevDomainItem ) {
+			clearDomainsDependencies();
 		}
 	}
 
@@ -404,6 +413,24 @@ class Signup extends Component {
 			persistSignupDestination( destination );
 			setSignupCompleteSlug( dependencies.siteSlug );
 			setSignupCompleteFlowName( this.props.flowName );
+		}
+
+		// Persist current domains data in the onboarding flow.
+		if ( this.props.flowName === 'onboarding' ) {
+			const { domainItem, siteUrl, domainCart } = dependencies;
+			const { stepSectionName } = this.props;
+
+			setDomainsDependencies( {
+				step: {
+					stepName: 'domains',
+					domainItem,
+					siteUrl,
+					isPurchasingItem: true,
+					stepSectionName,
+					domainCart,
+				},
+				dependencies: { domainItem, siteUrl, domainCart },
+			} );
 		}
 
 		this.handleFlowComplete( dependencies, filteredDestination );
