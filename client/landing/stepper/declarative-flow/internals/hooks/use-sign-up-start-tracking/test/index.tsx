@@ -5,6 +5,9 @@ import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
+import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { setSignupStartTime } from 'calypso/signup/storageUtils';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSignUpStartTracking } from '../';
 import type { Flow, StepperStep } from '../../../types';
@@ -28,6 +31,9 @@ const signUpFlow: Flow = {
 
 jest.mock( '@automattic/calypso-analytics' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start' );
+jest.mock( 'calypso/lib/analytics/ad-tracking' );
+jest.mock( 'calypso/lib/analytics/ga' );
+jest.mock( 'calypso/signup/storageUtils' );
 
 const render = ( { flow, queryParams = {} } ) => {
 	return renderHookWithProvider(
@@ -109,6 +115,21 @@ describe( 'useSignUpTracking', () => {
 				},
 				ref: '',
 			} );
+		} );
+
+		it( 'set the signup-start timer, records Google-Analytics and AD tracking only on initial mount', () => {
+			const { rerender } = render( {
+				flow: {
+					...signUpFlow,
+					variantSlug: 'variant-slug',
+				} satisfies Flow,
+			} );
+
+			rerender();
+
+			expect( setSignupStartTime ).toHaveBeenCalledTimes( 1 );
+			expect( gaRecordEvent ).toHaveBeenCalledTimes( 1 );
+			expect( adTrackSignupStart ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
