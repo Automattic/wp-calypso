@@ -1,12 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSignUpStartTracking } from '../';
 import type { Flow, StepperStep } from '../../../types';
@@ -29,6 +27,7 @@ const signUpFlow: Flow = {
 };
 
 jest.mock( '@automattic/calypso-analytics' );
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start' );
 
 const render = ( { flow, queryParams = {} } ) => {
 	return renderHookWithProvider(
@@ -54,13 +53,13 @@ describe( 'useSignUpTracking', () => {
 	it( 'does not track event when the flow is not a isSignupFlow', () => {
 		render( { flow: regularFlow } );
 
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordSignupStart ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not track event when the flow is not a isSignupFlow and the signup flag is set', () => {
 		render( { flow: regularFlow, queryParams: { start: 1 } } );
 
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordSignupStart ).not.toHaveBeenCalled();
 	} );
 
 	describe( 'sign-up-flow', () => {
@@ -70,10 +69,10 @@ describe( 'useSignUpTracking', () => {
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordSignupStart ).toHaveBeenCalledWith( {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
-				device: resolveDeviceTypeByViewPort(),
+				optionalProps: {},
 			} );
 		} );
 
@@ -86,11 +85,12 @@ describe( 'useSignUpTracking', () => {
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordSignupStart ).toHaveBeenCalledWith( {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
-				extra: 'props',
-				device: resolveDeviceTypeByViewPort(),
+				optionalProps: {
+					extra: 'props',
+				},
 			} );
 		} );
 
@@ -102,11 +102,12 @@ describe( 'useSignUpTracking', () => {
 				} satisfies Flow,
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordSignupStart ).toHaveBeenCalledWith( {
 				flow: 'sign-up-flow',
-				flow_variant: 'variant-slug',
+				optionalProps: {
+					flow_variant: 'variant-slug',
+				},
 				ref: '',
-				device: resolveDeviceTypeByViewPort(),
 			} );
 		} );
 	} );
