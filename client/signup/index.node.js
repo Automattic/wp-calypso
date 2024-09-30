@@ -44,7 +44,7 @@ function setupMetaTags( context, next ) {
 	const translate = i18n.translate.bind( i18n );
 
 	/**
-	 * Get the meta tags, excluding `description` and `robots` meta items.
+	 * Get the meta tags, excluding `description` and `robots` meta items, to prevent duplications.
 	 */
 	const meta = getDocumentHeadMeta( context.store.getState() ).filter(
 		( { name } ) => name !== 'description' && name !== 'robots'
