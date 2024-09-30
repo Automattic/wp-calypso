@@ -117,17 +117,25 @@ describe( 'useSignUpTracking', () => {
 			} );
 		} );
 
-		it( 'set the signup-start timer, records Google-Analytics and AD tracking only on initial mount', () => {
+		it( 'sets the signup-start timer only on initial mount (assuming static flowName and isSignupFlow)', () => {
 			const { rerender } = render( {
 				flow: {
 					...signUpFlow,
-					variantSlug: 'variant-slug',
 				} satisfies Flow,
 			} );
 
 			rerender();
-
 			expect( setSignupStartTime ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'records Google-Analytics and AD tracking only on initial mount (assuming static flowName and isSignupFlow)', () => {
+			const { rerender } = render( {
+				flow: {
+					...signUpFlow,
+				} satisfies Flow,
+			} );
+
+			rerender();
 			expect( gaRecordEvent ).toHaveBeenCalledTimes( 1 );
 			expect( adTrackSignupStart ).toHaveBeenCalledTimes( 1 );
 		} );
