@@ -76,29 +76,19 @@ export function setMetaTags( context, next ) {
 	);
 
 	/**
-	 * Only the main `/log-in` and `/log-in/[locale]` routes should be indexed.
+	 * Only the main `/log-in` and `/log-in/[mag-16-locale]` routes should be indexed.
 	 */
-	if (
-		hasQueryString ||
-		pathSegments.length > 2 ||
-		( pathSegments.length === 2 && ! hasMag16LocaleParam )
-	) {
-		const meta = getDocumentHeadMeta( context.store.getState() );
-		const noIndexMetaExists = meta.some(
-			( tag ) => tag.name === 'robots' && tag.content === 'noindex'
-		);
+	if ( hasQueryString || pathSegments.length > ( hasMag16LocaleParam ? 2 : 1 ) ) {
+		const meta = getDocumentHeadMeta( context.store.getState() )
+			// Remove existing robots meta tags to prevent duplication.
+			.filter( ( { name } ) => name !== 'robots' )
+			// Add the noindex meta tag.
+			.concat( {
+				name: 'robots',
+				content: 'noindex',
+			} );
 
-		// Set the noindex meta only if it's not already set.
-		if ( ! noIndexMetaExists ) {
-			context.store.dispatch(
-				setDocumentHeadMeta(
-					meta.concat( {
-						name: 'robots',
-						content: 'noindex',
-					} )
-				)
-			);
-		}
+		context.store.dispatch( setDocumentHeadMeta( meta ) );
 	}
 
 	next();
