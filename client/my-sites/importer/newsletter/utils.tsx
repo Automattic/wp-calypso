@@ -21,7 +21,7 @@ function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 	}
 }
 
-export function getSetpProgressSteps(
+export function getStepsProgress(
 	engine: string,
 	selectedSiteSlug: string,
 	fromSite: string,

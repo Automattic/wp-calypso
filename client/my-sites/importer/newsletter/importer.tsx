@@ -19,7 +19,7 @@ import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes } from './types';
-import { getSetpProgressSteps, getImporterStatus } from './utils';
+import { getStepsProgress, getImporterStatus } from './utils';
 
 import './importer.scss';
 
@@ -128,9 +128,18 @@ export default function NewsletterImporter( {
 
 			setValidFromSite( true );
 		}
-	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
+	}, [
+		urlData,
+		fromSite,
+		engine,
+		selectedSite,
+		resetPaidNewsletter,
+		step,
+		validFromSite,
+		shouldResetImport,
+	] );
 
-	const stepsProgress = getSetpProgressSteps(
+	const stepsProgress = getStepsProgress(
 		engine,
 		selectedSite?.slug || '',
 		fromSite,
