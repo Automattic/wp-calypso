@@ -63,7 +63,7 @@ export default function ConnectStripe( {
 					navigate={ () => {
 						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
-					label="Continue free subscriber import"
+					label="I have only free subscribers"
 				/>
 			</ImporterActionButtonContainer>
 		</>
