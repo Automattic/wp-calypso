@@ -1247,6 +1247,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/components": "npm:^28.7.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
     "@wordpress/element": "npm:^6.7.0"
@@ -11966,25 +11967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.5":
-  version: 10.2.5
-  resolution: "autoprefixer@npm:10.2.5"
-  dependencies:
-    browserslist: "npm:^4.16.3"
-    caniuse-lite: "npm:^1.0.30001196"
-    colorette: "npm:^1.2.2"
-    fraction.js: "npm:^4.0.13"
-    normalize-range: "npm:^0.1.2"
-    postcss-value-parser: "npm:^4.1.0"
-  peerDependencies:
-    postcss: ^8.1.0
-  bin:
-    autoprefixer: bin/autoprefixer
-  checksum: 77eea8d366a70abbb99cdda2fdd1c515891e077d2d2fa80505cc0fd38d2813db8237590c971f09b62ab5f37f479b35992edfcd09d4399ba8a0285853cbabc345
-  languageName: node
-  linkType: hard
-
-"autoprefixer@npm:^10.4.20":
+"autoprefixer@npm:^10.2.5, autoprefixer@npm:^10.4.20":
   version: 10.4.20
   resolution: "autoprefixer@npm:10.4.20"
   dependencies:
@@ -12634,7 +12617,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.23.0, browserslist@npm:^4.23.1, browserslist@npm:^4.23.3, browserslist@npm:^4.8.2":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.23.0, browserslist@npm:^4.23.1, browserslist@npm:^4.23.3, browserslist@npm:^4.8.2":
   version: 4.23.3
   resolution: "browserslist@npm:4.23.3"
   dependencies:
@@ -13347,7 +13330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001646":
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001646":
   version: 1.0.30001651
   resolution: "caniuse-lite@npm:1.0.30001651"
   checksum: 7821278952a6dbd17358e5d08083d258f092e2a530f5bc1840657cb140fbbc5ec44293bc888258c44a18a9570cde149ed05819ac8320b9710cf22f699891e6ad
@@ -14056,7 +14039,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^1.2.1, colorette@npm:^1.2.2":
+"colorette@npm:^1.2.1":
   version: 1.4.0
   resolution: "colorette@npm:1.4.0"
   checksum: 4955c8f7daafca8ae7081d672e4bd89d553bd5782b5846d5a7e05effe93c2f15f7e9c0cb46f341b59f579a39fcf436241ff79594899d75d5f3460c03d607fe9e
@@ -18786,13 +18769,6 @@ __metadata:
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
   checksum: 9b67c3fac86acdbc9ae47ba1ddd5f2f81526fa4c8226863ede5600a3f7c7416ef451f6f1e240a3cc32d0fd79fcfe6beb08fd0da454f360032bde70bf80afbb33
-  languageName: node
-  linkType: hard
-
-"fraction.js@npm:^4.0.13":
-  version: 4.1.0
-  resolution: "fraction.js@npm:4.1.0"
-  checksum: db0e43d60dbe9211673dd88a0ba7984a1b3b34dcefa2619e12c73e9d58106fc172f13b6e6f10af5c17f2ef6439a02fe848218ec9498d4ced7cccb7ecce42e776
   languageName: node
   linkType: hard
 
