@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { UserSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -8,14 +9,6 @@ import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step } from '../../types';
 
 import './styles.scss';
-
-declare global {
-	interface Window {
-		Calendly: any;
-	}
-}
-
-const CALENDLY_ID = 'tim-broddin-a8c/30min';
 
 const HundredYearPlanScheduleAppointment: Step = function HundredYearPlanScheduleAppointment( {
 	navigation,
@@ -34,12 +27,12 @@ const HundredYearPlanScheduleAppointment: Step = function HundredYearPlanSchedul
 		<HundredYearPlanStepWrapper
 			stepContent={
 				<div className="hundred-year-plan-schedule-appointment-content">
-					<div className="hundred-year-plan-schedule-appointment-content__left-pane">
+					<div className="hundred-year-plan-schedule-appointment-content__start-pane">
 						// TODO: content
 					</div>
-					<div className="hundred-year-plan-schedule-appointment-content__right-pane">
+					<div className="hundred-year-plan-schedule-appointment-content__end-pane">
 						<CalendlyWidget
-							url={ CALENDLY_ID }
+							url={ config( '100_year_plan_calendly_id' ) }
 							prefill={
 								currentUser
 									? { name: currentUser?.display_name, email: currentUser?.email }

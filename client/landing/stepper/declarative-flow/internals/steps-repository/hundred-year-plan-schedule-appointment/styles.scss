@@ -3,12 +3,12 @@
     flex-direction: row;
     justify-content: space-between;
 
-    &__left-pane {
-        width: 50%;
+    &__start-pane {
+       flex: 1;
     }
 
-    &__right-pane {
-        width: 50%;
+    &__end-pane {
+        flex: 1;
     }
 
     .calendly-widget {

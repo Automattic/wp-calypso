@@ -1,25 +1,25 @@
 import React, { useEffect, useMemo } from 'react';
 
+const CALENDLY_SCRIPT_URL = 'https://assets.calendly.com/assets/external/widget.js';
+
 declare global {
 	interface Window {
 		Calendly: any;
 	}
 }
 
-interface PrefillData {
+type CalendlyPrefillData = {
 	name?: string;
 	email?: string;
 	// Add other prefill fields as needed
-}
+};
 
-interface CalendlyWidgetProps {
+type CalendlyWidgetProps = {
 	url: string;
 	id?: string;
-	prefill?: PrefillData;
+	prefill?: CalendlyPrefillData;
 	onSchedule?: () => void;
-}
-
-const CALENDLY_SCRIPT_URL = 'https://assets.calendly.com/assets/external/widget.js';
+};
 
 function isCalendlyEvent( e: MessageEvent ): boolean {
 	return (
