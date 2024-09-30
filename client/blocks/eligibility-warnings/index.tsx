@@ -39,9 +39,6 @@ import WarningList from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
 import './style.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
 interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
@@ -342,10 +339,6 @@ function siteRequiresLaunch( holds: string[] ) {
 function siteRequiresGoingPublic( holds: string[] ) {
 	return holds.includes( 'SITE_NOT_PUBLIC' );
 }
-
-EligibilityWarnings.defaultProps = {
-	onProceed: noop,
-};
 
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the

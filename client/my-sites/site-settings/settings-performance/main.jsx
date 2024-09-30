@@ -17,7 +17,7 @@ import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-setti
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import Search from 'calypso/my-sites/site-settings/search';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SpeedUpYourSite from 'calypso/my-sites/site-settings/speed-up-site-settings';
+import SpeedUpSiteSettings from 'calypso/my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -107,16 +107,14 @@ class SiteSettingsPerformance extends Component {
 							/>
 						) : (
 							<>
-								<SpeedUpYourSite
+								<SpeedUpSiteSettings
 									isSavingSettings={ isSavingSettings }
 									isRequestingSettings={ isRequestingSettings }
 									submitForm={ submitForm }
 									updateFields={ updateFields }
 									siteIsAtomic={ siteIsAtomic }
 								/>
-
 								<SettingsSectionHeader title={ translate( 'Media' ) } />
-
 								<MediaSettingsPerformance
 									siteId={ siteId }
 									handleAutosavingToggle={ handleAutosavingToggle }
