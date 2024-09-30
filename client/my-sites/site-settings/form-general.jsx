@@ -224,7 +224,10 @@ export class SiteSettingsFormGeneral extends Component {
 						value={ site.domain }
 						disabled="disabled"
 					/>
-					<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
+					<Button
+						href={ '/domains/add/' + siteSlug + '?redirect_to=/settings/general/' + siteSlug }
+						onClick={ this.trackUpgradeClick }
+					>
 						<Gridicon icon="plus" />{ ' ' }
 						{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
 					</Button>
@@ -237,7 +240,12 @@ export class SiteSettingsFormGeneral extends Component {
 						{
 							components: {
 								domainSearchLink: (
-									<a href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick } />
+									<a
+										href={
+											'/domains/add/' + siteSlug + '?redirect_to=/settings/general/' + siteSlug
+										}
+										onClick={ this.trackUpgradeClick }
+									/>
 								),
 								mapDomainLink: (
 									<a
