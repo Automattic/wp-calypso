@@ -13,12 +13,18 @@ import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
 let isLoggedIn = false;
 
+const E2E_USER_AGENT = 'wp-e2e-tests';
+
+export function isE2ETest(): boolean {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( E2E_USER_AGENT );
+}
+
 export function useAuthenticateZendeskMessaging(
 	enabled = true,
 	type: ZendeskAuthType = 'zendesk'
 ) {
 	const currentEnvironment = config( 'env_id' );
-	const isTestMode = currentEnvironment === 'development';
+	const isTestMode = currentEnvironment === 'development' || isE2ETest();
 
 	return useQuery( {
 		queryKey: [ 'getMessagingAuth', type, isTestMode ],
