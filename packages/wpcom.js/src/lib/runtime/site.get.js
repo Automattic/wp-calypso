@@ -14,7 +14,7 @@ export default [
 	{ name: 'statsClicks', subpath: 'stats/clicks' },
 	{ name: 'statsCommentFollowers', subpath: 'stats/comment-followers' },
 	{ name: 'statsComments', subpath: 'stats/comments' },
-	{ name: 'statsCountryViews', subpath: 'stats/country-views' },
+	{ name: 'statsCountryViews', subpath: 'stats/location-views/country' },
 	{ name: 'statsFollowers', subpath: 'stats/followers' },
 	{ name: 'statsInsights', subpath: 'stats/insights' },
 	{ name: 'statsPublicize', subpath: 'stats/publicize' },
