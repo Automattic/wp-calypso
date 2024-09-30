@@ -57,8 +57,16 @@ function setupMetaTags( context, next ) {
 		),
 	} );
 
-	// All `/start/*` sub-pages should be noindex. See 3065-gh-Automattic/martech.
-	if ( ! /^\/start\/?$/.test( context.pathname ) ) {
+	const pathSegments = context.pathname.replace( /^[/]|[/]$/g, '' ).split( '/' );
+	const hasQueryString = Object.keys( context.query ).length > 0;
+	const hasMag16LocaleParam = config( 'magnificent_non_en_locales' ).includes(
+		context.params?.lang
+	);
+
+	/**
+	 * Prevent the sub-pages of `/start` from indexing, except for the localized main pages. See 3065-gh-Automattic/martech.
+	 */
+	if ( hasQueryString || pathSegments.length > ( hasMag16LocaleParam ? 2 : 1 ) ) {
 		meta.push( {
 			name: 'robots',
 			content: 'noindex',
