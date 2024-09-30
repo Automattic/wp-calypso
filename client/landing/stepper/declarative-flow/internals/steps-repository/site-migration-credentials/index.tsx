@@ -12,8 +12,11 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const handleSubmit = () => {
-		return navigation.submit?.();
+	const handleSubmit = ( platform?: string ) => {
+		return navigation.submit?.( {
+			action: 'submit',
+			platform,
+		} );
 	};
 
 	const handleSkip = () => {

@@ -14,7 +14,7 @@ import { SpecialInstructions } from './special-instructions';
 import { UsernameField } from './username-field';
 
 interface CredentialsFormProps {
-	onSubmit: () => void;
+	onSubmit: ( platform?: string ) => void;
 	onSkip: () => void;
 }
 

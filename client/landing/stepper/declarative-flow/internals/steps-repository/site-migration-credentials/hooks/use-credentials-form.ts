@@ -9,7 +9,7 @@ import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 
-export const useCredentialsForm = ( onSubmit: () => void ) => {
+export const useCredentialsForm = ( onSubmit: ( platform?: string ) => void ) => {
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const [ canBypassVerification, setCanBypassVerification ] = useState( false );
 	const translate = useTranslate();
@@ -67,6 +67,11 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 			return;
 		}
 
+		if ( siteInfo?.platform && 'wordpress' !== siteInfo.platform ) {
+			onSubmit( siteInfo.platform );
+			return;
+		}
+
 		requestAutomatedMigration( {
 			...formData,
 			bypassVerification: canBypassVerification || ! isEnglishLocale,
@@ -79,6 +84,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		isSiteInfoLoading,
 		isEnglishLocale,
 		requestAutomatedMigration,
+		onSubmit,
 	] );
 
 	useEffect( () => {
