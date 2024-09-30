@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Icon, starFilled } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
@@ -189,19 +190,20 @@ export const JetpackSitesDataViews = ( {
 						);
 					}
 
-					const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-					const isDevSite = ( item.isDevSite && devSitesEnabled ) || false;
-
 					return (
-						<>
+						<div
+							className={ clsx( {
+								'is-site-selected': site.blog_id === dataViewsState.selectedItem?.blog_id,
+							} ) }
+						>
 							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
 							<SiteDataField
 								site={ site }
 								isLoading={ isLoading }
-								isDevSite={ isDevSite }
+								isDevSite={ item.isDevSite }
 								onSiteTitleClick={ openSitePreviewPane }
 							/>
-						</>
+						</div>
 					);
 				},
 				enableHiding: false,
@@ -448,6 +450,7 @@ export const JetpackSitesDataViews = ( {
 			pluginsRef,
 			actionsRef,
 			isLoading,
+			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
 			renderField,
 			isNotProduction,

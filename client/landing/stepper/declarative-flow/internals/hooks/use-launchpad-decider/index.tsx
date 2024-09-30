@@ -74,13 +74,7 @@ export function shouldShowCustomerHome(
 	isLoadingExperiment: boolean,
 	experimentAssignment: ExperimentAssignment | null
 ): boolean {
-	return (
-		! isLoadingExperiment &&
-		( 'treatment' === experimentAssignment?.variationName ||
-			// for testing/development purposes we can use sessionStorage to force the treatment
-			'treatment' ===
-				window.sessionStorage.getItem( 'launchpad_removal_2024_experiment_variation' ) )
-	);
+	return ! isLoadingExperiment && 'treatment' === experimentAssignment?.variationName;
 }
 
 /**

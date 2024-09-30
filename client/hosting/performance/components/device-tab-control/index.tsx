@@ -1,4 +1,5 @@
 import { SegmentedControl } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
@@ -8,9 +9,16 @@ export type Tab = 'mobile' | 'desktop';
 type DeviceTabControlsProps = {
 	onDeviceTabChange: ( tab: Tab ) => void;
 	value: Tab;
+	showTitle?: boolean;
+	disabled?: boolean;
 };
 
-export const DeviceTabControls = ( { onDeviceTabChange, value }: DeviceTabControlsProps ) => {
+export const DeviceTabControls = ( {
+	onDeviceTabChange,
+	value,
+	showTitle,
+	disabled,
+}: DeviceTabControlsProps ) => {
 	const translate = useTranslate();
 
 	const options = [
@@ -26,8 +34,12 @@ export const DeviceTabControls = ( { onDeviceTabChange, value }: DeviceTabContro
 
 	return (
 		<div className="site-performance-device-tab__container">
-			<div className="site-performance-device-tab__heading">{ translate( 'Device' ) }</div>
-			<SegmentedControl className="site-performance-device-tab__controls">
+			{ showTitle && (
+				<div className="site-performance-device-tab__heading">{ translate( 'Device' ) }</div>
+			) }
+			<SegmentedControl
+				className={ clsx( 'site-performance-device-tab__controls', { [ 'disabled' ]: disabled } ) }
+			>
 				{ options.map( ( option ) => {
 					return (
 						<SegmentedControl.Item

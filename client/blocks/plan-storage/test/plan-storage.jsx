@@ -16,7 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
-import { PlanStorage } from '../index';
+import PlanStorage from 'calypso/blocks/plan-storage';
 
 const siteId = 123;
 

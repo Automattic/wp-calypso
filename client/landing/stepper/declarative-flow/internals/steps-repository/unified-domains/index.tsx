@@ -86,8 +86,10 @@ export default function DomainsStep( props: StepProps ) {
 	const mostRecentStateRef = useRef< ProvidedDependencies | undefined >( undefined );
 
 	const updateSignupStepState = useCallback(
-		( state: ProvidedDependencies ) => {
-			setStepState( ( mostRecentStateRef.current = { ...stepState, ...state } ) );
+		( state: ProvidedDependencies, providedDependencies: ProvidedDependencies ) => {
+			setStepState(
+				( mostRecentStateRef.current = { ...stepState, ...providedDependencies, ...state } )
+			);
 		},
 		[ stepState, setStepState ]
 	);
@@ -101,7 +103,8 @@ export default function DomainsStep( props: StepProps ) {
 				saveSignupStep={ updateSignupStepState }
 				submitSignupStep={ updateSignupStepState }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( { ...mostRecentStateRef.current, ...state } );
+					const { domainForm, suggestion, ...rest } = mostRecentStateRef.current ?? {};
+					props.navigation.submit?.( { ...rest, ...state } );
 				} }
 				step={ stepState }
 				flowName={ props.flow }

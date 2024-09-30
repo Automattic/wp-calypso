@@ -28,13 +28,13 @@
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/sites": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/data": "^10.2.0",
-		"@wordpress/dom-ready": "^4.2.0",
-		"@wordpress/i18n": "^5.2.0",
+		"@wordpress/data": "^10.8.0",
+		"@wordpress/dom-ready": "^4.8.0",
+		"@wordpress/i18n": "^5.8.0",
 		"calypso": "workspace:^",
 		"i18n-calypso": "workspace:^",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"redux": "^4.2.1"
 	},
 	"devDependencies": {

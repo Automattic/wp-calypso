@@ -22,6 +22,8 @@ type PerformanceProfilerDashboardContentProps = {
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
+	showV2?: boolean;
+	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
@@ -33,6 +35,8 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
 	activeTab = TabType.mobile,
+	showV2 = false,
+	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
 		overall_score,
@@ -53,20 +57,22 @@ export const PerformanceProfilerDashboardContent = ( {
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
-				<div className="top-section">
-					<PerformanceScore
-						value={ overall_score * 100 }
-						recommendationsQuantity={ Object.keys( audits ).length }
-						recommendationsRef={ insightsRef }
-					/>
-					{ displayThumbnail && (
-						<ScreenshotThumbnail
-							alt={ translate( 'Website thumbnail' ) }
-							src={ screenshots?.[ screenshots.length - 1 ].data }
-							activeTab={ activeTab }
+				{ ! showV2 && (
+					<div className="top-section">
+						<PerformanceScore
+							value={ overall_score * 100 }
+							recommendationsQuantity={ Object.keys( audits ).length }
+							recommendationsRef={ insightsRef }
 						/>
-					) }
-				</div>
+						{ displayThumbnail && (
+							<ScreenshotThumbnail
+								alt={ translate( 'Website thumbnail' ) }
+								src={ screenshots?.[ screenshots.length - 1 ].data }
+								activeTab={ activeTab }
+							/>
+						) }
+					</div>
+				) }
 				<CoreWebVitalsDisplay
 					fcp={ fcp }
 					lcp={ lcp }
@@ -74,9 +80,12 @@ export const PerformanceProfilerDashboardContent = ( {
 					inp={ inp }
 					ttfb={ ttfb }
 					tbt={ tbt }
+					overall={ overall_score * 100 }
+					showV2={ showV2 }
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }
+					onRecommendationsFilterChange={ onRecommendationsFilterChange }
 				/>
 
 				{ displayNewsletterBanner && (
@@ -100,6 +109,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						ref={ insightsRef }
 						hash={ hash }
 						filter={ filter }
+						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				) }
 			</div>

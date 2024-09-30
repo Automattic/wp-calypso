@@ -1,16 +1,21 @@
 @import "@wordpress/base-styles/breakpoints";
 
-@import "./styles/layout.scss";
-@import "./styles/wp-admin.scss";
-@import "./styles/promote-widget.scss";
-@import "./styles/typography.scss";
+@import "./styles/layout";
+@import "./styles/wp-admin";
+@import "./styles/promote-widget";
+@import "./styles/typography";
 
 // Specific Jetpack Blaze styles
 .jp-blaze-dashboard {
-	.promote-post-notice {
-		margin: 0;
-		border: none;
-		box-shadow: none;
+	.promote-post-i2__warnings-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding-bottom: 32px;
+
+		.notice {
+			margin-bottom: 0;
+		}
 	}
 
 	.promote-post-i2 {
@@ -238,6 +243,13 @@ $break-medium-expanded-menu: $break-medium + 272px;
 // Shared styles
 .woo-blaze-dashboard,
 .jp-blaze-dashboard {
+	.promote-post-notice {
+		margin: 0;
+		padding: 0;
+		border: none;
+		box-shadow: none;
+	}
+
 	// Campaigns details
 	.campaign-item__container {
 		.campaign-item-details__ad-destination-url-container a {

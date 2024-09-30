@@ -166,13 +166,16 @@
 
 	.components-button.is-primary,
 	.button.is-primary {
-		background-color: var(--color-primary-50);
-		border-color: var(--color-primary-50);
-		fill: var(--color-text-inverted);
-		color: var(--color-text-inverted);
+		&,
+		&:focus:not(:disabled) {
+			background-color: var(--color-primary-50);
+			border-color: var(--color-primary-50);
+			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
+		}
 
-		&:hover,
-		&:focus-visible {
+		&:hover:not(:disabled),
+		&:focus-visible:not(:disabled) {
 			background-color: var(--color-primary-70);
 			border-color: var(--color-primary-70);
 			fill: var(--color-text-inverted);
@@ -365,6 +368,10 @@
 		opacity: 0.5;
 		cursor: not-allowed;
 		pointer-events: none;
+	}
+
+	.global-notices {
+		z-index: 100001;
 	}
 }
 

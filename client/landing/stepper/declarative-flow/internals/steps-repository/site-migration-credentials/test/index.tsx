@@ -29,319 +29,358 @@ const messages = {
 		"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'.",
 };
 
+const { getByRole, getByLabelText, getByTestId, getByText, findByText } = screen;
+
+const continueButton = ( name = /Continue/ ) => getByRole( 'button', { name } );
+const siteAddressInput = () => getByLabelText( 'Current site address' );
+const usernameInput = () => getByLabelText( 'WordPress admin username' );
+const passwordInput = () => getByLabelText( 'Password' );
+const backupOption = () => getByRole( 'radio', { name: 'Backup file' } );
+const credentialsOption = () => getByRole( 'radio', { name: 'WordPress credentials' } );
+const backupFileInput = () => getByLabelText( 'Backup file location' );
+//TODO: it requires a testid because there is no accessible name, it is an issue with the component
+const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
+const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
+const skipButton = () => getByRole( 'button', { name: /I need help, please contact me/ } );
+
+const fillAllFields = async () => {
+	await userEvent.click( credentialsOption() );
+	await userEvent.type( siteAddressInput(), 'site-url.com' );
+	await userEvent.type( usernameInput(), 'username' );
+	await userEvent.type( passwordInput(), 'password' );
+};
+
 describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+	afterEach( () => {
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
+	} );
 
-	it( 'renders the form', async () => {
+	it( 'creates a credentials ticket', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		expect( screen.queryByRole( 'button', { name: /Continue/ } ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'How can we access your site?' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Site address' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'WordPress admin username' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Password' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Special instructions' ) ).toBeInTheDocument();
+		await userEvent.click( credentialsOption() );
+		await userEvent.type( siteAddressInput(), 'site-url.com' );
+		await userEvent.type( usernameInput(), 'username' );
+		await userEvent.type( passwordInput(), 'password' );
+
+		await userEvent.click( specialInstructionsButton() );
+		await userEvent.type( specialInstructionsInput(), 'notes' );
+		await userEvent.click( continueButton() );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'sites/site-url.wordpress.com/automated-migration',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				migration_type: 'credentials',
+				blog_url: 'site-url.wordpress.com',
+				bypass_verification: false,
+				notes: 'notes',
+				from_url: 'site-url.com',
+				username: 'username',
+				password: 'password',
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalled();
+		} );
 	} );
 
-	it( 'does not show any error message by default', async () => {
+	it( 'creates a credentials using backup file', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		expect( screen.queryByText( messages.urlError ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( messages.usernameError ) ).not.toBeInTheDocument();
+		await userEvent.click( backupOption() );
+		await userEvent.type( backupFileInput(), 'backup-file.zip' );
+		await userEvent.click( specialInstructionsButton() );
+		await userEvent.type( specialInstructionsInput(), 'notes' );
+		await userEvent.click( continueButton() );
+
+		//TODO: Ideally we should use nock to mock the request, but it is not working with the current implementation due to wpcomRequest usage that is well captured by nock.
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'sites/site-url.wordpress.com/automated-migration',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				blog_url: 'site-url.wordpress.com',
+				migration_type: 'backup',
+				notes: 'notes',
+				from_url: 'backup-file.zip',
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalled();
+		} );
 	} );
 
-	it.each( [
-		[
-			'site-url.com',
-			'username',
-			'password',
-			[],
-			[ messages.passwordError, messages.urlError, messages.usernameError ],
-		],
-		[
-			'siteurlnotld',
-			'username',
-			'password',
-			[ messages.noTLDError ],
-			[ messages.passwordError, messages.urlError, messages.usernameError ],
-		],
-		[
-			'',
-			'username',
-			'password',
-			[ messages.urlError ],
-			[ messages.passwordError, messages.usernameError ],
-		],
-		[
-			'',
-			'',
-			'password',
-			[ messages.urlError, messages.usernameError ],
-			[ messages.passwordError ],
-		],
-		[
-			'',
-			'username',
-			'',
-			[ messages.urlError, messages.passwordError ],
-			[ messages.usernameError ],
-		],
-		[ '', '     ', '', [ messages.urlError, messages.usernameError ], [] ],
-		[
-			'backup-url.com',
-			'username',
-			'',
-			[ messages.passwordError ],
-			[ messages.usernameError, messages.urlError ],
-		],
-		[
-			'backup-url.com',
-			'',
-			'',
-			[ messages.usernameError, messages.passwordError ],
-			[ messages.urlError ],
-		],
-		[ '', '', '', [ messages.usernameError, messages.urlError, messages.passwordError ], [] ],
-	] )(
-		'shows correct error messages for url:%s--username:%s--pass:%s--',
-		async ( siteAddress, username, password, expectedErrors, notExpectedErrors ) => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
+	it( 'skips the credential creation when the user does not fill the fields', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
 
-			const expandNotesButton = screen.getByTestId( 'special-instructions' );
-			await userEvent.click( expandNotesButton );
+		await userEvent.click( skipButton() );
 
-			const addressInput = screen.getByLabelText( /Site address/ );
-			const usernameInput = screen.getByLabelText( /WordPress admin username/ );
-			const passwordInput = screen.getByLabelText( /Password/ );
-			const notesInput = screen.getByTestId( 'special-instructions-textarea' );
+		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
+		expect( wpcomRequest ).not.toHaveBeenCalled();
+	} );
 
-			siteAddress && ( await userEvent.type( addressInput, siteAddress ) );
-			username && ( await userEvent.type( usernameInput, username ) );
-			password && ( await userEvent.type( passwordInput, password ) );
-			await userEvent.type( notesInput, 'notes' );
+	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {
+		render();
+		await userEvent.click( continueButton() );
+		await userEvent.click( credentialsOption() );
+		expect( getByText( messages.urlError ) ).toBeVisible();
+		expect( getByText( messages.usernameError ) ).toBeVisible();
+		expect( getByText( messages.passwordError ) ).toBeVisible();
+	} );
 
-			await waitFor( async () => {
-				await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
-			} );
+	it( 'shows errors on the required fields when the user does not fill the fields when user select backup option', async () => {
+		render();
+		await userEvent.click( backupOption() );
+		await userEvent.click( continueButton() );
+		expect( getByText( /Please enter a valid URL/ ) ).toBeVisible();
+	} );
 
-			expectedErrors.forEach( ( text ) => {
-				expect( screen.queryByText( text ) ).toBeInTheDocument();
-			} );
+	it( 'shows error when user set invalid site address', async () => {
+		render();
+		await userEvent.type( siteAddressInput(), 'invalid-site-address' );
+		await userEvent.click( continueButton() );
 
-			notExpectedErrors.forEach( ( text ) => {
-				expect( screen.queryByText( text ) ).not.toBeInTheDocument();
-			} );
-		}
-	);
+		expect( getByText( messages.noTLDError ) ).toBeVisible();
+	} );
 
-	it.each( [
-		[
-			'credentials',
-			'site-url.com',
-			'username',
-			'password',
-			[],
-			[ messages.passwordError, messages.urlError, messages.usernameError ],
-		],
-		[
-			'backup',
-			'backupsite-url.com',
-			'',
-			'',
-			[],
-			[ messages.passwordError, messages.urlError, messages.usernameError ],
-		],
-	] )(
-		'sends correctly formed request',
-		async (
-			howToAccessSite,
-			siteAddress,
-			username,
-			password,
-			expectedErrors,
-			notExpectedErrors
-		) => {
-			( wpcomRequest as jest.Mock ).mockClear();
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
+	it( 'fills the site address and disable it when the user already informed the site address on previous step', async () => {
+		const initialEntry = '/site-migration-credentials?from=https://example.com';
+		render( {}, { initialEntry } );
 
-			const isBackupRequest = howToAccessSite === 'backup';
+		expect( siteAddressInput() ).toHaveValue( 'https://example.com' );
+		expect( siteAddressInput() ).toBeDisabled();
+	} );
 
-			if ( isBackupRequest ) {
-				const backupRadio = screen.getByLabelText( 'Backup file' );
-				await userEvent.click( backupRadio );
-			}
+	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
 
-			const addressInput = screen.getByLabelText(
-				isBackupRequest ? /Backup file location/ : /Site address/
-			);
-
-			const expandNotesButton = screen.getByTestId( 'special-instructions' );
-			await userEvent.click( expandNotesButton );
-
-			const notesInput = screen.getByTestId( 'special-instructions-textarea' );
-
-			await userEvent.type( addressInput, siteAddress );
-			username &&
-				( await userEvent.type( screen.getByLabelText( /WordPress admin username/ ), username ) );
-			password && ( await userEvent.type( screen.getByLabelText( /Password/ ), password ) );
-			await userEvent.type( notesInput, 'notes' );
-
-			await waitFor( async () => {
-				await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
-			} );
-
-			await waitFor( async () => {
-				expect( wpcomRequest ).toHaveBeenCalledWith( {
-					path: 'sites/site-url.wordpress.com/automated-migration',
-					apiNamespace: 'wpcom/v2/',
-					apiVersion: '2',
-					method: 'POST',
-					body: {
-						migration_type: howToAccessSite,
-						blog_url: 'site-url.wordpress.com',
-						notes: 'notes',
-						from_url: siteAddress,
-						...( isBackupRequest
-							? {}
-							: {
-									username,
-									password,
-							  } ),
-					},
-				} );
-			} );
-
-			expectedErrors.forEach( ( text ) => {
-				expect( screen.queryByText( text ) ).toBeInTheDocument();
-			} );
-			notExpectedErrors.forEach( ( text ) => {
-				expect( screen.queryByText( text ) ).not.toBeInTheDocument();
-			} );
-		}
-	);
-
-	it.each( [
-		[
-			'Enter a valid URL.',
-			{
-				code: 'rest_invalid_param',
-				message: 'Test',
-				data: { params: { from_url: 'Invalid Param' } },
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'rest_invalid_param',
+			data: {
+				params: {
+					from_url: 'Invalid Param',
+					username: 'Invalid Param',
+					password: 'Invalid Param',
+					notes: 'Invalid Param',
+				},
 			},
-		],
-		[
-			'Enter a valid username.',
-			{
-				code: 'rest_invalid_param',
-				message: 'Test',
-				data: { params: { username: 'Invalid Param' } },
+		} );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+		await waitFor( () => {
+			expect( getByText( /Enter a valid URL/ ) ).toBeVisible();
+			expect( getByText( /Enter a valid username/ ) ).toBeVisible();
+			expect( getByText( /Enter a valid password/ ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'shows error message when there is an error on the with the backup file', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'rest_invalid_param',
+			data: {
+				params: {
+					from_url: 'Invalid Param',
+				},
 			},
-		],
-		[
-			'Invalid input, please check again',
-			{
-				code: 'rest_invalid_param',
-				message: 'Test note',
-				data: { params: { notes: 'Invalid Param' } },
-			},
-		],
-		[
-			'Enter a valid password.',
-			{
-				code: 'rest_invalid_param',
-				message: 'Test',
-				data: { params: { password: 'Invalid Param' } },
-			},
-		],
-		[
-			'An error occurred while saving credentials.',
-			{
-				code: 'rest_invalid_param',
-				message: 'Test',
-				data: { params: { nonexistant: 'Invalid Param' } },
-			},
-		],
-		[
-			'A test message',
-			{
-				code: 'rest_other_error',
-				message: 'A test message',
-				data: {},
-			},
-		],
-		[
-			'An error occurred while saving credentials.',
-			{
-				code: 'rest_other_error_no_message',
-				data: {},
-			},
-		],
-	] )(
-		'shows correct error messages after server validation -- %s -- %p',
-		async ( message, errorResponse ) => {
-			( wpcomRequest as jest.Mock ).mockClear();
+		} );
 
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
+		await userEvent.click( backupOption() );
+		await userEvent.type( backupFileInput(), 'backup-file.zip' );
+		await userEvent.click( continueButton() );
 
-			const expandNotesButton = screen.getByTestId( 'special-instructions' );
-			await userEvent.click( expandNotesButton );
+		await waitFor( () => {
+			expect( getByText( /Enter a valid URL/ ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+	} );
 
-			await userEvent.type( screen.getByLabelText( /Site address/ ), 'test.com' );
-			await userEvent.type( screen.getByLabelText( /WordPress admin username/ ), 'username' );
-			await userEvent.type( screen.getByLabelText( /Password/ ), 'password' );
-			await userEvent.type( screen.getByTestId( 'special-instructions-textarea' ), 'notes' );
+	it( 'shows an error message when the server returns a generic error', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
 
-			( wpcomRequest as jest.Mock ).mockRejectedValue( errorResponse );
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'rest_other_error',
+			message: 'Error message from backend',
+		} );
 
-			await waitFor( async () => {
-				await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
-			} );
+		await fillAllFields();
+		await userEvent.click( continueButton() );
 
-			await waitFor( async () => {
-				expect( wpcomRequest ).toHaveBeenCalledWith( {
-					path: 'sites/site-url.wordpress.com/automated-migration',
-					apiNamespace: 'wpcom/v2/',
-					apiVersion: '2',
-					method: 'POST',
-					body: {
-						migration_type: 'credentials',
-						blog_url: 'site-url.wordpress.com',
-						notes: 'notes',
-						from_url: 'test.com',
-						username: 'username',
-						password: 'password',
-					},
-				} );
-			} );
+		await waitFor( () => {
+			expect( getByText( /Error message from backend/ ) ).toBeVisible();
+		} );
+		expect( submit ).not.toHaveBeenCalled();
+	} );
 
-			await waitFor( () => {
-				expect( screen.queryByText( message ) ).toBeInTheDocument();
-			} );
-		}
-	);
+	it( 'shows an generic error when server doesn`t return error and shows normal Continue button', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {} );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
+		} );
+
+		await waitFor( () => {
+			expect( continueButton() ).toBeVisible();
+		} );
+	} );
 
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
 		const submit = jest.fn();
-		render(
-			{
-				navigation: { submit },
-			},
-			{
-				initialEntry:
-					'/site-migration-credentials?siteId=123&siteSlug=test.wordpress.com&error=ticket-creation',
-			}
+		const initialEntry = '/site-migration-credentials?error=ticket-creation';
+
+		render( { navigation: { submit } }, { initialEntry } );
+
+		const errorMessage = await findByText(
+			/We ran into a problem submitting your details. Please try again shortly./
 		);
 
 		await waitFor( () => {
-			const errorNotice = screen.getByText(
-				'We ran into a problem submitting your details. Please try again shortly.'
-			);
-			expect( errorNotice ).toBeInTheDocument();
+			expect( errorMessage ).toBeVisible();
+		} );
+	} );
+
+	it( 'shows "Verifying credentials" on the Continue button during submission', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockImplementation(
+			() =>
+				new Promise( ( resolve ) => {
+					setTimeout( resolve, 2000 );
+				} )
+		);
+
+		await fillAllFields();
+		jest.useFakeTimers();
+		userEvent.click( continueButton() );
+		jest.advanceTimersByTime( 1000 );
+
+		await waitFor( () => {
+			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
+		} );
+	} );
+
+	it.each( [
+		{
+			response_code: 404,
+			errorMessage: 'Check your site address.',
+		},
+		{
+			response_code: 401,
+			errorMessage: 'Check your username.',
+		},
+		{
+			response_code: 401,
+			errorMessage: 'Check your password.',
+		},
+	] )(
+		'shows error message for %p verification error',
+		async ( { response_code, errorMessage } ) => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+
+			( wpcomRequest as jest.Mock ).mockRejectedValue( {
+				code: 'automated_migration_tools_login_and_get_cookies_test_failed',
+				data: {
+					response_code,
+				},
+			} );
+
+			await fillAllFields();
+			userEvent.click( continueButton() );
+
+			await waitFor( () => {
+				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+			} );
+
+			await waitFor( () => {
+				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+				expect(
+					getByText(
+						'We could not verify your credentials. Can you double check your account information and try again?'
+					)
+				).toBeVisible();
+				expect( getByText( errorMessage ) ).toBeVisible();
+			} );
+		}
+	);
+
+	it( 'creates a credentials ticket by Continue anyways button', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await userEvent.click( credentialsOption() );
+		await userEvent.type( siteAddressInput(), 'site-url.com' );
+		await userEvent.type( usernameInput(), 'username' );
+		await userEvent.type( passwordInput(), 'password' );
+
+		await userEvent.click( specialInstructionsButton() );
+		await userEvent.type( specialInstructionsInput(), 'notes' );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
+			data: {
+				response_code: 401,
+			},
+		} );
+
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+		} );
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		await userEvent.click( continueButton( /Continue anyways/ ) );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'sites/site-url.wordpress.com/automated-migration',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				migration_type: 'credentials',
+				blog_url: 'site-url.wordpress.com',
+				bypass_verification: true,
+				notes: 'notes',
+				from_url: 'site-url.com',
+				username: 'username',
+				password: 'password',
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalled();
 		} );
 	} );
 } );

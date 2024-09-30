@@ -263,7 +263,7 @@ export const getPagedBlazeSearchData = (
 ): PagedBlazeContentData => {
 	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
-		const { has_more_pages, total_items } = lastPage;
+		const { has_more_pages, total_items, warnings } = lastPage;
 
 		let foundContent: BlazePagedItem[] = pagedData?.pages
 			?.map( ( item: BlazeDataPaged ) => item[ mode ] )
@@ -283,6 +283,7 @@ export const getPagedBlazeSearchData = (
 			has_more_pages,
 			total_items,
 			items: foundContent,
+			warnings,
 		};
 	}
 	return {

@@ -45,7 +45,9 @@ export default function UserContactSupportModalForm( {
 	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
-	const hasCompletedForm = !! message && !! name && !! email && !! product && !! agency;
+	const isClient = isClientView();
+	const hasCompletedForm =
+		!! message && !! name && !! email && !! product && ( !! agency || isClient );
 
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
 
@@ -150,8 +152,6 @@ export default function UserContactSupportModalForm( {
 			dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_open' ) );
 		}
 	}, [ dispatch, show ] );
-
-	const isClient = isClientView();
 
 	if ( ! show ) {
 		return null;

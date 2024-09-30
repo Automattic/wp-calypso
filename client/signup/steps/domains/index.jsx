@@ -855,27 +855,26 @@ export class RenderDomainsStep extends Component {
 			? SIGNUP_DOMAIN_ORIGIN.CUSTOM
 			: SIGNUP_DOMAIN_ORIGIN.FREE;
 
-		this.props.submitSignupStep(
-			Object.assign(
-				{
-					stepName: this.props.stepName,
-					domainItem,
-					isPurchasingItem,
-					siteUrl,
-					stepSectionName: this.props.stepSectionName,
-					domainCart,
-				},
-				this.getThemeArgs()
-			),
-			Object.assign(
-				{ domainItem, domainCart },
-				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {},
-				{ siteUrl: suggestion?.domain_name },
-				lastDomainSearched ? { lastDomainSearched } : {},
-				{ domainCart }
-			)
+		const stepDependencies = Object.assign(
+			{
+				stepName: this.props.stepName,
+				domainItem,
+				isPurchasingItem,
+				siteUrl,
+				stepSectionName: this.props.stepSectionName,
+				domainCart,
+			},
+			this.getThemeArgs()
 		);
+		const providedDependencies = Object.assign(
+			{ domainItem, domainCart },
+			useThemeHeadstartItem,
+			signupDomainOrigin ? { signupDomainOrigin } : {},
+			{ siteUrl: suggestion?.domain_name },
+			lastDomainSearched ? { lastDomainSearched } : {},
+			{ domainCart }
+		);
+		this.props.submitSignupStep( stepDependencies, providedDependencies );
 
 		const productToRemove = cart.products.find(
 			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
@@ -1178,7 +1177,10 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+		if (
+			shouldUseMultipleDomainsInCart( flowName ) &&
+			! [ 'use-your-domain' ].includes( stepSectionName )
+		) {
 			return translate( 'Find and claim one or more domain names' );
 		}
 

@@ -10,15 +10,17 @@ import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PlanStorage from 'calypso/blocks/plan-storage';
+import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { LaunchIcon, ShareLinkIcon } from 'calypso/hosting/overview/components/icons';
 import { PlanBandwidth } from 'calypso/hosting/overview/components/plan-bandwidth';
 import { PlanSiteVisits } from 'calypso/hosting/overview/components/plan-site-visits';
 import PlanStorageBar from 'calypso/hosting/overview/components/plan-storage-bar';
+import { Action } from 'calypso/hosting/overview/components/quick-actions-card';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -31,8 +33,6 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import { LaunchIcon, ShareLinkIcon } from './icons';
-import { Action } from './quick-actions-card';
 
 const DevelopmentSiteActions = () => {
 	const translate = useTranslate();
@@ -69,7 +69,7 @@ const DevelopmentSiteActions = () => {
 	);
 };
 
-const PricingSection: FC = () => {
+const PricingSection = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
@@ -195,7 +195,31 @@ const PricingSection: FC = () => {
 	);
 };
 
-const PlanCard: FC = () => {
+function PlanStorageFooter( { children }: PropsWithChildren ) {
+	const site = useSelector( getSelectedSite );
+	const dispatch = useDispatch();
+	const wrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
+
+	if ( wrapperIsLink ) {
+		return <div className="hosting-overview__plan-storage-footer">{ children }</div>;
+	}
+
+	return (
+		<div className="hosting-overview__plan-storage-footer">
+			<Button
+				plain
+				href={ `/add-ons/${ site?.slug }` }
+				onClick={ () => {
+					dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
+				} }
+			>
+				{ children }
+			</Button>
+		</div>
+	);
+}
+
+const PlanCard = () => {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -212,6 +236,7 @@ const PlanCard: FC = () => {
 	const isAgencyPurchase = planPurchase && isPartnerPurchase( planPurchase );
 	const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
 	const isA4A = useSelector( isA4AUser );
+
 	// Show that this is an Agency Managed plan for agency purchases.
 	const planName = isAgencyPurchase
 		? purchaseType( planPurchase )
@@ -224,6 +249,7 @@ const PlanCard: FC = () => {
 	const storageAddons = addOns.filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE && ! addOn?.exceedsSiteStorageLimits
 	);
+
 	const renderManageButton = () => {
 		if ( isJetpack || ! site || isStaging || isAgencyPurchase || isDevelopmentSite ) {
 			return false;
@@ -302,14 +328,10 @@ const PlanCard: FC = () => {
 							className="hosting-overview__plan-storage"
 							hideWhenNoStorage
 							siteId={ site?.ID }
-							StorageBarComponent={ PlanStorageBar }
+							storageBarComponent={ PlanStorageBar }
 						>
 							{ storageAddons.length > 0 && ! isAgencyPurchase && (
-								<div className="hosting-overview__plan-storage-footer">
-									<span className="hosting-overview__storage-footer-text">
-										{ translate( 'Need more storage?' ) }
-									</span>
-								</div>
+								<PlanStorageFooter>{ translate( 'Need more storage?' ) }</PlanStorageFooter>
 							) }
 						</PlanStorage>
 

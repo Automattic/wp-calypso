@@ -115,7 +115,7 @@ export class UploadingPane extends PureComponent {
 				return (
 					<div className="content-upload-form__in-progress">
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar className="content-upload-form__in-progress-bar" />
+						<ProgressBar className="content-upload-form__in-progress-bar is-larger-progress-bar" />
 					</div>
 				);
 			}

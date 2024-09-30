@@ -232,6 +232,43 @@ body.is-section-stepper .domains__step-content,
 	}
 }
 
+.onboarding {
+	&.domains {
+		&.step-route {
+			padding: 48px 0 0;
+			@include break-mobile {
+				padding: 48px 12px 0 12px;
+			}
+			.step-container {
+				.step-container__header {
+					margin: 36px 0 24px 0;
+					@include break-mobile {
+						margin: 24px 20px;
+					}
+					@include break-large {
+						margin: 48px 0 40px;
+					}
+				}
+			}
+			.formatted-header__title {
+				font-size: 2rem;
+				@include break-mobile {
+					font-size: 2.25rem;
+				}
+				@include break-xlarge {
+					font-size: 2.75rem;
+				}
+			}
+			.formatted-header__subtitle {
+				margin-top: 8px;
+			}
+			.register-domain-step__search-domain-step {
+				padding-bottom: 16px;
+			}
+		}
+	}
+}
+
 /**
  * Styles for design reskin
  * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
@@ -457,9 +494,12 @@ body.is-section-signup.is-white-signup {
 	.signup__step.is-mailbox-domain {
 		padding: 0 12px;
 	}
-
 	.step-container__content .domains__step-content-domain-step {
 		padding: 0 12px;
+		@include break-mobile {
+			padding: 0;
+		}
+
 	}
 }
 

@@ -1,4 +1,4 @@
-@import "calypso/components/text-control/style.scss";
+@import "calypso/components/text-control/style";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
@@ -271,6 +271,7 @@ body.is-section-accept-invite {
 }
 
 .card.auth-form__social.is-signup {
+	background: inherit;
 	margin-bottom: 0;
 
 	.auth-form__social-buttons-container {

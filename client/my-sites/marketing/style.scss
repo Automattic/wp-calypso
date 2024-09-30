@@ -171,11 +171,6 @@
 		}
 
 		.form-button {
-			margin-top: 26px;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				margin-top: 0;
-			}
 
 			@include breakpoint-deprecated( "<480px" ) {
 				width: 100%;

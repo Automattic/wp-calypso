@@ -11,11 +11,13 @@ import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import FileImporter from './content-upload/file-importer';
+import { EngineTypes } from './types';
+import { normalizeFromSite } from './utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 interface ContentProps {
 	nextStepUrl: string;
-	engine: string;
+	engine: EngineTypes;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
@@ -90,7 +92,7 @@ export default function Content( {
 						className="export-content"
 					/>
 					<Button
-						href={ `https://${ fromSite }/publish/settings?search=export` }
+						href={ `https://${ normalizeFromSite( fromSite ) }/publish/settings?search=export` }
 						target="_blank"
 						rel="noreferrer noopener"
 						icon={ external }

@@ -38,12 +38,12 @@ class VerifyEmailDialog extends Component {
 			? this.state.resendPendingStatus
 			: this.props.emailVerificationStatus;
 		if ( 'sent' === statusToCheck || 'error' === statusToCheck ) {
-			return this.props.translate( 'Email Sent' );
+			return this.props.translate( 'Email sent' );
 		}
 		if ( 'requesting' === statusToCheck ) {
 			return <Spinner className="email-verification-dialog__confirmation-dialog-spinner" />;
 		}
-		return this.props.translate( 'Resend Email' );
+		return this.props.translate( 'Resend email' );
 	}
 
 	handleClose = () => {
@@ -70,9 +70,12 @@ class VerifyEmailDialog extends Component {
 
 	getDialogButtons() {
 		return [
+			<Button key="close" onClick={ this.handleClose }>
+				{ this.props.translate( 'Cancel' ) }
+			</Button>,
 			<Button
 				key="resend"
-				primary={ false }
+				primary
 				disabled={
 					includes( [ 'requesting', 'sent', 'error' ], this.props.emailVerificationStatus ) ||
 					includes( [ 'requesting', 'sent', 'error' ], this.state.resendPendingStatus )
@@ -80,9 +83,6 @@ class VerifyEmailDialog extends Component {
 				onClick={ this.verifyEmail }
 			>
 				{ this.getResendButtonLabel() }
-			</Button>,
-			<Button key="close" primary onClick={ this.handleClose }>
-				{ this.props.translate( 'OK' ) }
 			</Button>,
 		];
 	}
@@ -108,29 +108,31 @@ class VerifyEmailDialog extends Component {
 
 	render() {
 		const strings = {
-			confirmHeading: this.props.translate( 'Please verify your email address:' ),
+			confirmHeading: this.props.translate( 'Verify your email' ),
 
 			confirmExplanation: this.props.translate(
-				'When you first signed up for a WordPress.com account we sent you an email. ' +
-					'Please open it and click on the blue button to verify your email address.'
-			),
-
-			confirmReasoning: this.props.translate(
-				'Verifying your email allows us to assist you if you ' +
-					'ever lose access to your account in the future.'
-			),
-
-			confirmEmail: this.props.translate(
-				'{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}',
+				"Check your inbox at {{wrapper}}%(email)s{{/wrapper}} for the confirmation email, or click 'Resend Email' to get a new one.",
 				{
 					components: {
 						wrapper: (
 							<span className="email-verification-dialog__confirmation-dialog-email-wrapper" />
 						),
-						emailPreferences: this.getEmailPreferencesComponent(),
 					},
 					args: {
 						email: this.props.email,
+					},
+				}
+			),
+
+			confirmReasoning: this.props.translate(
+				'Verify your email to secure your account and access more features.'
+			),
+
+			confirmEmail: this.props.translate(
+				"Can't access that email? {{emailPreferences}}Click here to update it{{/emailPreferences}}.",
+				{
+					components: {
+						emailPreferences: this.getEmailPreferencesComponent(),
 					},
 				}
 			),
@@ -147,14 +149,14 @@ class VerifyEmailDialog extends Component {
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
 					{ strings.confirmHeading }
 				</h1>
-				<p className="email-verification-dialog__confirmation-dialog-email">
-					{ strings.confirmEmail }
+				<p className="email-verification-dialog__confirmation-dialog-explanation">
+					{ strings.confirmReasoning }
 				</p>
 				<p className="email-verification-dialog__confirmation-dialog-explanation">
 					{ strings.confirmExplanation }
 				</p>
-				<p className="email-verification-dialog__confirmation-dialog-reasoning">
-					{ strings.confirmReasoning }
+				<p className="email-verification-dialog__confirmation-dialog-email">
+					{ strings.confirmEmail }
 				</p>
 			</Dialog>
 		);

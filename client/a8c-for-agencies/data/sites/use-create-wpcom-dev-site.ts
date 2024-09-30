@@ -11,6 +11,7 @@ import { getFetchDevLicensesQueryKey } from '../purchases/use-fetch-dev-licenses
 
 export interface APIError {
 	status: number;
+	code: string;
 }
 
 export interface CreateDevSiteParams {
