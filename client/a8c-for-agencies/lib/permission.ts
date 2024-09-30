@@ -66,14 +66,17 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_REFERRALS_DASHBOARD ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_PAYMENT_SETTINGS ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_FAQ ]: [ 'a4a_read_referrals' ],
-	[ A4A_PARTNER_DIRECTORY_LINK ]: [ 'partner_directory', 'a4a_read_partner_directory' ],
-	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'partner_directory', 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_LINK ]: [ 'a4a_feature_partner_directory', 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [
+		'a4a_feature_partner_directory',
+		'a4a_read_partner_directory',
+	],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [
 		'partner_directory',
 		'a4a_read_partner_directory',
 	],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [
-		'partner_directory',
+		'a4a_feature_partner_directory',
 		'a4a_read_partner_directory',
 	],
 	[ A4A_PURCHASES_LINK ]: [ 'a4a_jetpack_licensing' ],
