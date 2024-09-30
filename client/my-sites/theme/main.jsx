@@ -1208,6 +1208,7 @@ class ThemeSheet extends Component {
 			<Button
 				className="theme__sheet-primary-button"
 				primary
+				busy={ this.isRequestingActivatingTheme() }
 				disabled={ this.isLoading() }
 				onClick={ this.onUnlockStyleButtonClick }
 			>
