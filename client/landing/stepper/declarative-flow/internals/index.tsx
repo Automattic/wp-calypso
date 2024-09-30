@@ -5,6 +5,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, lazy } from 'react';
 import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
@@ -75,6 +76,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentStepRoute = params.step || '';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
+	const translate = useTranslate();
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
@@ -194,6 +196,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} else if ( isSenseiFlow( flow.name ) ) {
 			return __( 'Course Creator' );
 		}
+
+		return flow.title ?? translate( 'Create a site' );
 	};
 
 	useSignUpStartTracking( { flow } );
