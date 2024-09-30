@@ -32,7 +32,7 @@ function setUpLocale( context, next ) {
 		config( 'magnificent_non_en_locales' ).includes( context.lang );
 
 	if ( shouldSetupLocaleData ) {
-		return ssrSetupLocale();
+		return ssrSetupLocale( context, next );
 	}
 
 	next();
