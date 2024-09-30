@@ -1,6 +1,7 @@
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
+import { SITE_REQUEST } from 'calypso/state/action-types';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -1167,7 +1168,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success', () => {
 			return initiateThemeTransfer( siteId )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledTimes( 3 );
+				expect( spy ).toHaveBeenCalledTimes( 4 );
 
 				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
@@ -1183,6 +1184,14 @@ describe( 'actions', () => {
 						type: THEME_TRANSFER_INITIATE_SUCCESS,
 						siteId,
 						transferId: 1,
+					} )
+				);
+
+				expect( spy ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						meta: expect.objectContaining( {} ),
+						type: SITE_REQUEST,
+						siteId,
 					} )
 				);
 
