@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import { isDefaultLocale } from '@automattic/i18n-utils';
+import { isDefaultLocale, isMagnificentLocale } from '@automattic/i18n-utils';
 import { ssrSetupLocale } from 'calypso/controller';
 import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
@@ -23,8 +22,7 @@ export function setShouldServerSideRenderLogin( context, next ) {
 	 * rather than redirecting non-Mag-16 locales to English, as is done for other sections.
 	 */
 	const isLocaleValidForSSR =
-		isDefaultLocale( context.lang ) ||
-		config( 'magnificent_non_en_locales' ).includes( context.lang );
+		isDefaultLocale( context.lang ) || isMagnificentLocale( context.lang );
 
 	context.serverSideRender =
 		// if there are any parameters, they must be ONLY the ones in the list of valid query keys
@@ -71,9 +69,7 @@ export function ssrSetupLocaleLogin( context, next ) {
 export function setMetaTags( context, next ) {
 	const pathSegments = context.pathname.replace( /^[/]|[/]$/g, '' ).split( '/' );
 	const hasQueryString = Object.keys( context.query ).length > 0;
-	const hasMag16LocaleParam = config( 'magnificent_non_en_locales' ).includes(
-		context.params?.lang
-	);
+	const hasMag16LocaleParam = isMagnificentLocale( context.params?.lang );
 
 	/**
 	 * Only the main `/log-in` and `/log-in/[mag-16-locale]` routes should be indexed.
