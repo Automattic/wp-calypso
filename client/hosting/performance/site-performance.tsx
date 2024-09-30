@@ -9,6 +9,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -146,6 +147,7 @@ export const SitePerformance = () => {
 	}, [ currentPage?.wpcom_performance_report_url ] );
 
 	const retestPage = () => {
+		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		setWpcom_performance_report_url( {
 			url: currentPage?.url ?? '',
 			hash: '',
@@ -202,6 +204,13 @@ export const SitePerformance = () => {
 
 	const isMobile = ! useDesktopBreakpoint();
 	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+
+	const handleDeviceTabChange = ( tab: Tab ) => {
+		setActiveTab( tab );
+		recordTracksEvent( 'calypso_performance_profiler_device_tab_change', {
+			device: tab,
+		} );
+	};
 
 	const pageSelector = (
 		<PageSelector
@@ -278,7 +287,7 @@ export const SitePerformance = () => {
 				{ ! isMobile && pageSelector }
 				<DeviceTabControls
 					showTitle={ ! isMobile }
-					onDeviceTabChange={ setActiveTab }
+					onDeviceTabChange={ handleDeviceTabChange }
 					disabled={ disableControls }
 					value={ activeTab }
 				/>
