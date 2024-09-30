@@ -75,10 +75,12 @@ export default function Summary( {
 
 			{ showPauseSubstackBillingWarning && (
 				<Notice status="warning" className="importer__notice" isDismissible={ false }>
-					<h2>Action Required!</h2>
+					<h2>Action Required</h2>
 					To prevent any charges from your old provider, go to your{ ' ' }
 					<a
-						href={ `https://${ normalizeFromSite( fromSite ) }/publish/settings#payments-settings` }
+						href={ `https://${ normalizeFromSite(
+							fromSite
+						) }/publish/settings?search=Pause%20subscription` }
 						target="_blank"
 						rel="noreferrer"
 					>
