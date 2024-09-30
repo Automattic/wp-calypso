@@ -88,6 +88,7 @@ const domainSearch = ( context, next ) => {
 };
 
 const siteRedirect = ( context, next ) => {
+	const backUrl = context.query?.redirect_to;
 	context.primary = (
 		<Main>
 			<PageViewTracker
@@ -96,7 +97,7 @@ const siteRedirect = ( context, next ) => {
 			/>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
 			<CalypsoShoppingCartProvider>
-				<SiteRedirect />
+				<SiteRedirect backUrl={ backUrl } />
 			</CalypsoShoppingCartProvider>
 		</Main>
 	);
@@ -104,12 +105,13 @@ const siteRedirect = ( context, next ) => {
 };
 
 const mapDomain = ( context, next ) => {
+	const backUrl = context.query?.redirect_tosdfsd;
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 			<CalypsoShoppingCartProvider>
-				<MapDomain initialQuery={ context.query.initialQuery } />
+				<MapDomain backUrl={ backUrl } initialQuery={ context.query.initialQuery } />
 			</CalypsoShoppingCartProvider>
 		</Main>
 	);

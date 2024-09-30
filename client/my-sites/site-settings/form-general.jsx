@@ -249,13 +249,23 @@ export class SiteSettingsFormGeneral extends Component {
 								),
 								mapDomainLink: (
 									<a
-										href={ '/domains/add/mapping/' + siteSlug }
+										href={
+											'/domains/add/mapping/' +
+											siteSlug +
+											'?redirect_to=/settings/general/' +
+											siteSlug
+										}
 										onClick={ this.trackUpgradeClick }
 									/>
 								),
 								redirectLink: (
 									<a
-										href={ '/domains/add/site-redirect/' + siteSlug }
+										href={
+											'/domains/add/site-redirect/' +
+											siteSlug +
+											'?redirect_to=/settings/general/' +
+											siteSlug
+										}
 										onClick={ this.trackUpgradeClick }
 									/>
 								),
