@@ -1,4 +1,7 @@
 import { Button, FormLabel } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
+import { Icon } from '@wordpress/components';
+import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -10,7 +13,8 @@ import {
 	useEdgeCacheDefensiveModeQuery,
 } from 'calypso/data/hosting/use-cache';
 import { EdgeCacheLoadingPlaceholder } from 'calypso/hosting/server-settings/components/cache-card/edge-cache-loading-placeholder';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -21,6 +25,7 @@ type DefensiveModeCardProps = {
 
 export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 
 	const availableTtls = [
@@ -96,18 +101,54 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						</HostingCardDescription>
 					</div>
 
-					<Button
-						className="defensive-mode-card__button"
-						busy={ isEnabling }
-						disabled={ disabled || isEnabling }
-						onClick={ () => {
-							mutate( { active: false } );
-						} }
-					>
-						{ translate( 'Disable defensive mode', {
-							comment: 'Defensive mode is a feature to protect against DDoS attacks.',
-						} ) }
-					</Button>
+					{ ! defensiveModeData.enabled_by_a11n && (
+						<Button
+							className="defensive-mode-card__button"
+							busy={ isEnabling }
+							disabled={ disabled || isEnabling }
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_configuration_defensive_mode_disable' )
+								);
+								mutate( { active: false } );
+							} }
+						>
+							{ translate( 'Disable defensive mode', {
+								comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+							} ) }
+						</Button>
+					) }
+
+					{ defensiveModeData.enabled_by_a11n && (
+						<div className="defensive-mode-card__a11n-description">
+							<div>
+								<Icon icon={ info } size={ 24 } />
+							</div>
+
+							<div className="defensive-mode-card__a11n-text">
+								<p>
+									<strong>
+										{ translate(
+											'Defensive mode was enabled on your behalf to protect your site.',
+											{ comment: 'Defensive mode is a feature to protect against DDoS attacks.' }
+										) }
+									</strong>
+								</p>
+								<p>
+									{ translate(
+										'Please {{a}}contact support{{/a}} if you need to disable defensive mode.',
+										{
+											comment:
+												'Defensive mode is a feature to protect against DDoS attacks. This text is dislayed when defensive mode was enabled on behalf of users.',
+											components: {
+												a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+											},
+										}
+									) }
+								</p>
+							</div>
+						</div>
+					) }
 				</>
 			) }
 
@@ -136,6 +177,11 @@ export default function DefensiveModeCard( { disabled }: DefensiveModeCardProps 
 						busy={ isEnabling }
 						disabled={ disabled || isEnabling }
 						onClick={ () => {
+							dispatch(
+								recordTracksEvent( 'calypso_hosting_configuration_defensive_mode_enable', {
+									ttl,
+								} )
+							);
 							mutate( { active: true, ttl } );
 						} }
 					>
