@@ -46,9 +46,11 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 		adTrackSignupStart( flowName );
 	}, [ isSignupFlow, flowName ] );
 
-	if ( ! isSignupFlow ) {
-		return;
-	}
+	useEffect( () => {
+		if ( ! isSignupFlow ) {
+			return;
+		}
 
-	recordSignupStart( { flow: flowName, ref, optionalProps: extraProps || {} } );
+		recordSignupStart( { flow: flowName, ref, optionalProps: extraProps || {} } );
+	}, [ isSignupFlow, flowName, ref, extraProps ] );
 };
