@@ -63,6 +63,7 @@ interface FeedbackProps {
 }
 
 interface FeedbackPropsInternal {
+	animationClassName?: string;
 	clickHandler: ( action: string ) => void;
 	isOpen?: boolean;
 }
@@ -99,22 +100,17 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
-function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
+function FeedbackPanel( { isOpen, animationClassName, clickHandler }: FeedbackPropsInternal ) {
 	const translate = useTranslate();
-	const [ animationClassName, setAnimationClassName ] = useState(
-		FEEDBACK_PANEL_ANIMATION_NAME_ENTRY
-	);
 
 	const handleCloseButtonClicked = () => {
 		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
-		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 	};
 
 	const clickHandlerWithAnalytics = ( action: string ) => {
 		// stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel
 		// stats_feedback_action_open_form_modal_from_floating_panel
 		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_floating_panel` );
-
 		clickHandler( action );
 	};
 
@@ -161,6 +157,7 @@ function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
+	const [ animationName, setAnimationName ] = useState( FEEDBACK_PANEL_ANIMATION_NAME_ENTRY );
 
 	const { supportCommercialUse } = useStatsPurchases( siteId );
 
@@ -175,27 +172,33 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}
 	}, [ isPending, isError, shouldShowFeedbackPanel ] );
 
-	const dismissPanelWithDelay = () => {
-		// Allows the animation to run first.
-		setTimeout( () => {
-			setIsFloatingPanelOpen( false );
-		}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
-	};
+	function dismissFloatingPanel() {
+		const delay = isFloatingPanelOpen ? FEEDBACK_PANEL_ANIMATION_DELAY_EXIT : 0;
+		setAnimationName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
+		return new Promise( ( resolve ) => {
+			setTimeout( () => {
+				setIsFloatingPanelOpen( false );
+				resolve( '' );
+			}, delay );
+		} );
+	}
 
 	const handleButtonClick = ( action: string ) => {
 		switch ( action ) {
 			case ACTION_SEND_FEEDBACK:
-				setIsFloatingPanelOpen( false );
-				setIsOpen( true );
+				dismissFloatingPanel().then( () => {
+					setIsOpen( true );
+				} );
 				break;
 			case ACTION_DISMISS_FLOATING_PANEL:
-				dismissPanelWithDelay();
+				dismissFloatingPanel();
 				updateFeedbackPanelHibernationDelay();
 				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
 				break;
 			case ACTION_LEAVE_REVIEW:
-				setIsFloatingPanelOpen( false );
-				window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				dismissFloatingPanel().then( () => {
+					window.open( FEEDBACK_LEAVE_REVIEW_URL );
+				} );
 				break;
 			// Ignore other cases.
 		}
@@ -212,7 +215,11 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 	return (
 		<div className="stats-feedback-container">
 			<FeedbackCard clickHandler={ handleButtonClick } />
-			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
+			<FeedbackPanel
+				isOpen={ isFloatingPanelOpen }
+				animationClassName={ animationName }
+				clickHandler={ handleButtonClick }
+			/>
 			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
 		</div>
 	);
