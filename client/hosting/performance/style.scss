@@ -76,6 +76,16 @@ $section-max-width: 1224px;
 			fill: $studio-red-80;
 		}
 	}
+
+	@media (max-width: $break-large) {
+		.insight-header-container .counter {
+			display: none;
+		}
+
+		.metrics-insight-item .foldable-card__content > div {
+			padding-inline: 0;
+		}
+	}
 }
 
 .site-performance-device-tab-controls__container {
