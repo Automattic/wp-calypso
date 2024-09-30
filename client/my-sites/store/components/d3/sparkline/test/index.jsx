@@ -24,29 +24,14 @@ describe( 'Sparkline', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 
-	test( 'should have a default aspectRatio of 4.5', () => {
-		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } />;
-		expect( sparkline.props.aspectRatio ).toEqual( 4.5 );
-	} );
-
 	test( 'should have a defined aspectRatio if set', () => {
 		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } aspectRatio={ 10 } />;
 		expect( sparkline.props.aspectRatio ).toEqual( 10 );
 	} );
 
-	test( 'should have a default highlightRadius of 3.5', () => {
-		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } />;
-		expect( sparkline.props.highlightRadius ).toEqual( 3.5 );
-	} );
-
 	test( 'should have a defined highlightRadius if set', () => {
 		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } highlightRadius={ 10 } />;
 		expect( sparkline.props.highlightRadius ).toEqual( 10 );
-	} );
-
-	test( 'should have a default margin', () => {
-		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } />;
-		expect( sparkline.props.margin ).toEqual( { top: 4, right: 4, bottom: 4, left: 4 } );
 	} );
 
 	test( 'should have a defined margin if set', () => {
