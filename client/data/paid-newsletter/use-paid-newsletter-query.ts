@@ -33,6 +33,11 @@ export interface SubscribersStepContent {
 		scheduled_at: string;
 		status: string;
 		subscribed_count: string | null;
+		already_subscribed_count: string | null;
+		failed_subscribed_count: string | null;
+		paid_subscribed_count: string | null;
+		paid_already_subscribed_count: string | null;
+		paid_failed_subscribed_count: string | null;
 		timestamp: string;
 	};
 }
