@@ -45,6 +45,7 @@ import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checkl
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -95,6 +96,24 @@ class CurrentPlan extends Component {
 	componentDidMount() {
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
+		}
+
+		const queryParams = new URLSearchParams( window.location.search );
+		if ( queryParams.has( 'success' ) ) {
+			const planSlug = queryParams.get( 'success' );
+			const plan = getPlan( planSlug );
+			if ( plan ) {
+				this.props.dispatch(
+					successNotice(
+						this.props.translate( 'Your %(planName)s plan is now active.', {
+							args: { planName: plan.getTitle() },
+						} ),
+						{
+							duration: 10000,
+						}
+					)
+				);
+			}
 		}
 	}
 
