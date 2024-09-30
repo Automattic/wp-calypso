@@ -675,19 +675,41 @@ class CancelPurchaseForm extends Component {
 			);
 		}
 
+		if ( surveyStep === REMOVE_PLAN_STEP ) {
+			return (
+				<>
+					<GutenbergButton
+						className="cancel-purchase-form__remove-plan-button"
+						isPrimary
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.onSubmit }
+					>
+						{ this.getFinalActionText() }
+					</GutenbergButton>
+					<GutenbergButton
+						isSecondary
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.closeDialog }
+					>
+						{ translate( 'Keep plan' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
 		return (
-			<>
-				<GutenbergButton
-					isPrimary={ surveyStep !== UPSELL_STEP }
-					isSecondary={ surveyStep === UPSELL_STEP }
-					isDefault={ surveyStep !== UPSELL_STEP }
-					isBusy={ isCancelling }
-					disabled={ ! this.canGoNext() }
-					onClick={ this.onSubmit }
-				>
-					{ this.getFinalActionText() }
-				</GutenbergButton>
-			</>
+			<GutenbergButton
+				isPrimary={ surveyStep !== UPSELL_STEP }
+				isSecondary={ surveyStep === UPSELL_STEP }
+				isDefault={ surveyStep !== UPSELL_STEP }
+				isBusy={ isCancelling }
+				disabled={ ! this.canGoNext() }
+				onClick={ this.onSubmit }
+			>
+				{ this.getFinalActionText() }
+			</GutenbergButton>
 		);
 	};
 
