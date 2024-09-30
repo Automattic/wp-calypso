@@ -146,18 +146,19 @@
 	overflow: auto;
 	.main {
 		.navigation-header {
-			padding-inline: 16px;
+			padding: 24px;
+			padding-inline: 0;
 
-			@media (min-width: 403px) {
-				padding-inline: 34px;
-			}
+			.navigation-header__main {
+				padding-inline: 16px;
 
-			@include break-xhuge {
-				max-width: 100%;
-
-				.navigation-header__main {
+				@media (min-width: 403px) {
 					max-width: 1400px;
 					margin: 0 auto;
+					padding-inline: 34px;
+				}
+
+				@include break-xhuge {
 					padding-inline: 48px;
 				}
 			}
