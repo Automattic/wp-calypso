@@ -42,7 +42,7 @@ const HundredYearPlanFlow: Flow = {
 				  ]
 				: [] ),
 
-			// Has site steps (conditional)
+			// If the user has a site, we show them a different flow
 			...( hasSite
 				? [
 						{
@@ -56,8 +56,6 @@ const HundredYearPlanFlow: Flow = {
 						},
 				  ]
 				: [] ),
-
-			// Common steps (always included)
 			{
 				slug: 'setup',
 				asyncComponent: () => import( './internals/steps-repository/hundred-year-plan-setup' ),
@@ -120,7 +118,7 @@ const HundredYearPlanFlow: Flow = {
 					if ( 'diy' === providedDependencies?.diyOrDifmChoice ) {
 						return navigate( hasSite ? 'site-picker' : 'setup' );
 					}
-					// TODO: VIP flow
+					// TODO: add VIP flow
 					return navigate( hasSite ? 'site-picker' : 'setup' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
