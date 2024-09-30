@@ -105,7 +105,7 @@ const siteRedirect = ( context, next ) => {
 };
 
 const mapDomain = ( context, next ) => {
-	const backUrl = context.query?.redirect_tosdfsd;
+	const backUrl = context.query?.redirect_to;
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
