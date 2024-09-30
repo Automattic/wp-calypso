@@ -75,10 +75,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentStepRoute = params.step || '';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
+	const isValidStep = params.step != null && stepPaths.includes( params.step );
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
-	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
+	useFlowAnalytics(
+		{ flow: params.flow, step: params.step, variant: flow.variantSlug },
+		{ enabled: isValidStep }
+	);
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
