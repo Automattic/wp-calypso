@@ -260,7 +260,7 @@ const TabletView = ( {
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 		? renderedGridPlans
 		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
-	const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 2 : 3;
+	const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 4 : 3;
 	const plansForTopRow = gridPlansWithoutSpotlight.slice( 0, numberOfPlansToShowOnTop );
 	const plansForBottomRow = gridPlansWithoutSpotlight.slice( numberOfPlansToShowOnTop );
 	const tableProps = {
