@@ -1,4 +1,5 @@
-import { getLanguage, getLanguageRouteParam } from '@automattic/i18n-utils';
+import config from '@automattic/calypso-config';
+import { getLanguage, getLanguageRouteParam, isDefaultLocale } from '@automattic/i18n-utils';
 import defaultI18n from 'i18n-calypso';
 import { ssrSetupLocale } from 'calypso/controller';
 import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
@@ -15,7 +16,6 @@ export default function ( router ) {
 			`/start/:flowName/:stepName/:stepSectionName/${ lang }`,
 		],
 		setUpLocale,
-		ssrSetupLocale,
 		setupMetaTags
 	);
 }
@@ -25,6 +25,14 @@ function setUpLocale( context, next ) {
 	const language = getLanguage( context.params.lang );
 	if ( language ) {
 		context.lang = context.params.lang;
+	}
+
+	const shouldSetupLocaleData =
+		isDefaultLocale( context.lang ) ||
+		config( 'magnificent_non_en_locales' ).includes( context.lang );
+
+	if ( shouldSetupLocaleData ) {
+		return ssrSetupLocale();
 	}
 
 	next();
