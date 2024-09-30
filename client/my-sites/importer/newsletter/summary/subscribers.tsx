@@ -59,32 +59,31 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 					{ !! addedFree && (
 						<p>
 							<Icon icon={ people } />
-							<strong>{ addedFree }</strong> free subscribers
+							<strong>{ addedFree }</strong> free subscribers.
 						</p>
 					) }
-					{ !! existingFree && (
-						<p>
-							<Icon icon={ info } />
-							<strong>{ existingFree }</strong> existing subscribers
-						</p>
-					) }
-					{ !! failedFree && (
-						<p>
-							<Icon icon={ warning } />
-							<strong>{ failedFree }</strong> error in the email format.
-						</p>
-					) }
-
 					{ !! addedPaid && (
 						<p>
 							<Icon icon={ payment } />
 							<strong>{ addedPaid }</strong> paid subscribers added.
 						</p>
 					) }
+					{ !! existingFree && (
+						<p>
+							<Icon icon={ info } />
+							<strong>{ existingFree }</strong> existing subscribers.
+						</p>
+					) }
 					{ !! existingPaid && (
 						<p>
 							<Icon icon={ info } />
 							<strong>{ existingPaid }</strong> existing paid subscribers.
+						</p>
+					) }
+					{ !! failedFree && (
+						<p>
+							<Icon icon={ warning } />
+							<strong>{ failedFree }</strong> error in the email format.
 						</p>
 					) }
 					{ !! failedPaid && (
