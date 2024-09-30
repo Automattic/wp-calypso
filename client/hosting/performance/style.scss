@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 
 $section-max-width: 1224px;
@@ -12,6 +13,7 @@ $section-max-width: 1224px;
 	.notice-banner,
 	.notice-banner__title {
 		font-size: $font-body-small;
+		margin-bottom: 4px;
 	}
 
 	@media (max-width: $break-medium) {
@@ -20,6 +22,7 @@ $section-max-width: 1224px;
 
 	.performance-profiler-content .container {
 		padding-top: 0;
+		gap: 16px;
 
 		@media (max-width: $break-medium) {
 			padding-top: 24px;
@@ -35,14 +38,53 @@ $section-max-width: 1224px;
 			margin-top: 24px;
 		}
 	}
+
+	.notice-banner {
+		box-shadow: none;
+		padding: 16px;
+
+		.notice-banner__icon-wrapper {
+			margin-right: 8px;
+			position: unset;
+		}
+
+		.notice-banner__action-bar {
+			margin-top: 12px;
+		}
+
+		@media (max-width: $break-medium) {
+			margin-top: 24px;
+		}
+	}
+
+	.notice-banner.is-info {
+		border: none;
+		background-color: $studio-wordpress-blue-5;
+		color: $studio-wordpress-blue-80;
+
+		.notice-banner__icon {
+			fill: $studio-wordpress-blue-80;
+		}
+	}
+
+	.notice-banner.is-warning {
+		border: none;
+		background-color: $studio-red-0;
+		color: $studio-red-80;
+
+		.notice-banner__icon {
+			fill: $studio-red-80;
+		}
+	}
 }
 
 .site-performance-device-tab-controls__container {
 	display: flex;
 	gap: 24px;
 	flex-wrap: wrap;
-	align-items: start;
+	align-items: center;
 	justify-content: space-between;
+	margin-bottom: 16px;
 
 	.site-performance__page-selector {
 		display: flex;
@@ -50,7 +92,7 @@ $section-max-width: 1224px;
 		flex-grow: 1;
 		justify-content: flex-end;
 		gap: 10px;
-		max-height: 40px;
+		max-height: 36px;
 
 		@media (max-width: $break-medium) {
 			flex-direction: column;
@@ -63,6 +105,12 @@ $section-max-width: 1224px;
 				width: 100%;
 			}
 		}
+
+
+	}
+
+	.components-base-control {
+		margin: 0 !important;
 	}
 
 	.navigation-header-title {
@@ -70,12 +118,24 @@ $section-max-width: 1224px;
 		align-items: center;
 		justify-content: space-between;
 	}
+
+	.site-performance__page-selector-search-icon {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		display: flex;
+		align-self: start;
+		z-index: 2;
+		height: 100%;
+		margin-top: 6px;
+		pointer-events: none;
+	}
 }
 
 .site-performance__navigation-header.navigation-header {
 	width: auto;
 	padding-bottom: 0;
-	margin-bottom: 16px;
 
 	.gridicon {
 		fill: var(--color-neutral-100);
@@ -98,15 +158,28 @@ $section-max-width: 1224px;
 .site-performance__page-selector-drowdown {
 	max-width: 240px;
 	min-width: 240px;
+	margin: 0;
 
 	.components-combobox-control__suggestions-container {
 		position: relative;
 		z-index: 1;
 		background: var(--color-surface);
+
+		.components-flex {
+			height: 36px;
+		}
+
+	}
+
+	input.components-combobox-control__input[type="text"] {
+		height: 34px;
+		padding-right: 30px;
+		font-size: 0.875rem;
 	}
 
 	.components-form-token-field__suggestions-list {
 		max-height: initial !important;
+		box-shadow: inset 0 -1px 0 0 var(--color-neutral-50);
 	}
 
 	.components-form-token-field__suggestions-list li {
@@ -115,5 +188,14 @@ $section-max-width: 1224px;
 
 	@media (max-width: $break-medium) {
 		max-width: unset;
+	}
+}
+
+.site-performance__page-selector-container {
+	position: relative;
+	display: flex;
+
+	@media (max-width: $break-medium) {
+		width: 100%;
 	}
 }

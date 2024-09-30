@@ -4,7 +4,7 @@ import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 /**
  * Returns true if the site is coming_soon
  * @param {Object} state Global state tree
- * @param {Object} siteId Site ID
+ * @param {number | null} siteId Site ID
  * @returns {boolean} True if site is coming_soon
  */
 export default function isSiteComingSoon( state, siteId ) {
