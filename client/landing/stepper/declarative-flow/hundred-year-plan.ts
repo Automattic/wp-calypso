@@ -116,10 +116,10 @@ const HundredYearPlanFlow: Flow = {
 			switch ( _currentStep ) {
 				case 'diy-or-difm':
 					if ( 'diy' === providedDependencies?.diyOrDifmChoice ) {
-						return navigate( hasSite ? 'site-picker' : 'setup' );
+						return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
 					}
 					// TODO: add VIP flow
-					return navigate( hasSite ? 'site-picker' : 'setup' );
+					return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
 						return navigate( 'setup' );
