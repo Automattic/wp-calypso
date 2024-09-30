@@ -25,7 +25,7 @@ const CheckboxIntents = ( { label, control, value }: CheckboxProps ) => (
 		render={ ( { field } ) => {
 			return (
 				<CheckboxControl
-					className="site-migration-already-wordpress__form-checkbox-control"
+					className="site-migration-already-wpcom__form-checkbox-control"
 					onChange={ ( isChecked ) => {
 						if ( isChecked ) {
 							field.onChange( [ ...field.value, value ] );
@@ -57,7 +57,7 @@ const OtherDetails = ( { label, control, error }: OtherDetailsProps ) => {
 			rules={ { required: translate( 'Please, provide more details.' ) } }
 			render={ ( { field } ) => {
 				return (
-					<div className="site-migration-already-wordpress__form-textarea-container">
+					<div className="site-migration-already-wpcom__form-textarea-container">
 						<FormLabel htmlFor="otherDetails"> { label } </FormLabel>
 						<FormTextArea
 							id="otherDetails"
@@ -66,12 +66,12 @@ const OtherDetails = ( { label, control, error }: OtherDetailsProps ) => {
 							placeholder={ translate(
 								'Share any other details that will help us figure out what we need to do next.'
 							) }
-							className={ clsx( 'site-migration-already-wordpress__form-textarea', {
-								'site-migration-already-wordpress__form-textarea--error': error,
+							className={ clsx( 'site-migration-already-wpcom__form-textarea', {
+								'site-migration-already-wpcomrm-textarea--error': error,
 							} ) }
 						/>
 						{ error && error.message && (
-							<p className="site-migration-already-wordpress__form-error">{ error.message }</p>
+							<p className="site-migration-already-wpcomrror">{ error.message }</p>
 						) }
 					</div>
 				);
@@ -105,7 +105,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			if ( process.env.NODE_ENV !== 'development' ) {
+			if ( process.env.NODE_ENV !== 'test' ) {
 				alert( 'Success!' );
 			}
 			onComplete();
@@ -129,19 +129,19 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const isOtherChecked = intents.includes( 'other' );
 
 	return (
-		<div className="site-migration-already-wordpress__form-container">
-			<form className="site-migration-already-wordpress__form" onSubmit={ onSubmit }>
-				<div className="site-migration-already-wordpress__form-content">
-					<div className="site-migration-already-wordpress__form-title-container">
+		<div className="site-migration-already-wpcominer">
+			<form className="site-migration-already-wpcom__form" onSubmit={ onSubmit }>
+				<div className="site-migration-already-wpcom__form-content">
+					<div className="site-migration-already-wpcom__form-title-container">
 						<h4
-							className={ clsx( 'site-migration-already-wordpress__form-title', {
-								'site-migration-already-wordpress__form-title--error': errors.intents,
+							className={ clsx( 'site-migration-already-wpcomitle', {
+								'site-migration-already-wpcom__form-title--error': errors.intents,
 							} ) }
 						>
 							{ translate( 'What brought you here today?' ) }
 						</h4>
 						{ errors.intents && (
-							<p className="site-migration-already-wordpress__form-error">
+							<p className="site-migration-already-wpcom__form-error">
 								{ errors.intents.message }
 							</p>
 						) }
