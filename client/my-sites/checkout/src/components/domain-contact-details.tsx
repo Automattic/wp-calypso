@@ -24,7 +24,7 @@ export default function DomainContactDetails( {
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
-	emailOnly,
+	emailOnly = false,
 }: {
 	domainNames: string[];
 	contactDetails: DomainContactDetailsData;
@@ -101,8 +101,6 @@ export default function DomainContactDetails( {
 		</Fragment>
 	);
 }
-
-DomainContactDetails.defaultProps = { emailOnly: false };
 
 function getAllTopLevelTlds( domainNames: string[] ): string[] {
 	return Array.from( new Set( domainNames.map( getTopLevelOfTld ) ) ).sort();
