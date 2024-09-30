@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, JetpackLogo } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
@@ -278,6 +278,36 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						</div>
 					</Tooltip>
 				</div>
+			) }
+
+			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
+				<>
+					<div className="cache-card__hr" />
+
+					<div className="cache-card__jetpack-block">
+						<div className="cache-card__subtitle">{ translate( 'Elasticsearch' ) }</div>
+						<div className="cache-card__jetpack-description">
+							<JetpackLogo size={ 16 } />
+							<HostingCardDescription>
+								{ translate(
+									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
+									{
+										comment:
+											'Refers to how Jetpack Search uses Elasticsearch to index posts and pages on some WordPress.com sites',
+										components: {
+											a: (
+												<InlineSupportLink
+													supportContext="hosting-elasticsearch"
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+								) }
+							</HostingCardDescription>
+						</div>
+					</div>
+				</>
 			) }
 		</HostingCard>
 	);

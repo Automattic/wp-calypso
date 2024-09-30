@@ -134,6 +134,11 @@ const contextLinks = {
 		post_id: 99378,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'hosting-elasticsearch': {
+		link: 'https://developer.wordpress.com/docs/elasticsearch/elasticsearch-queries/',
+		post_id: 99387,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	import: {
 		link: 'https://wordpress.com/support/import/',
 		post_id: 41,
@@ -370,6 +375,10 @@ const contextLinks = {
 	'site-icons': {
 		link: 'https://wordpress.com/support/site-icons/',
 		post_id: 1327,
+	},
+	'site-performance': {
+		link: 'https://wordpress.com/support/check-your-sites-performance/',
+		post_id: 386816,
 	},
 };
 

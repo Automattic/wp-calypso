@@ -66,7 +66,7 @@ export default function MigrationsOverview() {
 				</div>
 				<div className="migrations-overview__section-intro">
 					{ translate(
-						'From now until the end of 2024, you’ll receive $100 for each migrated site to Pressable or WordPress.com, up to $10,000. If you’re a WP Engine customer, we’ll also cover any costs associated with breaking your contract. {{a}}Full Terms ↗{{/a}}',
+						'From now until the end of 2024, you’ll receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000.* If you’re a WP\u00A0Engine customer, we’ll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}',
 						{
 							components: {
 								a: (
@@ -82,7 +82,7 @@ export default function MigrationsOverview() {
 				</div>
 				<p className="migrations-overview__asterisk">
 					{ translate(
-						'* The $10k limit is for migrations from WP Engine to Pressable only. For migrations from other hosts the limit is $3k.'
+						'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts.'
 					) }
 				</p>
 				<div className="migrations-overview__section-subtitle">

@@ -30,28 +30,6 @@
 		margin-bottom: 0;
 	}
 
-	$wp-blue-50: #3858e9;
-	.filter {
-		.select-dropdown__item {
-			background-color: var(--studio-white);
-			color: $wp-blue-50;
-
-			&.is-selected {
-				background-color: $wp-blue-50;
-				color: var(--studio-white);
-
-				&:hover {
-					background-color: $wp-blue-50;
-				}
-			}
-
-			&:hover {
-				background-color: transparent;
-				color: initial;
-			}
-		}
-	}
-
 	.metrics-insight-item.foldable-card {
 		box-shadow: none;
 		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
@@ -210,8 +188,12 @@
 				}
 
 				.performance-profiler-tip {
-					max-width: 300px;
-					min-width: unset;
+					max-width: unset;
+					flex: 1;
+					margin-bottom: 32px;
+					& p {
+						max-width: 300px;
+					}
 				}
 			}
 
