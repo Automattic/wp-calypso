@@ -42,6 +42,7 @@ export function login( {
 	usernameOnly = undefined,
 	gravatarFrom = undefined,
 	gravatarFlow = undefined,
+	plugin_name = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -119,6 +120,10 @@ export function login( {
 
 	if ( gravatarFlow ) {
 		url = addQueryArgs( { gravatar_flow: '1' }, url );
+	}
+
+	if ( plugin_name ) {
+		url = addQueryArgs( { plugin_name }, url );
 	}
 
 	return url;

@@ -15,7 +15,7 @@ export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
 		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-core-profiler' ||
 		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-core-profiler';
 
-	const allowedPluginNames = [ 'woocommerce-payment' ];
+	const allowedPluginNames = [ 'woocommerce-payments' ];
 	const isPluginNameAllowed =
 		allowedPluginNames.includes(
 			get( getInitialQueryArguments( state ), 'plugin_name' ) as string
