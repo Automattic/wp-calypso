@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
@@ -200,7 +200,7 @@ export const SitePerformance = () => {
 		dispatch( launchSite( siteId! ) );
 	};
 
-	const isMobile = ! useDesktopBreakpoint();
+	const isMobile = useMobileBreakpoint();
 	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
 
 	const pageSelector = (
