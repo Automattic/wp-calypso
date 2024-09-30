@@ -50,6 +50,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
+			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -421,8 +422,9 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action } = providedDependencies as {
+					const { action, platform } = providedDependencies as {
 						action: 'skip' | 'submit';
+						platform?: string;
 					};
 
 					if ( action === 'skip' ) {
@@ -430,6 +432,15 @@ const siteMigration: Flow = {
 							addQueryArgs(
 								{ siteId, from: fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							)
+						);
+					}
+
+					if ( platform && 'wordpress' !== platform ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: fromQueryParam, siteSlug, platform },
+								STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug
 							)
 						);
 					}
