@@ -444,6 +444,28 @@
 
 }
 
+.hundred-year-domain.domains {
+	.step-container__header {
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(44px);
+				}
+			}
+			@include break-small {
+				margin-top: 60px;
+				margin-bottom: 0;
+			}
+			margin: 32px 16px;
+		}
+
+		@include break-small {
+			margin-bottom: 40px;
+		}
+	}
+}
+
 // Hundred year plan flow
 .hundred-year-plan.domains {
 	.step-container {

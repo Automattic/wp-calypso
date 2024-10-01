@@ -42,6 +42,7 @@ export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
+export const HUNDRED_YEAR_DOMIN_FLOW = 'hundred-year-domain';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const BLOG_FLOW = 'blog';
 export const REBLOGGING_FLOW = 'reblogging';

@@ -30,6 +30,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 	const translate = useTranslate();
 	switch ( flowName ) {
 		case HUNDRED_YEAR_PLAN_FLOW:
+		case 'hundred-year-domain':
 			return [
 				{
 					key: 'existing-site',
@@ -106,13 +107,16 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 		}
 		switch ( flow ) {
 			case HUNDRED_YEAR_PLAN_FLOW:
+			case 'hundred-year-domain':
 				return translate( 'Start your legacy' );
 			default:
 				return null;
 		}
 	};
 
-	const Container = flow === HUNDRED_YEAR_PLAN_FLOW ? HundredYearPlanStepWrapper : StepContainer;
+	const Container = [ HUNDRED_YEAR_PLAN_FLOW, 'hundred-year-domain' ].includes( flow )
+		? HundredYearPlanStepWrapper
+		: StepContainer;
 
 	return (
 		<Container
