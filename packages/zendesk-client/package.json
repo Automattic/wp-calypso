@@ -28,15 +28,13 @@
 		"@wordpress/api-fetch": "^7.8.0",
 		"@wordpress/element": "^6.8.0",
 		"@wordpress/url": "^4.8.0",
+		"react": "^18.2.0",
 		"smooch": "5.6.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^5.3.3"
-	},
-	"peerDependencies": {
-		"react": "^18.2.0"
 	},
 	"license": "GPL-2.0-or-later"
 }
