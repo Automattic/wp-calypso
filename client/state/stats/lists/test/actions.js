@@ -54,7 +54,7 @@ describe( 'actions', () => {
 				.persist()
 				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/streak?startDate=2015-06-01&endDate=2016-06-01` )
 				.reply( 200, STREAK_RESPONSE )
-				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/country-views` )
+				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/location-views/country` )
 				.reply( 404, {
 					error: 'not_found',
 				} )
