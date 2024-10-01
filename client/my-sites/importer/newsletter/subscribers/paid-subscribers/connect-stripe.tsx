@@ -1,6 +1,5 @@
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
-import { toInteger } from 'lodash';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,7 +38,8 @@ export default function ConnectStripe( {
 	}
 
 	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
-	const allEmailsCount = toInteger( cardData?.meta?.email_count ) || 0;
+	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
+
 	return (
 		<>
 			<SuccessNotice allEmailsCount={ allEmailsCount } />

@@ -1,6 +1,5 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { useQueryClient } from '@tanstack/react-query';
-import { toInteger } from 'lodash';
 import { useEffect, useState, useRef } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
 import { navigate } from 'calypso/lib/navigate';
@@ -159,7 +158,7 @@ export default function MapPlans( {
 		setProductToAdd( tierToAdd );
 	};
 
-	const allEmailsCount = toInteger( cardData?.meta?.email_count ) || 0;
+	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
 
 	return (
 		<>
