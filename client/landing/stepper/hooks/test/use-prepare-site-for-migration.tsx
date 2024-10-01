@@ -292,7 +292,7 @@ describe( 'usePrepareSiteForMigrationWithMoveToWPCOM', () => {
 			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/migrate-guru-key?http_envelope=1` )
 			.reply( errorCaptureMigrationKey );
 
-		const { result } = renderHook( () => useSiteMigrationKey( siteId ), {
+		const { result } = renderHook( () => useSiteMigrationKey( siteId, { retry: 0 } ), {
 			wrapper: Wrapper( new QueryClient() ),
 		} );
 
