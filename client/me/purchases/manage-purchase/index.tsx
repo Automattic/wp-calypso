@@ -656,9 +656,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		const isPlanPurchase = isPlan( purchase );
 		let text = translate( 'Remove subscription' );
 
-		if ( isPlan( purchase ) ) {
+		if ( isPlanPurchase ) {
 			text = translate( 'Remove plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
 			text = translate( 'Remove domain' );
@@ -676,7 +677,7 @@ class ManagePurchase extends Component<
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
-				skipSurvey
+				skipSurvey={ isPlanPurchase }
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
