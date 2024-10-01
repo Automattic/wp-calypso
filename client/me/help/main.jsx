@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Icon, external } from '@wordpress/icons';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
@@ -145,7 +146,12 @@ class Help extends PureComponent {
 					<Gridicon icon="video" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Video tutorials' ) }
+							{ this.props.translate( 'Video tutorials' ) }{ ' ' }
+							<Icon
+								icon={ external }
+								size={ 16 }
+								className="help__support-link-title__external-icon"
+							/>
 						</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate(
@@ -157,7 +163,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href="https://wordpress.com/learn/courses?ref=wpcom-help-more-resources"
-					target="_blank"
+					showLinkIcon={ false }
 				>
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
@@ -170,7 +176,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href="https://learn.wordpress.com"
-					target="_blank"
+					showLinkIcon={ false }
 				>
 					<Gridicon icon="list-ordered" size={ 36 } />
 					<div className="help__support-link-section">
@@ -192,7 +198,7 @@ class Help extends PureComponent {
 				className="help__support-link"
 				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 				onClick={ this.trackCoursesButtonClick }
-				target="_blank"
+				showLinkIcon={ false }
 			>
 				<Gridicon icon="chat" size={ 36 } />
 				<div className="help__support-link-section">
