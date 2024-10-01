@@ -23,6 +23,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import useCanUserLeaveBlog from 'calypso/sites-dashboard/hooks/use-can-user-leave-blog';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -508,6 +509,7 @@ export const SitesEllipsisMenu = ( {
 	const adminInterface = useSelector( ( state: AppState ) =>
 		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
 	);
+	const canLeave = useCanUserLeaveBlog( site );
 
 	const isWpAdminInterface = adminInterface === 'wp-admin';
 
@@ -585,6 +587,16 @@ export const SitesEllipsisMenu = ( {
 						}
 					>
 						{ __( 'Domains and DNS' ) }
+					</MenuItemLink>
+				) }
+				{ canLeave && (
+					<MenuItemLink
+					// href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
+					// onClick={ () =>
+					// 	recordTracks( 'calypso_sites_dashboard_site_action_dns_records_click' )
+					// }
+					>
+						{ __( 'Leave blog' ) }
 					</MenuItemLink>
 				) }
 				<WpAdminItem { ...props } />
