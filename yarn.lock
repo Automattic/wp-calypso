@@ -2241,11 +2241,10 @@ __metadata:
     "@wordpress/api-fetch": "npm:^7.8.0"
     "@wordpress/element": "npm:^6.8.0"
     "@wordpress/url": "npm:^4.8.0"
+    react: "npm:^18.3.1"
     smooch: "npm:5.6.0"
     typescript: "npm:^5.3.3"
     wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    react: ^18.2.0
   languageName: unknown
   linkType: soft
 
