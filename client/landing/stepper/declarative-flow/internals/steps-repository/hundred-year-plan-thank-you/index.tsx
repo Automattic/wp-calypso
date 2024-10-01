@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step } from '../../types';
@@ -6,8 +5,6 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const HundredYearPlanThankYou: Step = function HundredYearPlanThankYou( { flow } ) {
-	const translate = useTranslate();
-
 	return (
 		<HundredYearPlanStepWrapper
 			stepContent={
@@ -18,8 +15,8 @@ const HundredYearPlanThankYou: Step = function HundredYearPlanThankYou( { flow }
 			formattedHeader={
 				<FormattedHeader
 					brandFont
-					headerText={ translate( 'TODO: Thank You title' ) }
-					subHeaderText={ translate( 'TODO: Thank You header' ) }
+					headerText="TODO: Thank You title"
+					subHeaderText="TODO: Thank You header"
 					subHeaderAlign="center"
 				/>
 			}
