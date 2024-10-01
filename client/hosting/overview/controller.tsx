@@ -1,4 +1,5 @@
 import { Context as PageJSContext } from '@automattic/calypso-router';
+import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import HostingOverview from 'calypso/hosting/overview/components/hosting-overview';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
@@ -19,9 +20,11 @@ export function hostingConfiguration( context: PageJSContext, next: () => void )
 			} )
 		);
 		// Remove query param without triggering a re-render
-		const newUrl = new URL( window.location.href );
-		newUrl.searchParams.delete( 'hosting_features' );
-		window.history.replaceState( null, '', newUrl.toString() );
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.href, 'hosting_features' )
+		);
 	}
 	context.primary = (
 		<div className="hosting-configuration">
