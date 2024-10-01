@@ -1,6 +1,9 @@
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
+
+const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 interface ConnectionInfo {
 	isRegistered: boolean;
@@ -21,7 +24,8 @@ export function useJetpackConnectionStatus( siteId: number | null, isSimpleSites
 		...getDefaultQueryParams< ConnectionInfo >(),
 		queryKey: [ 'stats', 'jetpack-connnection-status', siteId, isSimpleSites ],
 		queryFn: () => {
-			if ( ! isSimpleSites ) {
+			// Simple sites are always connected, and sites in Calypso are always fully connected too, so we skip those.
+			if ( ! isSimpleSites && isOdysseyStats ) {
 				return queryJetpackConnectionStatus();
 			}
 			return { isRegistered: true, isUserConnected: true };
@@ -30,6 +34,6 @@ export function useJetpackConnectionStatus( siteId: number | null, isSimpleSites
 			...data,
 			isSiteFullyConnected: data.isRegistered && data.isUserConnected,
 		} ),
-		staleTime: 1000 * 60 * 5, // 5 minutes
+		staleTime: 1000 * 60 * 1, // 1 minutes
 	} );
 }
