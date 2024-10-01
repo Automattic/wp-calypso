@@ -11,41 +11,49 @@
 }
 
 .pressable-overview-plan-selection__details {
-	margin-block-start: 32px;
-	margin-block-end: 64px;
-	display: flex;
-	flex-direction: column;
-	gap: 32px;
-
-	> * {
-		padding: 24px;
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
-	}
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-auto-rows: auto;
+	margin-block: 32px 64px;
+	row-gap: 32px;
 
 	@include break-large {
-		flex-direction: row;
+		grid-template-columns: repeat(2, 1fr);
+		column-gap: 32px;
+		row-gap: 8px;
+
+		> * {
+			// Make items span full width if they're the only child
+			grid-column: auto / span 2;
+		}
+
+		// If there are 2 or more children, reset the grid span
+		> *:nth-child(1):nth-last-child(n+2),
+		> *:nth-child(2):nth-last-child(n+2) {
+			grid-column: auto / span 1;
+		}
+
 	}
+}
+
+.pressable-overview-plan-selection__details-hint {
+	@include a4a-font-body-md;
 }
 
 .pressable-overview-plan-selection__details-card {
 	border-radius: 4px;
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
 }
 
 .pressable-overview-plan-selection__details-card:not(.is-aside) {
-	flex-grow: 1;
 	background: var(--color-light-backdrop);
 }
 
 .pressable-overview-plan-selection__details-card.is-aside {
 	border: 1px solid var(--color-neutral-5);
-	flex-grow: 1;
-
-	@include break-large {
-		width: 300px;
-		flex-grow: 0;
-	}
 }
 
 .pressable-overview-plan-selection__details-card-header-title {

@@ -60,10 +60,10 @@ const Header = styled.div`
 
 	.impact {
 		padding: 4px 10px;
-		border-radius: 14px;
+		border-radius: 4px;
 		border: 1px solid transparent;
 		float: right;
-		font-size: 14px;
+		font-size: 12px;
 		color: var( --studio-black );
 
 		&.fail {

@@ -54,6 +54,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
@@ -124,6 +125,7 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
+		isWooCoreProfiler: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteHasJetpackPaidProduct: PropTypes.bool,
 		retryAuth: PropTypes.func.isRequired,
@@ -456,7 +458,7 @@ export class JetpackAuthorize extends Component {
 
 	isWooCoreProfiler( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from;
+		return 'woocommerce-core-profiler' === from || this.props.isWooCoreProfiler;
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -1322,6 +1324,7 @@ const connectComponent = connect(
 			isRequestingSitePurchases: isFetchingSitePurchases( state ),
 			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
+			isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),

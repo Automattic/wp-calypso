@@ -142,9 +142,9 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 				}
 		  );
 
-	const badgeText = hasEnTranslation( 'One time offer' )
-		? translate( 'One time offer' )
-		: translate( 'One time discount' );
+	const badgeText = hasEnTranslation( '50% off your first year' )
+		? translate( '50% off your first year' )
+		: translate( 'One time offer' );
 
 	return (
 		<UpgradePlanPrice billingTimeFrame={ billingTimeFrame }>

@@ -123,6 +123,7 @@ describe( 'reducer', () => {
 		expect( state ).toEqual( {
 			12345678: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
@@ -141,6 +142,7 @@ describe( 'reducer', () => {
 		const previousState = {
 			12345678: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
@@ -162,6 +164,7 @@ describe( 'reducer', () => {
 		expect( state ).toEqual( {
 			12345678: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
@@ -175,6 +178,7 @@ describe( 'reducer', () => {
 			},
 			9876543: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,

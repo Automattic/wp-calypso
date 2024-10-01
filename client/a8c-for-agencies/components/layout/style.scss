@@ -75,7 +75,7 @@ html,
 }
 
 .a4a-layout__top-wrapper {
-	padding-block-start: 48px;
+	padding-block-start: 24px;
 	border-bottom: #f1f1f1 1px solid;
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -94,12 +94,10 @@ html,
 			}
 		}
 	}
-}
 
-.main.a4a-layout.is-compact .a4a-layout__top-wrapper {
-	padding-block-start: 28px;
-	@include breakpoint-deprecated( "<660px" ) {
-		padding: 0;
+	// If we don't have a navigation, we will require some spacing on the borders.
+	&:not(.has-navigation) {
+		padding-block-end: 24px;
 	}
 }
 
@@ -107,32 +105,17 @@ html,
 	@include breakpoint-deprecated( ">660px" ) {
 		.a4a-layout__top-wrapper {
 			border-block-end: 1px solid var(--color-neutral-5);
-			// If we don't have a navigation, we will require some spacing on the borders.
-			&:not(.has-navigation) {
-				padding-block-end: 48px;
-			}
 		}
 	}
 }
-
-.main.a4a-layout.is-with-border.is-compact {
-	@include breakpoint-deprecated( ">660px" ) {
-		.a4a-layout__top-wrapper {
-
-			&:not(.has-navigation) {
-				padding-block-end: 28px;
-			}
-		}
-	}
-}
-
 
 .a4a-layout__header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin: 0 auto 24px auto;
+	margin: 0 auto;
 	height: 100%;
+	min-height: 40px;
 
 	> * + * {
 		margin-inline-start: 24px;
@@ -279,6 +262,11 @@ html,
 		}
 	}
 
+	.section-nav-tab {
+		box-sizing: border-box;
+		max-height: 48px;
+	}
+
 	.section-nav-tabs.is-dropdown {
 		width: 100%;
 		margin: 0 0 1px 0;
@@ -304,7 +292,6 @@ html,
 	}
 
 	@include breakpoint-deprecated( ">1040px" ) {
-		margin-block-start: 32px;
 		margin-inline: -16px;
 	}
 

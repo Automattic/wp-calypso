@@ -32,10 +32,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
-// Necessary for ThanksModal
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -408,7 +406,6 @@ class Upload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
-				<ThanksModal source="upload" />
 				<ActivationModal source="upload" />
 				<NavigationHeader
 					title={ translate( 'Themes' ) }

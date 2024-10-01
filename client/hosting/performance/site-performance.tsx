@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
@@ -9,6 +9,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -87,6 +88,9 @@ export const SitePerformance = () => {
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 
+	const isSitePublic =
+		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
 	) as { id: number; value: number }[];
@@ -119,6 +123,10 @@ export const SitePerformance = () => {
 	const [ currentPage, setCurrentPage ] = useState< ( typeof pages )[ number ] >();
 
 	useEffect( () => {
+		setCurrentPage( undefined );
+	}, [ siteId ] );
+
+	useEffect( () => {
 		if ( pages && ! currentPage ) {
 			setCurrentPage( pages.find( ( page ) => page.value === currentPageId ) );
 		}
@@ -139,6 +147,7 @@ export const SitePerformance = () => {
 	}, [ currentPage?.wpcom_performance_report_url ] );
 
 	const retestPage = () => {
+		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		setWpcom_performance_report_url( {
 			url: currentPage?.url ?? '',
 			hash: '',
@@ -157,9 +166,6 @@ export const SitePerformance = () => {
 
 		window.history.replaceState( {}, '', url.toString() );
 	};
-
-	const isSitePublic =
-		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
 
 	const performanceReport = usePerformanceReport(
 		isSitePublic ? wpcom_performance_report_url : undefined,
@@ -196,14 +202,22 @@ export const SitePerformance = () => {
 		dispatch( launchSite( siteId! ) );
 	};
 
-	const isMobile = ! useDesktopBreakpoint();
+	const isMobile = useMobileBreakpoint();
+	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+
+	const handleDeviceTabChange = ( tab: Tab ) => {
+		setActiveTab( tab );
+		recordTracksEvent( 'calypso_performance_profiler_device_tab_change', {
+			device: tab,
+		} );
+	};
 
 	const pageSelector = (
 		<PageSelector
 			onFilterValueChange={ setQuery }
 			allowReset={ false }
 			options={ pageOptions }
-			disabled={ isInitialLoading || performanceReport.isLoading }
+			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
 
@@ -221,61 +235,71 @@ export const SitePerformance = () => {
 		/>
 	);
 
+	const subtitle = performanceReport.performanceReport
+		? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
+				args: {
+					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+						'MMMM Do, YYYY h:mm:ss A'
+					),
+				},
+				components: {
+					button: (
+						<Button
+							css={ {
+								textDecoration: 'none !important',
+								':hover': {
+									textDecoration: 'underline !important',
+								},
+								fontSize: 'inherit',
+								whiteSpace: 'nowrap',
+							} }
+							variant="link"
+							onClick={ retestPage }
+						/>
+					),
+					span: (
+						<span
+							style={ {
+								fontVariantNumeric: 'tabular-nums',
+							} }
+						/>
+					),
+				},
+		  } )
+		: translate(
+				'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+				{
+					components: {
+						link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
+					},
+				}
+		  );
+
 	return (
 		<div className="site-performance">
 			<div className="site-performance-device-tab-controls__container">
 				{ isMobile ? (
-					<MobileHeader pageTitle={ currentPage?.label ?? '' } pageSelector={ pageSelector } />
+					<MobileHeader
+						pageTitle={ currentPage?.label ?? '' }
+						pageSelector={ pageSelector }
+						subtitle={ subtitle }
+					/>
 				) : (
 					<NavigationHeader
 						className="site-performance__navigation-header"
 						title={ translate( 'Performance' ) }
-						subtitle={
-							performanceReport.performanceReport
-								? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
-										args: {
-											testedDate: moment( performanceReport.performanceReport.timestamp ).format(
-												'MMMM Do, YYYY h:mm:ss A'
-											),
-										},
-										components: {
-											button: (
-												<Button
-													css={ {
-														textDecoration: 'none !important',
-														':hover': {
-															textDecoration: 'underline !important',
-														},
-														fontSize: 'inherit',
-														whiteSpace: 'nowrap',
-													} }
-													variant="link"
-													onClick={ retestPage }
-												/>
-											),
-										},
-								  } )
-								: translate(
-										'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-										{
-											components: {
-												link: (
-													<InlineSupportLink supportContext="site-monitoring" showIcon={ false } />
-												),
-											},
-										}
-								  )
-						}
+						subtitle={ subtitle }
 					/>
 				) }
 				{ ! isMobile && pageSelector }
 				<DeviceTabControls
 					showTitle={ ! isMobile }
-					onDeviceTabChange={ setActiveTab }
+					onDeviceTabChange={ handleDeviceTabChange }
+					disabled={ disableControls }
 					value={ activeTab }
 				/>
 			</div>
-			{ isInitialLoading ? (
+			{ isInitialLoading && isSitePublic ? (
 				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
 				<>
@@ -286,7 +310,7 @@ export const SitePerformance = () => {
 							ctaText={
 								site?.is_a4a_dev_site
 									? translate( 'Prepare for launch' )
-									: translate( 'Launch Site' )
+									: translate( 'Launch your site' )
 							}
 						/>
 					) : (
