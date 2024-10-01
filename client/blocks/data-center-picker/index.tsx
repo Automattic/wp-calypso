@@ -68,6 +68,12 @@ const SupportLink = styled.a`
 	color: var( --color-text-subtle ) !important;
 `;
 
+const StyledLabel = styled.div`
+	text-transform: none;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+`;
+
 const DataCenterPicker = ( {
 	onChange,
 	onClickShowPicker = () => null,
@@ -101,7 +107,7 @@ const DataCenterPicker = ( {
 			{ isFormShowing && (
 				<Form>
 					<SelectControl
-						label={ translate( 'Pick your primary data center' ) }
+						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
 						help={ translate(
 							'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
 							{
