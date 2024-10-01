@@ -30,6 +30,7 @@ const EmailVerificationBanner: React.FC = () => {
 					setIsDialogOpen( true );
 				} }
 				icon="notice"
+				disableHref
 			/>
 		</>
 	);

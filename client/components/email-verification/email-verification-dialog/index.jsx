@@ -108,6 +108,9 @@ class VerifyEmailDialog extends Component {
 	}
 
 	render() {
+		const { isPendingEmailChange: isEmailPendingChange, email } = this.props;
+		const { new_user_email } = this.props.userSettings || {};
+
 		const strings = {
 			confirmHeading: this.props.translate( 'Verify your email' ),
 
@@ -120,7 +123,7 @@ class VerifyEmailDialog extends Component {
 						),
 					},
 					args: {
-						email: this.props.email,
+						email: isEmailPendingChange && new_user_email ? new_user_email : email,
 					},
 				}
 			),
