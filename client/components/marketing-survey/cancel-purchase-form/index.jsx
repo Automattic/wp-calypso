@@ -85,12 +85,6 @@ class CancelPurchaseForm extends Component {
 			skipSurvey ||
 			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) )
 		) {
-			/**
-			 * We don't want to display the cancellation survey for sites purchased
-			 * through partners (e.g., A4A.)
-			 *
-			 * Let's jump right to the confirmation step.
-			 */
 			steps = [];
 		} else if ( ! isPlan( purchase ) ) {
 			steps = [ NEXT_ADVENTURE_STEP ];
