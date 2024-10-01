@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -11,7 +10,6 @@ import {
 	dismissAtomicTransferDialog,
 	activate as activateTheme,
 	initiateThemeTransfer,
-	requestActiveTheme,
 } from 'calypso/state/themes/actions';
 import {
 	getActiveTheme,
@@ -43,9 +41,7 @@ interface AtomicTransferDialogProps {
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
-	dispatchRecordTracksEvent: typeof recordTracksEvent;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
-	dispatchRequestActiveTheme: typeof requestActiveTheme;
 }
 
 type AtomicTransferDialogState = {
@@ -96,32 +92,18 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		dispatchInitiateThemeTransfer( siteId, null, '', '', 'theme_install' );
 	}
 
-	getAtomicSitePath = () => {
-		const { origin, href } = window.location;
-
-		return href.replace( origin, '' ).replace( /\b.wordpress.com/, '.wpcomstaging.com' );
-	};
-
-	updateActiveThemeStateAndRedirect = async ( siteId: number ) => {
-		const { dispatchRequestActiveTheme, activeTheme, theme } = this.props;
-		if ( activeTheme === theme?.id ) {
-			return window.location.replace( this.getAtomicSitePath() );
+	continueToActivate() {
+		const { siteId, theme, dispatchActivateTheme, dispatchAcceptAtomicTransferDialog } = this.props;
+		if ( siteId ) {
+			dispatchAcceptAtomicTransferDialog( theme.id );
+			dispatchActivateTheme( theme.id, siteId );
 		}
-		try {
-			await dispatchRequestActiveTheme( siteId );
-		} catch ( e ) {
-			/* do nothing */
-		}
-
-		setTimeout( () => {
-			this.updateActiveThemeStateAndRedirect( siteId );
-		}, 2000 );
-	};
+	}
 
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
 		const { siteId, siteSlug, isTransferred, uploadError } = this.props;
 		if ( siteId && siteSlug && prevProps.isTransferred !== isTransferred && isTransferred ) {
-			this.updateActiveThemeStateAndRedirect( siteId );
+			this.continueToActivate();
 		}
 
 		if ( siteId && uploadError && prevProps.uploadError !== uploadError ) {
@@ -162,13 +144,11 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	renderSuccessfulTransfer() {
-		const { isTransferred, theme, activeTheme } = this.props;
-		const isThemeActive = activeTheme === theme?.id;
+		const { isTransferred } = this.props;
 		const successfulTransferText = translate( 'Your site has been transferred successfully.' );
 
 		return (
-			isTransferred &&
-			isThemeActive && (
+			isTransferred && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-success"
@@ -249,8 +229,6 @@ export default connect(
 		dispatchAcceptAtomicTransferDialog: acceptAtomicTransferDialog,
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
 		dispatchActivateTheme: activateTheme,
-		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
-		dispatchRequestActiveTheme: requestActiveTheme,
 	}
 )( localize( AtomicTransferDialog ) );

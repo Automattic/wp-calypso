@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
@@ -21,27 +20,32 @@ import 'calypso/state/themes/init';
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  skipActivationModal Skip the Activation Modal to be shown even if needed on flows that don't require it
+ * @param  {Object}   [options] The options
+ * @param  {string}   [options.source]    The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  [options.purchased] Whether the theme has been purchased prior to activation
+ * @param  {boolean}  [options.isOnboardingFlow] Whether the activation happens in the onboarding flow
  * @returns {Function}          Action thunk
  */
-export function activate(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false,
-	skipActivationModal = false
-) {
+export function activate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
-		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
+		const { source, purchased, isOnboardingFlow } = options || {};
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
+
+		// The DotOrg themes will be handled by the marketplace install page.
+		// The theme with the plugin bundle will be handled by the plugin bundle flow.
+		const shouldAtomicTransfer =
+			isExternallyManagedTheme( getState(), themeId ) ||
+			isDotOrgTheme ||
+			( isDotComTheme && hasThemeBundleSoftwareSet && ! isOnboardingFlow );
 
 		/**
 		 * Make sure to show the Atomic transfer dialog if the theme requires
 		 * an Atomic site. If the dialog has been accepted, we can continue.
 		 */
 		if (
-			isExternallyManagedTheme( getState(), themeId ) &&
+			shouldAtomicTransfer &&
 			! isJetpackSite( getState(), siteId ) &&
 			! isSiteAtomic( getState(), siteId ) &&
 			! wasAtomicTransferDialogAccepted( getState(), themeId )
@@ -52,43 +56,30 @@ export function activate(
 		/**
 		 * Check whether the user has confirmed the activation or is in a flow that doesn't require acceptance.
 		 */
-		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! skipActivationModal ) {
+		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! isOnboardingFlow ) {
 			return dispatch( showActivationModal( themeId ) );
 		}
 
-		/**
-		 * Check if its a dotcom theme, if so, dispatch the activate action
-		 * and redirect to the Marketplace Thank You Page.
-		 */
-		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const siteSlug = getSiteSlug( getState(), siteId );
-		const dispatchActivateAction = activateOrInstallThenActivate(
-			themeId,
-			siteId,
-			source,
-			purchased
-		);
 
-		if ( isDotComTheme ) {
-			dispatchActivateAction( dispatch, getState );
-
-			const continueWithPluginBundle =
-				isWooTheme && skipActivationModal ? `&continueWithPluginBundle=true` : '';
+		// Redirect to the thank-you page if the theme has plugin bundle and is being activated in the onboarding flow.
+		// The thank-you page will continue to the plugin bundle flow and display the atomic transfer at the last step.
+		if ( isDotComTheme && hasThemeBundleSoftwareSet && isOnboardingFlow ) {
+			activateOrInstallThenActivate( themeId, siteId, {
+				source,
+				purchased,
+			} )( dispatch, getState );
 
 			return page(
-				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }${ continueWithPluginBundle }`
+				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
 			);
 		}
 
-		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		if ( isDotOrgTheme ) {
-			dispatch( productToBeInstalled( themeId, siteSlug ) );
-			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
-		}
-
-		// Themes should only be either dotCom or dotOrg so this line should never be reached.
-		// Leaving it to prevent potential regression issues.
-		return dispatchActivateAction( dispatch, getState );
+		return activateOrInstallThenActivate( themeId, siteId, {
+			source,
+			purchased,
+			showSuccessNotice: true,
+		} )( dispatch, getState );
 	};
 }
 
@@ -97,24 +88,20 @@ export function activate(
  * Otherwise, activate the theme directly
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
+ * @param  {Object}   [options] The options
+ * @param  {string}   [options.source]    The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  [options.purchased] Whether the theme has been purchased prior to activation
  * @returns {Function}          Action thunk
  */
-export function activateOrInstallThenActivate(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false
-) {
+export function activateOrInstallThenActivate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
+			return dispatch( installAndActivateTheme( installId, siteId, options ) );
 		}
 
-		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
+		return dispatch( activateTheme( themeId, siteId, options ) );
 	};
 }

@@ -28,27 +28,8 @@
 		color: var(--studio-gray-70);
 		font-size: $font-body;
 		margin-bottom: 0;
-	}
-
-	$wp-blue-50: #3858e9;
-	.filter {
-		.select-dropdown__item {
-			background-color: var(--studio-white);
-			color: $wp-blue-50;
-
-			&.is-selected {
-				background-color: $wp-blue-50;
-				color: var(--studio-white);
-
-				&:hover {
-					background-color: $wp-blue-50;
-				}
-			}
-
-			&:hover {
-				background-color: transparent;
-				color: initial;
-			}
+		@media (max-width: $break-xlarge) {
+			max-width: 360px;
 		}
 	}
 
@@ -210,8 +191,12 @@
 				}
 
 				.performance-profiler-tip {
-					max-width: 300px;
-					min-width: unset;
+					max-width: unset;
+					flex: 1;
+					margin-bottom: 32px;
+					& p {
+						max-width: 300px;
+					}
 				}
 			}
 
@@ -285,46 +270,6 @@
 				margin-top: 24px;
 				width: 100%;
 				overflow-x: auto;
-
-				.element-screenshot__overlay {
-					position: fixed;
-					top: 0;
-					left: 0;
-					right: 0;
-					bottom: 0;
-					z-index: 2000;
-					background: rgba(0, 0, 0, 0.3);
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					cursor: zoom-out;
-				}
-
-				.element-screenshot {
-
-					.element-screenshot__image {
-						position: relative;
-						cursor: zoom-in;
-						overflow: hidden;
-					}
-
-					.element-screenshot__mask {
-						position: absolute;
-						background-color: var(--studio-gray-60);
-						opacity: 0.8;
-
-						svg {
-							width: 0;
-							height: 0;
-						}
-					}
-
-					.element-screenshot__element-marker {
-						position: absolute;
-						border: 2px solid var(--studio-yellow-20);
-						box-sizing: border-box;
-					}
-				}
 
 				table {
 					table-layout: auto;
@@ -445,3 +390,50 @@
 		}
 	}
 }
+
+.element-screenshot {
+
+	.element-screenshot__image {
+		position: relative;
+		cursor: zoom-in;
+		overflow: hidden;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.element-screenshot__mask {
+		position: absolute;
+		background-color: var(--studio-gray-60);
+		opacity: 0.8;
+
+		svg {
+			width: 0;
+			height: 0;
+		}
+	}
+
+	.element-screenshot__element-marker {
+		position: absolute;
+		border: 2px solid var(--studio-yellow-20);
+		box-sizing: border-box;
+	}
+}
+
+@media (min-width: $break-small) {
+	.performance-profiler-insight-screenshot__overlay {
+		border-radius: 0;
+		max-height: initial;
+
+		.components-modal__content {
+			padding: 0;
+			margin-top: 0;
+		}
+
+		.components-modal__header {
+			button {
+				filter: invert(100%) contrast(130%);
+			}
+		}
+	}
+}
+

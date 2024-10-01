@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -19,6 +20,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
+import DefensiveModeCard from 'calypso/hosting/server-settings/components/defensive-mode-card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
 import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
@@ -134,6 +136,14 @@ const AllCards = ( {
 			feature: 'wp-admin',
 			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
+		} );
+	}
+
+	if ( config.isEnabled( 'hosting-server-settings-enhancements' ) ) {
+		allCards.push( {
+			feature: 'defensive-mode',
+			content: <DefensiveModeCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
 		} );
 	}
 

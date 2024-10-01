@@ -124,7 +124,11 @@ const noop = () => {
 	return;
 };
 
-function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
+function debounceSpeak( {
+	message = '',
+	priority = 'polite' as 'polite' | 'assertive',
+	timeout = 800,
+} ) {
 	return debounce( () => {
 		speak( message, priority );
 	}, timeout );
