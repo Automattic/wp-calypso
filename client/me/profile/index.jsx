@@ -5,6 +5,7 @@ import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
+import Banner from 'calypso/components/banner';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -22,6 +23,8 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteAdminUrl, getSiteTitle } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
 
@@ -60,6 +63,23 @@ class Profile extends Component {
 					) }
 				/>
 
+				{ this.props.siteAdminProfileUrl && (
+					<Banner
+						showIcon={ false }
+						href={ this.props.siteAdminProfileUrl }
+						description={ this.props.translate(
+							'Click here to visit your profile settings for {{b}}%(siteTitle)s{{/b}}’s WP Admin dashboard.',
+							{
+								args: {
+									siteTitle: this.props.siteTitle,
+								},
+								components: {
+									b: <strong />,
+								},
+							}
+						) }
+					/>
+				) }
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
 					<EditGravatar />
@@ -181,9 +201,15 @@ class Profile extends Component {
 
 export default compose(
 	connect(
-		( state ) => ( {
-			isFetchingUserSettings: isFetchingUserSettings( state ),
-		} ),
+		( state ) => {
+			const siteId = getSelectedSiteId( state );
+
+			return {
+				isFetchingUserSettings: isFetchingUserSettings( state ),
+				siteAdminProfileUrl: getSiteAdminUrl( state, siteId, 'profile.php' ),
+				siteTitle: getSiteTitle( state, siteId ),
+			};
+		},
 		{ recordGoogleEvent }
 	),
 	protectForm,
