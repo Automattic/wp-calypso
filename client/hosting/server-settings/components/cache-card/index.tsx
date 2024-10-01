@@ -203,7 +203,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 								<Tooltip
 									placement="top"
 									text={
-										isObjectCacheClearRateLimited
+										isEdgeCacheClearRateLimited
 											? translate(
 													'You cleared the edge cache recently. Please wait a minute and try again.',
 													{
