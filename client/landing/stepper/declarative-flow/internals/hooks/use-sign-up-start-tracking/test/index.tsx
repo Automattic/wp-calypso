@@ -117,6 +117,29 @@ describe( 'useSignUpTracking', () => {
 			} );
 		} );
 
+		it( 'records the calypso_signup_start event a single time if dependencies are stable', () => {
+			const { rerender } = render( {
+				flow: {
+					...signUpFlow,
+				} satisfies Flow,
+			} );
+
+			rerender();
+			expect( recordSignupStart ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'records the calypso_signup_start event multiple times when dependencies change', () => {
+			const { rerender } = render( {
+				flow: {
+					...signUpFlow,
+					useSignupStartEventProps: () => ( { extra: 'props' } ),
+				} satisfies Flow,
+			} );
+
+			rerender();
+			expect( recordSignupStart ).toHaveBeenCalledTimes( 2 );
+		} );
+
 		it( 'sets the signup-start timer only on initial mount (assuming static flowName and isSignupFlow)', () => {
 			const { rerender } = render( {
 				flow: {
