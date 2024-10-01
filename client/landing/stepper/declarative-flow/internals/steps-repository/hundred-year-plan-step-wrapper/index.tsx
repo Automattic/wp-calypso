@@ -208,7 +208,8 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 			stripZeros: true,
 		} );
 
-	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
+	// const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
+	const planTitle = '100-Yar Domain';
 
 	return (
 		<>

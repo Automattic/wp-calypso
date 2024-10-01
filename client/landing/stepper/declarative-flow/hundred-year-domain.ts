@@ -3,6 +3,7 @@ import { UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -50,59 +51,31 @@ const HundredYearDomainFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const currentUser = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
-			[]
-		);
-		const hasSite = !! currentUser?.site_count;
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const updateCartForExistingSite = async () => {
-				if ( ! providedDependencies?.siteSlug || ! providedDependencies?.siteId ) {
-					return;
-				}
 
-				const siteSlug: SiteSlug = providedDependencies.siteSlug as SiteSlug;
-				const siteId: SiteId = providedDependencies.siteSlug as SiteId;
+			const { domainName, productSlug } = providedDependencies;
 
+			const addDomainToCart = async () => {
 				const productsToAdd = [
-					{
-						product_slug: '100-year-domain', // TODO: replace by const
-					},
+					domainRegistration( {
+						domain: domainName as string,
+						productSlug: productSlug as string,
+					} ),
 				];
-				await addProductsToCart( siteSlug, '100-year-domain', productsToAdd );
+				await addProductsToCart( 'no-site', '100-year-domain', productsToAdd );
 
 				return {
-					siteId,
-					siteSlug,
+					siteId: null,
+					siteSlug: 'no-site',
 					goToCheckout: true,
 				};
 			};
 
 			switch ( _currentStep ) {
-				case 'diy-or-difm':
-					if ( 'diy' === providedDependencies?.diyOrDifmChoice ) {
-						return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
-					}
-					// TODO: add VIP flow
-					return navigate( 'schedule-appointment' );
-				case 'schedule-appointment':
-					return navigate( 'thank-you' );
-				case 'new-or-existing-site':
-					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'setup' );
-					}
-					return navigate( 'site-picker' );
-				case 'site-picker':
-					setPendingAction( updateCartForExistingSite );
-					return navigate( 'processing' );
-				case 'setup':
-					return navigate( 'domains' );
 				case 'domains':
-					setPlanCartItem( {
-						product_slug: PLAN_100_YEARS,
-					} );
+					addDomainToCart();
 					return navigate( 'createSite' );
 				case 'createSite':
 					return navigate( 'processing' );
@@ -111,11 +84,8 @@ const HundredYearDomainFlow: Flow = {
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
-						return window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								providedDependencies.siteSlug as string
-							) }?signup=1`
-						);
+						// return window.location.assign( `/checkout/no-site?signup=1` );
+						return window.location.assign( `/checkout/no-site?signup=1&isDomainOnly=1` );
 					}
 			}
 		}
