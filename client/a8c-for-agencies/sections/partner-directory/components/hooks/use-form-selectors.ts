@@ -88,7 +88,7 @@ export function useFormSelectors() {
 		availableLanguages,
 		availableProducts,
 		availableDirectories,
-		availableIndustries,
+		availableIndustries: Object.fromEntries( Object.entries( availableIndustries ).sort() ),
 		oldIndustries,
 	};
 }
