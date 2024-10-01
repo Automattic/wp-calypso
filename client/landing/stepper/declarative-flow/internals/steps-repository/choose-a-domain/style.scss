@@ -1,6 +1,6 @@
-@import "../../videopress-constants.scss";
-@import "@wordpress/base-styles/breakpoints.scss";
-@import "@wordpress/base-styles/mixins.scss";
+@import "../../videopress-constants";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 $videopress-mobile-layout-width: 1200px;
 $videopress-link-color: #c377ff;
@@ -149,13 +149,17 @@ $videopress-background: #010101;
 		background: none;
 		box-shadow: none;
 		border: none;
-		border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+		cursor: pointer;
 
 		.domain-registration-suggestion__domain-title-name {
-			color: #c3c4c7;
+			color: #c3c4c7 !important;
 		}
 		.domain-registration-suggestion__domain-title-tld {
 			color: #fff;
+		}
+
+		.domain-product-price__price {
+			color: var(--color-text-subtle) !important;
 		}
 
 		.domain-registration-suggestion__badges {
@@ -175,13 +179,42 @@ $videopress-background: #010101;
 			color: #fff;
 			background: none;
 		}
+
+		&:not(.is-placeholder):not(.featured-domain-suggestion) {
+			border-bottom: solid 1px rgba(255, 255, 255, 0.2) !important;
+
+			&:hover + .domain-suggestion {
+				border-top: solid 1px #646970;
+			}
+		}
+	}
+
+	.featured-domain-suggestion.featured-domain-suggestion--is-placeholder {
+		background-color: rgba(255, 255, 255, 0.15) !important;
+		border: solid 1px rgba(255, 255, 255, 0.1) !important;
+
+		@media (min-width: $videopress-mobile-layout-width) {
+			.domain-product-price {
+				flex-basis: 40%;
+			}
+
+			.domain-registration-suggestion__badges {
+				align-self: center;
+			}
+		}
+
+		.domain-registration-suggestion__match-reasons {
+			display: none;
+		}
 	}
 
 	.domain-suggestion.is-placeholder,
 	.featured-domain-suggestion--is-placeholder {
 		background: none;
 		box-shadow: none;
-		border: solid 1px rgba(255, 255, 255, 0.2);
+		border-top: solid 1px rgba(255, 255, 255, 0.2);
+		border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+		pointer-events: none;
 
 		.domain-registration-suggestion__badges,
 		.domain-registration-suggestion__match-reasons {
@@ -193,6 +226,11 @@ $videopress-background: #010101;
 	.domain-suggestion.is-placeholder {
 		.domain-suggestion__content {
 			background-color: rgba(255, 255, 255, 0.2);
+			margin-right: 0;
+		}
+
+		&:nth-of-type(2n + 1) .domain-suggestion__content {
+			margin-right: 2%;
 		}
 	}
 
@@ -258,6 +296,11 @@ $videopress-background: #010101;
 	.featured-domain-suggestion.card .domain-product-price {
 		align-items: flex-start;
 		margin-top: 12px;
+	}
+
+	.register-domain-step__filter-reset-notice {
+		background: none;
+		color: #fff;
 	}
 }
 

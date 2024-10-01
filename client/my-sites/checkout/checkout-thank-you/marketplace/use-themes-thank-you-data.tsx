@@ -35,7 +35,6 @@ export function useThemesThankYouData(
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const themeSlug = useSelector( ( state ) => getSiteOption( state, siteId, 'theme_slug' ) );
-	const isActive = themeSlugs.includes( themeSlug );
 
 	// texts
 	const title = translate( 'Congrats on your new theme!' );
@@ -50,6 +49,10 @@ export function useThemesThankYouData(
 		[ dotComThemes, dotOrgThemes, themeSlugs ]
 	);
 	const allThemesFetched = themesList.every( ( theme ) => !! theme );
+
+	const isActive = themesList.some(
+		( theme ) => theme?.stylesheet === themeSlug || theme?.id === themeSlug
+	);
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 

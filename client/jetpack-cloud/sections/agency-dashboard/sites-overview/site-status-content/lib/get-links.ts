@@ -48,7 +48,7 @@ const getLinks = (
 		case 'scan': {
 			if ( status !== 'inactive' ) {
 				link = isAtomicSite
-					? `https://wordpress.com/scan/history/${ siteUrlWithMultiSiteSupport }`
+					? `https://wordpress.com/scan/${ siteUrlWithMultiSiteSupport }`
 					: `/scan/${ siteUrlWithMultiSiteSupport }`;
 				isExternalLink = isAtomicSite;
 			}

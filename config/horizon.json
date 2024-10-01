@@ -10,6 +10,7 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
 	"features": {
+		"100-year-plan/vip": false,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
 		"a4a-dev-sites-referral": false,
@@ -45,6 +46,7 @@
 		"google-my-business": false,
 		"help": true,
 		"home/layout-dev": true,
+		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,

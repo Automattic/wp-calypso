@@ -9,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
@@ -498,12 +499,27 @@ export default function AgencyDetailsForm( {
 					<LayoutBanner
 						hideCloseButton
 						level="warning"
-						title={ translate( 'Unable to Proceed with Application' ) }
+						title={ preventWidows(
+							translate( 'It seems like we might not be the perfect match right now.' )
+						) }
 					>
 						<div>
-							{ translate(
-								'Automattic for Agencies is a program designed for agencies, developers, and freelancers who work with and provide services to their clients.' +
-									' Thank you for your interest, but we will not be progressing your application now. If you chose this option in error, please select the appropriate option from the list.'
+							{ preventWidows(
+								translate(
+									'Automattic for Agencies is a program designed for agencies, developers, and freelancers who work with and provide services to their clients.' +
+										" Depending on what you are looking for, you may want to check out one of our individual products, like {{wp}}WordPress.com{{/wp}}, {{pressable}}Pressable.com{{/pressable}}, {{woo}}Woo.com{{/woo}}, {{jetpack}}Jetpack.com{{/jetpack}}. If you really aren't sure where to go, feel free to contact us at {{email}}partnerships@automattic.com{{/email}} and we'll point you in the right direction.",
+									{
+										components: {
+											wp: <a href="https://wordpress.com" target="_blank" rel="noreferrer" />,
+											pressable: (
+												<a href="https://pressable.com" target="_blank" rel="noreferrer" />
+											),
+											woo: <a href="https://woocommerce.com" target="_blank" rel="noreferrer" />,
+											jetpack: <a href="https://jetpack.com" target="_blank" rel="noreferrer" />,
+											email: <a href="mailto:partnerships@automattic.com" />,
+										},
+									}
+								)
 							) }
 						</div>
 					</LayoutBanner>

@@ -141,14 +141,14 @@ export default function PlanSelectionDetails( {
 										}
 								  )
 								: translate( 'Custom WordPress installs' ),
-							translate( '{{b}}%(count)s{{/b}} visits per month', {
+							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
 									count: info ? formatNumber( info.visits ) : customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',
 							} ),
-							translate( '{{b}}%(size)s{{/b}} storage per month', {
+							translate( '{{b}}%(size)s{{/b}} storage per month*', {
 								args: {
 									size: info ? `${ info.storage }GB` : customString,
 								},
@@ -298,6 +298,17 @@ export default function PlanSelectionDetails( {
 					/>
 				</div>
 			) }
+
+			<div className="pressable-overview-plan-selection__details-hint">
+				{ translate(
+					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}$0.50{{/b}} per GB and {{b}}$8{{/b}} per 10K visits per month.",
+					{
+						components: {
+							b: <b />,
+						},
+					}
+				) }
+			</div>
 		</section>
 	);
 }

@@ -29,7 +29,7 @@ import 'calypso/state/themes/init';
  */
 export function activate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
-		const { source, purchased, skipActivationModal } = options || {};
+		const { source, purchased } = options || {};
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
@@ -55,7 +55,7 @@ export function activate( themeId, siteId, options ) {
 		/**
 		 * Check whether the user has confirmed the activation or is in a flow that doesn't require acceptance.
 		 */
-		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! skipActivationModal ) {
+		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! isOnboardingFlow ) {
 			return dispatch( showActivationModal( themeId ) );
 		}
 
@@ -84,15 +84,7 @@ export function activate( themeId, siteId, options ) {
 		return dispatchActivateAction( dispatch, getState );
 	};
 }
-
 /**
- * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
- * Otherwise, activate the theme directly
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @param  {Object}   [options] The options
- * @param  {string}   [options.source]    The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  [options.purchased] Whether the theme has been purchased prior to activation
  * @returns {Function}          Action thunk
  */
 export function activateOrInstallThenActivate( themeId, siteId, options ) {

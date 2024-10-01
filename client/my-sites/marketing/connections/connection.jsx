@@ -85,6 +85,7 @@ class SharingConnection extends Component {
 			mastodon: 'user',
 			threads: 'user',
 			nextdoor: 'user',
+			bluesky: 'user',
 		},
 	};
 

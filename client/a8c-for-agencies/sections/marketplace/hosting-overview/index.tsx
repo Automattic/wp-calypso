@@ -78,7 +78,6 @@ function Hosting( { section }: Props ) {
 			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
-			compact
 		>
 			<LayoutTop>
 				<PendingPaymentNotification />
