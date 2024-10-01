@@ -40,6 +40,11 @@ body.is-section-me {
 				box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 				overflow-y: auto;
 				overflow-x: hidden;
+				max-width: none;
+				& > * {
+					max-width: 1040px;
+					margin: 0 auto;
+				}
 			}
 		}
 	}
@@ -78,7 +83,6 @@ body.is-section-me {
 
 	.email-verification-banner {
 		max-width: 1040px;
-		// Note - may want to move these to the banner component and support a special isCritical case.
 		--color-accent: var(--studio-red);
 		--color-accent-60: var(--studio-red-60);
 	}
