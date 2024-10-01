@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -128,7 +128,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const newEmail = queryParams.get( 'new-email' );
 
 	const refetchTimeoutRef = useRef( null );
-	const refetchCountRef = useRef( 0 );
+	const [ refetchCount, setRefetchCount ] = useState( 0 );
 
 	useEffect( () => {
 		if ( ! newEmail ) {
@@ -145,7 +145,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 	const {
 		data: emailAccounts = [],
-		isLoading,
+		isLoading: isLoadingEmailAccounts,
 		refetch,
 	} = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
 		refetchOnMount: ! addEmailForwardMutationActive,
@@ -154,17 +154,22 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
 
+	const mailbox = newEmail ? newEmail.split( '@' )[ 0 ] : '';
+	const emailExists = emailAccounts.some( ( account ) =>
+		account.emails.some( ( email ) => {
+			return mailbox === email.mailbox;
+		} )
+	);
+	const isLoading = isLoadingEmailAccounts || ( newEmail && ! emailExists && refetchCount < 5 );
+
+	// Email provisioning takes a few seconds to complete, if there is a newEmail
+	// Refetch email acounts every 1.5 seconds up to 5 times until we can see it
 	useEffect( () => {
-		if (
-			! newEmail ||
-			emailAccounts.some( ( account ) =>
-				account.emails.some( ( email ) => email.mailbox === newEmail )
-			)
-		) {
+		if ( ! newEmail || emailExists ) {
 			return;
 		}
 
-		if ( refetchCountRef.current >= 5 ) {
+		if ( refetchCount >= 5 ) {
 			return;
 		}
 
@@ -174,15 +179,15 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 		refetchTimeoutRef.current = setTimeout( () => {
 			refetch();
-			refetchCountRef.current += 1;
-		}, 2000 );
+			setRefetchCount( ( prev ) => prev + 1 );
+		}, 1500 );
 
 		return () => {
 			if ( refetchTimeoutRef.current ) {
 				clearTimeout( refetchTimeoutRef.current );
 			}
 		};
-	}, [ newEmail, refetch, emailAccounts ] );
+	}, [ newEmail, refetch, emailAccounts, emailExists, refetchCount ] );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
