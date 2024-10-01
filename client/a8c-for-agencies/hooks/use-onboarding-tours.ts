@@ -48,9 +48,7 @@ export default function useOnboardingTours() {
 	);
 
 	const dismiss = useCallback( () => {
-		dispatch(
-			savePreference( A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME, { dismiss: false } )
-		);
+		dispatch( savePreference( A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME, true ) );
 	}, [ dispatch ] );
 
 	const isDismissed = useSelector( ( state ) =>
