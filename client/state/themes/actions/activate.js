@@ -61,20 +61,19 @@ export function activate( themeId, siteId, options ) {
 		}
 
 		const siteSlug = getSiteSlug( getState(), siteId );
-		const hasRedirection = ( isDotComTheme && hasThemeBundleSoftwareSet ) || isDotOrgTheme;
-		const dispatchActivateAction = activateOrInstallThenActivate( themeId, siteId, {
-			source,
-			purchased,
-			showSuccessNotice: ! hasRedirection,
-		} );
 
 		// Redirect to the thank-you page if the theme has plugin bundle and is being activated in the onboarding flow.
 		// The thank-you page will continue to the plugin bundle flow and display the atomic transfer at the last step.
 		if ( isDotComTheme && hasThemeBundleSoftwareSet && isOnboardingFlow ) {
-			dispatchActivateAction( dispatch, getState );
-
-			return page(
-				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
+			return dispatch(
+				activateOrInstallThenActivate( themeId, siteId, {
+					source,
+					purchased,
+				} )
+			).then( () =>
+				page(
+					`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
+				)
 			);
 		}
 
@@ -83,7 +82,13 @@ export function activate( themeId, siteId, options ) {
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
-		return dispatchActivateAction( dispatch, getState );
+		return dispatch(
+			activateOrInstallThenActivate( themeId, siteId, {
+				source,
+				purchased,
+				showSuccessNotice: true,
+			} )
+		);
 	};
 }
 
