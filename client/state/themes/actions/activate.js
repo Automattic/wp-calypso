@@ -65,15 +65,13 @@ export function activate( themeId, siteId, options ) {
 		// Redirect to the thank-you page if the theme has plugin bundle and is being activated in the onboarding flow.
 		// The thank-you page will continue to the plugin bundle flow and display the atomic transfer at the last step.
 		if ( isDotComTheme && hasThemeBundleSoftwareSet && isOnboardingFlow ) {
-			return dispatch(
-				activateOrInstallThenActivate( themeId, siteId, {
-					source,
-					purchased,
-				} )
-			).then( () =>
-				page(
-					`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
-				)
+			activateOrInstallThenActivate( themeId, siteId, {
+				source,
+				purchased,
+			} )( dispatch, getState );
+
+			return page(
+				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
 			);
 		}
 
@@ -82,13 +80,11 @@ export function activate( themeId, siteId, options ) {
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
-		return dispatch(
-			activateOrInstallThenActivate( themeId, siteId, {
-				source,
-				purchased,
-				showSuccessNotice: true,
-			} )
-		);
+		return activateOrInstallThenActivate( themeId, siteId, {
+			source,
+			purchased,
+			showSuccessNotice: true,
+		} )( dispatch, getState );
 	};
 }
 
