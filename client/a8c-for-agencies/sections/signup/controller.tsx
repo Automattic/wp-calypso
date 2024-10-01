@@ -6,15 +6,35 @@ import {
 	A4A_SIGNUP_FINISH_LINK,
 	A4A_SIGNUP_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { useSelector } from 'calypso/state';
+import {
+	getActiveAgency,
+	hasFetchedAgency,
+	isFetchingAgency,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';
+
+const PageViewTrackerWrapper = ( { path }: { path: string } ) => {
+	const agency = useSelector( getActiveAgency );
+	const hasFetched = useSelector( hasFetchedAgency );
+	const isFetching = useSelector( isFetchingAgency );
+
+	const shouldRenderTracker = hasFetched && ! isFetching && ! agency;
+
+	if ( ! shouldRenderTracker ) {
+		return null;
+	}
+
+	return <PageViewTracker title="A4A Signup" path={ path } />;
+};
 
 export const signUpContext: Callback = ( context, next ) => {
 	context.store.dispatch( hideMasterbar() );
 	context.primary = (
 		<>
-			<PageViewTracker title="A4A Signup" path={ context.path } />
+			<PageViewTrackerWrapper path={ context.path } />
 			<AgencySignUp />
 		</>
 	);
