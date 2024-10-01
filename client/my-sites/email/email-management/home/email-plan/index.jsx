@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useRef } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -47,6 +47,8 @@ import {
 	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useDispatch, useSelector } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
@@ -121,18 +123,66 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		);
 	};
 
+	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
+	const queryParams = new URLSearchParams( window.location.search );
+	const newEmail = queryParams.get( 'new-email' );
+
+	const refetchTimeoutRef = useRef( null );
+	const refetchCountRef = useRef( 0 );
+
+	useEffect( () => {
+		if ( ! newEmail ) {
+			return;
+		}
+		dispatch(
+			successNotice( translate( 'Your mailbox has been created.' ), {
+				duration: 8000,
+			} )
+		);
+	}, [ newEmail, dispatch, translate ] );
+
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
-	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
-		selectedSite.ID,
-		domain.name,
-		{
-			refetchOnMount: ! addEmailForwardMutationActive,
-			retry: false,
-		}
-	);
+	const {
+		data: emailAccounts = [],
+		isLoading,
+		refetch,
+	} = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
+		refetchOnMount: ! addEmailForwardMutationActive,
+		retry: false,
+	} );
 
 	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
+
+	useEffect( () => {
+		if (
+			! newEmail ||
+			emailAccounts.some( ( account ) =>
+				account.emails.some( ( email ) => email.mailbox === newEmail )
+			)
+		) {
+			return;
+		}
+
+		if ( refetchCountRef.current >= 5 ) {
+			return;
+		}
+
+		if ( refetchTimeoutRef.current ) {
+			clearTimeout( refetchTimeoutRef.current );
+		}
+
+		refetchTimeoutRef.current = setTimeout( () => {
+			refetch();
+			refetchCountRef.current += 1;
+		}, 2000 );
+
+		return () => {
+			if ( refetchTimeoutRef.current ) {
+				clearTimeout( refetchTimeoutRef.current );
+			}
+		};
+	}, [ newEmail, refetch, emailAccounts ] );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
