@@ -2,30 +2,32 @@
 @import "@wordpress/base-styles/mixins";
 
 .plugins-navigation-header.navigation-header {
-	padding: 24px;
-	padding-inline: 0;
+	padding-inline: 16px;
+
+	.navigation-header__main {
+		align-items: center;
+	}
 
 	@include break-medium {
 		border-block-end: 1px solid var(--color-border-secondary);
 	}
 
-	.navigation-header__main {
-		padding-inline: 16px;
+	@include break-huge {
+		padding-inline: 64px;
+	}
 
-		@media (min-width: 403px) {
+	@include break-xhuge {
+		max-width: 100%;
+
+		.navigation-header__main {
 			max-width: 1400px;
 			margin: 0 auto;
-			padding-inline: 34px;
-		}
-
-		@include break-xhuge {
-			padding-inline: 48px;
+			padding-inline: 64px;
 		}
 	}
 
 	.formatted-header__title {
 		font-size: 1.5rem;
-		letter-spacing: -0.5px;
 		line-height: 1.2;
 	}
 }

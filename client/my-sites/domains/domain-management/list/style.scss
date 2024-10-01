@@ -173,30 +173,52 @@
 	.domains-table-filter {
 		align-items: flex-start;
 	}
+
 	.domains-table {
-		@include break-xhuge {
+		padding: 0;
+		margin-top: 16px;
+
+		@media (min-width: 403px) {
 			max-width: 1400px;
 			margin-left: auto;
 			margin-right: auto;
 		}
+
+		@include break-medium {
+			margin-top: 35px;
+		}
+
 		.domains-table-toolbar {
-			@include break-huge {
-				margin-inline: 64px;
+			margin: 0;
+			padding-inline: 16px;
+
+			@media (min-width: 403px) {
+				padding-inline: 34px;
+			}
+
+			@include break-xhuge {
+				padding-inline: 48px;
 			}
 		}
 
-		table.is-7-column.has-checkbox {
-			@include break-huge {
-				grid-template-columns: 100px 2fr 1fr 1fr auto auto auto auto;
+		table.is-6-column.has-checkbox {
+			th:first-child,
+			td:first-child {
+				padding: 0 0 0 42px;
+			}
+		}
 
-				th:last-child,
-				td:last-child {
-					padding: 0 64px 0 0;
-				}
+		table.is-7-column.has-checkbox,
+		table.is-8-column.has-checkbox {
+			th:first-child,
+			td:first-child {
+				padding: 0 0 0 42px;
+			}
 
+			@include break-xhuge {
 				th:first-child,
 				td:first-child {
-					padding: 0 0 0 72px;
+					padding: 0 0 0 56px;
 				}
 			}
 		}
@@ -229,6 +251,12 @@
 	}
 
 	.domains-table-mobile-cards {
+		padding-inline: 16px;
+
+		@media (min-width: 403px) {
+			padding-inline: 32px;
+		}
+
 		.components-base-control {
 			display: flex;
 			align-items: center;
