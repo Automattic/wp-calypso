@@ -9,8 +9,6 @@ import {
 } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { navigate } from 'calypso/lib/navigate';
 
-const noop = () => {};
-
 function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 	if ( stepStatus === 'done' ) {
 		return <Icon icon={ check } />;
@@ -31,6 +29,7 @@ export function getStepsProgress(
 		paidNewsletterData?.steps.content.status,
 		paidNewsletterData?.steps.subscribers.status
 	);
+
 	const result: ClickHandler[] = [
 		{
 			message: 'Content',
@@ -58,7 +57,14 @@ export function getStepsProgress(
 		},
 		{
 			message: 'Summary',
-			onClick: noop,
+			onClick: () => {
+				navigate(
+					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/summary`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: summaryStatus === 'done' || summaryStatus === 'skipped' ? 'always' : 'onComplete',
 			indicator: getStepProgressIndicator( summaryStatus === 'done' ? 'done' : 'initial' ),
 		},
 	];
