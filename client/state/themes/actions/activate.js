@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
@@ -38,6 +37,7 @@ export function activate( themeId, siteId, options ) {
 		// The theme with the plugin bundle will be handled by the plugin bundle flow.
 		const shouldAtomicTransfer =
 			isExternallyManagedTheme( getState(), themeId ) ||
+			isDotOrgTheme ||
 			( isDotComTheme && hasThemeBundleSoftwareSet && ! isOnboardingFlow );
 
 		/**
@@ -73,11 +73,6 @@ export function activate( themeId, siteId, options ) {
 			return page(
 				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }&continueWithPluginBundle=true`
 			);
-		}
-
-		if ( isDotOrgTheme ) {
-			dispatch( productToBeInstalled( themeId, siteSlug ) );
-			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
 		return activateOrInstallThenActivate( themeId, siteId, {

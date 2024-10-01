@@ -59,7 +59,6 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
@@ -103,6 +102,7 @@ import {
 	getThemeType,
 	isThemeWooCommerce,
 	isActivatingTheme as getIsActivatingTheme,
+	isInstallingTheme as getIsInstallingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -353,9 +353,13 @@ class ThemeSheet extends Component {
 	};
 
 	isRequestingActivatingTheme = () => {
-		const { isThemeActivationSyncStarted, isActivatingTheme } = this.props;
+		const { isThemeActivationSyncStarted, isActivatingTheme, isInstallingTheme } = this.props;
 		const { isAtomicTransferCompleted } = this.state;
-		return ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) || isActivatingTheme;
+		return (
+			( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) ||
+			isActivatingTheme ||
+			isInstallingTheme
+		);
 	};
 
 	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
@@ -1666,6 +1670,7 @@ export default connect(
 			isLivePreviewSupported,
 			themeType: getThemeType( state, themeId ),
 			isActivatingTheme: getIsActivatingTheme( state, siteId ),
+			isInstallingTheme: getIsInstallingTheme( state, themeId, siteId ),
 		};
 	},
 	{
@@ -1674,6 +1679,5 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
-		setProductToBeInstalled: productToBeInstalled,
 	}
 )( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );
