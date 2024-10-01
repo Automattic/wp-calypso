@@ -11,11 +11,12 @@ import {
 } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import './style.scss';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import { setUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
+
+import './style.scss';
 
 const noop = () => {};
 
