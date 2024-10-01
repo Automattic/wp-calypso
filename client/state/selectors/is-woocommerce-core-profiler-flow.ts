@@ -11,22 +11,22 @@ import type { AppState } from 'calypso/types';
  * @returns {?boolean}        Whether the user reached Calypso via the WooCommerce Core Profiler flow
  */
 export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
-	const isCoreProfiler =
-		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-core-profiler' ||
-		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-core-profiler';
+	const initFrom = get( getInitialQueryArguments( state ), 'from' );
+	const currentFrom = get( getCurrentQueryArguments( state ), 'from' );
 
-	const allowedPluginNames = [ 'woocommerce-payments' ];
-	const isPluginNameAllowed =
-		allowedPluginNames.includes(
-			get( getInitialQueryArguments( state ), 'plugin_name' ) as string
-		) ||
-		allowedPluginNames.includes(
-			get( getCurrentQueryArguments( state ), 'plugin_name' ) as string
-		);
+	const initPluginName = get( getInitialQueryArguments( state ), 'plugin_name' );
+	const currentPluginName = get( getCurrentQueryArguments( state ), 'plugin_name' );
+
+	const isCoreProfiler =
+		initFrom === 'woocommerce-core-profiler' || currentFrom === 'woocommerce-core-profiler';
+
+	const isWooCommercePayments =
+		( initFrom === 'woocommerce-payments' || currentFrom === 'woocommerce-payments' ) &&
+		( initPluginName === 'woocommerce-payments' || currentPluginName === 'woocommerce-payments' );
 
 	return (
 		isCoreProfiler ||
-		isPluginNameAllowed ||
+		isWooCommercePayments ||
 		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
 			new URLSearchParams( state.login?.redirectTo?.original ).get( 'from' ) ===
 				'woocommerce-core-profiler' )
