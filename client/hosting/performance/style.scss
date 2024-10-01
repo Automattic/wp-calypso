@@ -10,6 +10,11 @@ $section-max-width: 1224px;
 	flex-direction: column;
 	gap: 16px;
 
+	// Button style overrides necessary because of conflicting WPcom styles.
+	.components-button.is-primary.is-busy:disabled {
+		background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+	}
+
 	.notice-banner,
 	.notice-banner__title {
 		font-size: $font-body-small;
@@ -18,6 +23,20 @@ $section-max-width: 1224px;
 
 	@media (max-width: $break-medium) {
 		gap: 0;
+	}
+
+	.performance-profiler-insights-section {
+		.subtitle {
+			font-size: $font-body-small;
+		}
+
+		.insight-header-container {
+			font-size: $font-body-small;
+		}
+
+		.description-area {
+			font-size: $font-body-small;
+		}
 	}
 
 	.performance-profiler-content .container {
@@ -76,15 +95,28 @@ $section-max-width: 1224px;
 			fill: $studio-red-80;
 		}
 	}
+
+	@media (max-width: $break-large) {
+		.insight-header-container .counter {
+			display: none;
+		}
+
+		.metrics-insight-item .foldable-card__content > div {
+			padding-inline: 0;
+		}
+	}
 }
 
 .site-performance-device-tab-controls__container {
 	display: flex;
 	gap: 24px;
-	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 16px;
+
+	@media (max-width: $break-medium) {
+		flex-wrap: wrap;
+	}
 
 	.site-performance__page-selector {
 		display: flex;
@@ -142,7 +174,6 @@ $section-max-width: 1224px;
 	}
 
 	@media (max-width: $break-medium) {
-		margin-bottom: 8px;
 		width: 100%;
 
 		.formatted-header__subtitle {
