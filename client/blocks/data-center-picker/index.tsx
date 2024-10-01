@@ -69,6 +69,12 @@ const SupportLink = styled.a`
 	color: var( --color-text-subtle ) !important;
 `;
 
+const StyledSelectControl = styled( SelectControl )`
+	.components-input-control__backdrop {
+		border-color: var( --studio-gray-10 ) !important;
+	}
+`;
+
 const StyledLabel = styled.div`
 	text-transform: none;
 	font-size: 0.875rem;
@@ -108,7 +114,7 @@ const DataCenterPicker = ( {
 
 			{ isFormShowing && (
 				<Form>
-					<SelectControl
+					<StyledSelectControl
 						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
 						help={
 							hasTranslation(
