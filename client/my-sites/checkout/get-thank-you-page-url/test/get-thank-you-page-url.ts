@@ -1919,7 +1919,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	describe( 'Congrats removals', () => {
-		it( 'redirects to /mailboxes/:site when purchasing only Titan Mail', () => {
+		it( 'redirects to /email/:domain/manage/:site when purchasing only Titan Mail', () => {
 			const url = getThankYouPageUrl( {
 				...defaultArgs,
 				cart: {
@@ -1928,6 +1928,7 @@ describe( 'getThankYouPageUrl', () => {
 						{
 							...getEmptyResponseCartProduct(),
 							product_slug: TITAN_MAIL_MONTHLY_SLUG,
+							meta: 'example.com', // meta holds the domain - not the same thing as siteSlug
 							extra: {
 								email_users: [ { email: 'test@example.com' } ],
 							},
@@ -1937,7 +1938,7 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 			expect( url ).toBe(
-				`/mailboxes/foo.bar?new-email=${ encodeURIComponent( 'test@example.com' ) }`
+				`/email/example.com/manage/foo.bar?new-email=${ encodeURIComponent( 'test@example.com' ) }`
 			);
 		} );
 
