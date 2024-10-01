@@ -52,6 +52,8 @@ export function useThemesThankYouData(
 	);
 	const allThemesFetched = themesList.every( ( theme ) => !! theme );
 
+	const firstTheme = themesList[ 0 ] ?? null;
+
 	const isActive = themesList.some(
 		( theme ) => theme?.stylesheet === themeSlug || theme?.id === themeSlug
 	);
@@ -68,21 +70,6 @@ export function useThemesThankYouData(
 
 	useQueryThemes( 'wpcom', themeSlugs );
 	useQueryThemes( 'wporg', themeSlugs );
-
-	// Clear completed activated theme request state to avoid displaying the Thanks modal
-	useEffect( () => {
-		return () => {
-			dispatch( clearActivated( siteId || 0 ) );
-		};
-	}, [ dispatch, siteId ] );
-
-	useEffect( () => {
-		if ( isActive && continueWithPluginBundle ) {
-			page(
-				`/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteId=${ siteId }&siteSlug=${ siteSlug }`
-			);
-		}
-	}, [ isActive, continueWithPluginBundle, siteId, siteSlug ] );
 
 	const themesSection = themesList
 		.filter( ( theme ) => theme )
@@ -122,18 +109,43 @@ export function useThemesThankYouData(
 
 	// DotOrg (if not also Dotcom) and Externay managed themes
 	// needs an atomic site to be installed.
-	type Theme = { id: string } | undefined;
 	const hasDotOrgThemes = dotOrgThemes.some(
-		( theme: Theme ) =>
-			!! theme && ! dotComThemes.find( ( dotComTheme: Theme ) => dotComTheme?.id === theme.id )
+		( theme: { id: string } | undefined ) =>
+			!! theme &&
+			! dotComThemes.find(
+				( dotComTheme: { id: string } | undefined ) => dotComTheme?.id === theme.id
+			)
 	);
 	const hasExternallyManagedThemes = useSelector( ( state ) =>
 		getHasExternallyManagedThemes( state, themeSlugs )
 	);
 	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
 
+	// Clear completed activated theme request state to avoid displaying the Thanks modal
+	useEffect( () => {
+		return () => {
+			dispatch( clearActivated( siteId || 0 ) );
+		};
+	}, [ dispatch, siteId ] );
+
+	// Redirect to the plugin bundle flow after the activation.
+	useEffect( () => {
+		if ( isActive && continueWithPluginBundle ) {
+			page(
+				`/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteId=${ siteId }&siteSlug=${ siteSlug }`
+			);
+		}
+	}, [ isActive, continueWithPluginBundle, siteId, siteSlug ] );
+
+	// Redirect to the Theme Details page after the atomic transfer.
+	useEffect( () => {
+		if ( firstTheme && isAtomicNeeded && isJetpack ) {
+			page( `/theme/${ firstTheme.id }/${ siteSlug }` );
+		}
+	}, [ firstTheme, isAtomicNeeded, isJetpack ] );
+
 	return [
-		themesList[ 0 ] ?? null,
+		firstTheme,
 		themesSection,
 		allThemesFetched,
 		goBackSection,
@@ -142,8 +154,9 @@ export function useThemesThankYouData(
 		thankyouSteps,
 		isAtomicNeeded,
 		null,
-		// Always display the loading screen if the theme has plugin bundle because the page will
-		// be redirected to the plugin-bundle flow immediately after the theme is activated.
-		! continueWithPluginBundle,
+		// Always display the loading screen for the following situations:
+		// - Redirect to the plugin-bundle flow after the theme is activated for Woo themes.
+		// - Redirect to the Theme Details page after the atomic transfer if it's required.
+		! ( continueWithPluginBundle || isAtomicNeeded ),
 	];
 }
