@@ -122,8 +122,8 @@ export function login( {
 		url = addQueryArgs( { gravatar_flow: '1' }, url );
 	}
 
-	if ( plugin_name ) {
-		url = addQueryArgs( { plugin_name }, url );
+	if ( pluginName ) {
+		url = addQueryArgs( { pluginName }, url );
 	}
 
 	return url;
