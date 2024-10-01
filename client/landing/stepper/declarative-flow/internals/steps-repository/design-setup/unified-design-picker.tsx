@@ -628,12 +628,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					return Promise.resolve()
 						.then( () =>
 							reduxDispatch(
-								activateOrInstallThenActivate(
-									themeId ?? '',
-									site?.ID ?? 0,
-									'assembler',
-									false
-								) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+								activateOrInstallThenActivate( themeId ?? '', site?.ID ?? 0, {
+									source: 'assembler',
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 							)
 						)
 						.then( ( activeThemeStylesheet: string ) =>

@@ -55,7 +55,6 @@ import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -103,6 +102,7 @@ import {
 	getIsLivePreviewSupported,
 	getThemeType,
 	isThemeWooCommerce,
+	isActivatingTheme as getIsActivatingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -302,7 +302,6 @@ class ThemeSheet extends Component {
 	 * Its assigned to state to guarantee the initial state will be the same for SSR
 	 */
 	state = {
-		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
@@ -322,9 +321,6 @@ class ThemeSheet extends Component {
 			themeStartActivationSync( siteId, themeId );
 		}
 
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { disabledButton: this.isLoading() } );
-
 		// Subscribe to breakpoint changes to switch to a compact breadcrumb on mobile.
 		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
 			this.setState( { isWide } );
@@ -334,11 +330,6 @@ class ThemeSheet extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( this.props.themeId !== prevProps.themeId ) {
 			this.scrollToTop();
-		}
-
-		if ( this.state.disabledButton !== this.isLoading() ) {
-			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { disabledButton: this.isLoading() } );
 		}
 	}
 
@@ -358,9 +349,13 @@ class ThemeSheet extends Component {
 	};
 
 	isLoading = () => {
-		const { isLoading, isThemeActivationSyncStarted } = this.props;
+		return this.props.isLoading || this.isRequestingActivatingTheme();
+	};
+
+	isRequestingActivatingTheme = () => {
+		const { isThemeActivationSyncStarted, isActivatingTheme } = this.props;
 		const { isAtomicTransferCompleted } = this.state;
-		return isLoading || ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted );
+		return ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) || isActivatingTheme;
 	};
 
 	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
@@ -1199,7 +1194,8 @@ class ThemeSheet extends Component {
 					this.onButtonClick( event );
 				} }
 				primary
-				disabled={ this.state.disabledButton }
+				busy={ this.isRequestingActivatingTheme() }
+				disabled={ this.isLoading() }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -1212,6 +1208,7 @@ class ThemeSheet extends Component {
 			<Button
 				className="theme__sheet-primary-button"
 				primary
+				busy={ this.isRequestingActivatingTheme() }
 				disabled={ this.isLoading() }
 				onClick={ this.onUnlockStyleButtonClick }
 			>
@@ -1435,7 +1432,6 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
 				<NavigationHeader
 					navigationItems={ navigationItems }
@@ -1669,6 +1665,7 @@ export default connect(
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
 			isLivePreviewSupported,
 			themeType: getThemeType( state, themeId ),
+			isActivatingTheme: getIsActivatingTheme( state, siteId ),
 		};
 	},
 	{
