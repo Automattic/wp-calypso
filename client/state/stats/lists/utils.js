@@ -397,7 +397,7 @@ export const normalizers = {
 	},
 
 	/**
-	 * Returns a normalized payload from `/sites/{ site }/stats/country-views`
+	 * Returns a normalized payload from `/sites/{ site }/stats/location-views/country`
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query
 	 * @returns {Object | null}        Normalized stats data

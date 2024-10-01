@@ -156,7 +156,7 @@ site.statsComments( function ( err, data ) {
 
 ### Site#statsCountryViews([query, ]fn)
 
-Returns stats [country views](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/country-views/) data.
+Returns stats [country views](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/location-views/country/) data.
 
 ```js
 site.statsCountryViews( function ( err, data ) {
