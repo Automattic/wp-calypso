@@ -42,7 +42,7 @@ export function login( {
 	usernameOnly = undefined,
 	gravatarFrom = undefined,
 	gravatarFlow = undefined,
-	plugin_name = undefined,
+	pluginName = undefined,
 } = {} ) {
 	let url = '/log-in';
 
