@@ -43,7 +43,7 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import {
 	initiateThemeTransfer as initiateTransfer,
 	installAndActivateTheme,
@@ -260,6 +260,9 @@ const MarketplaceProductInstall = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
+	const pluginsUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true' )
+	);
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
@@ -273,13 +276,9 @@ const MarketplaceProductInstall = ( {
 				! isAtomic &&
 				transferStates.COMPLETE === automatedTransferStatus )
 		) {
-			waitFor( 1 ).then( () =>
-				page.redirect(
-					`/marketplace/thank-you/${ selectedSiteSlug }?hide-progress-bar&plugins=${
-						installedPlugin?.slug || pluginSlug || uploadedPluginSlug
-					}`
-				)
-			);
+			waitFor( 1 ).then( () => {
+				window.location.href = pluginsUrl as string;
+			} );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus, atomicFlow, isPluginUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
