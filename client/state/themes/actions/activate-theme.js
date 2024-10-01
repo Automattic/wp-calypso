@@ -63,7 +63,7 @@ export function activateTheme( themeId, siteId, options = {} ) {
 				if ( showSuccessNotice ) {
 					dispatch(
 						successNotice(
-							translate( 'The %(themeName)s theme is activated successfully', {
+							translate( 'The %(themeName)s theme is activated successfully!', {
 								args: { themeName: theme.name },
 							} ),
 							{
