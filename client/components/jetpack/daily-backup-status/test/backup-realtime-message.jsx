@@ -11,6 +11,14 @@ jest.mock( 'i18n-calypso' ); // Mock the useTranslate hook
 jest.mock( 'calypso/state' ); // Mock the useDispatch hook
 
 describe( 'BackupRealtimeMessage', () => {
+	beforeAll( () => {
+		jest.useFakeTimers();
+	} );
+
+	afterAll( () => {
+		jest.useRealTimers();
+	} );
+
 	const renderMessage = ( baseBackupDate, eventsCount, selectedDate, learnMoreUrl ) => {
 		return render(
 			<BackupRealtimeMessage
