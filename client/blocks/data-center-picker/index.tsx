@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { SelectControl } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
 
@@ -81,6 +82,7 @@ const DataCenterPicker = ( {
 	value,
 }: Props ) => {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
+	const { hasTranslation } = useI18n();
 
 	return (
 		<div>
@@ -108,21 +110,41 @@ const DataCenterPicker = ( {
 				<Form>
 					<SelectControl
 						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
-						help={ translate(
-							'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
-							{
-								components: {
-									supportLink: (
-										<SupportLink
-											target="_blank"
-											href={ localizeUrl(
-												'https://wordpress.com/support/choose-your-sites-primary-data-center/'
-											) }
-										/>
-									),
-								},
-							}
-						) }
+						help={
+							hasTranslation(
+								'For redundancy, your site will be replicated in real-time to another region.'
+							)
+								? translate(
+										'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.',
+										{
+											components: {
+												supportLink: (
+													<SupportLink
+														target="_blank"
+														href={ localizeUrl(
+															'https://wordpress.com/support/choose-your-sites-primary-data-center/'
+														) }
+													/>
+												),
+											},
+										}
+								  )
+								: translate(
+										'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
+										{
+											components: {
+												supportLink: (
+													<SupportLink
+														target="_blank"
+														href={ localizeUrl(
+															'https://wordpress.com/support/choose-your-sites-primary-data-center/'
+														) }
+													/>
+												),
+											},
+										}
+								  )
+						}
 						options={ DataCenterOptions.map( ( option ) => ( {
 							label: option.label,
 							value: option.value,
