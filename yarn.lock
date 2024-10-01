@@ -1373,6 +1373,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/marketing@workspace:packages/marketing":
+  version: 0.0.0-use.local
+  resolution: "@automattic/marketing@workspace:packages/marketing"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: "npm:^4.7.4"
+    webpack: "npm:^5.94.0"
+  peerDependencies:
+    postcss: ^8.4.5
+    react: ^18.3.1
+    react-dom: ^18.3.1
+    tslib: ^2.3.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/material-design-icons@workspace:^, @automattic/material-design-icons@workspace:packages/material-design-icons":
   version: 0.0.0-use.local
   resolution: "@automattic/material-design-icons@workspace:packages/material-design-icons"
@@ -33212,6 +33228,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^4.7.4":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 5f6cad2e728a8a063521328e612d7876e12f0d8a8390d3b3aaa452a6a65e24e9ac8ea22beb72a924fd96ea0a49ea63bb4e251fb922b12eedfb7f7a26475e5c56
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^5.3.3":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
@@ -33219,6 +33245,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: e33cef99d82573624fc0f854a2980322714986bc35b9cb4d1ce736ed182aeab78e2cb32b385efa493b2a976ef52c53e20d6c6918312353a91850e2b76f1ea44f
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^4.7.4#optional!builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: e3333f887c6829dfe0ab6c1dbe0dd1e3e2aeb56c66460cb85c5440c566f900c833d370ca34eb47558c0c69e78ced4bfe09b8f4f98b6de7afed9b84b8d1dd06a1
   languageName: node
   linkType: hard
 
