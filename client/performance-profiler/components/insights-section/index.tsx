@@ -38,6 +38,9 @@ export const InsightsSection = forwardRef(
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
 			.sort( sortInsightKeys );
 		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
+			recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+				filter: option.value,
+			} );
 			setSelectedFilter( option.value );
 			if ( props.onRecommendationsFilterChange ) {
 				props.onRecommendationsFilterChange( option.value );

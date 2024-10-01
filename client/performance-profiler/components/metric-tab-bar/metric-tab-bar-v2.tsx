@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 import { Metrics } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	metricsNames,
 	mapThresholdsToStatus,
@@ -17,13 +18,18 @@ type Props = Record< Metrics, number > & {
 const MetricTabBarV2 = ( props: Props ) => {
 	const { activeTab, setActiveTab } = props;
 
+	const handleTabClick = ( tab: Metrics ) => {
+		setActiveTab( tab );
+		recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', { tab } );
+	};
+
 	return (
 		<div className="metric-tab-bar-v2">
 			<button
 				className={ clsx( 'metric-tab-bar-v2__tab metric-tab-bar-v2__performance', {
 					active: activeTab === 'overall',
 				} ) }
-				onClick={ () => setActiveTab( 'overall' ) }
+				onClick={ () => handleTabClick( 'overall' ) }
 			>
 				<div className="metric-tab-bar-v2__tab-text">
 					<div
@@ -61,7 +67,7 @@ const MetricTabBarV2 = ( props: Props ) => {
 						<button
 							key={ key }
 							className={ clsx( 'metric-tab-bar-v2__tab', { active: key === activeTab } ) }
-							onClick={ () => setActiveTab( key as Metrics ) }
+							onClick={ () => handleTabClick( key as Metrics ) }
 						>
 							<div className="metric-tab-bar-v2__tab-status">
 								<StatusIndicator
