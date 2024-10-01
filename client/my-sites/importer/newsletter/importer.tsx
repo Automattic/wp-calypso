@@ -19,7 +19,7 @@ import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes } from './types';
-import { getSetpProgressSteps, getImporterStatus } from './utils';
+import { getStepsProgress, getImporterStatus } from './utils';
 
 import './importer.scss';
 
@@ -44,17 +44,28 @@ function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 	return 'Import your newsletter';
 }
 
+function updatePathToContent( path: string ) {
+	if ( path.endsWith( '/content' ) ) {
+		return path;
+	}
+	return path + '/content';
+}
+
 export default function NewsletterImporter( {
 	siteSlug,
 	engine,
-	step = 'content',
+	step = 'reset',
 }: NewsletterImporterProps ) {
 	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
+	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
 
+	if ( step === 'reset' ) {
+		step = 'content';
+	}
 	const { data: paidNewsletterData } = usePaidNewsletterQuery(
 		engine,
 		step,
@@ -105,15 +116,30 @@ export default function NewsletterImporter( {
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
-			if ( selectedSite && step === stepSlugs[ 0 ] && validFromSite === false ) {
+			if ( selectedSite && shouldResetImport && validFromSite === false ) {
 				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+				setShouldResetImport( false );
+				window.history.replaceState(
+					null,
+					'',
+					updatePathToContent( window.location.pathname ) + window.location.search
+				);
 			}
 
 			setValidFromSite( true );
 		}
-	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
+	}, [
+		urlData,
+		fromSite,
+		engine,
+		selectedSite,
+		resetPaidNewsletter,
+		step,
+		validFromSite,
+		shouldResetImport,
+	] );
 
-	const stepsProgress = getSetpProgressSteps(
+	const stepsProgress = getStepsProgress(
 		engine,
 		selectedSite?.slug || '',
 		fromSite,
