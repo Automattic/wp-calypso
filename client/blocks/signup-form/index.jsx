@@ -628,7 +628,7 @@ class SignupForm extends Component {
 												href="/"
 												onClick={ ( event ) => {
 													event.preventDefault();
-													recordTracksEvent( 'calypso_login_reset_password_link_click' );
+													recordTracksEvent( 'calypso_signup_reset_password_link_click' );
 													page(
 														login( {
 															redirectTo: this.props.redirectToAfterLoginUrl,
