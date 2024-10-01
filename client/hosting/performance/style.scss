@@ -25,6 +25,20 @@ $section-max-width: 1224px;
 		gap: 0;
 	}
 
+	.performance-profiler-insights-section {
+		.subtitle {
+			font-size: $font-body-small;
+		}
+
+		.insight-header-container {
+			font-size: $font-body-small;
+		}
+
+		.description-area {
+			font-size: $font-body-small;
+		}
+	}
+
 	.performance-profiler-content .container {
 		padding-top: 0;
 		gap: 16px;

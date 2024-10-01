@@ -28,6 +28,9 @@
 		color: var(--studio-gray-70);
 		font-size: $font-body;
 		margin-bottom: 0;
+		@media (max-width: $break-xlarge) {
+			max-width: 360px;
+		}
 	}
 
 	.metrics-insight-item.foldable-card {
