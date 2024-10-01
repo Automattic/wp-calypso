@@ -1,8 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -19,8 +17,7 @@ import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import MailboxSelectionList from 'calypso/my-sites/email/mailboxes/mailbox-selection-list';
 import ProgressLine from 'calypso/my-sites/email/mailboxes/mailbox-selection-list/progress-line';
 import { getMailboxesPath } from 'calypso/my-sites/email/paths';
-import { useSelector, useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -106,26 +103,11 @@ const MailboxesManagement = ( {
 	const domains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, selectedSiteId ?? undefined )
 	);
+
 	const isLoadingDomains = useSelector(
 		( state ) => ! hasLoadedSiteDomains( state, selectedSiteId )
 	);
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-
-	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
-	const queryParams = new URLSearchParams( window.location.search );
-	const newEmail = queryParams.get( 'new-email' );
-
-	useEffect( () => {
-		if ( ! newEmail ) {
-			return;
-		}
-		dispatch(
-			successNotice( translate( 'Your new mailbox has been created.' ), {
-				duration: 5000,
-			} )
-		);
-	}, [ newEmail, dispatch, translate ] );
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId as number ) );
 
@@ -145,15 +127,6 @@ const MailboxesManagement = ( {
 
 	if ( hasAtLeastOneMailbox( nonWPCOMDomains ) ) {
 		return <MailboxSelectionList domains={ nonWPCOMDomains } />;
-	}
-
-	if ( selectedSiteId && newEmail ) {
-		return (
-			<>
-				<QuerySiteDomains siteId={ selectedSiteId } />
-				<ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />
-			</>
-		);
 	}
 
 	return (
