@@ -18,6 +18,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
+		"@automattic/zendesk-client": "workspace:^",
 		"@jest/types": "^29.5.0",
 		"@types/totp-generator": "^0.0.3",
 		"form-data": "^4.0.0",
