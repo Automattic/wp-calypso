@@ -24,7 +24,7 @@ export function useJetpackConnectionStatus( siteId: number | null, isSimpleSites
 		...getDefaultQueryParams< ConnectionInfo >(),
 		queryKey: [ 'stats', 'jetpack-connnection-status', siteId, isSimpleSites ],
 		queryFn: () => {
-			// Simple sites are always connected, and sites in Calypso are always fully connected too, so we skip those.
+			// Simple sites are always connected, and sites in Calypso are always fully connected too, so we only check non-simple site in Odyssey Stats.
 			if ( ! isSimpleSites && isOdysseyStats ) {
 				return queryJetpackConnectionStatus();
 			}
