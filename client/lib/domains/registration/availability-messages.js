@@ -219,7 +219,7 @@ function getAvailabilityNotice(
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site). If you want to connect it to this site ' +
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. If you want to connect it to this site ' +
 					'instead, we will be happy to help you do that. {{a}}Contact us.{{/a}}',
 				{
 					args: { domain, site },
