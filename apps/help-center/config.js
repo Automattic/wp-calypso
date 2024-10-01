@@ -1,9 +1,14 @@
 /* global helpCenterData */
+import {
+	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
+	ZENDESK_SUPPORT_CHAT_KEY,
+} from '@automattic/zendesk-client/src/constants';
+
 window.configData = {
 	env_id: helpCenterData?.isProxied ? 'staging' : 'production',
 	zendesk_support_chat_key: helpCenterData?.isProxied
-		? '715f17a8-4a28-4a7f-8447-0ef8f06c70d7'
-		: 'cec07bc9-4da6-4dd2-afa7-c7e01ae73584',
+		? ZENDESK_STAGING_SUPPORT_CHAT_KEY
+		: ZENDESK_SUPPORT_CHAT_KEY,
 	features: {
 		'help/gpt-response': true,
 	},
