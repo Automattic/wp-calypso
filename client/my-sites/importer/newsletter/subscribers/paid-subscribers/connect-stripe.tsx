@@ -1,5 +1,6 @@
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
+import { toInteger } from 'lodash';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -7,6 +8,7 @@ import ImporterActionButton from '../../../importer-action-buttons/action-button
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from '../start-import-button';
+import SuccessNotice from './success-notice';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
@@ -37,9 +39,10 @@ export default function ConnectStripe( {
 	}
 
 	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
-
+	const allEmailsCount = toInteger( cardData?.meta?.email_count ) || 0;
 	return (
 		<>
+			<SuccessNotice allEmailsCount={ allEmailsCount } />
 			<h2>Do you have paid subscribers?</h2>
 			<p>
 				To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're

@@ -24,6 +24,7 @@ export interface SubscribersStepContent {
 	connect_url?: string;
 	is_connected_stripe: boolean;
 	map_plans?: Record< string, string >;
+	account_display?: string;
 	plans?: Plan[];
 	meta?: {
 		email_count: string;
