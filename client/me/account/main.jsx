@@ -20,6 +20,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
@@ -487,6 +488,22 @@ class Account extends Component {
 		}
 	};
 
+	renderJoinDate() {
+		const { currentUserDate, translate, moment } = this.props;
+		const dateMoment = moment( currentUserDate );
+
+		return (
+			<span>
+				{ translate( 'Joined %(month)s %(year)s', {
+					args: {
+						month: dateMoment.format( 'MMMM' ),
+						year: dateMoment.format( 'YYYY' ),
+					},
+				} ) }
+			</span>
+		);
+	}
+
 	renderUsernameValidation() {
 		const { translate } = this.props;
 
@@ -815,7 +832,7 @@ class Account extends Component {
 							this.toggleConfirmUsernameForm
 						) }
 					>
-						{ translate( 'Save username' ) }
+						{ translate( 'Change username' ) }
 					</FormButton>
 
 					<FormButton
@@ -889,6 +906,9 @@ class Account extends Component {
 									renderUsernameForm && null !== this.getUsernameValidationFailureMessage()
 								}
 							/>
+							{ ! renderUsernameForm && (
+								<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
+							) }
 							{ renderUsernameForm && this.renderUsernameValidation() }
 						</FormFieldset>
 
@@ -965,6 +985,7 @@ class Account extends Component {
 
 export default compose(
 	localize,
+	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
 	connect(
