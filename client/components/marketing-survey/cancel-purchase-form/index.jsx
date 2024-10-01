@@ -70,7 +70,7 @@ class CancelPurchaseForm extends Component {
 		cancelBundledDomain: PropTypes.bool,
 		includedDomainPurchase: PropTypes.object,
 		linkedPurchases: PropTypes.array,
-		skipSurvey: PropTypes.bool,
+		skipRemovePlanSurvey: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -78,11 +78,11 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { purchase, skipSurvey, willAtomicSiteRevert } = this.props;
+		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert } = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
 		if (
-			skipSurvey ||
+			skipRemovePlanSurvey ||
 			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) )
 		) {
 			steps = [];
@@ -98,7 +98,7 @@ class CancelPurchaseForm extends Component {
 			steps.push( ATOMIC_REVERT_STEP );
 		}
 
-		if ( skipSurvey && steps.length === 0 ) {
+		if ( skipRemovePlanSurvey && steps.length === 0 ) {
 			steps.push( REMOVE_PLAN_STEP );
 		}
 
