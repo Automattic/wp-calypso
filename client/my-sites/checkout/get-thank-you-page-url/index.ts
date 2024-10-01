@@ -589,7 +589,10 @@ function getFallbackDestination( {
 		if ( emails && emails.length > 0 ) {
 			debug( 'site with titan products' );
 			if ( cart?.products?.length === 1 ) {
-				return `/mailboxes/${ siteSlug }?new-email=${ emails[ 0 ].email }`;
+				const domain = titanProducts[ 0 ]?.meta;
+				if ( domain ) {
+					return `/email/${ domain }/manage/${ siteSlug }?new-email=${ emails[ 0 ].email }`;
+				}
 			}
 			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
 		}
