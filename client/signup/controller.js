@@ -233,8 +233,20 @@ export default {
 			);
 			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
 				const lang = localeFromParams ?? localeFromStore;
+				const step = getStepName( context.params ) ? `/${ getStepName( context.params ) }` : '';
+				const section = getStepSectionName( context.params )
+					? `/${ getStepSectionName( context.params ) }`
+					: '';
+				const locale = lang ? `/${ lang }` : '';
+
 				window.location.replace(
-					window.location.origin + `/setup/onboarding/${ lang }` + window.location.search
+					window.location.origin +
+						`/setup/onboarding` +
+						step +
+						section +
+						locale +
+						( context.querystring ? '?' + context.querystring : '' ) +
+						( context.hashstring ? '#' + context.hashstring : '' )
 				);
 			}
 		}
