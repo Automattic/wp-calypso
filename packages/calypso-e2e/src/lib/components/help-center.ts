@@ -1,4 +1,4 @@
-import { ZENDESK_STAGING_SUPPORT_CHAT_KEY } from '@automattic/zendesk-client';
+import { ZENDESK_STAGING_SUPPORT_CHAT_KEY } from '@automattic/zendesk-client/src/constants';
 import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';

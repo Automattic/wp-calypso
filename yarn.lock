@@ -1102,6 +1102,7 @@ __metadata:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/components": "npm:^28.8.0"
     "@wordpress/compose": "npm:^7.8.0"
