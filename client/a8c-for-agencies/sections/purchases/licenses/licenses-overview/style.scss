@@ -1,8 +1,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.licenses-overview .search {
-	box-shadow: 0 0 0 1px var(--color-neutral-5);
+.licenses-overview {
+	.a4a-layout__body {
+		padding-block-start: 32px;
+	}
+
+	.search {
+		box-shadow: 0 0 0 1px var(--color-neutral-5);
+	}
 }
 
 .licenses-overview__empty-message {
