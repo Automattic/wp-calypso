@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step } from '../../types';
@@ -8,7 +7,6 @@ import './styles.scss';
 
 const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navigation, flow } ) {
 	const { submit } = navigation;
-	const translate = useTranslate();
 
 	return (
 		<HundredYearPlanStepWrapper
@@ -21,8 +19,8 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 			formattedHeader={
 				<FormattedHeader
 					brandFont
-					headerText={ translate( 'TODO: title' ) }
-					subHeaderText={ translate( 'TODO: header' ) }
+					headerText="TODO: title"
+					subHeaderText="TODO: header"
 					subHeaderAlign="center"
 				/>
 			}
