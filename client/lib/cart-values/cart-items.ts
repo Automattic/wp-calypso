@@ -847,6 +847,11 @@ export function getDomainPriceRule(
 	flowName: string,
 	domainAndPlanUpsellFlow: boolean
 ): string {
+	// We want to show a fixed price in the 100-year domain flow
+	if ( flowName === 'hundred-year-domain' ) {
+		return 'ONE_TIME_PRICE';
+	}
+
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}
