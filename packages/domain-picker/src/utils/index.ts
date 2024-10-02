@@ -66,6 +66,9 @@ export function getDomainSuggestionsVendor(
 	if ( isDomainForGravatarFlow( options.flowName ) ) {
 		return 'gravatar';
 	}
+	if ( options.flowName === 'hundred-year-domain' ) {
+		return '100-year-domains';
+	}
 	if ( options.flowName === LINK_IN_BIO_FLOW ) {
 		return 'link-in-bio';
 	}
