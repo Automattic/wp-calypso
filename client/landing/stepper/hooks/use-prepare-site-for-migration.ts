@@ -156,6 +156,7 @@ export const usePrepareSiteForMigrationWithMigrateGuru = ( siteId?: number ) => 
 		fetchStatus: migrationKeyFetchStatus,
 	} = useSiteMigrationKey( siteId, {
 		enabled: Boolean( pluginInstallationState.completed ),
+		retry: false,
 	} );
 
 	const { siteTransferStart, siteTransferEnd, pluginInstallationStart, pluginInstallationEnd } =
@@ -211,7 +212,7 @@ export const usePrepareSiteForMigrationWithMigrateToWPCOM = ( siteId?: number ) 
 		data: { migrationKey } = {},
 		error: migrationKeyError,
 		fetchStatus: migrationKeyFetchStatus,
-	} = useSiteMigrationKey( siteId );
+	} = useSiteMigrationKey( siteId, { enabled: true, retry: 20 } );
 
 	const { siteTransferStart, siteTransferEnd } = useTransferTimeTracking( siteTransferState );
 

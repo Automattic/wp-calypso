@@ -12,6 +12,11 @@ export interface AgencyDetailsPayload {
 	line2: string;
 	country: string;
 	postalCode: string;
+	phone?: {
+		phoneNumberFull?: string;
+		phoneNumber?: string;
+		countryCode?: string;
+	};
 	state: string;
 	referer?: string | null;
 	tos?: 'consented';
