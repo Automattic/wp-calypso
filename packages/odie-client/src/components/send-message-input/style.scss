@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+$blueberry-color: #3858e9;
 
 .odie-send-message-input-container {
 	display: flex;
@@ -34,7 +35,7 @@
 	background: none;
 	border: none;
 	cursor: pointer;
-	background-color: var(--color-primary);
+	background-color: $blueberry-color;
 	height: 40px;
 	width: 40px;
 
