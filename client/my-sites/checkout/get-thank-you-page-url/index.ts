@@ -588,7 +588,7 @@ function getFallbackDestination( {
 
 	const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
 	if ( titanProducts && titanProducts.length > 0 ) {
-		const emails = titanProducts[ 0 ].extra.email_users;
+		const emails = titanProducts[ 0 ].extra?.email_users;
 		if ( emails && emails.length > 0 ) {
 			debug( 'site with titan products' );
 			if ( cart?.products?.length === 1 ) {
