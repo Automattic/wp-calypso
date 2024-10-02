@@ -8,7 +8,8 @@ import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
-	getSignupCompleteSlug,
+	getSignupCompleteSiteID,
+	setSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -66,6 +67,10 @@ const hosting: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+			if ( providedDependencies.siteId ) {
+				setSignupCompleteSiteID( providedDependencies.siteId );
+			}
+
 			switch ( _currentStepSlug ) {
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
@@ -98,7 +103,7 @@ const hosting: Flow = {
 				case 'processing': {
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId || getSignupCompleteSlug(),
+						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
 					} );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
