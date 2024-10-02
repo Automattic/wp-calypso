@@ -29,8 +29,8 @@ function createTestStore( verified, pending = false ) {
 	);
 }
 
-describe( 'EmailNotVerifiedNotice', () => {
-	it( 'does not show the notice if already verified', () => {
+describe( 'EmailVerificationBanner', () => {
+	it( 'does not show the banner if already verified', () => {
 		render(
 			<ReduxProvider store={ createTestStore( true ) }>
 				<EmailVerificationBanner />
@@ -43,7 +43,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 		).toBeNull();
 	} );
 
-	it( 'shows the notice if not verified', () => {
+	it( 'shows the banner if not verified', () => {
 		render(
 			<ReduxProvider store={ createTestStore( false ) }>
 				<EmailVerificationBanner />
@@ -56,7 +56,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'shows the notice if email change is pending', () => {
+	it( 'shows the banner if email change is pending', () => {
 		render(
 			<ReduxProvider store={ createTestStore( true, true ) }>
 				<EmailVerificationBanner />
@@ -75,6 +75,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 				<EmailVerificationBanner />
 			</ReduxProvider>
 		);
+		// Click CTA on banner.
 		await screen.getByText( 'Verify email' ).click();
 		// Check for dialog modal copy to ensure it appeared.
 		expect(
