@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from 'calypso/landing/stepper/constants';
 import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
