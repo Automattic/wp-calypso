@@ -19,7 +19,7 @@ const extractDomainFromUrl = ( url: string ) => {
 	}
 };
 
-const SiteMigrationAlreadyWordPress: FC< StepProps > = ( { stepName, flow, navigation } ) => {
+const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigation } ) => {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' )!;
@@ -77,4 +77,4 @@ const SiteMigrationAlreadyWordPress: FC< StepProps > = ( { stepName, flow, navig
 	);
 };
 
-export default SiteMigrationAlreadyWordPress;
+export default SiteMigrationAlreadyWPCOM;
