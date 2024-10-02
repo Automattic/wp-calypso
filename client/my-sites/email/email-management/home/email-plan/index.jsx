@@ -135,7 +135,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			return;
 		}
 		dispatch(
-			successNotice( translate( 'Your mailbox has been created.' ), {
+			successNotice( translate( 'Your mailbox %(mailbox)s has been created.', { args: { mailbox: newEmail } } ), {
 				duration: 8000,
 			} )
 		);
