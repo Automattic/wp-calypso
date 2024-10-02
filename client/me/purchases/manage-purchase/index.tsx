@@ -116,6 +116,7 @@ import {
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
@@ -145,6 +146,7 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	getCancelPurchaseSurveyTakenPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -185,6 +187,7 @@ export interface ManagePurchaseConnectedProps {
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	hasLoadedSites: boolean;
+	hasTakenCancelPurchaseSurvey: boolean | null;
 	hasNonPrimaryDomainsFlag?: boolean;
 	hasSetupAds?: boolean;
 	isAtomicSite?: boolean | null;
@@ -643,6 +646,7 @@ class ManagePurchase extends Component<
 			hasLoadedSites,
 			hasNonPrimaryDomainsFlag,
 			hasCustomPrimaryDomain,
+			hasTakenCancelPurchaseSurvey,
 			site,
 			purchase,
 			purchaseListUrl,
@@ -677,7 +681,7 @@ class ManagePurchase extends Component<
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
-				skipRemovePlanSurvey={ isPlanPurchase }
+				skipRemovePlanSurvey={ isPlanPurchase && hasTakenCancelPurchaseSurvey }
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
@@ -1626,6 +1630,10 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 			: false,
 		hasSetupAds: Boolean(
 			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+		),
+		hasTakenCancelPurchaseSurvey: getPreference(
+			state,
+			getCancelPurchaseSurveyTakenPreferenceKey( purchase?.id )
 		),
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
