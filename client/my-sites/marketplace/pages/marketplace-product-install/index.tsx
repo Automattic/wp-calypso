@@ -276,7 +276,7 @@ const MarketplaceProductInstall = ( {
 				! isAtomic &&
 				transferStates.COMPLETE === automatedTransferStatus )
 		) {
-			waitFor( 1 ).then( () => {
+			waitFor( 2 ).then( () => {
 				window.location.href = pluginsUrl as string;
 			} );
 		}
