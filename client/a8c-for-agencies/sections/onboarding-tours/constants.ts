@@ -15,3 +15,5 @@ export const A4A_ONBOARDING_TOURS_EVENT_NAMES: Record< string, string > = {
 	startTour: 'calypso_a4a_start_tour',
 	endTour: 'calypso_a4a_end_tour',
 };
+
+export const A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME = 'a4a-onboarding-tour-dismissed';
