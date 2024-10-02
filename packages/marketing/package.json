@@ -26,7 +26,8 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"storybook": "sb dev"
 	},
 	"peerDependencies": {
 		"postcss": "^8.4.5",
@@ -36,7 +37,10 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/cli": "^7.6.19",
+		"@storybook/react": "^7.6.19",
 		"typescript": "^4.7.4",
 		"webpack": "^5.94.0"
 	}

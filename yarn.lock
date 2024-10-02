@@ -1378,7 +1378,10 @@ __metadata:
   resolution: "@automattic/marketing@workspace:packages/marketing"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/cli": "npm:^7.6.19"
+    "@storybook/react": "npm:^7.6.19"
     typescript: "npm:^4.7.4"
     webpack: "npm:^5.94.0"
   peerDependencies:
