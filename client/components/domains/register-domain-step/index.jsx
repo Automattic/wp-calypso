@@ -1069,6 +1069,15 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
+		// Skip availability check for the 100-year domain flow if the domain is not com/net/org
+		if (
+			this.props.flowName === 'hundred-year-domain' &&
+			! [ 'com', 'net', 'org' ].includes( getTld( domain ) )
+		) {
+			this.showSuggestionErrorMessage( domain, 'hundred_year_domain_tld_restriction', {} );
+			return;
+		}
+
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },

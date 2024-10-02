@@ -647,6 +647,13 @@ function getAvailabilityNotice(
 			severity = 'info';
 			break;
 
+		case 'hundred_year_domain_tld_restriction':
+			message = translate(
+				'Only .com, .net and .org domains are available for registration for 100 years.'
+			);
+			severity = 'info';
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
