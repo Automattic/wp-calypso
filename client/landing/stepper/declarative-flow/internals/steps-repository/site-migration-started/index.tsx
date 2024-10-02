@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { ExternalLink } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -14,6 +15,9 @@ const recordLinkClick = ( linkname: string ) => {
 
 const SiteMigrationStarted: Step = function () {
 	const translate = useTranslate();
+	const isWhiteLabeledPluginEnabled = config.isEnabled(
+		'migration-flow/enable-white-labeled-plugin'
+	);
 
 	const stepContent = (
 		<div className="migration-started-card">
@@ -59,7 +63,9 @@ const SiteMigrationStarted: Step = function () {
 						<>
 							{ translate( 'Your migration process has started.' ) }
 							<br />
-							{ translate( ' Migrate Guru will email you when the process is finished.' ) }
+							{ isWhiteLabeledPluginEnabled
+								? translate( "We'll email you when the process is finished." )
+								: translate( 'Migrate Guru will email you when the process is finished.' ) }
 						</>
 					}
 					align="center"
