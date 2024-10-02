@@ -12,6 +12,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import MissingPaymentSettingsNotice from '../../referrals/common/missing-payment-settings-notice';
 import useGetTipaltiPayee from '../../referrals/hooks/use-get-tipalti-payee';
 import withMarketplaceType, {
@@ -89,12 +90,19 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 		);
-		requestPayment( {
-			client_email: email,
-			client_message: message,
-			product_ids: productIds,
-			licenses: licenses,
-		} );
+		requestPayment(
+			{
+				client_email: email,
+				client_message: message,
+				product_ids: productIds,
+				licenses: licenses,
+			},
+			{
+				onError: ( error ) => {
+					dispatch( errorNotice( error.message ) );
+				},
+			}
+		);
 	}, [
 		dispatch,
 		email,
