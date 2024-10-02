@@ -156,9 +156,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 	const mailbox = newEmail ? newEmail.split( '@' )[ 0 ] : '';
 	const emailExists = emailAccounts.some( ( account ) =>
-		account.emails.some( ( email ) => {
-			return mailbox === email.mailbox;
-		} )
+		account.emails.some( ( email ) => mailbox === email.mailbox )
 	);
 	const isLoading = isLoadingEmailAccounts || ( newEmail && ! emailExists && refetchCount < 5 );
 
