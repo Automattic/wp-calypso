@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
-@import "../../style.scss";
+@import "../../style";
 
 $font-sf-pro-display: "SF Pro Display", $sans;
 $font-sf-pro-text: "SF Pro Text", $sans;
@@ -48,10 +48,6 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			padding-right: 16px;
 		}
 
-		&__post-type-mobile {
-			display: none;
-		}
-
 		&__data {
 			width: 28%;
 
@@ -76,7 +72,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 			width: 10%;
 		}
 
-		&__impressions {
+		&__spend {
 			width: 10%;
 		}
 
@@ -235,20 +231,15 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		.campaign-item {
-			&__post-type,
 			&__user,
 			&__status,
 			&__ends,
 			&__budget,
-			&__impressions,
+			&__spend,
 			&__clicks,
 			&__conversion,
 			&__action {
 				display: none;
-			}
-
-			&__post-type-mobile {
-				display: block;
 			}
 
 			&__status-mobile {

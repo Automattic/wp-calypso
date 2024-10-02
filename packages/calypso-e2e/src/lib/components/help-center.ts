@@ -1,3 +1,4 @@
+import { ZENDESK_STAGING_SUPPORT_CHAT_KEY } from '@automattic/zendesk-client/src/constants';
 import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';
@@ -207,7 +208,7 @@ export class HelpCenterComponent {
 
 		await this.page.evaluate( () => {
 			if ( typeof configData !== 'undefined' ) {
-				configData.zendesk_support_chat_key = '715f17a8-4a28-4a7f-8447-0ef8f06c70d7';
+				configData.zendesk_support_chat_key = ZENDESK_STAGING_SUPPORT_CHAT_KEY;
 			}
 		} );
 	}

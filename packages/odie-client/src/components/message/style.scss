@@ -1,5 +1,5 @@
 @import "@automattic/typography/styles/variables";
-@import "@automattic/components/src/styles/typography.scss";
+@import "@automattic/components/src/styles/typography";
 
 .odie-chatbox-message {
 	display: flex;
@@ -316,8 +316,6 @@ $custom-border-corner-size: 16px;
 		position: relative;
 		bottom: 24px;
 		font-family: $a8c-font-family-sans;
-		border-style: solid;
-		border-width: 1px;
 		cursor: pointer;
 		margin: 0;
 		outline: 0;
@@ -332,7 +330,7 @@ $custom-border-corner-size: 16px;
 		appearance: none;
 		background-color: var(--color-primary);
 		color: var(--studio-white);
-		border: none;
+		border: 1px none;
 		display: flex;
 		height: 28px;
 		padding: 12px 16px;

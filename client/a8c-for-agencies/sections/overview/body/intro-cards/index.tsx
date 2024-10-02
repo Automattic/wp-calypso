@@ -1,5 +1,6 @@
 import { Card, DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import SimpleList from 'calypso/a8c-for-agencies/sections/marketplace/common/simple-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -12,12 +13,24 @@ const Card1 = () => {
 			<h1>{ translate( 'Welcome to Automattic for Agencies' ) }</h1>
 			<p>
 				{ translate(
-					'Automattic for Agencies is a new agency program that brings together all of Automattic’s brands under one roof, enabling you to get the best deals on our products and services. We’ll also provide you with tooling to help you be more efficient in your work and grow your business.'
+					"Automattic for Agencies is a new agency program that combines the best of Automattic's offerings all in one place. By partnering with us, you will have opportunities to grow your business with:"
 				) }
 			</p>
+
+			<SimpleList
+				items={ [
+					translate( 'Significant discounts on our products and services' ),
+					translate( 'Earn partner badges to align your agency with Automattic brands' ),
+					translate( 'Recurring commissions on product referrals – including WooPayments' ),
+					translate( 'Tooling to help you be more efficient' ),
+				] }
+			/>
+
+			<br />
+
 			<p>
 				{ translate(
-					'This is only just the beginning. Soon, we’ll add partner directory listings across our brands, multiple user support, WooPayments commissions, and much more.'
+					'This is just the beginning. We look forward to partnering with you and seeing what the next chapter brings.'
 				) }
 			</p>
 		</>
@@ -28,10 +41,15 @@ const Card2 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'Get big discounts when purchasing in bulk' ) }</h1>
+			<h1>{ translate( 'Only pay for what you use' ) }</h1>
 			<p>
 				{ translate(
-					'You can save up to 80% on Woo, Jetpack, WordPress.com, and Pressable plans when purchasing in bulk. We also charge on a monthly basis, so you don’t have to pay for a year upfront to get the best prices.'
+					"We aim to ensure your business grows with as little upfront cost as possible. That's why we've adopted a pay-for-what-you-use model across all our products, including hosting. This allows you to add and remove products as needed without paying for a whole year upfront to get the best prices."
+				) }
+			</p>
+			<p>
+				{ translate(
+					'We will bill you at the start of each month for any hosting or products used in the previous month. These are charged on a per-day basis.'
 				) }
 			</p>
 		</>
@@ -42,10 +60,15 @@ const Card3 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'Manage all of your sites in a single place, regardless of host' ) }</h1>
+			<h1>{ translate( 'Earn recurring commissions on referrals' ) }</h1>
 			<p>
 				{ translate(
-					'With our sites dashboard, you can get a birds-eye view of the security and performance across all your sites, regardless of host. You’ll be notified immediately if critical issues need your attention, ensuring your clients remain happy.'
+					'With our novel create-a-cart feature, you can add any product in our marketplace to a cart for your client to purchase in just a few clicks. Once your client makes the purchase, you will receive a quarterly recurring commission (up to 50%).'
+				) }
+			</p>
+			<p>
+				{ translate(
+					'You can also earn a five basis points commission on WooPayments TPV (Total Payments Volume) by referring new clients to WooPayments.'
 				) }
 			</p>
 		</>
@@ -56,15 +79,10 @@ const Card4 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'And more to come' ) }</h1>
+			<h1>{ translate( 'Grow your business by getting listed on our partner directories' ) }</h1>
 			<p>
 				{ translate(
-					'We’re only just getting started. Our mission is to create an agency program that helps your business to grow with us. If you have any feedback or suggestions for us, we’d love to hear from you at {{mailto}}partnerships@automattic.com{{/mailto}}.',
-					{
-						components: {
-							mailto: <a href="mailto:partnerships@automattic.com" />,
-						},
-					}
+					'With our program, you can earn partner badges and align your agency with Woo, Jetpack, WordPress.com, and Pressable, enabling you to secure placement in multiple partner directory listings. All you need to do is demonstrate your expertise in supporting clients for each brand to get listed on their directory page.'
 				) }
 			</p>
 		</>

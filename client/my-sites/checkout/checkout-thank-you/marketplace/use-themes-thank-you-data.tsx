@@ -22,6 +22,7 @@ type ThankYouThemeData = [
 	string[],
 	boolean,
 	React.ReactElement | null,
+	boolean,
 ];
 
 export function useThemesThankYouData(
@@ -31,8 +32,11 @@ export function useThemesThankYouData(
 ): ThankYouThemeData {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const themeSlug = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'theme_slug' )
+	) as string;
 
 	// texts
 	const title = translate( 'Congrats on your new theme!' );
@@ -47,6 +51,10 @@ export function useThemesThankYouData(
 		[ dotComThemes, dotOrgThemes, themeSlugs ]
 	);
 	const allThemesFetched = themesList.every( ( theme ) => !! theme );
+
+	const isActive = themesList.some(
+		( theme ) => theme?.stylesheet === themeSlug || theme?.id === themeSlug
+	);
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
@@ -68,6 +76,14 @@ export function useThemesThankYouData(
 		};
 	}, [ dispatch, siteId ] );
 
+	useEffect( () => {
+		if ( isActive && continueWithPluginBundle ) {
+			page(
+				`/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteId=${ siteId }&siteSlug=${ siteSlug }`
+			);
+		}
+	}, [ isActive, continueWithPluginBundle, siteId, siteSlug ] );
+
 	const themesSection = themesList
 		.filter( ( theme ) => theme )
 		.map( ( theme: any ) => {
@@ -76,7 +92,6 @@ export function useThemesThankYouData(
 					key={ `theme_${ theme.id }` }
 					theme={ theme }
 					isOnboardingFlow={ isOnboardingFlow }
-					continueWithPluginBundle={ continueWithPluginBundle }
 				/>
 			);
 		} );
@@ -127,5 +142,8 @@ export function useThemesThankYouData(
 		thankyouSteps,
 		isAtomicNeeded,
 		null,
+		// Always display the loading screen if the theme has plugin bundle because the page will
+		// be redirected to the plugin-bundle flow immediately after the theme is activated.
+		! continueWithPluginBundle,
 	];
 }

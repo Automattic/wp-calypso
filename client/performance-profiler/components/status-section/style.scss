@@ -6,9 +6,8 @@
 	color: #000;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-end;
 	gap: 12px;
-
 
 	.status-badge {
 		display: flex;
@@ -19,11 +18,6 @@
 		border-radius: 4px;
 		font-weight: 500;
 		flex-shrink: 0;
-		width: 100%;
-
-		@media (max-width: $break-mobile) {
-			width: unset;
-		}
 
 		&.poor {
 			background: var(--studio-red-5);
@@ -47,8 +41,10 @@
 		}
 	}
 
-	@media (max-width: $break-mobile) {
+	@media (max-width: $break-large) {
 		flex-direction: row;
+		width: 100%;
+		align-items: center;
 		margin-bottom: 24px;
 	}
 }

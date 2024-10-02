@@ -223,9 +223,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
 
-			const redirectTo = encodeURIComponent(
-				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
-			);
+			const redirectTo = encodeURIComponent( `${ origin }/theme/${ themeId }/${ slug }` );
 
 			const currentPlanSlug = getSitePlanSlug( state, siteId );
 			const isEcommerceTrialMonthly = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;

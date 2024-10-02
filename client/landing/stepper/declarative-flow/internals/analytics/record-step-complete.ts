@@ -5,7 +5,7 @@ import { STEPPER_TRACKS_EVENT_STEP_COMPLETE } from 'calypso/landing/stepper/cons
 export interface RecordStepCompleteProps {
 	flow: string;
 	step: string;
-	optionalProps?: Record< string, string | number | null >;
+	optionalProps?: Record< string, string | number | null | boolean >;
 }
 
 const recordStepComplete = ( { flow, step, optionalProps }: RecordStepCompleteProps ) => {
