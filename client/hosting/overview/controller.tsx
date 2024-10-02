@@ -1,5 +1,5 @@
 import { Context as PageJSContext } from '@automattic/calypso-router';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import HostingOverview from 'calypso/hosting/overview/components/hosting-overview';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
@@ -7,10 +7,6 @@ import Hosting from 'calypso/hosting/server-settings/main';
 import { successNotice } from 'calypso/state/notices/actions';
 
 export function hostingOverview( context: PageJSContext, next: () => void ) {
-	const redirectToQueryParam = String( getQueryArg( context.path, 'redirect_to' ) );
-	if ( redirectToQueryParam ) {
-		return window.location.assign( redirectToQueryParam );
-	}
 	context.primary = <HostingOverview />;
 	next();
 }
