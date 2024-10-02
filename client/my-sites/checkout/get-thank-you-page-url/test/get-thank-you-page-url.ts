@@ -1307,7 +1307,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: samplePurchaseId,
 			} );
 
-			expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }` );
+			expect( url ).toBe( `/domains/manage/?new-domains=1` );
 		} );
 
 		it( 'Is not displayed if cart is missing', () => {
@@ -1969,6 +1969,41 @@ describe( 'getThankYouPageUrl', () => {
 					'test@example.com'
 				) }`
 			);
+		} );
+
+		/*
+		Code under test:
+
+			const domainItems = cart?.products?.filter( ( product ) => isDomainProduct( product ) );
+			if ( domainItems && domainItems.length > 0 && domainItems.length === cart?.products?.length ) {
+				debug( 'site with domain product' );
+				if ( siteSlug === 'no-site' ) {
+					return `/domains/manage/?new-domains=${ domainItems.length }`;
+				}
+				return `/domains/manage/${ siteSlug }?new-domains=${ domainItems.length }`;
+			}
+
+		*/
+		it( 'redirects to /domains/:domain/manage/:site when purchasing only domain', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						meta: 'domain-from-cart.com',
+						is_domain_registration: true,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				receiptId: samplePurchaseId,
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( `/domains/manage/foo.bar?new-domains=1` );
 		} );
 	} );
 } );

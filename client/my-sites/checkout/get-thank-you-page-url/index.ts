@@ -630,6 +630,9 @@ function getFallbackDestination( {
 	const domainItems = cart?.products?.filter( ( product ) => isDomainProduct( product ) );
 	if ( domainItems && domainItems.length > 0 && domainItems.length === cart?.products?.length ) {
 		debug( 'site with domain product' );
+		if ( siteSlug === 'no-site' ) {
+			return `/domains/manage/?new-domains=${ domainItems.length }`;
+		}
 		return `/domains/manage/${ siteSlug }?new-domains=${ domainItems.length }`;
 	}
 
