@@ -24,7 +24,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 
 	const [ hasImportError, setHasImportError ] = useState( false );
 
-	const { importCsvSubscribers } = useDispatch( Subscriber.store );
+	const { importCsvSubscribers, importCsvSubscribersUpdate } = useDispatch( Subscriber.store );
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 
@@ -64,6 +64,11 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 
 		return validExtensions.includes( match?.groups?.extension.toLowerCase() as string );
 	}
+
+	// This fixes the issue of the form being the the upload state even if the user hasn't loaded the importer.
+	useEffect( () => {
+		importCsvSubscribersUpdate( undefined ); // reset the form.
+	}, [ importCsvSubscribersUpdate ] );
 
 	const importSubscribersUrl =
 		'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
