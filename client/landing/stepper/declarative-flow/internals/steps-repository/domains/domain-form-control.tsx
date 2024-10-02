@@ -103,6 +103,10 @@ export function DomainFormControl( {
 		includeWordPressDotCom = false;
 	}
 
+	if ( flow === 'hundred-year-domain' ) {
+		includeWordPressDotCom = false;
+	}
+
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
