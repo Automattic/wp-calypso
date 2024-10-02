@@ -81,7 +81,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	} = props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'theme-showcase' );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp();
 	const updateShowSecondUpsellNudge = useCallback( () => {
 		const minColumnWidth = 320; // $theme-item-min-width: 320px;
 		const margin = 32; // $theme-item-horizontal-margin: 32px;

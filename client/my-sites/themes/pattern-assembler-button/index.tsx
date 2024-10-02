@@ -10,7 +10,7 @@ type Props = {
 
 export default function PatternAssemblerButton( { isPrimary, onClick }: Props ) {
 	const translate = useTranslate();
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'theme-showcase' );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp();
 
 	if ( ! isSiteAssemblerEnabled ) {
 		return null;

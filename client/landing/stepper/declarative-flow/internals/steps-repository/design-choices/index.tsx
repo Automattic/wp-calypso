@@ -35,7 +35,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
 
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp();
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 

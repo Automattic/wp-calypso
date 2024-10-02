@@ -130,7 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
 
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-picker' );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp();
 
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;

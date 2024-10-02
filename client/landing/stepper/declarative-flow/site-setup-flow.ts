@@ -155,7 +155,7 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 
-		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp();
 
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 
