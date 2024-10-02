@@ -8,6 +8,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	acceptAtomicTransferDialog,
 	dismissAtomicTransferDialog,
+	acceptActivationModal,
 	activate as activateTheme,
 	initiateThemeTransfer,
 } from 'calypso/state/themes/actions';
@@ -40,6 +41,7 @@ interface AtomicTransferDialogProps {
 	uploadError?: boolean;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
+	dispatchAcceptActivationModal: typeof acceptActivationModal;
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
 }
@@ -93,9 +95,16 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	continueToActivate() {
-		const { siteId, theme, dispatchActivateTheme, dispatchAcceptAtomicTransferDialog } = this.props;
+		const {
+			siteId,
+			theme,
+			dispatchActivateTheme,
+			dispatchAcceptAtomicTransferDialog,
+			dispatchAcceptActivationModal,
+		} = this.props;
 		if ( siteId ) {
 			dispatchAcceptAtomicTransferDialog( theme.id );
+			dispatchAcceptActivationModal( theme.id );
 			dispatchActivateTheme( theme.id, siteId );
 		}
 	}
@@ -228,6 +237,7 @@ export default connect(
 	{
 		dispatchAcceptAtomicTransferDialog: acceptAtomicTransferDialog,
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
+		dispatchAcceptActivationModal: acceptActivationModal,
 		dispatchActivateTheme: activateTheme,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
 	}
