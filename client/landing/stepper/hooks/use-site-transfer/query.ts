@@ -41,6 +41,12 @@ const isTransferring = ( status: TransferState ) => {
 	return ! endStates.includes( status );
 };
 
+const readyToTransferStates: TransferState[] = [ transferStates.NONE, transferStates.REVERTED ];
+
+const isReadyToTransfer = ( status: TransferState ) => {
+	return readyToTransferStates.includes( status );
+};
+
 export function getSiteTransferStatusQueryKey( siteId: number ) {
 	return [ 'sites', siteId, 'atomic', 'transfers', 'latest' ];
 }
@@ -68,7 +74,9 @@ export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?
 		select: ( data ) => {
 			return {
 				isTransferring: data?.status ? isTransferring( data.status as TransferStates ) : false,
-				isReadyToTransfer: data?.status === transferStates.NONE,
+				isReadyToTransfer: data?.status
+					? isReadyToTransfer( data.status as TransferStates )
+					: false,
 				completed: data?.status === transferStates.COMPLETED,
 				status: data.status,
 				error: null,
