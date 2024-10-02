@@ -14,10 +14,6 @@
 		line-height: 20px;
 	}
 
-	.campaign-item__title-row .campaign-item__post-type-mobile {
-		display: none;
-	}
-
 	.campaign-item__impressions,
 	.campaign-item__item__clicks,
 	.campaign-item__conversion {
@@ -64,14 +60,6 @@
 			.campaign-item__view-link:hover {
 				text-decoration: underline;
 			}
-		}
-
-		.campaign-item__title-row .campaign-item__post-type-mobile {
-			display: block;
-			font-size: 0.75rem;
-			font-weight: 400;
-			color: var(--studio-gray-40);
-			line-height: 20px;
 		}
 
 		.campaign-item__title {

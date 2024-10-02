@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Metrics } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	metricsNames,
 	mapThresholdsToStatus,
@@ -59,6 +60,9 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 		if ( key === activeTab ) {
 			setActiveTab( null );
 		} else {
+			recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
+				tab: key,
+			} );
 			setActiveTab( key as Metrics );
 		}
 	};

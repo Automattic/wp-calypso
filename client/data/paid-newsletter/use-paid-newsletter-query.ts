@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
-export type StepId = 'content' | 'subscribers' | 'summary';
+export type StepId = 'reset' | 'content' | 'subscribers' | 'summary';
 export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
 
 interface ContentStepContentProgress {

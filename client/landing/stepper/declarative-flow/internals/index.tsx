@@ -1,8 +1,4 @@
-import {
-	isNewsletterOrLinkInBioFlow,
-	isSenseiFlow,
-	isWooExpressFlow,
-} from '@automattic/onboarding';
+import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, lazy } from 'react';
@@ -189,11 +185,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	};
 
 	const getDocumentHeadTitle = () => {
-		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
-			return flow.title;
-		} else if ( isSenseiFlow( flow.name ) ) {
-			return __( 'Course Creator' );
-		}
+		return flow.title ?? __( 'Create a site' );
 	};
 
 	useSignUpStartTracking( { flow } );
