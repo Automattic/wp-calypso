@@ -134,8 +134,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		retry: false,
 	} );
 
-	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
-
 	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
 	const queryParams = new URLSearchParams( window.location.search );
 	const newEmail = queryParams.get( 'new-email' );
@@ -166,11 +164,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	// Email provisioning takes a few seconds to complete, if there is a newEmail
 	// Refetch email acounts every 1.5 seconds up to 5 times until we can see it
 	useEffect( () => {
-		if ( ! newEmail || emailExists ) {
-			return;
-		}
-
-		if ( emailAccountsRefetchCount >= 5 ) {
+		if ( ! newEmail || emailExists || emailAccountsRefetchCount >= 5 ) {
 			return;
 		}
 
@@ -181,6 +175,8 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 		return () => clearTimeout( refetchTimeout );
 	}, [ newEmail, refetch, emailExists, emailAccountsRefetchCount ] );
+
+	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
