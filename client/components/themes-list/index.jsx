@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getWooMyCustomThemeOptions } from 'calypso/my-sites/themes/theme-options';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -81,7 +81,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	} = props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'theme-showcase' );
 	const updateShowSecondUpsellNudge = useCallback( () => {
 		const minColumnWidth = 320; // $theme-item-min-width: 320px;
 		const margin = 32; // $theme-item-horizontal-margin: 32px;

@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -35,7 +35,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
 
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
