@@ -1,3 +1,3 @@
-export const useIsSiteAssemblerEnabledExp = () => {
+export const useIsSiteAssemblerEnabled = () => {
 	return false;
 };
