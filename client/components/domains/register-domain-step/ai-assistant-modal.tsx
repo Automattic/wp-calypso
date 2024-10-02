@@ -11,6 +11,7 @@ import { getDomainsInCart } from 'calypso/lib/cart-values/cart-items';
 import DomainsMiniCart from 'calypso/signup/steps/domains/domains-mini-cart';
 import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 import useAiSuggestionsMutation from './use-ai-suggestions';
+import ReskinSideExplainer from '../reskin-side-explainer';
 
 const HeaderImage = styled.img`
 	margin: 32px auto;
@@ -200,6 +201,8 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 		goToNext,
 		handleSkip,
 		freeDomainRemoveClickHandler,
+		handleDomainExplainerClick,
+		isPlanSelectionAvailableLaterInFlow,
 	} = props;
 	const translate = useTranslate();
 	const [ prompt, setPrompt ] = useState( '' );
@@ -217,7 +220,7 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 	}, [ results, translate ] );
 
 	const modalWidth = () => {
-		return '924px';
+		return '1024px';
 	};
 
 	const onSearch = ( newPrompt?: string ) => {
@@ -241,6 +244,8 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 	const onSearchChange = ( newPrompt: string ) => {
 		setPrompt( newPrompt );
 	};
+	const handleMoreResultsClick = () => {};
+
 	const domainsInCart = getDomainsInCart( cart );
 	const additionalDomains = temporaryCart
 		.map( ( cartDomain ) => {
@@ -298,6 +303,7 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					temporaryCart={ temporaryCart }
 					domainRemovalQueue={ domainRemovalQueue }
+					handleMoreResultsClick={ handleMoreResultsClick }
 					shouldShowAISuggestedSiteName
 				/>
 				{ domainsInCart.length > 0 || wpcomSubdomainSelected ? (
@@ -313,8 +319,22 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 						handleSkip={ handleSkip }
 						wpcomSubdomainSelected={ wpcomSubdomainSelected }
 						freeDomainRemoveClickHandler={ freeDomainRemoveClickHandler }
+						hideChooseDomainLater
 					/>
-				) : null }
+				) : (
+					<div className="domains__domain-side-content domains__free-domain">
+						<ReskinSideExplainer
+							onClick={ handleDomainExplainerClick }
+							type={
+								isPlanSelectionAvailableLaterInFlow
+									? 'free-domain-explainer-check-paid-plans'
+									: 'free-domain-explainer'
+							}
+							flowName={ flowName }
+							hideChooseDomainLater
+						/>
+					</div>
+				) }
 			</ResultsWrapper>
 		);
 	};
@@ -359,7 +379,7 @@ export default function AIAssistantModal( props: ModalContainerProps ) {
 				) }
 				{ isLoading && (
 					<Loading>
-						{ translate( 'Hold on tight … your request is being processed by our AI overlords' ) }
+						{ translate( 'Hold tight … our robot overlords are calculating in binary' ) }
 					</Loading>
 				) }
 

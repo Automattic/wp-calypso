@@ -225,6 +225,8 @@ export class DomainsMiniCart extends Component {
 		}
 
 		const userCurrency = this.props.userCurrency ?? 'USD';
+		const shouldHideChooseDomainLater =
+			this.props.flowName === 'domain' || this.props.hideChooseDomainLater;
 
 		return (
 			<div className="domains__domain-side-content domains__domain-cart">
@@ -263,7 +265,7 @@ export class DomainsMiniCart extends Component {
 				>
 					{ translate( 'Continue' ) }
 				</Button>
-				{ this.props.flowName !== 'domain' && (
+				{ ! shouldHideChooseDomainLater && (
 					<Button
 						borderless
 						className="domains__domain-cart-choose-later"

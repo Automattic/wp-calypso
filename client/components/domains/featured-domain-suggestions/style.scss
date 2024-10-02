@@ -203,8 +203,21 @@
 	margin-bottom: 10px;
 }
 
-.ai-assistant-modal .featured-domain-suggestions__wrapper {
-	margin-bottom: 20px;
+.ai-assistant-modal {
+	.featured-domain-suggestions__wrapper {
+		margin-bottom: 20px;
+	}
+
+	.featured-domain-suggestions__site-name-wrapper {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+    	gap: 10px;
+	}
+
+	.featured-domain-suggestions__more-search-results {
+		font-size: 12px;
+	}
 }
 
 body.is-section-stepper .step-container .featured-domain-suggestion.card,

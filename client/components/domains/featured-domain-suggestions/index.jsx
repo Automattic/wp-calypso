@@ -103,7 +103,7 @@ export class FeaturedDomainSuggestions extends Component {
 	}
 
 	render() {
-		const { featuredSuggestions } = this.props;
+		const { featuredSuggestions, handleMoreResultsClick } = this.props;
 		const childProps = this.getChildProps();
 
 		if ( this.props.showPlaceholders ) {
@@ -115,12 +115,22 @@ export class FeaturedDomainSuggestions extends Component {
 				{ featuredSuggestions.map( ( suggestion, index ) => (
 					<div className="featured-domain-suggestions__wrapper" key={ suggestion.domain_name }>
 						{ this.props.shouldShowAISuggestedSiteName && (
-							<div className="featured-domain-suggestions__site-name-suggestion">
-								<img src={ AIassistantIllustration } width={ 24 } alt="" />
-								<h2 className="featured-domain-suggestions__site-name-suggestion-text">
-									{ suggestion.business_name }
-								</h2>
-							</div>
+							<>
+								<div className="featured-domain-suggestions__site-name-suggestion">
+									<img src={ AIassistantIllustration } width={ 24 } alt="" />
+									<div className="featured-domain-suggestions__site-name-wrapper">
+										<h2 className="featured-domain-suggestions__site-name-suggestion-text">
+											{ suggestion.business_name }
+										</h2>
+										<div
+											className="featured-domain-suggestions__more-search-results"
+											onClick={ handleMoreResultsClick }
+										>
+											{ this.props.translate( '(more like this)' ) }
+										</div>
+									</div>
+								</div>
+							</>
 						) }
 						<DomainRegistrationSuggestion
 							suggestion={ suggestion }
