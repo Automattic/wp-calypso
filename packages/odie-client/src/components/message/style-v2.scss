@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
-@import "@automattic/components/src/styles/typography.scss";
+@import "@automattic/components/src/styles/typography";
+$blueberry-color: #3858e9;
 
 .odie-chatbox-message {
 	display: flex;
@@ -31,10 +32,8 @@
 
 	.disclaimer {
 		color: var(--studio-gray-50);
-		// font-size: $font-body-extra-small;
 		text-align: left;
 		gap: 4px;
-		// text-align: right;
 		p {
 			font-size: 0.75rem;
 		}
@@ -66,18 +65,15 @@
 }
 
 .odie-chatbox-message.odie-chatbox-message-user {
-	// background-color: var(--studio-gray-0);
-	//
-	justify-content: right;
+	justify-content: right
 }
 
 .odie-chatbox-message.odie-chatbox-message-user p {
-	border: 1px solid #000;
-	border-radius: 2px;
-	// font-size: 1rem;
-	font-size: 0.875rem;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 0 8px;
+	font-size: 1rem;
 	padding: 16px;
-	background-color: var(--color-primary);
+	background-color: $blueberry-color;
 	color: #fff;
 }
 
@@ -103,10 +99,12 @@
 	justify-content: center;
 
 	.odie-chatbox-introduction-message {
-		// border: 1px solid black;
 		background-color: #f7f7f7;
 		padding: 16px;
 		font-size: 0.875rem;
+		/* this is to match designs */
+		/* stylelint-disable-next-line scales/radii */		
+		border-radius: 8px 8px 8px 0;
 	}
 }
 
@@ -358,6 +356,7 @@ $custom-border-corner-size: 16px;
 		appearance: none;
 		background-color: var(--color-primary);
 		color: var(--studio-white);
+		/* stylelint-disable-next-line declaration-block-no-shorthand-property-overrides */
 		border: none;
 		display: flex;
 		height: 28px;
