@@ -44,7 +44,7 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
@@ -130,7 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
 
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-picker' );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
 
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
@@ -628,12 +628,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					return Promise.resolve()
 						.then( () =>
 							reduxDispatch(
-								activateOrInstallThenActivate(
-									themeId ?? '',
-									site?.ID ?? 0,
-									'assembler',
-									false
-								) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+								activateOrInstallThenActivate( themeId ?? '', site?.ID ?? 0, {
+									source: 'assembler',
+								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 							)
 						)
 						.then( ( activeThemeStylesheet: string ) =>

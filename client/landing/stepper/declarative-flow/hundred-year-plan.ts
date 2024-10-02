@@ -39,6 +39,16 @@ const HundredYearPlanFlow: Flow = {
 							asyncComponent: () =>
 								import( './internals/steps-repository/hundred-year-plan-diy-or-difm' ),
 						},
+						{
+							slug: 'schedule-appointment',
+							asyncComponent: () =>
+								import( './internals/steps-repository/hundred-year-plan-schedule-appointment' ),
+						},
+						{
+							slug: 'thank-you',
+							asyncComponent: () =>
+								import( './internals/steps-repository/hundred-year-plan-thank-you' ),
+						},
 				  ]
 				: [] ),
 
@@ -119,7 +129,9 @@ const HundredYearPlanFlow: Flow = {
 						return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
 					}
 					// TODO: add VIP flow
-					return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
+					return navigate( 'schedule-appointment' );
+				case 'schedule-appointment':
+					return navigate( 'thank-you' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
 						return navigate( 'setup' );

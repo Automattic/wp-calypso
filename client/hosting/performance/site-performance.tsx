@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
@@ -9,6 +9,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -146,6 +147,7 @@ export const SitePerformance = () => {
 	}, [ currentPage?.wpcom_performance_report_url ] );
 
 	const retestPage = () => {
+		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		setWpcom_performance_report_url( {
 			url: currentPage?.url ?? '',
 			hash: '',
@@ -200,8 +202,15 @@ export const SitePerformance = () => {
 		dispatch( launchSite( siteId! ) );
 	};
 
-	const isMobile = ! useDesktopBreakpoint();
+	const isMobile = useMobileBreakpoint();
 	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+
+	const handleDeviceTabChange = ( tab: Tab ) => {
+		setActiveTab( tab );
+		recordTracksEvent( 'calypso_performance_profiler_device_tab_change', {
+			device: tab,
+		} );
+	};
 
 	const pageSelector = (
 		<PageSelector
@@ -227,7 +236,7 @@ export const SitePerformance = () => {
 	);
 
 	const subtitle = performanceReport.performanceReport
-		? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
+		? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
 				args: {
 					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
 						'MMMM Do, YYYY h:mm:ss A'
@@ -246,6 +255,13 @@ export const SitePerformance = () => {
 							} }
 							variant="link"
 							onClick={ retestPage }
+						/>
+					),
+					span: (
+						<span
+							style={ {
+								fontVariantNumeric: 'tabular-nums',
+							} }
 						/>
 					),
 				},
@@ -278,7 +294,7 @@ export const SitePerformance = () => {
 				{ ! isMobile && pageSelector }
 				<DeviceTabControls
 					showTitle={ ! isMobile }
-					onDeviceTabChange={ setActiveTab }
+					onDeviceTabChange={ handleDeviceTabChange }
 					disabled={ disableControls }
 					value={ activeTab }
 				/>

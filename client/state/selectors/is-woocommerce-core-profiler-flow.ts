@@ -11,7 +11,7 @@ import type { AppState } from 'calypso/types';
  * @returns {?boolean}        Whether the user reached Calypso via the WooCommerce Core Profiler flow
  */
 export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
-	const allowedFrom = [ 'woocommerce-core-profiler', 'woocommerce-payments' ];
+	const allowedFrom = [ 'woocommerce-core-profiler' ];
 	return (
 		allowedFrom.includes( get( getInitialQueryArguments( state ), 'from' ) as string ) ||
 		allowedFrom.includes( get( getCurrentQueryArguments( state ), 'from' ) as string ) ||

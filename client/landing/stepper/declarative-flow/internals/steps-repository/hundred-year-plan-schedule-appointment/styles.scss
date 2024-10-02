@@ -1,0 +1,18 @@
+.hundred-year-plan-schedule-appointment-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &__start-pane {
+       flex: 1;
+    }
+
+    &__end-pane {
+        flex: 1;
+    }
+
+    .calendly-widget {
+        min-width: 320px;
+        height: 700px;
+    }
+}
