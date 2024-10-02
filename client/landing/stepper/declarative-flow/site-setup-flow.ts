@@ -5,7 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useExperiment } from 'calypso/lib/explat';
@@ -155,7 +155,7 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 
-		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
 
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 
