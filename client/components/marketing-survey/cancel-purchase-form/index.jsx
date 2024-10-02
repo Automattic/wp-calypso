@@ -19,7 +19,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { cancelPurchaseSurveyTaken, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -282,6 +282,8 @@ class CancelPurchaseForm extends Component {
 						isSubmitting: false,
 					} );
 				} );
+
+			this.props.cancelPurchaseSurveyTaken( purchase.id );
 		}
 
 		this.props.onClickFinalConfirm();
@@ -856,6 +858,7 @@ const ConnectedCancelPurchaseForm = connect(
 		hasBackupsFeature: siteHasFeature( state, purchase.siteId, WPCOM_FEATURES_BACKUPS ),
 	} ),
 	{
+		cancelPurchaseSurveyTaken,
 		fetchAtomicTransfer,
 		recordTracksEvent,
 		submitSurvey,
