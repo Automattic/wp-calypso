@@ -123,7 +123,7 @@ export function login( {
 	}
 
 	if ( pluginName ) {
-		url = addQueryArgs( { pluginName }, url );
+		url = addQueryArgs( { plugin_name: pluginName }, url );
 	}
 
 	return url;
