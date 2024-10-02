@@ -1,5 +1,6 @@
 import { Callback, Context } from '@automattic/calypso-router';
 import debug from 'debug';
+import { useEffect, useState } from 'react';
 import store from 'store';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import {
@@ -12,16 +13,38 @@ import {
 	hasFetchedAgency,
 	isFetchingAgency,
 } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';
 
+// A simple wrapper to ensure the PageViewTracker is only rendered, and the event fired,
+// after the agency has been fetched and we know if the user is an agency user or not.
+// This is because if they're an agency they get redirected and never see the page.
 const PageViewTrackerWrapper = ( { path }: { path: string } ) => {
+	const userLoggedIn = useSelector( isUserLoggedIn );
 	const agency = useSelector( getActiveAgency );
 	const hasFetched = useSelector( hasFetchedAgency );
 	const isFetching = useSelector( isFetchingAgency );
+	const [ shouldRenderTracker, setShouldRenderTracker ] = useState( false );
 
-	const shouldRenderTracker = hasFetched && ! isFetching && ! agency;
+	useEffect( () => {
+		if ( ! userLoggedIn ) {
+			// The majority of users aren't logged in, and we render the tracker.
+			// userLoggedIn seems to be accurate in it's initial state.
+			setShouldRenderTracker( true );
+		} else if ( hasFetched && ! isFetching ) {
+			// Use a tiny delay to ensure all state updates have propagated.
+			// Since there's a delay between hasFetched being set to true and
+			// agency being set when an agency exists.
+			// The 0 timeout gets it to execute after the current call stack is cleared.
+			const timer = setTimeout( () => {
+				setShouldRenderTracker( ! agency );
+			}, 0 );
+
+			return () => clearTimeout( timer );
+		}
+	}, [ hasFetched, isFetching, agency, userLoggedIn ] );
 
 	if ( ! shouldRenderTracker ) {
 		return null;
