@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect } from 'react';
 import { Control, Controller, FieldError, useForm } from 'react-hook-form';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import Notice from 'calypso/components/notice';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import {
 	type TicketMigrationData,
@@ -131,19 +132,26 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	return (
 		<div className="site-migration-already-wpcom__form-container">
 			<form className="site-migration-already-wpcom__form" onSubmit={ onSubmit }>
-				<div className="site-migration-already-wpcom__form-content">
+				{ errors.intents && (
+					<Notice
+						showIcon={ false }
+						status="is-warning"
+						text={ translate( 'Please select an option.' ) }
+						showDismiss={ false }
+						className="site-migration-already-wpcom__form-error-notice"
+					/>
+				) }
+				<div
+					className={ clsx( 'site-migration-already-wpcom__form-content', {
+						'site-migration-already-wpcom__form-content--error': errors.intents,
+					} ) }
+				>
 					<div className="site-migration-already-wpcom__form-title-container">
-						<h4
-							className={ clsx( 'site-migration-already-wpcom__form-title', {
-								'site-migration-already-wpcom__form-title--error': errors.intents,
-							} ) }
-						>
+						<h4 className="site-migration-already-wpcom__form-title">
 							{ translate( 'What brought you here today?' ) }
 						</h4>
-						{ errors.intents && (
-							<p className="site-migration-already-wpcom__form-error">{ errors.intents.message }</p>
-						) }
 					</div>
+
 					<CheckboxIntents
 						value="transfer-my-domain-to-wordpress-com"
 						label={ translate( 'Transfer my domain to WordPress.com' ) }

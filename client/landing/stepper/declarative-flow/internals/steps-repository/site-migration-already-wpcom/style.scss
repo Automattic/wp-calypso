@@ -12,17 +12,12 @@
 	flex-direction: column;
 	gap: 1rem;
 	align-items: center;
-	justify-content: center;
 }
 
-
 .site-migration-already-wpcom__form {
-	width: 520px;
-	padding: 0 2.5rem;
 	display: flex;
 	flex-direction: column;
-	gap: 1.5rem;
-	box-sizing: border-box;
+	gap: 16px;
 }
 
 .site-migration-already-wpcom__form .components-checkbox-control__label {
@@ -42,7 +37,6 @@
 	font-size: 0.875rem;
 	font-weight: 600;
 	margin-bottom: 0;
-
 }
 
 .site-migration-already-wpcom__form-textarea-container {
@@ -55,4 +49,18 @@
 
 .site-migration-already-wpcom__form-textarea--error {
 	border-color: var(--color-error);
+}
+
+.site-migration-already-wpcom__form-error-notice {
+	margin-bottom: 0;
+}
+
+.site-migration-already-wpcom__form-content--error {
+	* {
+		color: var(--color-error);
+
+	}
+	input[type="checkbox"] {
+		border-color: var(--color-error);
+	}
 }
