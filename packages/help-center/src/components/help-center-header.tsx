@@ -3,10 +3,10 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
-import { DragIcon, LeftChevron } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
+import { BackButton } from './back-button';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -58,46 +58,18 @@ const SupportModeTitle = () => {
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
-	const navigate = useNavigate();
 
 	const getHeaderText = () => {
 		if ( pathname === '/odie' ) {
-			return __( 'Wapuu', __i18n_text_domain__ );
+			return __( 'Virtual Expert', __i18n_text_domain__ );
 		}
 		return __( 'Help Center', __i18n_text_domain__ );
-	};
-
-	const helpCenterHeader = () => {
-		if ( pathname === '/odie' ) {
-			return (
-				<>
-					<Button
-						className="help-center-header__navigate-back"
-						label={ __( 'Back to Help Center', __i18n_text_domain__ ) }
-						icon={ LeftChevron }
-						onClick={ () => {
-							navigate( '/' );
-						} }
-						onTouchStart={ () => {
-							navigate( '/' );
-						} }
-					/>
-					{ getHeaderText() }
-				</>
-			);
-		}
-		return (
-			<>
-				<DragIcon />
-				{ getHeaderText() }
-			</>
-		);
 	};
 
 	return (
 		<>
 			<span id="header-text" className="help-center-header__text" role="presentation">
-				{ helpCenterHeader() }
+				<BackButton buttonText={ getHeaderText() } />
 			</span>
 			<Button
 				className="help-center-header__minimize"

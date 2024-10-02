@@ -7,7 +7,7 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage, useOdieAssistantContext } from '@automattic/odie-client';
+import { useGetOdieStorage } from '@automattic/odie-client';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -23,7 +23,6 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
-import { BackButtonHeader } from './back-button';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { generateContactOnClickEvent } from './utils';
@@ -155,7 +154,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 	return (
 		<div className="help-center-contact-page">
-			{ ! hideHeaders && <BackButtonHeader /> }
 			<div className="help-center-contact-page__content">
 				{ ! hideHeaders && (
 					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
@@ -186,13 +184,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { url, isLoading } = useStillNeedHelpURL();
-	const { clearChat } = useOdieAssistantContext();
 	const helpCenterContext = useHelpCenterContext();
 	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {
-		// clearChat();
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
