@@ -185,7 +185,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 				clearTimeout( refetchTimeoutRef.current );
 			}
 		};
-	}, [ newEmail, refetch, emailAccounts, emailExists, refetchCount ] );
+	}, [ newEmail, refetch, emailExists, refetchCount ] );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
