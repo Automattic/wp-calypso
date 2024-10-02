@@ -32,6 +32,11 @@ const Card = styled( FoldableCard )`
 	font-size: 16px;
 	line-height: normal;
 	letter-spacing: -0.1px;
+
+	&.foldable-card.card.is-expanded,
+	&.is-compact {
+		margin: 0;
+	}
 `;
 
 type Header = {

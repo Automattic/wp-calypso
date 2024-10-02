@@ -236,7 +236,7 @@ export const SitePerformance = () => {
 	);
 
 	const subtitle = performanceReport.performanceReport
-		? translate( 'Tested on %(testedDate)s. {{button}}Test again{{/button}}', {
+		? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
 				args: {
 					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
 						'MMMM Do, YYYY h:mm:ss A'
@@ -255,6 +255,13 @@ export const SitePerformance = () => {
 							} }
 							variant="link"
 							onClick={ retestPage }
+						/>
+					),
+					span: (
+						<span
+							style={ {
+								fontVariantNumeric: 'tabular-nums',
+							} }
 						/>
 					),
 				},

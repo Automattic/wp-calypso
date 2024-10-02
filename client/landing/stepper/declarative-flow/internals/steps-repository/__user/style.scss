@@ -1,4 +1,7 @@
 @import "calypso/signup/style";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 body.is-section-stepper .step-route {
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
@@ -10,7 +13,11 @@ body.is-section-stepper .step-route {
 	align-items: center;
 	justify-content: center;
 	min-height: calc(100vh - 96px);
-	margin: 48px 0 0;
+	margin: 140px 0 0;
+	@include break-small {
+		margin: 108px 0 0;
+	}
+	
 
 	a.step-wrapper__navigation-link {
 		color: #1d2327;
@@ -30,10 +37,23 @@ body.is-section-stepper .step-route {
 		fill: var(--color-text);
 		transform-origin: 0 0;
 	}
-	.formatted-header__title {
-		line-height: 3.25;
-		font-size: 2rem;
+
+	.step-container__content {
+		.formatted-header {
+			margin: 24px 20px;
+			.formatted-header__title {
+				/* this is to match with start */
+				/* stylelint-disable-next-line scales/font-sizes */
+				font-size: 1.875rem;
+				line-height: 40px;
+				@include break-small {
+					font-size: 2rem;
+					line-height: 3.25;
+				}	
+			}
+		}
 	}
+	
 	.signup-form-social-first {
 		width: 327px;
 		margin: 0 auto;

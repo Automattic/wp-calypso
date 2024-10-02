@@ -12,7 +12,7 @@ export function isDomainRenewable( domain: ResponseDomain ) {
 		domain.pendingRegistrationAtRegistry ||
 		domain.pendingRegistration ||
 		! domain.currentUserCanManage ||
-		( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
+		( ! domain.isRenewable && ! domain.isRedeemable ) ||
 		domain.aftermarketAuction;
 	return ! shouldNotAllowManualRenew;
 }

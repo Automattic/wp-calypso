@@ -16,7 +16,7 @@
 	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"zendesk_presales_chat_key_akismet": "7ce13115-7b34-4069-9d64-228d90f148d1",
 	"zendesk_presales_chat_key_jp_checkout": "7c42153f-f579-49ba-a33e-246b2d27fb93",
-	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
+	"zendesk_support_chat_key": "715f17a8-4a28-4a7f-8447-0ef8f06c70d7",
 	"features": {
 		"100-year-plan/vip": false,
 		"ad-tracking": false,
@@ -55,7 +55,7 @@
 		"google-my-business": true,
 		"help": true,
 		"help/gpt-response": true,
-		"hosting-server-settings-enhancements": false,
+		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
 		"importer/unified": true,
