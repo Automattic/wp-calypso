@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
+import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setSignupStartTime } from 'calypso/signup/storageUtils';
