@@ -93,7 +93,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		} else if ( error ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 		}
-	}, [ isSuccess, error, onSubmit, clearErrors ] );
+	}, [ isSuccess, error, onSubmit ] );
 
 	useEffect( () => {
 		const { unsubscribe } = watch( ( formData, changedField ) => {
