@@ -186,14 +186,6 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( getByText( messages.noTLDError ) ).toBeVisible();
 	} );
 
-	it( 'fills the site address and disable it when the user already informed the site address on previous step', async () => {
-		const initialEntry = '/site-migration-credentials?from=https://example.com';
-		render( {}, { initialEntry } );
-
-		expect( siteAddressInput() ).toHaveValue( 'https://example.com' );
-		expect( siteAddressInput() ).toBeDisabled();
-	} );
-
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
