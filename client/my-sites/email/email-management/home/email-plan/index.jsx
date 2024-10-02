@@ -159,9 +159,9 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		account.emails.some( ( email ) => mailbox === email.mailbox )
 	);
 
-	const [ refetchCount, setRefetchCount ] = useState( 0 );
-
-	const isLoading = isLoadingEmailAccounts || ( newEmail && ! emailExists && refetchCount < 5 );
+	const [ emailAccountsRefetchCount, setEmailAccountsRefetchCount ] = useState( 0 );
+	const isLoading =
+		isLoadingEmailAccounts || ( newEmail && ! emailExists && emailAccountsRefetchCount < 5 );
 
 	// Email provisioning takes a few seconds to complete, if there is a newEmail
 	// Refetch email acounts every 1.5 seconds up to 5 times until we can see it
@@ -170,17 +170,17 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			return;
 		}
 
-		if ( refetchCount >= 5 ) {
+		if ( emailAccountsRefetchCount >= 5 ) {
 			return;
 		}
 
 		const refetchTimeout = setTimeout( () => {
 			refetch();
-			setRefetchCount( ( prev ) => prev + 1 );
+			setEmailAccountsRefetchCount( ( prev ) => prev + 1 );
 		}, 1500 );
 
 		return () => clearTimeout( refetchTimeout );
-	}, [ newEmail, refetch, emailExists, refetchCount ] );
+	}, [ newEmail, refetch, emailExists, emailAccountsRefetchCount ] );
 
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
