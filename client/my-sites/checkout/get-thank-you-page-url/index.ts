@@ -591,7 +591,7 @@ function getFallbackDestination( {
 			if ( cart?.products?.length === 1 ) {
 				const domain = titanProducts[ 0 ]?.meta;
 				if ( domain ) {
-					return `/email/${ domain }/manage/${ siteSlug }?new-email=${ emails[ 0 ].email }`;
+					return getEmailManagementPath( siteSlug, domain, null, { 'new-email': emails[ 0 ].email } );
 				}
 			}
 			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
