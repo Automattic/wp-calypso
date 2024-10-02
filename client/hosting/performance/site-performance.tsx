@@ -43,7 +43,7 @@ const usePerformanceReport = (
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
-	const { data: basicMetrics, isError } = useUrlBasicMetricsQuery( url, hash, true );
+	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
@@ -79,6 +79,7 @@ const usePerformanceReport = (
 		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
 		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
 		isError: isError || isErrorInsights,
+		isFetched,
 	};
 };
 
@@ -171,6 +172,14 @@ export const SitePerformance = () => {
 		isSitePublic ? wpcom_performance_report_url : undefined,
 		activeTab
 	);
+
+	useEffect( () => {
+		if ( performanceReport.isFetched && performanceReport.url ) {
+			recordTracksEvent( 'calypso_performance_profiler_test_started', {
+				url: performanceReport.url,
+			} );
+		}
+	}, [ performanceReport.isFetched, performanceReport.url ] );
 
 	useEffect( () => {
 		if ( performanceReport.hash && performanceReport.hash !== wpcom_performance_report_url?.hash ) {
