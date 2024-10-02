@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -123,24 +123,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		);
 	};
 
-	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
-	const queryParams = new URLSearchParams( window.location.search );
-	const newEmail = queryParams.get( 'new-email' );
-
-	const refetchTimeoutRef = useRef( null );
-	const [ refetchCount, setRefetchCount ] = useState( 0 );
-
-	useEffect( () => {
-		if ( ! newEmail ) {
-			return;
-		}
-		dispatch(
-			successNotice( translate( 'Your mailbox %(mailbox)s has been created.', { args: { mailbox: newEmail } } ), {
-				duration: 8000,
-			} )
-		);
-	}, [ newEmail, dispatch, translate ] );
-
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
 	const {
@@ -154,10 +136,31 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
 
+	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
+	const queryParams = new URLSearchParams( window.location.search );
+	const newEmail = queryParams.get( 'new-email' );
+
+	useEffect( () => {
+		if ( ! newEmail ) {
+			return;
+		}
+		dispatch(
+			successNotice(
+				translate( 'Your mailbox %(mailbox)s has been created.', { args: { mailbox: newEmail } } ),
+				{
+					duration: 8000,
+				}
+			)
+		);
+	}, [ newEmail, dispatch, translate ] );
+
 	const mailbox = newEmail ? newEmail.split( '@' )[ 0 ] : '';
 	const emailExists = emailAccounts.some( ( account ) =>
 		account.emails.some( ( email ) => mailbox === email.mailbox )
 	);
+
+	const [ refetchCount, setRefetchCount ] = useState( 0 );
+
 	const isLoading = isLoadingEmailAccounts || ( newEmail && ! emailExists && refetchCount < 5 );
 
 	// Email provisioning takes a few seconds to complete, if there is a newEmail
@@ -171,20 +174,12 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			return;
 		}
 
-		if ( refetchTimeoutRef.current ) {
-			clearTimeout( refetchTimeoutRef.current );
-		}
-
-		refetchTimeoutRef.current = setTimeout( () => {
+		const refetchTimeout = setTimeout( () => {
 			refetch();
 			setRefetchCount( ( prev ) => prev + 1 );
 		}, 1500 );
 
-		return () => {
-			if ( refetchTimeoutRef.current ) {
-				clearTimeout( refetchTimeoutRef.current );
-			}
-		};
+		return () => clearTimeout( refetchTimeout );
 	}, [ newEmail, refetch, emailExists, refetchCount ] );
 
 	function getAddMailboxProps() {
