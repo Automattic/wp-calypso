@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useIsSiteAssemblerEnabled } from 'calypso/data/site-assembler';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import './style.scss';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 
 export default function PatternAssemblerButton( { isPrimary, onClick }: Props ) {
 	const translate = useTranslate();
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabled();
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'theme-showcase' );
 
 	if ( ! isSiteAssemblerEnabled ) {
 		return null;
