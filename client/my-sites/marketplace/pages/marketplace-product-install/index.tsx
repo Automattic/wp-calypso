@@ -10,7 +10,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
@@ -493,7 +492,6 @@ const MarketplaceProductInstall = ( {
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
-				<Item>{ translate( 'Marketplace installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || (
