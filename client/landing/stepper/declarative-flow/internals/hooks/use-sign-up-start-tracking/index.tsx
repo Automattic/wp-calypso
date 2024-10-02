@@ -19,12 +19,10 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 	const [ queryParams ] = useSearchParams();
 	const ref = queryParams.get( 'ref' ) || '';
 	const flowName = flow.name;
+	const flowVariant = flow.variantSlug;
 	const isSignupFlow = flow.isSignupFlow;
-	const extraProps = useSnakeCasedKeys( {
-		input: {
-			flowVariant: flow.variantSlug,
-			...flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
-		},
+	const signupStartEventProps = useSnakeCasedKeys( {
+		input: flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
 	} );
 
 	/**
@@ -50,6 +48,13 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 			return;
 		}
 
-		recordSignupStart( { flow: flowName, ref, optionalProps: extraProps || {} } );
-	}, [ isSignupFlow, flowName, ref, extraProps ] );
+		recordSignupStart( {
+			flow: flowName,
+			ref,
+			optionalProps: {
+				...signupStartEventProps,
+				...( flowVariant && { flow_variant: flowVariant } ),
+			},
+		} );
+	}, [ isSignupFlow, flowName, ref, signupStartEventProps, flowVariant ] );
 };

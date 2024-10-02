@@ -135,7 +135,9 @@ describe( 'useSignUpTracking', () => {
 			const { rerender } = render( {
 				flow: {
 					...signUpFlow,
-					useSignupStartEventProps: () => ( { extra: 'props' } ),
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
 				} satisfies Flow,
 			} );
 
