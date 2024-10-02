@@ -101,6 +101,7 @@ export function resolveDomainStatus(
 	const paymentSetupCallToAction = {
 		href: '/me/purchases/payment-methods',
 		label: translate( 'Fix' ),
+		onClick: ( e: MouseEvent ) => e.stopPropagation(),
 	};
 
 	switch ( domain.type ) {
