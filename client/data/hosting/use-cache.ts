@@ -198,15 +198,16 @@ export function useEdgeCacheDefensiveModeQuery( siteId: number | null ) {
 	const enabled = data?.enabled ?? false;
 	const enabledUntil = data?.enabled_until ?? 0;
 
-	// Refetch the defensive mode API endpoint ten seconds after it's set to disable
+	// If defensive mode is enabled, refetch the query ten seconds after the `enabled_util`
+	// timestamp
 	useEffect( () => {
 		if ( ! enabled ) {
 			return;
 		}
 
-		const msDiff = enabledUntil * 1000 - Date.now();
-		const delay = Math.max( 0, msDiff ) + 10000;
-		const timeoutId = setTimeout( () => refetch(), delay );
+		const delayUntilDefensiveModeEnds = enabledUntil * 1000 - Date.now();
+		const delayUntilRefetch = Math.max( 0, delayUntilDefensiveModeEnds ) + 10000;
+		const timeoutId = setTimeout( () => refetch(), delayUntilRefetch );
 
 		return () => {
 			clearTimeout( timeoutId );
