@@ -52,7 +52,7 @@ export const BackButton = ( {
 
 	return (
 		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
-			<Icon icon={ key === 'default' ? <DragIcon /> : chevronLeft } size={ 18 } />
+			<Icon icon={ isHelpCenterHome ? <DragIcon /> : chevronLeft } size={ 18 } />
 			{ buttonText ?? defaultButtonText }
 		</Button>
 	);
