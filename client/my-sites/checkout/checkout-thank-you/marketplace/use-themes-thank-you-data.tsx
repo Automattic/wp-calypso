@@ -141,9 +141,14 @@ export function useThemesThankYouData(
 	// Redirect to the Theme Details page after the atomic transfer.
 	useEffect( () => {
 		if ( firstTheme && isAtomicNeeded && isJetpack ) {
-			page( addQueryArgs( `/theme/${ firstTheme.id }/${ siteSlug }`, { activating: true } ) );
+			page(
+				addQueryArgs( `/theme/${ firstTheme.id }/${ siteSlug }`, {
+					activating: true,
+					...( isOnboardingFlow ? { onboarding: true } : {} ),
+				} )
+			);
 		}
-	}, [ firstTheme, isAtomicNeeded, isJetpack ] );
+	}, [ firstTheme, isAtomicNeeded, isJetpack, isOnboardingFlow ] );
 
 	return [
 		firstTheme,
