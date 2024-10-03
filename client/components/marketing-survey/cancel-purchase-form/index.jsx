@@ -283,7 +283,9 @@ class CancelPurchaseForm extends Component {
 					} );
 				} );
 
-			this.props.cancelPurchaseSurveyCompleted( purchase.id );
+			if ( this.props.flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+				this.props.cancelPurchaseSurveyCompleted( purchase.id );
+			}
 		}
 
 		this.props.onClickFinalConfirm();
