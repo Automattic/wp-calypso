@@ -124,6 +124,11 @@
 				margin: 0 0 1.5em 1.5em;
 			}
 
+			ol {
+				font-size: $font-body-small;
+				color: var(--color-neutral-80);
+			}
+
 			span.noticon.noticon-star {
 				color: var(--studio-yellow-20);
 			}
