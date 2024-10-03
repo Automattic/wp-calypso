@@ -283,7 +283,9 @@ class CancelPurchaseForm extends Component {
 					} );
 				} );
 
-			this.props.cancelPurchaseSurveyCompleted( purchase.id );
+			if ( this.props.flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+				this.props.cancelPurchaseSurveyCompleted( purchase.id );
+			}
 		}
 
 		this.props.onClickFinalConfirm();
@@ -538,7 +540,7 @@ class CancelPurchaseForm extends Component {
 									{
 										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business"
 										translate(
-											'If you remove your subscription, you will lose access to the features of the %(planName)s plan.',
+											'If you remove your plan, you will lose access to the features of the %(planName)s plan.',
 											{
 												args: {
 													planName: productName,
@@ -551,7 +553,7 @@ class CancelPurchaseForm extends Component {
 									{
 										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
 										translate(
-											'If you keep your subscription, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
+											'If you keep your plan, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
 											{
 												args: {
 													planName: productName,
@@ -595,6 +597,10 @@ class CancelPurchaseForm extends Component {
 	canGoNext() {
 		const { surveyStep, isSubmitting } = this.state;
 		const { disableButtons, isImport } = this.props;
+
+		if ( disableButtons || isSubmitting ) {
+			return false;
+		}
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			if ( isImport && ! this.state.importQuestionRadio ) {
