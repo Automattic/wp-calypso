@@ -34,6 +34,11 @@ const TRANSFER_NOT_INITIATED = () => ( {
 	},
 } );
 
+const REVERTED_TRANSFER = () => ( {
+	atomic_transfer_id: '1254451',
+	status: 'reverted',
+} );
+
 const TRANSFER_PROVISIONED = ( siteId: number ) => ( {
 	atomic_transfer_id: '1254451',
 	blog_id: siteId,
@@ -89,6 +94,36 @@ describe( 'useSiteTransfer', () => {
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.once()
 			.reply( 404, TRANSFER_NOT_INITIATED() )
+			.post( `/wpcom/v2/sites/${ siteId }/atomic/transfers`, {
+				context: 'unknown',
+				transfer_intent: 'migrate',
+			} )
+			.reply( 200, TRANSFER_ACTIVE( siteId ) )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.once()
+			.reply( 200, TRANSFER_COMPLETED( siteId ) );
+
+		const { result } = render( { siteId } );
+
+		await waitFor(
+			() => {
+				expect( result.current ).toEqual( {
+					completed: true,
+					status: 'success',
+					error: null,
+				} );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'completes the site preparation when the site transfer status is "reverted"', async () => {
+		const siteId = 4444;
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.once()
+			.reply( 200, REVERTED_TRANSFER() )
 			.post( `/wpcom/v2/sites/${ siteId }/atomic/transfers`, {
 				context: 'unknown',
 				transfer_intent: 'migrate',
