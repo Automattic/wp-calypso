@@ -60,7 +60,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { pathname } = useLocation();
 
 	const getHeaderText = () => {
-		if ( pathname === '/odie' ) {
+		if ( pathname === '/odie' || pathname === '/contact-form' ) {
 			return __( 'Virtual Expert', __i18n_text_domain__ );
 		}
 		return __( 'Help Center', __i18n_text_domain__ );
