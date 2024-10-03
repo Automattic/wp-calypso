@@ -82,7 +82,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
 
 		const isReEnteringStep =
-			signupCompleteFlowName === flow.name && signupCompleteStepName === stepSlug;
+			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
 
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flowName, kebabCase( stepSlug ), {
