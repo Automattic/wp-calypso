@@ -34,7 +34,7 @@ interface AtomicTransferDialogProps {
 	isMarketplaceProduct?: boolean;
 	activeTheme?: string | null;
 	uploadError?: boolean;
-	isJetpack: boolean;
+	isJetpack?: boolean;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchAcceptActivationModal: typeof acceptActivationModal;
