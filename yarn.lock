@@ -26822,6 +26822,7 @@ __metadata:
     crc32: "npm:^0.2.2"
     debug: "npm:^4.3.3"
     seed-random: "npm:^2.2.0"
+    tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
