@@ -45,7 +45,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
-		disabled: isPending || isSiteInfoLoading,
+		disabled: isPending,
 		defaultValues: {
 			from_url: importSiteQueryParam,
 			username: '',
@@ -77,14 +77,14 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	);
 
 	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && ( isPending || isSiteInfoLoading ) && ! canBypassVerification ) {
+		if ( isEnglishLocale && isPending && ! canBypassVerification ) {
 			return translate( 'Verifying credentials' );
 		}
 		if ( isEnglishLocale && canBypassVerification ) {
 			return translate( 'Continue anyways' );
 		}
 		return translate( 'Continue' );
-	}, [ isPending, canBypassVerification, isEnglishLocale, translate, isSiteInfoLoading ] );
+	}, [ isPending, canBypassVerification, isEnglishLocale, translate ] );
 
 	useEffect( () => {
 		if ( isSuccess ) {

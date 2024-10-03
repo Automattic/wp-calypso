@@ -8,7 +8,11 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
 
-export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { control, errors } ) => {
+interface Props extends CredentialsFormFieldProps {
+	isSiteInfoLoading: boolean;
+}
+
+export const SiteAddressField: React.FC< Props > = ( { control, errors, isSiteInfoLoading } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const hasEnTranslation = useHasEnTranslation();
@@ -42,6 +46,7 @@ export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { contr
 						isError={ !! errors?.from_url }
 						placeholder={ placeholder }
 						type="text"
+						disabled={ isSiteInfoLoading }
 						{ ...field }
 					/>
 				) }
