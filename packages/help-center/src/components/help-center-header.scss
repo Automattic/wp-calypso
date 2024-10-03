@@ -42,8 +42,7 @@
 			align-items: center;
 			flex: 1;
 			gap: 2px;
-			cursor: move;
-			margin: 0;
+			margin: 0 0 0 4px;
 
 			svg:not(.help-center__drag-icon) {
 				cursor: pointer;

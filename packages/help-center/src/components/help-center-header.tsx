@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
+import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
@@ -57,7 +58,8 @@ const SupportModeTitle = () => {
 
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
-	const { pathname } = useLocation();
+	const { pathname, key } = useLocation();
+	const isHelpCenterHome = key === 'default';
 
 	const headerText =
 		pathname === '/odie' || pathname === '/contact-form'
@@ -66,8 +68,9 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 
 	return (
 		<>
-			<span id="header-text" className="help-center-header__text" role="presentation">
-				<BackButton buttonText={ headerText } />
+			{ isHelpCenterHome ? <DragIcon /> : <BackButton /> }
+			<span id="header-text" role="presentation" className="help-center-header__text">
+				{ headerText }
 			</span>
 			<Button
 				className="help-center-header__minimize"

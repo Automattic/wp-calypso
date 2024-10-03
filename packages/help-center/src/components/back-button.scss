@@ -7,6 +7,7 @@
 		font-size: $font-body-small;
 		padding: 0;
 		gap: 4px;
+		cursor: pointer;
 	}
 
 	.help-center-back-button__header {
@@ -20,8 +21,5 @@
 		border-bottom: 1px solid var(--studio-gray-0);
 		padding: 0 16px;
 		box-sizing: border-box;
-	}
-	.back-button__help-center__drag {
-		cursor: move;
 	}
 }
