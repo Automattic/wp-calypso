@@ -75,11 +75,11 @@
 }
 
 .reader-full-post {
-	.like-button {
+	.reader-post-actions .like-button {
 		padding: 0;
-	}
 
-	.reader-post-actions .like-button__label {
-		font-size: 0.875rem;
-	}
+		.like-button__label {
+			font-size: rem(14px);
+		}
+	} 
 }

@@ -75,18 +75,5 @@
 			flex-direction: column;
 			height: auto;
 		}
-
-		.like-button {
-			gap: 0;
-			.like-button__like-icons {
-				margin-top: -1px;
-				margin-bottom: 1px;
-			}
-		}
-
-		.comment-button svg {
-			margin-top: -1px;
-			margin-bottom: 1px;
-		}
 	}
 }
