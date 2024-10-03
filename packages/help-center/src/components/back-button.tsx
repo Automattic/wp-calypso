@@ -26,10 +26,19 @@ export const BackButton = ( {
 	const { key } = useLocation();
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
-	const buttonClassName = clsx( 'back-button__help-center help-center-header__text', className );
+	const isHelpCenterHome = key === 'default';
+
+	const buttonClassName = clsx(
+		'back-button__help-center help-center-header__text',
+		{
+			'back-button__help-center__drag': isHelpCenterHome,
+		},
+		className
+	);
 
 	function defaultOnClick() {
-		if ( key === 'default' ) {
+		// There's no where to navigate if users are already on home.
+		if ( isHelpCenterHome ) {
 			return;
 		}
 		if ( backToRoot ) {

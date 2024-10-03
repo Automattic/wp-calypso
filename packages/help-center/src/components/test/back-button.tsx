@@ -50,7 +50,7 @@ describe( 'BackButton', () => {
 		expect( mockNavigate ).toHaveBeenCalledWith( -1 );
 	} );
 
-	it( "navigates to root when there's no history", async () => {
+	it( 'does not navigate if user is already on homepage', async () => {
 		const user = userEvent.setup();
 
 		render(
@@ -61,7 +61,7 @@ describe( 'BackButton', () => {
 
 		await user.click( screen.getByRole( 'button' ) );
 
-		expect( mockNavigate ).toHaveBeenCalledWith( '/' );
+		expect( mockNavigate ).not.toHaveBeenCalledWith( '/' );
 	} );
 
 	it( 'calls a custom onClick handler when defined instead of modifying history', async () => {
