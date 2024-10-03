@@ -1,5 +1,6 @@
 import { Badge, Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { DNS_RECORDS_DEFAULT } from '@automattic/urls';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -287,13 +288,7 @@ export default function DomainForwardingCard( {
 			'You can only forward subdomains. To forward a domain please "restore default A records." {{a}}Learn more{{/a}}.',
 			{
 				components: {
-					a: (
-						<a
-							href={ localizeUrl(
-								'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/'
-							) }
-						/>
-					),
+					a: <a href={ localizeUrl( DNS_RECORDS_DEFAULT ) } />,
 				},
 			}
 		);
