@@ -210,7 +210,7 @@ export const HelpCenterContactButton: FC = () => {
 			className="button help-center-contact-page__button"
 		>
 			<Icon icon={ comment } />
-			<span>{ __( 'Start new conversation', __i18n_text_domain__ ) }</span>
+			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
 		</Link>
 	);
 };
