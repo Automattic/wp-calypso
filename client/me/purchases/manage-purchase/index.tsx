@@ -146,7 +146,7 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
-	getCancelPurchaseSurveyTakenPreferenceKey,
+	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -187,7 +187,7 @@ export interface ManagePurchaseConnectedProps {
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	hasLoadedSites: boolean;
-	hasTakenCancelPurchaseSurvey: boolean | null;
+	hasCompletedCancelPurchaseSurvey: boolean | null;
 	hasNonPrimaryDomainsFlag?: boolean;
 	hasSetupAds?: boolean;
 	isAtomicSite?: boolean | null;
@@ -646,7 +646,7 @@ class ManagePurchase extends Component<
 			hasLoadedSites,
 			hasNonPrimaryDomainsFlag,
 			hasCustomPrimaryDomain,
-			hasTakenCancelPurchaseSurvey,
+			hasCompletedCancelPurchaseSurvey,
 			site,
 			purchase,
 			purchaseListUrl,
@@ -681,7 +681,7 @@ class ManagePurchase extends Component<
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
-				skipRemovePlanSurvey={ isPlanPurchase && hasTakenCancelPurchaseSurvey }
+				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
@@ -1631,9 +1631,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		hasSetupAds: Boolean(
 			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 		),
-		hasTakenCancelPurchaseSurvey: getPreference(
+		hasCompletedCancelPurchaseSurvey: getPreference(
 			state,
-			getCancelPurchaseSurveyTakenPreferenceKey( purchase?.id )
+			getCancelPurchaseSurveyCompletedPreferenceKey( purchase?.id )
 		),
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),

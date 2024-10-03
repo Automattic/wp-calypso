@@ -66,8 +66,8 @@ function isJetpackTemporarySitePurchase( purchase ) {
 	return isTemporarySitePurchase( purchase ) && productType === 'jetpack';
 }
 
-function getCancelPurchaseSurveyTakenPreferenceKey( purchaseId ) {
-	return `cancel-purchase-survey-taken-${ purchaseId }`;
+function getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId ) {
+	return `cancel-purchase-survey-completed-${ purchaseId }`;
 }
 
 export {
@@ -76,7 +76,7 @@ export {
 	getAddNewPaymentMethodPath,
 	isDataLoading,
 	isTemporarySitePurchase,
-	getCancelPurchaseSurveyTakenPreferenceKey,
+	getCancelPurchaseSurveyCompletedPreferenceKey,
 	getTemporarySiteType,
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
