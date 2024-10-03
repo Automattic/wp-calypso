@@ -28,7 +28,7 @@ import { useSitePerformancePageReports } from './hooks/useSitePerformancePageRep
 import './style.scss';
 
 const statType = 'statsTopPosts';
-const REFRESH_REPORT_INTERVAL = 1000 * 60 * 60 * 24; // 24 hours
+const REFRESH_REPORT_INTERVAL = 24; // 24 hours
 const statsQuery = {
 	num: -1,
 	summarize: 1,
