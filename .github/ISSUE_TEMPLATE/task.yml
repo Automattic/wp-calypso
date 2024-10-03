@@ -1,6 +1,7 @@
 name: Task
 description: Create a task
 title: "Task:"
+type: 'Task'
 labels: ["[Type] Task"]
 body:
   - type: textarea
