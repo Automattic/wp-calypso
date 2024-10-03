@@ -32,7 +32,8 @@ export function activate( themeId, siteId, options ) {
 		const {
 			source,
 			purchased,
-			isOnboardingFlow = hasQueryArg( window.location.href, 'onboarding' ),
+			isOnboardingFlow = typeof window !== 'undefined' &&
+				hasQueryArg( window.location.href, 'onboarding' ),
 		} = options || {};
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
