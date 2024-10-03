@@ -31,7 +31,7 @@ describe( 'BackButton', () => {
 			</MemoryRouter>
 		);
 
-		await user.click( screen.getByRole( 'button' ) );
+		await user.click( screen.getByTestId( 'back-button-icon' ) );
 
 		expect( mockNavigate ).toHaveBeenCalledWith( '/' );
 	} );
@@ -45,7 +45,7 @@ describe( 'BackButton', () => {
 			</MemoryRouter>
 		);
 
-		await user.click( screen.getByRole( 'button' ) );
+		await user.click( screen.getByTestId( 'back-button-icon' ) );
 
 		expect( mockNavigate ).toHaveBeenCalledWith( -1 );
 	} );
@@ -59,7 +59,7 @@ describe( 'BackButton', () => {
 			</MemoryRouter>
 		);
 
-		await user.click( screen.getByRole( 'button' ) );
+		await user.click( screen.getByTestId( 'back-button-icon' ) );
 
 		expect( mockNavigate ).not.toHaveBeenCalledWith( '/' );
 	} );
@@ -74,7 +74,7 @@ describe( 'BackButton', () => {
 			</MemoryRouter>
 		);
 
-		await user.click( screen.getByRole( 'button' ) );
+		await user.click( screen.getByTestId( 'back-button-icon' ) );
 
 		expect( onClickSpy ).toHaveBeenCalled();
 		expect( mockNavigate ).not.toHaveBeenCalled();

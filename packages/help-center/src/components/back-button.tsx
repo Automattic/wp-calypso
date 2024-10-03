@@ -29,7 +29,12 @@ export const BackButton = ( { onClick, backToRoot = false, className }: BackButt
 
 	return (
 		<span className={ buttonClassName }>
-			<Icon onClick={ onClick || defaultOnClick } icon={ chevronLeft } size={ 18 } />
+			<Icon
+				data-testid="back-button-icon"
+				onClick={ onClick || defaultOnClick }
+				icon={ chevronLeft }
+				size={ 18 }
+			/>
 		</span>
 	);
 };
