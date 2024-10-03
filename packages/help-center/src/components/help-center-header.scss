@@ -42,9 +42,11 @@
 			align-items: center;
 			flex: 1;
 			gap: 2px;
+			cursor: move;
 
-			svg {
+			svg:not(.help-center__drag-icon) {
 				margin: 0;
+				cursor: pointer;
 			}
 			:focus{
 				outline: none;

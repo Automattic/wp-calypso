@@ -1,4 +1,3 @@
-import { Button } from '@wordpress/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -51,9 +50,13 @@ export const BackButton = ( {
 	}
 
 	return (
-		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
-			<Icon icon={ isHelpCenterHome ? <DragIcon /> : chevronLeft } size={ 18 } />
+		<span className={ buttonClassName }>
+			<Icon
+				onClick={ onClick || defaultOnClick }
+				icon={ isHelpCenterHome ? <DragIcon /> : chevronLeft }
+				size={ 18 }
+			/>
 			{ buttonText ?? defaultButtonText }
-		</Button>
+		</span>
 	);
 };
