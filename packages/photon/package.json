@@ -1,6 +1,6 @@
 {
 	"name": "photon",
-	"version": "4.0.0",
+	"version": "4.1.0",
 	"description": "JavaScript library for the WordPress.com Photon image manipulation service.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
