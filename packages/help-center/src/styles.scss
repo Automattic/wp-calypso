@@ -111,6 +111,10 @@
 			.help-center__container-content {
 				display: none;
 			}
+			
+			.help-center-header__text {
+				cursor: pointer;
+			}
 		}
 	}
 
@@ -121,7 +125,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		// If the masterbar is there, don't cover it, if not, go to the top.
+		/* If the masterbar is there, don't cover it, if not, go to the top. */
 		top: var(--masterbar-height, 0);
 		max-height: calc(100% - 45px);
 		height: calc(100% - var(--masterbar-height, 0));

@@ -43,11 +43,12 @@
 			flex: 1;
 			gap: 2px;
 			cursor: move;
+			margin: 0;
 
 			svg:not(.help-center__drag-icon) {
-				margin: 0;
 				cursor: pointer;
 			}
+			
 			:focus{
 				outline: none;
 			}
