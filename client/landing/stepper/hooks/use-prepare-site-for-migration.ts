@@ -7,8 +7,6 @@ import { usePluginAutoInstallation } from './use-plugin-auto-installation';
 import { useSiteMigrationKey } from './use-site-migration-key';
 import { useSiteTransfer } from './use-site-transfer';
 
-const PLUGIN = { name: 'migrate-guru/migrateguru', slug: 'migrate-guru' };
-
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
 const getMigrationKeyStatus = (
@@ -140,12 +138,18 @@ const useTransferTimeTracking = (
 };
 
 /**
- *  Hook to manage the site to prepare a site for migration using Migrate Guru plugin.
+ *  Hook to manage the site to prepare a site for migration.
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
-export const usePrepareSiteForMigrationWithMigrateGuru = ( siteId?: number ) => {
+export const usePrepareSiteForMigration = ( siteId?: number ) => {
+	const isWhiteLabeledPluginEnabled = config.isEnabled(
+		'migration-flow/enable-white-labeled-plugin'
+	);
+	const plugin = isWhiteLabeledPluginEnabled
+		? { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' }
+		: { name: 'migrate-guru/migrateguru', slug: 'migrate-guru' };
 	const siteTransferState = useSiteTransfer( siteId );
-	const pluginInstallationState = usePluginAutoInstallation( PLUGIN, siteId, {
+	const pluginInstallationState = usePluginAutoInstallation( plugin, siteId, {
 		enabled: Boolean( siteTransferState.completed ),
 	} );
 	const transferTimingTracked = useRef( false );
@@ -188,53 +192,6 @@ export const usePrepareSiteForMigrationWithMigrateGuru = ( siteId?: number ) => 
 		migrationKey: ! pluginInstallationState.completed
 			? 'idle'
 			: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
-	};
-
-	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
-
-	return {
-		detailedStatus,
-		completed,
-		error,
-		migrationKey: migrationKey ?? null,
-	};
-};
-
-/**
- *  Hook to manage the site to prepare a site for migration using the Migrate to WordPress.com plugin.
- *  This hook manages the site transfer.
- */
-export const usePrepareSiteForMigrationWithMigrateToWPCOM = ( siteId?: number ) => {
-	const siteTransferState = useSiteTransfer( siteId );
-	const transferTimingTracked = useRef( false );
-
-	const {
-		data: { migrationKey } = {},
-		error: migrationKeyError,
-		fetchStatus: migrationKeyFetchStatus,
-	} = useSiteMigrationKey( siteId, { enabled: true, retry: 20 } );
-
-	const { siteTransferStart, siteTransferEnd } = useTransferTimeTracking( siteTransferState );
-
-	const completed = siteTransferState.completed;
-	const error = siteTransferState.error || migrationKeyError;
-	const criticalError = siteTransferState.error;
-	const hasAllTimingInfo = siteTransferEnd.current !== 0;
-
-	if ( completed && hasAllTimingInfo && ! transferTimingTracked.current ) {
-		const siteTransferElapsed = siteTransferEnd.current - siteTransferStart.current;
-
-		recordTracksEvent( 'calypso_onboarding_site_migration_transfer_timing', {
-			error,
-			migration_setup_elapsed: siteTransferElapsed,
-		} );
-
-		transferTimingTracked.current = true;
-	}
-
-	const detailedStatus = {
-		siteTransfer: siteTransferState.status,
-		migrationKey: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
 	};
 
 	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
