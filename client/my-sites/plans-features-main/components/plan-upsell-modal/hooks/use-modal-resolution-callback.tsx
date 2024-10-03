@@ -37,7 +37,9 @@ export function useModalResolutionCallback( {
 				if (
 					paidDomainName &&
 					( ( flowName && [ ONBOARDING_GUIDED_FLOW, 'onboarding' ].includes( flowName ) ) ||
-						intent === 'plans-jetpack-app-site-creation' )
+						[ 'plans-jetpack-app-site-creation', 'plans-site-selected-legacy' ].includes(
+							intent || ''
+						) )
 				) {
 					return PAID_PLAN_IS_REQUIRED_DIALOG;
 				}
