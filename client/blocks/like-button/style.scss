@@ -64,10 +64,6 @@
 	}
 }
 
-.reader-full-post__story .like-button {
-	padding: 0;
-}
-
 .like-button__label {
 	&:empty {
 		display: none;
@@ -76,4 +72,14 @@
 
 .like-button__like-icons {
 	line-height: 0;
+}
+
+.reader-full-post {
+	.like-button {
+		padding: 0;
+	}
+
+	.reader-post-actions .like-button__label {
+		font-size: 0.875rem;
+	}
 }
