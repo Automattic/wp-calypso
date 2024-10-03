@@ -65,12 +65,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ 0 }
+							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency
 							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
 							original
 						/>
 						<PlanPrice
