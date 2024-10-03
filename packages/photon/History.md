@@ -1,5 +1,9 @@
 # History
 
+## 4.1.1 / 2024-10-03
+
+- Add missing dependency on tslib.
+
 ## 4.1.0 / 2024-10-03
 
 - Consolidate onto `i0.wp.com` for HTTPS URLs.
