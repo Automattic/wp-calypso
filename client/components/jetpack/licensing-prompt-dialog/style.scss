@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
-@import "jetpack-connect/colors.scss";
+@import "jetpack-connect/colors";
 
 .is-section-jetpack-connect .licensing-prompt-dialog {
 	@include jetpack-connect-colors();

@@ -1,5 +1,5 @@
-@import "../../styles/variables.scss";
-@import "../../styles/mixins.scss";
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .onboarding-title {
 	@include onboarding-heading-text-mobile;

@@ -1,6 +1,5 @@
 //* This hook is used to track the step route in the declarative flow.
 
-import { SiteDetails } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { useEffect, useRef } from '@wordpress/element';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
@@ -21,18 +20,25 @@ import {
 import { useSelector } from 'calypso/state';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
 
-// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
-// See https://github.com/Automattic/wp-calypso/pull/82981.
-const useIsRequestingSelectedSite = ( siteSlugOrId: string | number, site: SiteDetails | null ) => {
-	return useSelector( ( state ) => site && isRequestingSite( state, siteSlugOrId ) );
+/**
+ * We wait for the site to be fetched before tracking the step route when a site ID/slug are defined in the params.
+ * This is to ensure that the site data is available for event tracking purposes.
+ * See `superProps`, `site_plan_id`, and https://github.com/Automattic/wp-calypso/pull/82981.
+ */
+const useHasRequestedSelectedSite = () => {
+	const { site, siteSlugOrId } = useSiteData();
+	const isRequestingSelectedSite = useSelector(
+		( state ) => site && isRequestingSite( state, siteSlugOrId )
+	);
+
+	return siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
 };
 
 interface Props {
 	flowName: string;
 	stepSlug: string;
-	// If true, the tracking event will not be recorded
-	skipTracking: boolean;
 	flowVariantSlug?: string;
+	skipStepRender?: boolean;
 }
 
 /**
@@ -41,15 +47,14 @@ interface Props {
 export const useStepRouteTracking = ( {
 	flowName,
 	stepSlug,
-	skipTracking,
 	flowVariantSlug,
+	skipStepRender,
 }: Props ) => {
 	const intent = useIntent();
 	const design = useSelectedDesign();
-	const { site, siteSlugOrId } = useSiteData();
-	const isRequestingSelectedSite = useIsRequestingSelectedSite( siteSlugOrId, site );
-	const hasRequestedSelectedSite = siteSlugOrId ? !! site && ! isRequestingSelectedSite : true;
+	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
+	const pathname = window.location.pathname;
 
 	/**
 	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
@@ -66,8 +71,8 @@ export const useStepRouteTracking = ( {
 	}, [] );
 
 	useEffect( () => {
-		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( ! hasRequestedSelectedSite || skipTracking ) {
+		// We wait for the site to be fetched before tracking the step route.
+		if ( ! hasRequestedSelectedSite ) {
 			return;
 		}
 
@@ -83,13 +88,14 @@ export const useStepRouteTracking = ( {
 				is_in_hosting_flow: isAnyHostingFlow( flowName ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
+				...( skipStepRender && { skip_step_render: skipStepRender } ),
 			} );
 
 			// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
 			stepCompleteEventPropsRef.current = {
 				flow: flowName,
 				step: stepSlug,
-				optionalProps: { intent },
+				optionalProps: { intent, ...( skipStepRender && { skip_step_render: skipStepRender } ) },
 			};
 
 			const stepOldSlug = getStepOldSlug( stepSlug );
@@ -100,20 +106,23 @@ export const useStepRouteTracking = ( {
 					is_in_hosting_flow: isAnyHostingFlow( flowName ),
 					...( design && { assembler_source: getAssemblerSource( design ) } ),
 					...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
+					...( skipStepRender && { skip_step_render: skipStepRender } ),
 				} );
 			}
 		}
 
 		// Also record page view for data and analytics
-		const pathname = window.location.pathname;
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
 		const params = {
 			flow: flowName,
+			...( skipStepRender && { skip_step_render: skipStepRender } ),
 		};
 		recordPageView( pathname, pageTitle, params );
 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
+		// We also leave out pathname. The respective event (calypso_page_view) is recorded behind a timeout and we don't want to trigger it again.
+		//     - window.location.pathname called inside the effect keeps referring to the previous path on a redirect. So we moved it outside.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking ] );
+	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipStepRender ] );
 };

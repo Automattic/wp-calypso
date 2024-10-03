@@ -18,6 +18,7 @@ type InsightsSectionProps = {
 	isWpcom: boolean;
 	hash: string;
 	filter?: string;
+	isLoggedInVersion?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -37,6 +38,9 @@ export const InsightsSection = forwardRef(
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
 			.sort( sortInsightKeys );
 		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
+			recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+				filter: option.value,
+			} );
 			setSelectedFilter( option.value );
 			if ( props.onRecommendationsFilterChange ) {
 				props.onRecommendationsFilterChange( option.value );
@@ -50,12 +54,18 @@ export const InsightsSection = forwardRef(
 				setSelectedFilter( filter );
 			}
 		}, [ selectedFilter, filter ] );
-
+		const siteOrPageSubtitle = props.isLoggedInVersion
+			? translate( 'your page' )
+			: translate( 'your site' );
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
 				<div className="header">
 					<div>
-						<h2 className="title">{ translate( 'Improve your site‘s performance' ) }</h2>
+						<h2 className="title">
+							{ props.isLoggedInVersion
+								? translate( 'Recommendations' )
+								: translate( 'Improve your site‘s performance' ) }
+						</h2>
 						<p className="subtitle">
 							{ filteredAudits.length
 								? translate(
@@ -66,7 +76,7 @@ export const InsightsSection = forwardRef(
 												quantity: filteredAudits.length,
 												metric:
 													selectedFilter === 'all'
-														? translate( 'your site' )
+														? siteOrPageSubtitle
 														: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
 											},
 											count: filteredAudits.length,

@@ -39,6 +39,7 @@ export class MapDomain extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		backUrl: PropTypes.string,
 	};
 
 	isMounted = false;
@@ -51,7 +52,12 @@ export class MapDomain extends Component {
 	};
 
 	goBack = () => {
-		const { currentRoute, selectedSite, selectedSiteSlug } = this.props;
+		const { currentRoute, selectedSite, selectedSiteSlug, backUrl } = this.props;
+
+		if ( backUrl ) {
+			page( backUrl );
+			return;
+		}
 
 		if ( ! selectedSite ) {
 			page( '/domains/add' );

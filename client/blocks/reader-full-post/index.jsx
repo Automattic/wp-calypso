@@ -635,6 +635,24 @@ export class FullPostView extends Component {
 
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
+							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
+								{ shouldShowComments( post ) && (
+									<Comments
+										showNestingReplyArrow
+										post={ post }
+										initialSize={ startingCommentId ? commentCount : 10 }
+										pageSize={ 25 }
+										startingCommentId={ startingCommentId }
+										commentCount={ commentCount }
+										maxDepth={ 1 }
+										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+										showConversationFollowButton
+										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+										shouldHighlightNew
+									/>
+								) }
+							</div>
+
 							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
 									siteId={ +post.site_ID }
@@ -659,24 +677,6 @@ export class FullPostView extends Component {
 									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
 								/>
 							) }
-
-							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ shouldShowComments( post ) && (
-									<Comments
-										showNestingReplyArrow
-										post={ post }
-										initialSize={ startingCommentId ? commentCount : 10 }
-										pageSize={ 25 }
-										startingCommentId={ startingCommentId }
-										commentCount={ commentCount }
-										maxDepth={ 1 }
-										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton
-										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-										shouldHighlightNew
-									/>
-								) }
-							</div>
 
 							{ showRelatedPosts && (
 								<RelatedPostsFromOtherSites
