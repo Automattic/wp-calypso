@@ -25,7 +25,8 @@ type InsightsSectionProps = {
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const { audits, fullPageScreenshot, isWpcom, hash, filter } = props;
+		const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
+			props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 
 		const sumMetricSavings = ( key: string ) =>
@@ -37,17 +38,20 @@ export const InsightsSection = forwardRef(
 		const filteredAudits = Object.keys( audits )
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
 			.sort( sortInsightKeys );
-		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
-			recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
-				filter: option.value,
-			} );
-			setSelectedFilter( option.value );
-			if ( props.onRecommendationsFilterChange ) {
-				props.onRecommendationsFilterChange( option.value );
-			} else {
-				updateQueryParams( { filter: option.value }, true );
-			}
-		}, [] );
+		const onFilter = useCallback(
+			( option: { label: string; value: string } ) => {
+				recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+					filter: option.value,
+				} );
+				setSelectedFilter( option.value );
+				if ( onRecommendationsFilterChange ) {
+					onRecommendationsFilterChange( option.value );
+				} else {
+					updateQueryParams( { filter: option.value }, true );
+				}
+			},
+			[ onRecommendationsFilterChange ]
+		);
 
 		useEffect( () => {
 			if ( filter && filter !== selectedFilter ) {
