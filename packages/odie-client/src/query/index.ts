@@ -42,7 +42,11 @@ const buildSendChatMessage = async (
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message: message.content, version, context: { selectedSiteId, screenShot } },
+				data: {
+					message: message.content,
+					version,
+					context: { selectedSiteId, screen_shot: screenShot },
+				},
 		  } );
 };
 
@@ -56,7 +60,11 @@ function odieWpcomSendSupportMessage(
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content, version, context: { selectedSiteId, screenShot } },
+		body: {
+			message: message.content,
+			version,
+			context: { selectedSiteId, screen_shot: screenShot },
+		},
 	} );
 }
 
