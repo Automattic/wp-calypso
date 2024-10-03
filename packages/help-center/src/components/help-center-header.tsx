@@ -59,17 +59,15 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 
-	const getHeaderText = () => {
-		if ( pathname === '/odie' || pathname === '/contact-form' ) {
-			return __( 'Virtual Expert', __i18n_text_domain__ );
-		}
-		return __( 'Help Center', __i18n_text_domain__ );
-	};
+	const headerText =
+		pathname === '/odie' || pathname === '/contact-form'
+			? __( 'Virtual Expert', __i18n_text_domain__ )
+			: __( 'Help Center', __i18n_text_domain__ );
 
 	return (
 		<>
 			<span id="header-text" className="help-center-header__text" role="presentation">
-				<BackButton buttonText={ getHeaderText() } />
+				<BackButton buttonText={ headerText } />
 			</span>
 			<Button
 				className="help-center-header__minimize"
@@ -116,7 +114,7 @@ const ContentMinimized = ( {
 					<Route path="/contact-form" element={ <SupportModeTitle /> } />
 					<Route path="/post" element={ <ArticleTitle /> } />
 					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route path="/odie" element={ __( 'Wapuu', __i18n_text_domain__ ) } />
+					<Route path="/odie" element={ __( 'Virtual Expert', __i18n_text_domain__ ) } />
 				</Routes>
 				{ unreadCount > 0 && (
 					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
