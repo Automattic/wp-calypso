@@ -226,6 +226,7 @@ export function resolveDomainStatus(
 					icon: 'cached',
 				};
 			}
+
 			if (
 				isPurchasedDomain &&
 				isCreditCardExpiring &&
