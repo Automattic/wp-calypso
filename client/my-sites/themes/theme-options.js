@@ -88,6 +88,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const redirectTo = encodeURIComponent(
 				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
 					style_variation: options?.styleVariationSlug,
+					activating: true,
 				} )
 			);
 
@@ -223,7 +224,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
 
-			const redirectTo = encodeURIComponent( `${ origin }/theme/${ themeId }/${ slug }` );
+			const redirectTo = encodeURIComponent(
+				addQueryArgs( `${ origin }/theme/${ themeId }/${ slug }`, { activating: true } )
+			);
 
 			const currentPlanSlug = getSitePlanSlug( state, siteId );
 			const isEcommerceTrialMonthly = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;

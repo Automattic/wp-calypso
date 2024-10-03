@@ -24,6 +24,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
+import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import photon from 'photon';
@@ -325,16 +326,30 @@ class ThemeSheet extends Component {
 		this.unsubscribeBreakpoint = subscribeIsWithinBreakpoint( '>960px', ( isWide ) => {
 			this.setState( { isWide } );
 		} );
+
+		this.maybeAutoActivate();
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.themeId !== prevProps.themeId ) {
+		const { themeId, defaultOption } = this.props;
+		if ( themeId !== prevProps.themeId ) {
 			this.scrollToTop();
+		}
+
+		if ( defaultOption?.key !== prevProps.defaultOption?.key ) {
+			this.maybeAutoActivate();
 		}
 	}
 
 	componentWillUnmount() {
 		this.unsubscribeBreakpoint();
+	}
+
+	maybeAutoActivate() {
+		const { defaultOption } = this.props;
+		if ( defaultOption?.key === 'activate' && hasQueryArg( window.location.href, 'activating' ) ) {
+			this.onButtonClick();
+		}
 	}
 
 	isLoaded = () => {

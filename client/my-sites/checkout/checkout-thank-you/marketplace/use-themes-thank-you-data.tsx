@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
@@ -140,7 +141,7 @@ export function useThemesThankYouData(
 	// Redirect to the Theme Details page after the atomic transfer.
 	useEffect( () => {
 		if ( firstTheme && isAtomicNeeded && isJetpack ) {
-			page( `/theme/${ firstTheme.id }/${ siteSlug }` );
+			page( addQueryArgs( `/theme/${ firstTheme.id }/${ siteSlug }`, { activating: true } ) );
 		}
 	}, [ firstTheme, isAtomicNeeded, isJetpack ] );
 
