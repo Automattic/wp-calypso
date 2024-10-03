@@ -22,9 +22,15 @@
 }
 
 .cancel-purchase-form__feedback,
-.cancel-purchase-form__atomic-revert {
+.cancel-purchase-form__atomic-revert,
+.cancel-purchase-form__remove-plan {
 	max-width: 730px;
 	margin: 0 auto 2rem;
+}
+
+.cancel-purchase-form__remove-plan .formatted-header__subtitle {
+	max-width: 290px;
+	margin: 0 auto;
 }
 
 .cancel-purchase-form__feedback-questions {
@@ -47,13 +53,6 @@
 		@include break-small {
 			text-align: center;
 		}
-	}
-
-	strong.is-highlighted {
-		background-color: var(--studio-yellow-5);
-		padding: 0.25rem 0.5rem;
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
-		color: var(--stugio-gray-80);
 	}
 
 	.components-base-control__field {
@@ -82,6 +81,16 @@
 			margin-top: auto;
 			margin-bottom: auto;
 		}
+	}
+}
+
+.cancel-purchase-form__atomic-revert,
+.cancel-purchase-form__remove-plan {
+	strong.is-highlighted {
+		background-color: var(--studio-yellow-5);
+		padding: 0.25rem 0.5rem;
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
+		color: var(--stugio-gray-80);
 	}
 }
 
@@ -347,4 +356,16 @@
 	li {
 		margin: 0.75rem 0;
 	}
+}
+
+.cancel-purchase-form__remove-plan-text {
+	display: block;
+
+	&:not(:last-child) {
+		margin-bottom: 1rem;
+	}
+}
+
+.cancel-purchase-form__remove-plan-button {
+	margin-right: 1rem;
 }
