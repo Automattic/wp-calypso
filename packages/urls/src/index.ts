@@ -21,6 +21,7 @@ export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds/`;
 export const DOMAIN_PROMOTIONAL_PRICING_POLICY = `${ root }/domains/domain-pricing-and-available-tlds/#domain-name-promotional-pricing-policy`;
+export const DNS_RECORDS_ADD = `${ root }/domains/custom-dns/add-a-new-dns-record/`;
 export const DNS_RECORDS_EDITING_OR_DELETING = `${ root }/domains/custom-dns/edit-or-delete-dns-records/`;
 export const DNS_RECORDS_DEFAULT = `${ root }/domains/custom-dns/view-or-restore-default-dns-records/`;
 export const DNS_RECORDS_DEFAULT_MX = `${ root }/domains/custom-dns/view-or-restore-default-dns-records/#default-mx-records`;
