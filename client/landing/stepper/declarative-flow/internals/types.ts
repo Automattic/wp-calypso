@@ -101,8 +101,7 @@ export type UseStepsHook = () => StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >,
-	steps?: FlowSteps[ number ][ 'slug' ][]
+	navigate: Navigate< FlowSteps >
 ) => NavigationControls;
 
 export type UseAssertConditionsHook< FlowSteps extends StepperStep[] > = (
