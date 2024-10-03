@@ -1,20 +1,23 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDebounce } from 'use-debounce';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isValidUrl } from 'calypso/lib/importer/url-validation';
 import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 
-export const useCredentialsForm = ( onSubmit: ( platform?: string ) => void ) => {
-	const importSiteQueryParam = useQuery().get( 'from' ) || '';
-	const [ canBypassVerification, setCanBypassVerification ] = useState( false );
+export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const [ formData, setFormData ] = useState< CredentialsFormData | null >( null );
+	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	const [ sourceUrl, setSourceUrl ] = useState( importSiteQueryParam );
+	const [ debouncedSourceUrl ] = useDebounce( sourceUrl, 500 );
 
 	const {
 		isPending,
@@ -29,7 +32,7 @@ export const useCredentialsForm = ( onSubmit: ( platform?: string ) => void ) =>
 		data: siteInfo,
 		isError: isPlatformVerificationError,
 		isLoading: isSiteInfoLoading,
-	} = useAnalyzeUrlQuery( formData?.from_url ?? '', !! formData && ! canBypassVerification );
+	} = useAnalyzeUrlQuery( debouncedSourceUrl, isEnglishLocale && isValidUrl( debouncedSourceUrl ) );
 
 	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
@@ -42,7 +45,7 @@ export const useCredentialsForm = ( onSubmit: ( platform?: string ) => void ) =>
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
-		disabled: isPending || isSiteInfoLoading,
+		disabled: isPending,
 		defaultValues: {
 			from_url: importSiteQueryParam,
 			username: '',
@@ -54,103 +57,68 @@ export const useCredentialsForm = ( onSubmit: ( platform?: string ) => void ) =>
 		errors: serverSideError,
 	} );
 
-	const accessMethod = watch( 'migrationType' );
+	const isWpcom = useMemo( () => !! siteInfo?.platform_data?.is_wpcom, [ siteInfo ] );
 
-	useEffect( () => {
-		if ( ! formData || isSiteInfoLoading || ( ! siteInfo && ! isPlatformVerificationError ) ) {
-			return;
+	const canBypassVerification = useMemo( () => {
+		const credentialsVerificationFailed =
+			error?.code === 'automated_migration_tools_login_and_get_cookies_test_failed';
+		return credentialsVerificationFailed || isWpcom;
+	}, [ error, isWpcom ] );
+
+	const submitHandler = useCallback(
+		( data: CredentialsFormData ) => {
+			clearErrors();
+			requestAutomatedMigration( {
+				...data,
+				bypassVerification: canBypassVerification || ! isEnglishLocale,
+			} );
+		},
+		[ requestAutomatedMigration, canBypassVerification, isEnglishLocale, clearErrors ]
+	);
+
+	const getContinueButtonText = useCallback( () => {
+		if ( isEnglishLocale && isPending && ! canBypassVerification ) {
+			return translate( 'Verifying credentials' );
 		}
-
-		if ( ! canBypassVerification && siteInfo?.platform_data?.is_wpcom ) {
-			setFormData( null );
-			setCanBypassVerification( true );
-			return;
+		if ( isEnglishLocale && canBypassVerification ) {
+			return translate( 'Continue anyways' );
 		}
-
-		if ( siteInfo?.platform && 'wordpress' !== siteInfo.platform ) {
-			onSubmit( siteInfo.platform );
-			return;
-		}
-
-		requestAutomatedMigration( {
-			...formData,
-			bypassVerification: canBypassVerification || ! isEnglishLocale,
-		} );
-	}, [
-		siteInfo,
-		formData,
-		canBypassVerification,
-		isPlatformVerificationError,
-		isSiteInfoLoading,
-		isEnglishLocale,
-		requestAutomatedMigration,
-		onSubmit,
-	] );
+		return translate( 'Continue' );
+	}, [ isPending, canBypassVerification, isEnglishLocale, translate ] );
 
 	useEffect( () => {
 		if ( isSuccess ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
 			onSubmit();
+		} else if ( error ) {
+			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 		}
-	}, [ isSuccess, onSubmit ] );
+	}, [ isSuccess, error, onSubmit ] );
 
 	useEffect( () => {
-		if ( ! error ) {
-			return;
-		}
+		const { unsubscribe } = watch( ( formData, changedField ) => {
+			if ( changedField?.name === 'from_url' && formData?.from_url ) {
+				setSourceUrl( formData?.from_url );
+				clearErrors( 'from_url' );
+			}
 
-		setFormData( null );
-
-		recordTracksEvent( 'calypso_site_migration_automated_request_error' );
-
-		const { code } = error;
-
-		const anywayModeErrors = [ 'automated_migration_tools_login_and_get_cookies_test_failed' ];
-
-		if ( anywayModeErrors.includes( code ) ) {
-			setCanBypassVerification( true );
-		}
-	}, [ error ] );
-
-	useEffect( () => {
-		const { unsubscribe } = watch( () => {
 			clearErrors( 'root' );
-			setCanBypassVerification( false );
-			setFormData( null );
+			reset();
 		} );
 		return () => unsubscribe();
-	}, [ watch, clearErrors ] );
-
-	const submitHandler = ( data: CredentialsFormData ) => {
-		reset();
-		clearErrors();
-		setFormData( data );
-	};
-
-	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && ( isPending || isSiteInfoLoading ) && ! canBypassVerification ) {
-			return translate( 'Verifying credentials' );
-		}
-
-		if ( isEnglishLocale && canBypassVerification ) {
-			return translate( 'Continue anyways' );
-		}
-
-		return translate( 'Continue' );
-	}, [ isPending, canBypassVerification, isEnglishLocale, translate, isSiteInfoLoading ] );
+	}, [ watch, clearErrors, reset ] );
 
 	return {
 		formState: { errors },
+		errors,
 		control,
 		handleSubmit,
-		errors,
-		accessMethod,
-		isPending,
 		submitHandler,
-		importSiteQueryParam,
+		accessMethod: watch( 'migrationType' ),
+		isPending,
 		getContinueButtonText,
-		siteInfo,
-		isPlatformVerificationError,
 		isSiteInfoLoading,
+		isPlatformVerificationError,
+		isWpcom,
 	};
 };

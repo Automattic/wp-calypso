@@ -9,14 +9,10 @@ import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
 
 interface Props extends CredentialsFormFieldProps {
-	importSiteQueryParam?: string | undefined | null;
+	isSiteInfoLoading: boolean;
 }
 
-export const SiteAddressField: React.FC< Props > = ( {
-	control,
-	errors,
-	importSiteQueryParam,
-} ) => {
+export const SiteAddressField: React.FC< Props > = ( { control, errors, isSiteInfoLoading } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const hasEnTranslation = useHasEnTranslation();
@@ -49,9 +45,8 @@ export const SiteAddressField: React.FC< Props > = ( {
 						id="from_url"
 						isError={ !! errors?.from_url }
 						placeholder={ placeholder }
-						readOnly={ !! importSiteQueryParam }
-						disabled={ !! importSiteQueryParam }
 						type="text"
+						disabled={ isSiteInfoLoading }
 						{ ...field }
 					/>
 				) }
