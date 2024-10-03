@@ -1,10 +1,14 @@
 # History
 
-## 4.0.0 / TBD
+## 4.1.0 / 2024-10-03
+
+- Consolidate onto `i0.wp.com` for HTTPS URLs.
+- Convert to TypeScript.
+
+## 4.0.0 / 2021-03-04
 
 - Drop dependency on `url` npm package.
 - Breaking change: support for URL / URLSearchParams APIs is now required.
-- Consolidate onto `i0.wp.com` for HTTPS URLs
 
 ## 3.0.0 / 2019-01-08
 
