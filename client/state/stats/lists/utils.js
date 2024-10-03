@@ -403,7 +403,7 @@ export const normalizers = {
 	 * @returns {Object | null}        Normalized stats data
 	 */
 	statsCountryViews: ( data, query = {} ) => {
-		// parsing a country-views response requires a period and date
+		// parsing a location-views response requires a period and date
 		if ( ! data || ! query.period || ! query.date ) {
 			return null;
 		}

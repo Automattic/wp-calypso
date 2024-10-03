@@ -160,7 +160,7 @@ Returns stats [country views](https://developer.wordpress.com/docs/api/1.1/get/s
 
 ```js
 site.statsCountryViews( function ( err, data ) {
-	// data country-views response
+	// data location-views response
 } );
 ```
 
