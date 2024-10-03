@@ -61,36 +61,26 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						{ translate( 'Limited Time Offer' ) }
 					</div>
 				) }
-				{ isLargeCurrency ? (
-					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ originalPrice.monthly }
-							displayPerMonthNotation={ false }
-							isLargeCurrency
-							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							original
-						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ introOfferPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency
-							isSmallestUnit={ false }
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							discounted
-						/>
-					</div>
-				) : (
+				<div className="plans-grid-next-header-price__pricing-group is-large-currency">
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ originalPrice.monthly }
+						displayPerMonthNotation={ false }
+						isLargeCurrency
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ introOfferPrice }
 						displayPerMonthNotation={ false }
+						isLargeCurrency
 						isSmallestUnit={ false }
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						discounted
 					/>
-				) }
+				</div>
 			</div>
 		);
 	}
