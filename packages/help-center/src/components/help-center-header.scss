@@ -36,7 +36,6 @@
 		}
 
 		.help-center-header__text {
-			margin: 1em 0;
 			font-size: $root-font-size;
 			font-weight: 500;
 			display: flex;
@@ -46,6 +45,9 @@
 
 			svg {
 				margin: 0;
+			}
+			:focus{
+				outline: none;
 			}
 
 			.help-center-header__article-title {
