@@ -596,6 +596,10 @@ class CancelPurchaseForm extends Component {
 		const { surveyStep, isSubmitting } = this.state;
 		const { disableButtons, isImport } = this.props;
 
+		if ( disableButtons || isSubmitting ) {
+			return false;
+		}
+
 		if ( surveyStep === FEEDBACK_STEP ) {
 			if ( isImport && ! this.state.importQuestionRadio ) {
 				return false;
