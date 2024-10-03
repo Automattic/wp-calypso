@@ -14,6 +14,7 @@ interface GoToImporterParams {
 	backToStep?: StepperStep;
 	migrateEntireSiteStep?: StepperStep;
 	replaceHistory?: boolean;
+	from?: string;
 }
 
 const getFlowPath = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
@@ -31,13 +32,20 @@ export const goToImporter = ( {
 	siteSlug,
 	backToStep,
 	migrateEntireSiteStep,
+	from = '',
 	replaceHistory = false,
 }: GoToImporterParams ) => {
 	const backToFlow = backToStep ? getFlowPath( backToStep?.slug ) : undefined;
 	const customizedActionGoToFlow = migrateEntireSiteStep
 		? getFlowPath( migrateEntireSiteStep?.slug )
 		: undefined;
-	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, customizedActionGoToFlow );
+	const path = getFinalImporterUrl(
+		siteSlug,
+		from,
+		platform,
+		backToFlow,
+		customizedActionGoToFlow
+	);
 
 	if ( isWpAdminImporter( path ) ) {
 		return goTo( path, replaceHistory );

@@ -299,6 +299,22 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				);
 			},
 		},
+		[ SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const from = getFromPropsOrUrl( 'from', props ) as string;
+				const platform = getFromPropsOrUrl( 'platform', props ) as ImporterPlatform;
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+
+				return goToImporter( {
+					siteSlug,
+					from,
+					platform,
+					siteId,
+					backToStep: SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+				} );
+			},
+		},
 	};
 };
 

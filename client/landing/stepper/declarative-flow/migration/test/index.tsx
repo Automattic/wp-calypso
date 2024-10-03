@@ -275,6 +275,35 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
+		describe( 'SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT STEP', () => {
+			it( 'redirects user from MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to Importer page', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+					dependencies: {
+						platform: 'blogger',
+						action: 'importer',
+					},
+				} );
+
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					addQueryArgs(
+						{
+							siteSlug: 'example.wordpress.com',
+							from: '',
+							backToFlow: `/migration/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
+							siteId: 123,
+							ref: 'migration',
+						},
+						'/setup/site-setup/importerBlogger'
+					)
+				);
+			} );
+		} );
+
 		describe( 'MIGRATION_UPGRADE_PLAN STEP', () => {
 			it( 'redirects user from MIGRATION_UPGRADE_PLAN to Checkout page', () => {
 				runNavigation( {
