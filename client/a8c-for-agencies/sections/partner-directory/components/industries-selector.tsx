@@ -30,15 +30,12 @@ const IndustriesSelector = ( { setIndustries, industries }: Props ) => {
 		[ availableIndustriesByLabel, setIndustries ]
 	);
 
-	// Get the selected industries by label
+	// Get the selected industries by label, and remove any duplicates
 	const selectedIndustriesByLabel = Array.from(
 		new Set(
 			industries.flatMap( ( slug ) => {
 				const key = slug as string;
-				const value =
-					key in oldIndustries
-						? availableIndustries[ oldIndustries[ key ] ]
-						: availableIndustries[ key ];
+				const value = availableIndustries[ oldIndustries[ key ] ?? key ];
 				return value ? [ value ] : [];
 			} )
 		)
