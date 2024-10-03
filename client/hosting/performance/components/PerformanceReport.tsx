@@ -43,9 +43,9 @@ export const PerformanceReport = ( {
 			performanceReport={ performanceReport }
 			url={ url }
 			hash={ hash }
-			showV2
+			useLoggedInCopy
+			overallScoreIsTab
 			filter={ filter }
-			displayThumbnail={ false }
 			displayNewsletterBanner={ false }
 			displayMigrationBanner={ false }
 			onRecommendationsFilterChange={ onFilterChange }

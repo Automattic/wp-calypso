@@ -22,7 +22,8 @@ type PerformanceProfilerDashboardContentProps = {
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
-	showV2?: boolean;
+	overallScoreIsTab?: boolean;
+	useLoggedInCopy: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -31,11 +32,11 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
-	displayThumbnail = true,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
 	activeTab = TabType.mobile,
-	showV2 = false,
+	overallScoreIsTab = false,
+	useLoggedInCopy,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
@@ -57,20 +58,18 @@ export const PerformanceProfilerDashboardContent = ( {
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
-				{ ! showV2 && (
+				{ ! overallScoreIsTab && (
 					<div className="top-section">
 						<PerformanceScore
 							value={ overall_score * 100 }
 							recommendationsQuantity={ Object.keys( audits ).length }
 							recommendationsRef={ insightsRef }
 						/>
-						{ displayThumbnail && (
-							<ScreenshotThumbnail
-								alt={ translate( 'Website thumbnail' ) }
-								src={ screenshots?.[ screenshots.length - 1 ].data }
-								activeTab={ activeTab }
-							/>
-						) }
+						<ScreenshotThumbnail
+							alt={ translate( 'Website thumbnail' ) }
+							src={ screenshots?.[ screenshots.length - 1 ].data }
+							activeTab={ activeTab }
+						/>
 					</div>
 				) }
 				<CoreWebVitalsDisplay
@@ -81,7 +80,7 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					overall={ overall_score * 100 }
-					showV2={ showV2 }
+					overallScoreIsTab={ overallScoreIsTab }
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }
@@ -109,7 +108,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						ref={ insightsRef }
 						hash={ hash }
 						filter={ filter }
-						isLoggedInVersion={ showV2 }
+						useLoggedInCopy={ useLoggedInCopy }
 						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				) }
