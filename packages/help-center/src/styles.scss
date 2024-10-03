@@ -96,6 +96,7 @@
 		height: 80vh;
 		max-height: 800px;
 		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
+		border-radius: 2px;
 
 		&.is-minimized {
 			min-height: $head-foot-height;
