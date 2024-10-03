@@ -540,7 +540,7 @@ class CancelPurchaseForm extends Component {
 									{
 										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business"
 										translate(
-											'If you remove your subscription, you will lose access to the features of the %(planName)s plan.',
+											'If you remove your plan, you will lose access to the features of the %(planName)s plan.',
 											{
 												args: {
 													planName: productName,
@@ -553,7 +553,7 @@ class CancelPurchaseForm extends Component {
 									{
 										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
 										translate(
-											'If you keep your subscription, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
+											'If you keep your plan, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
 											{
 												args: {
 													planName: productName,
