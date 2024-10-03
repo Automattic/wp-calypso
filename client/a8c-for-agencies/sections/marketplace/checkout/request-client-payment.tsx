@@ -99,7 +99,26 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 			},
 			{
 				onError: ( error ) => {
-					dispatch( errorNotice( error.message ) );
+					dispatch(
+						errorNotice(
+							error.code === 'cannot_refer_to_client'
+								? translate(
+										'Referring products to your own company is not allowed and against our {{a}}terms of service{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														href="https://automattic.com/for-agencies/program-incentives/"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+								  )
+								: error.message
+						)
+					);
 				},
 			}
 		);
