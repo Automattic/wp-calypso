@@ -39,7 +39,7 @@ export type ResolveDomainStatusReturn = {
 	noticeText?: TranslateResult | Array< TranslateResult > | null;
 	callToAction?: {
 		href?: string;
-		onClick?(): void;
+		onClick?: React.MouseEventHandler< HTMLAnchorElement | HTMLButtonElement >;
 		label: string;
 	};
 };
@@ -101,7 +101,8 @@ export function resolveDomainStatus(
 	const paymentSetupCallToAction = {
 		href: '/me/purchases/payment-methods',
 		label: translate( 'Fix' ),
-		onClick: ( e: MouseEvent ) => e.stopPropagation(),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
 	};
 
 	switch ( domain.type ) {
