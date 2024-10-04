@@ -43,7 +43,12 @@ const usePerformanceReport = (
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
-	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
+	const {
+		data: basicMetrics,
+		isError,
+		isFetched,
+		refetch,
+	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
@@ -80,6 +85,7 @@ const usePerformanceReport = (
 		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
 		isError: isError || isErrorInsights,
 		isFetched,
+		refetch,
 	};
 };
 
@@ -147,14 +153,6 @@ export const SitePerformance = () => {
 		setWpcom_performance_report_url( currentPage?.wpcom_performance_report_url );
 	}, [ currentPage?.wpcom_performance_report_url ] );
 
-	const retestPage = () => {
-		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
-		setWpcom_performance_report_url( {
-			url: currentPage?.url ?? '',
-			hash: '',
-		} );
-	};
-
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
 		setRecommendationsFilter( filter );
 		const url = new URL( window.location.href );
@@ -172,6 +170,15 @@ export const SitePerformance = () => {
 		isSitePublic ? wpcom_performance_report_url : undefined,
 		activeTab
 	);
+
+	const retestPage = () => {
+		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
+		setWpcom_performance_report_url( {
+			url: currentPage?.url ?? '',
+			hash: '',
+		} );
+		performanceReport.refetch();
+	};
 
 	useEffect( () => {
 		if ( performanceReport.isFetched && performanceReport.url ) {

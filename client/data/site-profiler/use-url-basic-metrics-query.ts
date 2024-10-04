@@ -16,7 +16,7 @@ function mapScores( response: UrlBasicMetricsQueryResponse ) {
 
 export const useUrlBasicMetricsQuery = ( url?: string, hash?: string, advance = false ) => {
 	return useQuery( {
-		queryKey: [ 'url', 'basic-metrics', url, hash, advance ],
+		queryKey: [ 'url', 'basic-metrics', url, advance ],
 		queryFn: (): Promise< UrlBasicMetricsQueryResponse > =>
 			wp.req.get(
 				{
