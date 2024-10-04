@@ -1027,6 +1027,7 @@ body.is-mobile-app-view {
 		display: flex;
 		flex-direction: row;
 		gap: 12px;
+		padding: 4px 3px;
 
 		.masterbar__item-howdy-account-gravatar {
 			border: none;
@@ -1042,16 +1043,22 @@ body.is-mobile-app-view {
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
-			padding: 0;
+			padding: 3px 5px;
 			margin: 0;
 			line-height: 18px;
+
+			.username {
+				font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				line-height: 14px;
+				margin-bottom: 4px;
+			}
 		}
 	}
 
 	.masterbar__item-subitems {
 		min-width: 264px !important;
 		max-height: 94px;
-		padding: 12px 0 0 0;
+		padding: 12px 0;
 
 		@media only screen and (max-width: 781px) {
 			min-width: 100% !important;
@@ -1064,8 +1071,8 @@ body.is-mobile-app-view {
 		&.logout-link {
 			position: relative;
 			float: left;
-			top: -35px;
-			left: 79px;
+			top: -5px;
+			left: 85px;
 		}
 	}
 
