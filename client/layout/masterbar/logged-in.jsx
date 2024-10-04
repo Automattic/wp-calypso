@@ -513,6 +513,7 @@ class MasterbarLoggedIn extends Component {
 						/>
 						<div className="masterbar__item-howdy-account-details">
 							<span className="display-name">{ user.display_name }</span>
+							<span className="username">{ user.username }</span>
 							<span className="display-name edit-profile">{ translate( 'My Profile' ) }</span>
 						</div>
 					</div>
