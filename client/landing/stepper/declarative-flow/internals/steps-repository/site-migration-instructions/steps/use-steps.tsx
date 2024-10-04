@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
-import { StepInstallMigrationGuru } from './step-install-migation-guru';
+import { StepInstallMigrationPlugin } from './step-install-migation-plugin';
 import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 
 interface StepsDataOptions {
@@ -54,7 +54,7 @@ const useStepsData = ( {
 
 	return [
 		{
-			key: 'install-the-migrate-guru-plugin',
+			key: 'install-the-migrate-plugin',
 			title: translate( 'Install the %(pluginName)s plugin', {
 				args: {
 					pluginName: config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
@@ -62,7 +62,7 @@ const useStepsData = ( {
 						: 'Migrate Guru',
 				},
 			} ) as string,
-			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
+			content: <StepInstallMigrationPlugin fromUrl={ fromUrl } />,
 		},
 		{
 			key: 'get-your-site-ready',

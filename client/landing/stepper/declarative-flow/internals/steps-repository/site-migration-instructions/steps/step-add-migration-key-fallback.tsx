@@ -4,7 +4,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
-import { getMigrateGuruPageURL } from './utils';
+import { getMigrationPluginPageURL } from './utils';
 import type { FC } from 'react';
 
 export const StepAddMigrationKeyFallback: FC = () => {
@@ -23,7 +23,7 @@ export const StepAddMigrationKeyFallback: FC = () => {
 	const ctaTranslationComponents = {
 		a: (
 			<ExternalLink
-				href={ getMigrateGuruPageURL( siteUrl ) }
+				href={ getMigrationPluginPageURL( siteUrl ) }
 				icon
 				iconSize={ 14 }
 				target="_blank"
