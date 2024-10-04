@@ -118,7 +118,7 @@ class StatsPostDetail extends Component {
 		};
 
 		// Check if post is valid.
-		if ( typeof post === 'object' && post.title?.length ) {
+		if ( typeof post === 'object' && post?.title?.length ) {
 			return {
 				...postBase,
 				date: post?.date,
@@ -129,7 +129,7 @@ class StatsPostDetail extends Component {
 		}
 
 		// Check if postFallback is valid.
-		if ( typeof postFallback === 'object' && postFallback.post_title?.length ) {
+		if ( typeof postFallback === 'object' && postFallback?.post_title?.length ) {
 			return {
 				...postBase,
 				date: postFallback?.post_date_gmt,
