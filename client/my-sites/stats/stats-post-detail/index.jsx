@@ -253,11 +253,10 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
-	const post = getSitePost( state, siteId, postId ) || {};
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 
 	return {
-		post,
+		post: getSitePost( state, siteId, postId ),
 		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
