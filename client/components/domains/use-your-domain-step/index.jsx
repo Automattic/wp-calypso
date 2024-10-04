@@ -4,7 +4,11 @@ import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { CALYPSO_HELP, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
+import {
+	CALYPSO_HELP_WITH_HELP_CENTER,
+	INCOMING_DOMAIN_TRANSFER,
+	MAP_EXISTING_DOMAIN,
+} from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -430,7 +434,7 @@ class UseYourDomainStep extends Component {
 						components: {
 							a: (
 								<a
-									href={ CALYPSO_HELP + '?help-center=home' }
+									href={ CALYPSO_HELP_WITH_HELP_CENTER }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

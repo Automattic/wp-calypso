@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { CALYPSO_HELP } from '@automattic/urls';
+import { CALYPSO_HELP_WITH_HELP_CENTER } from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -139,7 +139,7 @@ function DomainTransferOrConnect( {
 							{
 								a: createElement( 'a', {
 									target: '_blank',
-									href: CALYPSO_HELP + '?help-center=home',
+									href: CALYPSO_HELP_WITH_HELP_CENTER,
 								} ),
 							}
 						) }
