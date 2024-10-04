@@ -5,6 +5,7 @@ import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -50,6 +51,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
+			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -421,8 +423,9 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action } = providedDependencies as {
+					const { action, siteInfo } = providedDependencies as {
 						action: 'skip' | 'submit';
+						siteInfo?: UrlData | undefined;
 					};
 
 					if ( action === 'skip' ) {
@@ -432,6 +435,13 @@ const siteMigration: Flow = {
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
+					}
+
+					if ( siteInfo?.platform_data?.is_wpcom ) {
+						return navigate( STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug, {
+							siteId,
+							siteSlug,
+						} );
 					}
 
 					return navigate(
@@ -455,6 +465,15 @@ const siteMigration: Flow = {
 							)
 						);
 					}
+				}
+
+				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
 				}
 			}
 		}
