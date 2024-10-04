@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
 import SiteMigrationCredentials from '..';
@@ -19,7 +18,6 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/data/site-profiler/use-analyze-url-query' );
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
@@ -448,14 +446,6 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await fillNoteField();
 
-		( useAnalyzeUrlQuery as jest.Mock ).mockReturnValue( {
-			data: {
-				url: 'site-url.wordpress.com',
-			},
-			isError: false,
-			isLoading: false,
-		} );
-
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
@@ -543,36 +533,13 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 
 		await fillAllFields();
+
 		( wpcomRequest as jest.Mock ).mockImplementation(
 			() =>
 				new Promise( ( resolve ) => {
 					setTimeout( resolve, 2000 );
 				} )
 		);
-		( useAnalyzeUrlQuery as jest.Mock ).mockImplementation( ( url: string ) => {
-			if ( url === 'site-url.com' ) {
-				return {
-					data: {
-						url: 'site-url.wordpress.com',
-						platform_data: {
-							is_wpcom: true,
-						},
-					},
-					isError: false,
-					isLoading: true,
-				};
-			}
-			return {
-				data: {
-					url: 'site-url1.wordpress.com',
-					platform_data: {
-						is_wpcom: false,
-					},
-				},
-				isError: false,
-				isLoading: false,
-			};
-		} );
 
 		userEvent.click( continueButton() );
 
