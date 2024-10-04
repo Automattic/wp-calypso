@@ -11,7 +11,7 @@ import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 
-export const useCredentialsForm = ( onSubmit: () => void ) => {
+export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData | undefined ) => void ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
@@ -117,11 +117,11 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	useEffect( () => {
 		if ( isSuccess ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
-			onSubmit();
+			onSubmit( siteInfo );
 		} else if ( error ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 		}
-	}, [ isSuccess, error, onSubmit ] );
+	}, [ isSuccess, error, onSubmit, siteInfo ] );
 
 	useEffect( () => {
 		const { unsubscribe } = watch( ( formData, changedField ) => {

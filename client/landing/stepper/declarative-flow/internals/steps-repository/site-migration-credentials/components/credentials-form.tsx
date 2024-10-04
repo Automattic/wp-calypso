@@ -2,6 +2,7 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import Notice from 'calypso/components/notice';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useCredentialsForm } from '../hooks/use-credentials-form';
@@ -14,7 +15,7 @@ import { SpecialInstructions } from './special-instructions';
 import { UsernameField } from './username-field';
 
 interface CredentialsFormProps {
-	onSubmit: () => void;
+	onSubmit: ( siteInfo?: UrlData | undefined ) => void;
 	onSkip: () => void;
 }
 

@@ -1,6 +1,7 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { UrlData } from 'calypso/blocks/import/types';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -12,8 +13,8 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const handleSubmit = () => {
-		return navigation.submit?.();
+	const handleSubmit = ( siteInfo?: UrlData | undefined ) => {
+		return navigation.submit?.( { siteInfo } );
 	};
 
 	const handleSkip = () => {
