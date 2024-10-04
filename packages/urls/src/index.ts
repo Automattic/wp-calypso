@@ -9,6 +9,7 @@ export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-
 export const CONCIERGE_SUPPORT = `${ root }/concierge-support/`;
 export const CONTACT = `${ root }/contact/`;
 export const CALYPSO_CONTACT = '/help/contact';
+export const CALYPSO_HELP = '/help';
 export const CUSTOM_DNS = `${ root }/domains/custom-dns/`;
 export const DESIGNATED_AGENT = `${ root }/update-contact-information/#designated-agent`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;

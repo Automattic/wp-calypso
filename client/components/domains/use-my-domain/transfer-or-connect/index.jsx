@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { CALYPSO_CONTACT } from '@automattic/urls';
+import { CALYPSO_HELP } from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -136,7 +136,12 @@ function DomainTransferOrConnect( {
 					<div className={ baseClassName + '__support-link' }>
 						{ createInterpolateElement(
 							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
-							{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
+							{
+								a: createElement( 'a', {
+									target: '_blank',
+									href: CALYPSO_HELP + '?help-center=home',
+								} ),
+							}
 						) }
 					</div>
 				) }
