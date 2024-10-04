@@ -11,8 +11,8 @@
 		}
 
 		text {
-			font-size: $font-body-small;
-			fill: var(--studio-gray-70);
+			font-size: $font-body-extra-small;
+			fill: var(--studio-gray-50);
 		}
 	}
 
@@ -41,6 +41,7 @@
 			border-radius: 4px;
 			background: #f6f7f7;
 			width: 70%;
+			max-width: 330px;
 			text-wrap: pretty;
 			font-family: $font-sf-pro-text;
 			line-height: $font-size-header-small;

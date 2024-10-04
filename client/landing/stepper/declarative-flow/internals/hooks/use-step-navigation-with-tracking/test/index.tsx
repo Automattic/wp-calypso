@@ -22,27 +22,26 @@ jest.mock( '../../../analytics/record-step-navigation', () => ( {
 	recordStepNavigation: jest.fn(),
 } ) );
 
+const stepNavControls = {
+	submit: jest.fn(),
+	exitFlow: jest.fn(),
+	goBack: jest.fn(),
+	goNext: jest.fn(),
+	goToStep: jest.fn(),
+};
+
+const mockParams = {
+	flow: {
+		name: 'mock-flow',
+		isSignupFlow: false,
+		useSteps: () => [],
+		useStepNavigation: () => stepNavControls,
+	},
+	currentStepRoute: 'mock-step',
+	navigate: () => {},
+};
+
 describe( 'useStepNavigationWithTracking', () => {
-	const stepNavControls = {
-		submit: jest.fn(),
-		exitFlow: jest.fn(),
-		goBack: jest.fn(),
-		goNext: jest.fn(),
-		goToStep: jest.fn(),
-	};
-
-	const mockParams = {
-		flow: {
-			name: 'mock-flow',
-			isSignupFlow: false,
-			useSteps: () => [],
-			useStepNavigation: () => stepNavControls,
-		},
-		currentStepRoute: 'mock-step',
-		navigate: () => {},
-		steps: [],
-	};
-
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -55,6 +54,20 @@ describe( 'useStepNavigationWithTracking', () => {
 		expect( result.current ).toHaveProperty( 'goBack' );
 		expect( result.current ).toHaveProperty( 'goNext' );
 		expect( result.current ).toHaveProperty( 'goToStep' );
+	} );
+
+	it( 'ensures reference equality given same input', () => {
+		const { result, rerender } = renderHook(
+			( params ) => useStepNavigationWithTracking( params ),
+			{
+				initialProps: mockParams,
+			}
+		);
+
+		const previous = result.current;
+
+		rerender( mockParams );
+		expect( result.current ).toBe( previous );
 	} );
 
 	it( 'calls the wrapped submit control with correct parameters and records the respective event', () => {

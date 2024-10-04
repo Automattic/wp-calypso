@@ -101,8 +101,7 @@ export type UseStepsHook = () => StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >,
-	steps?: FlowSteps[ number ][ 'slug' ][]
+	navigate: Navigate< FlowSteps >
 ) => NavigationControls;
 
 export type UseAssertConditionsHook< FlowSteps extends StepperStep[] > = (
@@ -138,8 +137,6 @@ export type Flow = {
 	 * Required flag to indicate if the flow is a signup flow.
 	 */
 	isSignupFlow: boolean;
-	useSignupStartEventProps?: () => Record< string, string | number >;
-
 	/**
 	 *  You can use this hook to configure the login url.
 	 * @returns An object describing the configuration.

@@ -1,6 +1,7 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Notice } from '@wordpress/components';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import ImporterActionButton from '../importer-action-buttons/action-button';
@@ -27,23 +28,38 @@ interface SummaryProps {
 	steps: Steps;
 	engine: EngineTypes;
 	fromSite: string;
+	showConfetti: boolean;
+	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
 }
 
-export default function Summary( { steps, selectedSite, engine, fromSite }: SummaryProps ) {
+export default function Summary( {
+	steps,
+	selectedSite,
+	engine,
+	fromSite,
+	showConfetti,
+	shouldShownConfetti,
+}: SummaryProps ) {
 	const { resetPaidNewsletter } = useResetMutation();
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
 
 	const onButtonClick = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 	const paidSubscribersCount = parseInt(
-		steps.subscribers.content?.meta?.paid_subscribers_count || '0'
+		steps.subscribers.content?.meta?.paid_subscribed_count || '0'
 	);
 	const showPauseSubstackBillingWarning = paidSubscribersCount > 0;
 
+	useEffect( () => {
+		if ( showConfetti ) {
+			shouldShownConfetti( false );
+		}
+	}, [ showConfetti, shouldShownConfetti ] );
+
+	const importerStatus = getImporterStatus( steps.content.status, steps.subscribers.status );
+
 	return (
 		<Card>
-			{ importerStatus === 'done' && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
-
+			{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
 			<h2>{ getStepTitle( importerStatus ) }</h2>
 
 			{ steps.content.content && (
@@ -59,10 +75,12 @@ export default function Summary( { steps, selectedSite, engine, fromSite }: Summ
 
 			{ showPauseSubstackBillingWarning && (
 				<Notice status="warning" className="importer__notice" isDismissible={ false }>
-					<h2>Heads up!</h2>
+					<h2>Action Required</h2>
 					To prevent any charges from your old provider, go to your{ ' ' }
 					<a
-						href={ `https://${ normalizeFromSite( fromSite ) }/publish/settings#payments-settings` }
+						href={ `https://${ normalizeFromSite(
+							fromSite
+						) }/publish/settings?search=Pause%20subscription` }
 						target="_blank"
 						rel="noreferrer"
 					>

@@ -1,6 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@automattic/components/src/highlight-cards/variables";
 @import "@wordpress/base-styles/mixins";
 
 .stats__post-detail-highlights-section {
@@ -111,6 +111,7 @@
 		padding: 0;
 		margin: 0 0 -7px 0;
 		box-shadow: none;
+		overflow: hidden;
 
 		.module-header {
 			display: none;

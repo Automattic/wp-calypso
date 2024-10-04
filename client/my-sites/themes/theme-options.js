@@ -88,6 +88,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const redirectTo = encodeURIComponent(
 				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
 					style_variation: options?.styleVariationSlug,
+					activating: true,
 				} )
 			);
 
@@ -224,7 +225,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const slug = getSiteSlug( state, siteId );
 
 			const redirectTo = encodeURIComponent(
-				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
+				addQueryArgs( `${ origin }/theme/${ themeId }/${ slug }`, { activating: true } )
 			);
 
 			const currentPlanSlug = getSitePlanSlug( state, siteId );

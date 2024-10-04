@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Metrics } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	metricsNames,
 	mapThresholdsToStatus,
@@ -20,10 +21,11 @@ type HeaderProps = {
 	displayName: string;
 	metricKey: Metrics;
 	metricValue: number;
+	isActive?: boolean;
 };
 
 const CardHeader = ( props: HeaderProps ) => {
-	const { displayName, metricKey, metricValue } = props;
+	const { displayName, metricKey, metricValue, isActive } = props;
 	const status = mapThresholdsToStatus( metricKey, metricValue );
 	const isPerformanceScoreSelected = metricKey === 'overall';
 
@@ -35,7 +37,7 @@ const CardHeader = ( props: HeaderProps ) => {
 
 				{ isPerformanceScoreSelected ? (
 					<div className="metric-tab-bar-v2__tab-metric" style={ { marginTop: '6px' } }>
-						<CircularPerformanceScore score={ metricValue } size={ 48 } />
+						<CircularPerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
 				) : (
 					<span
@@ -58,6 +60,9 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 		if ( key === activeTab ) {
 			setActiveTab( null );
 		} else {
+			recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
+				tab: key,
+			} );
 			setActiveTab( key as Metrics );
 		}
 	};
@@ -91,6 +96,7 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 								displayName={ displayName }
 								metricKey={ key as Metrics }
 								metricValue={ props[ key as Metrics ] }
+								isActive={ key === activeTab }
 							/>
 						}
 						hideSummary

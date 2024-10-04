@@ -16,6 +16,7 @@ import {
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
+	PromotePostWarning,
 } from 'calypso/data/promote-post/types';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
@@ -24,7 +25,9 @@ import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
-import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
+import PostsList, {
+	postsNotReadyErrorMessage,
+} from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
 import {
 	SORT_OPTIONS_DEFAULT,
@@ -65,6 +68,7 @@ export type PagedBlazeContentData = {
 	has_more_pages: boolean;
 	total_items?: number;
 	items?: BlazePagedItem[];
+	warnings?: PromotePostWarning[];
 };
 
 export type PagedBlazeSearchResponse = {
@@ -145,10 +149,11 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postsIsLoadingNewContent = postsIsLoading || postIsRefetching;
 
-	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
-		'posts',
-		postsData
-	);
+	const {
+		has_more_pages: postsHasMorePages,
+		items: posts,
+		warnings: postsWarnings,
+	} = getPagedBlazeSearchData( 'posts', postsData );
 
 	const tabs: TabOption[] = [
 		{
@@ -226,6 +231,33 @@ export default function PromotedPosts( { tab }: Props ) {
 					  ) }
 			</div>
 		);
+	};
+
+	const renderWarningNotices = ( warnings?: PromotePostWarning[] ) => {
+		const content = [];
+
+		for ( const item of warnings ?? [] ) {
+			switch ( item ) {
+				case 'sync_in_progress':
+					content.push(
+						<Notice
+							key={ item }
+							className="promote-post-notice"
+							status="is-info"
+							showDismiss={ false }
+						>
+							{ postsNotReadyErrorMessage }
+						</Notice>
+					);
+					break;
+			}
+		}
+
+		return content.length ? (
+			<div className="promote-post-i2__warnings-wrapper promote-post-i2__aux-wrapper">
+				{ content }
+			</div>
+		) : null;
 	};
 
 	return (
@@ -329,6 +361,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
+					{ renderWarningNotices( postsWarnings ) }
+
 					<BlazePageViewTracker
 						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
 						title="Advertising > Ready to Promote"

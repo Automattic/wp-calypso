@@ -19,7 +19,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -48,7 +48,13 @@ import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
-import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP } from './steps';
+import {
+	ATOMIC_REVERT_STEP,
+	FEEDBACK_STEP,
+	UPSELL_STEP,
+	NEXT_ADVENTURE_STEP,
+	REMOVE_PLAN_STEP,
+} from './steps';
 
 import './style.scss';
 
@@ -64,6 +70,7 @@ class CancelPurchaseForm extends Component {
 		cancelBundledDomain: PropTypes.bool,
 		includedDomainPurchase: PropTypes.object,
 		linkedPurchases: PropTypes.array,
+		skipRemovePlanSurvey: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -71,16 +78,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { willAtomicSiteRevert, purchase } = this.props;
+		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert } = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
-		if ( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) ) {
-			/**
-			 * We don't want to display the cancellation survey for sites purchased
-			 * through partners (e.g., A4A.)
-			 *
-			 * Let's jump right to the confirmation step.
-			 */
+		if (
+			skipRemovePlanSurvey ||
+			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) )
+		) {
 			steps = [];
 		} else if ( ! isPlan( purchase ) ) {
 			steps = [ NEXT_ADVENTURE_STEP ];
@@ -92,6 +96,10 @@ class CancelPurchaseForm extends Component {
 
 		if ( willAtomicSiteRevert ) {
 			steps.push( ATOMIC_REVERT_STEP );
+		}
+
+		if ( skipRemovePlanSurvey && steps.length === 0 ) {
+			steps.push( REMOVE_PLAN_STEP );
 		}
 
 		return steps;
@@ -274,6 +282,10 @@ class CancelPurchaseForm extends Component {
 						isSubmitting: false,
 					} );
 				} );
+
+			if ( this.props.flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+				this.props.cancelPurchaseSurveyCompleted( purchase.id );
+			}
 		}
 
 		this.props.onClickFinalConfirm();
@@ -331,6 +343,7 @@ class CancelPurchaseForm extends Component {
 			flowType,
 		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
+		const { productName } = purchase;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -514,6 +527,51 @@ class CancelPurchaseForm extends Component {
 				</div>
 			);
 		}
+
+		if ( surveyStep === REMOVE_PLAN_STEP ) {
+			return (
+				<div className="cancel-purchase-form__remove-plan">
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Sorry to see you go' ) }
+						subHeaderText={
+							<>
+								<span className="cancel-purchase-form__remove-plan-text">
+									{
+										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business"
+										translate(
+											'If you remove your plan, you will lose access to the features of the %(planName)s plan.',
+											{
+												args: {
+													planName: productName,
+												},
+											}
+										)
+									}
+								</span>
+								<span className="cancel-purchase-form__remove-plan-text">
+									{
+										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
+										translate(
+											'If you keep your plan, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
+											{
+												args: {
+													planName: productName,
+													purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+												},
+												components: {
+													strong: <strong className="is-highlighted" />,
+												},
+											}
+										)
+									}
+								</span>
+							</>
+						}
+					/>
+				</div>
+			);
+		}
 	}
 
 	closeDialog = () => {
@@ -539,6 +597,10 @@ class CancelPurchaseForm extends Component {
 	canGoNext() {
 		const { surveyStep, isSubmitting } = this.state;
 		const { disableButtons, isImport } = this.props;
+
+		if ( disableButtons || isSubmitting ) {
+			return false;
+		}
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			if ( isImport && ! this.state.importQuestionRadio ) {
@@ -615,19 +677,41 @@ class CancelPurchaseForm extends Component {
 			);
 		}
 
+		if ( surveyStep === REMOVE_PLAN_STEP ) {
+			return (
+				<>
+					<GutenbergButton
+						className="cancel-purchase-form__remove-plan-button"
+						isPrimary
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.onSubmit }
+					>
+						{ this.getFinalActionText() }
+					</GutenbergButton>
+					<GutenbergButton
+						isSecondary
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.closeDialog }
+					>
+						{ translate( 'Keep plan' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
 		return (
-			<>
-				<GutenbergButton
-					isPrimary={ surveyStep !== UPSELL_STEP }
-					isSecondary={ surveyStep === UPSELL_STEP }
-					isDefault={ surveyStep !== UPSELL_STEP }
-					isBusy={ isCancelling }
-					disabled={ ! this.canGoNext() }
-					onClick={ this.onSubmit }
-				>
-					{ this.getFinalActionText() }
-				</GutenbergButton>
-			</>
+			<GutenbergButton
+				isPrimary={ surveyStep !== UPSELL_STEP }
+				isSecondary={ surveyStep === UPSELL_STEP }
+				isDefault={ surveyStep !== UPSELL_STEP }
+				isBusy={ isCancelling }
+				disabled={ ! this.canGoNext() }
+				onClick={ this.onSubmit }
+			>
+				{ this.getFinalActionText() }
+			</GutenbergButton>
 		);
 	};
 
@@ -780,6 +864,7 @@ const ConnectedCancelPurchaseForm = connect(
 		hasBackupsFeature: siteHasFeature( state, purchase.siteId, WPCOM_FEATURES_BACKUPS ),
 	} ),
 	{
+		cancelPurchaseSurveyCompleted,
 		fetchAtomicTransfer,
 		recordTracksEvent,
 		submitSurvey,

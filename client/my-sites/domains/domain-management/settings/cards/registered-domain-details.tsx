@@ -52,6 +52,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			! domain.currentUserIsOwner ||
 			( ! isLoadingPurchase && ! purchase ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			domain.aftermarketAuction
 		);
 	};
@@ -112,7 +113,7 @@ const RegisteredDomainDetails = ( {
 			domain.pendingRegistrationAtRegistry ||
 			domain.pendingRegistration ||
 			! domain.currentUserCanManage ||
-			( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			( ! isLoadingPurchase && ! purchase ) ||
 			domain.aftermarketAuction
 		);

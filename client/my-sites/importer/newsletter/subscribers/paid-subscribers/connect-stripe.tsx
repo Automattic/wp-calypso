@@ -7,6 +7,7 @@ import ImporterActionButton from '../../../importer-action-buttons/action-button
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from '../start-import-button';
+import SuccessNotice from './success-notice';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
@@ -37,9 +38,11 @@ export default function ConnectStripe( {
 	}
 
 	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
+	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
 
 	return (
 		<>
+			<SuccessNotice allEmailsCount={ allEmailsCount } />
 			<h2>Do you have paid subscribers?</h2>
 			<p>
 				To migrate your <strong>paid subscribers</strong> to WordPress.com, make sure you're
@@ -63,7 +66,7 @@ export default function ConnectStripe( {
 					navigate={ () => {
 						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
-					label="Continue free subscriber import"
+					label="I have only free subscribers"
 				/>
 			</ImporterActionButtonContainer>
 		</>

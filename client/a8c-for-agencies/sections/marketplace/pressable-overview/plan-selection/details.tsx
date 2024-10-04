@@ -65,7 +65,7 @@ export default function PlanSelectionDetails( {
 
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
-	if ( isLoading ) {
+	if ( ! isReferMode && isLoading ) {
 		return (
 			<section className="pressable-overview-plan-selection__details is-loader">
 				<div className="pressable-overview-plan-selection__details-card"></div>
@@ -93,7 +93,7 @@ export default function PlanSelectionDetails( {
 							  } ) }
 					</h3>
 
-					{ selectedPlan && (
+					{ ! isReferMode && selectedPlan && (
 						<div className="pressable-overview-plan-selection__details-card-header-price">
 							<strong className="pressable-overview-plan-selection__details-card-header-price-value">
 								{ formatCurrency( discountedCost, selectedPlan.currency ) }
@@ -115,6 +115,13 @@ export default function PlanSelectionDetails( {
 							) }
 						</div>
 					) }
+					{ isReferMode && (
+						<div className="pressable-overview-plan-selection__details-card-header-price">
+							<strong className="pressable-overview-plan-selection__details-card-header-coming-soon">
+								{ translate( 'Coming soon' ) }
+							</strong>
+						</div>
+					) }
 				</div>
 
 				{ ! isRegularOwnership && ! isReferMode && (
@@ -134,14 +141,14 @@ export default function PlanSelectionDetails( {
 										}
 								  )
 								: translate( 'Custom WordPress installs' ),
-							translate( '{{b}}%(count)s{{/b}} visits per month', {
+							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
 									count: info ? formatNumber( info.visits ) : customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',
 							} ),
-							translate( '{{b}}%(size)s{{/b}} storage per month', {
+							translate( '{{b}}%(size)s{{/b}} storage per month*', {
 								args: {
 									size: info ? `${ info.storage }GB` : customString,
 								},
@@ -291,6 +298,17 @@ export default function PlanSelectionDetails( {
 					/>
 				</div>
 			) }
+
+			<div className="pressable-overview-plan-selection__details-hint">
+				{ translate(
+					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}$0.50{{/b}} per GB and {{b}}$8{{/b}} per 10K visits per month.",
+					{
+						components: {
+							b: <b />,
+						},
+					}
+				) }
+			</div>
 		</section>
 	);
 }

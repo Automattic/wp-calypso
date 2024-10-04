@@ -500,8 +500,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user, siteAdminUrl } = this.props;
-		const editProfileLink = siteAdminUrl ? `${ siteAdminUrl }profile.php` : '/me';
+		const { translate, user } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -514,16 +513,12 @@ class MasterbarLoggedIn extends Component {
 						/>
 						<div className="masterbar__item-howdy-account-details">
 							<span className="display-name">{ user.display_name }</span>
-							<span className="display-name edit-profile">{ translate( 'Edit Profile' ) }</span>
+							<span className="username">{ user.username }</span>
+							<span className="display-name edit-profile">{ translate( 'My Profile' ) }</span>
 						</div>
 					</div>
 				),
-				url: editProfileLink,
-			},
-			{
-				label: translate( 'My Account' ),
 				url: '/me',
-				className: 'account-link',
 			},
 			{
 				label: translate( 'Log Out' ),
@@ -536,7 +531,7 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				tipTarget="me"
-				url={ editProfileLink }
+				url="/me"
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me', true ) }
 				className="masterbar__item-howdy"

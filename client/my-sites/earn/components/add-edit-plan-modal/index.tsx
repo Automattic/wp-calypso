@@ -139,7 +139,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
-		product?.subscribe_as_site_subscriber ?? false
+		product?.subscribe_as_site_subscriber ?? isOnlyTier
 	);
 
 	const [ editedPostIsTier, setEditedPostIsTier ] = useState(

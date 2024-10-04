@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -47,6 +47,8 @@ import {
 	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useDispatch, useSelector } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
@@ -123,14 +125,56 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
-	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
-		selectedSite.ID,
-		domain.name,
-		{
-			refetchOnMount: ! addEmailForwardMutationActive,
-			retry: false,
+	const {
+		data: emailAccounts = [],
+		isLoading: isLoadingEmailAccounts,
+		refetch,
+	} = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
+		refetchOnMount: ! addEmailForwardMutationActive,
+		retry: false,
+	} );
+
+	// Email checkout provides the /mailbox route with a new email param, e.g. /mailboxes/example.com?new-email=example@example.com
+	const queryParams = new URLSearchParams( window.location.search );
+	const newEmail = queryParams.get( 'new-email' );
+
+	useEffect( () => {
+		if ( ! newEmail ) {
+			return;
 		}
+		dispatch(
+			successNotice(
+				translate( 'Your mailbox %(mailbox)s has been created.', { args: { mailbox: newEmail } } ),
+				{
+					duration: 8000,
+				}
+			)
+		);
+	}, [ newEmail, dispatch, translate ] );
+
+	const mailbox = newEmail ? newEmail.split( '@' )[ 0 ] : '';
+	const emailExists = emailAccounts.some( ( account ) =>
+		account.emails.some( ( email ) => mailbox === email.mailbox )
 	);
+
+	const [ emailAccountsRefetchCount, setEmailAccountsRefetchCount ] = useState( 0 );
+	const isLoading =
+		isLoadingEmailAccounts || ( newEmail && ! emailExists && emailAccountsRefetchCount < 5 );
+
+	// Email provisioning takes a few seconds to complete, if there is a newEmail
+	// Refetch email acounts every 1.5 seconds up to 5 times until we can see it
+	useEffect( () => {
+		if ( ! newEmail || emailExists || emailAccountsRefetchCount >= 5 ) {
+			return;
+		}
+
+		const refetchTimeout = setTimeout( () => {
+			refetch();
+			setEmailAccountsRefetchCount( ( prev ) => prev + 1 );
+		}, 1500 );
+
+		return () => clearTimeout( refetchTimeout );
+	}, [ newEmail, refetch, emailExists, emailAccountsRefetchCount ] );
 
 	const emailForwardsLimit = getEmailForwardLimit( emailAccounts );
 
