@@ -3,7 +3,7 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
-	CALYPSO_CONTACT,
+	CALYPSO_HELP_WITH_HELP_CENTER,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS,
 	MAP_EXISTING_DOMAIN,
@@ -224,7 +224,13 @@ function getAvailabilityNotice(
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: <a target={ linksTarget } rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
+						a: (
+							<a
+								target={ linksTarget }
+								rel="noopener noreferrer"
+								href={ CALYPSO_HELP_WITH_HELP_CENTER }
+							/>
+						),
 					},
 				}
 			);
@@ -424,7 +430,7 @@ function getAvailabilityNotice(
 									href="http://wordpressfoundation.org/trademark-policy/"
 								/>
 							),
-							a2: <a target={ linksTarget } href={ CALYPSO_CONTACT } />,
+							a2: <a target={ linksTarget } href={ CALYPSO_HELP_WITH_HELP_CENTER } />,
 						},
 					}
 				);
@@ -479,7 +485,7 @@ function getAvailabilityNotice(
 				'This domain expired recently. To get it back please {{a}}contact support{{/a}}.',
 				{
 					components: {
-						a: <a target={ linksTarget } href={ CALYPSO_CONTACT } />,
+						a: <a target={ linksTarget } href={ CALYPSO_HELP_WITH_HELP_CENTER } />,
 					},
 				}
 			);
