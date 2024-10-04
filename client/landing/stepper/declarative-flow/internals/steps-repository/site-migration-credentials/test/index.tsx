@@ -8,9 +8,16 @@ import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import wp from 'calypso/lib/wp';
 import SiteMigrationCredentials from '..';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
+
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: {
+		get: jest.fn(),
+	},
+} ) );
 
 jest.mock( 'calypso/data/site-profiler/use-analyze-url-query' );
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
@@ -77,12 +84,7 @@ describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( useAnalyzeUrlQuery as jest.Mock ).mockReturnValue( {
-			data: {
-				url: 'site-url.wordpress.com',
-			},
-			isLoading: false,
-		} );
+		( wp.req.get as jest.Mock ).mockResolvedValue( {} );
 	} );
 	afterEach( () => {
 		jest.runOnlyPendingTimers();
@@ -100,6 +102,46 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( specialInstructionsButton() );
 		await userEvent.type( specialInstructionsInput(), 'notes' );
+		await userEvent.click( continueButton() );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'sites/site-url.wordpress.com/automated-migration',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				migration_type: 'credentials',
+				blog_url: 'site-url.wordpress.com',
+				bypass_verification: false,
+				notes: 'notes',
+				from_url: 'site-url.com',
+				username: 'username',
+				password: 'password',
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'creates a credentials ticket when site info fetching throws error', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await userEvent.click( credentialsOption() );
+		await userEvent.type( siteAddressInput(), 'site-url.com' );
+		await userEvent.type( usernameInput(), 'username' );
+		await userEvent.type( passwordInput(), 'password' );
+
+		await userEvent.click( specialInstructionsButton() );
+		await userEvent.type( specialInstructionsInput(), 'notes' );
+
+		( wp.req.get as jest.Mock ).mockRejectedValue( {
+			code: 'rest_other_error',
+			message: 'Error message from backend',
+		} );
+
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
@@ -439,21 +481,12 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAllFields();
 		await fillNoteField();
-		// Mock ( useAnalyzeUrlQuery as jest.Mock ) to return a proper payload when called with the site URL test.com, otherwise, return null
-		( useAnalyzeUrlQuery as jest.Mock ).mockImplementation( ( url: string ) => {
-			if ( url === 'site-url.com' ) {
-				return {
-					data: {
-						url: 'site-url.wordpress.com',
-						platform_data: {
-							is_wpcom: true,
-						},
-					},
-					isError: false,
-					isLoading: false,
-				};
-			}
-			return {};
+
+		( wp.req.get as jest.Mock ).mockResolvedValue( {
+			url: 'site-url.wordpress.com',
+			platform_data: {
+				is_wpcom: true,
+			},
 		} );
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
@@ -476,6 +509,32 @@ describe( 'SiteMigrationCredentials', () => {
 				...requestPayload.body,
 				bypass_verification: true,
 			},
+		} );
+	} );
+
+	it( 'shows "Verifying credentials" on the Continue button during submission when fetching site info', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		( wp.req.get as jest.Mock ).mockImplementation(
+			() =>
+				new Promise( ( resolve ) => {
+					setTimeout( resolve, 2000 );
+				} )
+		);
+
+		await fillAllFields();
+		jest.useFakeTimers();
+		userEvent.click( continueButton() );
+		jest.advanceTimersByTime( 1000 );
+
+		await waitFor( () => {
+			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
 		} );
 	} );
 
