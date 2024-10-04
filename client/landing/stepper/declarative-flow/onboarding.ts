@@ -3,6 +3,7 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -108,6 +109,13 @@ const onboarding: Flow = {
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
 					setPlanCartItem( cartItems?.[ 0 ] ?? null );
+					if ( ! cartItems?.[ 0 ] ) {
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, we switch the value
+						// to "free".
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+					}
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, true );
 				}
