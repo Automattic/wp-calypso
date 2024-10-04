@@ -1,4 +1,9 @@
-import { PLAN_BUSINESS, WPCOM_FEATURES_ATOMIC, getPlan } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_ATOMIC,
+	getPlan,
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { WordPressWordmark, Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
@@ -263,25 +268,38 @@ const MarketplaceProductInstall = ( {
 	const pluginsUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true' )
 	);
+	const canManagePlugins = useSelector( ( state ) => {
+		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
+	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
 			// Default process
 			( installedPlugin && pluginActive ) ||
 			// Transfer to atomic using a marketplace plugin
-			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
+			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus && canManagePlugins ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
 				! isAtomic &&
-				transferStates.COMPLETE === automatedTransferStatus )
+				transferStates.COMPLETE === automatedTransferStatus &&
+				canManagePlugins )
 		) {
-			waitFor( 2 ).then( () => {
+			waitFor( 1 ).then( () => {
 				window.location.href = pluginsUrl as string;
 			} );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus, atomicFlow, isPluginUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [
+		pluginActive,
+		automatedTransferStatus,
+		atomicFlow,
+		isPluginUploadFlow,
+		isAtomic,
+		canManagePlugins,
+		installedPlugin,
+		uploadedPluginSlug,
+		pluginsUrl,
+	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
 	useEffect( () => {
