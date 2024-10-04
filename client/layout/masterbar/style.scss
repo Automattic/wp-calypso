@@ -1048,7 +1048,7 @@ body.is-mobile-app-view {
 			line-height: 18px;
 
 			.username {
-				font-size: 11px;
+				font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				line-height: 14px;
 				margin-bottom: 4px;
 			}
