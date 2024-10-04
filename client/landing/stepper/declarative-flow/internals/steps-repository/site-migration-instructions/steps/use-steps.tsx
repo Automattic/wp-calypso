@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
-import { StepInstallMigrationPlugin } from './step-install-migation-plugin';
+import { StepInstallMigrationPlugin } from './step-install-migration-plugin';
 import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 
 interface StepsDataOptions {
