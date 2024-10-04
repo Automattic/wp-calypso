@@ -233,6 +233,7 @@
 		&:hover,
 		&:focus-visible {
 			background-color: var(--color-accent-100);
+			color: var(--color-surface);
 		}
 	}
 
@@ -377,7 +378,8 @@
 
 // New navigation will not include a masterbar
 .theme-a8c-for-agencies .layout.has-no-masterbar {
-	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* We are ignoring these lines because without the
+	// px value the calc function does not work as expected */
 	/* stylelint-disable-next-line length-zero-no-unit */
 	--masterbar-height: 0px;
 
