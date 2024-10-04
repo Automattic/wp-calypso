@@ -100,6 +100,7 @@ export type Message = {
 export type Chat = {
 	chat_id?: number | null;
 	messages: Message[];
+	created_at: string;
 };
 
 export type OdieAllowedSectionNames =

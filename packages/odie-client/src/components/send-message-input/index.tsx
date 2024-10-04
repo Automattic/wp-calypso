@@ -12,7 +12,7 @@ import React, {
 	RefObject,
 } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import ArrowUp from '../../assets/arrow-up.svg';
+import Send from '../../assets/send.svg';
 import { useOdieAssistantContext } from '../../context';
 import { useOdieSendMessage } from '../../query';
 import { Message } from '../../types/';
@@ -116,7 +116,7 @@ export const OdieSendMessageButton = ( {
 				);
 			}
 			return _x(
-				'Ask your question',
+				'Type a message…',
 				'Placeholder text for the message input field (chat)',
 				__i18n_text_domain__
 			);
@@ -146,7 +146,7 @@ export const OdieSendMessageButton = ( {
 						className="odie-send-message-inner-button"
 						disabled={ messageString.trim() === '' || isLoading }
 					>
-						<img src={ ArrowUp } alt={ _x( 'Arrow icon', 'html alt tag', __i18n_text_domain__ ) } />
+						<img src={ Send } alt={ _x( 'Send icon', 'html alt tag', __i18n_text_domain__ ) } />
 					</button>
 				</form>
 			</div>

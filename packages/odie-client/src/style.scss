@@ -35,6 +35,13 @@
 	height: 100%;
 	overscroll-behavior: contain;
 
+	.chatbox-messages-creation-date {
+		font-size: 0.75rem;
+		text-align: center;
+		width: 100%;
+		margin-top: 1rem;
+	}
+
 	.odie-chatbox-bottom-edge {
 		min-height: 8px;
 		width: 100%;

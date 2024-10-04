@@ -37,12 +37,12 @@
 
 		.help-center-header__text {
 			margin: 1em 0;
-			font-size: $font-body-small;
+			font-size: $root-font-size;
 			font-weight: 500;
 			display: flex;
 			align-items: center;
 			flex: 1;
-			gap: 4px;
+			gap: 2px;
 
 			svg {
 				margin: 0;
