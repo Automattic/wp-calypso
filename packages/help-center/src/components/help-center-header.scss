@@ -36,16 +36,20 @@
 		}
 
 		.help-center-header__text {
-			margin: 1em 0;
-			font-size: $font-body-small;
+			font-size: $root-font-size;
 			font-weight: 500;
 			display: flex;
 			align-items: center;
 			flex: 1;
-			gap: 4px;
+			gap: 2px;
+			margin: 0 0 0 4px;
 
-			svg {
-				margin: 0;
+			svg:not(.help-center__drag-icon) {
+				cursor: pointer;
+			}
+			
+			:focus{
+				outline: none;
 			}
 
 			.help-center-header__article-title {
