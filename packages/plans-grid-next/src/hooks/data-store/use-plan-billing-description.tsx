@@ -205,30 +205,32 @@ export default function usePlanBillingDescription( {
 				/* If the offer is for X years of a yearly plan */
 				if ( 'year' === introOffer.intervalUnit ) {
 					if ( 1 === introOffer.intervalCount ) {
+						// Note: Leaving out originalPriceFullTermText to
+						// match the existing text but we should probably
+						// include it in the future. See
+						// https://github.com/Automattic/wp-calypso/pull/86434
 						return translate(
-							'per month, %(introOfferFormattedPrice)s for your first year,{{br/}}' +
-								'then %(rawPrice)s billed annually, excl. taxes',
+							'per month, %(introOfferFormattedPrice)s for your first year, excl. taxes',
 							{
 								args: {
 									introOfferFormattedPrice: introOffer.formattedPrice,
-									rawPrice: originalPriceFullTermText,
 								},
-								components: { br: <br /> },
 								comment: 'excl. taxes is short for excluding taxes',
 							}
 						);
 					}
 
+					// Note: Leaving out originalPriceFullTermText to
+					// match the existing text but we should probably
+					// include it in the future. See
+					// https://github.com/Automattic/wp-calypso/pull/86434
 					return translate(
-						'per month, %(introOfferFormattedPrice)s for your first %(introOfferIntervalCount)s years,{{br/}}' +
-							'then %(rawPrice)s billed annually, excl. taxes',
+						'per month, %(introOfferFormattedPrice)s for your first %(introOfferIntervalCount)s years, excl. taxes',
 						{
 							args: {
 								introOfferFormattedPrice: introOffer.formattedPrice,
-								rawPrice: originalPriceFullTermText,
 								introOfferIntervalCount: introOffer.intervalCount,
 							},
-							components: { br: <br /> },
 							comment: 'excl. taxes is short for excluding taxes',
 						}
 					);
