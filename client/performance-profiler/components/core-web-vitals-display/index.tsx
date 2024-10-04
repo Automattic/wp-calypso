@@ -5,9 +5,9 @@ import {
 	PerformanceMetricsHistory,
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
-import { CoreWebVitalsAccordionV2 } from '../core-web-vitals-accordion/core-web-vitals-accordion-v2';
-import MetricTabBarV2 from '../metric-tab-bar/metric-tab-bar-v2';
-import { CoreWebVitalsDetailsV2 } from './core-web-vitals-details_v2';
+import { CoreWebVitalsAccordionV2 } from '../core-web-vitals-accordion';
+import MetricTabBarV2 from '../metric-tab-bar';
+import { CoreWebVitalsDetailsV2 } from './core-web-vitals-details';
 import './style.scss';
 
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {

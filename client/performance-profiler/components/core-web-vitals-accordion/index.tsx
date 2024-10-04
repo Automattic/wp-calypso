@@ -10,7 +10,7 @@ import {
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
 
-import './styles-v2.scss';
+import './styles.scss';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics | null;

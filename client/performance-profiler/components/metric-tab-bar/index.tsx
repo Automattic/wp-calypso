@@ -8,7 +8,7 @@ import {
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
 import { StatusIndicator } from '../status-indicator';
-import './style_v2.scss';
+import './style.scss';
 
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics;
