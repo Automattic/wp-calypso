@@ -3,7 +3,7 @@ import { NextButton } from '@automattic/onboarding';
 import { CheckboxControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { Control, Controller, FieldError, useForm } from 'react-hook-form';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
@@ -27,6 +27,7 @@ const CheckboxIntents = ( { label, control, value }: CheckboxProps ) => (
 			return (
 				<CheckboxControl
 					className="site-migration-already-wpcom__form-checkbox-control"
+					{ ...field }
 					onChange={ ( isChecked ) => {
 						if ( isChecked ) {
 							field.onChange( [ ...field.value, value ] );
@@ -62,6 +63,7 @@ const OtherDetails = ( { label, control, error }: OtherDetailsProps ) => {
 						<FormLabel htmlFor="otherDetails"> { label } </FormLabel>
 						<FormTextArea
 							id="otherDetails"
+							{ ...field }
 							value={ field.value }
 							onChange={ field.onChange }
 							placeholder={ translate(
@@ -90,25 +92,37 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const siteSlug = useSiteSlugParam() ?? '';
 
 	const {
+		mutate: createTicket,
+		isSuccess,
+		error,
+		isPending,
+	} = useMigrationTicketMutation( siteSlug );
+
+	const {
 		control,
 		handleSubmit,
 		watch,
 		setError,
 		formState: { errors },
 	} = useForm< TicketMigrationData >( {
+		disabled: isPending,
 		defaultValues: {
 			intents: [],
 			otherDetails: '',
 		},
 	} );
 
-	const { mutate: createTicket, isSuccess } = useMigrationTicketMutation( siteSlug );
+	useEffect( () => {
+		if ( error ) {
+			setError( 'root', {
+				type: 'manual',
+				message: translate( 'Something went wrong. Please try again.' ),
+			} );
+		}
+	}, [ error, setError, translate ] );
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			if ( process.env.NODE_ENV !== 'development' ) {
-				alert( 'Success!' );
-			}
 			onComplete();
 		}
 	}, [ isSuccess, onComplete ] );
@@ -119,6 +133,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 				type: 'manual',
 				message: translate( 'Please select an option.' ),
 			} );
+			return;
 		}
 		createTicket( {
 			intents: data.intents,
@@ -129,14 +144,24 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const intents = watch( 'intents' );
 	const isOtherChecked = intents.includes( 'other' );
 
+	const getErrorMessage = useCallback( () => {
+		if ( errors?.root?.message ) {
+			return errors.root.message;
+		}
+		if ( errors?.intents?.message ) {
+			return errors.intents.message;
+		}
+		return null;
+	}, [ errors ] );
+
 	return (
 		<div className="site-migration-already-wpcom__form-container">
 			<form className="site-migration-already-wpcom__form" onSubmit={ onSubmit }>
-				{ errors.intents && (
+				{ getErrorMessage() && (
 					<Notice
 						showIcon={ false }
 						status="is-warning"
-						text={ translate( 'Please select an option.' ) }
+						text={ getErrorMessage() }
 						showDismiss={ false }
 						className="site-migration-already-wpcom__form-error-notice"
 					/>
@@ -178,7 +203,9 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 						/>
 					) }
 				</div>
-				<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
+				<NextButton disabled={ isPending } type="submit">
+					{ translate( 'Continue' ) }
+				</NextButton>
 			</form>
 		</div>
 	);
