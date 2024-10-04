@@ -446,6 +446,11 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await fillNoteField();
 
+		( wp.req.get as jest.Mock ).mockRejectedValue( {
+			code: 'rest_other_error',
+			message: 'Error message from backend',
+		} );
+
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
@@ -462,7 +467,42 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		await waitFor( () => {
-			expect( submit ).toHaveBeenCalled();
+			expect( submit ).toHaveBeenCalledWith( { siteInfo: undefined } );
+		} );
+	} );
+
+	it( 'calls submit with siteInfo when site is not on WPCOM', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+		await fillAllFields();
+		await fillNoteField();
+
+		const siteInfo = {
+			url: 'site-url.wordpress.com',
+			platform_data: {
+				is_wpcom: false,
+			},
+		};
+
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfo );
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		await userEvent.click( continueButton() );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			...requestPayload,
+			body: {
+				...requestPayload.body,
+				bypass_verification: false,
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalledWith( { siteInfo } );
 		} );
 	} );
 
@@ -472,12 +512,14 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAllFields();
 		await fillNoteField();
 
-		( wp.req.get as jest.Mock ).mockResolvedValue( {
+		const siteInfo = {
 			url: 'site-url.wordpress.com',
 			platform_data: {
 				is_wpcom: true,
 			},
-		} );
+		};
+
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfo );
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
@@ -499,6 +541,10 @@ describe( 'SiteMigrationCredentials', () => {
 				...requestPayload.body,
 				bypass_verification: true,
 			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalledWith( { siteInfo } );
 		} );
 	} );
 
