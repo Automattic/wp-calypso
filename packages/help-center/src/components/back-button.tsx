@@ -1,24 +1,15 @@
 import { Icon, chevronLeft } from '@wordpress/icons';
-import clsx from 'clsx';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 
 import './back-button.scss';
 
-export type BackButtonProps = {
-	onClick?: () => void;
-	backToRoot?: boolean;
-	className?: string;
-	children?: React.ReactNode;
-};
-
-export const BackButton = ( { onClick, backToRoot = false, className }: BackButtonProps ) => {
+export const BackButton = () => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
+	const { pathname } = useLocation();
 
-	const buttonClassName = clsx( 'back-button__help-center', className );
-
-	function defaultOnClick() {
-		if ( backToRoot ) {
+	function handleClick() {
+		if ( pathname === '/success' ) {
 			navigate( '/' );
 		} else if ( searchParams.get( 'query' ) ) {
 			navigate( `/?query=${ searchParams.get( 'query' ) }` );
@@ -28,10 +19,10 @@ export const BackButton = ( { onClick, backToRoot = false, className }: BackButt
 	}
 
 	return (
-		<span className={ buttonClassName }>
+		<span className="back-button__help-center">
 			<Icon
 				data-testid="back-button-icon"
-				onClick={ onClick || defaultOnClick }
+				onClick={ handleClick }
 				icon={ chevronLeft }
 				size={ 18 }
 			/>

@@ -22,20 +22,6 @@ describe( 'BackButton', () => {
 		mockNavigate.mockClear();
 	} );
 
-	it( 'navigates to the root when back to root is true', async () => {
-		const user = userEvent.setup();
-
-		render(
-			<MemoryRouter initialEntries={ testEntries }>
-				<BackButton backToRoot />
-			</MemoryRouter>
-		);
-
-		await user.click( screen.getByTestId( 'back-button-icon' ) );
-
-		expect( mockNavigate ).toHaveBeenCalledWith( '/' );
-	} );
-
 	it( 'navigates to the previous page by default', async () => {
 		const user = userEvent.setup();
 
@@ -62,21 +48,5 @@ describe( 'BackButton', () => {
 		await user.click( screen.getByTestId( 'back-button-icon' ) );
 
 		expect( mockNavigate ).not.toHaveBeenCalledWith( '/' );
-	} );
-
-	it( 'calls a custom onClick handler when defined instead of modifying history', async () => {
-		const user = userEvent.setup();
-		const onClickSpy = jest.fn();
-
-		render(
-			<MemoryRouter initialEntries={ testEntries }>
-				<BackButton onClick={ onClickSpy } />
-			</MemoryRouter>
-		);
-
-		await user.click( screen.getByTestId( 'back-button-icon' ) );
-
-		expect( onClickSpy ).toHaveBeenCalled();
-		expect( mockNavigate ).not.toHaveBeenCalled();
 	} );
 } );
