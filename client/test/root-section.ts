@@ -140,7 +140,7 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
 
-	test( 'user with a selected site and edit permissions goes to My Home', async () => {
+	test( 'user with a selected site goes to My Home for Default Style interface', async () => {
 		const state = {
 			currentUser: {
 				id: 1,
@@ -157,6 +157,7 @@ describe( 'Logged In Landing Page', () => {
 					2: {
 						ID: 2,
 						URL: 'https://selected.wordpress.com',
+						options: { wpcom_admin_interface: 'calypso' },
 					},
 				},
 			},
@@ -166,5 +167,44 @@ describe( 'Logged In Landing Page', () => {
 		page( '/' );
 
 		await waitFor( () => expect( page.current ).toBe( '/home/selected.wordpress.com' ) );
+	} );
+
+	test( 'user with a selected site goes to WP Admin Dashboard for Classic Style interface', async () => {
+		const state = {
+			currentUser: {
+				id: 1,
+				capabilities: { 1: { edit_posts: true } },
+				user: { primary_blog: 1 },
+			},
+			ui: { selectedSiteId: 1 },
+			sites: {
+				items: {
+					1: {
+						ID: 1,
+						URL: 'https://test.wordpress.com',
+						options: {
+							wpcom_admin_interface: 'wp-admin',
+							admin_url: 'https://test.wordpress.com/wp-admin/',
+						},
+					},
+				},
+			},
+		};
+
+		const { page } = initRouter( { state } );
+
+		Object.defineProperty( window, 'location', {
+			value: {
+				assign: jest.fn(),
+			},
+		} );
+
+		page( '/' );
+
+		await waitFor( () => {
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://test.wordpress.com/wp-admin/'
+			);
+		} );
 	} );
 } );
