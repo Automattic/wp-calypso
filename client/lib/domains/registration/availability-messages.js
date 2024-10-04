@@ -236,21 +236,9 @@ function getAvailabilityNotice(
 				}
 			);
 			break;
-		case domainAvailability.MAPPED_SAME_SITE_REGISTRABLE:
-			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s and also available for registration.',
-				{
-					args: { domain, site },
-					components: {
-						strong: <strong />,
-						a: <a target={ linksTarget } rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
-					},
-				}
-			);
-			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site).' +
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s.' +
 					' {{a}}Register it to the connected site.{{/a}}',
 				{
 					args: { domain, site },

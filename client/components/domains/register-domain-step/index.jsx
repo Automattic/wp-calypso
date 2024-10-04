@@ -1091,11 +1091,7 @@ class RegisterDomainStep extends Component {
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
 
-					const availableDomainStatuses = [
-						AVAILABLE,
-						UNKNOWN,
-						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
-					];
+					const availableDomainStatuses = [ AVAILABLE, UNKNOWN, MAPPED_SAME_SITE_REGISTRABLE ];
 
 					if ( error ) {
 						resolve( null );
