@@ -1,7 +1,7 @@
 import './style.scss';
 import clsx from 'clsx';
 import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
-import { metricsTresholds, max2Decimals } from 'calypso/performance-profiler/utils/metrics';
+import { metricsThresholds, max2Decimals } from 'calypso/performance-profiler/utils/metrics';
 
 type Props = {
 	metricName: string;
@@ -11,7 +11,7 @@ type Props = {
 
 export const MetricScale = ( { metricName, value, valuation }: Props ) => {
 	const { good, needsImprovement, bad } =
-		metricsTresholds[ metricName as keyof typeof metricsTresholds ];
+		metricsThresholds[ metricName as keyof typeof metricsThresholds ];
 
 	const formatValue = ( value: number ): string => {
 		if ( value === null || value === undefined ) {

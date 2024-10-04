@@ -8,7 +8,7 @@ import {
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
 	metricsNames,
-	metricsTresholds,
+	metricsThresholds,
 	mapThresholdsToStatus,
 	metricValuations,
 	displayValue,
@@ -44,7 +44,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 
-	const { good, needsImprovement, bad } = metricsTresholds[ activeTab ];
+	const { good, needsImprovement, bad } = metricsThresholds[ activeTab ];
 
 	const formatUnit = ( value: number | string ) => {
 		const num = parseFloat( value as string );
@@ -236,8 +236,8 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 				<HistoryChart
 					data={ dataAvailable && historicalData }
 					range={ [
-						formatUnit( metricsTresholds[ activeTab ].good ),
-						formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
+						formatUnit( metricsThresholds[ activeTab ].good ),
+						formatUnit( metricsThresholds[ activeTab ].needsImprovement ),
 					] }
 					height={ 300 }
 					d3Format="%b %d"
