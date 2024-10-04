@@ -3,11 +3,10 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDebounce } from 'use-debounce';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { UrlData } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isValidUrl } from 'calypso/lib/importer/url-validation';
+import wp from 'calypso/lib/wp';
 import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
@@ -16,28 +15,32 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
-	const [ sourceUrl, setSourceUrl ] = useState( importSiteQueryParam );
-	const [ debouncedSourceUrl ] = useDebounce( sourceUrl, 500 );
+	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
+	const [ isBusy, setIsBusy ] = useState( false );
+
+	const analyzeUrl = useCallback( async ( domain: string ): Promise< UrlData | undefined > => {
+		try {
+			return await wp.req.get( {
+				path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
+				apiNamespace: 'wpcom/v2',
+			} );
+		} catch ( error ) {
+			return undefined;
+		}
+	}, [] );
 
 	const {
-		isPending,
-		mutate: requestAutomatedMigration,
+		mutateAsync: requestAutomatedMigration,
 		error,
 		isSuccess,
 		variables,
 		reset,
 	} = useSiteMigrationCredentialsMutation();
 
-	const {
-		data: siteInfo,
-		isError: isPlatformVerificationError,
-		isLoading: isSiteInfoLoading,
-	} = useAnalyzeUrlQuery( debouncedSourceUrl, isEnglishLocale && isValidUrl( debouncedSourceUrl ) );
-
 	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
 	const {
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		control,
 		handleSubmit,
 		watch,
@@ -45,7 +48,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
-		disabled: isPending,
+		disabled: isBusy,
 		defaultValues: {
 			from_url: importSiteQueryParam,
 			username: '',
@@ -57,6 +60,10 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		errors: serverSideError,
 	} );
 
+	useEffect( () => {
+		setIsBusy( isSubmitting );
+	}, [ isSubmitting ] );
+
 	const isWpcom = useMemo( () => !! siteInfo?.platform_data?.is_wpcom, [ siteInfo ] );
 
 	const canBypassVerification = useMemo( () => {
@@ -66,25 +73,46 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	}, [ error, isWpcom ] );
 
 	const submitHandler = useCallback(
-		( data: CredentialsFormData ) => {
+		async ( data: CredentialsFormData ) => {
 			clearErrors();
-			requestAutomatedMigration( {
+
+			const payload = {
 				...data,
 				bypassVerification: canBypassVerification || ! isEnglishLocale,
-			} );
+			};
+
+			const siteInfoResult = canBypassVerification ? siteInfo : await analyzeUrl( data.from_url );
+			setSiteInfo( siteInfoResult );
+
+			if ( siteInfoResult?.platform_data?.is_wpcom && ! canBypassVerification ) {
+				return;
+			}
+
+			try {
+				await requestAutomatedMigration( payload );
+			} catch ( error ) {
+				// Do nothing, error is handled by the form.
+			}
 		},
-		[ requestAutomatedMigration, canBypassVerification, isEnglishLocale, clearErrors ]
+		[
+			requestAutomatedMigration,
+			canBypassVerification,
+			isEnglishLocale,
+			clearErrors,
+			analyzeUrl,
+			siteInfo,
+		]
 	);
 
 	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && isPending && ! canBypassVerification ) {
+		if ( isEnglishLocale && isSubmitting && ! canBypassVerification ) {
 			return translate( 'Verifying credentials' );
 		}
 		if ( isEnglishLocale && canBypassVerification ) {
 			return translate( 'Continue anyways' );
 		}
 		return translate( 'Continue' );
-	}, [ isPending, canBypassVerification, isEnglishLocale, translate ] );
+	}, [ isSubmitting, canBypassVerification, isEnglishLocale, translate ] );
 
 	useEffect( () => {
 		if ( isSuccess ) {
@@ -98,7 +126,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	useEffect( () => {
 		const { unsubscribe } = watch( ( formData, changedField ) => {
 			if ( changedField?.name === 'from_url' && formData?.from_url ) {
-				setSourceUrl( formData?.from_url );
+				setSiteInfo( undefined );
 				clearErrors( 'from_url' );
 			}
 
@@ -115,10 +143,9 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		handleSubmit,
 		submitHandler,
 		accessMethod: watch( 'migrationType' ),
-		isPending,
+		isBusy,
 		getContinueButtonText,
-		isSiteInfoLoading,
-		isPlatformVerificationError,
+		isSubmitting,
 		isWpcom,
 	};
 };
