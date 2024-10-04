@@ -109,12 +109,12 @@ class StatsPostDetail extends Component {
 	}
 
 	getPost() {
-		const { isPostHomepage, post, postFallback } = this.props;
+		const { isPostHomepage, post, postFallback, countLikes } = this.props;
 
 		const postBase = {
 			title: this.getTitle(),
 			type: isPostHomepage ? 'page' : 'post',
-			like_count: post?.like_count || 0,
+			like_count: countLikes || 0,
 		};
 
 		// Check if post is valid.
@@ -256,10 +256,9 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const post = getSitePost( state, siteId, postId ) || {};
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 
-	post.like_count = countLikes;
-
 	return {
 		post,
+		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isPostHomepage,
