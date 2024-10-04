@@ -1365,33 +1365,6 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 		} );
 
-		it( 'Is not displayed if Professional Email is in the cart and email query parameter is present', () => {
-			const cart = {
-				...getMockCart(),
-				products: [
-					{
-						...getEmptyResponseCartProduct(),
-						product_slug: TITAN_MAIL_MONTHLY_SLUG,
-						extra: { email_users: [ { email: 'purchased_mailbox@foo.bar' } ] },
-					},
-				],
-			};
-
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				cart,
-				domains,
-				receiptId: samplePurchaseId,
-				siteSlug: 'foo.bar',
-			} );
-
-			expect( url ).toBe(
-				`/checkout/thank-you/foo.bar/${ samplePurchaseId }?email=${ encodeURIComponent(
-					'purchased_mailbox@foo.bar'
-				) }`
-			);
-		} );
-
 		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
 			const cart = {
 				...getMockCart(),
@@ -1942,6 +1915,60 @@ describe( 'getThankYouPageUrl', () => {
 					},
 				} )
 			).toThrow();
+		} );
+	} );
+
+	describe( 'Congrats removals', () => {
+		it( 'redirects to /email/:domain/manage/:site when purchasing only Titan Mail', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart: {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: TITAN_MAIL_MONTHLY_SLUG,
+							meta: 'example.com', // meta holds the domain - not the same thing as siteSlug
+							extra: {
+								email_users: [ { email: 'test@example.com' } ],
+							},
+						},
+					],
+				},
+				siteSlug: 'foo.bar',
+			} );
+			expect( url ).toBe(
+				`/email/example.com/manage/foo.bar?new-email=${ encodeURIComponent( 'test@example.com' ) }`
+			);
+		} );
+
+		it( 'redirects to /checkout/thank-you when purchasing multiple products including titanmail', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart: {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: 'personal-bundle',
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: TITAN_MAIL_MONTHLY_SLUG,
+							extra: {
+								email_users: [ { email: 'test@example.com' } ],
+							},
+						},
+					],
+				},
+				siteSlug: 'foo.bar',
+				receiptId: samplePurchaseId,
+			} );
+			expect( url ).toBe(
+				`/checkout/thank-you/foo.bar/${ samplePurchaseId }?email=${ encodeURIComponent(
+					'test@example.com'
+				) }`
+			);
 		} );
 	} );
 } );
