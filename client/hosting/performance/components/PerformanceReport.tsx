@@ -43,7 +43,6 @@ export const PerformanceReport = ( {
 			performanceReport={ performanceReport }
 			url={ url }
 			hash={ hash }
-			useLoggedInCopy
 			overallScoreIsTab
 			filter={ filter }
 			displayNewsletterBanner={ false }

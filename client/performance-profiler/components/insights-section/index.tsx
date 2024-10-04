@@ -21,7 +21,6 @@ type InsightsSectionProps = {
 	isWpcom: boolean;
 	hash: string;
 	filter?: string;
-	useLoggedInCopy: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -98,12 +97,7 @@ export const InsightsSection = forwardRef(
 							</AIBadge>
 						</h2>
 						<p className="subtitle">
-							{ getSubtitleText(
-								selectedFilter,
-								filteredAudits.length,
-								props.useLoggedInCopy,
-								translate
-							) }
+							{ getSubtitleText( selectedFilter, filteredAudits.length, translate ) }
 						</p>
 					</div>
 					<div className="filter">
@@ -157,24 +151,13 @@ export const InsightsSection = forwardRef(
 function getSubtitleText(
 	selectedFilter: string,
 	numRecommendations: number,
-	useLoggedInCopy: boolean,
 	translate: ReturnType< typeof useTranslate >
 ) {
 	if ( numRecommendations ) {
 		if ( selectedFilter === 'all' ) {
-			if ( useLoggedInCopy ) {
-				return translate(
-					'We found %(numRecommendations)d thing you can do for improving your page.',
-					'We found %(numRecommendations)d things you can do for improving your page.',
-					{
-						args: { numRecommendations },
-						count: numRecommendations,
-					}
-				);
-			}
 			return translate(
-				'We found %(numRecommendations)d thing you can do for improving your site.',
-				'We found %(numRecommendations)d things you can do for improving your site.',
+				'We found %(numRecommendations)d thing you can do for improving your page.',
+				'We found %(numRecommendations)d things you can do for improving your page.',
 				{
 					args: { numRecommendations },
 					count: numRecommendations,
@@ -195,13 +178,8 @@ function getSubtitleText(
 	}
 
 	if ( selectedFilter === 'all' ) {
-		if ( useLoggedInCopy ) {
-			return translate(
-				"Great job! We didn't find any recommendations for improving the speed of your page."
-			);
-		}
 		return translate(
-			"Great job! We didn't find any recommendations for improving the speed of your site."
+			"Great job! We didn't find any recommendations for improving the speed of your page."
 		);
 	}
 

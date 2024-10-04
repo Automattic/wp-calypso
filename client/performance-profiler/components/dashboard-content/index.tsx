@@ -23,7 +23,6 @@ type PerformanceProfilerDashboardContentProps = {
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
 	overallScoreIsTab?: boolean;
-	useLoggedInCopy: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -36,7 +35,6 @@ export const PerformanceProfilerDashboardContent = ( {
 	displayMigrationBanner = true,
 	activeTab = TabType.mobile,
 	overallScoreIsTab = false,
-	useLoggedInCopy,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
@@ -108,7 +106,6 @@ export const PerformanceProfilerDashboardContent = ( {
 						ref={ insightsRef }
 						hash={ hash }
 						filter={ filter }
-						useLoggedInCopy={ useLoggedInCopy }
 						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				) }

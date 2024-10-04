@@ -148,7 +148,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 							hash={ hash }
 							filter={ filter }
 							displayMigrationBanner={ ! performanceReport?.is_wpcom }
-							useLoggedInCopy={ false }
 						/>
 					) }
 				</>
