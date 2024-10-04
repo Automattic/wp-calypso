@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import Modal from 'react-modal';
 import { Provider as ReduxProvider } from 'react-redux';
 import { combineReducers } from 'redux';
 import { createReduxStore } from 'calypso/state';
@@ -30,6 +31,10 @@ function createTestStore( verified, pending = false ) {
 }
 
 describe( 'EmailVerificationBanner', () => {
+	beforeAll( () => {
+		Modal.setAppElement( document.body );
+	} );
+
 	it( 'does not show the banner if already verified', () => {
 		render(
 			<ReduxProvider store={ createTestStore( true ) }>
@@ -76,7 +81,7 @@ describe( 'EmailVerificationBanner', () => {
 			</ReduxProvider>
 		);
 		// Click CTA on banner.
-		await screen.getByText( 'Verify email' ).click();
+		await act( async () => await screen.getByText( 'Verify email' ).click() );
 		// Check for dialog modal copy to ensure it appeared.
 		expect(
 			screen.queryByText( /Verify your email to secure your account and access more features./ )
