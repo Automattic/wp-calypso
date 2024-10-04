@@ -1,12 +1,5 @@
-import config from '@automattic/calypso-config';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
-
-const isAlipayRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-alipay' );
-const isBancontactRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-bancontact' );
-const isIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
-const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
-const isWechatPayRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-wechat' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
