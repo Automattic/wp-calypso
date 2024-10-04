@@ -5,9 +5,9 @@ import {
 	PerformanceMetricsHistory,
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
-import { CoreWebVitalsAccordionV2 } from '../core-web-vitals-accordion';
-import MetricTabBarV2 from '../metric-tab-bar';
-import { CoreWebVitalsDetailsV2 } from './core-web-vitals-details';
+import { CoreWebVitalsAccordion } from '../core-web-vitals-accordion';
+import MetricTabBar from '../metric-tab-bar';
+import { CoreWebVitalsDetails } from './core-web-vitals-details';
 import './style.scss';
 
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
@@ -25,28 +25,28 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 
 	if ( isDesktop ) {
 		return (
-			<div className="core-web-vitals-display core-web-vitals-display-v2">
-				<MetricTabBarV2
+			<div className="core-web-vitals-display is-desktop">
+				<MetricTabBar
 					activeTab={ activeTab ?? defaultTab }
 					setActiveTab={ setActiveTab }
 					showOverall={ props.overallScoreIsTab }
 					{ ...props }
 				/>
-				<CoreWebVitalsDetailsV2 activeTab={ activeTab } { ...props } />
+				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
 			</div>
 		);
 	}
 
 	return (
 		<div className="core-web-vitals-display">
-			<CoreWebVitalsAccordionV2
+			<CoreWebVitalsAccordion
 				activeTab={ activeTab }
 				setActiveTab={ setActiveTab }
 				showOverall={ props.overallScoreIsTab }
 				{ ...props }
 			>
-				<CoreWebVitalsDetailsV2 activeTab={ activeTab } { ...props } />
-			</CoreWebVitalsAccordionV2>
+				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
+			</CoreWebVitalsAccordion>
 		</div>
 	);
 };

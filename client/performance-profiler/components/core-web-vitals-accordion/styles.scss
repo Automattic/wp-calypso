@@ -2,8 +2,8 @@
 
 $blueberry-color: #3858e9;
 
-.core-web-vitals-accordion-v2 {
-	.core-web-vitals-accordion-v2__card {
+.core-web-vitals-accordion {
+	.core-web-vitals-accordion__card {
 		margin: 0;
 		border-top: 0;
 		.foldable-card__content {
@@ -55,7 +55,7 @@ $blueberry-color: #3858e9;
 			&.is-expanded {
 				margin: 0;
 
-				.core-web-vitals-accordion-v2__header-text {
+				.core-web-vitals-accordion__header-text {
 					font-family: $font-sf-pro-display;
 					font-size: 1rem;
 					font-weight: 500;
@@ -66,14 +66,9 @@ $blueberry-color: #3858e9;
 				border-top: none;
 			}
 		}
-		.core-web-vitals-display__details {
-			border: 0;
-		}
-
-
 	}
 
-	.core-web-vitals-accordion-v2__card--overall {
+	.core-web-vitals-accordion__card--overall {
 		margin-bottom: 24px;
 
 		.card.is-compact {
@@ -92,7 +87,7 @@ $blueberry-color: #3858e9;
 
 }
 
-.core-web-vitals-accordion-v2__header {
+.core-web-vitals-accordion__header {
 	display: flex;
 	flex-direction: column;
 	align-items: start;
@@ -100,18 +95,18 @@ $blueberry-color: #3858e9;
 	width: 100%;
 }
 
-.core-web-vitals-accordion-v2__header-text {
+.core-web-vitals-accordion__header-text {
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
 	flex-basis: 100%;
 }
 
-.core-web-vitals-accordion-v2__header-text-name {
+.core-web-vitals-accordion__header-text-name {
 	font-weight: 500;
 }
 
-.core-web-vitals-accordion-v2__header-text-value {
+.core-web-vitals-accordion__header-text-value {
 
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header-small;

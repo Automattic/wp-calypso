@@ -26,7 +26,7 @@ type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
-export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
+export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	activeTab,
 	history,
 	audits,
@@ -107,7 +107,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 	const isPerformanceScoreSelected = activeTab === 'overall';
 
 	return (
-		<div className="core-web-vitals-display__details-v2">
+		<div className="core-web-vitals-display__details">
 			<div className="core-web-vitals-display__description">
 				<div className="core-web-vitals-display__description-container">
 					<div
@@ -125,7 +125,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 							<div className={ `core-web-vitals-display__metric ${ statusClass }` }>
 								{ isPerformanceScoreSelected ? (
 									<div
-										className="metric-tab-bar-v2__tab-metric"
+										className="metric-tab-bar__tab-metric"
 										css={ {
 											marginTop: '16px',
 										} }
@@ -169,7 +169,7 @@ export const CoreWebVitalsDetailsV2: React.FC< CoreWebVitalsDetailsProps > = ( {
 						</a>
 					) }
 				</p>
-				<div className="core-web-vitals-display-v2__ranges">
+				<div className="core-web-vitals-display__ranges">
 					<div className="range">
 						<StatusIndicator speed="good" />
 						<div className="range-heading">{ translate( 'Excellent' ) }</div>

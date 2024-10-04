@@ -32,18 +32,16 @@ const CardHeader = ( props: HeaderProps ) => {
 
 	const statusClassName = status === 'needsImprovement' ? 'needs-improvement' : status;
 	return (
-		<div className="core-web-vitals-accordion-v2__header">
-			<div className="core-web-vitals-accordion-v2__header-text">
-				<span className="core-web-vitals-accordion-v2__header-text-name">{ displayName }</span>
+		<div className="core-web-vitals-accordion__header">
+			<div className="core-web-vitals-accordion__header-text">
+				<span className="core-web-vitals-accordion__header-text-name">{ displayName }</span>
 
 				{ isPerformanceScoreSelected ? (
-					<div className="metric-tab-bar-v2__tab-metric" style={ { marginTop: '6px' } }>
+					<div className="metric-tab-bar__tab-metric" style={ { marginTop: '6px' } }>
 						<CircularPerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
 				) : (
-					<span
-						className={ `core-web-vitals-accordion-v2__header-text-value ${ statusClassName } ` }
-					>
+					<span className={ `core-web-vitals-accordion__header-text-value ${ statusClassName } ` }>
 						{ displayValue( metricKey, metricValue ) }
 					</span>
 				) }
@@ -52,7 +50,7 @@ const CardHeader = ( props: HeaderProps ) => {
 	);
 };
 
-export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
+export const CoreWebVitalsAccordion = ( props: Props ) => {
 	const { activeTab, setActiveTab, children, showOverall } = props;
 	const translate = useTranslate();
 
@@ -76,7 +74,7 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 		showOverall && overallEntry ? [ overallEntry, ...otherEntries ] : otherEntries;
 
 	return (
-		<div className="core-web-vitals-accordion-v2">
+		<div className="core-web-vitals-accordion">
 			{ reorderedEntries.map( ( [ key, { name: displayName } ] ) => {
 				if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
 					return null;
@@ -89,8 +87,8 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 
 				return (
 					<FoldableCard
-						className={ clsx( 'core-web-vitals-accordion-v2__card', {
-							[ 'core-web-vitals-accordion-v2__card--overall' ]: key === 'overall',
+						className={ clsx( 'core-web-vitals-accordion__card', {
+							[ 'core-web-vitals-accordion__card--overall' ]: key === 'overall',
 						} ) }
 						key={ key }
 						header={

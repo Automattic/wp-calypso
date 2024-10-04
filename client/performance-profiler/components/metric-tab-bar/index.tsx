@@ -16,7 +16,7 @@ type Props = Record< Metrics, number > & {
 	showOverall?: boolean;
 };
 
-const MetricTabBarV2 = ( props: Props ) => {
+const MetricTabBar = ( props: Props ) => {
 	const { activeTab, setActiveTab, showOverall } = props;
 
 	const handleTabClick = ( tab: Metrics ) => {
@@ -25,30 +25,30 @@ const MetricTabBarV2 = ( props: Props ) => {
 	};
 
 	return (
-		<div className="metric-tab-bar-v2">
+		<div className="metric-tab-bar">
 			{ showOverall && (
 				<button
-					className={ clsx( 'metric-tab-bar-v2__tab metric-tab-bar-v2__performance', {
+					className={ clsx( 'metric-tab-bar__tab metric-tab-bar__performance', {
 						active: activeTab === 'overall',
 					} ) }
 					onClick={ () => handleTabClick( 'overall' ) }
 				>
-					<div className="metric-tab-bar-v2__tab-text">
+					<div className="metric-tab-bar__tab-text">
 						<div
-							className="metric-tab-bar-v2__tab-header"
+							className="metric-tab-bar__tab-header"
 							css={ {
 								marginBottom: '6px',
 							} }
 						>
 							Performance Score
 						</div>
-						<div className="metric-tab-bar-v2__tab-metric">
+						<div className="metric-tab-bar__tab-metric">
 							<CircularPerformanceScore score={ props.overall } size={ 48 } />
 						</div>
 					</div>
 				</button>
 			) }
-			<div className="metric-tab-bar-v2__tab-container">
+			<div className="metric-tab-bar__tab-container">
 				{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
 					if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
 						return null;
@@ -69,17 +69,17 @@ const MetricTabBarV2 = ( props: Props ) => {
 					return (
 						<button
 							key={ key }
-							className={ clsx( 'metric-tab-bar-v2__tab', { active: key === activeTab } ) }
+							className={ clsx( 'metric-tab-bar__tab', { active: key === activeTab } ) }
 							onClick={ () => handleTabClick( key as Metrics ) }
 						>
-							<div className="metric-tab-bar-v2__tab-status">
+							<div className="metric-tab-bar__tab-status">
 								<StatusIndicator
 									speed={ mapThresholdsToStatus( key as Metrics, props[ key as Metrics ] ) }
 								/>
 							</div>
-							<div className="metric-tab-bar-v2__tab-text">
-								<div className="metric-tab-bar-v2__tab-header">{ displayName }</div>
-								<div className={ `metric-tab-bar-v2__tab-metric ${ statusClassName }` }>
+							<div className="metric-tab-bar__tab-text">
+								<div className="metric-tab-bar__tab-header">{ displayName }</div>
+								<div className={ `metric-tab-bar__tab-metric ${ statusClassName }` }>
 									{ displayValue( key as Metrics, props[ key as Metrics ] ) }
 								</div>
 							</div>
@@ -91,4 +91,4 @@ const MetricTabBarV2 = ( props: Props ) => {
 	);
 };
 
-export default MetricTabBarV2;
+export default MetricTabBar;
