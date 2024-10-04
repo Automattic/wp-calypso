@@ -61,7 +61,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						{ translate( 'Limited Time Offer' ) }
 					</div>
 				) }
-				<div className="plans-grid-next-header-price__pricing-group is-large-currency">
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice.monthly }
