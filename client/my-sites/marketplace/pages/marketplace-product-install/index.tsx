@@ -1,7 +1,7 @@
 import { PLAN_BUSINESS, WPCOM_FEATURES_ATOMIC, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { WordPressWordmark, Button } from '@automattic/components';
-import { ThemeProvider } from '@emotion/react';
+import { Button } from '@automattic/components';
+import { css, Global, ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -9,8 +9,8 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
@@ -492,8 +492,14 @@ const MarketplaceProductInstall = ( {
 			<QueryActiveTheme siteId={ siteId } />
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar className="marketplace-plugin-install__masterbar">
-				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
-				<Item>{ translate( 'Marketplace installation' ) }</Item>
+				<Global
+					styles={ css`
+						body {
+							--masterbar-height: 72px;
+						}
+					` }
+				/>
+				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || (
