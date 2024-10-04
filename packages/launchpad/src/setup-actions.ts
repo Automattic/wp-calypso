@@ -123,6 +123,17 @@ export const setUpActionsForTasks = ( {
 					useCalypsoPath = false;
 					break;
 
+				case 'review_site':
+					action = () => {
+						// redirects to the site slug home page in a new tab
+						window.open( `https://${ siteSlug }`, '_blank' );
+						updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { [ task.id ]: true },
+						} );
+					};
+					useCalypsoPath = false;
+					break;
+
 				default:
 					logMissingCalypsoPath = true;
 					useCalypsoPath = false;
