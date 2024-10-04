@@ -10,7 +10,7 @@ export const CONCIERGE_SUPPORT = `${ root }/concierge-support/`;
 export const CONTACT = `${ root }/contact/`;
 export const CALYPSO_CONTACT = '/help/contact';
 export const CALYPSO_HELP = '/help';
-export const CALYPSO_HELP_WITH_HELP_CENTER = CALYPSO_HELP + '?help_center=home';
+export const CALYPSO_HELP_WITH_HELP_CENTER = CALYPSO_HELP + '?help-center=home';
 export const CUSTOM_DNS = `${ root }/domains/custom-dns/`;
 export const DESIGNATED_AGENT = `${ root }/update-contact-information/#designated-agent`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
