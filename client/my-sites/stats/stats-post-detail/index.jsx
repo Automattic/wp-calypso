@@ -16,6 +16,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
@@ -113,27 +114,26 @@ class StatsPostDetail extends Component {
 		const postBase = {
 			title: this.getTitle(),
 			type: isPostHomepage ? 'page' : 'post',
+			like_count: post?.like_count || 0,
 		};
 
 		// Check if post is valid.
-		if ( typeof post === 'object' && post?.title.length ) {
+		if ( typeof post === 'object' && post.title?.length ) {
 			return {
 				...postBase,
 				date: post?.date,
 				post_thumbnail: post?.post_thumbnail,
-				like_count: post?.like_count,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
 			};
 		}
 
 		// Check if postFallback is valid.
-		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
+		if ( typeof postFallback === 'object' && postFallback.post_title?.length ) {
 			return {
 				...postBase,
 				date: postFallback?.post_date_gmt,
 				post_thumbnail: null,
-				like_count: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
 			};
@@ -252,11 +252,14 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
-
+	const countLikes = countPostLikes( state, siteId, postId ) || 0;
+	const post = getSitePost( state, siteId, postId ) || {};
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 
+	post.like_count = countLikes;
+
 	return {
-		post: getSitePost( state, siteId, postId ),
+		post,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isPostHomepage,
