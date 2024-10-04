@@ -59,11 +59,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
-						<SiteAddressField
-							control={ control }
-							errors={ errors }
-							isSiteInfoLoading={ isSiteInfoLoading }
-						/>
+						<SiteAddressField control={ control } errors={ errors } />
 						<UsernameField control={ control } errors={ errors } />
 						<PasswordField control={ control } errors={ errors } />
 					</div>
