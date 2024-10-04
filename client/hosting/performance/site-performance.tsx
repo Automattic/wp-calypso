@@ -13,6 +13,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
+import { setSiteProfilerReport } from 'calypso/state/site-profiler/actions';
+import { getSiteProfilerReport } from 'calypso/state/site-profiler/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -38,9 +40,20 @@ const statsQuery = {
 };
 
 const usePerformanceReport = (
-	wpcom_performance_report_url: { url: string; hash: string } | undefined,
-	activeTab: Tab
+	activeTab: Tab,
+	savePerformanceReportUrl: ( pageId: string, reportUrl: { url: string; hash: string } ) => void
 ) => {
+	const dispatch = useDispatch();
+	const site = useSelector( getSelectedSite );
+	const siteId = site?.ID;
+	const isSitePublic =
+		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
+
+	const queryParams = useSelector( getCurrentQueryArguments );
+	const currentPageId = queryParams?.page_id?.toString() ?? '0';
+	const wpcom_performance_report_url = useSelector( ( state ) =>
+		isSitePublic ? getSiteProfilerReport( state, siteId ) : undefined
+	);
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
 	const {
@@ -50,6 +63,14 @@ const usePerformanceReport = (
 		refetch,
 	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
+
+	useEffect( () => {
+		if ( token && finalUrl && siteId ) {
+			dispatch( setSiteProfilerReport( finalUrl, token, siteId ) );
+			savePerformanceReportUrl( currentPageId, { url: finalUrl, hash: token } );
+		}
+	}, [ dispatch, token, finalUrl, siteId, savePerformanceReportUrl, currentPageId ] );
+
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
 		token ?? hash
@@ -145,12 +166,14 @@ export const SitePerformance = () => {
 			: orderedPages;
 	}, [ currentPage, orderedPages ] );
 
-	const [ wpcom_performance_report_url, setWpcom_performance_report_url ] = useState(
-		currentPage?.wpcom_performance_report_url
-	);
-
 	useLayoutEffect( () => {
-		setWpcom_performance_report_url( currentPage?.wpcom_performance_report_url );
+		dispatch(
+			setSiteProfilerReport(
+				currentPage?.wpcom_performance_report_url?.url ?? '',
+				currentPage?.wpcom_performance_report_url?.hash ?? '',
+				siteId
+			)
+		);
 	}, [ currentPage?.wpcom_performance_report_url ] );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
@@ -166,17 +189,11 @@ export const SitePerformance = () => {
 		window.history.replaceState( {}, '', url.toString() );
 	};
 
-	const performanceReport = usePerformanceReport(
-		isSitePublic ? wpcom_performance_report_url : undefined,
-		activeTab
-	);
+	const performanceReport = usePerformanceReport( activeTab, savePerformanceReportUrl );
 
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
-		setWpcom_performance_report_url( {
-			url: currentPage?.url ?? '',
-			hash: '',
-		} );
+		dispatch( setSiteProfilerReport( currentPage?.url ?? '', '', siteId ) );
 		performanceReport.refetch();
 	};
 
@@ -187,24 +204,6 @@ export const SitePerformance = () => {
 			} );
 		}
 	}, [ performanceReport.isFetched, performanceReport.url ] );
-
-	useEffect( () => {
-		if ( performanceReport.hash && performanceReport.hash !== wpcom_performance_report_url?.hash ) {
-			const performanceReportUrl = {
-				url: performanceReport.url,
-				hash: performanceReport.hash,
-			};
-
-			setWpcom_performance_report_url( performanceReportUrl );
-			savePerformanceReportUrl( currentPageId, performanceReportUrl );
-		}
-	}, [
-		currentPageId,
-		performanceReport.url,
-		performanceReport.hash,
-		savePerformanceReportUrl,
-		wpcom_performance_report_url?.hash,
-	] );
 
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
