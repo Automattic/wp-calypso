@@ -92,16 +92,10 @@ export const InsightsSection = forwardRef(
 				<div className="header">
 					<div>
 						<h2 className="title">
-							{ props.useLoggedInCopy ? (
-								translate( 'Recommendations' )
-							) : (
-								<>
-									{ translate( 'Personalized recommendations' ) }
-									<AIBadge className={ clsx( { 'is-mobile': isMobile } ) }>
-										{ translate( 'Generated with AI' ) }
-									</AIBadge>
-								</>
-							) }
+							{ translate( 'Personalized Recommendations' ) }
+							<AIBadge className={ clsx( { 'is-mobile': isMobile } ) }>
+								{ translate( 'Generated with AI' ) }
+							</AIBadge>
 						</h2>
 						<p className="subtitle">
 							{ getSubtitleText(
