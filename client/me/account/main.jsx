@@ -506,20 +506,20 @@ class Account extends Component {
 
 	renderUsernameValidation() {
 		const { translate } = this.props;
+		const isUsernameValid = this.isUsernameValid();
+		const usernameValidationFailureMessage = this.getUsernameValidationFailureMessage();
 
 		if ( ! this.hasUnsavedUserSetting( 'user_login' ) ) {
 			return null;
 		}
 
-		if ( ! this.isUsernameValid() && null === this.getUsernameValidationFailureMessage() ) {
+		if ( ! isUsernameValid && null === usernameValidationFailureMessage ) {
 			return null;
 		}
 
 		return (
-			<FormInputValidation isError={ ! this.isUsernameValid() }>
-				{ this.isUsernameValid()
-					? translate( 'Nice username!' )
-					: this.getUsernameValidationFailureMessage() }
+			<FormInputValidation isError={ ! isUsernameValid }>
+				{ isUsernameValid ? translate( 'Nice username!' ) : usernameValidationFailureMessage }
 			</FormInputValidation>
 		);
 	}
@@ -906,10 +906,11 @@ class Account extends Component {
 									renderUsernameForm && null !== this.getUsernameValidationFailureMessage()
 								}
 							/>
-							{ ! renderUsernameForm && (
+							{ renderUsernameForm ? (
+								this.renderUsernameValidation()
+							) : (
 								<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
 							) }
-							{ renderUsernameForm && this.renderUsernameValidation() }
 						</FormFieldset>
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
