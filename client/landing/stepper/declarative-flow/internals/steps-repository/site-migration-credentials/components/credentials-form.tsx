@@ -26,8 +26,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		control,
 		errors,
 		accessMethod,
-		isPending,
-		isSiteInfoLoading,
+		isBusy,
 		submitHandler,
 		getContinueButtonText,
 	} = useCredentialsForm( onSubmit );
@@ -60,11 +59,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
-						<SiteAddressField
-							control={ control }
-							errors={ errors }
-							isSiteInfoLoading={ isSiteInfoLoading }
-						/>
+						<SiteAddressField control={ control } errors={ errors } />
 						<UsernameField control={ control } errors={ errors } />
 						<PasswordField control={ control } errors={ errors } />
 					</div>
@@ -79,7 +74,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				/>
 
 				<div className="site-migration-credentials__submit">
-					<NextButton disabled={ isPending || isSiteInfoLoading } type="submit">
+					<NextButton disabled={ isBusy } type="submit">
 						{ getContinueButtonText() }
 					</NextButton>
 				</div>
