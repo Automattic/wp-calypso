@@ -90,7 +90,7 @@ export default function SiteProfilerV2( props: Props ) {
 
 	const url = useMemo( () => getValidUrl( routerDomain ), [ routerDomain ] );
 
-	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
+	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, true, { enabled: ! hash } );
 
 	const showGetReportForm = !! url && isGetReportFormOpen;
 

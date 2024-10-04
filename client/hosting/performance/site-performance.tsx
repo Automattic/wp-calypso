@@ -48,7 +48,7 @@ const usePerformanceReport = (
 		isError,
 		isFetched,
 		refetch,
-	} = useUrlBasicMetricsQuery( url, hash, true );
+	} = useUrlBasicMetricsQuery( url, true, { enabled: ! hash } );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
