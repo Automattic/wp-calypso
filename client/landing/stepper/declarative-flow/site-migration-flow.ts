@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -120,6 +121,7 @@ const siteMigration: Flow = {
 			true
 		);
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
+		const isEnglishLocale = useIsEnglishLocale();
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -437,7 +439,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( siteInfo?.platform_data?.is_wpcom ) {
+					if ( isEnglishLocale && siteInfo?.platform_data?.is_wpcom ) {
 						return navigate( STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug, {
 							siteId,
 							siteSlug,
