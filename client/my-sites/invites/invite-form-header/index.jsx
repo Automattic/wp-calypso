@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import './style.scss';
 
 class InviteFormHeader extends Component {
 	static displayName = 'InviteFormHeader';
