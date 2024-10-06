@@ -8,7 +8,6 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { storedPaymentMethodsQueryKey } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-
 async function fetchIsBackup( storedDetailsId: string ): Promise< { is_backup: boolean } > {
 	return await wpcom.req.get( `/me/payment-methods/${ storedDetailsId }/is-backup` );
 }
