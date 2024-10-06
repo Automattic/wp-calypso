@@ -78,7 +78,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 							<div>
 								<span>{ subscription.productName }</span>
 								<span className="payment-method-delete-dialog__affected-subscription-domain">
-									{ subscription.domain }
+									{ subscription.meta || subscription.domain }
 								</span>
 							</div>
 							<div>
