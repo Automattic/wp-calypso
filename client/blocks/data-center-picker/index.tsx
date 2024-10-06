@@ -66,13 +66,6 @@ const CustomizeLink = styled.a`
 
 const SupportLink = styled.a`
 	text-decoration: underline;
-	color: var( --color-text-subtle ) !important;
-`;
-
-const StyledSelectControl = styled( SelectControl )`
-	.components-input-control__backdrop {
-		border-color: var( --studio-gray-10 ) !important;
-	}
 `;
 
 const StyledLabel = styled.div`
@@ -89,6 +82,13 @@ const DataCenterPicker = ( {
 }: Props ) => {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
 	const { hasTranslation } = useI18n();
+
+	const supportLinkComponent = (
+		<SupportLink
+			target="_blank"
+			href={ localizeUrl( 'https://wordpress.com/support/choose-your-sites-primary-data-center/' ) }
+		/>
+	);
 
 	return (
 		<div>
@@ -114,24 +114,17 @@ const DataCenterPicker = ( {
 
 			{ isFormShowing && (
 				<Form>
-					<StyledSelectControl
+					<SelectControl
 						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
 						help={
 							hasTranslation(
-								'For redundancy, your site will be replicated in real-time to another region.'
+								'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.'
 							)
 								? translate(
 										'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.',
 										{
 											components: {
-												supportLink: (
-													<SupportLink
-														target="_blank"
-														href={ localizeUrl(
-															'https://wordpress.com/support/choose-your-sites-primary-data-center/'
-														) }
-													/>
-												),
+												supportLink: supportLinkComponent,
 											},
 										}
 								  )
@@ -139,14 +132,7 @@ const DataCenterPicker = ( {
 										'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
 										{
 											components: {
-												supportLink: (
-													<SupportLink
-														target="_blank"
-														href={ localizeUrl(
-															'https://wordpress.com/support/choose-your-sites-primary-data-center/'
-														) }
-													/>
-												),
+												supportLink: supportLinkComponent,
 											},
 										}
 								  )
