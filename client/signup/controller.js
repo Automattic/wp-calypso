@@ -229,7 +229,7 @@ export default {
 		const isOnboardingFlow = flowName === 'onboarding';
 		if ( isOnboardingFlow ) {
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_flow_stepper'
+				'calypso_signup_onboarding_stepper_flow'
 			);
 			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
 				const lang = localeFromParams ?? localeFromStore;
