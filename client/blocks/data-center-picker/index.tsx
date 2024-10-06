@@ -1,7 +1,6 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { SelectControl } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
 
@@ -81,7 +80,7 @@ const DataCenterPicker = ( {
 	value,
 }: Props ) => {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
-	const { hasTranslation } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const supportLinkComponent = (
 		<SupportLink
@@ -117,7 +116,7 @@ const DataCenterPicker = ( {
 					<SelectControl
 						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
 						help={
-							hasTranslation(
+							hasEnTranslation(
 								'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.'
 							)
 								? translate(
