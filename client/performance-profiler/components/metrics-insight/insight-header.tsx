@@ -1,6 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import Markdown from 'react-markdown';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 
@@ -10,7 +9,6 @@ interface InsightHeaderProps {
 }
 export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 	const isMobile = ! useDesktopBreakpoint();
-	const translate = useTranslate();
 	const { data, index } = props;
 	const title = data.title ?? '';
 	const value = data.displayValue ?? '';
@@ -24,11 +22,7 @@ export const InsightHeader: React.FC< InsightHeaderProps > = ( props ) => {
 			return null;
 		}
 
-		return (
-			<span className={ clsx( 'impact fail', { 'is-mobile': isMobile } ) }>
-				{ translate( 'High Impact' ) }
-			</span>
-		);
+		return <span className={ clsx( 'impact fail', { 'is-mobile': isMobile } ) }>High Impact</span>;
 	};
 
 	return (

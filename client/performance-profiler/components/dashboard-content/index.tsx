@@ -22,7 +22,7 @@ type PerformanceProfilerDashboardContentProps = {
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
-	overallScoreIsTab?: boolean;
+	showV2?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -31,10 +31,11 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
+	displayThumbnail = true,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
 	activeTab = TabType.mobile,
-	overallScoreIsTab = false,
+	showV2 = false,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
@@ -56,18 +57,20 @@ export const PerformanceProfilerDashboardContent = ( {
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
-				{ ! overallScoreIsTab && (
+				{ ! showV2 && (
 					<div className="top-section">
 						<PerformanceScore
 							value={ overall_score * 100 }
 							recommendationsQuantity={ Object.keys( audits ).length }
 							recommendationsRef={ insightsRef }
 						/>
-						<ScreenshotThumbnail
-							alt={ translate( 'Website thumbnail' ) }
-							src={ screenshots?.[ screenshots.length - 1 ].data }
-							activeTab={ activeTab }
-						/>
+						{ displayThumbnail && (
+							<ScreenshotThumbnail
+								alt={ translate( 'Website thumbnail' ) }
+								src={ screenshots?.[ screenshots.length - 1 ].data }
+								activeTab={ activeTab }
+							/>
+						) }
 					</div>
 				) }
 				<CoreWebVitalsDisplay
@@ -78,7 +81,7 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					overall={ overall_score * 100 }
-					overallScoreIsTab={ overallScoreIsTab }
+					showV2={ showV2 }
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }
@@ -106,6 +109,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						ref={ insightsRef }
 						hash={ hash }
 						filter={ filter }
+						isLoggedInVersion={ showV2 }
 						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				) }

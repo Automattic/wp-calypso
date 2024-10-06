@@ -1,7 +1,4 @@
 import { SelectDropdown } from '@automattic/components';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import styled from '@emotion/styled';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useState } from 'react';
 import {
@@ -21,39 +18,14 @@ type InsightsSectionProps = {
 	isWpcom: boolean;
 	hash: string;
 	filter?: string;
+	isLoggedInVersion?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
-
-const AIBadge = styled.span`
-	padding: 0 8px;
-	margin-left: 8px;
-	width: fit-content;
-	border-radius: 4px;
-	float: right;
-	font-size: 12px;
-	line-height: 20px;
-	color: var( --studio-gray-100 );
-	background: linear-gradient(
-			0deg,
-			rgba( 255, 255, 255, 0.95 ) 0%,
-			rgba( 255, 255, 255, 0.95 ) 100%
-		),
-		linear-gradient( 90deg, #4458e4 0%, #069e08 100% );
-
-	&.is-mobile {
-		float: none;
-		display: block;
-		margin-left: 0;
-		margin-top: 8px;
-	}
-`;
 
 export const InsightsSection = forwardRef(
 	( props: InsightsSectionProps, ref: ForwardedRef< HTMLDivElement > ) => {
 		const translate = useTranslate();
-		const isMobile = ! useDesktopBreakpoint();
-		const { audits, fullPageScreenshot, isWpcom, hash, filter, onRecommendationsFilterChange } =
-			props;
+		const { audits, fullPageScreenshot, isWpcom, hash, filter } = props;
 		const [ selectedFilter, setSelectedFilter ] = useState( filter ?? 'all' );
 
 		const sumMetricSavings = ( key: string ) =>
@@ -65,39 +37,58 @@ export const InsightsSection = forwardRef(
 		const filteredAudits = Object.keys( audits )
 			.filter( ( key ) => filterRecommendations( selectedFilter, audits[ key ] ) )
 			.sort( sortInsightKeys );
-		const onFilter = useCallback(
-			( option: { label: string; value: string } ) => {
-				recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
-					filter: option.value,
-				} );
-				setSelectedFilter( option.value );
-				if ( onRecommendationsFilterChange ) {
-					onRecommendationsFilterChange( option.value );
-				} else {
-					updateQueryParams( { filter: option.value }, true );
-				}
-			},
-			[ onRecommendationsFilterChange ]
-		);
+		const onFilter = useCallback( ( option: { label: string; value: string } ) => {
+			recordTracksEvent( 'calypso_performance_profiler_recommendations_filter_change', {
+				filter: option.value,
+			} );
+			setSelectedFilter( option.value );
+			if ( props.onRecommendationsFilterChange ) {
+				props.onRecommendationsFilterChange( option.value );
+			} else {
+				updateQueryParams( { filter: option.value }, true );
+			}
+		}, [] );
 
 		useEffect( () => {
 			if ( filter && filter !== selectedFilter ) {
 				setSelectedFilter( filter );
 			}
 		}, [ selectedFilter, filter ] );
-
+		const siteOrPageSubtitle = props.isLoggedInVersion
+			? translate( 'your page' )
+			: translate( 'your site' );
 		return (
 			<div className="performance-profiler-insights-section" ref={ ref }>
 				<div className="header">
 					<div>
 						<h2 className="title">
-							{ translate( 'Personalized Recommendations' ) }
-							<AIBadge className={ clsx( { 'is-mobile': isMobile } ) }>
-								{ translate( 'Generated with AI' ) }
-							</AIBadge>
+							{ props.isLoggedInVersion
+								? translate( 'Recommendations' )
+								: translate( 'Improve your site‘s performance' ) }
 						</h2>
 						<p className="subtitle">
-							{ getSubtitleText( selectedFilter, filteredAudits.length, translate ) }
+							{ filteredAudits.length
+								? translate(
+										'We found %(quantity)d thing you can do for improving %(metric)s.',
+										'We found %(quantity)d things you can do for improving %(metric)s.',
+										{
+											args: {
+												quantity: filteredAudits.length,
+												metric:
+													selectedFilter === 'all'
+														? siteOrPageSubtitle
+														: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+											},
+											count: filteredAudits.length,
+										}
+								  )
+								: translate( "Great job! We didn't find any recommendations for improving %s.", {
+										args: [
+											selectedFilter === 'all'
+												? translate( 'the speed of your site' )
+												: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
+										],
+								  } ) }
 						</p>
 					</div>
 					<div className="filter">
@@ -147,45 +138,3 @@ export const InsightsSection = forwardRef(
 		);
 	}
 );
-
-function getSubtitleText(
-	selectedFilter: string,
-	numRecommendations: number,
-	translate: ReturnType< typeof useTranslate >
-) {
-	if ( numRecommendations ) {
-		if ( selectedFilter === 'all' ) {
-			return translate(
-				'We found %(numRecommendations)d thing you can do for improving your page.',
-				'We found %(numRecommendations)d things you can do for improving your page.',
-				{
-					args: { numRecommendations },
-					count: numRecommendations,
-				}
-			);
-		}
-		return translate(
-			'We found %(numRecommendations)d thing you can do for improving %(metric)s.',
-			'We found %(numRecommendations)d things you can do for improving %(metric)s.',
-			{
-				args: {
-					numRecommendations,
-					metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-				},
-				count: numRecommendations,
-			}
-		);
-	}
-
-	if ( selectedFilter === 'all' ) {
-		return translate(
-			"Great job! We didn't find any recommendations for improving the speed of your page."
-		);
-	}
-
-	return translate( "Great job! We didn't find any recommendations for improving %(metric)s.", {
-		args: {
-			metric: metricsNames[ selectedFilter as keyof typeof metricsNames ]?.name,
-		},
-	} );
-}
