@@ -509,6 +509,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.wpnc__time-group-title {
+			align-items: center;
 			display: flex;
 			@extend %headertext;
 			color: var(--color-neutral-40);
@@ -529,6 +530,12 @@ $with-sidebar-min-page-width: 1114px;
 				margin-left: auto;
 				margin-right: $wpnc__padding-small;
 			}
+
+			.wpnc__time-title {
+				align-items: center;
+				display: flex;
+				flex: 1;
+			}
 		}
 
 		.wpnc__time-group-wrap {
@@ -541,7 +548,6 @@ $with-sidebar-min-page-width: 1114px;
 			.wpnc__settings,
 			.wpnc__keyboard-shortcuts-button {
 				display: flex;
-				flex-grow: 1;
 
 				&:focus svg {
 					outline: var(--color-primary-light) solid 2px;
