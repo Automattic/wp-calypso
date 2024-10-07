@@ -16,6 +16,7 @@ type Props = Record< Metrics, number > & {
 	activeTab: Metrics | null;
 	setActiveTab: ( tab: Metrics | null ) => void;
 	children: React.ReactNode;
+	showOverall?: boolean;
 };
 type HeaderProps = {
 	displayName: string;
@@ -52,7 +53,7 @@ const CardHeader = ( props: HeaderProps ) => {
 };
 
 export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
-	const { activeTab, setActiveTab, children } = props;
+	const { activeTab, setActiveTab, children, showOverall } = props;
 	const translate = useTranslate();
 
 	const onClick = ( key: Metrics ) => {
@@ -71,7 +72,8 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 	const overallEntry = entries.find( ( [ key ] ) => key === 'overall' );
 	const otherEntries = entries.filter( ( [ key ] ) => key !== 'overall' );
 
-	const reorderedEntries = overallEntry ? [ overallEntry, ...otherEntries ] : otherEntries;
+	const reorderedEntries =
+		showOverall && overallEntry ? [ overallEntry, ...otherEntries ] : otherEntries;
 
 	return (
 		<div className="core-web-vitals-accordion-v2">

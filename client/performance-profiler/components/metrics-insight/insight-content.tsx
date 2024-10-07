@@ -36,8 +36,6 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 		setFeedbackSent( true );
 	};
 
-	const isPerformancePage = window.location.pathname.includes( '/sites/performance/' );
-
 	const renderFeedbackForm = () => {
 		if ( feedbackSent ) {
 			return <div className="survey">{ translate( 'Thanks for the feedback!' ) }</div>;
@@ -96,14 +94,7 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 	return (
 		<div className="metrics-insight-content">
 			{ isLoading ? (
-				<LLMMessage
-					message={
-						isPerformancePage
-							? translate( 'Finding the best solution for your page…' )
-							: translate( 'Finding the best solution for your site…' )
-					}
-					rotate
-				/>
+				<LLMMessage message={ translate( 'Finding the best solution for your page…' ) } rotate />
 			) : (
 				<>
 					<div className="description-area">

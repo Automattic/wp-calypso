@@ -2,14 +2,14 @@ import config from '@automattic/calypso-config';
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
-import { getPluginInstallationPage } from './utils';
+import { getMigrationPluginInstallURL } from './utils';
 import type { FC } from 'react';
 
 interface Props {
 	fromUrl: string;
 }
 
-export const StepInstallMigrationGuru: FC< Props > = ( { fromUrl } ) => {
+export const StepInstallMigrationPlugin: FC< Props > = ( { fromUrl } ) => {
 	const translate = useTranslate();
 	const isWhiteLabeledPluginEnabled = config.isEnabled(
 		'migration-flow/enable-white-labeled-plugin'
@@ -25,7 +25,7 @@ export const StepInstallMigrationGuru: FC< Props > = ( { fromUrl } ) => {
 						strong: <strong />,
 						a: (
 							<ExternalLink
-								href={ getPluginInstallationPage( fromUrl ) }
+								href={ getMigrationPluginInstallURL( fromUrl ) }
 								icon
 								iconSize={ 14 }
 								target="_blank"

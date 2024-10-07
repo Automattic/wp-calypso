@@ -1,4 +1,3 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -53,7 +52,6 @@ const DotcomSitesDataViews = ( {
 	setDataViewsState,
 }: Props ) => {
 	const { __ } = useI18n();
-	const hasEnTranslation = useHasEnTranslation();
 	const userId = useSelector( getCurrentUserId );
 
 	const openSitePreviewPane = useCallback(
@@ -190,9 +188,7 @@ const DotcomSitesDataViews = ( {
 		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
 	);
 
-	const siteSearchLabel = hasEnTranslation( 'Search sites…' )
-		? __( 'Search sites…' )
-		: __( 'Search sites' );
+	const siteSearchLabel = __( 'Search sites…' );
 
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {

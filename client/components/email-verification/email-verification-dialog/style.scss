@@ -26,9 +26,11 @@
 	margin-bottom: 16px;
 	color: var(--color-neutral-40);
 	font-size: $font-body-small;
-	a {
+	a,
+	button {
 		color: inherit;
 		text-decoration: underline;
+		cursor: pointer;
 	}
 }
 

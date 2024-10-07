@@ -11,7 +11,7 @@ import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 
-export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData | undefined ) => void ) => {
+export const useCredentialsForm = ( onSubmit: () => void ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';

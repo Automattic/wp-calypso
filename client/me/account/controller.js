@@ -3,6 +3,7 @@ import i18n, { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import AccountComponent, { noticeId as meSettingsNoticeId } from 'calypso/me/account/main';
 import { successNotice } from 'calypso/state/notices/actions';
+import EmailVerificationBanner from '../email-verification-banner';
 
 export function account( context, next ) {
 	// Update the url and show the notice after a redirect
@@ -24,6 +25,7 @@ export function account( context, next ) {
 
 	context.primary = (
 		<>
+			<EmailVerificationBanner />
 			<AccountTitle />
 			<AccountComponent path={ context.path } />
 		</>

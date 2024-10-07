@@ -130,12 +130,12 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should navigate to the next step when clicking on Next', async () => {
-		const { queryByText, getByRole } = render();
+		const { getByRole } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect(
-			queryByText( 'Then, pick WordPress.com as your destination host.' )
+			getByRole( 'link', { name: /Migrate to WordPress.com plugin screen on your source site/ } )
 		).toBeInTheDocument();
 	} );
 
@@ -143,9 +143,11 @@ describe( 'SiteMigrationInstructions', () => {
 		const { queryByText, getByRole } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
-		await userEvent.click( getByRole( 'button', { name: /Install the Migrate Guru plugin/ } ) );
+		await userEvent.click(
+			getByRole( 'button', { name: /Install the Migrate to WordPress.com plugin/ } )
+		);
 
-		expect( queryByText( 'Migrate Guru plugin' ) ).toBeInTheDocument();
+		expect( queryByText( 'Migrate to WordPress.com plugin' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should navigate to the next step when the steps are completed', async () => {
@@ -173,7 +175,7 @@ describe( 'SiteMigrationInstructions', () => {
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
 		expect(
-			getByRole( 'link', { name: /Migrate Guru page on the new WordPress.com site/ } )
+			getByRole( 'link', { name: /Migrate to WordPress.com page on the new WordPress.com site/ } )
 		).toBeInTheDocument();
 	} );
 

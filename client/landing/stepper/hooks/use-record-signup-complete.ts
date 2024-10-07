@@ -12,18 +12,17 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const { domainCartItem, planCartItem, siteCount, selectedDomain, isNewUser } = useSelect(
-		( select ) => {
+	const { domainCartItem, planCartItem, siteCount, selectedDomain, isNewUser, signupDomainOrigin } =
+		useSelect( ( select ) => {
 			return {
 				siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 				isNewUser: ( select( USER_STORE ) as UserSelect ).isNewUser(),
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			};
-		},
-		[]
-	);
+		}, [] );
 
 	const isNewishUser = useSelector( ( state ) =>
 		isUserRegistrationDaysWithinRange( state, null, 0, 7 )
@@ -71,7 +70,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 						hasPaidDomainItem && domainCartItem ? isDomainMapping( domainCartItem ) : undefined,
 					isTransfer:
 						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
-					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 				},
 				true
 			);

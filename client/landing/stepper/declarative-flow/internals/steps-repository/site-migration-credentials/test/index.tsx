@@ -84,10 +84,6 @@ describe( 'SiteMigrationCredentials', () => {
 		jest.clearAllMocks();
 		( wp.req.get as jest.Mock ).mockResolvedValue( {} );
 	} );
-	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
-	} );
 
 	it( 'creates a credentials ticket', async () => {
 		const submit = jest.fn();
@@ -204,8 +200,10 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {
 		render();
+
 		await userEvent.click( continueButton() );
 		await userEvent.click( credentialsOption() );
+
 		expect( getByText( messages.urlError ) ).toBeVisible();
 		expect( getByText( messages.usernameError ) ).toBeVisible();
 		expect( getByText( messages.passwordError ) ).toBeVisible();
@@ -213,8 +211,10 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select backup option', async () => {
 		render();
+
 		await userEvent.click( backupOption() );
 		await userEvent.click( continueButton() );
+
 		expect( getByText( /Please enter a valid URL/ ) ).toBeVisible();
 	} );
 
@@ -329,18 +329,12 @@ describe( 'SiteMigrationCredentials', () => {
 	it( 'shows "Verifying credentials" on the Continue button during submission', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
+		const pendingPromise = new Promise( () => {} );
 
-		( wpcomRequest as jest.Mock ).mockImplementation(
-			() =>
-				new Promise( ( resolve ) => {
-					setTimeout( resolve, 2000 );
-				} )
-		);
+		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		await fillAllFields();
-		jest.useFakeTimers();
 		userEvent.click( continueButton() );
-		jest.advanceTimersByTime( 1000 );
 
 		await waitFor( () => {
 			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
@@ -374,7 +368,7 @@ describe( 'SiteMigrationCredentials', () => {
 			} );
 
 			await fillAllFields();
-			userEvent.click( continueButton() );
+			await userEvent.click( continueButton() );
 
 			await waitFor( () => {
 				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
@@ -506,7 +500,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'Shows Continue anyways button and an already on WPCOM error if site is already on WPCOM', async () => {
+	it( 'shows Continue anyways button and an already on WPCOM error if site is already on WPCOM', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		await fillAllFields();
@@ -551,23 +545,17 @@ describe( 'SiteMigrationCredentials', () => {
 	it( 'shows "Verifying credentials" on the Continue button during submission when fetching site info', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
+		const pendingPromise = new Promise( () => {} );
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
 		} );
 
-		( wp.req.get as jest.Mock ).mockImplementation(
-			() =>
-				new Promise( ( resolve ) => {
-					setTimeout( resolve, 2000 );
-				} )
-		);
+		( wp.req.get as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		await fillAllFields();
-		jest.useFakeTimers();
-		userEvent.click( continueButton() );
-		jest.advanceTimersByTime( 1000 );
+		await userEvent.click( continueButton() );
 
 		await waitFor( () => {
 			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
@@ -577,17 +565,13 @@ describe( 'SiteMigrationCredentials', () => {
 	it( 'shows "Verifying credentials" on the Continue button during site info verification', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
+		const pendingPromise = new Promise( () => {} );
 
 		await fillAllFields();
 
-		( wpcomRequest as jest.Mock ).mockImplementation(
-			() =>
-				new Promise( ( resolve ) => {
-					setTimeout( resolve, 2000 );
-				} )
-		);
+		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
 
-		userEvent.click( continueButton() );
+		await userEvent.click( continueButton() );
 
 		await waitFor( () => {
 			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
