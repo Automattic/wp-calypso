@@ -18,6 +18,9 @@ type CalendlyWidgetProps = {
 	url: string;
 	id?: string;
 	prefill?: CalendlyPrefillData;
+	hideLandingPageDetails?: boolean;
+	hideEventTypeDetails?: boolean;
+	hideGdprBanner?: boolean;
 	onSchedule?: () => void;
 };
 
@@ -27,7 +30,16 @@ function isCalendlyEvent( e: MessageEvent ): boolean {
 	);
 }
 
-const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill, onSchedule } ) => {
+const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( props ) => {
+	const {
+		url,
+		id,
+		prefill,
+		hideLandingPageDetails,
+		hideEventTypeDetails,
+		hideGdprBanner,
+		onSchedule,
+	} = props;
 	const widgetId = useMemo(
 		() => id || `calendly-widget-${ Math.random().toString( 36 ).substr( 2, 9 ) }`,
 		[ id ]
@@ -60,10 +72,16 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill, on
 
 			const element = document.getElementById( widgetId );
 			if ( element ) {
+				const queryParams = new URLSearchParams();
+
+				queryParams.set( 'hide_landing_page_details', hideLandingPageDetails ? '1' : '0' );
+				queryParams.set( 'hide_event_type_details', hideEventTypeDetails ? '1' : '0' );
+				queryParams.set( 'hide_gdpr_banner', hideGdprBanner ? '1' : '0' );
+
 				// Clear out the container div when props change.
 				element.innerHTML = '';
 				window.Calendly.initInlineWidget( {
-					url: `https://calendly.com/${ url }`,
+					url: `https://calendly.com/${ url }?${ queryParams.toString() }`,
 					parentElement: document.getElementById( widgetId ),
 					prefill: prefill || {},
 					utm: {},
@@ -80,7 +98,7 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( { url, id, prefill, on
 				existingScript.remove();
 			}
 		};
-	}, [ url, widgetId, prefill ] );
+	}, [ url, widgetId, prefill, hideLandingPageDetails, hideEventTypeDetails, hideGdprBanner ] );
 
 	return <div id={ widgetId } className="calendly-widget" />;
 };
