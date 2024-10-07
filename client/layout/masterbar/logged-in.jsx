@@ -4,7 +4,6 @@ import page from '@automattic/calypso-router';
 import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { debounce } from '@wordpress/compose';
 import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -80,7 +79,6 @@ class MasterbarLoggedIn extends Component {
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
 		readerBtnRef: null,
-		readerPosition: null,
 	};
 
 	static propTypes = {
@@ -124,27 +122,6 @@ class MasterbarLoggedIn extends Component {
 		}
 	};
 
-	setupReaderPositionObserver() {
-		if ( this.props.sectionName !== 'home' && this.props.sectionGroup !== 'sites-dashboard' ) {
-			return;
-		}
-		const readerItem = document.querySelector( '.masterbar__reader' );
-		this.resizeObserver = new ResizeObserver(
-			debounce( () => {
-				const newRect = readerItem.getBoundingClientRect();
-				const readerPositionChanged =
-					! this.lastReaderPosition ||
-					newRect.left !== this.lastReaderPosition.left ||
-					newRect.top !== this.lastReaderPosition.top;
-				if ( readerPositionChanged ) {
-					this.setState( { readerPosition: newRect } );
-					this.lastReaderPosition = newRect;
-				}
-			}, 100 )
-		);
-		this.resizeObserver.observe( readerItem );
-	}
-
 	componentDidMount() {
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
@@ -158,20 +135,12 @@ class MasterbarLoggedIn extends Component {
 		};
 		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.subscribeToViewPortChanges();
-
-		// Observe if the position of the reader item has changed.
-		// Re-render to update the reader tooltip position.
-		this.setupReaderPositionObserver();
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
-
-		if ( this.resizeObserver ) {
-			this.resizeObserver.disconnect();
-		}
 	}
 
 	handleToggleMobileMenu = () => {
