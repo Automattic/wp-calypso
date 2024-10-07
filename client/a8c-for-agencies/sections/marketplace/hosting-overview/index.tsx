@@ -20,6 +20,7 @@ import {
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PressableUsageLimitNotice from '../common/pressable-usage-limit-notice';
 import ReferralToggle from '../common/referral-toggle';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
@@ -81,6 +82,7 @@ function Hosting( { section }: Props ) {
 		>
 			<LayoutTop>
 				<PendingPaymentNotification />
+				<PressableUsageLimitNotice />
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [
