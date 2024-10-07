@@ -74,10 +74,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const { data: tipaltiData } = useGetTipaltiPayee();
 
 	useEffect( () => {
-		if ( ! tipaltiData ) {
-			return;
-		}
-		if ( ! tipaltiData.IsPayable ) {
+		if ( tipaltiData && ! tipaltiData.IsPayable ) {
 			setTipaltiActionRequiredVisible( true );
 		}
 	}, [ tipaltiData ] );
