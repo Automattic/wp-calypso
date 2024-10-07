@@ -1,3 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
@@ -5,9 +8,11 @@ import {
 	useOdieBroadcastWithCallbacks,
 	useGetOdieStorage,
 } from '../data';
+import { isOdieAllowedBot } from '../utils/is-odie-allowed-bot';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -31,14 +36,12 @@ type OdieAssistantContextInterface = {
 	isLoadingEnvironment: boolean;
 	isLoadingExistingChat: boolean;
 	isMinimized?: boolean;
-	isUserEligible: boolean;
+	isUserEligibleForPaidSupport: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	lastMessageInView?: boolean;
-	navigateToContactOptions?: () => void;
-	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
@@ -69,11 +72,9 @@ const defaultContextInterfaceValues = {
 	isMinimized: false,
 	isNudging: false,
 	isVisible: false,
-	isUserEligible: false,
+	isUserEligibleForPaidSupport: false,
 	lastNudge: null,
 	lastMessageRef: null,
-	navigateToContactOptions: noop,
-	navigateToSupportDocs: noop,
 	odieClientId: '',
 	currentUser: { display_name: 'Me' },
 	sendNudge: noop,
@@ -102,19 +103,15 @@ export const odieClientId = Math.random().toString( 36 ).substring( 2, 15 );
 
 type OdieAssistantProviderProps = {
 	botName?: string;
-	botNameSlug: OdieAllowedBots;
+	botNameSlug?: OdieAllowedBots;
 	odieInitialPromptText?: string;
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
-	isUserEligible?: boolean;
+	isUserEligibleForPaidSupport?: boolean;
 	isMinimized?: boolean;
 	isLoadingEnvironment?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
-	logger?: ( message: string, properties: Record< string, unknown > ) => void;
-	loggerEventNamePrefix?: string;
-	navigateToContactOptions?: () => void;
-	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
 	version?: string | null;
 	children?: ReactNode;
@@ -122,18 +119,11 @@ type OdieAssistantProviderProps = {
 // Create a provider component for the context
 const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
-	botNameSlug = 'wpcom-support-chat',
-	odieInitialPromptText,
 	initialUserMessage,
-	isMinimized = false,
 	isLoadingEnvironment = false,
-	isUserEligible = true,
+	isUserEligibleForPaidSupport = true,
 	extraContactOptions,
 	enabled = true,
-	logger,
-	loggerEventNamePrefix,
-	navigateToContactOptions,
-	navigateToSupportDocs,
 	selectedSiteId,
 	version = null,
 	currentUser,
@@ -149,6 +139,20 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
+
+	const { odieInitialPromptText, botNameSlug, isMinimized } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
+		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+			? store.getOdieBotNameSlug()
+			: 'wpcom-support-chat';
+
+		return {
+			odieInitialPromptText: store.getOdieInitialPromptText(),
+			botNameSlug: odieBotNameSlug as OdieAllowedBots,
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const { chat: existingChat, isLoading: isLoadingExistingChat } = useLoadPreviousChat( {
@@ -170,14 +174,13 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
-			const event = loggerEventNamePrefix ? `${ loggerEventNamePrefix }_${ eventName }` : eventName;
-			logger?.( event, {
+			recordTracksEvent( `calypso_odie_${ eventName }`, {
 				...properties,
 				chat_id: chat?.chat_id,
 				bot_name_slug: botNameSlug,
 			} );
 		},
-		[ botNameSlug, chat?.chat_id, logger, loggerEventNamePrefix ]
+		[ botNameSlug, chat?.chat_id ]
 	);
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
@@ -271,8 +274,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isVisible,
 				lastNudge,
 				lastMessageInView,
-				navigateToContactOptions,
-				navigateToSupportDocs,
 				odieClientId,
 				selectedSiteId,
 				sendNudge: setLastNudge,
@@ -290,7 +291,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				version: overridenVersion,
 				isLoadingEnvironment,
 				isLoadingExistingChat,
-				isUserEligible,
+				isUserEligibleForPaidSupport,
 			} }
 		>
 			{ children }

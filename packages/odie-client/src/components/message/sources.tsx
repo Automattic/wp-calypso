@@ -1,13 +1,14 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import FoldableCard from '../foldable';
 import SupportDocLink from '../support-link';
-import CustomALink from './custom-a-link';
 import type { Message, Source } from '../../types/';
 
 export const Sources = ( { message }: { message: Message } ) => {
-	const { trackEvent, navigateToSupportDocs } = useOdieAssistantContext();
+	const navigate = useNavigate();
+	const { trackEvent } = useOdieAssistantContext();
 	const { _x } = useI18n();
 	const sources = useMemo( () => {
 		const messageLength = message?.context?.sources?.length ?? 0;
@@ -61,37 +62,26 @@ export const Sources = ( { message }: { message: Message } ) => {
 		>
 			<div className="odie-chatbox-message-sources">
 				{ sources.length > 0 &&
-					sources.map( ( source, index ) =>
-						navigateToSupportDocs ? (
-							<SupportDocLink
-								key={ index }
-								link={ source.url }
-								onLinkClickHandler={ () => {
-									trackEvent( 'chat_message_action_click', {
-										action: 'link',
-										in_chat_view: true,
-										href: source.url,
-									} );
-									trackEvent( 'sources_traintracks_interact', {
-										railcar: source?.railcar?.railcar,
-										action: 'click',
-										href: source.url,
-									} );
-									navigateToSupportDocs(
-										String( source.blog_id ),
-										String( source.post_id ),
-										source.title,
-										source.url
-									);
-								} }
-								title={ source.title }
-							/>
-						) : (
-							<CustomALink key={ index } href={ source.url } inline={ false }>
-								{ source.title }
-							</CustomALink>
-						)
-					) }
+					sources.map( ( source, index ) => (
+						<SupportDocLink
+							key={ index }
+							link={ source.url }
+							onLinkClickHandler={ () => {
+								trackEvent( 'chat_message_action_click', {
+									action: 'link',
+									in_chat_view: true,
+									href: source.url,
+								} );
+								trackEvent( 'sources_traintracks_interact', {
+									railcar: source?.railcar?.railcar,
+									action: 'click',
+									href: source.url,
+								} );
+								navigate( `/post?link=${ source.url }` );
+							} }
+							title={ source.title }
+						/>
+					) ) }
 			</div>
 		</FoldableCard>
 	);

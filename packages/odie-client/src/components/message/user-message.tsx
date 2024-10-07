@@ -17,7 +17,7 @@ export const UserMessage = ( {
 	message: Message;
 	onDislike: () => void;
 } ) => {
-	const { extraContactOptions, isUserEligible } = useOdieAssistantContext();
+	const { extraContactOptions, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isUser = message.role === 'user';
@@ -35,7 +35,9 @@ export const UserMessage = ( {
 		__i18n_text_domain__
 	);
 
-	const forwardMessage = isUserEligible ? supportHappinessWording : supportForumWording;
+	const forwardMessage = isUserEligibleForPaidSupport
+		? supportHappinessWording
+		: supportForumWording;
 
 	return (
 		<>
