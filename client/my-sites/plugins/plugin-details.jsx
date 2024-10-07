@@ -76,6 +76,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { FREE_NON_ORG_PLUGINS } from './constants';
 import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
 import { usePluginIsMaintained } from './use-plugin-is-maintained';
@@ -97,6 +98,7 @@ function PluginDetails( props ) {
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
+	const freeNonOrgPlugin = FREE_NON_ORG_PLUGINS[ props.pluginSlug ];
 	const PREMIUM_SLUG_FIELD = 'plugin.premium_slug';
 	const { data: esPlugin = {} } = useESPlugin( props.pluginSlug, [ PREMIUM_SLUG_FIELD ] );
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
@@ -159,7 +161,12 @@ function PluginDetails( props ) {
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
-		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
+		if (
+			isProductListFetched &&
+			! isMarketplaceProduct &&
+			! isWporgPluginFetched &&
+			! freeNonOrgPlugin
+		) {
 			dispatch( wporgFetchPluginData( props.pluginSlug, translate.localeSlug ) );
 		}
 	}, [
@@ -169,6 +176,7 @@ function PluginDetails( props ) {
 		props.pluginSlug,
 		dispatch,
 		translate.localeSlug,
+		freeNonOrgPlugin,
 	] );
 
 	// Fetch WPcom plugin data if needed
@@ -188,8 +196,9 @@ function PluginDetails( props ) {
 			...esPlugin,
 			...wpcomPlugin,
 			...wporgPlugin,
+			...freeNonOrgPlugin,
 			...plugin,
-			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
+			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched || freeNonOrgPlugin,
 			isMarketplaceProduct,
 			isSaasProduct,
 		};
@@ -201,11 +210,13 @@ function PluginDetails( props ) {
 		isWpComPluginFetched,
 		isMarketplaceProduct,
 		isSaasProduct,
+		freeNonOrgPlugin,
 	] );
 
 	const existingPlugin = useMemo( () => {
 		if (
 			( ! isMarketplaceProduct &&
+				! freeNonOrgPlugin &&
 				( isWporgPluginFetching || ( ! isWporgPluginFetched && ! wporgPluginError ) ) ) ||
 			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
 		) {
@@ -214,7 +225,6 @@ function PluginDetails( props ) {
 		if ( fullPlugin && fullPlugin.fetched ) {
 			return true;
 		}
-
 		// If the plugin has at least one site then we know it exists
 		const pluginSites = fullPlugin?.sites ? Object.values( fullPlugin.sites ) : [];
 		if ( pluginSites && pluginSites[ 0 ] ) {
@@ -235,6 +245,7 @@ function PluginDetails( props ) {
 		wporgPluginError,
 		fullPlugin,
 		requestingPluginsForSites,
+		freeNonOrgPlugin,
 	] );
 
 	const canPublishReview = useSelector( ( state ) =>
@@ -476,7 +487,7 @@ function PluginDetails( props ) {
 									</Notice>
 								) }
 
-								{ fullPlugin.wporg || isMarketplaceProduct ? (
+								{ fullPlugin.wporg || isMarketplaceProduct || freeNonOrgPlugin ? (
 									<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
