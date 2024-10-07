@@ -266,7 +266,7 @@ const MarketplaceProductInstall = ( {
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
 	const pluginsUrl = useSelector( ( state ) =>
-		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true' )
+		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true&plugin_status=active' )
 	);
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
