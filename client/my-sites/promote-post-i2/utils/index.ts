@@ -254,9 +254,15 @@ export const canPromoteAgainCampaign = ( status: string ) => {
 	if ( status === campaignStatus.REJECTED ) {
 		return false;
 	}
-	return [ campaignStatus.SCHEDULED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
-		status
-	);
+
+	return [
+		campaignStatus.SCHEDULED,
+		campaignStatus.ACTIVE,
+		campaignStatus.FINISHED,
+		campaignStatus.CREATED,
+		campaignStatus.CANCELED,
+		campaignStatus.PROCESSING,
+	].includes( status );
 };
 
 type PagedDataMode = 'campaigns' | 'posts';
