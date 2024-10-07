@@ -87,7 +87,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
 			path: 'sites/site-url.wordpress.com/automated-migration/wpcom-survey',
-			apiNamespace: 'wpcom/v2/',
+			apiNamespace: 'wpcom/v2',
 			apiVersion: '2',
 			method: 'POST',
 			body: {
