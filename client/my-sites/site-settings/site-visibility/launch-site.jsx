@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -77,10 +76,7 @@ const LaunchSite = () => {
 	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
 	const siteReferralActive = agency?.referral_status === 'active';
 	const shouldShowReferToClientButton =
-		config.isEnabled( 'a4a-dev-sites-referral' ) &&
-		isDevelopmentSite &&
-		! siteReferralActive &&
-		! agencyLoading;
+		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
 	const shouldShowAgencyBillingMessage =
 		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
 
