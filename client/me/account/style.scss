@@ -28,6 +28,13 @@ fieldset.account__settings-admin-home {
 	margin: 30px 0 20px 0;
 }
 
+.form-setting-explanation {
+	.account-email-field__enable-input.components-button.is-link {
+		color: inherit;
+		font-style: inherit;
+	}
+}
+
 .account__link-destination {
 	.components-base-control__field {
 		align-items: flex-start;

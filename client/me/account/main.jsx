@@ -619,6 +619,39 @@ class Account extends Component {
 			return;
 		}
 
+		// Determine success message based on what has been updated.
+		const newEmail = response.new_user_email;
+		const moreThanEmailChanged = Object.keys( response )?.find(
+			( item ) => ! [ 'new_user_email', 'user_email', 'user_email_change_pending' ].includes( item )
+		);
+
+		// Default case.
+		let successMessage = this.props.translate( 'Settings saved successfully!' );
+		if ( newEmail && moreThanEmailChanged ) {
+			// Email and other settings changed.
+			successMessage = this.props.translate(
+				'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.',
+				{
+					args: {
+						email: newEmail || '',
+					},
+					components: {
+						br: <br />,
+					},
+				}
+			);
+		} else if ( newEmail ) {
+			// Only email changed.
+			successMessage = this.props.translate(
+				'We sent an email to %(email)s. Please check your inbox to verify your email.',
+				{
+					args: {
+						email: newEmail || '',
+					},
+				}
+			);
+		}
+
 		this.setState(
 			{
 				submittingForm: false,
@@ -628,10 +661,7 @@ class Account extends Component {
 				},
 			},
 			() => {
-				this.props.successNotice(
-					this.props.translate( 'Settings saved successfully!' ),
-					noticeOptions
-				);
+				this.props.successNotice( successMessage, noticeOptions );
 			}
 		);
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
