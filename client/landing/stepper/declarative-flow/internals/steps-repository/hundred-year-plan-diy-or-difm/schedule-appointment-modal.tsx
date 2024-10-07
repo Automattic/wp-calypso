@@ -18,16 +18,34 @@ const ScheduleAppointmentModal = ( props: Props ) => {
 	);
 
 	return (
-		<Modal size="large" onRequestClose={ () => onClose?.() }>
-			<CalendlyWidget
-				url={ config( '100_year_plan_calendly_id' ) }
-				prefill={
-					currentUser ? { name: currentUser?.display_name, email: currentUser?.email } : undefined
-				}
-				onSchedule={ () => {
-					// TODO: submit
-				} }
-			/>
+		<Modal
+			size="large"
+			className="hundred-year-plan-schedule-appointment-modal"
+			shouldCloseOnClickOutside={ false }
+			onRequestClose={ () => onClose?.() }
+		>
+			<div className="calendly-container">
+				<div className="calendly-details">
+					<h2>TODO: title</h2>
+					<p>
+						TODO: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus accusantium
+						architecto at consequuntur dolorem doloremque eaque expedita fugiat ipsum labore minus,
+						nisi porro quos recusandae reprehenderit, tenetur, unde velit voluptatibus.
+					</p>
+				</div>
+				<CalendlyWidget
+					url={ config( '100_year_plan_calendly_id' ) }
+					prefill={
+						currentUser ? { name: currentUser?.display_name, email: currentUser?.email } : undefined
+					}
+					hideLandingPageDetails
+					hideEventTypeDetails
+					hideGdprBanner
+					onSchedule={ () => {
+						// TODO: submit
+					} }
+				/>
+			</div>
 		</Modal>
 	);
 };

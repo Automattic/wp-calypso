@@ -1,8 +1,10 @@
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import ScheduleAppointmentModal from './schedule-appointment-modal';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -11,39 +13,49 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 	const translate = useTranslate();
 	const { submit } = navigation;
 
+	const [ showModal, setShowModal ] = useState( false );
+
 	return (
 		<HundredYearPlanStepWrapper
 			stepContent={
-				<div>
-					<ul>
-						<li>
-							<Icon size={ 18 } icon={ check } />{ ' ' }
-							{ translate( 'Conduct a comprehensive digital longevity assessment' ) }
-						</li>
-						<li>
-							<Icon size={ 18 } icon={ check } />{ ' ' }
-							{ translate( 'Showcase our comprehensive legacy-building tools' ) }
-						</li>
-						<li>
-							<Icon size={ 18 } icon={ check } />{ ' ' }
-							{ translate( 'Answer all your questions about long-term success' ) }
-						</li>
-						<li>
-							<Icon size={ 18 } icon={ check } />{ ' ' }
-							{ translate( 'Chart a course for the production of your new site' ) }
-						</li>
-					</ul>
+				<>
+					{ showModal && <ScheduleAppointmentModal onClose={ () => setShowModal( false ) } /> }
+					<div>
+						<ul>
+							<li>
+								<Icon size={ 18 } icon={ check } />{ ' ' }
+								{ translate( 'Conduct a comprehensive digital longevity assessment' ) }
+							</li>
+							<li>
+								<Icon size={ 18 } icon={ check } />{ ' ' }
+								{ translate( 'Showcase our comprehensive legacy-building tools' ) }
+							</li>
+							<li>
+								<Icon size={ 18 } icon={ check } />{ ' ' }
+								{ translate( 'Answer all your questions about long-term success' ) }
+							</li>
+							<li>
+								<Icon size={ 18 } icon={ check } />{ ' ' }
+								{ translate( 'Chart a course for the production of your new site' ) }
+							</li>
+						</ul>
 
-					<div className="buttons-container">
-						<Button variant="primary" onClick={ () => submit?.( { diyOrDifmChoice: 'difm' } ) }>
-							{ translate( 'Schedule your free call' ) }
-						</Button>
+						<div className="buttons-container">
+							<Button
+								variant="primary"
+								onClick={ () => {
+									setShowModal( true );
+								} }
+							>
+								{ translate( 'Schedule your free call' ) }
+							</Button>
 
-						<Button variant="link" onClick={ () => submit?.( { diyOrDifmChoice: 'diy' } ) }>
-							{ translate( "I'll create my site on my own" ) }
-						</Button>
+							<Button variant="link" onClick={ () => submit?.( { diyOrDifmChoice: 'diy' } ) }>
+								{ translate( "I'll create my site on my own" ) }
+							</Button>
+						</div>
 					</div>
-				</div>
+				</>
 			}
 			formattedHeader={
 				<FormattedHeader

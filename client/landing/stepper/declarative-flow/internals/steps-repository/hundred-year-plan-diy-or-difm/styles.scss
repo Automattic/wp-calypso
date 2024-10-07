@@ -47,3 +47,28 @@
 		}
 	}
 }
+
+.hundred-year-plan-schedule-appointment-modal {
+
+	.calendly-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+
+	.calendly-details,
+	.calendly-widget {
+		flex: 1;
+		max-width: 50%;
+	}
+
+	.calendly-details {
+		border-inline-end: solid 1px var(--studio-gray-5);
+		padding-inline-end: 1rem;
+	}
+
+	.calendly-widget {
+		max-width: 376px;
+		height: 500px;
+	}
+}
