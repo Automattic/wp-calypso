@@ -1,3 +1,5 @@
+import { FormEvent } from 'react';
+
 function NpsScore( score: number ) {
 	return (
 		<label>
@@ -10,8 +12,12 @@ function NpsScore( score: number ) {
 export function Nps() {
 	const scores = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 
+	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+	};
+
 	return (
-		<form>
+		<form onSubmit={ handleSubmit }>
 			<h1>How are we doing so far?</h1>
 			<fieldset>
 				<legend>
