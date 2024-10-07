@@ -16,9 +16,11 @@ export function setSiteProfilerReport( url, hash, siteId ) {
 	};
 }
 
-export function setSiteProfilerStep( step ) {
+export function setSiteProfilerStep( step, siteId, pageId ) {
 	return {
 		type: SITE_PROFILER_SET_STEP,
 		step,
+		siteId,
+		pageId,
 	};
 }

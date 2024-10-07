@@ -12,10 +12,16 @@ const reportReducer = ( state = {}, action ) => {
 };
 
 const stepReducer = ( state = {}, action ) => {
-	const { siteId, step } = action;
+	const { siteId, step, pageId } = action;
 	switch ( action.type ) {
 		case SITE_PROFILER_SET_STEP:
-			return { ...state, [ siteId ]: step };
+			return {
+				...state,
+				[ siteId ]: {
+					...( state[ siteId ] || {} ),
+					[ pageId ]: step,
+				},
+			};
 
 		default:
 			return state;

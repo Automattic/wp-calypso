@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
+export const STEP_INTERVAL = 5000;
 const LoadingProgressContainer = styled.div`
 	span {
 		display: flex;
@@ -98,17 +99,20 @@ const LoadingProgressContainer = styled.div`
 `;
 
 const useLoadingSteps = ( {
+	getStep,
 	isSavedReport,
 	pageTitle,
 	isLoadingPages,
 }: {
+	getStep?: () => number;
 	isSavedReport: boolean;
 	pageTitle?: string;
 	isLoadingPages?: boolean;
 } ) => {
 	const translate = useTranslate();
+	const curStep = getStep ? getStep() : 0;
 
-	const [ step, setStep ] = useState( 0 );
+	const [ step, setStep ] = useState( curStep );
 
 	let steps = [];
 
@@ -117,7 +121,8 @@ const useLoadingSteps = ( {
 	} else {
 		steps = isSavedReport
 			? [ translate( 'Getting your report…' ) ]
-			: [
+			: // MAX_STEP_INDEX is derived from this array
+			  [
 					pageTitle
 						? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
 						: translate( 'Loading your site' ),
@@ -131,12 +136,11 @@ const useLoadingSteps = ( {
 
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
-			if ( step === steps.length - 1 ) {
+			if ( step >= steps.length - 1 ) {
 				return;
 			}
 			setStep( step + 1 );
-		}, 5000 );
-
+		}, STEP_INTERVAL );
 		return () => clearTimeout( timeoutId );
 	} );
 
@@ -158,17 +162,20 @@ const useLoadingSteps = ( {
 };
 
 export const PerformanceReportLoadingProgress = ( {
+	getStep,
 	pageTitle,
 	isSavedReport,
 	isLoadingPages,
 	className,
 }: {
+	getStep?: () => number;
 	isSavedReport: boolean;
 	pageTitle?: string;
 	className?: string;
 	isLoadingPages?: boolean;
 } ) => {
 	const { step, steps, stepStatus } = useLoadingSteps( {
+		getStep,
 		isSavedReport,
 		pageTitle,
 		isLoadingPages,

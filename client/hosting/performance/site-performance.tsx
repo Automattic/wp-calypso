@@ -4,17 +4,21 @@ import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState, useCallback } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { STEP_INTERVAL } from 'calypso/performance-profiler/pages/loading-screen/progress';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
-import { setSiteProfilerReport } from 'calypso/state/site-profiler/actions';
-import { getSiteProfilerReport } from 'calypso/state/site-profiler/selectors';
+import { setSiteProfilerReport, setSiteProfilerStep } from 'calypso/state/site-profiler/actions';
+import {
+	getSiteProfilerReport,
+	getSiteProfilerReportStep,
+} from 'calypso/state/site-profiler/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -91,13 +95,26 @@ const usePerformanceReport = (
 		token: string | undefined,
 		isReportLoaded: boolean
 	) => {
-		if ( hash ) {
-			return hash;
-		} else if ( token && isReportLoaded ) {
-			return token;
+		if ( ! isReportLoaded ) {
+			return '';
 		}
-		return '';
+		return hash || token || '';
 	};
+
+	const currentStep =
+		useSelector( ( state ) => getSiteProfilerReportStep( state, siteId, currentPageId ) ) || 0;
+
+	useEffect( () => {
+		if ( activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded ) {
+			const interval = setInterval( () => {
+				dispatch( setSiteProfilerStep( currentStep + 1, siteId, currentPageId ) );
+			}, STEP_INTERVAL );
+
+			return () => clearInterval( interval );
+		}
+	}, [ dispatch, currentStep, siteId, currentPageId, activeTab, mobileLoaded, desktopLoaded ] );
+
+	const getStep = useCallback( () => currentStep, [ currentStep ] );
 
 	return {
 		performanceReport,
@@ -107,6 +124,7 @@ const usePerformanceReport = (
 		isError: isError || isErrorInsights,
 		isFetched,
 		refetch,
+		getStep,
 	};
 };
 
@@ -194,6 +212,7 @@ export const SitePerformance = () => {
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		dispatch( setSiteProfilerReport( currentPage?.url ?? '', '', siteId ) );
+		dispatch( setSiteProfilerStep( 0, siteId, currentPageId ) );
 		performanceReport.refetch();
 	};
 
@@ -336,6 +355,7 @@ export const SitePerformance = () => {
 								onRetestClick={ retestPage }
 								onFilterChange={ handleRecommendationsFilterChange }
 								filter={ recommendationsFilter }
+								getStep={ performanceReport.getStep }
 							/>
 						)
 					) }

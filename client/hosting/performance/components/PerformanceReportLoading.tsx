@@ -2,10 +2,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import { PerformanceReportLoadingProgress } from 'calypso/performance-profiler/pages/loading-screen/progress';
 
 export const PerformanceReportLoading = ( {
+	getStep,
 	isSavedReport,
 	pageTitle,
 	isLoadingPages,
 }: {
+	getStep?: () => number;
 	isSavedReport: boolean;
 	pageTitle: string;
 	isLoadingPages?: boolean;
@@ -24,6 +26,7 @@ export const PerformanceReportLoading = ( {
 				isSavedReport={ isSavedReport }
 				pageTitle={ pageTitle }
 				isLoadingPages={ isLoadingPages }
+				getStep={ getStep }
 			/>
 			{ ! isLoadingPages && <p>{ __( 'Testing your site may take around 30 seconds.' ) }</p> }
 		</div>
