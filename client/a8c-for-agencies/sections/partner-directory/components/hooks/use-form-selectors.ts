@@ -71,25 +71,11 @@ export function useFormSelectors() {
 		pressable: 'Pressable.com',
 	};
 
-	const oldIndustries: Record< string, string > = {
-		agricultural_services: 'agriculture_and_farming',
-		business_services: 'legal_and_professional_services',
-		clothing_shops: 'fashion_and_beauty',
-		contracted_services: 'legal_and_professional_services',
-		government_services: 'government_and_public_services',
-		miscellaneous_shops: 'e_commerce_and_retail',
-		professional_services_and_membership_organisations: 'legal_and_professional_services',
-		retail_outlet_services: 'e_commerce_and_retail',
-		transportation_services: 'automotive_and_transportation',
-		utility_services: 'energy_and_utilities',
-	};
-
 	return {
 		availableServices,
 		availableLanguages,
 		availableProducts,
 		availableDirectories,
 		availableIndustries,
-		oldIndustries,
 	};
 }

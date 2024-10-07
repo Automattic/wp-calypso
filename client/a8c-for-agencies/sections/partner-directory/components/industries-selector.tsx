@@ -9,7 +9,7 @@ type Props = {
 };
 
 const IndustriesSelector = ( { setIndustries, industries }: Props ) => {
-	const { availableIndustries, oldIndustries } = useFormSelectors();
+	const { availableIndustries } = useFormSelectors();
 
 	// Get the reverse map of available industries
 	const availableIndustriesByLabel = useMemo(
@@ -30,16 +30,13 @@ const IndustriesSelector = ( { setIndustries, industries }: Props ) => {
 		[ availableIndustriesByLabel, setIndustries ]
 	);
 
-	// Get the selected industries by label, and remove any duplicates
-	const selectedIndustriesByLabel = Array.from(
-		new Set(
-			industries.flatMap( ( slug ) => {
-				const key = slug as string;
-				const value = availableIndustries[ oldIndustries[ key ] ?? key ];
-				return value ? [ value ] : [];
-			} )
-		)
-	);
+	// Get the selected industries by label
+	const selectedIndustriesByLabel = industries.flatMap( ( slug ) => {
+		const key = slug as string;
+		const value = availableIndustries[ key ];
+		return value ? [ value ] : [];
+	} );
+
 	return (
 		<FormTokenFieldWrapper
 			onChange={ handleSetIndustries }
