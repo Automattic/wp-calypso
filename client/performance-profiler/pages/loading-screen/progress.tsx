@@ -121,8 +121,7 @@ const useLoadingSteps = ( {
 	} else {
 		steps = isSavedReport
 			? [ translate( 'Getting your report…' ) ]
-			: // MAX_STEP_INDEX is derived from this array
-			  [
+			: [
 					pageTitle
 						? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
 						: translate( 'Loading your site' ),
