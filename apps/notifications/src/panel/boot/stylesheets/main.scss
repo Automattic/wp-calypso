@@ -185,6 +185,16 @@ $with-sidebar-min-page-width: 1114px;
 		fill: currentColor;
 	}
 
+	.wpnc__user a:focus,
+	.wpnc__user a:focus span.wpnc__excerpt,
+	.wpnc__user button:focus {
+		outline: var(--color-primary-light) solid 2px;
+	}
+
+	.wpnc__user .wpnc__user__site .wpnc__excerpt {
+		margin: 2px 0 0 2px;
+	}
+
 	.wpnc__user__username,
 	span.wpnc__user {
 		font-weight: 600;
@@ -662,10 +672,6 @@ $with-sidebar-min-page-width: 1114px;
 				@extend %ellipsy-box;
 				white-space: nowrap;
 				display: block;
-			}
-
-			a {
-				outline: 0;
 			}
 		}
 
