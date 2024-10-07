@@ -69,6 +69,10 @@
 .is-reader-page .reader-full-post__story-content {
 	padding-top: 0 !important;
 
+	.wp-block-columns {
+		margin-bottom: 24px;
+	}
+
 	.wp-block-jetpack-slideshow_slide img,
 	.wp-block-media-text__media img,
 	.wp-block-image img {
