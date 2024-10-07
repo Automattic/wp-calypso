@@ -32,6 +32,7 @@
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
+		"a4a-dev-sites-referral": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/collect-credentials": true,
 		"calypso/ai-blogging-prompts": true,
