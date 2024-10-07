@@ -250,6 +250,15 @@ export const canCancelCampaign = ( status: string ) => {
 	);
 };
 
+export const canPromoteAgainCampaign = ( status: string ) => {
+	if ( status === campaignStatus.REJECTED ) {
+		return false;
+	}
+	return [ campaignStatus.SCHEDULED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
+		status
+	);
+};
+
 type PagedDataMode = 'campaigns' | 'posts';
 
 type BlazeDataPaged = {
