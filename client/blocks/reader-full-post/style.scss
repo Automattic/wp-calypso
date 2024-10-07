@@ -1,6 +1,3 @@
-// Styles targeted at story content
-@import "./content";
-
 // Since we cannot use css variables in media queries, we need to define the valuess in scss.
 $reader-full-post-sidebar-width: 220px;
 $reader-full-post-story-padding: 24px;
@@ -8,6 +5,9 @@ $reader-full-post-story-max-width: 720px;
 // 295 for sidebar and 16 for the right frame padding.
 $global-sidebar-and-frame-width: 295px + 16px;
 $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-post-story-max-width + ( $reader-full-post-story-padding * 2 ) + $global-sidebar-and-frame-width;
+
+// Styles targeted at story content
+@import "./content";
 
 .is-group-reader.has-no-sidebar {
 	.masterbar {
