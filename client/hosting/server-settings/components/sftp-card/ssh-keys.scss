@@ -13,8 +13,15 @@
 
 .ssh-keys__cards-container {
 	display: block;
+
 	> .card:not(:last-child) {
 		margin-bottom: 12px;
+	}
+
+	code {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		word-break: break-word;
 	}
 }
 
