@@ -38,12 +38,11 @@ export function activate( themeId, siteId, options ) {
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
-
-		// The DotOrg themes will be handled by the marketplace install page.
-		// The theme with the plugin bundle will be handled by the plugin bundle flow.
 		const shouldAtomicTransfer =
 			isExternallyManagedTheme( getState(), themeId ) ||
-			isDotOrgTheme ||
+			// The wporg-only themes need the atomic transfer.
+			( isDotOrgTheme && ! isDotComTheme ) ||
+			// On the onboarding flow, the plugin-bundle theme will continue to the plugin bundle flow.
 			( isDotComTheme && hasThemeBundleSoftwareSet && ! isOnboardingFlow );
 
 		/**
