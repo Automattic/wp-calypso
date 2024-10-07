@@ -6,6 +6,7 @@ import { Moment } from 'moment';
 import qs from 'qs';
 import { RefObject } from 'react';
 import DateRange from 'calypso/components/date-range';
+import { TypeShortcutId } from 'calypso/components/date-range/shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { StatsDateControlProps } from './types';
@@ -13,20 +14,10 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-// Define the event name keys for tracking events
-type EventNameKey =
-	| 'last_7_days'
-	| 'last_30_days'
-	| 'last_90_days'
-	| 'last_year'
-	| 'custom_date_range'
-	| 'apply_button'
-	| 'trigger_button';
-
 // Define the structure for tracking event names
 interface EventNames {
-	jetpack_odyssey: Record< EventNameKey, string >;
-	calypso: Record< EventNameKey, string >;
+	jetpack_odyssey: Record< TypeShortcutId, string >;
+	calypso: Record< TypeShortcutId, string >;
 }
 
 // Define the tracking event names object. Hardcoding event names ensures consistency, searchability, and prevents errors per Tracks naming conventions.
@@ -108,7 +99,7 @@ const StatsDateControl = ( {
 	};
 
 	// handler for shortcut clicks
-	const onShortcutClickHandler = ( shortcutId: EventNameKey ) => {
+	const onShortcutClickHandler = ( shortcutId: TypeShortcutId ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( eventNames[ event_from ][ shortcutId ] );
 	};
@@ -153,7 +144,7 @@ const StatsDateControl = ( {
 				selectedEndDate={ moment( dateRange.chartEnd ) }
 				lastSelectableDate={ moment() }
 				firstSelectableDate={ moment( '2010-01-01' ) }
-				onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
+				onDateCommit={ ( startDate: Moment | null, endDate: Moment | null ) =>
 					startDate &&
 					endDate &&
 					onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )

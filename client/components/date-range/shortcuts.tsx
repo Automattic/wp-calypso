@@ -11,6 +11,16 @@ const DATERANGE_PERIOD = {
 	MONTH: 'month',
 };
 
+// Define the event name keys for tracking events
+export type TypeShortcutId =
+	| 'last_7_days'
+	| 'last_30_days'
+	| 'last_90_days'
+	| 'last_year'
+	| 'custom_date_range'
+	| 'apply_button'
+	| 'trigger_button';
+
 type MomentOrNull = Moment | null;
 
 const DateRangePickerShortcuts = ( {
@@ -23,7 +33,11 @@ const DateRangePickerShortcuts = ( {
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
-	onShortcutClick?: ( shortcutId: string ) => void;
+	onShortcutClick?: (
+		shortcutId: TypeShortcutId,
+		startDate?: Moment | null,
+		endDate?: Moment | null
+	) => void;
 	locked?: boolean;
 	startDate?: MomentOrNull;
 	endDate?: MomentOrNull;
@@ -98,7 +112,15 @@ const DateRangePickerShortcuts = ( {
 		return shortcut;
 	};
 
-	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
+	const handleClick = ( {
+		id,
+		offset,
+		range,
+	}: {
+		id?: TypeShortcutId;
+		offset: number;
+		range: number;
+	} ) => {
 		const newToDate = moment().startOf( 'day' ).subtract( offset, 'days' );
 		const newFromDate = moment()
 			.startOf( 'day' )
