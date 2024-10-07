@@ -12,6 +12,9 @@
 // Import styles for carousel blocks (Newspack Post Carousel, Jetpack Slideshow).
 @import "carousel";
 
+// Import minimal styles for Gutenberg Columns block
+@import "columns";
+
 .reader-full-post__story-content {
 	@extend %rendered-block-content;
 	font-family: $sans;
