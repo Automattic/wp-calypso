@@ -1,17 +1,19 @@
 import page from '@automattic/calypso-router';
-import { Button, FormLabel } from '@automattic/components';
+import { Button, FormLabel, Tooltip } from '@automattic/components';
+import { Icon, warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import MissingPaymentSettingsNotice from '../../referrals/common/missing-payment-settings-notice';
 import useGetTipaltiPayee from '../../referrals/hooks/use-get-tipalti-payee';
@@ -36,10 +38,18 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const user = useSelector( getCurrentUser );
+
+	const isUserUnverified = ! user?.email_verified;
+
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ tipaltiActionRequiredVisible, setTipaltiActionRequiredVisible ] = useState( false );
+
+	const ctaButtonRef = useRef< HTMLButtonElement >( null );
+
+	const [ showVerifyAccountToolip, setShowVerifyAccountToolip ] = useState( false );
 
 	const { onClearCart } = useShoppingCart();
 
@@ -194,15 +204,35 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 			<NoticeSummary type="request-client-payment" />
 
-			<div className="checkout__aside-actions">
+			<div
+				className="checkout__aside-actions"
+				role="button"
+				tabIndex={ 0 }
+				onMouseEnter={ () => setShowVerifyAccountToolip( true ) }
+				onMouseLeave={ () => setShowVerifyAccountToolip( false ) }
+				onMouseDown={ () => setShowVerifyAccountToolip( false ) }
+				onTouchStart={ () => setShowVerifyAccountToolip( true ) }
+			>
 				<Button
+					ref={ ctaButtonRef }
 					primary
 					onClick={ handleRequestPayment }
-					disabled={ ! hasCompletedForm }
+					disabled={ ! hasCompletedForm || isUserUnverified }
 					busy={ isPending }
 				>
 					{ translate( 'Request payment from client' ) }
+					{ isUserUnverified && <Icon icon={ warning } /> }
 				</Button>
+
+				<Tooltip
+					context={ ctaButtonRef.current }
+					isVisible={ showVerifyAccountToolip && isUserUnverified }
+					position="bottom"
+				>
+					{ translate(
+						'Please verify your account email in order to begin referring products to clients.'
+					) }
+				</Tooltip>
 			</div>
 
 			<div className="checkout__summary-notice-item">
