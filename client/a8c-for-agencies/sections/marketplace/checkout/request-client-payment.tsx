@@ -74,6 +74,9 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const { data: tipaltiData } = useGetTipaltiPayee();
 
 	useEffect( () => {
+		if ( ! tipaltiData ) {
+			return;
+		}
 		if ( ! tipaltiData.IsPayable ) {
 			setTipaltiActionRequiredVisible( true );
 		}
@@ -165,7 +168,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_email_click' ) )
 						}
-						disabled={ ! tipaltiData.IsPayable }
+						disabled={ ! tipaltiData?.IsPayable }
 					/>
 					<div
 						className={ clsx( 'checkout__client-referral-form-footer-error', {
@@ -187,7 +190,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_message_click' ) )
 						}
-						disabled={ ! tipaltiData.IsPayable }
+						disabled={ ! tipaltiData?.IsPayable }
 					/>
 				</FormFieldset>
 			</div>
