@@ -6,6 +6,17 @@
 
 $stats-card-min-width: 390px;
 
+// Force any JITM from Jetpack to be hidden.
+// We manage a separate jp-admin-notices DIV for these.
+
+.jetpack-jitm-message {
+	display: none;
+}
+
+.jp-admin-notices {
+	display: none;
+}
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {
