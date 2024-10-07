@@ -10,6 +10,13 @@ const meta: Meta< typeof Nps > = {
 
 export default meta;
 
-export const Default: NpsStory = {
+export const Desktop: NpsStory = {
 	args: {},
+};
+
+export const Mobile: NpsStory = {
+	args: {},
+	parameters: {
+		viewport: { defaultViewport: 'mobile1' },
+	},
 };
