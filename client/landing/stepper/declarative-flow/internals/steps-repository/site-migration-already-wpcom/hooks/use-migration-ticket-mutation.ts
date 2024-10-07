@@ -15,8 +15,8 @@ const setMigration = (
 	{ intents, otherDetails }: TicketMigrationData
 ): Promise< ApiResponse > => {
 	return wpcomRequest( {
-		path: `sites/${ siteSlug }/automated-migration/wpcom-survey`,
-		apiNamespace: 'wpcom/v2/',
+		path: `/sites/${ siteSlug }/automated-migration/wpcom-survey`,
+		apiNamespace: 'wpcom/v2',
 		apiVersion: '2',
 		method: 'POST',
 		body: {
