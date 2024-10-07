@@ -42,15 +42,23 @@ function isStepSectionName( pathFragment ) {
 	return ! isStepName( pathFragment );
 }
 
-export function getStepUrl( flowName, stepName, stepSectionName, localeSlug, params = {} ) {
+export function getStepUrl(
+	flowName,
+	stepName,
+	stepSectionName,
+	localeSlug,
+	params = {},
+	frameworkParam = null
+) {
 	const flow = flowName ? `/${ flowName }` : '';
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
 	const locale = localeSlug ? `/${ localeSlug }` : '';
 	const framework =
-		typeof window !== 'undefined' && window.location.pathname.startsWith( '/setup' )
+		frameworkParam ||
+		( typeof window !== 'undefined' && window.location.pathname.startsWith( '/setup' )
 			? '/setup'
-			: '/start';
+			: '/start' );
 
 	const url =
 		flowName === defaultFlowName && framework === '/start'

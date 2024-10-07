@@ -232,22 +232,18 @@ export default {
 				'calypso_signup_onboarding_stepper_flow'
 			);
 			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
-				const lang = localeFromParams ?? localeFromStore;
-				const step = getStepName( context.params ) ? `/${ getStepName( context.params ) }` : '';
-				const section = getStepSectionName( context.params )
-					? `/${ getStepSectionName( context.params ) }`
-					: '';
-				const locale = lang ? `/${ lang }` : '';
-
-				window.location.replace(
-					window.location.origin +
-						`/setup/onboarding` +
-						step +
-						section +
-						locale +
-						( context.querystring ? '?' + context.querystring : '' ) +
-						( context.hashstring ? '#' + context.hashstring : '' )
-				);
+				window.location =
+					getStepUrl(
+						flowName,
+						getStepName( context.params ),
+						getStepSectionName( context.params ),
+						localeFromParams ?? localeFromStore,
+						null,
+						'/setup'
+					) +
+					( context.querystring ? '?' + context.querystring : '' ) +
+					( context.hashstring ? '#' + context.hashstring : '' );
+				return;
 			}
 		}
 
