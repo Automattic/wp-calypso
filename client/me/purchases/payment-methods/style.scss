@@ -142,7 +142,7 @@
 				font-size: $font-body-extra-small;
 			}
 
-			&.payment-method-delete-dialog__affected-subscription-date {
+			&.payment-method-delete-dialog__affected-subscription-date span {
 				color: var(--color-error);
 				font-size: $font-body-extra-small;
 				text-align: center;
@@ -158,6 +158,7 @@
 	.payment-method-delete-dialog__affected-subscriptions-title-wrapper {
 		display: flex;
 		gap: 12px;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		margin-bottom: 8px;
 

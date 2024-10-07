@@ -11,7 +11,10 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
-import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
+import {
+	hasLoadedSitePurchasesFromServer,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
@@ -22,6 +25,7 @@ interface PaymentMethodListProps {
 	addPaymentMethodUrl: string;
 	translate: typeof translate;
 	isAgencyUser: boolean;
+	hasLoadedSitePurchasesFromServer: boolean;
 	hasLoadedUserPurchasesFromServer: boolean;
 }
 
@@ -29,10 +33,10 @@ class PaymentMethodList extends Component<
 	PaymentMethodListProps & WithStoredPaymentMethodsProps
 > {
 	renderPaymentMethods( paymentMethods: StoredPaymentMethod[] ) {
-		if (
-			this.props.paymentMethodsState.isLoading ||
-			! this.props.hasLoadedUserPurchasesFromServer
-		) {
+		const hasLoadedPurchases =
+			this.props.hasLoadedUserPurchasesFromServer || this.props.hasLoadedSitePurchasesFromServer;
+
+		if ( this.props.paymentMethodsState.isLoading || ! hasLoadedPurchases ) {
 			return (
 				<CompactCard className="payment-method-list__loader">
 					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />
@@ -108,5 +112,6 @@ class PaymentMethodList extends Component<
 
 export default connect( ( state: IAppState ) => ( {
 	isAgencyUser: isAgencyUser( state ),
+	hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 } ) )( withStoredPaymentMethods( localize( PaymentMethodList ), { type: 'all', expired: true } ) );

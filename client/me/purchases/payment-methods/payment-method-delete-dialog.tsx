@@ -1,9 +1,8 @@
 import { Gridicon, Dialog } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import moment from 'moment';
 import { FunctionComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -16,7 +15,6 @@ interface Props {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
-	moment: typeof moment;
 }
 
 const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
@@ -27,8 +25,9 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 	onClose,
 	onConfirm,
 } ) => {
+	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-	const associatedSubscriptions = purchases.filter(
+	const associatedSubscriptions = purchases?.filter(
 		( purchase: Purchase ) =>
 			purchase.payment?.storedDetailsId === card.stored_details_id && purchase.isAutoRenewEnabled
 	);
@@ -83,12 +82,12 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 							</div>
 							<div>
 								<span className="payment-method-delete-dialog__affected-subscription-date">
-									{ translate( 'Auto-renews{{br /}}%(date)s', {
-										args: {
-											date: moment( subscription.renewDate ).format( 'll' ),
-										},
-										components: { br: <br /> },
-									} ) }
+									<span>
+										{ translate( 'Auto-renews', {
+											comment: 'followed by a date - eg. "Auto-renews 21 Apr 2025"',
+										} ) }
+									</span>
+									<span>{ moment( subscription.renewDate ).format( 'll' ) }</span>
 								</span>
 							</div>
 						</div>
@@ -111,4 +110,4 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 	);
 };
 
-export default withLocalizedMoment( PaymentMethodDeleteDialog );
+export default PaymentMethodDeleteDialog;
