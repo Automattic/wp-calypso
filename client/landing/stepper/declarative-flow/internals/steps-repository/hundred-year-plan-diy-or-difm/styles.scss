@@ -1,0 +1,49 @@
+.hundred-year-plan-setup__diy-or-difm {
+
+	.step-container__header {
+		margin-bottom: 0;
+	}
+
+	ul {
+		margin: 0 0.5rem 2.5rem 0.5rem;
+		list-style-type: none;
+
+		li {
+			color: var(--studio-gray-60);
+		}
+
+		svg {
+			position: relative;
+			top: 8px;
+			padding: 5px !important;
+			margin-right: 5px !important;
+			background-color: var(--studio-gray-5);
+			border-radius: 100%;
+		}
+	}
+
+	.buttons-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		.components-button {
+			margin-bottom: 1rem;
+
+			&.is-primary {
+				padding-left: 1.5rem;
+				padding-right: 1.5rem;
+				background-color: var(--studio-gray-100);
+
+				&:hover {
+					background-color: var(--studio-gray-70);
+				}
+			}
+
+			&.is-link {
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+}

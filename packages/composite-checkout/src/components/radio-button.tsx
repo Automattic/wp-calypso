@@ -52,6 +52,15 @@ const RadioButtonWrapper = styled.div<
 		}
 	}
 
+	.credit-card__logos {
+		${ ( props ) => ( props.checked ? `display:flex;` : `display:none;` ) }
+
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			display: flex;
+			filter: grayscale( ${ getGrayscaleValue } );
+		}
+	}
+
 	svg {
 		filter: grayscale( ${ getGrayscaleValue } );
 	}
@@ -105,11 +114,14 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: column;
+	gap: 10px;
+	justify-content: center;
+	align-items: flex-start;
 	align-content: center;
 	font-size: 14px;
-	height: 72px;
+	height: fit-content;
+	min-height: 72px;
 
 	.rtl & {
 		padding: 16px 56px 16px 14px;
@@ -126,7 +138,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		content: '';
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
-		top: 28px;
+		top: 40%;
 		left: 24px;
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
@@ -145,7 +157,8 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		height: 8px;
 		content: '';
 		border-radius: 100%;
-		top: 32px;
+		margin-top: 4px;
+		top: 40%;
 		left: 28px;
 		position: absolute;
 		background: ${ getRadioColor };
@@ -157,6 +170,13 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			left: auto;
 		}
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 7px:
+		}
 }
 
 	${ handleLabelDisabled };

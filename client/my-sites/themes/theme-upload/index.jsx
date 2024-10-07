@@ -32,10 +32,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
-// Necessary for ThanksModal
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -58,7 +56,7 @@ import {
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
 	isUploadInProgress,
@@ -69,6 +67,8 @@ import {
 	getUploadProgressTotal,
 	getUploadProgressLoaded,
 	isInstallInProgress,
+	isTransferInProgress,
+	isTransferComplete,
 } from 'calypso/state/themes/upload-theme/selectors';
 import {
 	getSelectedSiteId,
@@ -109,9 +109,6 @@ class Upload extends Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
-		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
-			this.redirectToWpAdmin();
-		}
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -143,7 +140,7 @@ class Upload extends Component {
 		} );
 	};
 
-	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
+	requestUpdatedSiteData = ( isTransferring, wasTransferring, isThemeTransferCompleted ) => {
 		if ( isTransferring && ! this.state.isTransferring ) {
 			this.setState( {
 				isTransferring: true,
@@ -152,29 +149,18 @@ class Upload extends Component {
 				isTrialSite: true,
 			} );
 		}
-		if ( wasTransferring && isTransferCompleted ) {
+		if ( wasTransferring && isThemeTransferCompleted ) {
 			this.props.fetchUpdatedData();
 			this.setState( { isTransferring: false, showEligibility: false } );
 		}
 	};
 
 	componentDidUpdate( prevProps ) {
-		if (
-			this.props.isAtomic &&
-			this.props.canUploadThemesOrPlugins &&
-			! this.state.hasRequestedTrial
-		) {
-			this.redirectToWpAdmin();
-		}
 		if ( this.props.complete && ! prevProps.complete ) {
 			this.successMessage();
 		} else if ( this.props.failed && ! prevProps.failed ) {
 			this.failureMessage();
 		}
-	}
-
-	redirectToWpAdmin() {
-		window.location = this.props.siteThemeInstallUrl;
 	}
 
 	successMessage() {
@@ -312,9 +298,11 @@ class Upload extends Component {
 				<div className="theme-upload__description">{ theme.description }</div>
 				<div className="theme-upload__action-buttons">
 					<Button onClick={ this.onTryAndCustomizeClick }>{ tryandcustomize.label }</Button>
-					<Button primary onClick={ this.onActivateClick }>
-						{ activate.label }
-					</Button>
+					{ this.props.activeTheme !== theme.id && ! this.props.isThemeTransferCompleted && (
+						<Button primary onClick={ this.onActivateClick }>
+							{ activate.label }
+						</Button>
+					) }
 				</div>
 			</div>
 		);
@@ -418,7 +406,6 @@ class Upload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
-				<ThanksModal source="upload" />
 				<ActivationModal source="upload" />
 				<NavigationHeader
 					title={ translate( 'Themes' ) }
@@ -435,11 +422,12 @@ class Upload extends Component {
 				></NavigationHeader>
 
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
-				{ ! showTrialAcknowledgeModal && ! isAtomic && (
+				{ ! showTrialAcknowledgeModal && this.props.isThemeTransferInProgress && (
 					<HostingActivateStatus
 						context="theme"
 						onTick={ this.requestUpdatedSiteData }
 						keepAlive={ hasRequestedTrial && ! isAtomic }
+						forceEnable={ this.props.isThemeTransferInProgress }
 					/>
 				) }
 				{ showUpgradeBanner && ! isTrial && this.renderUpgradeBanner() }
@@ -464,6 +452,7 @@ const ConnectedUpload = connectOptions( Upload );
 
 const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
+
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
@@ -505,6 +494,7 @@ const mapStateToProps = ( state ) => {
 		complete: isUploadComplete( state, siteId ),
 		failed: hasUploadFailed( state, siteId ),
 		themeId,
+		activeTheme: getActiveTheme( state, siteId ),
 		isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
 		error: getUploadError( state, siteId ),
@@ -512,6 +502,8 @@ const mapStateToProps = ( state ) => {
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
+		isThemeTransferInProgress: isTransferInProgress( state, siteId ),
+		isThemeTransferCompleted: isTransferComplete( state, siteId ),
 		showEligibility,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteThemeInstallUrl: getSiteThemeInstallUrl( state, siteId ),

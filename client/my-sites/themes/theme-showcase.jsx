@@ -28,7 +28,6 @@ import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collectio
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -248,7 +247,7 @@ class ThemeShowcase extends Component {
 
 	scrollToSearchInput = () => {
 		// Scroll to the top of the showcase
-		if ( this.showcaseRef.current ) {
+		if ( this.showcaseRef.current && this.state.shouldThemeControlsSticky ) {
 			this.showcaseRef.current.scrollIntoView( {
 				behavior: 'instant',
 				block: 'start',
@@ -791,7 +790,6 @@ class ThemeShowcase extends Component {
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
-					<ThanksModal source="list" />
 					<ActivationModal source="list" />
 					<EligibilityWarningModal />
 					<ThemePreview />

@@ -1,11 +1,12 @@
 import { Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { getEditURL } from 'calypso/state/posts/utils';
 
 import './style.scss';
 
-const PostEditButton = ( { post, site, iconSize, onClick, translate } ) => {
+const PostEditButton = ( { post, site, iconSize = 24, onClick } ) => {
+	const translate = useTranslate();
 	const editUrl = getEditURL( post, site );
 	return (
 		<a className="post-edit-button" href={ editUrl } onClick={ onClick }>
@@ -22,8 +23,4 @@ PostEditButton.propTypes = {
 	onClick: PropTypes.func,
 };
 
-PostEditButton.defaultProps = {
-	iconSize: 24,
-};
-
-export default localize( PostEditButton );
+export default PostEditButton;

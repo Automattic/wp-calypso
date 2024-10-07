@@ -93,6 +93,10 @@
 			color: var(--color-text);
 		}
 
+		button {
+			height: auto;
+		}
+
 		button .plan-type-selector__interval-type-dropdown-option {
 			padding-right: 32px;
 		}

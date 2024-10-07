@@ -40,6 +40,7 @@ type Tab = {
 	selected: boolean;
 	path: string;
 	content: ReactNode;
+	onClick: () => void;
 };
 
 export default function TeamList( { currentTab }: Props ) {
@@ -66,6 +67,7 @@ export default function TeamList( { currentTab }: Props ) {
 				selected: currentTab === TAB_ACTIVE_MEMBERS,
 				path: `${ A4A_TEAM_LINK }/${ TAB_ACTIVE_MEMBERS }`,
 				content: <TeamMemberTable members={ activeMembers } onRefresh={ refetch } />,
+				onClick: () => dispatch( recordTracksEvent( 'calypso_a4a_team_active_members_tab_view' ) ),
 			},
 			{
 				key: TAB_INVITED_MEMBERS,
@@ -74,6 +76,7 @@ export default function TeamList( { currentTab }: Props ) {
 				selected: currentTab === TAB_INVITED_MEMBERS,
 				path: `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }`,
 				content: <TeamInviteTable members={ invitedMembers } onRefresh={ refetch } />,
+				onClick: () => dispatch( recordTracksEvent( 'calypso_a4a_team_invited_members_tab_view' ) ),
 			},
 		];
 
@@ -83,7 +86,7 @@ export default function TeamList( { currentTab }: Props ) {
 			items,
 			selected,
 		};
-	}, [ activeMembers, currentTab, invitedMembers, refetch, translate ] );
+	}, [ activeMembers, currentTab, dispatch, invitedMembers, refetch, translate ] );
 
 	if ( isPending ) {
 		return <PagePlaceholder />;
@@ -94,7 +97,7 @@ export default function TeamList( { currentTab }: Props ) {
 	}
 
 	return (
-		<Layout className="team-list full-width-layout-with-table" title={ title } wide compact>
+		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
 			<LayoutTop withNavigation>
 				<LayoutHeader>
 					<Title>{ title }</Title>

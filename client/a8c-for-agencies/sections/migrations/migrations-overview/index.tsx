@@ -20,6 +20,7 @@ import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hook
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import tipaltiLogo from 'calypso/a8c-for-agencies/sections/referrals/lib/tipalti-logo';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -57,13 +58,33 @@ export default function MigrationsOverview() {
 
 			<LayoutBody>
 				<div className="migrations-overview__section-heading">
-					{ translate( 'Special limited-time migration offer for our partners' ) }
+					{ preventWidows(
+						translate(
+							'Limited time offer: Migrate your sites to Pressable or WordPress.com and earn up to $10,000!'
+						)
+					) }
 				</div>
 				<div className="migrations-overview__section-intro">
 					{ translate(
-						"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until October 31, 2024."
+						'From now until the end of 2024, you’ll receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000.* If you’re a WP\u00A0Engine customer, we’ll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}',
+						{
+							components: {
+								a: (
+									<a
+										href="https://automattic.com/for-agencies/program-incentives"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
 					) }
 				</div>
+				<p className="migrations-overview__asterisk">
+					{ translate(
+						'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts.'
+					) }
+				</p>
 				<div className="migrations-overview__section-subtitle">
 					{ translate( 'How do I migrate my clients’ sites?' ) }
 				</div>
@@ -154,22 +175,6 @@ export default function MigrationsOverview() {
 						</div>
 					</div>
 				</Card>
-				<div className="migrations-overview__tos">
-					{ translate(
-						'To be eligible for the special migration offer, you must migrate a minimum of 3 sites by July 31, 2024, to a WordPress.com or Pressable.com hosting plan. Read the full {{a}}Terms of Service{{/a}}.',
-						{
-							components: {
-								a: (
-									<a
-										href="https://automattic.com/for-agencies/program-incentives/"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</div>
 			</LayoutBody>
 		</Layout>
 	);

@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
-import { StepInstallMigrationGuru } from './step-install-migation-guru';
+import { StepInstallMigrationPlugin } from './step-install-migration-plugin';
 import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 
 interface StepsDataOptions {
@@ -53,9 +54,15 @@ const useStepsData = ( {
 
 	return [
 		{
-			key: 'install-the-migrate-guru-plugin',
-			title: translate( 'Install the Migrate Guru plugin' ),
-			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
+			key: 'install-the-migrate-plugin',
+			title: translate( 'Install the %(pluginName)s plugin', {
+				args: {
+					pluginName: config.isEnabled( 'migration-flow/enable-white-labeled-plugin' )
+						? 'Migrate to WordPress.com'
+						: 'Migrate Guru',
+				},
+			} ) as string,
+			content: <StepInstallMigrationPlugin fromUrl={ fromUrl } />,
 		},
 		{
 			key: 'get-your-site-ready',

@@ -3,6 +3,8 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	getPlan,
 	TERM_ANNUALLY,
 	findFirstSimilarPlanKey,
@@ -86,6 +88,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const redirectTo = encodeURIComponent(
 				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
 					style_variation: options?.styleVariationSlug,
+					activating: true,
 				} )
 			);
 
@@ -222,10 +225,17 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const slug = getSiteSlug( state, siteId );
 
 			const redirectTo = encodeURIComponent(
-				`${ origin }/marketplace/theme/${ themeId }/install/${ slug }`
+				addQueryArgs( `${ origin }/theme/${ themeId }/${ slug }`, { activating: true } )
 			);
 
-			const planPathSlug = getPlanPathSlugForThemes( state, siteId, PLAN_BUSINESS );
+			const currentPlanSlug = getSitePlanSlug( state, siteId );
+			const isEcommerceTrialMonthly = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
+			const planPathSlug = getPlanPathSlugForThemes(
+				state,
+				siteId,
+				isEcommerceTrialMonthly ? PLAN_ECOMMERCE : PLAN_BUSINESS
+			);
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},

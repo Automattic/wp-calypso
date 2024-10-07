@@ -52,7 +52,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
-	meta?: LicenseMeta | null;
+	meta?: LicenseMeta;
 	referral?: ReferralAPIResponse | null;
 }
 
@@ -104,11 +104,13 @@ export default function LicensePreview( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
+	const isClientLicense = isAutomatedReferralsEnabled && referral;
+
 	const assign = useCallback( () => {
 		const redirectUrl = isWPCOMLicense
 			? A4A_SITES_LINK_NEEDS_SETUP
 			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired ) {
+		if ( paymentMethodRequired && ! isClientLicense ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
@@ -131,7 +133,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, translate, dispatch ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, isClientLicense, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -157,7 +159,7 @@ export default function LicensePreview( {
 	);
 
 	const shouldShowTransferredBadge = () => {
-		const transferredDate = meta?.a4a_transferred_subscription_expiration;
+		const transferredDate = meta?.transferredSubscriptionExpiration;
 
 		if ( ! transferredDate ) {
 			return false;
@@ -198,7 +200,7 @@ export default function LicensePreview( {
 					>
 						<div className="license-preview__migration-content">
 							{ translate(
-								"Your site is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for migrated sites{{icon/}}{{/a}}",
+								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for transferred sites{{icon/}}{{/a}}",
 								{
 									components: {
 										bold: <strong />,
@@ -219,7 +221,7 @@ export default function LicensePreview( {
 										),
 									},
 									args: {
-										date: meta?.a4a_transferred_subscription_expiration ?? '',
+										date: meta?.transferredSubscriptionExpiration ?? '',
 									},
 								}
 							) }
@@ -235,6 +237,8 @@ export default function LicensePreview( {
 	const productTitle = licenseKey.startsWith( 'wpcom-hosting-business' )
 		? translate( 'WordPress.com Site' )
 		: product;
+
+	const isDevelopmentSite = Boolean( meta?.isDevSite );
 
 	return (
 		<div
@@ -254,7 +258,7 @@ export default function LicensePreview( {
 				<div>
 					<span className="license-preview__product">
 						{ productTitle }
-						{ isAutomatedReferralsEnabled && referral && (
+						{ isClientLicense && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
 							</div>
@@ -352,6 +356,7 @@ export default function LicensePreview( {
 
 				<div className="license-preview__badge-container">
 					{ !! isParentLicense && bundleCountContent }
+					{ isDevelopmentSite && <Badge type="info-purple">{ translate( 'Development' ) }</Badge> }
 					{ shouldShowTransferredBadge() && <TransferredBadge /> }
 				</div>
 

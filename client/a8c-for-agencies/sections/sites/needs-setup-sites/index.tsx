@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -19,6 +18,7 @@ import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-conf
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
+import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
 import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
@@ -57,6 +57,8 @@ export default function NeedSetup( { licenseKey }: Props ) {
 	const { data: pendingSites, isFetching, refetch: refetchPendingSites } = useFetchPendingSites();
 
 	const { mutate: createWPCOMSite, isPending: isCreatingSite } = useCreateWPCOMSiteMutation();
+
+	const { trackSiteId } = useTrackProvisioningSites();
 
 	const allAvailableSites =
 		pendingSites?.filter(
@@ -153,12 +155,13 @@ export default function NeedSetup( { licenseKey }: Props ) {
 				{
 					onSuccess: () => {
 						refetchPendingSites();
-						page( addQueryArgs( A4A_SITES_LINK, { created_site: id, migration: true } ) );
+						trackSiteId( id, { migration: true } );
+						page( A4A_SITES_LINK );
 					},
 				}
 			);
 		},
-		[ createWPCOMSite, refetchPendingSites ]
+		[ createWPCOMSite, refetchPendingSites, trackSiteId ]
 	);
 
 	return (

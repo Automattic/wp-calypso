@@ -5,7 +5,8 @@ import { useSelect } from '@wordpress/data';
 import { external } from '@wordpress/icons';
 import { useEffect, useRef } from 'react';
 import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
-import { StepProps } from '../types';
+import { SubscribersStepProps } from '../types';
+import { normalizeFromSite } from '../utils';
 import SubscriberUploadForm from './upload-form';
 
 export default function StepInitial( {
@@ -16,7 +17,7 @@ export default function StepInitial( {
 	cardData,
 	engine,
 	setAutoFetchData,
-}: StepProps ) {
+}: SubscribersStepProps ) {
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 		return {
@@ -46,7 +47,7 @@ export default function StepInitial( {
 				className="export-subscribers"
 			/>
 			<Button
-				href={ `https://${ fromSite }/publish/subscribers` }
+				href={ `https://${ normalizeFromSite( fromSite ) }/publish/subscribers` }
 				target="_blank"
 				rel="noreferrer noopener"
 				icon={ external }

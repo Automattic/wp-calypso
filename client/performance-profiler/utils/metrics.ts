@@ -19,13 +19,16 @@ export const metricsNames = {
 	tbt: {
 		name: translate( 'Total Blocking Time' ),
 	},
+	overall: {
+		name: translate( 'Performance Score' ),
+	},
 };
 
 export const metricValuations = {
 	fcp: {
-		good: translate( 'Your site‘s First Contentful Paint is good' ),
-		needsImprovement: translate( 'Your site‘s First Contentful Paint is moderate' ),
-		bad: translate( 'Your site‘s First Contentful Paint needs improvement' ),
+		good: translate( 'Your site‘s First Contentful Paint is excellent' ),
+		needsImprovement: translate( 'Your site‘s First Contentful Paint needs improvement' ),
+		bad: translate( 'Your site‘s First Contentful Paint is poor' ),
 		heading: translate( 'What is First Contentful Paint?' ),
 		aka: translate( '(FCP)' ),
 		explanation: translate(
@@ -33,9 +36,9 @@ export const metricValuations = {
 		),
 	},
 	lcp: {
-		good: translate( 'Your site‘s Largest Contentful Paint is good' ),
-		needsImprovement: translate( 'Your site‘s Largest Contentful Paint is moderate' ),
-		bad: translate( 'Your site‘s Largest Contentful Paint needs improvement' ),
+		good: translate( 'Your site‘s Largest Contentful Paint is excellent' ),
+		needsImprovement: translate( 'Your site‘s Largest Contentful Paint needs improvement' ),
+		bad: translate( 'Your site‘s Largest Contentful Paint is poor' ),
 		heading: translate( 'What is Largest Contentful Paint?' ),
 		aka: translate( '(LCP)' ),
 		explanation: translate(
@@ -43,9 +46,9 @@ export const metricValuations = {
 		),
 	},
 	cls: {
-		good: translate( 'Your site‘s Cumulative Layout Shift is good' ),
-		needsImprovement: translate( 'Your site‘s Cumulative Layout Shift is moderate' ),
-		bad: translate( 'Your site‘s Cumulative Layout Shift needs improvement' ),
+		good: translate( 'Your site‘s Cumulative Layout Shift is excellent' ),
+		needsImprovement: translate( 'Your site‘s Cumulative Layout Shift needs improvement' ),
+		bad: translate( 'Your site‘s Cumulative Layout Shift is poor' ),
 		heading: translate( 'What is Cumulative Layout Shift?' ),
 		aka: translate( '(CLS)' ),
 		explanation: translate(
@@ -53,9 +56,9 @@ export const metricValuations = {
 		),
 	},
 	inp: {
-		good: translate( 'Your site‘s Interaction to Next Paint is good' ),
-		needsImprovement: translate( 'Your site‘s Interaction to Next Paint is moderate' ),
-		bad: translate( 'Your site‘s Interaction to Next Paint needs improvement' ),
+		good: translate( 'Your site‘s Interaction to Next Paint is excellent' ),
+		needsImprovement: translate( 'Your site‘s Interaction to Next Paint needs improvement' ),
+		bad: translate( 'Your site‘s Interaction to Next Paint is poor' ),
 		heading: translate( 'What is Interaction to Next Paint?' ),
 		aka: translate( '(INP)' ),
 		explanation: translate(
@@ -63,9 +66,9 @@ export const metricValuations = {
 		),
 	},
 	ttfb: {
-		good: translate( 'Your site‘s Time to First Byte is good' ),
-		needsImprovement: translate( 'Your site‘s Time to First Byte is moderate' ),
-		bad: translate( 'Your site‘s Time to First Byte needs improvement' ),
+		good: translate( 'Your site‘s Time to First Byte is excellent' ),
+		needsImprovement: translate( 'Your site‘s Time to First Byte needs improvement' ),
+		bad: translate( 'Your site‘s Time to First Byte is poor' ),
 		heading: translate( 'What is Time to First Byte?' ),
 		aka: translate( '(TTFB)' ),
 		explanation: translate(
@@ -73,13 +76,23 @@ export const metricValuations = {
 		),
 	},
 	tbt: {
-		good: translate( 'Your site‘s Total Blocking Time is good' ),
-		needsImprovement: translate( 'Your site‘s Total Blocking Time is moderate' ),
-		bad: translate( 'Your site‘s Total Blocking Time needs improvement' ),
+		good: translate( 'Your site‘s Total Blocking Time is excellent' ),
+		needsImprovement: translate( 'Your site‘s Total Blocking Time needs improvement' ),
+		bad: translate( 'Your site‘s Total Blocking Time is poor' ),
 		heading: translate( 'What is Total Blocking Time?' ),
 		aka: translate( '(TBT)' ),
 		explanation: translate(
 			'Total Blocking Time measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks, screen taps, or keyboard presses. The best sites have a wait time of less than 200 milliseconds.'
+		),
+	},
+	overall: {
+		good: translate( 'Your site‘s Performance Score is excellent' ),
+		needsImprovement: translate( 'Your site‘s Performance Score needs improvement' ),
+		bad: translate( 'Your site‘s Performance Score is poor' ),
+		heading: translate( 'What is Performance Score?' ),
+		aka: translate( '(PS)' ),
+		explanation: translate(
+			'The performance score is a combined representation of your site‘s individual speed metrics.'
 		),
 	},
 };
@@ -116,11 +129,28 @@ export const metricsTresholds = {
 		needsImprovement: 600,
 		bad: 1000,
 	},
+	overall: {
+		good: 100,
+		needsImprovement: 89,
+		bad: 49,
+	},
+};
+
+export const getPerformanceStatus = ( value: number ) => {
+	if ( value <= 49 ) {
+		return 'bad';
+	} else if ( value > 49 && value < 90 ) {
+		return 'needsImprovement';
+	}
+	return 'good';
 };
 
 export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
 
+	if ( metric === 'overall' ) {
+		return getPerformanceStatus( value );
+	}
 	if ( value <= good ) {
 		return 'good';
 	}

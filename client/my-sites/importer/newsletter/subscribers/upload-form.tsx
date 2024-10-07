@@ -4,12 +4,13 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ProgressBar } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, cloudUpload } from '@wordpress/icons';
-import { useCallback, useState, FormEvent } from 'react';
+import { useCallback, useState, FormEvent, useEffect } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
+import ImportSubscribersError from './import-subscribers-error';
 
 type Props = {
 	nextStepUrl: string;
@@ -21,7 +22,9 @@ type Props = {
 export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 
-	const { importCsvSubscribers } = useDispatch( Subscriber.store );
+	const [ hasImportError, setHasImportError ] = useState( false );
+
+	const { importCsvSubscribers, importCsvSubscribersUpdate } = useDispatch( Subscriber.store );
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 
@@ -30,6 +33,12 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 			imports: subscriber.getImportJobsSelector(),
 		};
 	}, [] );
+
+	useEffect( () => {
+		if ( importSelector?.error ) {
+			setHasImportError( true );
+		}
+	}, [ importSelector ] );
 
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( false );
 	const onSubmit = useCallback(
@@ -43,7 +52,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 	const onFileSelect = useCallback( ( files: Array< File > ) => {
 		const file = files[ 0 ];
 		const isValid = isValidExtension( file.name );
-
+		setHasImportError( false );
 		setIsSelectedFileValid( isValid );
 		isValid && setSelectedFile( file );
 	}, [] );
@@ -56,6 +65,11 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		return validExtensions.includes( match?.groups?.extension.toLowerCase() as string );
 	}
 
+	// This fixes the issue of the form being the the upload state even if the user hasn't loaded the importer.
+	useEffect( () => {
+		importCsvSubscribersUpdate( undefined ); // reset the form.
+	}, [ importCsvSubscribersUpdate ] );
+
 	const importSubscribersUrl =
 		'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
 
@@ -65,7 +79,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 				<div className="subscriber-upload-form__in-progress">
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
 					<p>Uploading...</p>
-					<ProgressBar className="subscriber-upload-form__progress-bar" />
+					<ProgressBar className="is-larger-progress-bar" />
 				</div>
 			</div>
 		);
@@ -91,12 +105,18 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					) }
 				</FilePicker>
 			</div>
-			{ isSelectedFileValid && selectedFile && (
+
+			{ isSelectedFileValid && selectedFile && ! hasImportError && (
 				<p>
 					By clicking "Continue," you represent that you've obtained the appropriate consent to
 					email each person. <a href={ localizeUrl( importSubscribersUrl ) }>Learn more</a>.
 				</p>
 			) }
+
+			{ hasImportError && importSelector?.error && (
+				<ImportSubscribersError error={ importSelector?.error } />
+			) }
+
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
 					type="submit"
@@ -104,7 +124,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					onClick={ () => {
 						recordTracksEvent( 'calypso_paid_importer_add_subscriber' );
 					} }
-					disabled={ ! ( isSelectedFileValid && selectedFile ) }
+					disabled={ ! ( isSelectedFileValid && selectedFile ) || hasImportError }
 				>
 					Continue
 				</ImporterActionButton>

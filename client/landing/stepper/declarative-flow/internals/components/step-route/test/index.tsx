@@ -6,6 +6,7 @@ import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
+import recordStepComplete from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
@@ -17,16 +18,17 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
-import type { NavigationControls } from '../../../types';
 import type {
 	Flow,
 	StepperStep,
 	StepProps,
+	NavigationControls,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete' );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
@@ -150,13 +152,15 @@ describe( 'StepRoute', () => {
 	} );
 
 	describe( 'tracking', () => {
-		it( 'records a page view when the step is rendered', async () => {
+		it( 'records a page view', async () => {
 			render( { step: regularStep } );
 
-			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug' );
+			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
+				flow: 'some-flow',
+			} );
 		} );
 
-		it( 'records recordStepStart when the step is rendered', async () => {
+		it( 'records recordStepStart', async () => {
 			render( { step: regularStep } );
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
@@ -164,14 +168,6 @@ describe( 'StepRoute', () => {
 				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 			} );
-		} );
-
-		it( 'does not record start and page view when the login is required and the user is not logged in', async () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			render( { step: requiresLoginStep } );
-
-			expect( recordStepStart ).not.toHaveBeenCalled();
-			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 
 		it( 'skips tracking when the step is re-entered', () => {
@@ -183,11 +179,88 @@ describe( 'StepRoute', () => {
 			expect( recordStepStart ).not.toHaveBeenCalled();
 		} );
 
-		it( 'skips trackings when the renderStep returns null', () => {
-			render( { step: regularStep, renderStep: () => null } );
+		it( 'records step-complete when the step is unmounted and step-start was previously recorded', () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			const { unmount } = render( { step: regularStep } );
+
+			expect( recordStepComplete ).not.toHaveBeenCalled();
+			unmount();
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				optionalProps: {
+					intent: 'build',
+				},
+			} );
+		} );
+
+		it( 'skips recording step-complete when the step is unmounted and step-start was not recorded', () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
+			const { unmount } = render( { step: regularStep } );
 
 			expect( recordStepStart ).not.toHaveBeenCalled();
-			expect( recordPageView ).not.toHaveBeenCalled();
+			unmount();
+			expect( recordStepComplete ).not.toHaveBeenCalled();
+		} );
+
+		it( 'records skip_step_render on start, complete and page view when the login is required and the user is not logged in', async () => {
+			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+
+			const { unmount } = render( { step: requiresLoginStep } );
+
+			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
+				intent: 'build',
+				assembler_source: 'premium',
+				is_in_hosting_flow: false,
+				skip_step_render: true,
+			} );
+			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
+				flow: 'some-flow',
+				skip_step_render: true,
+			} );
+
+			unmount();
+
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				optionalProps: {
+					intent: 'build',
+					skip_step_render: true,
+				},
+			} );
+		} );
+
+		it( 'records skip_step_render on start, complete and page view when renderStep returns null', async () => {
+			( getSignupCompleteFlowNameAndClear as jest.Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			const { unmount } = render( { step: regularStep, renderStep: () => null } );
+
+			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
+				intent: 'build',
+				assembler_source: 'premium',
+				is_in_hosting_flow: false,
+				skip_step_render: true,
+			} );
+			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
+				flow: 'some-flow',
+				skip_step_render: true,
+			} );
+
+			unmount();
+
+			expect( recordStepComplete ).toHaveBeenCalledWith( {
+				step: 'some-step-slug',
+				flow: 'some-flow',
+				optionalProps: {
+					intent: 'build',
+					skip_step_render: true,
+				},
+			} );
 		} );
 	} );
 } );

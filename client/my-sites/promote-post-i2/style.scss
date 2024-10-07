@@ -395,6 +395,17 @@ body.is-section-promote-post-i2 {
 		border-color: #ddd !important;
 		border-radius: 4px;
 	}
+
+	.promote-post-i2__warnings-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding-bottom: 32px;
+
+		.notice {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .promote-post-i2__loading-container {

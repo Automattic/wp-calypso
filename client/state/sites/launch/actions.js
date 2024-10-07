@@ -1,5 +1,5 @@
 import { addQueryArgs } from 'calypso/lib/url';
-import { SITE_LAUNCH } from 'calypso/state/action-types';
+import { SITE_LAUNCH, SITE_LAUNCH_FAILURE, SITE_LAUNCH_SUCCESS } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -15,6 +15,16 @@ export const launchSite = ( siteId ) => ( {
 			requestKey: `${ SITE_LAUNCH }-${ siteId }`,
 		},
 	},
+} );
+
+export const launchSiteSuccess = ( siteId ) => ( {
+	type: SITE_LAUNCH_SUCCESS,
+	siteId,
+} );
+
+export const launchSiteFailure = ( siteId ) => ( {
+	type: SITE_LAUNCH_FAILURE,
+	siteId,
 } );
 
 /**

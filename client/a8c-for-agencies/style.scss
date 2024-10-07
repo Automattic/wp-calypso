@@ -166,13 +166,16 @@
 
 	.components-button.is-primary,
 	.button.is-primary {
-		background-color: var(--color-primary-50);
-		border-color: var(--color-primary-50);
-		fill: var(--color-text-inverted);
-		color: var(--color-text-inverted);
+		&,
+		&:focus:not(:disabled) {
+			background-color: var(--color-primary-50);
+			border-color: var(--color-primary-50);
+			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
+		}
 
-		&:hover,
-		&:focus-visible {
+		&:hover:not(:disabled),
+		&:focus-visible:not(:disabled) {
 			background-color: var(--color-primary-70);
 			border-color: var(--color-primary-70);
 			fill: var(--color-text-inverted);
@@ -230,6 +233,7 @@
 		&:hover,
 		&:focus-visible {
 			background-color: var(--color-accent-100);
+			color: var(--color-surface);
 		}
 	}
 
@@ -366,11 +370,16 @@
 		cursor: not-allowed;
 		pointer-events: none;
 	}
+
+	.global-notices {
+		z-index: 100001;
+	}
 }
 
 // New navigation will not include a masterbar
 .theme-a8c-for-agencies .layout.has-no-masterbar {
-	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* We are ignoring these lines because without the
+	// px value the calc function does not work as expected */
 	/* stylelint-disable-next-line length-zero-no-unit */
 	--masterbar-height: 0px;
 

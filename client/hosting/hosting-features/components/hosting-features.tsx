@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button, Spinner } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { AnyAction } from 'redux';
@@ -41,6 +42,7 @@ const HostingFeatures = () => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
+	const redirectToParam = searchParams.get( 'redirect_to' );
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
 	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
@@ -136,7 +138,9 @@ const HostingFeatures = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
-			redirect_to: redirectUrl,
+			redirect_to: addQueryArgs( redirectToParam ?? redirectUrl, {
+				hosting_features: 'activated',
+			} ),
 			feature: FEATURE_SFTP,
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',

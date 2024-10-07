@@ -13,7 +13,9 @@ import { A4A_PARTNER_DIRECTORY_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/c
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import IndustriesSelector from '../components/industries-selector';
@@ -38,9 +40,11 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 
 	const { validate, validationError, updateValidationError } = useDetailsFormValidation();
 
+	const agency = useSelector( getActiveAgency );
+
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
-			response && reduxDispatch( setActiveAgency( response ) );
+			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
 
 			reduxDispatch(
 				successNotice( translate( 'Your agency profile was submitted!' ), {
@@ -50,7 +54,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			);
 			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ translate ]
+		[ agency, translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -118,6 +122,9 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			<FormSection title={ translate( 'Agency information' ) }>
 				<FormField
 					label={ translate( 'Company name' ) }
+					description={ translate(
+						'Include only your company name; save any descriptors for the Company bio section.'
+					) }
 					error={ validationError.name }
 					field={ formData.name }
 					checks={ [ validateNonEmpty() ] }

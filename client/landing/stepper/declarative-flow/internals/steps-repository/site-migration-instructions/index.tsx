@@ -117,7 +117,8 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
 
-	const showMigrationKeyFallback = migrationKeyStatus === 'error' && preparationCompleted;
+	const showMigrationKeyFallback =
+		( ! migrationKeyStatus || migrationKeyStatus === 'error' ) && preparationCompleted;
 
 	const { steps, completedSteps } = useSteps( {
 		fromUrl,

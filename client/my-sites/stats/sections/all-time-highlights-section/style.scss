@@ -1,0 +1,180 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/highlight-cards/variables";
+
+.stats__all-time-highlights-section {
+	.highlight-cards {
+		background-color: inherit;
+		box-shadow: none;
+
+		& > div:not(:first-of-type) {
+			margin-top: 24px;
+		}
+	}
+
+	.highlight-card {
+		padding: 24px;
+		min-width: 320px;
+
+		&.highlight-card--has-overlay {
+			.highlight-card-content {
+				filter: blur(10px);
+			}
+		}
+
+		.stats-card-upsell {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+	}
+
+	.post-stats-card {
+		flex: 1;
+		max-height: unset;
+		grid-template-columns: minmax(150px, 550px) minmax(0, auto);
+		// Enough space for .post-stats-card__upload
+		min-width: 480px;
+
+		// Get more space from the hidden upload button
+		@media (max-width: $break-large) {
+			gap: 24px 0;
+		}
+
+		@media (max-width: $custom-mobile-breakpoint) {
+			min-width: auto;
+			grid-template-columns: minmax(96px, 550px) minmax(0, auto);
+		}
+
+		&:not(:first-child) {
+			margin-left: 24px;
+		}
+
+		.post-stats-card__thumbnail,
+		.post-stats-card__upload {
+			margin-left: auto;
+
+			@media (max-width: $custom-mobile-breakpoint) {
+				margin-left: 4px;
+			}
+
+			@media (max-width: $break-wpcom-smallest) {
+				margin-left: 0;
+			}
+		}
+	}
+
+	.stats-card-upsell {
+		height: unset;
+	}
+
+	// For scrollable cards on narrow screens.
+	.highlight-cards-list {
+		overflow-x: auto;
+	}
+
+	.highlight-card-heading {
+		font-family: inherit;
+		font-weight: 500;
+		font-size: $font-title-small;
+		line-height: 26px;
+		color: var(--color-neutral-100);
+		margin-bottom: 24px;
+	}
+
+	.highlight-card-info-item-list,
+	.highlight-card-detail-item-list {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.highlight-card-info-item {
+		flex: 1;
+		display: flex;
+		align-items: center;
+
+		&:not(:first-child) {
+			margin-top: 22px;
+		}
+	}
+
+	.highlight-card-info-item-title {
+		font-weight: 500;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var(--color-neutral-100);
+		margin-left: 8px;
+	}
+
+	.highlight-card-info-item-count {
+		font-weight: 500;
+		font-size: $font-body;
+		line-height: 24px;
+		color: var(--studio-black);
+		margin-left: auto;
+	}
+
+	.highlight-card-detail-item {
+		&:not(:first-child) {
+			margin-top: 24px;
+		}
+	}
+
+	.highlight-card-detail-item-header {
+		font-weight: 500;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var(--color-neutral-100);
+		margin-bottom: 8px;
+	}
+
+	.highlight-card-detail-item-content {
+		font-family: $brand-serif;
+		font-weight: 400;
+		font-size: $font-title-large;
+		line-height: 40px;
+		color: var(--color-neutral-100);
+	}
+
+	.highlight-card-detail-item-footer {
+		font-weight: 400;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var(--color-neutral-60);
+		margin-top: 4px;
+	}
+
+	// Mobile layout
+	.highlight-cards-mobile {
+		margin: 16px 0;
+
+		& > div:not(:first-of-type) {
+			margin-top: 24px;
+		}
+
+		.highlight-cards-heading {
+			margin: 16px 16px 24px;
+		}
+
+		.dot-pager,
+		.highlight-cards-list {
+			padding: 24px;
+			border: 1px var(--color-border-subtle);
+			border-style: solid none;
+			background-color: var(--color-surface);
+		}
+
+		.card {
+			&.highlight-card,
+			&.post-stats-card {
+				padding: 0;
+				margin: 0;
+				box-shadow: none;
+				border: 0;
+			}
+		}
+	}
+}

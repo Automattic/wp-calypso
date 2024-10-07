@@ -60,6 +60,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -375,6 +376,10 @@ const PlansFeaturesMain = ( {
 		withDiscount,
 	} );
 
+	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
+		siteId ? !! isDomainOnlySiteSelector( state, siteId ) : false
+	);
+
 	const hiddenPlans = {
 		hideFreePlan,
 		hidePersonalPlan,
@@ -402,6 +407,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		isDomainOnlySite,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -423,6 +429,7 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		isDomainOnlySite,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -808,6 +815,7 @@ const PlansFeaturesMain = ( {
 						<div
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
 								'is-scrollable': plansWithScroll,
+								'is-plan-type-selector-visible': ! hidePlanSelector,
 							} ) }
 							data-e2e-plans="wpcom"
 						>
@@ -844,9 +852,6 @@ const PlansFeaturesMain = ( {
 											simplifiedFeaturesGridExperimentVariant !== 'simplified'
 										}
 										enableCategorisedFeatures={
-											simplifiedFeaturesGridExperimentVariant === 'simplified'
-										}
-										enableLargeFeatureTitles={
 											simplifiedFeaturesGridExperimentVariant === 'simplified'
 										}
 										enableStorageAsBadge={

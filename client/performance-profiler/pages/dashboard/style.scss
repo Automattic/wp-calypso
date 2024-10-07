@@ -23,14 +23,12 @@ $blueberry-color: #3858e9;
 .performance-profiler-content {
 	.top-section {
 		display: flex;
-		justify-content: space-between;
+		margin-right: auto;
 		width: 100%;
 		flex-wrap: wrap;
 		column-gap: 20px;
 		align-items: center;
-		@media (max-width: $break-small) {
-			justify-content: center;
-		}
+		justify-content: center;
 	}
 }
 

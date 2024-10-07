@@ -12,6 +12,9 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import MissingPaymentSettingsNotice from '../../referrals/common/missing-payment-settings-notice';
+import useGetTipaltiPayee from '../../referrals/hooks/use-get-tipalti-payee';
 import withMarketplaceType, {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REGULAR,
@@ -36,6 +39,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+	const [ tipaltiActionRequiredVisible, setTipaltiActionRequiredVisible ] = useState( false );
 
 	const { onClearCart } = useShoppingCart();
 
@@ -67,6 +71,14 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		[ checkoutItems ]
 	);
 
+	const { data: tipaltiData } = useGetTipaltiPayee();
+
+	useEffect( () => {
+		if ( ! tipaltiData.IsPayable ) {
+			setTipaltiActionRequiredVisible( true );
+		}
+	}, [ tipaltiData ] );
+
 	const handleRequestPayment = useCallback( () => {
 		if ( ! hasCompletedForm ) {
 			return;
@@ -78,12 +90,38 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 		);
-		requestPayment( {
-			client_email: email,
-			client_message: message,
-			product_ids: productIds,
-			licenses: licenses,
-		} );
+		requestPayment(
+			{
+				client_email: email,
+				client_message: message,
+				product_ids: productIds,
+				licenses: licenses,
+			},
+			{
+				onError: ( error ) => {
+					dispatch(
+						errorNotice(
+							error.code === 'cannot_refer_to_client'
+								? translate(
+										'Referring products to your own company is not allowed and against our {{a}}terms of service{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														href="https://automattic.com/for-agencies/program-incentives/"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+								  )
+								: error.message
+						)
+					);
+				},
+			}
+		);
 	}, [
 		dispatch,
 		email,
@@ -109,6 +147,13 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	return (
 		<>
+			{ tipaltiActionRequiredVisible && (
+				<div className="checkout__tipalti-action-required-notice">
+					<MissingPaymentSettingsNotice
+						onClose={ () => setTipaltiActionRequiredVisible( false ) }
+					/>
+				</div>
+			) }
 			<div className="checkout__client-referral-form">
 				<FormFieldset>
 					<FormLabel htmlFor="email">{ translate( 'Client’s email address' ) }</FormLabel>
@@ -120,6 +165,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_email_click' ) )
 						}
+						disabled={ ! tipaltiData.IsPayable }
 					/>
 					<div
 						className={ clsx( 'checkout__client-referral-form-footer-error', {
@@ -141,6 +187,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_message_click' ) )
 						}
+						disabled={ ! tipaltiData.IsPayable }
 					/>
 				</FormFieldset>
 			</div>

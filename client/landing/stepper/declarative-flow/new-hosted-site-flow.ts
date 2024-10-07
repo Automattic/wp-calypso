@@ -8,6 +8,8 @@ import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
+	getSignupCompleteSiteID,
+	setSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -50,6 +52,9 @@ const hosting: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
+
+		const query = useQuery();
+		const queryParams = Object.fromEntries( query );
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -62,6 +67,10 @@ const hosting: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+			if ( providedDependencies.siteId ) {
+				setSignupCompleteSiteID( providedDependencies.siteId );
+			}
+
 			switch ( _currentStepSlug ) {
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
@@ -69,12 +78,18 @@ const hosting: Flow = {
 
 					setPlanCartItem( {
 						product_slug: productSlug,
+						extra: {
+							...( queryParams?.utm_source && {
+								hideProductVariants: queryParams.utm_source === 'wordcamp',
+							} ),
+						},
 					} );
 
 					if ( isFreeHostingTrial( productSlug ) ) {
 						return navigate( 'trialAcknowledge' );
 					}
 
+					setSignupCompleteFlowName( flowName );
 					return navigate( 'createSite' );
 				}
 
@@ -88,12 +103,8 @@ const hosting: Flow = {
 				case 'processing': {
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId,
+						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
 					} );
-
-					persistSignupDestination( destination );
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
-					setSignupCompleteFlowName( flowName );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
 					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
@@ -101,6 +112,10 @@ const hosting: Flow = {
 					}
 
 					if ( providedDependencies.goToCheckout ) {
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+
 						couponCode && resetCouponCode();
 						return window.location.assign(
 							addQueryArgs(
@@ -112,7 +127,7 @@ const hosting: Flow = {
 						);
 					}
 
-					return window.location.assign( destination );
+					return navigate( 'plans' );
 				}
 			}
 		};
@@ -133,14 +148,14 @@ const hosting: Flow = {
 			[]
 		);
 
+		const queryParams = Object.fromEntries( query );
+
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
+			redirectTo: addQueryArgs( `/setup/${ flowName }`, { ...queryParams } ),
 		} );
 
 		useLayoutEffect( () => {
-			const queryParams = Object.fromEntries( query );
-
 			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
 
 			if ( ! userIsLoggedIn ) {
@@ -155,7 +170,7 @@ const hosting: Flow = {
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
 				window.location.assign( urlWithQueryParams );
 			}
-		}, [ userIsLoggedIn, isEligible, currentStepSlug, query ] );
+		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, logInUrl ] );
 
 		useEffect(
 			() => {

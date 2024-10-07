@@ -11,6 +11,7 @@ import googleDriveExample from 'calypso/assets/images/connections/google-drive-s
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Bluesky from './bluesky';
 import GooglePlusDeprication from './google-plus-deprecation';
 import Mastodon from './mastodon';
 import ServiceExample from './service-example';
@@ -44,6 +45,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'p2_slack',
 	'p2_github',
 	'mastodon',
+	'bluesky',
 ];
 
 class SharingServiceExamples extends Component {
@@ -259,16 +261,16 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/connections-instagram.png',
-					alt: this.props.translate( 'Add an Instagram widget', { textOnly: true } ),
+					alt: this.props.translate( 'Add the Latest Instagram Posts block', { textOnly: true } ),
 				},
 				label: this.props.translate(
-					'Add an {{link}}Instagram widget{{/link}} to display your latest photos.',
+					'Add the {{link}}Latest Instagram Posts block{{/link}} to display your latest photos.',
 					{
 						components: {
 							link: (
 								<a
 									href={ localizeUrl(
-										'https://wordpress.com/support/instagram/instagram-widget/'
+										'https://wordpress.com/support/instagram/#embed-a-feed-of-instagram-posts'
 									) }
 								/>
 							),
@@ -549,6 +551,18 @@ class SharingServiceExamples extends Component {
 		if ( 'mastodon' === this.props.service.ID ) {
 			return (
 				<Mastodon
+					service={ this.props.service }
+					action={ this.props.action }
+					connectAnother={ this.props.connectAnother }
+					connections={ this.props.connections }
+					isConnecting={ this.props.isConnecting }
+				/>
+			);
+		}
+
+		if ( 'bluesky' === this.props.service.ID ) {
+			return (
+				<Bluesky
 					service={ this.props.service }
 					action={ this.props.action }
 					connectAnother={ this.props.connectAnother }

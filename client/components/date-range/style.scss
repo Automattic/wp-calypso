@@ -50,7 +50,6 @@ $date-range-mobile-layout-switch: $break-small;
 	flex-direction: column;
 	padding: 15px;
 	margin: 0 auto;
-	// max-width: 90%;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 300px;
@@ -61,7 +60,8 @@ $date-range-mobile-layout-switch: $break-small;
 		.date-range__controls,
 		.date-range__date-inputs,
 		.date-range__picker,
-		.date-range__popover-header {
+		.date-range__popover-header,
+		.date-range__popover-footer {
 			filter: blur(10px);
 			z-index: 0;
 		}
@@ -75,6 +75,9 @@ $date-range-mobile-layout-switch: $break-small;
 			justify-content: center;
 			align-items: center;
 		}
+	}
+	.DayPicker-Week {
+		border-bottom: 4px solid var(--color-surface);
 	}
 }
 
@@ -112,6 +115,16 @@ $date-range-mobile-layout-switch: $break-small;
 		margin-right: 0;
 	}
 	margin-top: 10px;
+
+	@media (max-width: $date-range-mobile-layout-switch) {
+		flex-direction: column-reverse;
+		align-items: stretch;
+
+		.button {
+			height: 40px;
+			border: 0;
+		}
+	}
 }
 
 .date-range__info {
@@ -179,6 +192,14 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
+.date-range__popover-content .date-picker {
+
+	display: flex;
+	justify-content: center; /* Centers horizontally */
+	align-items: center;     /* Centers vertically */
+
+}
+
 .date-range__popover .date-picker--2up {
 
 	.DayPicker-wrapper,
@@ -214,6 +235,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 .date-range__date-input {
 	flex: 1;
+	max-width: 224px;
 
 	.form-label {
 		font-size: $font-body-extra-small;
@@ -321,7 +343,7 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	@media (max-width: $date-range-mobile-layout-switch) {
-		flex-direction: column; // Stack items vertically on small screens
+		flex-direction: column-reverse; // Stack items vertically on small screens
 	}
 }
 
@@ -332,9 +354,8 @@ $date-range-mobile-layout-switch: $break-small;
 
 	@media (max-width: $date-range-mobile-layout-switch) {
 		border-left: 0 none;
-		border-top: 1px solid var(--gray-gray-5, #dcdcde);
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
 		display: block; // Ensure it takes full width on mobile
-		margin-bottom: 16px; // Space between shortcuts and calendar
 	}
 
 	@media (min-width: $date-range-mobile-layout-switch) {

@@ -6,7 +6,6 @@ import {
 	isTailoredSignupFlow,
 	isOnboardingGuidedFlow,
 	ONBOARDING_GUIDED_FLOW,
-	StepContainer as StepperStepContainer,
 } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
@@ -15,6 +14,7 @@ import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
@@ -25,11 +25,12 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import StartStepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
@@ -112,6 +113,7 @@ export class PlansStep extends Component {
 			flowName,
 			initialContext,
 			intervalType,
+			isDomainOnlySite,
 		} = this.props;
 
 		const intervalTypeValue = intervalType || getIntervalType( this.props.path );
@@ -141,7 +143,17 @@ export class PlansStep extends Component {
 			? segmentSlug
 			: undefined;
 
-		const paidDomainName = domainItem?.meta;
+		let paidDomainName = domainItem?.meta;
+
+		/**
+		 * Domain-only sites have a paid domain but are on the free plan.
+		 * For flows showing plans for domain-only sites, we need to set
+		 * `paidDomainName` to the value of the domain-only site's domain.
+		 */
+		if ( ! paidDomainName && isDomainOnlySite && selectedSite.URL ) {
+			paidDomainName = getDomainFromUrl( selectedSite.URL );
+		}
+
 		let freeWPComSubdomain;
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 			freeWPComSubdomain = siteUrl;
@@ -208,7 +220,13 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
+		const {
+			translate,
+			useEmailOnboardingSubheader,
+			signupDependencies,
+			flowName,
+			deemphasizeFreePlan,
+		} = this.props;
 
 		const { segmentationSurveyAnswers } = signupDependencies;
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
@@ -244,6 +262,14 @@ export class PlansStep extends Component {
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
 			);
+		}
+
+		/**
+		 * If deemphasizeFreePlan is shown, we already show a subheader.
+		 * Returning null here hides the default subheader and prevents two subheaders from being shown.
+		 */
+		if ( deemphasizeFreePlan ) {
+			return null;
 		}
 	}
 
@@ -307,7 +333,8 @@ export class PlansStep extends Component {
 
 		if ( useStepperWrapper ) {
 			return (
-				<StepperStepContainer
+				<AsyncLoad
+					require="@automattic/onboarding/src/step-container"
 					flowName={ flowName }
 					stepName={ stepName }
 					formattedHeader={
@@ -329,7 +356,8 @@ export class PlansStep extends Component {
 		}
 
 		return (
-			<StartStepWrapper
+			<AsyncLoad
+				require="calypso/signup/step-wrapper"
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
@@ -404,7 +432,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, siteId, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -412,6 +440,8 @@ export default connect(
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+		isDomainOnlySite:
+			siteId || siteSlug ? isDomainOnlySiteSelector( state, siteId || siteSlug ) : false,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),

@@ -331,6 +331,7 @@
 		.magic-login__form-action button[type="submit"].form-button.is-primary {
 			min-height: unset;
 			margin-top: 0;
+			border-radius: 2px;
 
 			&,
 			&:disabled {
@@ -403,6 +404,7 @@
 		width: 100%;
 		min-height: 56px;
 		margin-top: 24px;
+		border-radius: 4px;
 
 		&.is-busy {
 			background-image: linear-gradient(-45deg, #1d4fc4 28%, darken(#1d4fc4, 10%) 28%, darken(#1d4fc4, 10%) 72%, #1d4fc4 72%);

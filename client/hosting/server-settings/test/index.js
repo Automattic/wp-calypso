@@ -133,7 +133,7 @@ const renderComponentWithStoreAndQueryClient = ( store ) => {
 
 const stringsForAdvancedFeatureCards = [ 'Database access', 'Web server settings' ];
 
-const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear cache' ];
+const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear all caches' ];
 
 const stringsForAllAtomicFeatureCards = [
 	...stringsForAdvancedFeatureCards,
@@ -176,6 +176,16 @@ describe( 'Hosting Configuration', () => {
 				addEventListener: jest.fn(),
 				removeEventListener: jest.fn(),
 				dispatchEvent: jest.fn(),
+			} ) ),
+		} );
+
+		// Mock `ResizeObserver`, which isn't currently supported in JSDOM
+		Object.defineProperty( global, 'ResizeObserver', {
+			writable: false,
+			value: jest.fn().mockImplementation( () => ( {
+				observe: jest.fn(),
+				unobserve: jest.fn(),
+				disconnect: jest.fn(),
 			} ) ),
 		} );
 	} );

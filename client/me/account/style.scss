@@ -26,8 +26,9 @@ fieldset.account__settings-admin-home {
 	margin: 30px 0 20px 0;
 }
 
-.account .form-input-validation {
-	padding-bottom: 0;
+.form-setting-explanation .account-email-field__enable-input.components-button.is-link {
+	color: inherit;
+	font-style: inherit;
 }
 
 .account__link-destination {
@@ -52,6 +53,10 @@ fieldset.account__settings-admin-home {
 	.inline-support-link {
 		margin-left: 4px;
 	}
+}
+
+.account .form-input-validation {
+	padding-bottom: 0;
 }
 
 .account__confirm-username-dialog.dialog {

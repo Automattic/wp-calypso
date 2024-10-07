@@ -356,7 +356,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&credentials=skipped`,
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
@@ -370,10 +370,8 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`,
-				state: {
-					siteSlug: 'example.wordpress.com',
-				},
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&preventTicketCreation=true`,
+				state: null,
 			} );
 		} );
 

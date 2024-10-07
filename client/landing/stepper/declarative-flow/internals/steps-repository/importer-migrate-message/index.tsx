@@ -37,7 +37,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
-	const isCredentialsSkipped = useQuery().get( 'credentials' ) === 'skipped';
+	const shouldPreventTicketCreation = useQuery().get( 'preventTicketCreation' ) === 'true';
 	const { isPending, sendTicket } = useSubmitMigrationTicket( {
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_importer_migration_ticket_submit_success', {
@@ -61,9 +61,9 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: config.isEnabled( 'automated-migration/collect-credentials' ),
-			skipped_credentials: isCredentialsSkipped,
+			prevent_ticket_creation: shouldPreventTicketCreation,
 		} );
-		if ( ! config.isEnabled( 'automated-migration/collect-credentials' ) || isCredentialsSkipped ) {
+		if ( ! shouldPreventTicketCreation ) {
 			sendTicket( {
 				locale,
 				from_url: fromUrl,
@@ -71,11 +71,14 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			} );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isCredentialsSkipped, config, fromUrl, siteSlug ] );
+	}, [ shouldPreventTicketCreation, config, fromUrl, siteSlug ] );
 	let whatToExpect: WhatToExpectProps[] = [];
 	let actions: ActionsProps[] = [];
 
-	if ( ! isCredentialsSkipped && config.isEnabled( 'automated-migration/collect-credentials' ) ) {
+	if (
+		shouldPreventTicketCreation &&
+		config.isEnabled( 'automated-migration/collect-credentials' )
+	) {
 		whatToExpect = [
 			{
 				icon: group,
@@ -86,7 +89,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: scheduled,
 				text: __(
-					`You'll get an update on the progress of your migration within 2-3 business days.`
+					`You'll get an update on the progress of your migration within 2–3 business days.`
 				),
 			},
 		];
@@ -111,7 +114,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: backup,
 				text: __(
-					`We'll update you on the progress of the migration, which usually takes 2-3 business days.`
+					`We'll update you on the progress of the migration, which usually takes 2–3 business days.`
 				),
 			},
 			{

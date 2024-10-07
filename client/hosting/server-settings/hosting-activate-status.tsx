@@ -13,12 +13,15 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import { activateContext } from './components/activate-context';
+import { HostingErrorStatus } from './components/hosting-error-status';
 import './style.scss';
 
 interface HostingActivateStatusProps {
-	context: 'theme' | 'plugin' | 'hosting';
+	context: activateContext;
 	siteId: number | null;
 	keepAlive?: boolean;
+	forceEnable?: boolean;
 	onTick?: (
 		isTransferring?: boolean,
 		wasTransferring?: boolean,
@@ -41,6 +44,7 @@ const HostingActivateStatus = ( {
 	siteId,
 	onTick,
 	keepAlive,
+	forceEnable,
 }: HostingActivateStatusProps ) => {
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 
@@ -78,26 +82,15 @@ const HostingActivateStatus = ( {
 		}
 	};
 
-	const getErrorText = () => {
-		switch ( context ) {
-			case 'theme':
-				return translate( 'There was an error activating theme features.' );
-			case 'plugin':
-				return translate( 'There was an error activating plugin features.' );
-			default:
-				return translate( 'There was an error activating hosting features.' );
-		}
-	};
-
 	if ( transferStatus === transferStates.ERROR ) {
-		return <Notice status="is-error" showDismiss={ false } text={ getErrorText() } icon="bug" />;
+		return <HostingErrorStatus context={ context } />;
 	}
 
-	if ( isTransferCompleted ) {
+	if ( isTransferCompleted && ! forceEnable ) {
 		return null;
 	}
 
-	if ( isTransferring || keepAlive ) {
+	if ( isTransferring || keepAlive || forceEnable ) {
 		return (
 			<Notice
 				className="hosting__activating-notice"

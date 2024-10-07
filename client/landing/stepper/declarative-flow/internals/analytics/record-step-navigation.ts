@@ -15,6 +15,16 @@ export interface RecordStepNavigationParams {
 	additionalProps?: ProvidedDependencies;
 }
 
+// These properties are never recorded in the tracks event for security reasons.
+const EXCLUDED_DEPENDENCIES = [
+	'bearer_token',
+	'token',
+	'password',
+	'password_confirm',
+	'domainCart',
+	'suggestion',
+];
+
 export function recordStepNavigation( {
 	event,
 	intent,
@@ -28,6 +38,9 @@ export function recordStepNavigation( {
 	const inputs = reduce(
 		providedDependencies,
 		( props, propValue, propName: string ) => {
+			if ( EXCLUDED_DEPENDENCIES.includes( propName ) ) {
+				return props;
+			}
 			propName = snakeCase( propName );
 
 			// Ensure we don't capture identifiable user data we don't need.
@@ -47,6 +60,15 @@ export function recordStepNavigation( {
 			if ( propName === 'plan' ) {
 				// propValue is null when user selects a free plan
 				propValue = ( propValue as { product_slug: string } | null )?.product_slug;
+			}
+
+			if (
+				[ 'cart_items', 'domain_item', 'email_item', 'domain_cart' ].includes( propName ) &&
+				typeof propValue !== 'string'
+			) {
+				propValue = Object.entries( propValue || {} )
+					.map( ( pair ) => pair.join( ':' ) )
+					.join( ',' );
 			}
 
 			return {

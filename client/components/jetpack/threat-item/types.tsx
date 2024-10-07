@@ -1,4 +1,4 @@
-export type ThreatAction = 'fix' | 'ignore';
+export type ThreatAction = 'fix' | 'ignore' | 'unignore';
 
 export type Extension = {
 	slug: string;

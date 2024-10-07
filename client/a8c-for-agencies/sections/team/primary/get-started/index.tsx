@@ -31,7 +31,7 @@ export default function GetStarted() {
 	};
 
 	return (
-		<Layout className="team-list-get-started" title={ title } wide compact>
+		<Layout className="team-list-get-started" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>

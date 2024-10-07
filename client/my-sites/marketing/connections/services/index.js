@@ -11,8 +11,10 @@ export { default as p2_slack } from './p2-slack';
 export { default as p2_github } from './p2-github';
 export { default as nextdoor } from './nextdoor';
 export { default as threads } from './threads';
+export { default as bluesky } from './bluesky';
 
 const services = new Set( [
+	'bluesky',
 	'p2_github',
 	'p2_slack',
 	'fediverse',

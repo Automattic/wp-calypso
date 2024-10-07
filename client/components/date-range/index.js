@@ -1,6 +1,7 @@
 import { Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -52,6 +53,7 @@ export class DateRange extends Component {
 		useArrowNavigation: PropTypes.bool,
 		overlay: PropTypes.node,
 		customTitle: PropTypes.string,
+		onShortcutClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -118,11 +120,24 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
-			currentShortcut: '',
+			numberOfMonths: this.getNumberOfMonths(),
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = createRef();
+		this.throttledHandleResize = debounce( () => {
+			this.setState( {
+				numberOfMonths: this.getNumberOfMonths(),
+			} );
+		}, 250 );
+	}
+
+	componentDidMount() {
+		window.addEventListener( 'resize', this.throttledHandleResize );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.throttledHandleResize );
 	}
 
 	/**
@@ -397,23 +412,17 @@ export class DateRange extends Component {
 	}
 
 	getNumberOfMonths() {
-		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
+		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
 	}
 
-	handleDateRangeChange = ( startDate, endDate, shortcutId = '' ) => {
+	handleDateRangeChange = ( startDate, endDate ) => {
 		this.setState( {
 			startDate,
 			endDate,
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
-			currentShortcut: shortcutId,
 		} );
 		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-	};
-
-	handleCalendarChange = ( startDate, endDate ) => {
-		// When the calendar or inputs change directly, set to custom range
-		this.handleDateRangeChange( startDate, endDate, 'custom_date_range' );
 	};
 
 	/**
@@ -467,9 +476,11 @@ export class DateRange extends Component {
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">
 							<Shortcuts
-								currentShortcut={ this.state.currentShortcut }
 								onClick={ this.handleDateRangeChange }
 								locked={ !! this.props.overlay }
+								startDate={ this.state.startDate }
+								endDate={ this.state.endDate }
+								onShortcutClick={ this.props.onShortcutClick } // for tracking shortcut clicks
 							/>
 						</div>
 					) }
@@ -489,9 +500,9 @@ export class DateRange extends Component {
 				lastSelectableDate={ this.props.lastSelectableDate }
 				selectedStartDate={ this.state.startDate }
 				selectedEndDate={ this.state.endDate }
-				onDateRangeChange={ this.handleCalendarChange }
+				onDateRangeChange={ this.handleDateRangeChange }
 				focusedMonth={ this.state.focusedMonth }
-				numberOfMonths={ this.getNumberOfMonths() }
+				numberOfMonths={ this.state.numberOfMonths }
 				useArrowNavigation={ this.props.useArrowNavigation }
 			/>
 		);

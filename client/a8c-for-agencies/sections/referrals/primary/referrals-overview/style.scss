@@ -7,11 +7,6 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
-.referrals-overview__notice {
-	.button.referrals-overview__notice-button {
-		margin-block-start: 1rem;
-	}
-}
 
 .referrals-overview__button-popover {
 	.a4a-popover__content {
@@ -135,11 +130,6 @@ $data-view-border-color: #f1f1f1;
 		margin-block-start: 32px;
 	}
 
-	&.main.a4a-layout.is-with-border .a4a-layout__top-wrapper:not(.has-navigation) {
-		padding-block-start: 24px;
-		padding-block-end: 0;
-	}
-
 	&.main.a4a-layout {
 		@include break-large {
 			background: inherit;
@@ -231,7 +221,9 @@ $data-view-border-color: #f1f1f1;
 	}
 }
 
-// FIXME: This is a temporary fix to make the referral layout columns the same height
+/* FIXME: This is a temporary fix to make the referral
+ * layout columns the same height
+ */
 .main.a4a-layout-column.referrals-layout__column {
 	height: auto;
 	overflow-y: scroll;

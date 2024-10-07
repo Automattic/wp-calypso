@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import PropTypes from 'prop-types';
 
 const DATERANGE_PERIOD = {
@@ -11,18 +11,34 @@ const DATERANGE_PERIOD = {
 	MONTH: 'month',
 };
 
+type MomentOrNull = Moment | null;
+
 const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
+	onShortcutClick, // Optional callback function for tracking shortcut clicks
 	locked = false,
+	startDate,
+	endDate,
 }: {
 	currentShortcut?: string;
 	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment, shortcutId: string ) => void;
+	onShortcutClick?: ( shortcutId: string ) => void;
 	locked?: boolean;
+	startDate?: MomentOrNull;
+	endDate?: MomentOrNull;
 } ) => {
 	const translate = useTranslate();
 
-	const getShortcutList = () => [
+	const normalizeDate = ( date: MomentOrNull ) => {
+		return date ? date.startOf( 'day' ) : date;
+	};
+
+	// Normalize dates to start of day
+	const normalizedStartDate = startDate ? normalizeDate( startDate ) : null;
+	const normalizedEndDate = endDate ? normalizeDate( endDate ) : null;
+
+	const shortcutList = [
 		{
 			id: 'last_7_days',
 			label: translate( 'Last 7 Days' ),
@@ -65,14 +81,40 @@ const DateRangePickerShortcuts = ( {
 		},
 	];
 
-	const shortcutList = getShortcutList();
+	const getShortcutForRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
+		if ( ! startDate || ! endDate ) {
+			return null;
+		}
+		// Search the shortcut array for something matching the current date range.
+		// Returns shortcut or null;
+		const today = moment().startOf( 'day' );
+		const daysInRange = Math.abs( endDate.diff( startDate, 'days' ) );
+		const shortcut = shortcutList.find( ( element ) => {
+			if ( endDate.isSame( today ) && daysInRange === element.range ) {
+				return element;
+			}
+			return null;
+		} );
+		return shortcut;
+	};
 
 	const handleClick = ( { id, offset, range }: { id?: string; offset: number; range: number } ) => {
-		const newToDate = moment().subtract( offset, 'days' );
-		const newFromDate = moment().subtract( offset + range, 'days' );
-
+		const newToDate = moment().startOf( 'day' ).subtract( offset, 'days' );
+		const newFromDate = moment()
+			.startOf( 'day' )
+			.subtract( offset + range, 'days' );
 		onClick( newFromDate, newToDate, id || '' );
+
+		// Call the onShortcutClick if provided
+		if ( onShortcutClick && id ) {
+			onShortcutClick( id );
+		}
 	};
+
+	currentShortcut =
+		currentShortcut ||
+		getShortcutForRange( normalizedStartDate, normalizedEndDate )?.id ||
+		'custom_date_range';
 
 	return (
 		<div className="date-range-picker-shortcuts__inner">
@@ -98,6 +140,10 @@ const DateRangePickerShortcuts = ( {
 DateRangePickerShortcuts.propTypes = {
 	currentShortcut: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
+	onShortcutClick: PropTypes.func,
+	locked: PropTypes.bool,
+	startDate: PropTypes.object,
+	endDate: PropTypes.object,
 };
 
 export default DateRangePickerShortcuts;

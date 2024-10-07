@@ -89,9 +89,11 @@ const WooExpressPlansPage = ( {
 					args: {
 						monthlyPrice: formatCurrency( annualPlanMonthlyPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 						annualPrice: formatCurrency( annualPlanPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 					},
 					components: {
@@ -106,6 +108,7 @@ const WooExpressPlansPage = ( {
 					args: {
 						monthlyPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 					},
 					components: {

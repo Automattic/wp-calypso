@@ -17,7 +17,7 @@ export default function CommissionsInfo( { items }: { items: ShoppingCartItem[] 
 
 	return (
 		<div className="commissions-info">
-			<span>{ translate( 'Your estimated commision:' ) }</span>
+			<span>{ translate( 'Your estimated commission:' ) }</span>
 			<span>
 				{ translate( '%(total)s/mo', {
 					args: {

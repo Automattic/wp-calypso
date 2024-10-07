@@ -1,5 +1,5 @@
 import { Card, Badge } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
+import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
@@ -15,14 +15,18 @@ interface ExternalProps {
 type Props = ExternalProps & LocalizeProps;
 
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
-	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<div>
-			{ getWarningDescription( context, warnings.length, translate, hasEnTranslation ) && (
+			{ getWarningDescription( context, warnings.length, translate ) && (
 				<div className="eligibility-warnings__warning">
 					<div className="eligibility-warnings__message">
-						<span className="eligibility-warnings__message-description">
-							{ getWarningDescription( context, warnings.length, translate, hasEnTranslation ) }
+						<span
+							className={ `eligibility-warnings__message-description ${
+								context === 'hosting-features' &&
+								'eligibility-warnings__message-description--hosting-features'
+							}` }
+						>
+							{ getWarningDescription( context, warnings.length, translate ) }
 						</span>
 					</div>
 				</div>
@@ -31,13 +35,15 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 			{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
-						{ context !== 'plugin-details' && (
+						{ context !== 'plugin-details' && context !== 'hosting-features' && (
 							<Fragment>
 								<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
 							</Fragment>
 						) }
 						<span className="eligibility-warnings__message-description">
-							<span>{ description } </span>
+							<span
+								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( description ) } } // eslint-disable-line react/no-danger
+							/>
 							{ domainNames && displayDomainNames( domainNames ) }
 							{ supportUrl && (
 								<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
@@ -84,8 +90,7 @@ function displayDomainNames( domainNames: DomainNames ) {
 function getWarningDescription(
 	context: string | null,
 	warningCount: number,
-	translate: LocalizeProps[ 'translate' ],
-	hasTranslation: ( arg: string ) => boolean
+	translate: LocalizeProps[ 'translate' ]
 ) {
 	const defaultCopy = translate(
 		'By proceeding the following change will be made to the site:',
@@ -121,25 +126,14 @@ function getWarningDescription(
 			);
 
 		case 'hosting-features':
-			return hasTranslation(
-				'By activating all hosting features the following change will be made to the site:'
-			)
-				? translate(
-						'By activating all hosting features the following change will be made to the site:',
-						'By activating all hosting features the following changes will be made to the site:',
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  )
-				: translate(
-						'By activating all developer tools the following change will be made to the site:',
-						'By activating all developer tools the following changes will be made to the site:',
-						{
-							count: warningCount,
-							args: warningCount,
-						}
-				  );
+			return translate(
+				'By proceeding the following change will be made to the site:',
+				'By proceeding the following changes will be made to the site:',
+				{
+					count: warningCount,
+					args: warningCount,
+				}
+			);
 
 		default:
 			return defaultCopy;

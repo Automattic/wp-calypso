@@ -1,6 +1,7 @@
 import { delay } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
@@ -8,6 +9,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_UPLOAD_SUCCESS,
 } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';
@@ -98,8 +100,13 @@ export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '', c
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
+
+				return dispatch( pollThemeTransferStatus( siteId, transfer_id, 3000, 180000, !! file ) );
 			} )
+			.then( () =>
+				// Get the latest site data after the atomic transfer.
+				dispatch( requestSite( siteId ) )
+			)
 			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
 			} );
@@ -154,11 +161,40 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  * @param {number} transferId -- the specific transfer
  * @param {number} [interval] -- time between poll attempts
  * @param {number} [timeout] -- time to wait for 'complete' status before bailing
+ * @param {boolean} hasThemeFileUpload -- has theme File Upload
  * @returns {Promise} for testing purposes only
  */
-export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
+export function pollThemeTransferStatus(
+	siteId,
+	transferId,
+	interval = 3000,
+	timeout = 240000,
+	hasThemeFileUpload = false
+) {
 	const endTime = Date.now() + timeout;
 	return ( dispatch ) => {
+		const tryThemeFetch = ( uploaded_theme_slug, resolve ) => {
+			wpcom.req.get( `/sites/${ siteId }/themes/mine`, { apiVersion: '1.1' } ).then( ( theme ) => {
+				if ( theme.id === uploaded_theme_slug ) {
+					dispatch( transferStatus( siteId, transferId, 'complete', '', uploaded_theme_slug ) );
+					dispatch( {
+						type: THEME_UPLOAD_SUCCESS,
+						siteId,
+						themeId: uploaded_theme_slug,
+					} );
+					// finished, stop polling
+					return resolve();
+				}
+
+				if ( Date.now() < endTime ) {
+					return setTimeout( tryThemeFetch, 1000, uploaded_theme_slug, resolve );
+				}
+
+				dispatch( transferStatusFailure( siteId, transferId, new Error() ) );
+				resolve();
+			} );
+		};
+
 		const pollStatus = ( resolve, reject ) => {
 			if ( Date.now() > endTime ) {
 				// timed-out, stop polling
@@ -168,13 +204,23 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 			return wpcom.req
 				.get( `/sites/${ siteId }/automated-transfers/status/${ transferId }` )
 				.then( ( { status, message, uploaded_theme_slug } ) => {
-					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
-					if ( status === 'complete' ) {
-						// finished, stop polling
-						return resolve();
+					if ( ! hasThemeFileUpload ) {
+						dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
+
+						if ( status === 'complete' ) {
+							// finished, stop polling
+							return resolve();
+						}
+
+						// poll again
+						return delay( pollStatus, interval, resolve, reject );
 					}
-					// poll again
-					return delay( pollStatus, interval, resolve, reject );
+					if ( status !== 'complete' ) {
+						dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
+						return delay( pollStatus, interval, resolve, reject );
+					}
+
+					tryThemeFetch( uploaded_theme_slug, resolve );
 				} )
 				.catch( ( error ) => {
 					dispatch( transferStatusFailure( siteId, transferId, error ) );

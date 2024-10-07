@@ -598,6 +598,20 @@ const partnerBundle: Reducer< string | null, OnboardAction > = ( state = null, a
 	return state;
 };
 
+const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_SIGNUP_DOMAIN_ORIGIN' ) {
+		return action.signupDomainOrigin;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -647,6 +661,7 @@ const reducer = combineReducers( {
 	profilerData,
 	paidSubscribers,
 	partnerBundle,
+	signupDomainOrigin,
 } );
 
 export type State = ReturnType< typeof reducer >;

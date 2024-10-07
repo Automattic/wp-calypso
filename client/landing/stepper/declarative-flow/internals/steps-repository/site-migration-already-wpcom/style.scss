@@ -1,0 +1,66 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.site-migration-already-wpcom__form-title--error,
+.site-migration-already-wpcom__form-error {
+	color: var(--color-error);
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.site-migration-already-wpcom__form-container {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+}
+
+.site-migration-already-wpcom__form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.site-migration-already-wpcom__form .components-checkbox-control__label {
+	font-size: 0.875rem;
+	font-weight: 400;
+}
+
+.site-migration-already-wpcom__form-title-container {
+	display: flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.site-migration-already-wpcom__form-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.site-migration-already-wpcom__form-textarea-container {
+	margin-top: 1.5rem;
+}
+
+.site-migration-already-wpcom__form-textarea {
+	width: 100%;
+}
+
+.site-migration-already-wpcom__form-textarea--error {
+	border-color: var(--color-error);
+}
+
+.site-migration-already-wpcom__form-error-notice {
+	margin-bottom: 0;
+}
+
+.site-migration-already-wpcom__form-content--error {
+	* {
+		color: var(--color-error);
+
+	}
+	input[type="checkbox"] {
+		border-color: var(--color-error);
+	}
+}
