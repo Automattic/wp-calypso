@@ -2,15 +2,13 @@ import { getLanguage } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-class LocaleSuggestionsListItem extends Component {
+export class LocaleSuggestionsListItem extends Component {
 	static propTypes = {
 		locale: PropTypes.object.isRequired,
 		onLocaleSuggestionClick: PropTypes.func,
 		path: PropTypes.string.isRequired,
-		trackLocaleSuggestionClick: PropTypes.func,
+		recordTracksEvent: PropTypes.func,
 	};
 
 	handleLocaleSuggestionClick = ( event ) => {
@@ -58,6 +56,4 @@ class LocaleSuggestionsListItem extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( LocaleSuggestionsListItem );
+export default LocaleSuggestionsListItem;
