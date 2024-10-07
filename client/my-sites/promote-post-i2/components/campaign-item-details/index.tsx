@@ -966,7 +966,7 @@ export default function CampaignItemDetails( props: Props ) {
 						) }
 						<div className="campaign-item-details__powered-by desktop">
 							{ isWooStore ? (
-								<span>{ translate( 'Woo Blaze - Powered by Jetpack' ) }</span>
+								<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
 							) : (
 								<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
 							) }
@@ -1058,7 +1058,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 							<div className="campaign-item-details__powered-by mobile">
 								{ isWooStore ? (
-									<span>{ translate( 'Woo Blaze - Powered by Jetpack' ) }</span>
+									<span>{ translate( 'Blaze Ads - Powered by Jetpack' ) }</span>
 								) : (
 									<span>{ translate( 'Blaze powered by Jetpack' ) }</span>
 								) }
