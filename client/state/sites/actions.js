@@ -20,11 +20,10 @@ import {
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
-import { getSiteDomain, isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -160,9 +159,9 @@ export function requestSite( siteFragment ) {
 				// If we can't manage the site, don't add it to state.
 				if ( site && site.capabilities ) {
 					const state = getState();
-					const wasSimple = isSimpleSite( state, siteFragment );
+					const wasAtomic = state?.sites?.items?.[ siteFragment ]?.options?.is_wpcom_atomic;
 					const isAtomic = site?.options?.is_wpcom_atomic;
-					const wasAdmin = canCurrentUser( state, siteFragment, 'manage_options' );
+					const wasAdmin = state?.currentUser?.capabilities?.[ siteFragment ]?.manage_options;
 					const isAdmin = site?.capabilities?.manage_options;
 
 					/*
@@ -170,7 +169,7 @@ export function requestSite( siteFragment ) {
 					 * after transfer, so let's hold off updating the state until the
 					 * endpoint returns accurate data.
 					 */
-					if ( wasSimple && isAtomic && wasAdmin && ! isAdmin ) {
+					if ( ! wasAtomic && isAtomic && wasAdmin && ! isAdmin ) {
 						setTimeout( () => dispatch( requestSite( siteFragment ) ), 2000 );
 					} else {
 						dispatch( receiveSite( omit( site, '_headers' ) ) );
