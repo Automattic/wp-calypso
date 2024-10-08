@@ -267,10 +267,16 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 		[ SITE_MIGRATION_CREDENTIALS.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const action = getFromPropsOrUrl( 'action', props ) as 'skip' | 'submit';
+				const action = getFromPropsOrUrl( 'action', props ) as 'skip' | 'submit' | 'already-wpcom';
 				const extraPrams = {
 					...( action !== 'skip' ? { preventTicketCreation: true } : {} ),
 				};
+
+				if ( action === 'already-wpcom' ) {
+					return navigateWithQueryParams( SITE_MIGRATION_ALREADY_WPCOM, [], props, {
+						replaceHistory: true,
+					} );
+				}
 
 				return navigateWithQueryParams(
 					SITE_MIGRATION_ASSISTED_MIGRATION,

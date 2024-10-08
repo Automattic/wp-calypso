@@ -6,7 +6,6 @@ import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { UrlData } from 'calypso/blocks/import/types';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -425,9 +424,8 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, siteInfo } = providedDependencies as {
-						action: 'skip' | 'submit';
-						siteInfo?: UrlData | undefined;
+					const { action } = providedDependencies as {
+						action: 'skip' | 'submit' | 'already-wpcom';
 					};
 
 					if ( action === 'skip' ) {
@@ -439,11 +437,13 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( isEnglishLocale && siteInfo?.platform_data?.is_wpcom ) {
-						return navigate( STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug, {
-							siteId,
-							siteSlug,
-						} );
+					if ( isEnglishLocale && action === 'already-wpcom' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug
+							)
+						);
 					}
 
 					return navigate(

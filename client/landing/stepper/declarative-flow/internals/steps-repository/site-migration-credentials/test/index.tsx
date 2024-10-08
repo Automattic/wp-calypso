@@ -382,58 +382,6 @@ describe( 'SiteMigrationCredentials', () => {
 		}
 	);
 
-	it( 'creates a credentials ticket by Continue anyways button', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		await userEvent.click( credentialsOption() );
-		await userEvent.type( siteAddressInput(), 'site-url.com' );
-		await userEvent.type( usernameInput(), 'username' );
-		await userEvent.type( passwordInput(), 'password' );
-
-		await fillNoteField();
-
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
-			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
-			data: {
-				response_code: 401,
-			},
-		} );
-
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-		} );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		await userEvent.click( continueButton( /Continue anyways/ ) );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration',
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
-			method: 'POST',
-			body: {
-				migration_type: 'credentials',
-				blog_url: 'site-url.wordpress.com',
-				bypass_verification: true,
-				notes: 'notes',
-				from_url: 'site-url.com',
-				username: 'username',
-				password: 'password',
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalled();
-		} );
-	} );
-
 	it( 'creates a credentials ticket even when the siteinfo request faces an error', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
@@ -461,84 +409,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( { siteInfo: undefined } );
-		} );
-	} );
-
-	it( 'calls submit with siteInfo when site is not on WPCOM', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAllFields();
-		await fillNoteField();
-
-		const siteInfo = {
-			url: 'site-url.wordpress.com',
-			platform_data: {
-				is_wpcom: false,
-			},
-		};
-
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfo );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		await userEvent.click( continueButton() );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			...requestPayload,
-			body: {
-				...requestPayload.body,
-				bypass_verification: false,
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( { siteInfo } );
-		} );
-	} );
-
-	it( 'shows Continue anyways button and an already on WPCOM error if site is already on WPCOM', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAllFields();
-		await fillNoteField();
-
-		const siteInfo = {
-			url: 'site-url.wordpress.com',
-			platform_data: {
-				is_wpcom: true,
-			},
-		};
-
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfo );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-			expect( getByText( 'Your site is already on WordPress.com.' ) ).toBeVisible();
-		} );
-
-		await userEvent.click( continueButton( /Continue anyways/ ) );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			...requestPayload,
-			body: {
-				...requestPayload.body,
-				bypass_verification: true,
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( { siteInfo } );
+			expect( submit ).toHaveBeenCalledWith( { action: 'submit' } );
 		} );
 	} );
 

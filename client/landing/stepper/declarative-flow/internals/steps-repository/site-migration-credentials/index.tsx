@@ -14,7 +14,8 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const isEnglishLocale = useIsEnglishLocale();
 
 	const handleSubmit = ( siteInfo?: UrlData | undefined ) => {
-		return navigation.submit?.( { siteInfo } );
+		const action = siteInfo?.platform_data?.is_wpcom === true ? 'already-wpcom' : 'submit';
+		return navigation.submit?.( { action } );
 	};
 
 	const handleSkip = () => {
