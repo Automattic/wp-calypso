@@ -1,0 +1,30 @@
+.reader-onboarding {
+	display: flex;
+	width: 100%;
+	flex-wrap: wrap;
+
+	&__link-button {
+		background: none;
+		border: none;
+		padding: 0;
+		color: #00e;
+		text-decoration: underline;
+		cursor: pointer;
+		font: inherit;
+	}
+
+	&__intro-column,
+	&__steps-column {
+		flex: 1 1 300px;
+		min-width: 300px; // Minimum width before wrapping
+		padding: 20px;
+	}
+
+	&__intro-column {
+		background-color: #aaa;
+	}
+
+	&__steps-column {
+		background-color: #eee;
+	}
+}
