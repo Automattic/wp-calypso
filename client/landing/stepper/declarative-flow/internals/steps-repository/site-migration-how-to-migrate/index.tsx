@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -75,8 +76,14 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		? true
 		: false;
 
+	const { updateMigrationStatus } = useUpdateMigrationStatus();
+
 	const handleClick = ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
+		if ( site?.ID ) {
+			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
+			updateMigrationStatus( site.ID, `migration-pending-${ parsedHow }` );
+		}
 		return navigation.submit?.( { how, destination } );
 	};
 
