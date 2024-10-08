@@ -12,3 +12,13 @@ export interface NpsEligibilityApiResponse {
 	seconds_until_eligible: number;
 	has_available_concierge_sessions: boolean;
 }
+
+export interface SubmitNpsSurveyResponse {
+	result: boolean;
+}
+
+export interface SubmitNpsSurveyParams {
+	score?: number;
+	dismissed?: boolean;
+	feedback?: string;
+}
