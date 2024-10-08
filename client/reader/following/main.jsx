@@ -21,7 +21,7 @@ function FollowingStream( { ...props } ) {
 			>
 				<BloganuaryHeader />
 				<NavigationHeader
-					title={ translate( 'Recent' ) }
+					title={ translate( 'Home' ) }
 					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
 					className={ clsx( 'following-stream-header', {
 						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,

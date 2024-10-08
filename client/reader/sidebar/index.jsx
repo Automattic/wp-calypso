@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -169,8 +168,7 @@ export class ReaderSidebar extends Component {
 	};
 
 	renderSidebarMenu() {
-		const { path, translate, teams, locale } = this.props;
-		const recentLabelTranslationReady = hasTranslation( 'Recent' ) || locale.startsWith( 'en' );
+		const { path, translate, teams } = this.props;
 		return (
 			<SidebarMenu>
 				<QueryReaderLists />
@@ -193,7 +191,7 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 						'sidebar-streams__following': true,
 					} ) }
-					label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
+					label={ translate( 'Home' ) }
 					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 					customIcon={ <ReaderFollowingIcon /> }
 					link="/read"
