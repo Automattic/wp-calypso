@@ -81,7 +81,8 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const handleClick = ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
 		if ( site?.ID ) {
-			updateMigrationStatus( site.ID, `migration-pending-${ how }` );
+			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
+			updateMigrationStatus( site.ID, `migration-pending-${ parsedHow }` );
 		}
 		return navigation.submit?.( { how, destination } );
 	};
