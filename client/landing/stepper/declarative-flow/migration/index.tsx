@@ -304,6 +304,11 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				);
 			},
 		},
+		[ SITE_MIGRATION_ALREADY_WPCOM.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				return navigateWithQueryParams( SITE_MIGRATION_ASSISTED_MIGRATION, [], props );
+			},
+		},
 	};
 };
 
