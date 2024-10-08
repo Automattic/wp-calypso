@@ -451,7 +451,7 @@ describe( `${ flow.name }`, () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', preventTicketCreation: true },
 				} );
 			} );
 		} );
