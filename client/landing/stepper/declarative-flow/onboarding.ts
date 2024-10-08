@@ -99,6 +99,7 @@ const onboarding: Flow = {
 					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
+					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if ( providedDependencies?.mode && providedDependencies?.domain ) {
 						return navigate(
 							`use-my-domain?step=${ providedDependencies.mode }&initialQuery=${ providedDependencies.domain }`

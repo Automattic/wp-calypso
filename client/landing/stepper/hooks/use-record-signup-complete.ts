@@ -75,6 +75,18 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 				true
 			);
 		},
-		[ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ]
+		[
+			domainCartItem,
+			flow,
+			isNewUser,
+			isNewishUser,
+			planCartItem,
+			selectedDomain,
+			signupDomainOrigin,
+			site?.slug,
+			siteCount,
+			siteId,
+			theme,
+		]
 	);
 };
