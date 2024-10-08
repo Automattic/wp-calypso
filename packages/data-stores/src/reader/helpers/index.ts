@@ -92,7 +92,7 @@ const getSubscriptionMutationParams = (
 	emailId?: string,
 	subscriptionId?: number
 ) => {
-	if ( isLoggedIn ) {
+	if ( isLoggedIn || action === 'delete' ) {
 		const isSubscriptionIdValid = isValidId( subscriptionId );
 		if ( ! isSubscriptionIdValid && ! url ) {
 			throw new Error( 'Subscription ID or URL is required to subscribe' );
