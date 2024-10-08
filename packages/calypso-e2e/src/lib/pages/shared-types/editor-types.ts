@@ -5,6 +5,6 @@ export interface BlockInserter {
 	searchBlockInserter( blockName: string ): Promise< void >;
 	selectBlockInserterResult(
 		name: string,
-		options?: { type?: 'block' | 'pattern'; blockFallBackName?: string }
+		options?: { type?: 'block' | 'pattern' }
 	): Promise< void >;
 }

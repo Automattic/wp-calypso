@@ -29,7 +29,6 @@ export class TwitterBlockFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Twitter Embed';
-	blockTestFallBackName = 'Twitter';
 	blockEditorSelector = blockParentSelector;
 
 	/**

@@ -7,7 +7,6 @@ import { EditorPage } from '../../pages';
 export interface BlockFlow {
 	blockSidebarName: string;
 	blockTestName?: string;
-	blockTestFallBackName?: string;
 	blockEditorSelector: string;
 	configure?( context: EditorContext ): Promise< void >;
 	validateAfterPublish?( context: PublishedPostContext ): Promise< void >;

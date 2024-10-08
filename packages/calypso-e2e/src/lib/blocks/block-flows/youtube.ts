@@ -29,7 +29,6 @@ export class YouTubeBlockFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'YouTube Embed';
-	blockTestFallBackName = 'YouTube';
 	blockEditorSelector = blockParentSelector;
 
 	/**
