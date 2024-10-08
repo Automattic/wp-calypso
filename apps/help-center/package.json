@@ -22,7 +22,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "rm -rf dist",
-		"teamcity:build-app": "yarn run build",
+		"teamcity:build-app": "yarn run build && yarn workspace wp-e2e-tests build && yarn workspace wp-e2e-tests test -- test/e2e/specs/help-center/help-center__wp-admin.ts",
 		"build": "NODE_ENV=production yarn dev",
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",

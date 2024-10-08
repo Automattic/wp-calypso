@@ -22,8 +22,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
 	const outputPath = path.join( __dirname, 'dist' );
 
-	// eslint-disable-next-line no-console
-	console.log( 'HelpCenterOutputPath: ', outputPath );
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
 	return {
