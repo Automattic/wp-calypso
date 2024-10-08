@@ -23,12 +23,12 @@ import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
 import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
+import { ExpiredReportNotice } from './components/expired-report-notice/expired-report-notice';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 
 import './style.scss';
 
 const statType = 'statsTopPosts';
-const REFRESH_REPORT_INTERVAL = 24; // 24 hours
 const statsQuery = {
 	num: -1,
 	summarize: 1,
@@ -190,21 +190,6 @@ export const SitePerformance = () => {
 		wpcom_performance_report_url?.hash,
 	] );
 
-	useEffect( () => {
-		const reportTimestamp = performanceReport.performanceReport?.timestamp;
-		const isOlderThan24Hours = reportTimestamp
-			? moment().diff( moment( reportTimestamp ), 'hours' ) > REFRESH_REPORT_INTERVAL
-			: false;
-
-		if ( isOlderThan24Hours ) {
-			recordTracksEvent( 'calypso_performance_profiler_report_refreshed' );
-			setWpcom_performance_report_url( {
-				url: currentPage?.url ?? '',
-				hash: '',
-			} );
-		}
-	}, [ currentPage?.url, performanceReport.performanceReport?.timestamp ] );
-
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
@@ -330,13 +315,19 @@ export const SitePerformance = () => {
 						/>
 					) : (
 						currentPage && (
-							<PerformanceReport
-								{ ...performanceReport }
-								pageTitle={ currentPage.label }
-								onRetestClick={ retestPage }
-								onFilterChange={ handleRecommendationsFilterChange }
-								filter={ recommendationsFilter }
-							/>
+							<>
+								<ExpiredReportNotice
+									reportTimestamp={ performanceReport.performanceReport?.timestamp }
+									onRetest={ retestPage }
+								/>
+								<PerformanceReport
+									{ ...performanceReport }
+									pageTitle={ currentPage.label }
+									onRetestClick={ retestPage }
+									onFilterChange={ handleRecommendationsFilterChange }
+									filter={ recommendationsFilter }
+								/>
+							</>
 						)
 					) }
 				</>

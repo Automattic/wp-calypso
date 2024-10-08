@@ -1,0 +1,50 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@automattic/components/src/styles/typography';
+
+.expired-report-notice {
+	background-color: $studio-wordpress-blue-5;
+	border-radius: 4px;
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	margin-bottom: 16px;
+	gap: 12px;
+
+	svg.icon {
+		align-self: flex-start;
+		fill: $studio-wordpress-blue-50;
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
+	}
+
+	.expired-report-notice-content {
+		display: flex;
+		flex-grow: 1;
+		gap: 12px;
+		flex-wrap: wrap;
+
+		.expired-report-text {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			flex-grow: 1;
+
+			.text {
+				font-size: $font-body-small;
+				font-weight: 500;
+				color: $studio-wordpress-blue-80;
+				font-family: $font-sf-pro-text;
+				line-height: 20px;
+			}
+
+			.subtext {
+				font-size: $font-body-small;
+				font-weight: 400;
+				line-height: 20px;
+				color: $studio-wordpress-blue-80;
+				font-family: $font-sf-pro-text;
+			}
+		}
+	}
+}
