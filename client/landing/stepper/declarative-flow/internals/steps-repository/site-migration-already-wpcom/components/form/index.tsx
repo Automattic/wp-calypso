@@ -27,6 +27,7 @@ const CheckboxIntents = ( { label, control, value }: CheckboxProps ) => (
 			return (
 				<CheckboxControl
 					className="already-wpcom__form-checkbox-control"
+					disabled={ field.disabled }
 					onChange={ ( isChecked ) => {
 						if ( isChecked ) {
 							field.onChange( [ ...field.value, value ] );
