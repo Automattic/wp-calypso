@@ -17,7 +17,11 @@ body.is-section-stepper .step-route {
 	@include break-small {
 		margin: 108px 0 0;
 	}
-	
+
+	.locale-suggestions {
+		width: 100%;
+	}
+
 
 	a.step-wrapper__navigation-link {
 		color: #1d2327;
@@ -49,11 +53,11 @@ body.is-section-stepper .step-route {
 				@include break-small {
 					font-size: 2rem;
 					line-height: 3.25;
-				}	
+				}
 			}
 		}
 	}
-	
+
 	.signup-form-social-first {
 		width: 327px;
 		margin: 0 auto;
