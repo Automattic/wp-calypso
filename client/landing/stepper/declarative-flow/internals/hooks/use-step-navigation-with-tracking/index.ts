@@ -54,11 +54,13 @@ export const useStepNavigationWithTracking = ( {
 		() => ( {
 			...( stepNavigation.submit && {
 				submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
-					handleRecordStepNavigation( {
-						event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-						providedDependencies,
-						additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ],
-					} );
+					if ( ! providedDependencies?.skipSubmitStepTracks ) {
+						handleRecordStepNavigation( {
+							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+							providedDependencies,
+							additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ],
+						} );
+					}
 					stepNavigation.submit?.( providedDependencies, ...params );
 				},
 			} ),

@@ -78,7 +78,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	};
 
 	const handleOnNext = ( { mode, domain }: { mode: string; domain: string } ) => {
-		submit?.( { mode, domain } );
+		submit?.( { mode, domain, skipSubmitStepTracks: true } );
 	};
 
 	const getBlogOnboardingFlowStepContent = () => {
