@@ -41,6 +41,8 @@ export const PressableUsageLimitNotice = () => {
 	const limitType = 'traffic'; // TODO: Replace with actual limit type
 	const limitTypeHumanised = limitTypes[ limitType ];
 
+	const isLimitExceeded = false; // TODO: Replace with actual check
+
 	return (
 		<LayoutBanner
 			level="warning"
@@ -49,13 +51,21 @@ export const PressableUsageLimitNotice = () => {
 			className="pressable-usage-limit-notice"
 		>
 			<div>
-				{ translate(
-					'Your Pressable plan has exceeded its allocated %s limit. Consider upgrading your plan to avoid additional fees.',
-					{
-						args: [ limitTypeHumanised ],
-						comment: 'The limit type is storage or traffic which is already translated',
-					}
-				) }
+				{ isLimitExceeded
+					? translate(
+							'Your Pressable plan has exceeded its allocated %s limit. Consider upgrading your plan to avoid additional fees.',
+							{
+								args: [ limitTypeHumanised ],
+								comment: 'The limit type is storage or traffic which is already translated',
+							}
+					  )
+					: translate(
+							'Your Pressable plan is close to exceeding its allocated %s limit. Consider upgrading your plan to avoid additional fees.',
+							{
+								args: [ limitTypeHumanised ],
+								comment: 'The limit type is storage or traffic which is already translated',
+							}
+					  ) }
 			</div>
 
 			<Button
