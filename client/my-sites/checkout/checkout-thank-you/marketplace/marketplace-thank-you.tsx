@@ -129,12 +129,15 @@ const MarketplaceThankYou = ( {
 	useEffect( () => {
 		// We don't want to show the progress bar again when it is hidden.
 		if ( ! showProgressBar ) {
-			// Redirect to plugins.php if there are only plugins and no themes.
+			return;
+		}
+
+		// Redirect to plugins.php if there are only plugins and no themes.
+		if ( isPageReady ) {
 			const isOnlyPlugins = pluginSlugs.length > 0 && themeSlugs.length === 0;
 			if ( isOnlyPlugins && pluginsUrl ) {
 				window.location.href = pluginsUrl;
 			}
-
 			return;
 		}
 
