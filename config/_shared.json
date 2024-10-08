@@ -8,7 +8,9 @@
 	"client_slug": false,
 	"daily_post_blog_id": 489937,
 	"facebook_api_key": false,
-	"features": {},
+	"features": {
+		"google_one_tap": false
+	},
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"hostname": false,

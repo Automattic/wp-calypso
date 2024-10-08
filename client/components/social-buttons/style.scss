@@ -12,6 +12,18 @@
 	}
 }
 
+.google__one-tap-loading {
+	position: absolute;
+}
+
+.google__one-tap-sign-in-container {
+	min-height: 62px;
+}
+
+.google__one-tap-sign-in-container iframe {
+	transform-origin: top left;
+}
+
 .social-buttons__service-name {
 	margin-left: 9px;
 }
