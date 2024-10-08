@@ -53,16 +53,20 @@ export const PressableUsageLimitNotice = () => {
 			<div>
 				{ isLimitExceeded
 					? translate(
-							'Your Pressable plan has exceeded its allocated %s limit. Consider upgrading your plan to avoid additional fees.',
+							'Your Pressable plan has exceeded its allocated %(limitType)s limit. Consider upgrading your plan to avoid additional fees.',
 							{
-								args: [ limitTypeHumanised ],
+								args: {
+									limitType: limitTypeHumanised,
+								},
 								comment: 'The limit type is storage or traffic which is already translated',
 							}
 					  )
 					: translate(
-							'Your Pressable plan is close to exceeding its allocated %s limit. Consider upgrading your plan to avoid additional fees.',
+							'Your Pressable plan is close to exceeding its allocated %(limitType)s limit. Consider upgrading your plan to avoid additional fees.',
 							{
-								args: [ limitTypeHumanised ],
+								args: {
+									limitType: limitTypeHumanised,
+								},
 								comment: 'The limit type is storage or traffic which is already translated',
 							}
 					  ) }
