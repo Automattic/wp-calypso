@@ -1,0 +1,25 @@
+.overview__growth-accelerator {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	border-radius: 4px;
+
+	&::after {
+		display: none;
+	}
+}
+
+.overview__growth-accelerator-header {
+	@include a4a-font-heading-md;
+}
+
+.overview__growth-accelerator-body {
+	@include a4a-font-body-md;
+	margin: 0;
+}
+
+.overview__growth-accelerator-footer {
+	display: flex;
+	gap: 16px;
+}
+
