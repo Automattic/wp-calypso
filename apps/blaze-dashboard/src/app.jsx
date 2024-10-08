@@ -81,16 +81,18 @@ async function AppBoot() {
 		window.location.hash = fixPath( window.location.hash );
 	}
 
-	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).then( () => {
-		registerBlazeDashboardPages( window.location.pathname + window.location.search );
+	window.addEventListener( 'load', function () {
+		// Ensure locale files are loaded before rendering.
+		setLocale( localeSlug ).then( () => {
+			registerBlazeDashboardPages( window.location.pathname + window.location.search );
 
-		// Adds the section class name to the body
-		document.querySelector( 'body' )?.classList.add( 'is-section-promote-post-i2' );
+			// Adds the section class name to the body
+			document.querySelector( 'body' )?.classList.add( 'is-section-promote-post-i2' );
 
-		// HACK: We need to remove the extra queryString that page adds when we configure it as hashbang
-		// To do this, we are showing the correct version of the path (after fixing it)
-		page.show( fixPath( window.location.hash ) );
+			// HACK: We need to remove the extra queryString that page adds when we configure it as hashbang
+			// To do this, we are showing the correct version of the path (after fixing it)
+			page.show( fixPath( window.location.hash ) );
+		} );
 	} );
 }
 
