@@ -14,9 +14,7 @@ import { skipDescribeIf } from '../../jest-helpers';
 declare const browser: Browser;
 
 // Only run on desktop when merging to wp-calypso/trunk
-skipDescribeIf(
-	envVariables.VIEWPORT_NAME === 'mobile' || envVariables.JETPACK_TARGET !== 'wpcom-production'
-)( 'Help Center in Calypso', () => {
+skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calypso', () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;
@@ -36,6 +34,9 @@ skipDescribeIf(
 
 		// Set Zendesk to staging environment to prevent calling Zendesk API in test environment.
 		await helpCenterComponent.setZendeskStaging();
+
+		// Force Odie to Test mode.
+		await helpCenterComponent.setOdieTestMode();
 	} );
 
 	// Close the page after the tests
@@ -148,7 +149,7 @@ skipDescribeIf(
 			expect( await helpCenterLocator.locator( '#odie-messages-container' ).count() ).toBeTruthy();
 		} );
 
-		it.skip( 'get forwarded to a human', async () => {
+		it( 'get forwarded to a human', async () => {
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();
@@ -160,7 +161,7 @@ skipDescribeIf(
 		/**
 		 * These tests need to be update
 		 */
-		it.skip( 'start talking with a human', async () => {
+		it( 'start talking with a human', async () => {
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
 			await contactSupportButton.dispatchEvent( 'click' );
 

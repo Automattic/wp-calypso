@@ -98,7 +98,7 @@ export class HelpCenterComponent {
 	 * Go back to the previous page.
 	 */
 	async goBack(): Promise< void > {
-		await this.popup.locator( 'button.back-button__help-center' ).click();
+		await this.popup.locator( 'span.back-button__help-center' ).click();
 	}
 
 	/**
@@ -206,10 +206,41 @@ export class HelpCenterComponent {
 			route.continue( { url: url.toString() } );
 		} );
 
-		await this.page.evaluate( () => {
-			if ( typeof configData !== 'undefined' ) {
-				configData.zendesk_support_chat_key = ZENDESK_STAGING_SUPPORT_CHAT_KEY;
+		await this.page.evaluate(
+			( _constants ) => {
+				if ( typeof configData !== 'undefined' ) {
+					configData.zendesk_support_chat_key = _constants.ZENDESK_STAGING_SUPPORT_CHAT_KEY;
+				}
+			},
+			{
+				ZENDESK_STAGING_SUPPORT_CHAT_KEY,
 			}
+		);
+	}
+
+	/**
+	 * Set Odie to Test mode.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async setOdieTestMode(): Promise< void > {
+		console.log( 'Setting Odie to staging environment' );
+
+		// Rewrite the Odie POST request to make sure it's in test mode.
+		await this.page.route( '**/odie/chat/*', async ( route, request ) => {
+			const postBody = JSON.parse( request.postData() || '{}' );
+
+			// Add Test Mode to the request.
+			postBody.test = true;
+
+			// Continue with the modified post data
+			await route.continue( {
+				postData: JSON.stringify( postBody ),
+				headers: {
+					...request.headers(),
+					'Content-Type': 'application/json',
+				},
+			} );
 		} );
 	}
 
