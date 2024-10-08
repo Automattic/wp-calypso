@@ -3,6 +3,7 @@
  */
 
 import { readFileSync } from 'fs';
+import path from 'path';
 import { HelpCenterComponent, TestAccount, envVariables } from '@automattic/calypso-e2e';
 import { Browser, Page, Locator } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -11,8 +12,16 @@ declare const browser: Browser;
 
 skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in WP Admin', () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
-	const helpCenterAppPath = require.resolve(
-		'@automattic/help-center-app/dist/help-center-wp-admin.min.js'
+	const helpCenterAppPath = path.resolve(
+		__dirname,
+		'..',
+		'..',
+		'..',
+		'..',
+		'apps',
+		'help-center',
+		'dist',
+		'help-center-wp-admin.js'
 	);
 	const localHelpCenterJs = readFileSync( helpCenterAppPath, 'utf8' );
 
