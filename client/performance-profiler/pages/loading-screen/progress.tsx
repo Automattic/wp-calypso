@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
-export const STEP_INTERVAL = 5000;
+const STEP_INTERVAL = 5000;
 const LoadingProgressContainer = styled.div`
 	span {
 		display: flex;

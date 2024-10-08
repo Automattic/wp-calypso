@@ -13,7 +13,6 @@ interface PerformanceReportProps {
 	pageTitle: string;
 	filter?: string;
 	onFilterChange?( fitler: string ): void;
-	getStep?: () => number;
 }
 
 export const PerformanceReport = ( {
@@ -26,20 +25,13 @@ export const PerformanceReport = ( {
 	pageTitle,
 	filter,
 	onFilterChange,
-	getStep,
 }: PerformanceReportProps ) => {
 	if ( isError ) {
 		return <ReportError onRetestClick={ onRetestClick } />;
 	}
 
 	if ( isLoading ) {
-		return (
-			<PerformanceReportLoading
-				getStep={ getStep }
-				isSavedReport={ !! hash }
-				pageTitle={ pageTitle }
-			/>
-		);
+		return <PerformanceReportLoading isSavedReport={ !! hash } pageTitle={ pageTitle } />;
 	}
 
 	if ( ! performanceReport ) {

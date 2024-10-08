@@ -1,4 +1,4 @@
-import { SITE_PROFILER_SET_REPORT, SITE_PROFILER_SET_STEP } from 'calypso/state/action-types';
+import { SITE_PROFILER_SET_REPORT } from 'calypso/state/action-types';
 
 import 'calypso/state/site-profiler/init';
 /**
@@ -7,19 +7,11 @@ import 'calypso/state/site-profiler/init';
  * @param {string} hash - The hash to set
  * @returns {Object} - The action object
  */
-export function setSiteProfilerReport( url, hash, siteId ) {
+export function setSiteProfilerReport( url, hash, siteId, pageId ) {
 	return {
 		type: SITE_PROFILER_SET_REPORT,
 		url,
 		hash,
-		siteId,
-	};
-}
-
-export function setSiteProfilerStep( step, siteId, pageId ) {
-	return {
-		type: SITE_PROFILER_SET_STEP,
-		step,
 		siteId,
 		pageId,
 	};
