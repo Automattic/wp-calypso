@@ -3,7 +3,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
-export class LocaleSuggestionsListItem extends Component {
+class LocaleSuggestionsListItem extends Component {
 	static propTypes = {
 		locale: PropTypes.object.isRequired,
 		onLocaleSuggestionClick: PropTypes.func,
