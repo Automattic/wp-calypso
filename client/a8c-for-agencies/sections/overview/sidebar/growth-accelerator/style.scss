@@ -25,3 +25,12 @@
 	gap: 16px;
 }
 
+.components-button.is-primary.overview__growth-accelerator-footer-schedule-call {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.components-button.is-link.overview__growth-accelerator-footer-not-interested {
+	color: var(--color-text);
+}

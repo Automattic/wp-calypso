@@ -48,6 +48,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 
 			<div className="overview__growth-accelerator-footer">
 				<Button
+					className="overview__growth-accelerator-footer-schedule-call"
 					variant="primary"
 					href="https://savvycal.com/automattic-for-agencies/agency-success?utm_campaign=overview"
 					target="_blank"
@@ -55,7 +56,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 					onClick={ onRequestCallClick }
 				>
 					{ translate( 'Schedule a call' ) }
-					<Icon icon={ external } />
+					<Icon icon={ external } size={ 16 } />
 				</Button>
 				<Button
 					className="overview__growth-accelerator-footer-not-interested"
