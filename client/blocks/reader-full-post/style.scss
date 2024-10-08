@@ -9,6 +9,8 @@ $reader-full-post-story-max-width: 720px;
 $global-sidebar-and-frame-width: 295px + 16px;
 $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-post-story-max-width + ( $reader-full-post-story-padding * 2 ) + $global-sidebar-and-frame-width;
 
+// Import minimal styles for Gutenberg Columns block
+@import "./columns";
 
 .is-group-reader.has-no-sidebar {
 	.masterbar {
