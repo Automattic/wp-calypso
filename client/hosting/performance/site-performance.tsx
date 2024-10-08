@@ -41,10 +41,18 @@ const usePerformanceReport = (
 	wpcom_performance_report_url: { url: string; hash: string } | undefined,
 	activeTab: Tab
 ) => {
-	const { url = '', hash = '' } = wpcom_performance_report_url || {};
+	const { url = '', hash: initialHash = '' } = wpcom_performance_report_url || {};
+	const localHash = localStorage.getItem( `${ url }` ) ?? '';
+	let hash = '';
 
+	if ( initialHash !== '' ) {
+		hash = initialHash;
+	} else if ( localHash !== '' ) {
+		hash = localHash;
+	}
 	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
+
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
 		token ?? hash
@@ -59,6 +67,18 @@ const usePerformanceReport = (
 
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+
+	if ( desktopLoaded || mobileLoaded ) {
+		localStorage.removeItem( `${ url }` );
+	}
+
+	useEffect( () => {
+		return () => {
+			if ( token ) {
+				localStorage.setItem( `${ url }`, token );
+			}
+		};
+	}, [ token, url ] );
 
 	const getHashOrToken = (
 		hash: string | undefined,

@@ -25,7 +25,9 @@ export const PerformanceReportLoading = ( {
 				pageTitle={ pageTitle }
 				isLoadingPages={ isLoadingPages }
 			/>
-			{ ! isLoadingPages && <p>{ __( 'Testing your site may take around 30 seconds.' ) }</p> }
+			{ ! isLoadingPages && ! isSavedReport && (
+				<p>{ __( 'Testing your site may take around 30 seconds.' ) }</p>
+			) }
 		</div>
 	);
 };
