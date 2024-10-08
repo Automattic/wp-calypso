@@ -44,7 +44,8 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 
 	it( 'shows an error when the user selects other but does not provide details', async () => {
 		render( {}, { initialEntry: '/some-path?from=https://example.com' } );
-		userEvent.click( intentByName( 'Other' ) );
+
+		await userEvent.click( intentByName( 'Other' ) );
 		await userEvent.click( continueButton() );
 
 		expect( await screen.findByText( /Please, provide more details/ ) ).toBeVisible();
@@ -54,7 +55,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
-		userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
+		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
 		await userEvent.click( continueButton() );
 
 		expect( navigation.submit ).toHaveBeenCalled();
@@ -78,15 +79,15 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
-		userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
-		userEvent.click( intentByName( 'Copy one of my existing sites on WordPress.com' ) );
-		userEvent.click( intentByName( 'Get access to my old site on WordPress.com' ) );
+		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
+		await userEvent.click( intentByName( 'Copy one of my existing sites on WordPress.com' ) );
+		await userEvent.click( intentByName( 'Get access to my old site on WordPress.com' ) );
 		await userEvent.click( intentByName( 'Other' ) );
 		await userEvent.type( otherDetails(), 'Test Details' );
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration/wpcom-survey',
+			path: '/sites/site-url.wordpress.com/automated-migration/wpcom-survey',
 			apiNamespace: 'wpcom/v2',
 			apiVersion: '2',
 			method: 'POST',
@@ -110,7 +111,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 
 		wpcomRequest.mockRejectedValue( {} );
 
-		userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
+		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
 		await userEvent.click( intentByName( 'Other' ) );
 		await userEvent.type( otherDetails(), 'Test Details' );
 		await userEvent.click( continueButton() );
