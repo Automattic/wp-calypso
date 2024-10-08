@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { NpsEligibility, NpsEligibilityApiResponse } from '../types';
 
-function useCheckNpsSurveyEligibility( surveyName: string ) {
+function useCheckNpsSurveyEligibility( surveyName: string ): UseQueryResult< NpsEligibility > {
 	return useQuery( {
 		queryKey: [ surveyName ],
 		queryFn: async (): Promise< NpsEligibility > => {
