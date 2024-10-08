@@ -71,16 +71,6 @@
 		justify-content: space-between;
 	}
 
-	.calendly-details,
-	.calendly-widget {
-		flex: 1;
-		max-width: 50%;
-	}
-
-	.calendly-details {
-		border-inline-end: solid 1px var(--studio-gray-5);
-	}
-
 	.calendly-details__header {
 		display: flex;
 		justify-content: center;
@@ -115,9 +105,22 @@
 
 	}
 
+	.calendly-details,
 	.calendly-widget {
-		max-width: 415px;
-		height: 500px;
-		margin: 1px;
+		flex: 1;
+		width: 50%;
+	}
+
+	.calendly-details {
+		border-inline-end: solid 1px var(--studio-gray-5);
+
+		@media (max-width: 768px) {
+			display: none;
+		}
+	}
+
+	.calendly-widget {
+		max-height: 100%;
+		overflow: scroll;
 	}
 }
