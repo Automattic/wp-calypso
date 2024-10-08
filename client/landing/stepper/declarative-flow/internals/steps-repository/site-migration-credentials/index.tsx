@@ -15,7 +15,7 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 
 	const handleSubmit = ( siteInfo?: UrlData | undefined ) => {
 		const action = siteInfo?.platform_data?.is_wpcom === true ? 'already-wpcom' : 'submit';
-		return navigation.submit?.( { action } );
+		return navigation.submit?.( { action, from: siteInfo?.url } );
 	};
 
 	const handleSkip = () => {

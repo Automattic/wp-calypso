@@ -382,6 +382,51 @@ describe( 'SiteMigrationCredentials', () => {
 		}
 	);
 
+	it( 'shows Continue anyways button and an already on WPCOM error if site is already on WPCOM', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+		await fillAllFields();
+		await fillNoteField();
+
+		const siteInfo = {
+			url: 'https://site-url.wordpress.com',
+			platform_data: {
+				is_wpcom: true,
+			},
+		};
+
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfo );
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
+
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
+			expect( getByText( 'Your site is already on WordPress.com.' ) ).toBeVisible();
+		} );
+
+		await userEvent.click( continueButton( /Continue anyways/ ) );
+
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			...requestPayload,
+			body: {
+				...requestPayload.body,
+				bypass_verification: true,
+			},
+		} );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'already-wpcom',
+				from: 'https://site-url.wordpress.com',
+			} );
+		} );
+	} );
+
 	it( 'creates a credentials ticket even when the siteinfo request faces an error', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );

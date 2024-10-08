@@ -424,14 +424,15 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action } = providedDependencies as {
+					const { action, from } = providedDependencies as {
 						action: 'skip' | 'submit' | 'already-wpcom';
+						from: string;
 					};
 
 					if ( action === 'skip' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: fromQueryParam, siteSlug },
+								{ siteId, from: from || fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
@@ -440,7 +441,7 @@ const siteMigration: Flow = {
 					if ( isEnglishLocale && action === 'already-wpcom' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: fromQueryParam, siteSlug },
+								{ siteId, from: from || fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug
 							)
 						);
@@ -448,7 +449,7 @@ const siteMigration: Flow = {
 
 					return navigate(
 						addQueryArgs(
-							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
 							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 						)
 					);

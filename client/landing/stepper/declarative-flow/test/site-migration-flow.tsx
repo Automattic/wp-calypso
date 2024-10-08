@@ -475,14 +475,16 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
 				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
 				dependencies: {
 					action: 'already-wpcom',
+					from: 'https://site-to-be-migrated.com',
 				},
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug }?siteSlug=example.wordpress.com`,
+				path: `/${ STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
