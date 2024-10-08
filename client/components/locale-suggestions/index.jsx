@@ -55,6 +55,14 @@ export class LocaleSuggestions extends Component {
 
 	getPathWithLocale = ( locale ) => addLocaleToPath( this.props.path, locale );
 
+	recordLocaleSuggestionClick = ( locale ) => {
+		this.props.recordTracksEvent( 'calypso_locale_suggestion_click', {
+			sourceLocale: getLocaleSlug(),
+			targetLocale: locale?.locale,
+			path: this.props.path,
+		} );
+	};
+
 	render() {
 		if ( this.state.dismissed ) {
 			return null;
@@ -81,7 +89,7 @@ export class LocaleSuggestions extends Component {
 					locale={ locale }
 					onLocaleSuggestionClick={ this.dismiss }
 					path={ this.getPathWithLocale( locale.locale ) }
-					recordTracksEvent={ this.props.recordTracksEvent }
+					recordLocaleSuggestionClick={ this.recordLocaleSuggestionClick }
 				/>
 			);
 		} );

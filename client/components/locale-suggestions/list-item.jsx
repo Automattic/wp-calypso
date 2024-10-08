@@ -8,16 +8,13 @@ class LocaleSuggestionsListItem extends Component {
 		locale: PropTypes.object.isRequired,
 		onLocaleSuggestionClick: PropTypes.func,
 		path: PropTypes.string.isRequired,
-		recordTracksEvent: PropTypes.func,
+		recordLocaleSuggestionClick: PropTypes.func,
 	};
 
 	handleLocaleSuggestionClick = ( event ) => {
 		const { locale, onLocaleSuggestionClick, path } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_locale_suggestion_click', {
-			locale: locale?.locale,
-			path,
-		} );
+		this.props.recordLocaleSuggestionClick( locale );
 
 		if ( this.hasLocaleDirectionChanged( locale ) ) {
 			event.preventDefault();
