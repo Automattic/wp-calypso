@@ -2,8 +2,10 @@ import config from '@automattic/calypso-config';
 import { UserSelect } from '@automattic/data-stores';
 import { Modal } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { Icon, captureVideo, scheduled } from '@wordpress/icons';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import CalendlyWidget from '../components/calendy-widget';
+import HunderYearPlanLogo from '../hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 
 interface Props {
 	onClose: () => void;
@@ -22,16 +24,34 @@ const ScheduleAppointmentModal = ( props: Props ) => {
 			size="large"
 			className="hundred-year-plan-schedule-appointment-modal"
 			shouldCloseOnClickOutside={ false }
+			__experimentalHideHeader
 			onRequestClose={ () => onClose?.() }
 		>
 			<div className="calendly-container">
 				<div className="calendly-details">
-					<h2>TODO: title</h2>
-					<p>
-						TODO: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus accusantium
-						architecto at consequuntur dolorem doloremque eaque expedita fugiat ipsum labore minus,
-						nisi porro quos recusandae reprehenderit, tenetur, unde velit voluptatibus.
-					</p>
+					<div className="calendly-details__header">
+						<HunderYearPlanLogo />
+					</div>
+					<div className="calendly-details__content">
+						<h3>WordPress.com 100-Year plan</h3>
+						<h2>30 Minute Meeting</h2>
+						<div className="calendly-details__item">
+							<span className="icon">
+								<Icon icon={ scheduled } size={ 28 } />
+							</span>
+							<strong>30 min</strong>
+						</div>
+						<div className="calendly-details__item">
+							<span className="icon">
+								<Icon icon={ captureVideo } size={ 28 } />
+							</span>
+							<strong>Web conferencing details provided upon confirmation.</strong>
+						</div>
+						<p>
+							Join us for an exclusive strategy session where we’ll chart a visionary course for
+							your digital evolution.
+						</p>
+					</div>
 				</div>
 				<CalendlyWidget
 					url={ config( '100_year_plan_calendly_id' ) }

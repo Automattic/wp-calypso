@@ -49,6 +49,21 @@
 }
 
 .hundred-year-plan-schedule-appointment-modal {
+	.components-modal__content {
+		padding: 0;
+
+		h2 {
+			font-weight: bold;
+			font-size: 1.75rem;
+			margin-bottom: 1rem;
+		}
+
+		h3 {
+			font-weight: bold;
+			color: var(--studio-gray-60);
+			margin-bottom: -5px;
+		}
+	}
 
 	.calendly-container {
 		display: flex;
@@ -64,11 +79,45 @@
 
 	.calendly-details {
 		border-inline-end: solid 1px var(--studio-gray-5);
-		padding-inline-end: 1rem;
+	}
+
+	.calendly-details__header {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 2.5rem 1rem;
+		border-bottom: solid 1px var(--studio-gray-5);
+	}
+
+	.calendly-details__content {
+		padding: 2rem;
+	}
+
+	.calendly-details__item {
+		display: flex;
+		align-items: center;
+		color: var(--studio-gray-60);
+		margin-bottom: 0.5rem;
+
+		&:last-of-type {
+			margin-bottom: 1.5rem;
+		}
+
+		.icon {
+			display: flex;
+			align-items: center;
+			margin-right: 5px;
+
+			svg {
+				fill: var(--studio-gray-60);
+			}
+		}
+
 	}
 
 	.calendly-widget {
-		max-width: 376px;
+		max-width: 415px;
 		height: 500px;
+		margin: 1px;
 	}
 }
