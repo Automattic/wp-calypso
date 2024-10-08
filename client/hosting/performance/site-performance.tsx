@@ -47,7 +47,8 @@ const statsQuery = {
 
 const usePerformanceReport = (
 	activeTab: Tab,
-	savePerformanceReportUrl: ( pageId: string, reportUrl: { url: string; hash: string } ) => void
+	savePerformanceReportUrl: ( pageId: string, reportUrl: { url: string; hash: string } ) => void,
+	currentPageId: string
 ) => {
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
@@ -55,9 +56,6 @@ const usePerformanceReport = (
 	const isSitePublic =
 		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
 
-	const queryParams = useSelector( getCurrentQueryArguments );
-
-	const currentPageId = queryParams?.page_id?.toString() ?? '0';
 	const wpcom_performance_report_url = useSelector( ( state ) =>
 		isSitePublic ? getSiteProfilerReport( state, siteId, currentPageId ) : undefined
 	);
@@ -148,29 +146,6 @@ export const SitePerformance = () => {
 	} );
 
 	useEffect( () => {
-		let isCurrentPage = true;
-
-		if ( ! queryParams?.page_id && lastVisitedReportPageId ) {
-			const currentPath = window.location.pathname;
-			const currentQuery = new URLSearchParams( window.location.search );
-
-			if ( currentQuery.get( 'page_id' ) !== lastVisitedReportPageId ) {
-				// Use setTimeout to push this update to the end of the event queue
-				setTimeout( () => {
-					if ( isCurrentPage ) {
-						currentQuery.set( 'page_id', lastVisitedReportPageId );
-						page.replace( `${ currentPath }?${ currentQuery.toString() }` );
-					}
-				}, 0 );
-			}
-		}
-
-		return () => {
-			isCurrentPage = false;
-		};
-	}, [ queryParams?.page_id, lastVisitedReportPageId ] );
-
-	useEffect( () => {
 		if ( ! lastVisitedReportPageId ) {
 			if ( queryParams?.page_id ) {
 				dispatch( setSiteProfilerLastVisitedReport( siteId, String( queryParams.page_id ) ) );
@@ -178,7 +153,7 @@ export const SitePerformance = () => {
 				dispatch( setSiteProfilerLastVisitedReport( siteId, '0' ) );
 			}
 		}
-	} );
+	}, [ queryParams?.page_id, lastVisitedReportPageId, dispatch, siteId ] );
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -233,7 +208,11 @@ export const SitePerformance = () => {
 		window.history.replaceState( {}, '', url.toString() );
 	};
 
-	const performanceReport = usePerformanceReport( activeTab, savePerformanceReportUrl );
+	const performanceReport = usePerformanceReport(
+		activeTab,
+		savePerformanceReportUrl,
+		currentPageId
+	);
 
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
