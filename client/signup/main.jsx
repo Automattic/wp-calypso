@@ -565,6 +565,10 @@ class Signup extends Component {
 		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
 		if ( ! dependencies.toStepper ) {
 			debug( 'Tracking signup completion.', debugProps );
+			const isMapping = domainItem && isDomainMapping( domainItem );
+			const isTransfer = domainItem && isDomainTransfer( domainItem );
+			const isTransferOrMapping =
+				isTransfer || isMapping ? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN : undefined;
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -582,9 +586,10 @@ class Signup extends Component {
 				intent,
 				startingPoint,
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-				isMapping: domainItem && isDomainMapping( domainItem ),
-				isTransfer: domainItem && isDomainTransfer( domainItem ),
-				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+				isMapping: isMapping,
+				isTransfer: isTransfer,
+				signupDomainOrigin:
+					isTransferOrMapping || signupDomainOrigin || SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 			} );
 		}
 	};
