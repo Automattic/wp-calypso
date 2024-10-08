@@ -2,6 +2,7 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import Notice from 'calypso/components/notice';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useCredentialsForm } from '../hooks/use-credentials-form';
@@ -14,7 +15,7 @@ import { SpecialInstructions } from './special-instructions';
 import { UsernameField } from './username-field';
 
 interface CredentialsFormProps {
-	onSubmit: () => void;
+	onSubmit: ( siteInfo?: UrlData | undefined ) => void;
 	onSkip: () => void;
 }
 
@@ -26,9 +27,8 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		control,
 		errors,
 		accessMethod,
-		isPending,
+		isBusy,
 		submitHandler,
-		importSiteQueryParam,
 		getContinueButtonText,
 	} = useCredentialsForm( onSubmit );
 
@@ -60,11 +60,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
-						<SiteAddressField
-							control={ control }
-							errors={ errors }
-							importSiteQueryParam={ importSiteQueryParam }
-						/>
+						<SiteAddressField control={ control } errors={ errors } />
 						<UsernameField control={ control } errors={ errors } />
 						<PasswordField control={ control } errors={ errors } />
 					</div>
@@ -79,7 +75,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				/>
 
 				<div className="site-migration-credentials__submit">
-					<NextButton disabled={ isPending } type="submit">
+					<NextButton disabled={ isBusy } type="submit">
 						{ getContinueButtonText() }
 					</NextButton>
 				</div>
@@ -88,7 +84,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 			<div className="site-migration-credentials__skip">
 				<button
 					className="button navigation-link step-container__navigation-link has-underline is-borderless"
-					disabled={ isPending }
 					onClick={ onSkip }
 					type="button"
 				>

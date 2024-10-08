@@ -120,7 +120,7 @@ const contextLinks = {
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-defensive-mode': {
-		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/',
+		link: 'https://developer.wordpress.com/docs/site-performance/defensive-mode/',
 		post_id: 99415,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},

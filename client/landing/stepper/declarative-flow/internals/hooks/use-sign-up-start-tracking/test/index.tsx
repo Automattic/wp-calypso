@@ -10,6 +10,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setSignupStartTime } from 'calypso/signup/storageUtils';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSignUpStartTracking } from '../';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from '../../../../../constants';
 import type { Flow, StepperStep } from '../../../types';
 
 const steps = [ { slug: 'step-1' }, { slug: 'step-2' } ] as StepperStep[];
@@ -86,7 +87,9 @@ describe( 'useSignUpTracking', () => {
 			render( {
 				flow: {
 					...signUpFlow,
-					useSignupStartEventProps: () => ( { extra: 'props' } ),
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
 				} satisfies Flow,
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
@@ -132,7 +135,9 @@ describe( 'useSignUpTracking', () => {
 			const { rerender } = render( {
 				flow: {
 					...signUpFlow,
-					useSignupStartEventProps: () => ( { extra: 'props' } ),
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
 				} satisfies Flow,
 			} );
 

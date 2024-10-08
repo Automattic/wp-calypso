@@ -1,25 +1,22 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { removeQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
 	cancelPendingEmailChange,
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
-import EmailNotVerifiedNotice from './email-not-verified-notice';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
 
@@ -95,69 +92,50 @@ const AccountEmailValidationNotice = ( {
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
-const AccountEmailPendingEmailChangeNotice = ( {
-	unsavedUserSettings,
-	userSettings,
+const EmailFieldExplanationText = ( {
+	unlockRef,
 }: {
-	unsavedUserSettings: UserSettingsType;
-	userSettings: UserSettingsType;
+	unlockRef: React.RefObject< HTMLButtonElement >;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
-	const domainsList: ResponseDomain[] = useSelector( getFlatDomainsList );
-	const isRequestingDomainList = useSelector( isRequestingAllDomains );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 
-	if ( ! isEmailChangePending ) {
-		return null;
+	const cancelWrapper = (
+		<Button
+			className="account-email-field__enable-input"
+			variant="link"
+			onClick={ ( ev: React.MouseEvent< HTMLButtonElement > ) => {
+				ev.preventDefault();
+				dispatch( cancelPendingEmailChange() );
+			} }
+			ref={ unlockRef }
+		/>
+	);
+
+	if ( isEmailChangePending ) {
+		// Show unverified message and cancel pending change option.
+		return translate(
+			'Your email has not been verified yet. {{cancelWrapper}}Cancel the pending email change{{/cancelWrapper}}.',
+			{
+				components: {
+					cancelWrapper,
+				},
+			}
+		);
 	}
 
-	const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
-	const email = getUserSetting( {
-		settingName: 'new_user_email',
-		unsavedUserSettings,
-		userSettings,
-	} ) as string;
+	if ( ! isEmailVerified ) {
+		// Show unverified message.
+		return translate( 'Your email has not been verified yet.' );
+	}
 
-	const hasCustomDomainRegistration = domainsList.some( ( domain ) => {
-		return domainTypes.REGISTERED === domain.type;
-	} );
-
-	const noticeText =
-		isRequestingDomainList || ! hasCustomDomainRegistration
-			? translate(
-					'Your email change is pending. Please take a moment to check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.',
-					{
-						args: { email },
-					}
-			  )
-			: translate(
-					'Your email change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
-					{
-						args: {
-							email,
-						},
-						components: {
-							br: <br />,
-							link: <a href={ editContactInfoInBulkUrl } />,
-						},
-					}
-			  );
-
-	return (
-		<Notice
-			className="account-email-field__change-pending"
-			showDismiss={ false }
-			status="is-info"
-			text={ noticeText }
-		>
-			<NoticeAction onClick={ () => dispatch( cancelPendingEmailChange() ) }>
-				{ translate( 'Cancel' ) }
-			</NoticeAction>
-		</Notice>
-	);
+	// Standard message.
+	return translate( 'Not publicly displayed, except to owners of sites you subscribe to.' );
 };
+
+export const emailFormEventEmitter = new EventTarget();
 
 const AccountEmailField = ( {
 	emailInputId = 'user_email',
@@ -169,10 +147,12 @@ const AccountEmailField = ( {
 	unsavedUserSettings = {},
 	userSettings = {},
 }: AccountEmailFieldProps ) => {
+	const inputRef = useRef< HTMLInputElement >( null );
+	const unlockRef = useRef< HTMLButtonElement >( null );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
-
+	const currentQuery = useSelector( getCurrentQueryArguments );
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -209,6 +189,40 @@ const AccountEmailField = ( {
 		dispatch( setUserSetting( 'user_email', value ) );
 	};
 
+	const scrollAndFocus = useCallback( () => {
+		if ( isEmailChangePending ) {
+			unlockRef.current?.focus();
+		} else {
+			inputRef.current?.focus();
+		}
+		// We need to bump the scroll call to the back of the callstack, since the dialog that
+		// triggers this on close can influence the scroll window.
+		setTimeout( () => {
+			inputRef.current?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+		} );
+	}, [ isEmailChangePending ] );
+
+	useEffect( () => {
+		// Check for query param used to indicate a need to scroll to the input, this is added when
+		// redirecting to this page for the purpose of email change.
+		const focusEmail = currentQuery?.focusEmail;
+		if ( focusEmail ) {
+			scrollAndFocus();
+			// Timeout to ensure this happens after the window url is updated, as this can run
+			// before that.
+			setTimeout( () =>
+				window.history.replaceState( {}, '', removeQueryArgs( window.location.href, 'focusEmail' ) )
+			);
+		}
+		// Listen for an event signalling to focus and scroll to the email field or button. This
+		// happens when we are already on a page with the input and need to trigger the
+		// functionality.
+		emailFormEventEmitter.addEventListener( 'highlightInput', scrollAndFocus );
+		return () => {
+			emailFormEventEmitter.removeEventListener( 'highlightInput', scrollAndFocus );
+		};
+	}, [ scrollAndFocus, currentQuery ] );
+
 	return (
 		<>
 			<QueryAllDomains />
@@ -222,6 +236,7 @@ const AccountEmailField = ( {
 					onFocus={ onFocus }
 					value={ emailAddress }
 					onChange={ onEmailAddressChange }
+					inputRef={ inputRef }
 				/>
 
 				<AccountEmailValidationNotice
@@ -231,15 +246,8 @@ const AccountEmailField = ( {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Not publicly displayed, except to owners of sites you subscribe to.' ) }
+					<EmailFieldExplanationText unlockRef={ unlockRef } />
 				</FormSettingExplanation>
-
-				<EmailNotVerifiedNotice />
-
-				<AccountEmailPendingEmailChangeNotice
-					unsavedUserSettings={ unsavedUserSettings }
-					userSettings={ userSettings }
-				/>
 			</FormFieldset>
 		</>
 	);

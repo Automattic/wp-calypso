@@ -78,6 +78,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 	const handleClearAllCache = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
 			site_id: siteId,
+			cache_type: 'all',
 		} );
 
 		if ( isEdgeCacheActive && ! isEdgeCacheClearRateLimited ) {
@@ -180,6 +181,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							} ) }
 						</div>
 						<ToggleControl
+							__nextHasNoMarginBottom
 							className="cache-card__edge-cache-toggle"
 							checked={ isEdgeCacheActive && isEdgeCacheEligible }
 							disabled={ isClearingEdgeCache || isEdgeCacheLoading || ! isEdgeCacheEligible }

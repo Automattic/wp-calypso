@@ -66,6 +66,10 @@
 .is-reader-page .reader-full-post__story-content {
 	padding-top: 0 !important;
 
+	.wp-block-columns {
+		margin-bottom: 24px;
+	}
+
 	.wp-block-jetpack-slideshow_slide img,
 	.wp-block-media-text__media img,
 	.wp-block-image img {
@@ -515,7 +519,7 @@
 			background-image: url("data:image/svg+xml,%3Csvg fill='none' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m12.3438 17.3438h-4.68755c-.08594 0-.15625.0703-.15625.1562v.625c0 .3457.2793.625.625.625h3.75c.3457 0 .625-.2793.625-.625v-.625c0-.0859-.0703-.1562-.1562-.1562zm-2.3438-16.0938c-3.53711 0-6.40625 2.86914-6.40625 6.40625 0 2.37105 1.28906 4.44145 3.20313 5.54885v2.2637c0 .3457.27929.625.625.625h5.15622c.3457 0 .625-.2793.625-.625v-2.2637c1.9141-1.1074 3.2032-3.1778 3.2032-5.54885 0-3.53711-2.8692-6.40625-6.4063-6.40625zm2.498 10.7383-.7011.4062v2.293h-3.59377v-2.293l-.70118-.4062c-1.53711-.8887-2.50195-2.52541-2.50195-4.33205 0-2.76172 2.23828-5 5-5 2.7617 0 5 2.23828 5 5 0 1.80664-.9648 3.44335-2.502 4.33205z' fill='%231e1e1e'/%3E%3C/svg%3E");
 			background-repeat: no-repeat;
 			background-size: 24px 24px;
-			content: "";
+			content: "";;
 			display: inline-block;
 			height: 24px;
 			left: -5px;
@@ -523,11 +527,11 @@
 			position: absolute;
 			width: 24px;
 			top: 1px;
-		}
-	}
 
 	.jetpack-blogging-prompt__text {
 		font-size: $font-title-medium;
 		margin-bottom: 24px;
+	}
+		}
 	}
 }

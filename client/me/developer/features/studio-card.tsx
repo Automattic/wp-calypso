@@ -24,7 +24,6 @@ export const StudioCard = () => {
 				<a
 					id="studio"
 					href={ localizeUrl( 'https://developer.wordpress.com/studio/' ) }
-					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ handleClickLink }
 				>

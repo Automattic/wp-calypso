@@ -70,6 +70,7 @@ export default function SignupForm() {
 					postal_code: payload.postalCode,
 					state: payload.state,
 					referer: payload.referer,
+					phone_number: payload.phone?.phoneNumberFull ?? '',
 				} )
 			);
 		},

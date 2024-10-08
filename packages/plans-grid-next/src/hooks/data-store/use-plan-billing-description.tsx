@@ -109,23 +109,23 @@ export default function usePlanBillingDescription( {
 	 */
 	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
 		if ( originalPriceFullTermText ) {
+			/* Introductory offers for monthly plans */
 			if ( isMonthlyPlan ) {
-				if ( 1 === introOffer.intervalCount ) {
-					return translate(
-						'per month, for your first %(introOfferIntervalUnit)s,{{br/}}' +
-							'then %(rawPrice)s billed monthly, excl. taxes',
-						{
-							args: {
-								rawPrice: originalPriceFullTermText,
-								introOfferIntervalUnit: introOffer.intervalUnit,
-							},
-							components: { br: <br /> },
-							comment: 'excl. taxes is short for excluding taxes',
-						}
-					);
-				}
-
+				/* If the offer is for X months */
 				if ( 'month' === introOffer.intervalUnit ) {
+					if ( 1 === introOffer.intervalCount ) {
+						return translate(
+							'for your first month,{{br/}}' + 'then %(rawPrice)s billed monthly, excl. taxes',
+							{
+								args: {
+									rawPrice: originalPriceFullTermText,
+								},
+								components: { br: <br /> },
+								comment: 'excl. taxes is short for excluding taxes',
+							}
+						);
+					}
+
 					return translate(
 						'for your first %(introOfferIntervalCount)s months,{{br/}}' +
 							'then %(rawPrice)s billed monthly, excl. taxes',
@@ -140,7 +140,21 @@ export default function usePlanBillingDescription( {
 					);
 				}
 
+				/* If the offer is for X years of monthly intervals */
 				if ( 'year' === introOffer.intervalUnit ) {
+					if ( 1 === introOffer.intervalCount ) {
+						return translate(
+							'for your first year,{{br/}}' + 'then %(rawPrice)s billed monthly, excl. taxes',
+							{
+								args: {
+									rawPrice: originalPriceFullTermText,
+								},
+								components: { br: <br /> },
+								comment: 'excl. taxes is short for excluding taxes',
+							}
+						);
+					}
+
 					return translate(
 						'per month, for your first %(introOfferIntervalCount)s years,{{br/}}' +
 							'then %(rawPrice)s billed monthly, excl. taxes',
@@ -156,23 +170,24 @@ export default function usePlanBillingDescription( {
 				}
 			}
 
+			/* Introductory offers for yearly plans */
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				if ( 1 === introOffer.intervalCount ) {
-					return translate(
-						'per month, for your first %(introOfferIntervalUnit)s,{{br/}}' +
-							'then %(rawPrice)s billed annually, excl. taxes',
-						{
-							args: {
-								rawPrice: originalPriceFullTermText,
-								introOfferIntervalUnit: introOffer.intervalUnit,
-							},
-							components: { br: <br /> },
-							comment: 'excl. taxes is short for excluding taxes',
-						}
-					);
-				}
-
+				/* If the offer is for X months of a yearly plan */
 				if ( 'month' === introOffer.intervalUnit ) {
+					if ( 1 === introOffer.intervalCount ) {
+						return translate(
+							'for your first month,{{br/}}' + 'then %(rawPrice)s billed annually, excl. taxes',
+							{
+								args: {
+									rawPrice: originalPriceFullTermText,
+									introOfferIntervalUnit: introOffer.intervalUnit,
+								},
+								components: { br: <br /> },
+								comment: 'excl. taxes is short for excluding taxes',
+							}
+						);
+					}
+
 					return translate(
 						'for your first %(introOfferIntervalCount)s months,{{br/}}' +
 							'then %(rawPrice)s billed annually, excl. taxes',
@@ -187,12 +202,29 @@ export default function usePlanBillingDescription( {
 					);
 				}
 
+				/* If the offer is for X years of a yearly plan */
 				if ( 'year' === introOffer.intervalUnit ) {
+					if ( 1 === introOffer.intervalCount ) {
+						return translate(
+							'per month, %(introOfferFormattedPrice)s for your first year,{{br/}}' +
+								'then %(rawPrice)s billed annually, excl. taxes',
+							{
+								args: {
+									introOfferFormattedPrice: introOffer.formattedPrice,
+									rawPrice: originalPriceFullTermText,
+								},
+								components: { br: <br /> },
+								comment: 'excl. taxes is short for excluding taxes',
+							}
+						);
+					}
+
 					return translate(
-						'per month, for your first %(introOfferIntervalCount)s years,{{br/}}' +
+						'per month, %(introOfferFormattedPrice)s for your first %(introOfferIntervalCount)s years,{{br/}}' +
 							'then %(rawPrice)s billed annually, excl. taxes',
 						{
 							args: {
+								introOfferFormattedPrice: introOffer.formattedPrice,
 								rawPrice: originalPriceFullTermText,
 								introOfferIntervalCount: introOffer.intervalCount,
 							},

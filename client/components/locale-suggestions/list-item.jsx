@@ -8,10 +8,13 @@ class LocaleSuggestionsListItem extends Component {
 		locale: PropTypes.object.isRequired,
 		onLocaleSuggestionClick: PropTypes.func,
 		path: PropTypes.string.isRequired,
+		recordLocaleSuggestionClick: PropTypes.func,
 	};
 
 	handleLocaleSuggestionClick = ( event ) => {
 		const { locale, onLocaleSuggestionClick, path } = this.props;
+
+		this.props.recordLocaleSuggestionClick( locale );
 
 		if ( this.hasLocaleDirectionChanged( locale ) ) {
 			event.preventDefault();
@@ -22,8 +25,6 @@ class LocaleSuggestionsListItem extends Component {
 		if ( onLocaleSuggestionClick ) {
 			onLocaleSuggestionClick();
 		}
-
-		// TODO: record analytics event here
 	};
 
 	hasLocaleDirectionChanged( locale ) {

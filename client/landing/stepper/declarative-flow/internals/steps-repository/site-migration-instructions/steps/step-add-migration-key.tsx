@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { MigrationKeyInput } from '../migration-key-input';
@@ -10,6 +11,13 @@ interface Props {
 
 export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationError } ) => {
 	const translate = useTranslate();
+	const isWhiteLabeledPluginEnabled = config.isEnabled(
+		'migration-flow/enable-white-labeled-plugin'
+	);
+	const migrationKeyLabel = isWhiteLabeledPluginEnabled
+		? 'Migration Key'
+		: 'Migrate Guru Migration Key';
+	const migrateLabel = isWhiteLabeledPluginEnabled ? 'Start migration' : 'Migrate';
 
 	if ( '' === migrationKey ) {
 		return (
@@ -33,7 +41,7 @@ export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationErr
 						components: {
 							strong: <strong />,
 						},
-						args: { migrationKeyLabel: 'Migrate Guru Migration Key', migrateLabel: 'Migrate' },
+						args: { migrationKeyLabel, migrateLabel },
 					}
 				) }
 			</p>

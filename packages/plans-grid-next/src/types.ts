@@ -74,6 +74,7 @@ export type PlansIntent =
 	| 'plans-guided-segment-blogger'
 	| 'plans-guided-segment-nonprofit'
 	| 'plans-guided-segment-consumer-or-business'
+	| 'plans-site-selected-legacy'
 	| 'default';
 
 export interface PlanActionOverrides {

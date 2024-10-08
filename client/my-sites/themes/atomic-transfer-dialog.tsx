@@ -4,10 +4,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import Notice from 'calypso/components/notice';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	acceptAtomicTransferDialog,
 	dismissAtomicTransferDialog,
+	acceptActivationModal,
 	activate as activateTheme,
 	initiateThemeTransfer,
 } from 'calypso/state/themes/actions';
@@ -18,11 +19,7 @@ import {
 	isExternallyManagedTheme,
 	shouldShowAtomicTransferDialog,
 } from 'calypso/state/themes/selectors';
-import {
-	isTransferComplete,
-	isUploadInProgress,
-	getUploadError,
-} from 'calypso/state/themes/upload-theme/selectors';
+import { isUploadInProgress, getUploadError } from 'calypso/state/themes/upload-theme/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Theme } from 'calypso/types';
@@ -31,15 +28,16 @@ import './atomic-transfer-dialog.scss';
 interface AtomicTransferDialogProps {
 	siteId?: number;
 	inProgress?: boolean;
-	isTransferred?: boolean;
 	showEligibility: boolean;
 	theme: Theme;
 	siteSlug?: string | null;
 	isMarketplaceProduct?: boolean;
 	activeTheme?: string | null;
 	uploadError?: boolean;
+	isJetpack?: boolean;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
+	dispatchAcceptActivationModal: typeof acceptActivationModal;
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
 }
@@ -93,16 +91,23 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	continueToActivate() {
-		const { siteId, theme, dispatchActivateTheme, dispatchAcceptAtomicTransferDialog } = this.props;
+		const {
+			siteId,
+			theme,
+			dispatchActivateTheme,
+			dispatchAcceptAtomicTransferDialog,
+			dispatchAcceptActivationModal,
+		} = this.props;
 		if ( siteId ) {
 			dispatchAcceptAtomicTransferDialog( theme.id );
+			dispatchAcceptActivationModal( theme.id );
 			dispatchActivateTheme( theme.id, siteId );
 		}
 	}
 
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
-		const { siteId, siteSlug, isTransferred, uploadError } = this.props;
-		if ( siteId && siteSlug && prevProps.isTransferred !== isTransferred && isTransferred ) {
+		const { siteId, siteSlug, uploadError, isJetpack } = this.props;
+		if ( siteId && siteSlug && prevProps.isJetpack !== isJetpack ) {
 			this.continueToActivate();
 		}
 
@@ -118,13 +123,13 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	isLoading() {
-		const { inProgress, activeTheme, theme, isTransferred } = this.props;
+		const { inProgress, activeTheme, theme, isJetpack } = this.props;
 		const isThemeActive = activeTheme === theme?.id;
 
 		const hasNotExceededMaxAttempts =
-			this.state.requestActiveThemeCount > 0 && ! this.exceededMaxAttempts() && ! isTransferred;
+			this.state.requestActiveThemeCount > 0 && ! this.exceededMaxAttempts() && ! isJetpack;
 
-		return inProgress || hasNotExceededMaxAttempts || ( isTransferred && ! isThemeActive );
+		return inProgress || hasNotExceededMaxAttempts || ( isJetpack && ! isThemeActive );
 	}
 
 	renderActivationInProgress() {
@@ -144,11 +149,11 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	renderSuccessfulTransfer() {
-		const { isTransferred } = this.props;
+		const { isJetpack } = this.props;
 		const successfulTransferText = translate( 'Your site has been transferred successfully.' );
 
 		return (
-			isTransferred && (
+			isJetpack && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-success"
@@ -219,15 +224,16 @@ export default connect(
 			showEligibility: shouldShowAtomicTransferDialog( state, themeId ),
 			isMarketplaceProduct: isExternallyManagedTheme( state, themeId ),
 			inProgress: isUploadInProgress( state, siteId ),
-			isTransferred: isTransferComplete( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			activeTheme: getActiveTheme( state, siteId ),
 			uploadError: typeof getUploadError( state, siteId ) === 'object',
+			isJetpack: !! isJetpackSite( state, siteId ),
 		};
 	},
 	{
 		dispatchAcceptAtomicTransferDialog: acceptAtomicTransferDialog,
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
+		dispatchAcceptActivationModal: acceptActivationModal,
 		dispatchActivateTheme: activateTheme,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
 	}

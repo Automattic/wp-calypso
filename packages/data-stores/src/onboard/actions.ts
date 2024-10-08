@@ -429,6 +429,11 @@ export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | un
 	bulkDomainsData,
 } );
 
+export const setSignupDomainOrigin = ( signupDomainOrigin: string | undefined ) => ( {
+	type: 'SET_SIGNUP_DOMAIN_ORIGIN' as const,
+	signupDomainOrigin,
+} );
+
 export const setShouldImportDomainTransferDnsRecords = (
 	shouldImportDomainTransferDnsRecords: boolean
 ) => ( {
@@ -531,4 +536,5 @@ export type OnboardAction = ReturnType<
 	| typeof setIsMigrateFromWp
 	| typeof setPaidSubscribers
 	| typeof setPartnerBundle
+	| typeof setSignupDomainOrigin
 >;

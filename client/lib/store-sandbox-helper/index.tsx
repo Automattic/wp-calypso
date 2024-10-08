@@ -62,6 +62,7 @@ export function StoreSandboxHelper() {
 			<div className={ menuItemClasses.join( ' ' ) }>Store Sandbox</div>
 			<div className="store-sandbox-helper__popover">
 				<ToggleControl
+					__nextHasNoMarginBottom
 					label="Store Sandbox"
 					checked={ isStoreSandboxed || false }
 					disabled={ ! isEditable }

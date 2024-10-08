@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { hasQueryArg } from '@wordpress/url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
@@ -28,16 +29,20 @@ import 'calypso/state/themes/init';
  */
 export function activate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
-		const { source, purchased, isOnboardingFlow } = options || {};
+		const {
+			source,
+			purchased,
+			isOnboardingFlow = typeof window !== 'undefined' &&
+				hasQueryArg( window.location.href, 'onboarding' ),
+		} = options || {};
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		const hasThemeBundleSoftwareSet = doesThemeBundleSoftwareSet( getState(), themeId );
-
-		// The DotOrg themes will be handled by the marketplace install page.
-		// The theme with the plugin bundle will be handled by the plugin bundle flow.
 		const shouldAtomicTransfer =
 			isExternallyManagedTheme( getState(), themeId ) ||
-			isDotOrgTheme ||
+			// The wporg-only themes need the atomic transfer.
+			( isDotOrgTheme && ! isDotComTheme ) ||
+			// On the onboarding flow, the plugin-bundle theme will continue to the plugin bundle flow.
 			( isDotComTheme && hasThemeBundleSoftwareSet && ! isOnboardingFlow );
 
 		/**

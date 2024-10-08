@@ -76,7 +76,7 @@ export default function NewsletterImporter( {
 	useEffect( () => {
 		if (
 			paidNewsletterData?.steps?.content?.status === 'importing' ||
-			paidNewsletterData?.steps.subscribers?.status === 'importing'
+			paidNewsletterData?.steps?.subscribers?.status === 'importing'
 		) {
 			setAutoFetchData( true );
 		} else {
@@ -157,8 +157,8 @@ export default function NewsletterImporter( {
 	const shouldShowConfettiRef = useRef( false );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const importerStatus = getImporterStatus(
-		paidNewsletterData?.steps.content.status,
-		paidNewsletterData?.steps.subscribers.status
+		paidNewsletterData?.steps?.content.status,
+		paidNewsletterData?.steps?.subscribers.status
 	);
 
 	useEffect( () => {

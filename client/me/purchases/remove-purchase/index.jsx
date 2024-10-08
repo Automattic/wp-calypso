@@ -64,6 +64,7 @@ class RemovePurchase extends Component {
 		activeSubscriptions: PropTypes.array,
 		linkIcon: PropTypes.string,
 		primaryDomain: PropTypes.object,
+		skipRemovePlanSurvey: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -285,7 +286,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase, activeSubscriptions } = this.props;
+		const { activeSubscriptions, purchase, skipRemovePlanSurvey } = this.props;
 
 		return (
 			<CancelPurchaseForm
@@ -296,6 +297,7 @@ class RemovePurchase extends Component {
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+				skipRemovePlanSurvey={ skipRemovePlanSurvey }
 			/>
 		);
 	}
