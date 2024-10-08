@@ -157,6 +157,12 @@ const BlazePressStrings = () => {
 	translate( 'Save my selection for future campaigns' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
+	translate(
+		'If you have Blaze Credit in your account, the credits will be used first before charging your card.'
+	);
+	translate(
+		'If the Blaze Credit balance does not cover the entire order, any outstanding balance will be taken from your provided card.'
+	);
 	translate( 'Could not retrieve countries. Please try again later.' );
 	translate( 'Could not connect to payment provider. Please try again later.' );
 	translate( 'Error setting up payment. Please try again later' );
@@ -205,6 +211,7 @@ const BlazePressStrings = () => {
 	translate( 'Summary' );
 	translate( 'Preview' );
 	translate( 'Depending on the platform, the ad may look different from the preview.' );
+	translate( 'Any outstanding balance will be charged to your provided card.' );
 	translate( 'Estimated Impressions' );
 	translate( 'Weekly Budget' );
 	translate( 'Max Budget' );
