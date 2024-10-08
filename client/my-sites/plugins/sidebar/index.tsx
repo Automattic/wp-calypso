@@ -19,7 +19,6 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 			className={ clsx( 'sidebar--plugins', { 'is-collapsed': isCollapsed } ) }
 			siteTitle={ ! isCollapsed && translate( 'Plugins' ) }
 			requireBackLink
-			backLinkHref="/sites"
 			subHeading={
 				! isCollapsed &&
 				translate(
