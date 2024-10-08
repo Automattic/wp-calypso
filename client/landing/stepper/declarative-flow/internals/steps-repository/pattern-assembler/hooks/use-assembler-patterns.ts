@@ -19,7 +19,7 @@ const useAssemblerPatterns = (
 					isEnabled( 'pattern-assembler/v2' )
 						? {
 								site: getPatternSourceSiteID(),
-								post_type: 'wp_block',
+								//post_type: 'wp_block',
 						  }
 						: {
 								tags:

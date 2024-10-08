@@ -1,4 +1,4 @@
-export const getPatternSourceSiteID = () => '174455321'; // dotcompatterns
+export const getPatternSourceSiteID = () => '233449226'; // dotcompatterns
 
 export const PUBLIC_API_URL = 'https://public-api.wordpress.com';
 export const SITE_TAGLINE = 'Site Tagline';
