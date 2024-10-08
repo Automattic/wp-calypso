@@ -363,3 +363,10 @@
 		}
 	}
 }
+
+.checkout__verify-account-tooltip {
+	a {
+		color: var(--color-text-inverted);
+		text-decoration: underline;
+	}
+}

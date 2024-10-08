@@ -225,12 +225,18 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				</Button>
 
 				<Tooltip
+					className="checkout__verify-account-tooltip"
 					context={ ctaButtonRef.current }
 					isVisible={ showVerifyAccountToolip && isUserUnverified }
 					position="bottom"
 				>
 					{ translate(
-						'Please verify your account email in order to begin referring products to clients.'
+						"Please verify your {{a}}account's email{{/a}} in order to begin referring products to clients.",
+						{
+							components: {
+								a: <a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />,
+							},
+						}
 					) }
 				</Tooltip>
 			</div>
