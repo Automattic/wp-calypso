@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -16,32 +17,45 @@ export const PressableUsageLimitNotice = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isDismissed = useSelector( ( state ) =>
+	const agency = useSelector( getActiveAgency );
+	const notifications = agency?.notifications ?? [];
+
+	const pressablePlanUsageLimitExceeded = notifications.find(
+		( notification ) => notification.reference === 'pressable_plan_usage_limit_exeeded'
+	);
+	const pressablePlanUsageLimitApproaching = notifications.find(
+		( notification ) => notification.reference === 'pressable_plan_usage_limit_approaching'
+	);
+	const pressableLimitNotice =
+		pressablePlanUsageLimitExceeded || pressablePlanUsageLimitApproaching;
+
+	const notificationDismissedTimestamp = useSelector( ( state ) =>
 		getPreference( state, PRESSABLE_LIMIT_NOTIFICATION_DISMISS_PREFERENCE )
 	);
 
+	const isDismissed = notificationDismissedTimestamp === pressableLimitNotice?.timestamp;
+
 	const dismissNotice = () => {
-		dispatch( savePreference( PRESSABLE_LIMIT_NOTIFICATION_DISMISS_PREFERENCE, true ) );
-		dispatch( recordTracksEvent( 'calypso_a4a_pressable_limit_notification_dismissed' ) );
+		if ( pressableLimitNotice ) {
+			dispatch(
+				savePreference(
+					PRESSABLE_LIMIT_NOTIFICATION_DISMISS_PREFERENCE,
+					pressableLimitNotice.timestamp
+				)
+			);
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_pressable_limit_notification_dismissed', {
+					type: pressableLimitNotice.reference,
+				} )
+			);
+		}
 	};
 
-	const showBanner = false; // TODO: Remove this when the banner is ready to be shown
-
-	if ( isDismissed || ! showBanner ) {
+	if ( isDismissed || ! pressableLimitNotice ) {
 		return null;
 	}
 
 	const learnMoreLink = ''; // TODO: Replace with actual link
-
-	const limitTypes = {
-		storage: translate( 'storage' ),
-		traffic: translate( 'traffic' ),
-	};
-
-	const limitType = 'traffic'; // TODO: Replace with actual limit type
-	const limitTypeHumanised = limitTypes[ limitType ];
-
-	const isLimitExceeded = false; // TODO: Replace with actual check
 
 	return (
 		<LayoutBanner
@@ -51,24 +65,12 @@ export const PressableUsageLimitNotice = () => {
 			className="pressable-usage-limit-notice"
 		>
 			<div>
-				{ isLimitExceeded
+				{ pressablePlanUsageLimitExceeded
 					? translate(
-							'Your Pressable plan has exceeded its allocated %(limitType)s limit. Consider upgrading your plan to avoid additional fees.',
-							{
-								args: {
-									limitType: limitTypeHumanised,
-								},
-								comment: 'The limit type is storage or traffic which is already translated',
-							}
+							'Your Pressable plan has exceeded its allocated limits. Consider upgrading your plan to avoid additional fees.'
 					  )
 					: translate(
-							'Your Pressable plan is close to exceeding its allocated %(limitType)s limit. Consider upgrading your plan to avoid additional fees.',
-							{
-								args: {
-									limitType: limitTypeHumanised,
-								},
-								comment: 'The limit type is storage or traffic which is already translated',
-							}
+							'Your Pressable plan is close to exceeding its allocated limits. Consider upgrading your plan to avoid additional fees.'
 					  ) }
 			</div>
 
