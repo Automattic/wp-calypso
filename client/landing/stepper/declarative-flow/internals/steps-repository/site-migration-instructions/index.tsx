@@ -4,6 +4,7 @@ import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
+import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -83,11 +84,13 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 
 	// Delete migration sticker.
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
+	const { updateMigrationStatus } = useUpdateMigrationStatus();
 	useEffect( () => {
 		if ( siteId ) {
 			deleteMigrationSticker( siteId );
+			updateMigrationStatus( siteId, 'migration-started-diy' );
 		}
-	}, [ deleteMigrationSticker, siteId ] );
+	}, [ deleteMigrationSticker, siteId, updateMigrationStatus ] );
 
 	// Site preparation.
 	const {
