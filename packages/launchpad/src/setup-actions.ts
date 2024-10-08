@@ -134,6 +134,11 @@ export const setUpActionsForTasks = ( {
 					useCalypsoPath = false;
 					break;
 
+				case 'connect_migration_domain':
+					logMissingCalypsoPath = true;
+					task.calypso_path = `/domains/add/use-my-domain/${ siteSlug }?initialQuery=`;
+					break;
+
 				default:
 					logMissingCalypsoPath = true;
 					useCalypsoPath = false;
