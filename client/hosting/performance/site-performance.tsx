@@ -13,8 +13,14 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
-import { setSiteProfilerReport } from 'calypso/state/site-profiler/actions';
-import { getSiteProfilerReport } from 'calypso/state/site-profiler/selectors';
+import {
+	setSiteProfilerLastVisitedReport,
+	setSiteProfilerReport,
+} from 'calypso/state/site-profiler/actions';
+import {
+	getSiteProfilerLastVisitedReport,
+	getSiteProfilerReport,
+} from 'calypso/state/site-profiler/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -50,6 +56,7 @@ const usePerformanceReport = (
 		site && ! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
 
 	const queryParams = useSelector( getCurrentQueryArguments );
+
 	const currentPageId = queryParams?.page_id?.toString() ?? '0';
 	const wpcom_performance_report_url = useSelector( ( state ) =>
 		isSitePublic ? getSiteProfilerReport( state, siteId, currentPageId ) : undefined
@@ -132,9 +139,45 @@ export const SitePerformance = () => {
 	}, [ dispatch, siteId ] );
 
 	const queryParams = useSelector( getCurrentQueryArguments );
+	const lastVisitedReportPageId = useSelector( ( state ) =>
+		siteId ? getSiteProfilerLastVisitedReport( state, siteId ) : undefined
+	);
 	const [ , setQuery, query ] = useDebouncedInput();
 	const { pages, isInitialLoading, savePerformanceReportUrl } = useSitePerformancePageReports( {
 		query,
+	} );
+
+	useEffect( () => {
+		let isCurrentPage = true;
+
+		if ( ! queryParams?.page_id && lastVisitedReportPageId ) {
+			const currentPath = window.location.pathname;
+			const currentQuery = new URLSearchParams( window.location.search );
+
+			if ( currentQuery.get( 'page_id' ) !== lastVisitedReportPageId ) {
+				// Use setTimeout to push this update to the end of the event queue
+				setTimeout( () => {
+					if ( isCurrentPage ) {
+						currentQuery.set( 'page_id', lastVisitedReportPageId );
+						page.replace( `${ currentPath }?${ currentQuery.toString() }` );
+					}
+				}, 0 );
+			}
+		}
+
+		return () => {
+			isCurrentPage = false;
+		};
+	}, [ queryParams?.page_id, lastVisitedReportPageId ] );
+
+	useEffect( () => {
+		if ( ! lastVisitedReportPageId ) {
+			if ( queryParams?.page_id ) {
+				dispatch( setSiteProfilerLastVisitedReport( siteId, String( queryParams.page_id ) ) );
+			} else {
+				dispatch( setSiteProfilerLastVisitedReport( siteId, '0' ) );
+			}
+		}
 	} );
 
 	const orderedPages = useMemo( () => {
@@ -145,7 +188,7 @@ export const SitePerformance = () => {
 		} );
 	}, [ pages, stats ] );
 
-	const currentPageId = queryParams?.page_id?.toString() ?? '0';
+	const currentPageId = queryParams?.page_id?.toString() || lastVisitedReportPageId || '0';
 	const filter = queryParams?.filter?.toString();
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 	const [ currentPage, setCurrentPage ] = useState< ( typeof pages )[ number ] >();
@@ -236,12 +279,13 @@ export const SitePerformance = () => {
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
-
 				if ( page_id ) {
 					setCurrentPage( pages.find( ( page ) => page.value === page_id ) );
+					dispatch( setSiteProfilerLastVisitedReport( siteId, page_id ) );
 					url.searchParams.set( 'page_id', page_id );
 				} else {
 					setCurrentPage( undefined );
+					dispatch( setSiteProfilerLastVisitedReport( siteId, '0' ) );
 					url.searchParams.delete( 'page_id' );
 				}
 
