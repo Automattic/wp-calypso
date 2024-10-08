@@ -87,6 +87,18 @@ const checkGtmInit = (): boolean => {
 	return 'dataLayer' in window && 'google_tag_manager' in window;
 };
 
+/**
+ * Assign a user via Explat, or get the user's assignment. If a user is assigned to the treatment
+ * group, we do not load trackers or fire tracking events. Note, this does not involve Tracks, only
+ * third-party trackers.
+ */
+const mayWeTrackUserExplat = (): boolean => {
+	// Replace this with an explat assignment and return a boolean for whether we should load
+	// trackers and fire off tracking events in the signup.
+	// Check if we're in Stepper or Signup.
+	return false;
+};
+
 export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {
 	ga: checkGtagInit,
 	gaEnhancedEcommerce: checkGtagInit,
@@ -113,7 +125,11 @@ const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
 };
 
 export const mayWeTrackGeneral = () =>
-	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
+	! isE2ETest() &&
+	! getDoNotTrack() &&
+	! isPiiUrl() &&
+	config.isEnabled( 'ad-tracking' ) &&
+	mayWeTrackUserExplat();
 
 export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	if ( ! mayWeTrackGeneral() ) {
