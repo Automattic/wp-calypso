@@ -114,6 +114,7 @@ const DataCenterPicker = ( {
 			{ isFormShowing && (
 				<Form>
 					<SelectControl
+						__nextHasNoMarginBottom
 						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
 						help={
 							hasEnTranslation(

@@ -181,6 +181,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							} ) }
 						</div>
 						<ToggleControl
+							__nextHasNoMarginBottom
 							className="cache-card__edge-cache-toggle"
 							checked={ isEdgeCacheActive && isEdgeCacheEligible }
 							disabled={ isClearingEdgeCache || isEdgeCacheLoading || ! isEdgeCacheEligible }
