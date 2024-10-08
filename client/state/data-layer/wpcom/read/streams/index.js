@@ -318,11 +318,23 @@ const streamApis = {
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
 		dateProperty: 'date',
-		query: ( extras ) =>
-			getQueryString( {
+		query: ( extras, { streamKey, pageHandle } ) => {
+			const { owner, slug } = JSON.parse( streamKeySuffix( streamKey ) );
+			return {
+				owner,
+				slug,
 				...extras,
-				alg_prefix: 'read:recommendations:posts',
-			} ),
+				...pageHandle,
+			};
+		},
+		pollQuery: ( extraFields = [], extraQueryParams = {}, { pageHandle } ) => {
+			return {
+				number: PER_POLL,
+				fields: [ SITE_LIMITER_FIELDS, ...extraFields ].join( ',' ),
+				...extraQueryParams,
+				...pageHandle,
+			};
+		},
 	},
 };
 
@@ -336,7 +348,6 @@ export function requestPage( action ) {
 		payload: { streamKey, streamType, pageHandle, isPoll, gap, localeSlug },
 	} = action;
 	const api = streamApis[ streamType ];
-	console.log( 'requestPage', pageHandle, api, action );
 
 	if ( ! api ) {
 		warn( `Unable to determine api path for ${ streamKey }` );
@@ -362,17 +373,17 @@ export function requestPage( action ) {
 	// There is a race condition in switchLocale when retrieving the language file
 	// The stream request can occur before the language file is loaded, so we need a way to explicitly set the lang in the request
 	const lang = localeSlug || i18n.getLocaleSlug();
-	const p = isPoll
+	const q = isPoll
 		? pollQuery( [], { ...algorithm } )
 		: query( { ...pageHandle, ...algorithm, number, lang }, action.payload );
-	console.log( 'p', p );
+	console.log( 'q', q );
 
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
 		apiNamespace: api.apiNamespace ?? null,
-		query: p,
+		query: q,
 		onSuccess: action,
 		onFailure: action,
 	} );
