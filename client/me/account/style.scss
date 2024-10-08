@@ -1,6 +1,4 @@
-.account .notice {
-	margin: 5px 0 0;
-}
+@import "@automattic/typography/styles/variables";
 
 .account__username-form-toggle-enter {
 	opacity: 0.01;
@@ -59,3 +57,24 @@ fieldset.account__settings-admin-home {
 	}
 }
 
+.account .form-input-validation {
+	padding-bottom: 0;
+}
+
+.account__confirm-username-dialog.dialog {
+	max-width: 600px;
+
+	.form-label {
+		font-size: $font-title-small;
+		margin-bottom: 16px;
+	}
+
+	p {
+		font-size: $font-body;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+}
