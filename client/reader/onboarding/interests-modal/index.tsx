@@ -9,7 +9,7 @@ interface InterestsModalProps {
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) => {
 	return (
 		isOpen && (
-			<Modal title="Select Your Interests" onRequestClose={ onClose } isFullScreen={ false }>
+			<Modal title="Select Your Interests" onRequestClose={ onClose } isFullScreen>
 				<p>Interest content here.</p>
 				<button onClick={ onClose }>Close</button>
 			</Modal>
