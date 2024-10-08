@@ -3,7 +3,7 @@ import { NextButton } from '@automattic/onboarding';
 import { CheckboxControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { Control, Controller, FieldError, useForm } from 'react-hook-form';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
@@ -111,6 +111,9 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 			otherDetails: '',
 		},
 	} );
+	const intents = watch( 'intents' );
+	const isOtherChecked = intents.includes( 'other' );
+	const errorMessage = errors?.root?.message ?? errors?.intents?.message;
 
 	useEffect( () => {
 		if ( error ) {
@@ -141,27 +144,14 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 		} );
 	} );
 
-	const intents = watch( 'intents' );
-	const isOtherChecked = intents.includes( 'other' );
-
-	const getErrorMessage = useCallback( () => {
-		if ( errors?.root?.message ) {
-			return errors.root.message;
-		}
-		if ( errors?.intents?.message ) {
-			return errors.intents.message;
-		}
-		return null;
-	}, [ errors ] );
-
 	return (
 		<div className="already-wpcom__form-container">
 			<form className="already-wpcom__form" onSubmit={ onSubmit }>
-				{ getErrorMessage() && (
+				{ errorMessage && (
 					<Notice
 						showIcon={ false }
 						status="is-warning"
-						text={ getErrorMessage() }
+						text={ errorMessage }
 						showDismiss={ false }
 						className="already-wpcom__form-error-notice"
 					/>
