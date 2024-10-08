@@ -97,13 +97,8 @@ export class LocaleSuggestions extends Component {
 }
 
 export default connect(
-	( state ) => (
-		{
-			localeSuggestions: getLocaleSuggestions( state ),
-		},
-		{
-			recordTracksEvent,
-		}
-	),
-	{ setLocale }
+	( state ) => ( {
+		localeSuggestions: getLocaleSuggestions( state ),
+	} ),
+	{ setLocale, recordTracksEvent }
 )( LocaleSuggestions );
