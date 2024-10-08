@@ -20,10 +20,11 @@ import {
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteDomain, isSimpleSite } from 'calypso/state/sites/selectors';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -138,7 +139,7 @@ export function requestSite( siteFragment ) {
 		return wpcom.site( siteFragment ).get( query );
 	}
 
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
 
 		const result = doRequest( false ).catch( ( error ) => {
@@ -158,7 +159,22 @@ export function requestSite( siteFragment ) {
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
 				if ( site && site.capabilities ) {
-					dispatch( receiveSite( omit( site, '_headers' ) ) );
+					const state = getState();
+					const wasSimple = isSimpleSite( state, siteFragment );
+					const isAtomic = site?.options?.is_wpcom_atomic;
+					const wasAdmin = canCurrentUser( state, siteFragment, 'manage_options' );
+					const isAdmin = site?.capabilities?.manage_options;
+
+					/*
+					 * Capabilities are not immediately propagated to the Atomic site
+					 * after transfer, so let's hold off updating the state until the
+					 * endpoint returns accurate data.
+					 */
+					if ( wasSimple && isAtomic && wasAdmin && ! isAdmin ) {
+						setTimeout( () => dispatch( requestSite( siteFragment ) ), 2000 );
+					} else {
+						dispatch( receiveSite( omit( site, '_headers' ) ) );
+					}
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );
