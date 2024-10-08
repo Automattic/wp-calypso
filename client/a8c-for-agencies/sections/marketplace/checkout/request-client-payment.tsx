@@ -210,7 +210,6 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				tabIndex={ 0 }
 				onMouseEnter={ () => setShowVerifyAccountToolip( true ) }
 				onMouseLeave={ () => setShowVerifyAccountToolip( false ) }
-				onMouseDown={ () => setShowVerifyAccountToolip( false ) }
 				onTouchStart={ () => setShowVerifyAccountToolip( true ) }
 			>
 				<Button
