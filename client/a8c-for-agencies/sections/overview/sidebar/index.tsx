@@ -1,5 +1,5 @@
 import OverviewSidebarContactSupport from './contact-support';
-import OverviewSidebarGrowthAccelerator from './growth-accelator';
+import OverviewSidebarGrowthAccelerator from './growth-accelerator';
 import OverviewSidebarQuickLinks from './quick-links';
 
 const OverviewSidebar = () => {
