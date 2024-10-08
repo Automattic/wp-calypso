@@ -1,8 +1,9 @@
 @use 'sass:math';
-@import "@wordpress/base-styles/breakpoints";
+// @import "@wordpress/base-styles/breakpoints";
 
 $column-gap: 19px; // Roughly 1.2rem, which is the gap in Gutenberg columns. This needs to be px for unit consistency in the math.div function.
-$column-min-width: math.div($reader-full-post-story-max-width - $reader-full-post-story-padding * 2 - $column-gap, 3); 
+// $column-min-width: math.div($reader-full-post-story-max-width - $reader-full-post-story-padding * 2 - $column-gap, 3);Roughly1.2rem,whichisthegapinGutenbergcolumns.Thisneedstobepxforunitconsistencyinthemath.divfunction.$column-min-width 
+$column-min-width: 220px; // TODO: Use vars based on content's width, padding, etc.
 
 .wp-block-columns {
 	display: flex;
@@ -26,7 +27,7 @@ $column-min-width: math.div($reader-full-post-story-max-width - $reader-full-pos
 	& > .wp-block-column {
 		flex-basis: 100%;
 
-		@media (min-width: $break-medium) {
+		@media (min-width: 782px) { // TODO: Use Gutenberg vars for breakpoint
 			flex-basis: 0;
 			min-width: $column-min-width; // This is the minimum width of a column in a 3-column layout.
 		}
