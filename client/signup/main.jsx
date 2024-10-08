@@ -567,8 +567,10 @@ class Signup extends Component {
 			debug( 'Tracking signup completion.', debugProps );
 			const isMapping = domainItem && isDomainMapping( domainItem );
 			const isTransfer = domainItem && isDomainTransfer( domainItem );
-			const isTransferOrMapping =
-				isTransfer || isMapping ? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN : undefined;
+			const signupDomainOriginValue =
+				isTransfer || isMapping
+					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
+					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -588,8 +590,7 @@ class Signup extends Component {
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 				isMapping: isMapping,
 				isTransfer: isTransfer,
-				signupDomainOrigin:
-					isTransferOrMapping || signupDomainOrigin || SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+				signupDomainOrigin: signupDomainOriginValue,
 			} );
 		}
 	};
