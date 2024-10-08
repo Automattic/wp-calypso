@@ -26,10 +26,11 @@ const getReferralInvoices = ( data: {
 
 				let isPaid = false;
 				let isDue = false;
-				if ( invoice.amount_due > 0 ) {
-					isDue = true;
-				} else if ( invoice.amount_paid > 0 ) {
+
+				if ( invoice.status === 'paid' ) {
 					isPaid = true;
+				} else if ( invoice.status === 'open' ) {
+					isDue = true;
 				}
 
 				acc.push( {
