@@ -204,7 +204,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === DESIGN_FIRST_FLOW || flow === NEWSLETTER_FLOW ) {
+		if ( flow === NEWSLETTER_FLOW || flow === DESIGN_FIRST_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
