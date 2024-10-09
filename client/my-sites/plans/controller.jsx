@@ -72,17 +72,24 @@ export function redirectToCheckout( context ) {
 }
 
 export function redirectToPlans( context ) {
+	console.log( 'hitting redirectToPlans' );
+
 	const siteDomain = context.params.domain;
 
 	if ( siteDomain ) {
+		console.log( 'redirectToPlans: siteDomain: ', siteDomain );
 		return page.redirect( `/plans/${ siteDomain }` );
 	}
+
+	console.log( 'redirectToPlans: redirecting to /plans' );
 
 	return page.redirect( '/plans' );
 }
 
 export function redirectToPlansIfNotJetpack( context, next ) {
+	console.log( 'hitting redirectToPlansIfNotJetpack' );
 	if ( ! showJetpackPlans( context ) ) {
+		console.log( 'redirectToPlansIfNotJetpack: redirecting to /plans' );
 		page.redirect( `/plans/${ context.params.site }` );
 	}
 	next();
