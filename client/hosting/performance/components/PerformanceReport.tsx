@@ -31,7 +31,7 @@ export const PerformanceReport = ( {
 	}
 
 	if ( isLoading ) {
-		return <PerformanceReportLoading isSavedReport={ !! hash } pageTitle={ pageTitle } />;
+		return <PerformanceReportLoading isSavedReport pageTitle={ pageTitle } />;
 	}
 
 	if ( ! performanceReport ) {
