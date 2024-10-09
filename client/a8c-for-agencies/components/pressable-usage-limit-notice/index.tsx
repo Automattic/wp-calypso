@@ -55,11 +55,12 @@ export const PressableUsageLimitNotice = () => {
 		return null;
 	}
 
+	const level = pressablePlanUsageLimitExceeded ? 'warning' : 'info';
 	const learnMoreLink = ''; // TODO: Replace with actual link
 
 	return (
 		<LayoutBanner
-			level="warning"
+			level={ level }
 			title={ translate( 'Upgrade Pressable' ) }
 			onClose={ dismissNotice }
 			className="pressable-usage-limit-notice"
