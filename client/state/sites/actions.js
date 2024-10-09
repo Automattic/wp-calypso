@@ -159,17 +159,21 @@ export function requestSite( siteFragment ) {
 				// If we can't manage the site, don't add it to state.
 				if ( site && site.capabilities ) {
 					const state = getState();
+
 					const wasAtomic = state?.sites?.items?.[ siteFragment ]?.options?.is_wpcom_atomic;
 					const isAtomic = site?.options?.is_wpcom_atomic;
+					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
+
 					const wasAdmin = state?.currentUser?.capabilities?.[ siteFragment ]?.manage_options;
 					const isAdmin = site?.capabilities?.manage_options;
+					const hasMismatchingCapabilities = wasAdmin && ! isAdmin;
 
 					/*
 					 * Capabilities are not immediately propagated to the Atomic site
 					 * after transfer, so let's hold off updating the state until the
 					 * endpoint returns accurate data.
 					 */
-					if ( ! wasAtomic && isAtomic && wasAdmin && ! isAdmin ) {
+					if ( hasSiteTransferredToAtomic && hasMismatchingCapabilities ) {
 						setTimeout( () => dispatch( requestSite( siteFragment ) ), 2000 );
 					} else {
 						dispatch( receiveSite( omit( site, '_headers' ) ) );
