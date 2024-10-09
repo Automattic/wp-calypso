@@ -56,7 +56,8 @@ export const PressableUsageLimitNotice = () => {
 	}
 
 	const level = pressablePlanUsageLimitExceeded ? 'warning' : 'info';
-	const learnMoreLink = ''; // TODO: Replace with actual link
+	// todo: add learn more link
+	const learnMoreLink = false;
 
 	return (
 		<LayoutBanner
@@ -87,19 +88,22 @@ export const PressableUsageLimitNotice = () => {
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
-				<Button
-					variant="secondary"
-					target="_blank"
-					href={ learnMoreLink }
-					onClick={ () => {
-						dispatch(
-							recordTracksEvent( 'calypso_a4a_pressable_limit_notification_learn_more_click' )
-						);
-					} }
-				>
-					{ translate( 'Learn more' ) }
-					<Icon icon={ external } size={ 18 } />
-				</Button>
+
+				{ learnMoreLink && (
+					<Button
+						variant="secondary"
+						target="_blank"
+						href={ learnMoreLink }
+						onClick={ () => {
+							dispatch(
+								recordTracksEvent( 'calypso_a4a_pressable_limit_notification_learn_more_click' )
+							);
+						} }
+					>
+						{ translate( 'Learn more' ) }
+						<Icon icon={ external } size={ 18 } />
+					</Button>
+				) }
 			</div>
 		</LayoutBanner>
 	);
