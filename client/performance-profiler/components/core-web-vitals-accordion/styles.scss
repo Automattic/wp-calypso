@@ -1,34 +1,96 @@
+@import "@automattic/components/src/styles/typography";
+
 $blueberry-color: #3858e9;
 
 .core-web-vitals-accordion {
 	.core-web-vitals-accordion__card {
+		margin: 0;
 		border-top: 0;
 		.foldable-card__content {
 			border-top: 0;
 		}
+
 		&.foldable-card {
 			box-shadow: none;
-			border-top: 1px solid var(--studio-gray-5);
+			border: 1px solid var(--studio-gray-5);
+
+			.foldable-card__header {
+				padding: 16px 22px;
+
+				button.foldable-card__action {
+					display: flex;
+					align-items: start;
+					margin-top: 20px;
+				}
+			}
 
 			&:last-child {
-				border-bottom: 1px solid var(--studio-gray-5);
+				/* stylelint-disable-next-line scales/radii */
+				border-bottom-right-radius: 6px;
+				/* stylelint-disable-next-line scales/radii */
+				border-bottom-left-radius: 6px;
+			}
+
+			&:nth-child(2) {
+				/* stylelint-disable-next-line scales/radii */
+				border-top-left-radius: 6px;
+				/* stylelint-disable-next-line scales/radii */
+				border-top-right-radius: 6px;
 			}
 
 			&.is-expanded .foldable-card__content {
 				border-top: 0;
 				max-height: fit-content;
+				margin: 0;
+			}
+
+			&:not(.is-expanded) {
+				border-bottom: 1px solid var(--studio-gray-5);
+
+				&:not(:nth-child(-n+2)) {
+					border-top: none;
+				}
+			}
+
+			&.is-expanded {
+				margin: 0;
+
+				.core-web-vitals-accordion__header-text {
+					font-family: $font-sf-pro-display;
+					font-size: 1rem;
+					font-weight: 500;
+				}
+			}
+
+			&.is-expanded:not(:nth-child(-n+2)) {
+				border-top: none;
 			}
 		}
-		.core-web-vitals-display__details {
-			border: 0;
+	}
+
+	.core-web-vitals-accordion__card--overall {
+		margin-bottom: 24px;
+
+		.card.is-compact {
+			margin-bottom: 24px;
+		}
+
+		&.foldable-card {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 6px;
+			&.is-expanded {
+				margin-bottom: 24px;
+			}
 		}
 	}
+
 
 }
 
 .core-web-vitals-accordion__header {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: start;
 	gap: 6px;
 	width: 100%;
 }
@@ -36,7 +98,31 @@ $blueberry-color: #3858e9;
 .core-web-vitals-accordion__header-text {
 	display: flex;
 	justify-content: space-between;
+	flex-direction: column;
 	flex-basis: 100%;
+}
+
+.core-web-vitals-accordion__header-text-name {
 	font-weight: 500;
+}
+
+.core-web-vitals-accordion__header-text-value {
+
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header-small;
+	margin-top: 6px;
+
+
+	&.good {
+		color: #00ba37;
+	}
+
+	&.needs-improvement {
+		color: #d67709;
+	}
+
+	&.bad {
+		color: #d63638;
+	}
 }
 
