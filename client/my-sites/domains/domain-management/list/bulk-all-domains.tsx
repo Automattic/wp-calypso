@@ -1,14 +1,12 @@
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useSelector, useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { useSelector } from 'calypso/state';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader from '../components/domain-header';
 import {
@@ -22,6 +20,7 @@ import {
 import EmptyState from './empty-state';
 import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import OptionsDomainButton from './options-domain-button';
+import { useNewDomainsNotification } from './use-new-domains-notification';
 import { usePurchaseActions } from './use-purchase-actions';
 
 import './style.scss';
@@ -34,7 +33,6 @@ interface BulkAllDomainsProps {
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains = [], isFetched, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 	const sitesDashboardGlobalStyles = css`
 		html {
@@ -320,25 +318,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		: [];
 	const purchaseActions = usePurchaseActions();
 
-	// Domain purhcases provide a new domain flag on checkout completion
-	// e.g. /domains/manage/example.wordpress.com?new-domains=2
-	const queryParams = new URLSearchParams( window.location.search );
-	const newDomains = queryParams.get( 'new-domains' );
-	useEffect( () => {
-		if ( newDomains ) {
-			dispatch(
-				successNotice(
-					translate( 'Your domain is being setup.', 'Your domains are being set up.', {
-						count: parseInt( newDomains ),
-					} ),
-					{
-						duration: 10000,
-					}
-				)
-			);
-		}
-	}, [ newDomains, dispatch, translate ] );
-
+	useNewDomainsNotification();
 	return (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
