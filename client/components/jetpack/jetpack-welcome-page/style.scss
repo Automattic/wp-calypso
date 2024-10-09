@@ -3,9 +3,15 @@
 @import "@wordpress/base-styles/variables";
 
 .jetpack-welcome-page {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	margin-top: -32px;
+	height: 100vh;
+
 	&.main.is-wide-layout {
 		max-width: 744px;
-		margin-top: 8vw;
 	}
 
 	&__card {
