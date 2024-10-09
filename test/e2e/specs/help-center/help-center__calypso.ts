@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { Browser, Page, Locator } from 'playwright';
+import { Browser, BrowserContext, Page, Locator } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
@@ -18,13 +18,15 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;
+	let context: BrowserContext;
 	let testAccount: TestAccount;
 	let helpCenterComponent: HelpCenterComponent;
 	let helpCenterLocator: Locator;
 
 	// Setup the page and test account
 	beforeAll( async function () {
-		page = await browser.newPage();
+		context = await browser.newContext();
+		page = await context.newPage();
 
 		testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page, { waitUntilStable: true } );
@@ -41,7 +43,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 
 	// Close the page after the tests
 	afterAll( async function () {
-		await page.close();
+		await context.close();
 	} );
 
 	/**

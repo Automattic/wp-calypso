@@ -224,8 +224,6 @@ export class HelpCenterComponent {
 	 * @returns {Promise<void>}
 	 */
 	async setOdieTestMode(): Promise< void > {
-		console.log( 'Setting Odie to staging environment' );
-
 		// Rewrite the Odie POST request to make sure it's in test mode.
 		await this.page.route( '**/odie/chat/*', async ( route, request ) => {
 			const postBody = JSON.parse( request.postData() || '{}' );
