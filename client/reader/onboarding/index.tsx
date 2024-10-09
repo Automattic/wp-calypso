@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -38,8 +39,14 @@ const ReaderOnboarding = () => {
 		<>
 			<div className="reader-onboarding">
 				<div className="reader-onboarding__intro-column">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						numberOfSteps={ tasks.length }
+						currentStep={ tasks.filter( ( task ) => task.completed ).length }
+					/>
 					<h2>{ translate( 'Your personal reading adventure' ) }</h2>
-					<p>{ translate( 'Tailor your feed, connect with your favorite topics' ) }</p>
+					<p>{ translate( 'Tailor your feed, connect with your favorite topics.' ) }</p>
 				</div>
 				<div className="reader-onboarding__steps-column">
 					<Checklist>
