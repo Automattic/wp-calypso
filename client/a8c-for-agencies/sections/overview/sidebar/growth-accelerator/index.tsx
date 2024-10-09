@@ -10,6 +10,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 
 import './style.scss';
 
+const GROWTH_ACCELERATOR_REQUESTED_PREFERENCE = 'a4a_growth_accelerator_requested';
 const GROWTH_ACCELERATOR_DISMISSED_PREFERENCE = 'a4a_growth_accelerator_dismissed';
 
 export default function OverviewSidebarGrowthAccelerator() {
@@ -19,6 +20,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 
 	const onRequestCallClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_overview_growth_accelerator_schedule_call_click' ) );
+		dispatch( savePreference( GROWTH_ACCELERATOR_REQUESTED_PREFERENCE, true ) );
 	}, [ dispatch ] );
 
 	const onNotInterestedClick = useCallback( () => {
@@ -28,6 +30,10 @@ export default function OverviewSidebarGrowthAccelerator() {
 
 	const isDismissed = useSelector( ( state ) =>
 		getPreference( state, GROWTH_ACCELERATOR_DISMISSED_PREFERENCE )
+	);
+
+	const hasRequested = useSelector( ( state ) =>
+		getPreference( state, GROWTH_ACCELERATOR_REQUESTED_PREFERENCE )
 	);
 
 	if ( isDismissed ) {
@@ -63,7 +69,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 					variant="link"
 					onClick={ onNotInterestedClick }
 				>
-					{ translate( "I'm not interested" ) }
+					{ hasRequested ? translate( 'Dismiss' ) : translate( "I'm not interested" ) }
 				</Button>
 			</div>
 		</Card>
