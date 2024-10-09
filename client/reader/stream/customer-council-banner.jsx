@@ -9,10 +9,11 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	const {
-		data: { is_following: alreadySubscribed },
+		data: p2,
 		isFetched: checkedAlreadySubscribed,
 		isFetching: checkingAlreadySubscribed,
 	} = Reader.useReadFeedSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) );
+	const alreadySubscribed = p2?.is_following;
 
 	const hideBanner = ( alreadySubscribed && checkedAlreadySubscribed ) || checkingAlreadySubscribed;
 
