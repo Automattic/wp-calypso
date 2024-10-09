@@ -1,0 +1,20 @@
+@import "../../variables";
+
+.bluesky-preview__post-actions {
+	margin-top: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	& > div {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		color: rgb(111, 134, 159);
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}

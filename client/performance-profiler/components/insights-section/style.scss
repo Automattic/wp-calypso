@@ -22,12 +22,16 @@
 		font-size: 1rem;
 		font-weight: 500;
 		margin-bottom: 8px;
+		width: fit-content;
 	}
 
 	.subtitle {
 		color: var(--studio-gray-70);
 		font-size: $font-body;
 		margin-bottom: 0;
+		@media (max-width: $break-xlarge) {
+			max-width: 360px;
+		}
 	}
 
 	.metrics-insight-item.foldable-card {

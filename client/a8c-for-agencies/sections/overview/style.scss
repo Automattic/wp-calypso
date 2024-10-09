@@ -6,8 +6,6 @@
 }
 
 .a4a-overview-header {
-	padding-block-end: 32px;
-
 	@include breakpoint-deprecated( "<660px" ) {
 		padding-block-end: 0;
 	}

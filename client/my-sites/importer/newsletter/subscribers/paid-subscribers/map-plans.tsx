@@ -15,6 +15,8 @@ import { getProductsForSiteId } from 'calypso/state/memberships/product-list/sel
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from './../start-import-button';
 import { MapPlan, TierToAdd } from './map-plan';
+import NoPlans from './no-plans';
+import SuccessNotice from './success-notice';
 
 function formatCurrencyFloat( amount: number, currency: string ) {
 	const formattedCurrency = formatCurrency( amount, currency, {
@@ -119,7 +121,15 @@ export default function MapPlans( {
 
 	// TODO what if those plans are undefined?
 	if ( ! monthyPlan || ! annualPlan ) {
-		return;
+		return (
+			<NoPlans
+				cardData={ cardData }
+				selectedSite={ selectedSite }
+				engine={ engine }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+			/>
+		);
 	}
 
 	const tierToAdd = {
@@ -148,8 +158,11 @@ export default function MapPlans( {
 		setProductToAdd( tierToAdd );
 	};
 
+	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
+
 	return (
 		<>
+			<SuccessNotice allEmailsCount={ allEmailsCount } />
 			<h2>Paid subscribers</h2>
 			<p>
 				<strong>

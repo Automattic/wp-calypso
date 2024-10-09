@@ -2,9 +2,8 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-hosted-site,
-.migration :not(:has(.list__wrapper)):not(.site-migration-instructions--launchpad),
 .site-migration :not(.site-migration-instructions--launchpad),
-.import-focused.migrate-message {
+.migrate-message {
 	.step-container__header {
 		margin: auto;
 		max-width: 720px;
@@ -50,9 +49,7 @@
 			}
 		}
 
-		svg {
-			fill: var(--studio-blue-50);
-		}
+
 	}
 
 	.wpcom__loading-ellipsis {

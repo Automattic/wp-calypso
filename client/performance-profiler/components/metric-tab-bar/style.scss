@@ -5,53 +5,52 @@ $blueberry-color: #3858e9;
 
 .metric-tab-bar {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
+	min-width: 250px;
+	align-self: self-start;
 
 	button {
 		color: inherit;
 	}
+
 }
 
 .metric-tab-bar__tab {
 	display: flex;
 	gap: 6px;
-	padding: 12px 16px;
-	background: var(--studio-white);
-	border: 1px solid var(--studio-white);
 	text-align: initial;
 	flex-grow: 1;
+	padding: 16px 22px 16px 22px;
+	width: 100%;
+	border: 1px solid transparent;
+	&:not(.active) {
+		border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+
+		&:not(:nth-child(-n+2)) {
+			border-top-color: transparent;
+		}
+
+		&:last-child {
+			border-bottom-color: transparent;
+		}
+
+		&.metric-tab-bar__performance {
+			border-bottom-color: transparent;
+		}
+
+	}
 
 	&.active {
 		/* stylelint-disable-next-line scales/radii */
-		border-radius: 6px 6px 0 0;
-		border: 1px solid var(--studio-gray-5);
-		border-bottom: none;
+		border-radius: 6px;
+		border-color: transparent;
+		outline: 1.5px solid $blueberry-color;
 		position: relative;
 
-		&::before,
-		&::after {
-			position: absolute;
-			width: 6px;
-			height: 6px;
-			bottom: 0;
-			content: "";
+		& + .metric-tab-bar__tab {
+			border-top-color: transparent;
 		}
-
-		&::before {
-			left: -6px;
-			background-image: url(calypso/assets/images/performance-profiler/menu-bar-left-border.svg);
-		}
-
-		&::after {
-			right: -6px;
-			background-image: url(calypso/assets/images/performance-profiler/menu-bar-right-border.svg);
-		}
-	}
-
-	&.active:first-child::before,
-	&.active:last-child::after {
-		display: none;
 	}
 
 	&:hover {
@@ -62,13 +61,13 @@ $blueberry-color: #3858e9;
 
 .metric-tab-bar__tab-status {
 	line-height: normal;
+	display: none;
 }
 
 .metric-tab-bar__tab-text {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-
 }
 
 .metric-tab-bar__tab-header {
@@ -78,5 +77,34 @@ $blueberry-color: #3858e9;
 }
 .metric-tab-bar__tab-metric {
 	font-family: $font-sf-pro-display;
-	font-size: $font-size-header;
+	font-size: $font-size-header-small;
+
+	&.good {
+		color: $studio-green-30;
+	}
+
+	&.needs-improvement {
+		color: $studio-orange-40;
+	}
+
+	&.bad {
+		color: $studio-red-50;
+	}
+}
+
+.metric-tab-bar__performance {
+	margin-bottom: 16px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	outline: 1px solid var(--studio-gray-5);
+}
+
+.metric-tab-bar__tab-container {
+	border: 1px solid var(--studio-gray-5);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+
+	.metric-tab-bar__tab:has(+ .metric-tab-bar__tab.active) {
+		border-bottom-color: transparent;
+	}
 }

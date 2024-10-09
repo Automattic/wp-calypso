@@ -1,6 +1,8 @@
 import debugFactory from 'debug';
 import wpcom from 'calypso/lib/wp';
+import { getCancelPurchaseSurveyCompletedPreferenceKey } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 
@@ -58,6 +60,10 @@ export const submitSurvey = ( surveyName, siteId, surveyData ) => ( dispatch ) =
 			}
 		} )
 		.catch( ( err ) => debug( err ) ); // shouldn't get here
+};
+
+export const cancelPurchaseSurveyCompleted = ( purchaseId ) => ( dispatch ) => {
+	savePreference( getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId ), true )( dispatch );
 };
 
 export function disableAutoRenew( purchaseId, onComplete ) {

@@ -1027,6 +1027,7 @@ body.is-mobile-app-view {
 		display: flex;
 		flex-direction: row;
 		gap: 12px;
+		padding: 4px 3px;
 
 		.masterbar__item-howdy-account-gravatar {
 			border: none;
@@ -1042,16 +1043,22 @@ body.is-mobile-app-view {
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
-			padding: 0;
+			padding: 3px 5px;
 			margin: 0;
 			line-height: 18px;
+
+			.username {
+				font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				line-height: 14px;
+				margin-bottom: 4px;
+			}
 		}
 	}
 
 	.masterbar__item-subitems {
 		min-width: 264px !important;
 		max-height: 94px;
-		padding: 12px 0 0 0;
+		padding: 12px 0;
 
 		@media only screen and (max-width: 781px) {
 			min-width: 100% !important;
@@ -1064,8 +1071,8 @@ body.is-mobile-app-view {
 		&.logout-link {
 			position: relative;
 			float: left;
-			top: -35px;
-			left: 79px;
+			top: -5px;
+			left: 85px;
 		}
 	}
 
@@ -1480,58 +1487,5 @@ a.masterbar__quick-language-switcher {
 
 	100% {
 		opacity: 1;
-	}
-}
-
-.popover.masterbar__reader-popover {
-	z-index: 176;
-
-	.popover__arrow::before {
-		--color-border-inverted: var(--color-neutral-100);
-	}
-
-	.popover__arrow {
-		border: 10px dashed var(--color-neutral-70) !important;
-		border-bottom-style: solid !important;
-		border-top: none !important;
-		border-left-color: transparent !important;
-		border-right-color: transparent !important;
-	}
-	.popover__inner {
-		display: flex;
-		gap: 16px;
-		padding: 16px;
-		flex-direction: column;
-		align-items: flex-start;
-		border-radius: 4px !important;
-		background-color: var(--color-neutral-100) !important;
-		border: 1px solid var(--color-neutral-70) !important;
-		left: 0 !important;
-	}
-
-	.masterbar__reader-popover-heading {
-		font-size: rem(16px);
-		color: var(--color-text-inverted);
-		font-weight: 500;
-	}
-
-	.masterbar__reader-popover-description {
-		max-width: 325px;
-		margin-top: -8px;
-		margin-bottom: 0;
-		font-size: rem(13px);
-		color: var(--color-neutral-0);
-		text-align: left;
-	}
-
-	.masterbar__reader-popover-actions {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		width: 100%;
-		button {
-			padding: 4px 8px;
-			font-size: rem(13px);
-		}
 	}
 }

@@ -3,25 +3,16 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
-import OdieAssistantProvider, {
-	OdieAssistant,
-	useOdieAssistantContext,
-	EllipsisMenu,
-	isOdieAllowedBot,
-} from '@automattic/odie-client';
+import OdieAssistantProvider, { OdieAssistant, isOdieAllowedBot } from '@automattic/odie-client';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import React, { useCallback } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 /**
  * Internal Dependencies
  */
-import { BackButtonHeader } from './back-button';
 import { ExtraContactOptions } from './help-center-extra-contact-option';
 import './help-center-odie.scss';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -48,26 +39,6 @@ const ProtectedRoute: React.FC< ProtectedRouteProps > = ( {
 		return <Navigate to={ redirectPath } replace />;
 	}
 	return children;
-};
-
-const OdieEllipsisMenu = () => {
-	const { __ } = useI18n();
-	const { clearChat } = useOdieAssistantContext();
-
-	return (
-		<EllipsisMenu
-			popoverClassName="help-center help-center__container-header-menu"
-			position="bottom"
-		>
-			<PopoverMenuItem
-				onClick={ clearChat }
-				className="help-center help-center__container-header-menu-item"
-			>
-				<Gridicon icon="comment" />
-				{ __( 'Clear Conversation' ) }
-			</PopoverMenuItem>
-		</EllipsisMenu>
-	);
 };
 
 export function HelpCenterOdie( {
@@ -141,11 +112,6 @@ export function HelpCenterOdie( {
 				isUserEligible={ isUserEligible }
 			>
 				<div className="help-center__container-content-odie">
-					<div className="help-center__container-odie-header">
-						<BackButtonHeader className="help-center__container-odie-back-button">
-							<OdieEllipsisMenu />
-						</BackButtonHeader>
-					</div>
 					<OdieAssistant />
 				</div>
 			</OdieAssistantProvider>

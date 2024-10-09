@@ -7,6 +7,7 @@ import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
+import { BackButton } from './back-button';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -57,13 +58,19 @@ const SupportModeTitle = () => {
 
 const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
+	const { pathname, key } = useLocation();
+	const isHelpCenterHome = key === 'default';
+
+	const headerText =
+		pathname === '/odie' || pathname === '/contact-form'
+			? __( 'Wapuu', __i18n_text_domain__ )
+			: __( 'Help Center', __i18n_text_domain__ );
 
 	return (
 		<>
-			<span id="header-text" className="help-center-header__text" role="presentation">
-				<DragIcon />
-
-				{ __( 'Help Center', __i18n_text_domain__ ) }
+			{ isHelpCenterHome ? <DragIcon /> : <BackButton /> }
+			<span id="header-text" role="presentation" className="help-center-header__text">
+				{ headerText }
 			</span>
 			<Button
 				className="help-center-header__minimize"

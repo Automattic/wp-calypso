@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -50,6 +51,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
+			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -118,6 +120,7 @@ const siteMigration: Flow = {
 			true
 		);
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
+		const isEnglishLocale = useIsEnglishLocale();
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -421,22 +424,32 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action } = providedDependencies as {
-						action: 'skip' | 'submit';
+					const { action, from } = providedDependencies as {
+						action: 'skip' | 'submit' | 'already-wpcom';
+						from: string;
 					};
 
 					if ( action === 'skip' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: fromQueryParam, siteSlug },
+								{ siteId, from: from || fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							)
+						);
+					}
+
+					if ( isEnglishLocale && action === 'already-wpcom' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: from || fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug
 							)
 						);
 					}
 
 					return navigate(
 						addQueryArgs(
-							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
 							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 						)
 					);
@@ -455,6 +468,15 @@ const siteMigration: Flow = {
 							)
 						);
 					}
+				}
+
+				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
 				}
 			}
 		}

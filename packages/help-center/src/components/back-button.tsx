@@ -1,31 +1,15 @@
-import { Button, Flex, FlexItem } from '@wordpress/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 
 import './back-button.scss';
 
-export type BackButtonProps = {
-	onClick?: () => void;
-	backToRoot?: boolean;
-	className?: string;
-	children?: React.ReactNode;
-};
-
-export const BackButton = ( { onClick, backToRoot = false, className }: BackButtonProps ) => {
-	const { __ } = useI18n();
-	const { key } = useLocation();
+export const BackButton = () => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
-	const buttonClassName = clsx( 'back-button__help-center', className );
+	const { pathname } = useLocation();
 
-	function defaultOnClick() {
-		if ( backToRoot ) {
-			navigate( '/' );
-		} else if ( key === 'default' ) {
-			// Workaround to detect when we don't have prior history
-			// https://github.com/remix-run/react-router/discussions/9922#discussioncomment-4722480
+	function handleClick() {
+		if ( pathname === '/success' ) {
 			navigate( '/' );
 		} else if ( searchParams.get( 'query' ) ) {
 			navigate( `/?query=${ searchParams.get( 'query' ) }` );
@@ -35,22 +19,13 @@ export const BackButton = ( { onClick, backToRoot = false, className }: BackButt
 	}
 
 	return (
-		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
-			<Icon icon={ chevronLeft } size={ 18 } />
-			{ __( 'Back', __i18n_text_domain__ ) }
-		</Button>
-	);
-};
-
-export const BackButtonHeader = ( { children, className }: BackButtonProps ) => {
-	return (
-		<div className={ clsx( 'help-center-back-button__header', className ) }>
-			<Flex justify="space-between">
-				<FlexItem>
-					<BackButton />
-				</FlexItem>
-				{ children }
-			</Flex>
-		</div>
+		<span className="back-button__help-center">
+			<Icon
+				data-testid="back-button-icon"
+				onClick={ handleClick }
+				icon={ chevronLeft }
+				size={ 18 }
+			/>
+		</span>
 	);
 };

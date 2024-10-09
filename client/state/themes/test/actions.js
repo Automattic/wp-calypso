@@ -1167,7 +1167,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success', () => {
 			return initiateThemeTransfer( siteId )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledTimes( 3 );
+				expect( spy ).toHaveBeenCalledTimes( 4 );
 
 				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {

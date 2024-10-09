@@ -27,9 +27,10 @@ import {
 } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const getNextStep = ( currentStep: string, steps: string[] ): string | undefined => {
-	const currentStepIndex = steps.indexOf( currentStep );
-	const nextStep = steps[ currentStepIndex + 1 ];
+const getNextStep = ( currentStep: string, steps: StepperStep[] ): string | undefined => {
+	const stepsIndex = steps.map( ( step ) => step.slug );
+	const currentStepIndex = stepsIndex.indexOf( currentStep );
+	const nextStep = stepsIndex[ currentStepIndex + 1 ];
 
 	return nextStep;
 };
@@ -54,7 +55,8 @@ const pluginBundleFlow: Flow = {
 		}
 		return [ ...initialBundleSteps, ...bundlePluginSteps ];
 	},
-	useStepNavigation( currentStep, navigate, steps = [] ) {
+	useStepNavigation( currentStep, navigate ) {
+		const steps = this.useSteps();
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]

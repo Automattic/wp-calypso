@@ -7,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -14,6 +15,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from '../constants';
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -46,13 +48,13 @@ function getPlanFromRecurType( recurType: string ) {
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	isSignupFlow: true,
-	useSignupStartEventProps() {
+	useTracksEventProps() {
 		const recur = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
 			[]
 		);
 
-		return { recur };
+		return useMemo( () => ( { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { recur } } ), [ recur ] );
 	},
 	useSteps() {
 		const steps = [

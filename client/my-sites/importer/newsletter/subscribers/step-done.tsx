@@ -4,7 +4,8 @@ import ImporterActionButton from '../../importer-action-buttons/action-button';
 import { SubscribersStepProps } from '../types';
 
 export default function StepDone( { cardData, nextStepUrl }: SubscribersStepProps ) {
-	const subscribedCount = parseInt( cardData.meta?.subscribed_count || '0' );
+	const subscribedCount = parseInt( cardData?.meta?.email_count || '0' );
+
 	return (
 		<Card>
 			<h2>Import your subscribers to WordPress.com</h2>

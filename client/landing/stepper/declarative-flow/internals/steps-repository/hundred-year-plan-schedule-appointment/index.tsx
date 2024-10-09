@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { UserSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { USER_STORE } from '../../../../stores';
 import CalendlyWidget from '../components/calendy-widget';
@@ -16,7 +15,6 @@ const HundredYearPlanScheduleAppointment: Step = function HundredYearPlanSchedul
 } ) {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { submit } = navigation;
-	const translate = useTranslate();
 
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
@@ -48,8 +46,8 @@ const HundredYearPlanScheduleAppointment: Step = function HundredYearPlanSchedul
 			formattedHeader={
 				<FormattedHeader
 					brandFont
-					headerText={ translate( 'TODO: title' ) }
-					subHeaderText={ translate( 'TODO: header' ) }
+					headerText="TODO: title"
+					subHeaderText="TODO: header"
 					subHeaderAlign="center"
 				/>
 			}

@@ -256,7 +256,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 		Promise.resolve()
 			.then( () =>
 				reduxDispatch(
-					activateOrInstallThenActivate( themeId, siteId, 'assembler', false ) as ThunkAction<
+					activateOrInstallThenActivate( themeId, siteId, { source: 'assembler' } ) as ThunkAction<
 						PromiseLike< string >,
 						any,
 						any,

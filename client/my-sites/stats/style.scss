@@ -6,6 +6,21 @@
 
 $stats-card-min-width: 390px;
 
+// Force any JITM from Jetpack to be hidden.
+// We currently manage our own CTAs across Stats pages.
+
+.jetpack-jitm-message {
+	display: none;
+}
+
+// TODO: Add this DIV to all tabs.
+// Currently only on the Traffic page.
+// JITMs will show above the Stats UI on other tabs.
+
+#jp-admin-notices {
+	display: none;
+}
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {

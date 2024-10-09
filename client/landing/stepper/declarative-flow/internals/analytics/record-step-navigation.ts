@@ -22,6 +22,7 @@ const EXCLUDED_DEPENDENCIES = [
 	'password',
 	'password_confirm',
 	'domainCart',
+	'suggestion',
 ];
 
 export function recordStepNavigation( {

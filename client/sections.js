@@ -416,6 +416,7 @@ const sections = [
 		group: 'reader',
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
+		isomorphic: true,
 	},
 	{
 		name: 'reader',

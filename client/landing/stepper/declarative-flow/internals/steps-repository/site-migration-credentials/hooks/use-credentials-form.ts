@@ -1,31 +1,46 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { UrlData } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wp from 'calypso/lib/wp';
 import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 
-export const useCredentialsForm = ( onSubmit: () => void ) => {
-	const importSiteQueryParam = useQuery().get( 'from' ) || '';
-	const [ canBypassVerification, setCanBypassVerification ] = useState( false );
+export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
+	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
+	const [ isBusy, setIsBusy ] = useState( false );
+
+	const analyzeUrl = useCallback( async ( domain: string ): Promise< UrlData | undefined > => {
+		try {
+			return await wp.req.get( {
+				path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
+				apiNamespace: 'wpcom/v2',
+			} );
+		} catch ( error ) {
+			return undefined;
+		}
+	}, [] );
 
 	const {
-		isPending,
-		mutate: requestAutomatedMigration,
+		mutateAsync: requestAutomatedMigration,
 		error,
 		isSuccess,
 		variables,
+		reset,
 	} = useSiteMigrationCredentialsMutation();
 
-	const serverSideError = useFormErrorMapping( error, variables );
+	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
 	const {
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		control,
 		handleSubmit,
 		watch,
@@ -33,7 +48,7 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
-		disabled: isPending,
+		disabled: isBusy,
 		defaultValues: {
 			from_url: importSiteQueryParam,
 			username: '',
@@ -45,67 +60,92 @@ export const useCredentialsForm = ( onSubmit: () => void ) => {
 		errors: serverSideError,
 	} );
 
-	const accessMethod = watch( 'migrationType' );
+	useEffect( () => {
+		setIsBusy( isSubmitting );
+	}, [ isSubmitting ] );
+
+	const isWpcom = useMemo( () => !! siteInfo?.platform_data?.is_wpcom, [ siteInfo ] );
+
+	const canBypassVerification = useMemo( () => {
+		const credentialsVerificationFailed =
+			error?.code === 'automated_migration_tools_login_and_get_cookies_test_failed';
+		return credentialsVerificationFailed || isWpcom;
+	}, [ error, isWpcom ] );
+
+	const submitHandler = useCallback(
+		async ( data: CredentialsFormData ) => {
+			clearErrors();
+
+			const payload = {
+				...data,
+				bypassVerification: canBypassVerification || ! isEnglishLocale,
+			};
+
+			const siteInfoResult = canBypassVerification ? siteInfo : await analyzeUrl( data.from_url );
+			setSiteInfo( siteInfoResult );
+
+			if ( siteInfoResult?.platform_data?.is_wpcom && ! canBypassVerification ) {
+				return;
+			}
+
+			try {
+				await requestAutomatedMigration( payload );
+			} catch ( error ) {
+				// Do nothing, error is handled by the form.
+			}
+		},
+		[
+			requestAutomatedMigration,
+			canBypassVerification,
+			isEnglishLocale,
+			clearErrors,
+			analyzeUrl,
+			siteInfo,
+		]
+	);
+
+	const getContinueButtonText = useCallback( () => {
+		if ( isEnglishLocale && isSubmitting && ! canBypassVerification ) {
+			return translate( 'Verifying credentials' );
+		}
+		if ( isEnglishLocale && canBypassVerification ) {
+			return translate( 'Continue anyways' );
+		}
+		return translate( 'Continue' );
+	}, [ isSubmitting, canBypassVerification, isEnglishLocale, translate ] );
 
 	useEffect( () => {
 		if ( isSuccess ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
-			onSubmit();
+			onSubmit( siteInfo );
+		} else if ( error ) {
+			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 		}
-	}, [ isSuccess, onSubmit ] );
+	}, [ isSuccess, error, onSubmit, siteInfo ] );
 
 	useEffect( () => {
-		if ( ! error ) {
-			return;
-		}
+		const { unsubscribe } = watch( ( formData, changedField ) => {
+			if ( changedField?.name === 'from_url' && formData?.from_url ) {
+				setSiteInfo( undefined );
+				clearErrors( 'from_url' );
+			}
 
-		recordTracksEvent( 'calypso_site_migration_automated_request_error' );
-
-		const { code } = error;
-
-		const anywayModeErrors = [ 'automated_migration_tools_login_and_get_cookies_test_failed' ];
-
-		if ( anywayModeErrors.includes( code ) ) {
-			setCanBypassVerification( true );
-		}
-	}, [ error ] );
-
-	useEffect( () => {
-		const { unsubscribe } = watch( () => {
 			clearErrors( 'root' );
-			setCanBypassVerification( false );
+			reset();
 		} );
 		return () => unsubscribe();
-	}, [ watch, clearErrors ] );
-
-	const submitHandler = ( data: CredentialsFormData ) => {
-		requestAutomatedMigration( {
-			...data,
-			bypassVerification: canBypassVerification || ! isEnglishLocale,
-		} );
-	};
-
-	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && isPending && ! canBypassVerification ) {
-			return translate( 'Verifying credentials' );
-		}
-
-		if ( isEnglishLocale && canBypassVerification ) {
-			return translate( 'Continue anyways' );
-		}
-
-		return translate( 'Continue' );
-	}, [ isPending, canBypassVerification, isEnglishLocale, translate ] );
+	}, [ watch, clearErrors, reset ] );
 
 	return {
 		formState: { errors },
+		errors,
 		control,
 		handleSubmit,
-		errors,
-		accessMethod,
-		isPending,
 		submitHandler,
-		importSiteQueryParam,
+		accessMethod: watch( 'migrationType' ),
+		isBusy,
 		getContinueButtonText,
+		isSubmitting,
+		isWpcom,
 	};
 };

@@ -415,6 +415,19 @@ export const normalizers = {
 
 		// filter out country views that have no legitimate country data associated with them
 		const countryData = filter( get( data, dataPath, [] ), ( viewData ) => {
+			// Ignore the unknown location of sources from the legacy stats geoviews table.
+			if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
+				return false;
+			}
+
+			// TODO: Investigate ignored countries that have `false` as the country_full data.
+			if (
+				countryInfo[ viewData.country_code ] &&
+				! countryInfo[ viewData.country_code ].country_full
+			) {
+				return false;
+			}
+
 			return countryInfo[ viewData.country_code ];
 		} );
 

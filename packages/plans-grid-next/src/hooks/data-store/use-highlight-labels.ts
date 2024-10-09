@@ -20,6 +20,7 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	isDomainOnlySite: boolean;
 }
 
 // TODO clk: move to plans data store
@@ -30,6 +31,7 @@ const useHighlightLabels = ( {
 	selectedPlan,
 	plansAvailabilityForPurchase,
 	highlightLabelOverrides,
+	isDomainOnlySite,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -43,7 +45,7 @@ const useHighlightLabels = ( {
 			}
 
 			const isCurrentPlan = currentSitePlanSlug
-				? isSamePlan( currentSitePlanSlug, planSlug )
+				? isSamePlan( currentSitePlanSlug, planSlug ) && ! isDomainOnlySite
 				: false;
 			const isPlanAvailableForPurchase = plansAvailabilityForPurchase?.[ planSlug ];
 			const isSuggestedPlan =

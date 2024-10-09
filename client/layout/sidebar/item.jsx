@@ -1,5 +1,5 @@
-import { Count, Badge, Gridicon, MaterialIcon } from '@automattic/components';
-import { Icon, chevronRightSmall } from '@wordpress/icons';
+import { Count, Badge, Gridicon } from '@automattic/components';
+import { Icon, chevronRightSmall, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
@@ -19,7 +19,7 @@ export default function SidebarItem( props ) {
 		'tooltip tooltip-right': !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
+	const { icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -60,15 +60,12 @@ export default function SidebarItem( props ) {
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
-				{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } /> }
-
-				{ materialIcon && (
-					<MaterialIcon
-						className="sidebar__menu-icon"
-						icon={ materialIcon }
-						style={ materialIconStyle }
-					/>
-				) }
+				{ icon &&
+					( typeof icon === 'string' ? (
+						<Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } />
+					) : (
+						<Icon icon={ icon } className="sidebar__menu-icon" size={ 24 } />
+					) ) }
 
 				{ customIcon && customIcon }
 
@@ -88,7 +85,7 @@ export default function SidebarItem( props ) {
 					) }
 				</span>
 				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
-					<Gridicon icon="external" size={ 24 } />
+					<Icon icon={ external } size={ 18 } />
 				) }
 				{ props.forceChevronIcon && <Icon icon={ chevronRightSmall } size={ 24 } /> }
 				{ props.children }
@@ -103,10 +100,8 @@ SidebarItem.propTypes = {
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
 	onNavigate: PropTypes.func,
-	icon: PropTypes.string,
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	customIcon: PropTypes.object,
-	materialIcon: PropTypes.string,
-	materialIconStyle: PropTypes.string,
 	selected: PropTypes.bool,
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,

@@ -4,5 +4,9 @@ export { useCanConnectToZendeskMessaging } from './use-can-connect-to-zendesk-me
 export { useSmooch } from './use-smooch';
 export { useOpenZendeskMessaging } from './use-open-zendesk-messaging';
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
-export { ZENDESK_SOURCE_URL_TICKET_FIELD_ID } from './constants';
+export {
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
+	ZENDESK_SUPPORT_CHAT_KEY,
+} from './constants';
 export type { ZendeskConfigName, MessagingGroup } from './types';

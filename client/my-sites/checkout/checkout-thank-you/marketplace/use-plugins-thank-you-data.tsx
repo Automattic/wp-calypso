@@ -33,6 +33,7 @@ type ThankYouData = [
 	string[],
 	boolean,
 	React.ReactElement | null,
+	boolean,
 ];
 
 export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
@@ -230,6 +231,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		thankyouSteps,
 		isAtomicNeeded,
 		thankYouHeaderAction,
+		true,
 	];
 }
 

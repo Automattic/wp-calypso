@@ -53,7 +53,8 @@ const MarketplaceThankYou = ( {
 		pluginSubtitle,
 		pluginsProgressbarSteps,
 		isAtomicNeededForPlugins,
-		thankYouHeaderAction,
+		thankYouHeaderActionForPlugins,
+		isLoadedPlugins,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
 		firstTheme,
@@ -64,6 +65,8 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 		themesProgressbarSteps,
 		isAtomicNeededForThemes,
+		thankYouHeaderActionForThemes,
+		isLoadedThemes,
 	] = useThemesThankYouData( themeSlugs, isOnboardingFlow, continueWithPluginBundle );
 
 	useEffect( () => {
@@ -93,7 +96,12 @@ const MarketplaceThankYou = ( {
 	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
 		useAtomicTransfer( isAtomicNeeded );
 
-	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
+	const isPageReady =
+		allPluginsFetched &&
+		allThemesFetched &&
+		isAtomicTransferCheckComplete &&
+		isLoadedPlugins &&
+		isLoadedThemes;
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -174,7 +182,7 @@ const MarketplaceThankYou = ( {
 					<ThankYouV2
 						title={ title }
 						subtitle={ subtitle }
-						headerButtons={ thankYouHeaderAction }
+						headerButtons={ thankYouHeaderActionForPlugins || thankYouHeaderActionForThemes }
 						products={ products }
 						footerDetails={ footerDetails }
 						showSuccessAnimation={ hasThemes }

@@ -55,7 +55,6 @@ export default function CampaignItem( props: Props ) {
 
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
 	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
-	const impressions_total = campaign_stats?.impressions_total ?? 0;
 	const conversion_rate_percentage = campaign_stats?.conversion_rate
 		? campaign_stats.conversion_rate * 100
 		: 0;
@@ -68,32 +67,23 @@ export default function CampaignItem( props: Props ) {
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
-	const { totalBudget, campaignDays } = useMemo(
+	const { totalBudgetUsed, campaignDays } = useMemo(
 		() =>
 			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
 		[ budget_cents, end_date, spent_budget_cents, start_date, is_evergreen ]
 	);
 
-	let budgetString = '-';
-	let budgetStringMobile = '';
-	if ( is_evergreen && campaignDays && ui_status !== campaignStatus.REJECTED ) {
+	const formattedTotalSpend = `$${ formatCents( totalBudgetUsed || 0, 2 ) }`;
+
+	let spendString = '-';
+	let spendStringMobile = '';
+	if ( campaignDays && ui_status !== campaignStatus.REJECTED ) {
 		/* translators: Daily average spend. dailyAverageSpending is the budget */
-		budgetString = sprintf(
+		spendString = formattedTotalSpend;
+		spendStringMobile = sprintf(
 			/* translators: %s is a formatted amount */
-			translate( '$%s weekly' ),
-			formatCents( totalBudget )
-		);
-		budgetStringMobile = sprintf(
-			/* translators: %s is a formatted amount */
-			translate( '$%s weekly budget' ),
-			totalBudget
-		);
-	} else if ( campaignDays && ui_status !== campaignStatus.REJECTED ) {
-		budgetString = `$${ formatCents( totalBudget ) }`;
-		budgetStringMobile = sprintf(
-			/* translators: %s is a formatted amount */
-			translate( '$%s budget' ),
-			totalBudget
+			translate( '%s spend' ),
+			formattedTotalSpend
 		);
 	}
 
@@ -133,12 +123,9 @@ export default function CampaignItem( props: Props ) {
 
 	function getMobileStats() {
 		const statElements = [];
-		if ( impressions_total > 0 ) {
-			statElements[ statElements.length ] = sprintf(
-				// translators: %s is formatted number of views
-				_n( '%s impression', '%s impressions', impressions_total ),
-				formatNumber( impressions_total )
-			);
+
+		if ( spendStringMobile ) {
+			statElements[ statElements.length ] = spendStringMobile;
 		}
 
 		if ( clicks_total > 0 ) {
@@ -147,10 +134,6 @@ export default function CampaignItem( props: Props ) {
 				_n( '%s click', '%s clicks', clicks_total ),
 				formatNumber( clicks_total )
 			);
-		}
-
-		if ( budgetStringMobile ) {
-			statElements[ statElements.length ] = budgetStringMobile;
 		}
 
 		return statElements.map( ( value, index ) => {
@@ -179,9 +162,8 @@ export default function CampaignItem( props: Props ) {
 							></div>
 						) }
 						<div className="campaign-item__title-row">
-							<div className="campaign-item__post-type-mobile">{ getPostType( type ) }</div>
-							<div className="campaign-item__title">{ name }</div>
 							<div className="campaign-item__post-type">{ getPostType( type ) }</div>
+							<div className="campaign-item__title">{ name }</div>
 							<div className="campaign-item__status-mobile">{ statusBadge }</div>
 						</div>
 					</div>
@@ -228,11 +210,8 @@ export default function CampaignItem( props: Props ) {
 					{ getCampaignEndText( campaign.end_date, campaign.status, campaign?.is_evergreen ) }
 				</div>
 			</td>
-			<td className="campaign-item__budget">
-				<div>{ budgetString }</div>
-			</td>
-			<td className="campaign-item__impressions">
-				<div>{ formatNumber( impressions_total ) }</div>
+			<td className="campaign-item__spend">
+				<div>{ spendString }</div>
 			</td>
 			<td className="campaign-item__clicks">
 				<div>{ formatNumber( clicks_total ) }</div>

@@ -15,10 +15,6 @@
 }
 
 .sidebar {
-	.sidebar__menu-icon:not(.svg_all-sites) {
-		height: 20px;
-		width: 20px;
-	}
 	.sidebar__me-signout-button {
 		.gridicons-popout {
 			display: none;
@@ -28,6 +24,10 @@
 	.sidebar__menu-link {
 		svg.sidebar__menu-icon {
 			fill: var(--color-sidebar-text);
+
+			&.gridicons-plans {
+				height: 20px;
+			}
 		}
 
 		&:hover,

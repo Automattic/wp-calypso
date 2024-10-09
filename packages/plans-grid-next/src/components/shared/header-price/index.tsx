@@ -57,41 +57,34 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
-					<div className="plans-grid-next-header-price__badge is-intro-offer">
+					<div className="plans-grid-next-header-price__badge">
 						{ translate( 'Limited Time Offer' ) }
 					</div>
 				) }
-				{ isLargeCurrency ? (
-					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ 0 }
-							displayPerMonthNotation={ false }
-							isLargeCurrency
-							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
-							original
-						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ introOfferPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency
-							isSmallestUnit={ false }
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							discounted
-						/>
-					</div>
-				) : (
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ originalPrice.monthly }
+						displayPerMonthNotation={ false }
+						isLargeCurrency
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ introOfferPrice }
 						displayPerMonthNotation={ false }
+						isLargeCurrency
 						isSmallestUnit={ false }
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						discounted
 					/>
-				) }
+				</div>
 			</div>
 		);
 	}

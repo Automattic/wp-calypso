@@ -10,6 +10,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setSignupStartTime } from 'calypso/signup/storageUtils';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSignUpStartTracking } from '../';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from '../../../../../constants';
 import type { Flow, StepperStep } from '../../../types';
 
 const steps = [ { slug: 'step-1' }, { slug: 'step-2' } ] as StepperStep[];
@@ -86,7 +87,9 @@ describe( 'useSignUpTracking', () => {
 			render( {
 				flow: {
 					...signUpFlow,
-					useSignupStartEventProps: () => ( { extra: 'props' } ),
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
 				} satisfies Flow,
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
@@ -115,6 +118,31 @@ describe( 'useSignUpTracking', () => {
 				},
 				ref: '',
 			} );
+		} );
+
+		it( 'records the calypso_signup_start event a single time if dependencies are stable', () => {
+			const { rerender } = render( {
+				flow: {
+					...signUpFlow,
+				} satisfies Flow,
+			} );
+
+			rerender();
+			expect( recordSignupStart ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'records the calypso_signup_start event multiple times when dependencies change', () => {
+			const { rerender } = render( {
+				flow: {
+					...signUpFlow,
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
+				} satisfies Flow,
+			} );
+
+			rerender();
+			expect( recordSignupStart ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it( 'sets the signup-start timer only on initial mount (assuming static flowName and isSignupFlow)', () => {

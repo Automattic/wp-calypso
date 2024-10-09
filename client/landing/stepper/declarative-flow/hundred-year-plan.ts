@@ -44,6 +44,11 @@ const HundredYearPlanFlow: Flow = {
 							asyncComponent: () =>
 								import( './internals/steps-repository/hundred-year-plan-schedule-appointment' ),
 						},
+						{
+							slug: 'thank-you',
+							asyncComponent: () =>
+								import( './internals/steps-repository/hundred-year-plan-thank-you' ),
+						},
 				  ]
 				: [] ),
 

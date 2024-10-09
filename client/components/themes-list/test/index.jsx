@@ -15,7 +15,7 @@ jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
 ) );
 
 jest.mock( 'calypso/data/site-assembler', () => ( {
-	useIsSiteAssemblerEnabledExp: () => true,
+	useIsSiteAssemblerEnabled: () => true,
 } ) );
 
 jest.mock( 'react-redux', () => ( {

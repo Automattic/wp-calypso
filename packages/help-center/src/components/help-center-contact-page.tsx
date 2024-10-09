@@ -23,7 +23,6 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
-import { BackButtonHeader } from './back-button';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { generateContactOnClickEvent } from './utils';
@@ -155,7 +154,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 	return (
 		<div className="help-center-contact-page">
-			{ ! hideHeaders && <BackButtonHeader /> }
 			<div className="help-center-contact-page__content">
 				{ ! hideHeaders && (
 					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>

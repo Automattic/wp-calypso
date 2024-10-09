@@ -64,19 +64,22 @@
 	}
 }
 
-.reader-full-post__story .like-button {
-	padding: 0;
-}
-
 .like-button__label {
-
 	&:empty {
 		display: none;
 	}
+}
 
-	.like-button__label-count {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 13px;
-		font-weight: 500;
-	}
+.like-button__like-icons {
+	line-height: 0;
+}
+
+.reader-full-post {
+	.reader-post-actions .like-button {
+		padding: 0;
+
+		.like-button__label {
+			font-size: rem(14px);
+		}
+	} 
 }

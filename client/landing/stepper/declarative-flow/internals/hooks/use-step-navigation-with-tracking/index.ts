@@ -19,20 +19,14 @@ interface Params< FlowSteps extends StepperStep[] > {
 	flow: Flow;
 	currentStepRoute: string;
 	navigate: Navigate< FlowSteps >;
-	steps: StepperStep[];
 }
 
 export const useStepNavigationWithTracking = ( {
 	flow,
 	currentStepRoute,
 	navigate,
-	steps,
 }: Params< ReturnType< Flow[ 'useSteps' ] > > ) => {
-	const stepNavigation = flow.useStepNavigation(
-		currentStepRoute,
-		navigate,
-		steps.map( ( step ) => step.slug )
-	);
+	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
 	const intent =
 		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(), [] ) ?? '';
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
