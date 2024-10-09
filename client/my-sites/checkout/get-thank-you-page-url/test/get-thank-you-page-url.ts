@@ -1919,91 +1919,182 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	describe( 'Congrats removals', () => {
-		it( 'redirects to /email/:domain/manage/:site when purchasing only Titan Mail', () => {
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				cart: {
-					...getMockCart(),
-					products: [
-						{
-							...getEmptyResponseCartProduct(),
-							product_slug: TITAN_MAIL_MONTHLY_SLUG,
-							meta: 'example.com', // meta holds the domain - not the same thing as siteSlug
-							extra: {
-								email_users: [ { email: 'test@example.com' } ],
+		describe( 'Titanmail', () => {
+			it( 'redirects to /email/:domain/manage/:site when purchasing only Titan Mail', () => {
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart: {
+						...getMockCart(),
+						products: [
+							{
+								...getEmptyResponseCartProduct(),
+								product_slug: TITAN_MAIL_MONTHLY_SLUG,
+								meta: 'example.com', // meta holds the domain - not the same thing as siteSlug
+								extra: {
+									email_users: [ { email: 'test@example.com' } ],
+								},
 							},
-						},
-					],
-				},
-				siteSlug: 'foo.bar',
-			} );
-			expect( url ).toBe(
-				`/email/example.com/manage/foo.bar?new-email=${ encodeURIComponent( 'test@example.com' ) }`
-			);
-		} );
-
-		it( 'redirects to /checkout/thank-you when purchasing multiple products including titanmail', () => {
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				cart: {
-					...getMockCart(),
-					products: [
-						{
-							...getEmptyResponseCartProduct(),
-							product_slug: 'personal-bundle',
-						},
-						{
-							...getEmptyResponseCartProduct(),
-							product_slug: TITAN_MAIL_MONTHLY_SLUG,
-							extra: {
-								email_users: [ { email: 'test@example.com' } ],
-							},
-						},
-					],
-				},
-				siteSlug: 'foo.bar',
-				receiptId: samplePurchaseId,
-			} );
-			expect( url ).toBe(
-				`/checkout/thank-you/foo.bar/${ samplePurchaseId }?email=${ encodeURIComponent(
-					'test@example.com'
-				) }`
-			);
-		} );
-
-		/*
-		Code under test:
-
-			const domainItems = cart?.products?.filter( ( product ) => isDomainProduct( product ) );
-			if ( domainItems && domainItems.length > 0 && domainItems.length === cart?.products?.length ) {
-				debug( 'site with domain product' );
-				if ( siteSlug === 'no-site' ) {
-					return `/domains/manage/?new-domains=${ domainItems.length }`;
-				}
-				return `/domains/manage/${ siteSlug }?new-domains=${ domainItems.length }`;
-			}
-
-		*/
-		it( 'redirects to /domains/:domain/manage/:site when purchasing only domain', () => {
-			const cart = {
-				...getMockCart(),
-				products: [
-					{
-						...getEmptyResponseCartProduct(),
-						meta: 'domain-from-cart.com',
-						is_domain_registration: true,
+						],
 					},
-				],
-			};
-
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				cart,
-				receiptId: samplePurchaseId,
-				siteSlug: 'foo.bar',
+					siteSlug: 'foo.bar',
+				} );
+				expect( url ).toBe(
+					`/email/example.com/manage/foo.bar?new-email=${ encodeURIComponent(
+						'test@example.com'
+					) }`
+				);
 			} );
 
-			expect( url ).toBe( `/domains/manage/foo.bar?new-domains=1` );
+			it( 'redirects to /checkout/thank-you when purchasing multiple products including titanmail', () => {
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart: {
+						...getMockCart(),
+						products: [
+							{
+								...getEmptyResponseCartProduct(),
+								product_slug: 'personal-bundle',
+							},
+							{
+								...getEmptyResponseCartProduct(),
+								product_slug: TITAN_MAIL_MONTHLY_SLUG,
+								extra: {
+									email_users: [ { email: 'test@example.com' } ],
+								},
+							},
+						],
+					},
+					siteSlug: 'foo.bar',
+					receiptId: samplePurchaseId,
+				} );
+				expect( url ).toBe(
+					`/checkout/thank-you/foo.bar/${ samplePurchaseId }?email=${ encodeURIComponent(
+						'test@example.com'
+					) }`
+				);
+			} );
+		} );
+
+		describe( 'Domain and signup scenarios', () => {
+			it( 'redirects to thank-you page when cart contains a domain product with a signup context', () => {
+				const cart = {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							meta: 'domain-from-cart.com',
+							is_domain_registration: true,
+							extra: { context: 'signup' },
+						},
+					],
+				};
+
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart,
+					receiptId: samplePurchaseId,
+					siteSlug: 'foo.bar',
+				} );
+
+				expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+			} );
+
+			it( 'redirects to /domains/:domain/manage/:site when purchasing a single domain for a site and nothing else', () => {
+				const cart = {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							meta: 'domain-from-cart.com',
+							is_domain_registration: true,
+						},
+					],
+				};
+
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart,
+					receiptId: samplePurchaseId,
+					siteSlug: 'foo.bar',
+				} );
+
+				expect( url ).toBe( `/domains/manage/foo.bar?new-domains=1` );
+			} );
+
+			it( 'redirects to /domains/:domain/manage/:site when purchasing multiple domain products for a site and nothing else', () => {
+				const cart = {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							meta: 'domain1.com',
+							is_domain_registration: true,
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							meta: 'domain2.com',
+							is_domain_registration: true,
+						},
+					],
+				};
+
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart,
+					siteSlug: 'foo.bar',
+				} );
+
+				expect( url ).toBe( '/domains/manage/foo.bar?new-domains=2' );
+			} );
+
+			it( 'redirects to /domains/manage when purchasing a domain not attached to any site', () => {
+				const cart = {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							meta: 'domain1.com',
+							is_domain_registration: true,
+						},
+					],
+				};
+
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart,
+					siteSlug: 'no-site',
+				} );
+
+				expect( url ).toBe( '/domains/manage/?new-domains=1' );
+			} );
+
+			it( 'redirects to thank-you page when cart contains both domain and non-domain products', () => {
+				const cart = {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							meta: 'domain1.com',
+							is_domain_registration: true,
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: PLAN_PERSONAL,
+						},
+					],
+				};
+
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					cart,
+					receiptId: samplePurchaseId,
+					siteSlug: 'foo.bar',
+				} );
+
+				expect( url ).toBe(
+					`/checkout/offer-professional-email/domain1.com/${ samplePurchaseId }/foo.bar`
+				);
+			} );
 		} );
 	} );
 } );
