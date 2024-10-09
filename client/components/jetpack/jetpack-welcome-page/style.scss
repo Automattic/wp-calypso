@@ -8,7 +8,7 @@
 	justify-content: center;
 	flex-direction: column;
 	margin-top: -32px;
-	height: 100vh;
+	height: calc( 100vh - 32px );
 
 	&.main.is-wide-layout {
 		max-width: 744px;
