@@ -160,10 +160,10 @@ export default function SubscribersChartSection( {
 						<StatsPeriodHeader>
 							<Intervals selected={ period } pathTemplate={ pathTemplate } compact />
 						</StatsPeriodHeader>
-						<div className="subscribers-section-legend" ref={ legendRef }></div>
 					</div>
 				</div>
 			</div>
+			<div className="subscribers-section-legend" ref={ legendRef }></div>
 			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
