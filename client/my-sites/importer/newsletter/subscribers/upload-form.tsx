@@ -3,10 +3,13 @@ import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ProgressBar } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, cloudUpload } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState, FormEvent, useEffect } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
@@ -20,6 +23,7 @@ type Props = {
 };
 
 export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
+	const { __ } = useI18n();
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 
 	const [ hasImportError, setHasImportError ] = useState( false );
@@ -70,9 +74,6 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		importCsvSubscribersUpdate( undefined ); // reset the form.
 	}, [ importCsvSubscribersUpdate ] );
 
-	const importSubscribersUrl =
-		'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
-
 	if ( importSelector?.inProgress ) {
 		return (
 			<div className="subscriber-upload-form__dropzone">
@@ -108,8 +109,22 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 
 			{ isSelectedFileValid && selectedFile && ! hasImportError && (
 				<p>
-					By clicking "Continue," you represent that you've obtained the appropriate consent to
-					email each person. <a href={ localizeUrl( importSubscribersUrl ) }>Learn more</a>.
+					{ createInterpolateElement(
+						__(
+							'By clicking "Continue," you represent that you\'ve obtained the appropriate consent to email each person. <learnMoreLink>Learn more</learnMoreLink>.'
+						),
+						{
+							learnMoreLink: (
+								<InlineSupportLink
+									showIcon={ false }
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+									) }
+									supportPostId={ 220199 }
+								/>
+							),
+						}
+					) }
 				</p>
 			) }
 
