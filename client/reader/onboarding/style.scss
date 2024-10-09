@@ -1,6 +1,5 @@
 .reader-onboarding {
 	display: flex;
-	width: 100%;
 	flex-wrap: wrap;
 	background-color: var(--color-surface-1);
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
@@ -12,11 +11,6 @@
 	h2 {
 		font-weight: 600;
 		margin-top: 20px;
-	}
-
-	&__intro-column,
-	&__steps-column {
-		min-width: 300px; // Minimum width before wrapping
 	}
 
 	&__steps-column {
