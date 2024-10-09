@@ -329,7 +329,7 @@ describe( 'Site Migration Flow', () => {
 			config.disable( 'automated-migration/collect-credentials' );
 		} );
 
-		it( 'Redirects back to the credentials step when failing to create the ticket', () => {
+		it( 'redirects back to the credentials step when failing to create the ticket', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -345,7 +345,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'Skipping the credentials step redirects the user to the instructions page', () => {
+		it( 'skipping the credentials step redirects the user to the instructions page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -436,6 +436,56 @@ describe( 'Site Migration Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`,
 				state: { siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-assisted-migration step skipping ticket creation', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'continue',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&preventTicketCreation=true`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-assisted-migration creating the ticket', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'skip',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-credentials step to site-migration-already-wpcom step when the user is already on WPCOM', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'already-wpcom',
+					from: 'https://site-to-be-migrated.com',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
+				state: null,
 			} );
 		} );
 

@@ -1,4 +1,5 @@
 import { DefaultError, useMutation } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 
 export interface TicketMigrationData {
 	intents: string[];
@@ -13,9 +14,16 @@ const setMigration = (
 	siteSlug: string,
 	{ intents, otherDetails }: TicketMigrationData
 ): Promise< ApiResponse > => {
-	// eslint-disable-next-line no-console
-	console.log( 'setMigration', siteSlug, intents, otherDetails );
-	return Promise.resolve( { success: true } );
+	return wpcomRequest( {
+		path: `/sites/${ siteSlug }/automated-migration/wpcom-survey`,
+		apiNamespace: 'wpcom/v2',
+		apiVersion: '2',
+		method: 'POST',
+		body: {
+			intents,
+			other_details: otherDetails,
+		},
+	} );
 };
 
 export const useMigrationTicketMutation = ( siteSlug: string ) => {

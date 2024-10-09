@@ -67,6 +67,14 @@ export interface Agency {
 		capabilities: string[];
 	};
 	can_issue_licenses: boolean;
+	notifications:
+		| [
+				{
+					timestamp: number;
+					reference: string;
+				},
+		  ]
+		| [];
 }
 
 export interface AgencyStore {

@@ -16,4 +16,3 @@ function render() {
 
 - `onChange (func)` - A function to handle the event callback when choosing a data center or picking the recommended one.
 - `value (string)` - The picked data center (this is a controlled component).
-- `compact (boolean)` - Whether or not to display a version of the data center picker without the global map.

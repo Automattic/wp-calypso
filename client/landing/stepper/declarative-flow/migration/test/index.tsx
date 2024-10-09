@@ -418,6 +418,42 @@ describe( `${ flow.name }`, () => {
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
+
+			it( 'redirects users from SITE_MIGRATION_CREDENTIALS > SITE_MIGRATION_ALREADY_WPCOM when the site is already on WPCOM', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+					dependencies: { action: 'already-wpcom' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ALREADY_WPCOM,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_ALREADY_WPCOM STEP', () => {
+			it( 'redirects users from SITE_MIGRATION_ALREADY_WPCOM to SITE_MIGRATION_CREDENTIALS', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_ALREADY_WPCOM,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { action: 'submit' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', preventTicketCreation: true },
+				} );
+			} );
 		} );
 
 		describe( 'SITE_MIGRATION_INSTRUCTIONS_STEP', () => {

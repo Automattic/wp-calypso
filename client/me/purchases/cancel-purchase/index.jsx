@@ -12,12 +12,14 @@ import { Card, CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-retention-management/retention-option-on-cancel-purchase';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import HeaderCake from 'calypso/components/header-cake';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormButton from 'calypso/components/forms/form-button';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getName,
@@ -32,7 +34,6 @@ import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purcha
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
-import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -44,7 +45,10 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import CancelPurchaseButton from './button';
+import CancelPurchaseDomainOptions from './domain-options';
+import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
+import CancelPurchaseSupportLink from './support-link';
 
 import './style.scss';
 
@@ -136,52 +140,129 @@ class CancelPurchase extends Component {
 		);
 	}
 
-	renderFooterText = () => {
-		const { purchase } = this.props;
-		const { expiryDate, refundInteger, totalRefundInteger, totalRefundCurrency } = purchase;
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
-				return this.props.translate( '%(refundText)s to be refunded', {
-					args: {
-						refundText: formatCurrency( totalRefundInteger, totalRefundCurrency, {
-							isSmallestUnit: true,
-						} ),
-					},
-					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-				} );
-			}
-			return this.props.translate( '%(refundText)s to be refunded', {
-				args: {
-					refundText: formatCurrency( refundInteger, totalRefundCurrency, {
-						isSmallestUnit: true,
-					} ),
-				},
-				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-			} );
-		}
+	renderExpirationText = () => {
+		const { purchase, translate } = this.props;
+		const { expiryDate } = purchase;
 
 		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
 			// Domain in AGP bought with domain credits
 			if ( isRefundable( purchase ) ) {
-				return this.props.translate(
-					'After you confirm this change, the domain will be removed immediately'
+				return translate(
+					'After you confirm this change, the domain will be removed immediately.'
 				);
 			}
-			return this.props.translate(
-				'After you confirm this change, the domain will be removed on %(expirationDate)s',
+			return translate(
+				'After you confirm this change, the domain will be removed on %(expirationDate)s.',
 				{
 					args: { expirationDate },
 				}
 			);
 		}
 
-		return this.props.translate(
-			'After you confirm this change, the subscription will be removed on %(expirationDate)s',
+		return translate(
+			'After you confirm this change, the subscription will be removed on %(expirationDate)s.',
 			{
 				args: { expirationDate },
 			}
+		);
+	};
+
+	renderFullText = () => {
+		const { includedDomainPurchase, purchase, translate } = this.props;
+		const { expiryDate } = purchase;
+		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
+
+		const refundAmountString = this.renderRefundAmountString(
+			purchase,
+			this.state.cancelBundledDomain,
+			includedDomainPurchase
+		);
+
+		if ( refundAmountString ) {
+			return translate(
+				'If you confirm this cancellation, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
+				{
+					args: {
+						refundText: refundAmountString,
+					},
+					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+					components: {
+						span: <span className="cancel-purchase__refund-string" />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'If you complete this cancellation, your subscription will be removed on {{span}}%(expirationDate)s{{/span}}.',
+			{
+				args: {
+					expirationDate,
+				},
+				components: {
+					span: <span className="cancel-purchase__warning-string" />,
+				},
+			}
+		);
+	};
+
+	renderFooterText = () => {
+		const { purchase, translate } = this.props;
+
+		const refundAmountString = this.renderRefundAmountString(
+			purchase,
+			this.state.cancelBundledDomain,
+			this.props.includedDomainPurchase
+		);
+
+		if ( refundAmountString ) {
+			return translate( '%(refundText)s to be refunded', {
+				args: {
+					refundText: refundAmountString,
+				},
+				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+			} );
+		}
+	};
+
+	renderRefundAmountString = ( purchase, cancelBundledDomain, includedDomainPurchase ) => {
+		const { refundInteger, totalRefundInteger, totalRefundCurrency } = purchase;
+
+		if ( hasAmountAvailableToRefund( purchase ) ) {
+			if ( cancelBundledDomain && includedDomainPurchase ) {
+				return formatCurrency( totalRefundInteger, totalRefundCurrency, {
+					isSmallestUnit: true,
+				} );
+			}
+			return formatCurrency( refundInteger, totalRefundCurrency, {
+				isSmallestUnit: true,
+			} );
+		}
+
+		return null;
+	};
+
+	renderCancelButton = () => {
+		const {
+			purchase,
+			includedDomainPurchase,
+			siteSlug,
+			purchaseListUrl,
+			getConfirmCancelDomainUrlFor,
+		} = this.props;
+		return (
+			<CancelPurchaseButton
+				purchase={ purchase }
+				includedDomainPurchase={ includedDomainPurchase }
+				disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
+				siteSlug={ siteSlug }
+				cancelBundledDomain={ this.state.cancelBundledDomain }
+				purchaseListUrl={ purchaseListUrl }
+				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
+				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+			/>
 		);
 	};
 
@@ -194,11 +275,7 @@ class CancelPurchase extends Component {
 			return (
 				<div>
 					<QueryUserPurchases />
-					<CancelPurchaseLoadingPlaceholder
-						purchaseId={ this.props.purchaseId }
-						siteSlug={ this.props.siteSlug }
-						getManagePurchaseUrlFor={ this.props.getManagePurchaseUrlFor }
-					/>
+					<CancelPurchaseLoadingPlaceholder />
 				</div>
 			);
 		}
@@ -209,6 +286,9 @@ class CancelPurchase extends Component {
 		const planDescription = plan?.getPlanCancellationDescription?.();
 		const { siteName, siteId } = purchase;
 
+		const cancellationFeatures =
+			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
+
 		let heading;
 
 		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
@@ -218,68 +298,106 @@ class CancelPurchase extends Component {
 		}
 
 		if ( isSubscription( purchase ) ) {
-			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
+			heading = this.props.translate( 'Cancel your %(purchaseName)s subscription', {
 				args: { purchaseName },
 			} );
 		}
 
 		return (
-			<Fragment>
+			<Card className="cancel-purchase__wrapper-card">
 				<QueryProductsList />
 				<TrackPurchasePageView
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
 
-				<HeaderCake
-					backHref={ this.props.getManagePurchaseUrlFor(
-						this.props.siteSlug,
-						this.props.purchaseId
-					) }
-				>
-					{ titles.cancelPurchase }
-				</HeaderCake>
-
-				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
-
-				<Card className="cancel-purchase__card">
-					<h2>{ heading }</h2>
-
-					<CancelPurchaseRefundInformation
-						purchase={ purchase }
-						isJetpackPurchase={ isJetpackPurchase }
-						includedDomainPurchase={ this.props.includedDomainPurchase }
-						confirmBundledDomain={ this.state.confirmCancelBundledDomain }
-						cancelBundledDomain={ this.state.cancelBundledDomain }
-						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+				<div className="cancel-purchase__back">
+					<HeaderCakeBack
+						icon="chevron-left"
+						href={ this.props.getManagePurchaseUrlFor(
+							this.props.siteSlug,
+							this.props.purchaseId
+						) }
 					/>
-				</Card>
+				</div>
 
-				<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-				<CompactCard className="cancel-purchase__product-information">
-					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-					<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
-					{ planDescription && (
-						<div className="cancel-purchase__plan-description">{ planDescription }</div>
-					) }
-					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
-				</CompactCard>
-				<CompactCard className="cancel-purchase__footer">
-					<div className="cancel-purchase__refund-amount">
-						{ this.renderFooterText( this.props ) }
+				<FormattedHeader
+					className="cancel-purchase__formatted-header"
+					brandFont
+					headerText={ heading }
+					align="left"
+				/>
+
+				<div className="cancel-purchase__inner-wrapper">
+					<div className="cancel-purchase__left">
+						<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
+
+						<CancelPurchaseRefundInformation
+							purchase={ purchase }
+							isJetpackPurchase={ isJetpackPurchase }
+						/>
+
+						<CancelPurchaseFeatureList
+							purchase={ purchase }
+							cancellationFeatures={ cancellationFeatures }
+						/>
+
+						<CancelPurchaseDomainOptions
+							includedDomainPurchase={ this.props.includedDomainPurchase }
+							cancelBundledDomain={ this.state.cancelBundledDomain }
+							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+							purchase={ purchase }
+						/>
+
+						{ ! cancellationFeatures.length ? (
+							<>
+								<CompactCard className="cancel-purchase__product-information">
+									<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
+									<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
+									{ planDescription && (
+										<div className="cancel-purchase__plan-description">{ planDescription }</div>
+									) }
+									<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
+								</CompactCard>
+
+								<CompactCard className="cancel-purchase__footer">
+									<div className="cancel-purchase__footer-text">
+										{ hasAmountAvailableToRefund( purchase ) ? (
+											<p className="cancel-purchase__refund-amount">{ this.renderFooterText() }</p>
+										) : (
+											<p className="cancel-purchase__expiration-text">
+												{ this.renderExpirationText() }
+											</p>
+										) }
+									</div>
+									{ this.renderCancelButton() }
+								</CompactCard>
+							</>
+						) : (
+							<>
+								<p>{ this.renderFullText() }</p>
+								<div className="cancel-purchase__confirm-buttons">
+									{ this.renderCancelButton() }
+									<FormButton
+										isPrimary={ false }
+										href={ this.props.getManagePurchaseUrlFor(
+											this.props.siteSlug,
+											this.props.purchaseId
+										) }
+									>
+										{ this.props.translate( 'Keep subscription' ) }
+									</FormButton>
+								</div>
+							</>
+						) }
 					</div>
-					<CancelPurchaseButton
-						purchase={ purchase }
-						includedDomainPurchase={ this.props.includedDomainPurchase }
-						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
-						siteSlug={ this.props.siteSlug }
-						cancelBundledDomain={ this.state.cancelBundledDomain }
-						purchaseListUrl={ this.props.purchaseListUrl }
-						getConfirmCancelDomainUrlFor={ this.props.getConfirmCancelDomainUrlFor }
-						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
-					/>
-				</CompactCard>
-			</Fragment>
+
+					<div className="cancel-purchase__right">
+						<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+						<CancelPurchaseSupportLink purchase={ purchase } />
+					</div>
+				</div>
+			</Card>
 		);
 	}
 }
