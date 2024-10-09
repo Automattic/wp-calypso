@@ -82,15 +82,20 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 
-	// Delete migration sticker.
-	const { deleteMigrationSticker } = useMigrationStickerMutation();
 	const { updateMigrationStatus } = useUpdateMigrationStatus();
 	useEffect( () => {
 		if ( siteId ) {
-			deleteMigrationSticker( siteId );
 			updateMigrationStatus( siteId, 'migration-started-diy' );
 		}
-	}, [ deleteMigrationSticker, siteId, updateMigrationStatus ] );
+	}, [ siteId, updateMigrationStatus ] );
+
+	// Delete migration sticker.
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [ deleteMigrationSticker, siteId ] );
 
 	// Site preparation.
 	const {
