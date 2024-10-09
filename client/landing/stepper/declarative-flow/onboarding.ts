@@ -121,7 +121,11 @@ const onboarding: Flow = {
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
 						// selection status before they land on the checkout page, this value can be
 						// 'free' or 'choose-later'
-						setSignupDomainOrigin( signupDomainOrigin );
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
 					}
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, true );
