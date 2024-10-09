@@ -1,41 +1,45 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
 import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
-import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
+import { useRequestAutomatedMigration as useRequestAutomatedMigration } from './use-request-automated-migration';
+
+export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined > => {
+	try {
+		return await wp.req.get( {
+			path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
+			apiNamespace: 'wpcom/v2',
+		} );
+	} catch ( error ) {
+		return undefined;
+	}
+};
+
+const isNotWordPress = ( siteInfo?: UrlData ) => {
+	return !! siteInfo?.platform && siteInfo?.platform !== 'wordpress';
+};
+
+const isWPCOM = ( siteInfo?: UrlData ) => {
+	return !! siteInfo?.platform_data?.is_wpcom;
+};
 
 export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) => {
-	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const siteSlug = useSiteSlugParam();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
 
-	const analyzeUrl = useCallback( async ( domain: string ): Promise< UrlData | undefined > => {
-		try {
-			return await wp.req.get( {
-				path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
-				apiNamespace: 'wpcom/v2',
-			} );
-		} catch ( error ) {
-			return undefined;
-		}
-	}, [] );
-
 	const {
 		mutateAsync: requestAutomatedMigration,
 		error,
-		isSuccess,
 		variables,
 		reset,
-	} = useSiteMigrationCredentialsMutation();
+	} = useRequestAutomatedMigration( siteSlug );
 
 	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
@@ -60,68 +64,44 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 		errors: serverSideError,
 	} );
 
+	const accessMethod = watch( 'migrationType' );
+
 	useEffect( () => {
 		setIsBusy( isSubmitting );
 	}, [ isSubmitting ] );
 
-	const isWpcom = useMemo( () => !! siteInfo?.platform_data?.is_wpcom, [ siteInfo ] );
+	const isLoginFailed =
+		error?.code === 'automated_migration_tools_login_and_get_cookies_test_failed';
+	const canBypassVerification = isLoginFailed || isWPCOM( siteInfo ) || isNotWordPress( siteInfo );
+	const shouldAnalyzeUrl = ! isLoginFailed && accessMethod === 'credentials';
 
-	const canBypassVerification = useMemo( () => {
-		const credentialsVerificationFailed =
-			error?.code === 'automated_migration_tools_login_and_get_cookies_test_failed';
-		return credentialsVerificationFailed || isWpcom;
-	}, [ error, isWpcom ] );
+	const submitHandler = handleSubmit( async ( data: CredentialsFormData ) => {
+		clearErrors();
 
-	const submitHandler = useCallback(
-		async ( data: CredentialsFormData ) => {
-			clearErrors();
+		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
+		setSiteInfo( siteInfoResult );
 
+		if ( isWPCOM( siteInfoResult ) && ! canBypassVerification ) {
+			return;
+		}
+
+		if ( isNotWordPress( siteInfoResult ) ) {
+			onSubmit( siteInfoResult );
+			return;
+		}
+
+		try {
 			const payload = {
 				...data,
-				bypassVerification: canBypassVerification || ! isEnglishLocale,
+				bypassVerification: canBypassVerification,
 			};
-
-			const siteInfoResult = canBypassVerification ? siteInfo : await analyzeUrl( data.from_url );
-			setSiteInfo( siteInfoResult );
-
-			if ( siteInfoResult?.platform_data?.is_wpcom && ! canBypassVerification ) {
-				return;
-			}
-
-			try {
-				await requestAutomatedMigration( payload );
-			} catch ( error ) {
-				// Do nothing, error is handled by the form.
-			}
-		},
-		[
-			requestAutomatedMigration,
-			canBypassVerification,
-			isEnglishLocale,
-			clearErrors,
-			analyzeUrl,
-			siteInfo,
-		]
-	);
-
-	const getContinueButtonText = useCallback( () => {
-		if ( isEnglishLocale && isSubmitting && ! canBypassVerification ) {
-			return translate( 'Verifying credentials' );
-		}
-		if ( isEnglishLocale && canBypassVerification ) {
-			return translate( 'Continue anyways' );
-		}
-		return translate( 'Continue' );
-	}, [ isSubmitting, canBypassVerification, isEnglishLocale, translate ] );
-
-	useEffect( () => {
-		if ( isSuccess ) {
+			await requestAutomatedMigration( payload );
 			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
-			onSubmit( siteInfo );
-		} else if ( error ) {
+			onSubmit( siteInfoResult );
+		} catch ( error ) {
 			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 		}
-	}, [ isSuccess, error, onSubmit, siteInfo ] );
+	} );
 
 	useEffect( () => {
 		const { unsubscribe } = watch( ( formData, changedField ) => {
@@ -142,10 +122,11 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 		control,
 		handleSubmit,
 		submitHandler,
-		accessMethod: watch( 'migrationType' ),
+		accessMethod,
 		isBusy,
-		getContinueButtonText,
+		canBypassVerification,
 		isSubmitting,
-		isWpcom,
+		isWPCOM: isWPCOM( siteInfo ),
+		isNotWordPress: isNotWordPress( siteInfo ),
 	};
 };
