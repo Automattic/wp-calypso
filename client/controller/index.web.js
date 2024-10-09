@@ -264,15 +264,11 @@ export function redirectIfCurrentUserCannot( capability ) {
  * @returns {void}
  */
 export function redirectIfP2( context, next ) {
-	console.log( 'hitting redirectIfP2' );
-
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	if ( isP2 ) {
-		console.log( 'redirectIfP2: redirecting to dashboard' );
-
 		return redirectToDashboard( context );
 	}
 
