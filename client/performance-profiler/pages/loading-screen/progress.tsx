@@ -136,6 +136,7 @@ const useLoadingSteps = ( {
 			}
 			setStep( step + 1 );
 		}, 5000 );
+
 		return () => clearTimeout( timeoutId );
 	} );
 
