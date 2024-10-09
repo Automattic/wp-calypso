@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 
-const STEP_INTERVAL = 5000;
 const LoadingProgressContainer = styled.div`
 	span {
 		display: flex;
@@ -132,11 +131,11 @@ const useLoadingSteps = ( {
 
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
-			if ( step >= steps.length - 1 ) {
+			if ( step === steps.length - 1 ) {
 				return;
 			}
 			setStep( step + 1 );
-		}, STEP_INTERVAL );
+		}, 5000 );
 		return () => clearTimeout( timeoutId );
 	} );
 
