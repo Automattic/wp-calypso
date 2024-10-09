@@ -48,6 +48,27 @@
 	}
 }
 
+.hundred-year-plan-schedule-appointment-modal-close {
+	position: fixed;
+	top: 1rem;
+	right: 1rem;
+	z-index: 100001;
+
+	@media (max-width: 960px) {
+		top: 5rem;
+	}
+
+	@media (min-width: 768px) {
+		svg {
+			fill: var(--studio-white);
+		}
+	}
+
+	@media (max-width: 600px) {
+		top: 3.5rem;
+	}
+}
+
 .hundred-year-plan-schedule-appointment-modal {
 	.components-modal__content {
 		padding: 0;
