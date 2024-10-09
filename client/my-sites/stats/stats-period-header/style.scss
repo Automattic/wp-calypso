@@ -3,6 +3,15 @@
 @import "@automattic/components/src/styles/typography";
 @import "../modernized-mixins";
 
+.subscribers-section-heading__chart-controls {
+	flex: 0 0 600px;
+
+	.u-legend .u-value {
+		min-width: 50px;
+		text-align: right;
+	  }
+}
+
 .stats__period-header {
 	display: flex;
 	flex-wrap: wrap;
