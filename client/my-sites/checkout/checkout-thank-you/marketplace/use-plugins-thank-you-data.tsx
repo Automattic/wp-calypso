@@ -16,6 +16,7 @@ import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchas
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -26,6 +27,7 @@ import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 
 type ThankYouData = [
 	React.ReactElement[],
+	boolean,
 	boolean,
 	JSX.Element,
 	string,
@@ -61,7 +63,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	);
 
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
-	const pluginsOnSite: [] = useSelector( ( state ) =>
+	const pluginsOnSite: Plugin[] = useSelector( ( state ) =>
 		getPluginsOnSite( state, siteId, softwareSlugs )
 	);
 	const wporgPlugins = useSelector(
@@ -86,6 +88,11 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
 
 	const allPluginsFetched = pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+	const allPluginsActivated = useSelector( ( state ) => {
+		return pluginsOnSite.every( ( pluginOnSite ) => {
+			return isPluginActive( state, siteId as number, pluginOnSite?.slug );
+		} );
+	} );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -225,6 +232,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	return [
 		pluginsSection,
 		allPluginsFetched,
+		allPluginsActivated,
 		goBackSection,
 		title,
 		subtitle,

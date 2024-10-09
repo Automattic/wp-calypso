@@ -48,6 +48,7 @@ const MarketplaceThankYou = ( {
 	const [
 		pluginsSection,
 		allPluginsFetched,
+		allPluginsActivated,
 		pluginsGoBackSection,
 		pluginTitle,
 		pluginSubtitle,
@@ -98,6 +99,7 @@ const MarketplaceThankYou = ( {
 
 	const isPageReady =
 		allPluginsFetched &&
+		allPluginsActivated &&
 		allThemesFetched &&
 		isAtomicTransferCheckComplete &&
 		isLoadedPlugins &&
