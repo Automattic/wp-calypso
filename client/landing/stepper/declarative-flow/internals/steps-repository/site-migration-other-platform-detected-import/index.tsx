@@ -5,14 +5,21 @@ import { useSearchParams } from 'react-router-dom';
 import { getPlatformImporterName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { Step } from '../../types';
 import { ImportPlatformForwarder } from './components/importer-forwarding-details';
-import { Scanning } from './components/scanning';
-
 import './style.scss';
+
+export const Scanning = () => {
+	return (
+		<div className="site-migration-other-platform__scanning">
+			<LoadingEllipsis />
+		</div>
+	);
+};
 
 const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 	const translate = useTranslate();
@@ -86,10 +93,7 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 				}
 				stepContent={
 					isAnalyzingUrl ? (
-						<Scanning
-							label={ translate( 'Scanning your site' ) }
-							text={ translate( "We'll be done in no time." ) }
-						/>
+						<Scanning />
 					) : (
 						<ImportPlatformForwarder onSubmit={ handleSubmit } onSkip={ handleSkip } />
 					)
