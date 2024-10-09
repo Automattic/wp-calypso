@@ -64,7 +64,7 @@ export const PressableUsageLimitNotice = () => {
 			onClose={ dismissNotice }
 			className="pressable-usage-limit-notice"
 		>
-			<div>
+			<p className="pressable-usage-limit-notice__message">
 				{ pressablePlanUsageLimitExceeded
 					? translate(
 							'Your Pressable plan has exceeded its allocated limits. Consider upgrading your plan to avoid additional fees.'
@@ -72,30 +72,34 @@ export const PressableUsageLimitNotice = () => {
 					: translate(
 							'Your Pressable plan is close to exceeding its allocated limits. Consider upgrading your plan to avoid additional fees.'
 					  ) }
-			</div>
+			</p>
 
-			<Button
-				className="is-dark"
-				href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
-				onClick={ () => {
-					dispatch( recordTracksEvent( 'calypso_a4a_pressable_limit_notification_upgrade_click' ) );
-				} }
-			>
-				{ translate( 'Upgrade now' ) }
-			</Button>
-			<Button
-				variant="secondary"
-				target="_blank"
-				href={ learnMoreLink }
-				onClick={ () => {
-					dispatch(
-						recordTracksEvent( 'calypso_a4a_pressable_limit_notification_learn_more_click' )
-					);
-				} }
-			>
-				{ translate( 'Learn more' ) }
-				<Icon icon={ external } size={ 18 } />
-			</Button>
+			<div className="pressable-usage-limit-notice__actions">
+				<Button
+					className="is-dark"
+					href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_a4a_pressable_limit_notification_upgrade_click' )
+						);
+					} }
+				>
+					{ translate( 'Upgrade now' ) }
+				</Button>
+				<Button
+					variant="secondary"
+					target="_blank"
+					href={ learnMoreLink }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_a4a_pressable_limit_notification_learn_more_click' )
+						);
+					} }
+				>
+					{ translate( 'Learn more' ) }
+					<Icon icon={ external } size={ 18 } />
+				</Button>
+			</div>
 		</LayoutBanner>
 	);
 };
