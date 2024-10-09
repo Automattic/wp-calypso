@@ -119,7 +119,7 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 			return [
 				{
 					url: site?.URL,
-					path: 'homepage',
+					path: '/',
 					label: __( 'Home' ),
 					value: HOME_PAGE_ID,
 					wpcom_performance_report_url: toPerformanceReportParts(
