@@ -111,7 +111,7 @@ export default function DomainsStep( props: StepProps ) {
 				props.navigation.submit?.( stepState );
 			}
 		}
-	} );
+	}, [ stepState, props.navigation, props.flow ] );
 
 	return (
 		<CalypsoShoppingCartProvider>
