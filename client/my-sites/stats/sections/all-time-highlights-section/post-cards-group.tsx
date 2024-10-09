@@ -14,6 +14,7 @@ import {
 	isRequestingSitePost,
 	getPostsForQuery,
 	isRequestingPostsForQuery,
+	countPostLikes,
 } from 'calypso/state/posts/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
@@ -98,6 +99,10 @@ export default function PostCardsGroup( {
 		getStatsTopPostsData( state, siteId, topPostsQuery )
 	);
 
+	const countLikes = useSelector(
+		( state ) => countPostLikes( state, siteId, topViewedPost?.id ) || 0
+	);
+
 	// Prepare the most popular post card.
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
@@ -115,7 +120,7 @@ export default function PostCardsGroup( {
 		title: decodeEntities(
 			stripHTML( textTruncator( mostPopularPost?.title, POST_STATS_CARD_TITLE_LIMIT ) )
 		),
-		likeCount: mostPopularPost?.like_count,
+		likeCount: countLikes,
 		viewCount: mostPopularPostViewCount,
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
