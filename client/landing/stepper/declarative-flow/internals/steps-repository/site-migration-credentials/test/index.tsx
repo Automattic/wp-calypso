@@ -78,14 +78,41 @@ const requestPayload = {
 	},
 };
 
+const baseSiteInfo = {
+	url: 'https://site-url.wordpress.com',
+	platform: 'wordpress',
+	platform_data: {
+		is_wpcom: false,
+	},
+};
+
+const siteInfoUsingWordPress = {
+	...baseSiteInfo,
+	platform: 'wordpress',
+};
+
+const siteInfoUsingWPCOM = {
+	...baseSiteInfo,
+	url: 'https://site-url.wpcomstating.com',
+	platform_data: {
+		is_wpcom: true,
+	},
+};
+
+const siteInfoUsingAnotherPlatform = {
+	...baseSiteInfo,
+	url: 'https://site-using-squarespace.com',
+	platform: 'squarespace',
+};
+
 describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( wp.req.get as jest.Mock ).mockResolvedValue( {} );
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWordPress );
 	} );
 
-	it( 'creates a credentials ticket', async () => {
+	it( 'creates an automated migration ticket', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
@@ -115,7 +142,11 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		await waitFor( () => {
-			expect( submit ).toHaveBeenCalled();
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'submit',
+				from: 'https://site-url.wordpress.com',
+				platform: 'wordpress',
+			} );
 		} );
 	} );
 
@@ -155,7 +186,10 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		await waitFor( () => {
-			expect( submit ).toHaveBeenCalled();
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'submit',
+				platform: undefined,
+			} );
 		} );
 	} );
 
@@ -184,7 +218,28 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		await waitFor( () => {
-			expect( submit ).toHaveBeenCalled();
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'submit',
+			} );
+		} );
+	} );
+
+	it( "doesn't create a ticket when site is using platforms other than WordPress", async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingAnotherPlatform );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+
+		expect( wpcomRequest ).not.toHaveBeenCalled();
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'site-is-not-using-wordpress',
+				platform: 'squarespace',
+				from: 'https://site-using-squarespace.com',
+			} );
 		} );
 	} );
 
@@ -341,6 +396,25 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
+	it( 'shows error message when site is not accessible', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
+			data: {
+				response_code: 404,
+			},
+		} );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( getByText( 'Check your site address.' ) ).toBeVisible();
+		} );
+	} );
+
 	it.each( [
 		{
 			response_code: 404,
@@ -382,20 +456,13 @@ describe( 'SiteMigrationCredentials', () => {
 		}
 	);
 
-	it( 'shows Continue anyways button and an already on WPCOM error if site is already on WPCOM', async () => {
+	it( 'shows Continue anyways button and an already on WPCOM', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		await fillAllFields();
 		await fillNoteField();
 
-		const siteInfo = {
-			url: 'https://site-url.wordpress.com',
-			platform_data: {
-				is_wpcom: true,
-			},
-		};
-
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfo );
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
@@ -422,7 +489,8 @@ describe( 'SiteMigrationCredentials', () => {
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith( {
 				action: 'already-wpcom',
-				from: 'https://site-url.wordpress.com',
+				from: 'https://site-url.wpcomstating.com',
+				platform: 'wordpress',
 			} );
 		} );
 	} );
