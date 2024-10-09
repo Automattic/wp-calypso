@@ -667,6 +667,9 @@ class ReaderStream extends Component {
 				body = (
 					<>
 						{ streamHeader?.() }
+						<div style={ { margin: '32px 16px 0' } }>
+							<CustomerCouncilBanner translate={ translate } />
+						</div>
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
 								<NavTabs label={ translate( 'Status' ) }>
