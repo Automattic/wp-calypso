@@ -19,7 +19,10 @@ body.is-section-stepper .step-route {
 	}
 
 	.locale-suggestions {
-		width: 100%;
+		margin: 0 auto;
+		@include break-medium {
+			width: 100%;
+		}
 	}
 
 
