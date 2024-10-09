@@ -117,23 +117,30 @@ const useLoadingSteps = ( {
 	if ( isLoadingPages ) {
 		steps = [ translate( 'Getting your site pages' ) ];
 	} else {
-		steps =
-			isSavedReport && ! isLoggedIn
-				? [ translate( 'Getting your report…' ) ]
-				: [
-						...( isSavedReport && step === 0
-							? [ translate( 'Checking for existing report…' ) ]
-							: [] ),
-						...( isSavedReport && step > 0 ? [ translate( 'No existing report found…' ) ] : [] ),
-						pageTitle
-							? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
-							: translate( 'Loading your site' ),
-						translate( 'Measuring Core Web Vitals' ),
-						translate( 'Taking screenshots' ),
-						translate( 'Fetching historic data' ),
-						translate( 'Identifying performance improvements' ),
-						translate( 'Finalizing your results' ),
-				  ];
+		const loggedInSteps = [
+			...( step === 0
+				? [ translate( 'Checking for existing report…' ) ]
+				: [ translate( 'No existing report found…' ) ] ),
+			pageTitle
+				? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
+				: translate( 'Loading your site' ),
+			translate( 'Measuring Core Web Vitals' ),
+			translate( 'Taking screenshots' ),
+			translate( 'Fetching historic data' ),
+			translate( 'Identifying performance improvements' ),
+			translate( 'Finalizing your results' ),
+		];
+		const loggedOutSteps = isSavedReport
+			? [ translate( 'Getting your report…' ) ]
+			: [
+					translate( 'Loading your site' ),
+					translate( 'Measuring Core Web Vitals' ),
+					translate( 'Taking screenshots' ),
+					translate( 'Fetching historic data' ),
+					translate( 'Identifying performance improvements' ),
+					translate( 'Finalizing your results' ),
+			  ];
+		steps = isLoggedIn ? loggedInSteps : loggedOutSteps;
 	}
 
 	useEffect( () => {
