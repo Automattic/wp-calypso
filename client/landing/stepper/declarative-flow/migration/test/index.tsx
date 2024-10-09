@@ -25,6 +25,7 @@ describe( `${ flow.name }`, () => {
 		Object.defineProperty( window, 'location', {
 			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
 		} );
+		jest.clearAllMocks();
 	} );
 
 	afterAll( () => {
@@ -509,6 +510,32 @@ describe( `${ flow.name }`, () => {
 						siteSlug: 'example.wordpress.com',
 						from: 'http://oldsite.example.com',
 					},
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT STEP', () => {
+			it( 'redirects users from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to SITE_MIGRATION_ASSISTED_MIGRATION', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'squarespace' },
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'/setup/site-setup/importerSquarespace?siteSlug=example.wordpress.com&from=&backToFlow=%2Fmigration%2Fsite-migration-credentials&siteId=123&ref=migration'
+				);
+			} );
+
+			it( 'redirects users from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to ASSISTED_MIGRATION when the user skips the import', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'squarespace' },
+					dependencies: { action: 'skip' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
 		} );
