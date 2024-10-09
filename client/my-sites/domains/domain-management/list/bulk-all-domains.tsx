@@ -328,11 +328,9 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		if ( newDomains ) {
 			dispatch(
 				successNotice(
-					translate(
-						'Your domain is being setup. We’ll notify you when it’s ready.',
-						'Your domains are being set up. We’ll notify you when they are ready.',
-						{ count: parseInt( newDomains ) }
-					),
+					translate( 'Your domain is being setup.', 'Your domains are being set up.', {
+						count: parseInt( newDomains ),
+					} ),
 					{
 						duration: 10000,
 					}
