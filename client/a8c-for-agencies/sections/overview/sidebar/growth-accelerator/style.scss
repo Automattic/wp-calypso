@@ -33,4 +33,10 @@
 
 .components-button.is-link.overview__growth-accelerator-footer-not-interested {
 	color: var(--color-text);
+
+	&:visited,
+	&:focus,
+	&:hover {
+		background-color: transparent;
+	}
 }
