@@ -1,4 +1,3 @@
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -9,7 +8,6 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
-import Banner from 'calypso/components/banner';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -48,6 +46,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
+import { CustomerCouncilBanner } from './customer-council-banner';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
@@ -60,57 +59,6 @@ const GUESSED_POST_HEIGHT = 600;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
-
-const CustomerCouncilBanner = ( { translate } ) => {
-	const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
-	const CUSTOMER_COUNCIL_P2_ID = '237686330';
-
-	const { mutate: subscribe, isIdle: notActivelySubscribing } =
-		SubscriptionManager.useSiteSubscribeMutation();
-
-	const {
-		data: { is_following: alreadySubscribed },
-		isFetched: checkedAlreadySubscribed,
-		isFetching: checkingAlreadySubscribed,
-	} = Reader.useReadFeedSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) );
-
-	const hideBanner = ( alreadySubscribed && checkedAlreadySubscribed ) || checkingAlreadySubscribed;
-
-	if ( hideBanner ) {
-		return null;
-	}
-
-	const subscribeToP2AndNavigate = () => {
-		subscribe(
-			{ blog_id: CUSTOMER_COUNCIL_P2_URL, url: CUSTOMER_COUNCIL_P2_URL },
-			{
-				onSettled: () => {
-					window.location.href = CUSTOMER_COUNCIL_P2_URL;
-				},
-			}
-		);
-	};
-
-	return (
-		<Banner
-			callToAction={
-				notActivelySubscribing ? translate( 'Subscribe' ) : `${ translate( 'Subscribing' ) }...`
-			}
-			dismissPreferenceName="reader-council-banner"
-			dismissTemporary
-			title={ translate( 'Want to shape the future of the WordPress.com Reader?' ) }
-			onClick={ subscribeToP2AndNavigate }
-			description={ translate(
-				'Join {{a}}our new blog{{/a}} to share your feedback and help us improve your reading experience.',
-				{
-					components: {
-						a: <a href={ CUSTOMER_COUNCIL_P2_URL } />,
-					},
-				}
-			) }
-		/>
-	);
-};
 
 class ReaderStream extends Component {
 	static propTypes = {
