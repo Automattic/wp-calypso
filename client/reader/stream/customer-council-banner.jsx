@@ -38,6 +38,7 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 			callToAction={
 				notActivelySubscribing ? translate( 'Subscribe' ) : `${ translate( 'Subscribing' ) }...`
 			}
+			disableHref
 			dismissPreferenceName="reader-council-banner"
 			dismissTemporary
 			title={ translate( 'Want to shape the future of the WordPress.com Reader?' ) }
