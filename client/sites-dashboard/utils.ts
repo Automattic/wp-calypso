@@ -66,6 +66,15 @@ export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
 };
 
+export const isPendingMigrationSite = ( site: SiteExcerptNetworkData ): boolean => {
+	const migrationStatus = site?.site_migration?.migration_status;
+	if ( ! migrationStatus ) {
+		return false;
+	}
+
+	return ! migrationStatus.startsWith( 'migration-completed' );
+};
+
 export const isHostingTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY;
 };

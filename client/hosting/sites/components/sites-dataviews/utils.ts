@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { DataViewsPaginationInfo } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DUMMY_DATA_VIEW_PREFIX } from './constants';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -23,4 +24,8 @@ export function getSitesPagination(
 
 export function removeDummyDataViewPrefix( dataView: string ) {
 	return dataView.replace( DUMMY_DATA_VIEW_PREFIX, '' );
+}
+
+export function isDefaultSiteTitle( title: string ) {
+	return title === translate( 'Site Title' ) || title === translate( 'My WordPress Site' );
 }
