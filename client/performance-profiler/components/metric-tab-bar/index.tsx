@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { Metrics } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -17,6 +18,7 @@ type Props = Record< Metrics, number > & {
 };
 
 const MetricTabBar = ( props: Props ) => {
+	const translate = useTranslate();
 	const { activeTab, setActiveTab, showOverall } = props;
 
 	const handleTabClick = ( tab: Metrics ) => {
@@ -40,7 +42,7 @@ const MetricTabBar = ( props: Props ) => {
 								marginBottom: '6px',
 							} }
 						>
-							Performance Score
+							{ translate( 'Performance Score' ) }
 						</div>
 						<div className="metric-tab-bar__tab-metric">
 							<CircularPerformanceScore score={ props.overall } size={ 48 } />
