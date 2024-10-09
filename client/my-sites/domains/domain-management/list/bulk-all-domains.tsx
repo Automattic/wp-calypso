@@ -1,12 +1,14 @@
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader from '../components/domain-header';
 import {
@@ -32,6 +34,7 @@ interface BulkAllDomainsProps {
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains = [], isFetched, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 	const sitesDashboardGlobalStyles = css`
 		html {
@@ -316,6 +319,27 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		? [ <OptionsDomainButton key="breadcrumb_button_1" allDomainsList /> ]
 		: [];
 	const purchaseActions = usePurchaseActions();
+
+	// Domain purhcases provide a new domain flag on checkout completion
+	// e.g. /domains/manage/example.wordpress.com?new-domains=2
+	const queryParams = new URLSearchParams( window.location.search );
+	const newDomains = queryParams.get( 'new-domains' );
+	useEffect( () => {
+		if ( newDomains ) {
+			dispatch(
+				successNotice(
+					translate(
+						'Your domain is being setup. We’ll notify you when it’s ready.',
+						'Your domains are being set up. We’ll notify you when they are ready.',
+						{ count: parseInt( newDomains ) }
+					),
+					{
+						duration: 10000,
+					}
+				)
+			);
+		}
+	}, [ newDomains, dispatch, translate ] );
 
 	return (
 		<>
