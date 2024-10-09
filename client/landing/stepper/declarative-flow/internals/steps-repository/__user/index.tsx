@@ -8,6 +8,8 @@ import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
@@ -19,8 +21,8 @@ import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
-import './style.scss';
 import { useSocialService } from './use-social-service';
+import './style.scss';
 
 const UserStepComponent: Step = function UserStep( {
 	flow,
@@ -57,52 +59,64 @@ const UserStepComponent: Step = function UserStep( {
 		redirectTo,
 	} );
 
+	const locale = useFlowLocale();
+	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
+
 	return (
-		<StepContainer
-			stepName={ stepName }
-			isHorizontalLayout={ false }
-			isWideLayout={ false }
-			isFullLayout
-			isLargeSkipLayout={ false }
-			hideBack
-			stepContent={
-				<>
-					<FormattedHeader
-						align="center"
-						headerText={ translate( 'Create your account' ) }
-						brandFont
-					/>
-					<SignupFormSocialFirst
-						stepName={ stepName }
-						flowName={ flow }
-						goToNextStep={ setWpAccountCreateResponse }
-						passDataToNextStep
-						logInUrl={ loginLink }
-						handleSocialResponse={ handleSocialResponse }
-						socialServiceResponse={ socialServiceResponse }
-						redirectToAfterLoginUrl={ window.location.href }
-						queryArgs={ {} }
-						userEmail=""
-						notice={ notice }
-						isSocialFirst
-						onCreateAccountSuccess={ () => setIsNewUser( true ) }
-					/>
-					{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
-						<WpcomLoginForm
-							authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
-							log={ accountCreateResponse.username }
-							redirectTo={ new URL( redirectTo, window.location.href ).href }
+		<>
+			{ shouldRenderLocaleSuggestions && (
+				<LocaleSuggestions path={ window.location.pathname } locale={ locale } />
+			) }
+			<StepContainer
+				stepName={ stepName }
+				isHorizontalLayout={ false }
+				isWideLayout={ false }
+				isFullLayout
+				isLargeSkipLayout={ false }
+				hideBack
+				stepContent={
+					<>
+						<FormattedHeader
+							align="center"
+							headerText={ translate( 'Create your account' ) }
+							brandFont
 						/>
-					) }
-				</>
-			}
-			recordTracksEvent={ recordTracksEvent }
-			customizedActionButtons={
-				<Button className="step-wrapper__navigation-link forward" href={ loginLink } variant="link">
-					<span>{ translate( 'Log in' ) }</span>
-				</Button>
-			}
-		/>
+						<SignupFormSocialFirst
+							stepName={ stepName }
+							flowName={ flow }
+							goToNextStep={ setWpAccountCreateResponse }
+							passDataToNextStep
+							logInUrl={ loginLink }
+							handleSocialResponse={ handleSocialResponse }
+							socialServiceResponse={ socialServiceResponse }
+							redirectToAfterLoginUrl={ window.location.href }
+							queryArgs={ {} }
+							userEmail=""
+							notice={ notice }
+							isSocialFirst
+							onCreateAccountSuccess={ () => setIsNewUser( true ) }
+						/>
+						{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
+							<WpcomLoginForm
+								authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
+								log={ accountCreateResponse.username }
+								redirectTo={ new URL( redirectTo, window.location.href ).href }
+							/>
+						) }
+					</>
+				}
+				recordTracksEvent={ recordTracksEvent }
+				customizedActionButtons={
+					<Button
+						className="step-wrapper__navigation-link forward"
+						href={ loginLink }
+						variant="link"
+					>
+						<span>{ translate( 'Log in' ) }</span>
+					</Button>
+				}
+			/>
+		</>
 	);
 };
 
