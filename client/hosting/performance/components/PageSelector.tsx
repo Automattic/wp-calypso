@@ -17,19 +17,9 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 					{ ...props }
 					className="site-performance__page-selector-drowdown"
 					__experimentalRenderItem={ ( { item } ) => (
-						<div
-							aria-label={ item.label }
-							css={ {
-								display: 'flex',
-								flexDirection: 'column',
-								paddingInline: '16px',
-								paddingBlock: '8px',
-								fontSize: '0.875rem',
-								gap: '4px',
-							} }
-						>
+						<div className="site-performance__page-selector-item" aria-label={ item.label }>
 							<span>{ item.label }</span>
-							<span>{ item.path }</span>
+							<span className="subtitle">{ item.path }</span>
 						</div>
 					) }
 				/>
