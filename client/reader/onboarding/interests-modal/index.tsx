@@ -1,5 +1,6 @@
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import { Modal, Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
@@ -61,73 +62,73 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 
 	const categories: Category[] = [
 		{
-			name: 'Lifestyle & Personal Development',
+			name: __( 'Lifestyle & Personal Development' ),
 			topics: [
-				{ name: 'Health', tag: 'health' },
-				{ name: 'Personal Finance', tag: 'personal-finance' },
-				{ name: 'Food', tag: 'food' },
-				{ name: 'Life Hacks', tag: 'life-hacks' },
-				{ name: 'Mental Health', tag: 'mental-health' },
-				{ name: 'Sleep', tag: 'sleep' },
-				{ name: 'Relationships', tag: 'relationships' },
-				{ name: 'Parenting', tag: 'parenting' },
-				{ name: 'Travel', tag: 'travel' },
+				{ name: __( 'Health' ), tag: 'health' },
+				{ name: __( 'Personal Finance' ), tag: 'personal-finance' },
+				{ name: __( 'Food' ), tag: 'food' },
+				{ name: __( 'Life Hacks' ), tag: 'life-hacks' },
+				{ name: __( 'Mental Health' ), tag: 'mental-health' },
+				{ name: __( 'Sleep' ), tag: 'sleep' },
+				{ name: __( 'Relationships' ), tag: 'relationships' },
+				{ name: __( 'Parenting' ), tag: 'parenting' },
+				{ name: __( 'Travel' ), tag: 'travel' },
 			],
 		},
 		{
-			name: 'Technology & Innovation',
+			name: __( 'Technology & Innovation' ),
 			topics: [
-				{ name: 'Gadgets', tag: 'gadgets' },
-				{ name: 'Software', tag: 'software' },
-				{ name: 'Tech News', tag: 'technology' },
-				{ name: 'Design', tag: 'design' },
-				{ name: 'Artificial Intelligence', tag: 'artificial-intelligence' },
-				{ name: 'Cybersecurity', tag: 'cybersecurity' },
-				{ name: 'Gaming', tag: 'gaming' },
-				{ name: 'Crypto', tag: 'cryptocurrency' },
-				{ name: 'Science', tag: 'science' },
+				{ name: __( 'Gadgets' ), tag: 'gadgets' },
+				{ name: __( 'Software' ), tag: 'software' },
+				{ name: __( 'Tech News' ), tag: 'technology' },
+				{ name: __( 'Design' ), tag: 'design' },
+				{ name: __( 'Artificial Intelligence' ), tag: 'artificial-intelligence' },
+				{ name: __( 'Cybersecurity' ), tag: 'cybersecurity' },
+				{ name: __( 'Gaming' ), tag: 'gaming' },
+				{ name: __( 'Crypto' ), tag: 'cryptocurrency' },
+				{ name: __( 'Science' ), tag: 'science' },
 			],
 		},
 		{
-			name: 'Creative Arts & Entertainment',
+			name: __( 'Creative Arts & Entertainment' ),
 			topics: [
-				{ name: 'Music', tag: 'music' },
-				{ name: 'Film & Television', tag: 'movies-and-tv' },
-				{ name: 'Book Reviews', tag: 'books' },
-				{ name: 'Art & Photography', tag: [ 'art', 'photography' ] },
-				{ name: 'Theatre & Performance', tag: 'theatre' },
-				{ name: 'Creative Writing', tag: 'writing' },
-				{ name: 'Architecture', tag: 'architecture' },
-				{ name: 'Comics', tag: 'comics' },
-				{ name: 'DIY Projects', tag: 'diy' },
+				{ name: __( 'Music' ), tag: 'music' },
+				{ name: __( 'Film & Television' ), tag: 'movies-and-tv' },
+				{ name: __( 'Book Reviews' ), tag: 'books' },
+				{ name: __( 'Art & Photography' ), tag: [ 'art', 'photography' ] },
+				{ name: __( 'Theatre & Performance' ), tag: 'theatre' },
+				{ name: __( 'Creative Writing' ), tag: 'writing' },
+				{ name: __( 'Architecture' ), tag: 'architecture' },
+				{ name: __( 'Comics' ), tag: 'comics' },
+				{ name: __( 'DIY Projects' ), tag: 'diy' },
 			],
 		},
 		{
-			name: 'Society & Culture',
+			name: __( 'Society & Culture' ),
 			topics: [
-				{ name: 'Education', tag: 'education' },
-				{ name: 'Nature', tag: 'nature' },
-				{ name: 'Future', tag: 'future' },
-				{ name: 'Politics', tag: 'politics' },
-				{ name: 'Climate', tag: 'climate-change' },
-				{ name: 'History', tag: 'history' },
-				{ name: 'Society', tag: 'society' },
-				{ name: 'Culture', tag: 'culture' },
-				{ name: 'Philosophy', tag: 'philosophy' },
+				{ name: __( 'Education' ), tag: 'education' },
+				{ name: __( 'Nature' ), tag: 'nature' },
+				{ name: __( 'Future' ), tag: 'future' },
+				{ name: __( 'Politics' ), tag: 'politics' },
+				{ name: __( 'Climate' ), tag: 'climate-change' },
+				{ name: __( 'History' ), tag: 'history' },
+				{ name: __( 'Society' ), tag: 'society' },
+				{ name: __( 'Culture' ), tag: 'culture' },
+				{ name: __( 'Philosophy' ), tag: 'philosophy' },
 			],
 		},
 		{
-			name: 'Industry',
+			name: __( 'Industry' ),
 			topics: [
-				{ name: 'Business', tag: 'business' },
-				{ name: 'Startups', tag: 'startups' },
-				{ name: 'Finance', tag: 'finance' },
-				{ name: 'Space', tag: 'space' },
-				{ name: 'Leadership', tag: 'leadership' },
-				{ name: 'Marketing', tag: 'marketing' },
-				{ name: 'Remote Work', tag: 'remote-work' },
-				{ name: 'SaaS', tag: 'saas' },
-				{ name: 'Creator Economy', tag: 'creator-economy' },
+				{ name: __( 'Business' ), tag: 'business' },
+				{ name: __( 'Startups' ), tag: 'startups' },
+				{ name: __( 'Finance' ), tag: 'finance' },
+				{ name: __( 'Space' ), tag: 'space' },
+				{ name: __( 'Leadership' ), tag: 'leadership' },
+				{ name: __( 'Marketing' ), tag: 'marketing' },
+				{ name: __( 'Remote Work' ), tag: 'remote-work' },
+				{ name: __( 'SaaS' ), tag: 'saas' },
+				{ name: __( 'Creator Economy' ), tag: 'creator-economy' },
 			],
 		},
 	];
@@ -135,10 +136,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 	const headerActions = (
 		<>
 			<Button onClick={ onClose } variant="link">
-				Cancel
+				{ __( 'Cancel' ) }
 			</Button>
 			<Button onClick={ handleContinue } variant="primary" disabled={ isButtonDisabled }>
-				Continue
+				{ __( 'Continue' ) }
 			</Button>
 		</>
 	);
@@ -146,13 +147,16 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 	return (
 		isOpen && (
 			<Modal
-				title="Select Your Interests"
 				onRequestClose={ onClose }
 				isFullScreen
 				headerActions={ headerActions }
 				isDismissible={ false }
 			>
 				<div className="interests-modal__content">
+					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
+					<p className="interests-modal__subtitle">
+						{ __( 'Follow at least 3 topics to personalize your Reader feed.' ) }
+					</p>
 					{ categories.map( ( category ) => (
 						<div key={ category.name } className="interests-modal__category">
 							<h3 className="interests-modal__section-header">{ category.name }</h3>
@@ -173,15 +177,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 							</div>
 						</div>
 					) ) }
-				</div>
-				<div className="interests-modal__footer">
-					<p className="interests-modal__footer-text">
-						{ isButtonDisabled
-							? `Please select at least ${ 3 - interests.length } more ${
-									interests.length === 2 ? 'interest' : 'interests'
-							  } to continue.`
-							: 'Great! You can now continue.' }
-					</p>
 				</div>
 			</Modal>
 		)

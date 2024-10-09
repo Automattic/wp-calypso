@@ -1,9 +1,21 @@
+.interests-modal__title {
+	font-family: Recoleta, sans-serif;
+	font-size: 2.75rem;
+	font-weight: 400;
+	text-align: center;
+}
+
+.interests-modal__subtitle {
+	text-align: center;
+}
+
 .interests-modal__content {
 	padding: 24px;
 }
 
 .interests-modal__category {
-	margin-bottom: 32px;
+	max-width: 1200px;
+	margin: 0 auto 32px auto;
 }
 
 .interests-modal__section-header {
