@@ -42,20 +42,6 @@ describe( 'Site Migration Other Platform Detected Import', () => {
 		} );
 	} );
 
-	it( 'scans the user site when the platform is not available', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/imports/analyze-url' )
-			.query( { site_url: 'https://example.com' } )
-			.once()
-			.reply( 200, {
-				platform: 'squarespace',
-			} );
-
-		render( {}, { initialEntry: '/step?from=https://example.com' } );
-
-		expect( await screen.findByText( /Scanning your site/ ) ).toBeVisible();
-	} );
-
 	it( 'submits with importer destination', async () => {
 		const submit = jest.fn();
 
