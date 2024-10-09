@@ -23,12 +23,12 @@ import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
 import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls, Tab } from './components/device-tab-control';
+import { ExpiredReportNotice } from './components/expired-report-notice/expired-report-notice';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 
 import './style.scss';
 
 const statType = 'statsTopPosts';
-
 const statsQuery = {
 	num: -1,
 	summarize: 1,
@@ -324,13 +324,19 @@ export const SitePerformance = () => {
 						/>
 					) : (
 						currentPage && (
-							<PerformanceReport
-								{ ...performanceReport }
-								pageTitle={ currentPage.label }
-								onRetestClick={ retestPage }
-								onFilterChange={ handleRecommendationsFilterChange }
-								filter={ recommendationsFilter }
-							/>
+							<>
+								<ExpiredReportNotice
+									reportTimestamp={ performanceReport.performanceReport?.timestamp }
+									onRetest={ retestPage }
+								/>
+								<PerformanceReport
+									{ ...performanceReport }
+									pageTitle={ currentPage.label }
+									onRetestClick={ retestPage }
+									onFilterChange={ handleRecommendationsFilterChange }
+									filter={ recommendationsFilter }
+								/>
+							</>
 						)
 					) }
 				</>
