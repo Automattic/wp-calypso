@@ -1,7 +1,7 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -66,7 +66,12 @@ const onboarding: Flow = {
 				currentStepSlug === 'domains' ||
 				( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
 			) {
-				window.history.replaceState( {}, document.title, window.location.pathname );
+				const newURL = removeQueryArgs(
+					window.location.pathname + window.location.search,
+					'step',
+					'initialQuery'
+				);
+				window.history.replaceState( {}, document.title, newURL );
 			}
 		};
 
@@ -85,13 +90,17 @@ const onboarding: Flow = {
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
+						const currentQueryArgs = getQueryArgs( window.location.href );
+						currentQueryArgs.step = 'domain-input';
 						setRedirectedToUseMyDomain( true );
-						let useMyDomainURL = 'use-my-domain?step=domain-input';
+						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
 						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
-							useMyDomainURL = addQueryArgs( useMyDomainURL, {
-								initialQuery: ( providedDependencies?.domainForm as { lastQuery?: string } )
-									?.lastQuery,
-							} );
+							const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
+								?.lastQuery;
+							if ( lastQueryParam !== undefined ) {
+								currentQueryArgs.initialQuery = lastQueryParam;
+							}
+							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
 						}
 						return navigate( useMyDomainURL );
 					}
@@ -101,9 +110,12 @@ const onboarding: Flow = {
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if ( providedDependencies?.mode && providedDependencies?.domain ) {
-						return navigate(
-							`use-my-domain?step=${ providedDependencies.mode }&initialQuery=${ providedDependencies.domain }`
-						);
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
+							step: providedDependencies.mode,
+							initialQuery: providedDependencies.domain,
+						} );
+						return navigate( destination );
 					}
 					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
@@ -154,11 +166,12 @@ const onboarding: Flow = {
 			switch ( currentStepSlug ) {
 				case 'use-my-domain':
 					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
-						const url = addQueryArgs( 'use-my-domain', {
+						const destination = addQueryArgs( '/use-my-domain', {
+							...getQueryArgs( window.location.href ),
 							step: 'domain-input',
 							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
 						} );
-						return navigate( url );
+						return navigate( destination );
 					}
 
 					if ( window.location.search ) {
