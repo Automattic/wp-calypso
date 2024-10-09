@@ -60,7 +60,7 @@ const UserStepComponent: Step = function UserStep( {
 	} );
 
 	const locale = useFlowLocale();
-	const shouldRenderLocaleSuggestions = ! isLoggedIn; // not sure if this is necessary. It's used in Classic login
+	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	return (
 		<>
