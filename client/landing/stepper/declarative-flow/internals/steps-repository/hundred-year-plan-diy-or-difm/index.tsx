@@ -19,7 +19,14 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 		<HundredYearPlanStepWrapper
 			stepContent={
 				<>
-					{ showModal && <ScheduleAppointmentModal onClose={ () => setShowModal( false ) } /> }
+					{ showModal && (
+						<ScheduleAppointmentModal
+							onClose={ () => setShowModal( false ) }
+							onSchedule={ () => {
+								submit?.( { nextStep: 'thank-you' } );
+							} }
+						/>
+					) }
 					<div>
 						<ul>
 							<li>

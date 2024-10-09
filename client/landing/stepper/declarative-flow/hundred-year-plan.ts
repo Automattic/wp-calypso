@@ -124,12 +124,13 @@ const HundredYearPlanFlow: Flow = {
 			};
 
 			switch ( _currentStep ) {
-				case 'diy-or-difm':
+				case 'diy-or-difm': {
 					if ( 'diy' === providedDependencies?.diyOrDifmChoice ) {
 						return navigate( hasSite ? 'new-or-existing-site' : 'setup' );
+					} else if ( providedDependencies?.nextStep === 'thank-you' ) {
+						return navigate( 'thank-you' );
 					}
-					// TODO: add VIP flow
-					return navigate( 'schedule-appointment' );
+				}
 				case 'schedule-appointment':
 					return navigate( 'thank-you' );
 				case 'new-or-existing-site':

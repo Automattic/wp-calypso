@@ -9,12 +9,13 @@ import CalendlyWidget from '../components/calendy-widget';
 import HunderYearPlanLogo from '../hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 
 interface Props {
-	onClose: () => void;
+	onClose?: () => void;
+	onSchedule: () => void;
 }
 
 const ScheduleAppointmentModal = ( props: Props ) => {
 	const translate = useTranslate();
-	const { onClose } = props;
+	const { onClose, onSchedule } = props;
 
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
@@ -87,9 +88,7 @@ const ScheduleAppointmentModal = ( props: Props ) => {
 						hideLandingPageDetails
 						hideEventTypeDetails
 						hideGdprBanner
-						onSchedule={ () => {
-							// TODO: submit
-						} }
+						onSchedule={ onSchedule }
 					/>
 				</div>
 			</Modal>
