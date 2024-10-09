@@ -2,6 +2,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { getPlatformImporterName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -17,6 +18,7 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' ) as string;
+
 	const [ platform, setPlatform ] = useState< ImporterPlatform | null >(
 		query.get( 'platform' ) as ImporterPlatform | null
 	);
@@ -25,16 +27,16 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 
 	const {
 		isFetching: isAnalyzingUrl,
-		data: analyzeUrlData,
+		data: siteInfo,
 		isSuccess,
 	} = useAnalyzeUrlQuery( from, shouldAnalyzeUrl );
 
 	useEffect( () => {
-		if ( ! isSuccess || ! analyzeUrlData ) {
+		if ( ! isSuccess || ! siteInfo ) {
 			return;
 		}
-		setPlatform( analyzeUrlData.platform );
-	}, [ analyzeUrlData, isSuccess, platform ] );
+		setPlatform( siteInfo.platform );
+	}, [ siteInfo, isSuccess, platform ] );
 
 	const handleSubmit = useCallback( () => {
 		navigation.submit?.( {
@@ -66,7 +68,16 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 							id="site-migration-credentials-header"
 							headerText={ translate( "Looks like there's been a mix-up" ) }
 							subHeaderText={ translate(
-								'Our migration service is for WordPress sites. But don’t worry — our import tool is ready to bring your content to WordPress.com.'
+								'Our migration service is for WordPress sites. But don’t worry — our {{strong}}%(platform)s{{/strong}} import tool is ready to bring your content to WordPress.com.',
+								{
+									args: {
+										platform:
+											getPlatformImporterName( siteInfo?.platform as ImporterPlatform ) || '',
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
 							) }
 							align="center"
 							subHeaderAlign="center"
