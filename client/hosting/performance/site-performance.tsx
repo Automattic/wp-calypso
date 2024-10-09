@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -43,7 +43,12 @@ const usePerformanceReport = (
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
-	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
+	const {
+		data: basicMetrics,
+		isError,
+		isFetched,
+		refetch: testAgain,
+	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
@@ -80,6 +85,7 @@ const usePerformanceReport = (
 		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
 		isError: isError || isErrorInsights,
 		isFetched,
+		testAgain,
 	};
 };
 
@@ -121,39 +127,27 @@ export const SitePerformance = () => {
 	const currentPageId = queryParams?.page_id?.toString() ?? '0';
 	const filter = queryParams?.filter?.toString();
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
-	const [ currentPage, setCurrentPage ] = useState< ( typeof pages )[ number ] >();
 
-	useEffect( () => {
-		setCurrentPage( undefined );
-	}, [ siteId ] );
+	// Stores any page selection made by the user, `undefined` by default. See
+	// `currentPage` below for logic regarding the default page if the user
+	// hasn't selected one yet.
+	const [ currentPageUserSelection, setCurrentPageUserSelection ] =
+		useState< ( typeof pages )[ number ] >();
 
-	useEffect( () => {
-		if ( pages && ! currentPage ) {
-			setCurrentPage( pages.find( ( page ) => page.value === currentPageId ) );
-		}
-	}, [ pages, currentPage, currentPageId ] );
+	const [ prevSiteId, setPrevSiteId ] = useState( siteId );
+	if ( prevSiteId !== siteId ) {
+		setPrevSiteId( siteId );
+		setCurrentPageUserSelection( undefined );
+	}
+
+	const currentPage =
+		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
 
 	const pageOptions = useMemo( () => {
 		return currentPage
 			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
 			: orderedPages;
 	}, [ currentPage, orderedPages ] );
-
-	const [ wpcom_performance_report_url, setWpcom_performance_report_url ] = useState(
-		currentPage?.wpcom_performance_report_url
-	);
-
-	useLayoutEffect( () => {
-		setWpcom_performance_report_url( currentPage?.wpcom_performance_report_url );
-	}, [ currentPage?.wpcom_performance_report_url ] );
-
-	const retestPage = () => {
-		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
-		setWpcom_performance_report_url( {
-			url: currentPage?.url ?? '',
-			hash: '',
-		} );
-	};
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
 		setRecommendationsFilter( filter );
@@ -169,7 +163,7 @@ export const SitePerformance = () => {
 	};
 
 	const performanceReport = usePerformanceReport(
-		isSitePublic ? wpcom_performance_report_url : undefined,
+		isSitePublic ? currentPage?.wpcom_performance_report_url : undefined,
 		activeTab
 	);
 
@@ -181,27 +175,22 @@ export const SitePerformance = () => {
 		}
 	}, [ performanceReport.isFetched, performanceReport.url ] );
 
-	useEffect( () => {
-		if ( performanceReport.hash && performanceReport.hash !== wpcom_performance_report_url?.hash ) {
-			const performanceReportUrl = {
-				url: performanceReport.url,
-				hash: performanceReport.hash,
-			};
-
-			setWpcom_performance_report_url( performanceReportUrl );
-			savePerformanceReportUrl( currentPageId, performanceReportUrl );
-		}
-	}, [
-		currentPageId,
-		performanceReport.url,
-		performanceReport.hash,
-		savePerformanceReportUrl,
-		wpcom_performance_report_url?.hash,
-	] );
-
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
+
+	const retestPage = () => {
+		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
+
+		performanceReport.testAgain().then( ( { data } ) => {
+			if ( data?.token && data.token !== currentPage?.wpcom_performance_report_url?.hash ) {
+				savePerformanceReportUrl( currentPageId, {
+					url: data.final_url,
+					hash: data.token,
+				} );
+			}
+		} );
+	};
 
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
@@ -231,10 +220,10 @@ export const SitePerformance = () => {
 				const url = new URL( window.location.href );
 
 				if ( page_id ) {
-					setCurrentPage( pages.find( ( page ) => page.value === page_id ) );
+					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
 					url.searchParams.set( 'page_id', page_id );
 				} else {
-					setCurrentPage( undefined );
+					setCurrentPageUserSelection( undefined );
 					url.searchParams.delete( 'page_id' );
 				}
 
