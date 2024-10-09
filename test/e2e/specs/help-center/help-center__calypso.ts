@@ -159,7 +159,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 			await contactSupportButton.dispatchEvent( 'click' );
 
 			const zendeskMessaging = await page
-				.frameLocator( 'iframe[title="Messaging window"]' )
+				.frameLocator( 'iframe[title="Messaging windowz"]' )
 				.getByPlaceholder( 'Type a message' );
 
 			await zendeskMessaging.waitFor( { state: 'visible' } );
