@@ -163,7 +163,6 @@ export default function SubscribersChartSection( {
 					</div>
 				</div>
 			</div>
-			<div className="subscribers-section-legend" ref={ legendRef }></div>
 			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
@@ -172,16 +171,19 @@ export default function SubscribersChartSection( {
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isChartLoading && chartData.length !== 0 && (
-				<UplotChart
-					data={ chartData }
-					legendContainer={ legendRef }
-					period={ period }
-					// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
-					mainColor={ isOdysseyStats ? '#069e08' : undefined }
-					fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
-					fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
-					yAxisFilter={ hideFractionNumber }
-				/>
+				<>
+					<div className="subscribers-section-legend" ref={ legendRef }></div>
+					<UplotChart
+						data={ chartData }
+						legendContainer={ legendRef }
+						period={ period }
+						// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
+						mainColor={ isOdysseyStats ? '#069e08' : undefined }
+						fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
+						fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+						yAxisFilter={ hideFractionNumber }
+					/>
+				</>
 			) }
 		</div>
 	);
