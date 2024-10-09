@@ -12,6 +12,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
+import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/pressable-usage-limit-notice';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -20,7 +21,6 @@ import {
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import PressableUsageLimitNotice from '../common/pressable-usage-limit-notice';
 import ReferralToggle from '../common/referral-toggle';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
