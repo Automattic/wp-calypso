@@ -3,7 +3,12 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useZendeskMessagingBindings, useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import config from '@automattic/calypso-config';
+import {
+	useSmooch,
+	useZendeskMessagingBindings,
+	useLoadZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -28,6 +33,8 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	const smoochRef = useRef< HTMLDivElement >( null );
+	const shouldUseFancyHelpCenter = config.isEnabled( 'help-center-experience' );
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -53,9 +60,26 @@ const HelpCenter: React.FC< Container > = ( {
 		isEligibleForChat || hasActiveChats
 	);
 
-	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
+	const { initSmooch, destroy } = useSmooch();
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
+
+	// Initialize Smooch which communicates with Zendesk
+	useEffect( () => {
+		if ( shouldUseFancyHelpCenter && isMessagingScriptLoaded && smoochRef.current ) {
+			initSmooch( smoochRef.current );
+		}
+
+		return () => {
+			destroy();
+		};
+	}, [ shouldUseFancyHelpCenter, initSmooch, isMessagingScriptLoaded, destroy ] );
+
+	useZendeskMessagingBindings(
+		HELP_CENTER_STORE,
+		hasActiveChats,
+		isMessagingScriptLoaded && ! shouldUseFancyHelpCenter
+	);
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -73,12 +97,15 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer
-			handleClose={ handleClose }
-			hidden={ hidden }
-			currentRoute={ currentRoute }
-			openingCoordinates={ openingCoordinates }
-		/>,
+		<>
+			<HelpCenterContainer
+				handleClose={ handleClose }
+				hidden={ hidden }
+				currentRoute={ currentRoute }
+				openingCoordinates={ openingCoordinates }
+			/>
+			<div ref={ smoochRef } style={ { display: 'none' } }></div>
+		</>,
 		portalParent
 	);
 };
