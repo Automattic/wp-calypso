@@ -13,6 +13,20 @@ import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { Flow, ProvidedDependencies } from './internals/types';
 
+const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
+	if (
+		currentStepSlug === 'domains' ||
+		( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
+	) {
+		const newURL = removeQueryArgs(
+			window.location.pathname + window.location.search,
+			'step',
+			'initialQuery'
+		);
+		window.history.replaceState( {}, document.title, newURL );
+	}
+};
+
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
@@ -61,21 +75,7 @@ const onboarding: Flow = {
 			[]
 		);
 
-		const clearUseMyDomainsQueryParams = () => {
-			if (
-				currentStepSlug === 'domains' ||
-				( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
-			) {
-				const newURL = removeQueryArgs(
-					window.location.pathname + window.location.search,
-					'step',
-					'initialQuery'
-				);
-				window.history.replaceState( {}, document.title, newURL );
-			}
-		};
-
-		clearUseMyDomainsQueryParams();
+		clearUseMyDomainsQueryParams( currentStepSlug );
 
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
