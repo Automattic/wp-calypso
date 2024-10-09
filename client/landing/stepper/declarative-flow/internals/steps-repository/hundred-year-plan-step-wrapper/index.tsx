@@ -201,12 +201,13 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.currency_code,
 		[]
 	);
-	const displayCost =
-		productPrice &&
-		currencyCode &&
-		formatCurrency( productPrice, currencyCode, {
-			stripZeros: true,
-		} );
+	// const displayCost =
+	// 	productPrice &&
+	// 	currencyCode &&
+	// 	formatCurrency( productPrice, currencyCode, {
+	// 		stripZeros: true,
+	// 	} );
+	const displayCost = '$2,000';
 
 	// const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
 	const planTitle = '100-Yar Domain';

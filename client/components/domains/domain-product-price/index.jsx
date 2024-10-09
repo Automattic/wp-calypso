@@ -280,7 +280,7 @@ class DomainProductPrice extends Component {
 
 		return (
 			<div className={ className }>
-				<span>{ price }</span>
+				<span>$2,000</span>
 			</div>
 		);
 	}
