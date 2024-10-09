@@ -318,20 +318,9 @@ const streamApis = {
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
 		dateProperty: 'date',
-		query: ( extras, { streamKey, pageHandle } ) => {
-			const { owner, slug } = JSON.parse( streamKeySuffix( streamKey ) );
+		query: ( extras, { pageHandle } ) => {
 			return {
-				owner,
-				slug,
-				...extras,
-				...pageHandle,
-			};
-		},
-		pollQuery: ( extraFields = [], extraQueryParams = {}, { pageHandle } ) => {
-			return {
-				number: PER_POLL,
-				fields: [ SITE_LIMITER_FIELDS, ...extraFields ].join( ',' ),
-				...extraQueryParams,
+				...{ extras, number: 40 },
 				...pageHandle,
 			};
 		},
