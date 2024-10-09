@@ -3,6 +3,7 @@ import { PostStatsCard, ComponentSwapper, DotPager } from '@automattic/component
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -182,6 +183,7 @@ export default function PostCardsGroup( {
 				<>
 					<QueryPosts siteId={ siteId } postId={ topViewedPost.id } query={ {} } />
 					<QueryPostStats siteId={ siteId } postId={ topViewedPost.id } />
+					<QueryPostLikes siteId={ siteId } postId={ topViewedPost.id } />
 				</>
 			) }
 
