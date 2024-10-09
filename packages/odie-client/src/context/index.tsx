@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
@@ -25,6 +26,7 @@ type ScrollToLastMessageType = () => void;
  *
  */
 type OdieAssistantContextInterface = {
+	shouldUseFancyHelpCenter: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -60,6 +62,7 @@ type OdieAssistantContextInterface = {
 };
 
 const defaultContextInterfaceValues = {
+	shouldUseFancyHelpCenter: false,
 	addMessage: noop,
 	botName: 'Wapuu',
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
@@ -260,6 +263,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
+				shouldUseFancyHelpCenter: config.isEnabled( 'help-center-experience' ),
 				addMessage,
 				botName,
 				botNameSlug,
