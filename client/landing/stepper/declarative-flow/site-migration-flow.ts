@@ -23,6 +23,7 @@ import { STEPS } from './internals/steps';
 import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
+import { goToImporter } from './migration/helpers';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
 const FLOW_NAME = 'site-migration';
@@ -52,6 +53,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
+			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -425,7 +427,7 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
 					const { action, from } = providedDependencies as {
-						action: 'skip' | 'submit' | 'already-wpcom';
+						action: 'skip' | 'submit' | 'already-wpcom' | 'site-is-not-using-wordpress';
 						from: string;
 					};
 
@@ -443,6 +445,20 @@ const siteMigration: Flow = {
 							addQueryArgs(
 								{ siteId, from: from || fromQueryParam, siteSlug },
 								STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug
+							)
+						);
+					}
+
+					if ( isEnglishLocale && action === 'site-is-not-using-wordpress' ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									from: from || fromQueryParam,
+									siteSlug,
+									platform: providedDependencies.platform as string,
+								},
+								STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug
 							)
 						);
 					}
@@ -474,6 +490,25 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
+				}
+				case STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug: {
+					if ( providedDependencies?.action === 'import' ) {
+						return goToImporter( {
+							platform: providedDependencies.platform as ImporterPlatform,
+							siteId: siteId!.toString(),
+							siteSlug,
+							backToFlow: `${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
+							from: fromQueryParam,
+							ref: FLOW_NAME,
+						} );
+					}
+
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: fromQueryParam, siteSlug },
 							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 						)
 					);
