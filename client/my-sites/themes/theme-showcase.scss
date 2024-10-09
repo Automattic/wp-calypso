@@ -25,44 +25,77 @@
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
+			overflow-x: hidden;
+			scrollbar-gutter: stable;
 		}
 
+		.themes__header-navigation-container {
+			margin-left: -14px;
+			margin-right: -29px;
+		}
 		.navigation-header {
+			max-width: 1400px;
 			padding-top: 24px;
-			padding-inline: 16px;
+			margin: 0 auto;
+			padding-inline: 48px;
 
 			.navigation-header__main {
 				align-items: center;
+				height: 40px;
 			}
 
-			@include break-medium {
-				border-block-end: 1px solid var(--color-border-secondary);
-			}
-
-			@include break-huge {
-				padding-inline: 64px;
-			}
-
-			@include break-xhuge {
-				max-width: 100%;
-
-				.navigation-header__main {
-					max-width: 1400px;
-					margin: 0 auto;
-					padding-inline: 64px;
-				}
+			.themes__pattern-assembler-button {
+				font-weight: normal;
+				-webkit-font-smoothing: antialiased;
+				font-size: $font-body-small;
+				line-height: 22px;
 			}
 
 			.formatted-header__title {
 				font-size: 1.5rem;
-				line-height: 1.2;
+				font-weight: 500;
+				line-height: 1.25;
+				letter-spacing: -0.5px;
+			}
+
+			.formatted-header__subtitle {
+				display: none;
 			}
 		}
 
+		.theme-showcase {
+			.theme__search-container {
+				margin: 0 auto;
+				max-width: 1400px;
+			}
+
+			.themes-toolbar-group {
+				max-width: 1400px;
+				margin: 0 auto;
+			}
+		}
 		.themes__content {
 			margin-top: 40px;
-			padding-left: 2rem;
-			padding-right: 2rem;
+			min-height: auto;
+			.themes__controls {
+				margin: 0 -14px;
+				margin-left: -14px;
+				margin-right: 2px;
+				padding-inline: 48px;
+				padding-inline-start: 48px;
+				padding-inline-end: 32px;
+			}
+
+			.themes__controls.is-sticky {
+				@include break-medium {
+					padding-bottom: 0;
+				}
+			}
+			.themes__showcase {
+				max-width: 1400px;
+				margin: 0 auto;
+				padding-inline: 34px;
+			}
 		}
 	}
 
@@ -533,9 +566,8 @@
 
 			.is-global-sidebar-visible & {
 				top: calc(var(--masterbar-height) + 16px);
-				width: calc(100% - var(--sidebar-width-max) - 31px);
-				padding: 40px 32px 8px;
-
+				width: initial;
+				right: 32px;
 
 				// Make the scroll behavior works on the top of the fixed element.
 				pointer-events: none;
