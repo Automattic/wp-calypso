@@ -5,10 +5,12 @@ export const PerformanceReportLoading = ( {
 	isSavedReport,
 	pageTitle,
 	isLoadingPages,
+	isLoggedIn,
 }: {
 	isSavedReport: boolean;
 	pageTitle: string;
 	isLoadingPages?: boolean;
+	isLoggedIn?: boolean;
 } ) => {
 	const { __ } = useI18n();
 
@@ -21,9 +23,10 @@ export const PerformanceReportLoading = ( {
 						lineHeight: '20px',
 					},
 				} }
-				isSavedReport={ isSavedReport }
 				pageTitle={ pageTitle }
 				isLoadingPages={ isLoadingPages }
+				isSavedReport={ isSavedReport }
+				isLoggedIn={ isLoggedIn }
 			/>
 			{ ! isLoadingPages && <p>{ __( 'Testing your site may take around 30 seconds.' ) }</p> }
 		</div>

@@ -101,10 +101,12 @@ const useLoadingSteps = ( {
 	isSavedReport,
 	pageTitle,
 	isLoadingPages,
+	isLoggedIn,
 }: {
 	isSavedReport: boolean;
 	pageTitle?: string;
 	isLoadingPages?: boolean;
+	isLoggedIn?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -115,18 +117,23 @@ const useLoadingSteps = ( {
 	if ( isLoadingPages ) {
 		steps = [ translate( 'Getting your site pages' ) ];
 	} else {
-		steps = isSavedReport
-			? [ translate( 'Getting your report…' ) ]
-			: [
-					pageTitle
-						? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
-						: translate( 'Loading your site' ),
-					translate( 'Measuring Core Web Vitals' ),
-					translate( 'Taking screenshots' ),
-					translate( 'Fetching historic data' ),
-					translate( 'Identifying performance improvements' ),
-					translate( 'Finalizing your results' ),
-			  ];
+		steps =
+			isSavedReport && ! isLoggedIn
+				? [ translate( 'Getting your report…' ) ]
+				: [
+						...( isSavedReport && step === 0
+							? [ translate( 'Checking for existing report…' ) ]
+							: [] ),
+						...( isSavedReport && step > 0 ? [ translate( 'No existing report found…' ) ] : [] ),
+						pageTitle
+							? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
+							: translate( 'Loading your site' ),
+						translate( 'Measuring Core Web Vitals' ),
+						translate( 'Taking screenshots' ),
+						translate( 'Fetching historic data' ),
+						translate( 'Identifying performance improvements' ),
+						translate( 'Finalizing your results' ),
+				  ];
 	}
 
 	useEffect( () => {
@@ -162,16 +169,19 @@ export const PerformanceReportLoadingProgress = ( {
 	isSavedReport,
 	isLoadingPages,
 	className,
+	isLoggedIn,
 }: {
 	isSavedReport: boolean;
 	pageTitle?: string;
 	className?: string;
 	isLoadingPages?: boolean;
+	isLoggedIn?: boolean;
 } ) => {
 	const { step, steps, stepStatus } = useLoadingSteps( {
 		isSavedReport,
 		pageTitle,
 		isLoadingPages,
+		isLoggedIn,
 	} );
 
 	return (
