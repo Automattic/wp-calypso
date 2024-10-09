@@ -1,5 +1,6 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import Banner from 'calypso/components/banner';
+import { navigate } from 'calypso/lib/navigate';
 
 export const CustomerCouncilBanner = ( { translate } ) => {
 	const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
@@ -26,7 +27,7 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 			{ blog_id: CUSTOMER_COUNCIL_P2_URL, url: CUSTOMER_COUNCIL_P2_URL },
 			{
 				onSettled: () => {
-					window.location.href = CUSTOMER_COUNCIL_P2_URL;
+					navigate( CUSTOMER_COUNCIL_P2_URL );
 				},
 			}
 		);
