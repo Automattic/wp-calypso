@@ -155,7 +155,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		if (
 			! siteId ||
 			( ! isJetpackSelfHosted && transferStatus !== transferStates.COMPLETE ) ||
-			allPluginsFetched ||
+			( allPluginsFetched && allPluginsActivated ) ||
 			pluginSlugs.length === 0
 		) {
 			return;
@@ -171,6 +171,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		transferStatus,
 		isJetpackSelfHosted,
 		allPluginsFetched,
+		allPluginsActivated,
 		pluginSlugs,
 	] );
 
