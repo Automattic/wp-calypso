@@ -54,7 +54,6 @@ const HundredYearDomainFlow: Flow = {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-
 			const { domainName, productSlug } = providedDependencies;
 
 			const addDomainToCart = async () => {
@@ -62,6 +61,7 @@ const HundredYearDomainFlow: Flow = {
 					domainRegistration( {
 						domain: domainName as string,
 						productSlug: productSlug as string,
+						extra: { is_hundred_year_domain: true },
 					} ),
 				];
 				await addProductsToCart( 'no-site', '100-year-domain', productsToAdd );
