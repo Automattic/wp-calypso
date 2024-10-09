@@ -107,9 +107,7 @@ export default function DomainsStep( props: StepProps ) {
 			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 		);
 		if ( isManageSiteFlow ) {
-			if ( Object.keys( stepState ).length > 0 ) {
-				props.navigation.submit?.( stepState );
-			}
+			props.navigation.submit?.( stepState );
 		}
 	} );
 
