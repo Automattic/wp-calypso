@@ -22,15 +22,8 @@ interface CredentialsFormProps {
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const {
-		handleSubmit,
-		control,
-		errors,
-		accessMethod,
-		isBusy,
-		submitHandler,
-		canBypassVerification,
-	} = useCredentialsForm( onSubmit );
+	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
+		useCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
 
@@ -55,7 +48,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	};
 
 	return (
-		<form className="site-migration-credentials__form" onSubmit={ handleSubmit( submitHandler ) }>
+		<form className="site-migration-credentials__form" onSubmit={ submitHandler }>
 			{ errorMessage && (
 				<Notice
 					className="site-migration-credentials__error-notice"
