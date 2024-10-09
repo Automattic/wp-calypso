@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { Browser, BrowserContext, Page, Locator } from 'playwright';
+import { Browser, Page, Locator } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
@@ -18,15 +18,13 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	let page: Page;
-	let context: BrowserContext;
 	let testAccount: TestAccount;
 	let helpCenterComponent: HelpCenterComponent;
 	let helpCenterLocator: Locator;
 
 	// Setup the page and test account
 	beforeAll( async function () {
-		context = await browser.newContext();
-		page = await context.newPage();
+		page = await browser.newPage();
 
 		testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page, { waitUntilStable: true } );
@@ -39,11 +37,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 
 		// Force Odie to Test mode.
 		await helpCenterComponent.setOdieTestMode();
-	} );
-
-	// Close the page after the tests
-	afterAll( async function () {
-		await context.close();
 	} );
 
 	/**
@@ -139,8 +132,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	 */
 	describe( 'Support Flow', () => {
 		it( 'start support flow', async () => {
-			await helpCenterComponent.openPopover();
-
 			const stillNeedHelpButton = helpCenterLocator.getByRole( 'link', {
 				name: 'Still need help?',
 			} );
