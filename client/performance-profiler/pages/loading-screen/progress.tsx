@@ -99,20 +99,17 @@ const LoadingProgressContainer = styled.div`
 `;
 
 const useLoadingSteps = ( {
-	getStep,
 	isSavedReport,
 	pageTitle,
 	isLoadingPages,
 }: {
-	getStep?: () => number;
 	isSavedReport: boolean;
 	pageTitle?: string;
 	isLoadingPages?: boolean;
 } ) => {
 	const translate = useTranslate();
-	const curStep = getStep ? getStep() : 0;
 
-	const [ step, setStep ] = useState( curStep );
+	const [ step, setStep ] = useState( 0 );
 
 	let steps = [];
 
@@ -161,20 +158,17 @@ const useLoadingSteps = ( {
 };
 
 export const PerformanceReportLoadingProgress = ( {
-	getStep,
 	pageTitle,
 	isSavedReport,
 	isLoadingPages,
 	className,
 }: {
-	getStep?: () => number;
 	isSavedReport: boolean;
 	pageTitle?: string;
 	className?: string;
 	isLoadingPages?: boolean;
 } ) => {
 	const { step, steps, stepStatus } = useLoadingSteps( {
-		getStep,
 		isSavedReport,
 		pageTitle,
 		isLoadingPages,
