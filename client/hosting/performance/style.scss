@@ -1,6 +1,8 @@
 @use "sass:math";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import '@automattic/components/src/styles/typography';
+
 
 $section-max-width: 1224px;
 
@@ -202,6 +204,24 @@ $section-max-width: 1224px;
 
 	}
 
+	.site-performance__page-selector-item {
+		display: flex;
+		flex-direction: column;
+		padding-inline: 16px;
+		padding-block: 8px;
+		font-size: $font-body-small;
+		font-family: $font-sf-pro-text;
+		gap: 4px;
+
+		.subtitle {
+			font-size: $font-body-extra-small;
+			color: #949494;
+			font-family: $font-sf-pro-text;
+			line-height: 20px;
+		}
+		
+	}
+
 	input.components-combobox-control__input[type="text"] {
 		height: 34px;
 		padding-right: 30px;
@@ -210,11 +230,17 @@ $section-max-width: 1224px;
 
 	.components-form-token-field__suggestions-list {
 		max-height: initial !important;
-		box-shadow: inset 0 -1px 0 0 var(--color-neutral-50);
 	}
 
 	.components-form-token-field__suggestions-list li {
 		padding: 0 !important;
+		&:not(:first-child) {
+			border-top: 1px solid #F0F0F0;
+		}
+
+		&.is-selected * {
+			color: #fff !important;
+		}
 	}
 
 	@media (max-width: $break-medium) {
