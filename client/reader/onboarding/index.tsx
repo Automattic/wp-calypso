@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
+import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import InterestsModal from './interests-modal';
 import SubscribeModal from './subscribe-modal';
@@ -19,14 +20,14 @@ const ReaderOnboarding = () => {
 	const tasks: Task[] = [
 		{
 			id: 'select-interests',
-			title: 'Select some of your interests',
+			title: translate( 'Select some of your interests' ),
 			actionDispatch: () => setIsInterestsModalOpen( true ),
 			completed: false,
 			disabled: false,
 		},
 		{
 			id: 'discover-sites',
-			title: "Discover and subscribe to sites you'll love",
+			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: () => setIsDiscoverModalOpen( true ),
 			completed: false,
 			disabled: false,
@@ -37,8 +38,8 @@ const ReaderOnboarding = () => {
 		<>
 			<div className="reader-onboarding">
 				<div className="reader-onboarding__intro-column">
-					<h2>Your personal reading adventure</h2>
-					<p>Tailor your feed, connect with your favorite topics</p>
+					<h2>{ translate( 'Your personal reading adventure' ) }</h2>
+					<p>{ translate( 'Tailor your feed, connect with your favorite topics' ) }</p>
 				</div>
 				<div className="reader-onboarding__steps-column">
 					<Checklist>
