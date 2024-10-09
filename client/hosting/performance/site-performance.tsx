@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -50,6 +50,7 @@ const usePerformanceReport = (
 	savePerformanceReportUrl: ( pageId: string, reportUrl: { url: string; hash: string } ) => void,
 	currentPageId: string
 ) => {
+	const [ isRefetching, setIsRefetching ] = useState( false );
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
@@ -60,7 +61,6 @@ const usePerformanceReport = (
 		isSitePublic ? getSiteProfilerReport( state, siteId, currentPageId ) : undefined
 	);
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
-
 	const {
 		data: basicMetrics,
 		isError,
@@ -78,7 +78,7 @@ const usePerformanceReport = (
 
 	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
 		url,
-		token ?? hash
+		hash
 	);
 
 	const mobileReport =
@@ -104,6 +104,11 @@ const usePerformanceReport = (
 		return '';
 	};
 
+	const refetchWithLoading = useCallback( () => {
+		setIsRefetching( true );
+		refetch().finally( () => setIsRefetching( false ) );
+	}, [ refetch ] );
+
 	return {
 		performanceReport,
 		url: finalUrl ?? url,
@@ -111,7 +116,8 @@ const usePerformanceReport = (
 		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
 		isError: isError || isErrorInsights,
 		isFetched,
-		refetch,
+		isRefetching,
+		refetch: refetchWithLoading,
 	};
 };
 
@@ -241,7 +247,11 @@ export const SitePerformance = () => {
 	};
 
 	const isMobile = useMobileBreakpoint();
-	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+	const disableControls =
+		performanceReport.isLoading ||
+		isInitialLoading ||
+		! isSitePublic ||
+		performanceReport.isRefetching;
 
 	const handleDeviceTabChange = ( tab: Tab ) => {
 		setActiveTab( tab );
@@ -338,7 +348,7 @@ export const SitePerformance = () => {
 					value={ activeTab }
 				/>
 			</div>
-			{ isInitialLoading && isSitePublic ? (
+			{ isInitialLoading || ( performanceReport.isRefetching && isSitePublic ) ? (
 				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
 				<>
