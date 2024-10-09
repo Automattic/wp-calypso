@@ -38,38 +38,25 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 		}
 	}, [ followedTags ] );
 
+	const isButtonDisabled = interests.length < 3;
+
 	const handleInterestChange = ( tag: string | string[] ) => {
 		const tags = Array.isArray( tag ) ? tag : [ tag ];
-		setInterests( ( prevInterests ) => {
-			const newInterests = new Set( prevInterests );
-			tags.forEach( ( t ) => {
-				if ( newInterests.has( t ) ) {
-					newInterests.delete( t );
-				} else {
-					newInterests.add( t );
-				}
-			} );
-			return Array.from( newInterests );
+		tags.forEach( ( t ) => {
+			if ( interests.includes( t ) ) {
+				dispatch( requestUnfollowTag( t ) );
+				setInterests( ( prevInterests ) => prevInterests.filter( ( interest ) => interest !== t ) );
+			} else {
+				dispatch( requestFollowTag( t ) );
+				setInterests( ( prevInterests ) => [ ...prevInterests, t ] );
+			}
 		} );
 	};
 
 	const handleContinue = () => {
-		// Unfollow tags that are no longer selected
-		followedTags?.forEach( ( followedTag ) => {
-			if ( ! interests.includes( followedTag.slug ) ) {
-				dispatch( requestUnfollowTag( followedTag.slug ) );
-			}
-		} );
-
-		// Follow newly selected tags
-		interests.forEach( ( tag ) => {
-			const isAlreadyFollowed = followedTags?.some( ( followedTag ) => followedTag.slug === tag );
-			if ( ! isAlreadyFollowed ) {
-				dispatch( requestFollowTag( tag ) );
-			}
-		} );
-
-		onClose();
+		if ( ! isButtonDisabled ) {
+			onClose();
+		}
 	};
 
 	const categories: Category[] = [
@@ -150,7 +137,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 			<Button onClick={ onClose } variant="link">
 				Cancel
 			</Button>
-			<Button onClick={ handleContinue } variant="primary">
+			<Button onClick={ handleContinue } variant="primary" disabled={ isButtonDisabled }>
 				Continue
 			</Button>
 		</>
@@ -187,7 +174,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 						</div>
 					) ) }
 				</div>
-				<button onClick={ onClose }>Close</button>
+				<div className="interests-modal__footer">
+					<p className="interests-modal__footer-text">
+						{ isButtonDisabled
+							? `Please select at least ${ 3 - interests.length } more ${
+									interests.length === 2 ? 'interest' : 'interests'
+							  } to continue.`
+							: 'Great! You can now continue.' }
+					</p>
+				</div>
 			</Modal>
 		)
 	);
