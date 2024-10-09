@@ -24,7 +24,7 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 
 	const subscribeToP2AndNavigate = () => {
 		subscribe(
-			{ blog_id: CUSTOMER_COUNCIL_P2_URL, url: CUSTOMER_COUNCIL_P2_URL },
+			{ blog_id: CUSTOMER_COUNCIL_P2_ID, url: CUSTOMER_COUNCIL_P2_URL },
 			{
 				onSettled: () => {
 					navigate( CUSTOMER_COUNCIL_P2_URL );
