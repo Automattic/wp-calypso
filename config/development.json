@@ -197,6 +197,7 @@
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
+		"reader/onboarding": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,
