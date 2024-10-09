@@ -8,6 +8,7 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
+import Banner from 'calypso/components/banner';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -58,6 +59,27 @@ const GUESSED_POST_HEIGHT = 600;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+
+const CustomerCouncilBanner = ( { translate } ) => {
+	const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
+
+	return (
+		<Banner
+			callToAction={ translate( 'Subscribe' ) }
+			dismissPreferenceName="reader-council-banner"
+			dismissTemporary
+			title={ translate( 'Want to shape the future of the WordPress.com Reader?' ) }
+			description={ translate(
+				'Join {{a}}our new blog{{/a}} to share your feedback and help us improve your reading experience.',
+				{
+					components: {
+						a: <a href={ CUSTOMER_COUNCIL_P2_URL } />,
+					},
+				}
+			) }
+		/>
+	);
+};
 
 class ReaderStream extends Component {
 	static propTypes = {
@@ -655,6 +677,7 @@ class ReaderStream extends Component {
 					<div className="stream__two-column">
 						<div className="reader__content">
 							{ streamHeader?.() }
+							<CustomerCouncilBanner translate={ translate } />
 							{ bodyContent }
 						</div>
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
