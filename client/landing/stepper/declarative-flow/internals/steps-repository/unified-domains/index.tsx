@@ -3,13 +3,18 @@ import { useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { RenderDomainsStep, submitDomainStepSelection } from 'calypso/signup/steps/domains';
+import {
+	wasSignupCheckoutPageUnloaded,
+	retrieveSignupDestination,
+	getSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import {
@@ -93,6 +98,20 @@ export default function DomainsStep( props: StepProps ) {
 		},
 		[ stepState, setStepState ]
 	);
+	useEffect( () => {
+		// This will automatically submit the domains step when navigating back from checkout
+		// It will redirect the user to plans step. The idea is to achieve the same behavior as /start.
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === props.flow;
+		const isManageSiteFlow = Boolean(
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
+		);
+		if ( isManageSiteFlow ) {
+			if ( Object.keys( stepState ).length > 0 ) {
+				props.navigation.submit?.( stepState );
+			}
+		}
+	} );
 
 	return (
 		<CalypsoShoppingCartProvider>
