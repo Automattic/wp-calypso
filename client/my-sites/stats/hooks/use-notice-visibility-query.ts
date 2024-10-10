@@ -89,6 +89,7 @@ const useNoticesVisibilityQueryRaw = function < T >(
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		queryFn: () => queryNotices( siteId ),
 		select,
+		staleTime: 60 * 1000, // 60 seconds
 		enabled: enabled !== false,
 	} );
 };
