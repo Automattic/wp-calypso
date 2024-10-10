@@ -41,7 +41,7 @@ export default function useLicenseActions(
 		return [
 			{
 				name: translate( 'Set up site' ),
-				href: `https://wordpress.com/home/${ siteSlug }`,
+				href: `https://wordpress.com/overview/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_site_set_up_click' ),
 				isExternalLink: true,
 				isEnabled: true,
