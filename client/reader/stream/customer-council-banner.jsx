@@ -2,10 +2,10 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import Banner from 'calypso/components/banner';
 import { navigate } from 'calypso/lib/navigate';
 
-export const CustomerCouncilBanner = ( { translate } ) => {
-	const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
-	const CUSTOMER_COUNCIL_P2_ID = '237686330';
+const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
+const CUSTOMER_COUNCIL_P2_ID = '237686330';
 
+export const CustomerCouncilBanner = ( { translate } ) => {
 	const { mutate: subscribe, isIdle: notActivelySubscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
