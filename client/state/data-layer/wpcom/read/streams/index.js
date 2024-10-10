@@ -363,16 +363,15 @@ export function requestPage( action ) {
 	// There is a race condition in switchLocale when retrieving the language file
 	// The stream request can occur before the language file is loaded, so we need a way to explicitly set the lang in the request
 	const lang = localeSlug || i18n.getLocaleSlug();
-	const q = isPoll
-		? pollQuery( [], { ...algorithm } )
-		: query( { ...pageHandle, ...algorithm, number, lang }, action.payload );
 
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
 		apiNamespace: api.apiNamespace ?? null,
-		query: q,
+		query: isPoll
+			? pollQuery( [], { ...algorithm } )
+			: query( { ...pageHandle, ...algorithm, number, lang }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );
