@@ -47,7 +47,7 @@ import {
 	is100Year,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { isDomainForGravatarFlow } from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -848,7 +848,7 @@ export function getDomainPriceRule(
 	domainAndPlanUpsellFlow: boolean
 ): string {
 	// We want to show a fixed price in the 100-year domain flow
-	if ( flowName === 'hundred-year-domain' ) {
+	if ( isHundredYearDomainFlow( flowName ) ) {
 		return 'ONE_TIME_PRICE';
 	}
 

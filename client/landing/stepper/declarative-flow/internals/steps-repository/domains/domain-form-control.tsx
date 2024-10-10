@@ -1,5 +1,6 @@
 import {
 	DOMAIN_UPSELL_FLOW,
+	HUNDRED_YEAR_DOMIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	LINK_IN_BIO_TLD_FLOW,
@@ -103,7 +104,7 @@ export function DomainFormControl( {
 		includeWordPressDotCom = false;
 	}
 
-	if ( flow === 'hundred-year-domain' ) {
+	if ( flow === HUNDRED_YEAR_DOMIN_FLOW ) {
 		includeWordPressDotCom = false;
 	}
 
