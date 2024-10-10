@@ -179,8 +179,9 @@ export const SitePerformance = () => {
 	}, [ siteId ] );
 
 	useEffect( () => {
-		if ( pages && ! currentPage ) {
-			setCurrentPage( pages.find( ( page ) => page.value === currentPageId ) );
+		const page = pages.find( ( page ) => page.value === currentPageId );
+		if ( page ) {
+			setCurrentPage( page );
 		}
 	}, [ pages, currentPage, currentPageId ] );
 
