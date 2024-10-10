@@ -252,13 +252,9 @@ function HelpSearchResults( {
 				section: sectionName,
 			} );
 
-			// push state only if it's internal link.
-			if ( ! /^http/.test( link ) ) {
-				event.preventDefault();
-				openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
-				onAdminSectionSelect( event );
-			}
-
+			event.preventDefault();
+			openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
+			onAdminSectionSelect( event );
 			return;
 		}
 

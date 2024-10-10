@@ -9,25 +9,20 @@ export function useSiteEditorUrls() {
 	const siteSlug = useSiteSlug();
 	const returnUrl = window.location.href;
 
-	if ( site?.is_core_site_editor_enabled ) {
+	if ( site?.is_core_site_editor_enabled && siteSlug ) {
 		const siteEditorUrl = `${ site?.options.admin_url }site-editor.php`;
 
 		return panels.reduce(
 			( acc, panel ) => {
-				if ( ! site?.jetpack && siteSlug ) {
-					let url = siteEditorUrl;
-					if ( panel !== 'root' ) {
-						url = `${ siteEditorUrl }?path=${ panel }&canvas=edit`;
-					}
-
-					acc[ panel ] = addQueryArgs( url, {
-						return: returnUrl,
-					} );
-				} else {
-					acc[ panel ] = addQueryArgs( siteEditorUrl, {
-						return: returnUrl,
-					} );
+				let url = siteEditorUrl;
+				if ( panel !== 'root' ) {
+					url = `${ siteEditorUrl }?path=${ panel }&canvas=edit`;
 				}
+
+				acc[ panel ] = addQueryArgs( url, {
+					return: returnUrl,
+				} );
+
 				return acc;
 			},
 			{} as Record< ( typeof panels )[ number ], string >
