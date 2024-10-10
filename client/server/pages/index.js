@@ -505,6 +505,7 @@ function setUpCSP( req, res, next ) {
 			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
+			'https://accounts.google.com/gsi/client',
 			'use.typekit.net',
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
@@ -513,6 +514,7 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			'*.wp.com',
 			'https://fonts.googleapis.com',
+			'https://accounts.google.com/gsi/style',
 			'use.typekit.net',
 			// per https://helpx.adobe.com/ca/fonts/using/content-security-policy.html
 			"'unsafe-inline'",
