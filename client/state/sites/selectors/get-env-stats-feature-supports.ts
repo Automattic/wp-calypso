@@ -73,7 +73,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		supportEmbededJITM:
 			isSiteJetpack &&
 			isOdysseyStats &&
-			! version_greater_than_or_equal( statsAdminVersion, '0.22.1', isOdysseyStats ),
+			version_greater_than_or_equal( statsAdminVersion, '0.22.1', isOdysseyStats ),
 	};
 }
 
