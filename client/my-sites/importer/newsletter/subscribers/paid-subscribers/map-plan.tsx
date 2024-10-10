@@ -1,7 +1,7 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState, KeyboardEvent } from 'react';
@@ -33,18 +33,18 @@ type MapPlanProps = {
 	selectedProductId: string;
 };
 
-type ProductInfoProps = {
-	product: Product;
-};
+function displayProduct( product?: Product ) {
+	if ( ! product ) {
+		return __( 'Select a newsletter tier' );
+	}
 
-function ProductInfo( { product }: ProductInfoProps ) {
 	return (
-		<>
-			{ product.title && <strong>{ product.title }</strong> }
+		<div>
+			<strong>{ product.title || '' }</strong>
 			<p>
 				{ formatCurrency( parseFloat( product.price ), product.currency ) }/{ product.interval }
 			</p>
-		</>
+		</div>
 	);
 }
 
@@ -66,7 +66,12 @@ export function MapPlan( {
 	tierToAdd,
 	selectedProductId,
 }: MapPlanProps ) {
-	const { __, _n } = useI18n();
+	const { __ } = useI18n();
+	let active_subscriptions = '';
+	if ( plan.active_subscriptions ) {
+		active_subscriptions = ` • ${ plan.active_subscriptions } active subscribers`;
+	}
+
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const selectedProduct = products.find(
@@ -86,17 +91,7 @@ export function MapPlan( {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ) }
-					/{ plan.plan_interval }
-					{ plan.active_subscriptions && (
-						<>
-							{ ' • ' }
-							{ sprintf(
-								// translators: %d is number of subscribers
-								_n( '%d active subscriber', '%d active subscribers', plan.active_subscriptions ),
-								plan.active_subscriptions
-							) }
-						</>
-					) }
+					/{ plan.plan_interval } { active_subscriptions }
 				</p>
 			</div>
 			<div className="map-plan__arrow">
@@ -132,11 +127,7 @@ export function MapPlan( {
 							}
 						} }
 					>
-						{ selectedProduct ? (
-							<ProductInfo product={ selectedProduct } />
-						) : (
-							__( 'Select a newsletter tier' )
-						) }
+						{ displayProduct( selectedProduct ) }
 					</Button>
 					<DropdownMenu
 						onToggle={ ( openState: boolean ) => {
