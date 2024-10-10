@@ -158,7 +158,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
-	if ( HUNDRED_YEAR_PLAN_FLOW === flowName || HUNDRED_YEAR_DOMAIN_FLOW === flowName ) {
+	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) ) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
