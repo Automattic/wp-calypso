@@ -1,5 +1,5 @@
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
@@ -7,6 +7,7 @@ import {
 	useNoticesVisibilityQuery,
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
@@ -26,67 +27,12 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-purchases';
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
+import JetpackJITM from './jetpack-jitm';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
 const SIGNIFICANT_VIEWS_AMOUNT = 100;
-
-declare global {
-	interface Window {
-		initJetpackJITM: () => void;
-		jitm_config: {
-			nonce: string;
-		};
-	}
-}
-
-const JetpackAdminNotices: React.FC = () => {
-	const jitmContainerRef = useRef< HTMLDivElement >( null );
-
-	useEffect( () => {
-		// Load CSS
-		const link: HTMLLinkElement = document.createElement( 'link' );
-		link.href =
-			'https://ready-carp-caterpillar.jurassic.ninja/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-jitm/build/index.css';
-		link.rel = 'stylesheet';
-		document.head.appendChild( link );
-
-		// Load JavaScript
-		const script: HTMLScriptElement = document.createElement( 'script' );
-		script.src =
-			'https://ready-carp-caterpillar.jurassic.ninja/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-jitm/build/index.js';
-		script.async = true;
-
-		script.onload = () => {
-			// Call reFetch after the script has loaded
-			if ( window.initJetpackJITM ) {
-				window.initJetpackJITM();
-			}
-		};
-
-		document.body.appendChild( script );
-
-		// Cleanup function
-		return () => {
-			document.head.removeChild( link );
-			document.body.removeChild( script );
-		};
-	}, [] ); // Empty dependency array ensures this runs only once on mount
-
-	return (
-		<>
-			<div
-				ref={ jitmContainerRef }
-				id="jp-admin-notices"
-				className="jetpack-jitm-message"
-				data-message-path="wp:jetpack_page_stats:admin_notices"
-				data-query="page%3Dstats"
-				data-nonce={ window.jitm_config.nonce } // Replace with actual nonce
-			></div>
-		</>
-	);
-};
 
 const ensureOnlyOneNoticeVisible = (
 	serverNoticesVisibility: Notices,
@@ -171,6 +117,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	) as AllTimeData;
 	const hasSignificantViews = !! ( views && views >= SIGNIFICANT_VIEWS_AMOUNT );
 
+	const { data } = usePlanUsageQuery( siteId );
+	const currentUsage = data?.current_usage.views_count || 0;
+	const tierLimit = data?.views_limit || null;
+	const isNearLimit = tierLimit ? currentUsage / tierLimit >= 0.9 : false;
+	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -187,6 +139,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasPWYWPlanOnly,
 		hasSignificantViews,
 		showPaywallNotice,
+		isNearLimit,
+		isOverLimit,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
@@ -224,7 +178,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		<>
 			{ allNotices }
 			{ /* JITM Container */ }
-			{ allNotices.length === 0 && <JetpackAdminNotices /> }
+			{ allNotices.length === 0 && <JetpackJITM /> }
 		</>
 	);
 };
