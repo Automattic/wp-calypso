@@ -30,7 +30,8 @@ $blueberry-color: #3858e9;
 	&.active {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
-		outline: 1px solid $blueberry-color;
+		outline: 1.5px solid $blueberry-color;
+		outline-offset: -0.5px;
 	}
 
 	&:last-child {
@@ -85,6 +86,8 @@ $blueberry-color: #3858e9;
 	&.active {
 		outline: none;
 		border-color: $blueberry-color;
+		border-width: 1.5px;
+		padding: 15.5px 21.5px 15.5px 21.5px;
 	}
 }
 
