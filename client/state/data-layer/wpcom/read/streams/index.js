@@ -318,6 +318,7 @@ const streamApis = {
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
 		dateProperty: 'date',
+		apiVersion: '1.3',
 		query: ( extras, { pageHandle } ) => {
 			return {
 				...{ extras, number: 40 },
@@ -365,7 +366,6 @@ export function requestPage( action ) {
 	const q = isPoll
 		? pollQuery( [], { ...algorithm } )
 		: query( { ...pageHandle, ...algorithm, number, lang }, action.payload );
-	console.log( 'q', q );
 
 	return http( {
 		method: 'GET',

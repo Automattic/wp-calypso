@@ -468,7 +468,6 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
-		console.log( 'fetchNextPage', { streamKey, stream, options, pageHandle, localeSlug } );
 		props.requestPage( { streamKey, pageHandle, localeSlug } );
 	};
 
