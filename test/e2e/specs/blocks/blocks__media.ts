@@ -17,9 +17,13 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	BlockFlow,
+	LayoutGridBlockFlow,
+	YouTubeBlockFlow,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_VIDEO_PATH } from '../constants';
+import { createBlockTests } from './shared/block-smoke-testing';
 
 declare const browser: Browser;
 
@@ -169,3 +173,16 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 	} );
 } );
+
+const blockFlows: BlockFlow[] = [
+	new YouTubeBlockFlow( {
+		embedUrl: 'https://www.youtube.com/watch?v=twGLN4lug-I',
+		expectedVideoTitle: 'Getting Started on @wordpress-com',
+	} ),
+	new LayoutGridBlockFlow( {
+		leftColumnText: DataHelper.getRandomPhrase(),
+		rightColumnText: DataHelper.getRandomPhrase(),
+	} ),
+];
+
+createBlockTests( 'Blocks: Core', blockFlows );
