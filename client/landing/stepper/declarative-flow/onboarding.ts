@@ -83,8 +83,8 @@ const onboarding: Flow = {
 
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
-    
-    clearUseMyDomainsQueryParams( currentStepSlug );
+
+		clearUseMyDomainsQueryParams( currentStepSlug );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
