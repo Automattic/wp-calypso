@@ -136,10 +136,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			changeSiteDomainIfNeeded( suggestion?.domain_name );
 		}
 
-		submit?.( {
-			freeDomain: suggestion?.is_free,
-			domainName: suggestion?.domain_name,
-		} );
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const handleSkip = ( _googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
