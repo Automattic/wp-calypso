@@ -28,7 +28,6 @@ interface Card {
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
 	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
-	followedTagSlugs.sort();
 
 	const { data: recommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
