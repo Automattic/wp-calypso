@@ -55,6 +55,15 @@
 	bottom: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.5);
+	padding: 1rem;
+
+	// match Calendly breakpoints
+	@media (max-width: 682px) {
+		padding: 0;
+	}
+	@media (max-width: 649px) {
+		padding: 4rem 0 0 0;
+	}
 
 	.calendly-popup {
 		height: 100%;
@@ -65,8 +74,8 @@
 	}
 	.calendly-popup-close {
 		position: absolute;
-		top: 1rem;
-		right: 1rem;
+		top: 1.5rem;
+		right: 2rem;
 		width: 19px;
 		height: 19px;
 		cursor: pointer;
