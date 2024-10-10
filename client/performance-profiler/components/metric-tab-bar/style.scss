@@ -24,33 +24,17 @@ $blueberry-color: #3858e9;
 	padding: 16px 22px 16px 22px;
 	width: 100%;
 	border: 1px solid transparent;
-	&:not(.active) {
-		border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 
-		&:not(:nth-child(-n+2)) {
-			border-top-color: transparent;
-		}
-
-		&:last-child {
-			border-bottom-color: transparent;
-		}
-
-		&.metric-tab-bar__performance {
-			border-bottom-color: transparent;
-		}
-
-	}
+	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 
 	&.active {
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 6px;
-		border-color: transparent;
-		outline: 1.5px solid $blueberry-color;
-		position: relative;
+		outline: 1px solid $blueberry-color;
+	}
 
-		& + .metric-tab-bar__tab {
-			border-top-color: transparent;
-		}
+	&:last-child {
+		border-bottom: 0;
 	}
 
 	&:hover {
@@ -94,17 +78,16 @@ $blueberry-color: #3858e9;
 
 .metric-tab-bar__performance {
 	margin-bottom: 16px;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
-	outline: 1px solid var(--studio-gray-5);
+	border: 1px solid var(--studio-gray-5);
+
+	&.active {
+		outline: none;
+		border-color: $blueberry-color;
+	}
 }
 
 .metric-tab-bar__tab-container {
 	border: 1px solid var(--studio-gray-5);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
-
-	.metric-tab-bar__tab:has(+ .metric-tab-bar__tab.active) {
-		border-bottom-color: transparent;
-	}
 }
