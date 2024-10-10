@@ -1,5 +1,5 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { HUNDRED_YEAR_DOMIN_FLOW, addProductsToCart } from '@automattic/onboarding';
+import { HUNDRED_YEAR_DOMAIN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -11,7 +11,7 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
 const HundredYearDomainFlow: Flow = {
-	name: HUNDRED_YEAR_DOMIN_FLOW,
+	name: HUNDRED_YEAR_DOMAIN_FLOW,
 
 	get title() {
 		return ( getPlan( PLAN_100_YEARS )?.getTitle() || '' ) as string;

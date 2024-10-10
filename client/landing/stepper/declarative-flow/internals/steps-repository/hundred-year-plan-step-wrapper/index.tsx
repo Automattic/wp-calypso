@@ -3,7 +3,7 @@ import { Gridicon, WordPressLogo, FoldableCard } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import {
-	HUNDRED_YEAR_DOMIN_FLOW,
+	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -221,7 +221,7 @@ function InfoColumn( {
 		} );
 
 	// TODO: Replace hardcoded value by 100-eyar domain product price when we have it
-	if ( flowName === HUNDRED_YEAR_DOMIN_FLOW ) {
+	if ( flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
 		displayCost = '$2,000';
 	}
 
