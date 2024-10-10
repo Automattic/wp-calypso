@@ -74,7 +74,7 @@ export default function NoPlans( {
 			<div className="no-plans__info">
 				<p>
 					{ sprintf(
-						// translators: %d is the Stripe account email address
+						// translators: %d is the Stripe account name
 						__(
 							'It looks like the Stripe Account (%s) does not have any active plans. Are you sure you connected the same Stipe account that you use on Substack?'
 						),
@@ -92,7 +92,7 @@ export default function NoPlans( {
 					siteId={ selectedSite.ID }
 					primary={ false }
 					step={ currentStep }
-					label={ __( 'Only Import free subscrivers' ) }
+					label={ __( 'Only import free subscribers' ) }
 					navigate={ () => {
 						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
