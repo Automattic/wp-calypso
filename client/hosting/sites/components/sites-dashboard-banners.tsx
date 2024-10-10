@@ -79,6 +79,8 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 			</div>
 		);
 	}
+
+	return null;
 };
 
 export default SitesDashboardBanners;
