@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,12 +9,6 @@ import {
 } from 'calypso/performance-profiler/components/message-display';
 import LoaderText from 'calypso/performance-profiler/components/weekly-report/loader-text';
 import { WeeklyReportProps } from 'calypso/performance-profiler/types/weekly-report';
-
-const Subtitle = styled.span`
-	color: #a7aaad;
-	font-size: 14px;
-	font-weight: 400;
-`;
 
 export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 	const translate = useTranslate();
@@ -84,7 +77,7 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 							components: {
 								strong: <strong />,
 								br: <br />,
-								subtitle: <Subtitle />,
+								subtitle: <span className="secondary-message" />,
 							},
 						}
 					) }
