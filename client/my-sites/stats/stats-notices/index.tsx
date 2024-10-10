@@ -81,6 +81,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const isSiteJetpackNotAtomic = useSelector(
 		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
+	const isSiteJetpack = useSelector(
+		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
+	);
 	const isWpcom = useSelector( ( state ) => !! isSiteWpcom( state, siteId ) );
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
 	const isOwnedByTeam51 = useSelector(
@@ -133,6 +136,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasPaidStats,
 		hasFreeStats,
 		isSiteJetpackNotAtomic,
+		isSiteJetpack,
 		statsPurchaseSuccess,
 		isCommercial,
 		isCommercialOwned,
@@ -178,7 +182,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		<>
 			{ allNotices }
 			{ /* JITM Container */ }
-			{ allNotices.length === 0 && <JetpackJITM /> }
+			{ allNotices.length === 0 && isSiteJetpack && isOdysseyStats && <JetpackJITM /> }
 		</>
 	);
 };
