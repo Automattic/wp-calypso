@@ -33,6 +33,7 @@ const JetpackJITM: React.FC = () => {
 		return () => {
 			document.head.removeChild( link );
 			document.body.removeChild( script );
+			// Stop JITM from running again if the component is re-rendered.
 			window.hasRunJetpackJITM = true;
 		};
 	}, [] ); // Empty dependency array ensures this runs only once on mount

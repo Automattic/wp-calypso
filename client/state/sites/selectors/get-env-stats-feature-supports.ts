@@ -18,6 +18,9 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
 		treatAtomicAsJetpackSite: false,
 	} );
+	const isSiteJetpack = isJetpackSite( state, siteId, {
+		treatAtomicAsJetpackSite: true,
+	} );
 
 	return {
 		supportsHighlightsSettings: version_greater_than_or_equal(
@@ -67,6 +70,10 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		isOldJetpack:
 			isSiteJetpackNotAtomic &&
 			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
+		supportEmbededJITM:
+			isSiteJetpack &&
+			isOdysseyStats &&
+			! version_greater_than_or_equal( statsAdminVersion, '0.22.1', isOdysseyStats ),
 	};
 }
 

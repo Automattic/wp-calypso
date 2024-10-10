@@ -154,6 +154,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// Only check plans loaded state for supporting Stats on WPCOM.
 	const hasLoadedPlans =
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
+	const { supportEmbededJITM } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 
 	if (
 		! hasLoadedPurchases ||
@@ -182,7 +185,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		<>
 			{ allNotices }
 			{ /* JITM Container */ }
-			{ allNotices.length === 0 && isSiteJetpack && isOdysseyStats && <JetpackJITM /> }
+			{ supportEmbededJITM && allNotices.length === 0 && <JetpackJITM /> }
 		</>
 	);
 };
