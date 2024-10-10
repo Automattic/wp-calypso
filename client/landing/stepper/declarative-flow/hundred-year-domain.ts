@@ -53,6 +53,8 @@ const HundredYearDomainFlow: Flow = {
 		} );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			const checkoutBackUrl = new URL( `/setup/${ flowName }/domains`, window.location.href );
+
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
@@ -63,18 +65,17 @@ const HundredYearDomainFlow: Flow = {
 
 					return window.location.assign( logInUrl );
 				case 'createSite':
-					return navigate( 'processing', undefined );
+					return navigate( 'processing' );
 				case 'processing':
-					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
-						setSignupCompleteSlug( providedDependencies.siteSlug );
-						setSignupCompleteFlowName( flowName );
+					setSignupCompleteSlug( providedDependencies.siteSlug );
+					setSignupCompleteFlowName( flowName );
 
-						return window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								providedDependencies.siteSlug as string
-							) }?signup=1`
-						);
-					}
+					// use replace instead of assign to remove the processing URL from history
+					return window.location.replace(
+						`/checkout/${ encodeURIComponent(
+							providedDependencies.siteSlug as string
+						) }?signup=1&checkoutBackUrl=${ encodeURIComponent( checkoutBackUrl.href ) }`
+					);
 			}
 		}
 
