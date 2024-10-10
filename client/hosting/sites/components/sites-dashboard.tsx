@@ -377,7 +377,7 @@ const SitesDashboard = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ dashboardTitle } />
-					<SitesDashboardBanners sitesStatuses={ statuses } paginatedSites={ paginatedSites } />
+					<SitesDashboardBanners sitesStatuses={ statuses } sitesCount={ paginatedSites.length } />
 
 					<DotcomSitesDataViews
 						sites={ paginatedSites }

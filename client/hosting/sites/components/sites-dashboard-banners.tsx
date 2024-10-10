@@ -6,22 +6,21 @@ import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
-import type { SiteExcerptData } from '@automattic/sites';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
 type SitesDashboardBannersProps = {
 	sitesStatuses: Status[];
-	paginatedSites: SiteExcerptData[];
+	sitesCount: number;
 };
 
-const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboardBannersProps ) => {
+const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBannersProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
+	const showA8CForAgenciesBanner = sitesCount >= 5;
 	const migrationPendingSitesCount = sitesStatuses.find(
 		( status ) => status.name === 'migration-pending'
 	)?.count;
