@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -16,8 +16,6 @@ type SitesDashboardBannersProps = {
 };
 
 const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBannersProps ) => {
-	const hasEnTranslation = useHasEnTranslation();
-
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const showA8CForAgenciesBanner = sitesCount >= 5;
@@ -69,27 +67,15 @@ const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBan
 						},
 					} ) }
 					className="sites-banner"
-					description={
-						hasEnTranslation(
-							"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
-						)
-							? translate(
-									"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
-							  )
-							: translate(
-									'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
-							  )
-					}
+					description={ translate(
+						"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
+					) }
 					dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
 					event="learn-more"
 					horizontal
 					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-sites-dashboard' ) }
 					target="_blank"
-					title={
-						hasEnTranslation( "Building sites for customers? Here's how to earn more." )
-							? translate( "Building sites for customers? Here's how to earn more." )
-							: translate( 'Managing multiple sites? Meet our agency hosting' )
-					}
+					title={ translate( "Building sites for customers? Here's how to earn more." ) }
 					tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 				/>
 			</div>
