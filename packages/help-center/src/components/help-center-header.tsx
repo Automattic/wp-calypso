@@ -68,6 +68,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { pathname, key } = useLocation();
+
 	const shouldDisplayChatHistoryButton = pathname !== '/chat-history';
 	const isHelpCenterHome = key === 'default';
 
