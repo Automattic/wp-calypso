@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 declare global {
 	interface Window {
@@ -12,8 +12,6 @@ declare global {
 }
 
 const JetpackJITM: React.FC = () => {
-	const jitmContainerRef = useRef< HTMLDivElement >( null );
-
 	useEffect( () => {
 		// Load CSS
 		const link: HTMLLinkElement = document.createElement( 'link' );
@@ -44,7 +42,6 @@ const JetpackJITM: React.FC = () => {
 
 	return (
 		<div
-			ref={ jitmContainerRef }
 			id="jp-admin-notices"
 			className="jetpack-jitm-message"
 			data-message-path="wp:jetpack_page_stats:admin_notices"
