@@ -52,9 +52,9 @@ const HundredYearDomainFlow: Flow = {
 			pageTitle: '100-Year Domain',
 		} );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const checkoutBackUrl = new URL( `/setup/${ flowName }/domains`, window.location.href );
+		const checkoutBackUrl = new URL( `/setup/${ flowName }/domains`, window.location.href );
 
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
