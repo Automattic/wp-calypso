@@ -75,10 +75,16 @@ const onboarding: Flow = {
 			[]
 		);
 
-		clearUseMyDomainsQueryParams( currentStepSlug );
+		const { signupDomainOrigin } = useSelect( ( select ) => {
+			return {
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+			};
+		}, [] );
 
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
+    
+    clearUseMyDomainsQueryParams( currentStepSlug );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
@@ -125,9 +131,13 @@ const onboarding: Flow = {
 					if ( ! cartItems?.[ 0 ] ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
-						// selection status before they land on the checkout page, we switch the value
-						// to "free".
-						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
 					}
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, true );

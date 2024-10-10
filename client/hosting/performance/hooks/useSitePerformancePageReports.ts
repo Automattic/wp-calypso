@@ -91,7 +91,7 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 				return {
 					url: page.link,
 					path,
-					label: page.title.rendered,
+					label: page.title.rendered || __( 'No Title' ),
 					value: page.id.toString(),
 					wpcom_performance_report_url: toPerformanceReportParts(
 						page.link,
