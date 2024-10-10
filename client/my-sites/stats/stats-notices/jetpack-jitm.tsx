@@ -5,6 +5,8 @@ declare global {
 		initJetpackJITM: () => void;
 		jitm_config: {
 			nonce: string;
+			jitm_base_url: string;
+			jitm_version: string;
 		};
 	}
 }
@@ -15,15 +17,13 @@ const JetpackJITM: React.FC = () => {
 	useEffect( () => {
 		// Load CSS
 		const link: HTMLLinkElement = document.createElement( 'link' );
-		link.href =
-			'https://ready-carp-caterpillar.jurassic.ninja/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-jitm/build/index.css';
+		link.href = `${ window.jitm_config.jitm_base_url }/build/index.css?ver=${ window.jitm_config.jitm_version }&minify=false`;
 		link.rel = 'stylesheet';
 		document.head.appendChild( link );
 
 		// Load JavaScript
 		const script: HTMLScriptElement = document.createElement( 'script' );
-		script.src =
-			'https://ready-carp-caterpillar.jurassic.ninja/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-jitm/build/index.js';
+		script.src = `${ window.jitm_config?.jitm_base_url }/build/index.js?ver=${ window.jitm_config.jitm_version }&minify=false`;
 		script.async = true;
 
 		script.onload = () => {
