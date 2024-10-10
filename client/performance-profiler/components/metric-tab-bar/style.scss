@@ -24,12 +24,12 @@ $blueberry-color: #3858e9;
 	padding: 16px 22px 16px 22px;
 	width: 100%;
 	border: 1px solid transparent;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
 
 	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 
 	&.active {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
 		outline: 1px solid $blueberry-color;
 	}
 
@@ -79,6 +79,8 @@ $blueberry-color: #3858e9;
 .metric-tab-bar__performance {
 	margin-bottom: 16px;
 	border: 1px solid var(--studio-gray-5);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 
 	&.active {
 		outline: none;
