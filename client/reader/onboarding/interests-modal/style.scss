@@ -1,64 +1,54 @@
-.interests-modal__title {
-	font-family: Recoleta, sans-serif;
-	font-size: 2.75rem;
-	font-weight: 400;
-	text-align: center;
-}
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
-.interests-modal__subtitle {
-	text-align: center;
-}
-
-.interests-modal__content {
-	padding: 24px;
-}
-
-.interests-modal__category {
-	max-width: 1200px;
-	margin: 0 auto 32px auto;
-}
-
-.interests-modal__section-header {
-	margin-bottom: 16px;
-}
-
-.interests-list {
-	display: grid;
-	gap: 16px;
-
-	// Default to 1 column for mobile
-	grid-template-columns: 1fr;
-
-	// 2 columns for medium screens
-	@media ( min-width: 600px ) {
-		grid-template-columns: repeat( 2, 1fr );
+.interests-modal {
+	&__content {
+		padding: 24px;
 	}
 
-	// 3 columns for larger screens
-	@media ( min-width: 900px ) {
-		grid-template-columns: repeat( 3, 1fr );
-	}
-}
-
-.select-card-checkbox__container {
-	height: 100%;
-}
-
-.select-card-checkbox__label {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	height: 100%;
-}
-
-// Styles for the header actions
-.components-modal__header {
-	.components-button.is-link {
-		margin-right: auto; // This will push the button to the left
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.75rem;
+		font-weight: 400;
+		text-align: center;
 	}
 
-	.components-button.is-primary {
-		margin-left: 16px; // Add some space between Cancel and Continue
+	&__subtitle {
+		text-align: center;
+	}
+
+	&__category {
+		max-width: 1200px;
+		margin: 0 auto 32px auto;
+	}
+
+	&__section-header {
+		margin-bottom: 16px;
+	}
+
+	&__topics-list {
+		display: grid;
+		gap: 16px;
+		grid-template-columns: 1fr;
+
+		@include break-small {
+			grid-template-columns: repeat( 2, 1fr );
+		}
+
+		@include break-large {
+			grid-template-columns: repeat( 3, 1fr );
+		}
+	}
+
+	.components-modal__header {
+		.components-button {
+			&.is-link {
+				margin-right: auto;
+			}
+
+			&.is-primary {
+				margin-left: 16px;
+			}
+		}
 	}
 }

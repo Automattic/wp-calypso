@@ -24,7 +24,6 @@ interface Category {
 
 interface Tag {
 	slug: string;
-	// Add other properties if needed
 }
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) => {
@@ -151,6 +150,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 				isFullScreen
 				headerActions={ headerActions }
 				isDismissible={ false }
+				className="interests-modal"
 			>
 				<div className="interests-modal__content">
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
@@ -160,7 +160,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 					{ categories.map( ( category ) => (
 						<div key={ category.name } className="interests-modal__category">
 							<h3 className="interests-modal__section-header">{ category.name }</h3>
-							<div className="interests-list">
+							<div className="interests-modal__topics-list">
 								{ category.topics.map( ( topic ) => (
 									<SelectCardCheckbox
 										key={ topic.name }
