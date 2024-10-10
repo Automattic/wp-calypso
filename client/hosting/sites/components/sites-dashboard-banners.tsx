@@ -1,11 +1,15 @@
 import { Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type SitesDashboardBannersProps = {
 	sitesStatuses: Status[];
@@ -14,6 +18,8 @@ type SitesDashboardBannersProps = {
 
 const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboardBannersProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
+
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
 	const migrationPendingSitesCount = sitesStatuses.find(
@@ -30,6 +36,10 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 		// If the banner is dismissed, we don't want to return earlier to show the other banner.
 		! isMigrationBannerDismissed
 	) {
+		const ctaClickHandler = () => {
+			setShowHelpCenter( true );
+		};
+
 		return (
 			<div className="sites-banner-container">
 				<Banner
@@ -43,9 +53,7 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 					dismissPreferenceName="dismissible-card-migration-pending-sites"
 					event="get-help"
 					horizontal
-					onClick={ () => {
-						alert( 'Open help center!' );
-					} }
+					onClick={ ctaClickHandler }
 					target="_blank"
 					title={ translate( 'Stuck on your migration?' ) }
 					tracksClickName="calypso_sites_dashboard_migration_banner_click"
