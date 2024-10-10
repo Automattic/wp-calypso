@@ -54,7 +54,7 @@ export const useStepNavigationWithTracking = ( {
 		() => ( {
 			...( stepNavigation.submit && {
 				submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
-					if ( ! providedDependencies?.skipSubmitStepTracks ) {
+					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
 						handleRecordStepNavigation( {
 							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 							providedDependencies,
