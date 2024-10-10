@@ -14,7 +14,7 @@ export function useNewDomainsNotification() {
 		if ( newDomains ) {
 			dispatch(
 				successNotice(
-					translate( 'Your domain is being setup.', 'Your domains are being set up.', {
+					translate( 'Your domain is being set up.', 'Your domains are being set up.', {
 						count: parseInt( newDomains ),
 					} ),
 					{
