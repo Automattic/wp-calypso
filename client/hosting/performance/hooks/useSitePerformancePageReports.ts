@@ -145,12 +145,11 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 			const performanceReportUrl = toPerformanceReportUrl( performanceReport );
 
 			if ( pageId === HOME_PAGE_ID ) {
-				dispatch(
+				return await dispatch(
 					saveSiteSettings( siteId, { wpcom_performance_report_url: performanceReportUrl } )
 				);
-			} else {
-				savePageMeta( siteId, parseInt( pageId, 10 ), performanceReportUrl );
 			}
+			return await savePageMeta( siteId, parseInt( pageId, 10 ), performanceReportUrl );
 		},
 		[ siteId, dispatch ]
 	);

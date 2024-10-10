@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -43,17 +43,22 @@ const usePerformanceReport = (
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
+	const [ retestState, setRetestState ] = useState( 'idle' );
+
 	const {
 		data: basicMetrics,
-		isError,
-		isFetched,
-		refetch: testAgain,
+		isError: isBasicMetricsError,
+		isFetched: isBasicMetricsFetched,
+		isLoading: isLoadingBasicMetrics,
+		refetch: requeueAdvancedMetrics,
 	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
-	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
-		url,
-		token ?? hash
-	);
+	const {
+		data: performanceInsights,
+		status: insightsStatus,
+		isError: isInsightsError,
+		isLoading: isLoadingInsights,
+	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
@@ -62,7 +67,7 @@ const usePerformanceReport = (
 
 	const performanceReport = activeTab === 'mobile' ? mobileReport : desktopReport;
 
-	const desktopLoaded = 'completed' === performanceInsights?.status;
+	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
 	const getHashOrToken = (
@@ -78,14 +83,33 @@ const usePerformanceReport = (
 		return '';
 	};
 
+	const testAgain = useCallback( async () => {
+		setRetestState( 'queueing-advanced' );
+		const result = await requeueAdvancedMetrics();
+		setRetestState( 'polling-for-insights' );
+		return result;
+	}, [ requeueAdvancedMetrics ] );
+
+	if (
+		retestState === 'polling-for-insights' &&
+		insightsStatus === 'success' &&
+		( activeTab === 'mobile' ? mobileLoaded : desktopLoaded )
+	) {
+		setRetestState( 'idle' );
+	}
+
 	return {
 		performanceReport,
 		url: finalUrl ?? url,
 		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
-		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
-		isError: isError || isErrorInsights,
-		isFetched,
+		isLoading:
+			isLoadingBasicMetrics ||
+			isLoadingInsights ||
+			( activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded ),
+		isError: isBasicMetricsError || isInsightsError,
+		isBasicMetricsFetched,
 		testAgain,
+		isRetesting: retestState !== 'idle',
 	};
 };
 
@@ -168,12 +192,12 @@ export const SitePerformance = () => {
 	);
 
 	useEffect( () => {
-		if ( performanceReport.isFetched && performanceReport.url ) {
+		if ( performanceReport.isBasicMetricsFetched && performanceReport.url ) {
 			recordTracksEvent( 'calypso_performance_profiler_test_started', {
 				url: performanceReport.url,
 			} );
 		}
-	}, [ performanceReport.isFetched, performanceReport.url ] );
+	}, [ performanceReport.isBasicMetricsFetched, performanceReport.url ] );
 
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
@@ -233,45 +257,46 @@ export const SitePerformance = () => {
 		/>
 	);
 
-	const subtitle = performanceReport.performanceReport
-		? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
-				args: {
-					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
-						'MMMM Do, YYYY h:mm:ss A'
-					),
-				},
-				components: {
-					button: (
-						<Button
-							css={ {
-								textDecoration: 'none !important',
-								':hover': {
-									textDecoration: 'underline !important',
-								},
-								fontSize: 'inherit',
-								whiteSpace: 'nowrap',
-							} }
-							variant="link"
-							onClick={ retestPage }
-						/>
-					),
-					span: (
-						<span
-							style={ {
-								fontVariantNumeric: 'tabular-nums',
-							} }
-						/>
-					),
-				},
-		  } )
-		: translate(
-				'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-				{
-					components: {
-						link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
+	const subtitle =
+		! performanceReport.isLoading && performanceReport.performanceReport
+			? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
+					args: {
+						testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+							'MMMM Do, YYYY h:mm:ss A'
+						),
 					},
-				}
-		  );
+					components: {
+						button: (
+							<Button
+								css={ {
+									textDecoration: 'none !important',
+									':hover': {
+										textDecoration: 'underline !important',
+									},
+									fontSize: 'inherit',
+									whiteSpace: 'nowrap',
+								} }
+								variant="link"
+								onClick={ retestPage }
+							/>
+						),
+						span: (
+							<span
+								style={ {
+									fontVariantNumeric: 'tabular-nums',
+								} }
+							/>
+						),
+					},
+			  } )
+			: translate(
+					'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+					{
+						components: {
+							link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
+						},
+					}
+			  );
 
 	return (
 		<div className="site-performance">
