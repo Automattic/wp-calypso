@@ -40,6 +40,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				},
 				{
 					tags: followedTagSlugs,
+					site_recs_per_card: 6, // This does not seem to have any effect. 8 results are always returned.
 				}
 			),
 		refetchOnMount: false,
