@@ -48,7 +48,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 
 			<p className="overview__growth-accelerator-body">
 				{ translate(
-					'Schedule a call with the Automattic for Agencies team to help us understand your business better and help you find and retain more clients. .'
+					'Schedule a call with the Automattic for Agencies team to help us understand your business better and help you find and retain more clients.'
 				) }
 			</p>
 
