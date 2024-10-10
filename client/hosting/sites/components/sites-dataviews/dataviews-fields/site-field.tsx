@@ -108,7 +108,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
-								fallback="first-grapheme"
+								fallback={ isMigrating ? 'migration' : 'first-grapheme' }
 								size={ 56 }
 							/>
 						</ThumbnailLink>
