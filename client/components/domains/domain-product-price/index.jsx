@@ -269,17 +269,12 @@ class DomainProductPrice extends Component {
 	}
 
 	/**
-	 * Renders the price of 100-year domains, which are a one time purchase
+	 * Used to render the price of 100-year domains, which are a one time purchase
+	 * TODO: Replace hardcoded value by 100-eyar domain product price when we have it
 	 */
 	renderOneTimePrice() {
-		const { showStrikedOutPrice, price } = this.props;
-
-		const className = clsx( 'domain-product-price domain-product-single-price', {
-			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
-		} );
-
 		return (
-			<div className={ className }>
+			<div className="domain-product-price domain-product-single-price">
 				<span>$2,000</span>
 			</div>
 		);

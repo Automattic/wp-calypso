@@ -1,7 +1,5 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { UserSelect } from '@automattic/data-stores';
-import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { addProductsToCart } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -9,13 +7,10 @@ import {
 	setSignupCompleteSlug,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { SiteId, SiteSlug } from 'calypso/types';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
 const HundredYearDomainFlow: Flow = {
-	// name: HUNDRED_YEAR_PLAN_FLOW,
 	name: 'hundred-year-domain',
 
 	get title() {
@@ -51,7 +46,6 @@ const HundredYearDomainFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const { domainName, productSlug } = providedDependencies;
