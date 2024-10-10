@@ -1,7 +1,9 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { useState, KeyboardEvent } from 'react';
 import { Product, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
@@ -31,18 +33,18 @@ type MapPlanProps = {
 	selectedProductId: string;
 };
 
-function displayProduct( product?: Product ) {
-	if ( ! product ) {
-		return 'Select a Newsletter Tier';
-	}
+type ProductInfoProps = {
+	product: Product;
+};
 
+function ProductInfo( { product }: ProductInfoProps ) {
 	return (
-		<div>
-			<strong>{ product.title || '' }</strong>
+		<>
+			{ product.title && <strong>{ product.title }</strong> }
 			<p>
 				{ formatCurrency( parseFloat( product.price ), product.currency ) }/{ product.interval }
 			</p>
-		</div>
+		</>
 	);
 }
 
@@ -64,11 +66,7 @@ export function MapPlan( {
 	tierToAdd,
 	selectedProductId,
 }: MapPlanProps ) {
-	let active_subscriptions = '';
-	if ( plan.active_subscriptions ) {
-		active_subscriptions = ` • ${ plan.active_subscriptions } active subscribers`;
-	}
-
+	const { __, _n } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const selectedProduct = products.find(
@@ -88,7 +86,17 @@ export function MapPlan( {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ) }
-					/{ plan.plan_interval } { active_subscriptions }
+					/{ plan.plan_interval }
+					{ plan.active_subscriptions && (
+						<>
+							{ ' • ' }
+							{ sprintf(
+								// translators: %d is number of subscribers
+								_n( '%d active subscriber', '%d active subscribers', plan.active_subscriptions ),
+								plan.active_subscriptions
+							) }
+						</>
+					) }
 				</p>
 			</div>
 			<div className="map-plan__arrow">
@@ -105,7 +113,7 @@ export function MapPlan( {
 							onProductAdd( tierToAdd, plan.product_id );
 						} }
 					>
-						Add Newsletter Tier
+						{ __( 'Add Newsletter Tier' ) }
 					</Button>
 				</div>
 			) }
@@ -124,19 +132,23 @@ export function MapPlan( {
 							}
 						} }
 					>
-						{ displayProduct( selectedProduct ) }
+						{ selectedProduct ? (
+							<ProductInfo product={ selectedProduct } />
+						) : (
+							__( 'Select a Newsletter Tier' )
+						) }
 					</Button>
 					<DropdownMenu
 						onToggle={ ( openState: boolean ) => {
 							setIsOpen( openState );
 						} }
 						icon={ chevronDown }
-						label="Choose a Newsletter Tier"
+						label={ __( 'Choose a Newsletter Tier' ) }
 						open={ isOpen }
 					>
 						{ ( { onClose }: { onClose: () => void } ) => (
 							<Fragment>
-								<MenuGroup label="Select">
+								<MenuGroup label={ __( 'Select' ) }>
 									<MenuItemsChoice
 										choices={ getProductChoices( sameIntervalProducts ) }
 										onSelect={ ( productId ) => {
@@ -147,7 +159,7 @@ export function MapPlan( {
 										value={ selectedProductId }
 									/>
 								</MenuGroup>
-								<MenuGroup label="OR">
+								<MenuGroup label={ __( 'OR' ) }>
 									<MenuItem
 										key="add-new"
 										onClick={ () => {
@@ -155,7 +167,7 @@ export function MapPlan( {
 											onProductAdd( tierToAdd, plan.product_id );
 										} }
 									>
-										Add Newsletter Tier
+										{ __( 'Add Newsletter Tier' ) }
 									</MenuItem>
 								</MenuGroup>
 							</Fragment>

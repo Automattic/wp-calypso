@@ -107,3 +107,14 @@ export function normalizeFromSite( fromSite: string ) {
 
 	return fromSite;
 }
+
+// Temporary i18n function placeholders because we don't want to send some strings for translations just yet.
+// Check with Zap team.
+
+export function todo__( text: string ) {
+	return text;
+}
+
+export function todo_n( textSingular: string, textPlural: string, count: number ) {
+	return count > 1 ? textPlural : textSingular;
+}

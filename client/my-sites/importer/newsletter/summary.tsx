@@ -1,6 +1,9 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import { Notice } from '@wordpress/components';
+import { ExternalLink, Notice } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
@@ -13,14 +16,14 @@ import { getImporterStatus, normalizeFromSite } from './utils';
 
 function getStepTitle( importerStatus: StepStatus ) {
 	if ( importerStatus === 'done' ) {
-		return 'Success! 🎉';
+		return __( 'Success! 🎉' );
 	}
 
 	if ( importerStatus === 'importing' ) {
-		return 'Almost there…';
+		return __( 'Almost there…' );
 	}
 
-	return 'Summary';
+	return __( 'Summary' );
 }
 
 interface SummaryProps {
@@ -40,6 +43,7 @@ export default function Summary( {
 	showConfetti,
 	shouldShownConfetti,
 }: SummaryProps ) {
+	const { __ } = useI18n();
 	const { resetPaidNewsletter } = useResetMutation();
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
@@ -75,18 +79,23 @@ export default function Summary( {
 
 			{ showPauseSubstackBillingWarning && (
 				<Notice status="warning" className="importer__notice" isDismissible={ false }>
-					<h2>Action Required</h2>
-					To prevent any charges from your old provider, go to your{ ' ' }
-					<a
-						href={ `https://${ normalizeFromSite(
-							fromSite
-						) }/publish/settings?search=Pause%20subscription` }
-						target="_blank"
-						rel="noreferrer"
-					>
-						Substack Payments Settings ↗
-					</a>
-					, select "Pause billing" and click "<strong>Pause indefinitely</strong>".
+					<h2>{ __( 'Action required' ) }</h2>
+					{ createInterpolateElement(
+						__(
+							'To prevent any charges from Substack, go to your <substackPaymentsSettingsLink>Substack Payments Settings</substackPaymentsSettingsLink>, select "Pause billing" and click "<strong>Pause indefinitely</strong>".'
+						),
+						{
+							strong: <strong />,
+							substackPaymentsSettingsLink: (
+								// @ts-expect-error Used in createInterpolateElement doesn't need children.
+								<ExternalLink
+									href={ `https://${ normalizeFromSite(
+										fromSite
+									) }/publish/settings?search=Pause%20subscription` }
+								/>
+							),
+						}
+					) }
 				</Notice>
 			) }
 
@@ -96,16 +105,16 @@ export default function Summary( {
 					onClick={ onButtonClick }
 					primary
 				>
-					Customize your newsletter
+					{ __( 'Customize your newsletter' ) }
 				</ImporterActionButton>
 				<ImporterActionButton href={ '/posts/' + selectedSite.slug } onClick={ onButtonClick }>
-					View content
+					{ __( 'View content' ) }
 				</ImporterActionButton>
 				<ImporterActionButton
 					href={ '/subscribers/' + selectedSite.slug }
 					onClick={ onButtonClick }
 				>
-					Check subscribers
+					{ __( 'Check subscribers' ) }
 				</ImporterActionButton>
 			</ImporterActionButtonContainer>
 		</Card>

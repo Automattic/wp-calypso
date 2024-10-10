@@ -1,5 +1,6 @@
 import { ProgressBar } from '@wordpress/components';
 import { Icon, people, atSymbol, payment, info, warning } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 interface SubscriberSummaryProps {
@@ -8,6 +9,7 @@ interface SubscriberSummaryProps {
 }
 
 export default function SubscriberSummary( { stepContent, status }: SubscriberSummaryProps ) {
+	const { __ } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
@@ -23,13 +25,15 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			<>
 				<div className="summary__content">
 					<p>
-						<Icon icon={ atSymbol } /> <strong>We're importing your subscribers.</strong>
+						<Icon icon={ atSymbol } />{ ' ' }
+						<strong>{ __( "We're importing your subscribers." ) }</strong>
 						<br />
 					</p>
 				</div>
 				<p>
-					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
-					done.
+					{ __(
+						"This may take a few minutes. Feel free to leave this window – we'll let you know when it's done."
+					) }
 				</p>
 				<p>
 					<ProgressBar className="is-larger-progress-bar" />
