@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 
 declare global {
 	interface Window {
@@ -26,9 +26,9 @@ const JetpackJITM: React.FC = () => {
 
 		script.onload = () => {
 			// Call reFetch after the script has loaded
-			if ( window.initJetpackJITM ) {
-				window.initJetpackJITM();
-			}
+			// if ( window.initJetpackJITM ) {
+			// 	window.initJetpackJITM( window.jQuery );
+			// }
 		};
 
 		document.body.appendChild( script );
@@ -51,4 +51,4 @@ const JetpackJITM: React.FC = () => {
 	);
 };
 
-export default JetpackJITM;
+export default memo( JetpackJITM, () => true );
