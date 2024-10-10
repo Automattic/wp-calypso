@@ -617,9 +617,18 @@ function getFallbackDestination( {
 	}
 
 	const planItems = cart?.products?.filter( ( product ) => isWpComPlan( product.product_slug ) );
-	if ( planItems && planItems.length > 0 && planItems.length === cart?.products?.length ) {
+	const onlyPlanItems = planItems
+		? planItems.length > 0 && planItems.length === cart?.products?.length
+		: true;
+	const isSignupFlow = !! getSignupCompleteFlowName();
+	const _hasEcommercePlan = cart && hasEcommercePlan( cart );
+	if ( onlyPlanItems && ! isSignupFlow && ! _hasEcommercePlan ) {
 		debug( 'site with plan product' );
-		return `/plans/my-plan/${ siteSlug }?success=${ planItems[ 0 ].product_slug }`;
+
+		// When clicking "No Thanks" on plan upgrade upsell page, there is no longer plan item in the cart.
+		const query = planItems ? `?success=${ planItems[ 0 ].product_slug }` : '';
+
+		return `/plans/${ siteSlug }${ query }`;
 	}
 
 	debug( 'simple thank-you page' );

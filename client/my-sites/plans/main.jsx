@@ -51,6 +51,7 @@ import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { successNotice } from '../../state/notices/actions';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
@@ -182,6 +183,8 @@ class Plans extends Component {
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
 		}
+
+		this.maybeShowSuccessNotice();
 	}
 
 	componentWillUnmount() {
@@ -227,6 +230,29 @@ class Plans extends Component {
 				  } )
 				: checkoutPath
 		);
+	};
+
+	maybeShowSuccessNotice = () => {
+		const queryParams = new URLSearchParams( window.location.search );
+		if ( queryParams.has( 'success' ) ) {
+			const planSlug = queryParams.get( 'success' );
+			const plan = getPlan( planSlug );
+			if ( plan ) {
+				this.props.dispatch(
+					successNotice(
+						this.props.translate( 'Your %(planName)s plan is now active.', {
+							args: { planName: plan.getTitle() },
+						} ),
+						{
+							duration: 10000,
+						}
+					)
+				);
+				const url = new URL( window.location.href );
+				url.searchParams.delete( 'success' );
+				window.history.replaceState( {}, '', url );
+			}
+		}
 	};
 
 	renderPlaceholder = () => {
