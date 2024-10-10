@@ -20,8 +20,7 @@ export function currentPlan( context, next ) {
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 	const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
 
-	// When redirecting from the checkout page, selectedSite's plan hasn't had time to update yet, use success param to
-	// to bypass the isFreePlan check here and allow loading of /plans/my-plan.
+	// When redirecting from the checkout page, no more redirects to use success param to show the success notice.
 	if ( ( ! context.query.hasOwnProperty( 'success' ) && isFreePlan ) || isEntrepreneurTrial ) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 

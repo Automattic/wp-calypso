@@ -114,7 +114,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
 	} );
 
-	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
+	it( 'redirects to /plans page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -129,7 +129,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+		expect( url ).toBe( '/plans/foo.bar?success=personal-bundle' );
 	} );
 
 	// Note: This just verifies the existing behavior; this URL is invalid unless
@@ -1090,10 +1090,10 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+		expect( url ).toBe( `/plans/foo.bar?success=blogger-bundle` );
 	} );
 
-	it( 'redirects to the thank you page if jetpack is not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
+	it( 'redirects to /plans page if jetpack is not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -1109,7 +1109,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+		expect( url ).toBe( `/plans/foo.bar?success=personal-bundle` );
 	} );
 
 	it( 'redirects to a Jetpack cloud redirectTo', () => {
@@ -1434,7 +1434,7 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+			expect( url ).toBe( `/plans/foo.bar?success=personal-bundle` );
 		} );
 	} );
 
@@ -1457,7 +1457,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to thank you page if jetpack is not in the cart, personal is in the cart, but hideNudge is true', () => {
+	it( 'redirects to /plans page if jetpack is not in the cart, personal is in the cart, but hideNudge is true', () => {
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -1474,7 +1474,7 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: samplePurchaseId,
 			hideNudge: true,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+		expect( url ).toBe( `/plans/foo.bar?success=personal-bundle` );
 	} );
 
 	it( 'redirects to a url on the same site we are checking out', () => {
