@@ -293,7 +293,7 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						className={ `hundred-year-plan-step-wrapper ${ stepName }` }
 						isMobile={ isMobile }
 					>
-						{ isOpen && <InfoModal onClose={ closeModal } /> }
+						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
 						{ ! hideInfoColumn && (
 							<InfoColumnWrapper isMobile={ isMobile }>
 								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
