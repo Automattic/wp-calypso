@@ -1,71 +1,81 @@
+import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
+import { useSmooch } from '@automattic/zendesk-client';
 import { TabPanel, Card } from '@wordpress/components';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useState } from 'react';
 
 import './help-center-chat-history.scss';
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
+	const locale = useLocale();
 
-	// Random test data
-	const recentTestData = [
-		{
-			id: 1,
-			avatar: 'https://via.placeholder.com/150',
-			lastMessage: {
-				name: 'John Doe',
-				message: 'Hello, how can I help you today?',
-				date: '2023-12-26 00:00Z',
-			},
-		},
-		{
-			id: 2,
-			avatar: 'https://via.placeholder.com/150',
-			lastMessage: {
-				name: 'Jane Doe',
-				message: 'Hello, how can I help you today?',
-				date: '2023-12-27 00:00Z',
-			},
-		},
-	];
+	const TAB_STATES = {
+		recent: 'recent',
+		archived: 'archived',
+	};
+
+	const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
+	const [ conversations, setConversations ] = useState( [] );
+	const { init, getConversations } = useSmooch();
+
+	useEffect( () => {
+		if ( init ) {
+			setConversations( getConversations() );
+		}
+	}, [ getConversations, init ] );
 
 	return (
 		<div className="help-center-chat-history">
 			<TabPanel
 				tabs={ [
 					{
-						name: 'recent',
+						name: TAB_STATES.recent,
 						title: __( 'Recent' ),
 						className: 'help-center-chat-history__recent',
 					},
 					{
-						name: 'archived',
+						name: TAB_STATES.archived,
 						title: __( 'Archived' ),
 						className: 'help-center-chat-history__archived',
 					},
 				] }
+				onSelect={ ( tabName ) => {
+					setActiveTab( tabName );
+				} }
 			>
 				{ () =>
-					recentTestData.map( ( conversation ) => (
-						<Card key={ conversation.id } className="help-center-chat-history__conversation-card">
-							<div className="help-center-chat-history__conversation-avatar">
-								<img src={ conversation.avatar } alt={ __( 'User Avatar' ) } />
-							</div>
-							<div className="help-center-chat-history__conversation-information">
-								<div>{ conversation?.lastMessage?.message }</div>
-								<div className="help-center-chat-history__conversation-sub-information">
-									<span className="help-center-chat-history__conversation-information-name">
-										{ conversation?.lastMessage?.name }
-									</span>
+					conversations.map( ( conversation ) => {
+						const message = conversation.messages[ 0 ];
 
-									<span>{ conversation?.lastMessage?.date }</span>
+						return (
+							<Card key={ conversation.id } className="help-center-chat-history__conversation-card">
+								<div className="help-center-chat-history__conversation-avatar">
+									<img src={ message.avatarUrl } alt={ __( 'User Avatar' ) } />
 								</div>
-							</div>
-							<div className="help-center-chat-history__open-conversation">
-								<Icon icon={ chevronRight } size={ 24 } />
-							</div>
-						</Card>
-					) )
+								<div className="help-center-chat-history__conversation-information">
+									<div>{ message.text }</div>
+									<div className="help-center-chat-history__conversation-sub-information">
+										<span className="help-center-chat-history__conversation-information-name">
+											{ message.displayName }
+										</span>
+
+										<span>
+											{ getRelativeTimeString( {
+												timestamp: message.received * 1000,
+												locale,
+												style: 'long',
+											} ) }
+										</span>
+									</div>
+								</div>
+								<div className="help-center-chat-history__open-conversation">
+									<Icon icon={ chevronRight } size={ 24 } />
+								</div>
+							</Card>
+						);
+					} )
 				}
 			</TabPanel>
 		</div>
