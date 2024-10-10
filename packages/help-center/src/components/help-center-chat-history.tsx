@@ -47,23 +47,23 @@ export const HelpCenterChatHistory = () => {
 			>
 				{ () =>
 					conversations.map( ( conversation ) => {
-						const message = conversation.messages[ 0 ];
+						const lastMessage = conversation.messages?.pop();
 
 						return (
 							<Card key={ conversation.id } className="help-center-chat-history__conversation-card">
 								<div className="help-center-chat-history__conversation-avatar">
-									<img src={ message.avatarUrl } alt={ __( 'User Avatar' ) } />
+									<img src={ lastMessage.avatarUrl } alt={ __( 'User Avatar' ) } />
 								</div>
 								<div className="help-center-chat-history__conversation-information">
-									<div>{ message.text }</div>
+									<div>{ lastMessage.text }</div>
 									<div className="help-center-chat-history__conversation-sub-information">
 										<span className="help-center-chat-history__conversation-information-name">
-											{ message.displayName }
+											{ lastMessage.displayName }
 										</span>
 
 										<span>
 											{ getRelativeTimeString( {
-												timestamp: message.received * 1000,
+												timestamp: lastMessage.received * 1000,
 												locale,
 												style: 'long',
 											} ) }
