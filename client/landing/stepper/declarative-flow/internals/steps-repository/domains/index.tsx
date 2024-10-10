@@ -116,9 +116,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
 		} else {
+			let extra = {};
+			if ( flow === HUNDRED_YEAR_DOMAIN_FLOW ) {
+				extra = { is_hundred_year_domain: true };
+			}
+
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
+				extra,
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
