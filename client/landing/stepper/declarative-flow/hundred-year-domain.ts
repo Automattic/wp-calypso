@@ -1,8 +1,7 @@
 import { UserSelect } from '@automattic/data-stores';
-import { HUNDRED_YEAR_DOMAIN_FLOW, addProductsToCart } from '@automattic/onboarding';
+import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -54,29 +53,9 @@ const HundredYearDomainFlow: Flow = {
 		} );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const { domainName, productSlug } = providedDependencies;
-
-			const addDomainToCart = async () => {
-				const productsToAdd = [
-					domainRegistration( {
-						domain: domainName as string,
-						productSlug: productSlug as string,
-						extra: { is_hundred_year_domain: true },
-					} ),
-				];
-				await addProductsToCart( 'no-site', flowName, productsToAdd );
-
-				return {
-					siteId: null,
-					siteSlug: 'no-site',
-					goToCheckout: true,
-				};
-			};
-
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
-					addDomainToCart();
 
 					if ( userIsLoggedIn ) {
 						return navigate( 'createSite' );
