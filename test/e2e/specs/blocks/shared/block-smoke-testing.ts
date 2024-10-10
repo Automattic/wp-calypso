@@ -69,7 +69,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
 						{
-							noSearch: ! blockFlow.noSearch === false,
+							noSearch: blockFlow.noSearch === false ? false : true,
 							blockFallBackName: blockFlow.blockTestFallBackName,
 						}
 					);
