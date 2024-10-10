@@ -25,9 +25,7 @@ const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBan
 		( status ) => status.name === 'migration-pending'
 	)?.count;
 
-	const isMigrationBannerDismissed = useSelector(
-		isCardDismissed( 'dismissible-card-migration-pending-sites' )
-	);
+	const isMigrationBannerDismissed = useSelector( isCardDismissed( 'migration-pending-sites' ) );
 
 	if (
 		migrationPendingSitesCount &&
@@ -49,7 +47,7 @@ const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBan
 					description={ translate(
 						"Let's solve it together. Reach out to our support team to get your migration started."
 					) }
-					dismissPreferenceName="dismissible-card-migration-pending-sites"
+					dismissPreferenceName="migration-pending-sites"
 					event="get-help"
 					horizontal
 					onClick={ ctaClickHandler }
