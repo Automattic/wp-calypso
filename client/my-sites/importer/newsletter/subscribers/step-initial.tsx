@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef } from 'react';
@@ -39,8 +40,13 @@ export default function StepInitial( {
 		<Card>
 			<h2>{ __( 'Step 1: Export your subscribers from Substack' ) }</h2>
 			<p>
-				{ __(
-					'Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.'
+				{ createInterpolateElement(
+					__(
+						'Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.'
+					),
+					{
+						strong: <strong />,
+					}
 				) }
 			</p>
 			<img

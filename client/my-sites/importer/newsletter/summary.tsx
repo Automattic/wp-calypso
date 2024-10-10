@@ -16,7 +16,7 @@ import { getImporterStatus, normalizeFromSite } from './utils';
 
 function getStepTitle( importerStatus: StepStatus ) {
 	if ( importerStatus === 'done' ) {
-		return __( 'Success! 🎉' );
+		return __( 'Success!' ) + ' 🎉';
 	}
 
 	if ( importerStatus === 'importing' ) {
