@@ -25,7 +25,7 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 					icon="info-outline"
 					callToAction={ translate( 'Get help' ) }
 					primaryButton={ false }
-					className="sites-a8c-for-agencies-banner"
+					className="sites-banner"
 					description={ translate(
 						"Let's solve it together. Reach out to our support team to get your migration started."
 					) }
@@ -52,7 +52,7 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 							icon: <Gridicon icon="external" />,
 						},
 					} ) }
-					className="sites-a8c-for-agencies-banner"
+					className="sites-banner"
 					description={
 						hasEnTranslation(
 							"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
