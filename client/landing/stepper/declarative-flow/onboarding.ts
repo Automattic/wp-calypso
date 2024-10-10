@@ -21,7 +21,8 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 		const newURL = removeQueryArgs(
 			window.location.pathname + window.location.search,
 			'step',
-			'initialQuery'
+			'initialQuery',
+			'lastQuery'
 		);
 		window.history.replaceState( {}, document.title, newURL );
 	}
