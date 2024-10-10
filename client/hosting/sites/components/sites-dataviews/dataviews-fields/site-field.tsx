@@ -20,7 +20,7 @@ import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link
 import {
 	displaySiteUrl,
 	isNotAtomicJetpack,
-	isPendingMigrationSite,
+	isMigrationInProgress,
 	isStagingSite,
 } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -82,7 +82,8 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	let siteTitle = site.title;
-	if ( isPendingMigrationSite( site ) && isDefaultSiteTitle( siteTitle ) ) {
+	const isMigrating = isMigrationInProgress( site );
+	if ( isMigrating && isDefaultSiteTitle( siteTitle ) ) {
 		siteTitle = translate( 'Incoming Migration' );
 	}
 
