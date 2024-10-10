@@ -12,6 +12,7 @@ export type HelpCenterRequiredInformation = {
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
+	is_core_site_editor_enabled: boolean;
 };
 
 const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInformation >( {
@@ -33,6 +34,7 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 	primarySiteId: 0,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
+	is_core_site_editor_enabled: false,
 } );
 
 export const HelpCenterRequiredContextProvider: React.FC< {

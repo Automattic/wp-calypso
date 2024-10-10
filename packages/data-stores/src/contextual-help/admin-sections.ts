@@ -9,6 +9,10 @@ export function generateAdminSections(
 		menus: string;
 		identity: string;
 	},
+	siteEditorUrls: {
+		root: string;
+		wp_global_styles: string;
+	},
 	googleMailService: string,
 	onboardingUrl: string
 ) {
@@ -56,7 +60,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( "Customize my site's theme" ),
-			link: customizerUrls.root,
+			link: siteEditorUrls.wp_global_styles,
 			synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 			icon: 'customize',
 		},
