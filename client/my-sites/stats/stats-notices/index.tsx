@@ -34,7 +34,7 @@ const SIGNIFICANT_VIEWS_AMOUNT = 100;
 
 declare global {
 	interface Window {
-		initJITM: () => void;
+		initJetpackJITM: () => void;
 		jitm_config: {
 			nonce: string;
 		};
@@ -60,8 +60,8 @@ const JetpackAdminNotices: React.FC = () => {
 
 		script.onload = () => {
 			// Call reFetch after the script has loaded
-			if ( window.initJITM ) {
-				window.initJITM();
+			if ( window.initJetpackJITM ) {
+				window.initJetpackJITM();
 			}
 		};
 
