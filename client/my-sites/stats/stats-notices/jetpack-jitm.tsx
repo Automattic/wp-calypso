@@ -3,6 +3,7 @@ import { memo, useEffect } from 'react';
 declare global {
 	interface Window {
 		initJetpackJITM: () => void;
+		hasRunJetpackJITM: boolean;
 		jitm_config: {
 			nonce: string;
 			base_url: string;
@@ -13,6 +14,9 @@ declare global {
 
 const JetpackJITM: React.FC = () => {
 	useEffect( () => {
+		if ( window.hasRunJetpackJITM ) {
+			return;
+		}
 		// Load CSS
 		const link: HTMLLinkElement = document.createElement( 'link' );
 		link.href = `${ window.jitm_config.base_url }/build/index.css?ver=${ window.jitm_config.version }&minify=false`;
@@ -23,20 +27,13 @@ const JetpackJITM: React.FC = () => {
 		const script: HTMLScriptElement = document.createElement( 'script' );
 		script.src = `${ window.jitm_config.base_url }/build/index.js?ver=${ window.jitm_config.version }&minify=false`;
 		script.async = true;
-
-		script.onload = () => {
-			// Call reFetch after the script has loaded
-			// if ( window.initJetpackJITM ) {
-			// 	window.initJetpackJITM( window.jQuery );
-			// }
-		};
-
 		document.body.appendChild( script );
 
 		// Cleanup function
 		return () => {
 			document.head.removeChild( link );
 			document.body.removeChild( script );
+			window.hasRunJetpackJITM = true;
 		};
 	}, [] ); // Empty dependency array ensures this runs only once on mount
 
