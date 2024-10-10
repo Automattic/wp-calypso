@@ -1,0 +1,14 @@
+.site-migration-support-instructions__card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+.site-migration-support-instructions__card {
+	max-width: 520px;
+	width: 100%;
+	margin: 0;
+}
