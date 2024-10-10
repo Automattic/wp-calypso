@@ -113,7 +113,7 @@ export function MapPlan( {
 							onProductAdd( tierToAdd, plan.product_id );
 						} }
 					>
-						{ __( 'Add Newsletter Tier' ) }
+						{ __( 'Add newsletter tier' ) }
 					</Button>
 				</div>
 			) }
@@ -135,7 +135,7 @@ export function MapPlan( {
 						{ selectedProduct ? (
 							<ProductInfo product={ selectedProduct } />
 						) : (
-							__( 'Select a Newsletter Tier' )
+							__( 'Select a newsletter tier' )
 						) }
 					</Button>
 					<DropdownMenu
@@ -143,7 +143,7 @@ export function MapPlan( {
 							setIsOpen( openState );
 						} }
 						icon={ chevronDown }
-						label={ __( 'Choose a Newsletter Tier' ) }
+						label={ __( 'Choose a newsletter tier' ) }
 						open={ isOpen }
 					>
 						{ ( { onClose }: { onClose: () => void } ) => (
@@ -167,7 +167,7 @@ export function MapPlan( {
 											onProductAdd( tierToAdd, plan.product_id );
 										} }
 									>
-										{ __( 'Add Newsletter Tier' ) }
+										{ __( 'Add newsletter tier' ) }
 									</MenuItem>
 								</MenuGroup>
 							</Fragment>
