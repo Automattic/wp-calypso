@@ -1,5 +1,5 @@
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
@@ -31,6 +31,62 @@ import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
 const SIGNIFICANT_VIEWS_AMOUNT = 100;
+
+declare global {
+	interface Window {
+		initJITM: () => void;
+		jitm_config: {
+			nonce: string;
+		};
+	}
+}
+
+const JetpackAdminNotices: React.FC = () => {
+	const jitmContainerRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		// Load CSS
+		const link: HTMLLinkElement = document.createElement( 'link' );
+		link.href =
+			'https://ready-carp-caterpillar.jurassic.ninja/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-jitm/build/index.css';
+		link.rel = 'stylesheet';
+		document.head.appendChild( link );
+
+		// Load JavaScript
+		const script: HTMLScriptElement = document.createElement( 'script' );
+		script.src =
+			'https://ready-carp-caterpillar.jurassic.ninja/wp-content/plugins/jetpack/jetpack_vendor/automattic/jetpack-jitm/build/index.js';
+		script.async = true;
+
+		script.onload = () => {
+			// Call reFetch after the script has loaded
+			if ( window.initJITM ) {
+				window.initJITM();
+			}
+		};
+
+		document.body.appendChild( script );
+
+		// Cleanup function
+		return () => {
+			document.head.removeChild( link );
+			document.body.removeChild( script );
+		};
+	}, [] ); // Empty dependency array ensures this runs only once on mount
+
+	return (
+		<>
+			<div
+				ref={ jitmContainerRef }
+				id="jp-admin-notices"
+				className="jetpack-jitm-message"
+				data-message-path="wp:jetpack_page_stats:admin_notices"
+				data-query="page%3Dstats"
+				data-nonce={ window.jitm_config.nonce } // Replace with actual nonce
+			></div>
+		</>
+	);
+};
 
 const ensureOnlyOneNoticeVisible = (
 	serverNoticesVisibility: Notices,
@@ -156,21 +212,26 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		noticeOptions
 	);
 
+	const allNotices = ALL_STATS_NOTICES.map(
+		( notice ) =>
+			calculatedNoticesVisibility[ notice.noticeId ] && (
+				<notice.component key={ notice.noticeId } { ...noticeOptions } />
+			)
+	).filter( Boolean );
+
 	// TODO: The dismiss logic could potentially be extracted too.
 	return (
 		<>
-			{ ALL_STATS_NOTICES.map(
-				( notice ) =>
-					calculatedNoticesVisibility[ notice.noticeId ] && (
-						<notice.component key={ notice.noticeId } { ...noticeOptions } />
-					)
-			) }
+			{ allNotices }
+			{ /* JITM Container */ }
+			{ allNotices.length === 0 && <JetpackAdminNotices /> }
 		</>
 	);
 };
 
 /**
  * Return new or old StatsNotices components based on env.
+ * JITM is rendered in the component as well.
  */
 export default function StatsNotices( {
 	siteId,
