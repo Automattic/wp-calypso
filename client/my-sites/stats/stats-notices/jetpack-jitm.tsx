@@ -5,8 +5,8 @@ declare global {
 		initJetpackJITM: () => void;
 		jitm_config: {
 			nonce: string;
-			jitm_base_url: string;
-			jitm_version: string;
+			base_url: string;
+			version: string;
 		};
 	}
 }
@@ -17,13 +17,13 @@ const JetpackJITM: React.FC = () => {
 	useEffect( () => {
 		// Load CSS
 		const link: HTMLLinkElement = document.createElement( 'link' );
-		link.href = `${ window.jitm_config.jitm_base_url }/build/index.css?ver=${ window.jitm_config.jitm_version }&minify=false`;
+		link.href = `${ window.jitm_config.base_url }/build/index.css?ver=${ window.jitm_config.version }&minify=false`;
 		link.rel = 'stylesheet';
 		document.head.appendChild( link );
 
 		// Load JavaScript
 		const script: HTMLScriptElement = document.createElement( 'script' );
-		script.src = `${ window.jitm_config?.jitm_base_url }/build/index.js?ver=${ window.jitm_config.jitm_version }&minify=false`;
+		script.src = `${ window.jitm_config.base_url }/build/index.js?ver=${ window.jitm_config.version }&minify=false`;
 		script.async = true;
 
 		script.onload = () => {
