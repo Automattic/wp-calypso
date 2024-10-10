@@ -20,7 +20,7 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 
 	if ( migrationPendingSitesCount && migrationPendingSitesCount > 0 ) {
 		return (
-			<div className="sites-a8c-for-agencies-banner-container">
+			<div className="sites-banner-container">
 				<Banner
 					icon="info-outline"
 					callToAction={ translate( 'Get help' ) }
@@ -45,7 +45,7 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 
 	if ( showA8CForAgenciesBanner ) {
 		return (
-			<div className="sites-a8c-for-agencies-banner-container">
+			<div className="sites-banner-container">
 				<Banner
 					callToAction={ translate( 'Learn more {{icon/}}', {
 						components: {
