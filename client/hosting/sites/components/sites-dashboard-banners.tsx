@@ -3,15 +3,45 @@ import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import Banner from 'calypso/components/banner';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
 type SitesDashboardBannersProps = {
+	sitesStatuses: Status[];
 	paginatedSites: SiteExcerptData[];
 };
 
-const SitesDashboardBanners = ( { paginatedSites }: SitesDashboardBannersProps ) => {
+const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboardBannersProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
+	const migrationPendingSitesCount = sitesStatuses.find(
+		( status ) => status.name === 'migration-pending'
+	)?.count;
+
+	if ( migrationPendingSitesCount && migrationPendingSitesCount > 0 ) {
+		return (
+			<div className="sites-a8c-for-agencies-banner-container">
+				<Banner
+					icon="info-outline"
+					callToAction={ translate( 'Get help' ) }
+					primaryButton={ false }
+					className="sites-a8c-for-agencies-banner"
+					description={ translate(
+						"Let's solve it together. Reach out to our support team to get your migration started."
+					) }
+					dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
+					event="get-help"
+					horizontal
+					onClick={ () => {
+						alert( 'Open help center!' );
+					} }
+					target="_blank"
+					title={ translate( 'Stuck on your migration?' ) }
+					tracksClickName="calypso_sites_dashboard_migration_banner_click"
+				/>
+			</div>
+		);
+	}
 
 	if ( showA8CForAgenciesBanner ) {
 		return (

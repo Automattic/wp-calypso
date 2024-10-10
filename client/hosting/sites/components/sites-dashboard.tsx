@@ -268,7 +268,7 @@ const SitesDashboard = ( {
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
-	const { currentStatusGroup } = useSitesListGrouping( allSites, {
+	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
 		status: statusSlug || 'all',
 		showHidden: true,
 	} );
@@ -377,7 +377,7 @@ const SitesDashboard = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ dashboardTitle } />
-					<SitesDashboardBanners paginatedSites={ paginatedSites } />
+					<SitesDashboardBanners sitesStatuses={ statuses } paginatedSites={ paginatedSites } />
 
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
