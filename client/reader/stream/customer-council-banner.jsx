@@ -1,6 +1,8 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import Banner from 'calypso/components/banner';
 import { navigate } from 'calypso/lib/navigate';
+import { useSelector } from 'calypso/state';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 
 const CUSTOMER_COUNCIL_P2_URL = 'https://readercouncilgeneral.wordpress.com/';
 const CUSTOMER_COUNCIL_P2_ID = '237686330';
@@ -16,7 +18,12 @@ export const CustomerCouncilBanner = ( { translate } ) => {
 	} = Reader.useReadFeedSiteQuery( Number( CUSTOMER_COUNCIL_P2_ID ) );
 	const alreadySubscribed = p2?.is_following;
 
-	const hideBanner = ( alreadySubscribed && checkedAlreadySubscribed ) || checkingAlreadySubscribed;
+	const isAutomattician = useSelector( isA8cTeamMember );
+
+	const hideBanner =
+		isAutomattician ||
+		( alreadySubscribed && checkedAlreadySubscribed ) ||
+		checkingAlreadySubscribed;
 
 	if ( hideBanner ) {
 		return null;
