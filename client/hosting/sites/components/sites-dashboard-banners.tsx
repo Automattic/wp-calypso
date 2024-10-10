@@ -1,6 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
@@ -18,7 +20,16 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 		( status ) => status.name === 'migration-pending'
 	)?.count;
 
-	if ( migrationPendingSitesCount && migrationPendingSitesCount > 0 ) {
+	const isMigrationBannerDismissed = useSelector(
+		isCardDismissed( 'dismissible-card-migration-pending-sites' )
+	);
+
+	if (
+		migrationPendingSitesCount &&
+		migrationPendingSitesCount > 0 &&
+		// If the banner is dismissed, we don't want to return earlier to show the other banner.
+		! isMigrationBannerDismissed
+	) {
 		return (
 			<div className="sites-banner-container">
 				<Banner
@@ -29,7 +40,7 @@ const SitesDashboardBanners = ( { sitesStatuses, paginatedSites }: SitesDashboar
 					description={ translate(
 						"Let's solve it together. Reach out to our support team to get your migration started."
 					) }
-					dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
+					dismissPreferenceName="dismissible-card-migration-pending-sites"
 					event="get-help"
 					horizontal
 					onClick={ () => {
