@@ -22,6 +22,7 @@ type CalendlyWidgetProps = {
 	hideEventTypeDetails?: boolean;
 	hideGdprBanner?: boolean;
 	onSchedule?: () => void;
+	onCalendlyViewed?: () => void;
 };
 
 function isCalendlyEvent( e: MessageEvent ): boolean {
@@ -39,6 +40,7 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( props ) => {
 		hideEventTypeDetails,
 		hideGdprBanner,
 		onSchedule,
+		onCalendlyViewed,
 	} = props;
 	const widgetId = useMemo(
 		() => id || `calendly-widget-${ Math.random().toString( 36 ).substr( 2, 9 ) }`,
@@ -49,6 +51,8 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( props ) => {
 		const handleMessage = ( e: MessageEvent ) => {
 			if ( isCalendlyEvent( e ) && e.data.event === 'calendly.event_scheduled' ) {
 				onSchedule?.();
+			} else if ( isCalendlyEvent( e ) && e.data.event === 'calendly.event_type_viewed' ) {
+				onCalendlyViewed?.();
 			}
 		};
 
@@ -80,7 +84,7 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( props ) => {
 
 				// Clear out the container div when props change.
 				element.innerHTML = '';
-				window.Calendly.initInlineWidget( {
+				window.Calendly.initPopupWidget( {
 					url: `https://calendly.com/${ url }?${ queryParams.toString() }`,
 					parentElement: document.getElementById( widgetId ),
 					prefill: prefill || {},
