@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+
 import './style.scss';
 
 interface InterestsModalProps {
@@ -14,7 +15,7 @@ interface InterestsModalProps {
 
 interface Topic {
 	name: string;
-	tag: string | string[];
+	tag: string;
 }
 
 interface Category {
@@ -27,34 +28,31 @@ interface Tag {
 }
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) => {
-	const [ interests, setInterests ] = useState< string[] >( [] );
-	const followedTags = useSelector( getReaderFollowedTags );
+	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
+	const followedTagsFromState = useSelector( getReaderFollowedTags );
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( followedTags ) {
-			const initialInterests = followedTags.map( ( tag: Tag ) => tag.slug );
-			setInterests( initialInterests );
+		if ( followedTagsFromState ) {
+			const initialTags = followedTagsFromState.map( ( tag: Tag ) => tag.slug );
+			setFollowedTags( initialTags );
 		}
-	}, [ followedTags ] );
+	}, [ followedTagsFromState ] );
 
-	const isButtonDisabled = interests.length < 3;
+	const isContinueDisabled = followedTags.length < 3;
 
-	const handleInterestChange = ( tag: string | string[] ) => {
-		const tags = Array.isArray( tag ) ? tag : [ tag ];
-		tags.forEach( ( t ) => {
-			if ( interests.includes( t ) ) {
-				dispatch( requestUnfollowTag( t ) );
-				setInterests( ( prevInterests ) => prevInterests.filter( ( interest ) => interest !== t ) );
-			} else {
-				dispatch( requestFollowTag( t ) );
-				setInterests( ( prevInterests ) => [ ...prevInterests, t ] );
-			}
-		} );
+	const handleTopicChange = ( checked: boolean, tag: string ) => {
+		if ( checked ) {
+			dispatch( requestFollowTag( tag ) );
+			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
+		} else {
+			dispatch( requestUnfollowTag( tag ) );
+			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
+		}
 	};
 
 	const handleContinue = () => {
-		if ( ! isButtonDisabled ) {
+		if ( ! isContinueDisabled ) {
 			onClose();
 		}
 	};
@@ -92,13 +90,13 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 			name: __( 'Creative Arts & Entertainment' ),
 			topics: [
 				{ name: __( 'Music' ), tag: 'music' },
-				{ name: __( 'Film & Television' ), tag: 'movies-and-tv' },
-				{ name: __( 'Book Reviews' ), tag: 'books' },
-				{ name: __( 'Art & Photography' ), tag: [ 'art', 'photography' ] },
+				{ name: __( 'Movies' ), tag: 'movies' },
+				{ name: __( 'Books' ), tag: 'books' },
+				{ name: __( 'Art' ), tag: 'art' },
 				{ name: __( 'Theatre & Performance' ), tag: 'theatre' },
 				{ name: __( 'Creative Writing' ), tag: 'writing' },
 				{ name: __( 'Architecture' ), tag: 'architecture' },
-				{ name: __( 'Comics' ), tag: 'comics' },
+				{ name: __( 'Photography' ), tag: 'photography' },
 				{ name: __( 'DIY Projects' ), tag: 'diy' },
 			],
 		},
@@ -137,7 +135,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 			<Button onClick={ onClose } variant="link">
 				{ __( 'Cancel' ) }
 			</Button>
-			<Button onClick={ handleContinue } variant="primary" disabled={ isButtonDisabled }>
+			<Button onClick={ handleContinue } variant="primary" disabled={ isContinueDisabled }>
 				{ __( 'Continue' ) }
 			</Button>
 		</>
@@ -164,11 +162,11 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 								{ category.topics.map( ( topic ) => (
 									<SelectCardCheckbox
 										key={ topic.name }
-										onChange={ () => handleInterestChange( topic.tag ) }
+										onChange={ ( checked ) => handleTopicChange( checked, topic.tag ) }
 										checked={
 											Array.isArray( topic.tag )
-												? topic.tag.every( ( t ) => interests.includes( t ) )
-												: interests.includes( topic.tag )
+												? topic.tag.every( ( t ) => followedTags.includes( t ) )
+												: followedTags.includes( topic.tag )
 										}
 									>
 										{ topic.name }
