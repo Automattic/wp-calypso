@@ -96,13 +96,13 @@ const onboarding: Flow = {
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
-						setRedirectedToUseMyDomain( true );
 
+						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
 
-						// Check for lastQuery and update currentQueryArgs if it exists
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
 							?.lastQuery;
+
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
 							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
