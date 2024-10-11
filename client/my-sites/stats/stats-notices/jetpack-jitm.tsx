@@ -46,7 +46,7 @@ const JetpackJITM: React.FC = () => {
 			id="jp-admin-notices"
 			className="jetpack-jitm-message"
 			data-message-path="wp:jetpack_page_stats:admin_notices"
-			data-query="page=stats"
+			data-query="page%3Dstats"
 			data-nonce={ window.jitm_config?.nonce }
 		/>
 	);
