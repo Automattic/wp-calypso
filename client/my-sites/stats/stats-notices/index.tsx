@@ -182,7 +182,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		<>
 			{ allNotices }
 			{ /** JITM Container */ }
-			{ allNotices.length === 0 && <JetpackJITM /> }
+			{ isOdysseyStats && isSiteJetpack && allNotices.length === 0 && <JetpackJITM /> }
 		</>
 	);
 };
