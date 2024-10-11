@@ -16,7 +16,7 @@ import {
 	getSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
 	getCurrentUser,
@@ -61,7 +61,9 @@ const RenderDomainsStepConnect = connect(
 			isPlanSelectionAvailableLaterInFlow: true,
 			userLoggedIn,
 			multiDomainDefaultPlan,
-			domainsWithPlansOnly: currentUserHasFlag( state as object, DOMAINS_WITH_PLANS_ONLY ),
+			domainsWithPlansOnly: getCurrentUser( state as object )
+				? currentUserHasFlag( state as object, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
+				: true,
 			flowName: flow,
 			path: window.location.pathname,
 			positionInFlow: 1,
