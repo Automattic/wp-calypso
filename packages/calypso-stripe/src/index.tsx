@@ -231,6 +231,19 @@ export async function createStripeSetupIntent(
 				card: element,
 				billing_details: paymentDetails,
 			},
+			payment_method_options: {
+				card: {
+					mandate_options: {
+						amount: 10,
+						amount_type: 'maximum',
+						currency: 'INR',
+						interval: 'sporadic',
+						reference: '{{Reference Number}}',
+						start_date: Date( 'now' ),
+						payment_method_options,
+					},
+				},
+			},
 		} );
 	} catch ( error ) {
 		// Some errors are thrown by confirmCardSetup and not returned as an error
