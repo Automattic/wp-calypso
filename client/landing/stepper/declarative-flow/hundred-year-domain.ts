@@ -46,7 +46,7 @@ const HundredYearDomainFlow: Flow = {
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/createSite`,
+			redirectTo: `/setup/${ flowName }/processing`,
 			pageTitle: '100-Year Domain',
 		} );
 
