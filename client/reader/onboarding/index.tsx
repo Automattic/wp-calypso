@@ -3,6 +3,8 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import InterestsModal from './interests-modal';
 import SubscribeModal from './subscribe-modal';
 import './style.scss';
@@ -10,6 +12,7 @@ import './style.scss';
 const ReaderOnboarding = () => {
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
 	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
+	const followedTags = useSelector( getReaderFollowedTags );
 
 	const handleInterestsContinue = () => {
 		setIsInterestsModalOpen( false );
@@ -28,7 +31,7 @@ const ReaderOnboarding = () => {
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
 			actionDispatch: () => setIsInterestsModalOpen( true ),
-			completed: false,
+			completed: followedTags ? followedTags.length > 2 : false,
 			disabled: false,
 		},
 		{
