@@ -1,0 +1,79 @@
+.help-center-support-chat__conversation-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
+	background-color: transparent;
+	padding: 16px;
+	gap: 6px;
+	max-height: 72px;
+	align-items: center;
+
+	&.is-unread-message {
+		// TODO: update background color
+		background-color: #EBF2FC;
+		border: 1px solid var(--color-primary);
+		.help-center-support-chat__open-conversation {
+			fill: var(--color-primary);
+		}
+	}
+
+	& > * {
+		display: flex;
+	}
+
+	.help-center-support-chat__conversation-avatar {
+		align-self: center;
+		flex-shrink: 0;
+
+		img {
+			border-radius: 50%;
+		}
+	}
+
+	.help-center-support-chat__conversation-information {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+
+		.help-center-support-chat__conversation-information-message {
+			display: -webkit-box;
+			color: #101517;
+			font-weight: 500;
+			font-size: 0.875rem;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			line-clamp: 1;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+		}	
+
+		.help-center-support-chat__conversation-sub-information {
+			display: flex;
+			color: #787C82;
+			font-weight: 400;
+			font-size: 0.75rem;
+			line-height: 20px;
+			align-items: center;
+			gap: 4px;
+
+			.help-center-support-chat__conversation-information-name {
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				overflow: hidden;
+				line-clamp: 1;
+				-webkit-line-clamp: 1;
+				-webkit-box-orient: vertical;
+			}
+		}
+	}
+
+	.help-center-support-chat__open-conversation {
+		display: flex;
+		align-items: center;
+		fill: #787C82;
+	}
+}
+
