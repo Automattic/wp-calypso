@@ -51,6 +51,7 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 					prefill={
 						currentUser ? { name: currentUser?.display_name, email: currentUser?.email } : undefined
 					}
+					hideGdprBanner
 					onSchedule={ () => onSchedule() }
 					onCalendlyViewed={ () => onCalendlyViewed() }
 				/>
