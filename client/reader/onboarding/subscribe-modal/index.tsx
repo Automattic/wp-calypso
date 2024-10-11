@@ -22,7 +22,7 @@ interface CardData {
 
 interface Card {
 	type: string;
-	data: CardData;
+	data: CardData[];
 }
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
@@ -39,20 +39,18 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				},
 				{
 					tags: followedTagSlugs,
-					site_recs_per_card: 6, // This does not seem to have any effect. 8 results are always returned.
+					site_recs_per_card: 6,
+					tag_recs_per_card: 0,
 				}
 			),
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
-		select: ( data ) => {
-			// Extract all sites from the cards array
-			return data.cards.flatMap( ( card: Card ): CardData | [] => {
-				if ( card.type !== 'post' || typeof card.data !== 'object' ) {
-					return [];
-				}
+		select: ( data: { cards: Card[] } ) => {
+			const recommendedBlogsCard = data.cards.find(
+				( card: Card ) => card.type === 'recommended_blogs'
+			);
 
-				return card.data;
-			} );
+			return recommendedBlogsCard ? recommendedBlogsCard.data : [];
 		},
 	} );
 
