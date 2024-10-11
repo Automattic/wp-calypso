@@ -68,6 +68,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 					key={ lastConversation.id }
 					message={ chatMessage }
 					isUnread={ unreadMessages > 0 }
+					navigateTo="odie"
 				/>
 			) : null }
 		</div>
