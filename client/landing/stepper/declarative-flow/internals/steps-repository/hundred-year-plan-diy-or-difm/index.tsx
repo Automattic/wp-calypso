@@ -100,7 +100,7 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 					<FormattedHeader
 						brandFont
 						headerText={ translate( "Let's craft your next century" ) }
-						subHeaderText={ translate( "Join us for an exclusive strategy session where we'll" ) }
+						subHeaderText={ translate( "Join us for an exclusive strategy session where we'll:" ) }
 						subHeaderAlign="center"
 					/>
 				}
