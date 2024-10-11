@@ -47,9 +47,9 @@
 /packages/wpcom-checkout/ @Automattic/shilling
 
 # Reader
-/client/reader @Automattic/reader
-/client/blocks/reader-* @Automattic/reader
-/client/state/reader @Automattic/reader
+/client/reader @Automattic/loop
+/client/blocks/reader-* @Automattic/loop
+/client/state/reader @Automattic/loop
 
 # Types, TypeScript, and type annotations
 /client/types.ts @Automattic/type-review
