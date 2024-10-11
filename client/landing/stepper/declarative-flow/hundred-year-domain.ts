@@ -1,6 +1,6 @@
 import { UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_DOMAIN_FLOW, addProductsToCart } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -8,7 +8,7 @@ import {
 	setSignupCompleteSlug,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { USER_STORE } from '../stores';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
@@ -42,6 +42,7 @@ const HundredYearDomainFlow: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
@@ -69,6 +70,12 @@ const HundredYearDomainFlow: Flow = {
 					await addProductsToCart( 'no-site', flowName, [ domainCartItem ] );
 
 					if ( userIsLoggedIn ) {
+						// Delay to keep the "Setting up your legacy..." page showing for 3 seconds
+						// since there's actually nothing to process there
+						setPendingAction( async () => {
+							await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
+						} );
+
 						return navigate( 'processing' );
 					}
 
