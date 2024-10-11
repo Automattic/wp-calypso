@@ -184,8 +184,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	return (
 		<>
 			{ allNotices }
-			{ /* JITM Container */ }
+			{ /** JITM Container */ }
 			{ supportEmbededJITM && allNotices.length === 0 && <JetpackJITM /> }
+			{ /** To be compatible with previous approach */ }
+			{ ! supportEmbededJITM && allNotices.length === 0 && <div id="jp-admin-notices"></div> }
 		</>
 	);
 };
