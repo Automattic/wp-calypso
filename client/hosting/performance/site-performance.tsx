@@ -45,7 +45,7 @@ const usePerformanceReport = (
 
 	const [ retestState, setRetestState ] = useState( 'idle' );
 	const [ reportCompleted, setReportCompleted ] = useState( false );
-	const testStartTime = useRef< number | undefined >();
+	const testStartTime = useRef< number | undefined >( 0 );
 
 	const {
 		data: basicMetrics,
@@ -76,14 +76,11 @@ const usePerformanceReport = (
 	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
-	const isTestCompleted = useMemo( () => {
-		const completed = !! testStartTime.current && !! performanceReport;
-		if ( completed ) {
-			testStartTime.current = undefined;
-			setReportCompleted( true );
-		}
-		return completed;
-	}, [ performanceReport ] );
+	const isTestCompleted = !! testStartTime.current && !! performanceReport;
+	if ( isTestCompleted ) {
+		testStartTime.current = undefined;
+		setReportCompleted( true );
+	}
 
 	const getHashOrToken = (
 		hash: string | undefined,
