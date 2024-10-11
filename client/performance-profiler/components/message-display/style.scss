@@ -86,8 +86,11 @@ $blueberry-color: #3858e9;
 
 			.message {
 				font-size: $font-body;
-				font-weight: 500;
 				line-height: $font-title-medium;
+
+				strong {
+					font-weight: 500;
+				}
 			}
 
 			.cta-button {

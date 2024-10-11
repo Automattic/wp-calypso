@@ -31,10 +31,6 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 		}
 	}, [ isSuccess, url, hash ] );
 
-	const secondaryMessage = translate(
-		'You can opt in again for weekly reports to receive performance change emails.'
-	);
-
 	return (
 		<div className="peformance-profiler-weekly-report-container">
 			<DocumentHead title={ translate( 'Speed Test weekly reports' ) } />
@@ -49,7 +45,6 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 							} ) }
 						</LoaderText>
 					}
-					secondaryMessage={ secondaryMessage }
 				/>
 			) }
 			{ isError && (
@@ -69,21 +64,26 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 							</ErrorSecondLine>
 						</>
 					}
-					secondaryMessage={ secondaryMessage }
 				/>
 			) }
 			{ isSuccess && (
 				<MessageDisplay
 					displayBadge
-					title={ translate( 'Unsubscribed!' ) }
+					title={ translate( 'Farewell, friend' ) }
 					message={ translate(
-						'You‘ll no longer receive weekly performance reports for {{strong}}%s{{/strong}}',
-						{ args: [ siteUrl.host ], components: { strong: <strong /> } }
+						'You’ll no longer receive performance reports for {{strong}}%s{{/strong}}{{br}}{{/br}}{{br}}{{/br}}{{subtitle}}If you ever change your mind, you can subscribe for {{br}}{{/br}}performance reports again from the results page.{{/subtitle}}',
+						{
+							args: [ siteUrl.host ],
+							components: {
+								strong: <strong />,
+								br: <br />,
+								subtitle: <span className="secondary-message" />,
+							},
+						}
 					) }
-					ctaText={ translate( '← Back to speed test' ) }
+					ctaText={ translate( 'Test a site' ) }
 					ctaHref="/speed-test"
 					ctaIcon="arrow-left"
-					secondaryMessage={ secondaryMessage }
 				/>
 			) }
 		</div>
