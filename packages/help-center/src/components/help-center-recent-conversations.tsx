@@ -22,8 +22,10 @@ const calculateUnread = ( conversations ) => {
 
 	conversations.forEach( ( conversation ) => {
 		let currentUnreadMessages = 0;
+		const userLastRead = conversation.participants[ 0 ].lastRead;
+
 		conversation.messages.forEach( ( message ) => {
-			if ( message.received > conversation.businessLastRead ) {
+			if ( message.received > userLastRead ) {
 				currentUnreadMessages++;
 			}
 		} );
