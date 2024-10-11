@@ -101,6 +101,8 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( props ) => {
 			if ( existingScript ) {
 				existingScript.remove();
 			}
+
+			window?.Calendly?.closePopupWidget();
 		};
 	}, [ url, widgetId, prefill, hideLandingPageDetails, hideEventTypeDetails, hideGdprBanner ] );
 
