@@ -42,6 +42,7 @@ import {
 	buildDIFMWebsiteContentRequestDTO,
 } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { requestProductsList } from 'calypso/state/products-list/actions';
 import {
 	getProductBySlug,
 	getProductsByBillingSlug,
@@ -660,6 +661,24 @@ async function addExternalManagedThemeToCart(
 		.finally( () => {
 			dispatch( setIsLoadingCart( false ) );
 		} );
+}
+
+export function addWithPluginPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { plugin, billing_period: billingPeriod, siteSlug } = dependencies;
+	const { cartItems, lastKnownFlow } = stepProvidedItems;
+
+	reduxStore.dispatch( requestProductsList( { type: 'all' } ) ).then( () => {
+		const marketplacePlugin = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+		const providedDependencies = { cartItems };
+
+		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(
+			( item ) => item
+		);
+
+		processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+			lastKnownFlow,
+		} );
+	} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
