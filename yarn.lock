@@ -1373,7 +1373,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/marketing@workspace:packages/marketing":
+"@automattic/marketing@workspace:^, @automattic/marketing@workspace:packages/marketing":
   version: 0.0.0-use.local
   resolution: "@automattic/marketing@workspace:packages/marketing"
   dependencies:
@@ -34891,6 +34891,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
+    "@automattic/marketing": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"

@@ -64,6 +64,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
+import NpsSurveyModal from './nps-survey-modal';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
@@ -372,6 +373,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
+				<NpsSurveyModal />
 				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && (
