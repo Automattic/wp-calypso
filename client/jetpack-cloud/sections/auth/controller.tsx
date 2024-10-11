@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
+import { getLocaleSlug } from 'i18n-calypso';
 import store from 'store';
 import Connect from './connect';
 import type { Callback, Context } from '@automattic/calypso-router';
@@ -12,13 +13,14 @@ const DEFAULT_NEXT_LOCATION = '/';
 export const connect: Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
 		const redirectUri = new URL( '/connect/oauth/token', window.location.origin );
-
+		const locale = getLocaleSlug() || 'en';
 		const authUrl = new URL( WP_AUTHORIZE_ENDPOINT );
 		authUrl.search = new URLSearchParams( {
 			response_type: 'token',
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: redirectUri.toString(),
 			scope: 'global',
+			locale,
 		} ).toString();
 
 		debug( `authUrl: ${ authUrl }` );
