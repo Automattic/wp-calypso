@@ -79,10 +79,10 @@ const ThankYouCard = ( {
 ThankYouCard.propTypes = {
 	buttonText: PropTypes.string,
 	buttonUrl: PropTypes.string,
-	description: PropTypes.string,
+	description: PropTypes.string | PropTypes.node,
 	descriptionWithHTML: PropTypes.object,
 	heading: PropTypes.string,
-	name: PropTypes.string,
+	name: PropTypes.string | PropTypes.node,
 	icon: PropTypes.node,
 	action: PropTypes.node,
 };
