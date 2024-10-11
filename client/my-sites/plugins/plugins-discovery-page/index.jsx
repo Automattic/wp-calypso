@@ -1,5 +1,7 @@
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -47,6 +49,27 @@ export const PaidPluginsSection = ( props ) => {
 		/>
 	);
 };
+export const FeaturedDeveloperSection = ( props ) => {
+	const { plugins: plugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
+		search: 'developer: Awesome Motive',
+	} );
+	const translate = useTranslate();
+
+	if ( props.jetpackNonAtomic ) {
+		return null;
+	}
+
+	return (
+		<SingleListView
+			{ ...props }
+			title={ translate( 'Must-have plugins from WPBeginner' ) }
+			subtitle={ translate( 'Add the best-loved plugins on WordPress.com' ) }
+			plugins={ plugins }
+			isFetching={ isFetchingPaidPlugins }
+			noBrowseAll
+		/>
+	);
+};
 
 const FeaturedPluginsSection = ( props ) => {
 	return (
@@ -89,6 +112,7 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isAwesomeMotive = getQueryArgs()?.ref === 'awesome-motive-lp';
 
 	const {
 		isTrialAcknowledgeModalOpen,
@@ -112,7 +136,11 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			) }
 
-			<PaidPluginsSection { ...props } />
+			{ isAwesomeMotive ? (
+				<FeaturedDeveloperSection { ...props } />
+			) : (
+				<PaidPluginsSection { ...props } />
+			) }
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
 			{ ! isLoggedIn && <InPageCTASection /> }
