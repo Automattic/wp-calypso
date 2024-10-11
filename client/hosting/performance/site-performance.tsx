@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -44,6 +44,8 @@ const usePerformanceReport = (
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
 	const [ retestState, setRetestState ] = useState( 'idle' );
+	const [ reportCompleted, setReportCompleted ] = useState( false );
+	const testStartTime = useRef< number | undefined >();
 
 	const {
 		data: basicMetrics,
@@ -60,6 +62,10 @@ const usePerformanceReport = (
 		isLoading: isLoadingInsights,
 	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
 
+	if ( isBasicMetricsFetched && finalUrl && ! reportCompleted ) {
+		testStartTime.current = Date.now();
+	}
+
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
 	const desktopReport =
@@ -69,6 +75,15 @@ const usePerformanceReport = (
 
 	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+
+	const isTestCompleted = useMemo( () => {
+		const completed = !! testStartTime.current && !! performanceReport;
+		if ( completed ) {
+			testStartTime.current = undefined;
+			setReportCompleted( true );
+		}
+		return completed;
+	}, [ performanceReport ] );
 
 	const getHashOrToken = (
 		hash: string | undefined,
@@ -110,6 +125,7 @@ const usePerformanceReport = (
 		isBasicMetricsFetched,
 		testAgain,
 		isRetesting: retestState !== 'idle',
+		testCompleted: isTestCompleted,
 	};
 };
 
@@ -136,7 +152,12 @@ export const SitePerformance = () => {
 
 	const queryParams = useSelector( getCurrentQueryArguments );
 	const [ , setQuery, query ] = useDebouncedInput();
-	const { pages, isInitialLoading, savePerformanceReportUrl } = useSitePerformancePageReports( {
+	const {
+		pages,
+		isInitialLoading,
+		savePerformanceReportUrl,
+		refetch: refetchPages,
+	} = useSitePerformancePageReports( {
 		query,
 	} );
 
@@ -215,6 +236,16 @@ export const SitePerformance = () => {
 			}
 		} );
 	};
+
+	if ( performanceReport.testCompleted && ! isInitialLoading ) {
+		const performanceReportUrl = {
+			url: performanceReport.url,
+			hash: performanceReport.hash,
+		};
+		savePerformanceReportUrl( currentPageId, performanceReportUrl ).then( () => {
+			refetchPages();
+		} );
+	}
 
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
