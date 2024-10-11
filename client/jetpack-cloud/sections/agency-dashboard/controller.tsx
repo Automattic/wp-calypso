@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config, { enable, isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import SitesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/sites';
@@ -45,10 +45,6 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	const showSitesDashboardV2 =
 		isSectionNameEnabled( 'jetpack-cloud-agency-sites-v2' ) &&
 		context.section.paths[ 0 ] === sitesPath();
-
-	if ( showSitesDashboardV2 && ! isEnabled( 'jetpack/manage-sites-v2-menu' ) ) {
-		enable( 'jetpack/manage-sites-v2-menu' );
-	}
 
 	// TODO: This insert dynamically into the body the class sites-dashboard-v2 to be able to modify some styles outside
 	//  of the SitesDashboardV2 context. This way it won't affect the current styles in any context (dev, staging, production).
