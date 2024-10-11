@@ -135,7 +135,7 @@ window.AppBoot = async () => {
 		// We track the redirect and the referrer to help us understand the impact of the redirect.
 		recordTracksEvent( 'calypso_tailored_flows_redirect', {
 			...redirect,
-			referrer: document.referrer ?? 'none',
+			referrer: document.referrer,
 		} );
 
 		// Perform the redirect without adding to the browser history.
