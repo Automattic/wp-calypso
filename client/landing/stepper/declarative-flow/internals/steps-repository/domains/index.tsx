@@ -214,7 +214,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
-		if ( flow === HUNDRED_YEAR_PLAN_FLOW || flow === HUNDRED_YEAR_DOMAIN_FLOW ) {
+		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
 			return __( 'Find the perfect domain' );
 		}
 
