@@ -9,6 +9,7 @@ $blueberry-color: #3858e9;
 	justify-content: space-between;
 	min-width: 250px;
 	align-self: self-start;
+	gap: 16px;
 
 	button {
 		color: inherit;
@@ -21,17 +22,30 @@ $blueberry-color: #3858e9;
 	gap: 6px;
 	text-align: initial;
 	flex-grow: 1;
-	padding: 16px 22px 16px 22px;
+	padding: 16px 22px;
 	width: 100%;
-	border: 1px solid transparent;
 
+	border: 1px solid transparent;
 	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 
 	&.active {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
-		outline: 1.5px solid $blueberry-color;
-		outline-offset: -0.5px;
+		border-color: transparent;
+
+		$metric-tab-shadow: 0 0 0 var(--wp-admin-border-width-focus) $blueberry-color;
+
+		box-shadow: $metric-tab-shadow;
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 3px solid transparent;
+
+		&.metric-tab-bar__performance {
+			border-inline-width: 0;
+			margin-inline: -1px;
+			padding-inline: 24px;
+			width: calc(100% + 2px);
+			box-shadow: $metric-tab-shadow inset;
+		}
 	}
 
 	&:last-child {
@@ -77,20 +91,7 @@ $blueberry-color: #3858e9;
 	}
 }
 
-.metric-tab-bar__performance {
-	margin-bottom: 16px;
-	border: 1px solid var(--studio-gray-5);
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
-
-	&.active {
-		outline: none;
-		border-color: $blueberry-color;
-		border-width: 1.5px;
-		padding: 15.5px 21.5px 15.5px 21.5px;
-	}
-}
-
+.metric-tab-bar__performance,
 .metric-tab-bar__tab-container {
 	border: 1px solid var(--studio-gray-5);
 	/* stylelint-disable-next-line scales/radii */
