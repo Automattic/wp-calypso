@@ -1,24 +1,46 @@
-import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
 import { useSmooch } from '@automattic/zendesk-client';
-import { TabPanel, Card } from '@wordpress/components';
-import { chevronRight, Icon } from '@wordpress/icons';
+import { TabPanel } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 
 import './help-center-chat-history.scss';
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
-	const locale = useLocale();
-
 	const TAB_STATES = {
 		recent: 'recent',
 		archived: 'archived',
 	};
 
-	const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
+	// TODO: might not need to store activeTab in state
+	// const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
 	const [ conversations, setConversations ] = useState( [] );
 	const { init, getConversations } = useSmooch();
+
+	const RecentConversations = ( { conversations } ) => {
+		if ( ! conversations ) {
+			return [];
+		}
+
+		return (
+			<>
+				{ conversations.map( ( conversation ) => {
+					const lastMessage =
+						Array.isArray( conversation.messages ) && conversation.messages.length > 0
+							? conversation.messages[ conversation.messages.length - 1 ]
+							: null;
+					return (
+						<HelpCenterSupportChatMessage
+							key={ conversation.id }
+							message={ lastMessage }
+							navigateTo="odie"
+						/>
+					);
+				} ) }
+			</>
+		);
+	};
 
 	useEffect( () => {
 		if ( init ) {
@@ -41,42 +63,20 @@ export const HelpCenterChatHistory = () => {
 						className: 'help-center-chat-history__archived',
 					},
 				] }
-				onSelect={ ( tabName ) => {
-					setActiveTab( tabName );
+				onSelect={ () => {
+					// setActiveTab( tabName );
 				} }
 			>
-				{ () =>
-					conversations.map( ( conversation ) => {
-						const lastMessage = conversation.messages?.pop();
-
-						return (
-							<Card key={ conversation.id } className="help-center-chat-history__conversation-card">
-								<div className="help-center-chat-history__conversation-avatar">
-									<img src={ lastMessage.avatarUrl } alt={ __( 'User Avatar' ) } />
-								</div>
-								<div className="help-center-chat-history__conversation-information">
-									<div>{ lastMessage.text }</div>
-									<div className="help-center-chat-history__conversation-sub-information">
-										<span className="help-center-chat-history__conversation-information-name">
-											{ lastMessage.displayName }
-										</span>
-
-										<span>
-											{ getRelativeTimeString( {
-												timestamp: lastMessage.received * 1000,
-												locale,
-												style: 'long',
-											} ) }
-										</span>
-									</div>
-								</div>
-								<div className="help-center-chat-history__open-conversation">
-									<Icon icon={ chevronRight } size={ 24 } />
-								</div>
-							</Card>
-						);
-					} )
-				}
+				{ ( tab ) => {
+					switch ( tab.name ) {
+						case TAB_STATES.recent:
+							return <RecentConversations conversations={ conversations } />;
+						case TAB_STATES.archived:
+							return <div>{ __( 'Archived Conversations' ) }</div>;
+						default:
+							return;
+					}
+				} }
 			</TabPanel>
 		</div>
 	);

@@ -29,6 +29,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
+import HelpCenterRecentConversation from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -354,7 +355,7 @@ function HelpSearchResults( {
 					) }
 				</p>
 			) : null }
-
+			<HelpCenterRecentConversation />
 			{ sections }
 		</div>
 	);
