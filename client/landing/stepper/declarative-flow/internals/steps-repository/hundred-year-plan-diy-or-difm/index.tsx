@@ -4,10 +4,9 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
-import CalendlyWidget from '../components/calendy-widget';
+import { useCalendlyWidget } from '../components/calendy-widget/use-calendly-widget';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step } from '../../types';
 
@@ -17,45 +16,26 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 	const translate = useTranslate();
 	const { submit } = navigation;
 
-	const [ showModal, setShowModal ] = useState( false );
-
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
 	);
 
-	const onCalendlyViewed = useCallback( () => {
-		const closeButtonEl = document.querySelector( '.calendly-popup-close' );
-
-		const handleCloseClick = () => {
-			setShowModal( false );
-			closeButtonEl?.removeEventListener( 'click', handleCloseClick );
-		};
-
-		closeButtonEl?.addEventListener( 'click', handleCloseClick );
-	}, [ showModal ] );
-
-	const onSchedule = useCallback( () => {
-		// Show the event details for a second before moving to the next step
-		setTimeout( () => {
-			setShowModal( false );
+	const { openCalendlyPopup, closeCalendlyPopup } = useCalendlyWidget( {
+		url: config( '100_year_plan_calendly_id' ),
+		prefill: currentUser
+			? { name: currentUser?.display_name, email: currentUser?.email }
+			: undefined,
+		hideGdprBanner: true,
+		onSchedule: () => {
 			submit?.( { nextStep: 'thank-you' } );
-		}, 1000 );
-	}, [ setShowModal, submit ] );
+			// Close the Calendly popup after 1 second, to improve the user experience
+			setTimeout( closeCalendlyPopup, 1000 );
+		},
+	} );
 
 	return (
 		<>
-			{ showModal && (
-				<CalendlyWidget
-					url={ config( '100_year_plan_calendly_id' ) }
-					prefill={
-						currentUser ? { name: currentUser?.display_name, email: currentUser?.email } : undefined
-					}
-					hideGdprBanner
-					onSchedule={ () => onSchedule() }
-					onCalendlyViewed={ () => onCalendlyViewed() }
-				/>
-			) }
 			<HundredYearPlanStepWrapper
 				stepContent={
 					<>
@@ -80,12 +60,7 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 							</ul>
 
 							<div className="buttons-container">
-								<Button
-									variant="primary"
-									onClick={ () => {
-										setShowModal( true );
-									} }
-								>
+								<Button variant="primary" onClick={ () => openCalendlyPopup() }>
 									{ translate( 'Schedule your free call' ) }
 								</Button>
 
