@@ -1,7 +1,8 @@
 import { UserSelect } from '@automattic/data-stores';
-import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
+import { HUNDRED_YEAR_DOMAIN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -27,10 +28,6 @@ const HundredYearDomainFlow: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/domains' ),
 			},
 			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
@@ -54,27 +51,37 @@ const HundredYearDomainFlow: Flow = {
 
 		const checkoutBackUrl = new URL( `/setup/${ flowName }/domains`, window.location.href );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
+			const { domainName, productSlug } = providedDependencies;
+
+			const domainCartItem = domainRegistration( {
+				productSlug: productSlug as string,
+				domain: domainName as string,
+				extra: { is_hundred_year_domain: true },
+			} );
+
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
 
+					// Adding the domain product to the cart here because this is a domain-only flow
+					// and we don't need to create a site for this domain
+					await addProductsToCart( 'no-site', flowName, [ domainCartItem ] );
+
 					if ( userIsLoggedIn ) {
-						return navigate( 'createSite' );
+						return navigate( 'processing' );
 					}
 
 					return window.location.assign( logInUrl );
-				case 'createSite':
-					return navigate( 'processing' );
 				case 'processing':
 					setSignupCompleteSlug( providedDependencies.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
-						`/checkout/${ encodeURIComponent(
-							providedDependencies.siteSlug as string
-						) }?signup=1&checkoutBackUrl=${ encodeURIComponent( checkoutBackUrl.href ) }`
+						`/checkout/no-site?signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
+							checkoutBackUrl.href
+						) }`
 					);
 			}
 		}
