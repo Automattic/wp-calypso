@@ -1,10 +1,13 @@
 import config from '@automattic/calypso-config';
+import { UserSelect } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import CalendlyWidget from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/calendy-widget';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
+import CalendlyWidget from '../components/calendy-widget';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step } from '../../types';
 
@@ -15,6 +18,11 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 	const { submit } = navigation;
 
 	const [ showModal, setShowModal ] = useState( false );
+
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 
 	const onCalendlyViewed = useCallback( () => {
 		const closeButtonEl = document.querySelector( '.calendly-popup-close' );
@@ -27,13 +35,23 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 		closeButtonEl?.addEventListener( 'click', handleCloseClick );
 	}, [ showModal ] );
 
+	const onSchedule = useCallback( () => {
+		// Show the event details for a second before moving to the next step
+		setTimeout( () => {
+			setShowModal( false );
+			submit?.( { nextStep: 'thank-you' } );
+		}, 1000 );
+	}, [ setShowModal, submit ] );
+
 	return (
 		<>
 			{ showModal && (
 				<CalendlyWidget
 					url={ config( '100_year_plan_calendly_id' ) }
-					prefill={ { name: 'Bogdan', email: 'email@gmail.com' } }
-					onSchedule={ () => {} }
+					prefill={
+						currentUser ? { name: currentUser?.display_name, email: currentUser?.email } : undefined
+					}
+					onSchedule={ () => onSchedule() }
 					onCalendlyViewed={ () => onCalendlyViewed() }
 				/>
 			) }
