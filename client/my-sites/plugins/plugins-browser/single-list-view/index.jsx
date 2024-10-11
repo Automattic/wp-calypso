@@ -31,15 +31,24 @@ function isNotInstalled( plugin, installedPlugins ) {
 	);
 }
 
-const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHeader } ) => {
+const SingleListView = ( {
+	category,
+	plugins,
+	isFetching,
+	siteSlug,
+	sites,
+	noHeader,
+	title,
+	subtitle,
+} ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.title || translate( 'Plugins' );
-	const categoryDescription = categories[ category ]?.description || null;
+	const categoryName = title || categories[ category ]?.title || translate( 'Plugins' );
+	const categoryDescription = subtitle || categories[ category ]?.description || null;
 
 	const { localizePath } = useLocalizedPlugins();
 
@@ -51,9 +60,12 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 		.filter( isNotBlocked )
 		.filter( ( plugin ) => ! siteId || isNotInstalled( plugin, installedPlugins ) );
 
-	let listLink = '/plugins/browse/' + category;
-	if ( domain ) {
-		listLink = '/plugins/browse/' + category + '/' + domain;
+	let listLink;
+	if ( category ) {
+		listLink = '/plugins/browse/' + category;
+		if ( domain ) {
+			listLink += '/' + domain;
+		}
 	}
 
 	if ( ! isFetching && plugins.length === 0 ) {
@@ -68,7 +80,9 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
-			browseAllLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
+			browseAllLink={
+				listLink && plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false
+			}
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
