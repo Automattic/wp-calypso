@@ -6,7 +6,7 @@ import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
-import { useCalendlyWidget } from '../components/calendy-widget/use-calendly-widget';
+import { useCalendlyWidget } from '../components/calendly-widget/use-calendly-widget';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step } from '../../types';
 
