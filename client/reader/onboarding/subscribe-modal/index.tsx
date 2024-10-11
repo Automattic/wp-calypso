@@ -1,11 +1,12 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { curatedBlogs } from './../curated-blogs';
 
 interface SubscribeModalProps {
 	isOpen: boolean;
@@ -13,9 +14,8 @@ interface SubscribeModalProps {
 }
 
 interface CardData {
-	ID: number;
-	site_ID: number;
 	feed_ID: number;
+	site_ID: number;
 	site_URL: string;
 	site_name: string;
 }
@@ -29,7 +29,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
 	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
 
-	const { data: recommendedSites = [], isLoading } = useQuery( {
+	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
 		queryFn: () =>
 			wpcom.req.get(
@@ -54,17 +54,55 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		},
 	} );
 
+	const combinedRecommendations = useMemo( () => {
+		const curatedRecommendations = followedTagSlugs
+			.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
+			.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) );
+
+		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
+			...site,
+			weight: 0,
+			isCurated: false,
+		} ) );
+
+		const allRecommendations = [ ...curatedRecommendations, ...apiRecommendations ];
+
+		// Increase weight for blogs that match multiple tags
+		const blogWeights = allRecommendations.reduce< Record< number, number > >( ( acc, blog ) => {
+			acc[ blog.feed_ID ] = ( acc[ blog.feed_ID ] || 0 ) + blog.weight;
+			return acc;
+		}, {} );
+
+		// Sort by weight (curated first), then remove duplicates
+		const sortedUniqueRecommendations = Object.values(
+			allRecommendations
+				.sort( ( a, b ) => blogWeights[ b.feed_ID ] - blogWeights[ a.feed_ID ] )
+				.reduce< Record< number, CardData & { weight: number; isCurated: boolean } > >(
+					( acc, blog ) => {
+						if ( ! acc[ blog.feed_ID ] ) {
+							acc[ blog.feed_ID ] = blog;
+						}
+						return acc;
+					},
+					{}
+				)
+		);
+
+		// Limit to 6 recommendations
+		return sortedUniqueRecommendations.slice( 0, 6 );
+	}, [ followedTagSlugs, apiRecommendedSites ] );
+
 	return (
 		isOpen && (
 			<Modal title="Discover and Subscribe" onRequestClose={ onClose } isFullScreen>
 				<h2>Suggested blogs based on your interests</h2>
 				{ isLoading && <LoadingPlaceholder /> }
-				{ ! isLoading && recommendedSites.length === 0 && (
+				{ ! isLoading && combinedRecommendations.length === 0 && (
 					<p>No recommendations available at the moment.</p>
 				) }
-				{ ! isLoading && recommendedSites.length > 0 && (
+				{ ! isLoading && combinedRecommendations.length > 0 && (
 					<div className="subscribe-modal__recommended-sites">
-						{ recommendedSites.map( ( site: CardData ) => (
+						{ combinedRecommendations.map( ( site: CardData ) => (
 							<ConnectedReaderSubscriptionListItem
 								key={ site.feed_ID }
 								feedId={ site.feed_ID }
