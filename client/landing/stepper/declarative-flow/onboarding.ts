@@ -14,16 +14,13 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
-	if (
-		currentStepSlug === 'domains' ||
-		( currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' ) )
-	) {
-		const newURL = removeQueryArgs(
-			window.location.pathname + window.location.search,
-			'step',
-			'initialQuery',
-			'lastQuery'
-		);
+	const isDomainsStep = currentStepSlug === 'domains';
+	const isPlansStepWithQuery =
+		currentStepSlug === 'plans' && getQueryArg( window.location.href, 'step' );
+
+	if ( isDomainsStep || isPlansStepWithQuery ) {
+		const { pathname, search } = window.location;
+		const newURL = removeQueryArgs( pathname + search, 'step', 'initialQuery', 'lastQuery' );
 		window.history.replaceState( {}, document.title, newURL );
 	}
 };
@@ -100,13 +97,14 @@ const onboarding: Flow = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 						setRedirectedToUseMyDomain( true );
+
 						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
-						if ( ( providedDependencies?.domainForm as { lastQuery?: string } )?.lastQuery ) {
-							const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
-								?.lastQuery;
-							if ( lastQueryParam !== undefined ) {
-								currentQueryArgs.initialQuery = lastQueryParam;
-							}
+
+						// Check for lastQuery and update currentQueryArgs if it exists
+						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
+							?.lastQuery;
+						if ( lastQueryParam !== undefined ) {
+							currentQueryArgs.initialQuery = lastQueryParam;
 							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
 						}
 						return navigate( useMyDomainURL );
