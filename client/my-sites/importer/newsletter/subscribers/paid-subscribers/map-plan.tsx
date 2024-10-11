@@ -1,7 +1,9 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { useState, KeyboardEvent } from 'react';
 import { Product, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
@@ -33,7 +35,7 @@ type MapPlanProps = {
 
 function displayProduct( product?: Product ) {
 	if ( ! product ) {
-		return 'Select a Newsletter Tier';
+		return __( 'Select a newsletter tier' );
 	}
 
 	return (
@@ -64,6 +66,7 @@ export function MapPlan( {
 	tierToAdd,
 	selectedProductId,
 }: MapPlanProps ) {
+	const { __ } = useI18n();
 	let active_subscriptions = '';
 	if ( plan.active_subscriptions ) {
 		active_subscriptions = ` • ${ plan.active_subscriptions } active subscribers`;
@@ -105,7 +108,7 @@ export function MapPlan( {
 							onProductAdd( tierToAdd, plan.product_id );
 						} }
 					>
-						Add Newsletter Tier
+						{ __( 'Add newsletter tier' ) }
 					</Button>
 				</div>
 			) }
@@ -131,12 +134,12 @@ export function MapPlan( {
 							setIsOpen( openState );
 						} }
 						icon={ chevronDown }
-						label="Choose a Newsletter Tier"
+						label={ __( 'Choose a newsletter tier' ) }
 						open={ isOpen }
 					>
 						{ ( { onClose }: { onClose: () => void } ) => (
 							<Fragment>
-								<MenuGroup label="Select">
+								<MenuGroup label={ __( 'Select' ) }>
 									<MenuItemsChoice
 										choices={ getProductChoices( sameIntervalProducts ) }
 										onSelect={ ( productId ) => {
@@ -147,7 +150,7 @@ export function MapPlan( {
 										value={ selectedProductId }
 									/>
 								</MenuGroup>
-								<MenuGroup label="OR">
+								<MenuGroup label={ __( 'OR' ) }>
 									<MenuItem
 										key="add-new"
 										onClick={ () => {
@@ -155,7 +158,7 @@ export function MapPlan( {
 											onProductAdd( tierToAdd, plan.product_id );
 										} }
 									>
-										Add Newsletter Tier
+										{ __( 'Add newsletter tier' ) }
 									</MenuItem>
 								</MenuGroup>
 							</Fragment>
