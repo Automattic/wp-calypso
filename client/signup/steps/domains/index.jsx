@@ -1416,6 +1416,7 @@ export class RenderDomainsStep extends Component {
 
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
+		const queryProductsType = flowName === 'with-plugin' ? 'all' : 'domains';
 
 		if ( useStepperWrapper ) {
 			return (
@@ -1429,7 +1430,7 @@ export class RenderDomainsStep extends Component {
 					shouldHideNavButtons={ this.shouldHideNavButtons() }
 					stepContent={
 						<div>
-							<QueryProductsList type="domains" />
+							<QueryProductsList type={ queryProductsType } />
 							{ this.renderContent() }
 						</div>
 					}
@@ -1466,7 +1467,7 @@ export class RenderDomainsStep extends Component {
 				shouldHideNavButtons={ this.shouldHideNavButtons() }
 				stepContent={
 					<div>
-						<QueryProductsList type="domains" />
+						<QueryProductsList type={ queryProductsType } />
 						{ this.renderContent() }
 					</div>
 				}
