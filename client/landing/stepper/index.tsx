@@ -24,6 +24,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -98,7 +99,49 @@ const initializeHotJar = ( flowName: string ) => {
 	}
 };
 
+// Define the old-to-new URL mappings.
+const redirects = [
+	{ from: '/setup/free', to: '/start/free/' },
+	{ from: '/setup/blog', to: '/start/' },
+	{ from: '/setup/link-in-bio', to: '/start/' },
+	{ from: '/setup/videopress', to: '/start/' },
+	{ from: '/setup/sensei', to: '/start/' },
+];
+
+// Retrieve the new redirect URL based on the current path.
+const getRedirect = () => {
+	const { pathname } = window.location;
+
+	// Find a matching redirect based on the current path.
+	const match = redirects.find( ( redirect ) => pathname.startsWith( redirect.from ) );
+
+	if ( match ) {
+		// Return the `to` path with a trailing slash for consistency.
+		return {
+			pathname,
+			from: match.from,
+			to: match.to,
+		};
+	}
+
+	// Return null if no match is found.
+	return null;
+};
+
 window.AppBoot = async () => {
+	// Redirect to the new URL if necessary
+	const redirect = getRedirect();
+	if ( redirect ) {
+		// We track the redirect and the referrer to help us understand the impact of the redirect.
+		recordTracksEvent( 'calypso_tailored_flows_redirect', {
+			...redirect,
+			referrer: document.referrer ?? 'none',
+		} );
+
+		// Perform the redirect without adding to the browser history.
+		return ( window.location = redirect.to );
+	}
+
 	const flowName = getFlowFromURL();
 
 	if ( ! flowName ) {
