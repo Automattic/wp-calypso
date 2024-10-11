@@ -40,11 +40,6 @@ const HundredYearPlanFlow: Flow = {
 								import( './internals/steps-repository/hundred-year-plan-diy-or-difm' ),
 						},
 						{
-							slug: 'schedule-appointment',
-							asyncComponent: () =>
-								import( './internals/steps-repository/hundred-year-plan-schedule-appointment' ),
-						},
-						{
 							slug: 'thank-you',
 							asyncComponent: () =>
 								import( './internals/steps-repository/hundred-year-plan-thank-you' ),
@@ -130,8 +125,6 @@ const HundredYearPlanFlow: Flow = {
 					} else if ( providedDependencies?.nextStep === 'thank-you' ) {
 						return navigate( 'thank-you' );
 					}
-				case 'schedule-appointment':
-					return navigate( 'thank-you' );
 				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
 						return navigate( 'setup' );
