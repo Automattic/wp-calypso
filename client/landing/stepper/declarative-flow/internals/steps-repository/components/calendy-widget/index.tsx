@@ -81,6 +81,7 @@ const CalendlyWidget: React.FC< CalendlyWidgetProps > = ( props ) => {
 				queryParams.set( 'hide_landing_page_details', hideLandingPageDetails ? '1' : '0' );
 				queryParams.set( 'hide_event_type_details', hideEventTypeDetails ? '1' : '0' );
 				queryParams.set( 'hide_gdpr_banner', hideGdprBanner ? '1' : '0' );
+				queryParams.set( 'primary_color', '000000' );
 
 				// Clear out the container div when props change.
 				element.innerHTML = '';
