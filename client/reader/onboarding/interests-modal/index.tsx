@@ -11,6 +11,7 @@ import './style.scss';
 interface InterestsModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+	onContinue: () => void;
 }
 
 interface Topic {
@@ -27,7 +28,7 @@ interface Tag {
 	slug: string;
 }
 
-const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) => {
+const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const followedTagsFromState = useSelector( getReaderFollowedTags );
 	const dispatch = useDispatch();
@@ -54,6 +55,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose } ) 
 	const handleContinue = () => {
 		if ( ! isContinueDisabled ) {
 			onClose();
+			onContinue();
 		}
 	};
 

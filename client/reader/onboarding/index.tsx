@@ -11,6 +11,11 @@ const ReaderOnboarding = () => {
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
 	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
 
+	const handleInterestsContinue = () => {
+		setIsInterestsModalOpen( false );
+		setIsDiscoverModalOpen( true );
+	};
+
 	const itemClickHandler = ( task: Task ) => {
 		recordTracksEvent( 'calypso_reader_onboarding_task_click', {
 			task: task.id,
@@ -64,6 +69,7 @@ const ReaderOnboarding = () => {
 			<InterestsModal
 				isOpen={ isInterestsModalOpen }
 				onClose={ () => setIsInterestsModalOpen( false ) }
+				onContinue={ handleInterestsContinue }
 			/>
 			<SubscribeModal
 				isOpen={ isDiscoverModalOpen }
