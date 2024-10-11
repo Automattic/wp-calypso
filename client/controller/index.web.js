@@ -201,7 +201,9 @@ export function redirectLoggedOutToSignup( context, next ) {
  */
 export function redirectMyJetpack( context, next ) {
 	const state = context.store.getState();
-	const product = getProductSlugFromContext( context );
+	const productSlug = getProductSlugFromContext( context );
+	// Strip the slug's quantity suffix, for upgradable quantity based products.
+	const product = productSlug.replace( /:-q-\d+/, '' );
 	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
 
 	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
