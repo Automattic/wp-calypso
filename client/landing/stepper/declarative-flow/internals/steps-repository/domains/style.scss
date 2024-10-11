@@ -448,6 +448,9 @@
 	margin-top: -60px;
 }
 
+// .step-container__header {
+// 	margin: 20px 24px 40px 20px;
+
 .hundred-year-domain.domains {
 	.step-container__header {
 		.formatted-header {
@@ -461,8 +464,10 @@
 				margin-top: 60px;
 				margin-bottom: 0;
 			}
-			margin: 32px 16px;
+			margin: 32px 0 16px;
 		}
+
+		margin-bottom: 32px;
 
 		@include break-small {
 			margin-bottom: 40px;
@@ -491,20 +496,49 @@
 		}
 
 		.domain-suggestion__content {
-			align-items: center;
+			align-items: start;
+			gap: 0;
+
+			@include break-small {
+				align-items: center;
+				gap: 16px;
+			}
 
 			.domain-product-price {
 				margin-top: 0;
-				align-items: flex-end;
-				align-self: center;
+				margin-bottom: 16px;
+
+				@include break-small {
+					align-items: flex-end;
+					align-self: center;
+					margin-bottom: 0;
+				}
 			}
 		}
 
-		// Reset styles for the featured domain suggestion
 		.domain-suggestion.card.featured-domain-suggestion {
+			padding: 16px 0;
+
+			@include break-mobile {
+				padding: 16px 20px;
+			}
+
 			.domain-registration-suggestion__title-info {
 				width: auto;
-				max-width: 55%;
+				margin-bottom: 4px;
+
+				@include break-small {
+					max-width: 55%;
+					margin-bottom: auto;
+				}
+			}
+		}
+
+		.domain-suggestion:not(.featured-domain-suggestion) {
+			padding: 16px 0;
+
+			@include break-small {
+				padding: 16px 20px;
 			}
 		}
 	}
