@@ -1,9 +1,9 @@
-import { Gridicon, Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
+import { getPaymentMethodImageURL, isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -12,6 +12,7 @@ import 'calypso/me/purchases/payment-methods/style.scss';
 interface Props {
 	card: StoredPaymentMethod;
 	paymentMethodSummary: TranslateResult;
+	purchases: Purchase[];
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
@@ -67,7 +68,9 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 						<CardHeading tagName="h2" size={ 20 }>
 							{ translate( 'Associated subscriptions' ) }
 						</CardHeading>
-						<img src={ getPaymentMethodImageURL( card?.card_type ) } alt="" />
+						{ isCreditCard( card ) && (
+							<img src={ getPaymentMethodImageURL( card?.card_type ) } alt="" />
+						) }
 					</div>
 					{ associatedSubscriptions.map( ( subscription: Purchase ) => (
 						<div
