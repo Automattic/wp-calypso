@@ -60,7 +60,7 @@ const HelpCenter: React.FC< Container > = ( {
 		isEligibleForChat
 	);
 
-	const { initSmooch } = useSmooch();
+	const { initSmooch, destroy } = useSmooch();
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
@@ -69,7 +69,11 @@ const HelpCenter: React.FC< Container > = ( {
 		if ( shouldUseFancyHelpCenter && isMessagingScriptLoaded && smoochRef?.current ) {
 			initSmooch( smoochRef.current );
 		}
-	}, [ shouldUseFancyHelpCenter, initSmooch, isMessagingScriptLoaded ] );
+
+		return () => {
+			destroy();
+		};
+	}, [ smoochRef?.current, isMessagingScriptLoaded ] );
 
 	useZendeskMessagingBindings(
 		HELP_CENTER_STORE,

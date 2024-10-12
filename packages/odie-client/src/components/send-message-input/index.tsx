@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import config from '@automattic/calypso-config';
 import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React, {
@@ -108,6 +109,14 @@ export const OdieSendMessageButton = ( {
 		);
 
 		if ( ! isLoading ) {
+			if ( config.isEnabled( 'help-center-experience' ) ) {
+				return _x(
+					'Type a message...',
+					'Placeholder text for the message input field (chat)',
+					__i18n_text_domain__
+				);
+			}
+
 			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
 				return _x(
 					'Continue chatting with Wapuu',
@@ -115,6 +124,7 @@ export const OdieSendMessageButton = ( {
 					__i18n_text_domain__
 				);
 			}
+
 			return _x(
 				'Ask your question',
 				'Placeholder text for the message input field (chat)',

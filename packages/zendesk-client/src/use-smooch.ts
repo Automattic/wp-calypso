@@ -12,20 +12,22 @@ const destroy = () => {
 };
 
 const getConversation = async ( chatId?: number ): Promise< Conversation | undefined > => {
-	console.log( 'getConversations', Smooch.getConversations() );
 	if ( chatId ) {
 		const existingConversation = Smooch.getConversations?.().find( ( conversation ) => {
 			return conversation.metadata[ 'odieChatId' ] === chatId;
 		} );
+
 		if ( ! existingConversation ) {
 			return;
 		}
+
 		const result = await Smooch.getConversationById( existingConversation.id );
 		if ( result ) {
 			Smooch.markAllAsRead( result.id );
 			return result;
 		}
 	}
+
 	return;
 };
 
@@ -59,6 +61,8 @@ export const useSmooch = () => {
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
+
+	window.Smooch = Smooch;
 
 	const initSmooch = useCallback(
 		( ref: HTMLDivElement ) => {
@@ -96,10 +100,7 @@ export const useSmooch = () => {
 			}
 			if ( metadata.odieChatId ) {
 				await submitUserFields( userfields );
-				await Smooch.createConversation( { metadata } ).then( ( conversation ) => {
-					// eslint-disable-next-line no-console
-					console.log( 'conversation', conversation );
-				} );
+				await Smooch.createConversation( { metadata } );
 			}
 		},
 		[ isSubmittingZendeskUserFields, submitUserFields ]

@@ -245,38 +245,29 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	);
 
 	useEffect( () => {
-		console.log( init );
 		if ( existingChat.chat_id ) {
 			setIsLoading( true );
 
 			if ( init ) {
-				getConversation( existingChat.chat_id )
-					.then( ( conversation ) => {
-						console.log( 'CONVO', conversation );
-						if ( conversation ) {
-							setSupportProvider( 'zendesk' );
-							const chatMessages = conversation.messages.map( ( message: any ) => ( {
-								content: message.text,
-								role: message.role === 'business' ? 'human' : 'user',
-								type: 'message',
-							} ) );
-							console.log( 'existing', existingChat );
-							console.log( 'chat', chatMessages );
-							setChat( {
-								chat_id: existingChat.chat_id,
-								messages: chatMessages,
-							} );
-						} else {
-							setChat( existingChat );
-						}
-					} )
-					.finally( () => {
-						setIsLoading( false );
-					} );
+				getConversation( existingChat.chat_id ).then( ( conversation ) => {
+					if ( conversation ) {
+						setSupportProvider( 'zendesk' );
+						const chatMessages = conversation.messages.map( ( message: any ) => ( {
+							content: message.text,
+							role: message.role === 'business' ? 'human' : 'user',
+							type: 'message',
+						} ) );
+						setChat( {
+							chat_id: existingChat.chat_id,
+							messages: [ ...existingChat.messages, ...chatMessages ],
+						} );
+					}
+				} );
 			} else {
 				setChat( existingChat );
-				setIsLoading( false );
 			}
+
+			setIsLoading( false );
 		}
 	}, [ existingChat, getConversation, init ] );
 
