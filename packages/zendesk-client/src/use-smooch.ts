@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { useCallback, useState } from 'react';
 import Smooch from 'smooch';
-import { SMOOCH_INTEGRATION_ID } from './constants';
+import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { UserFields } from './types';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
@@ -11,6 +12,7 @@ const destroy = () => {
 };
 
 const getConversation = async ( chatId?: number ): Promise< Conversation | undefined > => {
+	console.log( 'getConversations', Smooch.getConversations() );
 	if ( chatId ) {
 		const existingConversation = Smooch.getConversations?.().find( ( conversation ) => {
 			return conversation.metadata[ 'odieChatId' ] === chatId;
@@ -51,6 +53,8 @@ const addUnreadCountListener = ( callback: ( unreadCount: number ) => void ) => 
 };
 
 export const useSmooch = () => {
+	const currentEnvironment = config( 'env_id' );
+	const isTestMode = currentEnvironment !== 'production';
 	const [ init, setInit ] = useState( typeof Smooch.getConversations === 'function' );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -60,7 +64,7 @@ export const useSmooch = () => {
 		( ref: HTMLDivElement ) => {
 			if ( authData?.jwt && authData?.externalId && ! init ) {
 				Smooch.init( {
-					integrationId: SMOOCH_INTEGRATION_ID,
+					integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
 					embedded: true,
 					externalId: authData?.externalId,
 					jwt: authData?.jwt,
@@ -82,7 +86,7 @@ export const useSmooch = () => {
 				Smooch.render( ref );
 			}
 		},
-		[ init, authData ]
+		[ init, authData, isTestMode ]
 	);
 
 	const createConversation = useCallback(
@@ -92,7 +96,10 @@ export const useSmooch = () => {
 			}
 			if ( metadata.odieChatId ) {
 				await submitUserFields( userfields );
-				await Smooch.createConversation( { metadata } );
+				await Smooch.createConversation( { metadata } ).then( ( conversation ) => {
+					// eslint-disable-next-line no-console
+					console.log( 'conversation', conversation );
+				} );
 			}
 		},
 		[ isSubmittingZendeskUserFields, submitUserFields ]

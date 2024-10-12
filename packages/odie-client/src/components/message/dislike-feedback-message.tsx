@@ -2,10 +2,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
 import CustomALink from './custom-a-link';
+import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 
 export const DislikeFeedbackMessage = () => {
-	const { extraContactOptions } = useOdieAssistantContext();
+	const { shouldUseFancyHelpCenter, extraContactOptions } = useOdieAssistantContext();
 	const { _x } = useI18n();
 	return (
 		<>
@@ -24,7 +25,7 @@ export const DislikeFeedbackMessage = () => {
 					)
 				}
 			</Markdown>
-			{ extraContactOptions }
+			{ shouldUseFancyHelpCenter ? <GetSupport /> : extraContactOptions }
 		</>
 	);
 };

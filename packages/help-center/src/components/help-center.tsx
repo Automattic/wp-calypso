@@ -56,24 +56,20 @@ const HelpCenter: React.FC< Container > = ( {
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
-		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
-		isEligibleForChat || hasActiveChats
+		isHelpCenterShown && isEligibleForChat,
+		isEligibleForChat
 	);
 
-	const { initSmooch, destroy } = useSmooch();
+	const { initSmooch } = useSmooch();
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( shouldUseFancyHelpCenter && isMessagingScriptLoaded && smoochRef.current ) {
+		if ( shouldUseFancyHelpCenter && isMessagingScriptLoaded && smoochRef?.current ) {
 			initSmooch( smoochRef.current );
 		}
-
-		return () => {
-			destroy();
-		};
-	}, [ shouldUseFancyHelpCenter, initSmooch, isMessagingScriptLoaded, destroy ] );
+	}, [ shouldUseFancyHelpCenter, initSmooch, isMessagingScriptLoaded ] );
 
 	useZendeskMessagingBindings(
 		HELP_CENTER_STORE,

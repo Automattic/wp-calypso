@@ -91,7 +91,7 @@ const MessageAvatarHeader = ( {
 				</div>
 			</>
 		) : (
-			<HumanAvatar />
+			<>{ message.role === 'human' && <HumanAvatar /> }</>
 		);
 	}
 

@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useSmooch } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
@@ -12,7 +13,15 @@ import {
 import { isOdieAllowedBot } from '../utils/is-odie-allowed-bot';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
-import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
+import type {
+	Chat,
+	Context,
+	CurrentUser,
+	Message,
+	Nudge,
+	OdieAllowedBots,
+	SupportProvider,
+} from '../types/';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
@@ -26,6 +35,8 @@ type ScrollToLastMessageType = () => void;
  *
  */
 type OdieAssistantContextInterface = {
+	supportProvider: SupportProvider;
+	setSupportProvider: ( provider: SupportProvider ) => void;
 	shouldUseFancyHelpCenter: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
@@ -62,6 +73,7 @@ type OdieAssistantContextInterface = {
 };
 
 const defaultContextInterfaceValues = {
+	supportProvider: 'odie' as SupportProvider,
 	shouldUseFancyHelpCenter: false,
 	addMessage: noop,
 	botName: 'Wapuu',
@@ -87,6 +99,7 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
+	setSupportProvider: noop,
 	setScrollToLastMessage: noop,
 	scrollToLastMessage: noop,
 	trackEvent: noop,
@@ -132,6 +145,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
+	const { getConversation, init, addMessengerListener } = useSmooch();
+	const [ supportProvider, setSupportProvider ] = useState< SupportProvider >( 'odie' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
@@ -169,12 +184,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	const [ chat, setChat ] = useState< Chat >( existingChat );
 
-	useEffect( () => {
-		if ( existingChat.chat_id ) {
-			setChat( existingChat );
-		}
-	}, [ existingChat, existingChat.chat_id ] );
-
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent( `calypso_odie_${ eventName }`, {
@@ -189,6 +198,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const clearChat = useCallback( () => {
+		setSupportProvider( 'odie' );
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
@@ -225,15 +235,58 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
 
 				// Append new messages at the end
-				const messages = [ ...filteredMessages, ...newMessages ];
 				return {
 					chat_id: prevChat.chat_id,
-					messages,
+					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );
 		},
 		[ setChat ]
 	);
+
+	useEffect( () => {
+		console.log( init );
+		if ( existingChat.chat_id ) {
+			setIsLoading( true );
+
+			if ( init ) {
+				getConversation( existingChat.chat_id )
+					.then( ( conversation ) => {
+						console.log( 'CONVO', conversation );
+						if ( conversation ) {
+							setSupportProvider( 'zendesk' );
+							const chatMessages = conversation.messages.map( ( message: any ) => ( {
+								content: message.text,
+								role: message.role === 'business' ? 'human' : 'user',
+								type: 'message',
+							} ) );
+							console.log( 'existing', existingChat );
+							console.log( 'chat', chatMessages );
+							setChat( {
+								chat_id: existingChat.chat_id,
+								messages: chatMessages,
+							} );
+						} else {
+							setChat( existingChat );
+						}
+					} )
+					.finally( () => {
+						setIsLoading( false );
+					} );
+			} else {
+				setChat( existingChat );
+				setIsLoading( false );
+			}
+		}
+	}, [ existingChat, getConversation, init ] );
+
+	useEffect( () => {
+		if ( supportProvider === 'zendesk' && init ) {
+			addMessengerListener( ( message ) => {
+				addMessage( { content: message.text, role: 'human', type: 'message' } );
+			} );
+		}
+	}, [ supportProvider, init, addMessage, addMessengerListener ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
@@ -263,6 +316,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
+				supportProvider,
+				setSupportProvider,
 				shouldUseFancyHelpCenter: config.isEnabled( 'help-center-experience' ),
 				addMessage,
 				botName,

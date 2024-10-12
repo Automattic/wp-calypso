@@ -71,7 +71,7 @@ export type Nudge = {
 	context?: Record< string, unknown >;
 };
 
-export type MessageRole = 'user' | 'bot';
+export type MessageRole = 'user' | 'bot' | 'human';
 
 export type MessageType =
 	| 'message'
@@ -112,4 +112,7 @@ export type OdieAllowedSectionNames =
 	| 'help-center';
 
 export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as const;
+
 export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
+
+export type SupportProvider = 'zendesk' | 'odie';
