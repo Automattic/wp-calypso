@@ -34,6 +34,7 @@ export const HelpCenterChatHistory = () => {
 						<HelpCenterSupportChatMessage
 							key={ conversation.id }
 							message={ lastMessage }
+							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
 							navigateTo="odie"
 						/>
 					);
