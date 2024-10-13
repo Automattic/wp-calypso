@@ -21,19 +21,11 @@ const calculateUnread = ( conversations ) => {
 	let unreadMessages = 0;
 
 	conversations.forEach( ( conversation ) => {
-		let currentUnreadMessages = 0;
-		const userLastRead = conversation.participants[ 0 ].lastRead;
+		const unreadCount = conversation.participants[ 0 ]?.unreadCount ?? 0;
 
-		conversation.messages.forEach( ( message ) => {
-			if ( message.received > userLastRead ) {
-				currentUnreadMessages++;
-			}
-		} );
-
-		unreadMessages += currentUnreadMessages;
-
-		if ( currentUnreadMessages > 0 ) {
+		if ( unreadCount > 0 ) {
 			unreadConversations++;
+			unreadMessages += unreadCount;
 		}
 	} );
 
