@@ -608,6 +608,8 @@ class SignupForm extends Component {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
 				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );
+				const lostPasswordLink = lostPassword( this.props.locale );
+
 				return (
 					<span key={ error_code }>
 						<p>
@@ -625,7 +627,7 @@ class SignupForm extends Component {
 										),
 										pwdResetLink: isReactLostPasswordScreenEnabled() ? (
 											<a
-												href="/"
+												href={ lostPasswordLink }
 												onClick={ ( event ) => {
 													event.preventDefault();
 													recordTracksEvent( 'calypso_signup_reset_password_link_click' );
@@ -643,7 +645,7 @@ class SignupForm extends Component {
 												} }
 											/>
 										) : (
-											<a href={ lostPassword( this.props.locale ) } />
+											<a href={ lostPasswordLink } />
 										),
 									},
 								}
