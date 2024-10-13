@@ -7,7 +7,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import schema from './schema.json';
+import schema from './jitm-schema.json';
 
 const noop = () => {};
 
@@ -21,11 +21,10 @@ const unescapeDecimalEntities = ( str ) =>
 
 /**
  * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
- * @param {Object} response The response object from the jitms endpoint
- * @param {Object} response.data The jitms to display from the api
+ * @param {Object} jitms The response object from the jitms endpoint
  * @returns {Object} The transformed data to display
  */
-const transformApiRequest = ( { data: jitms } ) =>
+const transformApiRequest = ( jitms ) =>
 	jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
@@ -59,16 +58,14 @@ export const doFetchJITM = ( action ) => {
 	return http(
 		{
 			method: 'GET',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			apiNamespace: 'jetpack/v4',
+			path: '/jitm',
 			query: {
-				path: '/jetpack/v4/jitm',
-				query: JSON.stringify( {
-					message_path: action.messagePath,
-					s: action.searchQuery,
-				} ),
-				http_envelope: 1,
-				locale: action.locale,
+				message_path: action.messagePath,
+				s: action.searchQuery,
 			},
+			// http_envelope: 1,
+			locale: action.locale,
 		},
 		{ ...action }
 	);
@@ -84,16 +81,14 @@ export const doDismissJITM = ( action ) =>
 	http(
 		{
 			method: 'POST',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
-			query: {
-				path: '/jetpack/v4/jitm',
-				body: JSON.stringify( {
-					feature_class: action.featureClass,
-					id: action.id,
-				} ),
-				http_envelope: 1,
-				json: false,
-			},
+			apiNamespace: 'jetpack/v4',
+			path: '/jitm',
+			body: JSON.stringify( {
+				feature_class: action.featureClass,
+				id: action.id,
+			} ),
+			http_envelope: 1,
+			json: false,
 		},
 		action
 	);

@@ -27,7 +27,7 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-purchases';
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
-import JetpackJITM from './jetpack-jitm';
+import JITMWrapper from './jitm-wrapper';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
@@ -182,7 +182,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		<>
 			{ allNotices }
 			{ /** JITM Container */ }
-			{ isOdysseyStats && isSiteJetpack && allNotices.length === 0 && <JetpackJITM /> }
+			{ isSiteJetpack && allNotices.length === 0 && (
+				<JITMWrapper isOdysseyStats={ isOdysseyStats } siteId={ siteId } />
+			) }
 		</>
 	);
 };

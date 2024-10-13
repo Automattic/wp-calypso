@@ -31,7 +31,6 @@ const cachePath = path.resolve( '.cache', extraPath );
 const excludedPackages = [
 	/^calypso\/components\/inline-support-link$/,
 	/^calypso\/components\/web-preview.*$/,
-	/^calypso\/blocks\/upsell-nudge.*$/,
 	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
 	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
 	/^calypso\/components\/data\/query-keyring-connections$/,
@@ -200,6 +199,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-memberships$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/state\/data-layer\/wpcom\/sites\/jitm$/,
+			path.resolve( __dirname, 'src/lib/state-data-layer-wpcom-sites-jitm' )
 		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&

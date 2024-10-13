@@ -44,6 +44,11 @@
 }
 
 // Styling for JITM.
-.stats .jitm-card {
-	margin: 32px 8px 0 8px;
+.stats .jetpack-jitm-message .card {
+	margin-bottom: 0;
+	.banner__action {
+		a,a:visited {
+			color: var(--color-text-inverted);
+		}
+	}
 }
