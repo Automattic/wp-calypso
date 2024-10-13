@@ -15,12 +15,12 @@ const WordAdsEligibilityWarningDialog = ( {
 	const buttons = [
 		{
 			action: 'cancel',
-			label: translate( 'Cancel' ),
+			label: translate( 'Keep plan' ),
 		},
 		{
 			action: 'remove',
 			isPrimary: true,
-			label: translate( 'Remove Plan' ),
+			label: translate( 'Remove plan' ),
 			onClick: removePlan,
 		},
 	];
