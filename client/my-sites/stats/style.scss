@@ -239,10 +239,4 @@ $stats-card-min-width: 390px;
 	}
 }
 
-// Force any JITM from Jetpack to be hidden and it is removed in https://github.com/Automattic/jetpack/pull/39714.
-// We manage our own CTAs across Stats pages.
-.jetpack-jitm-message {
-	display: none;
-}
-
 @import "calypso/my-sites/stats/grid-layout";
