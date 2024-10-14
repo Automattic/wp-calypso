@@ -10,15 +10,17 @@
 
 		li {
 			color: var(--studio-gray-60);
+			margin-bottom: 8px;
+			display: flex;
 		}
 
 		svg {
 			position: relative;
-			top: 8px;
 			padding: 5px !important;
-			margin-right: 5px !important;
+			margin-right: 8px !important;
 			background-color: var(--studio-gray-5);
 			border-radius: 100%;
+			min-width: 18px;
 		}
 	}
 
