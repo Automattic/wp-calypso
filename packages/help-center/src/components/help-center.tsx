@@ -73,7 +73,7 @@ const HelpCenter: React.FC< Container > = ( {
 		return () => {
 			destroy();
 		};
-	}, [ smoochRef?.current, isMessagingScriptLoaded ] );
+	}, [ smoochRef?.current, isMessagingScriptLoaded, initSmooch ] );
 
 	useZendeskMessagingBindings(
 		HELP_CENTER_STORE,

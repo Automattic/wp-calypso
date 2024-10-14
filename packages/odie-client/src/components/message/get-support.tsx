@@ -19,7 +19,7 @@ export const GetSupport = () => {
 			{
 				messaging_initial_message: '',
 				messaging_site_id: selectedSiteId || null,
-				messaging_ai_chat_id: chat.chat_id?.toString(),
+				messaging_ai_chat_id: chat.chat_id as number,
 			},
 			{
 				odieChatId: chat.chat_id,

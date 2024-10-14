@@ -56,19 +56,14 @@ const MessageAvatarHeader = ( {
 				{ message.type === 'placeholder' ? (
 					<img
 						src={ WapuuThinking }
-						alt={ sprintf(
+						alt={
 							/* translators: %s is bot name, like Wapuu */
-							_x(
-								'Loading state, awaiting response from %(botName)s',
-								'html alt tag',
-								__i18n_text_domain__
-							),
-							botName
-						) }
+							_x( 'Loading state, awaiting response from AI', 'html alt tag', __i18n_text_domain__ )
+						}
 						className="odie-chatbox-thinking-icon"
 					/>
 				) : (
-					<strong className="message-header-name">{ botName }</strong>
+					<strong className="message-header-name"></strong>
 				) }
 
 				<div className="message-header-buttons">
@@ -76,15 +71,14 @@ const MessageAvatarHeader = ( {
 						<Button compact borderless onClick={ handleFullscreenToggle }>
 							<img
 								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-								alt={ sprintf(
+								alt={
 									/* translators: %s is bot name, like Wapuu */
 									_x(
-										'Icon to expand or collapse %(botName)s messages',
+										'Icon to expand or collapse AI messages',
 										'html alt tag',
 										__i18n_text_domain__
-									),
-									botName
-								) }
+									)
+								}
 							/>
 						</Button>
 					) }

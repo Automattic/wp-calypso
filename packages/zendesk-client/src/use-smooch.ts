@@ -62,8 +62,6 @@ export const useSmooch = () => {
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 
-	window.Smooch = Smooch;
-
 	const initSmooch = useCallback(
 		( ref: HTMLDivElement ) => {
 			if ( authData?.jwt && authData?.externalId && ! init ) {
@@ -90,7 +88,7 @@ export const useSmooch = () => {
 				Smooch.render( ref );
 			}
 		},
-		[ init, authData, isTestMode ]
+		[ authData, isTestMode ]
 	);
 
 	const createConversation = useCallback(
