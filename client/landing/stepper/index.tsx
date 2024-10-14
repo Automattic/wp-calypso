@@ -108,6 +108,7 @@ const redirects = [
 	{ from: '/setup/sensei/', to: '/start/' },
 ];
 
+// Adds a trailing slash to a path if necessary.
 const addTrailingSlash = ( path: string ) => ( path.endsWith( '/' ) ? path : `${ path }/` );
 
 // Retrieve the new redirect URL based on the current path.
