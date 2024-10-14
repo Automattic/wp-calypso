@@ -1,0 +1,38 @@
+.step-route.hundred-year-plan.thank-you {
+	.signup-header {
+		display: block;
+
+		h1 {
+			display: none;
+		}
+
+		svg {
+			fill: #fff;
+		}
+	}
+}
+
+.hundred-year-plan-setup__thank-you {
+	background: #000;
+
+	.formatted-header__title,
+	.formatted-header__subtitle {
+		color: var(--studio-gray-5) !important;
+		max-width: 717px;
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+
+	.step-container__header {
+		margin-bottom: 0;
+	}
+
+	video {
+		max-height: 460px;
+	}
+
+	.components-button {
+		box-shadow: none;
+		margin-bottom: 1rem;
+	}
+}

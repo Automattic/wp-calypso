@@ -1,3 +1,4 @@
+import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
@@ -19,7 +20,7 @@ import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes } from './types';
-import { getSetpProgressSteps, getImporterStatus } from './utils';
+import { getStepsProgress, getImporterStatus } from './utils';
 
 import './importer.scss';
 
@@ -38,23 +39,38 @@ type NewsletterImporterProps = {
 
 function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 	if ( urlData?.meta?.title && urlData?.platform === engine ) {
-		return `Import ${ urlData.meta.title }`;
+		return sprintf(
+			// translators: %s is the site name
+			__( 'Import %s' ),
+			urlData.meta.title
+		);
 	}
 
-	return 'Import your newsletter';
+	return __( 'Import your newsletter' );
+}
+
+function updatePathToContent( path: string ) {
+	if ( path.endsWith( '/content' ) ) {
+		return path;
+	}
+	return path + '/content';
 }
 
 export default function NewsletterImporter( {
 	siteSlug,
 	engine,
-	step = 'content',
+	step = 'reset',
 }: NewsletterImporterProps ) {
 	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
+	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
 
+	if ( step === 'reset' ) {
+		step = 'content';
+	}
 	const { data: paidNewsletterData } = usePaidNewsletterQuery(
 		engine,
 		step,
@@ -65,7 +81,7 @@ export default function NewsletterImporter( {
 	useEffect( () => {
 		if (
 			paidNewsletterData?.steps?.content?.status === 'importing' ||
-			paidNewsletterData?.steps.subscribers?.status === 'importing'
+			paidNewsletterData?.steps?.subscribers?.status === 'importing'
 		) {
 			setAutoFetchData( true );
 		} else {
@@ -105,15 +121,30 @@ export default function NewsletterImporter( {
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
-			if ( selectedSite && step === stepSlugs[ 0 ] && validFromSite === false ) {
+			if ( selectedSite && shouldResetImport && validFromSite === false ) {
 				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+				setShouldResetImport( false );
+				window.history.replaceState(
+					null,
+					'',
+					updatePathToContent( window.location.pathname ) + window.location.search
+				);
 			}
 
 			setValidFromSite( true );
 		}
-	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
+	}, [
+		urlData,
+		fromSite,
+		engine,
+		selectedSite,
+		resetPaidNewsletter,
+		step,
+		validFromSite,
+		shouldResetImport,
+	] );
 
-	const stepsProgress = getSetpProgressSteps(
+	const stepsProgress = getStepsProgress(
 		engine,
 		selectedSite?.slug || '',
 		fromSite,
@@ -131,8 +162,8 @@ export default function NewsletterImporter( {
 	const shouldShowConfettiRef = useRef( false );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const importerStatus = getImporterStatus(
-		paidNewsletterData?.steps.content.status,
-		paidNewsletterData?.steps.subscribers.status
+		paidNewsletterData?.steps?.content.status,
+		paidNewsletterData?.steps?.subscribers.status
 	);
 
 	useEffect( () => {

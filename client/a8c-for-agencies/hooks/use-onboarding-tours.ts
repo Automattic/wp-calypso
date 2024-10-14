@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getAllRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
@@ -14,7 +14,10 @@ import {
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 	A4A_TEAM_LINK,
 } from '../components/sidebar-menu/lib/constants';
-import { A4A_ONBOARDING_TOURS_PREFERENCE_NAME } from '../sections/onboarding-tours/constants';
+import {
+	A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME,
+	A4A_ONBOARDING_TOURS_PREFERENCE_NAME,
+} from '../sections/onboarding-tours/constants';
 import useNoActiveSite from './use-no-active-site';
 
 const checkTourCompletion = ( preferences: object, prefSlug: string ): boolean => {
@@ -44,7 +47,15 @@ export default function useOnboardingTours() {
 		[ dispatch ]
 	);
 
-	return useMemo( () => {
+	const dismiss = useCallback( () => {
+		dispatch( savePreference( A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME, true ) );
+	}, [ dispatch ] );
+
+	const isDismissed = useSelector( ( state ) =>
+		getPreference( state, A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME )
+	);
+
+	const tasks = useMemo( () => {
 		const addNewSiteTask: Task = {
 			calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 			completed: checkTourCompletion( preferences, 'addSiteStep1' ),
@@ -150,4 +161,15 @@ export default function useOnboardingTours() {
 
 		return tasks;
 	}, [ dispatch, noActiveSite, preferences, resetTour, translate ] );
+
+	const completedTasks = tasks.filter( ( task ) => task.completed );
+	const isCompleted = completedTasks.length === tasks.length;
+
+	return {
+		tasks,
+		dismiss,
+		isDismissed: isDismissed && isCompleted, // In case we add more tasks, we need to check the list is complete before concluding the onboarding is dismissed.
+		isCompleted,
+		completedTasks,
+	};
 }

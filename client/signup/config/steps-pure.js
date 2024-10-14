@@ -22,6 +22,7 @@ const noop = () => {};
 export function generateSteps( {
 	addPlanToCart = noop,
 	addWithThemePlanToCart = noop,
+	addWithPluginPlanToCart = noop,
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -107,7 +108,8 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideEcommercePlan: true,
+				intent: 'plans-site-selected-legacy',
+				deemphasizeFreePlan: true,
 			},
 		},
 
@@ -305,7 +307,7 @@ export function generateSteps( {
 
 		'plans-business-with-plugin': {
 			stepName: 'plans-business-with-plugin',
-			apiRequestFunction: addPlanToCart,
+			apiRequestFunction: addWithPluginPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],

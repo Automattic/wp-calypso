@@ -75,7 +75,6 @@ function PressableOverview() {
 			title={ translate( 'Pressable hosting' ) }
 			wide
 			withBorder
-			compact
 		>
 			<LayoutTop>
 				<LayoutHeader>

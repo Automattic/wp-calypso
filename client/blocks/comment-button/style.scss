@@ -21,23 +21,11 @@
 }
 
 .comment-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 13px;
-	font-weight: 500;
-
 	&:empty {
 		display: none;
 	}
-
-	.comment-button__label-count {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 13px;
-		font-weight: 500;
-	}
 }
 
-.reader-full-post .reader-post-actions .comment-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 13px;
-	font-weight: 500;
+.reader-full-post .reader-post-actions .comment-button .comment-button__label {
+	font-size: rem(14px);
 }

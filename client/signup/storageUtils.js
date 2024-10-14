@@ -41,6 +41,12 @@ export const setSignupCompleteSlug = ( value ) =>
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value )
 	);
+export const getSignupCompleteSiteID = () =>
+	ignoreFatalsForSessionStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_site_id' ) );
+export const setSignupCompleteSiteID = ( value ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_complete_site_id', value )
+	);
 export const setDomainsDependencies = ( dependencies ) => {
 	ignoreFatalsForSessionStorage( () =>
 		sessionStorage.setItem( 'wpcom_domains_dependencies', JSON.stringify( dependencies ) )

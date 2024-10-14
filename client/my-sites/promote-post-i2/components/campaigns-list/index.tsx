@@ -43,6 +43,7 @@ export default function CampaignsList( props: Props ) {
 		hasMorePages,
 		campaigns,
 	} = props;
+
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const translate = useTranslate();

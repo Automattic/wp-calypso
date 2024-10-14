@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
@@ -149,6 +150,12 @@ export function legacyRedirects( context, next ) {
 		'billing-history-v2': billingHistory,
 		'connected-apps': '/me/security/connected-applications',
 	};
+
+	if ( section === 'account' && context.query.new_email_result ) {
+		return page.redirect(
+			addQueryArgs( '/me/account', { new_email_result: context.query.new_email_result } )
+		);
+	}
 
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );

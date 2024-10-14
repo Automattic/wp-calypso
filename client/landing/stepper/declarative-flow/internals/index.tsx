@@ -1,8 +1,4 @@
-import {
-	isNewsletterOrLinkInBioFlow,
-	isSenseiFlow,
-	isWooExpressFlow,
-} from '@automattic/onboarding';
+import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, lazy } from 'react';
@@ -75,10 +71,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentStepRoute = params.step || '';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
+	const isValidStep = params.step != null && stepPaths.includes( params.step );
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
-	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
+	useFlowAnalytics(
+		{ flow: params.flow, step: params.step, variant: flow.variantSlug },
+		{ enabled: isValidStep }
+	);
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
@@ -112,7 +112,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		flow,
 		currentStepRoute,
 		navigate,
-		steps: flowSteps,
 	} );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
@@ -189,11 +188,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	};
 
 	const getDocumentHeadTitle = () => {
-		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
-			return flow.title;
-		} else if ( isSenseiFlow( flow.name ) ) {
-			return __( 'Course Creator' );
-		}
+		return flow.title ?? __( 'Create a site' );
 	};
 
 	useSignUpStartTracking( { flow } );

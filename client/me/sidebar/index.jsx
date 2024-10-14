@@ -1,6 +1,18 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	bell,
+	category,
+	code,
+	cog,
+	commentAuthorAvatar,
+	help,
+	lockOutline,
+	notAllowed,
+	payment,
+	seen,
+} from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -122,7 +134,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '', path ) }
 						link="/me"
 						label={ translate( 'My Profile' ) }
-						materialIcon="person"
+						icon={ commentAuthorAvatar }
 						onNavigate={ this.onNavigate }
 					/>
 
@@ -130,7 +142,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/account', path ) }
 						link="/me/account"
 						label={ translate( 'Account Settings' ) }
-						materialIcon="settings"
+						icon={ cog }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="account"
 					/>
@@ -139,7 +151,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/purchases', path ) }
 						link={ purchasesRoot }
 						label={ translate( 'Purchases' ) }
-						materialIcon="credit_card"
+						icon={ payment }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="purchases"
 					/>
@@ -148,7 +160,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/security', path ) }
 						link="/me/security"
 						label={ translate( 'Security' ) }
-						materialIcon="lock"
+						icon={ lockOutline }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="security"
 					/>
@@ -157,7 +169,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/privacy', path ) }
 						link="/me/privacy"
 						label={ translate( 'Privacy' ) }
-						materialIcon="visibility"
+						icon={ seen }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="privacy"
 					/>
@@ -166,7 +178,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/developer', path ) }
 						link="/me/developer"
 						label={ translate( 'Developer Features' ) }
-						icon="code"
+						icon={ code }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="developer"
 					/>
@@ -174,7 +186,7 @@ class MeSidebar extends Component {
 					<SidebarItem
 						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 						label={ translate( 'Manage Blogs' ) }
-						materialIcon="apps"
+						icon={ category }
 						forceInternalLink
 						onNavigate={ ( event, urlPath ) => {
 							this.handleGlobalSidebarMenuItemClick( urlPath );
@@ -185,7 +197,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/notifications', path ) }
 						link="/me/notifications"
 						label={ translate( 'Notification Settings' ) }
-						materialIcon="notifications"
+						icon={ bell }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="notification-settings"
 					/>
@@ -194,7 +206,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/site-blocks', path ) }
 						link="/me/site-blocks"
 						label={ translate( 'Blocked Sites' ) }
-						materialIcon="block"
+						icon={ notAllowed }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="site-blocks"
 					/>
@@ -211,7 +223,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/help', path ) }
 						link="/help"
 						label={ translate( 'Support' ) }
-						icon="help"
+						icon={ help }
 						onNavigate={ this.onNavigate }
 					/>
 				</SidebarMenu>

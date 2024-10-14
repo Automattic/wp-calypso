@@ -71,8 +71,9 @@
 		height: unset;
 	}
 
+	// For scrollable cards on narrow screens.
 	.highlight-cards-list {
-		overflow-x: unset;
+		overflow-x: auto;
 	}
 
 	.highlight-card-heading {

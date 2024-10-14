@@ -45,6 +45,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
+	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
 	const [ destinationState, setDestinationState ] = useState( {} );
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
@@ -94,11 +95,19 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
-				submit?.( {}, ProcessingResult.NO_ACTION );
+				setHasEmptyActionRun( true );
 			}
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
+
+	// As for hasActionSuccessfullyRun, in this case we submit the no action result.
+	useEffect( () => {
+		if ( hasEmptyActionRun ) {
+			submit?.( {}, ProcessingResult.NO_ACTION );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasEmptyActionRun ] );
 
 	// When the hasActionSuccessfullyRun flag turns on, run submit() and fire the sign-up completion event.
 	useEffect( () => {

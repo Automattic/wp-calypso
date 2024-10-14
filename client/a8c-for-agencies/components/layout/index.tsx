@@ -22,15 +22,7 @@ type Props = {
 	compact?: boolean;
 };
 
-function MainLayout( {
-	children,
-	className,
-	title,
-	wide,
-	withBorder,
-	compact,
-	sidebarNavigation,
-}: Props ) {
+function MainLayout( { children, className, title, wide, withBorder, sidebarNavigation }: Props ) {
 	const hasLayoutColumns = React.Children.toArray( children ).some(
 		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
 	);
@@ -42,7 +34,6 @@ function MainLayout( {
 		<Main
 			className={ clsx( 'a4a-layout', className, {
 				'is-with-border': withBorder,
-				'is-compact': compact,
 			} ) }
 			fullWidthLayout={ wide }
 			wideLayout={ ! wide } // When we set to full width, we want to set this to false.

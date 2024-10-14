@@ -23,6 +23,7 @@ const useGridPlansForFeaturesGrid = ( {
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	highlightLabelOverrides,
+	isDomainOnlySite,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -42,6 +43,7 @@ const useGridPlansForFeaturesGrid = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		highlightLabelOverrides,
+		isDomainOnlySite,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {

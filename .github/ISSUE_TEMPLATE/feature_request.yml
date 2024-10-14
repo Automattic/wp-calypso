@@ -1,6 +1,7 @@
 name: Feature Request
 description: Suggest an idea for Calypso!
 title: "Feature Request:"
+type: 'Enhancement'
 labels: ["[Type] Feature Request"]
 body:
   - type: markdown

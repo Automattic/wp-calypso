@@ -58,13 +58,17 @@ export default function useShoppingCart() {
 					return {
 						slug: cacheData[ 0 ],
 						quantity: parseInt( cacheData[ 1 ] ),
+						...( cacheData[ 2 ] ? { licenseId: parseInt( cacheData[ 2 ] ) } : {} ),
+						...( cacheData[ 3 ]
+							? { siteUrls: decodeURIComponent( cacheData[ 3 ] ).split( ',' ) }
+							: {} ),
 					};
 				} ) ?? [];
 
 		if ( data && !! selectedItemsCache.length ) {
 			const loadedItems: ShoppingCartItem[] = [];
 
-			selectedItemsCache.forEach( ( { slug, quantity } ) => {
+			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls } ) => {
 				const match =
 					quantity === 1 || slug.startsWith( 'wpcom-hosting' )
 						? data.find( ( product ) => product.slug === slug )
@@ -75,7 +79,7 @@ export default function useShoppingCart() {
 						  );
 
 				if ( match ) {
-					loadedItems.push( { ...match, quantity } );
+					loadedItems.push( { ...match, quantity, licenseId, siteUrls } );
 				}
 			} );
 
@@ -89,7 +93,15 @@ export default function useShoppingCart() {
 		( items: ShoppingCartItem[] ) => {
 			sessionStorage.setItem(
 				storageKey,
-				items.map( ( item ) => `${ item.slug }:${ item.quantity }` ).join( ',' )
+				items
+					.map( ( item ) =>
+						item.licenseId
+							? `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ encodeURIComponent(
+									item.siteUrls?.join( ',' ) ?? ''
+							  ) }`
+							: `${ item.slug }:${ item.quantity }`
+					)
+					.join( ',' )
 			);
 			setSelectedCartItems( items );
 		},

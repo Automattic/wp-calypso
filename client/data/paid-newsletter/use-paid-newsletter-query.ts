@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
-export type StepId = 'content' | 'subscribers' | 'summary';
+export type StepId = 'reset' | 'content' | 'subscribers' | 'summary';
 export type StepStatus = 'initial' | 'skipped' | 'importing' | 'done';
 
 interface ContentStepContentProgress {
@@ -24,6 +24,7 @@ export interface SubscribersStepContent {
 	connect_url?: string;
 	is_connected_stripe: boolean;
 	map_plans?: Record< string, string >;
+	account_display?: string;
 	plans?: Plan[];
 	meta?: {
 		email_count: string;
@@ -33,6 +34,11 @@ export interface SubscribersStepContent {
 		scheduled_at: string;
 		status: string;
 		subscribed_count: string | null;
+		already_subscribed_count: string | null;
+		failed_subscribed_count: string | null;
+		paid_subscribed_count: string | null;
+		paid_already_subscribed_count: string | null;
+		paid_failed_subscribed_count: string | null;
 		timestamp: string;
 	};
 }

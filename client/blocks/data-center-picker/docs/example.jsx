@@ -8,9 +8,6 @@ const DataCenterPickerExample = () => {
 	return (
 		<div>
 			<Card compact>
-				<DataCenterPicker compact onChange={ setValue } value={ value } />
-			</Card>
-			<Card compact>
 				<DataCenterPicker onChange={ setValue } value={ value } />
 			</Card>
 		</div>

@@ -1,62 +1,134 @@
-.cancel-purchase__card {
-	h2 {
-		color: var(--color-neutral-70);
-		font-size: $font-title-small;
-		font-weight: 400;
-		margin-bottom: 20px;
-	}
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-	p {
-		color: var(--color-neutral-40);
-		font-size: $font-body-small;
-	}
+.is-section-me.is-global-sidebar-visible .purchases__cancel.main,
+.is-section-me.is-global-sidebar-visible .purchases__cancel-domain.main {
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+}
 
-	hr {
-		background: var(--color-neutral-0);
+.cancel-purchase__wrapper-card {
+	padding: 32px;
+	padding-top: 12px;
+
+	.purchases__cancel & {
+		box-shadow: none;
+		padding: 0;
 	}
 }
 
-.cancel-purchase__content {
-	margin: 0;
-	padding: 0 0 10px;
+.cancel-purchase__back .header-cake__back,
+.confirm-cancel-domain__back .header-cake__back {
+	padding: 24px 0;
+	text-align: left;
+}
 
-	@include breakpoint-deprecated( ">660px" ) {
-		width: 55%;
-	}
+.cancel-purchase__right .purchases-site__header.card {
+	background: var(--studio-gray-0);
+	border-radius: 2px;
 
-	p {
-		color: var(--color-neutral-light);
-		display: block;
-		font-size: $font-body-small;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 150%;
-		margin-top: 5px;
-	}
+	.site .site__content {
+		padding: 24px 18px;
 
-	hr {
-		margin: 18px 0;
+		@include break-mobile {
+			padding: 12px;
+		}
 	}
 }
 
-.cancel-purchase__product-information .product-link {
+.cancel-purchase__support-link {
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
+	margin-top: 12px;
+
+	.is-link {
+		font-size: $font-body-small;
+		text-decoration: none;
+	}
 }
 
-.cancel-purchase__purchase-name {
-	font-size: $font-body;
+.cancel-purchase__domain-options {
+	.card {
+		margin: 16px 8px;
+	}
+
+	.cancel-purchase__refund-domain-info {
+		color: var(--color-text-subtle);
+		display: inline-block;
+		font-size: $font-body-extra-small;
+		line-height: 1.4;
+		margin-top: 4px;
+	}
+
+	.cancel-purchase__domain-warning {
+		display: inline-block;
+		font-size: $font-body-small;
+		line-height: 1.4;
+
+		.form-label {
+			margin: 1.5em 0;
+		}
+	}
+}
+
+.cancel-purchase__inner-wrapper {
+	display: flex;
+	flex-direction: column-reverse;
+	margin-bottom: 24px;
+
+	@include break-large {
+		display: grid;
+		grid-template-columns: 7fr 3fr;
+		gap: 32px;
+	}
+}
+
+.confirm-cancel-domain__formatted-header.formatted-header,
+.cancel-purchase__formatted-header.formatted-header {
+	margin: 16px 0;
+}
+
+.cancel-purchase__features {
+	ul.cancel-purchase__features-list {
+		list-style: none;
+		margin: 1.5em;
+		margin-bottom: 0;
+
+		@include break-mobile {
+			column-count: 2;
+			column-gap: 20px;
+		}
+
+		li {
+			list-style: none;
+			display: flex;
+			margin-bottom: 12px;
+			font-size: $font-body-small;
+
+			span {
+				margin: auto 0;
+				flex: 1;
+			}
+
+			.gridicon {
+				color: var(--color-error-40);
+			}
+		}
+	}
+}
+
+.cancel-purchase__features-link {
+	text-align: right;
+
+	a {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+		text-decoration: underline;
+	}
+}
+
+.cancel-purchase__refund-string {
+	color: var(--color-success);
 	font-weight: 600;
-}
-
-.cancel-purchase__refund-information,
-.cancel-purchase__plan-description,
-.cancel-purchase__support-information {
-	font-size: $font-body-small;
-}
-
-.cancel-purchase__support-information .support-link {
-	color: var(--color-primary);
-	font-weight: 600;
-	padding-inline-start: 0;
 }
 
 .cancel-purchase__site-title {
@@ -64,33 +136,60 @@
 	text-transform: uppercase;
 }
 
-.cancel-purchase__section {
-	color: var(--color-neutral-50);
-	margin: 0;
+.cancel-purchase__warning-string {
+	color: var(--color-error);
+	font-weight: 600;
 }
 
-.cancel-purchase__section-header {
-	display: block;
+.cancel-purchase__confirm-buttons {
+	display: flex;
+
+	.form-button {
+		margin-left: 8px;
+	}
+}
+
+.cancel-purchase__purchase-name {
 	font-size: $font-body;
-	font-weight: 400;
+	font-weight: 600;
+}
+
+.cancel-purchase__product-information .product-link,
+.cancel-purchase__refund-information,
+.cancel-purchase__plan-description {
+	font-size: $font-body-small;
 }
 
 .cancel-purchase__footer {
-	align-items: baseline;
+	align-items: center;
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
+	gap: 8px;
+
+	.cancel-purchase__footer-text {
+		flex-grow: 1;
+	}
+
+	.cancel-purchase__button-wrapper {
+		flex-shrink: 0;
+	}
 
 	&::after {
 		display: none;
 	}
 }
 
-.cancel-purchase__refund-amount {
-	color: var(--color-success);
+.cancel-purchase__footer-text p {
 	font-size: $font-body-small;
 	margin: 0;
-	padding: 0 10px 5px 0;
+
+	&.cancel-purchase__refund-amount {
+		color: var(--color-success);
+	}
+
+	&.cancel-purchase__expiration-text {
+		color: var(--color-error);
+	}
 }
 
 .cancel-purchase__button {
@@ -99,8 +198,8 @@
 	}
 }
 
-.cancel-purchase-loading-placeholder__cancel-button {
-	width: 30%;
+.purchases__cancel .cancel-purchase__inner-wrapper.card {
+	box-shadow: none;
 }
 
 .cancel-purchase-loading-placeholder__header {

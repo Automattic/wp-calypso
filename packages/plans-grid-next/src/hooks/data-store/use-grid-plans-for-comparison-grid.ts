@@ -27,6 +27,7 @@ const useGridPlansForComparisonGrid = ( {
 	term,
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
+	isDomainOnlySite,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -44,6 +45,7 @@ const useGridPlansForComparisonGrid = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		isDomainOnlySite,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {

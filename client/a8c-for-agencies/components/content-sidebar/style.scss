@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .content-sidebar {
+	margin-block-start: 16px;
 	grid-row: 4 / span 1;
 
 	@include break-xlarge {

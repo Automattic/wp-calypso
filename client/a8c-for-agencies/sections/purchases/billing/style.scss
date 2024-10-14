@@ -1,3 +1,7 @@
+.billing-dashboard .a4a-layout__body {
+	padding-block-start: 32px;
+}
+
 .a4a-billing__header-actions {
 	@include breakpoint-deprecated( "<660px" ) {
 		display: block;

@@ -30,11 +30,6 @@ export function installTheme( themeId, siteId ) {
 			.post( `/sites/${ siteId }/themes/${ themeId }/install` )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
-				dispatch( {
-					type: THEME_INSTALL_SUCCESS,
-					siteId,
-					themeId,
-				} );
 
 				// Install parent theme if theme requires one
 				if ( themeId.endsWith( '-wpcom' ) ) {
@@ -48,6 +43,13 @@ export function installTheme( themeId, siteId ) {
 				}
 			} )
 			.then( () => dispatch( requestThemes( siteId, {} ) ) )
+			.then( () => {
+				dispatch( {
+					type: THEME_INSTALL_SUCCESS,
+					siteId,
+					themeId,
+				} );
+			} )
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,

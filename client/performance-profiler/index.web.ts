@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { getLanguageRouteParam } from '@automattic/i18n-utils/';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import {
 	PerformanceProfilerDashboardContext,
@@ -8,13 +9,20 @@ import {
 } from './controller';
 
 export default function () {
-	page( '/speed-test-tool/', PerformanceProfilerDashboardContext, makeLayout, clientRender );
-	page( '/speed-test-tool/weekly-report', WeeklyReportContext, makeLayout, clientRender );
+	const lang = getLanguageRouteParam();
+
 	page(
-		'/speed-test-tool/weekly-report/unsubscribe',
+		`/${ lang }/speed-test-tool/`,
+		PerformanceProfilerDashboardContext,
+		makeLayout,
+		clientRender
+	);
+	page( `/${ lang }/speed-test-tool/weekly-report`, WeeklyReportContext, makeLayout, clientRender );
+	page(
+		`/${ lang }/speed-test-tool/weekly-report/unsubscribe`,
 		WeeklyReportUnsubscribeContext,
 		makeLayout,
 		clientRender
 	);
-	page( '/speed-test-tool*', notFound, makeLayout, clientRender );
+	page( `/${ lang }/speed-test-tool*`, notFound, makeLayout, clientRender );
 }

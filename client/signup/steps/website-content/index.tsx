@@ -15,6 +15,7 @@ import {
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	changesSaved,
@@ -259,6 +260,7 @@ export default function WrapperWebsiteContent(
 		};
 	} & WebsiteContentStepProps
 ) {
+	const { skippedCheckout } = useSelector( getInitialQueryArguments ) ?? {};
 	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
@@ -299,6 +301,13 @@ export default function WrapperWebsiteContent(
 			page( `/home/${ queryObject.siteSlug }` );
 		}
 	}, [ data, queryObject.siteSlug ] );
+
+	useEffect( () => {
+		if ( skippedCheckout === '1' ) {
+			debug( 'User did not make a DIFM purchase, redirecting to home' );
+			page( `/home/${ queryObject.siteSlug }` );
+		}
+	}, [ skippedCheckout, queryObject.siteSlug ] );
 
 	if ( isLoading ) {
 		return <Loader />;

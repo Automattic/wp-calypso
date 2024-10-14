@@ -15,6 +15,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'site_monitoring_page',
 	'front_page_updated',
 	'post_sharing_enabled',
+	'mobile_app_installed',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -119,6 +120,17 @@ export const setUpActionsForTasks = ( {
 							method: 'post',
 						} );
 						onSiteLaunched?.();
+					};
+					useCalypsoPath = false;
+					break;
+
+				case 'review_site':
+					action = () => {
+						// redirects to the site slug home page in a new tab
+						window.open( `https://${ siteSlug }`, '_blank' );
+						updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { [ task.id ]: true },
+						} );
 					};
 					useCalypsoPath = false;
 					break;

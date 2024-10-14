@@ -168,16 +168,8 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__menu-link {
 			.sidebar__menu-icon {
-				&.dashicons-admin-site-alt3 {
-					margin-right: 9px;
-					margin-left: 1px;
-
-					.is-global-sidebar-collapsed & {
-						margin-left: 2px;
-					}
-				}
-
 				&.svg_all-sites,
+				&.svg_all-domains,
 				&.svg-plugins,
 				&.svg-calendar {
 					.is-global-sidebar-visible:not(.is-global-sidebar-collapsed) & {

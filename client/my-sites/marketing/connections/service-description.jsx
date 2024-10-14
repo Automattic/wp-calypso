@@ -166,7 +166,7 @@ class SharingServiceDescription extends Component {
 					} );
 				}
 
-				return this.props.translate( 'Connect to use the Instagram widget.', {
+				return this.props.translate( 'Connect to use the Latest Instagram Posts block.', {
 					comment: 'Description for Instagram when no accounts are connected',
 				} );
 			},

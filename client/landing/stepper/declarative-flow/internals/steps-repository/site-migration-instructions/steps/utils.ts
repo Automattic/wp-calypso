@@ -12,7 +12,7 @@ const ensureProtocol = ( url: string ) => {
 	return url;
 };
 
-export const getPluginInstallationPage = ( fromUrl: string ) => {
+export const getMigrationPluginInstallURL = ( fromUrl: string ) => {
 	if ( fromUrl !== '' ) {
 		const baseUrl = ensureProtocol( fromUrl );
 
@@ -32,7 +32,7 @@ export const getPluginInstallationPage = ( fromUrl: string ) => {
 		: 'https://wordpress.org/plugins/migrate-guru/';
 };
 
-export const getMigrateGuruPageURL = ( siteURL: string ) => {
+export const getMigrationPluginPageURL = ( siteURL: string ) => {
 	const baseUrl = ensureProtocol( siteURL );
 
 	if ( isWhiteLabeledPluginEnabled ) {

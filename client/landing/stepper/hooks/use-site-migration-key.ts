@@ -28,19 +28,17 @@ const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
 	);
 };
 
-type Options = Pick< UseQueryOptions, 'enabled' >;
+type Options = {
+	enabled?: UseQueryOptions[ 'enabled' ];
+	retry?: UseQueryOptions[ 'retry' ];
+};
 
 export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 	return useQuery( {
 		queryKey: [ 'site-migration-key', siteId ],
 		queryFn: () => getMigrationKey( siteId! ),
-		retry: ( failureCount: number, error: Error ) => {
-			if ( isWhiteLabeledPluginEnabled() && failureCount >= 20 ) {
-				throw error;
-			}
-
-			return false;
-		},
+		retry: options?.retry ?? false,
+		retryDelay: 5000,
 		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
 		refetchOnWindowFocus: false,

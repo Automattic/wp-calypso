@@ -200,6 +200,7 @@ const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		case 'plans-affiliate':
+		case 'plans-site-selected-legacy':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		default:
@@ -232,6 +233,7 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
+	isDomainOnlySite,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -277,6 +279,7 @@ const useGridPlans: UseGridPlansType = ( {
 		selectedPlan,
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
+		isDomainOnlySite: isDomainOnlySite || false,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package

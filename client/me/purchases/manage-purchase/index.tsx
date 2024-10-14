@@ -116,6 +116,7 @@ import {
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
@@ -145,6 +146,7 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -185,6 +187,7 @@ export interface ManagePurchaseConnectedProps {
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	hasLoadedSites: boolean;
+	hasCompletedCancelPurchaseSurvey: boolean | null;
 	hasNonPrimaryDomainsFlag?: boolean;
 	hasSetupAds?: boolean;
 	isAtomicSite?: boolean | null;
@@ -643,6 +646,7 @@ class ManagePurchase extends Component<
 			hasLoadedSites,
 			hasNonPrimaryDomainsFlag,
 			hasCustomPrimaryDomain,
+			hasCompletedCancelPurchaseSurvey,
 			site,
 			purchase,
 			purchaseListUrl,
@@ -656,9 +660,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		const isPlanPurchase = isPlan( purchase );
 		let text = translate( 'Remove subscription' );
 
-		if ( isPlan( purchase ) ) {
+		if ( isPlanPurchase ) {
 			text = translate( 'Remove plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
 			text = translate( 'Remove domain' );
@@ -676,6 +681,7 @@ class ManagePurchase extends Component<
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
+				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
@@ -1624,6 +1630,10 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 			: false,
 		hasSetupAds: Boolean(
 			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+		),
+		hasCompletedCancelPurchaseSurvey: getPreference(
+			state,
+			getCancelPurchaseSurveyCompletedPreferenceKey( purchase?.id )
 		),
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),

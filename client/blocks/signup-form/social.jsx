@@ -146,7 +146,7 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
-		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp', 'wordpress-hosting-dev-lp' ];
+		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
 
 		return {

@@ -8,6 +8,8 @@ import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
+	getSignupCompleteSiteID,
+	setSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -65,6 +67,10 @@ const hosting: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+			if ( providedDependencies.siteId ) {
+				setSignupCompleteSiteID( providedDependencies.siteId );
+			}
+
 			switch ( _currentStepSlug ) {
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
@@ -83,6 +89,7 @@ const hosting: Flow = {
 						return navigate( 'trialAcknowledge' );
 					}
 
+					setSignupCompleteFlowName( flowName );
 					return navigate( 'createSite' );
 				}
 
@@ -96,12 +103,8 @@ const hosting: Flow = {
 				case 'processing': {
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId,
+						siteId: providedDependencies.siteId || getSignupCompleteSiteID(),
 					} );
-
-					persistSignupDestination( destination );
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
-					setSignupCompleteFlowName( flowName );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
 					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
@@ -109,6 +112,10 @@ const hosting: Flow = {
 					}
 
 					if ( providedDependencies.goToCheckout ) {
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+
 						couponCode && resetCouponCode();
 						return window.location.assign(
 							addQueryArgs(
@@ -120,7 +127,7 @@ const hosting: Flow = {
 						);
 					}
 
-					return window.location.assign( destination );
+					return navigate( 'plans' );
 				}
 			}
 		};

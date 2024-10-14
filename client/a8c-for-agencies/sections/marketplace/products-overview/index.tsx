@@ -84,7 +84,6 @@ function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder
-			compact
 		>
 			<LayoutTop withNavigation>
 				<PendingPaymentNotification />

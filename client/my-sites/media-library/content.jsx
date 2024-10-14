@@ -172,8 +172,8 @@ export class MediaLibraryContent extends Component {
 					break;
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
 					message = translate(
-						'%d file could not be uploaded because the file type is not supported.',
-						'%d files could not be uploaded because their file types are unsupported.',
+						'%(occurrences)d file could not be uploaded because the file type is not supported.',
+						'%(occurrences)d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
 					actionText = translate( 'See supported file types' );
@@ -182,15 +182,15 @@ export class MediaLibraryContent extends Component {
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
 					message = translate(
-						'%d file could not be uploaded because no image exists at the specified URL.',
-						'%d files could not be uploaded because no images exist at the specified URLs',
+						'%(occurrences)d file could not be uploaded because no image exists at the specified URL.',
+						'%(occurrences)d files could not be uploaded because no images exist at the specified URLs',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
 					message = translate(
-						'%d file could not be uploaded because it exceeds the maximum upload size.',
-						'%d files could not be uploaded because they exceed the maximum upload size.',
+						'%(occurrences)d file could not be uploaded because it exceeds the maximum upload size.',
+						'%(occurrences)d files could not be uploaded because they exceed the maximum upload size.',
 						i18nOptions
 					);
 					break;
@@ -198,8 +198,8 @@ export class MediaLibraryContent extends Component {
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
 					message = translate(
-						'%d file could not be uploaded because there is not enough space left.',
-						'%d files could not be uploaded because there is not enough space left.',
+						'%(occurrences)d file could not be uploaded because there is not enough space left.',
+						'%(occurrences)d files could not be uploaded because there is not enough space left.',
 						i18nOptions
 					);
 					break;
@@ -213,8 +213,8 @@ export class MediaLibraryContent extends Component {
 						upgradeNudgeFeature = 'extra-storage';
 					}
 					message = translate(
-						'%d file could not be uploaded because you have reached your plan storage limit.',
-						'%d files could not be uploaded because you have reached your plan storage limit.',
+						'%(occurrences)d file could not be uploaded because you have reached your plan storage limit.',
+						'%(occurrences)d files could not be uploaded because you have reached your plan storage limit.',
 						i18nOptions
 					);
 					break;
@@ -236,8 +236,8 @@ export class MediaLibraryContent extends Component {
 
 				default:
 					message = translate(
-						'%d file could not be uploaded because an error occurred while uploading.',
-						'%d files could not be uploaded because errors occurred while uploading.',
+						'%(occurrences)d file could not be uploaded because an error occurred while uploading.',
+						'%(occurrences)d files could not be uploaded because errors occurred while uploading.',
 						i18nOptions
 					);
 					break;

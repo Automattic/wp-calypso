@@ -57,7 +57,7 @@ describe( 'preparePreviewText', () => {
 			const { container } = render( preparePreviewText( text, { platform, maxChars: 60 } ) );
 
 			expect( container.innerHTML ).toBe(
-				'This is the first line<br>This is the second line<br>this third an'
+				'This is the first line<br>This is the second line<br>this third an…'
 			);
 		}
 	} );

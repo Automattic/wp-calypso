@@ -1,6 +1,7 @@
 import { FormLabel } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import { translate, useTranslate } from 'i18n-calypso';
+import i18n, { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -58,7 +59,7 @@ const ConfirmationModalInputContainer = styled.div( {
 	marginBottom: '26px',
 } );
 
-const ConfirmationModalInputSiteSlug = styled.span( {
+const ConfirmationModalRedSpan = styled.span( {
 	color: '#D63638',
 } );
 
@@ -161,16 +162,12 @@ const StagingToProductionSync = ( {
 	showSyncPanel,
 	isSqlsOptionDisabled,
 	isSiteWooStore,
-	databaseSyncConfirmed,
-	setdatabaseSyncConfirmed,
 	isSqlSyncOptionChecked,
 }: {
 	disabled: boolean;
 	siteSlug: string;
 	isSyncInProgress: boolean;
 	onSelectItems: ( items: CheckboxOptionItem[] ) => void;
-	databaseSyncConfirmed: boolean;
-	setdatabaseSyncConfirmed: ( value: boolean ) => void;
 	selectedItems: CheckboxOptionItem[];
 	isSyncButtonDisabled: boolean;
 	onConfirm: () => void;
@@ -236,7 +233,22 @@ const StagingToProductionSync = ( {
 		],
 		[ translate ]
 	);
-
+	const syncWarningTranslation =
+		englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+		i18n.hasTranslation(
+			'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
+		)
+			? translate(
+					'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.',
+					{
+						components: {
+							span: <ConfirmationModalRedSpan />,
+						},
+					}
+			  )
+			: translate(
+					'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
+			  );
 	return (
 		<>
 			{ showSyncPanel && (
@@ -248,10 +260,6 @@ const StagingToProductionSync = ( {
 						disabled={ disabled }
 						onChange={ onSelectItems }
 						isSqlsOptionDisabled={ isSqlsOptionDisabled }
-						databaseSyncConfirmed={ databaseSyncConfirmed }
-						setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }
-						isSiteWooStore={ !! isSiteWooStore }
-						isSqlSyncOptionChecked={ !! isSqlSyncOptionChecked }
 					></SyncOptionsPanel>
 				</>
 			) }
@@ -276,11 +284,7 @@ const StagingToProductionSync = ( {
 							{ isSiteWooStore && isSqlSyncOptionChecked && (
 								<SyncWarningContainer>
 									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
-									<SyncWarningContent>
-										{ translate(
-											'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
-										) }
-									</SyncWarningContent>
+									<SyncWarningContent>{ syncWarningTranslation }</SyncWarningContent>
 								</SyncWarningContainer>
 							) }
 							<ConfirmationModalInputTitle>
@@ -289,7 +293,7 @@ const StagingToProductionSync = ( {
 										siteSlug: siteSlug as string,
 									},
 									components: {
-										span: <ConfirmationModalInputSiteSlug />,
+										span: <ConfirmationModalRedSpan />,
 									},
 								} ) }
 							</ConfirmationModalInputTitle>
@@ -475,7 +479,6 @@ export const SiteSyncCard = ( {
 		[] as CheckboxOptionItem[]
 	);
 	const [ selectedOption, setSelectedOption ] = useState< string | null >( null );
-	const [ databaseSyncConfirmed, setdatabaseSyncConfirmed ] = useState< boolean >( false );
 	const siteSlug = useSelector(
 		type === 'staging' ? ( state ) => getSiteSlug( state, productionSiteId ) : getSelectedSiteSlug
 	);
@@ -523,20 +526,10 @@ export const SiteSyncCard = ( {
 
 	const isSqlSyncOptionChecked = selectedItems.some( ( item ) => item.name === 'sqls' );
 
-	useEffect( () => {
-		if ( ! isSqlSyncOptionChecked && databaseSyncConfirmed ) {
-			setdatabaseSyncConfirmed( false );
-		}
-	}, [ isSqlSyncOptionChecked, databaseSyncConfirmed, setdatabaseSyncConfirmed ] );
-
-	const disallowWooCommerceSync =
-		isSiteWooStore && isSqlSyncOptionChecked && ! databaseSyncConfirmed;
-
 	const isSyncButtonDisabled =
 		disabled ||
 		( selectedItems.length === 0 && selectedOption === actionForType ) ||
-		selectedOption === null ||
-		disallowWooCommerceSync;
+		selectedOption === null;
 
 	let siteToSync: 'production' | 'staging' | null = null;
 	if ( targetSite ) {
@@ -618,8 +611,6 @@ export const SiteSyncCard = ( {
 					onConfirm={ selectedOption === 'push' ? onPushInternal : onPullInternal }
 					isSqlsOptionDisabled={ false }
 					isSiteWooStore={ isSiteWooStore }
-					databaseSyncConfirmed={ databaseSyncConfirmed }
-					setdatabaseSyncConfirmed={ setdatabaseSyncConfirmed }
 					isSqlSyncOptionChecked={ isSqlSyncOptionChecked }
 				/>
 			) }

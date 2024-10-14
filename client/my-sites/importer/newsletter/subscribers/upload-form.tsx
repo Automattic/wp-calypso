@@ -3,10 +3,14 @@ import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ProgressBar } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, cloudUpload } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState, FormEvent, useEffect } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
@@ -20,11 +24,12 @@ type Props = {
 };
 
 export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
+	const { __ } = useI18n();
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 
 	const [ hasImportError, setHasImportError ] = useState( false );
 
-	const { importCsvSubscribers } = useDispatch( Subscriber.store );
+	const { importCsvSubscribers, importCsvSubscribersUpdate } = useDispatch( Subscriber.store );
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 
@@ -65,15 +70,17 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		return validExtensions.includes( match?.groups?.extension.toLowerCase() as string );
 	}
 
-	const importSubscribersUrl =
-		'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
+	// This fixes the issue of the form being the the upload state even if the user hasn't loaded the importer.
+	useEffect( () => {
+		importCsvSubscribersUpdate( undefined ); // reset the form.
+	}, [ importCsvSubscribersUpdate ] );
 
 	if ( importSelector?.inProgress ) {
 		return (
 			<div className="subscriber-upload-form__dropzone">
 				<div className="subscriber-upload-form__in-progress">
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-					<p>Uploading...</p>
+					<p>{ __( 'Uploading…' ) }</p>
 					<ProgressBar className="is-larger-progress-bar" />
 				</div>
 			</div>
@@ -84,18 +91,28 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		<form onSubmit={ onSubmit } autoComplete="off" className="subscriber-upload-form">
 			{ ! isSelectedFileValid && selectedFile && (
 				<FormInputValidation className="is-file-validation" isError text="">
-					Sorry, you can only upload CSV files. Please try again with a valid file.
+					{ __( 'Sorry, you can only upload CSV files. Please try again with a valid file.' ) }
 				</FormInputValidation>
 			) }
 			<div className="subscriber-upload-form__dropzone">
 				<DropZone onFilesDrop={ onFileSelect } />
 				<FilePicker accept="text/csv" onPick={ onFileSelect } multiple={ false }>
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-					{ ! selectedFile && <p>Drag a file here, or click to upload a file</p> }
+					{ ! selectedFile && <p>{ __( 'Drag a file here, or click to upload a file' ) }</p> }
 					{ selectedFile && (
 						<p>
-							To replace this <em className="file-name">{ selectedFile?.name }</em>
-							<br /> drag a file, or click to upload different one.
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %s is a file name, e.g. example.csv
+									__(
+										'To replace this <fileName>%s</fileName> drag a file, or click to upload different one.'
+									),
+									selectedFile?.name || '-'
+								),
+								{
+									fileName: <em className="file-name" />,
+								}
+							) }
 						</p>
 					) }
 				</FilePicker>
@@ -103,8 +120,22 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 
 			{ isSelectedFileValid && selectedFile && ! hasImportError && (
 				<p>
-					By clicking "Continue," you represent that you've obtained the appropriate consent to
-					email each person. <a href={ localizeUrl( importSubscribersUrl ) }>Learn more</a>.
+					{ createInterpolateElement(
+						__(
+							'By clicking "Continue," you represent that you\'ve obtained the appropriate consent to email each person. <learnMoreLink>Learn more</learnMoreLink>.'
+						),
+						{
+							learnMoreLink: (
+								<InlineSupportLink
+									showIcon={ false }
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+									) }
+									supportPostId={ 220199 }
+								/>
+							),
+						}
+					) }
 				</p>
 			) }
 
@@ -121,7 +152,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					} }
 					disabled={ ! ( isSelectedFileValid && selectedFile ) || hasImportError }
 				>
-					Continue
+					{ __( 'Continue' ) }
 				</ImporterActionButton>
 				<ImporterActionButton
 					href={ nextStepUrl }
@@ -130,7 +161,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
 					} }
 				>
-					Skip for now
+					{ __( 'Skip for now' ) }
 				</ImporterActionButton>
 			</ImporterActionButtonContainer>
 		</form>

@@ -96,6 +96,7 @@
 		height: 80vh;
 		max-height: 800px;
 		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
+		border-radius: 2px;
 
 		&.is-minimized {
 			min-height: $head-foot-height;
@@ -111,6 +112,10 @@
 			.help-center__container-content {
 				display: none;
 			}
+			
+			.help-center-header__text {
+				cursor: pointer;
+			}
 		}
 	}
 
@@ -121,7 +126,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		// If the masterbar is there, don't cover it, if not, go to the top.
+		/* If the masterbar is there, don't cover it, if not, go to the top. */
 		top: var(--masterbar-height, 0);
 		max-height: calc(100% - 45px);
 		height: calc(100% - var(--masterbar-height, 0));

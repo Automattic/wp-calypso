@@ -3,20 +3,17 @@ body.is-section-marketplace.theme-default.color-scheme {
 }
 
 .marketplace-plugin-install__masterbar {
-	display: flex;
-	align-items: baseline;
-	justify-content: flex-start;
+	--color-masterbar-background: var(--studio-white);
+	--color-masterbar-text: var(--studio-gray-60);
+	padding-right: 24px;
+	border-bottom: 0;
 
-	.marketplace-plugin-install__wpcom-wordmark {
-		align-self: center;
-		margin-left: 10px;
-	}
-
-	.masterbar__item,
-	.masterbar__item:hover {
-		color: var(--color-primary-5);
-		flex-grow: 0;
-		background: var(--color-masterbar-background);
+	.marketplace-plugin-install__logo {
+		fill: rgb(54, 54, 54);
+		margin: 24px 12px 24px 24px;
+		@media (min-width: 480px) {
+			margin: 24px;
+		}
 	}
 }
 
