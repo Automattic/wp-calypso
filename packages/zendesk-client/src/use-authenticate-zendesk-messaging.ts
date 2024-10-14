@@ -18,7 +18,6 @@ export function useAuthenticateZendeskMessaging(
 	type: ZendeskAuthType = 'zendesk'
 ) {
 	const currentEnvironment = config( 'env_id' );
-	const shouldUseFancyHelpCenter = config.isEnabled( 'help-center-experience' );
 	const isTestMode = currentEnvironment !== 'production';
 
 	return useQuery( {
@@ -45,7 +44,7 @@ export function useAuthenticateZendeskMessaging(
 		enabled,
 		select: ( messagingAuth ) => {
 			const jwt = messagingAuth?.user.jwt;
-			if ( ! shouldUseFancyHelpCenter && ! isLoggedIn ) {
+			if ( ! isLoggedIn ) {
 				if ( typeof window.zE !== 'function' || ! jwt ) {
 					return;
 				}
