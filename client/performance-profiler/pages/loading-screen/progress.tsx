@@ -117,7 +117,7 @@ const useLoadingSteps = ( {
 		steps = [ translate( 'Getting your site pages' ) ];
 	} else {
 		steps = isSavedReport
-			? [ translate( 'Getting your report…' ) ]
+			? [ translate( 'Getting your report' ) ]
 			: [
 					pageTitle
 						? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
