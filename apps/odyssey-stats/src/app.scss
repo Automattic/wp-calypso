@@ -119,7 +119,7 @@
 }
 
 // Force any JITM from Jetpack to be hidden and it is removed in https://github.com/Automattic/jetpack/pull/39714.
-// We manage our own CTAs across Stats pages.
+// We manage our own CTAs, including JITM, across Stats pages.
 .jetpack-jitm-message,
 .jitm-card.jitm-banner {
 	display: none;
