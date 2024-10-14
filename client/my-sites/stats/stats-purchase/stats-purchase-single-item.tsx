@@ -155,9 +155,6 @@ const StatsCommercialPurchase = ( {
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 
-	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
-	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
-
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 	const startingTierQuantity = haveTiers ? getTierQuantity( tiers[ 0 ] ) : 0;
