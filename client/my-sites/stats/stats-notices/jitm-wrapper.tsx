@@ -11,7 +11,7 @@ const JITMWrapper: React.FC< StatsNoticeProps > = ( { isOdysseyStats } ) => {
 	const jitm = useSelector( ( state ) => getTopJITM( state, messagePath ) );
 	return (
 		<div
-			className={ clsx( 'jetpack-jitm-message', {
+			className={ clsx( 'jetpack-jitm-message-container', {
 				'inner-notice-container': !! jitm,
 				'has-odyssey-stats-bg-color': isOdysseyStats,
 				'inner-notice-container--calypso': ! isOdysseyStats,
