@@ -11,12 +11,15 @@ import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-type SitesDashboardBannersProps = {
+type SitesDashboardBannersManagerProps = {
 	sitesStatuses: Status[];
 	sitesCount: number;
 };
 
-const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBannersProps ) => {
+const SitesDashboardBannersManager = ( {
+	sitesStatuses,
+	sitesCount,
+}: SitesDashboardBannersManagerProps ) => {
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const showA8CForAgenciesBanner = sitesCount >= 5;
@@ -86,4 +89,4 @@ const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBan
 	return null;
 };
 
-export default SitesDashboardBanners;
+export default SitesDashboardBannersManager;

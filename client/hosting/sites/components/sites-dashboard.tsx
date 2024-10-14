@@ -46,7 +46,7 @@ import {
 } from '../onboarding-tours';
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
-import SitesDashboardBanners from './sites-dashboard-banners';
+import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
@@ -377,7 +377,10 @@ const SitesDashboard = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ dashboardTitle } />
-					<SitesDashboardBanners sitesStatuses={ statuses } sitesCount={ paginatedSites.length } />
+					<SitesDashboardBannersManager
+						sitesStatuses={ statuses }
+						sitesCount={ paginatedSites.length }
+					/>
 
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
