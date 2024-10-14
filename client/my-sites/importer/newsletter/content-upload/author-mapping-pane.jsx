@@ -219,7 +219,7 @@ class AuthorMappingPane extends PureComponent {
 						importerStatus?.customData?.attachmentsNumber || 0
 					) }
 				</Notice>
-				<h2>Author mapping</h2>
+				<h2>{ this.props.translate( 'Author mapping' ) }</h2>
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
@@ -240,7 +240,7 @@ class AuthorMappingPane extends PureComponent {
 				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
-						Import
+						{ this.props.translate( 'Import' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>

@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { StepId } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSubscriberImportMutation } from 'calypso/data/paid-newsletter/use-subscriber-import-mutation';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
@@ -21,6 +22,7 @@ export default function StartImportButton( {
 	primary = true,
 	label,
 }: Props ) {
+	const { __ } = useI18n();
 	const { enqueueSubscriberImport } = useSubscriberImportMutation();
 
 	const importSubscribers = () => {
@@ -30,7 +32,7 @@ export default function StartImportButton( {
 
 	return (
 		<ImporterActionButton primary={ primary } disabled={ disabled } onClick={ importSubscribers }>
-			{ label || 'Import subscribers' }
+			{ label || __( 'Import subscribers' ) }
 		</ImporterActionButton>
 	);
 }

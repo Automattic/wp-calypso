@@ -230,7 +230,7 @@ export default {
 		const isOnboardingFlow = flowName === 'onboarding';
 		if ( isOnboardingFlow ) {
 			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_stepper_flow'
+				'calypso_signup_onboarding_stepper_flow_2'
 			);
 			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
 				window.location =

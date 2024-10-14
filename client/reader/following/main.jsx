@@ -29,7 +29,7 @@ function FollowingStream( { ...props } ) {
 						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 					} ) }
 				/>
-				<FollowingIntro />
+				{ ! config.isEnabled( 'reader/onboarding' ) && <FollowingIntro /> }
 				{ config.isEnabled( 'reader/onboarding' ) && <ReaderOnboarding /> }
 			</Stream>
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />

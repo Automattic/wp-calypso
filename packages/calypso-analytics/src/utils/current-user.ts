@@ -9,6 +9,7 @@ export interface SetCurrentUserParams {
 	ID: string;
 	username: string;
 	email: string;
+	localeSlug: string;
 }
 
 export interface CurrentUserHashedPii {
@@ -22,6 +23,7 @@ export interface CurrentUser {
 	username: string;
 	email: string;
 	hashedPii: CurrentUserHashedPii;
+	localeSlug: string;
 }
 
 /**
@@ -51,6 +53,7 @@ export function setCurrentUser( currentUser: SetCurrentUserParams ): CurrentUser
 		ID: parseInt( currentUser.ID, 10 ),
 		username: currentUser.username,
 		email: currentUser.email,
+		localeSlug: currentUser.localeSlug,
 		hashedPii: {
 			ID: hashPii( currentUser.ID ),
 			username: hashPii( currentUser.username.toLowerCase().replace( /\s/g, '' ) ),
