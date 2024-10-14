@@ -448,9 +448,6 @@
 	margin-top: -60px;
 }
 
-// .step-container__header {
-// 	margin: 20px 24px 40px 20px;
-
 .hundred-year-domain.domains {
 	.step-container__header {
 		.formatted-header {
@@ -485,10 +482,6 @@
 			@include break-small {
 				padding: 0 48px 0 32px;
 			}
-		}
-		// Hide the "Sale" tag
-		.badge.badge--warning {
-			display: none;
 		}
 		// Change button styles
 		.button.is-primary {
