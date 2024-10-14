@@ -138,9 +138,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
 
-	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
-		import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
-
 	[ 'hundred-year-plan' ]: () =>
 		import( /* webpackChunkName: "hundred-year-plan" */ './hundred-year-plan' ),
 
@@ -182,8 +179,17 @@ const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } 
 		),
 };
 
+const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > =
+	config.isEnabled( '100-year-domain' )
+		? {
+				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
+					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+		  }
+		: {};
+
 export default {
 	...availableFlows,
 	...videoPressTvFlows,
 	...hostedSiteMigrationFlow,
+	...hundredYearDomainFlow,
 };
