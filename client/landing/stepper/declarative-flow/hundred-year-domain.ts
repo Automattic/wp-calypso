@@ -1,5 +1,6 @@
-import { UserSelect } from '@automattic/data-stores';
+import { OnboardSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_DOMAIN_FLOW, addProductsToCart } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -8,18 +9,17 @@ import {
 	setSignupCompleteSlug,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
+import { ONBOARD_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
 const HundredYearDomainFlow: Flow = {
 	name: HUNDRED_YEAR_DOMAIN_FLOW,
+	isSignupFlow: true,
 
 	get title() {
 		return translate( '100-Year Domain' );
 	},
-
-	isSignupFlow: false,
 
 	useSteps() {
 		const steps = [
@@ -27,10 +27,12 @@ const HundredYearDomainFlow: Flow = {
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/domains' ),
 			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			...stepsWithRequiredLogin( [
+				{
+					slug: 'processing',
+					asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+				},
+			] ),
 		];
 
 		return steps;
@@ -38,24 +40,21 @@ const HundredYearDomainFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+		const checkoutBackUrl = new URL( `/setup/${ flowName }/domains`, window.location.href );
+
+		const { setDomainCartItem } = useDispatch( ONBOARD_STORE );
+
+		const { domainCartItem } = useSelect(
+			( select ) => ( {
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			} ),
 			[]
 		);
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/processing`,
-			pageTitle: '100-Year Domain',
-		} );
-
-		const checkoutBackUrl = new URL( `/setup/${ flowName }/domains`, window.location.href );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const { domainName, productSlug } = providedDependencies;
 
-			const domainCartItem = domainRegistration( {
+			const submittedDomainCartItem = domainRegistration( {
 				productSlug: productSlug as string,
 				domain: domainName as string,
 				extra: { is_hundred_year_domain: true },
@@ -64,29 +63,23 @@ const HundredYearDomainFlow: Flow = {
 			switch ( _currentStep ) {
 				case 'domains':
 					clearSignupDestinationCookie();
+					setDomainCartItem( submittedDomainCartItem );
+					return navigate( 'processing' );
 
-					// Adding the domain product to the cart here because this is a domain-only flow
-					// and we don't need to create a site for this domain
-					await addProductsToCart( 'no-site', flowName, [ domainCartItem ] );
-
-					if ( userIsLoggedIn ) {
-						// Delay to keep the "Setting up your legacy..." page showing for 3 seconds
-						// since there's actually nothing to process there
-						setPendingAction( async () => {
-							await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
-						} );
-
-						return navigate( 'processing' );
-					}
-
-					return window.location.assign( logInUrl );
 				case 'processing':
 					setSignupCompleteSlug( providedDependencies.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
+					await addProductsToCart( 'no-site', flowName, [
+						domainCartItem as MinimalRequestCartProduct,
+					] );
+					// Delay to keep the "Setting up your legacy..." page showing for 2 seconds
+					// since there's nothing to actually process in that step
+					await new Promise( ( resolve ) => setTimeout( resolve, 2000 ) );
+
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
-						`/checkout/no-site?signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
+						`/checkout/no-site?signup=1&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
 							checkoutBackUrl.href
 						) }`
 					);
