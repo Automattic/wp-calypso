@@ -16,7 +16,9 @@ export function useSiteEditorUrls() {
 			( acc, panel ) => {
 				let url = siteEditorUrl;
 				if ( panel !== 'root' ) {
-					url = `${ siteEditorUrl }?path=${ panel }&canvas=edit`;
+					url = addQueryArgs( siteEditorUrl, {
+						path: `/${ panel }`,
+					} );
 				}
 
 				acc[ panel ] = addQueryArgs( url, {
