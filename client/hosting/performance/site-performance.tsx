@@ -38,6 +38,13 @@ const statsQuery = {
 };
 
 const usePerformanceReport = (
+	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
+	refetchPages: () => void,
+	savePerformanceReportUrl: (
+		pageId: string,
+		wpcom_performance_report_url: { url: string; hash: string }
+	) => Promise< void >,
+	currentPageId: string,
 	wpcom_performance_report_url: { url: string; hash: string } | undefined,
 	activeTab: Tab
 ) => {
@@ -53,6 +60,20 @@ const usePerformanceReport = (
 		refetch: requeueAdvancedMetrics,
 	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
+	useEffect( () => {
+		if ( token && finalUrl ) {
+			setIsSavingPerformanceReportUrl( true );
+			savePerformanceReportUrl( currentPageId, { url: finalUrl, hash: token } )
+				.then( () => {
+					refetchPages();
+				} )
+				.finally( () => {
+					setIsSavingPerformanceReportUrl( false );
+				} );
+		}
+		// We only want to run this effect when the token changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ token ] );
 	const {
 		data: performanceInsights,
 		status: insightsStatus,
@@ -139,7 +160,6 @@ export const SitePerformance = () => {
 	const {
 		pages,
 		isInitialLoading,
-		isFetching: isFetchingPages,
 		savePerformanceReportUrl,
 		refetch: refetchPages,
 	} = useSitePerformancePageReports( {
@@ -163,6 +183,8 @@ export const SitePerformance = () => {
 	// hasn't selected one yet.
 	const [ currentPageUserSelection, setCurrentPageUserSelection ] =
 		useState< ( typeof pages )[ number ] >();
+
+	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
 
 	const [ prevSiteId, setPrevSiteId ] = useState( siteId );
 	if ( prevSiteId !== siteId ) {
@@ -193,6 +215,10 @@ export const SitePerformance = () => {
 	};
 
 	const performanceReport = usePerformanceReport(
+		setIsSavingPerformanceReportUrl,
+		refetchPages,
+		savePerformanceReportUrl,
+		currentPageId,
 		isSitePublic ? currentPage?.wpcom_performance_report_url : undefined,
 		activeTab
 	);
@@ -222,38 +248,6 @@ export const SitePerformance = () => {
 		} );
 	};
 
-	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
-
-	useEffect( () => {
-		const initialPagesDataLoaded = ! isInitialLoading && pages.length;
-
-		if (
-			initialPagesDataLoaded &&
-			performanceReport.hash &&
-			currentPage?.wpcom_performance_report_url.hash !== performanceReport.hash
-		) {
-			const performanceReportUrl = {
-				url: performanceReport.url,
-				hash: performanceReport.hash,
-			};
-			setIsSavingPerformanceReportUrl( true );
-			savePerformanceReportUrl( currentPageId, performanceReportUrl )
-				.then( () => refetchPages() )
-				.finally( () => {
-					setIsSavingPerformanceReportUrl( false );
-				} );
-		}
-	}, [
-		isInitialLoading,
-		pages,
-		currentPage?.wpcom_performance_report_url.hash,
-		currentPageId,
-		performanceReport.hash,
-		performanceReport.url,
-		savePerformanceReportUrl,
-		refetchPages,
-	] );
-
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
 			page( `/settings/general/${ site.slug }` );
@@ -265,7 +259,7 @@ export const SitePerformance = () => {
 	const isMobile = useMobileBreakpoint();
 	const disableControls =
 		performanceReport.isLoading ||
-		isFetchingPages ||
+		isInitialLoading ||
 		! isSitePublic ||
 		isSavingPerformanceReportUrl;
 
