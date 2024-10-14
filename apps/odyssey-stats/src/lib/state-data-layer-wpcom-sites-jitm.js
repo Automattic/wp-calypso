@@ -124,7 +124,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 			onSuccess: receiveJITM,
 			onError: failedJITM,
 			fromApi: makeJsonSchemaParser(
-				{ ...schema, properties: { ...schema.properties.data.items } },
+				{ ...schema, ...schema.properties.data },
 				transformApiRequest
 			),
 		} ),
