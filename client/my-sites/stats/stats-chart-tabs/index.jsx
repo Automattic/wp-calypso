@@ -90,7 +90,9 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => this.props.requestChartCounts( this.props.query );
+	makeQuery = () => {
+		return this.props.requestChartCounts( this.props.query );
+	};
 
 	render() {
 		const { isActiveTabLoading } = this.props;
@@ -160,11 +162,6 @@ const connectComponent = connect(
 		// Set up quantity for API call.
 		const defaultQuantity = 'year' === period ? 10 : 30;
 		const quantity = customQuantity ? customQuantity : defaultQuantity;
-
-		const counts = getCountRecords( state, siteId, period );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 
 		// The end date of the chart depends on the customRange.
@@ -175,6 +172,11 @@ const connectComponent = connect(
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId );
+
+		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
+		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 
 		return {
 			chartData,
