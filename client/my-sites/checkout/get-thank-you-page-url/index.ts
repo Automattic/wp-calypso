@@ -284,7 +284,6 @@ export default function getThankYouPageUrl( {
 			{
 				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
-				fromSiteSlug,
 				redirect_to: redirectTo,
 			},
 			thankYouUrl

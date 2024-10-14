@@ -152,6 +152,7 @@ const StatsCommercialPurchase = ( {
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
+
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 
@@ -161,6 +162,9 @@ const StatsCommercialPurchase = ( {
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const needsConnectionForUpgrade =
+		hasAnyStatsPlan && isOdysseyStats && ! connectionStatus?.isSiteFullyConnected;
 
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
@@ -202,16 +206,26 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ isCommercialOwned && <StatsUpgradeInstructions /> }
 			{ tierSelectionElements }
+			{ needsConnectionForUpgrade && (
+				<div className="stats-purchase-wizard__notice connection-notice">
+					{ translate( 'Please {{link}}connect your user account{{/link}} to upgrade stats.', {
+						components: {
+							link: <a href="/wp-admin/admin.php?page=my-jetpack#/connection" />,
+						},
+					} ) }
+				</div>
+			) }
 			<div className="stats-purchase-wizard__actions">
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
-					disabled={ ! haveTiers }
+					disabled={ ! haveTiers || needsConnectionForUpgrade }
 					onClick={ () =>
 						gotoCheckoutPage( {
 							from,
 							type: 'commercial',
 							siteSlug,
+							siteId,
 							adminUrl,
 							redirectUri,
 							price: undefined,
