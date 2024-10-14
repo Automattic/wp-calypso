@@ -2,12 +2,11 @@ import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import schema from 'calypso/state/data-layer/wpcom/sites/jitm/schema.json';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import schema from './jitm-schema.json';
 
 const noop = () => {};
 
@@ -115,7 +114,6 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
  */
 export const failedJITM = ( action ) => ( dispatch, getState ) => {
 	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
-	dispatch( setJetpackConnectionMaybeUnhealthy( siteId ) );
 	dispatch( clearJITM( siteId, action.messagePath ) );
 };
 
@@ -125,7 +123,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 			fetch: doFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema.data.items, transformApiRequest ),
 		} ),
 	],
 

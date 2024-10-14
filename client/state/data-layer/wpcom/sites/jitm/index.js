@@ -25,7 +25,7 @@ const unescapeDecimalEntities = ( str ) =>
  * @param {Object} response.data The jitms to display from the api
  * @returns {Object} The transformed data to display
  */
-const transformApiRequest = ( { data: jitms } ) =>
+export const transformApiRequest = ( { data: jitms } ) =>
 	jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
@@ -66,7 +66,7 @@ export const doFetchJITM = ( action ) => {
 					message_path: action.messagePath,
 					s: action.searchQuery,
 				} ),
-				http_envelope: 1,
+				// http_envelope: 1,
 				locale: action.locale,
 			},
 		},
@@ -91,7 +91,7 @@ export const doDismissJITM = ( action ) =>
 					feature_class: action.featureClass,
 					id: action.id,
 				} ),
-				http_envelope: 1,
+				// http_envelope: 1,
 				json: false,
 			},
 		},
