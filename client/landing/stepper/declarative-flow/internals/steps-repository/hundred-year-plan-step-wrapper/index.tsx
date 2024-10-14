@@ -24,6 +24,7 @@ type Props = {
 	stepContent: ReactElement;
 	justifyStepContent?: string;
 	formattedHeader?: ReactElement;
+	hideInfoColumn?: boolean;
 };
 
 const FlexWrapper = styled.div< { justifyStepContent?: string } >`
@@ -250,7 +251,8 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 }
 
 function HundredYearPlanStepWrapper( props: Props ) {
-	const { stepContent, stepName, flowName, formattedHeader, justifyStepContent } = props;
+	const { stepContent, stepName, flowName, formattedHeader, justifyStepContent, hideInfoColumn } =
+		props;
 
 	const isMobile = useBreakpoint( `<${ SMALL_BREAKPOINT }px` );
 	const [ isOpen, setOpen ] = useState( false );
@@ -274,9 +276,11 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						isMobile={ isMobile }
 					>
 						{ isOpen && <InfoModal onClose={ closeModal } /> }
-						<InfoColumnWrapper isMobile={ isMobile }>
-							<InfoColumn isMobile={ isMobile } openModal={ openModal } />
-						</InfoColumnWrapper>
+						{ ! hideInfoColumn && (
+							<InfoColumnWrapper isMobile={ isMobile }>
+								<InfoColumn isMobile={ isMobile } openModal={ openModal } />
+							</InfoColumnWrapper>
+						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>
 							<div className="step-container__header">{ formattedHeader }</div>
 							{ stepContent }

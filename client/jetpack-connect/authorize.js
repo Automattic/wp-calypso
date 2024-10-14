@@ -975,8 +975,12 @@ export class JetpackAuthorize extends Component {
 			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
-		// If the site has a Jetpack paid product send the user back to wp-admin rather than to the Plans page.
-		if ( siteHasJetpackPaidProduct ) {
+		const urlParams = new URLSearchParams( window.location.search );
+		const skipPricing = urlParams.get( 'skip_pricing' );
+
+		// If the site has a Jetpack paid product or the manual query parameter to skip plans
+		// send the user back to wp-admin rather than to the Plans page.
+		if ( siteHasJetpackPaidProduct || skipPricing ) {
 			debug(
 				'authorization-form: getRedirectionTarget -> Site already has a paid product, redirection target is: %s',
 				redirectAfterAuth

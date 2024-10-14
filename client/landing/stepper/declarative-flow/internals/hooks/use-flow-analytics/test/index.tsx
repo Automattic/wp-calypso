@@ -14,10 +14,13 @@ describe( 'useFlowAnalytics', () => {
 		( { initialEntries } ) =>
 		( { children } ) => <MemoryRouter initialEntries={ initialEntries }>{ children }</MemoryRouter>;
 
-	const render = ( options = { initialEntries: [ '/setup/flow' ] } ) => {
-		const Wrapper = buildWrapper( options );
+	const render = (
+		renderOptions = { initialEntries: [ '/setup/flow' ] },
+		hookOptions: Parameters< typeof useFlowAnalytics >[ 1 ] = { enabled: true }
+	) => {
+		const Wrapper = buildWrapper( renderOptions );
 		return renderHook(
-			() => useFlowAnalytics( { flow: 'flow', step: 'step', variant: 'variant' } ),
+			() => useFlowAnalytics( { flow: 'flow', step: 'step', variant: 'variant' }, hookOptions ),
 			{ wrapper: Wrapper }
 		);
 	};
@@ -73,6 +76,12 @@ describe( 'useFlowAnalytics', () => {
 		render();
 
 		expect( recordFlowStart ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'doesn`t track the flow when the hook is disabled', () => {
+		render( { initialEntries: [ '/setup/flow' ] }, { enabled: false } );
+
+		expect( recordFlowStart ).not.toHaveBeenCalled();
 	} );
 
 	it( 'tracks the same flow after 20 min', () => {

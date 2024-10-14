@@ -47,7 +47,7 @@ export class MapFlow implements BlockFlow {
 			// Enter the supplied address.
 			const editorParent = await context.editorPage.getEditorParent();
 			await editorParent
-				.getByRole( 'textbox', { name: 'Add a marker' } )
+				.getByPlaceholder( 'Add a marker' )
 				.type( this.configurationData.address, { delay: 5 } );
 
 			// Wait for the popover and click on the first matching item.

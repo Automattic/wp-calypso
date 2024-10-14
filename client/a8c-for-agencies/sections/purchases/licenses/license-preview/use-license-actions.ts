@@ -14,6 +14,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function useLicenseActions(
 	siteUrl: string | null,
+	isDevSite: boolean,
 	attachedAt: string | null,
 	revokedAt: string | null,
 	licenseType: LicenseType,
@@ -40,8 +41,15 @@ export default function useLicenseActions(
 		const licenseState = getLicenseState( attachedAt, revokedAt );
 		return [
 			{
+				name: translate( 'Prepare for launch' ),
+				href: `https://wordpress.com/settings/general/${ siteSlug }`,
+				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
+				isExternalLink: true,
+				isEnabled: isDevSite,
+			},
+			{
 				name: translate( 'Set up site' ),
-				href: `https://wordpress.com/home/${ siteSlug }`,
+				href: `https://wordpress.com/overview/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_site_set_up_click' ),
 				isExternalLink: true,
 				isEnabled: true,
@@ -94,6 +102,7 @@ export default function useLicenseActions(
 		canRevoke,
 		dispatch,
 		isChildLicense,
+		isDevSite,
 		licenseType,
 		revokedAt,
 		siteUrl,

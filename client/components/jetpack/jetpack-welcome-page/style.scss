@@ -5,7 +5,20 @@
 .jetpack-welcome-page {
 	&.main.is-wide-layout {
 		max-width: 744px;
-		margin-top: 8vw;
+		margin-top: 16px;
+
+		@media (min-width: 660px) {
+			margin-top: -16px;
+		}
+
+		@include break-medium {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			height: 100vh;
+			margin-top: -32px;
+		}
 	}
 
 	&__card {
