@@ -35,7 +35,7 @@ export default function PaidImportSubscribersError( { error }: Props ) {
 						);
 					case HANDLED_ERROR.IMPORT_RUNNING:
 						return __(
-							'An subscriber import has already started. Please wait till that one finished before starting a new one.'
+							'A subscriber import has already started. Please wait till that one finished before starting a new one.'
 						);
 					case HANDLED_ERROR.MISSING_ARGS:
 					case HANDLED_ERROR.EMPTY_CSV_FILE:

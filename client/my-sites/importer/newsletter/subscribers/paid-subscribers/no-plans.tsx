@@ -76,7 +76,7 @@ export default function NoPlans( {
 					{ sprintf(
 						// translators: %d is the Stripe account name
 						__(
-							'It looks like the Stripe Account (%s) does not have any active plans. Are you sure you connected the same Stipe account that you use on Substack?'
+							'It looks like the Stripe Account (%s) does not have any active plans. Are you sure you connected the same Stripe account that you use on Substack?'
 						),
 						cardData?.account_display
 					) }
