@@ -110,17 +110,19 @@ const redirects = [
 // Adds a trailing slash to a path if necessary.
 const addTrailingSlash = ( path: string ) => ( path.endsWith( '/' ) ? path : `${ path }/` );
 
-// Retrieve the new redirect URL based on the current path.
+// Retrieve the new redirect URL based on the current path, and preserve trailing path after 'from'.
 const getRedirect = ( pathname: string ) => {
-	// Find a matching redirect based on the current path.
+	// Find a matching redirect based on the beginning of the current path.
 	const match = redirects.find( ( redirect ) => pathname.startsWith( redirect.from ) );
 
 	if ( match ) {
-		// Return the `to` path with a trailing slash for consistency.
+		// Get the rest of the pathname that comes after the matching `from` part.
+		const trailingPath = pathname.replace( match.from, '' );
+
+		// Return the `to` path with the trailing part and a trailing slash for consistency.
 		return {
-			pathname,
 			from: match.from,
-			to: match.to,
+			to: addTrailingSlash( match.to + trailingPath ),
 		};
 	}
 
@@ -129,8 +131,11 @@ const getRedirect = ( pathname: string ) => {
 };
 
 window.AppBoot = async () => {
-	// Redirect to the new URL if necessary
-	const redirect = getRedirect( addTrailingSlash( window.location.pathname ) );
+	const { pathname, search } = window.location;
+
+	// Redirect to the new URL if necessary, with trailing slash applied to the pathname.
+	const redirect = getRedirect( addTrailingSlash( pathname ) );
+
 	if ( redirect ) {
 		// We track the redirect and the referrer to help us understand the impact of the redirect.
 		recordTracksEvent( 'calypso_tailored_flows_redirect', {
@@ -138,8 +143,11 @@ window.AppBoot = async () => {
 			referrer: document.referrer,
 		} );
 
+		// Include the original query parameters (search) in the redirect.
+		const redirectUrl = redirect.to + search;
+
 		// Perform the redirect without adding to the browser history.
-		return ( window.location = redirect.to );
+		return ( window.location = redirectUrl );
 	}
 
 	const flowName = getFlowFromURL();
