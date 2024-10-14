@@ -123,7 +123,10 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 			fetch: doFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( schema.data.items, transformApiRequest ),
+			fromApi: makeJsonSchemaParser(
+				{ ...schema, properties: { ...schema.properties.data.items } },
+				transformApiRequest
+			),
 		} ),
 	],
 
