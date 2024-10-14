@@ -111,7 +111,7 @@ export const OdieSendMessageButton = ( {
 		if ( ! isLoading ) {
 			if ( config.isEnabled( 'help-center-experience' ) ) {
 				return _x(
-					'Type a message...',
+					'Type a message…',
 					'Placeholder text for the message input field (chat)',
 					__i18n_text_domain__
 				);
