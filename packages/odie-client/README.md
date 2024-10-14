@@ -38,8 +38,6 @@ const MyApp = () => (
 - `initialUserMessage?: string | null | undefined` - Set an initial message from the user.
 - `isMinimized?: boolean` - Tells if parent component app is minimized.
 - `extraContactOptions?: ReactNode` - Show extra options for exiting the chat.
-- `logger?: (message: string, properties: Record<string, unknown>) => void` - Log user events.
-- `loggerEventNamePrefix?: string` - Prefix for logged events.
 - `children?: ReactNode` - Child components within the provider.
 
 ## Odie Storage
