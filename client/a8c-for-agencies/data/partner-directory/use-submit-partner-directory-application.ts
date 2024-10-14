@@ -34,6 +34,7 @@ function mutationSubmitPartnerDirectoryApplication(
 			} ) ),
 			feedback_url: application.feedbackUrl,
 			is_published: application.isPublished,
+			edit_mode: application.editMode,
 		},
 	} );
 }

@@ -25,9 +25,12 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 		}
 	);
 
-	const onSubmit = useCallback( () => {
-		formData && submit( formData );
-	}, [ formData, submit ] );
+	const onSubmit = useCallback(
+		( { editMode }: { editMode: boolean } ) => {
+			formData && submit( { ...formData, editMode } );
+		},
+		[ formData, submit ]
+	);
 
 	return {
 		onSubmit,

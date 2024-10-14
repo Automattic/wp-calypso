@@ -144,7 +144,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			}
 			return;
 		}
-		onSubmit();
+		onSubmit( { editMode: !! initialFormData } );
 	};
 
 	const { services, products, directories, feedbackUrl } = formData;

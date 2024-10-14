@@ -9,6 +9,7 @@ export interface AgencyDirectoryApplication {
 	feedbackUrl: string;
 	status?: AgencyDirectoryApplicationStatus;
 	isPublished?: boolean;
+	editMode?: boolean;
 }
 
 export interface DirectoryApplication {

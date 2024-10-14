@@ -156,7 +156,7 @@ const PartnerDirectoryDashboard = () => {
 
 	useEffect( () => {
 		if ( shouldSubmitPublishProfile ) {
-			submitPublishProfile();
+			submitPublishProfile( { editMode: false } );
 			setShouldSubmitPublishProfile( false );
 		}
 	}, [ shouldSubmitPublishProfile, submitPublishProfile ] );
