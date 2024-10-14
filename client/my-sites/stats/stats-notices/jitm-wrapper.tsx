@@ -21,7 +21,7 @@ const JITMWrapper: React.FC< StatsNoticeProps > = ( { isOdysseyStats } ) => {
 				require="calypso/blocks/jitm"
 				placeholder={ null }
 				messagePath={ messagePath }
-				query="page%3Dstats"
+				searchQuery="page%3Dstats"
 			/>
 		</div>
 	);

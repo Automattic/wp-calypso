@@ -61,9 +61,8 @@ export const doFetchJITM = ( action ) => {
 			path: '/jitm',
 			query: {
 				message_path: action.messagePath,
-				s: action.searchQuery,
+				query: action.searchQuery,
 			},
-			// http_envelope: 1,
 			locale: action.locale,
 		},
 		{ ...action }
@@ -86,7 +85,6 @@ export const doDismissJITM = ( action ) =>
 				feature_class: action.featureClass,
 				id: action.id,
 			} ),
-			http_envelope: 1,
 			json: false,
 		},
 		action

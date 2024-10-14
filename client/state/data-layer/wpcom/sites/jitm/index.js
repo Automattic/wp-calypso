@@ -64,7 +64,7 @@ export const doFetchJITM = ( action ) => {
 				path: '/jetpack/v4/jitm',
 				query: JSON.stringify( {
 					message_path: action.messagePath,
-					s: action.searchQuery,
+					query: action.searchQuery,
 				} ),
 				// http_envelope: 1,
 				locale: action.locale,
