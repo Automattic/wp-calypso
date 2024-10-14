@@ -43,19 +43,21 @@ const HundredYearPlanDIYOrDIFM: Step = function HundredYearPlanDIYOrDIFM( { navi
 							<ul>
 								<li>
 									<Icon size={ 18 } icon={ check } />{ ' ' }
-									{ translate( 'Conduct a comprehensive digital longevity assessment' ) }
+									<span>
+										{ translate( 'Conduct a comprehensive digital longevity assessment' ) }
+									</span>
 								</li>
 								<li>
 									<Icon size={ 18 } icon={ check } />{ ' ' }
-									{ translate( 'Showcase our comprehensive legacy-building tools' ) }
+									<span>{ translate( 'Showcase our comprehensive legacy-building tools' ) }</span>
 								</li>
 								<li>
 									<Icon size={ 18 } icon={ check } />{ ' ' }
-									{ translate( 'Answer all your questions about long-term success' ) }
+									<span>{ translate( 'Answer all your questions about long-term success' ) }</span>
 								</li>
 								<li>
 									<Icon size={ 18 } icon={ check } />{ ' ' }
-									{ translate( 'Chart a course for the production of your new site' ) }
+									<span>{ translate( 'Chart a course for the production of your new site' ) }</span>
 								</li>
 							</ul>
 
