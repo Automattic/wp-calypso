@@ -80,6 +80,7 @@
 	}
 
 	// Use base component styling of `@automattic/components/Button`
+	.inner-notice-container .banner__action a.button,
 	.button.jetpack-emerald-button {
 		padding: 0.5em 1.5em;
 		font-size: 1rem;
@@ -113,7 +114,6 @@
 	}
 }
 
-// Hide Odyssey Stats preview JITM inside odyssey.
-.jitm-card.jitm-banner.odyssey-stats-preview {
-	display: none;
+.inner-notice-container .card.banner.is-jetpack {
+	border-left: 3px solid var(--color-jetpack);
 }
