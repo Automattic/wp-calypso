@@ -99,8 +99,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			await blazeCampaignPage.clickButton( 'Get started' );
 		} );
 
-		it( 'Click on Continue', async function () {
-			await blazeCampaignPage.clickButton( 'Continue' );
+		it( 'Click on Save', async function () {
+			await blazeCampaignPage.clickButton( 'Save' );
 		} );
 
 		it( 'Upload image', async function () {

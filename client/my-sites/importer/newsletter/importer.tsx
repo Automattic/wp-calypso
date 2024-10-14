@@ -1,6 +1,6 @@
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
@@ -19,7 +19,7 @@ import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes } from './types';
-import { getSetpProgressSteps } from './utils';
+import { getSetpProgressSteps, getImporterStatus } from './utils';
 
 import './importer.scss';
 
@@ -127,6 +127,21 @@ export default function NewsletterImporter( {
 		}
 	);
 
+	// Helps only show the confetti once even if you navigate between the different steps.
+	const shouldShowConfettiRef = useRef( false );
+	const [ showConfetti, setShowConfetti ] = useState( false );
+	const importerStatus = getImporterStatus(
+		paidNewsletterData?.steps.content.status,
+		paidNewsletterData?.steps.subscribers.status
+	);
+
+	useEffect( () => {
+		if ( importerStatus === 'done' && ! shouldShowConfettiRef.current ) {
+			shouldShowConfettiRef.current = true;
+			setShowConfetti( true );
+		}
+	}, [ importerStatus, showConfetti ] );
+
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
@@ -180,6 +195,8 @@ export default function NewsletterImporter( {
 							steps={ paidNewsletterData.steps }
 							engine={ engine }
 							fromSite={ fromSite }
+							showConfetti={ showConfetti }
+							shouldShownConfetti={ setShowConfetti }
 						/>
 					) }
 				</>

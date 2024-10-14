@@ -1,10 +1,12 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { isFetchingNotificationsSettings } from 'calypso/state/notification-settings/selectors';
 import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 
-export default class extends PureComponent {
+class StreamOptions extends PureComponent {
 	static displayName = 'NotificationSettingsFormStreamOptions';
 
 	static propTypes = {
@@ -13,6 +15,7 @@ export default class extends PureComponent {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		settings: PropTypes.object.isRequired,
 		onToggle: PropTypes.func.isRequired,
+		isFetching: PropTypes.bool,
 	};
 
 	// Assume this is a device stream if not timeline or email
@@ -33,6 +36,7 @@ export default class extends PureComponent {
 						<li className="notification-settings-form-stream-options__item" key={ index }>
 							{ isException ? null : (
 								<FormCheckbox
+									disabled={ this.props.isFetching }
 									checked={ get( this.props.settings, setting ) }
 									onChange={ () => {
 										this.props.onToggle( this.props.blogId, this.props.stream, setting );
@@ -46,3 +50,7 @@ export default class extends PureComponent {
 		);
 	}
 }
+
+const mapStateToProps = ( state ) => ( { isFetching: isFetchingNotificationsSettings( state ) } );
+
+export default connect( mapStateToProps )( StreamOptions );

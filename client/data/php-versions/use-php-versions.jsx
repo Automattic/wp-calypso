@@ -1,8 +1,18 @@
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const usePhpVersions = () => {
-	const recommendedValue = '8.1';
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	// 10% of sites will have a recommended PHP version of 8.2.
+	// 237292101 is the first site of the list.
+	const is10Percent = siteId % 10 === 0 && siteId >= 237292101;
+	const recommendedValue = is10Percent ? '8.2' : '8.1';
+	const label = translate( '%s (recommended)', {
+		args: recommendedValue,
+		comment: 'PHP Version for a version switcher',
+	} );
 
 	const phpVersions = [
 		{
@@ -24,11 +34,8 @@ export const usePhpVersions = () => {
 			disabled: true, // EOL 26th November, 2023
 		},
 		{
-			label: translate( '%s (recommended)', {
-				args: '8.1',
-				comment: 'PHP Version for a version switcher',
-			} ),
-			value: recommendedValue,
+			label: '8.1',
+			value: '8.1',
 		},
 		{
 			label: '8.2',
@@ -39,6 +46,12 @@ export const usePhpVersions = () => {
 			value: '8.3',
 		},
 	];
+
+	if ( is10Percent ) {
+		phpVersions[ 4 ].label = label;
+	} else {
+		phpVersions[ 3 ].label = label;
+	}
 
 	return { recommendedValue, phpVersions };
 };

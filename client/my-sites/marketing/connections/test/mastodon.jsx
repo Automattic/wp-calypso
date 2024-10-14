@@ -59,7 +59,7 @@ describe( 'Mastodon', () => {
 		// error message is displayed
 		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
 
-		const btn = screen.getByRole( 'button', { name: /Connect one more account/i } );
+		const btn = screen.getByRole( 'button', { name: /Connect account/i } );
 		expect( btn ).toBeDisabled();
 	} );
 

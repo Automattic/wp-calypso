@@ -248,7 +248,7 @@ class ThemeShowcase extends Component {
 
 	scrollToSearchInput = () => {
 		// Scroll to the top of the showcase
-		if ( this.showcaseRef.current ) {
+		if ( this.showcaseRef.current && this.state.shouldThemeControlsSticky ) {
 			this.showcaseRef.current.scrollIntoView( {
 				behavior: 'instant',
 				block: 'start',

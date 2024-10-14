@@ -1,4 +1,5 @@
 import { Card, FormLabel } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -144,7 +145,7 @@ class Profile extends Component {
 									{
 										components: {
 											strong: <strong />,
-											a: <a href="https://gravatar.com/profile" target="_blank" rel="noreferrer" />,
+											a: <ExternalLink href="https://gravatar.com/profile" />,
 										},
 										args: {
 											email: this.props.getSetting( 'user_email' ),

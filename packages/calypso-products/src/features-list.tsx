@@ -2705,7 +2705,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SENSEI_SELL_COURSES ]: {
 		getSlug: () => FEATURE_SENSEI_SELL_COURSES,
-		getTitle: () => i18n.translate( 'Sell courses and subscriptions' ),
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Sell courses' )
+				? i18n.translate( 'Sell courses' )
+				: i18n.translate( 'Sell courses and subscriptions' ),
 	},
 	[ FEATURE_SENSEI_STORAGE ]: {
 		getSlug: () => FEATURE_SENSEI_STORAGE,

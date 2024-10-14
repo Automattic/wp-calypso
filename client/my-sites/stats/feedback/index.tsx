@@ -17,9 +17,15 @@ import 'animate.css';
 
 import './style.scss';
 
-const ACTION_LEAVE_REVIEW = 'action_redirect_to_plugin_review_page';
-const ACTION_SEND_FEEDBACK = 'action_open_form_modal';
-const ACTION_DISMISS_FLOATING_PANEL = 'action_dismiss_floating_panel';
+const TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD =
+	'stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section';
+const TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD =
+	'stats_feedback_action_open_form_modal_from_persistent_section';
+const TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL =
+	'stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel';
+const TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL =
+	'stats_feedback_action_open_form_modal_from_floating_panel';
+const TRACKS_EVENT_DISMISS_FLOATING_PANEL = 'stats_feedback_action_dismiss_floating_panel';
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
@@ -62,35 +68,27 @@ interface FeedbackProps {
 	siteId: number;
 }
 
-interface FeedbackPropsInternal {
-	clickHandler: ( action: string ) => void;
-	isOpen?: boolean;
+interface FeedbackContentProps {
+	onLeaveReview: () => void;
+	onSendFeedback: () => void;
 }
 
-function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
+function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProps ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
 	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
-	const handleLeaveReview = () => {
-		clickHandler( ACTION_LEAVE_REVIEW );
-	};
-
-	const handleSendFeedback = () => {
-		clickHandler( ACTION_SEND_FEEDBACK );
-	};
-
 	return (
 		<div className="stats-feedback-content">
 			<div className="stats-feedback-content__cta">{ ctaText }</div>
 			<div className="stats-feedback-content__actions">
-				<Button variant="secondary" onClick={ handleLeaveReview }>
+				<Button variant="secondary" onClick={ onLeaveReview }>
 					<span className="stats-feedback-content__emoji">😍</span>
 					{ primaryButtonText }
 				</Button>
-				<Button variant="secondary" onClick={ handleSendFeedback }>
+				<Button variant="secondary" onClick={ onSendFeedback }>
 					<span className="stats-feedback-content__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
@@ -99,23 +97,38 @@ function FeedbackContent( { clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
-function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
+interface FeedbackPanelProps {
+	isOpen: boolean;
+	onDismissPanel: () => void;
+	onLeaveReview: () => void;
+	onSendFeedback: () => void;
+}
+
+function FeedbackPanel( {
+	isOpen,
+	onDismissPanel,
+	onLeaveReview,
+	onSendFeedback,
+}: FeedbackPanelProps ) {
 	const translate = useTranslate();
 	const [ animationClassName, setAnimationClassName ] = useState(
 		FEEDBACK_PANEL_ANIMATION_NAME_ENTRY
 	);
 
-	const handleCloseButtonClicked = () => {
-		clickHandler( ACTION_DISMISS_FLOATING_PANEL );
+	const handleDismissPanel = () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL );
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
+		onDismissPanel();
 	};
 
-	const clickHandlerWithAnalytics = ( action: string ) => {
-		// stats_feedback_action_redirect_to_plugin_review_page_from_floating_panel
-		// stats_feedback_action_open_form_modal_from_floating_panel
-		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_floating_panel` );
+	const handleLeaveReviewFromPanel = () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL );
+		onLeaveReview();
+	};
 
-		clickHandler( action );
+	const handleSendFeedbackFromPanel = () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL );
+		onSendFeedback();
 	};
 
 	if ( ! isOpen ) {
@@ -126,14 +139,17 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 		<div className={ clsx( 'stats-feedback-panel', 'animate__animated', animationClassName ) }>
 			<Button
 				className="stats-feedback-panel__close-button"
-				onClick={ handleCloseButtonClicked }
+				onClick={ handleDismissPanel }
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
-			<FeedbackContent clickHandler={ clickHandlerWithAnalytics } />
+			<FeedbackContent
+				onLeaveReview={ handleLeaveReviewFromPanel }
+				onSendFeedback={ handleSendFeedbackFromPanel }
+			/>
 			<Button
 				className="stats-feedback-panel__dismiss-button"
-				onClick={ handleCloseButtonClicked }
+				onClick={ handleDismissPanel }
 				variant="link"
 			>
 				{ translate( 'Dismiss' ) }
@@ -142,24 +158,33 @@ function FeedbackPanel( { isOpen, clickHandler }: FeedbackPropsInternal ) {
 	);
 }
 
-function FeedbackCard( { clickHandler }: FeedbackPropsInternal ) {
-	const clickHandlerWithAnalytics = ( action: string ) => {
-		// stats_feedback_action_redirect_to_plugin_review_page_from_persistent_section
-		// stats_feedback_action_open_form_modal_from_persistent_section
-		trackStatsAnalyticsEvent( `stats_feedback_${ action }_from_persistent_section` );
+interface FeedbackCardProps {
+	onLeaveReview: () => void;
+	onSendFeedback: () => void;
+}
 
-		clickHandler( action );
+function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+	const handleLeaveReviewFromCard = () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
+		onLeaveReview();
+	};
+	const handleSendFeedbackFromCard = () => {
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD );
+		onSendFeedback();
 	};
 
 	return (
 		<div className="stats-feedback-card">
-			<FeedbackContent clickHandler={ clickHandlerWithAnalytics } />
+			<FeedbackContent
+				onLeaveReview={ handleLeaveReviewFromCard }
+				onSendFeedback={ handleSendFeedbackFromCard }
+			/>
 		</div>
 	);
 }
 
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
 	const { supportCommercialUse } = useStatsPurchases( siteId );
@@ -182,27 +207,23 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		}, FEEDBACK_PANEL_ANIMATION_DELAY_EXIT );
 	};
 
-	const handleButtonClick = ( action: string ) => {
-		switch ( action ) {
-			case ACTION_SEND_FEEDBACK:
-				setIsFloatingPanelOpen( false );
-				setIsOpen( true );
-				break;
-			case ACTION_DISMISS_FLOATING_PANEL:
-				dismissPanelWithDelay();
-				updateFeedbackPanelHibernationDelay();
-				trackStatsAnalyticsEvent( `stats_feedback_${ ACTION_DISMISS_FLOATING_PANEL }` );
-				break;
-			case ACTION_LEAVE_REVIEW:
-				setIsFloatingPanelOpen( false );
-				window.open( FEEDBACK_LEAVE_REVIEW_URL );
-				break;
-			// Ignore other cases.
-		}
+	const handleDismissPanel = () => {
+		dismissPanelWithDelay();
+		updateFeedbackPanelHibernationDelay();
 	};
 
-	const onModalClose = () => {
-		setIsOpen( false );
+	const handleLeaveReview = () => {
+		setIsFloatingPanelOpen( false );
+		window.open( FEEDBACK_LEAVE_REVIEW_URL );
+	};
+
+	const handleSendFeedback = () => {
+		setIsFloatingPanelOpen( false );
+		setIsFeedbackModalOpen( true );
+	};
+
+	const handleCloseModalDialog = () => {
+		setIsFeedbackModalOpen( false );
 	};
 
 	if ( ! supportCommercialUse ) {
@@ -211,9 +232,16 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	return (
 		<div className="stats-feedback-container">
-			<FeedbackCard clickHandler={ handleButtonClick } />
-			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
-			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ onModalClose } /> }
+			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
+			<FeedbackPanel
+				isOpen={ isFloatingPanelOpen }
+				onDismissPanel={ handleDismissPanel }
+				onLeaveReview={ handleLeaveReview }
+				onSendFeedback={ handleSendFeedback }
+			/>
+			{ isFeedbackModalOpen && (
+				<FeedbackModal siteId={ siteId } onClose={ handleCloseModalDialog } />
+			) }
 		</div>
 	);
 }

@@ -6,7 +6,6 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-	justify-content: center;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-end;
@@ -30,6 +29,10 @@
 		}
 	}
 
+	&.domain-product-single-price {
+		justify-content: start;
+		margin-top: 6px;
+	}
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
 			padding-left: 1em;
@@ -81,11 +84,6 @@
 		}
 	}
 
-	.domain-product-price__price,
-	.domain-product-price__regular-price {
-		margin: auto 0;
-	}
-
 	.domain-product-price__renewal-price {
 		line-height: 1.7;
 		font-size: $font-body-small;
@@ -133,18 +131,6 @@
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: var(--color-neutral-0);
 			color: transparent;
-		}
-	}
-}
-
-.featured-domain-suggestions {
-	.domain-product-price {
-		.is-section-domains & {
-			padding-left: 0;
-		}
-
-		&.is-free-domain {
-			padding-left: 0;
 		}
 	}
 }

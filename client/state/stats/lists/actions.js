@@ -93,7 +93,7 @@ export function requestSiteStats( siteId, statType, query ) {
 					return {
 						period: PERIOD_ALL_TIME,
 						quantity: query.quantity ?? 10,
-						sort_field: query.sort_field ?? 'post_id',
+						sort_field: query.sort_field ?? 'post_date',
 						sort_order: query.sort_order ?? 'desc',
 					};
 				default:

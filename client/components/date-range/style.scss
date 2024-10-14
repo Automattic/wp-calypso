@@ -60,7 +60,8 @@ $date-range-mobile-layout-switch: $break-small;
 		.date-range__controls,
 		.date-range__date-inputs,
 		.date-range__picker,
-		.date-range__popover-header {
+		.date-range__popover-header,
+		.date-range__popover-footer {
 			filter: blur(10px);
 			z-index: 0;
 		}

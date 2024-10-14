@@ -18,6 +18,12 @@ class SharingServiceDescription extends Component {
 
 	static defaultProps = {
 		descriptions: Object.freeze( {
+			bluesky() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Sharing posts to your Bluesky profile.' );
+				}
+				return this.props.translate( 'Share posts to your Bluesky profile.' );
+			},
 			facebook: function () {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(

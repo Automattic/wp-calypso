@@ -74,7 +74,21 @@ const OverviewBodyProducts = () => {
 				'Product Bundles: Offer personalized bundles, bulk discounts, and assembled products.'
 			),
 			translate( 'Subscriptions: Enable weekly, monthly, or annual subscriptions.' ),
-			translate( 'WooPayments Referrals: Coming soon.' ),
+			translate(
+				'WooPayments: Earn a recurring 5bps commission on Total Payment Volume (TPV) for any new clients referred. {{a}}Learn{{nbsp/}}more ↗{{/a}}',
+				{
+					components: {
+						a: (
+							<a
+								href="https://automattic.com/for-agencies/program-incentives/"
+								target="_blank"
+								rel="noreferrer noopener"
+							/>
+						),
+						nbsp: <>&nbsp;</>,
+					},
+				}
+			) as string,
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'View all WooCommerce products' ),

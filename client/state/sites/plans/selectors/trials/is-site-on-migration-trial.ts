@@ -7,10 +7,10 @@ import type { AppState } from 'calypso/types';
 /**
  * Checks whether the current site is on the migration trial.
  * @param {AppState} state Global state tree
- * @param {number} siteId - Site ID
+ * @param {number|null} siteId - Site ID
  * @returns {boolean} Returns true if the site is on the trial
  */
-export default function isSiteOnMigrationTrial( state: AppState, siteId: number ): boolean {
+export default function isSiteOnMigrationTrial( state: AppState, siteId: number | null ): boolean {
 	if ( ! isEnabled( 'plans/migration-trial' ) ) {
 		return false;
 	}

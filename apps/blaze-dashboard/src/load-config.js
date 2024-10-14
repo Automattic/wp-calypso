@@ -37,7 +37,11 @@ productionConfig.features.blaze_setup_mode = !! needSetup;
 productionConfig.features[ 'use-translation-chunks' ] = false;
 
 // Sets the advertising path prefix for this app
-productionConfig.advertising_dashboard_path_prefix = isBlazePlugin ? '/wc-blaze' : '/advertising';
+const dashboardPathPrefix = isBlazePlugin
+	? window.configData?.dashboard_path_prefix || '/wc-blaze' // Compatibility with older versions of Blaze Ads plugin
+	: '/advertising';
+
+productionConfig.advertising_dashboard_path_prefix = dashboardPathPrefix;
 
 // Note: configData is hydrated in Jetpack: https://github.com/Automattic/jetpack/blob/60b0dac0dc5ad7edec2b86edb57b65a3a98ec42d/projects/packages/blaze/src/class-dashboard-config-data.php#L31
 window.configData = {

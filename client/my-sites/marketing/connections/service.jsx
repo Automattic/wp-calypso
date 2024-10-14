@@ -646,7 +646,7 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.props.service.ID === 'mastodon'
+						this.props.service.ID === 'mastodon' || this.props.service.ID === 'bluesky'
 							? cloneElement( action, { isExpanded: true } )
 							: action
 					}

@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "../../mixins.scss";
+@import "../../mixins";
 
 .product-listing__placeholder {
 	@include placeholder( --color-neutral-10 );

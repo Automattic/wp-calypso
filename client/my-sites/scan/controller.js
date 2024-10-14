@@ -11,7 +11,6 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import ScanHistoryPage from './history';
@@ -98,11 +97,8 @@ export function scan( context, next ) {
 }
 
 export function scanHistory( context, next ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const showScanNavigation = ! isAtomicSite( state, siteId ) && isJetpackCloud();
 	const { filter } = context.params;
-	context.primary = <ScanHistoryPage filter={ filter } showNavigation={ showScanNavigation } />;
+	context.primary = <ScanHistoryPage filter={ filter } />;
 	next();
 }
 

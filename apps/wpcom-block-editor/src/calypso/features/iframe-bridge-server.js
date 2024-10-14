@@ -560,12 +560,69 @@ async function openLinksInParentFrame( calypsoPort ) {
 		} );
 	} );
 
-	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
-	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
+	await isEditorReadyWithBlocks();
+
+	// Observes the popover slot for the "Manage Patterns" link which can be found
+	// in the block's more menu or in the block-editor menu, and for the navigation link.
+	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				// For some reason, some nodes might be `undefined`, see:
+				// https://sentry.io/organizations/a8c/issues/3216750319/?project=5876245.
+				// We skip the iteration if that's the case.
+				if ( ! node ) {
+					continue;
+				}
+
+				if ( node?.classList?.contains( 'components-popover' ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
+						'a[href$="site-editor.php?path=%2Fpatterns"]'
+					);
+
+					if ( manageReusableBlocksAnchorElem ) {
+						manageReusableBlocksAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageReusableBlocksAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
+
+					const manageNavigationMenusAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_navigation"]'
+					);
+
+					if ( manageNavigationMenusAnchorElem ) {
+						manageNavigationMenusAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageNavigationMenusAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
+				}
+			}
+		}
+	} );
+
+	// Observe children of the Popover Container
+	const popoverContainer = getPopoverFallbackContainer();
+	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
+
+	const { createNewPostUrl } = calypsoifyGutenberg;
+	if ( ! createNewPostUrl ) {
 		return;
 	}
-
-	await isEditorReadyWithBlocks();
 
 	// Handle the view post link in the snackbar, which unfortunately has a click
 	// handler which stops propagation, so we can't override it with the global handler.
@@ -610,25 +667,8 @@ async function openLinksInParentFrame( calypsoPort ) {
 	};
 	const createNewPostLinkObserver = new window.MutationObserver( tryToReplaceCreateNewPostLink );
 
-	// Manage reusable blocks link in the global block inserter's Reusable tab
-	// Post editor only
-	const inserterManageReusableBlocksObserver = new window.MutationObserver( ( mutations ) => {
-		const node = mutations[ 0 ].target;
-		if ( node.attributes.getNamedItem( 'aria-selected' )?.nodeValue === 'true' ) {
-			const hyperlink = document.querySelector( 'a.block-editor-inserter__manage-reusable-blocks' );
-			if ( hyperlink ) {
-				hyperlink.href = manageReusableBlocksUrl;
-				hyperlink.target = '_top';
-			}
-		}
-	} );
-
 	const shouldReplaceCreateNewPostLinksFor = ( node ) =>
 		createNewPostUrl && node.classList.contains( 'interface-interface-skeleton__sidebar' );
-
-	const shouldReplaceManageReusableBlockLinksFor = ( node ) =>
-		manageReusableBlocksUrl &&
-		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
 
 	const observeSidebarMutations = ( node ) => {
 		if (
@@ -639,16 +679,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 			// If a Query block is selected, then the sidebar will
 			// directly open on the block settings tab
 			tryToReplaceCreateNewPostLink();
-		} else if (
-			// Block inserter sidebar, Reusable tab
-			shouldReplaceManageReusableBlockLinksFor( node )
-		) {
-			const reusableTab = node.querySelector( '.components-tab-panel__tabs-item[id*="reusable"]' );
-			if ( reusableTab ) {
-				inserterManageReusableBlocksObserver.observe( reusableTab, {
-					attributeFilter: [ 'aria-selected' ],
-				} );
-			}
 		}
 	};
 
@@ -658,11 +688,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 			shouldReplaceCreateNewPostLinksFor( node )
 		) {
 			createNewPostLinkObserver.disconnect();
-		} else if (
-			// Block inserter sidebar, Reusable tab
-			shouldReplaceManageReusableBlockLinksFor( node )
-		) {
-			inserterManageReusableBlocksObserver.disconnect();
 		}
 	};
 
@@ -696,58 +721,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// They are always direct children of the body element.
 	const body = document.querySelector( '.interface-interface-skeleton__body' );
 	sidebarsObserver.observe( body, { childList: true } );
-
-	// Observes the popover slot for the "Manage reusable blocks" link which can be found
-	// in the reusable block's more menu or in the block-editor menu
-	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
-		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
-			// We should leave the URL alone so it goes to the fancy site-editor view, not a regular old post listing
-			anchorElem.href = manageReusableBlocksUrl;
-			anchorElem.target = '_top';
-		};
-
-		for ( const record of mutations ) {
-			for ( const node of record.addedNodes ) {
-				// For some reason, some nodes might be `undefined`, see:
-				// https://sentry.io/organizations/a8c/issues/3216750319/?project=5876245.
-				// We skip the iteration if that's the case.
-				if ( ! node ) {
-					continue;
-				}
-
-				if ( node?.classList?.contains( 'components-popover' ) ) {
-					const manageReusableBlocksAnchorElem = node.querySelector(
-						'a[href$="site-editor.php?path=%2Fpatterns"]'
-					);
-
-					const manageNavigationMenusAnchorElem = node.querySelector(
-						'a[href$="edit.php?post_type=wp_navigation"]'
-					);
-
-					manageReusableBlocksAnchorElem &&
-						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
-
-					if ( manageNavigationMenusAnchorElem ) {
-						manageNavigationMenusAnchorElem.addEventListener(
-							'click',
-							( e ) => {
-								calypsoPort.postMessage( {
-									action: 'openLinkInParentFrame',
-									payload: { postUrl: manageNavigationMenusAnchorElem.href },
-								} );
-								e.preventDefault();
-							},
-							false
-						);
-					}
-				}
-			}
-		}
-	} );
-
-	// Observe children of the Popover Container
-	const popoverContainer = getPopoverFallbackContainer();
-	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors

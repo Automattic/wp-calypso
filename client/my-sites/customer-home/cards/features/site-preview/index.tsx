@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { ReactNode } from 'react';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
+import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -112,9 +112,13 @@ const SitePreview = ( {
 				<div className="home-site-preview__action-bar">
 					<div className="home-site-preview__site-info">
 						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
-						<SiteUrl href={ selectedSiteURL } title={ selectedSiteURL }>
+						<a
+							href={ selectedSiteURL }
+							title={ selectedSiteURL }
+							className="home-site-preview__info-domain"
+						>
 							<Truncated>{ selectedSiteSlug }</Truncated>
-						</SiteUrl>
+						</a>
 					</div>
 					<SitePreviewEllipsisMenu />
 				</div>

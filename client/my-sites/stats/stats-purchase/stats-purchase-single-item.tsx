@@ -152,6 +152,8 @@ const StatsCommercialPurchase = ( {
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
+	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );

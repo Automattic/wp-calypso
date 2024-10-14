@@ -106,7 +106,7 @@ const SharingServiceAction = ( {
 		);
 	}
 
-	if ( 'mastodon' === service.ID ) {
+	if ( 'mastodon' === service.ID || 'bluesky' === service.ID ) {
 		return (
 			<Button
 				scary={ warning }

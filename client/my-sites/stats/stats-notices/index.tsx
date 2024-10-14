@@ -23,8 +23,8 @@ import hasSiteProductJetpackStatsPWYWOnly from 'calypso/state/sites/selectors/ha
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { AllTimeData } from '../all-time-highlights-section';
 import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-purchases';
+import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';

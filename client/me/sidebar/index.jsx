@@ -175,6 +175,7 @@ class MeSidebar extends Component {
 						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 						label={ translate( 'Manage Blogs' ) }
 						materialIcon="apps"
+						forceInternalLink
 						onNavigate={ ( event, urlPath ) => {
 							this.handleGlobalSidebarMenuItemClick( urlPath );
 						} }

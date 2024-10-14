@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .performance-profiler-tip {
 	max-width: 460px;
 	background-color: #f7f8fe;
@@ -21,4 +23,5 @@
 	.learn-more-link {
 		margin-top: 20px;
 	}
+
 }

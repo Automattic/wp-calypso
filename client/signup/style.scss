@@ -259,7 +259,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 }
 
 .layout.is-wccom-oauth-flow {
-	@import "jetpack-connect/colors.scss";
+	@import "jetpack-connect/colors";
 	@include woocommerce-colors();
 	background-color: var(--color-woocommerce-onboarding-background);
 	height: 100%;

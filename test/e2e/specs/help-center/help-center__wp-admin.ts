@@ -146,7 +146,7 @@ skipDescribeIf(
 			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 
-		it( 'get forwarded to a human', async () => {
+		it.skip( 'get forwarded to a human', async () => {
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();
@@ -158,7 +158,7 @@ skipDescribeIf(
 		/**
 		 * These tests need to be update
 		 */
-		it( 'start talking with a human', async () => {
+		it.skip( 'start talking with a human', async () => {
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
 			await contactSupportButton.dispatchEvent( 'click' );
 

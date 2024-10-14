@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -153,7 +152,7 @@ const Home = ( {
 
 	const headerActions = (
 		<>
-			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
+			<Button href={ site.URL } onClick={ trackViewSiteAction }>
 				{ translate( 'View site' ) }
 			</Button>
 			{ isAdmin && ! isP2 && (
@@ -179,13 +178,13 @@ const Home = ( {
 				<SiteIcon site={ site } size={ 58 } />
 				<div className="customer-home__site-info">
 					<div className="customer-home__site-title">{ site.name }</div>
-					<ExternalLink
+					<a
 						href={ site.URL }
 						className="customer-home__site-domain"
 						onClick={ trackViewSiteAction }
 					>
 						<span className="customer-home__site-domain-text">{ site.domain }</span>
-					</ExternalLink>
+					</a>
 				</div>
 			</div>
 		</div>

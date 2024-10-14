@@ -65,7 +65,7 @@ export default function PlanSelectionDetails( {
 
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
-	if ( isLoading ) {
+	if ( ! isReferMode && isLoading ) {
 		return (
 			<section className="pressable-overview-plan-selection__details is-loader">
 				<div className="pressable-overview-plan-selection__details-card"></div>
@@ -93,7 +93,7 @@ export default function PlanSelectionDetails( {
 							  } ) }
 					</h3>
 
-					{ selectedPlan && (
+					{ ! isReferMode && selectedPlan && (
 						<div className="pressable-overview-plan-selection__details-card-header-price">
 							<strong className="pressable-overview-plan-selection__details-card-header-price-value">
 								{ formatCurrency( discountedCost, selectedPlan.currency ) }
@@ -113,6 +113,13 @@ export default function PlanSelectionDetails( {
 									components: { b: <b /> },
 								}
 							) }
+						</div>
+					) }
+					{ isReferMode && (
+						<div className="pressable-overview-plan-selection__details-card-header-price">
+							<strong className="pressable-overview-plan-selection__details-card-header-coming-soon">
+								{ translate( 'Coming soon' ) }
+							</strong>
 						</div>
 					) }
 				</div>

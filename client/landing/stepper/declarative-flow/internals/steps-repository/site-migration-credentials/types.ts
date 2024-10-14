@@ -7,6 +7,7 @@ export interface CredentialsFormData {
 	backupFileLocation: string;
 	migrationType: 'credentials' | 'backup';
 	notes: string;
+	bypassVerification?: boolean;
 }
 
 export interface ApiFormData {
@@ -23,6 +24,7 @@ export interface ApiError {
 	message: string;
 	data: {
 		params?: Record< string, string >;
+		response_code?: number;
 	};
 }
 

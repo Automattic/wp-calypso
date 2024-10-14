@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Security2faCodePrompt from 'calypso/me/security-2fa-code-prompt';
 import Security2faStatus from 'calypso/me/security-2fa-status';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -100,12 +101,12 @@ class Security2faDisable extends Component {
 						{
 							components: {
 								changephonelink: (
-									<a
-										href={ localizeUrl(
+									<InlineSupportLink
+										supportPostId={ 39178 }
+										supportLink={ localizeUrl(
 											'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
 										) }
-										target="_blank"
-										rel="noopener noreferrer"
+										showIcon={ false }
 									/>
 								),
 							},

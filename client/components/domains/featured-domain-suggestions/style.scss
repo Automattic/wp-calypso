@@ -5,6 +5,15 @@
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
+	border-top: 1px solid rgba(220, 220, 222, 0.64);
+
+	@include break-small {
+		border-top: none;
+		margin: 0 20px;
+	}
+	@include break-large {
+		margin: 0;
+	}
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
@@ -44,6 +53,10 @@
 		}
 	}
 
+	.domain-registration-suggestion__title-info {
+		max-width: unset;
+	}
+
 	.button.domain-suggestion__action {
 		flex-grow: 0;
 		text-align: center;
@@ -63,9 +76,15 @@
 		display: flex;
 		flex-basis: auto;
 		flex-direction: column;
-		justify-content: center;
 		flex-grow: 1;
 		margin-top: 0;
+		flex-wrap: wrap;
+		.domain-registration-suggestion__title-info {
+			width: 100%;
+		}
+		@media (min-width: 660px) {
+			flex-direction: row;
+		}
 	}
 
 	.domain-registration-suggestion__title,
@@ -74,7 +93,6 @@
 	.domain-registration-suggestion__match-reasons {
 		flex: 0 0 auto;
 		align-self: flex-start;
-		width: 100%;
 	}
 
 	.domain-registration-suggestion__title {
@@ -108,16 +126,23 @@
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		margin: 0;
-		justify-content: flex-start;
-
+		flex-grow: 1;
+		align-items: baseline;
 		body.is-section-signup.is-white-signup & {
 			align-items: flex-start;
 			margin-top: 12px;
 		}
-
-		body.is-section-stepper & {
-			align-items: flex-start;
+		.is-section-domains & {
+			padding-left: 0;
+		}
+		&.is-free-domain {
+			padding-left: 0;
 			margin-top: 12px;
+			display: flex;
+			flex-direction: column-reverse;
+			@include break-mobile {
+				flex-direction: column;
+			}
 		}
 	}
 
@@ -180,7 +205,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	background: #fff;
 	border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 	padding: 16px 20px;
-
+	flex-direction: column-reverse;
 	@include break-mobile {
 		border-radius: 4px;
 		margin-bottom: 12px;

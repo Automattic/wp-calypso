@@ -13,6 +13,7 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 			agency_name: details.agencyName,
 			agency_url: details.agencyUrl,
 			number_sites: details.managedSites,
+			user_type: details.userType,
 			services_offered: details.servicesOffered,
 			products_offered: details.productsOffered,
 			address_line1: details.line1,

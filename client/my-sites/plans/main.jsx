@@ -447,7 +447,13 @@ class Plans extends Component {
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
 				<QueryProducts />
-				<TrackComponentView eventName="calypso_plans_view" />
+				<TrackComponentView
+					eventName="calypso_plans_view"
+					eventProperties={ {
+						current_plan_slug: currentPlanSlug || null,
+						is_site_on_paid_plan: !! ( currentPlanSlug && ! isFreePlan ),
+					} }
+				/>
 				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
 					<DomainUpsellDialog domain={ selectedSite.slug } />
 				) }

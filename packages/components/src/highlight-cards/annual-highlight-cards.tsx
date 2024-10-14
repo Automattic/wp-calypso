@@ -1,4 +1,4 @@
-import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
+import { comment, Icon, paragraph, postContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate, useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
@@ -13,7 +13,6 @@ type AnnualHighlightCounts = {
 	likes: number | null;
 	posts: number | null;
 	words: number | null;
-	followers: number | null;
 };
 
 type AnnualHighlightsProps = {
@@ -34,7 +33,6 @@ function getCardProps( counts: AnnualHighlightCounts ) {
 		{ heading: translate( 'Words' ), count: counts?.words, icon: paragraph },
 		{ heading: translate( 'Likes' ), count: counts?.likes, icon: starEmpty },
 		{ heading: translate( 'Comments' ), count: counts?.comments, icon: comment },
-		{ heading: translate( 'Subscribers' ), count: counts?.followers, icon: people },
 	];
 }
 

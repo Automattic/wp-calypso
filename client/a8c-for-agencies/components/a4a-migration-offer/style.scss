@@ -4,6 +4,19 @@
 	border: 1px solid var(--studio-automattic-blue-5);
 	box-shadow: none;
 
+	.foldable-card__main {
+		flex: 11 1;
+	}
+
+	.a4a-migration-offer__icon {
+		background-color: var(--studio-automattic-blue-50);
+		border-radius: 50%;
+		padding: 6px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	&.non-foldable {
 		display: flex;
 		flex-direction: row;
@@ -52,7 +65,7 @@
 
 		h3 {
 			color: var(--studio-gray-100);
-			font-weight: 500;
+			font-weight: 600;
 			font-size: 1rem;
 		}
 	}
@@ -61,6 +74,17 @@
 		color: var(--studio-gray-80);
 		@include a4a-font-body-lg;
 		max-width: 850px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		margin-block-end: 12px;
+	}
+
+	.a4a-migration-offer__asterisk {
+		color: var(--studio-gray-80);
+		font-size: 0.75rem;
+		font-weight: 400;
+		margin-block-start: 12px;
+		margin-bottom: 0;
 	}
 
 	.a4a-migration-offer__details-button {

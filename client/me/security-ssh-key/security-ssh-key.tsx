@@ -9,6 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -208,12 +209,12 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 							{
 								br: <br />,
 								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/'
+									<InlineSupportLink
+										supportPostId={ 100385 }
+										supportLink={ localizeUrl(
+											'https://developer.wordpress.com/docs/developer-tools/ssh/'
 										) }
-										target="_blank"
-										rel="noreferrer"
+										showIcon={ false }
 									/>
 								),
 							}

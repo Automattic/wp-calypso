@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { Provider as ReduxProvider } from 'react-redux';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { setHrefLangLinks } from 'calypso/controller/localized-links';
 import {
@@ -18,7 +19,7 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
-import { setShouldServerSideRenderLogin } from './ssr';
+import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -37,22 +38,25 @@ const ReduxWrappedLayout = ( {
 	secondary,
 	redirectUri,
 	showGdprBanner,
+	i18n,
 } ) => {
 	return (
-		<RouteProvider
-			currentSection={ currentSection }
-			currentRoute={ currentRoute }
-			currentQuery={ currentQuery }
-		>
-			<ReduxProvider store={ store }>
-				<LayoutLoggedOut
-					primary={ primary }
-					secondary={ secondary }
-					redirectUri={ redirectUri }
-					showGdprBanner={ showGdprBanner }
-				/>
-			</ReduxProvider>
-		</RouteProvider>
+		<CalypsoI18nProvider i18n={ i18n }>
+			<RouteProvider
+				currentSection={ currentSection }
+				currentRoute={ currentRoute }
+				currentQuery={ currentQuery }
+			>
+				<ReduxProvider store={ store }>
+					<LayoutLoggedOut
+						primary={ primary }
+						secondary={ secondary }
+						redirectUri={ redirectUri }
+						showGdprBanner={ showGdprBanner }
+					/>
+				</ReduxProvider>
+			</RouteProvider>
+		</CalypsoI18nProvider>
 	);
 };
 
@@ -66,6 +70,7 @@ export default ( router ) => {
 			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
 			redirectLoggedIn,
 			setLocaleMiddleware(),
+			setMetaTags,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLoginUse,
 			makeLoggedOutLayout
@@ -74,6 +79,7 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
 			setLocaleMiddleware(),
+			setMetaTags,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLogin,
 			makeLoggedOutLayout
@@ -84,6 +90,7 @@ export default ( router ) => {
 		[ `/log-in/qr/${ lang }` ],
 		redirectLoggedIn,
 		setLocaleMiddleware(),
+		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		qrCodeLogin,
 		makeLoggedOutLayout
@@ -106,9 +113,11 @@ export default ( router ) => {
 		redirectDefaultLocale,
 		setLocaleMiddleware(),
 		setHrefLangLinks,
+		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,
 		setShouldServerSideRenderLogin,
+		ssrSetupLocaleLogin,
 		makeLoggedOutLayout
 	);
 };

@@ -109,6 +109,7 @@ export const PerformanceProfilerDashboardContent = ( {
 						ref={ insightsRef }
 						hash={ hash }
 						filter={ filter }
+						isLoggedInVersion={ showV2 }
 						onRecommendationsFilterChange={ onRecommendationsFilterChange }
 					/>
 				) }

@@ -20,10 +20,11 @@ type HeaderProps = {
 	displayName: string;
 	metricKey: Metrics;
 	metricValue: number;
+	isActive?: boolean;
 };
 
 const CardHeader = ( props: HeaderProps ) => {
-	const { displayName, metricKey, metricValue } = props;
+	const { displayName, metricKey, metricValue, isActive } = props;
 	const status = mapThresholdsToStatus( metricKey, metricValue );
 	const isPerformanceScoreSelected = metricKey === 'overall';
 
@@ -35,7 +36,7 @@ const CardHeader = ( props: HeaderProps ) => {
 
 				{ isPerformanceScoreSelected ? (
 					<div className="metric-tab-bar-v2__tab-metric" style={ { marginTop: '6px' } }>
-						<CircularPerformanceScore score={ metricValue } size={ 48 } />
+						<CircularPerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
 				) : (
 					<span
@@ -91,6 +92,7 @@ export const CoreWebVitalsAccordionV2 = ( props: Props ) => {
 								displayName={ displayName }
 								metricKey={ key as Metrics }
 								metricValue={ props[ key as Metrics ] }
+								isActive={ key === activeTab }
 							/>
 						}
 						hideSummary

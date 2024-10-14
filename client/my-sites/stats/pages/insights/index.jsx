@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -10,21 +8,22 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import AllTimeViewsSection from 'calypso/my-sites/stats/features/modules/all-time-views-section';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AllTimeHighlightsSection from '../../all-time-highlights-section';
-import AnnualHighlightsSection from '../../annual-highlights-section';
-import PostingActivity from '../../post-trends';
+import AllTimeHighlightsSection from '../../sections/all-time-highlights-section';
+import AllTimeViewsSection from '../../sections/all-time-views-section';
+import AnnualHighlightsSection from '../../sections/annual-highlights-section';
+import PostingActivity from '../../sections/posting-activity-section';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
+	const { siteId, siteSlug, isOdysseyStats, isJetpack } = props;
+	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 
@@ -121,10 +120,6 @@ const StatsInsights = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-StatsInsights.propTypes = {
-	translate: PropTypes.func,
-};
-
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -136,4 +131,4 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsInsights );
+export default connectComponent( StatsInsights );

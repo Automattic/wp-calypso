@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { recordSignupStart } from 'calypso/lib/analytics/signup';
+import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
+import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { setSignupStartTime } from 'calypso/signup/storageUtils';
 import { type Flow } from '../../types';
 
 /**
@@ -17,7 +20,6 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 	const flowName = flow.name;
 	const isSignupFlow = flow.isSignupFlow;
 	const signupStartEventProps = flow.useSignupStartEventProps?.();
-
 	const extraProps = useMemo(
 		() => ( {
 			...signupStartEventProps,
@@ -26,11 +28,27 @@ export const useSignUpStartTracking = ( { flow }: Props ) => {
 		[ signupStartEventProps, flowVariant ]
 	);
 
+	/**
+	 * Timers and other analytics
+	 *
+	 * Important: Ideally, this hook should only run once per signup (`isSignupFlow`) session.
+	 * Avoid introducing more dependencies.
+	 */
 	useEffect( () => {
 		if ( ! isSignupFlow ) {
 			return;
 		}
 
-		recordSignupStart( flowName, ref, extraProps || {} );
-	}, [ extraProps, flowName, ref, isSignupFlow ] );
+		setSignupStartTime();
+		// Google Analytics
+		gaRecordEvent( 'Signup', 'calypso_signup_start' );
+		// Marketing
+		adTrackSignupStart( flowName );
+	}, [ isSignupFlow, flowName ] );
+
+	if ( ! isSignupFlow ) {
+		return;
+	}
+
+	recordSignupStart( { flow: flowName, ref, optionalProps: extraProps || {} } );
 };

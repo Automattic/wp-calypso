@@ -1,6 +1,6 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@automattic/components/src/highlight-cards/variables";
 
 $custom-stats-tab-mobile-break: $break-small;
 

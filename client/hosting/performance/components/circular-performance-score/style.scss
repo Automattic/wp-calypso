@@ -1,27 +1,26 @@
+@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/components/src/styles/typography";
 
 .circular-performance-bar {
 	position: relative;
 	display: inline-block;
+	color: $studio-black;
 
 	&.good {
-		color: #00ba37;
 		.circular__progress-bar .circular__progress-bar-fill-circle {
-			stroke: #00ba37;
+			stroke: $studio-green-30;
 		}
 	}
 
 	&.needs-improvement {
-		color: #d67709;
 		.circular__progress-bar .circular__progress-bar-fill-circle {
-			stroke: #d67709;
+			stroke: $studio-orange-40;
 		}
 	}
 
 	&.poor {
-		color: #d63638;
 		.circular__progress-bar .circular__progress-bar-fill-circle {
-			stroke: #d63638;
+			stroke: $studio-red-50;
 		}
 	}
 }
@@ -34,5 +33,9 @@
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header-small;
 	font-weight: 400;
+
+	&--large {
+		font-size: 1.75rem;
+	}
 }
 

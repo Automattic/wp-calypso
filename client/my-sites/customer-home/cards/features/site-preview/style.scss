@@ -81,6 +81,17 @@
 				font-weight: 500;
 				line-height: 24px;
 			}
+
+			.home-site-preview__info-domain {
+				text-overflow: ellipsis;
+				overflow: hidden;
+				font-size: rem(14px);
+				color: var(--studio-gray-60);
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
 		}
 	}
 

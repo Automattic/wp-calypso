@@ -57,7 +57,7 @@ jest.mock( '@wordpress/data', () => {
 		createSelector: jest.fn(),
 		createRegistrySelector: jest.fn(),
 		registerStore: jest.fn(),
-		combineReducers: jest.fn(),
+		combineReducers: jest.fn( () => ( { sites: { launch: { inProgress: jest.fn() } } } ) ),
 		createReduxStore: jest.fn(),
 		register: jest.fn(),
 		useSelect: jest.fn().mockImplementation( ( selectFunc ) => {

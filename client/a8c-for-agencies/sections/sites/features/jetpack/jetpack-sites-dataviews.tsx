@@ -190,9 +190,6 @@ export const JetpackSitesDataViews = ( {
 						);
 					}
 
-					const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-					const isDevSite = ( item.isDevSite && devSitesEnabled ) || false;
-
 					return (
 						<div
 							className={ clsx( {
@@ -203,7 +200,7 @@ export const JetpackSitesDataViews = ( {
 							<SiteDataField
 								site={ site }
 								isLoading={ isLoading }
-								isDevSite={ isDevSite }
+								isDevSite={ item.isDevSite }
 								onSiteTitleClick={ openSitePreviewPane }
 							/>
 						</div>

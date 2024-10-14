@@ -8,9 +8,18 @@ function getSomeCleanLoginContext( queryValues, lang = 'en' ) {
 }
 
 describe( 'setShouldServerSideRenderLogin', () => {
-	test( 'when lang is non-default, then sets context.serverSideRender to FALSE - and calls next()', () => {
+	test( 'when lang is Mag-16, then sets context.serverSideRender to TRUE - and calls next()', () => {
 		const next = jest.fn();
 		const contextWithNonDefaultLang = getSomeCleanLoginContext( {}, 'ar' );
+
+		setShouldServerSideRenderLogin( contextWithNonDefaultLang, next );
+		expect( contextWithNonDefaultLang.serverSideRender ).toBe( true );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'when lang is non-default and non-Mag-16, then sets context.serverSideRender to FALSE - and calls next()', () => {
+		const next = jest.fn();
+		const contextWithNonDefaultLang = getSomeCleanLoginContext( {}, 'bg' );
 
 		setShouldServerSideRenderLogin( contextWithNonDefaultLang, next );
 		expect( contextWithNonDefaultLang.serverSideRender ).toBe( false );

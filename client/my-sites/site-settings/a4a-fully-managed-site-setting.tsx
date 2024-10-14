@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -24,13 +23,12 @@ export function A4AFullyManagedSiteSetting( {
 	onSaveSetting,
 	disabled,
 }: Props ) {
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 	const isDevSite = site.is_a4a_dev_site;
 	const isAtomicSite = site.is_wpcom_atomic;
 
 	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID } );
 
-	const shouldShowToggle = devSitesEnabled && agencySite && isAtomicSite;
+	const shouldShowToggle = agencySite && isAtomicSite;
 
 	if ( ! shouldShowToggle ) {
 		return null;
@@ -75,7 +73,20 @@ export function A4AFullyManagedSiteSetting( {
 							{
 								components: translationComponents,
 							}
-						) }
+						) }{ ' ' }
+						{ translate( '{{a}}Learn more.{{/a}}', {
+							components: {
+								a: (
+									<a
+										target="_blank"
+										href={ localizeUrl(
+											'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+										) }
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
 					</p>
 				) : (
 					<ToggleControl
