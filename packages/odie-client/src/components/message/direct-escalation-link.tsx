@@ -1,5 +1,5 @@
+import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 

@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
-import { useEffect } from 'react';
+import { useEffect } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
