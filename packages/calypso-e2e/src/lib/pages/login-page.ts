@@ -126,6 +126,16 @@ export class LoginPage {
 	}
 
 	/**
+	 * Clicks the "Continue with GitHub" link.
+	 */
+	async clickLoginWithGitHub(): Promise< Locator > {
+		const locator = await this.page.locator( ':text-is("Continue with GitHub")' );
+		await locator.waitFor();
+		await locator.click();
+		return locator;
+	}
+
+	/**
 	 * Clicks the "Create an account" link.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
