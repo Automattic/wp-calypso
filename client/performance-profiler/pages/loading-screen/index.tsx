@@ -39,7 +39,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 
 	const heading = isSavedReport
 		? translate( 'Your site‘s results are ready' )
-		: translate( 'Testing your site‘s speed…' );
+		: translate( 'Testing your site‘s speed' );
 
 	const tips = [
 		{
