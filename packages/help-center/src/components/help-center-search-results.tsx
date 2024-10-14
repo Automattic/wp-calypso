@@ -253,7 +253,14 @@ function HelpSearchResults( {
 			} );
 
 			event.preventDefault();
-			openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
+
+			// push state only if it's internal link.
+			if ( ! /^http/.test( link ) ) {
+				openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
+			} else {
+				openAdminInNewTab ? window.open( link, '_blank' ) : window.open( link, '_self' );
+			}
+
 			onAdminSectionSelect( event );
 			return;
 		}
