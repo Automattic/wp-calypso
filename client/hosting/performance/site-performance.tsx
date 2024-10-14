@@ -152,6 +152,7 @@ export const SitePerformance = () => {
 	const {
 		pages,
 		isInitialLoading,
+		isFetching: isFetchingPages,
 		savePerformanceReportUrl,
 		refetch: refetchPages,
 	} = useSitePerformancePageReports( {
@@ -234,15 +235,37 @@ export const SitePerformance = () => {
 		} );
 	};
 
-	if ( performanceReport.testCompleted && ! isInitialLoading ) {
-		const performanceReportUrl = {
-			url: performanceReport.url,
-			hash: performanceReport.hash,
-		};
-		savePerformanceReportUrl( currentPageId, performanceReportUrl ).then( () => {
-			refetchPages();
-		} );
-	}
+	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
+
+	useEffect( () => {
+		const initialPagesDataLoaded = ! isInitialLoading && pages.length;
+
+		if (
+			initialPagesDataLoaded &&
+			performanceReport.hash &&
+			currentPage?.wpcom_performance_report_url.hash !== performanceReport.hash
+		) {
+			const performanceReportUrl = {
+				url: performanceReport.url,
+				hash: performanceReport.hash,
+			};
+			setIsSavingPerformanceReportUrl( true );
+			savePerformanceReportUrl( currentPageId, performanceReportUrl )
+				.then( () => refetchPages() )
+				.finally( () => {
+					setIsSavingPerformanceReportUrl( false );
+				} );
+		}
+	}, [
+		isInitialLoading,
+		pages,
+		currentPage?.wpcom_performance_report_url.hash,
+		currentPageId,
+		performanceReport.hash,
+		performanceReport.url,
+		savePerformanceReportUrl,
+		refetchPages,
+	] );
 
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
@@ -253,7 +276,11 @@ export const SitePerformance = () => {
 	};
 
 	const isMobile = useMobileBreakpoint();
-	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+	const disableControls =
+		performanceReport.isLoading ||
+		isFetchingPages ||
+		! isSitePublic ||
+		isSavingPerformanceReportUrl;
 
 	const handleDeviceTabChange = ( tab: Tab ) => {
 		setActiveTab( tab );
