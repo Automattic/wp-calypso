@@ -130,11 +130,6 @@ const RegisteredDomainDetails = ( {
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( domain.subscriptionId ?? '', 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-				customLabel={
-					! domain.expired || domain.isRenewable
-						? translate( 'Renew now' )
-						: translate( 'Redeem now' )
-				}
 				disabled={ isLoadingPurchase }
 			/>
 		);

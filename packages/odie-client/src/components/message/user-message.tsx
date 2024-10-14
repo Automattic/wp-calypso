@@ -35,9 +35,8 @@ export const UserMessage = ( {
 		__i18n_text_domain__
 	);
 
-	const forwardMessage = isUserEligibleForPaidSupport
-		? supportHappinessWording
-		: supportForumWording;
+	const forwardMessage = isUserEligibleForPaidSupport ? supportHappinessWording : supportForumWording;
+	const displayMessage = isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
 	return (
 		<>
@@ -47,7 +46,7 @@ export const UserMessage = ( {
 					a: CustomALink,
 				} }
 			>
-				{ isRequestingHumanSupport ? forwardMessage : message.content }
+				{ isRequestingHumanSupport ? displayMessage : message.content }
 			</Markdown>
 			{ showExtraContactOptions && extraContactOptions }
 			{ ! hasFeedback && ! isUser && (
