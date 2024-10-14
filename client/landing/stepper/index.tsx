@@ -105,7 +105,6 @@ const redirects = [
 	{ from: '/setup/blog/', to: '/start/' },
 	{ from: '/setup/link-in-bio/', to: '/start/' },
 	{ from: '/setup/videopress/', to: '/start/' },
-	{ from: '/setup/sensei/', to: '/start/' },
 ];
 
 // Adds a trailing slash to a path if necessary.
