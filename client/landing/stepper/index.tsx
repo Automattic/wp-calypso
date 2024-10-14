@@ -109,9 +109,7 @@ const redirects = [
 ];
 
 // Retrieve the new redirect URL based on the current path.
-const getRedirect = () => {
-	const { pathname } = window.location;
-
+const getRedirect = ( pathname: string ) => {
 	// Find a matching redirect based on the current path.
 	const match = redirects.find( ( redirect ) => pathname.startsWith( redirect.from ) );
 
@@ -130,7 +128,7 @@ const getRedirect = () => {
 
 window.AppBoot = async () => {
 	// Redirect to the new URL if necessary
-	const redirect = getRedirect();
+	const redirect = getRedirect( window.location.pathname );
 	if ( redirect ) {
 		// We track the redirect and the referrer to help us understand the impact of the redirect.
 		recordTracksEvent( 'calypso_tailored_flows_redirect', {
