@@ -14,7 +14,8 @@ export function generateAdminSections(
 		wp_global_styles: string;
 	},
 	googleMailService: string,
-	onboardingUrl: string
+	onboardingUrl: string,
+	isCoreSiteEditorEnabled: boolean
 ) {
 	return [
 		{
@@ -60,7 +61,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( "Customize my site's theme" ),
-			link: siteEditorUrls.wp_global_styles,
+			link: isCoreSiteEditorEnabled ? siteEditorUrls.wp_global_styles : customizerUrls.root,
 			synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 			icon: 'customize',
 		},

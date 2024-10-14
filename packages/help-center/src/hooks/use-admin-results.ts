@@ -65,6 +65,7 @@ export function filterListBySearchTerm(
 }
 
 export function useAdminResults( searchTerm: string ) {
+	const { site } = useHelpCenterContext();
 	const siteSlug = useSiteSlug();
 	const customizerUrls = useCustomizerUrls();
 	const siteEditorUrls = useSiteEditorUrls();
@@ -76,7 +77,8 @@ export function useAdminResults( searchTerm: string ) {
 			customizerUrls,
 			siteEditorUrls,
 			googleMailServiceFamily,
-			onboardingUrl
+			onboardingUrl,
+			site?.is_core_site_editor_enabled
 		);
 		const filteredSections = filterListBySearchTerm( searchTerm, sections, 4, locale );
 
