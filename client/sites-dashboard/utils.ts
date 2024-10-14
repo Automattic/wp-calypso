@@ -66,7 +66,7 @@ export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
 };
 
-export const isMigrationInProgress = ( site: SiteExcerptNetworkData ): boolean => {
+export const isMigrationInProgress = ( site: SiteExcerptData ): boolean => {
 	const migrationStatus = site?.site_migration?.migration_status;
 	if ( ! migrationStatus ) {
 		return false;
