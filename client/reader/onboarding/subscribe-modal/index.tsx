@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { curatedBlogs } from './../curated-blogs';
+import { curatedBlogs } from '../curated-blogs';
 
 interface SubscribeModalProps {
 	isOpen: boolean;
@@ -55,41 +55,49 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	} );
 
 	const combinedRecommendations = useMemo( () => {
+		// Get list of curated recommendations.
 		const curatedRecommendations = followedTagSlugs
 			.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
 			.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) );
 
+		// Get list of API recommended blogs.
 		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
 			...site,
-			weight: 0,
+			weight: 1,
 			isCurated: false,
 		} ) );
 
+		// Combine all recommendations.
 		const allRecommendations = [ ...curatedRecommendations, ...apiRecommendations ];
 
-		// Increase weight for blogs that match multiple tags
+		// Increase "weight" for blogs that match multiple tags.
 		const blogWeights = allRecommendations.reduce< Record< number, number > >( ( acc, blog ) => {
 			acc[ blog.feed_ID ] = ( acc[ blog.feed_ID ] || 0 ) + blog.weight;
 			return acc;
 		}, {} );
 
-		// Sort by weight (curated first), then remove duplicates
-		const sortedUniqueRecommendations = Object.values(
-			allRecommendations
-				.sort( ( a, b ) => blogWeights[ b.feed_ID ] - blogWeights[ a.feed_ID ] )
-				.reduce< Record< number, CardData & { weight: number; isCurated: boolean } > >(
-					( acc, blog ) => {
-						if ( ! acc[ blog.feed_ID ] ) {
-							acc[ blog.feed_ID ] = blog;
-						}
-						return acc;
-					},
-					{}
-				)
+		// Remove duplicates, prioritizing curated blogs.
+		const uniqueRecommendations = Object.values(
+			allRecommendations.reduce<
+				Record< number, CardData & { weight: number; isCurated: boolean } >
+			>( ( acc, blog ) => {
+				if ( ! acc[ blog.feed_ID ] || blog.isCurated ) {
+					acc[ blog.feed_ID ] = { ...blog, weight: blogWeights[ blog.feed_ID ] };
+				}
+				return acc;
+			}, {} )
 		);
 
+		// Sort recommendations: curated first, then by "weight" (i.e. how many tags it matches).
+		const sortedRecommendations = uniqueRecommendations.sort( ( a, b ) => {
+			if ( a.isCurated !== b.isCurated ) {
+				return a.isCurated ? -1 : 1;
+			}
+			return b.weight - a.weight;
+		} );
+
 		// Limit to 6 recommendations
-		return sortedUniqueRecommendations.slice( 0, 6 );
+		return sortedRecommendations.slice( 0, 6 );
 	}, [ followedTagSlugs, apiRecommendedSites ] );
 
 	return (
@@ -113,7 +121,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								showNotificationSettings={ false }
 								showFollowedOnDate={ false }
 								followSource="reader-onboarding-modal"
-								disableSuggestedFollows
 							/>
 						) ) }
 					</div>
