@@ -3,6 +3,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
@@ -25,16 +26,16 @@ const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBan
 
 	const isMigrationBannerDismissed = useSelector( isCardDismissed( 'migration-pending-sites' ) );
 
+	const openHelpCenter = useCallback( () => {
+		setShowHelpCenter( true );
+	}, [ setShowHelpCenter ] );
+
 	if (
 		migrationPendingSitesCount &&
 		migrationPendingSitesCount > 0 &&
 		// If the banner is dismissed, we don't want to return earlier to show the other banner.
 		! isMigrationBannerDismissed
 	) {
-		const ctaClickHandler = () => {
-			setShowHelpCenter( true );
-		};
-
 		return (
 			<div className="sites-banner-container">
 				<Banner
@@ -48,7 +49,7 @@ const SitesDashboardBanners = ( { sitesStatuses, sitesCount }: SitesDashboardBan
 					dismissPreferenceName="migration-pending-sites"
 					event="get-help"
 					horizontal
-					onClick={ ctaClickHandler }
+					onClick={ openHelpCenter }
 					target="_blank"
 					title={ translate( 'Stuck on your migration?' ) }
 					tracksClickName="calypso_sites_dashboard_migration_banner_click"
