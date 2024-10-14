@@ -138,10 +138,6 @@
 /client/landing/stepper/declarative-flow/internals/steps-repository/migration-handler @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/site-picker @Automattic/caribou
 
-# Renovate config
-/renovate.json5 @noahtallen
-/.github/workflows/renovate.yml @noahtallen
-
 # Support
 /packages/help-center @Automattic/vertex
 
