@@ -90,9 +90,7 @@ class StatModuleChartTabs extends Component {
 		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
 	}
 
-	makeQuery = () => {
-		return this.props.requestChartCounts( this.props.query );
-	};
+	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
 		const { isActiveTabLoading } = this.props;
