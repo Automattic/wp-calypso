@@ -101,12 +101,14 @@ const initializeHotJar = ( flowName: string ) => {
 
 // Define the old-to-new URL mappings.
 const redirects = [
-	{ from: '/setup/free', to: '/start/free/' },
-	{ from: '/setup/blog', to: '/start/' },
-	{ from: '/setup/link-in-bio', to: '/start/' },
-	{ from: '/setup/videopress', to: '/start/' },
-	{ from: '/setup/sensei', to: '/start/' },
+	{ from: '/setup/free/', to: '/start/free/' },
+	{ from: '/setup/blog/', to: '/start/' },
+	{ from: '/setup/link-in-bio/', to: '/start/' },
+	{ from: '/setup/videopress/', to: '/start/' },
+	{ from: '/setup/sensei/', to: '/start/' },
 ];
+
+const addTrailingSlash = ( path: string ) => ( path.endsWith( '/' ) ? path : `${ path }/` );
 
 // Retrieve the new redirect URL based on the current path.
 const getRedirect = ( pathname: string ) => {
@@ -128,7 +130,7 @@ const getRedirect = ( pathname: string ) => {
 
 window.AppBoot = async () => {
 	// Redirect to the new URL if necessary
-	const redirect = getRedirect( window.location.pathname );
+	const redirect = getRedirect( addTrailingSlash( window.location.pathname ) );
 	if ( redirect ) {
 		// We track the redirect and the referrer to help us understand the impact of the redirect.
 		recordTracksEvent( 'calypso_tailored_flows_redirect', {
