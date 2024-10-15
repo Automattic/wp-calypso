@@ -262,6 +262,15 @@ export const getPagedBlazeSearchData = (
 	pagedData?: InfiniteData< CampaignQueryResult | PostQueryResult >
 ): PagedBlazeContentData => {
 	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
+
+	const campaigns_stats =
+		lastPage && 'campaigns_stats' in lastPage
+			? lastPage.campaigns_stats
+			: {
+					total_impressions: 0,
+					total_clicks: 0,
+			  };
+
 	if ( lastPage ) {
 		const { has_more_pages, total_items, warnings } = lastPage;
 
@@ -281,6 +290,7 @@ export const getPagedBlazeSearchData = (
 
 		return {
 			has_more_pages,
+			campaigns_stats,
 			total_items,
 			items: foundContent,
 			warnings,
