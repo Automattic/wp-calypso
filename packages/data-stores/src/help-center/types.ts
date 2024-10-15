@@ -33,7 +33,6 @@ export interface HelpCenterSite {
 		site_intent: string;
 		admin_url: string;
 	};
-	is_core_site_editor_enabled: boolean;
 }
 
 export interface Dispatch {
