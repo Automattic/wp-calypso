@@ -54,6 +54,7 @@ export function recordSignupComplete(
 		isMapping,
 		signupDomainOrigin,
 		elapsedTimeSinceStart = null,
+		framework = 'start',
 	},
 	now
 ) {
@@ -80,6 +81,7 @@ export function recordSignupComplete(
 				isTransfer,
 				isMapping,
 				signupDomainOrigin,
+				framework,
 			},
 			true
 		);
@@ -122,7 +124,7 @@ export function recordSignupComplete(
 		const device = resolveDeviceTypeByViewPort();
 
 		// Tracks
-		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
+		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device, framework } );
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
 	}

@@ -45,6 +45,14 @@ export default function MigrationsOverview() {
 		dispatch( recordTracksEvent( 'calypso_a4a_migrations_add_bank_details_button_click' ) );
 	}, [ dispatch ] );
 
+	const onMigrateToWPCOMClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_migrations_migrate_to_wpcom_button_click' ) );
+	}, [ dispatch ] );
+
+	const onMigrateToPressableClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_migrations_migrate_to_pressable_button_click' ) );
+	}, [ dispatch ] );
+
 	return (
 		<Layout className="migrations-overview__layout" title={ title } wide>
 			<LayoutTop>
@@ -106,6 +114,7 @@ export default function MigrationsOverview() {
 								<Button
 									primary
 									compact
+									onClick={ onMigrateToWPCOMClick }
 									href="https://developer.wordpress.com/docs/get-started/build-new-or-migrate/migrate-existing/"
 									target="_blank"
 								>
@@ -133,6 +142,7 @@ export default function MigrationsOverview() {
 								<Button
 									primary
 									compact
+									onClick={ onMigrateToPressableClick }
 									href="https://pressable.com/knowledgebase/migrate-a-site-to-pressable/"
 									target="_blank"
 								>
