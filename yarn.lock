@@ -336,7 +336,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": "npm:^0.4.1"
-    "@types/node": "npm:^20.8.6"
+    "@types/node": "npm:^22.7.5"
     cookie: "npm:^0.4.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
@@ -366,7 +366,7 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/types": "npm:^29.5.0"
-    "@types/node": "npm:^20.8.6"
+    "@types/node": "npm:^22.7.5"
     "@types/node-fetch": "npm:^2.6.1"
     "@types/totp-generator": "npm:^0.0.3"
     "@wordpress/i18n": "npm:^5.8.0"
@@ -1001,7 +1001,7 @@ __metadata:
     "@types/karma": "npm:^6.3.3"
     "@types/karma-spec-reporter": "npm:^0.0.3"
     "@types/karma-summary-reporter": "npm:^3.1.0"
-    "@types/node": "npm:^22.2.0"
+    "@types/node": "npm:^22.7.5"
     "@types/ua-parser-js": "npm:^0.7.36"
     "@typescript-eslint/eslint-plugin": "npm:^5.44.0"
     "@typescript-eslint/parser": "npm:^5.44.0"
@@ -1204,7 +1204,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": "npm:^0.0.1"
-    "@types/node": "npm:^20.8.6"
+    "@types/node": "npm:^22.7.5"
     allure-js-commons: "npm:2.0.0-beta.9"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -8475,7 +8475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.2.0, @types/node@npm:^22.7.5":
+"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.7.5":
   version: 22.7.5
   resolution: "@types/node@npm:22.7.5"
   dependencies:
@@ -8500,7 +8500,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.12.7, @types/node@npm:^20.8.6":
+"@types/node@npm:^20.12.7":
   version: 20.12.7
   resolution: "@types/node@npm:20.12.7"
   dependencies:
