@@ -8,7 +8,6 @@ import { translate } from 'i18n-calypso';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
-import { isDefaultSiteTitle } from 'calypso/hosting/sites/components/sites-dataviews/utils';
 import { navigate } from 'calypso/lib/navigate';
 import { isP2Theme } from 'calypso/lib/site/utils';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
@@ -81,11 +80,8 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 		event.preventDefault();
 	};
 
-	let siteTitle = site.title;
 	const isMigrating = isMigrationInProgress( site );
-	if ( isMigrating && isDefaultSiteTitle( siteTitle ) ) {
-		siteTitle = translate( 'Incoming Migration' );
-	}
+	const siteTitle = isMigrating ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
 		<div className="sites-dataviews__site">
