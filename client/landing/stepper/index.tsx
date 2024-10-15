@@ -24,7 +24,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -99,57 +98,7 @@ const initializeHotJar = ( flowName: string ) => {
 	}
 };
 
-// Define the old-to-new URL mappings.
-const redirects = [
-	{ from: '/setup/free/', to: '/start/free/' },
-	{ from: '/setup/blog/', to: '/start/' },
-	{ from: '/setup/link-in-bio/', to: '/start/' },
-	{ from: '/setup/videopress/', to: '/start/' },
-];
-
-// Adds a trailing slash to a path if necessary.
-const addTrailingSlash = ( path: string ) => ( path.endsWith( '/' ) ? path : `${ path }/` );
-
-// Retrieve the new redirect URL based on the current path, and preserve trailing path after 'from'.
-const getRedirect = ( pathname: string ) => {
-	// Find a matching redirect based on the beginning of the current path.
-	const match = redirects.find( ( redirect ) => pathname.startsWith( redirect.from ) );
-
-	if ( match ) {
-		// Get the rest of the pathname that comes after the matching `from` part.
-		const trailingPath = pathname.replace( match.from, '' );
-
-		// Return the `to` path with the trailing part and a trailing slash for consistency.
-		return {
-			from: match.from,
-			to: addTrailingSlash( match.to + trailingPath ),
-		};
-	}
-
-	// Return null if no match is found.
-	return null;
-};
-
 window.AppBoot = async () => {
-	const { pathname, search } = window.location;
-
-	// Redirect to the new URL if necessary, with trailing slash applied to the pathname.
-	const redirect = getRedirect( addTrailingSlash( pathname ) );
-
-	if ( redirect ) {
-		// We track the redirect and the referrer to help us understand the impact of the redirect.
-		recordTracksEvent( 'calypso_tailored_flows_redirect', {
-			...redirect,
-			referrer: document.referrer,
-		} );
-
-		// Include the original query parameters (search) in the redirect.
-		const redirectUrl = redirect.to + search;
-
-		// Perform the redirect without adding to the browser history.
-		return ( window.location = redirectUrl );
-	}
-
 	const flowName = getFlowFromURL();
 
 	if ( ! flowName ) {
