@@ -15,7 +15,7 @@ export function generateAdminSections(
 	},
 	googleMailService: string,
 	onboardingUrl: string,
-	isCoreSiteEditorEnabled: boolean
+	isCoreSiteEditorEnabled?: boolean
 ) {
 	return [
 		{
