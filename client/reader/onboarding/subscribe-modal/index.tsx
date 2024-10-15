@@ -1,6 +1,7 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
@@ -102,11 +103,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	return (
 		isOpen && (
-			<Modal title="Discover and Subscribe" onRequestClose={ onClose } isFullScreen>
-				<h2>Suggested blogs based on your interests</h2>
+			<Modal onRequestClose={ onClose } isFullScreen>
+				<h2>{ __( "Discover sites that you'll love" ) }</h2>
+				<p>
+					{ __( 'Preview sites by clicking below, then subscribe to any site that inspires you.' ) }
+				</p>
 				{ isLoading && <LoadingPlaceholder /> }
 				{ ! isLoading && combinedRecommendations.length === 0 && (
-					<p>No recommendations available at the moment.</p>
+					<p>{ __( 'No recommendations available at the moment.' ) }</p>
 				) }
 				{ ! isLoading && combinedRecommendations.length > 0 && (
 					<div className="subscribe-modal__recommended-sites">
@@ -125,6 +129,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 						) ) }
 					</div>
 				) }
+				<p>{ __( 'Load more recommendations' ) }</p>
 			</Modal>
 		)
 	);
