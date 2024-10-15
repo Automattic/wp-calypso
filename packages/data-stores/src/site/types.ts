@@ -618,6 +618,7 @@ export interface SourceSiteMigrationBase {
 	// Migration meta
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
+	migration_status?: string;
 }
 
 export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {

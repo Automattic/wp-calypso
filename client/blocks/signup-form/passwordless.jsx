@@ -75,7 +75,7 @@ class PasswordlessSignupForm extends Component {
 			password: '',
 		};
 		const { flowName, queryArgs = {} } = this.props;
-		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp', 'wordpress-hosting-dev-lp' ];
+		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( queryArgs.ref );
 
 		// If not in a flow, submit the form as a standard signup form.

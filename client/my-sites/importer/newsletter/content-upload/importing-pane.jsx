@@ -187,7 +187,7 @@ export class ImportingPane extends PureComponent {
 				{ isImporting && (
 					<>
 						<ImporterActionButton primary busy disabled>
-							Importing
+							{ this.props.translate( 'Importing' ) }
 						</ImporterActionButton>
 						<ImporterActionButton href={ nextStepUrl }>
 							{ this.props.translate( 'Continue' ) }
@@ -247,7 +247,7 @@ export class ImportingPane extends PureComponent {
 						onMap={ this.handleOnMap }
 						onStartImport={ () => {
 							this.props.startImporting( this.props.importerStatus );
-							this.props.infoNotice( 'We’re importing your content', {
+							this.props.infoNotice( this.props.translate( 'We’re importing your content' ), {
 								displayOnNextPage: true,
 								duration: 5000,
 							} );
@@ -265,8 +265,8 @@ export class ImportingPane extends PureComponent {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) && (
 					<>
-						<h2>Import your content to WordPress.com</h2>
-						<p>Please, wait while we import your content…</p>
+						<h2>{ this.props.translate( 'Import your content to WordPress.com' ) }</h2>
+						<p>{ this.props.translate( 'Please, wait while we import your content…' ) }</p>
 						<div className="importer__import-progress">
 							<ProgressBar className="importer__import-progress-bar" value={ percentComplete } />
 							{ blockingMessage && <p>{ blockingMessage }</p> }
@@ -280,9 +280,9 @@ export class ImportingPane extends PureComponent {
 				) }
 				{ this.isFinished() && ! this.isError() && (
 					<>
-						<h2>Import your content to WordPress.com</h2>
+						<h2>{ this.props.translate( 'Import your content to WordPress.com' ) }</h2>
 						<Notice status="success" className="importer__notice" isDismissible={ false }>
-							Success! Your content has been imported!
+							{ this.props.translate( 'Success! Your content has been imported!' ) }
 						</Notice>
 					</>
 				) }

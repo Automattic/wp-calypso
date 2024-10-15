@@ -7,7 +7,10 @@ export const DURATION = 20 * 60 * 1000; // 20 min
 interface Params {
 	flow: string | null;
 	variant?: string;
-	step: string;
+	step: string | null;
+}
+interface Options {
+	enabled: boolean;
 }
 
 interface SessionKeys {
@@ -56,7 +59,7 @@ const startSession = ( keys: SessionKeys, extra: Record< string, any > ) => {
  * Same flow with same parameters will be tracked only once whitin the DURATION time
  * returns void
  */
-export const useFlowAnalytics = ( params: Params ) => {
+export const useFlowAnalytics = ( params: Params, options: Options = { enabled: true } ) => {
 	const [ search ] = useSearchParams();
 	const { flow, step, variant } = params;
 	const ref = search.get( 'ref' );
@@ -85,8 +88,8 @@ export const useFlowAnalytics = ( params: Params ) => {
 	);
 
 	useEffect( () => {
-		if ( ! flowStarted && flow ) {
+		if ( ! flowStarted && flow && step && options.enabled ) {
 			startSession( sessionKeys, extraTrackingParams );
 		}
-	}, [ extraTrackingParams, flow, flowStarted, sessionKeys ] );
+	}, [ extraTrackingParams, flow, flowStarted, sessionKeys, step, options.enabled ] );
 };

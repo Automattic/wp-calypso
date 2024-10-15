@@ -120,6 +120,14 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 		);
 	}
 
+	const isMigrationPeding =
+		site.site_migration?.migration_status?.startsWith( 'migration-pending' );
+	const statusElement = isMigrationPeding ? (
+		<span className="sites-dataviews__migration-pending-status">{ translatedStatus }</span>
+	) : (
+		translatedStatus
+	);
+
 	return (
 		<WithAtomicTransfer site={ site }>
 			{ ( result ) =>
@@ -132,7 +140,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 							<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 						) : (
 							<div>
-								{ translatedStatus }
+								{ statusElement }
 								<SiteLaunchNag site={ site } />
 							</div>
 						) }
