@@ -17,7 +17,6 @@ import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MobileHeader } from './components/MobileHeader';
-import { NoPageFound } from './components/NoPageFound';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
@@ -358,7 +357,7 @@ export const SitePerformance = () => {
 				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
 				<>
-					{ ! isSitePublic && (
+					{ ! isSitePublic ? (
 						<ReportUnavailable
 							isLaunching={ siteIsLaunching }
 							onLaunchSiteClick={ onLaunchSiteClick }
@@ -368,8 +367,7 @@ export const SitePerformance = () => {
 									: translate( 'Launch your site' )
 							}
 						/>
-					) }
-					{ isSitePublic && currentPage && (
+					) : (
 						<>
 							<ExpiredReportNotice
 								reportTimestamp={ performanceReport.performanceReport?.timestamp }
@@ -384,7 +382,6 @@ export const SitePerformance = () => {
 							/>
 						</>
 					) }
-					{ isSitePublic && ! currentPage && <NoPageFound /> }
 				</>
 			) }
 		</div>
