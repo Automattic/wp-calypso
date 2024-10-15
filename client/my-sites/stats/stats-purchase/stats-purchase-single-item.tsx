@@ -209,7 +209,7 @@ const StatsCommercialPurchase = ( {
 				<div className="stats-purchase-wizard__notice connection-notice">
 					{ translate( 'Please {{link}}connect your user account{{/link}} to upgrade stats.', {
 						components: {
-							link: <a href="/wp-admin/admin.php?page=my-jetpack#/connection" />,
+							link: <a href={ `${ adminUrl }admin.php?page=my-jetpack#/connection` } />,
 						},
 					} ) }
 				</div>
