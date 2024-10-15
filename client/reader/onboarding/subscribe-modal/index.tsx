@@ -9,6 +9,8 @@ import wpcom from 'calypso/lib/wp';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { curatedBlogs } from '../curated-blogs';
 
+import './style.scss';
+
 interface SubscribeModalProps {
 	isOpen: boolean;
 	onClose: () => void;
@@ -103,33 +105,45 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	return (
 		isOpen && (
-			<Modal onRequestClose={ onClose } isFullScreen>
-				<h2>{ __( "Discover sites that you'll love" ) }</h2>
-				<p>
-					{ __( 'Preview sites by clicking below, then subscribe to any site that inspires you.' ) }
-				</p>
-				{ isLoading && <LoadingPlaceholder /> }
-				{ ! isLoading && combinedRecommendations.length === 0 && (
-					<p>{ __( 'No recommendations available at the moment.' ) }</p>
-				) }
-				{ ! isLoading && combinedRecommendations.length > 0 && (
-					<div className="subscribe-modal__recommended-sites">
-						{ combinedRecommendations.map( ( site: CardData ) => (
-							<ConnectedReaderSubscriptionListItem
-								key={ site.feed_ID }
-								feedId={ site.feed_ID }
-								siteId={ site.site_ID }
-								site={ site }
-								url={ site.site_URL }
-								showLastUpdatedDate={ false }
-								showNotificationSettings={ false }
-								showFollowedOnDate={ false }
-								followSource="reader-onboarding-modal"
-							/>
-						) ) }
+			<Modal onRequestClose={ onClose } isFullScreen className="subscribe-modal">
+				<div className="subscribe-modal__content">
+					<div className="subscribe-modal__left-column">
+						<h2>{ __( "Discover sites that you'll love" ) }</h2>
+						<p>
+							{ __(
+								'Preview sites by clicking below, then subscribe to any site that inspires you.'
+							) }
+						</p>
+						{ isLoading && <LoadingPlaceholder /> }
+						{ ! isLoading && combinedRecommendations.length === 0 && (
+							<p>{ __( 'No recommendations available at the moment.' ) }</p>
+						) }
+						{ ! isLoading && combinedRecommendations.length > 0 && (
+							<div className="subscribe-modal__recommended-sites">
+								{ combinedRecommendations.map( ( site: CardData ) => (
+									<ConnectedReaderSubscriptionListItem
+										key={ site.feed_ID }
+										feedId={ site.feed_ID }
+										siteId={ site.site_ID }
+										site={ site }
+										url={ site.site_URL }
+										showLastUpdatedDate={ false }
+										showNotificationSettings={ false }
+										showFollowedOnDate={ false }
+										followSource="reader-onboarding-modal"
+									/>
+								) ) }
+							</div>
+						) }
+						<p>{ __( 'Load more recommendations' ) }</p>
 					</div>
-				) }
-				<p>{ __( 'Load more recommendations' ) }</p>
+					<div className="subscribe-modal__right-column">
+						<h3>{ __( 'Preview' ) }</h3>
+						<div className="subscribe-modal__preview-placeholder">
+							{ __( 'Select a blog to preview its posts' ) }
+						</div>
+					</div>
+				</div>
 			</Modal>
 		)
 	);
