@@ -654,5 +654,18 @@ describe( 'Site Migration Flow', () => {
 				state: null,
 			} );
 		} );
+
+		it( 'redirects the user to the other platform detected import step when going back from the credentials step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
 	} );
 } );

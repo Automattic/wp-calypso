@@ -611,5 +611,16 @@ describe( `${ flow.name }`, () => {
 				},
 			} );
 		} );
+		it( 'redirects back user from SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT to SITE_MIGRATION_CREDENTIALS', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'squarespace' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_MIGRATION_CREDENTIALS,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+		} );
 	} );
 } );

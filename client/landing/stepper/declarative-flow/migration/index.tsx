@@ -352,6 +352,9 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					ref: MIGRATION_FLOW,
 				} );
 			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				return navigateWithQueryParams( SITE_MIGRATION_CREDENTIALS, [], props );
+			},
 		},
 	};
 };
