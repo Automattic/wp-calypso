@@ -873,6 +873,12 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',
 	},
+	{
+		name: 'a8c-for-agencies-agency-tier',
+		paths: [ '/agency-tier' ],
+		module: 'calypso/a8c-for-agencies/sections/agency-tier',
+		group: 'a8c-for-agencies',
+	},
 ];
 
 module.exports = sections;
