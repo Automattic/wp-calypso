@@ -1,35 +1,29 @@
 import { addQueryArgs } from '@wordpress/url';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useSiteSlug } from './use-site-slug';
 
 const panels = [ 'root', 'wp_global_styles' ] as const;
 
 export function useSiteEditorUrls() {
 	const { site } = useHelpCenterContext();
-	const siteSlug = useSiteSlug();
 	const returnUrl = window.location.href;
 
-	if ( site?.is_core_site_editor_enabled && siteSlug ) {
-		const siteEditorUrl = `${ site?.options.admin_url }site-editor.php`;
+	const siteEditorUrl = `${ site?.options.admin_url }site-editor.php`;
 
-		return panels.reduce(
-			( acc, panel ) => {
-				let url = siteEditorUrl;
-				if ( panel !== 'root' ) {
-					url = addQueryArgs( siteEditorUrl, {
-						path: `/${ panel }`,
-					} );
-				}
-
-				acc[ panel ] = addQueryArgs( url, {
-					return: returnUrl,
+	return panels.reduce(
+		( acc, panel ) => {
+			let url = siteEditorUrl;
+			if ( panel !== 'root' ) {
+				url = addQueryArgs( siteEditorUrl, {
+					path: `/${ panel }`,
 				} );
+			}
 
-				return acc;
-			},
-			{} as Record< ( typeof panels )[ number ], string >
-		);
-	}
+			acc[ panel ] = addQueryArgs( url, {
+				return: returnUrl,
+			} );
 
-	return [];
+			return acc;
+		},
+		{} as Record< ( typeof panels )[ number ], string >
+	);
 }
