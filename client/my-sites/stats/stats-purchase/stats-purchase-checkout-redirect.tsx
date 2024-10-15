@@ -27,24 +27,58 @@ const getStatsCheckoutURL = (
 	isSiteFullyConnected?: boolean
 ) => {
 	const isFromWpAdmin = config.isEnabled( 'is_running_in_jetpack_site' );
-	// Get the checkout URL for the product, or the siteless checkout URL if there's no siteId or Jetpack is not fully connected (site and user).
-	// TODO: We don't have Jetpack Stats purchase enabled for Simple sites, but if we do, we will want Simple sites to use normal checkout flow as users are always logged in.
-	const checkoutType = ! siteId || ( isFromWpAdmin && ! isSiteFullyConnected ) ? 'jetpack' : siteId;
+
+	// Get the checkout URL for the product, or the siteless checkout URL if there's no siteId or Jetpack is not fully
+	// connected (site and user):
+	let checkoutType;
+	let doRedirectToSitelessIfNotLoggedIn = false;
+	let isSitelessCheckout = false;
+
+	// A NOTE: For normal checkout (not siteless), in the checkout url, if you use the siteId in place of the siteSlug, and
+	// also add a `source=my-jetpack` query param, then the Calypso routing middleware will redirect to siteless checkout
+	// when the user is Not logged-in (instead of redirecting to login page), otherwise if logged-in then it's logged-in
+	// checkout as usual.
+
+	if ( siteId && siteSlug ) {
+		// We know what site it is
+		if ( isFromWpAdmin ) {
+			// We know the site and we're in wp-admin of the plugin
+			if ( isSiteFullyConnected ) {
+				// The plugin is site & user connected
+				if ( isUpgrade ) {
+					checkoutType = siteSlug; // Go to normal checkout (will redirect to login, if not logged-in)
+				} else {
+					doRedirectToSitelessIfNotLoggedIn = true;
+					checkoutType = siteId; // Go to normal checkout (will redirect to siteless checkout, if not logged-in)
+				}
+			} else {
+				// The plugin is Not fully connected
+				isSitelessCheckout = true;
+				checkoutType = 'jetpack'; // go to siteless checkout
+			}
+		} else {
+			// We know the site and we're in Calypso
+			checkoutType = siteSlug; // go to normal checkout (with site and user context (logged-in))
+		}
+	} else {
+		// We don't know the site and we're in Calypso
+		checkoutType = 'jetpack'; // go to siteless checkout
+	}
 
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
 	);
 
-	if ( isFromWpAdmin ) {
-		if ( isSiteFullyConnected ) {
-			setUrlParam( checkoutProductUrl, 'site', siteSlug );
-			setUrlParam( checkoutProductUrl, 'source', 'my-jetpack' );
-		} else {
-			setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
-			setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
-			setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
-		}
+	// Set URL parameters
+	if ( isSitelessCheckout ) {
+		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
+		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
+		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
+	}
+	if ( doRedirectToSitelessIfNotLoggedIn ) {
+		setUrlParam( checkoutProductUrl, 'site', siteSlug );
+		setUrlParam( checkoutProductUrl, 'source', 'my-jetpack' );
 	}
 
 	// Add redirect_to parameter
