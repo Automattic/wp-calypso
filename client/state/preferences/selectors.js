@@ -47,5 +47,6 @@ export const preferencesLastFetchedTimestamp = ( state ) => state.preferences.la
  * @returns {boolean}       Whether preferences have been received
  */
 export function hasReceivedRemotePreferences( state ) {
+	// All JITM are hidden if the value is false, so we test whether it's odyssey here.
 	return !! state.preferences.remoteValues || config.isEnabled( 'is_running_in_jetpack_site' );
 }

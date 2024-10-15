@@ -1,5 +1,5 @@
 /**
- * Odysse version of `client/state/data-layer/wpcom/sites/jitm/index.js`.
+ * Odyssey version of `client/state/data-layer/wpcom/sites/jitm/index.js`.
  */
 import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
