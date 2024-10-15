@@ -302,7 +302,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		[ setChat ]
 	);
 
-	const overridenVersion = versionParams || version;
+	const overriddenVersion = versionParams || version;
 
 	if ( ! enabled ) {
 		return <>{ children }</>;
@@ -342,7 +342,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				scrollToLastMessage: scrollToLastMessage ?? noop,
 				trackEvent,
 				updateMessage,
-				version: overridenVersion,
+				version: overriddenVersion,
 				isLoadingEnvironment,
 				isLoadingExistingChat,
 				isUserEligibleForPaidSupport,
