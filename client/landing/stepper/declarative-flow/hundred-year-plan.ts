@@ -27,7 +27,7 @@ const HundredYearPlanFlow: Flow = {
 			[]
 		);
 
-		const isVipFeatureEnabled = config.isEnabled( '100year/vip' );
+		const isVipFeatureEnabled = config.isEnabled( '100-year-plan/vip' );
 		const hasSite = !! currentUser?.site_count;
 
 		const steps = [
