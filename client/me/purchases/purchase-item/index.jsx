@@ -446,6 +446,40 @@ class PurchaseItem extends Component {
 		return productType;
 	}
 
+	getSiteTitle() {
+		const { purchase, site, translate, slug, showSite } = this.props;
+		if ( isTemporarySitePurchase( purchase ) ) {
+			return null;
+		}
+
+		if ( showSite && site ) {
+			return translate( 'Subscription for {{button}}%(siteName)s{{/button}}', {
+				args: {
+					siteName: site.name,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteName)s', {
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
+		}
+
+		return;
+	}
+
 	getPaymentMethod() {
 		const { purchase, translate } = this.props;
 
@@ -578,6 +612,7 @@ class PurchaseItem extends Component {
 					</div>
 
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
+					<div className="purchase-item__purchase-type">{ this.getSiteTitle() }</div>
 				</div>
 
 				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>
