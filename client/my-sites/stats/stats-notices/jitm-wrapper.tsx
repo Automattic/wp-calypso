@@ -7,7 +7,7 @@ import { StatsNoticeProps } from './types';
 const JITMWrapper: React.FC< StatsNoticeProps > = ( { isOdysseyStats } ) => {
 	const messagePath = isOdysseyStats
 		? 'wp:jetpack_page_stats:admin_notices'
-		: 'calypso:jetpack_page_stats:admin_notices';
+		: 'calypso:stats:admin_notices';
 	const jitm = useSelector( ( state ) => getTopJITM( state, messagePath ) );
 	return (
 		<div
