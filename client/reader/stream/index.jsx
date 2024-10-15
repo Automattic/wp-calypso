@@ -602,8 +602,7 @@ class ReaderStream extends Component {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const isCouncilPromoStream =
-			this.props.isDiscoverStream || this.props.streamKey === 'following';
+		const isReaderCouncilStream = false; // Disabling banner. Original condition: ( this.props.isDiscoverStream || this.props.streamKey === 'following' );
 		let { items, isRequesting } = this.props;
 		let body;
 		let showingStream;
@@ -658,7 +657,7 @@ class ReaderStream extends Component {
 					<div className="stream__two-column">
 						<div className="reader__content">
 							{ streamHeader?.() }
-							{ isCouncilPromoStream && <CustomerCouncilBanner translate={ translate } /> }
+							{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
 							{ bodyContent }
 						</div>
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
@@ -669,7 +668,7 @@ class ReaderStream extends Component {
 				body = (
 					<>
 						{ streamHeader?.() }
-						{ isCouncilPromoStream && (
+						{ isReaderCouncilStream && (
 							<div style={ { margin: '32px 16px 0' } }>
 								<CustomerCouncilBanner translate={ translate } />
 							</div>

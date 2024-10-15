@@ -222,6 +222,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		productName,
 		productsList,
 		productSlug,
+		redirectTo,
 		selectedSite,
 		supportTicketRequestStatus,
 		translate,
@@ -319,31 +320,34 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					className="licensing-thank-you-auto-activation__select"
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
 				>
-					{ selectDropdownItems.map( ( option ) => (
-						<SelectDropdown.Item { ...option.props }>
-							<div
-								className={ clsx(
-									'licensing-thank-you-auto-activation__dropdown-item-flex-container',
-									{
-										'has-seperator': option.value === 'activate-license-manually',
-									}
-								) }
-							>
-								<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-									{ option.value === 'activate-license-manually' ? (
-										<strong>{ option.label }</strong>
-									) : (
-										option.label
+					{ selectDropdownItems.map( ( option ) => {
+						const { key: itemKey, ...props } = option.props;
+						return (
+							<SelectDropdown.Item key={ itemKey } { ...props }>
+								<div
+									className={ clsx(
+										'licensing-thank-you-auto-activation__dropdown-item-flex-container',
+										{
+											'has-seperator': option.value === 'activate-license-manually',
+										}
 									) }
-								</span>
-								{ option.value !== 'activate-license-manually' && (
-									<span>
-										<Gridicon icon="link" size={ 18 } />
+								>
+									<span className="licensing-thank-you-auto-activation__dropdown-item-text">
+										{ option.value === 'activate-license-manually' ? (
+											<strong>{ option.label }</strong>
+										) : (
+											option.label
+										) }
 									</span>
-								) }
-							</div>
-						</SelectDropdown.Item>
-					) ) }
+									{ option.value !== 'activate-license-manually' && (
+										<span>
+											<Gridicon icon="link" size={ 18 } />
+										</span>
+									) }
+								</div>
+							</SelectDropdown.Item>
+						);
+					} ) }
 				</SelectDropdown>
 				{ error && <FormInputValidation isError={ !! error } text={ error }></FormInputValidation> }
 				<Button

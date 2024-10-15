@@ -58,7 +58,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, destinationSiteId ) );
 
-	redirectTo = filterAllowedRedirect(
+	const finalRedirect = filterAllowedRedirect(
 		redirectTo ?? '',
 		siteSlug ?? '',
 		productConfirmationInfo.buttonUrl
@@ -111,7 +111,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 									} )
 								)
 							}
-							href={ redirectTo }
+							href={ finalRedirect }
 						>
 							{ translate( 'Go to Dashboard' ) }
 						</Button>
