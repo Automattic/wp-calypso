@@ -7,7 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
 import { CredentialsFormData } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
-import { useRequestAutomatedMigration as useRequestAutomatedMigration } from './use-request-automated-migration';
+import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
 export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined > => {
 	try {
