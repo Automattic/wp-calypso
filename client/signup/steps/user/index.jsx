@@ -749,7 +749,8 @@ export class UserStep extends Component {
 		}
 
 		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.userLoggedIn ) {
-			return page( this.getLoginUrl() );
+			page( this.getLoginUrl() );
+			return null;
 		}
 
 		// TODO: decouple hideBack flag from the flow name.
