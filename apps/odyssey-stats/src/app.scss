@@ -112,6 +112,12 @@
 			}
 		}
 	}
+
+	.inner-notice-container .banner__action a.button.is-compact {
+		font-size: 12px; // stylelint-disable-line declaration-property-unit-allowed-list
+		line-height: 1;
+		padding: 7px;
+	}
 }
 
 .inner-notice-container .card.banner.is-jetpack {
