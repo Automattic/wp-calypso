@@ -156,7 +156,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 		 */
 		it( 'start talking with a human', async () => {
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.dispatchEvent( 'click' );
+			await contactSupportButton.click();
 
 			const zendeskMessaging = await page
 				.frameLocator( 'iframe[title="Messaging window"]' )

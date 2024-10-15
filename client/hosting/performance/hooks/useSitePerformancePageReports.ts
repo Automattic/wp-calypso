@@ -77,7 +77,11 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 
-	const { data, isLoading: isInitialLoading } = useQuery( {
+	const {
+		data,
+		isLoading: isInitialLoading,
+		refetch,
+	} = useQuery( {
 		queryKey: [ 'useSitePerformancePageReports', siteId, query ],
 		queryFn: () => getPages( siteId!, query ),
 		refetchOnWindowFocus: false,
@@ -145,15 +149,14 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 			const performanceReportUrl = toPerformanceReportUrl( performanceReport );
 
 			if ( pageId === HOME_PAGE_ID ) {
-				dispatch(
+				return await dispatch(
 					saveSiteSettings( siteId, { wpcom_performance_report_url: performanceReportUrl } )
 				);
-			} else {
-				savePageMeta( siteId, parseInt( pageId, 10 ), performanceReportUrl );
 			}
+			return await savePageMeta( siteId, parseInt( pageId, 10 ), performanceReportUrl );
 		},
 		[ siteId, dispatch ]
 	);
 
-	return { pages, isInitialLoading, savePerformanceReportUrl };
+	return { pages, isInitialLoading, savePerformanceReportUrl, refetch };
 };

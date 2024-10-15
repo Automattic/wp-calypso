@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -38,17 +38,48 @@ const statsQuery = {
 };
 
 const usePerformanceReport = (
+	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
+	refetchPages: () => void,
+	savePerformanceReportUrl: (
+		pageId: string,
+		wpcom_performance_report_url: { url: string; hash: string }
+	) => Promise< void >,
+	currentPageId: string,
 	wpcom_performance_report_url: { url: string; hash: string } | undefined,
 	activeTab: Tab
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
-	const { data: basicMetrics, isError, isFetched } = useUrlBasicMetricsQuery( url, hash, true );
+	const [ retestState, setRetestState ] = useState( 'idle' );
+
+	const {
+		data: basicMetrics,
+		isError: isBasicMetricsError,
+		isFetched: isBasicMetricsFetched,
+		isLoading: isLoadingBasicMetrics,
+		refetch: requeueAdvancedMetrics,
+	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
-	const { data: performanceInsights, isError: isErrorInsights } = useUrlPerformanceInsightsQuery(
-		url,
-		token ?? hash
-	);
+	useEffect( () => {
+		if ( token && finalUrl ) {
+			setIsSavingPerformanceReportUrl( true );
+			savePerformanceReportUrl( currentPageId, { url: finalUrl, hash: token } )
+				.then( () => {
+					refetchPages();
+				} )
+				.finally( () => {
+					setIsSavingPerformanceReportUrl( false );
+				} );
+		}
+		// We only want to run this effect when the token changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ token ] );
+	const {
+		data: performanceInsights,
+		status: insightsStatus,
+		isError: isInsightsError,
+		isLoading: isLoadingInsights,
+	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
@@ -57,7 +88,7 @@ const usePerformanceReport = (
 
 	const performanceReport = activeTab === 'mobile' ? mobileReport : desktopReport;
 
-	const desktopLoaded = 'completed' === performanceInsights?.status;
+	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
 	const getHashOrToken = (
@@ -73,13 +104,33 @@ const usePerformanceReport = (
 		return '';
 	};
 
+	const testAgain = useCallback( async () => {
+		setRetestState( 'queueing-advanced' );
+		const result = await requeueAdvancedMetrics();
+		setRetestState( 'polling-for-insights' );
+		return result;
+	}, [ requeueAdvancedMetrics ] );
+
+	if (
+		retestState === 'polling-for-insights' &&
+		insightsStatus === 'success' &&
+		( activeTab === 'mobile' ? mobileLoaded : desktopLoaded )
+	) {
+		setRetestState( 'idle' );
+	}
+
 	return {
 		performanceReport,
 		url: finalUrl ?? url,
 		hash: getHashOrToken( hash, token, activeTab === 'mobile' ? mobileLoaded : desktopLoaded ),
-		isLoading: activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded,
-		isError: isError || isErrorInsights,
-		isFetched,
+		isLoading:
+			isLoadingBasicMetrics ||
+			isLoadingInsights ||
+			( activeTab === 'mobile' ? ! mobileLoaded : ! desktopLoaded ),
+		isError: isBasicMetricsError || isInsightsError,
+		isBasicMetricsFetched,
+		testAgain,
+		isRetesting: retestState !== 'idle',
 	};
 };
 
@@ -106,7 +157,12 @@ export const SitePerformance = () => {
 
 	const queryParams = useSelector( getCurrentQueryArguments );
 	const [ , setQuery, query ] = useDebouncedInput();
-	const { pages, isInitialLoading, savePerformanceReportUrl } = useSitePerformancePageReports( {
+	const {
+		pages,
+		isInitialLoading,
+		savePerformanceReportUrl,
+		refetch: refetchPages,
+	} = useSitePerformancePageReports( {
 		query,
 	} );
 
@@ -121,39 +177,29 @@ export const SitePerformance = () => {
 	const currentPageId = queryParams?.page_id?.toString() ?? '0';
 	const filter = queryParams?.filter?.toString();
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
-	const [ currentPage, setCurrentPage ] = useState< ( typeof pages )[ number ] >();
 
-	useEffect( () => {
-		setCurrentPage( undefined );
-	}, [ siteId ] );
+	// Stores any page selection made by the user, `undefined` by default. See
+	// `currentPage` below for logic regarding the default page if the user
+	// hasn't selected one yet.
+	const [ currentPageUserSelection, setCurrentPageUserSelection ] =
+		useState< ( typeof pages )[ number ] >();
 
-	useEffect( () => {
-		if ( pages && ! currentPage ) {
-			setCurrentPage( pages.find( ( page ) => page.value === currentPageId ) );
-		}
-	}, [ pages, currentPage, currentPageId ] );
+	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
+
+	const [ prevSiteId, setPrevSiteId ] = useState( siteId );
+	if ( prevSiteId !== siteId ) {
+		setPrevSiteId( siteId );
+		setCurrentPageUserSelection( undefined );
+	}
+
+	const currentPage =
+		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
 
 	const pageOptions = useMemo( () => {
 		return currentPage
 			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
 			: orderedPages;
 	}, [ currentPage, orderedPages ] );
-
-	const [ wpcom_performance_report_url, setWpcom_performance_report_url ] = useState(
-		currentPage?.wpcom_performance_report_url
-	);
-
-	useLayoutEffect( () => {
-		setWpcom_performance_report_url( currentPage?.wpcom_performance_report_url );
-	}, [ currentPage?.wpcom_performance_report_url ] );
-
-	const retestPage = () => {
-		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
-		setWpcom_performance_report_url( {
-			url: currentPage?.url ?? '',
-			hash: '',
-		} );
-	};
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
 		setRecommendationsFilter( filter );
@@ -169,39 +215,38 @@ export const SitePerformance = () => {
 	};
 
 	const performanceReport = usePerformanceReport(
-		isSitePublic ? wpcom_performance_report_url : undefined,
+		setIsSavingPerformanceReportUrl,
+		refetchPages,
+		savePerformanceReportUrl,
+		currentPageId,
+		isSitePublic ? currentPage?.wpcom_performance_report_url : undefined,
 		activeTab
 	);
 
 	useEffect( () => {
-		if ( performanceReport.isFetched && performanceReport.url ) {
+		if ( performanceReport.isBasicMetricsFetched && performanceReport.url ) {
 			recordTracksEvent( 'calypso_performance_profiler_test_started', {
 				url: performanceReport.url,
 			} );
 		}
-	}, [ performanceReport.isFetched, performanceReport.url ] );
-
-	useEffect( () => {
-		if ( performanceReport.hash && performanceReport.hash !== wpcom_performance_report_url?.hash ) {
-			const performanceReportUrl = {
-				url: performanceReport.url,
-				hash: performanceReport.hash,
-			};
-
-			setWpcom_performance_report_url( performanceReportUrl );
-			savePerformanceReportUrl( currentPageId, performanceReportUrl );
-		}
-	}, [
-		currentPageId,
-		performanceReport.url,
-		performanceReport.hash,
-		savePerformanceReportUrl,
-		wpcom_performance_report_url?.hash,
-	] );
+	}, [ performanceReport.isBasicMetricsFetched, performanceReport.url ] );
 
 	const siteIsLaunching = useSelector(
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
+
+	const retestPage = () => {
+		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
+
+		performanceReport.testAgain().then( ( { data } ) => {
+			if ( data?.token && data.token !== currentPage?.wpcom_performance_report_url?.hash ) {
+				savePerformanceReportUrl( currentPageId, {
+					url: data.final_url,
+					hash: data.token,
+				} );
+			}
+		} );
+	};
 
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
@@ -212,7 +257,11 @@ export const SitePerformance = () => {
 	};
 
 	const isMobile = useMobileBreakpoint();
-	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+	const disableControls =
+		performanceReport.isLoading ||
+		isInitialLoading ||
+		! isSitePublic ||
+		isSavingPerformanceReportUrl;
 
 	const handleDeviceTabChange = ( tab: Tab ) => {
 		setActiveTab( tab );
@@ -231,10 +280,10 @@ export const SitePerformance = () => {
 				const url = new URL( window.location.href );
 
 				if ( page_id ) {
-					setCurrentPage( pages.find( ( page ) => page.value === page_id ) );
+					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
 					url.searchParams.set( 'page_id', page_id );
 				} else {
-					setCurrentPage( undefined );
+					setCurrentPageUserSelection( undefined );
 					url.searchParams.delete( 'page_id' );
 				}
 
@@ -244,45 +293,46 @@ export const SitePerformance = () => {
 		/>
 	);
 
-	const subtitle = performanceReport.performanceReport
-		? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
-				args: {
-					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
-						'MMMM Do, YYYY h:mm:ss A'
-					),
-				},
-				components: {
-					button: (
-						<Button
-							css={ {
-								textDecoration: 'none !important',
-								':hover': {
-									textDecoration: 'underline !important',
-								},
-								fontSize: 'inherit',
-								whiteSpace: 'nowrap',
-							} }
-							variant="link"
-							onClick={ retestPage }
-						/>
-					),
-					span: (
-						<span
-							style={ {
-								fontVariantNumeric: 'tabular-nums',
-							} }
-						/>
-					),
-				},
-		  } )
-		: translate(
-				'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-				{
-					components: {
-						link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
+	const subtitle =
+		! performanceReport.isLoading && performanceReport.performanceReport
+			? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
+					args: {
+						testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+							'MMMM Do, YYYY h:mm:ss A'
+						),
 					},
-				}
-		  );
+					components: {
+						button: (
+							<Button
+								css={ {
+									textDecoration: 'none !important',
+									':hover': {
+										textDecoration: 'underline !important',
+									},
+									fontSize: 'inherit',
+									whiteSpace: 'nowrap',
+								} }
+								variant="link"
+								onClick={ retestPage }
+							/>
+						),
+						span: (
+							<span
+								style={ {
+									fontVariantNumeric: 'tabular-nums',
+								} }
+							/>
+						),
+					},
+			  } )
+			: translate(
+					'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
+					{
+						components: {
+							link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
+						},
+					}
+			  );
 
 	return (
 		<div className="site-performance">

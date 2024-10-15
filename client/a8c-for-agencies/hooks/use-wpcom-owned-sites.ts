@@ -50,7 +50,10 @@ export default function useWPCOMOwnedSites() {
 	return {
 		count: isReady
 			? licenses.filter(
-					( license ) => license.productId === creatorPlan?.product_id && ! license.referral // We make sure we do not count referrals
+					( license ) =>
+						license.productId === creatorPlan?.product_id &&
+						! license.referral && // We make sure we do not count referrals
+						! license.meta?.isDevSite // And also a dev site
 			  ).length
 			: 0,
 		isReady,

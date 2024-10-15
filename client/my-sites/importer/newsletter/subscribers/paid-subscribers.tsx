@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { hasQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -17,6 +18,7 @@ export default function PaidSubscribers( {
 	setAutoFetchData,
 	status,
 }: SubscribersStepProps ) {
+	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
 	const isSuccess = hasQueryArg( window.location.href, 'stripe_connect_success' );
@@ -24,11 +26,11 @@ export default function PaidSubscribers( {
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			dispatch( successNotice( 'Stripe account connected successfully' ) );
+			dispatch( successNotice( __( 'Stripe account connected successfully' ) ) );
 		} else if ( isCancelled ) {
-			dispatch( infoNotice( 'Stripe account connection cancelled' ) );
+			dispatch( infoNotice( __( 'Stripe account connection cancelled' ) ) );
 		}
-	}, [ isSuccess, dispatch, isCancelled ] );
+	}, [ isSuccess, dispatch, isCancelled, __ ] );
 
 	return (
 		<>
