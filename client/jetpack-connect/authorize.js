@@ -1067,6 +1067,7 @@ export class JetpackAuthorize extends Component {
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
+								isWooCoreProfiler={ this.isWooCoreProfiler() }
 							/>
 							{ ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
 								<div className="jetpack-connect__jetpack-logo-wrapper">
