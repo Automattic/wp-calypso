@@ -15,7 +15,7 @@ export function generateAdminSections(
 	},
 	googleMailService: string,
 	onboardingUrl: string,
-	isCoreSiteEditorEnabled?: boolean
+	isJetpack?: boolean
 ) {
 	return [
 		{
@@ -61,7 +61,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( "Customize my site's theme" ),
-			link: isCoreSiteEditorEnabled ? siteEditorUrls.wp_global_styles : customizerUrls.root,
+			link: ! isJetpack ? siteEditorUrls.wp_global_styles : customizerUrls.root,
 			synonyms: [ 'color', 'font', 'design', 'css', 'widgets' ],
 			icon: 'customize',
 		},

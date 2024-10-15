@@ -78,7 +78,7 @@ export function useAdminResults( searchTerm: string ) {
 			siteEditorUrls,
 			googleMailServiceFamily,
 			onboardingUrl,
-			site?.is_core_site_editor_enabled
+			site?.jetpack
 		);
 		const filteredSections = filterListBySearchTerm( searchTerm, sections, 4, locale );
 
