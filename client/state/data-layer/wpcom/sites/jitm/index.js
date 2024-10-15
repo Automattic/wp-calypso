@@ -62,7 +62,7 @@ export const transformApiRequest = ( jitms ) => {
  * @param {Object} action The fetch action
  * @returns {Object} The HTTP fetch action
  */
-const doFetchJITM = ( action ) =>
+export const doFetchJITM = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -85,7 +85,7 @@ const doFetchJITM = ( action ) =>
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
  */
-const doDismissJITM = ( action ) =>
+export const doDismissJITM = ( action ) =>
 	http(
 		{
 			method: 'POST',
