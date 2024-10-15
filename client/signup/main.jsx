@@ -527,7 +527,7 @@ class Signup extends Component {
 
 		const { isNewishUser, existingSiteCount } = this.props;
 
-		const isNewUser = !! ( dependencies && dependencies.is_new_account );
+		const isNewUser = !! ( dependencies && dependencies.username );
 		const siteId = dependencies && dependencies.siteId;
 		const isNew7DUserSite = !! (
 			isNewUser ||
@@ -591,7 +591,6 @@ class Signup extends Component {
 				isMapping: isMapping,
 				isTransfer: isTransfer,
 				signupDomainOrigin: signupDomainOriginValue,
-				framework: 'start',
 			} );
 		}
 	};

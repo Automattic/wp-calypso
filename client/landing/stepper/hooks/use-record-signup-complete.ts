@@ -71,7 +71,6 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 					isTransfer:
 						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
 					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
-					framework: 'stepper',
 				},
 				true
 			);
