@@ -36,6 +36,7 @@ const excludedPackages = [
 	/^calypso\/components\/data\/query-keyring-connections$/,
 	/^calypso\/components\/data\/query-jetpack-modules$/,
 	/^calypso\/components\/data\/query-site-keyrings$/,
+	/^calypso\/components\/data\/query-preferences$/,
 ];
 
 const excludedPackagePlugins = excludedPackages.map(
@@ -199,10 +200,6 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-memberships$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/state\/data-layer\/wpcom\/sites\/jitm$/,
-			path.resolve( __dirname, 'src/lib/state-data-layer-wpcom-sites-jitm' )
 		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
