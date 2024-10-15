@@ -35,7 +35,7 @@ const HelpCenterSmooch: React.FC = () => {
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( shouldUseHelpCenterExperience && isMessagingScriptLoaded && authData ) {
+		if ( shouldUseHelpCenterExperience && isMessagingScriptLoaded && authData?.isLoggedIn ) {
 			if ( authData?.jwt && authData?.externalId ) {
 				initSmooch( authData )
 					.then( () => {

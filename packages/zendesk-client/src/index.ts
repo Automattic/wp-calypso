@@ -5,6 +5,7 @@ export { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-mess
 export { useSmooch } from './use-smooch';
 export { useOpenZendeskMessaging } from './use-open-zendesk-messaging';
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
+export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,

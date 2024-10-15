@@ -71,7 +71,7 @@ export type Nudge = {
 	context?: Record< string, unknown >;
 };
 
-export type MessageRole = 'user' | 'bot' | 'human';
+export type MessageRole = 'user' | 'bot' | 'business';
 
 export type MessageType =
 	| 'message'
@@ -116,3 +116,49 @@ export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as
 export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie';
+interface ConversationParticipant {
+	id: string;
+	userId: string;
+	unreadCount: number;
+	lastRead: number;
+}
+
+export type ZendeskMessage = {
+	avatarUrl: string;
+	displayName: string;
+	id: string;
+	metadata: Metadata;
+	received: number;
+	role: string;
+	source: {
+		type: 'web' | 'slack';
+		id: string;
+		integrationId: string;
+	};
+	type: ZendeskContentType;
+	text: string;
+};
+
+export type ZendeskContentType =
+	| 'text'
+	| 'carousel'
+	| 'file'
+	| 'form'
+	| 'formResponse'
+	| 'image'
+	| 'list'
+	| 'location'
+	| 'template';
+
+export type ZendeskConversation = {
+	id: string;
+	lastUpdatedAt: number;
+	businessLastRead: number;
+	description: string;
+	displayName: string;
+	iconUrl: string;
+	type: 'sdkGroup' | string;
+	participants: ConversationParticipant[];
+	metadata: Metadata;
+	messages: ZendeskMessage[];
+};

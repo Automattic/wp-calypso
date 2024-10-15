@@ -47,9 +47,9 @@ const MessageAvatarHeader = ( {
 } ) => {
 	const { _x } = useI18n();
 	const isMobile = useMobileBreakpoint();
-	const { botName, shouldUseFancyHelpCenter } = useOdieAssistantContext();
+	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
-	if ( shouldUseFancyHelpCenter ) {
+	if ( shouldUseHelpCenterExperience ) {
 		return message.role === 'bot' ? (
 			<>
 				<WapuuAvatar className={ wapuuAvatarClasses } />
@@ -85,7 +85,7 @@ const MessageAvatarHeader = ( {
 				</div>
 			</>
 		) : (
-			<>{ message.role === 'human' && <HumanAvatar /> }</>
+			<>{ message.role === 'business' && <HumanAvatar /> }</>
 		);
 	}
 
@@ -183,7 +183,7 @@ const ChatMessage = ( {
 	} );
 
 	const messageHeader = (
-		<div className={ `message-header ${ isBot ? 'bot' : 'human' }` }>
+		<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
 			<MessageAvatarHeader
 				currentUser={ currentUser }
 				isFullscreen={ isFullscreen }

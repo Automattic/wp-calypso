@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSmooch } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
@@ -10,7 +9,7 @@ import {
 	useOdieBroadcastWithCallbacks,
 	useGetOdieStorage,
 } from '../data';
-import { isOdieAllowedBot } from '../utils/is-odie-allowed-bot';
+import { isOdieAllowedBot, useZendeskConversations, zendeskMessageListener } from '../utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type {
@@ -145,7 +144,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
-	const { getConversation, addMessengerListener } = useSmooch();
+	const { getConversationByChatId } = useZendeskConversations();
 	const [ supportProvider, setSupportProvider ] = useState< SupportProvider >( 'odie' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -253,35 +252,34 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 			setIsLoading( true );
 
 			if ( isChatLoaded ) {
-				getConversation( existingChat.chat_id ).then( ( conversation ) => {
+				getConversationByChatId( existingChat.chat_id ).then( ( conversation ) => {
 					if ( conversation ) {
 						setSupportProvider( 'zendesk' );
-						const chatMessages = conversation.messages.map( ( message: any ) => ( {
-							content: message.text,
-							role: message.role === 'business' ? 'human' : 'user',
-							type: 'message',
-						} ) );
-						setChat( {
-							chat_id: existingChat.chat_id,
-							messages: [ ...existingChat.messages, ...chatMessages ],
-						} );
+						const chatMessages = conversation.messages.map(
+							( message ) =>
+								( {
+									content: message.text,
+									role: message.role,
+									type: 'message',
+								} ) as Message
+						);
+						existingChat.messages = [ ...existingChat.messages, ...chatMessages ];
 					}
 				} );
-			} else {
-				setChat( existingChat );
 			}
 
+			setChat( existingChat );
 			setIsLoading( false );
 		}
-	}, [ existingChat, getConversation, isChatLoaded ] );
+	}, [ existingChat, isChatLoaded, getConversationByChatId ] );
 
 	useEffect( () => {
 		if ( supportProvider === 'zendesk' && isChatLoaded ) {
-			addMessengerListener( ( message ) => {
-				addMessage( { content: message.text, role: 'human', type: 'message' } );
+			zendeskMessageListener( existingChat.chat_id, ( message ) => {
+				addMessage( { content: message.text, role: 'business', type: 'message' } );
 			} );
 		}
-	}, [ supportProvider, isChatLoaded, addMessage, addMessengerListener ] );
+	}, [ supportProvider, isChatLoaded, addMessage, existingChat ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
