@@ -25,7 +25,7 @@ export default function CampaignsTotalStats( {
 					</div>
 				</div>
 				<div className="campaigns-total-stats__item">
-					<div className="campaigns-total-stats__label">{ translate( 'Total visitors' ) }</div>
+					<div className="campaigns-total-stats__label">{ translate( 'Total clicks' ) }</div>
 					<div className="campaigns-total-stats__result">{ formatNumber( totalClicks || 0 ) }</div>
 				</div>
 			</div>
