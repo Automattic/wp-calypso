@@ -12,7 +12,7 @@ import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 
 const HelpCenterSmooch: React.FC = () => {
-	const shouldUseFancyHelpCenter = config.isEnabled( 'help-center-experience' );
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 
 	const smoochRef = useRef< HTMLDivElement >( null );
@@ -35,7 +35,7 @@ const HelpCenterSmooch: React.FC = () => {
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( shouldUseFancyHelpCenter && isMessagingScriptLoaded && authData ) {
+		if ( shouldUseHelpCenterExperience && isMessagingScriptLoaded && authData ) {
 			if ( authData?.jwt && authData?.externalId ) {
 				initSmooch( authData )
 					.then( () => {

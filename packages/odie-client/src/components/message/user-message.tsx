@@ -18,7 +18,7 @@ export const UserMessage = ( {
 	message: Message;
 	onDislike: () => void;
 } ) => {
-	const { extraContactOptions, isUserEligibleForPaidSupport, shouldUseFancyHelpCenter } =
+	const { extraContactOptions, isUserEligibleForPaidSupport, shouldUseHelpCenterExperience } =
 		useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
@@ -56,7 +56,7 @@ export const UserMessage = ( {
 				{ isRequestingHumanSupport ? displayMessage : message.content }
 			</Markdown>
 			{ showExtraContactOptions &&
-				( shouldUseFancyHelpCenter ? <GetSupport /> : extraContactOptions ) }
+				( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
 			{ ! showExtraContactOptions && isBot && (
 				<WasThisHelpfulButtons
 					message={ message }

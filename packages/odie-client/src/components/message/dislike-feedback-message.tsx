@@ -6,7 +6,7 @@ import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 
 export const DislikeFeedbackMessage = () => {
-	const { shouldUseFancyHelpCenter, extraContactOptions } = useOdieAssistantContext();
+	const { shouldUseHelpCenterExperience, extraContactOptions } = useOdieAssistantContext();
 	const { _x } = useI18n();
 	return (
 		<>
@@ -25,7 +25,7 @@ export const DislikeFeedbackMessage = () => {
 					)
 				}
 			</Markdown>
-			{ shouldUseFancyHelpCenter ? <GetSupport /> : extraContactOptions }
+			{ shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions }
 		</>
 	);
 };

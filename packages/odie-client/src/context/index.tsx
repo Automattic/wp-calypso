@@ -37,7 +37,7 @@ type ScrollToLastMessageType = () => void;
 type OdieAssistantContextInterface = {
 	supportProvider: SupportProvider;
 	setSupportProvider: ( provider: SupportProvider ) => void;
-	shouldUseFancyHelpCenter: boolean;
+	shouldUseHelpCenterExperience: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -74,7 +74,7 @@ type OdieAssistantContextInterface = {
 
 const defaultContextInterfaceValues = {
 	supportProvider: 'odie' as SupportProvider,
-	shouldUseFancyHelpCenter: false,
+	shouldUseHelpCenterExperience: false,
 	addMessage: noop,
 	botName: 'Wapuu',
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
@@ -313,7 +313,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 			value={ {
 				supportProvider,
 				setSupportProvider,
-				shouldUseFancyHelpCenter: config.isEnabled( 'help-center-experience' ),
+				shouldUseHelpCenterExperience: config.isEnabled( 'help-center-experience' ),
 				addMessage,
 				botName,
 				botNameSlug,
