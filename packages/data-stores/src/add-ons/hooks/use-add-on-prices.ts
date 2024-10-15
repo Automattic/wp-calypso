@@ -37,7 +37,10 @@ const useAddOnPrices = ( productSlug: ProductsList.StoreProductSlug, quantity?: 
 		// taking a cursory look, it seems as if this will require deeper investigation. For now, because
 		// we are always working with smallest currency units for add-ons, we explicitly round decimal add-on
 		// monthly prices to suppress the warnings ( something that was already happening in the library ).
-		let monthlyPrice = Number.isInteger( cost ) ? cost : Math.round( cost / 12 );
+		const rawMonthlyPrice = cost / 12;
+		let monthlyPrice = Number.isInteger( rawMonthlyPrice )
+			? rawMonthlyPrice
+			: Math.round( rawMonthlyPrice );
 		let yearlyPrice = cost;
 
 		if ( product?.term === 'month' ) {
