@@ -9,6 +9,7 @@ import {
 	cog,
 	commentAuthorAvatar,
 	people,
+	starEmpty,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -29,6 +30,7 @@ import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
+	A4A_AGENCY_TIER_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -170,6 +172,19 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Team' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Team',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-agency-tier' )
+				? [
+						{
+							icon: starEmpty,
+							path: '/',
+							link: A4A_AGENCY_TIER_LINK,
+							title: translate( 'Agency Tier' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Agency Tier',
 							},
 						},
 				  ]

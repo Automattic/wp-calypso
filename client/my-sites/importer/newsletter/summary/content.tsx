@@ -1,4 +1,6 @@
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, post } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
@@ -70,11 +72,15 @@ interface ContentSummaryProps {
 }
 
 export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {
+	const { __ } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ post } /> You <strong>skipped</strong> content importing.
+					<Icon icon={ post } />
+					{ createInterpolateElement( __( 'You <strong>skipped</strong> content importing.' ), {
+						strong: <strong />,
+					} ) }
 				</p>
 			</div>
 		);
@@ -84,10 +90,11 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ post } /> <strong>We're importing your content.</strong>
+					<Icon icon={ post } /> <strong>{ __( "We're importing your content." ) }</strong>
 					<br />
-					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
-					done.
+					{ __(
+						"This may take a few minutes. Feel free to leave this window — we'll let you know when it's done."
+					) }
 				</p>
 			</div>
 		);

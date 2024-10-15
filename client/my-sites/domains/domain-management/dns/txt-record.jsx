@@ -1,10 +1,8 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { DNS_TXT_RECORD_CHAR_LIMIT } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
@@ -24,16 +22,7 @@ class TxtRecord extends Component {
 		if ( value?.length === 0 ) {
 			return translate( 'TXT records may not be empty' );
 		} else if ( value?.length > 2048 ) {
-			return translate(
-				'TXT records may not exceed 2048 characters. {{supportLink}}Learn more{{/supportLink}}.',
-				{
-					components: {
-						supportLink: (
-							<ExternalLink href={ DNS_TXT_RECORD_CHAR_LIMIT } target="_blank" icon={ false } />
-						),
-					},
-				}
-			);
+			return translate( 'TXT records may not exceed 2048 characters.' );
 		}
 
 		return null;

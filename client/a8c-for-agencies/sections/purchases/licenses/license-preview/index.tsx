@@ -371,6 +371,7 @@ export default function LicensePreview( {
 					{ isWPCOMLicense && isSiteAtomic ? (
 						<LicenseActions
 							siteUrl={ siteUrl }
+							isDevSite={ isDevelopmentSite }
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }

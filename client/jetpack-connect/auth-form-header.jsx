@@ -107,7 +107,7 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
-			return translate( 'One last step!' );
+			return translate( 'Connect your account' );
 		}
 
 		if ( isWpcomMigration ) {
@@ -167,6 +167,7 @@ export class AuthFormHeader extends Component {
 
 		if ( isWooCoreProfiler ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
+			const reviewDocLink = <a href="https://woocommerce.com/documentation/woocommerce/" />;
 			const translateParams = {
 				components: {
 					br: <br />,
@@ -185,24 +186,45 @@ export class AuthFormHeader extends Component {
 					'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
 			};
 
-			switch ( currentState ) {
-				case 'logged-out':
-					return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-						? translate(
-								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-								translateParams
-						  )
-						: translate(
-								"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-								translateParams
-						  );
-				default:
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
-						{
-							args: { pluginName },
-						}
-					);
+			if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
+				switch ( currentState ) {
+					case 'logged-out':
+						return translate(
+							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. {{br}}{{/br}}For more information, please {{doc}}review our documentation{{/doc}}.',
+							{
+								...translateParams,
+								components: {
+									...translateParams.components,
+									doc: reviewDocLink,
+								},
+							}
+						);
+					default:
+						return translate(
+							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+							{
+								args: { pluginName },
+								components: {
+									doc: reviewDocLink,
+								},
+							}
+						);
+				}
+			} else {
+				switch ( currentState ) {
+					case 'logged-out':
+						return translate(
+							"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+							translateParams
+						);
+					default:
+						return translate(
+							"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
+							{
+								args: { pluginName },
+							}
+						);
+				}
 			}
 		}
 

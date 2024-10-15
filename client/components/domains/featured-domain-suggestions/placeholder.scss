@@ -1,10 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-.featured-domain-suggestion--is-placeholder {
+.featured-domain-suggestion.featured-domain-suggestion--is-placeholder {
 	min-height: 222px;
 
 	.domain-registration-suggestion__title,
 	.domain-registration-suggestion__badges,
-	.domain-registration-suggestion__match-reasons,
+	.domain-suggestion__action-container,
+	.domain-product-price,
+	.domain-registration-suggestion__title-info,
 	.domain-suggestion__action {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: var(--color-neutral-0);
@@ -16,16 +20,25 @@
 		width: 60%;
 		height: 45px;
 	}
+	.domain-registration-suggestion__title-info,
 	.domain-product-price {
 		height: 18px;
 	}
 	.domain-registration-suggestion__badges {
 		height: 22px;
+		width: 20%;
+		align-self: start !important;
+
 	}
-	.domain-registration-suggestion__match-reasons {
-		height: 52px;
-	}
-	.domain-suggestion__action {
+	.domain-suggestion__action-container {
 		height: 40px;
+		margin-bottom: 6px;
+	}
+
+	.domain-suggestion__content {
+		flex-grow: 0;
+		@include break-mobile {
+			flex-grow: 1;
+		}
 	}
 }

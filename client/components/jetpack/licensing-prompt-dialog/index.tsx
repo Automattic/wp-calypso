@@ -23,7 +23,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	const userLicenses = useSelector( getUserLicenses );
 	const userLicensesCounts = useSelector( getUserLicensesCounts );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=jetpack#/license/activation';
+	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=my-jetpack#/add-license';
 
 	const hasOneDetachedLicense = userLicensesCounts && userLicensesCounts[ 'detached' ] === 1;
 	const hasDetachedLicenses = userLicensesCounts && userLicensesCounts[ 'detached' ] !== 0;

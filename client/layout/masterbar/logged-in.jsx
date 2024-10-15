@@ -453,10 +453,10 @@ class MasterbarLoggedIn extends Component {
 				url={ siteActions[ 0 ].url }
 				subItems={ siteActions }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
-				tooltip={ translate( 'New' ) }
+				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
 				tipTarget="new-menu"
 			>
-				{ translate( 'New' ) }
+				{ translate( 'New', { context: 'admin bar menu group label' } ) }
 			</Item>
 		);
 	}
