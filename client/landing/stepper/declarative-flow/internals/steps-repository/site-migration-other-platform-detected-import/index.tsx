@@ -76,10 +76,11 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 	const descriptionWithoutPlatform = translate(
 		'Our migration service is for WordPress sites. We don’t currently support importing from this platform.'
 	);
+	const title = translate( "Looks like there's been a mix-up" );
 
 	return (
 		<>
-			<DocumentHead title={ translate( "Looks like there's been a mix-up" ) } />
+			<DocumentHead title={ title } />
 			<StepContainer
 				stepName="site-migration-other-platform"
 				goBack={ navigation?.goBack }
@@ -92,7 +93,7 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 					) : (
 						<FormattedHeader
 							id="site-migration-credentials-header"
-							headerText={ translate( "Looks like there's been a mix-up" ) }
+							headerText={ title }
 							subHeaderText={
 								platformName === 'Unknown' ? descriptionWithoutPlatform : descriptionWithPlatform
 							}
