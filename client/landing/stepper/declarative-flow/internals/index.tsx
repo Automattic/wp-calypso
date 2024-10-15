@@ -36,19 +36,19 @@ const lazyCache = new WeakMap<
 >();
 
 const redirects = [
-	{ from: 'free', to: '/start/free/:lang?' },
-	{ from: 'blog', to: '/start/:lang?' },
-	{ from: 'link-in-bio', to: '/start/:lang?' },
-	{ from: 'videopress', to: '/start/:lang?' },
+	{ flow: 'free', to: '/start/free/:lang?' },
+	{ flow: 'blog', to: '/start/:lang?' },
+	{ flow: 'link-in-bio', to: '/start/:lang?' },
+	{ flow: 'videopress', to: '/start/:lang?' },
 ];
 
 type RedirectHandlerProps = {
 	redirectTo: string;
-	redirectFrom: string;
+	flow: string;
 };
 
 // Custom component to run code when the route matches
-const RedirectHandler: React.FC< RedirectHandlerProps > = ( { redirectTo, redirectFrom } ) => {
+const RedirectHandler: React.FC< RedirectHandlerProps > = ( { redirectTo, flow } ) => {
 	const location = useLocation();
 	const { lang } = useParams< { lang?: string } >();
 
@@ -57,7 +57,7 @@ const RedirectHandler: React.FC< RedirectHandlerProps > = ( { redirectTo, redire
 
 	// Track the redirect event
 	recordTracksEvent( 'calypso_tailored_flows_redirect', {
-		redirectFrom: `/setup/${ redirectFrom }`,
+		redirectFrom: `/setup/${ flow }`,
 		redirectFromUrl: `/setup${ location.pathname + location.search }`,
 		redirectTo: redirectUrl,
 		referrer: document.referrer,
@@ -234,20 +234,16 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						{ /* Step-based routes */ }
 						{ flowSteps.map( ( step ) => (
 							<Route
-								key={ `${ redirect.from }_step_${ step.slug }` }
-								path={ `${ redirect.from }/${ step.slug }/:lang?` }
-								element={
-									<RedirectHandler redirectTo={ redirect.to } redirectFrom={ redirect.from } />
-								}
+								key={ `${ redirect.flow }_step_${ step.slug }` }
+								path={ `${ redirect.flow }/${ step.slug }/:lang?` }
+								element={ <RedirectHandler redirectTo={ redirect.to } flow={ redirect.flow } /> }
 							/>
 						) ) }
 						{ /* Lang-based routes */ }
 						<Route
-							key={ `${ redirect.from }_lang` }
-							path={ `${ redirect.from }/:lang?` }
-							element={
-								<RedirectHandler redirectTo={ redirect.to } redirectFrom={ redirect.from } />
-							}
+							key={ `${ redirect.flow }_lang` }
+							path={ `${ redirect.flow }/:lang?` }
+							element={ <RedirectHandler redirectTo={ redirect.to } flow={ redirect.flow } /> }
 						/>
 					</>
 				) ) }
