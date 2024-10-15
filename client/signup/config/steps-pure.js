@@ -136,6 +136,7 @@ export function generateSteps( {
 			optionalDependencies: [
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
@@ -161,6 +162,7 @@ export function generateSteps( {
 			optionalDependencies: [
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
@@ -191,6 +193,7 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 				'oauth2_client_id',
 				'oauth2_redirect',
@@ -525,7 +528,7 @@ export function generateSteps( {
 				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect' ],
+			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
 		},
 
 		'oauth2-name': {
@@ -542,7 +545,7 @@ export function generateSteps( {
 				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect' ],
+			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
