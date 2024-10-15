@@ -37,6 +37,8 @@ const useAddOnPrices = ( productSlug: ProductsList.StoreProductSlug, quantity?: 
 		// taking a cursory look, it seems as if this will require deeper investigation. For now, because
 		// we are always working with smallest currency units for add-ons, we explicitly round decimal add-on
 		// monthly prices to suppress the warnings ( something that was already happening in the library ).
+		//
+		// Once https://github.com/Automattic/wp-calypso/issues/95416 is resolved, we can remove this rounding.
 		const initialMonthlyPrice = cost / 12;
 		let monthlyPrice = Number.isInteger( initialMonthlyPrice )
 			? initialMonthlyPrice
