@@ -36,6 +36,14 @@ const goTo = ( path: string, replaceHistory: boolean ) => {
 	return window.location.assign( path );
 };
 
+const getBackToFlowFromStep = ( backToStep?: StepperStep ) => {
+	if ( backToStep ) {
+		return getFlowPath( backToStep.slug );
+	}
+
+	return undefined;
+};
+
 export const goToImporter = ( {
 	platform,
 	siteId,
@@ -47,7 +55,7 @@ export const goToImporter = ( {
 	from,
 	ref,
 }: GoToImporterParams ) => {
-	const backToFlowURL = backToFlow || ( backToStep ? getFlowPath( backToStep?.slug ) : undefined );
+	const backToFlowURL = backToFlow || getBackToFlowFromStep( backToStep );
 	const customizedActionGoToFlow = migrateEntireSiteStep
 		? getFlowPath( migrateEntireSiteStep?.slug )
 		: undefined;
