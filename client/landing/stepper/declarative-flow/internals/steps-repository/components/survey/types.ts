@@ -14,6 +14,7 @@ export interface SurveyProps extends PropsWithChildren {
 	onSkip?: () => void;
 	isOpen?: boolean;
 	className?: string;
+	title?: string;
 }
 
 export interface TriggerProps {

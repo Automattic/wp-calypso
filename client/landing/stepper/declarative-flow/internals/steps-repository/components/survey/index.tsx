@@ -1,8 +1,10 @@
+import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import React, { cloneElement, useCallback, useContext, useMemo, useState } from 'react';
 import { SurveyContextType, SurveyActionsContextType, TriggerProps, SurveyProps } from './types';
-
+import './style.scss';
 export * from './types';
 
 const SurveyContext = React.createContext< SurveyContextType | undefined >( undefined );
@@ -22,7 +24,7 @@ const Trigger = ( { asChild, children, onClick, as }: TriggerProps ) => {
 
 export const SurveyTriggerAccept = ( {
 	children,
-	as = 'span',
+	as = 'button',
 	asChild,
 }: Omit< TriggerProps, 'onClick' > ) => {
 	const { accept } = useContext( SurveyActionsContext );
@@ -80,6 +82,7 @@ export const Survey = ( {
 	onAccept,
 	onSkip,
 	isOpen = true,
+	title,
 	className,
 }: SurveyProps ) => {
 	const cookieValue = cookie.parse( document.cookie );
@@ -119,23 +122,25 @@ export const Survey = ( {
 	}
 
 	return (
-		<div
-			aria-modal="true"
-			role="dialog"
-			aria-label={ name }
-			className={ clsx( 'survey-notice', className ) }
-		>
-			<button
-				className={ clsx( 'survey-notice__backdrop', element( 'backdrop' ) ) }
-				onClick={ () => actions.skip() }
-			/>
-			<div className={ clsx( 'survey-notice__popup', element( 'popup' ) ) }>
-				<SurveyContext.Provider value={ { isOpen } }>
-					<SurveyActionsContext.Provider value={ actions }>
+		<SurveyContext.Provider value={ { isOpen } }>
+			<SurveyActionsContext.Provider value={ actions }>
+				<div aria-label={ name } className={ clsx( 'survey-notice', className ) }>
+					<SurveyTriggerSkip asChild>
+						<button className={ clsx( 'survey-notice__backdrop', element( 'backdrop' ) ) } />
+					</SurveyTriggerSkip>
+					<div className={ clsx( 'survey-notice__popup', element( 'popup' ) ) }>
+						<div className="survey-notice__popup-head">
+							<div className="survey-notice__popup-head-title">{ title }</div>
+							<SurveyTriggerSkip asChild>
+								<Button className="survey-notice__popup-head-close">
+									<Gridicon icon="cross" size={ 16 } />
+								</Button>
+							</SurveyTriggerSkip>
+						</div>
 						{ children }
-					</SurveyActionsContext.Provider>
-				</SurveyContext.Provider>
-			</div>
-		</div>
+					</div>
+				</div>
+			</SurveyActionsContext.Provider>
+		</SurveyContext.Provider>
 	);
 };
