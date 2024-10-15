@@ -38,6 +38,8 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 		isSuccess,
 	} = useAnalyzeUrlQuery( from, shouldAnalyzeUrl );
 
+	const platformName = convertPlatformName( platform as ImporterPlatform ) || '';
+
 	useEffect( () => {
 		if ( ! isSuccess || ! siteInfo ) {
 			return;
@@ -52,11 +54,28 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 		} );
 	}, [ navigation, platform ] );
 
-	const handleSkip = useCallback( () => {
+	const handleHelp = useCallback( () => {
 		navigation.submit?.( {
 			action: 'skip',
 		} );
 	}, [ navigation ] );
+
+	const descriptionWithPlatform = translate(
+		// translators: platform is the name of the platform importer we are supporting.
+		'Our migration service is for WordPress sites. But don’t worry — our {{strong}}%(platform)s{{/strong}} import tool is ready to bring your content to WordPress.com.',
+		{
+			args: {
+				platform: platformName || '',
+			},
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
+
+	const descriptionWithoutPlatform = translate(
+		'Our migration service is for WordPress sites. We don’t currently support importing from this platform.'
+	);
 
 	return (
 		<>
@@ -74,17 +93,9 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 						<FormattedHeader
 							id="site-migration-credentials-header"
 							headerText={ translate( "Looks like there's been a mix-up" ) }
-							subHeaderText={ translate(
-								'Our migration service is for WordPress sites. But don’t worry — our {{strong}}%(platform)s{{/strong}} import tool is ready to bring your content to WordPress.com.',
-								{
-									args: {
-										platform: convertPlatformName( platform as ImporterPlatform ) || '',
-									},
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
+							subHeaderText={
+								platformName === 'Unknown' ? descriptionWithoutPlatform : descriptionWithPlatform
+							}
 							align="center"
 							subHeaderAlign="center"
 						/>
@@ -94,7 +105,11 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 					isAnalyzingUrl ? (
 						<Scanning />
 					) : (
-						<ImportPlatformForwarder onSubmit={ handleSubmit } onSkip={ handleSkip } />
+						<ImportPlatformForwarder
+							platformName={ platformName }
+							onSubmit={ handleSubmit }
+							onHelp={ handleHelp }
+						/>
 					)
 				}
 				recordTracksEvent={ recordTracksEvent }

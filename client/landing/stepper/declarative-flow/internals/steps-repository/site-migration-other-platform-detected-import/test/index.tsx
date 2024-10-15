@@ -58,12 +58,14 @@ describe( 'Site Migration Other Platform Detected Import', () => {
 	it( 'shows the platform name using friendly names', () => {
 		render( {}, { initialEntry: '/step?platform=movabletype&from=https://example.com' } );
 
-		expect( screen.getByText( /Movable Type & TypePad/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Movable Type & TypePad/ ) ).toBeVisible();
 	} );
 
-	it( 'shows a generic message when the platform is not wordpress', () => {
+	it( 'hides the import button when the platform is not supported', async () => {
 		render( {}, { initialEntry: '/step?platform=nonsupportedplatform&from=https://example.com' } );
 
-		expect( screen.getByText( /Unknown/ ) ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Import Your Content' } )
+		).not.toBeInTheDocument();
 	} );
 } );
