@@ -226,7 +226,6 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		selectedSite,
 		supportTicketRequestStatus,
 		translate,
-		redirectTo,
 	] );
 
 	const siteSelectOptions = useMemo( () => {

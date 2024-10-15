@@ -1775,11 +1775,10 @@ describe( 'getThankYouPageUrl', () => {
 				connectAfterCheckout: true,
 				adminUrl: adminUrl,
 				fromSiteSlug: fromSiteSlug,
-				redirectTo: 'https://foo.bar/some-path?with-args=yes',
 				receiptId: 'invalid receipt ID' as any,
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
 
 			expect( url ).toBe(
 				addQueryArgs(
@@ -1868,10 +1867,9 @@ describe( 'getThankYouPageUrl', () => {
 				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
 				jetpackTemporarySiteId: '123456789',
-				redirectTo: 'https://my.site/wp-admin/',
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789&redirect_to=https%3A%2F%2Fmy.site%2Fwp-admin%2F'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
 			);
 		} );
 
