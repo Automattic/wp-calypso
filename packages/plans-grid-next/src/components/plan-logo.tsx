@@ -14,10 +14,9 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import PlanDivOrTdContainer from './plan-div-td-container';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
+import Tooltip, { useManageTooltipToggle } from './shared/tooltip';
 import type { GridPlan } from '../types';
 
 const PlanLogo: React.FunctionComponent< {
@@ -72,7 +71,7 @@ const PlanLogo: React.FunctionComponent< {
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planSlug ) && (
-					<Plans2023Tooltip
+					<Tooltip
 						text={ translate(
 							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 						) }
@@ -81,27 +80,27 @@ const PlanLogo: React.FunctionComponent< {
 						activeTooltipId={ activeTooltipId }
 					>
 						<CloudLogo />
-					</Plans2023Tooltip>
+					</Tooltip>
 				) }
 				{ shouldShowWooLogo && (
-					<Plans2023Tooltip
+					<Tooltip
 						text={ translate( 'Make your online store a reality with the power of WooCommerce.' ) }
 						id="woo-logo"
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					>
 						<WooLogo />
-					</Plans2023Tooltip>
+					</Tooltip>
 				) }
 				{ isWpcomEnterpriseGridPlan( planSlug ) && (
-					<Plans2023Tooltip
+					<Tooltip
 						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
 						id="enterprise-logo"
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					>
 						<VIPLogo />
-					</Plans2023Tooltip>
+					</Tooltip>
 				) }
 			</header>
 		</PlanDivOrTdContainer>

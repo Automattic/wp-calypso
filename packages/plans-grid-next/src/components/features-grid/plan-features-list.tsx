@@ -9,12 +9,11 @@ import { AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
-import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
-import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import { PlanStorage } from '../shared/storage';
+import Tooltip, { useManageTooltipToggle } from '../shared/tooltip';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
@@ -155,7 +154,7 @@ const PlanFeaturesList = ( {
 					{ jetpackFeatures.length !== 0 && (
 						<>
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-								<Plans2023Tooltip
+								<Tooltip
 									text={ translate(
 										'Security, performance, and growth tools—powered by Jetpack.'
 									) }
@@ -164,7 +163,7 @@ const PlanFeaturesList = ( {
 									id={ `${ planSlug }-jp-logo-${ mapIndex }` }
 								>
 									<JetpackLogo size={ 16 } />
-								</Plans2023Tooltip>
+								</Tooltip>
 							</div>
 							<PlanFeatures2023GridFeatures
 								features={ jetpackFeatures }
