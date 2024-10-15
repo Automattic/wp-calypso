@@ -17,16 +17,16 @@ const StepContent = () => {
 	const siteSlug = useSiteSlugParam();
 
 	return (
-		<div className="site-migration-support-instructions__card-list">
+		<div className="migration-support-instructions__list">
 			<FlowCard
-				className="site-migration-support-instructions__card"
+				className="migration-support-instructions__card"
 				title={ translate( 'Explore features' ) }
 				text={ translate( 'Discover the features available on WordPress.com.' ) }
 				onClick={ () => redirect( `/home/${ siteSlug }` ) }
 			/>
 
 			<FlowCard
-				className="site-migration-support-instructions__card"
+				className="migration-support-instructions__card"
 				title={ translate( 'Learn about WordPress.com' ) }
 				text={ translate(
 					'Access guides and tutorials to better understand how to use WordPress.com.'

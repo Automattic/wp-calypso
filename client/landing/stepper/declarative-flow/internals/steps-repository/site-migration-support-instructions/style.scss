@@ -1,14 +1,18 @@
-.site-migration-support-instructions__card-list {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	width: 100%;
-	justify-content: center;
-	align-items: center;
-}
+.migration-support-instructions {
+	padding: 0 24px;
 
-.site-migration-support-instructions__card {
-	max-width: 520px;
-	width: 100%;
-	margin: 0;
+	.migration-support-instructions__list {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		width: 100%;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.migration-support-instructions__card {
+		max-width: 520px;
+		width: 100%;
+		margin: 0;
+	}
 }

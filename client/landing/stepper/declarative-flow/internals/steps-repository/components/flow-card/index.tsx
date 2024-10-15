@@ -18,6 +18,9 @@ interface FlowCardProps {
 	className?: string;
 }
 
+const bemElement = ( customClassName?: string ) => ( element: string ) =>
+	customClassName ? `${ customClassName }__${ element }` : undefined;
+
 const FlowCard = ( {
 	icon,
 	onClick,
@@ -27,6 +30,8 @@ const FlowCard = ( {
 	badge,
 	className,
 }: FlowCardProps ) => {
+	const bem = bemElement( className );
+
 	return (
 		<Card
 			className={ clsx( 'flow-question', className ) }
@@ -38,18 +43,16 @@ const FlowCard = ( {
 			<CardBody>
 				<Flex>
 					{ icon && (
-						<FlexItem className={ clsx( 'flow-question__icon', `${ className }__icon` ) }>
+						<FlexItem className={ clsx( 'flow-question__icon', bem( 'icon' ) ) }>
 							<Icon icon={ icon } size={ 24 } />
 						</FlexItem>
 					) }
 					<FlexBlock>
-						<h3 className={ clsx( 'flow-question__heading', `${ className }__heading` ) }>
+						<h3 className={ clsx( 'flow-question__heading', bem( 'heading' ) ) }>
 							{ title }
 							{ badge && <Badge type={ badge.type }>{ badge.text }</Badge> }
 						</h3>
-						<p className={ clsx( 'flow-question__description', `${ className }__description` ) }>
-							{ text }
-						</p>
+						<p className={ clsx( 'flow-question__description', bem( 'description' ) ) }>{ text }</p>
 					</FlexBlock>
 					<FlexItem>
 						<Icon icon={ chevronRight } size={ 24 } />
