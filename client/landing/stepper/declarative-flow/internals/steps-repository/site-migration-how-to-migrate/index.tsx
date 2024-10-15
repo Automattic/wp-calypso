@@ -1,59 +1,20 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo, useEffect } from 'react';
+import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import FlowCard from '../components/flow-card';
-import type { NavigationControls, StepProps } from '../../types';
+import usePendingMigrationStatus from './use-pending-migration-status';
+import type { StepProps } from '../../types';
 
 import './style.scss';
-
-interface PendingMigrationStatusProps {
-	onSubmit?: Pick< NavigationControls, 'submit' >[ 'submit' ];
-}
-
-const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) => {
-	const site = useSite();
-	const siteId = site?.ID;
-
-	const canInstallPlugins = site?.plan?.features?.active.find(
-		( feature ) => feature === 'install-plugins'
-	)
-		? true
-		: false;
-
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
-
-	// Register pending migration status when loading the step.
-	useEffect( () => {
-		if ( siteId ) {
-			updateMigrationStatus( siteId, 'migration-pending' );
-		}
-	}, [ siteId, updateMigrationStatus ] );
-
-	const onOptionClick = ( how: string ) => {
-		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
-		if ( siteId ) {
-			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
-			updateMigrationStatus( siteId, `migration-pending-${ parsedHow }` );
-		}
-
-		if ( onSubmit ) {
-			return onSubmit( { how, destination } );
-		}
-	};
-
-	return { onOptionClick };
-};
 
 interface Props extends StepProps {
 	headerText?: string;
