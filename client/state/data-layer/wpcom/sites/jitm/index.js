@@ -29,8 +29,8 @@ const unescapeDecimalEntities = ( str ) =>
  */
 export const transformApiRequest = ( jitms ) => {
 	// Different shape of date between Calypso and Jetpack.
-	if ( jitms && typeof jitms === 'object' && jitms.jitms ) {
-		jitms = jitms.jitms;
+	if ( jitms && jitms.data ) {
+		jitms = jitms.data;
 	}
 	return jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
