@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,6 +17,7 @@ import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MobileHeader } from './components/MobileHeader';
+import { NoPageFound } from './components/NoPageFound';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
@@ -156,15 +156,12 @@ export const SitePerformance = () => {
 	}, [ dispatch, siteId ] );
 
 	const queryParams = useSelector( getCurrentQueryArguments );
-	const [ , setQuery, query ] = useDebouncedInput();
 	const {
 		pages,
 		isInitialLoading,
 		savePerformanceReportUrl,
 		refetch: refetchPages,
-	} = useSitePerformancePageReports( {
-		query,
-	} );
+	} = useSitePerformancePageReports();
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -272,7 +269,6 @@ export const SitePerformance = () => {
 
 	const pageSelector = (
 		<PageSelector
-			onFilterValueChange={ setQuery }
 			allowReset={ false }
 			options={ pageOptions }
 			disabled={ disableControls }
@@ -362,7 +358,7 @@ export const SitePerformance = () => {
 				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
 			) : (
 				<>
-					{ ! isSitePublic ? (
+					{ ! isSitePublic && (
 						<ReportUnavailable
 							isLaunching={ siteIsLaunching }
 							onLaunchSiteClick={ onLaunchSiteClick }
@@ -372,23 +368,23 @@ export const SitePerformance = () => {
 									: translate( 'Launch your site' )
 							}
 						/>
-					) : (
-						currentPage && (
-							<>
-								<ExpiredReportNotice
-									reportTimestamp={ performanceReport.performanceReport?.timestamp }
-									onRetest={ retestPage }
-								/>
-								<PerformanceReport
-									{ ...performanceReport }
-									pageTitle={ currentPage.label }
-									onRetestClick={ retestPage }
-									onFilterChange={ handleRecommendationsFilterChange }
-									filter={ recommendationsFilter }
-								/>
-							</>
-						)
 					) }
+					{ isSitePublic && currentPage && (
+						<>
+							<ExpiredReportNotice
+								reportTimestamp={ performanceReport.performanceReport?.timestamp }
+								onRetest={ retestPage }
+							/>
+							<PerformanceReport
+								{ ...performanceReport }
+								pageTitle={ currentPage.label }
+								onRetestClick={ retestPage }
+								onFilterChange={ handleRecommendationsFilterChange }
+								filter={ recommendationsFilter }
+							/>
+						</>
+					) }
+					{ isSitePublic && ! currentPage && <NoPageFound /> }
 				</>
 			) }
 		</div>
