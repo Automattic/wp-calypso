@@ -1,7 +1,10 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { useSmooch } from '@automattic/zendesk-client';
 import { TabPanel } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 
 import './help-center-chat-history.scss';
@@ -16,7 +19,11 @@ export const HelpCenterChatHistory = () => {
 	// TODO: might not need to store activeTab in state
 	// const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
 	const [ conversations, setConversations ] = useState( [] );
-	const { init, getConversations } = useSmooch();
+	const { getConversations } = useSmooch();
+	const { isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return { isChatLoaded: store.getIsChatLoaded() };
+	}, [] );
 
 	const RecentConversations = ( { conversations } ) => {
 		if ( ! conversations ) {
@@ -44,10 +51,10 @@ export const HelpCenterChatHistory = () => {
 	};
 
 	useEffect( () => {
-		if ( init ) {
+		if ( isChatLoaded && getConversations ) {
 			setConversations( getConversations() );
 		}
-	}, [ getConversations, init ] );
+	}, [ getConversations, isChatLoaded ] );
 
 	return (
 		<div className="help-center-chat-history">

@@ -1,8 +1,11 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { uuid } from '@automattic/odie-client/src/query';
 import { useSmooch } from '@automattic/zendesk-client';
+import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
+import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 
 import './help-center-recent-conversations.scss';
@@ -34,13 +37,17 @@ const calculateUnread = ( conversations ) => {
 
 const HelpCenterRecentConversations: React.FC = () => {
 	const { __ } = useI18n();
-	const { init, getConversations } = useSmooch();
+	const { getConversations } = useSmooch();
 	const [ conversations, setConversations ] = useState( [] );
 	const [ unreadConversationsCount, setUnreadConversationsCount ] = useState( 0 );
 	const [ unreadMessagesCount, setUnreadMessagesCount ] = useState( 0 );
+	const { isChatLoaded } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return { isChatLoaded: store.getIsChatLoaded() };
+	}, [] );
 
 	useEffect( () => {
-		if ( init ) {
+		if ( isChatLoaded && getConversations ) {
 			const conversations = getConversations();
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
 
@@ -48,7 +55,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			setUnreadMessagesCount( unreadMessages );
 			setConversations( conversations );
 		}
-	}, [ init, getConversations ] );
+	}, [ isChatLoaded, getConversations ] );
 
 	if ( ! conversations ) {
 		return [];
