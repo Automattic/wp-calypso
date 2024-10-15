@@ -54,4 +54,16 @@ describe( 'Site Migration Other Platform Detected Import', () => {
 			platform: 'squarespace',
 		} );
 	} );
+
+	it( 'shows the platform name using friendly names', () => {
+		render( {}, { initialEntry: '/step?platform=movabletype&from=https://example.com' } );
+
+		expect( screen.getByText( /Movable Type & TypePad/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows a generic message when the platform is not wordpress', () => {
+		render( {}, { initialEntry: '/step?platform=nonsupportedplatform&from=https://example.com' } );
+
+		expect( screen.getByText( /Unknown/ ) ).toBeInTheDocument();
+	} );
 } );

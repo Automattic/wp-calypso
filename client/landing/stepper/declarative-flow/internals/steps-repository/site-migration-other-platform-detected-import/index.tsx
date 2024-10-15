@@ -2,7 +2,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getPlatformImporterName } from 'calypso/blocks/import/util';
+import { convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -78,8 +78,7 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 								'Our migration service is for WordPress sites. But don’t worry — our {{strong}}%(platform)s{{/strong}} import tool is ready to bring your content to WordPress.com.',
 								{
 									args: {
-										platform:
-											getPlatformImporterName( siteInfo?.platform as ImporterPlatform ) || '',
+										platform: convertPlatformName( platform as ImporterPlatform ) || '',
 									},
 									components: {
 										strong: <strong />,
