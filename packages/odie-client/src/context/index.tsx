@@ -145,7 +145,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
-	const { getConversation, init, addMessengerListener } = useSmooch();
+	const { getConversation, addMessengerListener } = useSmooch();
 	const [ supportProvider, setSupportProvider ] = useState< SupportProvider >( 'odie' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -158,19 +158,23 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
-	const { odieInitialPromptText, botNameSlug, isMinimized } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { odieInitialPromptText, botNameSlug, isMinimized, isChatLoaded } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-			? store.getOdieBotNameSlug()
-			: 'wpcom-support-chat';
+			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+				? store.getOdieBotNameSlug()
+				: 'wpcom-support-chat';
 
-		return {
-			odieInitialPromptText: store.getOdieInitialPromptText(),
-			botNameSlug: odieBotNameSlug as OdieAllowedBots,
-			isMinimized: store.getIsMinimized(),
-		};
-	}, [] );
+			return {
+				odieInitialPromptText: store.getOdieInitialPromptText(),
+				botNameSlug: odieBotNameSlug as OdieAllowedBots,
+				isMinimized: store.getIsMinimized(),
+				isChatLoaded: store.getIsChatLoaded(),
+			};
+		},
+		[]
+	);
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const { chat: existingChat, isLoading: isLoadingExistingChat } = useLoadPreviousChat( {
@@ -248,7 +252,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		if ( existingChat.chat_id ) {
 			setIsLoading( true );
 
-			if ( init ) {
+			if ( isChatLoaded ) {
 				getConversation( existingChat.chat_id ).then( ( conversation ) => {
 					if ( conversation ) {
 						setSupportProvider( 'zendesk' );
@@ -269,15 +273,15 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 			setIsLoading( false );
 		}
-	}, [ existingChat, getConversation, init ] );
+	}, [ existingChat, getConversation, isChatLoaded ] );
 
 	useEffect( () => {
-		if ( supportProvider === 'zendesk' && init ) {
+		if ( supportProvider === 'zendesk' && isChatLoaded ) {
 			addMessengerListener( ( message ) => {
 				addMessage( { content: message.text, role: 'human', type: 'message' } );
 			} );
 		}
-	}, [ supportProvider, init, addMessage, addMessengerListener ] );
+	}, [ supportProvider, isChatLoaded, addMessage, addMessengerListener ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
