@@ -8,6 +8,17 @@
 
 .invite-accept-logged-in .card {
 	margin-bottom: 0;
+
+	.invite-form-header__title {
+		color: var(--color-text);
+		font-size: $font-title-small;
+		line-height: 24px;
+		margin-bottom: 16px;
+	}
+
+	.invite-form-header__explanation {
+		font-size: $font-body-small;
+	}
 }
 
 .invite-accept-logged-in__join-as-username {
