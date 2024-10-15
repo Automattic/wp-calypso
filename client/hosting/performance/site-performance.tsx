@@ -368,19 +368,21 @@ export const SitePerformance = () => {
 							}
 						/>
 					) : (
-						<>
-							<ExpiredReportNotice
-								reportTimestamp={ performanceReport.performanceReport?.timestamp }
-								onRetest={ retestPage }
-							/>
-							<PerformanceReport
-								{ ...performanceReport }
-								pageTitle={ currentPage.label }
-								onRetestClick={ retestPage }
-								onFilterChange={ handleRecommendationsFilterChange }
-								filter={ recommendationsFilter }
-							/>
-						</>
+						currentPage && (
+							<>
+								<ExpiredReportNotice
+									reportTimestamp={ performanceReport.performanceReport?.timestamp }
+									onRetest={ retestPage }
+								/>
+								<PerformanceReport
+									{ ...performanceReport }
+									pageTitle={ currentPage.label }
+									onRetestClick={ retestPage }
+									onFilterChange={ handleRecommendationsFilterChange }
+									filter={ recommendationsFilter }
+								/>
+							</>
+						)
 					) }
 				</>
 			) }
