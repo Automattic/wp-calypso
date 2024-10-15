@@ -7,6 +7,10 @@
 	flex-direction: column;
 	text-align: right;
 
+	.ai-assistant-modal & {
+		text-align: left;
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-end;
 		font-size: $font-body;
