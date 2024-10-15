@@ -62,7 +62,7 @@
 	},
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1",
-		"redux": "^4.2.1"
+		"redux": "^5.0.1"
 	},
 	"private": true
 }
