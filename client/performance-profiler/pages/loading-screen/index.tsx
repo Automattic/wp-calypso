@@ -31,7 +31,41 @@ const StyledLoadingScreen = styled.div`
 `;
 
 const TipContainer = styled.div`
-	margin-top: 65px;
+	margin-top: 64px;
+	position: relative;
+	overflow: hidden;
+	height: 200px;
+`;
+
+const TipWrapper = styled.div< { isActive: boolean } >`
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	animation: ${ ( props ) => ( props.isActive ? 'slideInRight' : 'slideOutLeft' ) } 0.5s ease
+		forwards;
+
+	@keyframes slideInRight {
+		from {
+			transform: translateX( 100% );
+			opacity: 0;
+		}
+		to {
+			transform: translateX( 0 );
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideOutLeft {
+		from {
+			transform: translateX( 0 );
+			opacity: 1;
+		}
+		to {
+			transform: translateX( -100% );
+			opacity: 0;
+		}
+	}
 `;
 
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
@@ -96,15 +130,13 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				<h2 className={ isSavedReport ? 'saved-report' : '' }>{ heading }</h2>
 				{ ! isSavedReport && <p>{ translate( 'This may take around 30 seconds.' ) }</p> }
 				<PerformanceReportLoadingProgress isSavedReport={ isSavedReport } />
-				{ tips[ currentTip ] && (
-					<TipContainer>
-						<Tip
-							title={ tips[ currentTip ].heading }
-							content={ tips[ currentTip ].description }
-							link={ tips[ currentTip ].link }
-						/>
-					</TipContainer>
-				) }
+				<TipContainer>
+					{ tips.map( ( tip, index ) => (
+						<TipWrapper key={ index } isActive={ index === currentTip }>
+							<Tip title={ tip.heading } content={ tip.description } link={ tip.link } />
+						</TipWrapper>
+					) ) }
+				</TipContainer>
 			</StyledLoadingScreen>
 		</LayoutBlock>
 	);

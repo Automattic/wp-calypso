@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
@@ -8,10 +9,18 @@ import {
 	useOdieBroadcastWithCallbacks,
 	useGetOdieStorage,
 } from '../data';
-import { isOdieAllowedBot } from '../utils/is-odie-allowed-bot';
+import { isOdieAllowedBot, useZendeskConversations, zendeskMessageListener } from '../utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
-import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
+import type {
+	Chat,
+	Context,
+	CurrentUser,
+	Message,
+	Nudge,
+	OdieAllowedBots,
+	SupportProvider,
+} from '../types/';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
@@ -25,6 +34,9 @@ type ScrollToLastMessageType = () => void;
  *
  */
 type OdieAssistantContextInterface = {
+	supportProvider: SupportProvider;
+	setSupportProvider: ( provider: SupportProvider ) => void;
+	shouldUseHelpCenterExperience: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -60,6 +72,8 @@ type OdieAssistantContextInterface = {
 };
 
 const defaultContextInterfaceValues = {
+	supportProvider: 'odie' as SupportProvider,
+	shouldUseHelpCenterExperience: false,
 	addMessage: noop,
 	botName: 'Wapuu',
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
@@ -84,6 +98,7 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
+	setSupportProvider: noop,
 	setScrollToLastMessage: noop,
 	scrollToLastMessage: noop,
 	trackEvent: noop,
@@ -102,6 +117,7 @@ const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 export const odieClientId = Math.random().toString( 36 ).substring( 2, 15 );
 
 type OdieAssistantProviderProps = {
+	shouldUseHelpCenterExperience?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	odieInitialPromptText?: string;
@@ -118,6 +134,7 @@ type OdieAssistantProviderProps = {
 } & PropsWithChildren;
 // Create a provider component for the context
 const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
+	shouldUseHelpCenterExperience,
 	botName = 'Wapuu assistant',
 	initialUserMessage,
 	isLoadingEnvironment = false,
@@ -129,6 +146,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	children,
 } ) => {
+	const { getConversationByChatId } = useZendeskConversations();
+	const [ supportProvider, setSupportProvider ] = useState< SupportProvider >( 'odie' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
@@ -140,19 +159,23 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
-	const { odieInitialPromptText, botNameSlug, isMinimized } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { odieInitialPromptText, botNameSlug, isMinimized, isChatLoaded } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-			? store.getOdieBotNameSlug()
-			: 'wpcom-support-chat';
+			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+				? store.getOdieBotNameSlug()
+				: 'wpcom-support-chat';
 
-		return {
-			odieInitialPromptText: store.getOdieInitialPromptText(),
-			botNameSlug: odieBotNameSlug as OdieAllowedBots,
-			isMinimized: store.getIsMinimized(),
-		};
-	}, [] );
+			return {
+				odieInitialPromptText: store.getOdieInitialPromptText(),
+				botNameSlug: odieBotNameSlug as OdieAllowedBots,
+				isMinimized: store.getIsMinimized(),
+				isChatLoaded: store.getIsChatLoaded(),
+			};
+		},
+		[]
+	);
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const { chat: existingChat, isLoading: isLoadingExistingChat } = useLoadPreviousChat( {
@@ -165,12 +188,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const versionParams = urlSearchParams.get( 'version' );
 
 	const [ chat, setChat ] = useState< Chat >( existingChat );
-
-	useEffect( () => {
-		if ( existingChat.chat_id ) {
-			setChat( existingChat );
-		}
-	}, [ existingChat, existingChat.chat_id ] );
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
@@ -186,6 +203,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const clearChat = useCallback( () => {
+		setSupportProvider( 'odie' );
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
@@ -222,15 +240,54 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
 
 				// Append new messages at the end
-				const messages = [ ...filteredMessages, ...newMessages ];
 				return {
 					chat_id: prevChat.chat_id,
-					messages,
+					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );
 		},
 		[ setChat ]
 	);
+
+	useEffect( () => {
+		if ( ! shouldUseHelpCenterExperience && existingChat.chat_id ) {
+			setChat( existingChat );
+		}
+	}, [ existingChat, existingChat.chat_id ] );
+
+	useEffect( () => {
+		if ( shouldUseHelpCenterExperience && existingChat.chat_id ) {
+			setIsLoading( true );
+
+			if ( isChatLoaded ) {
+				getConversationByChatId( existingChat.chat_id ).then( ( conversation ) => {
+					if ( conversation ) {
+						setSupportProvider( 'zendesk' );
+						const chatMessages = conversation.messages.map(
+							( message ) =>
+								( {
+									content: message.text,
+									role: message.role,
+									type: 'message',
+								} ) as Message
+						);
+						existingChat.messages = [ ...existingChat.messages, ...chatMessages ];
+					}
+				} );
+			}
+
+			setChat( existingChat );
+			setIsLoading( false );
+		}
+	}, [ existingChat, isChatLoaded, getConversationByChatId ] );
+
+	useEffect( () => {
+		if ( shouldUseHelpCenterExperience && supportProvider === 'zendesk' && isChatLoaded ) {
+			zendeskMessageListener( existingChat.chat_id, ( message ) => {
+				addMessage( { content: message.text, role: 'business', type: 'message' } );
+			} );
+		}
+	}, [ supportProvider, isChatLoaded, addMessage, existingChat ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
@@ -251,7 +308,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		[ setChat ]
 	);
 
-	const overridenVersion = versionParams || version;
+	const overriddenVersion = versionParams || version;
 
 	if ( ! enabled ) {
 		return <>{ children }</>;
@@ -260,6 +317,9 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	return (
 		<OdieAssistantContext.Provider
 			value={ {
+				supportProvider,
+				setSupportProvider,
+				shouldUseHelpCenterExperience: config.isEnabled( 'help-center-experience' ),
 				addMessage,
 				botName,
 				botNameSlug,
@@ -288,7 +348,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				scrollToLastMessage: scrollToLastMessage ?? noop,
 				trackEvent,
 				updateMessage,
-				version: overridenVersion,
+				version: overriddenVersion,
 				isLoadingEnvironment,
 				isLoadingExistingChat,
 				isUserEligibleForPaidSupport,

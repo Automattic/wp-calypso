@@ -1791,6 +1791,46 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
+		it( "Connect-after-checkout flow redirects to the site's wp-admin `connect_url_redirect` url, along with a `redirect_to` query param when available", () => {
+			mockWindowLocation();
+			const adminUrl = 'https://my.site/wp-admin/';
+			const fromSiteSlug = 'my.site';
+			const productSlug = 'jetpack_backup_daily';
+
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: productSlug,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				receiptId: 'invalid receipt ID' as any,
+				sitelessCheckoutType: 'jetpack',
+				connectAfterCheckout: true,
+				adminUrl: adminUrl,
+				fromSiteSlug: fromSiteSlug,
+				redirectTo: 'https://foo.bar/some-path?with-args=yes',
+			} );
+
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
+
+			expect( url ).toBe(
+				addQueryArgs(
+					{
+						redirect_after_auth: redirectAfterAuth,
+						from: 'connect-after-checkout',
+					},
+					`${ adminUrl }admin.php?page=jetpack&connect_url_redirect=true&jetpack_connect_login_redirect=true`
+				)
+			);
+		} );
+
 		it( 'Redirects to the 100 year plan thank-you page when the 100 year plan is available', () => {
 			const cart = {
 				...getMockCart(),
@@ -1830,6 +1870,29 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+			);
+		} );
+
+		it( 'Siteless checkout redirects with `redirect_to` query param when available', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				sitelessCheckoutType: 'jetpack',
+				receiptId: 80023,
+				redirectTo: 'https://foo.bar/some-path?with-args=yes',
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes'
 			);
 		} );
 
