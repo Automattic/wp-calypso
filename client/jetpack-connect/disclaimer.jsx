@@ -39,18 +39,40 @@ class JetpackConnectDisclaimer extends PureComponent {
 		);
 
 		if ( isWooCoreProfiler && config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
+			const termsOfServiceLink = (
+				<a
+					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+					className="jetpack-connect__sso-actions-modal-link"
+					onClick={ () => {
+						this.props.recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click', {
+							...this.props,
+						} );
+					} }
+				/>
+			);
+			const syncDataLink = (
+				<a
+					href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+					className="jetpack-connect__sso-actions-modal-link"
+					onClick={ () => {
+						this.props.recordTracksEvent( 'calypso_jpc_disclaimer_sync_data_link_click', {
+							...this.props,
+						} );
+					} }
+				/>
+			);
+
 			text = translate(
-				'By connecting your account, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s. This connection does not add any additional plugins or change the way you run your store.',
+				"By clicking Connect your account, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site's data{{/syncDataLink}} with us.",
 				{
 					components: {
-						detailsLink,
+						termsOfServiceLink,
+						syncDataLink,
 					},
-					args: {
-						companyName,
-						siteName,
-					},
-					comment:
-						'`companyName` is the site domain receiving the data (typically WordPress.com), and `siteName` is the site domain sharing the data.',
 				}
 			);
 		} else {
