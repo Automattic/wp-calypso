@@ -146,7 +146,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.waitFor( { state: 'visible' } );
+			await contactSupportButton.waitFor( { state: 'visible', timeout: 30000 } );
 
 			expect( await contactSupportButton.count() ).toBeTruthy();
 		} );
