@@ -70,7 +70,7 @@
 		"jest": "^29.7.0",
 		"lodash": "^4.17.21",
 		"mkdirp": "^1.0.4",
-		"node-fetch": "^2.6.6",
+		"node-fetch": "^2.7.0",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
 		"size-limit": "^8.2.6",

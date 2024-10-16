@@ -71,7 +71,7 @@
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.4",
-		"node-fetch": "^2.6.6",
+		"node-fetch": "^2.7.0",
 		"typescript": "^5.3.3",
 		"wait-for-expect": "^3.0.2",
 		"wpcom-proxy-request": "workspace:^"
