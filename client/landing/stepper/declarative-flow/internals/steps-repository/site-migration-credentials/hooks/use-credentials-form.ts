@@ -81,15 +81,6 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );
 
-		if ( isWPCOM( siteInfoResult ) && ! canBypassVerification ) {
-			return;
-		}
-
-		if ( isNotWordPress( siteInfoResult ) ) {
-			onSubmit( siteInfoResult );
-			return;
-		}
-
 		try {
 			const payload = {
 				...data,

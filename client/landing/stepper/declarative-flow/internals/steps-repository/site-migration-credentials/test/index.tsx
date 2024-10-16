@@ -99,12 +99,6 @@ const siteInfoUsingWPCOM = {
 	},
 };
 
-const siteInfoUsingAnotherPlatform = {
-	...baseSiteInfo,
-	url: 'https://site-using-squarespace.com',
-	platform: 'squarespace',
-};
-
 describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
@@ -220,25 +214,6 @@ describe( 'SiteMigrationCredentials', () => {
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith( {
 				action: 'submit',
-			} );
-		} );
-	} );
-
-	it( "doesn't create a ticket when site is using platforms other than WordPress", async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingAnotherPlatform );
-
-		await fillAllFields();
-		await userEvent.click( continueButton() );
-
-		expect( wpcomRequest ).not.toHaveBeenCalled();
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'site-is-not-using-wordpress',
-				platform: 'squarespace',
-				from: 'https://site-using-squarespace.com',
 			} );
 		} );
 	} );
