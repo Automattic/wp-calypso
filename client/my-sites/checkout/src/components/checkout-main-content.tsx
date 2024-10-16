@@ -78,6 +78,7 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
+import { IsForBusinessCheckbox } from './is-for-business-checkbox';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -956,6 +957,7 @@ function CheckoutTermsAndCheckboxes( {
 	return (
 		<CheckoutTermsAndCheckboxesWrapper>
 			<BeforeSubmitCheckoutHeader />
+			<IsForBusinessCheckbox />
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
 					isAccepted={ is3PDAccountConsentAccepted }

@@ -82,7 +82,7 @@ export type ApplyCouponToCart = ( couponId: string ) => Promise< ResponseCart >;
 
 export type RemoveProductFromCart = ( uuidToRemove: string ) => Promise< ResponseCart >;
 
-export type UpdateTaxLocationInCart = ( location: CartLocation ) => Promise< ResponseCart >;
+export type UpdateTaxLocationInCart = ( location: TaxLocationUpdate ) => Promise< ResponseCart >;
 
 export type SetCouponFieldVisible = ( couponFieldVisible: boolean ) => void;
 
@@ -118,7 +118,7 @@ export type ShoppingCartAction =
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'CART_PRODUCTS_REPLACE_ALL'; products: RequestCartProduct[] }
-	| { type: 'SET_LOCATION'; location: CartLocation }
+	| { type: 'SET_LOCATION'; location: TaxLocationUpdate }
 	| {
 			type: 'CART_PRODUCT_REPLACE';
 			uuidToReplace: string;
@@ -211,6 +211,7 @@ export type RequestCartTaxData = null | {
 		organization?: string;
 		address?: string;
 		city?: string;
+		is_for_business?: boolean;
 	};
 };
 
@@ -315,16 +316,19 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	has_pending_payment?: boolean;
 }
 
+export interface ResponseCartTaxLocation {
+	country_code?: string;
+	postal_code?: string;
+	subdivision_code?: string;
+	vat_id?: string;
+	organization?: string;
+	address?: string;
+	city?: string;
+	is_for_business?: boolean;
+}
+
 export interface ResponseCartTaxData {
-	location: {
-		country_code?: string;
-		postal_code?: string;
-		subdivision_code?: string;
-		vat_id?: string;
-		organization?: string;
-		address?: string;
-		city?: string;
-	};
+	location: ResponseCartTaxLocation;
 	display_taxes: boolean;
 }
 
@@ -591,7 +595,13 @@ export interface IntroductoryOfferTerms {
 	should_prorate_when_offer_ends: boolean;
 }
 
-export interface CartLocation {
+/**
+ * The data passed to the `updateLocation()` cart manager action.
+ *
+ * To convert this to the data used by the cart's `tax.location` property, use
+ * `convertLocationUpdateToTaxLocation()`.
+ */
+export interface TaxLocationUpdate {
 	countryCode?: string;
 	postalCode?: string;
 	subdivisionCode?: string;
@@ -599,7 +609,14 @@ export interface CartLocation {
 	organization?: string;
 	address?: string;
 	city?: string;
+	isForBusiness?: boolean;
 }
+
+/**
+ * Legacy alias for `TaxLocationUpdate`.
+ * @deprecated Use `TaxLocationUpdate`
+ */
+export type CartLocation = TaxLocationUpdate;
 
 export type DomainLegalAgreementUrl = string;
 export type DomainLegalAgreementTitle = string;
