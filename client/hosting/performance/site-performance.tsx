@@ -270,7 +270,6 @@ export const SitePerformance = () => {
 	};
 
 	// This forces a no pages found message in the dropdown
-	// This will be removed when gutenberg PR https://github.com/WordPress/gutenberg/pull/66142 is merged
 	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
 
 	const options = ! noPagesFound.found
