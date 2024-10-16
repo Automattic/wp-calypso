@@ -1332,6 +1332,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/launchpad@workspace:packages/launchpad"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
