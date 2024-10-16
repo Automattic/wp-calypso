@@ -36,6 +36,8 @@ const statsQuery = {
 	max: 0,
 };
 
+const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
 const usePerformanceReport = (
 	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
 	refetchPages: () => void,
@@ -197,7 +199,7 @@ export const SitePerformance = () => {
 			: orderedPages;
 
 		// Add a disabled option at the end that will show a disclaimer message.
-		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
+		return [ ...options, { label: alphabet, value: '-1', path: '', disabled: true } ];
 	}, [ currentPage, orderedPages ] );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
