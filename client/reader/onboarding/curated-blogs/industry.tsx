@@ -35,6 +35,42 @@ export const industryBlogs: CuratedBlogsList = {
 			site_URL: 'https://spaceq.ca/',
 			site_name: 'SpaceQ',
 		},
+		{
+			feed_ID: 46452720,
+			site_ID: 80681979,
+			site_URL: 'https://spacenews.com/',
+			site_name: 'SpaceNews',
+		},
+		{
+			feed_ID: 111984321,
+			site_ID: 182546481,
+			site_URL: 'https://everydayastronaut.com/',
+			site_name: 'Everyday Astronaut',
+		},
+		{
+			feed_ID: 157803248,
+			site_ID: null,
+			site_URL: 'https://www.nasa.gov/',
+			site_name: 'NASA',
+		},
+		{
+			feed_ID: 109455857,
+			site_ID: null,
+			site_URL: 'https://www.planetary.org/',
+			site_name: 'The Planetary Society Articles',
+		},
+		{
+			feed_ID: 8947919,
+			site_ID: null,
+			site_URL: 'https://www.spacedaily.com/index.html',
+			site_name: 'Space News From SpaceDaily.Com',
+		},
+		{
+			feed_ID: 55764368,
+			site_ID: null,
+			site_URL: 'https://spaceflightnow.com/',
+			site_name: 'Spaceflight Now',
+		},
 	],
 	leadership: [
 		// Add leadership blogs...
