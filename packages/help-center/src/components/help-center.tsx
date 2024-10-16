@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -28,6 +29,8 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
+
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -70,7 +73,7 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			<HelpCenterSmooch />
+			{ shouldUseHelpCenterExperience && <HelpCenterSmooch /> }
 		</>,
 		portalParent
 	);

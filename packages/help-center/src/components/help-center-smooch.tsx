@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import {
 	useSmooch,
@@ -12,9 +11,7 @@ import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 
 const HelpCenterSmooch: React.FC = () => {
-	const shouldUseHelpCenterExperience = config.isEnabled( 'help-center-experience' );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
-
 	const smoochRef = useRef< HTMLDivElement >( null );
 	const { isHelpCenterShown } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -35,7 +32,7 @@ const HelpCenterSmooch: React.FC = () => {
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( shouldUseHelpCenterExperience && isMessagingScriptLoaded && authData?.isLoggedIn ) {
+		if ( isMessagingScriptLoaded && authData?.isLoggedIn ) {
 			if ( authData?.jwt && authData?.externalId ) {
 				initSmooch( authData )
 					.then( () => {
