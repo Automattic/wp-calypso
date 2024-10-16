@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { connect } from 'react-redux';
 import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';
+import { getReferenceId } from '../helpers/notes';
 import { trashNote } from '../state/notes/thunks';
 import ActionButton from './action-button';
 
@@ -16,7 +17,7 @@ const TrashButton = ( { note, translate, trashNote } ) => {
 			icon="trash"
 			isActive={ false }
 			hotkey={ keys.KEY_T }
-			onToggle={ () => trashNote( note, restClient ) }
+			onToggle={ () => trashNote( note, getReferenceId( note, 'site' ), restClient ) }
 			text={ translate( 'Trash', { context: 'verb: imperative' } ) }
 			title={ translate( 'Trash comment', { context: 'verb: imperative' } ) }
 		/>

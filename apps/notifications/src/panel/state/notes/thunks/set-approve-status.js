@@ -1,3 +1,4 @@
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { approveNote } from '../actions';
@@ -17,6 +18,9 @@ const setApproveStatus =
 			// getNote() updates the redux store with a fresh object from the API
 			restClient.getNote( noteId )
 		);
+
+		// Refresh the admin menu on update of status to ensure count shown is not stale
+		dispatch( requestAdminMenu( siteId ) );
 	};
 
 export default setApproveStatus;
