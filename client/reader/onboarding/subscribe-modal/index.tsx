@@ -1,6 +1,6 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -8,6 +8,8 @@ import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscript
 import wpcom from 'calypso/lib/wp';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { curatedBlogs } from '../curated-blogs';
+
+import './style.scss';
 
 interface SubscribeModalProps {
 	isOpen: boolean;
@@ -101,36 +103,64 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		return sortedRecommendations.slice( 0, 6 );
 	}, [ followedTagSlugs, apiRecommendedSites ] );
 
+	const headerActions = (
+		<>
+			<Button onClick={ onClose } variant="link">
+				{ __( 'Cancel' ) }
+			</Button>
+		</>
+	);
+
 	return (
 		isOpen && (
-			<Modal onRequestClose={ onClose } isFullScreen>
-				<h2>{ __( "Discover sites that you'll love" ) }</h2>
-				<p>
-					{ __( 'Preview sites by clicking below, then subscribe to any site that inspires you.' ) }
-				</p>
-				{ isLoading && <LoadingPlaceholder /> }
-				{ ! isLoading && combinedRecommendations.length === 0 && (
-					<p>{ __( 'No recommendations available at the moment.' ) }</p>
-				) }
-				{ ! isLoading && combinedRecommendations.length > 0 && (
-					<div className="subscribe-modal__recommended-sites">
-						{ combinedRecommendations.map( ( site: CardData ) => (
-							<ConnectedReaderSubscriptionListItem
-								key={ site.feed_ID }
-								feedId={ site.feed_ID }
-								siteId={ site.site_ID }
-								site={ site }
-								url={ site.site_URL }
-								showLastUpdatedDate={ false }
-								showNotificationSettings={ false }
-								showFollowedOnDate={ false }
-								followSource="reader-onboarding-modal"
-								disableSuggestedFollows
-							/>
-						) ) }
+			<Modal
+				onRequestClose={ onClose }
+				isFullScreen
+				className="subscribe-modal"
+				headerActions={ headerActions }
+				isDismissible={ false }
+			>
+				<div className="subscribe-modal__content">
+					<div className="subscribe-modal__site-list-column">
+						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
+						<p>
+							{ __(
+								'Preview sites by clicking below, then subscribe to any site that inspires you.'
+							) }
+						</p>
+						{ isLoading && <LoadingPlaceholder /> }
+						{ ! isLoading && combinedRecommendations.length === 0 && (
+							<p>{ __( 'No recommendations available at the moment.' ) }</p>
+						) }
+						{ ! isLoading && combinedRecommendations.length > 0 && (
+							<div className="subscribe-modal__recommended-sites">
+								{ combinedRecommendations.map( ( site: CardData ) => (
+									<ConnectedReaderSubscriptionListItem
+										key={ site.feed_ID }
+										feedId={ site.feed_ID }
+										siteId={ site.site_ID }
+										site={ site }
+										url={ site.site_URL }
+										showLastUpdatedDate={ false }
+										showNotificationSettings={ false }
+										showFollowedOnDate={ false }
+										followSource="reader-onboarding-modal"
+										disableSuggestedFollows
+									/>
+								) ) }
+							</div>
+						) }
+						<p>{ __( 'Load more recommendations' ) }</p>
+						<Button className="subscribe-modal__continue-button is-primary" onClick={ onClose }>
+							{ __( 'Continue' ) }
+						</Button>
 					</div>
-				) }
-				<p>{ __( 'Load more recommendations' ) }</p>
+					<div className="subscribe-modal__preview-column">
+						<div className="subscribe-modal__preview-placeholder">
+							{ __( 'Select a blog to preview its posts' ) }
+						</div>
+					</div>
+				</div>
 			</Modal>
 		)
 	);
