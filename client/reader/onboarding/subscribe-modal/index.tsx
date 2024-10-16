@@ -2,10 +2,11 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
+import FeedStream from 'calypso/reader/feed-stream';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { curatedBlogs } from '../curated-blogs';
 
@@ -27,6 +28,18 @@ interface Card {
 	type: string;
 	data: CardData[];
 }
+
+interface FeedStreamProps {
+	feedId: number;
+	siteId?: number;
+	showBack?: boolean;
+	trackScrollPage: () => void;
+	streamKey: string;
+	// Add other props as needed
+}
+
+const TypedFeedStream: ComponentType< FeedStreamProps > =
+	FeedStream as ComponentType< FeedStreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
@@ -111,8 +124,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		</>
 	);
 
+	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+
 	const handleItemClick = ( site: CardData ) => {
-		console.log( 'hello world', site );
+		setSelectedSite( site );
+	};
+
+	const trackScrollPage = () => {
+		// Implement scroll tracking logic here if needed
+		console.log( 'Scroll tracked' );
 	};
 
 	return (
@@ -161,9 +181,19 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 						</Button>
 					</div>
 					<div className="subscribe-modal__preview-column">
-						<div className="subscribe-modal__preview-placeholder">
-							{ __( 'Select a blog to preview its posts' ) }
-						</div>
+						{ selectedSite ? (
+							<TypedFeedStream
+								feedId={ selectedSite.feed_ID }
+								siteId={ selectedSite.site_ID }
+								showBack={ false }
+								trackScrollPage={ trackScrollPage }
+								streamKey={ `feed:${ selectedSite.feed_ID }` }
+							/>
+						) : (
+							<div className="subscribe-modal__preview-placeholder">
+								{ __( 'Select a blog to preview its posts' ) }
+							</div>
+						) }
 					</div>
 				</div>
 			</Modal>
