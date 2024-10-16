@@ -6,17 +6,17 @@
  * Default mock implementations
  */
 jest.mock( '@wordpress/data' );
-jest.mock( '@automattic/data-stores', () => ( {
-	Plans: {
-		usePlans: jest.fn(),
-		useSitePlans: jest.fn(),
-		useIntroOffers: jest.fn(),
-		useCurrentPlan: jest.fn(),
-	},
-	Purchases: {
-		useSitePurchaseById: jest.fn(),
-	},
-} ) );
+// jest.mock( '@automattic/data-stores', () => ( {
+// 	Plans: {
+// 		usePlans: jest.fn(),
+// 		useSitePlans: jest.fn(),
+// 		useIntroOffers: jest.fn(),
+// 		useCurrentPlan: jest.fn(),
+// 	},
+// 	Purchases: {
+// 		useSitePurchaseById: jest.fn(),
+// 	},
+// } ) );
 
 jest.mock( '../../', () => ( {
 	usePlans: jest.fn(),
@@ -32,7 +32,43 @@ jest.mock( '../../../purchases', () => ( {
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import * as Plans from '../../';
 import * as Purchases from '../../../purchases';
+import { COST_OVERRIDE_REASONS } from '../../constants';
 import usePricingMetaForGridPlans from '../use-pricing-meta-for-grid-plans';
+
+const SITE_PLANS = {
+	[ PLAN_PREMIUM ]: {
+		expiry: null,
+		pricing: {
+			billPeriod: 365,
+			currencyCode: 'USD',
+			originalPrice: {
+				full: 500,
+				monthly: 500,
+			},
+			discountedPrice: {
+				full: 250,
+				monthly: 250,
+			},
+		},
+	},
+};
+
+const PLANS = {
+	[ PLAN_PREMIUM ]: {
+		pricing: {
+			billPeriod: 365,
+			currencyCode: 'USD',
+			originalPrice: {
+				full: 500,
+				monthly: 500,
+			},
+			discountedPrice: {
+				full: 400,
+				monthly: 400,
+			},
+		},
+	},
+};
 
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
@@ -43,49 +79,75 @@ describe( 'usePricingMetaForGridPlans', () => {
 		} ) );
 		Plans.usePlans.mockImplementation( () => ( {
 			isLoading: false,
-			data: {
-				[ PLAN_PREMIUM ]: {
-					pricing: {
-						billPeriod: 365,
-						currencyCode: 'USD',
-						originalPrice: {
-							full: 500,
-							monthly: 500,
-						},
-						discountedPrice: {
-							full: 400,
-							monthly: 400,
-						},
-					},
-				},
+			data: PLANS,
+		} ) );
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: SITE_PLANS,
+		} ) );
+		Plans.useCurrentPlan.mockImplementation( () => undefined );
+	} );
+
+	it( 'should return intro offer when available', () => {
+		const introOffer = {
+			formattedPrice: '$150',
+			rawPrice: {
+				monthly: 12.5,
+				full: 150,
 			},
+			isOfferComplete: false,
+			intervalUnit: 'year',
+			intervalCount: 1,
+		};
+
+		const useCheckPlanAvailabilityForPurchase = () => {
+			return {
+				[ PLAN_PREMIUM ]: true,
+			};
+		};
+
+		Plans.useIntroOffers.mockImplementation( () => ( {
+			[ PLAN_PREMIUM ]: introOffer,
 		} ) );
 		Plans.useSitePlans.mockImplementation( () => ( {
 			isLoading: false,
 			data: {
 				[ PLAN_PREMIUM ]: {
-					expiry: null,
+					...SITE_PLANS[ PLAN_PREMIUM ],
 					pricing: {
-						billPeriod: 365,
-						currencyCode: 'USD',
-						originalPrice: {
-							full: 500,
-							monthly: 500,
-						},
-						discountedPrice: {
-							full: 250,
-							monthly: 250,
-						},
-						costOverrides: [
-							{
-								overrideCode: 'recent-plan-proration',
-							},
-						],
+						...SITE_PLANS[ PLAN_PREMIUM ].pricing,
+						introOffer,
 					},
 				},
 			},
 		} ) );
-		Plans.useCurrentPlan.mockImplementation( () => undefined );
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_PREMIUM ],
+			storageAddOns: null,
+			siteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+		} );
+
+		const expectedPricingMeta = {
+			[ PLAN_PREMIUM ]: {
+				originalPrice: {
+					full: 500,
+					monthly: 500,
+				},
+				discountedPrice: {
+					full: 250,
+					monthly: 250,
+				},
+				billingPeriod: 365,
+				currencyCode: 'USD',
+				expiry: null,
+				introOffer,
+			},
+		};
+
+		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
 	it( 'should return the original price as the site plan price and discounted price as Null for the current plan', () => {
@@ -121,7 +183,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 				billingPeriod: 365,
 				currencyCode: 'USD',
 				expiry: null,
-				introOffer: null,
+				introOffer: undefined,
 			},
 		};
 
@@ -161,7 +223,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 				billingPeriod: 365,
 				currencyCode: 'USD',
 				expiry: null,
-				introOffer: null,
+				introOffer: undefined,
 			},
 		};
 
@@ -202,7 +264,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 				billingPeriod: 365,
 				currencyCode: 'USD',
 				expiry: null,
-				introOffer: null,
+				introOffer: undefined,
 			},
 		};
 
@@ -244,7 +306,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 				billingPeriod: 365,
 				currencyCode: 'USD',
 				expiry: null,
-				introOffer: null,
+				introOffer: undefined,
 			},
 		};
 
@@ -255,6 +317,19 @@ describe( 'usePricingMetaForGridPlans', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
+		} ) );
+
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: {
+				[ PLAN_PREMIUM ]: {
+					...SITE_PLANS[ PLAN_PREMIUM ],
+					pricing: {
+						...SITE_PLANS[ PLAN_PREMIUM ].pricing,
+						costOverrides: [ { overrideCode: COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION } ],
+					},
+				},
+			},
 		} ) );
 
 		const useCheckPlanAvailabilityForPurchase = () => {
@@ -286,7 +361,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 				billingPeriod: 365,
 				currencyCode: 'USD',
 				expiry: null,
-				introOffer: null,
+				introOffer: undefined,
 			},
 		};
 
