@@ -20,7 +20,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"peerDependencies": {
-		"webpack": "^5.94.0"
+		"webpack": "^5.95.0"
 	},
 	"dependencies": {
 		"semver": "^7.0.0"
