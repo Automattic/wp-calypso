@@ -204,6 +204,14 @@ $section-max-width: 1224px;
 
 	}
 
+	.message {
+		padding-inline: 18px;
+		padding-block: 16px;
+		font-size: $font-body-extra-small;
+		font-family: $font-sf-pro-text;
+		color: #949494;
+	}
+
 	.site-performance__page-selector-item {
 		display: flex;
 		flex-direction: column;

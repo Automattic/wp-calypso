@@ -16,12 +16,18 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 				<SearchableDropdown
 					{ ...props }
 					className="site-performance__page-selector-drowdown"
-					__experimentalRenderItem={ ( { item } ) => (
-						<div className="site-performance__page-selector-item" aria-label={ item.label }>
-							<span>{ item.label }</span>
-							<span className="subtitle">{ item.path }</span>
-						</div>
-					) }
+					__experimentalRenderItem={ ( { item } ) => {
+						return item.value === '-1' ? (
+							<div className="message">
+								{ translate( 'Searching your top 20 most popular pages.' ) }
+							</div>
+						) : (
+							<div className="site-performance__page-selector-item" aria-label={ item.label }>
+								<span>{ item.label }</span>
+								<span className="subtitle">{ item.path }</span>
+							</div>
+						);
+					} }
 				/>
 				<div className="site-performance__page-selector-search-icon">
 					<Icon

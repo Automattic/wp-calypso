@@ -192,9 +192,12 @@ export const SitePerformance = () => {
 		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
 
 	const pageOptions = useMemo( () => {
-		return currentPage
+		const options = currentPage
 			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
 			: orderedPages;
+
+		// Add a disabled option at the end that will show a disclaimer message.
+		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
 	}, [ currentPage, orderedPages ] );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
