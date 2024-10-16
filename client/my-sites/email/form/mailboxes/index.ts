@@ -52,6 +52,7 @@ class MailboxForm< T extends EmailProvider > {
 	private getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
 		const domainField = this.getFormField< string >( FIELD_DOMAIN );
 		const domainName = domainField?.value ?? '';
+		const mailboxName = this.getFieldValue< string >( FIELD_MAILBOX );
 		const mailboxHasDomainError = Boolean( domainField?.error );
 		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
 		const areApostrophesSupported = this.provider === EmailProvider.Google;
@@ -71,7 +72,7 @@ class MailboxForm< T extends EmailProvider > {
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
 			],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
-			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
+			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength, domainName, mailboxName ) ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new PasswordResetEmailValidator( domainName ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
@@ -205,7 +206,7 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
-	private validateFieldByName(
+	private async validateFieldByName(
 		fieldName: ValidatorFieldNames,
 		validator: Validator< unknown >,
 		skipInvisibleFields: boolean
@@ -223,22 +224,23 @@ class MailboxForm< T extends EmailProvider > {
 			return;
 		}
 
-		validator.validate( field );
+		await validator.validate( field );
 	}
 
-	validate(
+	async validate(
 		skipInvisibleFields = false,
 		additionalValidators?: [ ValidatorFieldNames, Validator< unknown > ][]
 	) {
 		this.clearErrors();
-
-		[ ...this.getValidators(), ...( additionalValidators ?? [] ) ].forEach(
-			( [ fieldName, validator ] ) =>
-				this.validateFieldByName( fieldName, validator, skipInvisibleFields )
+		const validators = [ ...this.getValidators(), ...( additionalValidators ?? [] ) ];
+		const validationPromises = validators.map( ( [ fieldName, validator ] ) =>
+			this.validateFieldByName( fieldName, validator, skipInvisibleFields )
 		);
+
+		await Promise.all( validationPromises );
 	}
 
-	validateField( fieldName: FormFieldNames ) {
+	async validateField( fieldName: FormFieldNames ) {
 		const field = this.getFormField( fieldName );
 		if ( ! field ) {
 			return;
@@ -248,9 +250,13 @@ class MailboxForm< T extends EmailProvider > {
 		field.error = null;
 
 		// Validate single field by name
-		this.getValidators()
-			.filter( ( [ currentFieldName, validator ] ) => currentFieldName === fieldName && validator )
-			.forEach( ( [ , validator ] ) => validator.validate( field ) );
+		const validators = this.getValidators()
+			.filter( ( [ currentFieldName ] ) => currentFieldName === fieldName )
+			.map( ( [ , validator ] ) => validator );
+
+		const promises = Promise.all( validators.map( ( validator ) => validator.validate( field ) ) );
+
+		await promises;
 	}
 
 	async validateOnDemand() {

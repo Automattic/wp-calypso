@@ -3,30 +3,48 @@ import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import wp from 'calypso/lib/wp';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import type { FieldError, MailboxFormFieldBase } from 'calypso/my-sites/email/form/mailboxes/types';
+import type {
+	SingleFieldError,
+	MailboxFormFieldBase,
+} from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface Validator< T > {
-	validate( field?: MailboxFormFieldBase< T > ): void;
+	validate( field?: MailboxFormFieldBase< T > ): Promise< void >;
 }
 
+const REQUIRED_FIELD_ERROR_MESSAGE = i18n.translate( 'This field is required.' );
 abstract class BaseValidator< T > implements Validator< T > {
-	validate( field?: MailboxFormFieldBase< T > ): void {
-		if ( ! field || field.hasError() ) {
+	async validate( field?: MailboxFormFieldBase< T > ): Promise< void > {
+		if ( ! field || field.error?.includes( REQUIRED_FIELD_ERROR_MESSAGE ) ) {
 			return;
 		}
 
-		this.validateField( field );
+		await this.validateField( field );
 	}
 
-	abstract validateField( field: MailboxFormFieldBase< T > ): void;
+	abstract validateField( field: MailboxFormFieldBase< T > ): Promise< void >;
+
+	protected addError( field: MailboxFormFieldBase< T >, error: SingleFieldError ): void {
+		if ( field.error?.includes( error ) ) {
+			return;
+		}
+
+		if ( field.error === null ) {
+			field.error = [ error ];
+		} else if ( Array.isArray( field.error ) ) {
+			field.error.push( error );
+		} else {
+			field.error = [ field.error, error ];
+		}
+	}
 }
 
 class RequiredValidator< T > extends BaseValidator< T > {
-	static getRequiredFieldError(): FieldError {
-		return i18n.translate( 'This field is required.' );
+	static getRequiredFieldError(): SingleFieldError {
+		return REQUIRED_FIELD_ERROR_MESSAGE;
 	}
 
-	validateField( field: MailboxFormFieldBase< T > ): void {
+	async validateField( field: MailboxFormFieldBase< T > ): Promise< void > {
 		if ( ! field.isRequired ) {
 			return;
 		}
@@ -34,24 +52,28 @@ class RequiredValidator< T > extends BaseValidator< T > {
 		const requiredFieldError = RequiredValidator.getRequiredFieldError();
 
 		if ( ! field.value ) {
-			field.error = requiredFieldError;
-
+			this.addError( field, requiredFieldError );
 			return;
 		}
 
 		if ( typeof field.value === 'string' && field.value.trim() === '' ) {
-			field.error = requiredFieldError;
+			this.addError( field, requiredFieldError );
+		}
+
+		if ( field.error?.includes( requiredFieldError ) ) {
+			// If RequiredValidator error is present, make it the only error
+			field.error = [ RequiredValidator.getRequiredFieldError() ];
 		}
 	}
 }
 
 class RequiredIfVisibleValidator extends RequiredValidator< string > {
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( ! field.isVisible ) {
 			return;
 		}
 
-		super.validateField( field );
+		await super.validateField( field );
 	}
 }
 
@@ -63,15 +85,18 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 		this.maximumStringLength = maximumStringLength;
 	}
 
-	static getFieldTooLongError( maximumStringLength: number ): FieldError {
+	static getFieldTooLongError( maximumStringLength: number ): SingleFieldError {
 		return i18n.translate( "This field can't be longer than %s characters.", {
 			args: maximumStringLength,
 		} );
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( this.maximumStringLength < ( field.value?.length ?? 0 ) ) {
-			field.error = MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength );
+			this.addError(
+				field,
+				MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength )
+			);
 		}
 	}
 }
@@ -92,11 +117,11 @@ class MailboxNameValidator extends BaseValidator< string > {
 		this.areApostrophesSupported = areApostrophesSupported;
 	}
 
-	static getInvalidEmailError(): FieldError {
+	static getInvalidEmailError(): SingleFieldError {
 		return i18n.translate( 'Please supply a valid email address.' );
 	}
 
-	static getUnsupportedCharacterError( supportsApostrophes: boolean ): FieldError {
+	static getUnsupportedCharacterError( supportsApostrophes: boolean ): SingleFieldError {
 		return supportsApostrophes
 			? i18n.translate(
 					'Only numbers, letters, dashes, underscores, apostrophes and periods are allowed.'
@@ -104,25 +129,24 @@ class MailboxNameValidator extends BaseValidator< string > {
 			: i18n.translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
-		const regex = this.areApostrophesSupported
-			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
-			: /^[\da-z_-](\.?[\da-z_-])*$/i;
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
+		const value = field.value;
 
-		if ( ! regex.test( field.value ) ) {
-			field.error = MailboxNameValidator.getUnsupportedCharacterError(
-				this.areApostrophesSupported
+		const regex = this.areApostrophesSupported ? /^[\da-z._'-]*$/i : /^[\da-z._-]*$/i;
+
+		if ( ! regex.test( value ) ) {
+			this.addError(
+				field,
+				MailboxNameValidator.getUnsupportedCharacterError( this.areApostrophesSupported )
 			);
-			return;
 		}
 
 		if (
 			this.domainName &&
 			! this.mailboxHasDomainError &&
-			! emailValidator.validate( `${ field.value }@${ this.domainName }` )
+			( ! emailValidator.validate( `${ value }@${ this.domainName }` ) || value.startsWith( '-' ) )
 		) {
-			field.error = MailboxNameValidator.getInvalidEmailError();
-			return;
+			this.addError( field, MailboxNameValidator.getInvalidEmailError() );
 		}
 	}
 }
@@ -135,11 +159,11 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 		this.domainName = domainName;
 	}
 
-	static getInvalidEmailError(): FieldError {
+	static getInvalidEmailError(): SingleFieldError {
 		return i18n.translate( 'Please supply a valid email address.' );
 	}
 
-	static getSameDomainError( domainName: string ): FieldError {
+	static getSameDomainError( domainName: string ): SingleFieldError {
 		return i18n.translate(
 			'This email address must have a different domain than {{strong}}%(domain)s{{/strong}}. Please use a different email address.',
 			{
@@ -153,85 +177,100 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 		);
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( ! field.value || field.value.trim() === '' ) {
 			return;
 		}
 
-		const value = `${ field.value }`;
+		const value = field.value;
 
 		if ( ! emailValidator.validate( value ) ) {
-			field.error = PasswordResetEmailValidator.getInvalidEmailError();
-
-			return;
+			this.addError( field, PasswordResetEmailValidator.getInvalidEmailError() );
 		}
 
-		const parts = `${ value }`.split( '@' );
-
+		const parts = value.split( '@' );
 		if (
 			this.domainName &&
 			parts.length > 1 &&
 			parts[ 1 ].toLowerCase() === this.domainName?.toLowerCase()
 		) {
-			field.error = PasswordResetEmailValidator.getSameDomainError( this.domainName );
+			this.addError( field, PasswordResetEmailValidator.getSameDomainError( this.domainName ) );
 		}
 	}
 }
 
 class PasswordValidator extends BaseValidator< string > {
 	private readonly minimumPasswordLength: number;
+	private readonly domain: string;
+	private readonly mailboxName?: string;
 	static readonly maximumPasswordLength = 100;
 
-	constructor( minimumPasswordLength: number ) {
+	constructor( minimumPasswordLength: number, domain: string, mailboxName?: string ) {
 		super();
 		this.minimumPasswordLength = minimumPasswordLength;
+		this.domain = domain;
+		this.mailboxName = mailboxName;
 	}
 
-	static getPasswordTooShortError( minimumPasswordLength: number ): FieldError {
+	static getPasswordTooShortError( minimumPasswordLength: number ): SingleFieldError {
 		return i18n.translate( "This field can't be shorter than %s characters.", {
 			args: String( minimumPasswordLength ),
 		} );
 	}
 
-	static getPasswordTooLongError(): FieldError {
+	static getPasswordTooLongError(): SingleFieldError {
 		return i18n.translate( "This field can't be longer than %s characters.", {
 			args: PasswordValidator.maximumPasswordLength,
 		} );
 	}
 
-	static getPasswordStartsWithSpaceError(): FieldError {
+	static getPasswordStartsWithSpaceError(): SingleFieldError {
 		return i18n.translate( "This field can't start with a white space." );
 	}
 
-	static getPasswordEndsWithSpaceError(): FieldError {
+	static getPasswordEndsWithSpaceError(): SingleFieldError {
 		return i18n.translate( "This field can't end with a white space." );
 	}
 
 	static getPasswordContainsForbiddenCharacterError(
 		firstForbiddenCharacter: string | undefined
-	): FieldError {
+	): SingleFieldError {
 		return i18n.translate( "This field can't accept '%s' as character.", {
 			args: firstForbiddenCharacter,
 			comment: '%s denotes a single character that is not allowed in this field',
 		} );
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	static getPasswordContainsDomainError( domain: string ): SingleFieldError {
+		return i18n.translate( "Your password can't contain your domain name (%s).", {
+			args: domain,
+			comment: '%s denotes the domain name that is email address is being created for',
+		} );
+	}
+
+	static getPasswordContainsMailboxNameError( mailboxName: string ): SingleFieldError {
+		return i18n.translate( "Your password can't contain your email address name (%s).", {
+			args: mailboxName,
+			comment: '%s denotes the name being used for the email address the user is creating',
+		} );
+	}
+
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		const value = field.value;
 
 		if ( this.minimumPasswordLength > value.length ) {
-			field.error = PasswordValidator.getPasswordTooShortError( this.minimumPasswordLength );
-			return;
+			this.addError(
+				field,
+				PasswordValidator.getPasswordTooShortError( this.minimumPasswordLength )
+			);
 		}
 
 		if ( PasswordValidator.maximumPasswordLength < value.length ) {
-			field.error = PasswordValidator.getPasswordTooLongError();
-			return;
+			this.addError( field, PasswordValidator.getPasswordTooLongError() );
 		}
 
 		if ( value.startsWith( ' ' ) ) {
-			field.error = PasswordValidator.getPasswordStartsWithSpaceError();
-			return;
+			this.addError( field, PasswordValidator.getPasswordStartsWithSpaceError() );
 		}
 
 		// Checks that passwords only have ASCII characters (see https://en.wikipedia.org/wiki/ASCII#Character_set)
@@ -242,14 +281,73 @@ class PasswordValidator extends BaseValidator< string > {
 				regexp.test( character )
 			);
 
-			field.error =
-				PasswordValidator.getPasswordContainsForbiddenCharacterError( firstForbiddenCharacter );
-			return;
+			this.addError(
+				field,
+				PasswordValidator.getPasswordContainsForbiddenCharacterError( firstForbiddenCharacter )
+			);
 		}
 
 		if ( value.endsWith( ' ' ) ) {
-			field.error = PasswordValidator.getPasswordEndsWithSpaceError();
+			this.addError( field, PasswordValidator.getPasswordEndsWithSpaceError() );
 		}
+
+		const domainParts = `${ this.domain }`.split( '.' );
+
+		if ( value.toLowerCase().includes( domainParts[ 0 ].toLowerCase() ) ) {
+			this.addError( field, PasswordValidator.getPasswordContainsDomainError( domainParts[ 0 ] ) );
+		}
+
+		if ( this.mailboxName && value.toLowerCase().includes( this.mailboxName.toLowerCase() ) ) {
+			this.addError(
+				field,
+				PasswordValidator.getPasswordContainsMailboxNameError( this.mailboxName )
+			);
+		}
+
+		try {
+			const apiResponse = await this.mockApiCall( value );
+			if ( ! apiResponse.success && apiResponse.errors ) {
+				apiResponse.errors.forEach( ( error ) => this.addError( field, error ) );
+			}
+		} catch ( error ) {
+			this.addError( field, PasswordValidator.getApiCallError() );
+		}
+	}
+
+	private async mockApiCall(
+		password: string
+	): Promise< { success: boolean; errors?: SingleFieldError[] } > {
+		return new Promise( ( resolve, reject ) => {
+			setTimeout( () => {
+				try {
+					if ( password === 'password123' || password === 'short' ) {
+						resolve( {
+							success: false,
+							errors: [ i18n.translate( 'This password is too common.' ) ],
+						} );
+					} else if ( password === 'multierrors' ) {
+						resolve( {
+							success: false,
+							errors: [
+								i18n.translate( 'This password is too common.' ),
+								i18n.translate( 'This password has angered the entropy gods' ),
+								i18n.translate( "No real error, I just don't like you." ),
+							],
+						} );
+					} else if ( password === 'testerror' ) {
+						reject( new Error( 'Simulated API error' ) );
+					} else {
+						resolve( { success: true } );
+					}
+				} catch ( error ) {
+					reject( error );
+				}
+			}, 500 );
+		} );
+	}
+
+	static getApiCallError(): SingleFieldError {
+		return i18n.translate( 'An error occurred while validating the password. Please try again.' );
 	}
 }
 
@@ -263,7 +361,10 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError( domainName: string, existingMailboxName: string ): FieldError {
+	static getExistingMailboxError(
+		domainName: string,
+		existingMailboxName: string
+	): SingleFieldError {
 		return i18n.translate(
 			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
 			{
@@ -273,11 +374,11 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		);
 	}
 
-	getMailboxError( fieldValue: string ) {
+	getMailboxError( fieldValue: string ): SingleFieldError {
 		return ExistingMailboxNamesValidator.getExistingMailboxError( this.domainName, fieldValue );
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( ! field.value || field.error ) {
 			return;
 		}
@@ -291,7 +392,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 				return;
 			}
 
-			field.error = this.getMailboxError( fieldValueLowerCased );
+			this.addError( field, this.getMailboxError( fieldValueLowerCased ) );
 		} );
 	}
 }
@@ -304,7 +405,10 @@ class PreviouslySpecifiedMailboxNamesValidator extends ExistingMailboxNamesValid
 		);
 	}
 
-	static getExistingMailboxError( domainName: string, existingMailboxName: string ): FieldError {
+	static getExistingMailboxError(
+		domainName: string,
+		existingMailboxName: string
+	): SingleFieldError {
 		return i18n.translate(
 			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} has already been specified before.',
 			{
@@ -325,7 +429,7 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 		this.provider = provider;
 	}
 
-	static getUnavailableMailboxError( mailboxName: string, message: string ): FieldError {
+	static getUnavailableMailboxError( mailboxName: string, message: string ): SingleFieldError {
 		return i18n.translate( '{{strong}}%(mailbox)s{{/strong}} is not available: %(message)s', {
 			comment:
 				'%(mailbox)s is the local part of an email address. %(message)s is a translated message that gives context to why the mailbox is not available',
@@ -377,9 +481,9 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 
 		// If mailbox name is not available ...
 		if ( status !== 200 ) {
-			field.error = MailboxNameAvailabilityValidator.getUnavailableMailboxError(
-				field.value,
-				message
+			this.addError(
+				field,
+				MailboxNameAvailabilityValidator.getUnavailableMailboxError( field.value, message )
 			);
 		}
 	}
