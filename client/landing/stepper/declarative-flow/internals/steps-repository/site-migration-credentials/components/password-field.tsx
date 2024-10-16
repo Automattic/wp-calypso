@@ -41,9 +41,7 @@ export const PasswordField: React.FC< CredentialsFormFieldProps > = ( { control,
 							className={ toggleVisibilityClasses }
 							onClick={ () => setPasswordHidden( ! passwordHidden ) }
 							type="button"
-						>
-							{ passwordHidden ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
-						</button>
+						></button>
 					</div>
 				) }
 			/>
