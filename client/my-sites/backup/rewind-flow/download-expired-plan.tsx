@@ -91,10 +91,10 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 	const [ downloadFlowImageSrc, setDownloadFlowImageSrc ] = useState( JetpackBackupSVG );
 
 	useEffect( () => {
-		if ( ! isDownloadURLNotReady ) {
+		if ( ! isDownloadURLNotReady && userRequestedDownload ) {
 			dispatch( recordTracksEvent( 'calypso_jetpack_backup_download_ready' ) );
 		}
-	}, [ isDownloadURLNotReady, dispatch ] );
+	}, [ isDownloadURLNotReady, dispatch, userRequestedDownload ] );
 
 	const renderConfirm = () => (
 		<>
