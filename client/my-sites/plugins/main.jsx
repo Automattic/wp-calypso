@@ -8,7 +8,7 @@ import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -59,6 +59,7 @@ import UpdatePlugins from './plugin-management-v2/update-plugins';
 import PluginsList from './plugins-list';
 
 import './style.scss';
+import { DataViews } from '@wordpress/dataviews';
 
 export class PluginsMain extends Component {
 	constructor( props ) {
@@ -375,16 +376,115 @@ export class PluginsMain extends Component {
 			}
 		}
 
+		// const installedPluginsList = showInstalledPluginList && (
+		// 	<PluginsList
+		// 		header={ this.props.translate( 'Installed Plugins' ) }
+		// 		plugins={ currentPlugins }
+		// 		isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+		// 		isLoading={ this.props.requestingPluginsForSites }
+		// 		isJetpackCloud={ this.props.isJetpackCloud }
+		// 		searchTerm={ search }
+		// 		filter={ this.props.filter }
+		// 		requestPluginsError={ this.props.requestPluginsError }
+		// 	/>
+		// );
+
+		console.log( 'currentPlugins', currentPlugins );
+
+		const data = currentPlugins.map( ( plugin ) => {
+			return {
+				id: plugin.id,
+				name: plugin.name,
+				sites: plugin.sites.length,
+				update: true,
+				imageSrc: plugin.icon,
+			};
+		} );
+
+		const fields = [
+			{
+				id: 'plugins',
+				label: 'Installed Plugins',
+				render: ( { item } ) => {
+					return (
+						<>
+							<img src={ item.imageSrc } />
+							<a href="...">{ item.name }</a>
+						</>
+					);
+				},
+				enableSorting: false,
+			},
+			{
+				id: 'sites',
+				label: 'Sites',
+				enableHiding: false,
+				render: ( { item } ) => {
+					return <span>{ item.sites && item.sites.length }</span>;
+				},
+			},
+			{
+				id: 'update',
+				label: 'Update available',
+				enableHiding: false,
+				render: ( { item } ) => {
+					return <Button>Update to 1.2.3</Button>;
+				},
+			},
+		];
+
+		const view = {
+			type: 'table',
+			search: '',
+			filters: [
+				{ field: 'plugins', operator: 'is', value: 2 },
+				{ field: 'status', operator: 'isAny', value: [ 'publish', 'draft' ] },
+			],
+			page: 1,
+			perPage: 30,
+			sort: {
+				field: 'date',
+				direction: 'desc',
+			},
+			fields: [ 'plugins', 'sites', 'update' ],
+			layout: {},
+		};
+
+		const paginationInfo = {
+			totalItems: 2,
+			totalPages: 5,
+		};
+
+		const actions = [
+			{
+				href: `some-url`,
+				callback: () => {
+					console.log( 'Manage Plugin' );
+				},
+				label: translate( 'Manage Plugin' ),
+				isExternalLink: true,
+				isEnabled: true,
+			},
+			{
+				href: `some-url`,
+				callback: () => {
+					console.log( 'Remove' );
+				},
+				label: translate( 'Remove' ),
+				isExternalLink: true,
+				isEnabled: true,
+				icon: 'trash',
+			},
+		];
+
 		const installedPluginsList = showInstalledPluginList && (
-			<PluginsList
-				header={ this.props.translate( 'Installed Plugins' ) }
-				plugins={ currentPlugins }
-				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
-				isLoading={ this.props.requestingPluginsForSites }
-				isJetpackCloud={ this.props.isJetpackCloud }
-				searchTerm={ search }
-				filter={ this.props.filter }
-				requestPluginsError={ this.props.requestPluginsError }
+			<DataViews
+				// header={ this.props.translate( 'Installed Plugins' ) }
+				data={ data }
+				fields={ fields }
+				view={ view }
+				actions={ actions }
+				paginationInfo={ paginationInfo }
 			/>
 		);
 
