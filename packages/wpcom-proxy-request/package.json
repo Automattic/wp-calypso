@@ -48,6 +48,6 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"postcss": "^8.4.5",
-		"webpack": "^5.94.0"
+		"webpack": "^5.95.0"
 	}
 }
