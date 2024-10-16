@@ -1,8 +1,9 @@
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { trashNote as trashNoteAction } from '../actions';
 import bumpStat from '../utils/bump-stat';
 
-const trashNote = ( note, restClient ) => ( dispatch ) => {
+const trashNote = ( note, siteId, restClient ) => ( dispatch ) => {
 	bumpStat( 'trash-comment' );
 	recordTracksEvent( 'calypso_notification_note_trash', {
 		note_type: note.type,
@@ -10,6 +11,9 @@ const trashNote = ( note, restClient ) => ( dispatch ) => {
 
 	dispatch( trashNoteAction( note.id ) );
 	restClient.global.updateUndoBar( 'trash', note );
+
+	// Refresh the admin menu on update of status to ensure count shown is not stale
+	dispatch( requestAdminMenu( siteId ) );
 };
 
 export default trashNote;

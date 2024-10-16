@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { connect } from 'react-redux';
 import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';
+import { getReferenceId } from '../helpers/notes';
 import { spamNote } from '../state/notes/thunks';
 import ActionButton from './action-button';
 
@@ -16,7 +17,7 @@ const SpamButton = ( { note, translate, spamNote } ) => {
 			icon="spam"
 			isActive={ false }
 			hotkey={ keys.KEY_S }
-			onToggle={ () => spamNote( note, restClient ) }
+			onToggle={ () => spamNote( note, getReferenceId( note, 'site' ), restClient ) }
 			text={ translate( 'Spam', { context: 'verb: Mark as Spam' } ) }
 			title={ translate( 'Mark comment as spam', { context: 'verb: imperative' } ) }
 		/>
