@@ -246,9 +246,19 @@ export const formatNumber = ( number: number, onlyPositives = false ): string =>
 
 export const formatLargeNumber = ( number: number ): string => {
 	if ( number >= 1000000 ) {
-		return ( number / 1000000 ).toFixed( 3 ).replace( /\.?0+$/, '' ) + 'M';
+		return (
+			( number / 1000000 )
+				.toFixed( 3 )
+				.replace( /\.?0+$/, '' )
+				.toLocaleString() + 'M'
+		);
 	} else if ( number >= 100000 ) {
-		return ( number / 1000 ).toFixed( 2 ).replace( /\.?0+$/, '' ) + 'K';
+		return (
+			( number / 1000 )
+				.toFixed( 2 )
+				.replace( /\.?0+$/, '' )
+				.toLocaleString() + 'K'
+		);
 	}
 	return formatNumber( number );
 };
