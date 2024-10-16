@@ -108,7 +108,6 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 	}, [ watch, clearErrors, reset ] );
 
 	return {
-		formState: { errors },
 		errors,
 		control,
 		handleSubmit,
@@ -116,8 +115,5 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 		accessMethod,
 		isBusy,
 		canBypassVerification,
-		isSubmitting,
-		isWPCOM: isWPCOM( siteInfo ),
-		isNotWordPress: isNotWordPress( siteInfo ),
 	};
 };
