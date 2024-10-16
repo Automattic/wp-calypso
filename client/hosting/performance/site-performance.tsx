@@ -36,8 +36,6 @@ const statsQuery = {
 	max: 0,
 };
 
-const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-
 const usePerformanceReport = (
 	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
 	refetchPages: () => void,
@@ -199,7 +197,7 @@ export const SitePerformance = () => {
 			: orderedPages;
 
 		// Add a disabled option at the end that will show a disclaimer message.
-		return [ ...options, { label: alphabet, value: '-1', path: '', disabled: true } ];
+		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
 	}, [ currentPage, orderedPages ] );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
@@ -271,10 +269,35 @@ export const SitePerformance = () => {
 		} );
 	};
 
+	// This forces a no pages found message in the dropdown
+	// This will be removed when gutenberg PR https://github.com/WordPress/gutenberg/pull/66142 is merged
+	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
+
+	const options = ! noPagesFound.found
+		? [
+				{
+					label: noPagesFound.query,
+					value: '-2',
+					disabled: true,
+				},
+		  ]
+		: pageOptions;
+
 	const pageSelector = (
 		<PageSelector
+			onFilterValueChange={ ( value ) => {
+				const filter = pageOptions.find( ( option ) =>
+					option.label.toLowerCase().startsWith( value )
+				);
+
+				if ( filter ) {
+					setNoPagesFound( { query: '', found: true } );
+					return;
+				}
+				setNoPagesFound( { query: value, found: false } );
+			} }
 			allowReset={ false }
-			options={ pageOptions }
+			options={ options }
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
