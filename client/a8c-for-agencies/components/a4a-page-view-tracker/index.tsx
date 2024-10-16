@@ -9,19 +9,13 @@ type Props = {
 
 export default function A4APageViewTracker( { title, path, properties }: Props ) {
 	// Split the path into its components
-	const [ basePath, queryString ] = path.split( /[?]/ );
-
-	// Parse query string into an object
-	const queryParams = queryString ? Object.fromEntries( new URLSearchParams( queryString ) ) : {};
+	const [ basePath ] = path.split( /[?]/ );
 
 	return (
 		<PageViewTracker
 			title={ title }
 			path={ basePath }
-			properties={ {
-				...queryParams,
-				...properties,
-			} }
+			properties={ { properties } }
 			options={ { useA8CForAgenciesGoogleAnalytics: true } }
 		/>
 	);
