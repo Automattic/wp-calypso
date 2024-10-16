@@ -40,6 +40,7 @@
 		"@wordpress/base-styles": "^5.8.0",
 		"@wordpress/components": "^28.8.0",
 		"@wordpress/icons": "^10.8.0",
+		"@wordpress/url": "^4.8.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
