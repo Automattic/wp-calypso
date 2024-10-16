@@ -1341,6 +1341,7 @@ __metadata:
     "@storybook/addon-a11y": "npm:^7.6.19"
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
+    "@wordpress/base-styles": "npm:^5.8.0"
     "@wordpress/components": "npm:^28.8.0"
     clsx: "npm:^2.1.1"
     msw: "npm:^2.1.7"
