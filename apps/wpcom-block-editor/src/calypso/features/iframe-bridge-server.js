@@ -1120,7 +1120,15 @@ function handleSinglePosts( calypsoPort ) {
 			commandItem = document.querySelector( '[data-selected=true]' );
 		}
 
+		if ( ! commandItem ) {
+			return;
+		}
+
 		const postId = extractPostIdFromDataValueAttribute( commandItem );
+
+		if ( ! postId ) {
+			return;
+		}
 
 		calypsoPort.postMessage( {
 			action: 'wpAdminRedirect',
