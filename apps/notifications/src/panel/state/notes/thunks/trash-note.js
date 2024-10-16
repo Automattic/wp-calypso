@@ -2,7 +2,7 @@ import { recordTracksEvent } from '../../../helpers/stats';
 import { trashNote as trashNoteAction } from '../actions';
 import bumpStat from '../utils/bump-stat';
 
-const trashNote = ( note, siteId, restClient ) => ( dispatch ) => {
+const trashNote = ( note, restClient ) => ( dispatch ) => {
 	bumpStat( 'trash-comment' );
 	recordTracksEvent( 'calypso_notification_note_trash', {
 		note_type: note.type,
