@@ -15,7 +15,7 @@ export default function A4APageViewTracker( { title, path, properties }: Props )
 		<PageViewTracker
 			title={ title }
 			path={ basePath }
-			properties={ { properties } }
+			properties={ properties }
 			options={ { useA8CForAgenciesGoogleAnalytics: true } }
 		/>
 	);
