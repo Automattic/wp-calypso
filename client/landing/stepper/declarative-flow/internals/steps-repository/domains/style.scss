@@ -449,6 +449,10 @@
 }
 
 .hundred-year-domain.domains {
+	.step-container {
+		margin: 0;
+	}
+
 	.step-container__header {
 		.formatted-header {
 			.formatted-header__title {
