@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { Icon, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
@@ -15,7 +16,12 @@ import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
 import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
-import { displaySiteUrl, isNotAtomicJetpack, isStagingSite } from 'calypso/sites-dashboard/utils';
+import {
+	displaySiteUrl,
+	isNotAtomicJetpack,
+	isMigrationInProgress,
+	isStagingSite,
+} from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -74,6 +80,9 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 		event.preventDefault();
 	};
 
+	const isMigrating = isMigrationInProgress( site );
+	const siteTitle = isMigrating ? translate( 'Incoming Migration' ) : site.title;
+
 	return (
 		<div className="sites-dataviews__site">
 			<SiteListTile
@@ -95,7 +104,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
-								fallback="first-grapheme"
+								fallback={ isMigrating ? 'migration' : 'first-grapheme' }
 								size={ 56 }
 							/>
 						</ThumbnailLink>
@@ -104,7 +113,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 				title={
 					<ListTileTitle>
 						<SiteName as="div" title={ title }>
-							<Truncated>{ site.title }</Truncated>
+							<Truncated>{ siteTitle }</Truncated>
 						</SiteName>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
