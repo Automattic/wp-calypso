@@ -98,6 +98,12 @@ const BackupUpsellBody = () => {
 	const [ rewindId, setRewindId ] = useState< string | null >( null );
 	const [ backupPeriodDate, setBackupPeriodDate ] = useState< string | null >( null );
 
+	const resetBackupState = () => {
+		setIsRevertedWithValidBackup( false );
+		setRewindId( null );
+		setBackupPeriodDate( null );
+	};
+
 	const fetchLatestAtomicTransfer = useCallback( async ( siteId: number | string ) => {
 		try {
 			const transfer = await wpcom.req.get( {
@@ -133,14 +139,10 @@ const BackupUpsellBody = () => {
 				setRewindId( validBackup.object.backup_period );
 				setBackupPeriodDate( backupPeriodHumanReadable );
 			} else {
-				setIsRevertedWithValidBackup( false );
-				setRewindId( null );
-				setBackupPeriodDate( null );
+				resetBackupState();
 			}
 		} catch ( error ) {
-			setIsRevertedWithValidBackup( false );
-			setRewindId( null );
-			setBackupPeriodDate( null );
+			resetBackupState();
 		}
 	}, [] );
 
@@ -152,9 +154,7 @@ const BackupUpsellBody = () => {
 				if ( transferStatus && transferStatus.status === 'reverted' ) {
 					await fetchRewindBackups( siteId );
 				} else {
-					setIsRevertedWithValidBackup( false );
-					setRewindId( null );
-					setBackupPeriodDate( null );
+					resetBackupState();
 				}
 			} )();
 		}
