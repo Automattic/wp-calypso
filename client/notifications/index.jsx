@@ -145,7 +145,7 @@ export class Notifications extends Component {
 			},
 		],
 		NOTES_REMOVE: [
-			( store, { isComment } ) => {
+			( _, { isComment } ) => {
 				if ( isComment ) {
 					this.props.requestAdminMenu( this.props.selectedSiteId );
 				}
@@ -309,7 +309,8 @@ export default connect(
 		selectedSiteId: getSelectedSiteId( state ),
 	} ),
 	( dispatch ) => ( {
-		recordTracksEventAction: ( ...args ) => dispatch( recordTracksEventAction( ...args ) ),
+		recordTracksEventAction: ( name, properties ) =>
+			dispatch( recordTracksEventAction( name, properties ) ),
 		setUnseenCount: ( count ) => dispatch( setUnseenCount( count ) ),
 		didForceRefresh: () => dispatch( didForceRefresh() ),
 		requestAdminMenu: ( siteId ) => dispatch( requestAdminMenuAction( siteId ) ),
