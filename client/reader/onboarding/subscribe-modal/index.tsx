@@ -111,6 +111,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		</>
 	);
 
+	const handleItemClick = () => {
+		console.log( 'hello world' );
+	};
+
 	return (
 		isOpen && (
 			<Modal
@@ -146,6 +150,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										showFollowedOnDate={ false }
 										followSource="reader-onboarding-modal"
 										disableSuggestedFollows
+										onItemClick={ handleItemClick }
 									/>
 								) ) }
 							</div>
