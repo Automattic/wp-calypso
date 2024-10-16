@@ -1,4 +1,5 @@
 import { Card, Badge } from '@automattic/components';
+import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -9,7 +10,9 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import getAgencyTierLogo from '../../lib/get-agency-tier-logo';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
 
 import './style.scss';
@@ -17,23 +20,27 @@ import './style.scss';
 export default function AgencyTierOverview() {
 	const translate = useTranslate();
 
+	const agency = useSelector( getActiveAgency );
+
 	const title = translate( 'Your Agency Tier' );
 	const benefits = getTierBenefits( translate );
 
+	const currentAgencyTierInfo = agency?.tier?.id
+		? getAgencyTierInfo( agency.tier.id, translate )
+		: null;
+
+	const learnMoreLink = ''; // TODO: Add link
+
 	return (
-		<Layout
-			className="agency-tier-overview"
-			title={ title }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="agency-tier-overview" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
 					<Subtitle>
-						{ translate( 'Experience the rewards of selling Auatomattic products and hosting.' ) }
+						{ translate( 'Experience the rewards of selling Automattic products and hosting.' ) }
 					</Subtitle>
 					<Actions>
+						<MobileSidebarNavigation />
 						{
 							// TODO: Add actions
 							<></>
@@ -43,6 +50,32 @@ export default function AgencyTierOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
+				{ currentAgencyTierInfo && (
+					<div className="agency-tier-overview__top-content">
+						<div className="agency-tier-overview__top-content-left">
+							<div className="agency-tier-overview__current-tier-container">
+								<div
+									className={ clsx(
+										'agency-tier-overview__current-tier-badge',
+										currentAgencyTierInfo.id
+									) }
+								>
+									<div className="agency-tier-overview__current-agency-tier">
+										{ currentAgencyTierInfo.fullTitle }
+									</div>
+								</div>
+								<div className="agency-tier-overview__current-tier-aside">
+									<div>{ currentAgencyTierInfo.subtitle }</div>
+									{ translate( '{{a}}Learn more{{/a}} ↗', {
+										components: {
+											a: <a target="_blank" href={ learnMoreLink } rel="noopener noreferrer" />,
+										},
+									} ) }
+								</div>
+							</div>
+						</div>
+					</div>
+				) }
 				<div className="agency-tier-overview__bottom-content">
 					<div className="agency-tier-overview__bottom-content-subheading">
 						{ translate( 'Take a closer look' ) }
@@ -56,14 +89,17 @@ export default function AgencyTierOverview() {
 								<div className="agency-tier-overview__benefit-card-content">
 									<div className="agency-tier-overview__benefit-card-header">
 										<div className="agency-tier-overview__benefit-card-icons">
-											{ benefit.availableTiers.map( ( tier ) => (
-												<img
-													key={ tier }
-													src={ getAgencyTierLogo( tier ) }
-													alt={ tier }
-													className="agency-tier-overview__benefit-card-icon"
-												/>
-											) ) }
+											{ benefit.availableTiers.map( ( tier ) => {
+												const { logo } = getAgencyTierInfo( tier, translate );
+												return (
+													<img
+														key={ tier }
+														src={ logo }
+														alt={ tier }
+														className="agency-tier-overview__benefit-card-icon"
+													/>
+												);
+											} ) }
 										</div>
 
 										{ benefit.isComingSoon && (
