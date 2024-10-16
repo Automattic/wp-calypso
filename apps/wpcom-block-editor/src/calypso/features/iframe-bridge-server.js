@@ -1109,7 +1109,17 @@ function extractPostIdFromDataValueAttribute( commandItem ) {
 function handleSinglePosts( calypsoPort ) {
 	const selector = `[data-value^="${ __( 'Single Posts' ) }"]`;
 
-	const postMessage = ( commandItem ) => {
+	const callback = ( e ) => {
+		e.preventDefault();
+
+		let commandItem;
+
+		if ( e.type === 'click' ) {
+			commandItem = e.target.closest( '[cmdk-item]' );
+		} else if ( e.type === 'keydown' ) {
+			commandItem = document.querySelector( '[data-selected=true]' );
+		}
+
 		const postId = extractPostIdFromDataValueAttribute( commandItem );
 
 		calypsoPort.postMessage( {
@@ -1121,23 +1131,8 @@ function handleSinglePosts( calypsoPort ) {
 		} );
 	};
 
-	const clickCallback = ( e ) => {
-		e.preventDefault();
-
-		const commandItem = e.target.closest( '[cmdk-item]' );
-		postMessage( commandItem );
-	};
-
-	addEditorListener( selector, clickCallback );
-
-	const enterCallback = ( e ) => {
-		e.preventDefault();
-
-		const commandItem = document.querySelector( '[data-selected=true]' );
-		postMessage( commandItem );
-	};
-
-	addCommandsInputListener( selector, enterCallback );
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
 }
 
 function initPort( message ) {
