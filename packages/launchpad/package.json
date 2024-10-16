@@ -35,6 +35,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/base-styles": "^5.8.0",
 		"@wordpress/components": "^28.8.0",
