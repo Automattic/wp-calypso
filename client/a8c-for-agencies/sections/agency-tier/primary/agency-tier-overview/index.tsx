@@ -31,7 +31,7 @@ export default function AgencyTierOverview() {
 				<LayoutHeader>
 					<Title>{ title } </Title>
 					<Subtitle>
-						{ translate( 'Experience the rewards of selling Auatomattic products and hosting.' ) }
+						{ translate( 'Experience the rewards of selling Automattic products and hosting.' ) }
 					</Subtitle>
 					<Actions>
 						{
