@@ -28,7 +28,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
-	usePresalesChat( 'wpcom', true, true );
+	usePresalesChat( 'wpcom' );
 
 	const options = useMemo(
 		() => [

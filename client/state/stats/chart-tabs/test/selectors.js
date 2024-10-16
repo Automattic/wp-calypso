@@ -2,14 +2,18 @@ import { getCountRecords, getLoadingTabs } from '../selectors';
 
 describe( 'selectors', () => {
 	const siteId = 1234;
+	const date = '2100-11-10';
 	const period = 'month';
+	const quantity = 3;
+
+	const requestKey = `${ date }-${ period }-${ quantity }`;
 
 	const state = {
 		stats: {
 			chartTabs: {
 				counts: {
 					[ siteId ]: {
-						[ period ]: [
+						[ requestKey ]: [
 							{
 								period: '2100-11-10',
 								views: 247,
@@ -33,7 +37,7 @@ describe( 'selectors', () => {
 				},
 				isLoading: {
 					[ siteId ]: {
-						[ period ]: {
+						[ requestKey ]: {
 							views: false,
 							visitors: true,
 							likes: true,
@@ -53,7 +57,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( "should return a site's chart counts given a duration period", () => {
-			expect( getCountRecords( state, siteId, period ) ).toEqual( [
+			expect( getCountRecords( state, siteId, date, period, quantity ) ).toEqual( [
 				{
 					period: '2100-11-10',
 					views: 247,
@@ -76,7 +80,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getLoadingTabs()', () => {
-		const loadingTabs = getLoadingTabs( state, siteId, period );
+		const loadingTabs = getLoadingTabs( state, siteId, date, period, quantity );
 		test( 'should return an array', () => {
 			expect( Array.isArray( loadingTabs ) ).toBeTruthy();
 		} );

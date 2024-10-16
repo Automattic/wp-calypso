@@ -244,11 +244,15 @@ const contextLinks = {
 		post_id: 243475,
 	},
 	privacy: {
-		link: 'https://wordpress.com/support/settings/privacy-settings/',
+		link: 'https://wordpress.com/support/privacy-settings/',
 		post_id: 1507,
 	},
 	'privacy-preview-link': {
 		link: 'https://wordpress.com/support/settings/privacy-settings/#preview-link',
+		post_id: 1507,
+	},
+	'privacy-prevent-third-party-sharing': {
+		link: 'https://wordpress.com/support/privacy-settings/make-your-website-public/#prevent-third-party-sharing',
 		post_id: 1507,
 	},
 	'primary-site-address': {
