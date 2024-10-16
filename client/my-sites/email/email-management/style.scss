@@ -442,8 +442,16 @@
 	}
 }
 
-.email-plan-subscription__expired {
-	color: var(--color-error-50);
+.email-plan-subscription__description {
+	font-size: $font-body-small;
+
+	&.email-plan-subscription__description--expired {
+		color: var(--color-error-50);
+	}
+
+	.email-plan-subscription__description-renews-date {
+		margin-left: 20px;
+	}
 }
 
 .email-plan-warnings__container {
