@@ -145,6 +145,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										showNotificationSettings={ false }
 										showFollowedOnDate={ false }
 										followSource="reader-onboarding-modal"
+                    disableSuggestedFollows
 									/>
 								) ) }
 							</div>

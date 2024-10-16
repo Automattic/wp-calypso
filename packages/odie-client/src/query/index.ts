@@ -1,12 +1,11 @@
-import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
-import { canAccessWpcomApis } from 'wpcom-proxy-request';
-// eslint-disable-next-line no-restricted-imports
-import wpcom from 'calypso/lib/wp';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, useSetOdieStorage } from '../data';
+import { zendeskSendMessage } from '../utils';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -45,7 +44,8 @@ function odieWpcomSendSupportMessage(
 	version?: string | null,
 	selectedSiteId?: number | null
 ) {
-	return wpcom.req.post( {
+	return wpcomRequest( {
+		method: 'POST',
 		path,
 		apiNamespace: 'wpcom/v2',
 		body: { message: message.content, version, context: { selectedSiteId } },
@@ -70,27 +70,23 @@ export const uuid = () => {
  * const { mutate, isLoading } = useOdieSendMessage();
  * mutate( { message: { content: 'Hello' } } );
  */
-export const useOdieSendMessage = (): UseMutationResult<
-	{ chat_id: string; messages: Message[] },
-	unknown,
-	{ message: Message },
-	{ internal_message_id: string }
-> => {
+export const useOdieSendMessage = () => {
 	const {
 		chat,
 		botNameSlug,
 		setIsLoading,
-		setChat,
 		updateMessage,
 		odieClientId,
 		selectedSiteId,
 		version,
+		supportProvider,
+		addMessage,
+		shouldUseHelpCenterExperience,
 	} = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 	const storeChatId = useSetOdieStorage( 'chat_id' );
 	const { __ } = useI18n();
-
 	/* translators: Error message when Wapuu fails to send a message */
 	const wapuuErrorMessage = __(
 		"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
@@ -103,21 +99,30 @@ export const useOdieSendMessage = (): UseMutationResult<
 		__i18n_text_domain__
 	);
 
-	return useMutation<
-		{ chat_id: string; messages: Message[] },
-		{ data: { status: number; messages: Message[] } },
+	const zendeskMutation = useMutation( {
+		mutationFn: async ( { message }: { message: Message } ) => {
+			addMessage( message );
+			const result = await zendeskSendMessage( message.content, chat.chat_id );
+			return result;
+		},
+	} );
+
+	const odieMutation = useMutation<
+		{ messages: Message[]; chat_id: number },
+		Error,
 		{ message: Message },
 		{ internal_message_id: string }
 	>( {
-		mutationFn: ( { message }: { message: Message } ) => {
+		mutationFn: async ( { message }: { message: Message } ) => {
 			broadcastOdieMessage( message, odieClientId );
-			return buildSendChatMessage(
+			const result = await buildSendChatMessage(
 				{ ...message },
 				botNameSlug,
 				chat.chat_id,
 				version,
 				selectedSiteId
 			);
+			return result as { messages: Message[]; chat_id: number };
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
@@ -131,21 +136,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 				},
 			];
 
-			setChat( ( prevChat: Chat ) => {
-				// Normalize message to always be an array
-				const newMessages = messages;
-
-				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
-				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
-					? prevChat.messages
-					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
-
-				// Append new messages at the end
-				return {
-					chat_id: prevChat.chat_id,
-					messages: [ ...filteredMessages, ...newMessages ],
-				};
-			} );
+			addMessage( messages );
 			setIsLoading( true );
 			userMessage.current = message;
 
@@ -182,7 +173,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			updateMessage( message );
 
 			broadcastOdieMessage( message, odieClientId );
-			storeChatId( data.chat_id );
+			storeChatId( data.chat_id.toString() );
 			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
 
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
@@ -206,13 +197,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSettled: () => {
 			setIsLoading( false );
 		},
-		onError: ( response, __, context ) => {
+		onError: ( error, __, context ) => {
 			if ( ! context ) {
 				throw new Error( 'Context is undefined' );
 			}
 
-			const isRateLimitError =
-				response && response.data && response.data.status === 429 ? true : false;
+			const isRateLimitError = error.message.includes( '429' );
 
 			const { internal_message_id } = context;
 			const message = {
@@ -226,6 +216,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 			broadcastOdieMessage( message, odieClientId );
 		},
 	} );
+
+	if ( shouldUseHelpCenterExperience && supportProvider === 'zendesk' ) {
+		return zendeskMutation;
+	}
+
+	return odieMutation;
 };
 
 const buildGetChatMessage = (
@@ -252,7 +248,8 @@ const buildGetChatMessage = (
 };
 
 function odieWpcomGetChat( path: string ): Promise< Chat > {
-	return wpcom.req.get( {
+	return wpcomRequest( {
+		method: 'GET',
 		path,
 		apiNamespace: 'wpcom/v2',
 	} ) as Promise< Chat >;
@@ -290,7 +287,8 @@ const odieWpcomSendMessageFeedback = (
 ) => {
 	const path = `/odie/chat/${ botNameSlug }/${ chatId }/${ messageId }/feedback`;
 
-	return wpcom.req.post( {
+	return wpcomRequest( {
+		method: 'POST',
 		path,
 		apiNamespace: 'wpcom/v2',
 		body: { rating_value },
@@ -305,11 +303,7 @@ const odieWpcomSendMessageFeedback = (
  * const { mutate, isLoading } = useOdieSendMessageFeedback();
  * mutate( { rating_value: 1, message: { message_id: 123 } } );
  */
-export const useOdieSendMessageFeedback = (): UseMutationResult<
-	number,
-	unknown,
-	{ rating_value: number; message: Message }
-> => {
+export const useOdieSendMessageFeedback = () => {
 	const { chat, botNameSlug } = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 

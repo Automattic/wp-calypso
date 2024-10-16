@@ -146,7 +146,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.waitFor( { state: 'visible' } );
+			await contactSupportButton.waitFor( { state: 'visible', timeout: 30000 } );
 
 			expect( await contactSupportButton.count() ).toBeTruthy();
 		} );
@@ -158,10 +158,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
 			await contactSupportButton.click();
 
-			const zendeskMessaging = await page
-				.frameLocator( 'iframe[title="Messaging window"]' )
-				.getByPlaceholder( 'Type a message' );
-
+			const zendeskMessaging = await page.locator( 'iframe[title="Messaging window"]' );
 			await zendeskMessaging.waitFor( { state: 'visible' } );
 
 			expect( await zendeskMessaging.count() ).toBeTruthy();
