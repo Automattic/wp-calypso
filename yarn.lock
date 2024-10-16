@@ -1345,6 +1345,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^5.8.0"
     "@wordpress/components": "npm:^28.8.0"
+    "@wordpress/icons": "npm:^10.8.0"
     clsx: "npm:^2.1.1"
     msw: "npm:^2.1.7"
     msw-storybook-addon: "npm:2.0.2"
