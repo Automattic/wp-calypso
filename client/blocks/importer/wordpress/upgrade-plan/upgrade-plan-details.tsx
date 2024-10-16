@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
-	calculateMonthlyPriceForPlan,
 	getPlan,
 	Plan,
 	PLAN_BUSINESS,
@@ -169,7 +168,6 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 };
 
 const preparePlanPriceOfferProps = (
-	selectedPlan: string,
 	introOfferAvailable: boolean,
 	plan?: Plan,
 	pricing?: PricingMetaForGridPlan
@@ -177,10 +175,8 @@ const preparePlanPriceOfferProps = (
 	const currencyCode = pricing?.currencyCode;
 	const originalMonthlyPrice = pricing?.originalPrice.monthly ?? undefined;
 
-	const introOfferFullPrice = pricing?.introOffer?.rawPrice ?? undefined;
-	const introOfferMonthlyPrice = introOfferFullPrice
-		? calculateMonthlyPriceForPlan( selectedPlan, introOfferFullPrice )
-		: undefined;
+	const introOfferFullPrice = pricing?.introOffer?.rawPrice.full ?? undefined;
+	const introOfferMonthlyPrice = pricing?.introOffer?.rawPrice.monthly ?? undefined;
 
 	const originalFullPrice = pricing?.originalPrice.full ?? undefined;
 
@@ -207,12 +203,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	const plan = getPlan( selectedPlan );
 
-	const planPriceOfferProps = preparePlanPriceOfferProps(
-		selectedPlan,
-		introOfferAvailable,
-		plan,
-		pricing
-	);
+	const planPriceOfferProps = preparePlanPriceOfferProps( introOfferAvailable, plan, pricing );
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 

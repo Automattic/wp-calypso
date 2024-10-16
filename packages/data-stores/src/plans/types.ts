@@ -68,7 +68,15 @@ export interface PlanProduct {
 
 export interface PlanIntroductoryOffer {
 	formattedPrice: string;
-	rawPrice: number;
+	rawPrice: {
+		monthly: number;
+		full: number;
+	};
+	/**
+	 * IMPORTANT:
+	 * we make the raw assumption that the interval unit is either "year" or "month"
+	 * to compute mmonthly/full price
+	 */
 	intervalUnit: string;
 	intervalCount: number;
 	isOfferComplete: boolean;
@@ -174,7 +182,12 @@ export interface PlanNext {
 
 export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_formatted_price?: string;
-	introductory_offer_raw_price?: number;
+	introductory_offer_raw_price_integer?: number;
+	/**
+	 * IMPORTANT:
+	 * we make the raw assumption that the interval unit is either "year" or "month"
+	 * to compute mmonthly/full price
+	 */
 	introductory_offer_interval_unit?: string;
 	introductory_offer_interval_count?: number;
 	introductory_offer_end_date?: string;

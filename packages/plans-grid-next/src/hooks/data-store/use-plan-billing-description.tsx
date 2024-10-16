@@ -108,7 +108,15 @@ export default function usePlanBillingDescription( {
 	 *   2. We only expose month & year based intervals for now (so no need to introduce more translations just yet)
 	 */
 	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
-		if ( originalPriceFullTermText ) {
+		const introOfferFullTermText =
+			currencyCode && introOffer.rawPrice
+				? formatCurrency( introOffer.rawPrice.full, currencyCode, {
+						stripZeros: true,
+						isSmallestUnit: true,
+				  } )
+				: null;
+
+		if ( originalPriceFullTermText && introOfferFullTermText ) {
 			/* Introductory offers for monthly plans */
 			if ( isMonthlyPlan ) {
 				/* If the offer is for X months */
@@ -210,7 +218,7 @@ export default function usePlanBillingDescription( {
 								'then %(rawPrice)s billed annually, excl. taxes',
 							{
 								args: {
-									introOfferFormattedPrice: introOffer.formattedPrice,
+									introOfferFormattedPrice: introOfferFullTermText,
 									rawPrice: originalPriceFullTermText,
 								},
 								components: { br: <br /> },
@@ -224,7 +232,7 @@ export default function usePlanBillingDescription( {
 							'then %(rawPrice)s billed annually, excl. taxes',
 						{
 							args: {
-								introOfferFormattedPrice: introOffer.formattedPrice,
+								introOfferFormattedPrice: introOfferFullTermText,
 								rawPrice: originalPriceFullTermText,
 								introOfferIntervalCount: introOffer.intervalCount,
 							},
