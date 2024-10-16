@@ -150,7 +150,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^10.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.10.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -169,7 +169,7 @@ __metadata:
     react-redux: "npm:^8.1.3"
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -237,7 +237,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.0"
     npm-run-all: "npm:^4.1.5"
     tree-kill: "npm:^1.2.2"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     yargs: "npm:^17.0.1"
   bin:
     calypso-apps-builder: ./index.js
@@ -282,7 +282,7 @@ __metadata:
     "@babel/core": "npm:^7.25.8"
     "@types/webpack-env": "npm:^1.18.5"
     "@wordpress/browserslist-config": "npm:^6.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.10.0"
     autoprefixer: "npm:^10.2.5"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.8.2"
@@ -307,7 +307,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   peerDependencies:
     postcss: ^8.4.5
-    webpack: ^5.94.0
+    webpack: ^5.95.0
   bin:
     build-app-languages: ./bin/build-app-languages.js
     calypso-build: ./bin/calypso-build.js
@@ -510,7 +510,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     sass-loader: "npm:^12.1.0"
     style-loader: "npm:^1.3.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@storybook/react": ^7.6.19
   languageName: unknown
@@ -566,7 +566,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^10.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.10.0"
     "@wordpress/dom-ready": "npm:^4.8.0"
     "@wordpress/i18n": "npm:^5.8.0"
     calypso: "workspace:^"
@@ -580,7 +580,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
@@ -666,7 +666,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
     uuid: "npm:^9.0.1"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@wordpress/data": ^10.8.0
     react: ^18.3.1
@@ -781,7 +781,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.8.0
@@ -823,7 +823,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@wordpress/data": ^10.8.0
     "@wordpress/element": ^6.8.0
@@ -929,7 +929,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.8.0
@@ -1003,7 +1003,7 @@ __metadata:
     "@fpjs-incubator/broyster": "npm:^0.1.4"
     "@rollup/plugin-json": "npm:^5.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
-    "@rollup/plugin-terser": "npm:^0.2.1"
+    "@rollup/plugin-terser": "npm:^0.4.4"
     "@rollup/plugin-typescript": "npm:^10.0.1"
     "@types/jasmine": "npm:^3.10.3"
     "@types/karma": "npm:^6.3.3"
@@ -1018,7 +1018,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.1.3"
     file-loader: "npm:^6.2.0"
     got: "npm:^11.8.5"
-    html-webpack-plugin: "npm:^5.5.0"
+    html-webpack-plugin: "npm:^5.6.0"
     karma: "npm:^6.4.1"
     karma-chrome-launcher: "npm:^3.1.1"
     karma-firefox-launcher: "npm:^2.1.2"
@@ -1031,15 +1031,15 @@ __metadata:
     rollup: "npm:^3.3.0"
     rollup-plugin-dts: "npm:^5.2.0"
     rollup-plugin-license: "npm:^3.0.1"
-    terser-webpack-plugin: "npm:^5.3.6"
+    terser-webpack-plugin: "npm:^5.3.10"
     ts-loader: "npm:^9.4.2"
     ts-node: "npm:^10.9.1"
     tslib: "npm:^2.4.1"
     typescript: "npm:^5.3.3"
     ua-parser-js: "npm:^0.7.32"
-    webpack: "npm:^5.94.0"
-    webpack-cli: "npm:^5.0.1"
-    webpack-dev-server: "npm:^4.11.1"
+    webpack: "npm:^5.95.0"
+    webpack-cli: "npm:^5.1.4"
+    webpack-dev-server: "npm:^4.15.2"
   languageName: unknown
   linkType: soft
 
@@ -1115,14 +1115,14 @@ __metadata:
     "@wordpress/components": "npm:^28.8.0"
     "@wordpress/compose": "npm:^7.8.0"
     "@wordpress/data": "npm:^10.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:6.10.0"
     "@wordpress/plugins": "npm:^7.8.0"
     "@wordpress/private-apis": "npm:^1.8.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:3.10.0"
     copy-webpack-plugin: "npm:^10.2.4"
     postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.8.0
@@ -1234,7 +1234,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@babel/runtime": ^7.25.7
     "@wordpress/data": ^10.8.0
@@ -1290,7 +1290,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   languageName: unknown
   linkType: soft
 
@@ -1323,7 +1323,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.8.0
@@ -1368,7 +1368,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.8.0
@@ -1455,7 +1455,7 @@ __metadata:
     react-redux: "npm:^8.1.3"
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -1482,7 +1482,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.8.0"
     "@wordpress/is-shallow-equal": "npm:^5.8.0"
     "@wordpress/primitives": "npm:^4.8.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.0.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.10.0"
     clsx: "npm:^2.1.1"
     lodash: "npm:^4.17.21"
     moment: "npm:^2.26.0"
@@ -1491,7 +1491,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   languageName: unknown
   linkType: soft
 
@@ -1555,7 +1555,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^5.8.0"
     "@wordpress/data": "npm:^10.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.10.0"
     "@wordpress/icons": "npm:^10.8.0"
     autoprefixer: "npm:^10.2.5"
     babel-jest: "npm:^29.6.1"
@@ -1578,7 +1578,7 @@ __metadata:
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
     size-limit: "npm:^8.2.6"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
   languageName: unknown
@@ -1611,7 +1611,7 @@ __metadata:
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.5.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/i18n": ^5.8.0
@@ -1688,7 +1688,7 @@ __metadata:
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@wordpress/i18n": ^5.8.0
     postcss: ^8.4.5
@@ -1751,7 +1751,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     require-from-string: "npm:^2.0.2"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -1812,7 +1812,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -1871,7 +1871,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
     "@babel/runtime": ^7.25.7
     react: ^18.3.1
@@ -2033,7 +2033,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
   peerDependencies:
-    webpack: ^5.94.0
+    webpack: ^5.95.0
   languageName: unknown
   linkType: soft
 
@@ -2044,7 +2044,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     semver: "npm:^7.0.0"
   peerDependencies:
-    webpack: ^5.94.0
+    webpack: ^5.95.0
   languageName: unknown
   linkType: soft
 
@@ -2055,9 +2055,9 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
-    webpack: ^5.94.0
+    webpack: ^5.95.0
   languageName: unknown
   linkType: soft
 
@@ -2069,9 +2069,9 @@ __metadata:
     css-loader: "npm:^6.11.0"
     mini-css-extract-plugin: "npm:^1.6.2"
     rtlcss: "npm:^3.1.2"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   peerDependencies:
-    webpack: ^5.94.0
+    webpack: ^5.95.0
   languageName: unknown
   linkType: soft
 
@@ -2090,7 +2090,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/components": "npm:^28.8.0"
     "@wordpress/data": "npm:^10.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.10.0"
     "@wordpress/element": "npm:^6.8.0"
     "@wordpress/i18n": "npm:^5.8.0"
     "@wordpress/plugins": "npm:^7.8.0"
@@ -2105,7 +2105,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
@@ -2181,7 +2181,7 @@ __metadata:
     "@wordpress/components": "npm:^28.8.0"
     "@wordpress/compose": "npm:^7.8.0"
     "@wordpress/data": "npm:^10.8.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.10.0"
     "@wordpress/dom-ready": "npm:^4.8.0"
     "@wordpress/edit-post": "npm:^8.8.3"
     "@wordpress/edit-site": "npm:^6.8.3"
@@ -2204,7 +2204,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     redux: "npm:^4.2.1"
     tinymce: "npm:^5.0.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
@@ -5125,16 +5125,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.11, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.13":
-  version: 0.5.13
-  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.13"
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.11, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.15":
+  version: 0.5.15
+  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.15"
   dependencies:
-    ansi-html-community: "npm:^0.0.8"
+    ansi-html: "npm:^0.0.9"
     core-js-pure: "npm:^3.23.3"
     error-stack-parser: "npm:^2.0.6"
     html-entities: "npm:^2.1.0"
     loader-utils: "npm:^2.0.4"
-    schema-utils: "npm:^3.0.0"
+    schema-utils: "npm:^4.2.0"
     source-map: "npm:^0.7.3"
   peerDependencies:
     "@types/webpack": 4.x || 5.x
@@ -5158,7 +5158,7 @@ __metadata:
       optional: true
     webpack-plugin-serve:
       optional: true
-  checksum: 2aa713ce0979bfe508fc8a4605eaf39be2ee8f3d8e53d0dd7af1eab1249c7782e95aa644938210c86a654570ea355659a228c150b3fde51f2831211be8e4a0cc
+  checksum: ba310aa4d53070f59c8a374d1d256c5965c044c0c3fb1ff6b55353fb5e86de08a490a7bd59a31f0d4951f8f29f81864c7df224fe1342543a95d048b7413ff171
   languageName: node
   linkType: hard
 
@@ -6226,19 +6226,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-terser@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "@rollup/plugin-terser@npm:0.2.1"
+"@rollup/plugin-terser@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "@rollup/plugin-terser@npm:0.4.4"
   dependencies:
-    serialize-javascript: "npm:^6.0.0"
-    smob: "npm:^0.0.6"
-    terser: "npm:^5.15.1"
+    serialize-javascript: "npm:^6.0.1"
+    smob: "npm:^1.0.0"
+    terser: "npm:^5.17.4"
   peerDependencies:
-    rollup: ^2.x || ^3.x
+    rollup: ^2.0.0||^3.0.0||^4.0.0
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 4b631f6b30ee9f8317ad076ae477697376193fb4747e242b334fcee9f4db2e67efcf9a97c7a4bc0a9746764f23f9e1b1ac84dfbc84b6f5091d52ee35c9067cf2
+  checksum: b9cb6c8f02ac1c1344019e9fb854321b74f880efebc41b6bdd84f18331fce0f4a2aadcdb481042245cd3f409b429ac363af71f9efec4a2024731d67d32af36ee
   languageName: node
   linkType: hard
 
@@ -9968,14 +9968,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dependency-extraction-webpack-plugin@npm:5.9.0":
-  version: 5.9.0
-  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:5.9.0"
+"@wordpress/dependency-extraction-webpack-plugin@npm:6.10.0":
+  version: 6.10.0
+  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:6.10.0"
   dependencies:
     json2php: "npm:^0.0.7"
   peerDependencies:
     webpack: ^5.0.0
-  checksum: de26747649fe096736bbd443b657947abc8965a14dc298a5566dcae31b0fdb232e7bd283c1f263c99a89d0884a279260013abbf88535fb4e04cc62ef5ba947ca
+  checksum: ca009962547dc18bc3e944f7dc709b98412eb257b80b8264378860b9b9efeaca0c9ef3f2af074359b3317d559cd13a78cca572d36b3529030c9b57a5b0abed69
   languageName: node
   linkType: hard
 
@@ -10560,12 +10560,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/readable-js-assets-webpack-plugin@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:3.0.0"
+"@wordpress/readable-js-assets-webpack-plugin@npm:3.10.0":
+  version: 3.10.0
+  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:3.10.0"
   peerDependencies:
     webpack: ^4.8.3 || ^5.0.0
-  checksum: af5f55532a4dead2290a62a1f5999a1a18f552108d0c85ff919d4d0474996be6a1d00e2da2c828e9db05a038c336497616163c20ec55dbf41bbb635f502eb8a7
+  checksum: 643f0c7a023ef33eabbab3a80c4c50172bea60bc6f90b4d61b7c38552ca5fcdf531ba9c0d4d6953bb906b218d022d16ddd8046bfa6e17994c16b76001ce083ca
   languageName: node
   linkType: hard
 
@@ -10868,7 +10868,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     semver: "npm:^7.3.2"
     superagent: "npm:^3.8.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-cli: "npm:^4.10.0"
     winston: "npm:^3.3.3"
     wpcom-xhr-request: "workspace:^"
@@ -11054,14 +11054,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv-keywords@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "ajv-keywords@npm:5.0.0"
+"ajv-keywords@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "ajv-keywords@npm:5.1.0"
   dependencies:
     fast-deep-equal: "npm:^3.1.3"
   peerDependencies:
-    ajv: ^8.0.0
-  checksum: 68573520c0e3320d9c76cafd65bbfd4cc36c330ed710f6b42b19eb8a5b55196c32ff44f86317cbee2831b509cec3d6396fa902d5973bd5f51c6ddd9c70b4266f
+    ajv: ^8.8.2
+  checksum: 18bec51f0171b83123ba1d8883c126e60c6f420cef885250898bf77a8d3e65e3bfb9e8564f497e30bdbe762a83e0d144a36931328616a973ee669dc74d4a9590
   languageName: node
   linkType: hard
 
@@ -11077,15 +11077,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.6.3, ajv@npm:^8.8.0":
-  version: 8.12.0
-  resolution: "ajv@npm:8.12.0"
+"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.6.3, ajv@npm:^8.9.0":
+  version: 8.17.1
+  resolution: "ajv@npm:8.17.1"
   dependencies:
-    fast-deep-equal: "npm:^3.1.1"
+    fast-deep-equal: "npm:^3.1.3"
+    fast-uri: "npm:^3.0.1"
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
-    uri-js: "npm:^4.2.2"
-  checksum: ac4f72adf727ee425e049bc9d8b31d4a57e1c90da8d28bcd23d60781b12fcd6fc3d68db5df16994c57b78b94eed7988f5a6b482fd376dc5b084125e20a0a622e
+  checksum: ec3ba10a573c6b60f94639ffc53526275917a2df6810e4ab5a6b959d87459f9ef3f00d5e7865b82677cb7d21590355b34da14d1d0b9c32d75f95a187e76fff35
   languageName: node
   linkType: hard
 
@@ -11145,6 +11145,15 @@ __metadata:
   bin:
     ansi-html: bin/ansi-html
   checksum: 45d3a6f0b4f10b04fdd44bef62972e2470bfd917bf00439471fa7473d92d7cbe31369c73db863cc45dda115cb42527f39e232e9256115534b8ee5806b0caeed4
+  languageName: node
+  linkType: hard
+
+"ansi-html@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "ansi-html@npm:0.0.9"
+  bin:
+    ansi-html: bin/ansi-html
+  checksum: 4a5de9802fb50193e32b51a9ea48dc0d7e4436b860cb819d7110c62f2bfb1410288e1a2f9a848269f5eab8f903797a7f0309fe4c552f92a92b61a5b759ed52bd
   languageName: node
   linkType: hard
 
@@ -13083,7 +13092,7 @@ __metadata:
     utility-types: "npm:^3.10.0"
     uuid: "npm:^9.0.1"
     valid-url: "npm:^1.0.9"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-dev-middleware: "npm:^5.3.4"
     webpack-hot-middleware: "npm:^2.26.1"
@@ -18055,6 +18064,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-uri@npm:^3.0.1":
+  version: 3.0.3
+  resolution: "fast-uri@npm:3.0.3"
+  checksum: 4b2c5ce681a062425eae4f15cdc8fc151fd310b2f69b1f96680677820a8b49c3cd6e80661a406e19d50f0c40a3f8bffdd458791baf66f4a879d80be28e10a320
+  languageName: node
+  linkType: hard
+
 "fastest-levenshtein@npm:^1.0.12, fastest-levenshtein@npm:^1.0.16":
   version: 1.0.16
   resolution: "fastest-levenshtein@npm:1.0.16"
@@ -19472,7 +19488,7 @@ __metadata:
     "@wordpress/data": "npm:^10.8.0"
     "@wordpress/element": "npm:^6.8.0"
     "@wordpress/i18n": "npm:^5.8.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.0.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.10.0"
     clsx: "npm:^2.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     glob: "npm:^7.1.6"
@@ -19480,7 +19496,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
   languageName: unknown
   linkType: soft
 
@@ -30202,15 +30218,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"schema-utils@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "schema-utils@npm:4.0.0"
+"schema-utils@npm:^4.0.0, schema-utils@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "schema-utils@npm:4.2.0"
   dependencies:
     "@types/json-schema": "npm:^7.0.9"
-    ajv: "npm:^8.8.0"
+    ajv: "npm:^8.9.0"
     ajv-formats: "npm:^2.1.1"
-    ajv-keywords: "npm:^5.0.0"
-  checksum: d76f1b0724fb74fa9da19d4f98ebe89c2703d8d28df9dc44d66ab9a9cbca869b434181a36a2bc00ec53980f27e8fabe143759bdc8754692bbf7ef614fc6e9da4
+    ajv-keywords: "npm:^5.1.0"
+  checksum: 8dab7e7800316387fd8569870b4b668cfcecf95ac551e369ea799bbcbfb63fb0365366d4b59f64822c9f7904d8c5afcfaf5a6124a4b08783e558cd25f299a6b4
   languageName: node
   linkType: hard
 
@@ -30702,10 +30718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smob@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "smob@npm:0.0.6"
-  checksum: 518d2787ba11235271776c9aff831a320cf4392ed6b510bf83e944d3cf0565c42a2c64fb9e8c622f9f03e2ddf58b037089833d11fffcb55d482a03afa4596c1f
+"smob@npm:^1.0.0":
+  version: 1.5.0
+  resolution: "smob@npm:1.5.0"
+  checksum: a1067f23265812de8357ed27312101af49b89129eb973e3f26ab5856ea774f88cace13342e66e32470f933ccfa916e0e9d0f7ca8bbd4f92dfab2af45c15956c2
   languageName: node
   linkType: hard
 
@@ -32076,7 +32092,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser-webpack-plugin@npm:^5.3.1, terser-webpack-plugin@npm:^5.3.10, terser-webpack-plugin@npm:^5.3.6":
+"terser-webpack-plugin@npm:^5.3.1, terser-webpack-plugin@npm:^5.3.10":
   version: 5.3.10
   resolution: "terser-webpack-plugin@npm:5.3.10"
   dependencies:
@@ -32098,9 +32114,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.10.0, terser@npm:^5.15.1, terser@npm:^5.26.0":
-  version: 5.31.5
-  resolution: "terser@npm:5.31.5"
+"terser@npm:^5.10.0, terser@npm:^5.17.4, terser@npm:^5.26.0":
+  version: 5.36.0
+  resolution: "terser@npm:5.36.0"
   dependencies:
     "@jridgewell/source-map": "npm:^0.3.3"
     acorn: "npm:^8.8.2"
@@ -32108,7 +32124,7 @@ __metadata:
     source-map-support: "npm:~0.5.20"
   bin:
     terser: bin/terser
-  checksum: 6e7c66c1f4062ee098bff3dc3c396819ebf5f1740f0615be9de39b675a78c732d199f4dcfdcd15bd65f354e37c45bb944360f532a36fe7f7d22f800ca53c2d02
+  checksum: f4ed2bead19f64789ddcfb85b7cef78f3942f967b8890c54f57d1e35bc7d547d551c6a4c32210bce6ba45b1c738314bbfac6acbc6c762a45cd171777d0c120d9
   languageName: node
   linkType: hard
 
@@ -34021,7 +34037,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^5.0.1":
+"webpack-cli@npm:^5.1.4":
   version: 5.1.4
   resolution: "webpack-cli@npm:5.1.4"
   dependencies:
@@ -34086,7 +34102,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^4.11.1":
+"webpack-dev-server@npm:^4.15.2":
   version: 4.15.2
   resolution: "webpack-dev-server@npm:4.15.2"
   dependencies:
@@ -34185,9 +34201,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.94.0":
-  version: 5.94.0
-  resolution: "webpack@npm:5.94.0"
+"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.95.0":
+  version: 5.95.0
+  resolution: "webpack@npm:5.95.0"
   dependencies:
     "@types/estree": "npm:^1.0.5"
     "@webassemblyjs/ast": "npm:^1.12.1"
@@ -34217,7 +34233,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: b4d1b751f634079bd177a89eef84d80fa5bb8d6fc15d72ab40fc2b9ca5167a79b56585e1a849e9e27e259803ee5c4365cb719e54af70a43c06358ec268ff4ebf
+  checksum: b9e6d0f8ebcbf0632494ac0b90fe4acb8f4a9b83f7ace4a67a15545a36fe58599c912ab58e625e1bf58ab3b0916c75fe99da6196d412ee0cab0b5065edd84238
   languageName: node
   linkType: hard
 
@@ -34529,7 +34545,7 @@ __metadata:
     "@babel/register": "npm:^7.25.7"
     "@babel/runtime": "npm:^7.25.7"
     "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
-    "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.13"
+    "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
@@ -34659,7 +34675,7 @@ __metadata:
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^4.10.0"
     webpack-dev-middleware: "npm:^5.3.4"
@@ -34740,7 +34756,7 @@ __metadata:
     debug: "npm:^4.3.3"
     postcss: "npm:^8.4.5"
     uuid: "npm:^9.0.1"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     wp-error: "npm:^1.3.0"
   languageName: unknown
   linkType: soft
@@ -34769,7 +34785,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     qs: "npm:^6.5.2"
     tus-js-client: "npm:2.3.0"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-cli: "npm:^4.10.0"
     wpcom-oauth-cors: "npm:^1.0.2-beta"
     wpcom-proxy-request: "workspace:^"
