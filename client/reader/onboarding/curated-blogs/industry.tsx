@@ -2,7 +2,42 @@ import { CuratedBlogsList } from './index';
 
 export const industryBlogs: CuratedBlogsList = {
 	business: [
-		// Add business blogs...
+		{
+			feed_ID: 83448543,
+			site_ID: 147199084,
+			site_URL: 'https://seths.blog/',
+			site_name: "Seth's Blog",
+		},
+		{
+			feed_ID: 63349823,
+			site_ID: 126020344,
+			site_URL: 'https://venturebeat.com/feed/',
+			site_name: 'VentureBeat',
+		},
+		{
+			feed_ID: 102181945,
+			site_ID: 164745976,
+			site_URL: 'https://tim.blog/',
+			site_name: 'The Blog of Author Tim Ferriss',
+		},
+		{
+			feed_ID: 42227761,
+			site_ID: 104842126,
+			site_URL: 'https://www.thesmallbusinesssite.co.za/',
+			site_name: 'The Small Business Site',
+		},
+		{
+			feed_ID: 34131275,
+			site_ID: 41106627,
+			site_URL: 'https://www.ducttapemarketing.com/',
+			site_name: 'Duct Tape Marketing',
+		},
+		{
+			feed_ID: 8892459,
+			site_ID: null,
+			site_URL: 'https://www.businesspundit.com/',
+			site_name: 'Business Pundit',
+		},
 	],
 	startups: [
 		// Add startup blogs...
