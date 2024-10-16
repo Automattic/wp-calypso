@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^6.21.0",
 		"@wordpress/eslint-plugin": "^21.1.2",
 		"@wordpress/stylelint-config": "^23.0.0",
-		"node-fetch": "^2.6.6",
+		"node-fetch": "^2.7.0",
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
