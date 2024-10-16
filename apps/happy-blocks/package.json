@@ -52,7 +52,7 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@emotion/react": "^11.11.1",
-		"@testing-library/react": "^15.0.7",
+		"@testing-library/react": "^16.0.1",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.0.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"glob": "^7.1.6",
