@@ -520,6 +520,12 @@
 				padding: 16px 20px;
 			}
 
+			.domain-suggestion__content {
+				@include break-small {
+					flex-direction: row;
+				}
+			}
+
 			.domain-registration-suggestion__title-info {
 				width: auto;
 				margin-bottom: 4px;
