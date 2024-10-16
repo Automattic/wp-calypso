@@ -39,7 +39,7 @@ function getPricing(): PricingMetaForGridPlan {
 		introOffer: {
 			formattedPrice: '$150',
 			rawPrice: {
-				monthly: 150,
+				monthly: 12.5,
 				full: 150,
 			},
 			isOfferComplete: false,
