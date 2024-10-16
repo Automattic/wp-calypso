@@ -89,10 +89,6 @@ export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_PRO_2_YEARS = 'pro-plan-2y';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
-export const PLAN_BLUEHOST_CLOUD = 'bluehost-cloud-bundle'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
-export const PLAN_BLUEHOST_CLOUD_MONTHLY = 'bluehost-cloud-bundle-monthly'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
-export const PLAN_BLUEHOST_CLOUD_2Y = 'bluehost-cloud-bundle-2y'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
-export const PLAN_BLUEHOST_CLOUD_3Y = 'bluehost-cloud-bundle-3y'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
 export const PLAN_MIGRATION_TRIAL_MONTHLY = 'wp_bundle_migration_trial_monthly';
 export const PLAN_HOSTING_TRIAL_MONTHLY = 'wp_bundle_hosting_trial_monthly';
 
@@ -122,10 +118,6 @@ export const WPCOM_PLANS = < const >[
 	PLAN_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
-	PLAN_BLUEHOST_CLOUD,
-	PLAN_BLUEHOST_CLOUD_MONTHLY,
-	PLAN_BLUEHOST_CLOUD_2Y,
-	PLAN_BLUEHOST_CLOUD_3Y,
 	PLAN_CHARGEBACK,
 	PLAN_VIP,
 	PLAN_P2_PLUS,
