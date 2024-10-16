@@ -1,6 +1,6 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -103,12 +103,26 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		return sortedRecommendations.slice( 0, 6 );
 	}, [ followedTagSlugs, apiRecommendedSites ] );
 
+	const headerActions = (
+		<>
+			<Button onClick={ onClose } variant="link">
+				{ __( 'Cancel' ) }
+			</Button>
+		</>
+	);
+
 	return (
 		isOpen && (
-			<Modal onRequestClose={ onClose } isFullScreen className="subscribe-modal">
+			<Modal
+				onRequestClose={ onClose }
+				isFullScreen
+				className="subscribe-modal"
+				headerActions={ headerActions }
+				isDismissible={ false }
+			>
 				<div className="subscribe-modal__content">
-					<div className="subscribe-modal__left-column">
-						<h2>{ __( "Discover sites that you'll love" ) }</h2>
+					<div className="subscribe-modal__site-list-column">
+						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
 						<p>
 							{ __(
 								'Preview sites by clicking below, then subscribe to any site that inspires you.'
@@ -136,9 +150,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 							</div>
 						) }
 						<p>{ __( 'Load more recommendations' ) }</p>
+						<Button className="subscribe-modal__continue-button is-primary" onClick={ onClose }>
+							{ __( 'Continue' ) }
+						</Button>
 					</div>
-					<div className="subscribe-modal__right-column">
-						<h3>{ __( 'Preview' ) }</h3>
+					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">
 							{ __( 'Select a blog to preview its posts' ) }
 						</div>

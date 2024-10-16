@@ -2,8 +2,13 @@
 @import '@wordpress/base-styles/mixins';
 
 .subscribe-modal {
-	.components-modal__content {
-		padding: 0;
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.25rem;
+		font-weight: 400;
+		line-height: 1.2;
+		margin-bottom: 16px;
+		text-wrap: balance;
 	}
 
 	&__content {
@@ -16,29 +21,32 @@
 		}
 	}
 
-	&__left-column {
+	&__site-list-column {
 		flex: 1;
-		padding: 24px;
-		overflow-y: auto;
-		max-width: 100%;
+		padding: 30px;
 
 		@include break-medium {
-			max-width: 500px;
+			max-width: 450px;
+		}
+
+		.subscribe-modal__continue-button {
+			width: 100%;
+			justify-content: center;
+		}
+
+		p {
+			text-wrap: balance;
 		}
 	}
 
-	&__right-column {
+	&__preview-column {
 		flex: 1;
 		padding: 24px;
-		border-left: none;
-		border-top: 1px solid #e0e0e0;
-		background-color: #f6f7f7;
-		display: none;
+		display: flex;
+		flex-direction: column;
 
 		@include break-medium {
-			display: block;
-			border-left: 1px solid #e0e0e0;
-			border-top: none;
+			display: flex;
 		}
 	}
 
@@ -50,9 +58,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		height: 300px;
+		flex-grow: 1;
 		background-color: #e0e0e0;
-		color: #555;
 		font-style: italic;
+		border: 1px solid #ccc;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 	}
 }
