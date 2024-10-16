@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
@@ -102,24 +101,19 @@ const MessageAvatarHeader = ( {
 		<>
 			<img
 				src={ WapuuAvatarSquared }
-				alt={ sprintf(
+				alt={
 					/* translators: %s is bot name, like Wapuu */
-					_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
-					botName
-				) }
+					_x( 'AI profile picture', 'html alt tag', __i18n_text_domain__ )
+				}
 				className={ wapuuAvatarClasses }
 			/>
 			{ message.type === 'placeholder' ? (
 				<img
 					src={ WapuuThinking }
-					alt={ sprintf(
-						/* translators: %s is bot name, like Wapuu */
-						_x(
-							'Loading state, awaiting response from %(botName)s',
-							'html alt tag',
-							__i18n_text_domain__
-						),
-						botName
+					alt={ _x(
+						'Loading state, awaiting response from AI',
+						'html alt tag',
+						__i18n_text_domain__
 					) }
 					className="odie-chatbox-thinking-icon"
 				/>
@@ -132,14 +126,10 @@ const MessageAvatarHeader = ( {
 					<Button compact borderless onClick={ handleFullscreenToggle }>
 						<img
 							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-							alt={ sprintf(
-								/* translators: %s is bot name, like Wapuu */
-								_x(
-									'Icon to expand or collapse %(botName)s messages',
-									'html alt tag',
-									__i18n_text_domain__
-								),
-								botName
+							alt={ _x(
+								'Icon to expand or collapse AI messages',
+								'html alt tag',
+								__i18n_text_domain__
 							) }
 						/>
 					</Button>
