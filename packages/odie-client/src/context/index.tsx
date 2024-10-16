@@ -117,6 +117,7 @@ const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 export const odieClientId = Math.random().toString( 36 ).substring( 2, 15 );
 
 type OdieAssistantProviderProps = {
+	shouldUseHelpCenterExperience?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	odieInitialPromptText?: string;
@@ -133,6 +134,7 @@ type OdieAssistantProviderProps = {
 } & PropsWithChildren;
 // Create a provider component for the context
 const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
+	shouldUseHelpCenterExperience,
 	botName = 'Wapuu assistant',
 	initialUserMessage,
 	isLoadingEnvironment = false,
@@ -248,7 +250,13 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	);
 
 	useEffect( () => {
-		if ( existingChat.chat_id ) {
+		if ( ! shouldUseHelpCenterExperience && existingChat.chat_id ) {
+			setChat( existingChat );
+		}
+	}, [ existingChat, existingChat.chat_id ] );
+
+	useEffect( () => {
+		if ( shouldUseHelpCenterExperience && existingChat.chat_id ) {
 			setIsLoading( true );
 
 			if ( isChatLoaded ) {
@@ -274,7 +282,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	}, [ existingChat, isChatLoaded, getConversationByChatId ] );
 
 	useEffect( () => {
-		if ( supportProvider === 'zendesk' && isChatLoaded ) {
+		if ( shouldUseHelpCenterExperience && supportProvider === 'zendesk' && isChatLoaded ) {
 			zendeskMessageListener( existingChat.chat_id, ( message ) => {
 				addMessage( { content: message.text, role: 'business', type: 'message' } );
 			} );
