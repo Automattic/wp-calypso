@@ -308,7 +308,30 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	'remote-work': [
-		// Add remote work blogs...
+		{
+			feed_ID: 188407,
+			site_ID: 1047865,
+			site_URL: 'https://ma.tt/',
+			site_name: 'Matt Mullenweg',
+		},
+		{
+			feed_ID: 161740858,
+			site_ID: 236373731,
+			site_URL: 'http://beremoteconsulting.com/',
+			site_name: 'Be Remote Consulting',
+		},
+		{
+			feed_ID: 100447297,
+			site_ID: 161885925,
+			site_URL: 'https://distributed.blog/',
+			site_name: 'Distributed.blog',
+		},
+		{
+			feed_ID: 49613049,
+			site_ID: null,
+			site_URL: 'https://www.skipthedrive.com/',
+			site_name: 'SkipTheDrive',
+		},
 	],
 	saas: [
 		// Add SaaS blogs...
