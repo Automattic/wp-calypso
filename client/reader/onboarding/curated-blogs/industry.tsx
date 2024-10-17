@@ -89,6 +89,12 @@ export const industryBlogs: CuratedBlogsList = {
 			site_name: 'VentureBeat',
 		},
 		{
+			feed_ID: 359631,
+			site_ID: 6003453,
+			site_URL: 'http://davidcummings.org/',
+			site_name: 'David Cummings on Startups',
+		},
+		{
 			feed_ID: 102488324,
 			site_ID: null,
 			site_URL: 'https://avc.com/',
@@ -131,6 +137,12 @@ export const industryBlogs: CuratedBlogsList = {
 			site_ID: null,
 			site_URL: 'ttps://awealthofcommonsense.com/',
 			site_name: 'A Wealth of Common Sense',
+		},
+		{
+			feed_ID: 110277378,
+			site_ID: 185546778,
+			site_URL: 'https://www.wellesleyhillsfinancial.com/',
+			site_name: 'Wellesley Hills Financial',
 		},
 		{
 			feed_ID: 46459237,
@@ -334,7 +346,30 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	saas: [
-		// Add SaaS blogs...
+		{
+			feed_ID: 111100674,
+			site_ID: 136296444,
+			site_URL: 'https://techcrunch.com/',
+			site_name: 'TechCrunch',
+		},
+		{
+			feed_ID: 458090,
+			site_ID: 11070789,
+			site_URL: 'https://kellblog.com/',
+			site_name: 'Kellblog',
+		},
+		{
+			feed_ID: 359631,
+			site_ID: 6003453,
+			site_URL: 'http://davidcummings.org/',
+			site_name: 'David Cummings on Startups',
+		},
+		{
+			feed_ID: 25353898,
+			site_ID: null,
+			site_URL: 'https://www.tomtunguz.com/',
+			site_name: 'Tomasz Tunguz',
+		},
 	],
 	'creator-economy': [
 		// Add creator economy blogs...
