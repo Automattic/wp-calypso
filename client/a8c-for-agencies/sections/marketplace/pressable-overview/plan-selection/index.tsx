@@ -92,9 +92,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 								<h2>{ existingPlan.name }</h2>
 							</div>
 						) }
-						<div className="pressable-overview-plan-selection__details-card">
-							<PressableUsageDetails existingPlan={ existingPlan } />
-						</div>
+						<PressableUsageDetails existingPlan={ existingPlan } />
 					</section>
 
 					<PlanSelectionFilter
