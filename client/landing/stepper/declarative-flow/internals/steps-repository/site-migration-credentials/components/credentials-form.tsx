@@ -2,13 +2,12 @@ import { NextButton } from '@automattic/onboarding';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
 import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
 import wp from 'calypso/lib/wp';
-import { site } from '../../../../../../../state/rewind/staging/reducer';
-import { useSiteMigrationCredentialsMutation } from '../hooks/use-site-migration-credentials-mutation';
 import { CredentialsFormData } from '../types';
 import { PasswordField } from './password-field';
 import { SiteAddressField } from './site-address-field';
@@ -98,8 +97,23 @@ const CredentialsFormContent = ( {
 	} );
 
 	const { errors, isSubmitting } = formState;
-	const submitHandler = async ( data: CredentialsFormData ) => {
+	const submitHandler = async () => {
 		onComplete();
+	};
+
+	const startMigrationByCredentials = async () => {
+		const app_name = 'WordPress.com migration';
+		const app_id = '82c3e0a7-fe41-4f40-9e89-aaa947bd19c8';
+		const success_url = window.location.href;
+		const reject_url = `${ window.location.href }?error=app_migration_failed`;
+
+		const url = addQueryArgs( `${ from }/wp-admin/authorize-application.php`, {
+			app_name,
+			app_id,
+			success_url,
+			reject_url,
+		} );
+		window.location.href = url;
 	};
 
 	return (
@@ -128,7 +142,9 @@ const CredentialsFormContent = ( {
 							</p>
 						</CardBody>
 						<CardFooter>
-							<NextButton onClick={ onComplete }>Make the magic happen!</NextButton>
+							<NextButton onClick={ startMigrationByCredentials }>
+								Make the magic happen!
+							</NextButton>
 						</CardFooter>
 					</Card>
 					<form onSubmit={ handleSubmit( submitHandler ) }>
