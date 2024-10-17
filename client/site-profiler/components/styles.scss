@@ -40,6 +40,11 @@ html[dir="rtl"] {
 		font-size: 2.5rem;
 		line-height: 1.15;
 		margin-bottom: 1rem;
+
+		@media ( max-width: $break-small ) {
+			/* stylelint-disable-next-line */
+			font-size: 1.875em;
+		}
 	}
 
 	h3 {
