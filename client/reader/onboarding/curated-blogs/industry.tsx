@@ -252,7 +252,60 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	marketing: [
-		// Add marketing blogs...
+		{
+			feed_ID: 83448543,
+			site_ID: 147199084,
+			site_URL: 'https://seths.blog/',
+			site_name: "Seth's Blog",
+		},
+		{
+			feed_ID: 34233000,
+			site_ID: 129292381,
+			site_URL: 'https://problogger.com/',
+			site_name: 'ProBlogger',
+		},
+		{
+			feed_ID: 102995580,
+			site_ID: 171937388,
+			site_URL: 'https://stevenpdennis.com/',
+			site_name: 'Steve Dennis',
+		},
+		{
+			feed_ID: 66184789,
+			site_ID: 85568242,
+			site_URL: 'https://guykawasaki.com/',
+			site_name: 'Guy Kawasaki',
+		},
+		{
+			feed_ID: 34131275,
+			site_ID: 41106627,
+			site_URL: 'https://www.ducttapemarketing.com/',
+			site_name: 'Duct Tape Marketing',
+		},
+		{
+			feed_ID: 55218042,
+			site_ID: null,
+			site_URL: 'https://neilpatel.com/',
+			site_name: 'Neil Patel',
+		},
+		{
+			feed_ID: 103548967,
+			site_ID: null,
+			site_URL: 'https://copyblogger.com/',
+			site_name: 'Copyblogger',
+		},
+		{
+			feed_ID: 2352372,
+			site_ID: null,
+			site_URL: 'https://www.socialmediaexaminer.com/',
+			site_name: 'Social Media Examiner',
+		},
+		{
+			feed_ID: 1693511,
+			site_ID: null,
+			site_URL: 'https://www.convinceandconvert.com/',
+			site_name: 'Convince & Convert',
+		},
 	],
 	'remote-work': [
 		// Add remote work blogs...
