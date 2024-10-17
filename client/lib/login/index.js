@@ -78,6 +78,14 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
 			includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
 		) {
+			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
+			const pluginName = get( currentQuery, 'plugin_name' );
+			const urlObj = new URL( currentQuery.redirect_to );
+			if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
+				urlObj.searchParams.set( 'plugin_name', pluginName );
+				return urlObj.toString();
+			}
+
 			/**
 			 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
 			 * this case, the redirect_to will handle signups as part of the flow. Use the
@@ -239,8 +247,8 @@ export const getLoginLinkPageUrl = ( {
 export const getPluginTitle = ( pluginName, translate ) => {
 	const pluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
-		'woocommerce-payments': translate( 'Jetpack and WooPayments' ),
-		'order-attribution': translate( 'Jetpack and Order Attribution' ),
+		'woocommerce-payments': translate( 'WooPayments' ),
+		'order-attribution': translate( 'Order Attribution' ),
 		default: translate( 'Jetpack' ),
 	};
 
