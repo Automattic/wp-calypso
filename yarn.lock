@@ -212,7 +212,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-analytics@workspace:^, @automattic/calypso-analytics@workspace:packages/calypso-analytics":
+"@automattic/calypso-analytics@npm:^1.1.2, @automattic/calypso-analytics@workspace:^, @automattic/calypso-analytics@workspace:packages/calypso-analytics":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-analytics@workspace:packages/calypso-analytics"
   dependencies:
@@ -536,7 +536,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-url@workspace:^, @automattic/calypso-url@workspace:packages/calypso-url":
+"@automattic/calypso-url@npm:^1.1.0, @automattic/calypso-url@workspace:^, @automattic/calypso-url@workspace:packages/calypso-url":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-url@workspace:packages/calypso-url"
   dependencies:
@@ -617,7 +617,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/components@npm:^2.0.1, @automattic/components@workspace:^, @automattic/components@workspace:packages/components":
+"@automattic/components@npm:^2.0.1":
+  version: 2.1.1
+  resolution: "@automattic/components@npm:2.1.1"
+  dependencies:
+    "@automattic/calypso-analytics": "npm:^1.1.2"
+    "@automattic/calypso-url": "npm:^1.1.0"
+    "@automattic/format-currency": "npm:^2.0.0"
+    "@automattic/i18n-utils": "npm:^1.2.1"
+    "@automattic/material-design-icons": "npm:^1.0.0"
+    "@automattic/typography": "npm:^1.0.0"
+    "@automattic/viewport-react": "npm:^1.0.0"
+    "@wordpress/base-styles": "npm:^4.47.0"
+    "@wordpress/components": "npm:^27.4.0"
+    "@wordpress/icons": "npm:^9.47.0"
+    "@wordpress/react-i18n": "npm:^3.54.0"
+    canvas-confetti: "npm:^1.6.0"
+    classnames: "npm:^2.3.2"
+    gridicons: "npm:^3.4.2"
+    i18n-calypso: "npm:^7.0.0"
+    lodash: "npm:^4.17.21"
+    prop-types: "npm:^15.7.2"
+    react-modal: "npm:^3.16.1"
+    react-router-dom: "npm:^6.10.0"
+    react-slider: "npm:^2.0.5"
+    utility-types: "npm:^3.10.0"
+    uuid: "npm:^9.0.1"
+  peerDependencies:
+    "@wordpress/data": ^9.26.0
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: 2adadf6ff55e2bd399b85c8aadb47e8408123b33431226a588f3683b71607c78fe881bf295955cfbfe630ff3c9dfda70ed0dfaa8884c808c8d0f18a8f4d19cc7
+  languageName: node
+  linkType: hard
+
+"@automattic/components@workspace:^, @automattic/components@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
@@ -1040,7 +1074,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/format-currency@workspace:^, @automattic/format-currency@workspace:packages/format-currency":
+"@automattic/format-currency@npm:^2.0.0, @automattic/format-currency@workspace:^, @automattic/format-currency@workspace:packages/format-currency":
   version: 0.0.0-use.local
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
@@ -1166,7 +1200,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/i18n-utils@workspace:^, @automattic/i18n-utils@workspace:packages/i18n-utils":
+"@automattic/i18n-utils@npm:^1.2.1, @automattic/i18n-utils@workspace:^, @automattic/i18n-utils@workspace:packages/i18n-utils":
   version: 0.0.0-use.local
   resolution: "@automattic/i18n-utils@workspace:packages/i18n-utils"
   dependencies:
@@ -1387,7 +1421,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/material-design-icons@workspace:^, @automattic/material-design-icons@workspace:packages/material-design-icons":
+"@automattic/material-design-icons@npm:^1.0.0, @automattic/material-design-icons@workspace:^, @automattic/material-design-icons@workspace:packages/material-design-icons":
   version: 0.0.0-use.local
   resolution: "@automattic/material-design-icons@workspace:packages/material-design-icons"
   dependencies:
@@ -1921,7 +1955,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/typography@npm:1.0.0, @automattic/typography@workspace:^, @automattic/typography@workspace:packages/typography":
+"@automattic/typography@npm:1.0.0, @automattic/typography@npm:^1.0.0, @automattic/typography@workspace:^, @automattic/typography@workspace:packages/typography":
   version: 0.0.0-use.local
   resolution: "@automattic/typography@workspace:packages/typography"
   dependencies:
@@ -1987,7 +2021,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/viewport-react@workspace:^, @automattic/viewport-react@workspace:packages/viewport-react":
+"@automattic/viewport-react@npm:^1.0.0, @automattic/viewport-react@workspace:^, @automattic/viewport-react@workspace:packages/viewport-react":
   version: 0.0.0-use.local
   resolution: "@automattic/viewport-react@workspace:packages/viewport-react"
   dependencies:
@@ -6254,6 +6288,13 @@ __metadata:
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+  languageName: node
+  linkType: hard
+
+"@remix-run/router@npm:1.20.0":
+  version: 1.20.0
+  resolution: "@remix-run/router@npm:1.20.0"
+  checksum: 2e017dea530717a6e93a16d478714c4c9165313a1c48e39172ec609bc20324ca6362e8ee2243602df6343644c9268d82a3f50f154d3bb8a17dddde6c37be6e83
   languageName: node
   linkType: hard
 
@@ -13677,6 +13718,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"classnames@npm:^2.3.2":
+  version: 2.5.1
+  resolution: "classnames@npm:2.5.1"
+  checksum: afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
+  languageName: node
+  linkType: hard
+
 "clean-css@npm:4.2.x":
   version: 4.2.3
   resolution: "clean-css@npm:4.2.3"
@@ -20401,7 +20449,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"i18n-calypso@workspace:^, i18n-calypso@workspace:packages/i18n-calypso":
+"i18n-calypso@npm:^7.0.0, i18n-calypso@workspace:^, i18n-calypso@workspace:packages/i18n-calypso":
   version: 0.0.0-use.local
   resolution: "i18n-calypso@workspace:packages/i18n-calypso"
   dependencies:
@@ -28546,6 +28594,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:^6.10.0":
+  version: 6.27.0
+  resolution: "react-router-dom@npm:6.27.0"
+  dependencies:
+    "@remix-run/router": "npm:1.20.0"
+    react-router: "npm:6.27.0"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 7db48ffd0b387af0eed060ceaf42075d074e63fbd30f4cf60993526b3610883a9ff82615965001165ed69d2bf2f1bce05c594a21c8d0d845e7b9bf203201116e
+  languageName: node
+  linkType: hard
+
 "react-router-dom@npm:^6.23.1":
   version: 6.23.1
   resolution: "react-router-dom@npm:6.23.1"
@@ -28567,6 +28628,17 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 091949805745136350ab049b2a96281bf38742c9d3651019fb48ea79c5eafbfb0379f1d3e636602dd56b0ef278389e8fd25be983dc2c0ffd1103d06dfa8019f3
+  languageName: node
+  linkType: hard
+
+"react-router@npm:6.27.0":
+  version: 6.27.0
+  resolution: "react-router@npm:6.27.0"
+  dependencies:
+    "@remix-run/router": "npm:1.20.0"
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 440d6ee00890cec92a0c2183164149fbb96363efccf52bb132a964f44e51aec2f4b5a0520c67f6f17faddaa4097090fd76f7efe58263947532fceeb11dd4cdf3
   languageName: node
   linkType: hard
 
