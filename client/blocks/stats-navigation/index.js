@@ -169,6 +169,9 @@ class StatsNavigation extends Component {
 
 		// Address flashing tooltip here.
 		console.log( 'Rendering StatsNavigation component' );
+		const isJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
+		const delayTooltipPresentationForDotCom = isNewSite && ! isJetpackSite;
+		console.log( 'delayTooltipPresentationForDotCom:', delayTooltipPresentationForDotCom );
 
 		return (
 			<div className={ wrapperClass }>
@@ -227,7 +230,9 @@ class StatsNavigation extends Component {
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
-								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! isNewSite
+								showSettingsTooltip &&
+								! isPageSettingsTooltipDismissed &&
+								! delayTooltipPresentationForDotCom
 							}
 							onTooltipDismiss={ this.onTooltipDismiss }
 						/>
