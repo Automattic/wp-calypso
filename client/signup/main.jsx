@@ -592,6 +592,7 @@ class Signup extends Component {
 				isTransfer: isTransfer,
 				signupDomainOrigin: signupDomainOriginValue,
 				framework: 'start',
+				isNewishUser,
 			} );
 		}
 	};
