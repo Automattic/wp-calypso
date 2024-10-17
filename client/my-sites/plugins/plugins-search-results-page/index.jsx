@@ -14,7 +14,7 @@ import usePlugins from '../use-plugins';
 /**
  * Module variables
  */
-const PLUGIN_SLUGS_BLOCKLIST = [];
+const PLUGIN_SLUGS_BLOCKLIST = [ 'wp-fusion-lite' ];
 
 function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
