@@ -8,30 +8,3 @@
 		margin-top: 0;
 	}
 }
-
-.hosting-features__cards {
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-column-gap: 16px;
-	grid-row-gap: 16px;
-	padding: 0 20px;
-	@include break-medium {
-		grid-template-columns: 1fr 1fr 1fr;
-		padding: 0;
-	}
-}
-
-.hosting-features__card {
-	> p {
-		font-size: rem(14px);
-		margin-bottom: 20px;
-		color: var(--color-text-subtle);
-		flex-grow: 1;
-	}
-
-	> a {
-		font-size: rem(13px);
-		font-weight: 400;
-		line-height: 16px;
-	}
-}

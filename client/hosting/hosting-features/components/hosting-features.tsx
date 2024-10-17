@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { HostingCard } from 'calypso/components/hosting-card';
+import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
@@ -29,7 +29,7 @@ type PromoCardProps = {
 };
 
 const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
-	<HostingCard className="hosting-features__card" title={ title }>
+	<HostingCard inGrid className="hosting-features__card" title={ title }>
 		<p>{ text }</p>
 		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
 			components: {
@@ -257,7 +257,7 @@ const HostingFeatures = () => {
 				<p>{ description }</p>
 				{ buttons }
 			</HostingHero>
-			<div className="hosting-features__cards">
+			<HostingCardGrid>
 				{ promoCards.map( ( card ) => (
 					<PromoCard
 						key={ card.title }
@@ -266,7 +266,7 @@ const HostingFeatures = () => {
 						supportContext={ card.supportContext }
 					/>
 				) ) }
-			</div>
+			</HostingCardGrid>
 		</div>
 	);
 };
