@@ -5,6 +5,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Spinner } from '@wordpr
 import { addQueryArgs } from '@wordpress/url';
 import { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 import { UrlData } from 'calypso/blocks/import/types';
 import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
 import wp from 'calypso/lib/wp';
@@ -83,6 +84,16 @@ const FadeIn = styled.div`
 	animation-delay: 0.2s;
 `;
 
+const LoginContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	background-color: var( --color-success );
+	padding: 1rem;
+	border-radius: 0.5rem;
+	color: var( --color-text-inverted );
+`;
+
 const CredentialsFormContent = ( {
 	from,
 	onComplete,
@@ -121,7 +132,6 @@ const CredentialsFormContent = ( {
 			}
 		);
 
-		alert( url );
 		window.location.href = url;
 	};
 
@@ -315,6 +325,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	>( 'analyze' );
 	const [ from, setFrom ] = useState< string | undefined >( undefined );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const [ query ] = useSearchParams();
+
+	const login = query.get( 'user_login' );
+	const password = query.get( 'password' );
 
 	const onAnalyzed = ( siteInfo?: UrlData ) => {
 		if ( ! siteInfo ) {
@@ -350,6 +364,12 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 
 	return (
 		<FormContent>
+			{ login && password && (
+				<LoginContainer>
+					<p>Login: { login }</p>
+					<p>Password: { password }</p>
+				</LoginContainer>
+			) }
 			{ isLoading && <Spinner /> }
 			{ step === 'analyze' && <AnalyzeFormContent onAnalyzed={ onAnalyzed } /> }
 			{ step !== 'analyze' && from && (
