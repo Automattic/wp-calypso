@@ -112,41 +112,43 @@ const PluginsBrowserList = ( {
 
 	return (
 		<div className="plugins-browser-list">
-			{ ! noHeader && ( title || subtitle || resultCount || browseAllLink ) && (
-				<PluginsResultsHeader
-					title={ title }
-					subtitle={ subtitle }
-					resultCount={ resultCount }
-					browseAllLink={ browseAllLink }
-					listName={ listName }
-				/>
-			) }
-			{ listName === 'paid' && (
-				<AsyncLoad
-					require="calypso/blocks/jitm"
-					template="spotlight"
-					placeholder={ null }
-					messagePath="calypso:plugins:spotlight"
-				/>
-			) }
-			{ listType === 'search' && (
-				<AsyncLoad
-					require="calypso/blocks/jitm"
-					template="spotlight"
-					jitmPlaceholder={ SpotlightPlaceholder }
-					messagePath="calypso:plugins:search"
-					searchQuery={ search }
-				/>
-			) }
-			{ listType === 'browse' && (
-				<AsyncLoad
-					require="calypso/blocks/jitm"
-					template="spotlight"
-					jitmPlaceholder={ SpotlightPlaceholder }
-					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
-				/>
-			) }
-			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
+			<ol>
+				{ ! noHeader && ( title || subtitle || resultCount || browseAllLink ) && (
+					<PluginsResultsHeader
+						title={ title }
+						subtitle={ subtitle }
+						resultCount={ resultCount }
+						browseAllLink={ browseAllLink }
+						listName={ listName }
+					/>
+				) }
+				{ listName === 'paid' && (
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="spotlight"
+						placeholder={ null }
+						messagePath="calypso:plugins:spotlight"
+					/>
+				) }
+				{ listType === 'search' && (
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="spotlight"
+						jitmPlaceholder={ SpotlightPlaceholder }
+						messagePath="calypso:plugins:search"
+						searchQuery={ search }
+					/>
+				) }
+				{ listType === 'browse' && (
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="spotlight"
+						jitmPlaceholder={ SpotlightPlaceholder }
+						messagePath={ `calypso:${ sectionJitmPath }:spotlight` }
+					/>
+				) }
+				<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
+			</ol>
 		</div>
 	);
 };
