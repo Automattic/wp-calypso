@@ -30,13 +30,20 @@
 		}
 
 		.themes__header-navigation-container {
-			margin: 0 -14px;
+			margin-left: -14px;
+			margin-right: -14px;
+			@media (min-width: $break-small) {
+				border-block-end: 1px solid var(--color-border-secondary);
+			}
 		}
 		.navigation-header {
 			max-width: 1400px;
 			padding-top: 24px;
 			margin: 0 auto;
 			padding-inline: 48px;
+			@media (max-width: $break-small) {
+				padding-inline: 24px;
+			}
 
 			.navigation-header__main {
 				align-items: center;
@@ -57,10 +64,17 @@
 
 		.theme-showcase {
 			.theme__search-container {
-				margin-right: -16px;
+				@media (min-width: $break-small) {
+					margin-left: -14px;
+					margin-right: -14px;
+				}
+
 				.theme__search-content {
 					margin: 0 auto;
 					padding-inline: 48px;
+					@media (max-width: $break-small) {
+						padding-inline: 24px;
+					}
 					box-sizing: border-box;
 					max-width: 1400px;
 				}
@@ -71,41 +85,64 @@
 				margin: 0 auto;
 				box-sizing: border-box;
 				padding-inline: 48px;
+				@media (max-width: $break-small) {
+					padding-inline: 24px;
+				}
 				.responsive-toolbar-group__full-list {
 					padding-inline: 48px;
+					@media (max-width: $break-small) {
+						padding-inline: 24px;
+					}
 				}
 			}
 
 			.themes__filters {
-				margin-right: -16px;
+				@media (min-width: $break-small) {
+					margin-left: -14px;
+					margin-right: -14px;
+				}
 			}
 		}
 
-		.themes__content, .themes__controls, .themes__showcase {
-			@media (max-width: $break-small) {
-				padding: 0;
-			}
-		}
 		.themes__content {
+			clip-path: inset(0 0 0 0);
 			margin-top: 40px;
 			min-height: auto;
-			.themes__controls {
-				margin: 0 -14px;
+			@media (max-width: $break-small) {
+				margin-top: 10px;
 				margin-left: -14px;
-				margin-right: 2px;
+				margin-right: -14px;
+			}
+			.themes__controls,
+			.themes__showcase {
+				@media (max-width: $break-small) {
+					padding: 0;
+				}
 			}
 
 			.themes__controls.is-sticky {
+				padding-left: initial;
+				padding-right: initial;
+				padding-top: 30px;
+
 				@include break-medium {
 					padding-bottom: 0;
-					padding-left: 23px;
 				}
 			}
 			.themes__showcase {
-				max-width: 1400px;
-				margin: 0 auto;
+				@media (min-width: $break-small) {
+					margin-left: -14px;
+					margin-right: -14px;
+				}
+
 				.theme-showcase__all-themes {
+					box-sizing: border-box;
+					margin: 0 auto;
+					max-width: 1400px;
 					padding-inline: 48px;
+					@media (max-width: $break-small) {
+						padding-inline: 24px;
+					}
 				}
 			}
 		}
@@ -565,10 +602,6 @@
 	}
 
 	.themes__controls.is-sticky {
-		.theme__search-container, .themes__filters {
-			margin-left: -22px;
-			margin-right: -64px;
-		}
 		@include break-medium {
 			position: fixed;
 			left: var(--sidebar-width-max);
@@ -583,7 +616,7 @@
 			.is-global-sidebar-visible & {
 				top: calc(var(--masterbar-height) + 16px);
 				width: initial;
-				right: 32px;
+				right: 15px;
 
 				// Make the scroll behavior works on the top of the fixed element.
 				pointer-events: none;
