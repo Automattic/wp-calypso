@@ -9,13 +9,29 @@ import { CredentialsForm } from './components/credentials-form';
 import type { Step } from '../../types';
 import './style.scss';
 
+const getAction = ( siteInfo?: UrlData ) => {
+	if ( ! siteInfo ) {
+		return 'submit';
+	}
+
+	if ( siteInfo?.platform_data?.is_wpcom ) {
+		return 'already-wpcom';
+	}
+
+	if ( siteInfo?.platform && siteInfo?.platform !== 'wordpress' ) {
+		return 'site-is-not-using-wordpress';
+	}
+
+	return 'submit';
+};
+
 const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
 	const handleSubmit = ( siteInfo?: UrlData | undefined ) => {
-		const action = siteInfo?.platform_data?.is_wpcom === true ? 'already-wpcom' : 'submit';
-		return navigation.submit?.( { action, from: siteInfo?.url } );
+		const action = getAction( siteInfo );
+		return navigation.submit?.( { action, from: siteInfo?.url, platform: siteInfo?.platform } );
 	};
 
 	const handleSkip = () => {
