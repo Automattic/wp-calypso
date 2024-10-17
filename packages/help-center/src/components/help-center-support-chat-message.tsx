@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import type { ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 
@@ -21,6 +22,11 @@ export const HelpCenterSupportChatMessage = ( {
 	navigateTo = '',
 	avatarSize = 32,
 	isUnread = false,
+}: {
+	message: ZendeskMessage;
+	navigateTo: string;
+	avatarSize?: number;
+	isUnread: boolean;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();

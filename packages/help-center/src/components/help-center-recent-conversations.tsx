@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-recent-conversations.scss';
 
@@ -19,7 +20,7 @@ const GetSectionName = ( unreadCount: number ) => {
 	return __( 'Recent Conversation', __i18n_text_domain__ );
 };
 
-const calculateUnread = ( conversations ) => {
+const calculateUnread = ( conversations: ZendeskConversation[] ) => {
 	let unreadConversations = 0;
 	let unreadMessages = 0;
 
@@ -38,7 +39,7 @@ const calculateUnread = ( conversations ) => {
 const HelpCenterRecentConversations: React.FC = () => {
 	const { __ } = useI18n();
 	const { getConversations } = useSmooch();
-	const [ conversations, setConversations ] = useState( [] );
+	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const [ unreadConversationsCount, setUnreadConversationsCount ] = useState( 0 );
 	const [ unreadMessagesCount, setUnreadMessagesCount ] = useState( 0 );
 	const { isChatLoaded } = useSelect( ( select ) => {
@@ -48,7 +49,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			const conversations = getConversations();
+			const conversations = getConversations() as ZendeskConversation[];
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
 
 			setUnreadConversationsCount( unreadConversations );
@@ -65,8 +66,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
 
 	const multipleUnreadMessages = {
+		...lastMessage,
 		text: 'Multiple Unread Messages',
-		received: lastMessage?.received,
 		displayName: sprintf(
 			/* translators: %1$s is total number of unread messages, %2$s is the total number of chats with unread messages */
 			__( '%1$s messages from %2$s chats', __i18n_text_domain__ ),
