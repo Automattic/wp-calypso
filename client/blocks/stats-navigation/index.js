@@ -250,6 +250,10 @@ export default connect(
 		const isNewSite =
 			siteCreatedTimeStamp &&
 			new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
+		// Logging shows this value moving from null to true/false.
+		// In the case of a new site, that means it's null and becomes true.
+		// This causes the tooltip to flash in Odyssey Stats.
+		// console.log( 'isNewSite:', isNewSite );
 
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
