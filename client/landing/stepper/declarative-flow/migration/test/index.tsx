@@ -442,7 +442,7 @@ describe( `${ flow.name }`, () => {
 		} );
 
 		describe( 'SITE_MIGRATION_ALREADY_WPCOM STEP', () => {
-			it( 'redirects users from SITE_MIGRATION_ALREADY_WPCOM to SITE_MIGRATION_CREDENTIALS', () => {
+			it( 'redirects users from SITE_MIGRATION_ALREADY_WPCOM to SITE_MIGRATION_SUPPORT_INSTRUCTIONS', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -450,8 +450,8 @@ describe( `${ flow.name }`, () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com', preventTicketCreation: true },
+					step: STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', variation: 'goals_shared' },
 				} );
 			} );
 		} );

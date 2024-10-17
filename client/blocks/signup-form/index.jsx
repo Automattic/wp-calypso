@@ -42,6 +42,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
@@ -607,6 +608,8 @@ class SignupForm extends Component {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
 				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );
+				const lostPasswordLink = lostPassword( this.props.locale );
+
 				return (
 					<span key={ error_code }>
 						<p>
@@ -622,7 +625,28 @@ class SignupForm extends Component {
 												onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
 											/>
 										),
-										pwdResetLink: <a href={ lostPassword( this.props.locale ) } />,
+										pwdResetLink: isReactLostPasswordScreenEnabled() ? (
+											<a
+												href={ lostPasswordLink }
+												onClick={ ( event ) => {
+													event.preventDefault();
+													recordTracksEvent( 'calypso_signup_reset_password_link_click' );
+													page(
+														login( {
+															redirectTo: this.props.redirectToAfterLoginUrl,
+															locale: this.props.locale,
+															action: this.props.isWooCoreProfilerFlow
+																? 'jetpack/lostpassword'
+																: 'lostpassword',
+															oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+															from: this.props.from,
+														} )
+													);
+												} }
+											/>
+										) : (
+											<a href={ lostPasswordLink } />
+										),
 									},
 								}
 							) }

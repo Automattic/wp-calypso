@@ -95,7 +95,7 @@ export function WPOrderReviewLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box', {
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box_v2', {
 		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
 	} );
 

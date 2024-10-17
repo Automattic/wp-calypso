@@ -204,6 +204,15 @@ $section-max-width: 1224px;
 
 	}
 
+	.message {
+		padding-inline: 18px;
+		padding-block: 16px;
+		font-size: $font-body-extra-small;
+		font-family: $font-sf-pro-text;
+		color: #949494 !important;
+		background: var(--color-surface);
+	}
+
 	.site-performance__page-selector-item {
 		display: flex;
 		flex-direction: column;
@@ -237,7 +246,7 @@ $section-max-width: 1224px;
 			border-top: 1px solid #F0F0F0;
 		}
 
-		&.is-selected * {
+		&.is-selected > .site-performance__page-selector-item > .subtitle {
 			color: #fff !important;
 		}
 	}

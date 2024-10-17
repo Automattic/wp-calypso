@@ -318,6 +318,13 @@ const streamApis = {
 			return `/read/list/${ owner }/${ slug }/posts`;
 		},
 		dateProperty: 'date',
+		apiVersion: '1.3',
+		query: ( extras, { pageHandle } ) => {
+			return {
+				...{ extras, number: 40 },
+				...pageHandle,
+			};
+		},
 	},
 };
 

@@ -75,6 +75,11 @@ export interface Agency {
 				},
 		  ]
 		| [];
+	tier: {
+		id: 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
+		label: string;
+		features: string[];
+	};
 }
 
 export interface AgencyStore {

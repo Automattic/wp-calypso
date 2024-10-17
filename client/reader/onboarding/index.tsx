@@ -26,12 +26,14 @@ const ReaderOnboarding = () => {
 		task?.actionDispatch?.();
 	};
 
+	const taskOneCompleted = followedTags ? followedTags.length > 2 : false;
+
 	const tasks: Task[] = [
 		{
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
 			actionDispatch: () => setIsInterestsModalOpen( true ),
-			completed: followedTags ? followedTags.length > 2 : false,
+			completed: taskOneCompleted,
 			disabled: false,
 		},
 		{
@@ -39,7 +41,7 @@ const ReaderOnboarding = () => {
 			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: () => setIsDiscoverModalOpen( true ),
 			completed: false,
-			disabled: false,
+			disabled: ! taskOneCompleted,
 		},
 	];
 

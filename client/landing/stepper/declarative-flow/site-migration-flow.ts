@@ -474,7 +474,7 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
-							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 						)
 					);
 				}
