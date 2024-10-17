@@ -38,7 +38,7 @@ const unpackIntroOffer = (
 				/**
 				 * IMPORTANT:
 				 * we make the raw assumption that the interval unit is either "year" or "month"
-				 * to compute mmonthly/full price
+				 * to compute monthly/full price
 				 */
 				'year' === plan.introductory_offer_interval_unit
 					? parseFloat(
