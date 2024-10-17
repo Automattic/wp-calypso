@@ -9,10 +9,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import {
-	useNoticeVisibilityQuery,
-	useNoticesVisibilityQuery,
-} from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
@@ -32,29 +29,20 @@ import './style.scss';
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
 	return function WrappedComponent( props ) {
-		const {
-			data: showSettingsTooltip,
-			isPending,
-			refetch: refetchNotices,
-		} = useNoticeVisibilityQuery( props.siteId, 'traffic_page_settings' );
-		console.log( 'showSettingsTooltip', showSettingsTooltip );
-		console.log( 'isPending', isPending );
-
-		const { data: fullData, isPending: isPendingX } = useNoticesVisibilityQuery( props.siteId );
-		console.log( 'fullData: ', fullData );
-		console.log( 'isPendingX: ', isPendingX );
+		const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+			props.siteId,
+			'traffic_page_settings'
+		);
 
 		const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
 			props.siteId,
 			'traffic_page_settings'
 		);
 
-		const debugShowTooltip = showSettingsTooltip;
-
 		return (
 			<HookedComponent
 				{ ...props }
-				showSettingsTooltip={ debugShowTooltip }
+				showSettingsTooltip={ showSettingsTooltip }
 				refetchNotices={ refetchNotices }
 				mutateNoticeVisbilityAsync={ mutateNoticeVisbilityAsync }
 			/>
@@ -172,11 +160,6 @@ class StatsNavigation extends Component {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 
-		const isJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
-		console.log( 'isJetpackSite', isJetpackSite );
-		const delaySettingsTooltip = isNewSite === true && isJetpackSite === false;
-		console.log( 'delaySettingsTooltip', delaySettingsTooltip );
-
 		// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 		const isModuleSettingsSupported =
 			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
@@ -241,7 +224,7 @@ class StatsNavigation extends Component {
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
-								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delaySettingsTooltip
+								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! isNewSite
 							}
 							onTooltipDismiss={ this.onTooltipDismiss }
 						/>
@@ -254,14 +237,11 @@ class StatsNavigation extends Component {
 export default connect(
 	( state, { siteId, selectedItem } ) => {
 		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
-		console.log( 'siteCreatedTimeStamp', siteCreatedTimeStamp );
 		const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 		// Check if the site is created within a week.
-		let isNewSite =
+		const isNewSite =
 			siteCreatedTimeStamp &&
 			new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
-		console.log( 'isNewSite', isNewSite );
-		isNewSite = true;
 
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
