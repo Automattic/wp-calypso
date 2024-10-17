@@ -109,8 +109,7 @@ export class ConfigApi extends Function {
 	// Copied from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/apps/odyssey-stats/src/load-config.js
 	_overrideConfigDataFeatures() {
 		// Set is_running_in_jetpack_site to true if not specified (undefined or null).
-		productionConfig.features.is_running_in_jetpack_site =
-			this.configData.features?.is_running_in_jetpack_site ?? true;
+		productionConfig.features.is_running_in_jetpack_site = false;
 
 		// The option enables loading of the whole translation file, and could be optimized by setting it to `true`, which needs the translation chunks in place.
 		// @see https://github.com/Automattic/wp-calypso/blob/trunk/docs/translation-chunks.md

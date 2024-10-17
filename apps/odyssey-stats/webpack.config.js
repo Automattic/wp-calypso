@@ -189,18 +189,18 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/data\/query-site-purchases$/,
-			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/data\/query-products-list$/,
-			path.resolve( __dirname, 'src/components/odyssey-query-products' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/data\/query-memberships$/,
-			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
-		),
+		// new webpack.NormalModuleReplacementPlugin(
+		// 	/^calypso\/components\/data\/query-site-purchases$/,
+		// 	path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		// ),
+		// new webpack.NormalModuleReplacementPlugin(
+		// 	/^calypso\/components\/data\/query-products-list$/,
+		// 	path.resolve( __dirname, 'src/components/odyssey-query-products' )
+		// ),
+		// new webpack.NormalModuleReplacementPlugin(
+		// 	/^calypso\/components\/data\/query-memberships$/,
+		// 	path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
+		// ),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
