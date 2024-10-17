@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -156,15 +155,12 @@ export const SitePerformance = () => {
 	}, [ dispatch, siteId ] );
 
 	const queryParams = useSelector( getCurrentQueryArguments );
-	const [ , setQuery, query ] = useDebouncedInput();
 	const {
 		pages,
 		isInitialLoading,
 		savePerformanceReportUrl,
 		refetch: refetchPages,
-	} = useSitePerformancePageReports( {
-		query,
-	} );
+	} = useSitePerformancePageReports();
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -196,9 +192,12 @@ export const SitePerformance = () => {
 		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
 
 	const pageOptions = useMemo( () => {
-		return currentPage
+		const options = currentPage
 			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
 			: orderedPages;
+
+		// Add a disabled option at the end that will show a disclaimer message.
+		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
 	}, [ currentPage, orderedPages ] );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
@@ -270,11 +269,34 @@ export const SitePerformance = () => {
 		} );
 	};
 
+	// This forces a no pages found message in the dropdown
+	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
+
+	const options = ! noPagesFound.found
+		? [
+				{
+					label: noPagesFound.query,
+					value: '-2',
+					disabled: true,
+				},
+		  ]
+		: pageOptions;
+
 	const pageSelector = (
 		<PageSelector
-			onFilterValueChange={ setQuery }
+			onFilterValueChange={ ( value ) => {
+				const filter = pageOptions.find( ( option ) =>
+					option.label.toLowerCase().startsWith( value )
+				);
+
+				if ( filter ) {
+					setNoPagesFound( { query: '', found: true } );
+					return;
+				}
+				setNoPagesFound( { query: value, found: false } );
+			} }
 			allowReset={ false }
-			options={ pageOptions }
+			options={ options }
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
