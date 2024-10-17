@@ -11,6 +11,7 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy = jest.fn();
+		window.location.search = 'https://example.com';
 	} );
 
 	const businessPlan = {

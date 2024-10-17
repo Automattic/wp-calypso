@@ -3,7 +3,7 @@ const base = require( '@automattic/calypso-jest' );
 
 module.exports = {
 	...base,
-	rootDir: '../../client',
+	rootDir: '../../client/state/products-list',
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
 	testPathIgnorePatterns: [ '<rootDir>/server/' ],
 
