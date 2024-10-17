@@ -1,6 +1,12 @@
 import { Card } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import useScheduledTimeMutation from 'calypso/data/jetpack-backup/use-scheduled-time-mutation';
+import useScheduledTimeQuery from 'calypso/data/jetpack-backup/use-scheduled-time-query';
+import { useDispatch, useSelector } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { FunctionComponent } from 'react';
 import './style.scss';
 
@@ -8,8 +14,12 @@ import './style.scss';
 const generateTimeSlots = (): { label: string; value: string }[] => {
 	const options = [];
 	for ( let hour = 0; hour < 24; hour++ ) {
-		const startTime = hour.toString().padStart( 2, '0' ) + ':00';
-		const endTime = hour.toString().padStart( 2, '0' ) + ':59';
+		const period = hour < 12 ? 'AM' : 'PM';
+		const adjustedHour = hour % 12 || 12;
+
+		const startTime = `${ adjustedHour }:00`;
+		const endTime = `${ adjustedHour }:59 ${ period }`;
+
 		options.push( {
 			label: `${ startTime } - ${ endTime }`,
 			value: hour.toString(),
@@ -19,8 +29,39 @@ const generateTimeSlots = (): { label: string; value: string }[] => {
 };
 
 const BackupScheduleSetting: FunctionComponent = () => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const options = generateTimeSlots();
+	const queryClient = useQueryClient();
+
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const { isLoading: isScheduledTimeQueryLoading, data } = useScheduledTimeQuery( siteId );
+	const { isPending: isScheduledTimeMutationLoading, mutate: scheduledTimeMutate } =
+		useScheduledTimeMutation( {
+			onSuccess: () => {
+				queryClient.invalidateQueries( { queryKey: [ 'jetpack-backup-scheduled-time', siteId ] } );
+				dispatch(
+					successNotice( translate( 'Daily backup time successfully changed.' ), {
+						duration: 5000,
+						isPersistent: true,
+					} )
+				);
+			},
+			onError: () => {
+				dispatch(
+					errorNotice( translate( 'Update daily backup time. Please, try again.' ), {
+						duration: 5000,
+						isPersistent: true,
+					} )
+				);
+			},
+		} );
+
+	const isLoading = isScheduledTimeQueryLoading || isScheduledTimeMutationLoading;
+
+	const updateScheduledTime = ( selectedTime: string ) => {
+		scheduledTimeMutate( { scheduledHour: selectedTime as unknown as number } );
+	};
 
 	return (
 		<div id="backup-schedule" className="backup-schedule-setting">
@@ -33,7 +74,13 @@ const BackupScheduleSetting: FunctionComponent = () => {
 						'Pick a timeframe for your backup to run. Some site owners prefer scheduling backups at specific times for better control.'
 					) }
 				</p>
-				<SelectControl options={ options } help={ translate( 'Default time' ) } />
+				<SelectControl
+					disabled={ isLoading }
+					options={ options }
+					value={ data?.scheduledHour.toString() }
+					help={ translate( 'Default time' ) } // @TODO: show who updated the schedule time
+					onChange={ updateScheduledTime }
+				/>
 			</Card>
 		</div>
 	);
