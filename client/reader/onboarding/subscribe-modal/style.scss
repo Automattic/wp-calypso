@@ -75,7 +75,9 @@
 			display: flex;
 		}
 
-		.reader-post-actions {
+		.reader-post-actions,
+		.comments__comment-list,
+		.reader-post-options-menu__ellipsis-menu {
 			display: none;
 		}
 	}

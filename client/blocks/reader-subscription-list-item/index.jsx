@@ -113,19 +113,20 @@ function ReaderSubscriptionListItem( {
 		}
 	};
 
-	const handleClick = ( event ) => {
-		event.preventDefault();
+	const handleClick = () => {
 		onItemClick();
 	};
 
 	return (
 		<div
-			className={ clsx(
-				'reader-subscription-list-item',
-				className,
-				{ 'is-selected': isSelected } // Add this class when the item is selected
-			) }
+			className={ clsx( 'reader-subscription-list-item', className, {
+				'is-selected': isSelected,
+			} ) }
 			onClick={ handleClick }
+			onKeyDown={ ( e ) => e.key === 'Enter' && handleClick( e ) }
+			role="button"
+			tabIndex={ 0 }
+			aria-pressed={ isSelected }
 		>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
