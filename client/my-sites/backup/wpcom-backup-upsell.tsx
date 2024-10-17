@@ -6,6 +6,7 @@ import {
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect, useCallback } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,18 +22,21 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import BackupDownloadFlowExpiredPlan from './rewind-flow/download-expired-plan';
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
 
 const BackupMultisiteBody = () => {
 	const translate = useTranslate();
+
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
@@ -86,6 +90,76 @@ const BackupUpsellBody = () => {
 	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
 	const isWPcomSite = ! isJetpack || isAtomic;
+
+	const [ isRevertedWithValidBackup, setIsRevertedWithValidBackup ] = useState< null | boolean >(
+		null
+	);
+
+	const [ rewindId, setRewindId ] = useState< string | null >( null );
+	const [ backupPeriodDate, setBackupPeriodDate ] = useState< string | null >( null );
+
+	const resetBackupState = () => {
+		setIsRevertedWithValidBackup( false );
+		setRewindId( null );
+		setBackupPeriodDate( null );
+	};
+
+	const fetchLatestAtomicTransfer = useCallback( async ( siteId: number | string ) => {
+		try {
+			const transfer = await wpcom.req.get( {
+				path: `/sites/${ siteId }/atomic/transfers/latest`,
+				apiNamespace: 'wpcom/v2',
+			} );
+			return transfer;
+		} catch ( error ) {
+			return null;
+		}
+	}, [] );
+
+	const fetchRewindBackups = useCallback( async ( siteId: number | string ) => {
+		try {
+			const response = await wpcom.req.get( {
+				path: `/sites/${ siteId }/rewind/backups`,
+				apiNamespace: 'wpcom/v3',
+				query: { number: 10 },
+			} );
+
+			const validBackup = response.backups?.find(
+				( backup: { is_rewindable: boolean; summary: string } ) =>
+					backup.is_rewindable && backup.summary === 'Backup complete'
+			);
+
+			if ( validBackup ) {
+				const backupPeriod = validBackup.object.backup_period;
+				const backupPeriodHumanReadable = new Date(
+					parseInt( backupPeriod ) * 1000
+				).toLocaleDateString( 'en-US', { year: 'numeric', month: 'long', day: 'numeric' } );
+
+				setIsRevertedWithValidBackup( true );
+				setRewindId( validBackup.object.backup_period );
+				setBackupPeriodDate( backupPeriodHumanReadable );
+			} else {
+				resetBackupState();
+			}
+		} catch ( error ) {
+			resetBackupState();
+		}
+	}, [] );
+
+	useEffect( () => {
+		if ( siteId ) {
+			( async () => {
+				const transferStatus = await fetchLatestAtomicTransfer( siteId );
+
+				if ( transferStatus && transferStatus.status === 'reverted' ) {
+					await fetchRewindBackups( siteId );
+				} else {
+					resetBackupState();
+				}
+			} )();
+		}
+	}, [ fetchLatestAtomicTransfer, fetchRewindBackups, siteId ] );
+
 	const onUpgradeClick = useTrackCallback(
 		undefined,
 		isWPcomSite ? 'calypso_jetpack_backup_business_upsell' : 'calypso_jetpack_backup_upsell'
@@ -121,7 +195,6 @@ const BackupUpsellBody = () => {
 						)
 					) }
 				</p>
-
 				{ ! isAdmin && (
 					<Notice
 						status="is-warning"
@@ -163,7 +236,14 @@ const BackupUpsellBody = () => {
 					</div>
 				) }
 			</PromoCard>
-
+			{ isRevertedWithValidBackup && backupPeriodDate && rewindId && siteSlug && siteId && (
+				<BackupDownloadFlowExpiredPlan
+					backupDisplayDate={ backupPeriodDate }
+					rewindId={ rewindId }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+				/>
+			) }
 			{ isWPcomSite && ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
