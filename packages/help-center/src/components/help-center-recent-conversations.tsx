@@ -62,7 +62,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 		return [];
 	}
 
-	const lastConversation = conversations[ conversations.length - 1 ];
+	const lastConversation = conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
 
 	const multipleUnreadMessages = {
@@ -92,6 +92,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			</h3>
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
+					conversation={ lastConversation }
 					key={ lastConversation.id }
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
