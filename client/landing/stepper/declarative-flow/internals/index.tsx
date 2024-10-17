@@ -1,4 +1,11 @@
-import { isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isWooExpressFlow,
+	SENSEI_FLOW,
+	VIDEOPRESS_FLOW,
+	LINK_IN_BIO_FLOW,
+	FREE_FLOW,
+	BLOG_FLOW,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect } from 'react';
@@ -36,10 +43,11 @@ const lazyCache = new WeakMap<
 >();
 
 const redirects = [
-	{ flow: 'free', to: '/start/free/:lang?' },
-	{ flow: 'blog', to: '/start/:lang?' },
-	{ flow: 'link-in-bio', to: '/start/:lang?' },
-	{ flow: 'videopress', to: '/start/:lang?' },
+	{ flow: BLOG_FLOW, to: '/start/:lang?' },
+	{ flow: FREE_FLOW, to: '/start/free/:lang?' },
+	{ flow: LINK_IN_BIO_FLOW, to: '/start/:lang?' },
+	{ flow: VIDEOPRESS_FLOW, to: '/start/:lang?' },
+	{ flow: SENSEI_FLOW, to: '/plugins/sensei-pro/' },
 ];
 
 type RedirectHandlerProps = {
@@ -51,6 +59,11 @@ type RedirectHandlerProps = {
 const RedirectHandler: React.FC< RedirectHandlerProps > = ( { redirectTo, flow } ) => {
 	const location = useLocation();
 	const { lang } = useParams< { lang?: string } >();
+
+	// If lang exists, prepend it for the SENSEI flow
+	if ( flow === SENSEI_FLOW && lang ) {
+		redirectTo = `/${ lang }${ redirectTo }`;
+	}
 
 	// Generate the redirection URL
 	const redirectUrl = generatePath( redirectTo, { lang: lang || null } ) + location.search;
