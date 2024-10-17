@@ -37,11 +37,11 @@
 			}
 		}
 		.navigation-header {
-			max-width: 1400px;
 			padding-top: 24px;
+			max-width: 1400px;
 			margin: 0 auto;
 			padding-inline: 48px;
-			@media (max-width: $break-small) {
+			@media (max-width: 402px) {
 				padding-inline: 24px;
 			}
 
@@ -62,62 +62,30 @@
 			}
 		}
 
-		.theme-showcase {
-			.theme__search-container {
-				@media (min-width: $break-small) {
-					margin-left: -14px;
-					margin-right: -14px;
-				}
-
-				.theme__search-content {
-					margin: 0 auto;
-					padding-inline: 48px;
-					@media (max-width: $break-small) {
-						padding-inline: 24px;
-					}
-					box-sizing: border-box;
-					max-width: 1400px;
-				}
-			}
-
-			.themes-toolbar-group {
-				max-width: 1400px;
-				margin: 0 auto;
-				box-sizing: border-box;
-				padding-inline: 48px;
-				@media (max-width: $break-small) {
-					padding-inline: 24px;
-				}
-				.responsive-toolbar-group__full-list {
-					padding-inline: 48px;
-					@media (max-width: $break-small) {
-						padding-inline: 24px;
-					}
-				}
-			}
-
-			.themes__filters {
-				@media (min-width: $break-small) {
-					margin-left: -14px;
-					margin-right: -14px;
-				}
-			}
-		}
-
 		.themes__content {
 			clip-path: inset(0 0 0 0);
 			margin-top: 40px;
 			min-height: auto;
 			@media (max-width: $break-small) {
 				margin-top: 10px;
-				margin-left: -14px;
-				margin-right: -14px;
 			}
 			.themes__controls,
 			.themes__showcase {
+				margin-left: -14px;
+				margin-right: -14px;
 				@media (max-width: $break-small) {
 					padding: 0;
 				}
+			}
+
+			.themes__controls .theme__search-container, .themes__controls .themes__filters, .themes__showcase .theme-showcase__all-themes {
+				margin: 0 auto;
+				padding-inline: 48px;
+				@media (max-width: 402px) {
+					padding-inline: 24px;
+				}
+				box-sizing: border-box;
+				max-width: 1400px;
 			}
 
 			.themes__controls.is-sticky {
@@ -127,22 +95,6 @@
 
 				@include break-medium {
 					padding-bottom: 0;
-				}
-			}
-			.themes__showcase {
-				@media (min-width: $break-small) {
-					margin-left: -14px;
-					margin-right: -14px;
-				}
-
-				.theme-showcase__all-themes {
-					box-sizing: border-box;
-					margin: 0 auto;
-					max-width: 1400px;
-					padding-inline: 48px;
-					@media (max-width: $break-small) {
-						padding-inline: 24px;
-					}
 				}
 			}
 		}

@@ -717,36 +717,34 @@ class ThemeShowcase extends Component {
 								} ) }
 							>
 								<div className="theme__search-container">
-									<div className="theme__search-content">
-										<div className="theme__search">
-											<div className="theme__search-input">
-												{ isSearchV2 ? (
-													<SearchThemesV2
-														query={ featureStringFilter + search }
-														onSearch={ this.doSearch }
-													/>
-												) : (
-													<SearchThemes
-														query={ filterString + search }
-														onSearch={ this.doSearch }
-														recordTracksEvent={ this.recordSearchThemesTracksEvent }
-													/>
-												) }
-											</div>
-											{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-												<>
-													<SelectDropdown
-														className="section-nav-tabs__dropdown"
-														onSelect={ this.onTierSelectFilter }
-														selectedText={ translate( 'View: %s', {
-															args: getOptionLabel( tiers, tier ) || '',
-														} ) }
-														options={ tiers }
-														initialSelected={ tier }
-													></SelectDropdown>
-												</>
+									<div className="theme__search">
+										<div className="theme__search-input">
+											{ isSearchV2 ? (
+												<SearchThemesV2
+													query={ featureStringFilter + search }
+													onSearch={ this.doSearch }
+												/>
+											) : (
+												<SearchThemes
+													query={ filterString + search }
+													onSearch={ this.doSearch }
+													recordTracksEvent={ this.recordSearchThemesTracksEvent }
+												/>
 											) }
 										</div>
+										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+											<>
+												<SelectDropdown
+													className="section-nav-tabs__dropdown"
+													onSelect={ this.onTierSelectFilter }
+													selectedText={ translate( 'View: %s', {
+														args: getOptionLabel( tiers, tier ) || '',
+													} ) }
+													options={ tiers }
+													initialSelected={ tier }
+												></SelectDropdown>
+											</>
+										) }
 									</div>
 								</div>
 								<div
