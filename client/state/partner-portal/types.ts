@@ -160,7 +160,7 @@ export interface Invoice {
 	id: string;
 	number: string;
 	dueDate: string | null;
-	created: string | null;
+	created: number;
 	effectiveAt: string | null;
 	status: InvoiceStatus;
 	total: number;

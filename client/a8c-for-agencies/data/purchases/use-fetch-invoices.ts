@@ -14,6 +14,8 @@ interface Pagination {
 	ending_before: string;
 }
 
+type Status = 'paid' | 'open' | 'draft' | 'uncollectible' | 'void';
+
 function selectInvoices( api: APIInvoices ): Invoices {
 	return {
 		items: api.items.map( ( apiInvoice ) => ( {
@@ -35,28 +37,31 @@ export const getFetchInvoicesQueryKey = ( {
 	starting_after,
 	ending_before,
 	agencyId,
+	status,
 }: {
 	starting_after: string;
 	ending_before: string;
 	agencyId?: number;
+	status?: Status;
 } ) => {
-	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId ];
+	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId, status ];
 };
 
 export default function useFetchInvoices(
 	pagination: Pagination,
-	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >
+	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >,
+	status?: Status
 ): UseQueryResult< Invoices, QueryError > {
 	const { starting_after, ending_before } = pagination;
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery< APIInvoices, QueryError, Invoices >( {
-		queryKey: getFetchInvoicesQueryKey( { starting_after, ending_before, agencyId } ),
+		queryKey: getFetchInvoicesQueryKey( { starting_after, ending_before, agencyId, status } ),
 		queryFn: () =>
 			wpcom.req.get( {
 				apiNamespace: 'wpcom/v2',
 				path: addQueryArgs(
-					{ starting_after, ending_before, agency_id: agencyId },
+					{ starting_after, ending_before, agency_id: agencyId, status },
 					'/jetpack-licensing/partner/invoices'
 				),
 			} ),
