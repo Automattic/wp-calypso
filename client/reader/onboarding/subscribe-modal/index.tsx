@@ -2,7 +2,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React, { useMemo, useState, ComponentType } from 'react';
+import React, { useMemo, useState, ComponentType, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
@@ -124,6 +124,13 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 
+	// Add this useEffect hook to select the first site when recommendations are loaded
+	useEffect( () => {
+		if ( combinedRecommendations.length > 0 && ! selectedSite ) {
+			setSelectedSite( combinedRecommendations[ 0 ] );
+		}
+	}, [ combinedRecommendations, selectedSite ] );
+
 	const handleItemClick = ( site: CardData ) => {
 		setSelectedSite( site );
 	};
@@ -136,7 +143,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				className="subscribe-modal"
 				headerActions={ headerActions }
 				isDismissible={ false }
-				isScrollable={ false }
 			>
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__site-list-column">
