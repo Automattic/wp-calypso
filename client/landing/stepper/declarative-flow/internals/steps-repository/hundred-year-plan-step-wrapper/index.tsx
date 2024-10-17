@@ -2,11 +2,7 @@ import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon, WordPressLogo, FoldableCard } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import {
-	HUNDRED_YEAR_DOMAIN_FLOW,
-	HUNDRED_YEAR_PLAN_FLOW,
-	StepContainer,
-} from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -194,15 +190,7 @@ function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobil
 	);
 }
 
-function InfoColumn( {
-	isMobile,
-	openModal,
-	flowName,
-}: {
-	isMobile: boolean;
-	openModal: () => void;
-	flowName: string;
-} ) {
+function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: () => void } ) {
 	const translate = useTranslate();
 
 	const productPrice = useSelect(
@@ -213,20 +201,14 @@ function InfoColumn( {
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.currency_code,
 		[]
 	);
-	let displayCost =
+	const displayCost =
 		productPrice &&
 		currencyCode &&
 		formatCurrency( productPrice, currencyCode, {
 			stripZeros: true,
 		} );
 
-	// TODO: Replace hardcoded value by 100-eyar domain product price when we have it
-	if ( flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
-		displayCost = '$2,000';
-	}
-
-	const planTitle =
-		flowName === HUNDRED_YEAR_PLAN_FLOW ? getPlan( PLAN_100_YEARS )?.getTitle() : '100-Year Domain';
+	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
 
 	return (
 		<>
@@ -293,10 +275,10 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						className={ `hundred-year-plan-step-wrapper ${ stepName }` }
 						isMobile={ isMobile }
 					>
-						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
+						{ isOpen && <InfoModal onClose={ closeModal } /> }
 						{ ! hideInfoColumn && (
 							<InfoColumnWrapper isMobile={ isMobile }>
-								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
+								<InfoColumn isMobile={ isMobile } openModal={ openModal } />
 							</InfoColumnWrapper>
 						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>
