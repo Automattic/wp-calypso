@@ -15,7 +15,6 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsGlobalValuesProvider } from './../pages/providers/global-provider';
-import StatsRedirectFlow from './index';
 
 type AsyncLoadProps = {
 	children: ReactNode;
@@ -119,7 +118,7 @@ export default function LoadStatsPage( { children }: AsyncLoadProps ) {
 		<StatsGlobalValuesProvider>
 			<>
 				<QuerySitePurchases siteId={ siteId } />
-				<StatsRedirectFlow>{ children }</StatsRedirectFlow>
+				{ children }
 			</>
 		</StatsGlobalValuesProvider>
 	);
