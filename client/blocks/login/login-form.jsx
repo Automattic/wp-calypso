@@ -73,10 +73,12 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
+
 import './login-form.scss';
 
 export class LoginForm extends Component {
@@ -429,8 +431,13 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless, loginButtonText } =
-			this.props;
+		const {
+			translate,
+			isWoo,
+			isPasswordlessJetpackConnection,
+			isWooPasswordless,
+			loginButtonText,
+		} = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
@@ -440,7 +447,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isWoo && ! isWooCoreProfilerFlow ) {
+		if ( isWoo && ! isPasswordlessJetpackConnection ) {
 			return translate( 'Get started' );
 		}
 
@@ -592,7 +599,7 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email or username' );
 		}
 
-		if ( this.props.isWooCoreProfilerFlow || this.props.isBlazePro ) {
+		if ( this.props.isPasswordlessJetpackConnection || this.props.isBlazePro ) {
 			return this.props.translate( 'Your email address' );
 		}
 
@@ -632,7 +639,9 @@ export class LoginForm extends Component {
 							login( {
 								redirectTo: this.props.redirectTo,
 								locale: this.props.locale,
-								action: this.props.isWooCoreProfilerFlow ? 'jetpack/lostpassword' : 'lostpassword',
+								action: this.props.isPasswordlessJetpackConnection
+									? 'jetpack/lostpassword'
+									: 'lostpassword',
 								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 								from: get( this.props.currentQuery, 'from' ),
 							} )
@@ -832,7 +841,7 @@ export class LoginForm extends Component {
 			isWoo,
 			isWooPasswordless,
 			isPartnerSignup,
-			isWooCoreProfilerFlow,
+			isPasswordlessJetpackConnection,
 			isBlazePro,
 			hideSignupLink,
 			isSignupExistingAccount,
@@ -850,7 +859,8 @@ export class LoginForm extends Component {
 			isWoo && ! isPartnerSignup && ! isWooPasswordless ? isFormFilled : isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
-		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
+		const isCoreProfilerLostPasswordFlow =
+			isPasswordlessJetpackConnection && currentQuery.lostpassword_flow;
 		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
 			currentQuery,
 			oauth2Client
@@ -1213,8 +1223,8 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+			isPasswordlessJetpackConnection: isPasswordlessJetpackConnectionFlow( state ),
 			isWoo:
 				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
 				isWooCommerceCoreProfilerFlow( state ),

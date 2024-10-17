@@ -63,6 +63,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -734,7 +735,8 @@ class SignupForm extends Component {
 				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
+							{ this.props.isReskinned ||
+							( this.props.isWoo && ! this.props.isPasswordlessJetpackConnection )
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -1429,6 +1431,7 @@ export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+		const isPasswordlessJetpackConnection = isPasswordlessJetpackConnectionFlow( state );
 
 		return {
 			currentUser: getCurrentUser( state ),
@@ -1440,8 +1443,9 @@ export default connect(
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isWoo: isWooOAuth2Client( oauth2Client ) || isPasswordlessJetpackConnection,
 			isWooCoreProfilerFlow,
+			isPasswordlessJetpackConnection,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),

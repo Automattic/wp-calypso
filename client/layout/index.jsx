@@ -48,8 +48,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -65,6 +65,7 @@ import { getColorScheme, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
+
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -445,7 +446,7 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			isWooCommerceCoreProfilerFlow( state );
+			isPasswordlessJetpackConnectionFlow( state );
 		const isBlazePro = getIsBlazePro( state );
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
