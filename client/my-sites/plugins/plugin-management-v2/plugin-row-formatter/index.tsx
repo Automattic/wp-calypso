@@ -57,7 +57,9 @@ export default function PluginRowFormatter( {
 			<Button
 				borderless
 				compact
-				href={ `/plugins/${ item.slug }${ selectedSite ? `/${ selectedSite.domain }` : '' }` }
+				href={ `/plugins/${ item.slug }${
+					selectedSite ? `/${ selectedSite.domain }` : ''
+				}?manage=true` }
 				{ ...props }
 			/>
 		);
