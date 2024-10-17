@@ -22,6 +22,15 @@ export interface Agency {
 			email: string;
 			name: string;
 			pressable_id: number;
+			usage: null | {
+				status: string;
+				storage_gb: number;
+				visits_count: number;
+				sites_count: number;
+				start_date: string;
+				end_date: string;
+				created_at: number;
+			};
 		};
 	};
 	profile: {
