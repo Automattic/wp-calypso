@@ -140,7 +140,7 @@ export interface APIInvoice {
 	id: string;
 	number: string;
 	due_date: string | null;
-	created: string | null;
+	created: number;
 	effective_at: string | null;
 	status: InvoiceStatus;
 	total: number;

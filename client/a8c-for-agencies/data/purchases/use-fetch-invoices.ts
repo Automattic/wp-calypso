@@ -3,7 +3,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import type { APIInvoices, Invoices } from 'calypso/state/partner-portal/types';
+import type { APIInvoices, Invoices, InvoiceStatus } from 'calypso/state/partner-portal/types';
 
 interface QueryError {
 	code?: string;
@@ -13,8 +13,6 @@ interface Pagination {
 	starting_after: string;
 	ending_before: string;
 }
-
-type Status = 'paid' | 'open' | 'draft' | 'uncollectible' | 'void';
 
 function selectInvoices( api: APIInvoices ): Invoices {
 	return {
@@ -42,7 +40,7 @@ export const getFetchInvoicesQueryKey = ( {
 	starting_after: string;
 	ending_before: string;
 	agencyId?: number;
-	status?: Status;
+	status?: InvoiceStatus;
 } ) => {
 	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId, status ];
 };
@@ -50,7 +48,7 @@ export const getFetchInvoicesQueryKey = ( {
 export default function useFetchInvoices(
 	pagination: Pagination,
 	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >,
-	status?: Status
+	status?: InvoiceStatus
 ): UseQueryResult< Invoices, QueryError > {
 	const { starting_after, ending_before } = pagination;
 	const agencyId = useSelector( getActiveAgencyId );
