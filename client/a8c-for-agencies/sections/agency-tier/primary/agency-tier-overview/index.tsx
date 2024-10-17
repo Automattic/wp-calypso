@@ -1,4 +1,5 @@
 import { Card, Badge } from '@automattic/components';
+import { Icon, check } from '@wordpress/icons';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -30,6 +31,12 @@ export default function AgencyTierOverview() {
 		: null;
 
 	const learnMoreLink = ''; // TODO: Add link
+
+	const ALL_TIERS: ( 'emerging-partner' | 'agency-partner' | 'pro-agency-partner' )[] = [
+		'emerging-partner',
+		'agency-partner',
+		'pro-agency-partner',
+	];
 
 	return (
 		<Layout className="agency-tier-overview" title={ title } wide>
@@ -73,6 +80,50 @@ export default function AgencyTierOverview() {
 									} ) }
 								</div>
 							</div>
+						</div>
+						<div className="agency-tier-overview__top-content-right">
+							<Card className="agency-tier-overview__benefit-card" compact>
+								<div className="agency-tier-overview__benefit-card-title">
+									{ translate( 'Level up with Automattic!' ) }
+								</div>
+								<div className="agency-tier-overview__benefit-card-items">
+									{ ALL_TIERS.map( ( tier ) => {
+										const { title, logo, id } = getAgencyTierInfo( tier, translate );
+										const currentTierInfo = getAgencyTierInfo(
+											currentAgencyTierInfo.id,
+											translate
+										);
+										const isCurrentTier = currentTierInfo.includedTiers.includes( tier );
+										return (
+											<div
+												key={ tier }
+												className={ clsx( 'agency-tier-overview__benefit-card-item', {
+													'opacity-50': ! isCurrentTier,
+												} ) }
+											>
+												<div className="agency-tier-overview__benefit-card-item-icon">
+													<img src={ logo } alt={ tier } />
+													{ isCurrentTier && (
+														<span
+															className={ clsx(
+																'agency-tier-overview__benefit-card-item-icon-check',
+																id
+															) }
+														>
+															<span>
+																<Icon icon={ check } size={ 24 } />
+															</span>
+														</span>
+													) }
+												</div>
+												<span className="agency-tier-overview__benefit-card-item-title">
+													{ title }
+												</span>
+											</div>
+										);
+									} ) }
+								</div>
+							</Card>
 						</div>
 					</div>
 				) }

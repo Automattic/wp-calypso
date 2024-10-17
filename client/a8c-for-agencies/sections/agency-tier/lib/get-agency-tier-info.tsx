@@ -12,6 +12,7 @@ const getAgencyTierInfo = (
 		fullTitle: '',
 		subtitle: '',
 		logo: '',
+		includedTiers: [] as string[],
 	};
 	switch ( agencyTier ) {
 		case 'emerging-partner':
@@ -31,6 +32,7 @@ const getAgencyTierInfo = (
 					{ args: { amount: '$1,200' }, comment: 'Amount of revenue' }
 				),
 				logo: EmergingPartnerLogo,
+				includedTiers: [ 'emerging-partner' ],
 			};
 			break;
 		case 'agency-partner':
@@ -53,6 +55,7 @@ const getAgencyTierInfo = (
 					}
 				),
 				logo: AgencyPartnerLogo,
+				includedTiers: [ 'emerging-partner', 'agency-partner' ],
 			};
 			break;
 		case 'pro-agency-partner':
@@ -69,6 +72,7 @@ const getAgencyTierInfo = (
 				),
 				subtitle: preventWidows( translate( "You've reached the highest tier!" ) ),
 				logo: ProAgencyPartnerLogo,
+				includedTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
 			};
 	}
 	return { id: agencyTier, ...tierInfo };

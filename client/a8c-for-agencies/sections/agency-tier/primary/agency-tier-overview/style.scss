@@ -3,7 +3,9 @@
 
 $color-pink: #f4b1ff;
 $dark-blue: #022836;
+$light-blue: #5ab7e8;
 $dark-green: #104e30;
+$light-green: #53dc81;
 
 .agency-tier-overview__top-content {
 	display: grid;
@@ -30,7 +32,7 @@ $dark-green: #104e30;
 			border: 1px solid var(--color-gray-5);
 		}
 
-		@include break-huge {
+		@include break-wide {
 			height: 230px;
 		}
 	}
@@ -179,6 +181,12 @@ $dark-green: #104e30;
 	}
 }
 
+.agency-tier-overview__top-content-right {
+	@include break-wide {
+		margin-inline-start: 12px;
+	}
+}
+
 .agency-tier-overview__bottom-content {
 	padding-block-start: 24px;
 
@@ -266,5 +274,87 @@ $dark-green: #104e30;
 		@include a4a-font-body-sm;
 		display: flex;
 		align-items: center;
+	}
+}
+
+.agency-tier-overview__benefit-card-items {
+	padding-block-start: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.agency-tier-overview__benefit-card-item {
+		.agency-tier-overview__benefit-card-item-icon {
+			position: relative;
+			display: inline-flex;
+
+			img {
+				transform: scale(1.5);
+			}
+
+			.agency-tier-overview__benefit-card-item-icon-check {
+				position: absolute;
+				background: var(--color-text-white);
+				border-radius: 50%;
+				width: 23px;
+				height: 23px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				top: 11.5px;
+				left: 24px;
+
+				span {
+					padding: 4px;
+					border-radius: 50%;
+					width: 10px;
+					height: 10px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+
+					svg {
+						transform: scale(1.7);
+					}
+				}
+
+				&.emerging-partner {
+					span {
+						background: $color-pink;
+					}
+					svg {
+						stroke: $dark-blue;
+					}
+				}
+
+				&.agency-partner {
+					span {
+						background: $dark-blue;
+					}
+					svg {
+						fill: var(--color-text-white);
+						stroke: $light-blue;
+					}
+				}
+
+				&.pro-agency-partner {
+					span {
+						background: $dark-green;
+					}
+					svg {
+						fill: var(--color-text-white);
+						stroke: $light-green;
+					}
+
+				}
+			}
+		}
+
+		.agency-tier-overview__benefit-card-item-title {
+			@include a4a-font-heading-md($font-weight: 600);
+			position: relative;
+			top: -6px;
+			left: 24px;
+		}
 	}
 }
