@@ -11,7 +11,6 @@ import { useEffect, useMemo } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -199,9 +198,6 @@ const StatsPurchasePage = ( {
 						/>
 					</>
 				) }
-
-				{ /* Only query site purchases on Calypso via existing data component */ }
-				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
 				{ isLoading && (
 					<div className="stats-purchase-page__loader">
