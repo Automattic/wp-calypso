@@ -1,9 +1,8 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
-import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -36,35 +35,35 @@ import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-ho
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { AppState } from 'calypso/types';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
+
+import './style.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
 
-const SftpClipboardButtonInput = styled( ClipboardButtonInput )( {
-	display: 'block',
-	marginBottom: '16px',
-} );
-
-const SftpQuestionsContainer = styled.div( {
-	marginBottom: '1.5em',
-} );
-
-const SftpPasswordExplainer = styled.p( {
-	marginBottom: '8px',
-} );
-
-const SftpEnableWarning = styled.p( {
-	color: 'var(--color-text-subtle)',
-} );
-
-const SftpSshLabel = styled( FormLabel )( {
-	marginTop: '16px',
-	paddingTop: '16px',
-	borderTop: '1px solid #e0e0e0',
-} );
+type SftpCardComponentProps = SftpCardProps & {
+	translate: LocalizeProps[ 'translate' ];
+	siteId: number | null;
+	siteSlug: string | null;
+	currentUserId: number | null;
+	username: string | null;
+	password: string | null;
+	siteHasSftpFeature: boolean;
+	siteHasSshFeature: boolean;
+	isSshAccessEnabled: boolean;
+	isLoadingSftpData: boolean;
+	createSftpUser: ( siteId: number | null, currentUserId: number | null ) => void;
+	requestSftpUsers: ( siteId: number | null ) => void;
+	resetSftpPassword: ( siteId: number | null, sshUsername: string | null ) => void;
+	requestSshAccess: ( siteId: number | null ) => void;
+	enableSshAccess: ( siteId: number | null ) => void;
+	disableSshAccess: ( siteId: number | null ) => void;
+	removePasswordFromState: ( siteId: number | null, username: string | null ) => void;
+};
 
 export const SftpCard = ( {
 	translate,
@@ -85,7 +84,7 @@ export const SftpCard = ( {
 	enableSshAccess,
 	disableSshAccess,
 	removePasswordFromState,
-} ) => {
+}: SftpCardComponentProps ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
@@ -94,12 +93,6 @@ export const SftpCard = ( {
 	const siteIntent = useSiteOption( 'site_intent' );
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
-
-	const onDestroy = () => {
-		if ( password ) {
-			removePasswordFromState( siteId, currentUserId, username );
-		}
-	};
 
 	const resetPassword = () => {
 		setPasswordLoading( true );
@@ -133,8 +126,18 @@ export const SftpCard = ( {
 				requestSshAccess( siteId );
 			}
 		}
-		return onDestroy();
 	}, [ disabled, siteId, siteHasSshFeature ] );
+
+	// For security reasons we remove the password from the state when the component is unmounted
+	// Since users should reset it every time they want to see it
+	useEffect(
+		() => () => {
+			if ( password ) {
+				removePasswordFromState( siteId, username );
+			}
+		},
+		[ username, password, siteId, removePasswordFromState ]
+	);
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -155,8 +158,13 @@ export const SftpCard = ( {
 		if ( password ) {
 			return (
 				<>
-					<SftpClipboardButtonInput id="password" name="password" value={ password } />
-					<p className="sftp-card__password-warning">
+					<ClipboardButtonInput
+						className="sftp-card__input"
+						id="password"
+						name="password"
+						value={ password }
+					/>
+					<p>
 						{ translate(
 							'Save your password somewhere safe. You will need to reset it to view it again.'
 						) }
@@ -167,15 +175,10 @@ export const SftpCard = ( {
 
 		return (
 			<>
-				<SftpPasswordExplainer>
+				<div className="sftp-card__password-explainer">
 					{ translate( 'For security reasons, you must reset your password to view it.' ) }
-				</SftpPasswordExplainer>
-				<Button
-					onClick={ resetPassword }
-					disabled={ isPasswordLoading }
-					busy={ isPasswordLoading }
-					className="sftp-card__password-reset-button"
-				>
+				</div>
+				<Button onClick={ resetPassword } disabled={ isPasswordLoading } busy={ isPasswordLoading }>
 					{ translate( 'Reset password' ) }
 				</Button>
 			</>
@@ -202,7 +205,12 @@ export const SftpCard = ( {
 					) }
 				/>
 				{ isSshAccessEnabled && (
-					<SftpClipboardButtonInput id="ssh" name="ssh" value={ sshConnectString } />
+					<ClipboardButtonInput
+						className="sftp-card__input"
+						id="ssh"
+						name="ssh"
+						value={ sshConnectString }
+					/>
 				) }
 			</div>
 		);
@@ -241,7 +249,7 @@ export const SftpCard = ( {
 				</HostingCardDescription>
 			) }
 			{ displayQuestionsAndButton && (
-				<SftpQuestionsContainer>
+				<div className="sftp-card__questions-container">
 					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
 						{ translate(
 							'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}}. ' +
@@ -274,11 +282,11 @@ export const SftpCard = ( {
 							) }
 						</PanelBody>
 					) }
-				</SftpQuestionsContainer>
+				</div>
 			) }
 			{ displayQuestionsAndButton && (
 				<>
-					<SftpEnableWarning>
+					<p className="sftp-card__enable-warning">
 						{ translate(
 							'{{strong}}Ready to access your website files?{{/strong}} Keep in mind, if mistakes happen you can restore your last backup, but will lose changes made after the backup date.',
 							{
@@ -287,31 +295,46 @@ export const SftpCard = ( {
 								},
 							}
 						) }
-					</SftpEnableWarning>
-					<Button onClick={ createUser } className="sftp-card__create-credentials-button">
-						{ translate( 'Create credentials' ) }
-					</Button>
+					</p>
+					<Button onClick={ createUser }>{ translate( 'Create credentials' ) }</Button>
 				</>
 			) }
 			{ username && (
-				<FormFieldset className="sftp-card__info-field">
+				<FormFieldset>
 					<FormLabel htmlFor="url">{ translate( 'URL' ) }</FormLabel>
-					<SftpClipboardButtonInput id="url" name="url" value={ SFTP_URL } />
+					<ClipboardButtonInput
+						className="sftp-card__input"
+						id="url"
+						name="url"
+						value={ SFTP_URL }
+					/>
 					<FormLabel htmlFor="port">{ translate( 'Port' ) }</FormLabel>
-					<SftpClipboardButtonInput id="port" name="port" value={ SFTP_PORT.toString() } />
+					<ClipboardButtonInput
+						className="sftp-card__input"
+						id="port"
+						name="port"
+						value={ SFTP_PORT.toString() }
+					/>
 					<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
-					<SftpClipboardButtonInput id="username" name="username" value={ username } />
+					<ClipboardButtonInput
+						className="sftp-card__input"
+						id="username"
+						name="username"
+						value={ username }
+					/>
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
 					{ siteHasSshFeature && (
-						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH access' ) }</SftpSshLabel>
+						<FormLabel className="sftp-card__ssh-label" htmlFor="ssh">
+							{ translate( 'SSH access' ) }
+						</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>
 						{ () => (
 							<>
-								{ siteHasSshFeature && isSshAccessEnabled && (
-									<SshKeys disabled={ disabled } siteId={ siteId } siteSlug={ siteSlug } />
+								{ siteHasSshFeature && isSshAccessEnabled && siteId && siteSlug && (
+									<SshKeys disabled={ !! disabled } siteId={ siteId } siteSlug={ siteSlug } />
 								) }
 							</>
 						) }
@@ -324,7 +347,7 @@ export const SftpCard = ( {
 	);
 };
 
-const resetSftpPassword = ( siteId, sshUsername ) =>
+const resetSftpPassword = ( siteId: number | null, sshUsername: string | null ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent( 'Hosting Configuration', 'Clicked "Reset Password" Button in SFTP Card' ),
@@ -334,7 +357,7 @@ const resetSftpPassword = ( siteId, sshUsername ) =>
 		resetAtomicSftpPassword( siteId, sshUsername )
 	);
 
-const createSftpUser = ( siteId, currentUserId ) =>
+const createSftpUser = ( siteId: number | null, currentUserId: number | null ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -347,7 +370,7 @@ const createSftpUser = ( siteId, currentUserId ) =>
 		createAtomicSftpUser( siteId, currentUserId )
 	);
 
-const enableSshAccess = ( siteId ) =>
+const enableSshAccess = ( siteId: number | null ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_hosting_configuration_enable_ssh_access' ),
@@ -356,7 +379,7 @@ const enableSshAccess = ( siteId ) =>
 		enableAtomicSshAccess( siteId )
 	);
 
-const disableSshAccess = ( siteId ) =>
+const disableSshAccess = ( siteId: number | null ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_hosting_configuration_disable_ssh_access' ),
@@ -365,13 +388,17 @@ const disableSshAccess = ( siteId ) =>
 		disableAtomicSshAccess( siteId )
 	);
 
+type SftpCardProps = {
+	disabled?: boolean;
+};
+
 export default connect(
-	( state, { disabled } ) => {
+	( state: AppState, { disabled }: SftpCardProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const currentUserId = getCurrentUserId( state );
-		let username;
-		let password;
+		let username: string | null = null;
+		let password: string | null = null;
 
 		if ( ! disabled ) {
 			const users = getAtomicHostingSftpUsers( state, siteId );
@@ -408,7 +435,7 @@ export default connect(
 		enableSshAccess,
 		disableSshAccess,
 
-		removePasswordFromState: ( siteId, username ) =>
+		removePasswordFromState: ( siteId: number | null, username: string | null ) =>
 			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
 	}
 )( localize( SftpCard ) );
