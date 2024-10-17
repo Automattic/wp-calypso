@@ -20,7 +20,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -156,7 +156,7 @@ export default connect(
 			isDevAccount: isDevAccount,
 			isWoo:
 				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-				isWooCommerceCoreProfilerFlow( state ),
+				isPasswordlessJetpackConnectionFlow( state ),
 		};
 	},
 	{ showErrorNotice: errorNotice }

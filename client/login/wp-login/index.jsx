@@ -47,7 +47,6 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
@@ -665,7 +664,6 @@ export default connect(
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
-			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isPasswordlessJetpackConnection: isPasswordlessJetpackConnectionFlow( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ),
 			isWooPasswordless: getIsWooPasswordless( state ),

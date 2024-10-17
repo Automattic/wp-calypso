@@ -44,7 +44,6 @@ import {
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
 import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
@@ -572,7 +571,6 @@ const connectComponent = connect(
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
-		isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
 		isPasswordlessJetpackConnection: isPasswordlessJetpackConnectionFlow( state ),
 	} ),
 	{
