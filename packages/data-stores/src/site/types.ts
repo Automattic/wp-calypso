@@ -134,6 +134,7 @@ export interface SiteDetails {
 	is_a4a_client?: boolean;
 	is_a4a_dev_site?: boolean;
 	jetpack: boolean;
+	jetpack_connection?: boolean;
 	lang?: string;
 	launch_status: string;
 	locale: string;
