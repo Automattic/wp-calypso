@@ -6,7 +6,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
-import { Icon, upload, plugins } from '@wordpress/icons';
+import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
@@ -18,7 +18,6 @@ import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -57,7 +56,6 @@ import {
 import NoPermissionsError from './no-permissions-error';
 import PluginsListV2 from './plugin-management-v2/plugin-list-v2';
 import UpdatePlugins from './plugin-management-v2/update-plugins';
-import PluginsList from './plugins-list';
 import './style.scss';
 
 export class PluginsMain extends Component {
@@ -156,15 +154,11 @@ export class PluginsMain extends Component {
 	}
 
 	getCurrentPlugins() {
-		const { currentPlugins, currentPluginsOnVisibleSites, search, selectedSiteSlug } = this.props;
-		let plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
+		const { currentPlugins, currentPluginsOnVisibleSites, selectedSiteSlug } = this.props;
+		const plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
 
 		if ( ! plugins ) {
 			return plugins;
-		}
-
-		if ( search ) {
-			plugins = plugins.filter( this.matchSearchTerms.bind( this, search ) );
 		}
 
 		return this.addWporgDataToPlugins( plugins );
@@ -376,7 +370,11 @@ export class PluginsMain extends Component {
 		}
 
 		const installedPluginsList = showInstalledPluginList && (
-			<PluginsListV2 currentPlugins={ currentPlugins } />
+			<PluginsListV2
+				currentPlugins={ currentPlugins }
+				onSearch={ this.props.doSearch }
+				initialSearch={ this.props.search }
+			/>
 		);
 
 		return <div>{ installedPluginsList }</div>;
@@ -539,25 +537,7 @@ export class PluginsMain extends Component {
 							'plugins__main-content-jc': isJetpackCloud,
 						} ) }
 					>
-						<div className="plugins__content-wrapper">
-							{
-								// Hide the search box only when the request to fetch plugins fail, and there are no sites.
-								! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
-									<div className="plugins__search">
-										<Search
-											hideFocus
-											isOpen
-											onSearch={ this.props.doSearch }
-											initialValue={ this.props.search }
-											hideClose={ ! this.props.search }
-											analyticsGroup="Plugins"
-											placeholder={ this.props.translate( 'Search plugins' ) }
-										/>
-									</div>
-								)
-							}
-							{ this.renderPluginsContent() }
-						</div>
+						<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
 					</div>
 				</div>
 			</>

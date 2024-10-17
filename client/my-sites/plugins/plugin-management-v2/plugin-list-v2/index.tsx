@@ -1,7 +1,7 @@
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import Button from 'calypso/blocks/follow-button/button';
 
@@ -9,12 +9,12 @@ import './style.scss';
 
 interface Props {
 	currentPlugins: Array;
+	initialSearch?: string;
+	onSearch?: ( search: string ) => void;
 }
 
-export default function PluginsListV2( { currentPlugins }: Props ) {
+export default function PluginsListV2( { currentPlugins, initialSearch, onSearch }: Props ) {
 	const translate = useTranslate();
-
-	console.log( 'currentPlugins', currentPlugins );
 
 	const fields = useMemo(
 		() => [
@@ -38,6 +38,8 @@ export default function PluginsListV2( { currentPlugins }: Props ) {
 			{
 				id: 'plugins',
 				label: 'Installed Plugins',
+				getValue: ( { item }: { item } ) => item.name,
+				enableGlobalSearch: true,
 				render: ( { item } ) => {
 					return (
 						<>
@@ -78,7 +80,7 @@ export default function PluginsListV2( { currentPlugins }: Props ) {
 	const pluginsPerPage = 10;
 	const initialDataViewsState = {
 		type: 'table',
-		search: '',
+		search: initialSearch || '',
 		// filters:
 		// 	filter?.issueTypes?.map( ( issueType ) => {
 		// 		return {
@@ -166,6 +168,11 @@ export default function PluginsListV2( { currentPlugins }: Props ) {
 
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
+	// When search changes, notify the parent component
+	useEffect( () => {
+		onSearch && onSearch( dataViewsState.search );
+	}, [ dataViewsState.search, onSearch ] );
+
 	const { data, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( currentPlugins, dataViewsState, fields );
 	}, [ currentPlugins, dataViewsState, fields ] );
@@ -175,8 +182,10 @@ export default function PluginsListV2( { currentPlugins }: Props ) {
 			<ItemsDataViews
 				data={ {
 					items: data,
+					getItemId: ( item ) => `${ item.id }`,
 					fields,
 					pagination: paginationInfo,
+					searchLabel: translate( 'Search for plugins' ),
 					enableSearch: true,
 					actions: actions,
 					dataViewsState: dataViewsState,
