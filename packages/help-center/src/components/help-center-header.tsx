@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import {
@@ -69,7 +70,8 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const navigate = useNavigate();
 	const { pathname, key } = useLocation();
 
-	const shouldDisplayChatHistoryButton = pathname !== '/chat-history';
+	const shouldDisplayChatHistoryButton =
+		config.isEnabled( 'help-center-experience' ) && pathname !== '/chat-history';
 	const isHelpCenterHome = key === 'default';
 
 	const headerText =
