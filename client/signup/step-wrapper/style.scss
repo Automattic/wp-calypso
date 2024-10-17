@@ -8,6 +8,7 @@
 
 	.formatted-header {
 		flex-grow: 1;
+		text-wrap: pretty;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {

@@ -1,6 +1,7 @@
 import { WordPressLogo } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import MigrationFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon/migration-favicon';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { getFirstGrapheme } from 'calypso/lib/string';
 import { useSelector } from 'calypso/state';
@@ -13,7 +14,7 @@ interface SiteFaviconProps {
 	color?: string;
 	size?: number;
 	className?: string;
-	fallback?: 'color' | 'wordpress-logo' | 'first-grapheme';
+	fallback?: 'color' | 'wordpress-logo' | 'first-grapheme' | 'migration';
 }
 
 const SiteFavicon = ( {
@@ -40,6 +41,9 @@ const SiteFavicon = ( {
 				</div>
 			);
 			defaultFaviconClass = 'is-first-grapheme';
+			break;
+		case 'migration':
+			defaultFavicon = <MigrationFavicon size={ size } />;
 			break;
 		case 'color':
 		default:
