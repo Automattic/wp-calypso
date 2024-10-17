@@ -169,9 +169,12 @@ class StatsNavigation extends Component {
 
 		// Address flashing tooltip here.
 		// console.log( 'Rendering StatsNavigation component' );
-		const isJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
-		const delayTooltipPresentationForDotCom = isNewSite && ! isJetpackSite;
+		// const isJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
+		// const delayTooltipPresentationForDotCom = isNewSite && ! isJetpackSite;
 		// console.log( 'delayTooltipPresentationForDotCom:', delayTooltipPresentationForDotCom );
+		console.log( 'showSettingsTooltip: ', showSettingsTooltip );
+		console.log( 'isPageSettingsTooltipDismissed: ', isPageSettingsTooltipDismissed );
+		console.log( 'isNewSite: ', isNewSite );
 
 		return (
 			<div className={ wrapperClass }>
@@ -230,9 +233,7 @@ class StatsNavigation extends Component {
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
-								showSettingsTooltip &&
-								! isPageSettingsTooltipDismissed &&
-								! delayTooltipPresentationForDotCom
+								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! isNewSite
 							}
 							onTooltipDismiss={ this.onTooltipDismiss }
 						/>
@@ -245,6 +246,7 @@ class StatsNavigation extends Component {
 export default connect(
 	( state, { siteId, selectedItem } ) => {
 		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
+		console.log( 'siteCreatedTimeStamp:', siteCreatedTimeStamp );
 		const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 		// Check if the site is created within a week.
 		const isNewSite =
@@ -253,7 +255,7 @@ export default connect(
 		// Logging shows this value moving from null to true/false.
 		// In the case of a new site, that means it's null and becomes true.
 		// This causes the tooltip to flash in Odyssey Stats.
-		// console.log( 'isNewSite:', isNewSite );
+		console.log( 'isNewSite:', isNewSite );
 
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
