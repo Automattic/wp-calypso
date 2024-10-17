@@ -39,10 +39,12 @@ function withNoticeHook( HookedComponent ) {
 			'traffic_page_settings'
 		);
 
+		const forceTooltipVisible = true;
+
 		return (
 			<HookedComponent
 				{ ...props }
-				showSettingsTooltip={ showSettingsTooltip }
+				showSettingsTooltip={ showSettingsTooltip || forceTooltipVisible }
 				refetchNotices={ refetchNotices }
 				mutateNoticeVisbilityAsync={ mutateNoticeVisbilityAsync }
 			/>
@@ -236,7 +238,11 @@ class StatsNavigation extends Component {
 
 export default connect(
 	( state, { siteId, selectedItem } ) => {
-		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
+		let siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
+		if ( siteCreatedTimeStamp !== null ) {
+			siteCreatedTimeStamp = '2024-10-15T04:29:42+00:00';
+		}
+
 		const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 		// Check if the site is created within a week.
 		const isNewSite =
