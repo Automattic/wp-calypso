@@ -35,7 +35,6 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
-		"@automattic/design-picker": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
@@ -67,6 +66,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/design-picker": "workspace:^",
 		"@remix-run/router": "^1.5.0",
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
