@@ -170,6 +170,11 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
+		// The isNewSite value can be null so we need to guard against that.
+		// This is semantically incorrect as we expect a boolean value. Probably best to address this
+		// in the connect() function.
+		const delayTooltipPresentation = isNewSite === null || isNewSite;
+
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
@@ -227,7 +232,9 @@ class StatsNavigation extends Component {
 							pageModules={ pageModules }
 							onToggleModule={ this.onToggleModule }
 							isTooltipShown={
-								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! isNewSite
+								showSettingsTooltip &&
+								! isPageSettingsTooltipDismissed &&
+								! delayTooltipPresentation
 							}
 							onTooltipDismiss={ this.onTooltipDismiss }
 						/>
