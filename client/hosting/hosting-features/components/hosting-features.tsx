@@ -260,6 +260,7 @@ const HostingFeatures = () => {
 			<div className="hosting-features__cards">
 				{ promoCards.map( ( card ) => (
 					<PromoCard
+						key={ card.title }
 						title={ card.title }
 						text={ card.text }
 						supportContext={ card.supportContext }
