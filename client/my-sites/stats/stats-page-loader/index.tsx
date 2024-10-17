@@ -14,7 +14,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { StatsGlobalValuesProvider } from './../pages/providers/global-provider';
+import { StatsGlobalValuesProvider } from '../pages/providers/global-provider';
 
 type AsyncLoadProps = {
 	children: ReactNode;
@@ -67,7 +67,7 @@ const InsufficientPermissionsNotice = () => {
 	);
 };
 
-export default function LoadStatsPage( { children }: AsyncLoadProps ) {
+export default function StatsPageLoader( { children }: AsyncLoadProps ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
