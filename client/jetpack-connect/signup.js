@@ -43,6 +43,7 @@ import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
+import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
@@ -67,6 +68,7 @@ export class JetpackSignup extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		isWooCoreProfiler: PropTypes.bool,
+		isPasswordlessJetpackConnection: PropTypes.bool,
 	};
 
 	state = {
@@ -131,7 +133,7 @@ export class JetpackSignup extends Component {
 
 	isWooCoreProfiler( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooCoreProfiler;
+		return 'woocommerce-core-profiler' === from || this.props.isPasswordlessJetpackConnection;
 	}
 
 	getWooDnaConfig() {
@@ -571,6 +573,7 @@ const connectComponent = connect(
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
 		isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
+		isPasswordlessJetpackConnection: isPasswordlessJetpackConnectionFlow( state ),
 	} ),
 	{
 		createAccount: createAccountAction,
