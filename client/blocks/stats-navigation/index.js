@@ -168,10 +168,10 @@ class StatsNavigation extends Component {
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		// Address flashing tooltip here.
-		console.log( 'Rendering StatsNavigation component' );
+		// console.log( 'Rendering StatsNavigation component' );
 		const isJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
 		const delayTooltipPresentationForDotCom = isNewSite && ! isJetpackSite;
-		console.log( 'delayTooltipPresentationForDotCom:', delayTooltipPresentationForDotCom );
+		// console.log( 'delayTooltipPresentationForDotCom:', delayTooltipPresentationForDotCom );
 
 		return (
 			<div className={ wrapperClass }>
