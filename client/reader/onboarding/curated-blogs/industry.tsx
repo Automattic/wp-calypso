@@ -58,7 +58,54 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	startups: [
-		// Add startup blogs...
+		{
+			feed_ID: 111100674,
+			site_ID: 136296444,
+			site_URL: 'https://techcrunch.com/',
+			site_name: 'TechCrunch',
+		},
+		{
+			feed_ID: 116494,
+			site_ID: 6599589,
+			site_URL: 'https://steveblank.com/',
+			site_name: 'Steve Blank',
+		},
+		{
+			feed_ID: 116044414,
+			site_ID: 186248957,
+			site_URL: 'http://tremendous.blog',
+			site_name: 'Tremendous',
+		},
+		{
+			feed_ID: 458090,
+			site_ID: 11070789,
+			site_URL: 'http://kellblog.com',
+			site_name: 'Kellblog',
+		},
+		{
+			feed_ID: 63349823,
+			site_ID: 126020344,
+			site_URL: 'https://venturebeat.com/',
+			site_name: 'VentureBeat',
+		},
+		{
+			feed_ID: 102488324,
+			site_ID: null,
+			site_URL: 'https://avc.com/',
+			site_name: 'AVC',
+		},
+		{
+			feed_ID: 25353898,
+			site_ID: null,
+			site_URL: 'https://www.tomtunguz.com/',
+			site_name: 'Tomasz Tunguz',
+		},
+		{
+			feed_ID: 122170613,
+			site_ID: null,
+			site_URL: 'https://andrewchen.com/',
+			site_name: 'andrewchen',
+		},
 	],
 	finance: [
 		// Add finance blogs...
