@@ -108,7 +108,42 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	finance: [
-		// Add finance blogs...
+		{
+			feed_ID: 65429685,
+			site_ID: 2327063,
+			site_URL: 'https://alephblog.com/',
+			site_name: 'The Aleph Blog',
+		},
+		{
+			feed_ID: 162814955,
+			site_ID: 23704597,
+			site_URL: 'https://jlcollinsnh.wordpress.com/',
+			site_name: 'jlcollinsnh',
+		},
+		{
+			feed_ID: 9046327,
+			site_ID: null,
+			site_URL: 'https://abnormalreturns.com/',
+			site_name: 'Abnormal Returns',
+		},
+		{
+			feed_ID: 32743323,
+			site_ID: null,
+			site_URL: 'ttps://awealthofcommonsense.com/',
+			site_name: 'A Wealth of Common Sense',
+		},
+		{
+			feed_ID: 46459237,
+			site_ID: null,
+			site_URL: 'https://ritholtz.com/',
+			site_name: 'The Big Picture',
+		},
+		{
+			feed_ID: 8873211,
+			site_ID: null,
+			site_URL: 'http://www.calculatedriskblog.com/',
+			site_name: 'Calculated Risk',
+		},
 	],
 	space: [
 		{
