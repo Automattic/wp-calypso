@@ -2,7 +2,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
@@ -116,6 +116,22 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		siteId,
 	} );
 
+	const preventUnload = useCallback(
+		( event: BeforeUnloadEvent ) => {
+			if ( ! preparationCompleted ) {
+				event.returnValue = true; // Safari iOS https://caniuse.com/mdn-api_window_beforeunload_event_preventdefault_activation
+				event.preventDefault(); // Modern browsers
+			}
+		},
+		[ preparationCompleted ]
+	);
+
+	useEffect( () => {
+		window.addEventListener( 'beforeunload', preventUnload );
+		return () => {
+			window.removeEventListener( 'beforeunload', preventUnload );
+		};
+	}, [ preparationCompleted, preventUnload ] );
 	// Hosting details.
 	const { data: hostingDetails } = useHostingProviderUrlDetails( fromUrl );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
