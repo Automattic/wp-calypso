@@ -301,6 +301,10 @@ export const STEPS = {
 		slug: 'already-wpcom',
 		asyncComponent: () => import( './steps-repository/site-migration-already-wpcom' ),
 	},
+	SITE_MIGRATION_SUPPORT_INSTRUCTIONS: {
+		slug: 'migration-support-instructions',
+		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
+	},
 
 	PICK_SITE: {
 		slug: 'sitePicker',

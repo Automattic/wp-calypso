@@ -1485,6 +1485,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "npm:^2.0.1"
+    "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@types/react": "npm:^18.2.6"
     "@wordpress/api-fetch": "npm:7.8.0"
