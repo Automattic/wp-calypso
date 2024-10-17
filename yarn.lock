@@ -664,6 +664,7 @@ __metadata:
     "@automattic/color-studio": "npm:^3.0.1"
     "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
