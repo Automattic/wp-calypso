@@ -39,13 +39,7 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 
 	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
 
-	const {
-		formState: { errors, isSubmitting },
-		control,
-		handleSubmit,
-		watch,
-		clearErrors,
-	} = useForm< CredentialsFormData >( {
+	const { control, handleSubmit, watch, clearErrors, formState } = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
 		disabled: isBusy,
@@ -59,6 +53,8 @@ export const useCredentialsForm = ( onSubmit: ( siteInfo?: UrlData ) => void ) =
 		},
 		errors: serverSideError,
 	} );
+
+	const { isSubmitting, errors } = formState;
 
 	useEffect( () => {
 		setIsBusy( isSubmitting );
