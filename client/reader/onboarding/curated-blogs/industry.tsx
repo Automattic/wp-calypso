@@ -372,6 +372,17 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	'creator-economy': [
-		// Add creator economy blogs...
+		{
+			feed_ID: 138958746,
+			site_ID: 35140201,
+			site_URL: 'https://creatoreconomylaw.com/',
+			site_name: 'Creator Economy Law',
+		},
+		{
+			feed_ID: 108106978,
+			site_ID: 181411913,
+			site_URL: 'https://www.tubefilter.com/',
+			site_name: 'Tubefilter',
+		},
 	],
 };
