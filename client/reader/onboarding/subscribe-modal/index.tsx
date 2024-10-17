@@ -6,7 +6,7 @@ import React, { useMemo, useState, ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
-import FeedStream from 'calypso/reader/feed-stream';
+import Stream from 'calypso/reader/stream';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { curatedBlogs } from '../curated-blogs';
 
@@ -29,17 +29,15 @@ interface Card {
 	data: CardData[];
 }
 
-interface FeedStreamProps {
-	feedId: number;
-	siteId?: number;
-	showBack?: boolean;
-	trackScrollPage: () => void;
+interface StreamProps {
 	streamKey: string;
-	// Add other props as needed
+	className?: string;
+	followSource?: string;
+	useCompactCards?: boolean;
+	// Add other props as needed based on the Stream component's requirements
 }
 
-const TypedFeedStream: ComponentType< FeedStreamProps > =
-	FeedStream as ComponentType< FeedStreamProps >;
+const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
@@ -130,11 +128,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setSelectedSite( site );
 	};
 
-	const trackScrollPage = () => {
-		// Implement scroll tracking logic here if needed
-		console.log( 'Scroll tracked' );
-	};
-
 	return (
 		isOpen && (
 			<Modal
@@ -181,19 +174,22 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 						</Button>
 					</div>
 					<div className="subscribe-modal__preview-column">
-						{ selectedSite ? (
-							<TypedFeedStream
-								feedId={ selectedSite.feed_ID }
-								siteId={ selectedSite.site_ID }
-								showBack={ false }
-								trackScrollPage={ trackScrollPage }
-								streamKey={ `feed:${ selectedSite.feed_ID }` }
-							/>
-						) : (
-							<div className="subscribe-modal__preview-placeholder">
-								{ __( 'Select a blog to preview its posts' ) }
-							</div>
-						) }
+						<div className="subscribe-modal__preview-placeholder">
+							{ selectedSite ? (
+								<div className="subscribe-modal__preview-stream-container">
+									<TypedStream
+										streamKey={ `feed:${ selectedSite.feed_ID }` }
+										className="is-site-stream subscribe-modal__preview-stream"
+										followSource="reader_subscribe_modal"
+										useCompactCards
+									/>
+								</div>
+							) : (
+								<div className="subscribe-modal__preview-placeholder-text">
+									{ __( 'Select a blog to preview its posts' ) }
+								</div>
+							) }
+						</div>
 					</div>
 				</div>
 			</Modal>
