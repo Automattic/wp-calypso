@@ -167,6 +167,9 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
+		// Address flashing tooltip here.
+		console.log( 'Rendering StatsNavigation component' );
+
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
