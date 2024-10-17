@@ -685,7 +685,7 @@ __metadata:
     canvas-confetti: "npm:^1.6.0"
     clsx: "npm:^2.1.1"
     colord: "npm:2.9.3"
-    debug: "npm:^4.3.3"
+    debug: "npm:^4.3.4"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
@@ -758,6 +758,8 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
+    "@automattic/load-script": "workspace:^"
+    "@automattic/oauth-token": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": "npm:^1.5.0"
     "@tanstack/react-query": "npm:^5.15.5"
@@ -1373,6 +1375,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -1522,6 +1525,16 @@ __metadata:
     react-dom: "npm:^18.3.1"
     redux: "npm:^4.2.1"
     webpack: "npm:^5.94.0"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/oauth-token@workspace:^, @automattic/oauth-token@workspace:packages/oauth-token":
+  version: 0.0.0-use.local
+  resolution: "@automattic/oauth-token@workspace:packages/oauth-token"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    cookie: "npm:^0.4.1"
+    store: "npm:^2.0.12"
   languageName: unknown
   linkType: soft
 
@@ -2022,7 +2035,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/viewport-react@npm:^1.0.0, @automattic/viewport-react@workspace:^, @automattic/viewport-react@workspace:packages/viewport-react":
+"@automattic/viewport-react@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@automattic/viewport-react@npm:1.0.0"
+  dependencies:
+    "@automattic/viewport": "npm:^1.0.0"
+    "@wordpress/compose": "npm:^3.7.0"
+  peerDependencies:
+    react: ^16.0.0
+  checksum: 67b5076b8146f77d24b6c7f563a46e7cf1833b58964837db764c4b23a77fd39e32326d04ebe7df303366e54d821e17a4f9bcadb825943347c1e0850552cdc179
+  languageName: node
+  linkType: hard
+
+"@automattic/viewport-react@workspace:^, @automattic/viewport-react@workspace:packages/viewport-react":
   version: 0.0.0-use.local
   resolution: "@automattic/viewport-react@workspace:packages/viewport-react"
   dependencies:
@@ -2035,7 +2060,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/viewport@workspace:^, @automattic/viewport@workspace:packages/viewport":
+"@automattic/viewport@npm:^1.0.0, @automattic/viewport@workspace:^, @automattic/viewport@workspace:packages/viewport":
   version: 0.0.0-use.local
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
@@ -12986,6 +13011,7 @@ __metadata:
     "@automattic/material-design-icons": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
+    "@automattic/oauth-token": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"

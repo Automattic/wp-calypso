@@ -39,6 +39,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
+		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/api-fetch": "^7.8.0",

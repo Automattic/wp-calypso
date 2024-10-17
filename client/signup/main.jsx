@@ -8,6 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
+import * as oauthToken from '@automattic/oauth-token';
 import debugModule from 'debug';
 import {
 	clone,
@@ -39,7 +40,6 @@ import {
 	recordSignupPlanChange,
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
