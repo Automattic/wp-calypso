@@ -24,6 +24,12 @@ export const HelpCenterChatHistory = () => {
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 
+	useEffect( () => {
+		if ( isChatLoaded && getConversations ) {
+			setConversations( getConversations() as ZendeskConversation[] );
+		}
+	}, [ getConversations, isChatLoaded ] );
+
 	const RecentConversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 		if ( ! conversations ) {
 			return [];
@@ -41,6 +47,7 @@ export const HelpCenterChatHistory = () => {
 						return (
 							<HelpCenterSupportChatMessage
 								key={ conversation.id }
+								conversation={ conversation }
 								message={ lastMessage }
 								isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
 								navigateTo="odie"
@@ -51,12 +58,6 @@ export const HelpCenterChatHistory = () => {
 			</>
 		);
 	};
-
-	useEffect( () => {
-		if ( isChatLoaded && getConversations ) {
-			setConversations( getConversations() as ZendeskConversation[] );
-		}
-	}, [ getConversations, isChatLoaded ] );
 
 	return (
 		<div className="help-center-chat-history">

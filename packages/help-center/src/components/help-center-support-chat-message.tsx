@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
+import { useOdieAssistantContext, useSetOdieStorage } from '@automattic/odie-client';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import type { ZendeskMessage } from '@automattic/odie-client';
+import type { ZendeskConversation, ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 
@@ -19,11 +20,12 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 
 export const HelpCenterSupportChatMessage = ( {
 	message,
-	navigateTo = '',
+	conversation,
 	avatarSize = 32,
 	isUnread = false,
 }: {
 	message: ZendeskMessage;
+	conversation: ZendeskConversation;
 	navigateTo: string;
 	avatarSize?: number;
 	isUnread: boolean;
@@ -33,14 +35,24 @@ export const HelpCenterSupportChatMessage = ( {
 
 	const { displayName, received, text, avatarUrl } = message;
 	const helpCenterContext = useHelpCenterContext();
+	const { setChat } = useOdieAssistantContext();
+	const storeChatId = useSetOdieStorage( 'chat_id' );
+
 	const sectionName = helpCenterContext.sectionName;
 
 	return (
 		<Link
-			// TODO: remove hardcoded value
-			to={ 'odie' || navigateTo }
-			target="_self"
-			onClick={ () => trackContactButtonClicked( sectionName ) }
+			to="/odie"
+			onClick={ () => {
+				if ( conversation?.metadata?.odieChatId ) {
+					storeChatId( String( conversation?.metadata?.odieChatId ) );
+					setChat( {
+						chat_id: conversation?.metadata?.odieChatId,
+						messages: [ ...conversation.messages ],
+					} );
+				}
+				trackContactButtonClicked( sectionName );
+			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
 			} ) }
