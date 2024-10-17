@@ -100,7 +100,7 @@ export type Message = {
 export type Chat = {
 	conversationId?: string;
 	chat_id?: number | null;
-	messages: Message[];
+	messages: ( Message | ZendeskMessage )[];
 };
 
 export type OdieAllowedSectionNames =
