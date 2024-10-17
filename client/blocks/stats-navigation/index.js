@@ -171,8 +171,8 @@ class StatsNavigation extends Component {
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		// The isNewSite value can be null so we need to guard against that.
-		// This is semantically incorrect as we expect a boolean value. Probably best to address this
-		// in the connect() function.
+		// This is semantically incorrect as we expect a boolean value.
+		// TODO: Update logic in connect() function to send only true/false value.
 		const delayTooltipPresentation = isNewSite === null || isNewSite;
 
 		return (
