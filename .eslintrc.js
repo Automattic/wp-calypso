@@ -152,7 +152,7 @@ module.exports = {
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
-
+					'@typescript-eslint/consistent-type-imports': 'warn',
 					// TypeScript compiler already takes care of these errors
 					'import/no-extraneous-dependencies': 'off',
 					'import/named': 'off',
