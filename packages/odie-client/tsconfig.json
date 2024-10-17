@@ -8,5 +8,5 @@
 	},
 	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ { "path": "../components" } ]
+	"references": [ { "path": "../components" }, { "path": "../zendesk-client" } ]
 }
