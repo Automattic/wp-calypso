@@ -6,8 +6,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-
-import './help-center-chat-history.scss';
+import type { ZendeskConversation } from '@automattic/odie-client';
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
@@ -18,14 +17,14 @@ export const HelpCenterChatHistory = () => {
 
 	// TODO: might not need to store activeTab in state
 	// const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
-	const [ conversations, setConversations ] = useState( [] );
+	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const { getConversations } = useSmooch();
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 
-	const RecentConversations = ( { conversations } ) => {
+	const RecentConversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 		if ( ! conversations ) {
 			return [];
 		}
@@ -37,14 +36,17 @@ export const HelpCenterChatHistory = () => {
 						Array.isArray( conversation.messages ) && conversation.messages.length > 0
 							? conversation.messages[ conversation.messages.length - 1 ]
 							: null;
-					return (
-						<HelpCenterSupportChatMessage
-							key={ conversation.id }
-							message={ lastMessage }
-							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
-							navigateTo="odie"
-						/>
-					);
+
+					if ( lastMessage ) {
+						return (
+							<HelpCenterSupportChatMessage
+								key={ conversation.id }
+								message={ lastMessage }
+								isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
+								navigateTo="odie"
+							/>
+						);
+					}
 				} ) }
 			</>
 		);
@@ -52,7 +54,7 @@ export const HelpCenterChatHistory = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			setConversations( getConversations() );
+			setConversations( getConversations() as ZendeskConversation[] );
 		}
 	}, [ getConversations, isChatLoaded ] );
 
