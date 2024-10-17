@@ -8,7 +8,7 @@ import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload, plugins } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import { DataViews } from 'calypso/components/dataviews';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Search from 'calypso/components/search';
@@ -56,9 +55,9 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
+import PluginsListV2 from './plugin-management-v2/plugin-list-v2';
 import UpdatePlugins from './plugin-management-v2/update-plugins';
 import PluginsList from './plugins-list';
-
 import './style.scss';
 
 export class PluginsMain extends Component {
@@ -376,156 +375,8 @@ export class PluginsMain extends Component {
 			}
 		}
 
-		// const installedPluginsList = showInstalledPluginList && (
-		// 	<PluginsList
-		// 		header={ this.props.translate( 'Installed Plugins' ) }
-		// 		plugins={ currentPlugins }
-		// 		isPlaceholder={ this.shouldShowPluginListPlaceholders() }
-		// 		isLoading={ this.props.requestingPluginsForSites }
-		// 		isJetpackCloud={ this.props.isJetpackCloud }
-		// 		searchTerm={ search }
-		// 		filter={ this.props.filter }
-		// 		requestPluginsError={ this.props.requestPluginsError }
-		// 	/>
-		// );
-
-		console.log( 'currentPlugins', currentPlugins );
-
-		const fields = [
-			{
-				id: 'plugins',
-				label: 'Installed Plugins',
-				render: ( { item } ) => {
-					return (
-						<>
-							{ item.icon && <img src={ item.icon } /> }
-							{ ! item.icon && (
-								<Icon
-									size={ 32 }
-									icon={ plugins }
-									className="plugin-common-card__plugin-icon plugin-default-icon"
-								/>
-							) }
-							<a href="...">{ item.name }</a>
-						</>
-					);
-				},
-				enableSorting: false,
-			},
-			{
-				id: 'sites',
-				label: 'Sites',
-				enableHiding: false,
-				render: ( { item } ) => {
-					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
-				},
-			},
-			{
-				id: 'update',
-				label: 'Update available',
-				enableHiding: false,
-				render: ( { item } ) => {
-					return <Button>Update to 1.2.3</Button>;
-				},
-			},
-		];
-
-		const view = {
-			type: 'table',
-			search: '',
-			filters: [
-				{ field: 'plugins', operator: 'is', value: 2 },
-				{ field: 'status', operator: 'isAny', value: [ 'publish', 'draft' ] },
-			],
-			page: 1,
-			perPage: 30,
-			sort: {
-				field: 'date',
-				direction: 'desc',
-			},
-			fields: [ 'plugins', 'sites', 'update' ],
-			layout: {},
-		};
-
-		const paginationInfo = {
-			totalItems: 2,
-			totalPages: 5,
-		};
-
-		const actions = [
-			{
-				href: `some-url`,
-				callback: () => {
-					console.log( 'Manage Plugin' );
-				},
-				label: translate( 'Manage Plugin' ),
-				isExternalLink: true,
-				isEnabled: true,
-				supportsBulk: false,
-			},
-			{
-				href: `some-url`,
-				callback: () => {
-					console.log( 'Activate' );
-				},
-				label: translate( 'Activate' ),
-				isExternalLink: true,
-				isEnabled: true,
-				supportsBulk: true,
-			},
-			{
-				href: `some-url`,
-				callback: () => {
-					console.log( 'Deactivate' );
-				},
-				label: translate( 'Deactivate' ),
-				isExternalLink: true,
-				isEnabled: true,
-				supportsBulk: true,
-			},
-			{
-				href: `some-url`,
-				callback: () => {
-					console.log( 'Enable Autoupdate' );
-				},
-				label: translate( 'Enable Autoupdate' ),
-				isExternalLink: true,
-				isEnabled: true,
-				supportsBulk: true,
-			},
-			{
-				href: `some-url`,
-				callback: () => {
-					console.log( 'Disable Autoupdate' );
-				},
-				label: translate( 'Disable Autoupdate' ),
-				isExternalLink: true,
-				isEnabled: true,
-				supportsBulk: true,
-			},
-			{
-				href: `some-url`,
-				callback: () => {
-					console.log( 'Remove' );
-				},
-				label: translate( 'Remove' ),
-				isExternalLink: true,
-				isEnabled: true,
-				supportsBulk: true,
-			},
-		];
-
 		const installedPluginsList = showInstalledPluginList && (
-			<DataViews
-				// header={ this.props.translate( 'Installed Plugins' ) }
-				data={ currentPlugins }
-				fields={ fields }
-				view={ view }
-				actions={ actions }
-				paginationInfo={ paginationInfo }
-				onChangeView={ () => console.log( 'onChangeView' ) }
-				isLoading={ this.props.requestingPluginsForSites }
-			/>
+			<PluginsListV2 currentPlugins={ currentPlugins } />
 		);
 
 		return <div>{ installedPluginsList }</div>;
