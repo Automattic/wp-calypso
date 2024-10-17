@@ -177,6 +177,7 @@ export class AuthFormHeader extends Component {
 								isJetpack: true,
 								redirectTo: window.location.href,
 								from: this.props.authQuery.from,
+								plugin_name: this.props.authQuery.plugin_name,
 							} ) }
 						/>
 					),
