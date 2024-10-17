@@ -6,19 +6,16 @@ import {
 import useNock from 'calypso/test-helpers/use-nock';
 import { receiveProductsList, requestProductsList } from '../actions';
 
-let windowSpy;
-
 describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
 		spy = jest.fn();
-		windowSpy = jest.spyOn( globalThis, 'window', 'get' );
-		windowSpy.mockImplementation( () => ( {
+		global.window = {
 			location: {
 				search: '',
 			},
-		} ) );
+		};
 	} );
 
 	const businessPlan = {
