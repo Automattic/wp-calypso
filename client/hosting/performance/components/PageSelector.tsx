@@ -20,7 +20,7 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 						if ( item.value === '-1' ) {
 							return (
 								<div className="message">
-									{ translate( 'Searching your top 20 most popular pages.' ) }
+									{ translate( 'Performance testing is available for the 20 most popular pages.' ) }
 								</div>
 							);
 						}
