@@ -11,7 +11,7 @@ export const industryBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 63349823,
 			site_ID: 126020344,
-			site_URL: 'https://venturebeat.com/feed/',
+			site_URL: 'https://venturebeat.com/',
 			site_name: 'VentureBeat',
 		},
 		{
