@@ -1087,6 +1087,62 @@ function handleAddPost( calypsoPort ) {
 	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
+/**
+ * @external HTMLDivElement
+ */
+
+/**
+ * Extracts the post ID from the data-value attribute of the "Single Posts" command item,
+ * and encodes it for use in a URL.
+ * Example: data-value="Single Posts pub/fewer//single" -> "pub/fewer//single"
+ * Example: data-value="Single Posts pub/twentytwentyfour//single" -> "pub/twentytwentyfour//single"
+ * @param {HTMLDivElement} commandItem The command item element.
+ * @returns string
+ */
+function extractPostIdFromDataValueAttribute( commandItem ) {
+	const value = commandItem.getAttribute( 'data-value' );
+	const theme = value.replace( __( 'Single Posts' ), '' ).trim();
+
+	return encodeURIComponent( theme );
+}
+
+function handleSinglePosts( calypsoPort ) {
+	const selector = `[data-value^="${ __( 'Single Posts' ) }"]`;
+
+	const callback = ( e ) => {
+		e.preventDefault();
+
+		let commandItem;
+
+		if ( e.type === 'click' ) {
+			commandItem = e.target.closest( '[cmdk-item]' );
+		} else if ( e.type === 'keydown' ) {
+			commandItem = document.querySelector( '[data-selected=true]' );
+		}
+
+		if ( ! commandItem ) {
+			return;
+		}
+
+		const postId = extractPostIdFromDataValueAttribute( commandItem );
+
+		if ( ! postId ) {
+			return;
+		}
+
+		calypsoPort.postMessage( {
+			action: 'wpAdminRedirect',
+			payload: {
+				destinationUrl: `/wp-admin/site-editor.php?postType=wp_template&postId=${ postId }&canvas=edit`,
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1193,6 +1249,8 @@ function initPort( message ) {
 		handleAddPage( calypsoPort );
 
 		handleAddPost( calypsoPort );
+
+		handleSinglePosts( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
