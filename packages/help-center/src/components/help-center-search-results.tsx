@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
@@ -189,6 +190,7 @@ function HelpSearchResults( {
 	currentRoute,
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const shouldDisplayRecentConversations = config.isEnabled( 'help-center-experience' );
 
 	const adminResults = useAdminResults( searchQuery );
 
@@ -355,7 +357,8 @@ function HelpSearchResults( {
 					) }
 				</p>
 			) : null }
-			<HelpCenterRecentConversation />
+
+			{ shouldDisplayRecentConversations && <HelpCenterRecentConversation /> }
 			{ sections }
 		</div>
 	);
