@@ -25,6 +25,7 @@ class ConnectedSubscriptionListItem extends Component {
 		railcar: PropTypes.object,
 		disableSuggestedFollows: PropTypes.bool,
 		onItemClick: PropTypes.func,
+		isSelected: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -68,6 +69,7 @@ class ConnectedSubscriptionListItem extends Component {
 			railcar,
 			disableSuggestedFollows,
 			onItemClick,
+			isSelected,
 		} = this.props;
 
 		return (
@@ -85,6 +87,7 @@ class ConnectedSubscriptionListItem extends Component {
 				railcar={ railcar }
 				disableSuggestedFollows={ disableSuggestedFollows }
 				onItemClick={ onItemClick }
+				isSelected={ isSelected }
 			/>
 		);
 	}

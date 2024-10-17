@@ -171,6 +171,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										followSource="reader-onboarding-modal"
 										disableSuggestedFollows
 										onItemClick={ () => handleItemClick( site ) }
+										isSelected={ selectedSite?.feed_ID === site.feed_ID }
 									/>
 								) ) }
 							</div>

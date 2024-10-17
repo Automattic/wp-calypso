@@ -46,6 +46,7 @@ function ReaderSubscriptionListItem( {
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
 	disableSuggestedFollows,
 	onItemClick,
+	isSelected,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -118,7 +119,14 @@ function ReaderSubscriptionListItem( {
 	};
 
 	return (
-		<div className={ clsx( 'reader-subscription-list-item', className ) } onClick={ handleClick }>
+		<div
+			className={ clsx(
+				'reader-subscription-list-item',
+				className,
+				{ 'is-selected': isSelected } // Add this class when the item is selected
+			) }
+			onClick={ handleClick }
+		>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
