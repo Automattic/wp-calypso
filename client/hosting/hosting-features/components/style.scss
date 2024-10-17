@@ -2,61 +2,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.hosting-features__hero {
-	grid-column: 1 / -1;
-	text-align: center;
-	margin-bottom: 70px;
-
-	> h1 {
-		margin-top: 30px;
-		font-style: normal;
-		font-weight: 500;
-		font-size: rem(36px);
-		font-family: Recoleta, sans-serif;
-	}
-	> p {
-		font-style: normal;
-		font-weight: 400;
-		font-size: rem(18px);
-	}
-	.hosting-features__button {
-		margin: 0 5px;
-		padding: 10px 14px;
-		font-size: rem(14px);
-		height: 40px;
-	}
-
-	.hosting-features__content-spinner {
-		margin-top: 16px;
-		& + h1 {
-			margin-top: 0;
-		}
-	}
-}
-
-.hosting-features__cards {
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-column-gap: 16px;
-	grid-row-gap: 16px;
-	padding: 0 20px;
-	@include break-medium {
-		grid-template-columns: 1fr 1fr 1fr;
-		padding: 0;
-	}
-}
-
-.hosting-features__card {
-	> p {
-		font-size: rem(14px);
-		margin-bottom: 20px;
-		color: var(--color-text-subtle);
-		flex-grow: 1;
-	}
-
-	> a {
-		font-size: rem(13px);
-		font-weight: 400;
-		line-height: 16px;
+.hosting-features__content-spinner {
+	margin-top: 16px;
+	& + h1 {
+		margin-top: 0;
 	}
 }

@@ -1,0 +1,27 @@
+@import "@automattic/components/src/styles/typography";
+
+.hosting-hero {
+	grid-column: 1 / -1;
+	text-align: center;
+	margin-bottom: 70px;
+
+	> h1 {
+		margin-top: 30px;
+		font-style: normal;
+		font-weight: 500;
+		font-size: rem(36px);
+		font-family: Recoleta, sans-serif;
+	}
+	> p {
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(18px);
+	}
+}
+
+.hosting-hero-button {
+	margin: 0 5px;
+	padding: 10px 14px;
+	font-size: rem(14px);
+	height: 40px;
+}
