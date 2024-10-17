@@ -53,26 +53,29 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			const hasPaidDomainItem =
 				( selectedDomain && ! selectedDomain.is_free ) || !! domainProductSlug;
 
-			recordSignupComplete( {
-				flow,
-				siteId: siteId ?? signupCompletionState?.siteId,
-				isNewUser,
-				hasCartItems,
-				isNew7DUserSite,
-				theme,
-				intent: flow,
-				startingPoint: flow,
-				isBlankCanvas: theme?.includes( 'blank-canvas' ),
-				planProductSlug,
-				domainProductSlug,
-				isMapping:
-					hasPaidDomainItem && domainCartItem ? isDomainMapping( domainCartItem ) : undefined,
-				isTransfer:
-					hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
-				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
-				framework: 'stepper',
-				isNewishUser,
-			} );
+			recordSignupComplete(
+				{
+					flow,
+					siteId: siteId ?? signupCompletionState?.siteId,
+					isNewUser,
+					hasCartItems,
+					isNew7DUserSite,
+					theme,
+					intent: flow,
+					startingPoint: flow,
+					isBlankCanvas: theme?.includes( 'blank-canvas' ),
+					planProductSlug,
+					domainProductSlug,
+					isMapping:
+						hasPaidDomainItem && domainCartItem ? isDomainMapping( domainCartItem ) : undefined,
+					isTransfer:
+						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
+					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+					framework: 'stepper',
+					isNewishUser,
+				},
+				true
+			);
 		},
 		[
 			domainCartItem,
