@@ -58,7 +58,8 @@
 		"tslib": "^2.3.0",
 		"use-debounce": "^3.1.0",
 		"utility-types": "^3.10.0",
-		"validator": "^13.5.2"
+		"validator": "^13.5.2",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.8.0",
@@ -74,7 +75,6 @@
 		"nock": "^13.5.4",
 		"node-fetch": "^2.6.6",
 		"typescript": "^5.3.3",
-		"wait-for-expect": "^3.0.2",
-		"wpcom-proxy-request": "workspace:^"
+		"wait-for-expect": "^3.0.2"
 	}
 }
