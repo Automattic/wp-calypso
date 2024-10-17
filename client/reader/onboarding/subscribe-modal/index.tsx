@@ -136,6 +136,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				className="subscribe-modal"
 				headerActions={ headerActions }
 				isDismissible={ false }
+				isScrollable={ false }
 			>
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__site-list-column">
