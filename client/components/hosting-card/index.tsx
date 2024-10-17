@@ -22,6 +22,12 @@ interface HostingCardDescriptionProps {
 	children: string | ReactNode;
 }
 
+interface HostingCardLinkButtonProps {
+	to: string;
+	children: string | ReactNode;
+	hideOnMobile?: boolean;
+}
+
 export function HostingCard( { className, headingId, title, children }: HostingCardProps ) {
 	return (
 		<Card className={ clsx( 'hosting-card', className ) }>
@@ -50,12 +56,6 @@ export function HostingCardHeading( { id, title, children }: HostingCardHeadingP
 
 export function HostingCardDescription( { children }: HostingCardDescriptionProps ) {
 	return <p className="hosting-card__description">{ children }</p>;
-}
-
-interface HostingCardLinkButtonProps {
-	to: string;
-	children: string | ReactNode;
-	hideOnMobile?: boolean;
 }
 
 export function HostingCardLinkButton( {
