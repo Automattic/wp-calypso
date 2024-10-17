@@ -65,6 +65,7 @@ class StatsNavigation extends Component {
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
+		isNewSite: PropTypes.bool,
 	};
 
 	state = {
