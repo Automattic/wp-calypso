@@ -31,6 +31,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
