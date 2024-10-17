@@ -92,11 +92,12 @@ const HelpCenterRecentConversations: React.FC = () => {
 			</h3>
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
-					conversation={ lastConversation }
 					key={ lastConversation.id }
+					conversation={ lastConversation }
+					badgeCount={ unreadConversationsCount - 1 }
+					avatarSize={ 38 }
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
-					navigateTo="odie"
 				/>
 			) : null }
 		</div>

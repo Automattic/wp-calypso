@@ -21,12 +21,13 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 export const HelpCenterSupportChatMessage = ( {
 	message,
 	conversation,
+	badgeCount,
 	avatarSize = 32,
 	isUnread = false,
 }: {
 	message: ZendeskMessage;
 	conversation: ZendeskConversation;
-	navigateTo: string;
+	badgeCount: number;
 	avatarSize?: number;
 	isUnread: boolean;
 } ) => {
@@ -47,7 +48,7 @@ export const HelpCenterSupportChatMessage = ( {
 				if ( conversation?.metadata?.odieChatId ) {
 					storeChatId( String( conversation?.metadata?.odieChatId ) );
 					setChat( {
-						chat_id: conversation?.metadata?.odieChatId,
+						chat_id: Number( conversation?.metadata?.odieChatId ),
 						messages: [ ...conversation.messages ],
 					} );
 				}
@@ -57,13 +58,21 @@ export const HelpCenterSupportChatMessage = ( {
 				'is-unread-message': isUnread,
 			} ) }
 		>
-			<div className="help-center-support-chat__conversation-avatar">
+			<div
+				className={ clsx( 'help-center-support-chat__conversation-avatar', {
+					'has-badge': badgeCount > 0,
+				} ) }
+			>
 				<img
 					src={ avatarUrl }
 					alt={ __( 'User Avatar' ) }
 					height={ avatarSize }
 					width={ avatarSize }
 				/>
+
+				{ badgeCount > 0 && (
+					<div className="help-center-support-chat__conversation-badge">+{ badgeCount }</div>
+				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
 				<div className="help-center-support-chat__conversation-information-message">{ text }</div>
