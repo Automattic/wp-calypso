@@ -21,13 +21,7 @@ import AgencySignupFinish from './primary/agency-signup-finish';
 // A simple wrapper to ensure the PageViewTracker is only rendered, and the event fired,
 // after the agency has been fetched and we know if the user is an agency user or not.
 // This is because if they're an agency they get redirected and never see the page.
-const PageViewTrackerWrapper = ( {
-	path,
-	properties,
-}: {
-	path: string;
-	properties: Record< string, string >;
-} ) => {
+const PageViewTrackerWrapper = ( { path }: { path: string } ) => {
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const agency = useSelector( getActiveAgency );
 	const hasFetched = useSelector( hasFetchedAgency );
@@ -56,16 +50,14 @@ const PageViewTrackerWrapper = ( {
 		return null;
 	}
 
-	return <PageViewTracker title="A4A Signup" path={ path } properties={ properties } />;
+	return <PageViewTracker title="A4A Signup" path={ path } />;
 };
 
 export const signUpContext: Callback = ( context, next ) => {
-	const { ref } = context.query;
-
 	context.store.dispatch( hideMasterbar() );
 	context.primary = (
 		<>
-			<PageViewTrackerWrapper path={ context.path } properties={ { ref } } />
+			<PageViewTrackerWrapper path={ context.path } />
 			<AgencySignUp />
 		</>
 	);
