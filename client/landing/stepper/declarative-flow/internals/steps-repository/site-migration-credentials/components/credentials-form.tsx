@@ -101,18 +101,27 @@ const CredentialsFormContent = ( {
 		onComplete();
 	};
 
+	const removeDuplicatedSlashes = ( url: string ) => {
+		return url.replace( /([^:]\/)\/+/g, '$1' );
+	};
+
 	const startMigrationByCredentials = async () => {
-		const app_name = 'WordPress.com migration';
+		const app_name = 'wp_migration';
 		const app_id = '82c3e0a7-fe41-4f40-9e89-aaa947bd19c8';
 		const success_url = window.location.href;
 		const reject_url = `${ window.location.href }?error=app_migration_failed`;
 
-		const url = addQueryArgs( `${ from }/wp-admin/authorize-application.php`, {
-			app_name,
-			app_id,
-			success_url,
-			reject_url,
-		} );
+		const url = addQueryArgs(
+			removeDuplicatedSlashes( `${ from }wp-admin/authorize-application.php` ),
+			{
+				app_name,
+				app_id,
+				success_url,
+				reject_url,
+			}
+		);
+
+		alert( url );
 		window.location.href = url;
 	};
 
