@@ -1,6 +1,4 @@
 import { FormLabel } from '@automattic/components';
-import { Icon } from '@wordpress/components';
-import { seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
