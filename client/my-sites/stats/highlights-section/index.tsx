@@ -58,6 +58,7 @@ export default function HighlightsSection( {
 		};
 	}, [ highlights, currentPeriod ] );
 
+	// Handle tooltip for highlights section.
 	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
 		siteId,
 		'traffic_page_highlights_module_settings'
