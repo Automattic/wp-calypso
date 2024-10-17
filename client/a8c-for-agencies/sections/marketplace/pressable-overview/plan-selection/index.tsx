@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
+import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -19,6 +21,7 @@ type Props = {
 
 export default function PressableOverviewPlanSelection( { onAddToCart }: Props ) {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
 
@@ -81,14 +84,27 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 			} ) }
 		>
 			{ pressableOwnership !== 'regular' && ! isReferMode && (
-				<PlanSelectionFilter
-					selectedPlan={ selectedPlan }
-					plans={ pressablePlans }
-					onSelectPlan={ onSelectPlan }
-					existingPlan={ existingPlan }
-					pressablePlan={ pressablePlan }
-					isLoading={ ! isExistingPlanFetched }
-				/>
+				<>
+					<section className="pressable-overview-plan-selection__details">
+						{ !! existingPlan && (
+							<div className="pressable-overview-plan-selection__filter-owned-plan">
+								<div>{ translate( 'You own the' ) }</div>
+								<h2>{ existingPlan.name }</h2>
+							</div>
+						) }
+						<div className="pressable-overview-plan-selection__details-card">
+							<PressableUsageDetails existingPlan={ existingPlan } />
+						</div>
+					</section>
+
+					<PlanSelectionFilter
+						selectedPlan={ selectedPlan }
+						plans={ pressablePlans }
+						onSelectPlan={ onSelectPlan }
+						pressablePlan={ pressablePlan }
+						isLoading={ ! isExistingPlanFetched }
+					/>
+				</>
 			) }
 
 			<PlanSelectionDetails
