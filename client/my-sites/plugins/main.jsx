@@ -6,7 +6,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
-import { Icon, upload } from '@wordpress/icons';
+import { Icon, upload, plugins } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
@@ -16,6 +16,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import { DataViews } from 'calypso/components/dataviews';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Search from 'calypso/components/search';
@@ -59,7 +60,6 @@ import UpdatePlugins from './plugin-management-v2/update-plugins';
 import PluginsList from './plugins-list';
 
 import './style.scss';
-import { DataViews } from '@wordpress/dataviews';
 
 export class PluginsMain extends Component {
 	constructor( props ) {
@@ -391,16 +391,6 @@ export class PluginsMain extends Component {
 
 		console.log( 'currentPlugins', currentPlugins );
 
-		const data = currentPlugins.map( ( plugin ) => {
-			return {
-				id: plugin.id,
-				name: plugin.name,
-				sites: plugin.sites.length,
-				update: true,
-				imageSrc: plugin.icon,
-			};
-		} );
-
 		const fields = [
 			{
 				id: 'plugins',
@@ -408,7 +398,14 @@ export class PluginsMain extends Component {
 				render: ( { item } ) => {
 					return (
 						<>
-							<img src={ item.imageSrc } />
+							{ item.icon && <img src={ item.icon } /> }
+							{ ! item.icon && (
+								<Icon
+									size={ 32 }
+									icon={ plugins }
+									className="plugin-common-card__plugin-icon plugin-default-icon"
+								/>
+							) }
 							<a href="...">{ item.name }</a>
 						</>
 					);
@@ -420,7 +417,7 @@ export class PluginsMain extends Component {
 				label: 'Sites',
 				enableHiding: false,
 				render: ( { item } ) => {
-					return <span>{ item.sites && item.sites.length }</span>;
+					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
 				},
 			},
 			{
@@ -464,6 +461,47 @@ export class PluginsMain extends Component {
 				label: translate( 'Manage Plugin' ),
 				isExternalLink: true,
 				isEnabled: true,
+				supportsBulk: false,
+			},
+			{
+				href: `some-url`,
+				callback: () => {
+					console.log( 'Activate' );
+				},
+				label: translate( 'Activate' ),
+				isExternalLink: true,
+				isEnabled: true,
+				supportsBulk: true,
+			},
+			{
+				href: `some-url`,
+				callback: () => {
+					console.log( 'Deactivate' );
+				},
+				label: translate( 'Deactivate' ),
+				isExternalLink: true,
+				isEnabled: true,
+				supportsBulk: true,
+			},
+			{
+				href: `some-url`,
+				callback: () => {
+					console.log( 'Enable Autoupdate' );
+				},
+				label: translate( 'Enable Autoupdate' ),
+				isExternalLink: true,
+				isEnabled: true,
+				supportsBulk: true,
+			},
+			{
+				href: `some-url`,
+				callback: () => {
+					console.log( 'Disable Autoupdate' );
+				},
+				label: translate( 'Disable Autoupdate' ),
+				isExternalLink: true,
+				isEnabled: true,
+				supportsBulk: true,
 			},
 			{
 				href: `some-url`,
@@ -473,18 +511,20 @@ export class PluginsMain extends Component {
 				label: translate( 'Remove' ),
 				isExternalLink: true,
 				isEnabled: true,
-				icon: 'trash',
+				supportsBulk: true,
 			},
 		];
 
 		const installedPluginsList = showInstalledPluginList && (
 			<DataViews
 				// header={ this.props.translate( 'Installed Plugins' ) }
-				data={ data }
+				data={ currentPlugins }
 				fields={ fields }
 				view={ view }
 				actions={ actions }
 				paginationInfo={ paginationInfo }
+				onChangeView={ () => console.log( 'onChangeView' ) }
+				isLoading={ this.props.requestingPluginsForSites }
 			/>
 		);
 
