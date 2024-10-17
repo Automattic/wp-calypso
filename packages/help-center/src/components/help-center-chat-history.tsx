@@ -8,6 +8,8 @@ import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
+import './help-center-chat-history.scss';
+
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
 	const TAB_STATES = {
@@ -15,8 +17,7 @@ export const HelpCenterChatHistory = () => {
 		archived: 'archived',
 	};
 
-	// TODO: might not need to store activeTab in state
-	// const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
+	const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const { getConversations } = useSmooch();
 	const { isChatLoaded } = useSelect( ( select ) => {
@@ -75,7 +76,7 @@ export const HelpCenterChatHistory = () => {
 					},
 				] }
 				onSelect={ () => {
-					// setActiveTab( tabName );
+					setActiveTab( activeTab );
 				} }
 			>
 				{ ( tab ) => {
@@ -83,7 +84,11 @@ export const HelpCenterChatHistory = () => {
 						case TAB_STATES.recent:
 							return <RecentConversations conversations={ conversations } />;
 						case TAB_STATES.archived:
-							return <div>{ __( 'Archived Conversations' ) }</div>;
+							return (
+								<div className="help-center-chat-history__no-results">
+									{ __( 'Nothing found…' ) }
+								</div>
+							);
 						default:
 							return;
 					}
