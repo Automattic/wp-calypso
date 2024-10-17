@@ -208,7 +208,48 @@ export const industryBlogs: CuratedBlogsList = {
 		},
 	],
 	leadership: [
-		// Add leadership blogs...
+		{
+			feed_ID: 25599614,
+			site_ID: 124014575,
+			site_URL: 'https://randsinrepose.com/',
+			site_name: 'Rands in Repose',
+		},
+		{
+			feed_ID: 70733206,
+			site_ID: 112277013,
+			site_URL: 'https://journeytoleadershipblog.com/',
+			site_name: 'Journey To Leadership',
+		},
+		{
+			feed_ID: 36408839,
+			site_ID: 23168767,
+			site_URL: 'http://paulitaylor.com/',
+			site_name: 'Paul Taylor',
+		},
+		{
+			feed_ID: 57034834,
+			site_ID: null,
+			site_URL: 'https://hbr.org/',
+			site_name: 'HBR.org',
+		},
+		{
+			feed_ID: 4192830,
+			site_ID: null,
+			site_URL: 'https://www.askamanager.org/',
+			site_name: 'Ask a Manager',
+		},
+		{
+			feed_ID: 41466875,
+			site_ID: null,
+			site_URL: 'https://thinkers50.com/',
+			site_name: 'Thinkers50',
+		},
+		{
+			feed_ID: 13014452,
+			site_ID: null,
+			site_URL: 'https://simonsinek.com/',
+			site_name: 'Simon Sinek',
+		},
 	],
 	marketing: [
 		// Add marketing blogs...
