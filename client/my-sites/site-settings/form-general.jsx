@@ -604,6 +604,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
+		const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
 
 		return (
 			<div className={ clsx( classes ) }>
@@ -654,7 +655,7 @@ export class SiteSettingsFormGeneral extends Component {
 					isUnlaunchedSite={ propsisUnlaunchedSite }
 					urlRef="unlaunched-settings"
 				/>
-				{ this.renderAdminInterface() }
+				{ ! isDevelopmentSite && this.renderAdminInterface() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<>

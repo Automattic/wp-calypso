@@ -1,9 +1,8 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useCallback, useState } from 'react';
+import config from '@automattic/calypso-config';
+import { useCallback } from 'react';
 import Smooch from 'smooch';
-import { SMOOCH_INTEGRATION_ID } from './constants';
+import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { UserFields } from './types';
-import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 
 const destroy = () => {
@@ -15,15 +14,18 @@ const getConversation = async ( chatId?: number ): Promise< Conversation | undef
 		const existingConversation = Smooch.getConversations?.().find( ( conversation ) => {
 			return conversation.metadata[ 'odieChatId' ] === chatId;
 		} );
+
 		if ( ! existingConversation ) {
 			return;
 		}
+
 		const result = await Smooch.getConversationById( existingConversation.id );
 		if ( result ) {
 			Smooch.markAllAsRead( result.id );
 			return result;
 		}
 	}
+
 	return;
 };
 
@@ -46,44 +48,34 @@ const addMessengerListener = ( callback: ( message: Message ) => void ) => {
 	} );
 };
 
+const initSmooch = ( {
+	jwt,
+	externalId,
+}: {
+	isLoggedIn: boolean;
+	jwt: string;
+	externalId: string | undefined;
+} ) => {
+	const currentEnvironment = config( 'env_id' );
+	const isTestMode = currentEnvironment !== 'production';
+
+	return Smooch.init( {
+		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		embedded: true,
+		externalId,
+		jwt,
+	} );
+};
+
 const addUnreadCountListener = ( callback: ( unreadCount: number ) => void ) => {
 	Smooch.on( 'unreadCount', callback );
 };
 
 export const useSmooch = () => {
-	const [ init, setInit ] = useState( typeof Smooch.getConversations === 'function' );
-	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 
-	const initSmooch = useCallback(
-		( ref: HTMLDivElement ) => {
-			if ( authData?.jwt && authData?.externalId && ! init ) {
-				Smooch.init( {
-					integrationId: SMOOCH_INTEGRATION_ID,
-					embedded: true,
-					externalId: authData?.externalId,
-					jwt: authData?.jwt,
-				} )
-					.then( () => {
-						recordTracksEvent( 'calypso_smooch_messenger_init', {
-							success: true,
-							error: '',
-						} );
-						setInit( true );
-					} )
-					.catch( ( error ) => {
-						recordTracksEvent( 'calypso_smooch_messenger_init', {
-							success: false,
-							error: error.message,
-						} );
-						setInit( false );
-					} );
-				Smooch.render( ref );
-			}
-		},
-		[ init, authData ]
-	);
+	window.Smooch = Smooch;
 
 	const createConversation = useCallback(
 		async ( userfields: UserFields, metadata: Conversation[ 'metadata' ] ) => {
@@ -98,17 +90,9 @@ export const useSmooch = () => {
 		[ isSubmittingZendeskUserFields, submitUserFields ]
 	);
 
-	if ( ! init ) {
-		return {
-			init,
-			destroy,
-			initSmooch,
-		};
-	}
-
 	return {
-		init,
 		initSmooch,
+		renderSmooch: Smooch.render,
 		destroy,
 		getConversation,
 		createConversation,

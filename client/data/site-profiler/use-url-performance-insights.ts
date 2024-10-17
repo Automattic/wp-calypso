@@ -25,6 +25,6 @@ export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) =>
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) =>
-			query.state.data?.pagespeed?.status === 'completed' ? false : 5000, // 5 second	;
+			query.state.data?.pagespeed?.status === 'completed' ? false : 5000, // 5 second
 	} );
 };

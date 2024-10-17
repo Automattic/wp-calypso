@@ -16,22 +16,24 @@ export const PageSelector = ( props: ComponentProps< typeof SearchableDropdown >
 				<SearchableDropdown
 					{ ...props }
 					className="site-performance__page-selector-drowdown"
-					__experimentalRenderItem={ ( { item } ) => (
-						<div
-							aria-label={ item.label }
-							css={ {
-								display: 'flex',
-								flexDirection: 'column',
-								paddingInline: '16px',
-								paddingBlock: '8px',
-								fontSize: '0.875rem',
-								gap: '4px',
-							} }
-						>
-							<span>{ item.label }</span>
-							<span>{ item.path }</span>
-						</div>
-					) }
+					__experimentalRenderItem={ ( { item } ) => {
+						if ( item.value === '-1' ) {
+							return (
+								<div className="message">
+									{ translate( 'Performance testing is available for the 20 most popular pages.' ) }
+								</div>
+							);
+						}
+						if ( item.value === '-2' ) {
+							return <div className="message">{ translate( 'No pages found' ) }</div>;
+						}
+						return (
+							<div className="site-performance__page-selector-item" aria-label={ item.label }>
+								<span>{ item.label }</span>
+								<span className="subtitle">{ item.path }</span>
+							</div>
+						);
+					} }
 				/>
 				<div className="site-performance__page-selector-search-icon">
 					<Icon

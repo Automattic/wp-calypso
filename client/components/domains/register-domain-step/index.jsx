@@ -1083,13 +1083,15 @@ class RegisterDomainStep extends Component {
 						AVAILABLE_PREMIUM,
 						MAPPED,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
+						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+						MAPPED_SAME_SITE_REGISTRABLE,
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
 
-					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
+					const availableDomainStatuses = [ AVAILABLE, UNKNOWN, MAPPED_SAME_SITE_REGISTRABLE ];
 
 					if ( error ) {
 						resolve( null );
@@ -1118,7 +1120,12 @@ class RegisterDomainStep extends Component {
 					let availabilityStatus = status;
 
 					// Mapped status always overrides other statuses, unless the domain is owned by the current user.
-					if ( isDomainMapped && status !== REGISTERED_OTHER_SITE_SAME_USER ) {
+					if (
+						isDomainMapped &&
+						status !== REGISTERED_OTHER_SITE_SAME_USER &&
+						status !== MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
+						status !== MAPPED_SAME_SITE_REGISTRABLE
+					) {
 						availabilityStatus = mappable;
 					}
 
@@ -1482,7 +1489,11 @@ class RegisterDomainStep extends Component {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
-		const { DOMAIN_AVAILABILITY_THROTTLED, REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
+		const {
+			DOMAIN_AVAILABILITY_THROTTLED,
+			REGISTERED_OTHER_SITE_SAME_USER,
+			MAPPED_SAME_SITE_REGISTRABLE,
+		} = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1516,7 +1527,8 @@ class RegisterDomainStep extends Component {
 					const skipAvailabilityErrors =
 						! status ||
 						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions ) ||
-						status === DOMAIN_AVAILABILITY_THROTTLED;
+						status === DOMAIN_AVAILABILITY_THROTTLED ||
+						status === MAPPED_SAME_SITE_REGISTRABLE;
 
 					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );

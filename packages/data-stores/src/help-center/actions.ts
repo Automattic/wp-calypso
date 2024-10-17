@@ -66,6 +66,12 @@ export const setIsMinimized = ( minimized: boolean ) =>
 		minimized,
 	} ) as const;
 
+export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_IS_CHAT_LOADED',
+		isChatLoaded,
+	} ) as const;
+
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -153,6 +159,7 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
 			| typeof setIsMinimized
+			| typeof setIsChatLoaded
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug

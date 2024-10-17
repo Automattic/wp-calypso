@@ -186,6 +186,7 @@ export const SftpCard = ( {
 		return (
 			<div className="sftp-card__ssh-field">
 				<ToggleControl
+					__nextHasNoMarginBottom
 					disabled={ isLoading || isSshAccessLoading }
 					checked={ isSshAccessEnabled }
 					onChange={ () => toggleSshAccess() }

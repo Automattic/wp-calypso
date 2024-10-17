@@ -71,6 +71,7 @@ const StyledLabel = styled.div`
 	text-transform: none;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
+	text-wrap: wrap;
 `;
 
 const DataCenterPicker = ( {
@@ -114,6 +115,7 @@ const DataCenterPicker = ( {
 			{ isFormShowing && (
 				<Form>
 					<SelectControl
+						__nextHasNoMarginBottom
 						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
 						help={
 							hasEnTranslation(

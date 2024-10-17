@@ -172,12 +172,14 @@ const CheckoutModalTitle = styled.h1`
 	font-size: 20px;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	line-height: 1.3;
+	word-wrap: break-word;
 `;
 
 const CheckoutModalCopy = styled.p`
 	margin: 0;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	font-size: 16px;
+	word-wrap: break-word;
 `;
 
 const CheckoutModalActions = styled.div`

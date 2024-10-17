@@ -1,5 +1,3 @@
-import { Gridicon } from '@automattic/components';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -28,7 +26,6 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { isP2Theme } from 'calypso/lib/site/utils';
@@ -49,6 +46,7 @@ import {
 } from '../onboarding-tours';
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
+import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
@@ -127,11 +125,9 @@ const SitesDashboard = ( {
 		[],
 		sitesFilterCallback,
 		'all',
-		[ 'is_a4a_dev_site' ],
+		[ 'is_a4a_dev_site', 'site_migration' ],
 		[ 'theme_slug' ]
 	);
-
-	const hasEnTranslation = useHasEnTranslation();
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
@@ -272,7 +268,7 @@ const SitesDashboard = ( {
 	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
-	const { currentStatusGroup } = useSitesListGrouping( allSites, {
+	const { currentStatusGroup, statuses } = useSitesListGrouping( allSites, {
 		status: statusSlug || 'all',
 		showHidden: true,
 	} );
@@ -354,8 +350,6 @@ const SitesDashboard = ( {
 	const hideListing = false;
 	const isNarrowView = false;
 
-	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
-
 	const dashboardTitle = siteType === 'p2' ? translate( 'P2s' ) : translate( 'Sites' );
 
 	return (
@@ -383,42 +377,11 @@ const SitesDashboard = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ dashboardTitle } />
-					{ showA8CForAgenciesBanner && (
-						<div className="sites-a8c-for-agencies-banner-container">
-							<Banner
-								callToAction={ translate( 'Learn more {{icon/}}', {
-									components: {
-										icon: <Gridicon icon="external" />,
-									},
-								} ) }
-								className="sites-a8c-for-agencies-banner"
-								description={
-									hasEnTranslation(
-										"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
-									)
-										? translate(
-												"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
-										  )
-										: translate(
-												'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
-										  )
-								}
-								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
-								event="learn-more"
-								horizontal
-								href={ localizeUrl(
-									'https://wordpress.com/for-agencies?ref=wpcom-sites-dashboard'
-								) }
-								target="_blank"
-								title={
-									hasEnTranslation( "Building sites for customers? Here's how to earn more." )
-										? translate( "Building sites for customers? Here's how to earn more." )
-										: translate( 'Managing multiple sites? Meet our agency hosting' )
-								}
-								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
-							/>
-						</div>
-					) }
+					<SitesDashboardBannersManager
+						sitesStatuses={ statuses }
+						sitesCount={ paginatedSites.length }
+					/>
+
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
 						isLoading={ isLoading || ! initialSortApplied }

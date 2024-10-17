@@ -1,4 +1,9 @@
-import { DNS_RECORDS_EDITING_OR_DELETING } from '@automattic/urls';
+import {
+	DNS_RECORDS_DEFAULT,
+	DNS_RECORDS_DEFAULT_MX,
+	DNS_RECORDS_DEFAULT_A,
+	DNS_RECORDS_DEFAULT_CNAME,
+} from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -25,18 +30,25 @@ class DnsRecordData extends Component {
 
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
+			let url = DNS_RECORDS_DEFAULT;
+			switch ( type ) {
+				case 'MX':
+					url = DNS_RECORDS_DEFAULT_MX;
+					break;
+				case 'A':
+					url = DNS_RECORDS_DEFAULT_A;
+					break;
+				case 'CNAME':
+					url = DNS_RECORDS_DEFAULT_CNAME;
+					break;
+			}
+
 			if ( 'MX' === type ) {
 				return translate(
 					'Mail handled by WordPress.com email forwarding. {{supportLink}}Learn more{{/supportLink}}.',
 					{
 						components: {
-							supportLink: (
-								<ExternalLink
-									href={ DNS_RECORDS_EDITING_OR_DELETING }
-									target="_blank"
-									icon={ false }
-								/>
-							),
+							supportLink: <ExternalLink href={ url } target="_blank" icon={ false } />,
 						},
 					}
 				);
@@ -44,9 +56,7 @@ class DnsRecordData extends Component {
 
 			return translate( 'Handled by WordPress.com. {{supportLink}}Learn more{{/supportLink}}.', {
 				components: {
-					supportLink: (
-						<ExternalLink href={ DNS_RECORDS_EDITING_OR_DELETING } target="_blank" icon={ false } />
-					),
+					supportLink: <ExternalLink href={ url } target="_blank" icon={ false } />,
 				},
 			} );
 		}

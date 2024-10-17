@@ -67,6 +67,19 @@ export interface Agency {
 		capabilities: string[];
 	};
 	can_issue_licenses: boolean;
+	notifications:
+		| [
+				{
+					timestamp: number;
+					reference: string;
+				},
+		  ]
+		| [];
+	tier: {
+		id: 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
+		label: string;
+		features: string[];
+	};
 }
 
 export interface AgencyStore {

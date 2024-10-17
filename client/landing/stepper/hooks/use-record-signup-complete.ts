@@ -71,10 +71,24 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 					isTransfer:
 						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
 					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+					framework: 'stepper',
+					isNewishUser,
 				},
 				true
 			);
 		},
-		[ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ]
+		[
+			domainCartItem,
+			flow,
+			isNewUser,
+			isNewishUser,
+			planCartItem,
+			selectedDomain,
+			signupDomainOrigin,
+			site?.slug,
+			siteCount,
+			siteId,
+			theme,
+		]
 	);
 };
