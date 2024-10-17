@@ -31,7 +31,7 @@ $blueberry-color: #3858e9;
 				border-bottom-left-radius: 6px;
 			}
 
-			&:nth-child(2) {
+			&:nth-child(1) {
 				/* stylelint-disable-next-line scales/radii */
 				border-top-left-radius: 6px;
 				/* stylelint-disable-next-line scales/radii */
@@ -47,7 +47,7 @@ $blueberry-color: #3858e9;
 			&:not(.is-expanded) {
 				border-bottom: 1px solid var(--studio-gray-5);
 
-				&:not(:nth-child(-n+2)) {
+				&:not(:nth-child(-n+1)) {
 					border-top: none;
 				}
 			}
@@ -62,7 +62,7 @@ $blueberry-color: #3858e9;
 				}
 			}
 
-			&.is-expanded:not(:nth-child(-n+2)) {
+			&.is-expanded:not(:nth-child(-n+1)) {
 				border-top: none;
 			}
 		}
@@ -73,6 +73,16 @@ $blueberry-color: #3858e9;
 
 		.card.is-compact {
 			margin-bottom: 24px;
+		}
+
+		+ .card.foldable-card {
+			/* stylelint-disable-next-line scales/radii */
+			border-top-left-radius: 6px !important;
+			/* stylelint-disable-next-line scales/radii */
+			border-top-right-radius: 6px !important;
+
+			border-top: 1px solid var(--studio-gray-5) !important;
+			
 		}
 
 		&.foldable-card {
