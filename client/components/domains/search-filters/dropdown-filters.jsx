@@ -12,19 +12,17 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 
-const HANDLED_FILTER_KEYS = [ 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
+const HANDLED_FILTER_KEYS = [ 'tlds', 'maxCharacters', 'exactSldMatchesOnly' ];
 
 export class DropdownFilters extends Component {
 	static propTypes = {
 		availableTlds: PropTypes.array,
 		filters: PropTypes.shape( {
-			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.array,
 		} ).isRequired,
 		lastFilters: PropTypes.shape( {
-			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.array,
@@ -67,7 +65,6 @@ export class DropdownFilters extends Component {
 	getFiltercounts() {
 		return (
 			( this.props.lastFilters.tlds?.length || 0 ) +
-			( this.props.lastFilters.includeDashes && 1 ) +
 			( this.props.lastFilters.exactSldMatchesOnly && 1 ) +
 			( this.props.lastFilters.maxCharacters !== '' && 1 )
 		);
@@ -112,7 +109,7 @@ export class DropdownFilters extends Component {
 	handleFiltersReset = () => {
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover( { discardChanges: false } );
-			this.props.onReset( 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
+			this.props.onReset( 'tlds', 'maxCharacters', 'exactSldMatchesOnly' );
 		} );
 	};
 	handleFiltersSubmit = () => {
@@ -183,13 +180,12 @@ export class DropdownFilters extends Component {
 
 	renderPopover() {
 		const {
-			filters: { includeDashes, maxCharacters, exactSldMatchesOnly },
+			filters: { maxCharacters, exactSldMatchesOnly },
 			popoverId,
 			translate,
 			showTldFilter,
 		} = this.props;
 
-		const isDashesFilterEnabled = config.isEnabled( 'domains/kracken-ui/dashes-filter' );
 		const isExactMatchFilterEnabled = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
 		const isLengthFilterEnabled = config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 
@@ -259,22 +255,6 @@ export class DropdownFilters extends Component {
 							/>
 							<span className="search-filters__checkbox-label">
 								{ translate( 'Show exact matches only' ) }
-							</span>
-						</FormLabel>
-					) }
-
-					{ isDashesFilterEnabled && (
-						<FormLabel className="search-filters__label" htmlFor="search-filters-include-dashes">
-							<FormInputCheckbox
-								className="search-filters__checkbox"
-								checked={ includeDashes }
-								id="search-filters-include-dashes"
-								name="includeDashes"
-								onChange={ this.handleOnChange }
-								value="includeDashes"
-							/>
-							<span className="search-filters__checkbox-label">
-								{ translate( 'Enable dashes' ) }
 							</span>
 						</FormLabel>
 					) }
