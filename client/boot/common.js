@@ -8,7 +8,7 @@ import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
@@ -403,9 +403,8 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 };
 
 function renderLayout( reduxStore, reactQueryClient ) {
-	ReactDom.render(
-		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
-		document.getElementById( 'wpcom' )
+	createRoot( document.getElementById( 'wpcom' ) ).render(
+		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />
 	);
 }
 
