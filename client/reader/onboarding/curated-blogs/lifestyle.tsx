@@ -268,7 +268,42 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	parenting: [
-		// Add more parenting blogs...
+		{
+			feed_ID: 8070109,
+			site_ID: 41049453,
+			site_URL: 'http://picturebookparenting.com/',
+			site_name: 'Picture Book Parenting',
+		},
+		{
+			feed_ID: 53974728,
+			site_ID: 61752497,
+			site_URL: 'https://theparentingadventurestipsandtricks.wordpress.com/',
+			site_name: 'The Parenting Adventures',
+		},
+		{
+			feed_ID: 116033921,
+			site_ID: 191316489,
+			site_URL: 'https://thechampatree.in/',
+			site_name: 'Motherhood Parenting Blog & Marketplace – THE CHAMPA TREE',
+		},
+		{
+			feed_ID: 77137085,
+			site_ID: 109325384,
+			site_URL: 'https://successfulblackparenting.com/',
+			site_name: 'BACKtalk by Successful Black Parenting',
+		},
+		{
+			feed_ID: 250166,
+			site_ID: 7649928,
+			site_URL: 'https://www.parentingforcollege.com/',
+			site_name: 'Parenting for College',
+		},
+		{
+			feed_ID: 125543499,
+			site_ID: 143921227,
+			site_URL: 'https://parentingbyanshu.com/',
+			site_name: 'Parenting By Anshu',
+		},
 	],
 	travel: [
 		// Add more travel blogs...
