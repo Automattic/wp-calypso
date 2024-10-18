@@ -24,6 +24,19 @@
 		}
 	}
 
+	.pressable-usage-details__storage-bar {
+		margin-top: 16px;
+		background-color: var(--color-neutral-5);
+		border-radius: 4px;
+		height: 8px;
+
+		.progress-bar__progress {
+			border-radius: 4px;
+			height: 100%;
+			background-color: var(--studio-automattic-blue-50);
+		}
+	}
+
 	.pressable-usage-details__info-item {
 		background: var(--color-neutral-0);
 		padding: 16px;

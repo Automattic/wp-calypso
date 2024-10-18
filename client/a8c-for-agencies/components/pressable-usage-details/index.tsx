@@ -1,3 +1,4 @@
+import { ProgressBar } from '@automattic/components';
 import formatNumber, {
 	DEFAULT_LOCALE,
 	STANDARD_FORMATTING_OPTIONS,
@@ -20,7 +21,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 	// const agency = useSelector( getActiveAgency );
 	// const planUsage = agency?.third_party?.pressable?.usage;
 	const planUsage = {
-		storage_gb: 16,
+		storage_gb: 20,
 		sites_count: 2,
 		visits_count: 12589,
 	};
@@ -47,7 +48,14 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 							} ) }
 						</div>
 					</div>
-					<div className="pressable-usage-details__info-value">[ Progress-bar here ]</div>
+					<div className="pressable-usage-details__info-value">
+						<ProgressBar
+							className="pressable-usage-details__storage-bar"
+							compact
+							value={ planUsage.storage_gb }
+							total={ planInfo.storage }
+						/>
+					</div>
 				</div>
 			</div>
 
@@ -56,7 +64,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					<div className="pressable-usage-details__info-header">
 						<div className="pressable-usage-details__info-label">{ translate( 'Sites' ) }</div>
 						<div className="pressable-usage-details__info-top-right">
-							{ translate( '%(max_sites)d maximum of sites', {
+							{ translate( 'up to %(max_sites)d sites', {
 								args: {
 									max_sites: planInfo.install,
 								},

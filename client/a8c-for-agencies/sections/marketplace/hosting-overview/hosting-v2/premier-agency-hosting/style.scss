@@ -43,11 +43,11 @@
 
 .pressable-overview-plan-existing {
 	background-image: linear-gradient(0deg, var(--color-primary-0) 0%, #fff 100%);
-	padding: 32px 16px 48px;
+	padding: 0 16px 48px;
 	margin-bottom: 32px;
 
 	@include break-large {
-		padding: 32px 32px 48px;
+		padding: 0 32px 48px;
 	}
 
 	.pressable-overview-plan-existing__details-card{
