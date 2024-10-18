@@ -230,7 +230,42 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	relationships: [
-		// Add more relationship blogs...
+		{
+			feed_ID: 1901833,
+			site_ID: 19760099,
+			site_URL: 'https://sybersue.com/',
+			site_name: 'Dating Relationship Coaching & Advice',
+		},
+		{
+			feed_ID: 111629924,
+			site_ID: 187086184,
+			site_URL: 'https://relationshipsmag.com/',
+			site_name: 'Relationships Magazine',
+		},
+		{
+			feed_ID: 109999954,
+			site_ID: 184198806,
+			site_URL: 'https://relationshipandlife.com/',
+			site_name: 'Relationship and Life',
+		},
+		{
+			feed_ID: 156082911,
+			site_ID: 215835640,
+			site_URL: 'https://sweetjtherapy.com/',
+			site_name: 'Therapy for Relationships',
+		},
+		{
+			feed_ID: 107206274,
+			site_ID: 178271159,
+			site_URL: 'https://happilylover.com/',
+			site_name: 'Happily Lover',
+		},
+		{
+			feed_ID: 158829118,
+			site_ID: 233376185,
+			site_URL: 'https://markdatingadvise.wordpress.com/',
+			site_name: "Mark's Dating Advise",
+		},
 	],
 	parenting: [
 		// Add more parenting blogs...
