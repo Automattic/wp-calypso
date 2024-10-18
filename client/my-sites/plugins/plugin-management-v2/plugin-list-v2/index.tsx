@@ -1,9 +1,9 @@
+import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import Button from 'calypso/blocks/follow-button/button';
 
 import './style.scss';
 
@@ -102,7 +102,9 @@ export default function PluginsListV2( {
 				label: 'Update available',
 				enableHiding: false,
 				render: ( { item } ) => {
-					return <Button>Update to 1.2.3</Button>;
+					if ( item.status.includes( PLUGINS_STATUS.UPDATE ) ) {
+						return <Button variant="secondary">Update to 1.2.3</Button>;
+					}
 				},
 			},
 		],
