@@ -16,6 +16,7 @@ import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import {
 	getPages,
+	getPostTypeRecords,
 	inIframe,
 	isEditorReady,
 	isEditorReadyWithBlocks,
@@ -1087,60 +1088,32 @@ function handleAddPost( calypsoPort ) {
 	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
-/**
- * @external HTMLDivElement
- */
-
-/**
- * Extracts the post ID from the data-value attribute of the "Single Posts" command item,
- * and encodes it for use in a URL.
- * Example: data-value="Single Posts pub/fewer//single" -> "pub/fewer//single"
- * Example: data-value="Single Posts pub/twentytwentyfour//single" -> "pub/twentytwentyfour//single"
- * @param {HTMLDivElement} commandItem The command item element.
- * @returns string
- */
-function extractPostIdFromDataValueAttribute( commandItem ) {
-	const value = commandItem.getAttribute( 'data-value' );
-	const theme = value.replace( __( 'Single Posts' ), '' ).trim();
-
-	return encodeURIComponent( theme );
-}
-
-function handleSinglePosts( calypsoPort ) {
-	const selector = `[data-value^="${ __( 'Single Posts' ) }"]`;
-
-	const callback = ( e ) => {
+async function handleWpTemplateCommands( calypsoPort ) {
+	const callback = ( e, postType, postId ) => {
 		e.preventDefault();
-
-		let commandItem;
-
-		if ( e.type === 'click' ) {
-			commandItem = e.target.closest( '[cmdk-item]' );
-		} else if ( e.type === 'keydown' ) {
-			commandItem = document.querySelector( '[data-selected=true]' );
-		}
-
-		if ( ! commandItem ) {
-			return;
-		}
-
-		const postId = extractPostIdFromDataValueAttribute( commandItem );
-
-		if ( ! postId ) {
-			return;
-		}
 
 		calypsoPort.postMessage( {
 			action: 'wpAdminRedirect',
 			payload: {
-				destinationUrl: `/wp-admin/site-editor.php?postType=wp_template&postId=${ postId }&canvas=edit`,
+				destinationUrl: `/wp-admin/site-editor.php?postType=${ postType }&postId=${ encodeURIComponent(
+					postId
+				) }&canvas=edit`,
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
 		} );
 	};
 
-	addEditorListener( selector, callback );
-	addCommandsInputListener( selector, callback );
+	const entityNames = [ 'wp_template', 'wp_template_part' ];
+
+	entityNames.forEach( async ( entityName ) => {
+		const records = await getPostTypeRecords( entityName );
+
+		records.forEach( ( record ) => {
+			const selector = `[data-value$="${ record.id }"]`;
+			addEditorListener( selector, ( e ) => callback( e, entityName, record.id ) );
+			addCommandsInputListener( selector, ( e ) => callback( e, entityName, record.id ) );
+		} );
+	} );
 }
 
 function initPort( message ) {
@@ -1250,7 +1223,7 @@ function initPort( message ) {
 
 		handleAddPost( calypsoPort );
 
-		handleSinglePosts( calypsoPort );
+		handleWpTemplateCommands( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
@@ -1259,7 +1232,7 @@ function initPort( message ) {
 // Note: domReady is used instead of `(function() { ... })()` because certain
 // things in `initPort` require other scripts to be loaded. (For example, ETK
 // scripts need to be available before some things will work correctly.)
-domReady( () => {
+domReady( async () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
