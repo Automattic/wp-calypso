@@ -1,9 +1,10 @@
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { Icon, plugins } from '@wordpress/icons';
+import { Icon, link, linkOff, plugins, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { navigate } from 'calypso/lib/navigate';
 
 import './style.scss';
 
@@ -83,7 +84,7 @@ export default function PluginsListV2( {
 									className="plugin-common-card__plugin-icon plugin-default-icon"
 								/>
 							) }
-							<a href="...">{ item.name }</a>
+							<a href={ '/plugins/' + item.slug }>{ item.name }</a>
 						</>
 					);
 				},
@@ -129,8 +130,8 @@ export default function PluginsListV2( {
 	const actions = [
 		{
 			href: `some-url`,
-			callback: () => {
-				console.log( 'Manage Plugin' );
+			callback: ( data ) => {
+				data.length && navigate( '/plugins/' + data[ 0 ].slug );
 			},
 			label: translate( 'Manage Plugin' ),
 			isExternalLink: true,
@@ -139,13 +140,14 @@ export default function PluginsListV2( {
 		},
 		{
 			href: `some-url`,
-			callback: () => {
-				console.log( 'Activate' );
+			callback: ( data ) => {
+				console.log( 'Activate Plugin, data: ', data );
 			},
 			label: translate( 'Activate' ),
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: true,
+			icon: <Icon icon={ link } />,
 		},
 		{
 			href: `some-url`,
@@ -156,6 +158,7 @@ export default function PluginsListV2( {
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: true,
+			icon: <Icon icon={ linkOff } />,
 		},
 		{
 			href: `some-url`,
@@ -186,6 +189,7 @@ export default function PluginsListV2( {
 			isExternalLink: true,
 			isEnabled: true,
 			supportsBulk: true,
+			icon: <Icon icon={ trash } />,
 		},
 	];
 
@@ -197,6 +201,7 @@ export default function PluginsListV2( {
 	}, [ dataViewsState.search, onSearch ] );
 
 	const { data, paginationInfo } = useMemo( () => {
+		console.log( 'dataViewsState', dataViewsState );
 		return filterSortAndPaginate( currentPlugins, dataViewsState, fields );
 	}, [ currentPlugins, dataViewsState, fields ] );
 
@@ -213,6 +218,9 @@ export default function PluginsListV2( {
 					actions: actions,
 					dataViewsState: dataViewsState,
 					setDataViewsState: setDataViewsState,
+					onSelectionChange: ( items ) => {
+						console.log( 'items: ', items );
+					},
 					defaultLayouts: { table: {} },
 				} }
 			/>
