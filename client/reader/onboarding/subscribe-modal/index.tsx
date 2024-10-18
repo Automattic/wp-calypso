@@ -34,7 +34,6 @@ interface StreamProps {
 	className?: string;
 	followSource?: string;
 	useCompactCards?: boolean;
-	// Add other props as needed based on the Stream component's requirements
 }
 
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
