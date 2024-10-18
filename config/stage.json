@@ -43,7 +43,6 @@
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
-		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"external-media": true,
