@@ -51,7 +51,7 @@ export const PaidPluginsSection = ( props ) => {
 };
 export const FeaturedDeveloperSection = ( props ) => {
 	const { plugins: plugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
-		search: 'developer: Awesome Motive',
+		search: props.searchTerm,
 	} );
 	const translate = useTranslate();
 
@@ -62,11 +62,11 @@ export const FeaturedDeveloperSection = ( props ) => {
 	return (
 		<SingleListView
 			{ ...props }
+			category={ null }
 			title={ translate( 'Must-have plugins from WPBeginner' ) }
 			subtitle={ translate( 'Add the best-loved plugins on WordPress.com' ) }
 			plugins={ plugins }
 			isFetching={ isFetchingPaidPlugins }
-			noBrowseAll
 		/>
 	);
 };
@@ -136,11 +136,10 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			) }
 
-			{ isAwesomeMotive ? (
-				<FeaturedDeveloperSection { ...props } />
-			) : (
-				<PaidPluginsSection { ...props } />
+			{ isAwesomeMotive && (
+				<FeaturedDeveloperSection { ...props } searchTerm="developer: Awesome Motive" />
 			) }
+			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
 			{ ! isLoggedIn && <InPageCTASection /> }
