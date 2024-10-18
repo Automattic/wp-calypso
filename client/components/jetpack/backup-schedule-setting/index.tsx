@@ -2,39 +2,58 @@ import { Card } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { SelectControl } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import useScheduledTimeMutation from 'calypso/data/jetpack-backup/use-scheduled-time-mutation';
 import useScheduledTimeQuery from 'calypso/data/jetpack-backup/use-scheduled-time-query';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { FunctionComponent } from 'react';
 import './style.scss';
 
-// Helper function to generate all time slots
-const generateTimeSlots = (): { label: string; value: string }[] => {
-	const options = [];
-	for ( let hour = 0; hour < 24; hour++ ) {
-		const period = hour < 12 ? 'AM' : 'PM';
-		const adjustedHour = hour % 12 || 12;
-
-		const startTime = `${ adjustedHour }:00`;
-		const endTime = `${ adjustedHour }:59 ${ period }`;
-
-		options.push( {
-			label: `${ startTime } - ${ endTime }`,
-			value: hour.toString(),
-		} );
-	}
-	return options;
-};
-
 const BackupScheduleSetting: FunctionComponent = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const options = generateTimeSlots();
 	const queryClient = useQueryClient();
-
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+
+	const convertHourToRange = ( hour: number ): string => {
+		const period = hour < 12 ? 'AM' : 'PM';
+		const adjustedHour = hour % 12 || 12;
+		return `${ adjustedHour }:00 - ${ adjustedHour }:59 ${ period }`;
+	};
+
+	const generateTimeSlots = (): { label: string; value: string }[] => {
+		const options = [];
+		for ( let hour = 0; hour < 24; hour++ ) {
+			const utcTime = moment.utc().startOf( 'day' ).hour( hour );
+			const localTime =
+				timezone && gmtOffset
+					? applySiteOffset( utcTime, { timezone, gmtOffset } )
+					: utcTime.local();
+			const localHour = localTime.hour();
+			const timeRange = convertHourToRange( localHour );
+
+			options.push( {
+				label: timeRange,
+				value: hour.toString(),
+				localHour, // for sorting
+			} );
+		}
+
+		// Sort options by local hour before returning
+		options.sort( ( a, b ) => a.localHour - b.localHour );
+
+		// Remove the localHour from the final result as it's not needed anymore
+		return options.map( ( { label, value } ) => ( { label, value } ) );
+	};
+
+	const timeSlotOptions = generateTimeSlots();
 	const { isFetching: isScheduledTimeQueryFetching, data } = useScheduledTimeQuery( siteId );
 	const { isPending: isScheduledTimeMutationLoading, mutate: scheduledTimeMutate } =
 		useScheduledTimeMutation( {
@@ -64,12 +83,15 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	};
 
 	const getScheduleInfoMessage = (): TranslateResult => {
+		const hour = data?.scheduledHour || 0;
+		const range = convertHourToRange( hour );
+
 		if ( ! data || data.scheduledBy === undefined || data.scheduledBy === 0 ) {
-			return translate( 'Default time' );
+			return `${ translate( 'Default time' ) }. UTC: ${ range }`;
 		}
-		return translate( 'Time set by %(scheduledBy)s', {
+		return `${ translate( 'Time set by %(scheduledBy)s', {
 			args: { scheduledBy: data.scheduledBy },
-		} );
+		} ) }. UTC: ${ range }`;
 	};
 
 	return (
@@ -85,10 +107,11 @@ const BackupScheduleSetting: FunctionComponent = () => {
 				</p>
 				<SelectControl
 					disabled={ isLoading }
-					options={ options }
+					options={ timeSlotOptions }
 					value={ data?.scheduledHour?.toString() || '' }
 					help={ getScheduleInfoMessage() }
 					onChange={ updateScheduledTime }
+					__nextHasNoMarginBottom
 				/>
 			</Card>
 		</div>
