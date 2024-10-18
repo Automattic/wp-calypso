@@ -22,7 +22,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 
 	const planInfo = existingPlan?.slug ? getPressablePlan( existingPlan?.slug ) : null;
 
-	if ( ! planUsage || ! planInfo ) {
+	if ( ! planInfo ) {
 		return null;
 	}
 
@@ -33,12 +33,12 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					<div className="pressable-usage-details__info-header">
 						<div className="pressable-usage-details__info-label">{ translate( 'Storage' ) }</div>
 						<div className="pressable-usage-details__info-top-right storage">
-							{ translate( 'Using %(used_storage)d of %(max_storage)d GB', {
+							{ translate( 'Using %(used_storage)s of %(max_storage)s GB', {
 								args: {
-									used_storage: planUsage.storage_gb,
+									used_storage: planUsage ? planUsage.storage_gb : '?',
 									max_storage: planInfo.storage,
 								},
-								comment: '%(used_storage)d and %(max_storage)d are the storage values in GB.',
+								comment: '%(used_storage)s and %(max_storage)d are the storage values in GB.',
 							} ) }
 						</div>
 					</div>
@@ -46,7 +46,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						<ProgressBar
 							className="pressable-usage-details__storage-bar"
 							compact
-							value={ planUsage.storage_gb }
+							value={ planUsage ? planUsage.storage_gb : 0 }
 							total={ planInfo.storage }
 						/>
 					</div>
@@ -58,20 +58,20 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					<div className="pressable-usage-details__info-header">
 						<div className="pressable-usage-details__info-label">{ translate( 'Sites' ) }</div>
 						<div className="pressable-usage-details__info-top-right">
-							{ translate( 'up to %(max_sites)d sites', {
+							{ translate( 'up to %(max_sites)s sites', {
 								args: {
 									max_sites: planInfo.install,
 								},
-								comment: '%(max_sites)d is the maximum number of sites.',
+								comment: '%(max_sites)s is the maximum number of sites.',
 							} ) }
 						</div>
 					</div>
 					<div className="pressable-usage-details__info-value">
-						{ translate( '%(total_sites)d installed sites', {
+						{ translate( '%(total_sites)s installed sites', {
 							args: {
-								total_sites: planUsage.sites_count,
+								total_sites: planUsage ? planUsage.sites_count : '?',
 							},
-							comment: '%(total_sites)d is the number of installed sites.',
+							comment: '%(total_sites)s is the number of installed sites.',
 						} ) }
 					</div>
 				</div>
@@ -95,11 +95,13 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					<div className="pressable-usage-details__info-value">
 						{ translate( '%(visits_count)s visits this month', {
 							args: {
-								visits_count: formatNumber(
-									planUsage.visits_count,
-									DEFAULT_LOCALE,
-									STANDARD_FORMATTING_OPTIONS
-								),
+								visits_count: planUsage
+									? formatNumber(
+											planUsage.visits_count,
+											DEFAULT_LOCALE,
+											STANDARD_FORMATTING_OPTIONS
+									  )
+									: '?',
 							},
 							comment: '%(visits_count)s is the number of month visits of the site.',
 						} ) }
