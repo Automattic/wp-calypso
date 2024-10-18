@@ -1,6 +1,4 @@
 import { FormLabel } from '@automattic/components';
-import { Icon } from '@wordpress/components';
-import { seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -41,9 +39,7 @@ export const PasswordField: React.FC< CredentialsFormFieldProps > = ( { control,
 							className={ toggleVisibilityClasses }
 							onClick={ () => setPasswordHidden( ! passwordHidden ) }
 							type="button"
-						>
-							{ passwordHidden ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
-						</button>
+						></button>
 					</div>
 				) }
 			/>
