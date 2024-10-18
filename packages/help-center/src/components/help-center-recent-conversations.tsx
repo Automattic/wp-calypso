@@ -49,6 +49,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
+			// @ts-expect-error This will be fixed up in later iteration
 			const conversations = getConversations() as ZendeskConversation[];
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
 
