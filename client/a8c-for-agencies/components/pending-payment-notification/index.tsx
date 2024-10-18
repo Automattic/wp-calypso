@@ -3,19 +3,16 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import useFetchInvoices from 'calypso/a8c-for-agencies/data/purchases/use-fetch-invoices';
-import { useDispatch } from 'calypso/state';
-import { setPreference } from 'calypso/state/preferences/actions';
 import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import { A4A_INVOICES_LINK } from '../sidebar-menu/lib/constants';
 
 import './style.scss';
 
-const PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE = 'pending-payment-notification-dismissed';
+// TODO: Uncomment this if we would want to dismiss the notification.
+// const PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE = 'pending-payment-notification-dismissed';
 
 export default function PendingPaymentNotification() {
-	const dispatch = useDispatch();
-
-	const invoices = useFetchInvoices( { starting_after: '', ending_before: '' }, undefined, 'open' );
+	const invoices = useFetchInvoices( { starting_after: '', ending_before: '' }, undefined, 'paid' );
 
 	const translate = useTranslate();
 
@@ -36,6 +33,8 @@ export default function PendingPaymentNotification() {
 
 	const title =
 		daysDue < 21 ? translate( 'Overdue invoice' ) : translate( 'Urgent: Overdue invoice' );
+
+	const level = daysDue < 21 ? 'warning' : 'error';
 
 	let description;
 
@@ -63,7 +62,7 @@ export default function PendingPaymentNotification() {
 				comment: '%(daysDue)d is the number of days invoice is overdue.',
 			}
 		);
-	} else {
+	} else if ( daysDue < 29 ) {
 		description = translate(
 			'Your invoice is %(daysDue)d days overdue. We’ll revoke your active licenses tomorrow if we don’t receive payment.',
 			{
@@ -71,17 +70,18 @@ export default function PendingPaymentNotification() {
 				comment: '%(daysDue)d is the number of days invoice is overdue.',
 			}
 		);
+	} else {
+		description = translate(
+			'Your product licenses have now been revoked. If you want to continue using the plaform, please pay you outstanding invoices.'
+		);
 	}
 
 	return (
 		<LayoutBanner
 			className="pending-payment-notification"
-			level="warning"
+			level={ level }
 			title={ title }
-			onClose={ () =>
-				// Dismiss the notification temporarily so that it shows again on the next page load.
-				dispatch( setPreference( PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE, true ) )
-			}
+			hideCloseButton
 		>
 			<div>{ description }</div>
 			<Button className="is-dark" href={ A4A_INVOICES_LINK }>
