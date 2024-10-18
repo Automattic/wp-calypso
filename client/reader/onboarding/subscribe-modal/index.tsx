@@ -73,6 +73,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				  } ) )
 				: [];
 		},
+		staleTime: Infinity,
 	} );
 
 	const combinedRecommendations = useMemo( () => {
