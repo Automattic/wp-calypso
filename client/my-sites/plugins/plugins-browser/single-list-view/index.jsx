@@ -1,3 +1,4 @@
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -33,6 +34,7 @@ function isNotInstalled( plugin, installedPlugins ) {
 
 const SingleListView = ( {
 	category,
+	searchTerm,
 	plugins,
 	isFetching,
 	siteSlug,
@@ -67,6 +69,11 @@ const SingleListView = ( {
 			listLink += '/' + domain;
 		}
 	}
+	if ( searchTerm ) {
+		listLink = addQueryArgs( '/plugins', {
+			s: searchTerm,
+		} );
+	}
 
 	if ( ! isFetching && plugins.length === 0 ) {
 		return null;
@@ -80,9 +87,7 @@ const SingleListView = ( {
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
-			browseAllLink={
-				listLink && plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false
-			}
+			browseAllLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
