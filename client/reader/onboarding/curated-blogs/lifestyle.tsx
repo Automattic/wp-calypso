@@ -116,7 +116,42 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	'life-hacks': [
-		// Add more life hacks blogs...
+		{
+			feed_ID: 107132735,
+			site_ID: 179513101,
+			site_URL: 'https://goodlifetoo.wordpress.com/',
+			site_name: 'Life hack',
+		},
+		{
+			feed_ID: 91274429,
+			site_ID: 140678957,
+			site_URL: 'http://tipsfromsharvi.com/',
+			site_name: 'Tips from Sharvi',
+		},
+		{
+			feed_ID: 114384304,
+			site_ID: 189729885,
+			site_URL: 'https://rachelpedia.com/',
+			site_name: 'Rachelpedia’s Lifestyle Blog',
+		},
+		{
+			feed_ID: 90611393,
+			site_ID: 143762023,
+			site_URL: 'https://wiseandshinezine.com/',
+			site_name: 'Wise & Shine',
+		},
+		{
+			feed_ID: 67075716,
+			site_ID: 130306686,
+			site_URL: 'https://optimisticlifeat30.wordpress.com/',
+			site_name: 'Optimistic Life',
+		},
+		{
+			feed_ID: 162167509,
+			site_ID: 236808004,
+			site_URL: 'http://arksale.in/',
+			site_name: 'Next-Level Insights',
+		},
 	],
 	'mental-health': [
 		// Add more mental health blogs...
