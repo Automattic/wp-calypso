@@ -30,8 +30,12 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			<DocumentHead title={ translate( 'Scan' ) } />
 			{ isJetpackPlatform && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
-			{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-				<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
+			{ ! isA8CForAgencies() && (
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Scan' ) }
+					subtitle={ translate( 'Guard against malware and bad actors 24/7.' ) }
+				/>
 			) }
 
 			<ScanNavigation section="history" />
