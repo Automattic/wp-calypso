@@ -78,7 +78,42 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	food: [
-		// Add more food blogs...
+		{
+			feed_ID: 89316309,
+			site_ID: 153557609,
+			site_URL: 'https://bestindianfoodblog.wordpress.com/',
+			site_name: 'Best Indian Food Blog',
+		},
+		{
+			feed_ID: 125849892,
+			site_ID: 134042189,
+			site_URL: 'http://jensfoodblog.com/',
+			site_name: "Jen's Food Blog",
+		},
+		{
+			feed_ID: 7739903,
+			site_ID: 46464658,
+			site_URL: 'https://thefoodgallery.wordpress.com/',
+			site_name: 'The Food Gallery',
+		},
+		{
+			feed_ID: 1270452,
+			site_ID: 30938996,
+			site_URL: 'https://foodobs.wordpress.com/',
+			site_name: 'Food Observations',
+		},
+		{
+			feed_ID: 37010753,
+			site_ID: 32992360,
+			site_URL: 'https://lucysfriendlyfoods.com/',
+			site_name: "Lucy's Friendly Foods",
+		},
+		{
+			feed_ID: 24019003,
+			site_ID: 74128278,
+			site_URL: 'https://www.foodandwinegazette.com/',
+			site_name: 'Food and Wine Gazette',
+		},
 	],
 	'life-hacks': [
 		// Add more life hacks blogs...
