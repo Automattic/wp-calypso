@@ -25,44 +25,78 @@
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
+			overflow-x: hidden;
+			scrollbar-gutter: stable;
 		}
 
+		.themes__header-navigation-container {
+			margin-left: -14px;
+			margin-right: -14px;
+			@media (min-width: $break-small) {
+				border-block-end: 1px solid var(--color-border-secondary);
+			}
+		}
 		.navigation-header {
 			padding-top: 24px;
-			padding-inline: 16px;
+			max-width: 1400px;
+			margin: 0 auto;
+			padding-inline: 48px;
+			@media (max-width: 402px) {
+				padding-inline: 24px;
+			}
 
 			.navigation-header__main {
 				align-items: center;
-			}
-
-			@include break-medium {
-				border-block-end: 1px solid var(--color-border-secondary);
-			}
-
-			@include break-huge {
-				padding-inline: 64px;
-			}
-
-			@include break-xhuge {
-				max-width: 100%;
-
-				.navigation-header__main {
-					max-width: 1400px;
-					margin: 0 auto;
-					padding-inline: 64px;
-				}
+				height: 40px;
 			}
 
 			.formatted-header__title {
 				font-size: 1.5rem;
-				line-height: 1.2;
+				font-weight: 500;
+				line-height: 1.25;
+				letter-spacing: -0.5px;
+			}
+
+			.formatted-header__subtitle {
+				display: none;
 			}
 		}
 
 		.themes__content {
+			clip-path: inset(0 0 0 0);
 			margin-top: 40px;
-			padding-left: 2rem;
-			padding-right: 2rem;
+			min-height: auto;
+			@media (max-width: $break-small) {
+				margin-top: 10px;
+			}
+			.themes__controls,
+			.themes__showcase {
+				margin-left: -14px;
+				margin-right: -14px;
+				@media (max-width: $break-small) {
+					padding: 0;
+				}
+			}
+
+			.themes__controls .theme__search-container, .themes__controls .themes__filters, .themes__showcase .theme-showcase__all-themes {
+				margin: 0 auto;
+				padding-inline: 48px;
+				@media (max-width: 402px) {
+					padding-inline: 24px;
+				}
+				box-sizing: border-box;
+				max-width: 1400px;
+			}
+
+			.themes__controls.is-sticky {
+				padding-left: initial;
+				padding-right: initial;
+				padding-top: 30px;
+
+				@include break-medium {
+					padding-bottom: 0;
+				}
+			}
 		}
 	}
 
@@ -533,9 +567,8 @@
 
 			.is-global-sidebar-visible & {
 				top: calc(var(--masterbar-height) + 16px);
-				width: calc(100% - var(--sidebar-width-max) - 31px);
-				padding: 40px 32px 8px;
-
+				width: initial;
+				right: 15px;
 
 				// Make the scroll behavior works on the top of the fixed element.
 				pointer-events: none;
