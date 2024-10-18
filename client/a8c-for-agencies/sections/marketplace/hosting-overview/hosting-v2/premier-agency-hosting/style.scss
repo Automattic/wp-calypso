@@ -40,3 +40,34 @@
 		}
 	}
 }
+
+.pressable-overview-plan-existing {
+	background-image: linear-gradient(0deg, var(--color-primary-0) 0%, #fff 100%);
+	padding-bottom: 48px;
+	margin-bottom: 32px;
+
+	.pressable-overview-plan-existing__details-card{
+		flex: 1;
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 4px;
+		padding: 24px;
+		justify-content: space-between;
+		max-width: 1000px;
+		margin: 0 auto;
+		background-color: #fff;
+	}
+
+	.pressable-overview-plan-existing__owned-plan {
+		font-size: 0.75rem;
+		color: var(--color-neutral-60);
+	}
+	.pressable-overview-plan-existing__name {
+		font-size: 1.50rem;
+		font-weight: bold;
+		color: var(--color-accent-100);
+	}
+
+	.pressable-overview-plan-existing__header {
+		margin-bottom: 16px;
+	}
+}

@@ -2,9 +2,9 @@
 @import "@wordpress/base-styles/mixins";
 
 .pressable-usage-details__card {
-	padding: 20px;
-	border: 1px solid var(--color-neutral-5);
-	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 	width: 100%;
 	margin: 0 auto;
 
@@ -16,12 +16,12 @@
 	.pressable-usage-details__info {
 		display: flex;
 		justify-content: space-between;
+		gap: 8px;
 	}
 
 	.pressable-usage-details__info-item {
 		background: var(--color-neutral-0);
-		padding: 15px;
-		margin: 10px;
+		padding: 16px;
 		border-radius: 4px;
 		width: 100%;
 	}
@@ -33,17 +33,22 @@
 	}
 
 	.pressable-usage-details__info-label {
-		font-size: 0.75rem;
+		font-size: 0.875rem;
 		text-transform: uppercase;
 	}
 
 	.pressable-usage-details__info-top-right {
-		font-size: 0.75rem;
+		font-size: 0.875rem;
 		color: var(--color-neutral-60);
+
+		&.storage {
+			font-weight: bold;
+			font-size: 1rem;
+		}
 	}
 
 	.pressable-usage-details__info-value {
-		font-size: 1.25rem;
+		font-size: 1rem;
 		font-weight: bold;
 		margin-top: 5px;
 	}

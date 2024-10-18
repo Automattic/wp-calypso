@@ -1,6 +1,9 @@
 import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
+import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
+import useExistingPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-existing-pressable-plan';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -20,8 +23,37 @@ type Props = {
 export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
+	const { pressablePlans } = useProductAndPlans( {
+		selectedSite: null,
+		productSearchQuery: '',
+	} );
+
+	const { existingPlan, isReady: isExistingPlanFetched } = useExistingPressablePlan( {
+		plans: pressablePlans,
+	} );
+
 	return (
 		<div className="premier-agency-hosting">
+			{ isExistingPlanFetched && existingPlan && (
+				<section className="pressable-overview-plan-existing ok">
+					<div className="pressable-overview-plan-existing__details-card">
+						<div className="pressable-overview-plan-existing__header">
+							<div className="pressable-overview-plan-existing__owned-plan">
+								{ translate( 'You own the' ) }
+							</div>
+							<div className="pressable-overview-plan-existing__name">
+								{ translate( '%(plan_name)s plan', {
+									args: {
+										plan_name: existingPlan.name,
+									},
+									comment: '%(plan_name)s is the plan name.',
+								} ) }
+							</div>
+						</div>
+						<PressableUsageDetails existingPlan={ existingPlan } />
+					</div>
+				</section>
+			) }
 			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
