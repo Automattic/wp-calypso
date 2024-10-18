@@ -13,6 +13,7 @@ export * from './forms';
 export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
 export { default as ProductIcon } from './product-icon';
+export type { SupportedSlugs } from './product-icon/config';
 export { default as ProgressBar } from './progress-bar';
 export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
