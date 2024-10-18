@@ -64,6 +64,7 @@ class StatsNavigation extends Component {
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
 		isNewSite: PropTypes.bool,
+		delayTooltipPresentation: PropTypes.bool,
 	};
 
 	state = {
@@ -150,7 +151,7 @@ class StatsNavigation extends Component {
 			statsAdminVersion,
 			showLock,
 			hideModuleSettings,
-			isNewSite,
+			delayTooltipPresentation,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -167,11 +168,6 @@ class StatsNavigation extends Component {
 			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
-
-		// The isNewSite value can be null so we need to guard against that.
-		// This is semantically incorrect as we expect a boolean value.
-		// TODO: Update logic in connect() function to send only true/false value.
-		const delayTooltipPresentation = isNewSite === null || isNewSite;
 
 		return (
 			<div className={ wrapperClass }>
@@ -242,6 +238,25 @@ class StatsNavigation extends Component {
 	}
 }
 
+function shouldDelayTooltipPresentation( state, siteId ) {
+	// Check the 'created_at' time stamp.
+	// Can return null (Redux hydration?) which we'll treat as a delay.
+	const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
+	if ( siteCreatedTimeStamp === null ) {
+		return true;
+	}
+
+	// Check if the site is less than one week old.
+	const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+	const siteIsLessThanOneWeekOld =
+		new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
+	if ( siteIsLessThanOneWeekOld ) {
+		return true;
+	}
+
+	return false;
+}
+
 export default connect(
 	( state, { siteId, selectedItem } ) => {
 		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
@@ -264,6 +279,7 @@ export default connect(
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
+			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
 			isNewSite,
 		};
 	},
