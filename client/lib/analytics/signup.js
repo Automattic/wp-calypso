@@ -54,7 +54,8 @@ export function recordSignupComplete(
 		isMapping,
 		signupDomainOrigin,
 		elapsedTimeSinceStart = null,
-		framework = 'start',
+		framework,
+		isNewishUser,
 	},
 	now
 ) {
@@ -82,6 +83,7 @@ export function recordSignupComplete(
 				isMapping,
 				signupDomainOrigin,
 				framework,
+				isNewishUser,
 			},
 			true
 		);
@@ -107,6 +109,7 @@ export function recordSignupComplete(
 		is_transfer: isTransfer,
 		is_mapping: isMapping,
 		signup_domain_origin: signupDomainOrigin,
+		framework,
 	} );
 
 	// Google Analytics
@@ -124,7 +127,13 @@ export function recordSignupComplete(
 		const device = resolveDeviceTypeByViewPort();
 
 		// Tracks
-		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device, framework } );
+		recordTracksEvent( 'calypso_new_user_site_creation', {
+			flow,
+			device,
+			framework,
+			is_new_user: isNewUser,
+			is_newish_user: isNewishUser,
+		} );
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
 	}

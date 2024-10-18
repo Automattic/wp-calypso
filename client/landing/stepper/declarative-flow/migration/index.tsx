@@ -36,6 +36,7 @@ const {
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 	SITE_MIGRATION_CREDENTIALS,
 	SITE_MIGRATION_ALREADY_WPCOM,
+	SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 } = STEPS;
 
 const steps = [
@@ -50,6 +51,7 @@ const steps = [
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 	SITE_MIGRATION_CREDENTIALS,
 	SITE_MIGRATION_ALREADY_WPCOM,
+	SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 ];
 
 const plans: { [ key: string ]: string } = {
@@ -307,9 +309,9 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		[ SITE_MIGRATION_ALREADY_WPCOM.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				return navigateWithQueryParams(
-					SITE_MIGRATION_ASSISTED_MIGRATION,
-					[ 'preventTicketCreation' ],
-					{ ...props, ...{ preventTicketCreation: true } },
+					SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
+					[ 'variation' ],
+					{ ...props, variation: 'goals_shared' },
 					{ replaceHistory: true }
 				);
 			},

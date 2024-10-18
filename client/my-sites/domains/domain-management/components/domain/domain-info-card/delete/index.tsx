@@ -37,6 +37,9 @@ const DomainDeleteInfoCard = ( {
 	const title =
 		domain.type === domainType.TRANSFER ? translate( 'Cancel transfer' ) : translate( 'Delete' );
 
+	const buttonLabel =
+		domain.type === domainType.TRANSFER ? translate( 'Cancel' ) : translate( 'Delete' );
+
 	const getDescription = () => {
 		switch ( domain.type ) {
 			case domainType.SITE_REDIRECT:
@@ -58,7 +61,7 @@ const DomainDeleteInfoCard = ( {
 			purchase={ purchase }
 			className={ removePurchaseClassName }
 		>
-			{ translate( 'Delete' ) }
+			{ buttonLabel }
 		</RemovePurchase>
 	);
 
