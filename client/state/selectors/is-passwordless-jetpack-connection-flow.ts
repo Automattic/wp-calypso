@@ -5,12 +5,13 @@ import { isWooCommerceCoreProfilerFlow } from './is-woocommerce-core-profiler-fl
 import type { AppState } from 'calypso/types';
 
 const isWooCommercePaymentsOnboardingFlow = ( state: AppState ): boolean => {
-	return (
-		( get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
-			get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments' ) &&
-		( get( getInitialQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' ||
-			get( getCurrentQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' )
-	);
+	const from =
+		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
+		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments';
+	const plugin =
+		get( getInitialQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments' ||
+		get( getCurrentQueryArguments( state ), 'plugin_name' ) === 'woocommerce-payments';
+	return from && plugin;
 };
 /**
  * Returns true if the user should see the new passwordless Jetpack connection flow.
