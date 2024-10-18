@@ -207,7 +207,7 @@ const StatsCommercialPurchase = ( {
 			{ tierSelectionElements }
 			{ needsConnectionForUpgrade && (
 				<div className="stats-purchase-wizard__notice connection-notice">
-					{ translate( 'Please {{link}}connect your user account{{/link}} to upgrade stats.', {
+					{ translate( 'Please {{link}}connect your user account{{/link}} to upgrade Stats.', {
 						components: {
 							link: <a href={ `${ adminUrl }admin.php?page=my-jetpack#/connection` } />,
 						},
