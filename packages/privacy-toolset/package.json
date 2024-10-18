@@ -51,7 +51,7 @@
 		"@testing-library/react": "^15.0.7",
 		"postcss": "^8.4.5",
 		"require-from-string": "^2.0.2",
-		"typescript": "^5.3.3",
+		"typescript": "^5.6.3",
 		"webpack": "^5.94.0"
 	}
 }
