@@ -130,8 +130,20 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 && ! selectedSite ) {
-			setSelectedSite( combinedRecommendations[ 0 ] );
+		if ( combinedRecommendations.length > 0 ) {
+			// Check if the current selectedSite is still in the recommendations
+			const isCurrentSiteStillRecommended = combinedRecommendations.some(
+				( site ) => site.feed_ID === selectedSite?.feed_ID
+			);
+
+			if ( ! isCurrentSiteStillRecommended || ! selectedSite ) {
+				// If the current site is not in recommendations or there's no selected site,
+				// select the first site from the new recommendations
+				setSelectedSite( combinedRecommendations[ 0 ] );
+			}
+		} else {
+			// If there are no recommendations, clear the selected site
+			setSelectedSite( null );
 		}
 	}, [ combinedRecommendations, selectedSite ] );
 
