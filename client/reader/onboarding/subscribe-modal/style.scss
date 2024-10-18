@@ -14,18 +14,23 @@
 	&__content {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		height: calc( 100vh - 200px );
+		align-items: center;
 
-		@include break-medium {
+		@media ( min-width: 1200px ) {
 			flex-direction: row;
+			overflow: hidden;
+			align-items: initial;
 		}
 	}
 
 	&__site-list-column {
 		flex: 1;
-		padding: 30px;
+		padding: 20px 20px 0;
+		overflow-y: auto;
+		max-width: 600px;
 
-		@include break-medium {
+		@media ( min-width: 1200px ) {
 			max-width: 450px;
 		}
 
@@ -37,16 +42,19 @@
 		p {
 			text-wrap: balance;
 		}
-	}
 
-	&__preview-column {
-		flex: 1;
-		padding: 24px;
-		display: flex;
-		flex-direction: column;
+		.reader-subscription-list-item {
+			padding: 12px;
+			border: 1px solid var( --color-neutral-5 );
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+			cursor: pointer;
+			margin-bottom: 12px;
 
-		@include break-medium {
-			display: flex;
+			&.is-selected {
+				background-color: #e6f3fa;
+				border: 1px solid #0087be;
+				border-radius: 6px; /* stylelint-disable-line scales/radii */
+			}
 		}
 	}
 
@@ -54,14 +62,46 @@
 		margin-bottom: 24px;
 	}
 
+	&__preview-column {
+		flex: 1;
+		padding: 24px;
+		display: none;
+		flex-direction: column;
+		overflow: hidden;
+
+		clip-path: inset( 0 0 0 0 );
+
+		@media ( min-width: 1200px ) {
+			display: flex;
+		}
+
+		.reader-post-actions,
+		.comments__comment-list,
+		.reader-post-options-menu__ellipsis-menu,
+		.reader-update-notice {
+			display: none;
+		}
+	}
+
 	&__preview-placeholder {
-		display: flex;
-		align-items: center;
 		justify-content: center;
-		flex-grow: 1;
-		background-color: #e0e0e0;
-		font-style: italic;
-		border: 1px solid #ccc;
+		border: 1px solid #f2f2f2;
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		background-color: #f2f2f2;
+		height: calc( 100vh - 224px );
+		width: calc( 100vw - 620px );
+		overflow: hidden;
+		position: fixed;
+	}
+
+	&__preview-stream-header {
+		background-color: #fff;
+		text-align: center;
+		line-height: rem( 36px );
+		font-size: rem( 14px );
+	}
+
+	&__preview-stream-container {
+		padding-top: 40px;
 	}
 }
