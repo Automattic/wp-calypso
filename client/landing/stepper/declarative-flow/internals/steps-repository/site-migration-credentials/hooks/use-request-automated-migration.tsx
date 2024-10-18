@@ -1,13 +1,12 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ApiError, CredentialsFormData } from '../types';
 
 interface AutomatedMigrationAPIResponse {
 	success: boolean;
 }
 
-interface AutomatedMigrationBody {
+interface AutomatedMigration {
 	migration_type: 'credentials' | 'backup';
 	blog_url: string;
 	from_url?: string;
@@ -18,15 +17,24 @@ interface AutomatedMigrationBody {
 	bypass_verification?: boolean;
 }
 
-export const useSiteMigrationCredentialsMutation = <
-	TData = AutomatedMigrationAPIResponse,
-	TError = ApiError,
->(
-	options: UseMutationOptions< TData, TError, CredentialsFormData > = {}
-) => {
-	const siteSlug = useSiteSlugParam();
+const requestAutomatedMigration = async (
+	siteSlug: string,
+	payload: AutomatedMigration
+): Promise< AutomatedMigrationAPIResponse > => {
+	return wpcomRequest( {
+		path: `sites/${ siteSlug }/automated-migration`,
+		apiNamespace: 'wpcom/v2/',
+		apiVersion: '2',
+		method: 'POST',
+		body: payload,
+	} );
+};
 
-	return useMutation< TData, TError, CredentialsFormData >( {
+export const useRequestAutomatedMigration = (
+	siteSlug?: string | null,
+	options: UseMutationOptions< AutomatedMigrationAPIResponse, ApiError, CredentialsFormData > = {}
+) => {
+	return useMutation< AutomatedMigrationAPIResponse, ApiError, CredentialsFormData >( {
 		mutationFn: ( {
 			from_url,
 			username,
@@ -35,8 +43,12 @@ export const useSiteMigrationCredentialsMutation = <
 			migrationType,
 			backupFileLocation,
 			bypassVerification,
-		}: CredentialsFormData ) => {
-			let body: AutomatedMigrationBody = {
+		} ) => {
+			if ( ! siteSlug ) {
+				throw new Error( 'Site slug is required' );
+			}
+
+			let body: AutomatedMigration = {
 				migration_type: migrationType,
 				blog_url: siteSlug ?? '',
 				notes,
@@ -58,13 +70,7 @@ export const useSiteMigrationCredentialsMutation = <
 				};
 			}
 
-			return wpcomRequest( {
-				path: `sites/${ siteSlug }/automated-migration`,
-				apiNamespace: 'wpcom/v2/',
-				apiVersion: '2',
-				method: 'POST',
-				body,
-			} );
+			return requestAutomatedMigration( siteSlug, body );
 		},
 		...options,
 	} );
