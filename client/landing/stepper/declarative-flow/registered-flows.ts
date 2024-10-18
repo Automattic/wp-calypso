@@ -20,7 +20,6 @@ import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
-	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -179,17 +178,8 @@ const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } 
 		),
 };
 
-const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > =
-	config.isEnabled( '100-year-domain' )
-		? {
-				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
-					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
-		  }
-		: {};
-
 export default {
 	...availableFlows,
 	...videoPressTvFlows,
 	...hostedSiteMigrationFlow,
-	...hundredYearDomainFlow,
 };
