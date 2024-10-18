@@ -2,9 +2,9 @@ import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { PanelBody, ToggleControl } from '@wordpress/components';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -12,6 +12,7 @@ import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useSelector } from 'calypso/state';
 import {
 	withAnalytics,
 	composeAnalytics,
@@ -35,7 +36,6 @@ import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-ho
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { AppState } from 'calypso/types';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
 
@@ -45,46 +45,87 @@ const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
 
-type SftpCardComponentProps = SftpCardProps & {
-	translate: LocalizeProps[ 'translate' ];
-	siteId: number | null;
-	siteSlug: string | null;
-	currentUserId: number | null;
-	username: string | null;
-	password: string | null;
-	siteHasSftpFeature: boolean;
-	siteHasSshFeature: boolean;
-	isSshAccessEnabled: boolean;
-	isLoadingSftpData: boolean;
-	createSftpUser: ( siteId: number | null, currentUserId: number | null ) => void;
-	requestSftpUsers: ( siteId: number | null ) => void;
-	resetSftpPassword: ( siteId: number | null, sshUsername: string | null ) => void;
-	requestSshAccess: ( siteId: number | null ) => void;
-	enableSshAccess: ( siteId: number | null ) => void;
-	disableSshAccess: ( siteId: number | null ) => void;
-	removePasswordFromState: ( siteId: number | null, username: string | null ) => void;
+const resetSftpPassword = ( siteId: number | null, sshUsername: string | null ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent( 'Hosting Configuration', 'Clicked "Reset Password" Button in SFTP Card' ),
+			recordTracksEvent( 'calypso_hosting_configuration_reset_sftp_password' ),
+			bumpStat( 'hosting-config', 'reset-sftp-password' )
+		),
+		resetAtomicSftpPassword( siteId, sshUsername )
+	);
+
+const createSftpUser = ( siteId: number | null, currentUserId: number | null ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Hosting Configuration',
+				'Clicked "Create SFTP Credentials" Button in SFTP Card'
+			),
+			recordTracksEvent( 'calypso_hosting_configuration_create_sftp_user' ),
+			bumpStat( 'hosting-config', 'create-sftp-user' )
+		),
+		createAtomicSftpUser( siteId, currentUserId )
+	);
+
+const enableSshAccess = ( siteId: number | null ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_hosting_configuration_enable_ssh_access' ),
+			bumpStat( 'hosting-config', 'enable-ssh-access' )
+		),
+		enableAtomicSshAccess( siteId )
+	);
+
+const disableSshAccess = ( siteId: number | null ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_hosting_configuration_disable_ssh_access' ),
+			bumpStat( 'hosting-config', 'disable-ssh-access' )
+		),
+		disableAtomicSshAccess( siteId )
+	);
+
+type SftpCardProps = {
+	disabled: boolean;
 };
 
-export const SftpCard = ( {
-	translate,
-	username,
-	password,
-	siteId,
-	siteSlug,
-	disabled,
-	currentUserId,
-	requestSftpUsers,
-	createSftpUser,
-	resetSftpPassword,
-	siteHasSftpFeature,
-	siteHasSshFeature,
-	isSshAccessEnabled,
-	isLoadingSftpData,
-	requestSshAccess,
-	enableSshAccess,
-	disableSshAccess,
-	removePasswordFromState,
-}: SftpCardComponentProps ) => {
+export const SftpCard = ( { disabled }: SftpCardProps ) => {
+	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const currentUserId = useSelector( getCurrentUserId );
+	const siteHasSftpFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_SFTP )
+	);
+	const siteHasSshFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_SSH )
+	);
+	const isSshAccessEnabled =
+		'ssh' === useSelector( ( state ) => getAtomicHostingSshAccess( state, siteId ) );
+	const isLoadingSftpData = useSelector( ( state ) =>
+		getAtomicHostingIsLoadingSftpData( state, siteId )
+	);
+	const { username, password } = useSelector( ( state ) => {
+		if ( disabled ) {
+			return { username: null, password: null };
+		}
+
+		const users = getAtomicHostingSftpUsers( state, siteId );
+
+		// If SFTP user is not created yet
+		if ( users === null || ! users.length ) {
+			return { username: null, password: null };
+		}
+
+		// Pick first user. Rest of users will be handled in next phases.
+		return {
+			username: users[ 0 ].username,
+			password: users[ 0 ].password || null,
+		};
+	} );
+
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
@@ -94,14 +135,14 @@ export const SftpCard = ( {
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
-	const resetPassword = () => {
+	const handleResetPassword = () => {
 		setPasswordLoading( true );
-		resetSftpPassword( siteId, username );
+		reduxDispatch( resetSftpPassword( siteId, username ) );
 	};
 
-	const createUser = () => {
+	const handleCreateUser = () => {
 		setIsLoading( true );
-		createSftpUser( siteId, currentUserId );
+		reduxDispatch( createSftpUser( siteId, currentUserId ) );
 		if ( 'host-site' === siteIntent ) {
 			updateLaunchpadSettings( siteId, {
 				checklist_statuses: { setup_ssh: true },
@@ -109,21 +150,21 @@ export const SftpCard = ( {
 		}
 	};
 
-	const toggleSshAccess = () => {
+	const handleToggleSshAccess = () => {
 		setSshAccessLoading( true );
 		if ( isSshAccessEnabled ) {
-			disableSshAccess( siteId );
+			reduxDispatch( disableSshAccess( siteId ) );
 		} else {
-			enableSshAccess( siteId );
+			reduxDispatch( enableSshAccess( siteId ) );
 		}
 	};
 
 	useEffect( () => {
 		if ( ! disabled ) {
 			setIsLoading( true );
-			requestSftpUsers( siteId );
+			reduxDispatch( requestAtomicSftpUsers( siteId ) );
 			if ( siteHasSshFeature ) {
-				requestSshAccess( siteId );
+				reduxDispatch( requestAtomicSshAccess( siteId ) );
 			}
 		}
 	}, [ disabled, siteId, siteHasSshFeature ] );
@@ -133,10 +174,10 @@ export const SftpCard = ( {
 	useEffect(
 		() => () => {
 			if ( password ) {
-				removePasswordFromState( siteId, username );
+				reduxDispatch( updateAtomicSftpUser( siteId, [ { username, password: null } ] ) );
 			}
 		},
-		[ username, password, siteId, removePasswordFromState ]
+		[ username, password, siteId, reduxDispatch ]
 	);
 
 	useEffect( () => {
@@ -178,7 +219,11 @@ export const SftpCard = ( {
 				<div className="sftp-card__password-explainer">
 					{ translate( 'For security reasons, you must reset your password to view it.' ) }
 				</div>
-				<Button onClick={ resetPassword } disabled={ isPasswordLoading } busy={ isPasswordLoading }>
+				<Button
+					onClick={ handleResetPassword }
+					disabled={ isPasswordLoading }
+					busy={ isPasswordLoading }
+				>
 					{ translate( 'Reset password' ) }
 				</Button>
 			</>
@@ -192,7 +237,7 @@ export const SftpCard = ( {
 					__nextHasNoMarginBottom
 					disabled={ isLoading || isSshAccessLoading }
 					checked={ isSshAccessEnabled }
-					onChange={ () => toggleSshAccess() }
+					onChange={ handleToggleSshAccess }
 					label={ translate(
 						'Enable SSH access for this site. {{supportLink}}Learn more{{/supportLink}}.',
 						{
@@ -296,7 +341,7 @@ export const SftpCard = ( {
 							}
 						) }
 					</p>
-					<Button onClick={ createUser }>{ translate( 'Create credentials' ) }</Button>
+					<Button onClick={ handleCreateUser }>{ translate( 'Create credentials' ) }</Button>
 				</>
 			) }
 			{ username && (
@@ -346,96 +391,3 @@ export const SftpCard = ( {
 		</HostingCard>
 	);
 };
-
-const resetSftpPassword = ( siteId: number | null, sshUsername: string | null ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordGoogleEvent( 'Hosting Configuration', 'Clicked "Reset Password" Button in SFTP Card' ),
-			recordTracksEvent( 'calypso_hosting_configuration_reset_sftp_password' ),
-			bumpStat( 'hosting-config', 'reset-sftp-password' )
-		),
-		resetAtomicSftpPassword( siteId, sshUsername )
-	);
-
-const createSftpUser = ( siteId: number | null, currentUserId: number | null ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordGoogleEvent(
-				'Hosting Configuration',
-				'Clicked "Create SFTP Credentials" Button in SFTP Card'
-			),
-			recordTracksEvent( 'calypso_hosting_configuration_create_sftp_user' ),
-			bumpStat( 'hosting-config', 'create-sftp-user' )
-		),
-		createAtomicSftpUser( siteId, currentUserId )
-	);
-
-const enableSshAccess = ( siteId: number | null ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_hosting_configuration_enable_ssh_access' ),
-			bumpStat( 'hosting-config', 'enable-ssh-access' )
-		),
-		enableAtomicSshAccess( siteId )
-	);
-
-const disableSshAccess = ( siteId: number | null ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_hosting_configuration_disable_ssh_access' ),
-			bumpStat( 'hosting-config', 'disable-ssh-access' )
-		),
-		disableAtomicSshAccess( siteId )
-	);
-
-type SftpCardProps = {
-	disabled?: boolean;
-};
-
-export default connect(
-	( state: AppState, { disabled }: SftpCardProps ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSelectedSiteSlug( state );
-		const currentUserId = getCurrentUserId( state );
-		let username: string | null = null;
-		let password: string | null = null;
-
-		if ( ! disabled ) {
-			const users = getAtomicHostingSftpUsers( state, siteId );
-			if ( users !== null ) {
-				if ( users.length ) {
-					// Pick first user. Rest of users will be handled in next phases.
-					username = users[ 0 ].username;
-					password = users[ 0 ].password;
-				} else {
-					// No SFTP user created yet.
-					username = null;
-					password = null;
-				}
-			}
-		}
-
-		return {
-			siteId,
-			siteSlug,
-			currentUserId,
-			username,
-			password,
-			siteHasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
-			siteHasSshFeature: siteHasFeature( state, siteId, FEATURE_SSH ),
-			isSshAccessEnabled: 'ssh' === getAtomicHostingSshAccess( state, siteId ),
-			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
-		};
-	},
-	{
-		requestSftpUsers: requestAtomicSftpUsers,
-		createSftpUser,
-		resetSftpPassword,
-		requestSshAccess: requestAtomicSshAccess,
-		enableSshAccess,
-		disableSshAccess,
-
-		removePasswordFromState: ( siteId: number | null, username: string | null ) =>
-			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
-	}
-)( localize( SftpCard ) );
