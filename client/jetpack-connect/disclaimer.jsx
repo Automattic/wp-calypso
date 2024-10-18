@@ -67,7 +67,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 			);
 
 			text = translate(
-				"By clicking Connect your account, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site's data{{/syncDataLink}} with us.",
+				"By clicking Connect your account, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site’s data{{/syncDataLink}} with us.",
 				{
 					components: {
 						termsOfServiceLink,
