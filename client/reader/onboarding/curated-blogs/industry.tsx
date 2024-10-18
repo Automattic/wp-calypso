@@ -373,6 +373,18 @@ export const industryBlogs: CuratedBlogsList = {
 	],
 	'creator-economy': [
 		{
+			feed_ID: 150905227,
+			site_ID: 225278048,
+			site_URL: 'http://louderback.com/',
+			site_name: 'Jim Louderback',
+		},
+		{
+			feed_ID: 91274429,
+			site_ID: 140678957,
+			site_URL: 'http://tipsfromsharvi.com/',
+			site_name: 'Tips from Sharvi',
+		},
+		{
 			feed_ID: 138958746,
 			site_ID: 35140201,
 			site_URL: 'https://creatoreconomylaw.com/',
@@ -383,6 +395,18 @@ export const industryBlogs: CuratedBlogsList = {
 			site_ID: 181411913,
 			site_URL: 'https://www.tubefilter.com/',
 			site_name: 'Tubefilter',
+		},
+		{
+			feed_ID: 141870632,
+			site_ID: 218647781,
+			site_URL: 'https://bernoff.com/',
+			site_name: 'Josh Bernoff',
+		},
+		{
+			feed_ID: 135285068,
+			site_ID: 208791429,
+			site_URL: 'http://roineland.com/',
+			site_name: 'The Roine Playground',
 		},
 	],
 };
