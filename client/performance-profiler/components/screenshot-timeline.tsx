@@ -58,7 +58,35 @@ const ScreenshotModal = styled( Modal )`
 
 		.components-modal__header {
 			button {
-				filter: invert( 100% ) contrast( 130% );
+				position: relative;
+			}
+
+			button::before,
+			button::after {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				border-radius: 50%;
+				background-color: black;
+				mix-blend-mode: screen;
+			}
+
+			button::before {
+				background-color: white;
+				mix-blend-mode: difference;
+			}
+
+			button::after {
+				background-color: black;
+				mix-blend-mode: screen;
+			}
+
+			button svg {
+				fill: white;
+				mix-blend-mode: difference;
 			}
 		}
 	}
