@@ -123,7 +123,7 @@ export async function createAccount( {
 
 	// Handling special case where users log in via social using signup form.
 	let isNewAccountCreated = true;
-	if ( service && response && 'created_account' in response && !! response?.created_account ) {
+	if ( service && response && 'created_account' in response && ! response?.created_account ) {
 		isNewAccountCreated = false;
 	}
 
