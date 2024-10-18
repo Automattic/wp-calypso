@@ -10,10 +10,26 @@ import './style.scss';
 interface Props {
 	currentPlugins: Array;
 	initialSearch?: string;
+	pluginUpdateCount: number;
+	pluginActiveCount: number;
+	pluginInactivecount: number;
 	onSearch?: ( search: string ) => void;
 }
 
-export default function PluginsListV2( { currentPlugins, initialSearch, onSearch }: Props ) {
+export const PLUGINS_STATUS = {
+	ACTIVE: 1,
+	INACTIVE: 2,
+	UPDATE: 3,
+};
+
+export default function PluginsListV2( {
+	currentPlugins,
+	initialSearch,
+	pluginUpdateCount,
+	pluginActiveCount,
+	pluginInactivecount,
+	onSearch,
+}: Props ) {
 	const translate = useTranslate();
 
 	const fields = useMemo(
@@ -21,15 +37,31 @@ export default function PluginsListV2( { currentPlugins, initialSearch, onSearch
 			{
 				id: 'status',
 				label: translate( 'Status' ),
+				getValue: ( { item }: { item } ) => {
+					return item.status;
+				},
 				render: () => null,
 				elements: [
-					{ value: 1, label: translate( 'All' ) },
-					{ value: 2, label: translate( 'Active' ) },
-					{ value: 3, label: translate( 'Inactive' ) },
-					{ value: 4, label: translate( 'Needs update' ) },
+					{
+						value: PLUGINS_STATUS.ACTIVE,
+						label:
+							translate( 'Active' ) + ( pluginActiveCount > 0 ? ' - ' + pluginActiveCount : '' ),
+					},
+					{
+						value: PLUGINS_STATUS.INACTIVE,
+						label:
+							translate( 'Inactive' ) +
+							( pluginInactivecount > 0 ? ' - ' + pluginInactivecount : '' ),
+					},
+					{
+						value: PLUGINS_STATUS.UPDATE,
+						label:
+							translate( 'Needs update' ) +
+							( pluginUpdateCount > 0 ? ' - ' + pluginUpdateCount : '' ),
+					},
 				],
 				filterBy: {
-					operators: [ 'is' ],
+					operators: [ 'isAny' ],
 					isPrimary: true,
 				},
 				enableHiding: false,
@@ -81,18 +113,7 @@ export default function PluginsListV2( { currentPlugins, initialSearch, onSearch
 	const initialDataViewsState = {
 		type: 'table',
 		search: initialSearch || '',
-		// filters:
-		// 	filter?.issueTypes?.map( ( issueType ) => {
-		// 		return {
-		// 			field: 'status',
-		// 			operator: 'is',
-		// 			value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-		// 		};
-		// 	} ) || [],
-		filters: [
-			// { field: 'plugins', operator: 'is', value: 2 },
-			// { field: 'status', operator: 'isAny', value: [ 'publish', 'draft' ] },
-		],
+		filters: [],
 		page: 1,
 		perPage: pluginsPerPage,
 		sort: {
