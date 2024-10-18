@@ -269,7 +269,6 @@ class RegisterDomainStep extends Component {
 
 	getInitialFiltersState() {
 		return {
-			includeDashes: false,
 			maxCharacters: '',
 			exactSldMatchesOnly: false,
 			tlds: [],
@@ -534,7 +533,6 @@ class RegisterDomainStep extends Component {
 
 	renderSearchFilters() {
 		const isKrackenUi =
-			config.isEnabled( 'domains/kracken-ui/dashes-filter' ) ||
 			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
 			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 		const isRenderingInitialSuggestions =

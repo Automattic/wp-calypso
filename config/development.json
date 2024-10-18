@@ -63,7 +63,6 @@
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domains/gdpr-consent-page": true,
-		"domains/kracken-ui/dashes-filter": false,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/max-characters-filter": false,
 		"domains/kracken-ui/pagination": true,
