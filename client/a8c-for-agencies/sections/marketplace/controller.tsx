@@ -49,7 +49,7 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 	if ( isEnabled( 'a4a-hosting-page-redesign' ) && ! context.params.section ) {
 		const currentAgency = getActiveAgency( context.store.getState() );
 		page.redirect(
-			// If the agency is managing more than 5 sites, then we make pressable as default section.
+			// If the agency is managing less than 5 sites, then we make wpcom as default section.
 			currentAgency?.number_of_sites === '1-5'
 				? A4A_MARKETPLACE_HOSTING_WPCOM_LINK
 				: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
