@@ -4,7 +4,7 @@ import { Button, JetpackLogo } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	useEdgeCacheQuery,
@@ -129,13 +129,13 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 			} ) }
 		>
 			<div className="cache-card__all-cache-block">
-				<HostingCardDescription>
+				<div>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
 						components: {
 							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 						},
 					} ) }
-				</HostingCardDescription>
+				</div>
 
 				<Tooltip
 					placement="top"
@@ -145,7 +145,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							: ''
 					}
 				>
-					<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+					<div className="cache-card__button-wrapper">
 						<Button
 							busy={ isClearingAllCaches }
 							disabled={
@@ -216,7 +216,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 											: ''
 									}
 								>
-									<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+									<div className="cache-card__button-wrapper">
 										<Button
 											busy={ isClearingEdgeCache && ! isClearingAllCaches }
 											disabled={
@@ -245,7 +245,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							comment: 'Object cache stores database lookups and some network requests',
 						} ) }
 					</div>
-					<HostingCardDescription>
+					<div>
 						{ translate(
 							'Data is cached using Memcached to reduce database lookups. {{a}}Learn more{{/a}}.',
 							{
@@ -255,7 +255,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 								},
 							}
 						) }
-					</HostingCardDescription>
+					</div>
 
 					<Tooltip
 						placement="top"
@@ -290,7 +290,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 						<div className="cache-card__subtitle">{ translate( 'Elasticsearch' ) }</div>
 						<div className="cache-card__jetpack-description">
 							<JetpackLogo size={ 16 } />
-							<HostingCardDescription>
+							<div>
 								{ translate(
 									'Jetpack indexes the content of your site with Elasticsearch. {{a}}Learn more{{/a}}.',
 									{
@@ -306,7 +306,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 										},
 									}
 								) }
-							</HostingCardDescription>
+							</div>
 						</div>
 					</div>
 				</>
