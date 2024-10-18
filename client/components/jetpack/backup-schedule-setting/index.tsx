@@ -35,7 +35,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	const queryClient = useQueryClient();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const { isLoading: isScheduledTimeQueryLoading, data } = useScheduledTimeQuery( siteId );
+	const { isFetching: isScheduledTimeQueryFetching, data } = useScheduledTimeQuery( siteId );
 	const { isPending: isScheduledTimeMutationLoading, mutate: scheduledTimeMutate } =
 		useScheduledTimeMutation( {
 			onSuccess: () => {
@@ -57,7 +57,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 			},
 		} );
 
-	const isLoading = isScheduledTimeQueryLoading || isScheduledTimeMutationLoading;
+	const isLoading = isScheduledTimeQueryFetching || isScheduledTimeMutationLoading;
 
 	const updateScheduledTime = ( selectedTime: string ) => {
 		scheduledTimeMutate( { scheduledHour: selectedTime as unknown as number } );
