@@ -14,7 +14,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-auto-rows: auto;
-	margin-block: 32px 64px;
+	margin-block: 56px 64px;
 	row-gap: 32px;
 
 	@include break-large {
@@ -248,8 +248,11 @@
 		width: 1000px;
 	}
 
-	.pressable-overview-plan-selection__filter-owned-plan {
-		margin-block-start: 32px;
+	.pressable-overview-plan-selection__upgrade-title {
+		font-size: 2rem;
+		font-weight: bold;
+		text-align: center;
+		margin-block: 56px 32px;
 	}
 
 	.pressable-overview-plan-selection__details-card {
