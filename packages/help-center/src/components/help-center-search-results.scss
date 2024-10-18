@@ -40,4 +40,16 @@
 			font-size: $font-body;
 		}
 	}
+
+	// Homepage conversations section
+	.help-center-homepage-conversations {
+		.help-center-support-chat__conversation-container {
+			border-radius: 4px;
+			border: 1.5px solid #C3C4C7;
+
+			&:hover, &.is-unread-message {
+				border: 1.5px solid var(--color-primary) !important;
+			}
+		}
+	}
 }
