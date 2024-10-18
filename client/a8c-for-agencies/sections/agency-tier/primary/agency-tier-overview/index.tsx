@@ -13,6 +13,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import DownloadBadges from '../../download-badges';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
 
@@ -48,10 +49,7 @@ export default function AgencyTierOverview() {
 					</Subtitle>
 					<Actions>
 						<MobileSidebarNavigation />
-						{
-							// TODO: Add actions
-							<></>
-						}
+						<DownloadBadges />
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
