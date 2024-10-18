@@ -192,7 +192,42 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	sleep: [
-		// Add more sleep-related blogs...
+		{
+			feed_ID: 64878796,
+			site_ID: 128043702,
+			site_URL: 'https://michellessanctuary.wordpress.com/',
+			site_name: "Michelle's Sanctuary | Bedtime Stories & Sleep Meditations",
+		},
+		{
+			feed_ID: 47798491,
+			site_ID: 103187149,
+			site_URL: 'https://sleepwithsilk.com/',
+			site_name: 'Sleep With Silk',
+		},
+		{
+			feed_ID: 156735694,
+			site_ID: 231287213,
+			site_URL: 'https://somaticsleepcoach.com/',
+			site_name: 'Somatic Sleep Coach',
+		},
+		{
+			feed_ID: 13096676,
+			site_ID: 66008408,
+			site_URL: 'https://neurosciencenews.com/',
+			site_name: 'Neuroscience News',
+		},
+		{
+			feed_ID: 98160517,
+			site_ID: 158811106,
+			site_URL: 'https://thatsleepguy.com/',
+			site_name: 'That Sleep Guy',
+		},
+		{
+			feed_ID: 144414492,
+			site_ID: 35212544,
+			site_URL: 'http://naturalremediesgoodhealth.com/',
+			site_name: 'News on Natural Remedies, Good Sleep and Good Health',
+		},
 	],
 	relationships: [
 		// Add more relationship blogs...
