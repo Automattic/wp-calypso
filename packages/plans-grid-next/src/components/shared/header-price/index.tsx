@@ -58,7 +58,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
 					<div className="plans-grid-next-header-price__badge">
-						{ translate( 'Limited Time Offer' ) }
+						{ translate( 'Special Offer' ) }
 					</div>
 				) }
 				<div
