@@ -43,6 +43,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
@@ -131,7 +132,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		} else {
 			setCurrentPage( 0 );
 		}
-	}, [ currentPage ] );
+		setSelectedSite( combinedRecommendations[ ( currentPage + 1 ) * 6 ] );
+	}, [ currentPage, combinedRecommendations ] );
 
 	const loadMoreText = currentPage === 2 ? __( 'Start over' ) : __( 'Load more recommendations' );
 
@@ -142,8 +144,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			</Button>
 		</>
 	);
-
-	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
