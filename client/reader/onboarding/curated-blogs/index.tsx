@@ -14,7 +14,7 @@ export const curatedBlogs = {
 
 export type CuratedBlog = {
 	feed_ID: number;
-	site_ID: number | null;
+	site_ID: number | null; // null if not a WordPress.com site
 	site_URL: string;
 	site_name: string;
 };

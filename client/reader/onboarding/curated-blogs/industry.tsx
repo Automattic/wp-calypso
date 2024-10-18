@@ -33,14 +33,8 @@ export const industryBlogs: CuratedBlogsList = {
 			site_name: 'Duct Tape Marketing',
 		},
 		{
-			feed_ID: 14195733,
-			site_ID: 104842126,
-			site_URL: 'https://www.smallbiztechnology.com',
-			site_name: 'SmallBizTechnology',
-		},
-		{
 			feed_ID: 200540198,
-			site_ID: 200540198,
+			site_ID: null,
 			site_URL: 'http://smallbizsurvival.com',
 			site_name: 'Small Biz Survival',
 		},
