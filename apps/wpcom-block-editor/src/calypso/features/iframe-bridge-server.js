@@ -1232,7 +1232,7 @@ function initPort( message ) {
 // Note: domReady is used instead of `(function() { ... })()` because certain
 // things in `initPort` require other scripts to be loaded. (For example, ETK
 // scripts need to be available before some things will work correctly.)
-domReady( async () => {
+domReady( () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
