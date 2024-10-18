@@ -35,6 +35,7 @@ const Thumbnail = styled.img`
 	border-radius: 6px;
 	width: 100%;
 	min-width: 60px;
+	cursor: pointer;
 `;
 
 const Tick = styled.p`
