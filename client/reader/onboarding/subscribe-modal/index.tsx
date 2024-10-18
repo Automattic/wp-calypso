@@ -64,7 +64,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				( card: Card ) => card.type === 'recommended_blogs'
 			);
 
-			return recommendedBlogsCard ? recommendedBlogsCard.data : [];
+			return recommendedBlogsCard
+				? recommendedBlogsCard.data.map( ( site: CardData & { URL?: string } ) => ( {
+						...site,
+						site_URL: site.URL || site.site_URL,
+				  } ) )
+				: [];
 		},
 	} );
 
@@ -124,7 +129,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 
-	// Add this useEffect hook to select the first site when recommendations are loaded
+	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
 		if ( combinedRecommendations.length > 0 && ! selectedSite ) {
 			setSelectedSite( combinedRecommendations[ 0 ] );
@@ -133,6 +138,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	const handleItemClick = ( site: CardData ) => {
 		setSelectedSite( site );
+	};
+
+	const formatUrl = ( url: string ): string => {
+		return url
+			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
+			.replace( /\/$/, '' ); // Remove trailing slash
 	};
 
 	return (
@@ -184,14 +195,19 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">
 							{ selectedSite ? (
-								<div className="subscribe-modal__preview-stream-container">
-									<TypedStream
-										streamKey={ `feed:${ selectedSite.feed_ID }` }
-										className="is-site-stream subscribe-modal__preview-stream"
-										followSource="reader_subscribe_modal"
-										useCompactCards
-									/>
-								</div>
+								<>
+									<div className="subscribe-modal__preview-stream-header">
+										<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
+									</div>
+									<div className="subscribe-modal__preview-stream-container">
+										<TypedStream
+											streamKey={ `feed:${ selectedSite.feed_ID }` }
+											className="is-site-stream subscribe-modal__preview-stream"
+											followSource="reader_subscribe_modal"
+											useCompactCards
+										/>
+									</div>
+								</>
 							) : (
 								<div className="subscribe-modal__preview-placeholder-text">
 									{ __( 'Select a blog to preview its posts' ) }
