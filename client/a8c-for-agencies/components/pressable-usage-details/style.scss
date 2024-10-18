@@ -1,0 +1,50 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.pressable-usage-details__card {
+	padding: 20px;
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 4px;
+	width: 100%;
+	margin: 0 auto;
+
+	.pressable-usage-details__title {
+		font-size: 1.5rem;
+		margin-bottom: 10px;
+	}
+
+	.pressable-usage-details__info {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.pressable-usage-details__info-item {
+		background: var(--color-neutral-0);
+		padding: 15px;
+		margin: 10px;
+		border-radius: 4px;
+		width: 100%;
+	}
+
+	.pressable-usage-details__info-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.pressable-usage-details__info-label {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+	}
+
+	.pressable-usage-details__info-top-right {
+		font-size: 0.75rem;
+		color: var(--color-neutral-60);
+	}
+
+	.pressable-usage-details__info-value {
+		font-size: 1.25rem;
+		font-weight: bold;
+		margin-top: 5px;
+	}
+}
