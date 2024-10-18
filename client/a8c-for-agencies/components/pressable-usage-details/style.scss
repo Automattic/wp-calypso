@@ -8,6 +8,11 @@
 	width: 100%;
 	margin: 0 auto;
 
+	.pressable-usage-details__empty-message {
+		font-size: 0.875rem;
+		margin-bottom: 16px;
+	}
+
 	.pressable-usage-details__title {
 		font-size: 1.5rem;
 		margin-bottom: 10px;
@@ -42,6 +47,7 @@
 		padding: 16px;
 		border-radius: 4px;
 		width: auto;
+		min-height: 45px;
 
 		@include break-large {
 			width: 100%;
@@ -57,6 +63,13 @@
 	.pressable-usage-details__info-label {
 		font-size: 0.875rem;
 		text-transform: uppercase;
+	}
+
+	&.is-empty {
+		.pressable-usage-details__info-top-right,
+		.pressable-usage-details__info-label {
+			color: var(--studio-gray-40);
+		}
 	}
 
 	.pressable-usage-details__info-top-right {

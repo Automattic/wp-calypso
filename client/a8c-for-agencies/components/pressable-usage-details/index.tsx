@@ -3,6 +3,7 @@ import formatNumber, {
 	DEFAULT_LOCALE,
 	STANDARD_FORMATTING_OPTIONS,
 } from '@automattic/components/src/number-formatters/lib/format-number';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
@@ -27,19 +28,29 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 	}
 
 	return (
-		<div className="pressable-usage-details__card">
+		<div
+			className={ clsx( 'pressable-usage-details__card', {
+				'is-empty': ! planUsage,
+			} ) }
+		>
+			{ ! planUsage && (
+				<div className="pressable-usage-details__empty-message">
+					{ translate( "View your usage data here when it's available." ) }
+				</div>
+			) }
 			<div className="pressable-usage-details__info">
 				<div className="pressable-usage-details__info-item">
 					<div className="pressable-usage-details__info-header">
 						<div className="pressable-usage-details__info-label">{ translate( 'Storage' ) }</div>
 						<div className="pressable-usage-details__info-top-right storage">
-							{ translate( 'Using %(used_storage)s of %(max_storage)s GB', {
-								args: {
-									used_storage: planUsage ? planUsage.storage_gb : '?',
-									max_storage: planInfo.storage,
-								},
-								comment: '%(used_storage)s and %(max_storage)d are the storage values in GB.',
-							} ) }
+							{ planUsage &&
+								translate( 'Using %(used_storage)s of %(max_storage)s GB', {
+									args: {
+										used_storage: planUsage ? planUsage.storage_gb : '?',
+										max_storage: planInfo.storage,
+									},
+									comment: '%(used_storage)s and %(max_storage)d are the storage values in GB.',
+								} ) }
 						</div>
 					</div>
 					<div className="pressable-usage-details__info-value">
@@ -67,12 +78,13 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						</div>
 					</div>
 					<div className="pressable-usage-details__info-value">
-						{ translate( '%(total_sites)s installed sites', {
-							args: {
-								total_sites: planUsage ? planUsage.sites_count : '?',
-							},
-							comment: '%(total_sites)s is the number of installed sites.',
-						} ) }
+						{ planUsage &&
+							translate( '%(total_sites)s installed sites', {
+								args: {
+									total_sites: planUsage.sites_count,
+								},
+								comment: '%(total_sites)s is the number of installed sites.',
+							} ) }
 					</div>
 				</div>
 
@@ -93,18 +105,17 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						</div>
 					</div>
 					<div className="pressable-usage-details__info-value">
-						{ translate( '%(visits_count)s visits this month', {
-							args: {
-								visits_count: planUsage
-									? formatNumber(
-											planUsage.visits_count,
-											DEFAULT_LOCALE,
-											STANDARD_FORMATTING_OPTIONS
-									  )
-									: '?',
-							},
-							comment: '%(visits_count)s is the number of month visits of the site.',
-						} ) }
+						{ planUsage &&
+							translate( '%(visits_count)s visits this month', {
+								args: {
+									visits_count: formatNumber(
+										planUsage.visits_count,
+										DEFAULT_LOCALE,
+										STANDARD_FORMATTING_OPTIONS
+									),
+								},
+								comment: '%(visits_count)s is the number of month visits of the site.',
+							} ) }
 					</div>
 				</div>
 			</div>
