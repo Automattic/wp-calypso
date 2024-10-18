@@ -13,8 +13,17 @@ concurrency:
   group: gardening-${{ github.event_name }}-${{ github.event.action }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  contents: read  #  to fetch code (actions/checkout)
+
 jobs:
   repo-gardening:
+    permissions:
+      contents: read  #  to fetch code (actions/checkout)
+      actions: read  #  to list workflows (softprops/turnstyle)
+      pull-requests: write  #  for (automattic/action-repo-gardening)
+      issues: write  #  for (automattic/action-repo-gardening)
+
     name: 'Assign issues, Clean up labels, and notify Design and Editorial when necessary'
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
