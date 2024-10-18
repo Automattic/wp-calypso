@@ -49,7 +49,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 			},
 			onError: () => {
 				dispatch(
-					errorNotice( translate( 'Update daily backup time. Please, try again.' ), {
+					errorNotice( translate( 'Update daily backup time failed. Please, try again.' ), {
 						duration: 5000,
 						isPersistent: true,
 					} )
@@ -75,7 +75,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	return (
 		<div id="backup-schedule" className="backup-schedule-setting">
 			<Card compact className="setting-title">
-				<h3>{ translate( 'Backup schedule' ) }</h3>
+				<h3>{ translate( 'Daily backup time schedule' ) }</h3>
 			</Card>
 			<Card className="setting-content">
 				<p>
