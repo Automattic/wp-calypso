@@ -84,7 +84,7 @@ export type MessageType =
 	| 'introduction';
 
 export type Message = {
-	content?: string;
+	content: string;
 	context?: Context;
 	internal_message_id?: string;
 	message_id?: number;
