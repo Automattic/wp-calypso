@@ -3,7 +3,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import type { APIInvoices, Invoices } from 'calypso/state/partner-portal/types';
+import type { APIInvoices, Invoices, InvoiceStatus } from 'calypso/state/partner-portal/types';
 
 interface QueryError {
 	code?: string;
@@ -35,28 +35,31 @@ export const getFetchInvoicesQueryKey = ( {
 	starting_after,
 	ending_before,
 	agencyId,
+	status,
 }: {
 	starting_after: string;
 	ending_before: string;
 	agencyId?: number;
+	status?: InvoiceStatus;
 } ) => {
-	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId ];
+	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId, status ];
 };
 
 export default function useFetchInvoices(
 	pagination: Pagination,
-	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >
+	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >,
+	status?: InvoiceStatus
 ): UseQueryResult< Invoices, QueryError > {
 	const { starting_after, ending_before } = pagination;
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery< APIInvoices, QueryError, Invoices >( {
-		queryKey: getFetchInvoicesQueryKey( { starting_after, ending_before, agencyId } ),
+		queryKey: getFetchInvoicesQueryKey( { starting_after, ending_before, agencyId, status } ),
 		queryFn: () =>
 			wpcom.req.get( {
 				apiNamespace: 'wpcom/v2',
 				path: addQueryArgs(
-					{ starting_after, ending_before, agency_id: agencyId },
+					{ starting_after, ending_before, agency_id: agencyId, status },
 					'/jetpack-licensing/partner/invoices'
 				),
 			} ),

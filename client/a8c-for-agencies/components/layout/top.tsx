@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { Children, ReactNode } from 'react';
+import PendingPaymentNotification from '../pending-payment-notification';
 import LayoutNavigation from './nav';
 
 type Props = {
@@ -19,6 +20,7 @@ export default function LayoutTop( { children, withNavigation }: Props ) {
 				'has-navigation': withNavigation || !! navigation,
 			} ) }
 		>
+			<PendingPaymentNotification />
 			{ children }
 		</div>
 	);
