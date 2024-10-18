@@ -13,26 +13,26 @@ const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
-// if ( config.isEnabled( 'oauth' ) ) {
-// 	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
-// } else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-// 	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
-// } else {
-wpcom = new WPCOM( wpcomProxyRequest );
+if ( config.isEnabled( 'oauth' ) ) {
+	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
+} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
+} else {
+	wpcom = new WPCOM( wpcomProxyRequest );
 
-// Upgrade to "access all users blogs" mode
-wpcom.request(
-	{
-		metaAPI: { accessAllUsersBlogs: true },
-	},
-	function ( error ) {
-		if ( error ) {
-			throw error;
+	// Upgrade to "access all users blogs" mode
+	wpcom.request(
+		{
+			metaAPI: { accessAllUsersBlogs: true },
+		},
+		function ( error ) {
+			if ( error ) {
+				throw error;
+			}
+			debug( 'Proxy now running in "access all user\'s blogs" mode' );
 		}
-		debug( 'Proxy now running in "access all user\'s blogs" mode' );
-	}
-);
-// }
+	);
+}
 
 wpcom = wpcomSupport( wpcom );
 
