@@ -63,7 +63,6 @@ class StatsNavigation extends Component {
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
-		isNewSite: PropTypes.bool,
 		delayTooltipPresentation: PropTypes.bool,
 	};
 
@@ -259,13 +258,6 @@ function shouldDelayTooltipPresentation( state, siteId ) {
 
 export default connect(
 	( state, { siteId, selectedItem } ) => {
-		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
-		const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
-		// Check if the site is created within a week.
-		const isNewSite =
-			siteCreatedTimeStamp &&
-			new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
-
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 				state,
@@ -280,7 +272,6 @@ export default connect(
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
-			isNewSite,
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
