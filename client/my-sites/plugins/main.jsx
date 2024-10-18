@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
-import { Button, Count } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -18,10 +18,6 @@ import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Search from 'calypso/components/search';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
@@ -55,9 +51,8 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
+import PluginsListV2, { PLUGINS_STATUS } from './plugin-management-v2/plugin-list-v2';
 import UpdatePlugins from './plugin-management-v2/update-plugins';
-import PluginsList from './plugins-list';
-
 import './style.scss';
 
 export class PluginsMain extends Component {
@@ -156,15 +151,11 @@ export class PluginsMain extends Component {
 	}
 
 	getCurrentPlugins() {
-		const { currentPlugins, currentPluginsOnVisibleSites, search, selectedSiteSlug } = this.props;
-		let plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
+		const { currentPlugins, currentPluginsOnVisibleSites, selectedSiteSlug } = this.props;
+		const plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
 
 		if ( ! plugins ) {
 			return plugins;
-		}
-
-		if ( search ) {
-			plugins = plugins.filter( this.matchSearchTerms.bind( this, search ) );
 		}
 
 		return this.addWporgDataToPlugins( plugins );
@@ -186,63 +177,8 @@ export class PluginsMain extends Component {
 		);
 	}
 
-	getFilters() {
-		const { translate, search } = this.props;
-		const siteFilter = `${ this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' }${
-			search ? '?s=' + search : ''
-		}`;
-
-		return [
-			{
-				title: isWithinBreakpoint( '<480px' )
-					? translate( 'All Plugins', { context: 'Filter label for plugins list' } )
-					: translate( 'All', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/manage' + siteFilter,
-				id: 'all',
-			},
-			{
-				title: translate( 'Active', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/active' + siteFilter,
-				id: 'active',
-			},
-			{
-				title: translate( 'Inactive', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/inactive' + siteFilter,
-				id: 'inactive',
-			},
-			{
-				title: translate( 'Updates', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/updates' + siteFilter,
-				id: 'updates',
-			},
-		];
-	}
-
 	isFetchingPlugins() {
 		return this.props.requestingPluginsForSites;
-	}
-
-	getPluginCount( filterId ) {
-		let count;
-		if ( 'updates' === filterId ) {
-			count = this.props.pluginUpdateCount;
-		}
-		if ( 'all' === filterId ) {
-			count = this.props.allPluginsCount;
-		}
-		if ( this.props.requestingPluginsForSites && ! count ) {
-			return undefined;
-		}
-		return count;
-	}
-
-	getSelectedText() {
-		const found = find( this.getFilters(), ( filterItem ) => this.props.filter === filterItem.id );
-		if ( 'undefined' !== typeof found ) {
-			const count = this.getPluginCount( found.id );
-			return { title: found.title, count };
-		}
-		return '';
 	}
 
 	getEmptyContentUpdateData() {
@@ -375,16 +311,36 @@ export class PluginsMain extends Component {
 			}
 		}
 
+		// Add flags for plugins status: active, inactive, updates
+		// TODO: Check the best way of doind this. We can probably move this to the backend
+		currentPlugins.map( ( plugin ) => {
+			plugin.status = [];
+			const pluginWithUpdates = find( this.props.pluginsWithUpdates, { slug: plugin.slug } );
+			if ( pluginWithUpdates ) {
+				plugin.status.push( PLUGINS_STATUS.UPDATE );
+			}
+
+			const pluginsInactive = find( this.props.pluginsInactive, { slug: plugin.slug } );
+			if ( pluginsInactive ) {
+				plugin.status.push( PLUGINS_STATUS.INACTIVE );
+			}
+
+			const pluginsActive = find( this.props.pluginsActive, { slug: plugin.slug } );
+			if ( pluginsActive ) {
+				plugin.status.push( PLUGINS_STATUS.ACTIVE );
+			}
+
+			return plugin;
+		} );
+
 		const installedPluginsList = showInstalledPluginList && (
-			<PluginsList
-				header={ this.props.translate( 'Installed Plugins' ) }
-				plugins={ currentPlugins }
-				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
-				isLoading={ this.props.requestingPluginsForSites }
-				isJetpackCloud={ this.props.isJetpackCloud }
-				searchTerm={ search }
-				filter={ this.props.filter }
-				requestPluginsError={ this.props.requestPluginsError }
+			<PluginsListV2
+				currentPlugins={ currentPlugins }
+				onSearch={ this.props.doSearch }
+				initialSearch={ this.props.search }
+				pluginUpdateCount={ this.props.pluginUpdateCount }
+				pluginActiveCount={ this.props.pluginsActive.length }
+				pluginInactiveCount={ this.props.pluginsInactive.length }
 			/>
 		);
 
@@ -432,21 +388,6 @@ export class PluginsMain extends Component {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
-		const navItems = this.getFilters().map( ( filterItem ) => {
-			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
-				return null;
-			}
-
-			const attr = {
-				key: filterItem.id,
-				path: filterItem.path,
-				selected: filterItem.id === this.props.filter,
-				count: this.getPluginCount( filterItem.id ),
-			};
-
-			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
-		} );
-
 		const { isJetpackCloud, selectedSite } = this.props;
 
 		let pageTitle;
@@ -455,15 +396,6 @@ export class PluginsMain extends Component {
 		} else {
 			pageTitle = this.props.translate( 'Installed Plugins', { textOnly: true } );
 		}
-
-		const { title, count } = this.getSelectedText();
-
-		const selectedTextContent = (
-			<span>
-				{ title }
-				{ count ? <Count count={ count } compact /> : null }
-			</span>
-		);
 
 		const currentPlugins = this.getCurrentPlugins();
 
@@ -528,19 +460,6 @@ export class PluginsMain extends Component {
 									</div>
 								</div>
 							) }
-							<div className="plugins__main plugins__main-updated">
-								<div className="plugins__main-header">
-									<SectionNav
-										applyUpdatedStyles
-										selectedText={ selectedTextContent }
-										className="plugins-section-nav"
-									>
-										<NavTabs selectedText={ title } selectedCount={ count }>
-											{ navItems }
-										</NavTabs>
-									</SectionNav>
-								</div>
-							</div>
 						</div>
 					</div>
 					<div
@@ -548,25 +467,7 @@ export class PluginsMain extends Component {
 							'plugins__main-content-jc': isJetpackCloud,
 						} ) }
 					>
-						<div className="plugins__content-wrapper">
-							{
-								// Hide the search box only when the request to fetch plugins fail, and there are no sites.
-								! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
-									<div className="plugins__search">
-										<Search
-											hideFocus
-											isOpen
-											onSearch={ this.props.doSearch }
-											initialValue={ this.props.search }
-											hideClose={ ! this.props.search }
-											analyticsGroup="Plugins"
-											placeholder={ this.props.translate( 'Search plugins' ) }
-										/>
-									</div>
-								)
-							}
-							{ this.renderPluginsContent() }
-						</div>
+						<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
 					</div>
 				</div>
 			</>
@@ -578,7 +479,7 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		( state, { filter, isJetpackCloud } ) => {
+		( state, { isJetpackCloud } ) => {
 			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
@@ -610,10 +511,12 @@ export default flow(
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
-				currentPlugins: getPlugins( state, siteIds, filter ),
-				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
+				currentPlugins: getPlugins( state, siteIds ),
+				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				pluginsWithUpdates,
+				pluginsActive: getPlugins( state, siteIds, 'active' ),
+				pluginsInactive: getPlugins( state, siteIds, 'inactive' ),
 				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
