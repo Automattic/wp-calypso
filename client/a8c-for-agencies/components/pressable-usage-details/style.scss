@@ -15,15 +15,24 @@
 
 	.pressable-usage-details__info {
 		display: flex;
+		flex-direction: column;
 		justify-content: space-between;
 		gap: 8px;
+
+		@include break-large {
+			flex-direction: row;
+		}
 	}
 
 	.pressable-usage-details__info-item {
 		background: var(--color-neutral-0);
 		padding: 16px;
 		border-radius: 4px;
-		width: 100%;
+		width: auto;
+
+		@include break-large {
+			width: 100%;
+		}
 	}
 
 	.pressable-usage-details__info-header {

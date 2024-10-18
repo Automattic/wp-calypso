@@ -35,7 +35,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	return (
 		<div className="premier-agency-hosting">
 			{ isExistingPlanFetched && existingPlan && (
-				<section className="pressable-overview-plan-existing ok">
+				<section className="pressable-overview-plan-existing">
 					<div className="pressable-overview-plan-existing__details-card">
 						<div className="pressable-overview-plan-existing__header">
 							<div className="pressable-overview-plan-existing__owned-plan">
