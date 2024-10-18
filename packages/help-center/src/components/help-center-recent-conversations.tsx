@@ -92,6 +92,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 					avatarSize={ 38 }
 					message={ chatMessage }
 					isUnread={ unreadMessagesCount > 0 }
+					navigateTo="/chat-history"
 				/>
 			) : null }
 		</div>
