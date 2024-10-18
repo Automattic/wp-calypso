@@ -13,6 +13,10 @@
 			display: none;
 		}
 	}
+
+	.async-load__placeholder {
+		margin: 12px;
+	}
 }
 
 body.is-section-stepper .domains__step-content,
