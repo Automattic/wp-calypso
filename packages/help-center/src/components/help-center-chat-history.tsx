@@ -51,7 +51,6 @@ export const HelpCenterChatHistory = () => {
 								conversation={ conversation }
 								message={ lastMessage }
 								isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
-								navigateTo="odie"
 							/>
 						);
 					}

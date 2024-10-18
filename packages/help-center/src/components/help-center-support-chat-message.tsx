@@ -21,24 +21,23 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 export const HelpCenterSupportChatMessage = ( {
 	message,
 	conversation,
-	badgeCount,
+	badgeCount = 0,
 	avatarSize = 32,
 	isUnread = false,
 }: {
 	message: ZendeskMessage;
 	conversation: ZendeskConversation;
-	badgeCount: number;
+	badgeCount?: number;
 	avatarSize?: number;
 	isUnread: boolean;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
+	const { setChat } = useOdieAssistantContext();
 	const { displayName, received, text, avatarUrl } = message;
 	const helpCenterContext = useHelpCenterContext();
-	const { setChat } = useOdieAssistantContext();
 	const storeChatId = useSetOdieStorage( 'chat_id' );
-
 	const sectionName = helpCenterContext.sectionName;
 
 	return (

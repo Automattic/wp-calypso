@@ -1,5 +1,4 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { uuid } from '@automattic/odie-client/src/query';
 import { useSmooch } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -49,7 +48,6 @@ const HelpCenterRecentConversations: React.FC = () => {
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			// @ts-expect-error This will be fixed up in later iteration
 			const conversations = getConversations() as ZendeskConversation[];
 			const { unreadConversations, unreadMessages } = calculateUnread( conversations );
 
@@ -66,25 +64,20 @@ const HelpCenterRecentConversations: React.FC = () => {
 	const lastConversation = conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
 
-	const multipleUnreadMessages = {
+	const chatMessage = {
 		...lastMessage,
-		text: 'Multiple Unread Messages',
-		displayName: sprintf(
-			/* translators: %1$s is total number of unread messages, %2$s is the total number of chats with unread messages */
-			__( '%1$s messages from %2$s chats', __i18n_text_domain__ ),
-			unreadMessagesCount,
-			unreadConversationsCount
-		),
-		avatarUrl: 'https://secure.gravatar.com/avatar/0e5d5a8e3d1c0d8d3d1c0d8d3d1c0d8d',
-		id: uuid(),
+		...( unreadConversationsCount > 1
+			? {
+					text: 'Multiple Unread Messages',
+					displayName: sprintf(
+						/* translators: %1$s is total number of unread messages, %2$s is the total number of chats with unread messages */
+						__( '%1$s messages from %2$s chats', __i18n_text_domain__ ),
+						unreadMessagesCount,
+						unreadConversationsCount
+					),
+			  }
+			: undefined ),
 	};
-
-	// const chatMessageKey = lastMessage.id;
-	let chatMessage = lastMessage;
-
-	if ( unreadConversationsCount > 1 ) {
-		chatMessage = multipleUnreadMessages;
-	}
 
 	return (
 		<div className="help-center-homepage-conversations">
