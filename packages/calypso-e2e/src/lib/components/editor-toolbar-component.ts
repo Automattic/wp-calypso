@@ -108,12 +108,17 @@ export class EditorToolbarComponent {
 	async openBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage(
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
+		const translatedButtonNameOld = await this.translateFromPage(
 			'Toggle block inserter',
 			'Generic label for block inserter button'
 		);
+		const translatedButtonNameNew = await this.translateFromPage(
+			'Block Inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
-			name: translatedButtonName,
+			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
 			exact: true,
 		} );
 
@@ -130,12 +135,17 @@ export class EditorToolbarComponent {
 	async closeBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage(
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
+		const translatedButtonNameOld = await this.translateFromPage(
 			'Toggle block inserter',
 			'Generic label for block inserter button'
 		);
+		const translatedButtonNameNew = await this.translateFromPage(
+			'Block Inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
-			name: translatedButtonName,
+			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
 			exact: true,
 		} );
 
