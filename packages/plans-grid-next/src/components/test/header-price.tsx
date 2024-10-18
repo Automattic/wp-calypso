@@ -110,7 +110,7 @@ describe( 'HeaderPrice', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'should display "Limited Time Offer" badge when intro offer exists and offer is not complete', () => {
+	test( 'should display "Special Offer" badge when intro offer exists and offer is not complete', () => {
 		const pricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 120, monthly: 10 },
@@ -137,7 +137,7 @@ describe( 'HeaderPrice', () => {
 		const { container } = render( <HeaderPrice { ...defaultProps } /> );
 		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
-		expect( badge ).toHaveTextContent( 'Limited Time Offer' );
+		expect( badge ).toHaveTextContent( 'Special Offer' );
 	} );
 
 	test( 'should display "One time discount" badge when there is a monthly discounted price', () => {
