@@ -73,12 +73,13 @@
 		}
 	}
 
-	.sites-a8c-for-agencies-banner-container {
+	.sites-banner-container {
 		display: flex;
 		justify-content: center;
 	}
 
-	.sites-a8c-for-agencies-banner {
+	.sites-banner {
+		width: 100%;
 		margin-inline: 16px;
 
 		.banner__action {
@@ -634,7 +635,7 @@
 			}
 		}
 
-		.sites-a8c-for-agencies-banner-container {
+		.sites-banner-container {
 			display: none;
 		}
 	}

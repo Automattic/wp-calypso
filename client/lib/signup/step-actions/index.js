@@ -939,6 +939,7 @@ export function createAccount(
 		const providedDependencies = {
 			username,
 			marketing_price_group,
+			is_new_account: newAccountCreated,
 			...bearerToken,
 		};
 

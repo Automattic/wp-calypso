@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { useDebouncedInput } from '@wordpress/compose';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -38,14 +37,19 @@ const statsQuery = {
 };
 
 const usePerformanceReport = (
+	setIsSavingPerformanceReportUrl: ( isSaving: boolean ) => void,
+	refetchPages: () => void,
+	savePerformanceReportUrl: (
+		pageId: string,
+		wpcom_performance_report_url: { url: string; hash: string }
+	) => Promise< void >,
+	currentPageId: string,
 	wpcom_performance_report_url: { url: string; hash: string } | undefined,
 	activeTab: Tab
 ) => {
 	const { url = '', hash = '' } = wpcom_performance_report_url || {};
 
 	const [ retestState, setRetestState ] = useState( 'idle' );
-	const [ reportCompleted, setReportCompleted ] = useState( false );
-	const testStartTime = useRef< number | undefined >( 0 );
 
 	const {
 		data: basicMetrics,
@@ -55,16 +59,26 @@ const usePerformanceReport = (
 		refetch: requeueAdvancedMetrics,
 	} = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
+	useEffect( () => {
+		if ( token && finalUrl ) {
+			setIsSavingPerformanceReportUrl( true );
+			savePerformanceReportUrl( currentPageId, { url: finalUrl, hash: token } )
+				.then( () => {
+					refetchPages();
+				} )
+				.finally( () => {
+					setIsSavingPerformanceReportUrl( false );
+				} );
+		}
+		// We only want to run this effect when the token changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ token ] );
 	const {
 		data: performanceInsights,
 		status: insightsStatus,
 		isError: isInsightsError,
 		isLoading: isLoadingInsights,
 	} = useUrlPerformanceInsightsQuery( url, token ?? hash );
-
-	if ( isBasicMetricsFetched && finalUrl && ! reportCompleted ) {
-		testStartTime.current = Date.now();
-	}
 
 	const mobileReport =
 		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
@@ -75,12 +89,6 @@ const usePerformanceReport = (
 
 	const desktopLoaded = typeof performanceInsights?.desktop === 'object';
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
-
-	const isTestCompleted = !! testStartTime.current && !! performanceReport;
-	if ( isTestCompleted ) {
-		testStartTime.current = undefined;
-		setReportCompleted( true );
-	}
 
 	const getHashOrToken = (
 		hash: string | undefined,
@@ -122,7 +130,6 @@ const usePerformanceReport = (
 		isBasicMetricsFetched,
 		testAgain,
 		isRetesting: retestState !== 'idle',
-		testCompleted: isTestCompleted,
 	};
 };
 
@@ -148,15 +155,12 @@ export const SitePerformance = () => {
 	}, [ dispatch, siteId ] );
 
 	const queryParams = useSelector( getCurrentQueryArguments );
-	const [ , setQuery, query ] = useDebouncedInput();
 	const {
 		pages,
 		isInitialLoading,
 		savePerformanceReportUrl,
 		refetch: refetchPages,
-	} = useSitePerformancePageReports( {
-		query,
-	} );
+	} = useSitePerformancePageReports();
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -176,6 +180,8 @@ export const SitePerformance = () => {
 	const [ currentPageUserSelection, setCurrentPageUserSelection ] =
 		useState< ( typeof pages )[ number ] >();
 
+	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
+
 	const [ prevSiteId, setPrevSiteId ] = useState( siteId );
 	if ( prevSiteId !== siteId ) {
 		setPrevSiteId( siteId );
@@ -186,9 +192,12 @@ export const SitePerformance = () => {
 		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
 
 	const pageOptions = useMemo( () => {
-		return currentPage
+		const options = currentPage
 			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
 			: orderedPages;
+
+		// Add a disabled option at the end that will show a disclaimer message.
+		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
 	}, [ currentPage, orderedPages ] );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
@@ -205,6 +214,10 @@ export const SitePerformance = () => {
 	};
 
 	const performanceReport = usePerformanceReport(
+		setIsSavingPerformanceReportUrl,
+		refetchPages,
+		savePerformanceReportUrl,
+		currentPageId,
 		isSitePublic ? currentPage?.wpcom_performance_report_url : undefined,
 		activeTab
 	);
@@ -234,16 +247,6 @@ export const SitePerformance = () => {
 		} );
 	};
 
-	if ( performanceReport.testCompleted && ! isInitialLoading ) {
-		const performanceReportUrl = {
-			url: performanceReport.url,
-			hash: performanceReport.hash,
-		};
-		savePerformanceReportUrl( currentPageId, performanceReportUrl ).then( () => {
-			refetchPages();
-		} );
-	}
-
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
 			page( `/settings/general/${ site.slug }` );
@@ -253,7 +256,11 @@ export const SitePerformance = () => {
 	};
 
 	const isMobile = useMobileBreakpoint();
-	const disableControls = performanceReport.isLoading || isInitialLoading || ! isSitePublic;
+	const disableControls =
+		performanceReport.isLoading ||
+		isInitialLoading ||
+		! isSitePublic ||
+		isSavingPerformanceReportUrl;
 
 	const handleDeviceTabChange = ( tab: Tab ) => {
 		setActiveTab( tab );
@@ -262,11 +269,34 @@ export const SitePerformance = () => {
 		} );
 	};
 
+	// This forces a no pages found message in the dropdown
+	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
+
+	const options = ! noPagesFound.found
+		? [
+				{
+					label: noPagesFound.query,
+					value: '-2',
+					disabled: true,
+				},
+		  ]
+		: pageOptions;
+
 	const pageSelector = (
 		<PageSelector
-			onFilterValueChange={ setQuery }
+			onFilterValueChange={ ( value ) => {
+				const filter = pageOptions.find( ( option ) =>
+					option.label.toLowerCase().startsWith( value )
+				);
+
+				if ( filter ) {
+					setNoPagesFound( { query: '', found: true } );
+					return;
+				}
+				setNoPagesFound( { query: value, found: false } );
+			} }
 			allowReset={ false }
-			options={ pageOptions }
+			options={ options }
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );

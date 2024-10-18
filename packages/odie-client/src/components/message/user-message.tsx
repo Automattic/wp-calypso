@@ -4,6 +4,7 @@ import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
+import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types/';
@@ -17,10 +18,13 @@ export const UserMessage = ( {
 	message: Message;
 	onDislike: () => void;
 } ) => {
-	const { extraContactOptions, isUserEligible } = useOdieAssistantContext();
+	const { extraContactOptions, isUserEligibleForPaidSupport, shouldUseHelpCenterExperience } =
+		useOdieAssistantContext();
+
+	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
-	const isUser = message.role === 'user';
+	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
@@ -35,7 +39,11 @@ export const UserMessage = ( {
 		__i18n_text_domain__
 	);
 
-	const forwardMessage = isUserEligible ? supportHappinessWording : supportForumWording;
+	const forwardMessage = isUserEligibleForPaidSupport
+		? supportHappinessWording
+		: supportForumWording;
+	const displayMessage =
+		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
 	return (
 		<>
@@ -45,17 +53,18 @@ export const UserMessage = ( {
 					a: CustomALink,
 				} }
 			>
-				{ isRequestingHumanSupport ? forwardMessage : message.content }
+				{ isRequestingHumanSupport ? displayMessage : message.content }
 			</Markdown>
-			{ showExtraContactOptions && extraContactOptions }
-			{ ! hasFeedback && ! isUser && (
+			{ showExtraContactOptions &&
+				( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
+			{ ! showExtraContactOptions && isBot && (
 				<WasThisHelpfulButtons
 					message={ message }
 					onDislike={ onDislike }
 					isDisliked={ isDisliked }
 				/>
 			) }
-			{ ! isUser && (
+			{ isBot && (
 				<>
 					{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
 					<div className="disclaimer">
@@ -64,7 +73,6 @@ export const UserMessage = ( {
 							__i18n_text_domain__
 						) }
 						<ExternalLink href="https://automattic.com/ai-guidelines">
-							{ ' ' }
 							{ __( 'Learn more.', __i18n_text_domain__ ) }
 						</ExternalLink>
 					</div>

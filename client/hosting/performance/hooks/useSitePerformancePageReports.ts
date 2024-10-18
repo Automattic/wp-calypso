@@ -20,7 +20,7 @@ const FIELDS_TO_RETRIEVE = [ 'id', 'link', 'title', 'wpcom_performance_report_ur
 const getPages = ( siteId: number, query = '' ) => {
 	return wpcomRequest< SitePage[] >( {
 		path: addQueryArgs( `/sites/${ siteId }/pages`, {
-			per_page: 10,
+			per_page: 20,
 			search: query,
 			page: 1,
 			status: 'publish',

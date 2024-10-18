@@ -1,12 +1,20 @@
-import { isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isWooExpressFlow,
+	SENSEI_FLOW,
+	VIDEOPRESS_FLOW,
+	LINK_IN_BIO_FLOW,
+	FREE_FLOW,
+	BLOG_FLOW,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, lazy } from 'react';
+import React, { lazy, useEffect } from 'react';
 import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -16,7 +24,7 @@ import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
-import { StepRoute, StepperLoader } from './components';
+import { StepperLoader, StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
@@ -33,6 +41,46 @@ const lazyCache = new WeakMap<
 	} >,
 	React.ComponentType< StepProps >
 >();
+
+const redirects = [
+	{ flow: BLOG_FLOW, to: '/start/:lang?' },
+	{ flow: FREE_FLOW, to: '/start/free/:lang?' },
+	{ flow: LINK_IN_BIO_FLOW, to: '/start/:lang?' },
+	{ flow: VIDEOPRESS_FLOW, to: '/start/:lang?' },
+	{ flow: SENSEI_FLOW, to: '/plugins/sensei-pro/' },
+];
+
+type RedirectHandlerProps = {
+	redirectTo: string;
+	flow: string;
+};
+
+// Custom component to run code when the route matches
+const RedirectHandler: React.FC< RedirectHandlerProps > = ( { redirectTo, flow } ) => {
+	const location = useLocation();
+	const { lang } = useParams< { lang?: string } >();
+
+	// If lang exists, prepend it for the SENSEI flow
+	if ( flow === SENSEI_FLOW && lang ) {
+		redirectTo = `/${ lang }${ redirectTo }`;
+	}
+
+	// Generate the redirection URL
+	const redirectUrl = generatePath( redirectTo, { lang: lang || null } ) + location.search;
+
+	// Track the redirect event
+	recordTracksEvent( 'calypso_tailored_flows_redirect', {
+		redirectFrom: `/setup/${ flow }`,
+		redirectFromUrl: `/setup${ location.pathname + location.search }`,
+		redirectTo: redirectUrl,
+		referrer: document.referrer,
+	} );
+
+	// Perform the actual redirection
+	window.location.href = redirectUrl;
+
+	return null;
+};
 
 function flowStepComponent( flowStep: StepperStep | undefined ) {
 	if ( ! flowStep ) {
@@ -198,6 +246,24 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Routes>
+				{ redirects.map( ( redirect ) => (
+					<>
+						{ /* Step-based routes */ }
+						{ flowSteps.map( ( step ) => (
+							<Route
+								key={ `${ redirect.flow }_step_${ step.slug }` }
+								path={ `${ redirect.flow }/${ step.slug }/:lang?` }
+								element={ <RedirectHandler redirectTo={ redirect.to } flow={ redirect.flow } /> }
+							/>
+						) ) }
+						{ /* Lang-based routes */ }
+						<Route
+							key={ `${ redirect.flow }_lang` }
+							path={ `${ redirect.flow }/:lang?` }
+							element={ <RedirectHandler redirectTo={ redirect.to } flow={ redirect.flow } /> }
+						/>
+					</>
+				) ) }
 				{ flowSteps.map( ( step ) => (
 					<Route
 						key={ step.slug }

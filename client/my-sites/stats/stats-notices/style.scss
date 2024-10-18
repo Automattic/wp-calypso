@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .stats .inner-notice-container {
 	padding-top: 32px;
 
@@ -39,6 +41,22 @@
 		.notice-banner__action-link > span {
 			border-bottom: 0;
 			vertical-align: middle;
+		}
+	}
+}
+
+// Styling for JITM.
+.stats .jetpack-jitm-message-container .card {
+	margin-bottom: 0;
+	.banner__action {
+		a,a:visited {
+			color: var(--color-text-inverted);
+		}
+	}
+	&.banner.is-jetpack {
+		@media (max-width: $break-small) {
+			margin-left: 16px;
+			margin-right: 16px;
 		}
 	}
 }
