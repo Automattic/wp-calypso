@@ -6,6 +6,7 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
@@ -29,6 +30,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
 
 function useLogPaymentMethodsError( message: string ) {
@@ -46,12 +48,14 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level payment methods load error'
 	);
+	const siteId = useSelector( getSelectedSiteId );
 
 	return (
 		<Main wideLayout className="purchases">
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
+			<QuerySitePurchases siteId={ siteId } />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader
 					title={ titles.sectionTitle }
