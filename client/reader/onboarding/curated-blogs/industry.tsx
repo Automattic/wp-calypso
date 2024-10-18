@@ -42,7 +42,7 @@ export const industryBlogs: CuratedBlogsList = {
 			feed_ID: 69594518,
 			site_ID: 133617928,
 			site_URL: 'http://trendingbusinessinsights.com',
-			site_name: 'usiness Insights',
+			site_name: 'Business Insights',
 		},
 		{
 			feed_ID: 8892459,
