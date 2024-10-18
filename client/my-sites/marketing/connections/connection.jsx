@@ -258,7 +258,7 @@ class SharingConnection extends Component {
 				{ this.getProfileImage() }
 				<div className={ statusClasses }>
 					<span className="sharing-connection__account-name">
-						{ this.props.connection.external_display }
+						{ this.props.connection.external_display || this.props.connection.external_name }
 					</span>
 					<SharingConnectionKeyringUserLabel
 						siteId={ this.props.siteId }

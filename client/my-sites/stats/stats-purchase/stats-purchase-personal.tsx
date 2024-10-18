@@ -6,8 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -49,7 +47,6 @@ const PersonalPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -59,13 +56,6 @@ const PersonalPurchase = ( {
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 
 	const continueButtonText = translate( 'Contribute now and continue' );
-	const { refetch: refetchNotices } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
-	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'focus_jetpack_purchase',
-		'postponed',
-		4 * 7 * 24 * 3600 // four weeks
-	);
 
 	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
 		handlePlanSwap( e );
@@ -92,21 +82,13 @@ const PersonalPurchase = ( {
 	};
 
 	const handleCheckoutPostponed = () => {
-		setPostponeBusy( true );
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
 
-		mutateNoticeVisbilityAsync()
-			.then( refetchNotices )
-			.finally( () => {
-				// publish event
-				const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-				recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
-
-				// redirect to the Traffic page
-				setTimeout( () => {
-					setPostponeBusy( false );
-					page( `/stats/day/${ siteSlug }` );
-				}, 250 );
-			} );
+		// redirect to the Traffic page
+		setTimeout( () => {
+			page( `/stats/day/${ siteSlug }` );
+		}, 250 );
 	};
 
 	return (
@@ -222,12 +204,7 @@ const PersonalPurchase = ( {
 						{ continueButtonText }
 					</ButtonComponent>
 
-					<ButtonComponent
-						variant="secondary"
-						isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
-						busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
-						onClick={ handleCheckoutPostponed }
-					>
+					<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
 						{ translate( 'I will do it later' ) }
 					</ButtonComponent>
 				</div>

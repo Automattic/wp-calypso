@@ -34,10 +34,7 @@ function isValidBlueskyHandle( handle: string ) {
 }
 
 const isAlreadyConnected = ( connections: Array< Connection >, handle: string ) => {
-	return connections.some( ( connection ) => {
-		const { external_display } = connection;
-		return external_display === handle;
-	} );
+	return connections.some( ( { external_name } ) => external_name === handle );
 };
 
 export const Bluesky: React.FC< Props > = ( {

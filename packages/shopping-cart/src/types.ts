@@ -681,6 +681,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	signup?: boolean;
 	headstart_theme?: string;
 	feature_slug?: string;
+	is_hundred_year_domain?: boolean;
 	/**
 	 * A way to signal intent to the back end when included as an extra with
 	 * certain products.

@@ -30,6 +30,7 @@
 	"zendesk_support_chat_key": "715f17a8-4a28-4a7f-8447-0ef8f06c70d7",
 	"features": {
 		"100-year-plan/vip": true,
+		"100-year-domain": true,
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
 		"akismet/checkout-quantity-dropdown": true,

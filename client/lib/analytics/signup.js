@@ -54,7 +54,7 @@ export function recordSignupComplete(
 		isMapping,
 		signupDomainOrigin,
 		elapsedTimeSinceStart = null,
-		framework = 'start',
+		framework,
 		isNewishUser,
 	},
 	now
@@ -109,6 +109,7 @@ export function recordSignupComplete(
 		is_transfer: isTransfer,
 		is_mapping: isMapping,
 		signup_domain_origin: signupDomainOrigin,
+		framework,
 	} );
 
 	// Google Analytics

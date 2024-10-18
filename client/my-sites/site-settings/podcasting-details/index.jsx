@@ -31,10 +31,14 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isRequestingTermsForQueryIgnoringPage } from 'calypso/state/terms/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import PodcastFeedUrl from './feed-url';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
@@ -166,15 +170,20 @@ class PodcastingDetails extends Component {
 	render() {
 		const {
 			handleSubmitForm,
+			site,
 			siteId,
 			translate,
+			isJetpack,
 			isPodcastingEnabled,
 			isSavingSettings,
 			plansDataLoaded,
 		} = this.props;
-		const { isCoverImageUploading } = this.state;
 
-		if ( ! siteId ) {
+		const { isCoverImageUploading } = this.state;
+		const isAudioUploadEnabled =
+			plansDataLoaded && ( site?.options?.upgraded_filetypes_enabled || isJetpack );
+
+		if ( ! site || ! siteId ) {
 			return null;
 		}
 
@@ -201,7 +210,7 @@ class PodcastingDetails extends Component {
 				/>
 
 				<form id="site-settings" onSubmit={ handleSubmitForm }>
-					{ ! error && plansDataLoaded && (
+					{ ! error && plansDataLoaded && ! isAudioUploadEnabled && (
 						<UpsellNudge
 							plan={ PLAN_PERSONAL }
 							title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
@@ -428,6 +437,7 @@ const getFormSettings = ( settings ) => {
 };
 
 const connectComponent = connect( ( state, ownProps ) => {
+	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 
 	// The settings form wrapper gives us a string here, but inside this
@@ -453,7 +463,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const newPostUrl = `/post/${ siteSlug }`;
 
 	return {
+		site,
 		siteId,
+		isJetpack,
 		isPrivate: isPrivateSite( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,
@@ -464,7 +476,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings,
 		newPostUrl,
-		plansDataLoaded: ! isRequestingSitePlans( state, siteId ),
+		plansDataLoaded: hasLoadedSitePlansFromServer( state, siteId ),
 	};
 } );
 
