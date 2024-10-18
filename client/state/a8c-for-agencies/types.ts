@@ -75,7 +75,9 @@ export interface Agency {
 				},
 		  ]
 		| [];
-	number_of_sites?: string;
+	signup_meta: {
+		number_sites: string;
+	};
 	tier: {
 		id: 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
 		label: string;
