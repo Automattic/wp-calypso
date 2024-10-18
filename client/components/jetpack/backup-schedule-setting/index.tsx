@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { SelectControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import useScheduledTimeMutation from 'calypso/data/jetpack-backup/use-scheduled-time-mutation';
 import useScheduledTimeQuery from 'calypso/data/jetpack-backup/use-scheduled-time-query';
 import { useDispatch, useSelector } from 'calypso/state';
