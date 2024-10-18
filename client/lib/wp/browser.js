@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import * as oauthToken from '@automattic/oauth-token';
 import debugFactory from 'debug';
 import WPCOM from 'wpcom';
 import wpcomProxyRequest from 'wpcom-proxy-request';
-import * as oauthToken from 'calypso/lib/oauth-token';
 import wpcomSupport from 'calypso/lib/wp/support';
 import wpcomXhrWrapper, { jetpack_site_xhr_wrapper } from 'calypso/lib/wpcom-xhr-wrapper';
 import { injectFingerprint } from './handlers/fingerprint';

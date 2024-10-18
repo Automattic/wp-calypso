@@ -1,5 +1,4 @@
-/* eslint-disable no-restricted-imports */
-import * as oauthToken from 'calypso/lib/oauth-token'; // Import restricted
+import * as oauthToken from '@automattic/oauth-token';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	AddSubscribersResponse,

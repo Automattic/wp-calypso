@@ -1,6 +1,6 @@
+import * as oAuthToken from '@automattic/oauth-token';
 import debugFactory from 'debug';
 import { navigate } from 'calypso/lib/navigate';
-import * as oAuthToken from 'calypso/lib/oauth-token';
 import { newPost } from 'calypso/lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
