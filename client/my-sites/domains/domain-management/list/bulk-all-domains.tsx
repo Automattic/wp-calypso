@@ -20,6 +20,7 @@ import {
 import EmptyState from './empty-state';
 import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import OptionsDomainButton from './options-domain-button';
+import { useNewDomainsNotification } from './use-new-domains-notification';
 import { usePurchaseActions } from './use-purchase-actions';
 
 import './style.scss';
@@ -317,6 +318,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		: [];
 	const purchaseActions = usePurchaseActions();
 
+	useNewDomainsNotification();
 	return (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />

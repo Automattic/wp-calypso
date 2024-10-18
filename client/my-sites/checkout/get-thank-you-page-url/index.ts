@@ -19,6 +19,7 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	is100Year,
+	isDomainProduct,
 	isValidFeatureKey,
 } from '@automattic/calypso-products';
 import {
@@ -626,6 +627,23 @@ function getFallbackDestination( {
 			},
 			`/marketplace/thank-you/${ siteSlug }`
 		);
+	}
+
+	// If the cart contains a product with the signup context, we want to fallback to the normal thank-you page (for now).
+	const signupContext = cart?.products?.some( ( product ) => product?.extra?.context === 'signup' );
+	// If the cart contains only domain items, redirect to the domains management page.
+	const domainItems = cart?.products?.filter( ( product ) => isDomainProduct( product ) );
+	if (
+		! signupContext &&
+		domainItems &&
+		domainItems.length > 0 &&
+		domainItems.length === cart?.products?.length
+	) {
+		debug( 'site with domain product' );
+		if ( siteSlug === 'no-site' ) {
+			return `/domains/manage/?new-domains=${ domainItems.length }`;
+		}
+		return `/domains/manage/${ siteSlug }?new-domains=${ domainItems.length }`;
 	}
 
 	debug( 'simple thank-you page' );
