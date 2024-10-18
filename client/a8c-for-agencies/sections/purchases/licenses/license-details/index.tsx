@@ -2,7 +2,10 @@ import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
+import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import useExistingPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-existing-pressable-plan';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
@@ -48,6 +51,15 @@ export default function LicenseDetails( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 
+	const { pressablePlans } = useProductAndPlans( {
+		selectedSite: null,
+		productSearchQuery: '',
+	} );
+
+	const { existingPlan: pressablePlan } = useExistingPressablePlan( {
+		plans: pressablePlans,
+	} );
+
 	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
 	return (
@@ -78,9 +90,12 @@ export default function LicenseDetails( {
 					</li>
 				) }
 				{ isPressableLicense && licenseState !== LicenseState.Revoked && (
-					<h4 className="license-details__label">
-						{ translate( 'Manage your Pressable licenses' ) }
-					</h4>
+					<div>
+						<h4 className="license-details__label">
+							{ translate( 'Manage your Pressable licenses' ) }
+						</h4>
+						{ pressablePlan && <PressableUsageDetails existingPlan={ pressablePlan } /> }
+					</div>
 				) }
 
 				<li className="license-details__list-item-small">
