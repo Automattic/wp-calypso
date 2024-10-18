@@ -60,7 +60,16 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	const isLoading = isScheduledTimeQueryFetching || isScheduledTimeMutationLoading;
 
 	const updateScheduledTime = ( selectedTime: string ) => {
-		scheduledTimeMutate( { scheduledHour: selectedTime as unknown as number } );
+		scheduledTimeMutate( { scheduledHour: Number( selectedTime ) } );
+	};
+
+	const getScheduleInfoMessage = (): TranslateResult => {
+		if ( ! data || data.scheduledBy === undefined || data.scheduledBy === 0 ) {
+			return translate( 'Default time' );
+		}
+		return translate( 'Time set by %(scheduledBy)s', {
+			args: { scheduledBy: data.scheduledBy },
+		} );
 	};
 
 	return (
@@ -77,8 +86,8 @@ const BackupScheduleSetting: FunctionComponent = () => {
 				<SelectControl
 					disabled={ isLoading }
 					options={ options }
-					value={ data?.scheduledHour.toString() }
-					help={ translate( 'Default time' ) } // @TODO: show who updated the schedule time
+					value={ data?.scheduledHour?.toString() || '' }
+					help={ getScheduleInfoMessage() }
 					onChange={ updateScheduledTime }
 				/>
 			</Card>
