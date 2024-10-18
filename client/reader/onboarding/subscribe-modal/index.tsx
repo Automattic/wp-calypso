@@ -2,10 +2,11 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, ComponentType, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
+import Stream from 'calypso/reader/stream';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { curatedBlogs } from '../curated-blogs';
 
@@ -27,6 +28,16 @@ interface Card {
 	type: string;
 	data: CardData[];
 }
+
+interface StreamProps {
+	streamKey: string;
+	className?: string;
+	followSource?: string;
+	useCompactCards?: boolean;
+	// Add other props as needed based on the Stream component's requirements
+}
+
+const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
@@ -111,6 +122,19 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		</>
 	);
 
+	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+
+	// Add this useEffect hook to select the first site when recommendations are loaded
+	useEffect( () => {
+		if ( combinedRecommendations.length > 0 && ! selectedSite ) {
+			setSelectedSite( combinedRecommendations[ 0 ] );
+		}
+	}, [ combinedRecommendations, selectedSite ] );
+
+	const handleItemClick = ( site: CardData ) => {
+		setSelectedSite( site );
+	};
+
 	return (
 		isOpen && (
 			<Modal
@@ -146,6 +170,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										showFollowedOnDate={ false }
 										followSource="reader-onboarding-modal"
 										disableSuggestedFollows
+										onItemClick={ () => handleItemClick( site ) }
 									/>
 								) ) }
 							</div>
@@ -157,7 +182,20 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 					</div>
 					<div className="subscribe-modal__preview-column">
 						<div className="subscribe-modal__preview-placeholder">
-							{ __( 'Select a blog to preview its posts' ) }
+							{ selectedSite ? (
+								<div className="subscribe-modal__preview-stream-container">
+									<TypedStream
+										streamKey={ `feed:${ selectedSite.feed_ID }` }
+										className="is-site-stream subscribe-modal__preview-stream"
+										followSource="reader_subscribe_modal"
+										useCompactCards
+									/>
+								</div>
+							) : (
+								<div className="subscribe-modal__preview-placeholder-text">
+									{ __( 'Select a blog to preview its posts' ) }
+								</div>
+							) }
 						</div>
 					</div>
 				</div>
