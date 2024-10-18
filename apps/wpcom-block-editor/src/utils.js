@@ -71,17 +71,19 @@ export const isEditorReadyWithBlocks = async () =>
 		} );
 	} );
 
-export const getPages = async () =>
+export const getPostTypeRecords = async ( name ) =>
 	new Promise( ( resolve ) => {
 		const unsubscribe = subscribe( () => {
-			const pages = select( 'core' ).getEntityRecords( 'postType', 'page', { per_page: -1 } );
+			const records = select( 'core' ).getEntityRecords( 'postType', name, { per_page: -1 } );
 
-			if ( pages !== null ) {
+			if ( records !== null ) {
 				unsubscribe();
-				resolve( pages );
+				resolve( records );
 			}
 		} );
 	} );
+
+export const getPages = async () => getPostTypeRecords( 'page' );
 
 // All end-to-end tests use a custom user agent containing this string.
 const E2E_USER_AGENT = 'wp-e2e-tests';
