@@ -67,7 +67,6 @@
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/max-characters-filter": false,
 		"domains/kracken-ui/pagination": true,
-		"domains/new-status-design": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
