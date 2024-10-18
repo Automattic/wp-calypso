@@ -134,6 +134,12 @@ export class LoginForm extends Component {
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
 			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
 		} );
+		// Remove url param to keep the last used login consistent upon refresh
+		const url = new URL( window.location );
+		if ( this.props.currentQuery?.username_only ) {
+			url.searchParams.delete( 'username_only' );
+			window.history.replaceState( {}, document.title, url );
+		}
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -799,7 +805,7 @@ export class LoginForm extends Component {
 		} );
 
 	getLastUsedAuthenticationMethod() {
-		if ( typeof document !== 'undefined' ) {
+		if ( typeof document !== 'undefined' && this.props.currentQuery?.username_only !== 'true' ) {
 			const cookies = cookie.parse( document.cookie );
 			return cookies.last_used_authentication_method ?? '';
 		}
