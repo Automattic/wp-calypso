@@ -154,7 +154,42 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	'mental-health': [
-		// Add more mental health blogs...
+		{
+			feed_ID: 145462369,
+			site_ID: 161801402,
+			site_URL: 'https://mind55555.com/',
+			site_name: 'WPA PROFESSIONAL HEALTH PROVIDER MENTAL HEALTH',
+		},
+		{
+			feed_ID: 101375108,
+			site_ID: 168794404,
+			site_URL: 'http://mental-health-matters.org/',
+			site_name: 'Mental Health Matters',
+		},
+		{
+			feed_ID: 100704960,
+			site_ID: 141517174,
+			site_URL: 'http://letstalkaboutmentalhealth.com.au/',
+			site_name: 'Let’s Talk About Mental Health',
+		},
+		{
+			feed_ID: 112106194,
+			site_ID: 53685563,
+			site_URL: 'https://resiliencymentalhealth.com/',
+			site_name: 'Resiliency Mental Health',
+		},
+		{
+			feed_ID: 44793102,
+			site_ID: 101000435,
+			site_URL: 'http://therapybits.com/',
+			site_name: 'Therapy Bits',
+		},
+		{
+			feed_ID: 132870273,
+			site_ID: 209099465,
+			site_URL: 'http://simplymentalhealth.ca/',
+			site_name: 'Simply mental health',
+		},
 	],
 	sleep: [
 		// Add more sleep-related blogs...
