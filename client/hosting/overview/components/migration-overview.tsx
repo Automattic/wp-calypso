@@ -48,6 +48,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 		const baseQueryArgs = {
 			siteId: site.ID,
 			siteSlug: site.slug,
+			start: 'true',
 			ref: 'hosting-migration-overview',
 		};
 
