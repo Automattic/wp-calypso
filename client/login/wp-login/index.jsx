@@ -46,7 +46,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
@@ -323,7 +323,7 @@ export class Login extends Component {
 			isReactLostPasswordScreenEnabled() &&
 			( this.props.isWoo ||
 				this.props.isBlazePro ||
-				( this.props.isWooCoreProfilerFlow &&
+				( this.props.isPasswordlessJetpackConnection &&
 					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) )
 		) {
 			return (
@@ -337,7 +337,9 @@ export class Login extends Component {
 							login( {
 								redirectTo: this.props.redirectTo,
 								locale: this.props.locale,
-								action: this.props.isWooCoreProfilerFlow ? 'jetpack/lostpassword' : 'lostpassword',
+								action: this.props.isPasswordlessJetpackConnection
+									? 'jetpack/lostpassword'
+									: 'lostpassword',
 								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 								from: get( this.props.currentQuery, 'from' ),
 							} )
@@ -456,12 +458,12 @@ export class Login extends Component {
 			locale,
 			isLoginView,
 			signupUrl,
-			isWooCoreProfilerFlow,
 			isWooPasswordless,
 			isPartnerSignup,
 			isWoo,
 			isBlazePro,
 			currentQuery,
+			isPasswordlessJetpackConnection,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
@@ -470,7 +472,7 @@ export class Login extends Component {
 
 		if (
 			currentQuery.lostpassword_flow === 'true' &&
-			isWooCoreProfilerFlow &&
+			isPasswordlessJetpackConnection &&
 			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
 		) {
 			return null;
@@ -501,7 +503,7 @@ export class Login extends Component {
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
 			! ( isWoo && ! isPartnerSignup ) &&
 			! isBlazePro &&
-			! isWooCoreProfilerFlow;
+			! isPasswordlessJetpackConnection;
 
 		if ( shouldRenderFooter ) {
 			return (
@@ -662,7 +664,7 @@ export default connect(
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
-			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
+			isPasswordlessJetpackConnection: isPasswordlessJetpackConnectionFlow( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ),
 			isWooPasswordless: getIsWooPasswordless( state ),
 			isBlazePro: getIsBlazePro( state ),
