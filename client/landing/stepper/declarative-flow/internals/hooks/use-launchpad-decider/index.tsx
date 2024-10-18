@@ -20,7 +20,8 @@ interface SiteProps {
 }
 
 export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
-	const showCustomerHome = true;
+	// placeholder field for the experiment assignment
+	const showCustomerHome = false;
 
 	let launchpadStateOnSkip: null | 'skipped' = null;
 	if ( showCustomerHome ) {
