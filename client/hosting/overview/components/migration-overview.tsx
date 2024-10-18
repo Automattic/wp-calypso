@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
+import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -42,16 +43,31 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 		let continueMigrationUrl = 'https://wordpress.com';
 		const migrationType = getMigrationType( site );
 
+		const queryArgs = {
+			siteId: site.ID,
+			siteSlug: site.slug,
+			ref: 'hosting-migration-overview',
+		};
+
 		// TODO: Fix links. It should also check if the user already purchased a plan to redirect to the proper step in the proper flow.
 		switch ( migrationType ) {
 			case 'diy':
-				continueMigrationUrl = 'https://wordpress.com/diy';
+				continueMigrationUrl = addQueryArgs(
+					queryArgs,
+					'/setup/migration/migration-how-to-migrate'
+				);
 				break;
 			case 'difm':
-				continueMigrationUrl = 'https://wordpress.com/difm';
+				continueMigrationUrl = addQueryArgs(
+					queryArgs,
+					'/setup/migration/site-migration-credentials'
+				);
 				break;
 			default:
-				continueMigrationUrl = 'https://wordpress.com/pending';
+				continueMigrationUrl = addQueryArgs(
+					queryArgs,
+					'/setup/migration/migration-how-to-migrate'
+				);
 		}
 
 		return (
