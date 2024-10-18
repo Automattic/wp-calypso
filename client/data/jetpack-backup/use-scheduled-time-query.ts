@@ -4,12 +4,12 @@ import wpcom from 'calypso/lib/wp';
 export interface ScheduledTimeApi {
 	ok: boolean;
 	scheduled_hour: number;
-	scheduled_by: number;
+	scheduled_by: string | null;
 }
 
 export interface ScheduledTime {
 	scheduledHour: number;
-	scheduledBy: number;
+	scheduledBy: string | null;
 }
 
 const useScheduledTimeQuery = ( blogId: number ): UseQueryResult< ScheduledTime, Error > => {

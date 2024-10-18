@@ -86,7 +86,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 		const hour = data?.scheduledHour || 0;
 		const range = convertHourToRange( hour );
 
-		if ( ! data || data.scheduledBy === undefined || data.scheduledBy === 0 ) {
+		if ( ! data || ! data.scheduledBy ) {
 			return `${ translate( 'Default time' ) }. UTC: ${ range }`;
 		}
 		return `${ translate( 'Time set by %(scheduledBy)s', {
