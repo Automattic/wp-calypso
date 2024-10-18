@@ -24,11 +24,17 @@
 			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
-			overflow-y: auto;
-			overflow-x: hidden;
-			scrollbar-gutter: stable;
+			@media (max-width: $break-mobile), (max-height: $break-mobile) {
+				overflow-y: auto;
+				overflow-x: hidden;
+			}
 		}
 
+		.theme-showcase {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
 		.themes__header-navigation-container {
 			margin-left: -14px;
 			margin-right: -14px;
@@ -63,11 +69,17 @@
 		}
 
 		.themes__content {
-			clip-path: inset(0 0 0 0);
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
 			margin-top: 40px;
-			min-height: auto;
+			min-height: 0;
 			@media (max-width: $break-small) {
 				margin-top: 10px;
+			}
+			.themes__showcase {
+				flex-grow: 1;
+				min-height: 0;
 			}
 			.themes__controls,
 			.themes__showcase {
@@ -78,6 +90,13 @@
 				}
 			}
 
+			.theme-showcase__all-themes {
+				@media (min-width: $break-mobile) and (min-height: $break-mobile) {
+					overflow-y: auto;
+				}
+				height: 100%;
+			}
+
 			.themes__controls .theme__search-container, .themes__controls .themes__filters, .themes__showcase .theme-showcase__all-themes {
 				margin: 0 auto;
 				padding-inline: 48px;
@@ -86,16 +105,6 @@
 				}
 				box-sizing: border-box;
 				max-width: 1400px;
-			}
-
-			.themes__controls.is-sticky {
-				padding-left: initial;
-				padding-right: initial;
-				padding-top: 30px;
-
-				@include break-medium {
-					padding-bottom: 0;
-				}
 			}
 		}
 	}
@@ -553,7 +562,7 @@
 		}
 	}
 
-	.themes__controls.is-sticky {
+	.themes__controls.is-sticky:not(.is-global-sidebar-visible) {
 		@include break-medium {
 			position: fixed;
 			left: var(--sidebar-width-max);
@@ -566,16 +575,10 @@
 			z-index: 20;
 
 			.is-global-sidebar-visible & {
-				top: calc(var(--masterbar-height) + 16px);
-				width: initial;
-				right: 15px;
-
-				// Make the scroll behavior works on the top of the fixed element.
-				pointer-events: none;
-
-				> * {
-					pointer-events: auto;
-				}
+				border-bottom: initial;
+				position: static;
+				width: auto;
+				padding: 0;
 			}
 		}
 	}
@@ -593,6 +596,9 @@
 			.is-global-sidebar-visible & {
 				padding-top: 40px;
 				margin-top: -40px;
+				&.is-sticky {
+					height: auto;
+				}
 			}
 
 			&.is-sticky {
