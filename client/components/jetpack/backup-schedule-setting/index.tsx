@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { SelectControl } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import moment from 'moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useScheduledTimeMutation from 'calypso/data/jetpack-backup/use-scheduled-time-mutation';
 import useScheduledTimeQuery from 'calypso/data/jetpack-backup/use-scheduled-time-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -18,14 +18,22 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
+	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 
-	const convertHourToRange = ( hour: number ): string => {
-		const period = hour < 12 ? 'AM' : 'PM';
-		const adjustedHour = hour % 12 || 12;
-		return `${ adjustedHour }:00 - ${ adjustedHour }:59 ${ period }`;
+	const convertHourToRange = ( hour: number, isUtc: boolean = false ): string => {
+		const time = isUtc
+			? moment.utc().startOf( 'day' ).hour( hour )
+			: moment().startOf( 'day' ).hour( hour );
+
+		const formatString = isUtc ? 'HH:mm' : 'LT'; // 24-hour format for UTC, 12-hour for local
+
+		const startTime = time.format( formatString );
+		const endTime = time.add( 59, 'minutes' ).format( formatString );
+
+		return `${ startTime } - ${ endTime }`;
 	};
 
 	const generateTimeSlots = (): { label: string; value: string }[] => {
@@ -84,7 +92,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 
 	const getScheduleInfoMessage = (): TranslateResult => {
 		const hour = data?.scheduledHour || 0;
-		const range = convertHourToRange( hour );
+		const range = convertHourToRange( hour, true );
 
 		if ( ! data || ! data.scheduledBy ) {
 			return `${ translate( 'Default time' ) }. UTC: ${ range }`;
