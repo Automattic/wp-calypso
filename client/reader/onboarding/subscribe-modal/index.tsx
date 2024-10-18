@@ -39,8 +39,11 @@ interface StreamProps {
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useSelector( getReaderFollowedTags ) || [];
-	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
+	const followedTags = useSelector( getReaderFollowedTags );
+
+	const followedTagSlugs = useMemo( () => {
+		return ( followedTags || [] ).map( ( tag ) => tag.slug );
+	}, [ followedTags ] );
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
@@ -133,8 +136,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		} else {
 			setCurrentPage( 0 );
 		}
-		setSelectedSite( combinedRecommendations[ ( currentPage + 1 ) * 6 ] );
-	}, [ currentPage, combinedRecommendations ] );
+		// console.log( displayedRecommendations[ 0 ] );
+		// setSelectedSite( displayedRecommendations[ 0 ] );
+	}, [ currentPage ] );
 
 	const loadMoreText = currentPage === 2 ? __( 'Start over' ) : __( 'Load more recommendations' );
 
@@ -148,22 +152,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			// Check if the current selectedSite is still in the recommendations
-			const isCurrentSiteStillRecommended = combinedRecommendations.some(
-				( site ) => site.feed_ID === selectedSite?.feed_ID
-			);
+		setCurrentPage( 0 );
+		setSelectedSite( null );
+	}, [ followedTagSlugs ] );
 
-			if ( ! isCurrentSiteStillRecommended || ! selectedSite ) {
-				// If the current site is not in recommendations or there's no selected site,
-				// select the first site from the new recommendations
-				setSelectedSite( combinedRecommendations[ 0 ] );
-			}
-		} else {
-			// If there are no recommendations, clear the selected site
-			setSelectedSite( null );
+	// Select the first site by default when recommendations are loaded.
+	useEffect( () => {
+		if ( displayedRecommendations.length > 0 ) {
+			console.log( displayedRecommendations[ 0 ] );
+			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
-	}, [ combinedRecommendations, selectedSite ] );
+	}, [ displayedRecommendations ] );
 
 	const handleItemClick = ( site: CardData ) => {
 		setSelectedSite( site );
