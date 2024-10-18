@@ -42,30 +42,8 @@ const TipWrapper = styled.div< { isActive: boolean } >`
 	top: 0;
 	left: 0;
 	width: 100%;
-	animation: ${ ( props ) => ( props.isActive ? 'slideInRight' : 'slideOutLeft' ) } 0.5s ease
-		forwards;
-
-	@keyframes slideInRight {
-		from {
-			transform: translateX( 100% );
-			opacity: 0;
-		}
-		to {
-			transform: translateX( 0 );
-			opacity: 1;
-		}
-	}
-
-	@keyframes slideOutLeft {
-		from {
-			transform: translateX( 0 );
-			opacity: 1;
-		}
-		to {
-			transform: translateX( -100% );
-			opacity: 0;
-		}
-	}
+	opacity: ${ ( props ) => ( props.isActive ? 1 : 0 ) };
+	transition: opacity 0.5s ease;
 `;
 
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
@@ -110,18 +88,16 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 		},
 	];
 	const [ currentTip, setCurrentTip ] = useState( 0 );
+	const [ previousTip, setPreviousTip ] = useState( 0 );
 
 	useEffect( () => {
-		const updateCurrentTip = () => {
-			setTimeout( () => {
-				const randomTip = Math.floor( Math.random() * tips.length );
-				setCurrentTip( randomTip );
+		const intervalId = setInterval( () => {
+			setPreviousTip( currentTip );
+			const randomTip = Math.floor( Math.random() * tips.length );
+			setCurrentTip( randomTip );
+		}, 10000 );
 
-				updateCurrentTip();
-			}, 10000 );
-		};
-
-		updateCurrentTip();
+		return () => clearInterval( intervalId );
 	}, [] );
 
 	return (
@@ -132,7 +108,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				<PerformanceReportLoadingProgress isSavedReport={ isSavedReport } />
 				<TipContainer>
 					{ tips.map( ( tip, index ) => (
-						<TipWrapper key={ index } isActive={ index === currentTip }>
+						<TipWrapper key={ index } isActive={ index === currentTip || index === previousTip }>
 							<Tip title={ tip.heading } content={ tip.description } link={ tip.link } />
 						</TipWrapper>
 					) ) }

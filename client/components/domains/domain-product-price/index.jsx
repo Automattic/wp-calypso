@@ -268,6 +268,18 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	/**
+	 * Used to render the price of 100-year domains, which are a one time purchase
+	 * TODO: Replace hardcoded value by 100-eyar domain product price when we have it
+	 */
+	renderOneTimePrice() {
+		return (
+			<div className="domain-product-price domain-product-single-price">
+				<span>$2,000</span>
+			</div>
+		);
+	}
+
 	render() {
 		if ( this.props.isLoading ) {
 			return (
@@ -278,6 +290,8 @@ class DomainProductPrice extends Component {
 		}
 
 		switch ( this.props.rule ) {
+			case 'ONE_TIME_PRICE':
+				return this.renderOneTimePrice();
 			case 'FREE_DOMAIN':
 				return this.renderFree();
 			case 'FREE_FOR_FIRST_YEAR':
