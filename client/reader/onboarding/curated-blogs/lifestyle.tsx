@@ -27,20 +27,55 @@ export const lifestyleBlogs: CuratedBlogsList = {
 			site_name: 'MedHelp',
 		},
 		{
-			feed_ID: 9031944,
-			site_ID: 0,
-			site_URL: 'https://chriskresser.com/',
-			site_name: 'Chris Kresser',
+			feed_ID: 37662890,
+			site_ID: 37547896,
+			site_URL: 'https://healthyhelperkaila.com/',
+			site_name: 'Healthy Helper',
 		},
 		{
-			feed_ID: 122109,
-			site_ID: 0,
-			site_URL: 'https://www.kevinmd.com/',
-			site_name: 'KevinMD.com',
+			feed_ID: 1150618,
+			site_ID: 30537913,
+			site_URL: 'https://fitrecovery.wordpress.com/',
+			site_name: 'Fit Recovery',
 		},
 	],
 	'personal-finance': [
-		// Add more personal finance blogs...
+		{
+			feed_ID: 118631270,
+			site_ID: 190981201,
+			site_URL: 'https://sakkemoto.com/',
+			site_name: 'Financial Freedom',
+		},
+		{
+			feed_ID: 159355948,
+			site_ID: 233910280,
+			site_URL: 'https://economiceureka.wordpress.com/',
+			site_name: 'Study of Wealth',
+		},
+		{
+			feed_ID: 161425747,
+			site_ID: 234156106,
+			site_URL: 'https://themoneymindedmom.com/',
+			site_name: 'The Money Minded Mom | personal finance blog',
+		},
+		{
+			feed_ID: 155102636,
+			site_ID: 229419222,
+			site_URL: 'http://capturingnewsuccess.com/',
+			site_name: 'Capturing New Success',
+		},
+		{
+			feed_ID: 145623992,
+			site_ID: 156317518,
+			site_URL: 'http://interestuponinterest.com/',
+			site_name: 'Interest upon Interest',
+		},
+		{
+			feed_ID: 154629074,
+			site_ID: 228401187,
+			site_URL: 'https://commercestheories.com/',
+			site_name: 'Commerce Theories',
+		},
 	],
 	food: [
 		// Add more food blogs...
