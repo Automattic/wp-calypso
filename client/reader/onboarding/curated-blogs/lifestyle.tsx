@@ -306,6 +306,41 @@ export const lifestyleBlogs: CuratedBlogsList = {
 		},
 	],
 	travel: [
-		// Add more travel blogs...
+		{
+			feed_ID: 125544558,
+			site_ID: 13744910,
+			site_URL: 'http://sherrylachelletravels.com/',
+			site_name: 'Sherry Lachelle Travels',
+		},
+		{
+			feed_ID: 88998444,
+			site_ID: 125430959,
+			site_URL: 'https://thetravelarchitect.wordpress.com/',
+			site_name: 'The Travel Architect',
+		},
+		{
+			feed_ID: 18228049,
+			site_ID: 62211166,
+			site_URL: 'https://theluxurytravelexpert.com/',
+			site_name: 'the Luxury Travel Expert',
+		},
+		{
+			feed_ID: 7279497,
+			site_ID: 45569860,
+			site_URL: 'http://travelwithintent.com/',
+			site_name: 'Travel with Intent',
+		},
+		{
+			feed_ID: 112669284,
+			site_ID: 188022353,
+			site_URL: 'https://www.traveloffpath.com/',
+			site_name: 'Travel Off Path',
+		},
+		{
+			feed_ID: 81363240,
+			site_ID: 145012586,
+			site_URL: 'https://eatsleeplovetravel.com/',
+			site_name: 'Eat Sleep Love Travel',
+		},
 	],
 };
