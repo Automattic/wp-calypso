@@ -1,9 +1,10 @@
-import ReactDom from 'react-dom';
+import { hydrateRoot } from 'react-dom/client';
+import { getRootNode, getRootDomElement } from 'calypso/boot/common';
 
 export function render( context ) {
-	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
+	getRootNode().render( context.layout );
 }
 
 export function hydrate( context ) {
-	ReactDom.hydrate( context.layout, document.getElementById( 'wpcom' ) );
+	hydrateRoot( getRootDomElement(), context.layout );
 }
