@@ -49,6 +49,7 @@ export const HelpCenterSupportChatMessage = ( {
 					storeChatId( String( conversation?.metadata?.odieChatId ) );
 					setChat( {
 						chat_id: Number( conversation?.metadata?.odieChatId ),
+						// @ts-expect-error This will be fixed up in later iteration
 						messages: [ ...conversation.messages ],
 					} );
 				}
