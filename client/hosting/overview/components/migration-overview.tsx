@@ -1,3 +1,4 @@
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
@@ -40,34 +41,68 @@ const cards = [
 
 const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	if ( getMigrationStatus( site ) === 'pending' ) {
-		let continueMigrationUrl = 'https://wordpress.com';
 		const migrationType = getMigrationType( site );
 
-		const queryArgs = {
+		const isFreePlan = site.plan && isFreePlanProduct( site.plan );
+
+		const baseQueryArgs = {
 			siteId: site.ID,
 			siteSlug: site.slug,
 			ref: 'hosting-migration-overview',
 		};
 
-		// TODO: Fix links. It should also check if the user already purchased a plan to redirect to the proper step in the proper flow.
-		switch ( migrationType ) {
-			case 'diy':
-				continueMigrationUrl = addQueryArgs(
-					queryArgs,
-					'/setup/migration/migration-how-to-migrate'
-				);
-				break;
-			case 'difm':
-				continueMigrationUrl = addQueryArgs(
-					queryArgs,
-					'/setup/migration/site-migration-credentials'
-				);
-				break;
-			default:
-				continueMigrationUrl = addQueryArgs(
-					queryArgs,
-					'/setup/migration/migration-how-to-migrate'
-				);
+		let continueMigrationUrl;
+
+		if ( isFreePlan ) {
+			// For the flows where the checkout is after the choice.
+			switch ( migrationType ) {
+				case 'diy':
+					continueMigrationUrl = addQueryArgs(
+						{
+							...baseQueryArgs,
+							destination: 'upgrade',
+							how: 'myself',
+						},
+						'/setup/site-migration/site-migration-upgrade-plan'
+					);
+					break;
+				case 'difm':
+					continueMigrationUrl = addQueryArgs(
+						{
+							...baseQueryArgs,
+							destination: 'upgrade',
+							how: 'difm',
+						},
+						'/setup/site-migration/site-migration-upgrade-plan'
+					);
+					break;
+				default:
+					continueMigrationUrl = addQueryArgs(
+						baseQueryArgs,
+						'/setup/site-migration/site-migration-how-to-migrate'
+					);
+			}
+		} else {
+			// For the /setup/migration, where the checkout is before the choice.
+			switch ( migrationType ) {
+				case 'diy':
+					continueMigrationUrl = addQueryArgs(
+						baseQueryArgs,
+						'/setup/migration/migration-how-to-migrate'
+					);
+					break;
+				case 'difm':
+					continueMigrationUrl = addQueryArgs(
+						baseQueryArgs,
+						'/setup/migration/site-migration-credentials'
+					);
+					break;
+				default:
+					continueMigrationUrl = addQueryArgs(
+						baseQueryArgs,
+						'/setup/migration/migration-how-to-migrate'
+					);
+			}
 		}
 
 		return (
