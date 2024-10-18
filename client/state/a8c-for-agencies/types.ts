@@ -22,7 +22,7 @@ export interface Agency {
 			email: string;
 			name: string;
 			pressable_id: number;
-			usage: null | {
+			usage?: null | {
 				status: string;
 				storage_gb: number;
 				visits_count: number;

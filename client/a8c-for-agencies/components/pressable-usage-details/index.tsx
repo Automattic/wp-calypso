@@ -4,9 +4,9 @@ import formatNumber, {
 	STANDARD_FORMATTING_OPTIONS,
 } from '@automattic/components/src/number-formatters/lib/format-number';
 import { useTranslate } from 'i18n-calypso';
-//import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
-//import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
@@ -17,14 +17,8 @@ type Props = {
 
 export default function PressableUsageDetails( { existingPlan }: Props ) {
 	const translate = useTranslate();
-	// @todo (dev-testing mode) => Before merge, get the plan usage from the agency object instead of mocked one
-	// const agency = useSelector( getActiveAgency );
-	// const planUsage = agency?.third_party?.pressable?.usage;
-	const planUsage = {
-		storage_gb: 20,
-		sites_count: 2,
-		visits_count: 12589,
-	};
+	const agency = useSelector( getActiveAgency );
+	const planUsage = agency?.third_party?.pressable?.usage;
 
 	const planInfo = existingPlan?.slug ? getPressablePlan( existingPlan?.slug ) : null;
 
