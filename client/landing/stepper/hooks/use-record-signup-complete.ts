@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN, recordSignupComplete } from 'calypso/lib/analytics/signup';
+import { clearSignupIsNewUser, getSignupIsNewUser } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { useSite } from './use-site';
@@ -12,14 +13,14 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const { domainCartItem, planCartItem, siteCount, selectedDomain, isNewUser, signupDomainOrigin } =
+	const { username, siteCount, domainCartItem, planCartItem, selectedDomain, signupDomainOrigin } =
 		useSelect( ( select ) => {
 			return {
+				username: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.username,
 				siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-				isNewUser: ( select( USER_STORE ) as UserSelect ).isNewUser(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			};
 		}, [] );
@@ -31,6 +32,10 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
 			const siteSlug = site?.slug ?? signupCompletionState?.siteSlug;
+			const isNewUser = getSignupIsNewUser( username );
+			if ( isNewUser ) {
+				clearSignupIsNewUser( username );
+			}
 
 			const isNew7DUserSite = !! (
 				isNewUser ||
@@ -80,7 +85,6 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		[
 			domainCartItem,
 			flow,
-			isNewUser,
 			isNewishUser,
 			planCartItem,
 			selectedDomain,
@@ -89,6 +93,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			siteCount,
 			siteId,
 			theme,
+			username,
 		]
 	);
 };
