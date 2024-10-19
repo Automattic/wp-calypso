@@ -42,7 +42,6 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
-		"domains/transfer-to-any-user": true,
 		"cookie-banner": false,
 		"google-my-business": false,
 		"help": true,
