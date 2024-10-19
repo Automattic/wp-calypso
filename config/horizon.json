@@ -33,8 +33,6 @@
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domains/gdpr-consent-page": true,
-		"domains/kracken-ui/exact-match-filter": true,
-		"domains/kracken-ui/pagination": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
