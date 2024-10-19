@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -30,7 +29,6 @@ export class FilterResetNotice extends Component {
 
 	render() {
 		return (
-			config.isEnabled( 'domains/kracken-ui/pagination' ) &&
 			this.hasActiveFilters() &&
 			this.hasTooFewSuggestions() && (
 				<Card

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
@@ -84,9 +83,6 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
-// TODO: Enable A/B test handling for M2.1 release
-const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
-
 const noop = () => {};
 const domains = wpcom.domains();
 
@@ -94,7 +90,7 @@ const domains = wpcom.domains();
 const PAGE_SIZE = 10;
 const EXACT_MATCH_PAGE_SIZE = 4;
 const MAX_PAGES = 3;
-const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
+const SUGGESTION_QUANTITY = PAGE_SIZE * MAX_PAGES;
 const MIN_QUERY_LENGTH = 2;
 
 // session storage key for query cache
@@ -412,14 +408,8 @@ class RegisterDomainStep extends Component {
 	getSuggestionsFromProps() {
 		const { pageNumber, pageSize } = this.state;
 		const searchResults = this.state.searchResults || [];
-		const isKrackenUi = isPaginationEnabled;
 
-		let suggestions;
-		if ( isKrackenUi ) {
-			suggestions = searchResults.slice( 0, pageNumber * pageSize );
-		} else {
-			suggestions = [ ...searchResults ];
-		}
+		const suggestions = searchResults.slice( 0, pageNumber * pageSize );
 
 		if ( this.isSubdomainResultsVisible() ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
@@ -531,13 +521,11 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters =
-			( isKrackenUi && ! isRenderingInitialSuggestions ) || this.props.isReskinned;
+		const showFilters = ! isRenderingInitialSuggestions || this.props.isReskinned;
 
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
@@ -675,10 +663,6 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderPaginationControls() {
-		if ( ! isPaginationEnabled ) {
-			return null;
-		}
-
 		const { searchResults, pageNumber, pageSize, loadingResults: isLoading } = this.state;
 
 		if ( searchResults === null ) {
