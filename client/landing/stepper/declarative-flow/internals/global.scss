@@ -104,7 +104,6 @@ button {
 .update-design,
 .update-options,
 .hundred-year-plan,
-.hundred-year-domain,
 .link-in-bio-tld,
 .entrepreneur,
 .generate-content {
@@ -121,8 +120,7 @@ button {
 		@include break-small {
 			&.courses,
 			&.site-picker,
-			&.new-or-existing-site,
-			&.domains {
+			&.new-or-existing-site {
 				margin-top: -60px;
 			}
 		}
