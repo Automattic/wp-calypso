@@ -119,3 +119,16 @@ export const getSignupCompleteElapsedTime = () => {
 
 	return Math.floor( performance.now() - startTime );
 };
+
+export const setSignupIsNewUser = ( username ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.setItem( `wpcom_signup_is_new_user_${ username }`, true )
+	);
+export const getSignupIsNewUser = ( username ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.getItem( `wpcom_signup_is_new_user_${ username }` )
+	);
+export const clearSignupIsNewUser = ( username ) =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.removeItem( `wpcom_signup_is_new_user_${ username }` )
+	);

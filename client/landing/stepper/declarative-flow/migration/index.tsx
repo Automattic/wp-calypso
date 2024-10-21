@@ -36,6 +36,7 @@ const {
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 	SITE_MIGRATION_CREDENTIALS,
 	SITE_MIGRATION_ALREADY_WPCOM,
+	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 } = STEPS;
 
@@ -51,6 +52,7 @@ const steps = [
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 	SITE_MIGRATION_CREDENTIALS,
 	SITE_MIGRATION_ALREADY_WPCOM,
+	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 ];
 
@@ -142,6 +144,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						siteSlug,
 						platform,
 						backToStep: PLATFORM_IDENTIFICATION,
+						ref: MIGRATION_FLOW,
 					} );
 				}
 
@@ -173,6 +176,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						siteSlug,
 						backToStep: PLATFORM_IDENTIFICATION,
 						replaceHistory: true,
+						ref: MIGRATION_FLOW,
 					} );
 				}
 
@@ -210,6 +214,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						backToStep: PLATFORM_IDENTIFICATION,
 						migrateEntireSiteStep: MIGRATION_UPGRADE_PLAN,
 						replaceHistory: true,
+						ref: MIGRATION_FLOW,
 					} );
 				}
 
@@ -269,16 +274,30 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 		[ SITE_MIGRATION_CREDENTIALS.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const action = getFromPropsOrUrl( 'action', props ) as 'skip' | 'submit' | 'already-wpcom';
-				const extraPrams = {
-					...( action !== 'skip' ? { preventTicketCreation: true } : {} ),
-				};
+				const action = getFromPropsOrUrl( 'action', props ) as
+					| 'skip'
+					| 'submit'
+					| 'already-wpcom'
+					| 'site-is-not-using-wordpress';
 
 				if ( action === 'already-wpcom' ) {
 					return navigateWithQueryParams( SITE_MIGRATION_ALREADY_WPCOM, [], props, {
 						replaceHistory: true,
 					} );
 				}
+
+				if ( action === 'site-is-not-using-wordpress' ) {
+					return navigateWithQueryParams(
+						SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
+						[ 'platform' ],
+						props,
+						{ replaceHistory: true }
+					);
+				}
+
+				const extraPrams = {
+					...( action !== 'skip' ? { preventTicketCreation: true } : {} ),
+				};
 
 				return navigateWithQueryParams(
 					SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -314,6 +333,29 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					{ ...props, variation: 'goals_shared' },
 					{ replaceHistory: true }
 				);
+			},
+		},
+		[ SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const platform = getFromPropsOrUrl( 'platform', props ) as ImporterPlatform;
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+
+				if ( props?.action === 'skip' ) {
+					return navigateWithQueryParams( SITE_MIGRATION_ASSISTED_MIGRATION, [], props );
+				}
+
+				return goToImporter( {
+					platform,
+					siteId,
+					siteSlug,
+					backToStep: SITE_MIGRATION_CREDENTIALS,
+					replaceHistory: true,
+					ref: MIGRATION_FLOW,
+				} );
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				return navigateWithQueryParams( SITE_MIGRATION_CREDENTIALS, [], props );
 			},
 		},
 	};

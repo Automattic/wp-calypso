@@ -38,7 +38,7 @@ class ConnectionsList extends PureComponent {
 			<div className="post-share__connections">
 				{ connections.map( ( connection ) => (
 					<Connection
-						key={ connection.keyring_connection_ID }
+						key={ connection.ID }
 						{ ...{
 							connection,
 							onToggle,

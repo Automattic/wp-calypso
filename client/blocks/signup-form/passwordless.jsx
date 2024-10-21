@@ -179,6 +179,7 @@ class PasswordlessSignupForm extends Component {
 			username,
 			marketing_price_group,
 			bearer_token: response.bearer_token,
+			is_new_account: true,
 			...( flowName === 'wpcc'
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
