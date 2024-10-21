@@ -355,10 +355,13 @@ class ScanPage extends Component< Props > {
 				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-					<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
+				{ ! isA8CForAgencies() && (
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Scan' ) }
+						subtitle={ translate( 'Guard against malware and bad actors 24/7.' ) }
+					/>
 				) }
-
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section="scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
