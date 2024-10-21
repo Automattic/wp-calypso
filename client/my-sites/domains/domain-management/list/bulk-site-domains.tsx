@@ -36,6 +36,7 @@ import EmptyDomainsListCard from './empty-domains-list-card';
 import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import ManageAllDomainsButton from './manage-all-domains-button';
 import OptionsDomainButton from './options-domain-button';
+import { useNewDomainsNotification } from './use-new-domains-notification';
 import { usePurchaseActions } from './use-purchase-actions';
 import { filterOutWpcomDomains } from './utils';
 import './style.scss';
@@ -116,6 +117,8 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			}
 		}
 	};
+
+	useNewDomainsNotification();
 
 	return (
 		<>
