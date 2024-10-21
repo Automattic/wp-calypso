@@ -17,12 +17,12 @@ export default function PendingPaymentNotification() {
 	const translate = useTranslate();
 
 	const daysDue = useMemo( () => {
-		const latestUnpaidInvoice =
+		const oldestUnpaidInvoice =
 			invoices?.data?.items.reduce( ( latest, current ) => {
 				return latest < current.created ? latest : current.created;
 			}, Infinity ) || 0;
 		const nowInSeconds = Math.floor( Date.now() / 1000 ); // Get current time in seconds
-		const differenceInSeconds = nowInSeconds - latestUnpaidInvoice;
+		const differenceInSeconds = nowInSeconds - oldestUnpaidInvoice;
 		return Math.floor( differenceInSeconds / ( 60 * 60 * 24 ) ); // Convert seconds to days
 	}, [ invoices ] );
 	const daysLeft = 28 - daysDue;
@@ -62,7 +62,7 @@ export default function PendingPaymentNotification() {
 				comment: '%(daysDue)d is the number of days invoice is overdue.',
 			}
 		);
-	} else if ( daysDue < 29 ) {
+	} else if ( daysDue < 28 ) {
 		description = translate(
 			'Your invoice is %(daysDue)d days overdue. We’ll revoke your active licenses tomorrow if we don’t receive payment.',
 			{
@@ -72,7 +72,7 @@ export default function PendingPaymentNotification() {
 		);
 	} else {
 		description = translate(
-			'Your product licenses have now been revoked. If you want to continue using the plaform, please pay you outstanding invoices.'
+			'Your product licenses have now been revoked. If you want to continue using the plaform, please pay your outstanding invoices.'
 		);
 	}
 
