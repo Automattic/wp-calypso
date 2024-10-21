@@ -18,8 +18,8 @@ export default function PendingPaymentNotification() {
 
 	const daysDue = useMemo( () => {
 		const oldestUnpaidInvoice =
-			invoices?.data?.items.reduce( ( latest, current ) => {
-				return latest < current.created ? latest : current.created;
+			invoices?.data?.items.reduce( ( oldest, current ) => {
+				return oldest < current.created ? oldest : current.created;
 			}, Infinity ) || 0;
 		const nowInSeconds = Math.floor( Date.now() / 1000 ); // Get current time in seconds
 		const differenceInSeconds = nowInSeconds - oldestUnpaidInvoice;
