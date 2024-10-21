@@ -1,0 +1,46 @@
+.agency-tier-download-badges-modal {
+	&.a4a-themed-modal .components-modal__content.hide-header {
+		background: var(--color-white);
+	}
+
+	.a4a-themed-modal__sidebar-image-container {
+		min-width: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.a4a-themed-modal__sidebar-image {
+			width: auto;
+		}
+	}
+
+	.agency-tier-download-badges-modal__content {
+		display: flex;
+		gap: 16px;
+		flex-direction: column;
+
+		.agency-tier-download-badges-modal__title {
+			@include a4a-font-heading-xl;
+		}
+
+		.agency-tier-download-badges-modal__description {
+			@include a4a-font-body-md;
+		}
+
+		.agency-tier-download-badges-modal__list-heading {
+			@include a4a-font-heading-md($font-weight: 700);
+		}
+
+		.agency-tier-download-badges-modal__list {
+			display: grid;
+			gap: 8px;
+			margin: 0 0 0 0.8rem;
+			list-style-image: url(calypso/assets/images/a8c-for-agencies/agency-tier/check-icon.svg);
+
+			li {
+				@include a4a-font-body-md;
+				padding-inline-start: 8px;
+			}
+		}
+	}
+}
