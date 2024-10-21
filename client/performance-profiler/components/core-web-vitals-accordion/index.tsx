@@ -37,7 +37,7 @@ const CardHeader = ( props: HeaderProps ) => {
 				<span className="core-web-vitals-accordion__header-text-name">{ displayName }</span>
 
 				{ isPerformanceScoreSelected ? (
-					<div className="metric-tab-bar__tab-metric" style={ { marginTop: '6px' } }>
+					<div className="metric-tab-bar__tab-metric performance-score accordion">
 						<CircularPerformanceScore score={ metricValue } size={ isActive ? 72 : 48 } />
 					</div>
 				) : (
