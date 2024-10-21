@@ -45,7 +45,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
@@ -74,7 +74,7 @@ const LayoutLoggedOut = ( {
 	showGdprBanner,
 	isPartnerSignup,
 	isPartnerSignupStart,
-	isWooCoreProfilerFlow,
+	isWooPasswordlessJPC,
 	isWooPasswordless,
 	isBlazePro,
 	locale,
@@ -140,7 +140,7 @@ const LayoutLoggedOut = ( {
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': hasGravPoweredClientClass,
-		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
+		'is-woocommerce-core-profiler-flow': isWooPasswordlessJPC,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWooPasswordless,
@@ -223,7 +223,7 @@ const LayoutLoggedOut = ( {
 				} ) }
 			/>
 		);
-	} else if ( isWooCoreProfilerFlow ) {
+	} else if ( isWooPasswordlessJPC ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = (
@@ -357,7 +357,7 @@ export default withCurrentRoute(
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-			const isWooCoreProfilerFlow = isWooPasswordlessJPCFlow( state );
+			const isWooPasswordlessJPC = isWooPasswordlessJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||
@@ -385,7 +385,7 @@ export default withCurrentRoute(
 				useOAuth2Layout: showOAuth2Layout( state ),
 				isPartnerSignup,
 				isPartnerSignupStart,
-				isWooCoreProfilerFlow,
+				isWooPasswordlessJPC,
 				isWooPasswordless: getIsWooPasswordless( state ),
 				isBlazePro: getIsBlazePro( state ),
 				twoFactorEnabled,

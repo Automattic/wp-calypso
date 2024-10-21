@@ -14,7 +14,7 @@ const LostPasswordForm = ( {
 	oauth2ClientId,
 	locale,
 	from,
-	isWooCoreProfilerFlow,
+	isWooPasswordlessJPC,
 } ) => {
 	const translate = useTranslate();
 	const [ email, setEmail ] = useState( '' );
@@ -65,7 +65,7 @@ const LostPasswordForm = ( {
 
 		if (
 			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-			isWooCoreProfilerFlow
+			isWooPasswordlessJPC
 		) {
 			const accountType = await getAuthAccountTypeRequest( email );
 			if ( accountType?.passwordless === true ) {
@@ -108,7 +108,7 @@ const LostPasswordForm = ( {
 					redirectTo: redirectToAfterLoginUrl,
 					emailAddress: email,
 					lostpasswordFlow: true,
-					action: isWooCoreProfilerFlow ? 'jetpack' : null,
+					action: isWooPasswordlessJPC ? 'jetpack' : null,
 					from,
 				} )
 			);
