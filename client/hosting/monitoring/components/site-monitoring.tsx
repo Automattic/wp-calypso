@@ -1,3 +1,4 @@
+import colorStudio from '@automattic/color-studio';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -230,8 +231,8 @@ export interface HTTPCodeSerie {
 }
 
 const seriesDefaultProps = {
-	fill: 'rgba(196, 196, 196, 0.1)',
-	stroke: 'rgba(196, 196, 196, 1)',
+	fill: colorStudio.colors[ 'Gray 10' ] + '10',
+	stroke: colorStudio.colors[ 'Gray 10' ],
 };
 
 const useSuccessHttpCodeSeries = () => {
@@ -239,25 +240,25 @@ const useSuccessHttpCodeSeries = () => {
 	const series: HTTPCodeSerie[] = [
 		{
 			statusCode: 200,
-			fill: 'rgba(104, 179, 232, 0.1)',
+			fill: colorStudio.colors[ 'WordPress Blue 30' ] + '10',
 			label: __( '200: OK Response' ),
-			stroke: 'rgba(104, 179, 232, 1)',
+			stroke: colorStudio.colors[ 'WordPress Blue 30' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
 		{
 			statusCode: 301,
-			fill: 'rgba(235, 101, 148, 0.2)',
+			fill: colorStudio.colors[ 'Pink 30' ] + '20',
 			label: __( '301: Moved Permanently' ),
-			stroke: 'rgba(235, 101, 148, 1)',
+			stroke: colorStudio.colors[ 'Pink 30' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
 		{
 			statusCode: 302,
-			fill: 'rgba(9, 181, 133, 0.1)',
+			fill: colorStudio.colors[ 'Celadon 30' ] + '10',
 			label: __( '302: Moved Temporarily' ),
-			stroke: 'rgba(9, 181, 133, 1)',
+			stroke: colorStudio.colors[ 'Celadon 30' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
@@ -272,42 +273,42 @@ const useErrorHttpCodeSeries = () => {
 		// most common 4xx errors
 		{
 			statusCode: 400,
-			fill: 'rgba(242, 215, 107, 0.1)',
+			fill: colorStudio.colors[ 'Yellow 10' ] + '10',
 			label: __( '400: Bad Request' ),
-			stroke: 'rgba(242, 215, 107, 1)',
+			stroke: colorStudio.colors[ 'Yellow 10' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
 		{
 			statusCode: 401,
-			fill: 'rgba(140, 143, 148, 0.1)',
+			fill: colorStudio.colors[ 'Gray 20' ] + '10',
 			label: __( '401: Unauthorized' ),
-			stroke: 'rgba(140, 143, 148, 1)',
+			stroke: colorStudio.colors[ 'Gray 20' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
 		{
 			statusCode: 403,
-			fill: 'rgba(104, 179, 232, 0.1)',
+			fill: colorStudio.colors[ 'WordPress Blue 30' ] + '10',
 			label: __( '403: Forbidden' ),
-			stroke: 'rgba(104, 179, 232, 1)',
+			stroke: colorStudio.colors[ 'WordPress Blue 30' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
 		{
 			statusCode: 404,
-			fill: 'rgba(9, 181, 133, 0.1)',
+			fill: colorStudio.colors[ 'Celadon 30' ] + '10',
 			label: __( '404: Not Found' ),
-			stroke: 'rgba(9, 181, 133, 1)',
+			stroke: colorStudio.colors[ 'Celadon 30' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
 		// most common 5xx errors
 		{
 			statusCode: 500,
-			fill: 'rgba(235, 101, 148, 0.1)',
+			fill: colorStudio.colors[ 'Pink 30' ] + '10',
 			label: __( '500: Internal Server Error' ),
-			stroke: 'rgba(235, 101, 148, 1)',
+			stroke: colorStudio.colors[ 'Pink 30' ],
 			showInLegend: true,
 			showInTooltip: true,
 		},
@@ -567,14 +568,14 @@ export const SiteMonitoring = () => {
 				data={ formattedData as uPlot.AlignedData }
 				series={ [
 					{
-						fill: 'rgba(6, 117, 196, 0.1)',
+						fill: colorStudio.colors[ 'WordPress Blue 50' ] + '10',
 						label: __( 'Requests per minute' ),
-						stroke: '#0675C4',
+						stroke: colorStudio.colors[ 'WordPress Blue 50' ],
 					},
 					{
-						fill: 'rgba(222, 177, 0, 0.2)',
+						fill: colorStudio.colors[ 'Yellow 30' ] + '20',
 						label: __( 'Average response time (ms)' ),
-						stroke: 'rgba(222, 177, 0, 1)',
+						stroke: colorStudio.colors[ 'Yellow 30' ],
 						scale: 'average-response-time',
 						unit: 'ms',
 					},
