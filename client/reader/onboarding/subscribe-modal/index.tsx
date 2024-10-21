@@ -3,10 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
+import { useDispatch } from 'calypso/state';
+import { requestPage } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { curatedBlogs } from '../curated-blogs';
 
@@ -47,6 +49,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	const dispatch = useDispatch();
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
@@ -122,7 +125,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		} );
 
 		// Limit to 18 recommendations.
-		return sortedRecommendations.slice( 0, 18 );
+		const finalRec = sortedRecommendations.slice( 0, 18 );
+
+		// Foreach finalRec, call requestPage to prefetch the feed streams
+		finalRec.forEach( ( site ) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
+		} );
+
+		return finalRec;
 	}, [ followedTagSlugs, apiRecommendedSites ] );
 
 	const displayedRecommendations = useMemo( () => {
@@ -254,4 +265,4 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	);
 };
 
-export default SubscribeModal;
+export default connect( null, { requestPage } )( SubscribeModal );
