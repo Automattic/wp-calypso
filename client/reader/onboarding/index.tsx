@@ -3,12 +3,12 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/constants';
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useSelector } from 'calypso/state';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { READER_ONBOARDING_PREFERENCE_KEY } from './constants';
 
 import './style.scss';
 
