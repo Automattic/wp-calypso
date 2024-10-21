@@ -1,4 +1,5 @@
-import { Button } from '@wordpress/components';
+import { FoldableCard, ProgressBar } from '@automattic/components';
+import { Button, Notice } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { Icon, link, linkOff, plugins, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -6,7 +7,9 @@ import { find } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { navigate } from 'calypso/lib/navigate';
+import { useSelector } from 'calypso/state';
 import { PluginActions } from '../hooks/types';
+import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';
 
 import './style.scss';
 
@@ -35,6 +38,8 @@ export default function PluginsListDataViews( {
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
+	const allStatuses = useSelector( ( state ) => getPluginActionStatuses( state ) );
+
 	// Add flags for plugins status: active, inactive, updates
 	// TODO: Check the best way of doind this. We can probably move this to the backend
 	currentPlugins.map( ( plugin ) => {
@@ -229,8 +234,47 @@ export default function PluginsListDataViews( {
 		return filterSortAndPaginate( currentPlugins, dataViewsState, fields );
 	}, [ currentPlugins, dataViewsState, fields ] );
 
+	const ApplyingStatus = () => {
+		const completed = allStatuses.filter( ( status ) => status.status === 'completed' );
+		const errors = allStatuses.filter( ( status ) => status.status === 'error' );
+
+		if (
+			allStatuses.length === 0 ||
+			completed.length === allStatuses.length ||
+			completed.length + errors.length === allStatuses.length
+		) {
+			return null;
+		}
+
+		const value = ( completed.length * 100 ) / allStatuses.length;
+
+		return (
+			<>
+				<h2>{ translate( 'Applying modifications' ) }</h2>
+				<ProgressBar value={ value } total={ 100 } color="blue" isPulsing />
+
+				<Notice status="error" isDismissible>
+					{ translate( 'An error occurred while applying modifications' ) }
+				</Notice>
+				<FoldableCard compact header={ translate( 'See more details' ) } highlight="info">
+					{ errors.map( ( error ) => (
+						<>
+							<span className="help-results__footer-text">
+								{ translate( 'Site: ' ) } { error.siteId } { ' - ' }
+								{ translate( 'Error: ' ) }
+								{ error.error.message }
+							</span>
+							<br />
+						</>
+					) ) }
+				</FoldableCard>
+			</>
+		);
+	};
+
 	return (
 		<div className="referrals-details-table__container redesigned-a8c-table">
+			<ApplyingStatus />
 			<ItemsDataViews
 				data={ {
 					items: data,
