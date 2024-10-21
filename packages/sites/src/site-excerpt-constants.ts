@@ -14,6 +14,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'p2_thumbnail_elements',
 	'plan',
 	'jetpack',
+	'jetpack_connection',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
 	'user_interactions',
