@@ -111,7 +111,7 @@ $section-max-width: 1224px;
 
 .site-performance-device-tab-controls__container {
 	display: flex;
-	gap: 24px;
+	gap: 16px;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 16px;
@@ -186,6 +186,12 @@ $section-max-width: 1224px;
 			align-items: center;
 		}
 	}
+}
+
+.site-performance__navigation-header {
+	display: flex;
+	flex-grow: 1;
+	flex-flow: column;
 }
 
 .site-performance__page-selector-drowdown {

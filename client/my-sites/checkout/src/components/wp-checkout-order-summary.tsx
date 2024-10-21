@@ -948,7 +948,7 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 	padding-left: 24px;
 	position: relative;
 	overflow-wrap: break-word;
-	color: ${ ( props ) => ( props.isSupported ? 'inherit' : 'var( --color-neutral-40 )' ) };
+	color: ${ ( props ) => ( props.isSupported ? 'inherit' : props.theme.colors.textColorLight ) };
 
 	.rtl & {
 		padding-right: 24px;
@@ -1044,7 +1044,7 @@ const LoadingCopy = styled.p`
 const SwitchToAnnualPlanButton = styled.button`
 	text-align: left;
 	text-decoration: underline;
-	color: var( --color-link );
+	color: ${ ( props ) => props.theme.colors.primary };
 	cursor: pointer;
 
 	.rtl & {

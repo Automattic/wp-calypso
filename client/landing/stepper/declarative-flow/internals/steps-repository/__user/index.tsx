@@ -1,6 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,11 +9,11 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
+import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -34,7 +33,6 @@ const UserStepComponent: Step = function UserStep( {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
-	const { setIsNewUser } = useDataStoreDispatch( USER_STORE );
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
@@ -61,6 +59,12 @@ const UserStepComponent: Step = function UserStep( {
 
 	const locale = useFlowLocale();
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
+
+	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
+		if ( 'username' in data ) {
+			setSignupIsNewUser( data.username );
+		}
+	};
 
 	return (
 		<>
@@ -94,7 +98,7 @@ const UserStepComponent: Step = function UserStep( {
 							userEmail=""
 							notice={ notice }
 							isSocialFirst
-							onCreateAccountSuccess={ () => setIsNewUser( true ) }
+							onCreateAccountSuccess={ handleCreateAccountSuccess }
 						/>
 						{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 							<WpcomLoginForm

@@ -1,4 +1,4 @@
-declare module 'calypso/lib/oauth-token' {
+declare module '@automattic/oauth-token' {
 	const getToken: () => string | boolean;
 	const setToken: ( token: string ) => void;
 	const clearToken: () => void;

@@ -117,20 +117,24 @@ export async function createAccount( {
 		} );
 	}
 
-	const isNewAccountCreated = 'created_account' in response && !! response?.created_account;
-
 	if ( 'error' in response ) {
-		return response;
-	} else if ( isNewAccountCreated ) {
-		const username = response?.signup_sandbox_username || response?.username;
-
-		recordNewAccountCreation( {
-			response,
-			flowName,
-			username,
-			signupType: service ? 'social' : 'default',
-		} );
+		return { ...response, isNewAccountCreated: false };
 	}
+
+	// Handling special case where users log in via social using signup form.
+	let isNewAccountCreated = true;
+	if ( service && response && 'created_account' in response && ! response?.created_account ) {
+		isNewAccountCreated = false;
+	}
+
+	const username = response?.signup_sandbox_username || response?.username;
+
+	recordNewAccountCreation( {
+		response,
+		flowName,
+		username,
+		signupType: service ? 'social' : 'default',
+	} );
 
 	return { ...response, isNewAccountCreated };
 }

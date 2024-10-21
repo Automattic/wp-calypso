@@ -7,17 +7,13 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { UNLISTED_PLUGINS } from '../constants';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
 import { PaidPluginsSection } from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
 
-/**
- * Module variables
- */
-const PLUGIN_SLUGS_BLOCKLIST = [];
-
 function isNotBlocked( plugin ) {
-	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
+	return UNLISTED_PLUGINS.indexOf( plugin.slug ) === -1;
 }
 
 const PluginsSearchResultPage = ( {

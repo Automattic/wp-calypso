@@ -116,7 +116,7 @@ export default function SiteProfiler( props: Props ) {
 	return (
 		<>
 			{ ! showResultScreen && (
-				<LayoutBlock className="domain-analyzer-block" width="medium">
+				<LayoutBlock className="domain-analyzer-block">
 					<DocumentHead title={ translate( 'Site Profiler' ) } />
 					<DomainAnalyzer
 						domain={ domain }

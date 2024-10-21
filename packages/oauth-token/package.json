@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/viewport-react",
-	"version": "1.0.1",
-	"description": "React helpers for tracking viewport changes.",
+	"name": "@automattic/oauth-token",
+	"version": "1.0.0",
+	"description": "Wrapper for OAuth token storage so we can change the underlying storage location without changing access to the token.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -10,19 +10,15 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/viewport-react"
+		"directory": "packages/oauth-token"
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/oauth-token#readme",
 	"dependencies": {
-		"@automattic/viewport": "workspace:^",
-		"@wordpress/compose": "^7.8.0"
-	},
-	"peerDependencies": {
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"cookie": "^0.4.1",
+		"store": "^2.0.12"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

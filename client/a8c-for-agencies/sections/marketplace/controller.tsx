@@ -4,8 +4,10 @@ import page from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import {
 	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
@@ -45,7 +47,13 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
 	if ( isEnabled( 'a4a-hosting-page-redesign' ) && ! context.params.section ) {
-		page.redirect( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
+		const currentAgency = getActiveAgency( context.store.getState() );
+		page.redirect(
+			// If the agency is managing less than 5 sites, then we make wpcom as default section.
+			currentAgency?.signup_meta?.number_sites === '1-5'
+				? A4A_MARKETPLACE_HOSTING_WPCOM_LINK
+				: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+		);
 		return;
 	}
 

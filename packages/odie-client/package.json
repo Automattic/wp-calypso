@@ -29,7 +29,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/components": "^2.0.1",
+		"@automattic/components": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@types/react": "^18.2.6",
