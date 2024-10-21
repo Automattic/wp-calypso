@@ -1,10 +1,12 @@
+.cache-card {
+	.hosting-card__description {
+		margin: 0;
+	}
+}
+
 .cache-card__button-wrapper {
 	display: inline-block;
 	margin-top: 16px;
-}
-
-.cache-card__button-wrapper__clear-all {
-	margin-top: 3px;
 }
 
 .cache-card__nb {
@@ -33,12 +35,6 @@
 .cache-card__global-object-cache-block,
 .cache-card__jetpack-block {
 	margin-top: 24px;
-}
-
-.cache-card__global-object-cache-block {
-	.hosting-card__description {
-		margin: 0;
-	}
 }
 
 .cache-card__jetpack-description {
