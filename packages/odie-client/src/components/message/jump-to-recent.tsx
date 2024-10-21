@@ -1,5 +1,5 @@
+import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { RefObject, useCallback } from 'react';
 import { useOdieAssistantContext } from '../../context';
@@ -9,8 +9,8 @@ export const JumpToRecent = ( {
 }: {
 	containerReference: RefObject< HTMLDivElement >;
 } ) => {
-	const { trackEvent, isMinimized, lastMessageInView, chat } = useOdieAssistantContext();
-	const { _x } = useI18n();
+	const { trackEvent, isMinimized, lastMessageInView, chat, chatStatus } =
+		useOdieAssistantContext();
 
 	const jumpToRecent = useCallback( () => {
 		if ( containerReference.current && chat.messages.length > 0 ) {
@@ -26,7 +26,7 @@ export const JumpToRecent = ( {
 		trackEvent( 'chat_jump_to_recent_click' );
 	}, [ containerReference, trackEvent, chat.messages.length ] );
 
-	if ( isMinimized || chat.messages.length < 2 ) {
+	if ( isMinimized || chat.messages.length < 2 || chatStatus !== 'loaded' ) {
 		return null;
 	}
 
@@ -42,14 +42,7 @@ export const JumpToRecent = ( {
 				disabled={ lastMessageInView }
 				onClick={ jumpToRecent }
 			>
-				{
-					/* translators: A dynamic button that appears on a chatbox, when the last message is not vissible */
-					_x(
-						'Jump to recent',
-						'A dynamic button that appears on a chatbox, when the last message is not vissible',
-						__i18n_text_domain__
-					)
-				}
+				{ __( 'Jump to recent', __i18n_text_domain__ ) }
 				<Icon icon={ chevronDown } fill="white" />
 			</button>
 		</div>
