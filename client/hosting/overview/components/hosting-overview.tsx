@@ -5,15 +5,25 @@ import ActiveDomainsCard from 'calypso/hosting/overview/components/active-domain
 import PlanCard from 'calypso/hosting/overview/components/plan-card';
 import QuickActionsCard from 'calypso/hosting/overview/components/quick-actions-card';
 import SiteBackupCard from 'calypso/hosting/overview/components/site-backup-card';
-import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
+import {
+	isNotAtomicJetpack,
+	isMigrationInProgress,
+	getMigrationStatus,
+} from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import MigrationOverview from './migration-overview';
 import SupportCard from './support-card';
 
 import './style.scss';
 
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
+
+	if ( site && isMigrationInProgress( site ) && getMigrationStatus( site ) === 'pending' ) {
+		return <MigrationOverview site={ site } />;
+	}
+
 	const isJetpackNotAtomic = site && isNotAtomicJetpack( site );
 	const subtitle = isJetpackNotAtomic
 		? translate( 'Get a quick glance at your plans and upgrades.' )

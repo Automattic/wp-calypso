@@ -2,13 +2,14 @@ import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-produc
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { Button, Spinner } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { HostingCard } from 'calypso/components/hosting-card';
+import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
+import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -28,7 +29,7 @@ type PromoCardProps = {
 };
 
 const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
-	<HostingCard className="hosting-features__card" title={ title }>
+	<HostingCard inGrid className="hosting-features__card" title={ title }>
 		<p>{ text }</p>
 		{ translate( '{{supportLink}}Learn more{{/supportLink}}', {
 			components: {
@@ -204,9 +205,7 @@ const HostingFeatures = () => {
 		description = activateDescription;
 		buttons = (
 			<>
-				<Button
-					variant="primary"
-					className="hosting-features__button"
+				<HostingHeroButton
 					onClick={ () => {
 						if ( showActivationButton ) {
 							dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
@@ -215,7 +214,7 @@ const HostingFeatures = () => {
 					} }
 				>
 					{ translate( 'Activate now' ) }
-				</Button>
+				</HostingHeroButton>
 
 				<Dialog
 					additionalClassNames="plugin-details-cta__dialog-content"
@@ -239,36 +238,35 @@ const HostingFeatures = () => {
 		title = unlockTitle;
 		description = unlockDescription;
 		buttons = (
-			<Button
-				variant="primary"
-				className="hosting-features__button"
+			<HostingHeroButton
 				href={ upgradeLink }
 				onClick={ () =>
 					dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
 				}
 			>
 				{ translate( 'Upgrade now' ) }
-			</Button>
+			</HostingHeroButton>
 		);
 	}
 
 	return (
 		<div className="hosting-features">
-			<div className="hosting-features__hero">
+			<HostingHero>
 				{ isTransferInProgress && <Spinner className="hosting-features__content-spinner" /> }
 				<h1>{ title }</h1>
 				<p>{ description }</p>
 				{ buttons }
-			</div>
-			<div className="hosting-features__cards">
+			</HostingHero>
+			<HostingCardGrid>
 				{ promoCards.map( ( card ) => (
 					<PromoCard
+						key={ card.title }
 						title={ card.title }
 						text={ card.text }
 						supportContext={ card.supportContext }
 					/>
 				) ) }
-			</div>
+			</HostingCardGrid>
 		</div>
 	);
 };
