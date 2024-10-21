@@ -109,22 +109,24 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 		getAtomicHostingIsLoadingSftpData( state, siteId )
 	);
 	const { username, password } = useSelector( ( state ) => {
-		if ( disabled ) {
-			return { username: null, password: null };
-		}
+		let username;
+		let password;
 
 		const users = getAtomicHostingSftpUsers( state, siteId );
 
-		// If SFTP user is not created yet
-		if ( users === null || ! users.length ) {
-			return { username: null, password: null };
+		if ( ! disabled && users !== null ) {
+			if ( users.length ) {
+				// Pick first user. Rest of users will be handled in next phases.
+				username = users[ 0 ].username;
+				password = users[ 0 ].password;
+			} else {
+				// No SFTP user created yet.
+				username = null;
+				password = null;
+			}
 		}
 
-		// Pick first user. Rest of users will be handled in next phases.
-		return {
-			username: users[ 0 ].username,
-			password: users[ 0 ].password || null,
-		};
+		return { username, password };
 	} );
 
 	// State for clipboard copy button for both username and password data
