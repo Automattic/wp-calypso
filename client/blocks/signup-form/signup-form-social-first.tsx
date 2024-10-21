@@ -9,7 +9,7 @@ import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-e
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
@@ -80,8 +80,8 @@ const SignupFormSocialFirst = ( {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
-	const isPasswordlessJetpackConnection = useSelector( isPasswordlessJetpackConnectionFlow );
-	const isWoo = isWooOAuth2Client( oauth2Client ) || isPasswordlessJetpackConnection;
+	const isWooPasswordlessJPC = useSelector( isWooPasswordlessJPCFlow );
+	const isWoo = isWooOAuth2Client( oauth2Client ) || isWooPasswordlessJPC;
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 	const renderTermsOfService = () => {

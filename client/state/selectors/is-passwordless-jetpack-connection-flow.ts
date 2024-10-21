@@ -22,8 +22,8 @@ const isWooCommercePaymentsOnboardingFlow = ( state: AppState ): boolean => {
  * @param  {Object}   state  Global state tree
  * @returns {?boolean}        Whether the user should see the new passwordless Jetpack connection or not
  */
-export const isPasswordlessJetpackConnectionFlow = ( state: AppState ): boolean => {
+export const isWooPasswordlessJPCFlow = ( state: AppState ): boolean => {
 	return isWooCommerceCoreProfilerFlow( state ) || isWooCommercePaymentsOnboardingFlow( state );
 };
 
-export default isPasswordlessJetpackConnectionFlow;
+export default isWooPasswordlessJPCFlow;

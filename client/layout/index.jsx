@@ -48,7 +48,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import isPasswordlessJetpackConnectionFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -445,8 +445,7 @@ export default withCurrentRoute(
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooCoreProfilerFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			isPasswordlessJetpackConnectionFlow( state );
+			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooPasswordlessJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
