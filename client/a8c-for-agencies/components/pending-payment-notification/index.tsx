@@ -12,7 +12,7 @@ import './style.scss';
 // const PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE = 'pending-payment-notification-dismissed';
 
 export default function PendingPaymentNotification() {
-	const invoices = useFetchInvoices( { starting_after: '', ending_before: '' }, undefined, 'paid' );
+	const invoices = useFetchInvoices( { starting_after: '', ending_before: '' }, undefined, 'open' );
 
 	const translate = useTranslate();
 
