@@ -101,8 +101,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 
-	blog: () => import( /* webpackChunkName: "blog" */ '../declarative-flow/blog' ),
-
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
 
