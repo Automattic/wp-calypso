@@ -385,6 +385,10 @@ export class PluginsMain extends Component {
 				searchTerm={ search }
 				filter={ this.props.filter }
 				requestPluginsError={ this.props.requestPluginsError }
+				pluginsWithUpdates={ this.props.pluginsWithUpdates }
+				activePlugins={ this.props.activePlugins }
+				inactivePlugins={ this.props.inactivePlugins }
+				onSearch={ this.props.doSearch }
 			/>
 		);
 
@@ -585,6 +589,8 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const activePlugins = getPlugins( state, siteIds, 'active' );
+			const inactivePlugins = getPlugins( state, siteIds, 'inactive' );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
@@ -614,6 +620,8 @@ export default flow(
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				pluginsWithUpdates,
+				activePlugins,
+				inactivePlugins,
 				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
