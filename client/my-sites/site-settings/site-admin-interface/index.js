@@ -56,6 +56,8 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 				infoNotice( translate( 'Changing admin interface style…' ), {
 					id: changeLoadingNoticeId,
 					showDismiss: false,
+					isLoading: true,
+					icon: 'sync',
 				} )
 			);
 		},
