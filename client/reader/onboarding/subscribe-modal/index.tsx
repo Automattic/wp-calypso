@@ -2,7 +2,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React, { useMemo, useState, ComponentType, useEffect } from 'react';
+import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
@@ -39,8 +39,14 @@ interface StreamProps {
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useSelector( getReaderFollowedTags ) || [];
-	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
+	const followedTags = useSelector( getReaderFollowedTags );
+
+	const followedTagSlugs = useMemo( () => {
+		return ( followedTags || [] ).map( ( tag ) => tag.slug );
+	}, [ followedTags ] );
+
+	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
@@ -52,7 +58,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				},
 				{
 					tags: followedTagSlugs,
-					site_recs_per_card: 6,
+					site_recs_per_card: 24,
 					tag_recs_per_card: 0,
 				}
 			),
@@ -70,6 +76,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				  } ) )
 				: [];
 		},
+		staleTime: Infinity,
 	} );
 
 	const combinedRecommendations = useMemo( () => {
@@ -114,9 +121,24 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			return b.weight - a.weight;
 		} );
 
-		// Limit to 6 recommendations
-		return sortedRecommendations.slice( 0, 6 );
+		// Limit to 18 recommendations.
+		return sortedRecommendations.slice( 0, 18 );
 	}, [ followedTagSlugs, apiRecommendedSites ] );
+
+	const displayedRecommendations = useMemo( () => {
+		const startIndex = currentPage * 6;
+		return combinedRecommendations.slice( startIndex, startIndex + 6 );
+	}, [ combinedRecommendations, currentPage ] );
+
+	const handleLoadMore = useCallback( () => {
+		if ( currentPage < 2 ) {
+			setCurrentPage( currentPage + 1 );
+		} else {
+			setCurrentPage( 0 );
+		}
+	}, [ currentPage ] );
+
+	const loadMoreText = currentPage === 2 ? __( 'Start over' ) : __( 'Load more recommendations' );
 
 	const headerActions = (
 		<>
@@ -126,14 +148,18 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		</>
 	);
 
-	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	// Reset the page and selected site when the followed tags change.
+	useEffect( () => {
+		setCurrentPage( 0 );
+		setSelectedSite( null );
+	}, [ followedTagSlugs ] );
 
 	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 && ! selectedSite ) {
-			setSelectedSite( combinedRecommendations[ 0 ] );
+		if ( displayedRecommendations.length > 0 ) {
+			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
-	}, [ combinedRecommendations, selectedSite ] );
+	}, [ displayedRecommendations ] );
 
 	const handleItemClick = ( site: CardData ) => {
 		setSelectedSite( site );
@@ -168,7 +194,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 						) }
 						{ ! isLoading && combinedRecommendations.length > 0 && (
 							<div className="subscribe-modal__recommended-sites">
-								{ combinedRecommendations.map( ( site: CardData ) => (
+								{ displayedRecommendations.map( ( site: CardData ) => (
 									<ConnectedReaderSubscriptionListItem
 										key={ site.feed_ID }
 										feedId={ site.feed_ID }
@@ -186,7 +212,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								) ) }
 							</div>
 						) }
-						<p>{ __( 'Load more recommendations' ) }</p>
+						{ combinedRecommendations.length > 6 && (
+							<Button
+								className="subscribe-modal__load-more-button"
+								onClick={ handleLoadMore }
+								variant="link"
+							>
+								{ loadMoreText }
+							</Button>
+						) }
 						<Button className="subscribe-modal__continue-button is-primary" onClick={ onClose }>
 							{ __( 'Continue' ) }
 						</Button>
