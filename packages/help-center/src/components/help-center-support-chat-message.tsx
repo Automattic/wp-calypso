@@ -24,14 +24,14 @@ export const HelpCenterSupportChatMessage = ( {
 	badgeCount = 0,
 	avatarSize = 32,
 	isUnread = false,
-	navigateTo = '',
+	navigateTo = '/odie',
 }: {
 	message: ZendeskMessage;
 	conversation: ZendeskConversation;
 	badgeCount?: number;
 	avatarSize?: number;
 	isUnread: boolean;
-	navigateTo: string;
+	navigateTo?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -44,9 +44,9 @@ export const HelpCenterSupportChatMessage = ( {
 
 	return (
 		<Link
-			to={ navigateTo ? navigateTo : '/odie' }
+			to={ navigateTo }
 			onClick={ () => {
-				if ( ! navigateTo && conversation?.metadata?.odieChatId ) {
+				if ( navigateTo === '/odie' && conversation?.metadata?.odieChatId ) {
 					storeChatId( String( conversation?.metadata?.odieChatId ) );
 					setChat( {
 						chat_id: Number( conversation?.metadata?.odieChatId ),
