@@ -87,7 +87,7 @@ const disableSshAccess = ( siteId: number | null ) =>
 	);
 
 type SftpCardProps = {
-	disabled: boolean;
+	disabled?: boolean;
 };
 
 export const SftpCard = ( { disabled }: SftpCardProps ) => {
