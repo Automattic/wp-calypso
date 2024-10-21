@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getCurrentOAuth2Client } from '../oauth2-clients/ui/selectors';
 import getWccomFrom from './get-wccom-from';
-import isWooPasswordlessJPCFlow from './is-passwordless-jetpack-connection-flow';
+import isWooPasswordlessJPCFlow from './is-woo-passwordless-jpc-flow';
 import type { AppState } from 'calypso/types';
 
 /**

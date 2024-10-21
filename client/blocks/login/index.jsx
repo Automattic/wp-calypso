@@ -60,7 +60,7 @@ import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-fr
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-passwordless-jetpack-connection-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
@@ -879,7 +879,7 @@ class Login extends Component {
 						redirectToAfterLoginUrl={ this.props.redirectTo }
 						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 						locale={ locale }
-						isWooCoreProfilerFlow={ isWooPasswordlessJPC }
+						isWooPasswordlessJPC={ isWooPasswordlessJPC }
 						from={ get( currentQuery, 'from' ) }
 					/>
 					{ ! isWooPasswordlessJPC && ! isBlazePro && (

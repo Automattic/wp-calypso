@@ -21,7 +21,7 @@ export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWooOnboarding: PropTypes.bool,
-		isWooCoreProfiler: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
@@ -59,7 +59,7 @@ export class AuthFormHeader extends Component {
 			translate,
 			partnerSlug,
 			isWooOnboarding,
-			isWooCoreProfiler,
+			isWooPasswordlessJPC,
 			wooDnaConfig,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
@@ -106,7 +106,7 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( isWooCoreProfiler ) {
+		if ( isWooPasswordlessJPC ) {
 			return translate( 'Connect your account' );
 		}
 
@@ -147,7 +147,7 @@ export class AuthFormHeader extends Component {
 		const {
 			translate,
 			isWooOnboarding,
-			isWooCoreProfiler,
+			isWooPasswordlessJPC,
 			wooDnaConfig,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
@@ -165,7 +165,7 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( isWooCoreProfiler ) {
+		if ( isWooPasswordlessJPC ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			const reviewDocLink = <a href="https://woocommerce.com/documentation/woocommerce/" />;
 			const translateParams = {
@@ -280,11 +280,11 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { isWpcomMigration, isWooCoreProfiler } = this.props;
+		const { isWpcomMigration, isWooPasswordlessJPC } = this.props;
 		const { jpVersion } = this.props.authQuery;
 		if (
 			// Always show the site card for Woo Core Profiler
-			! isWooCoreProfiler &&
+			! isWooPasswordlessJPC &&
 			! versionCompare( jpVersion, '4.0.3', '>' )
 		) {
 			return null;
@@ -312,7 +312,7 @@ export class AuthFormHeader extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<Site site={ site } defaultIcon={ isWooCoreProfiler ? <Icon icon={ globe } /> : null } />
+				<Site site={ site } defaultIcon={ isWooPasswordlessJPC ? <Icon icon={ globe } /> : null } />
 			</CompactCard>
 		);
 	}
