@@ -154,7 +154,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setSelectedSite( null );
 	}, [ followedTagSlugs ] );
 
-	//  Select the first site by default when recommendations are loaded.
+	// Select the first site by default when recommendations are loaded.
 	useEffect( () => {
 		if ( displayedRecommendations.length > 0 ) {
 			setSelectedSite( displayedRecommendations[ 0 ] );
