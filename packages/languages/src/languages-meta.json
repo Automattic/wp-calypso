@@ -723,6 +723,16 @@
 		"isTranslatedIncompletely": true,
 		"territories": [ "002" ]
 	},
+	"kal": {
+		"value": 490,
+		"langSlug": "kal",
+		"name": "Kalaallisut",
+		"wpLocale": "kal",
+		"parentLangSlug": null,
+		"calypsoPercentTranslated": 0,
+		"isTranslatedIncompletely": true,
+		"territories": [ "154" ]
+	},
 	"kir": {
 		"value": 479,
 		"langSlug": "kir",
