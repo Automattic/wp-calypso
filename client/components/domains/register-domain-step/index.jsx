@@ -28,6 +28,7 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
+import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
@@ -77,9 +78,9 @@ import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/uti
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import AIAssistantModal from './ai-assistant-modal';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
-
 import './style.scss';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
@@ -182,6 +183,7 @@ class RegisterDomainStep extends Component {
 
 		this._isMounted = false;
 		this.state = this.getState( props );
+		this.state.isModalOpen = false;
 		this.state.filters = this.getInitialFiltersState();
 		this.state.lastFilters = this.getInitialFiltersState();
 
@@ -626,10 +628,58 @@ class RegisterDomainStep extends Component {
 				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
+		const toggleModal = () => {
+			this.setState( { isModalOpen: ! this.state.isModalOpen } );
+		};
+
 		return (
 			<>
 				<Search { ...componentProps }></Search>
+				<div className="search-filters__dropdown-filters">
+					<Button onClick={ toggleModal }>
+						<img
+							src={ AIassistantIllustration }
+							width={ 24 }
+							alt={ this.props.translate( 'AI Assistant' ) }
+						/>
+					</Button>
+				</div>
 				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
+				<AIAssistantModal
+					isModalOpen={ this.state.isModalOpen }
+					onClose={ toggleModal }
+					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.isCartPendingUpdate }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					onClickResult={ this.onAddDomain }
+					isDomainOnly={ this.props.isDomainOnly }
+					fetchAlgo={ this.getFetchAlgo() }
+					isSignupStep={ this.props.isSignupStep }
+					showStrikedOutPrice={
+						this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+					}
+					premiumDomains={ this.state.premiumDomains }
+					lastDomainSearched={ this.state.lastDomainSearched }
+					railcarId={ this.state.railcarId }
+					selectedSite={ this.props.selectedSite }
+					pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
+					unavailableDomains={ this.state.unavailableDomains }
+					isReskinned={ this.props.isReskinned }
+					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+					useProvidedProductsList={ this.props.useProvidedProductsList }
+					products={ this.props.products }
+					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+					temporaryCart={ this.props.temporaryCart }
+					domainRemovalQueue={ this.props.domainRemovalQueue }
+					wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
+					flowName={ this.props.flowName }
+					removeDomainClickHandler={ this.props.removeDomainClickHandler }
+					isMiniCartContinueButtonBusy={ this.props.isMiniCartContinueButtonBusy }
+					goToNext={ this.props.goToNext }
+					handleSkip={ this.props.handleSkip }
+					freeDomainRemoveClickHandler={ this.props.freeDomainRemoveClickHandler }
+					cartIsLoading={ this.props.cartIsLoading }
+				/>
 			</>
 		);
 	}

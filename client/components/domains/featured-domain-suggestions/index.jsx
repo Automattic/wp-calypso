@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import AIassistantIllustration from 'calypso/assets/images/domains/ai-assitant.svg';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 
@@ -102,7 +103,7 @@ export class FeaturedDomainSuggestions extends Component {
 	}
 
 	render() {
-		const { featuredSuggestions } = this.props;
+		const { featuredSuggestions, handleMoreResultsClick } = this.props;
 		const childProps = this.getChildProps();
 
 		if ( this.props.showPlaceholders ) {
@@ -112,21 +113,40 @@ export class FeaturedDomainSuggestions extends Component {
 		return (
 			<div className={ this.getClassNames() }>
 				{ featuredSuggestions.map( ( suggestion, index ) => (
-					<DomainRegistrationSuggestion
-						key={ suggestion.domain_name }
-						suggestion={ suggestion }
-						isFeatured
-						railcarId={ this.props.railcarId + '-' + index }
-						isSignupStep={ this.props.isSignupStep }
-						uiPosition={ index }
-						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
-						fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
-						buttonStyles={ { primary: true } }
-						isReskinned={ this.props.isReskinned }
-						products={ this.props.products ?? undefined }
-						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
-						{ ...childProps }
-					/>
+					<div className="featured-domain-suggestions__wrapper" key={ suggestion.domain_name }>
+						{ this.props.shouldShowAISuggestedSiteName && (
+							<>
+								<div className="featured-domain-suggestions__site-name-suggestion">
+									<img src={ AIassistantIllustration } width={ 24 } alt="" />
+									<div className="featured-domain-suggestions__site-name-wrapper">
+										<h2 className="featured-domain-suggestions__site-name-suggestion-text">
+											{ suggestion.business_name }
+										</h2>
+										<div
+											className="featured-domain-suggestions__more-search-results"
+											onClick={ handleMoreResultsClick }
+										>
+											{ this.props.translate( '(more like this)' ) }
+										</div>
+									</div>
+								</div>
+							</>
+						) }
+						<DomainRegistrationSuggestion
+							suggestion={ suggestion }
+							isFeatured
+							railcarId={ this.props.railcarId + '-' + index }
+							isSignupStep={ this.props.isSignupStep }
+							uiPosition={ index }
+							premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
+							fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
+							buttonStyles={ { primary: true } }
+							isReskinned={ this.props.isReskinned }
+							products={ this.props.products ?? undefined }
+							isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+							{ ...childProps }
+						/>
+					</div>
 				) ) }
 			</div>
 		);
