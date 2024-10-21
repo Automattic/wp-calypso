@@ -92,7 +92,8 @@ type SftpCardProps = {
 
 export const SftpCard = ( { disabled }: SftpCardProps ) => {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
+	const dispatch = useDispatch();
+
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const currentUserId = useSelector( getCurrentUserId );
@@ -137,12 +138,12 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 
 	const handleResetPassword = () => {
 		setPasswordLoading( true );
-		reduxDispatch( resetSftpPassword( siteId, username ) );
+		dispatch( resetSftpPassword( siteId, username ) );
 	};
 
 	const handleCreateUser = () => {
 		setIsLoading( true );
-		reduxDispatch( createSftpUser( siteId, currentUserId ) );
+		dispatch( createSftpUser( siteId, currentUserId ) );
 		if ( 'host-site' === siteIntent ) {
 			updateLaunchpadSettings( siteId, {
 				checklist_statuses: { setup_ssh: true },
@@ -153,31 +154,31 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 	const handleToggleSshAccess = () => {
 		setSshAccessLoading( true );
 		if ( isSshAccessEnabled ) {
-			reduxDispatch( disableSshAccess( siteId ) );
+			dispatch( disableSshAccess( siteId ) );
 		} else {
-			reduxDispatch( enableSshAccess( siteId ) );
+			dispatch( enableSshAccess( siteId ) );
 		}
 	};
 
 	useEffect( () => {
 		if ( ! disabled ) {
 			setIsLoading( true );
-			reduxDispatch( requestAtomicSftpUsers( siteId ) );
+			dispatch( requestAtomicSftpUsers( siteId ) );
 			if ( siteHasSshFeature ) {
-				reduxDispatch( requestAtomicSshAccess( siteId ) );
+				dispatch( requestAtomicSshAccess( siteId ) );
 			}
 		}
-	}, [ disabled, siteId, siteHasSshFeature ] );
+	}, [ disabled, siteId, siteHasSshFeature, dispatch ] );
 
 	// For security reasons we remove the password from the state when the component is unmounted
 	// Since users should reset it every time they want to see it
 	useEffect(
 		() => () => {
 			if ( password ) {
-				reduxDispatch( updateAtomicSftpUser( siteId, [ { username, password: null } ] ) );
+				dispatch( updateAtomicSftpUser( siteId, [ { username, password: null } ] ) );
 			}
 		},
-		[ username, password, siteId, reduxDispatch ]
+		[ username, password, siteId, dispatch ]
 	);
 
 	useEffect( () => {
