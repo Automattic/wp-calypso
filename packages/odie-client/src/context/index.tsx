@@ -231,7 +231,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 
 				// Append new messages at the end
 				return {
-					chat_id: prevChat.chat_id,
+					...prevChat,
 					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );
