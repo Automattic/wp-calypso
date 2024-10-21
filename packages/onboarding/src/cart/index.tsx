@@ -30,6 +30,7 @@ interface GetNewSiteParams {
 	username: string;
 	sourceSlug?: string;
 	siteIntent?: string;
+	partnerBundle?: string;
 }
 
 type NewSiteParams = {
@@ -108,6 +109,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		siteVisibility,
 		sourceSlug,
 		siteIntent,
+		partnerBundle,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -131,6 +133,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
+			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
 		},
 		validate: false,
 	};
@@ -152,7 +155,8 @@ export const createSiteWithCart = async (
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
-	siteIntent?: string
+	siteIntent?: string,
+	partnerBundle?: string
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -169,6 +173,7 @@ export const createSiteWithCart = async (
 		username,
 		sourceSlug,
 		siteIntent,
+		partnerBundle,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -195,6 +200,7 @@ export const createSiteWithCart = async (
 			options: {
 				...newSiteParams.options,
 				has_segmentation_survey: hasSegmentationSurvey,
+				site_partner_bundle: partnerBundle,
 				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
