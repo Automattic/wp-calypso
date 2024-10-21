@@ -23,6 +23,7 @@ import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -352,20 +353,23 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-				<NavigationHeader
-					className="stats__section-header modernized-header"
-					title={ translate( 'Jetpack Stats' ) }
-					subtitle={ translate(
-						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-							},
-						}
-					) }
-					screenReader={ navItems.traffic?.label }
-					navigationItems={ [] }
-				></NavigationHeader>
+				{ ! isNewDateFilteringEnabled && (
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ translate( 'Jetpack Stats' ) }
+						subtitle={ translate(
+							"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+								},
+							}
+						) }
+						screenReader={ navItems.traffic?.label }
+						navigationItems={ [] }
+					></NavigationHeader>
+				) }
+				{ isNewDateFilteringEnabled && <JetpackLogo size={ 20 } full /> }
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
