@@ -232,9 +232,8 @@ export class PluginsList extends Component {
 		} );
 	}
 
-	bulkActionDialog = ( actionName, selectedPlugin ) => {
-		const { plugins, allSites, showPluginActionDialog } = this.props;
-		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
+	bulkActionDialog = ( actionName, selectedPlugins ) => {
+		const { allSites, showPluginActionDialog } = this.props;
 		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		const ALL_ACTION_CALLBACKS = {
@@ -361,10 +360,6 @@ export class PluginsList extends Component {
 		this.removePluginStatuses();
 	};
 
-	removePluginDialog = ( selectedPlugin ) => {
-		this.bulkActionDialog( PluginActions.REMOVE, selectedPlugin );
-	};
-
 	maybeShowDisconnectNotice() {
 		if ( ! this.state.disconnectJetpackNotice ) {
 			return;
@@ -409,8 +404,6 @@ export class PluginsList extends Component {
 	}
 
 	render() {
-		const selectedSiteSlug = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : '';
-
 		return (
 			<div className="plugins-list">
 				<PluginsListDataViews
@@ -420,6 +413,7 @@ export class PluginsList extends Component {
 					pluginsWithUpdates={ this.props.pluginsWithUpdates }
 					activePlugins={ this.props.activePlugins }
 					inactivePlugins={ this.props.inactivePlugins }
+					bulkActionDialog={ this.bulkActionDialog }
 				/>
 			</div>
 		);

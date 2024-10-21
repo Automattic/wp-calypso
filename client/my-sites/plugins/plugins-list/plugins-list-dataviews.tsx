@@ -6,6 +6,7 @@ import { find } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { navigate } from 'calypso/lib/navigate';
+import { PluginActions } from '../hooks/types';
 
 import './style.scss';
 
@@ -16,6 +17,7 @@ interface Props {
 	activePlugins: Array;
 	inactivePlugins: Array;
 	onSearch?: ( search: string ) => void;
+	bulkActionDialog: ( action: string, plugins: Array ) => void;
 }
 
 export const PLUGINS_STATUS = {
@@ -31,9 +33,8 @@ export default function PluginsListDataViews( {
 	activePlugins,
 	inactivePlugins,
 	onSearch,
+	bulkActionDialog,
 }: Props ) {
-	// return <>something</>;
-
 	// Add flags for plugins status: active, inactive, updates
 	// TODO: Check the best way of doind this. We can probably move this to the backend
 	currentPlugins.map( ( plugin ) => {
@@ -100,7 +101,7 @@ export default function PluginsListDataViews( {
 				render: ( { item } ) => {
 					return (
 						<>
-							{ item.icon && <img src={ item.icon } /> }
+							{ item.icon && <img alt={ item.name } src={ item.icon } /> }
 							{ ! item.icon && (
 								<Icon
 									size={ 32 }
@@ -164,8 +165,8 @@ export default function PluginsListDataViews( {
 		},
 		{
 			href: `some-url`,
-			callback: ( data ) => {
-				console.log( 'Activate Plugin, data: ', data );
+			callback: ( plugins ) => {
+				bulkActionDialog( PluginActions.ACTIVATE, plugins );
 			},
 			label: translate( 'Activate' ),
 			isExternalLink: true,
@@ -175,8 +176,8 @@ export default function PluginsListDataViews( {
 		},
 		{
 			href: `some-url`,
-			callback: () => {
-				console.log( 'Deactivate' );
+			callback: ( plugins ) => {
+				bulkActionDialog( PluginActions.DEACTIVATE, plugins );
 			},
 			label: translate( 'Deactivate' ),
 			isExternalLink: true,
@@ -186,8 +187,8 @@ export default function PluginsListDataViews( {
 		},
 		{
 			href: `some-url`,
-			callback: () => {
-				console.log( 'Enable Autoupdate' );
+			callback: ( plugins ) => {
+				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Enable Autoupdate' ),
 			isExternalLink: true,
@@ -196,8 +197,8 @@ export default function PluginsListDataViews( {
 		},
 		{
 			href: `some-url`,
-			callback: () => {
-				console.log( 'Disable Autoupdate' );
+			callback: ( plugins ) => {
+				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Disable Autoupdate' ),
 			isExternalLink: true,
@@ -206,8 +207,8 @@ export default function PluginsListDataViews( {
 		},
 		{
 			href: `some-url`,
-			callback: () => {
-				console.log( 'Remove' );
+			callback: ( plugins ) => {
+				bulkActionDialog( PluginActions.REMOVE, plugins );
 			},
 			label: translate( 'Remove' ),
 			isExternalLink: true,
@@ -225,7 +226,6 @@ export default function PluginsListDataViews( {
 	}, [ dataViewsState.search, onSearch ] );
 
 	const { data, paginationInfo } = useMemo( () => {
-		console.log( 'dataViewsState', dataViewsState );
 		return filterSortAndPaginate( currentPlugins, dataViewsState, fields );
 	}, [ currentPlugins, dataViewsState, fields ] );
 
@@ -242,9 +242,6 @@ export default function PluginsListDataViews( {
 					actions: actions,
 					dataViewsState: dataViewsState,
 					setDataViewsState: setDataViewsState,
-					onSelectionChange: ( items ) => {
-						console.log( 'items: ', items );
-					},
 					defaultLayouts: { table: {} },
 				} }
 			/>
