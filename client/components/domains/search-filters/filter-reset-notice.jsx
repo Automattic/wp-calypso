@@ -8,7 +8,6 @@ export class FilterResetNotice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool.isRequired,
 		lastFilters: PropTypes.shape( {
-			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
 			tlds: PropTypes.arrayOf( PropTypes.string ),
 		} ).isRequired,
@@ -16,8 +15,8 @@ export class FilterResetNotice extends Component {
 	};
 
 	hasActiveFilters() {
-		const { lastFilters: { exactSldMatchesOnly, maxCharacters, tlds = [] } = {} } = this.props;
-		return exactSldMatchesOnly || maxCharacters !== '' || tlds.length > 0;
+		const { lastFilters: { exactSldMatchesOnly, tlds = [] } = {} } = this.props;
+		return exactSldMatchesOnly || tlds.length > 0;
 	}
 
 	hasTooFewSuggestions() {

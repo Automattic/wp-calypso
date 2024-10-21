@@ -269,7 +269,6 @@ class RegisterDomainStep extends Component {
 
 	getInitialFiltersState() {
 		return {
-			maxCharacters: '',
 			exactSldMatchesOnly: false,
 			tlds: [],
 		};
@@ -532,9 +531,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi =
-			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
-			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
+		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
