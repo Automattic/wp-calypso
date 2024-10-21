@@ -180,13 +180,6 @@ if ( isset( $args['website'] ) ) {
 								<?php echo esc_html( __( 'Commerce', 'happy-blocks' ) ); ?>
 							</a>
 						</li>
-						<li>
-							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>"
-								tabindex="-1">
-								<?php echo esc_html( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>
-							</a>
-						</li>
 					</ul>
 					<div class="x-dropdown-content-separator"></div>
 					<ul role="menu">
@@ -453,13 +446,6 @@ if ( isset( $args['website'] ) ) {
 									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/ecommerce/' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( __( 'Commerce', 'happy-blocks' ) ); ?>
-								</a>
-							</li>
-							<li class="x-menu-grid-item">
-								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/create-a-course/' ) ); ?>"
-									tabindex="-1">
-									<?php echo esc_html( fixme__( 'Course Maker', __( 'Course', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">
