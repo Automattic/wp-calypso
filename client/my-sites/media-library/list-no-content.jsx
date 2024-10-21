@@ -21,7 +21,7 @@ class MediaLibraryListNoContent extends Component {
 		const { filter, source, translate } = this.props;
 
 		//TODO: handle each service with individual messages
-		if ( 'google_photos' === source ) {
+		if ( 'google_photos_picker' === source ) {
 			if ( 'videos' === filter ) {
 				return translate( "You don't have any videos in your Google Photos library.", {
 					comment: 'Media no results',
@@ -90,7 +90,7 @@ class MediaLibraryListNoContent extends Component {
 					{ this.props.translate( 'Upload media' ) }
 				</UploadButton>
 			);
-		} else if ( 'google_photos' === this.props.source ) {
+		} else if ( 'google_photos_picker' === this.props.source ) {
 			line = this.props.translate( 'New images and videos may take a few minutes to appear.' );
 		}
 
