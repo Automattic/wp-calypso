@@ -54,6 +54,21 @@ export class TranslatorInvite extends Component {
 		return <div className="translator-invite__content">{ noticeText }</div>;
 	}
 
+	getTestStrings() {
+		const test1 = this.props.translate( 'This text is used to test translations.' );
+		const test2 = this.props.translate( "We've been testing this for %d days.", {
+			args: [ 99999 ],
+			comment: 'The number of days we have been testing.',
+		} );
+
+		return (
+			<div>
+				<div>{ test1 }</div>
+				<div>{ test2 }</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { locale, translate } = this.props;
 		if ( config( 'i18n_default_locale_slug' ) === locale ) {
