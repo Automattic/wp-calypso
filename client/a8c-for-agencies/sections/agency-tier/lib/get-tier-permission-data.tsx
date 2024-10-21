@@ -1,4 +1,5 @@
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { preventWidows } from 'calypso/lib/formatting';
 
 const getTierPermissionData = (
 	section: string,
@@ -18,8 +19,8 @@ const getTierPermissionData = (
 		'a8c-for-agencies-partner-directory': {
 			title: translate( 'Partner Directory' ),
 			content: {
-				heading: translate(
-					"Reach the next tier to be showcased in Automattic's partner directories."
+				heading: preventWidows(
+					translate( "Reach the next tier to be showcased in Automattic's partner directories." )
 				),
 				description: translate(
 					"Agency Partners and Pro Agency Partners get to be included in Automatic's directories. Pro Agency Partners also get co-marketing opportunities."
