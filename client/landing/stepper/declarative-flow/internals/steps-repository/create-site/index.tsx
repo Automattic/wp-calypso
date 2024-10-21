@@ -230,7 +230,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent
+			siteIntent,
+			partnerBundle ?? undefined
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
