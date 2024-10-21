@@ -1,12 +1,13 @@
 import { MaterialIcon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { GOOGLE_TRANSFER } from '@automattic/onboarding';
+import { GOOGLE_TRANSFER, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import TransferDomains from './domains';
 import type { Step } from '../../types';
 
@@ -22,10 +23,14 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	};
 
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
+	const isHundredYearDomainsTransferFlow = HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug;
+
+	const Container = isHundredYearDomainsTransferFlow ? HundredYearPlanStepWrapper : StepContainer;
 
 	return (
-		<StepContainer
+		<Container
 			flowName={ flow }
+			variantSlug={ variantSlug }
 			stepName="domains"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
