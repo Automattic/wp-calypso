@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { isEqual, reduce } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -145,21 +145,6 @@ export class PluginsList extends Component {
 		return canAutoupdate || canActivate;
 	}
 
-	setBulkSelectionState = ( plugins, selectionState ) => {
-		const slugsToBeUpdated = reduce(
-			plugins,
-			( slugs, plugin ) => {
-				slugs[ plugin.slug ] = this.canBulkSelect( plugin ) && selectionState;
-				return slugs;
-			},
-			{}
-		);
-
-		this.setState( {
-			selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ),
-		} );
-	};
-
 	getSelected() {
 		return this.props.plugins.filter( this.isSelected.bind( this ) );
 	}
@@ -175,34 +160,17 @@ export class PluginsList extends Component {
 	}
 
 	// Actions
-	toggleBulkManagement = () => {
-		const activateBulkManagement = ! this.state.bulkManagementActive;
-
-		if ( activateBulkManagement ) {
-			this.setBulkSelectionState( this.props.plugins, true );
-			this.setState( { bulkManagementActive: true } );
-			this.recordEvent( 'Clicked Manage' );
-		} else {
-			this.setState( { bulkManagementActive: false } );
-			this.removePluginStatuses();
-			this.recordEvent( 'Clicked Manage Done' );
-		}
-	};
-
 	removePluginStatuses() {
 		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 	}
 
-	doActionOverSelected( actionName, action, selectedPlugins ) {
-		if ( ! selectedPlugins ) {
-			selectedPlugins = this.props.plugins.filter( this.isSelected );
-		}
-
+	doActionOverSelected( actionName, action ) {
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		this.removePluginStatuses();
-		const pluginAndSiteObjects = selectedPlugins
+
+		const pluginAndSiteObjects = this.state.selectedPlugins
 			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
@@ -233,6 +201,10 @@ export class PluginsList extends Component {
 	}
 
 	bulkActionDialog = ( actionName, selectedPlugins ) => {
+		this.setState( {
+			selectedPlugins: selectedPlugins,
+		} );
+
 		const { allSites, showPluginActionDialog } = this.props;
 		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
