@@ -218,7 +218,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
-    cookie: "npm:^0.4.1"
+    cookie: "npm:^0.7.0"
     debug: "npm:^4.3.3"
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.3.0"
@@ -337,7 +337,7 @@ __metadata:
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": "npm:^0.4.1"
     "@types/node": "npm:^22.7.5"
-    cookie: "npm:^0.4.1"
+    cookie: "npm:^0.7.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -707,7 +707,7 @@ __metadata:
   resolution: "@automattic/create-calypso-config@workspace:packages/create-calypso-config"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    cookie: "npm:^0.4.1"
+    cookie: "npm:^0.7.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -1501,7 +1501,7 @@ __metadata:
   resolution: "@automattic/oauth-token@workspace:packages/oauth-token"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    cookie: "npm:^0.4.1"
+    cookie: "npm:^0.7.0"
     store: "npm:^2.0.12"
   languageName: unknown
   linkType: soft
@@ -12981,7 +12981,7 @@ __metadata:
     component-event: "npm:^0.2.1"
     component-file-picker: "npm:^0.2.1"
     component-query: "npm:^0.0.3"
-    cookie: "npm:^0.4.1"
+    cookie: "npm:^0.7.0"
     cookie-parser: "npm:^1.4.6"
     core-js-bundle: "npm:^3.6.4"
     cpf_cnpj: "npm:^0.2.0"
@@ -14362,17 +14362,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^0.4.1, cookie@npm:~0.4.1":
-  version: 0.4.2
-  resolution: "cookie@npm:0.4.2"
-  checksum: beab41fbd7c20175e3a2799ba948c1dcc71ef69f23fe14eeeff59fc09f50c517b0f77098db87dbb4c55da802f9d86ee86cdc1cd3efd87760341551838d53fca2
-  languageName: node
-  linkType: hard
-
 "cookie@npm:^0.5.0":
   version: 0.5.0
   resolution: "cookie@npm:0.5.0"
   checksum: c01ca3ef8d7b8187bae434434582288681273b5a9ed27521d4d7f9f7928fe0c920df0decd9f9d3bbd2d14ac432b8c8cf42b98b3bdd5bfe0e6edddeebebe8b61d
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^0.7.0":
+  version: 0.7.2
+  resolution: "cookie@npm:0.7.2"
+  checksum: 9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
+  languageName: node
+  linkType: hard
+
+"cookie@npm:~0.4.1":
+  version: 0.4.2
+  resolution: "cookie@npm:0.4.2"
+  checksum: beab41fbd7c20175e3a2799ba948c1dcc71ef69f23fe14eeeff59fc09f50c517b0f77098db87dbb4c55da802f9d86ee86cdc1cd3efd87760341551838d53fca2
   languageName: node
   linkType: hard
 
