@@ -252,7 +252,7 @@ describe( 'useGenerateActionHook', () => {
 			priceString: '$300',
 		} );
 
-		expect( action.primary.text ).toBe( 'Upgrade – %(priceString)s' );
+		expect( action.primary.text ).toBe( 'Upgrade (%(priceString)s)' );
 	} );
 
 	it( 'should handle upgrade to longer billing period - annual', () => {
