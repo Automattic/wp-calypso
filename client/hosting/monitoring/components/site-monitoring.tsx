@@ -231,8 +231,12 @@ export interface HTTPCodeSerie {
 	showInTooltip?: boolean;
 }
 
+function colorToAlpha( color: keyof typeof colorStudio.colors, alpha: number ) {
+	return chroma( colorStudio.colors[ color ] ).alpha( alpha ).hex();
+}
+
 const seriesDefaultProps = {
-	fill: chroma( colorStudio.colors[ 'Gray 10' ] ).alpha( 0.1 ).hex(),
+	fill: colorToAlpha( 'Gray 10', 0.1 ),
 	stroke: colorStudio.colors[ 'Gray 10' ],
 };
 
@@ -241,7 +245,7 @@ const useSuccessHttpCodeSeries = () => {
 	const series: HTTPCodeSerie[] = [
 		{
 			statusCode: 200,
-			fill: chroma( colorStudio.colors[ 'WordPress Blue 30' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'WordPress Blue 30', 0.1 ),
 			label: __( '200: OK Response' ),
 			stroke: colorStudio.colors[ 'WordPress Blue 30' ],
 			showInLegend: true,
@@ -249,7 +253,7 @@ const useSuccessHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 301,
-			fill: chroma( colorStudio.colors[ 'Pink 30' ] ).alpha( 0.2 ).hex(),
+			fill: colorToAlpha( 'Pink 30', 0.2 ),
 			label: __( '301: Moved Permanently' ),
 			stroke: colorStudio.colors[ 'Pink 30' ],
 			showInLegend: true,
@@ -257,7 +261,7 @@ const useSuccessHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 302,
-			fill: chroma( colorStudio.colors[ 'Celadon 30' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'Celadon 30', 0.1 ),
 			label: __( '302: Moved Temporarily' ),
 			stroke: colorStudio.colors[ 'Celadon 30' ],
 			showInLegend: true,
@@ -274,7 +278,7 @@ const useErrorHttpCodeSeries = () => {
 		// most common 4xx errors
 		{
 			statusCode: 400,
-			fill: chroma( colorStudio.colors[ 'Yellow 10' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'Yellow 10', 0.1 ),
 			label: __( '400: Bad Request' ),
 			stroke: colorStudio.colors[ 'Yellow 10' ],
 			showInLegend: true,
@@ -282,7 +286,7 @@ const useErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 401,
-			fill: chroma( colorStudio.colors[ 'Gray 20' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'Gray 20', 0.1 ),
 			label: __( '401: Unauthorized' ),
 			stroke: colorStudio.colors[ 'Gray 20' ],
 			showInLegend: true,
@@ -290,7 +294,7 @@ const useErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 403,
-			fill: chroma( colorStudio.colors[ 'WordPress Blue 30' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'WordPress Blue 30', 0.1 ),
 			label: __( '403: Forbidden' ),
 			stroke: colorStudio.colors[ 'WordPress Blue 30' ],
 			showInLegend: true,
@@ -298,7 +302,7 @@ const useErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 404,
-			fill: chroma( colorStudio.colors[ 'Celadon 30' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'Celadon 30', 0.1 ),
 			label: __( '404: Not Found' ),
 			stroke: colorStudio.colors[ 'Celadon 30' ],
 			showInLegend: true,
@@ -307,7 +311,7 @@ const useErrorHttpCodeSeries = () => {
 		// most common 5xx errors
 		{
 			statusCode: 500,
-			fill: chroma( colorStudio.colors[ 'Pink 30' ] ).alpha( 0.1 ).hex(),
+			fill: colorToAlpha( 'Pink 30', 0.1 ),
 			label: __( '500: Internal Server Error' ),
 			stroke: colorStudio.colors[ 'Pink 30' ],
 			showInLegend: true,
@@ -569,12 +573,12 @@ export const SiteMonitoring = () => {
 				data={ formattedData as uPlot.AlignedData }
 				series={ [
 					{
-						fill: chroma( colorStudio.colors[ 'WordPress Blue 50' ] ).alpha( 0.1 ).hex(),
+						fill: colorToAlpha( 'WordPress Blue 50', 0.1 ),
 						label: __( 'Requests per minute' ),
 						stroke: colorStudio.colors[ 'WordPress Blue 50' ],
 					},
 					{
-						fill: chroma( colorStudio.colors[ 'Yellow 30' ] ).alpha( 0.2 ).hex(),
+						fill: colorToAlpha( 'Yellow 30', 0.2 ),
 						label: __( 'Average response time (ms)' ),
 						stroke: colorStudio.colors[ 'Yellow 30' ],
 						scale: 'average-response-time',
