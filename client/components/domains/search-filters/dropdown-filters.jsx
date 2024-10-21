@@ -81,16 +81,13 @@ export class DropdownFilters extends Component {
 	};
 
 	handleFiltersReset = () => {
-		this.setState( {}, () => {
-			this.togglePopover( { discardChanges: false } );
-			this.props.onReset( 'tlds', 'exactSldMatchesOnly' );
-		} );
+		this.togglePopover( { discardChanges: false } );
+		this.props.onReset( 'tlds', 'exactSldMatchesOnly' );
 	};
+
 	handleFiltersSubmit = () => {
-		this.setState( {}, () => {
-			this.togglePopover( { discardChanges: false } );
-			this.hasFiltersChanged() && this.props.onSubmit();
-		} );
+		this.togglePopover( { discardChanges: false } );
+		this.hasFiltersChanged() && this.props.onSubmit();
 	};
 
 	hasFiltersChanged() {
