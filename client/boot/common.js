@@ -8,7 +8,7 @@ import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
@@ -202,6 +202,8 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
+export const getRootDomElement = () => document.getElementById( 'wpcom' );
+
 const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
@@ -217,7 +219,7 @@ const utils = () => {
 	accessibleFocus();
 
 	// Configure app element that React Modal will aria-hide when modal is open
-	Modal.setAppElement( document.getElementById( 'wpcom' ) );
+	Modal.setAppElement( getRootDomElement() );
 };
 
 const configureReduxStore = ( currentUser, reduxStore ) => {
@@ -402,10 +404,18 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 };
 
+let wpcomRootNode;
+export const getRootNode = () => {
+	if ( wpcomRootNode == null ) {
+		wpcomRootNode = createRoot( getRootDomElement() );
+	}
+
+	return wpcomRootNode;
+};
+
 function renderLayout( reduxStore, reactQueryClient ) {
-	ReactDom.render(
-		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
-		document.getElementById( 'wpcom' )
+	getRootNode().render(
+		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />
 	);
 }
 
