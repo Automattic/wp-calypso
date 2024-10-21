@@ -1,5 +1,4 @@
-import { isMigrationInProgress } from 'calypso/sites-dashboard/utils';
-import { getMigrationStatus, getMigrationType } from '../utils'; // Adjust the import path as necessary
+import { getMigrationStatus, getMigrationType, isMigrationInProgress } from '../utils'; // Adjust the import path as necessary
 
 describe( 'isMigrationInProgress', () => {
 	it.each( [
