@@ -121,7 +121,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			return b.weight - a.weight;
 		} );
 
-		// Limit to 18 recommendations instead of 6
+		// Limit to 18 recommendations.
 		return sortedRecommendations.slice( 0, 18 );
 	}, [ followedTagSlugs, apiRecommendedSites ] );
 
@@ -136,8 +136,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		} else {
 			setCurrentPage( 0 );
 		}
-		// console.log( displayedRecommendations[ 0 ] );
-		// setSelectedSite( displayedRecommendations[ 0 ] );
 	}, [ currentPage ] );
 
 	const loadMoreText = currentPage === 2 ? __( 'Start over' ) : __( 'Load more recommendations' );
@@ -150,16 +148,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		</>
 	);
 
-	// Select the first site by default when recommendations are loaded.
+	// Reset the page and selected site when the followed tags change.
 	useEffect( () => {
 		setCurrentPage( 0 );
 		setSelectedSite( null );
 	}, [ followedTagSlugs ] );
 
-	// Select the first site by default when recommendations are loaded.
+	//  Select the first site by default when recommendations are loaded.
 	useEffect( () => {
 		if ( displayedRecommendations.length > 0 ) {
-			console.log( displayedRecommendations[ 0 ] );
 			setSelectedSite( displayedRecommendations[ 0 ] );
 		}
 	}, [ displayedRecommendations ] );
@@ -216,7 +213,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 							</div>
 						) }
 						{ combinedRecommendations.length > 6 && (
-							<Button onClick={ handleLoadMore } variant="link">
+							<Button
+								className="subscribe-modal__load-more-button"
+								onClick={ handleLoadMore }
+								variant="link"
+							>
 								{ loadMoreText }
 							</Button>
 						) }
