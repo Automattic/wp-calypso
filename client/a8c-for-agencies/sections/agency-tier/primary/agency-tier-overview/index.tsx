@@ -98,7 +98,7 @@ export default function AgencyTierOverview() {
 											<div
 												key={ tier }
 												className={ clsx( 'agency-tier-overview__benefit-card-item', {
-													'opacity-50': ! isCurrentTier,
+													'is-opacity-50': ! isCurrentTier,
 												} ) }
 											>
 												<div className="agency-tier-overview__benefit-card-item-icon">
