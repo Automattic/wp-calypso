@@ -369,7 +369,7 @@ class StatsSite extends Component {
 						navigationItems={ [] }
 					></NavigationHeader>
 				) }
-				{ isNewDateFilteringEnabled && <JetpackLogo size={ 20 } full /> }
+				{ isNewDateFilteringEnabled && <JetpackLogo size={ 40 } full /> }
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
