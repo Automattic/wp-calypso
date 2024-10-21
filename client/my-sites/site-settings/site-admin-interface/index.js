@@ -16,7 +16,7 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	errorNotice,
-	plainNotice,
+	infoNotice,
 	removeNotice,
 	successNotice,
 } from 'calypso/state/notices/actions';
@@ -53,7 +53,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 		onMutate: () => {
 			removeAllNotices();
 			dispatch(
-				plainNotice( translate( 'Changing admin interface style…' ), {
+				infoNotice( translate( 'Changing admin interface style…' ), {
 					id: changeLoadingNoticeId,
 					showDismiss: false,
 				} )
