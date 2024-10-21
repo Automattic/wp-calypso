@@ -51,7 +51,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-backgrounds": "^7.6.19",
-		"typescript": "^5.3.3"
+		"typescript": "^5.6.3"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
