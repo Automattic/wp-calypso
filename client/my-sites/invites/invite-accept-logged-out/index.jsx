@@ -18,7 +18,6 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { WpLoggedOutInviteLogo } from '../invite-accept-logged-out/wp-logo';
-import { getExplanationForInvite } from '../utils';
 
 import './style.scss';
 /**
@@ -161,11 +160,6 @@ class InviteAcceptLoggedOut extends Component {
 		);
 	};
 
-	renderInviteExplanationLabel = () => {
-		const { role, site } = this.props.invite;
-		return getExplanationForInvite( role, site.title, this.props.translate );
-	};
-
 	render() {
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return this.renderSignInLinkOnly();
@@ -187,13 +181,7 @@ class InviteAcceptLoggedOut extends Component {
 			<>
 				<WpLoggedOutInviteLogo />
 				<div className="invite-accept-logged-out-wrapper">
-					<header className="invite-accept-logged-out-invite-header">
-						<h1>{ this.props.translate( 'Sign up to start editing' ) }</h1>
-						<span>{ this.props.invite?.site.title }</span>
-						<p className="invite-accept-logged-out-invite-description">
-							{ this.renderInviteExplanationLabel() }
-						</p>
-					</header>
+					{ this.renderFormHeader() }
 					<SignupForm
 						redirectToAfterLoginUrl={ window.location.href }
 						isPasswordless
