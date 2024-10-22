@@ -43,6 +43,7 @@ import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
@@ -171,6 +172,9 @@ export class JetpackSignup extends Component {
 					extra: {
 						...userData.extra,
 						jpc: true,
+						source: this.props.isWooPasswordlessJPC
+							? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from
+							: '',
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
@@ -571,6 +575,7 @@ const connectComponent = connect(
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
 		isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
+		isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
 	} ),
 	{
 		createAccount: createAccountAction,
