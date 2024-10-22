@@ -112,15 +112,16 @@ export function search( options: SearchParams ) {
 }
 
 export function searchBySlug(
-	slug: string,
+	slug: string[],
 	locale: string,
 	options?: { fields?: Array< string > | undefined; group_id?: string }
 ) {
 	const params = {
 		lang: locale,
-		filter: getFilterbySlug( slug ),
+		filter: getFilterbySlugs( slug ),
 		fields: options?.fields ?? RETURNABLE_FIELDS,
 		group_id: options?.group_id ?? 'wporg',
+		size: slug.length,
 	};
 	const queryString = params;
 
@@ -144,14 +145,14 @@ function getFilterbyAuthor( author: string ): {
 	};
 }
 
-function getFilterbySlug( slug: string ): {
+function getFilterbySlugs( slugs: string[] ): {
 	bool: {
-		must: { term: object }[];
+		should: { terms: object }[];
 	};
 } {
 	return {
 		bool: {
-			must: [ { term: { slug } } ],
+			should: [ { terms: { slug: slugs } } ],
 		},
 	};
 }
