@@ -2,6 +2,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { connect, useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
@@ -67,8 +68,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 					tag_recs_per_card: 0,
 				}
 			),
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
+		refetchOnMount: 'always',
+		refetchOnWindowFocus: true,
 		select: ( data: { cards: Card[] } ) => {
 			const recommendedBlogsCard = data.cards.find(
 				( card: Card ) => card.type === 'recommended_blogs'
@@ -82,13 +83,25 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				: [];
 		},
 		staleTime: Infinity,
+		enabled: followedTagSlugs.length > 0,
 	} );
 
 	const combinedRecommendations = useMemo( () => {
-		// Get list of curated recommendations.
-		const curatedRecommendations = followedTagSlugs
-			.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
-			.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) );
+		if ( isLoading ) {
+			console.log( 'isLoading', isLoading );
+			return [];
+		}
+
+		console.log( 'Calculating combinedRecommendations' );
+		const currentLocale = getLocaleSlug();
+		const isEnglish = currentLocale?.startsWith( 'en' );
+
+		// Get list of curated recommendations only if the language is English.
+		const curatedRecommendations = isEnglish
+			? followedTagSlugs
+					.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
+					.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) )
+			: [];
 
 		// Get list of API recommended blogs.
 		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
@@ -129,14 +142,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		// Limit to 18 recommendations.
 		const finalRec = sortedRecommendations.slice( 0, 18 );
 
-		// Foreach finalRec, call requestPage to prefetch the feed streams
-		finalRec.forEach( ( site ) => {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
-		} );
-
 		return finalRec;
-	}, [ followedTagSlugs, apiRecommendedSites, dispatch ] );
+	}, [ followedTagSlugs, apiRecommendedSites, dispatch, isLoading ] );
 
 	const displayedRecommendations = useMemo( () => {
 		const startIndex = currentPage * 6;
@@ -160,6 +167,27 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			</Button>
 		</>
 	);
+
+	// Prefetch the first blog's feed stream.
+	useEffect( () => {
+		if ( combinedRecommendations.length > 0 ) {
+			console.log( 'PREFETCHING FIRST BLOG' );
+			dispatch(
+				requestPage( { streamKey: `feed:${ combinedRecommendations[ 0 ].feed_ID }` } as any )
+			);
+		}
+	}, [ combinedRecommendations, dispatch ] );
+
+	// Prefetch the feed streams when the modal is opened.
+	useEffect( () => {
+		if ( isOpen ) {
+			console.log( 'PREFETCHING EVERYTHING ELSE' );
+			combinedRecommendations.forEach( ( site ) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
+			} );
+		}
+	}, [ isOpen, combinedRecommendations, dispatch ] );
 
 	// Reset the page and selected site when the followed tags change.
 	useEffect( () => {
