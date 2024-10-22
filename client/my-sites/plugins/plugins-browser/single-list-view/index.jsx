@@ -1,4 +1,3 @@
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -34,7 +33,6 @@ function isNotInstalled( plugin, installedPlugins ) {
 
 const SingleListView = ( {
 	category,
-	searchTerm,
 	plugins,
 	isFetching,
 	siteSlug,
@@ -68,11 +66,6 @@ const SingleListView = ( {
 		if ( domain ) {
 			listLink += '/' + domain;
 		}
-	}
-	if ( searchTerm ) {
-		listLink = addQueryArgs( '/plugins', {
-			s: searchTerm,
-		} );
 	}
 
 	if ( ! isFetching && plugins.length === 0 ) {
