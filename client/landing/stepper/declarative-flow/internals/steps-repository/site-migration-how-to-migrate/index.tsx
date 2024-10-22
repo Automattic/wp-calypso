@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { canInstallPlugins } from '@automattic/sites';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -70,16 +71,10 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		hostingProviderSlug !== 'unknown' &&
 		hostingProviderSlug !== 'automattic';
 
-	const canInstallPlugins = site?.plan?.features?.active.find(
-		( feature ) => feature === 'install-plugins'
-	)
-		? true
-		: false;
-
 	const { updateMigrationStatus } = useUpdateMigrationStatus();
 
 	const handleClick = ( how: string ) => {
-		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
+		const destination = canInstallPlugins( site ) ? 'migrate' : 'upgrade';
 		if ( site?.ID ) {
 			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
 			updateMigrationStatus( site.ID, `migration-pending-${ parsedHow }` );
