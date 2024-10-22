@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { canInstallPlugins } from '@automattic/sites';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
