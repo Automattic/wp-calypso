@@ -14,7 +14,7 @@ export const useSendZendeskMessage = () => {
 
 	return useCallback(
 		async ( message: Message ) => {
-			setChatStatus( 'sending' );
+			setChatStatus( 'loading' );
 
 			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist
