@@ -90,3 +90,17 @@ $sidebar-appearance-break-point: $break-medium;
 		}
 	}
 }
+
+// Override the overflow value to "clip" for Stats.
+// This allows us to implement a sticky header for the Stats page.
+.is-section-stats {
+	& .layout__content {
+		overflow: clip;
+	}
+}
+
+.stats-new-date-filtering-callout {
+	position: sticky;
+	top: 32px;
+	z-index: 20;
+}
