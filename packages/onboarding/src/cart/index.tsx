@@ -28,9 +28,9 @@ interface GetNewSiteParams {
 	useThemeHeadstart: boolean;
 	siteVisibility: Site.Visibility;
 	username: string;
+	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
-	partnerBundle?: string;
 }
 
 type NewSiteParams = {
@@ -152,11 +152,11 @@ export const createSiteWithCart = async (
 	useThemeHeadstart: boolean,
 	username: string,
 	domainCartItems: MinimalRequestCartProduct[],
+	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
-	siteIntent?: string,
-	partnerBundle?: string
+	siteIntent?: string
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );

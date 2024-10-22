@@ -227,11 +227,11 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			useThemeHeadstart,
 			username,
 			mergedDomainCartItems,
+			partnerBundle,
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent,
-			partnerBundle ?? undefined
+			siteIntent
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
