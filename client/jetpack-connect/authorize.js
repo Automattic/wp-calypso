@@ -1066,7 +1066,7 @@ export class JetpackAuthorize extends Component {
 									siteName={ decodeEntities( authQuery.blogname ) }
 									companyName={ this.getCompanyName() }
 									from={ authQuery.from }
-									isWooCoreProfiler={ this.isWooCoreProfiler() }
+									isWooPasswordlessJPC={ this.props.isWooPasswordlessJPC }
 								/>
 								<div className="jetpack-connect__jetpack-logo-wrapper">
 									<JetpackLogo monochrome size={ 18 } />{ ' ' }
@@ -1081,7 +1081,7 @@ export class JetpackAuthorize extends Component {
 									siteName={ decodeEntities( authQuery.blogname ) }
 									companyName={ this.getCompanyName() }
 									from={ authQuery.from }
-									isWooCoreProfiler={ this.isWooCoreProfiler() }
+									isWooPasswordlessJPC={ this.props.isWooPasswordlessJPC }
 								/>
 								{ this.renderStateAction() }
 							</div>
