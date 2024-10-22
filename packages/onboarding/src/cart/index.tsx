@@ -200,7 +200,6 @@ export const createSiteWithCart = async (
 			options: {
 				...newSiteParams.options,
 				has_segmentation_survey: hasSegmentationSurvey,
-				site_partner_bundle: partnerBundle,
 				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
