@@ -364,6 +364,7 @@ export class PluginsList extends Component {
 					activePlugins={ this.props.activePlugins }
 					inactivePlugins={ this.props.inactivePlugins }
 					bulkActionDialog={ this.bulkActionDialog }
+					isLoading={ this.props.isLoading }
 				/>
 			</div>
 		);

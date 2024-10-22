@@ -21,6 +21,7 @@ interface Props {
 	pluginsWithUpdates: Array< Plugin >;
 	activePlugins: Array< Plugin >;
 	inactivePlugins: Array< Plugin >;
+	isLoading: boolean;
 	onSearch?: ( search: string ) => void;
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
@@ -37,6 +38,7 @@ export default function PluginsListDataViews( {
 	pluginsWithUpdates,
 	activePlugins,
 	inactivePlugins,
+	isLoading,
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
@@ -75,21 +77,15 @@ export default function PluginsListDataViews( {
 				elements: [
 					{
 						value: PLUGINS_STATUS.ACTIVE,
-						label:
-							translate( 'Active' ) +
-							( activePlugins?.length > 0 ? ' - ' + activePlugins?.length : '' ),
+						label: translate( 'Active' ),
 					},
 					{
 						value: PLUGINS_STATUS.INACTIVE,
-						label:
-							translate( 'Inactive' ) +
-							( inactivePlugins?.length > 0 ? ' - ' + inactivePlugins?.length : '' ),
+						label: translate( 'Inactive' ),
 					},
 					{
 						value: PLUGINS_STATUS.UPDATE,
-						label:
-							translate( 'Needs update' ) +
-							( pluginsWithUpdates?.length > 0 ? ' - ' + pluginsWithUpdates?.length : '' ),
+						label: translate( 'Needs update' ),
 					},
 				],
 				filterBy: {
@@ -285,6 +281,7 @@ export default function PluginsListDataViews( {
 					setDataViewsState: setDataViewsState,
 					defaultLayouts: { table: {} },
 				} }
+				isLoading={ isLoading }
 			/>
 		</div>
 	);
