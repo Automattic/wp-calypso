@@ -47,7 +47,7 @@ export class TwitterBlockFlow implements BlockFlow {
 
 		// We should make sure the actual Iframe loads, because it takes a second.
 		const twitterIframeLocator = editorCanvas.locator( selectors.editorTwitterIframe );
-		await twitterIframeLocator.waitFor();
+		await twitterIframeLocator.waitFor( { timeout: 20000 } );
 	}
 
 	/**
@@ -60,6 +60,6 @@ export class TwitterBlockFlow implements BlockFlow {
 			.frameLocator( selectors.publishedTwitterIframe )
 			.locator( `text=${ this.configurationData.expectedTweetText }` )
 			.first(); // May not be specific enough to match only one (and that's okay).
-		await expectedTweetLocator.waitFor();
+		await expectedTweetLocator.waitFor( { timeout: 20000 } );
 	}
 }
