@@ -38,15 +38,33 @@ function addEditorListener( selector, cb ) {
 	}
 }
 
+const enterOverrides = {};
+let addedEnterListener = false;
 function addCommandsInputListener( selector, cb ) {
-	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
-		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
-		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+	enterOverrides[ selector ] = cb;
 
-		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
-			cb( e );
-		}
-	} );
+	if ( ! addedEnterListener ) {
+		document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+			const isInputActive = document.activeElement?.matches(
+				'.commands-command-menu__header input'
+			);
+			const selectedCommand = document.querySelector( '[data-selected=true]' );
+
+			if ( e.key === 'Enter' && isInputActive && !! selectedCommand ) {
+				const matchingSelector = Object.keys( enterOverrides ).find( ( _selector ) => {
+					return selectedCommand.matches( _selector );
+				} );
+
+				if ( matchingSelector ) {
+					const callback = enterOverrides[ matchingSelector ];
+
+					callback?.( e );
+				}
+			}
+		} );
+
+		addedEnterListener = true;
+	}
 }
 
 /**
