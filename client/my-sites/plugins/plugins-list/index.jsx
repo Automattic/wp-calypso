@@ -127,32 +127,10 @@ export class PluginsList extends Component {
 		return !! this.state.selectedPlugins[ slug ];
 	};
 
-	togglePlugin = ( plugin ) => {
-		const { slug } = plugin;
-		const { selectedPlugins } = this.state;
-		const oldValue = selectedPlugins[ slug ];
-		const eventAction =
-			'Clicked to ' + this.isSelected( plugin ) ? 'Deselect' : 'Select' + 'Single Plugin';
-		this.setState( {
-			selectedPlugins: Object.assign( {}, selectedPlugins, { [ slug ]: ! oldValue } ),
-		} );
-		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', slug );
-	};
-
-	canBulkSelect( plugin ) {
-		const { autoupdate: canAutoupdate, activation: canActivate } =
-			this.getAllowedPluginActions( plugin );
-		return canAutoupdate || canActivate;
-	}
-
-	getSelected() {
-		return this.props.plugins.filter( this.isSelected.bind( this ) );
-	}
-
 	recordEvent( eventAction, includeSelectedPlugins ) {
 		eventAction += this.props.selectedSite ? '' : ' on Multisite';
 		if ( includeSelectedPlugins ) {
-			const pluginSlugs = this.getSelected().map( ( plugin ) => plugin.slug );
+			const pluginSlugs = this.state.selectedPlugins.map( ( plugin ) => plugin.slug );
 			this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugins', pluginSlugs );
 		} else {
 			this.props.recordGoogleEvent( 'Plugins', eventAction );
@@ -389,43 +367,6 @@ export class PluginsList extends Component {
 				/>
 			</div>
 		);
-	}
-
-	getPlugins() {
-		const plugins = this.props.plugins.map( ( plugin ) => {
-			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
-			const allowedPluginActions = this.getAllowedPluginActions( plugin );
-			const isSelectable =
-				this.state.bulkManagementActive &&
-				( allowedPluginActions.autoupdate || allowedPluginActions.activation );
-
-			return {
-				...plugin,
-				...{ onClick: selectThisPlugin, isSelected: this.isSelected( plugin ), isSelectable },
-			};
-		} );
-
-		// Plugins which require an update sort first, otherwise the original order is kept.
-		plugins.sort( ( a, b ) => {
-			const updateA = !! a.update;
-			const updateB = !! b.update;
-			return Number( updateB ) - Number( updateA );
-		} );
-
-		return plugins;
-	}
-
-	getAllowedPluginActions( plugin ) {
-		const { hasManagePlugins, siteIsAtomic, siteIsJetpack, selectedSite } = this.props;
-		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
-		const isManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( plugin.slug );
-		const canManagePlugins =
-			! selectedSite || ( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
-
-		return {
-			autoupdate: ! isManagedPlugin && canManagePlugins,
-			activation: ! isManagedPlugin && canManagePlugins,
-		};
 	}
 }
 
