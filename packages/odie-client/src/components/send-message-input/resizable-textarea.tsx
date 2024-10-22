@@ -22,6 +22,14 @@ export const ResizableTextarea: React.FC< {
 	);
 
 	useEffect( () => {
+		// Set's back the textarea height after sending messages, it is needed for long messages.
+		if ( inputRef.current ) {
+			inputRef.current.style.height = 'auto';
+			autosize.update( inputRef.current );
+		}
+	}, [ sendMessageHandler, inputRef ] );
+
+	useEffect( () => {
 		if ( inputRef.current ) {
 			const currentInput = inputRef.current;
 			autosize( currentInput );
