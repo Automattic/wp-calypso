@@ -12,6 +12,7 @@ import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -87,10 +88,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	} );
 
 	const combinedRecommendations = useMemo( () => {
-		if ( isLoading ) {
-			console.log( 'isLoading', isLoading );
-			return [];
-		}
+		// if ( isLoading ) {
+		// 	console.log( 'isLoading', isLoading );
+		// 	return [];
+		// }
 
 		console.log( 'Calculating combinedRecommendations' );
 		const currentLocale = getLocaleSlug();
@@ -143,7 +144,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		const finalRec = sortedRecommendations.slice( 0, 18 );
 
 		return finalRec;
-	}, [ followedTagSlugs, apiRecommendedSites, dispatch, isLoading ] );
+	}, [ followedTagSlugs, apiRecommendedSites ] );
 
 	const displayedRecommendations = useMemo( () => {
 		const startIndex = currentPage * 6;
@@ -217,6 +218,27 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		onClose();
 	}, [ dispatch, onClose ] );
 
+	const trackScrollPage = useCallback(
+		(
+			path: string,
+			title: string,
+			category: string,
+			pageNum: number,
+			resultsShown: number,
+			total: number
+		) => {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_infinite_scroll_performed', {
+					path,
+					page: pageNum,
+					results: resultsShown,
+					total,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
+
 	return (
 		isOpen && (
 			<Modal
@@ -287,6 +309,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 											className="is-site-stream subscribe-modal__preview-stream"
 											followSource="reader_subscribe_modal"
 											useCompactCards
+											trackScrollPage={ trackScrollPage }
 										/>
 									</div>
 								</>
@@ -295,6 +318,28 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 									{ __( 'Select a blog to preview its posts' ) }
 								</div>
 							) }
+							<div className="subscribe-modal__preview-placeholder">
+								{ selectedSite ? (
+									<>
+										<div className="subscribe-modal__preview-stream-header">
+											<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
+										</div>
+										<div className="subscribe-modal__preview-stream-container">
+											<TypedStream
+												streamKey={ `feed:${ selectedSite.feed_ID }` }
+												className="is-site-stream subscribe-modal__preview-stream"
+												followSource="reader_subscribe_modal"
+												useCompactCards
+												trackScrollPage={ trackScrollPage }
+											/>
+										</div>
+									</>
+								) : (
+									<div className="subscribe-modal__preview-placeholder-text">
+										{ __( 'Select a blog to preview its posts' ) }
+									</div>
+								) }
+							</div>
 						</div>
 					</div>
 				</div>
