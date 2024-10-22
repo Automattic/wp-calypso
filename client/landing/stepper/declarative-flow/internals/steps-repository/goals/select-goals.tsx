@@ -72,8 +72,6 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 	const hasBuiltByExpressGoal = goalOptions.some( ( g ) => g.key === SiteGoal.DIFM );
 	return (
 		<>
-			<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
-
 			<div className="select-goals__cards-container">
 				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
 				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
