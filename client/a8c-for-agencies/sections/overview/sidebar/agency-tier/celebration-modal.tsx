@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import A4AThemedModal from 'calypso/a8c-for-agencies/components/a4a-themed-modal';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -83,16 +84,18 @@ export default function AgencyTierCelebrationModal( {
 		>
 			<div className="agency-tier-celebration-modal__content-wrapper">
 				<div className="agency-tier-celebration-modal__content" ref={ benefitslistRef }>
-					<div className="agency-tier-celebration-modal__title">{ title }</div>
-					<div className="agency-tier-celebration-modal__description">{ description }</div>
+					<div className="agency-tier-celebration-modal__title">{ preventWidows( title ) }</div>
+					<div className="agency-tier-celebration-modal__description">
+						{ preventWidows( description ) }
+					</div>
 					{ extraDescription && (
 						<div className="agency-tier-celebration-modal__extra-description">
-							{ extraDescription }
+							{ preventWidows( extraDescription ) }
 						</div>
 					) }
 					<ul className="agency-tier-celebration-modal__benefits">
 						{ benefits.map( ( benefit ) => (
-							<li key={ benefit }>{ benefit }</li>
+							<li key={ benefit }>{ preventWidows( benefit ) }</li>
 						) ) }
 					</ul>
 				</div>
