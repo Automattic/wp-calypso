@@ -1,11 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
@@ -49,24 +51,19 @@ export const PaidPluginsSection = ( props ) => {
 		/>
 	);
 };
-export const FeaturedDeveloperSection = ( props ) => {
-	const { plugins: plugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
-		search: props.searchTerm,
-	} );
+export const FeaturedWPBeginnerSection = ( props ) => {
 	const translate = useTranslate();
 
-	if ( props.jetpackNonAtomic ) {
-		return null;
-	}
+	const { data: plugins = [], isFetching } = useESPlugin( WPBEGINNER_PLUGINS );
 
 	return (
 		<SingleListView
 			{ ...props }
-			category={ null }
+			category="wpbeginner"
+			plugins={ plugins }
+			isFetching={ isFetching }
 			title={ translate( 'Must-have plugins from WPBeginner' ) }
 			subtitle={ translate( 'Add the best-loved plugins on WordPress.com' ) }
-			plugins={ plugins }
-			isFetching={ isFetchingPaidPlugins }
 		/>
 	);
 };
@@ -112,7 +109,7 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isAwesomeMotive = getQueryArgs()?.ref === 'awesome-motive-lp';
+	const isWPBeginnerSpecial = getQueryArgs()?.ref === 'wpbeginner-special-lp';
 
 	const {
 		isTrialAcknowledgeModalOpen,
@@ -136,18 +133,22 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			) }
 
-			{ isAwesomeMotive && (
-				<FeaturedDeveloperSection { ...props } searchTerm="developer: Awesome Motive" />
+			{ isWPBeginnerSpecial ? (
+				<FeaturedWPBeginnerSection { ...props } />
+			) : (
+				<>
+					<PaidPluginsSection { ...props } />
+					<CollectionListView category="monetization" { ...props } />
+					<EducationFooter />
+					{ ! isLoggedIn && <InPageCTASection /> }
+					<FeaturedPluginsSection
+						{ ...props }
+						pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+						isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+					/>
+				</>
 			) }
-			<PaidPluginsSection { ...props } />
-			<CollectionListView category="monetization" { ...props } />
-			<EducationFooter />
-			{ ! isLoggedIn && <InPageCTASection /> }
-			<FeaturedPluginsSection
-				{ ...props }
-				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-			/>
+
 			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
 			<CollectionListView category="ecommerce" { ...props } />

@@ -79,3 +79,19 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 ];
 
 export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping', 'wp-fusion-lite' ];
+
+export const WPBEGINNER_PLUGINS = [
+	'wpforms-lite',
+	'all-in-one-seo-pack',
+	'optinmonster',
+	'google-analytics-for-wordpress',
+	'coming-soon',
+	'wp-mail-smtp',
+	'trustpulse-api',
+	'insert-headers-and-footers',
+	'stripe',
+	'pushengage',
+	'easy-digital-downloads',
+	'searchwp-live-ajax-search',
+	'custom-facebook-feed',
+];

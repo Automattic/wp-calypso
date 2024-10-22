@@ -1,29 +1,52 @@
 import { useTranslate } from 'i18n-calypso';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
+import { WPBEGINNER_PLUGINS } from '../constants';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
-	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
+	const { data: esPlugins = [], isFetching: esIsFetching } = useESPlugin( WPBEGINNER_PLUGINS );
+
+	let plugins;
+	let isFetching;
+	const {
+		plugins: categoryPlugins,
+		isFetching: categoryIsFetching,
+		fetchNextPage,
+		pagination,
+	} = usePlugins( {
 		category,
 		infinite: true,
 	} );
 
+	let results = pagination.results;
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.title || category;
-	const categoryDescription = categories[ category ]?.description;
+	let categoryName = categories[ category ]?.title || category;
+	let categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
+
+	if ( category === 'wpbeginner' ) {
+		plugins = esPlugins;
+		isFetching = esIsFetching;
+		categoryName = translate( 'Must-have plugins from WPBeginner' );
+		categoryDescription = translate( 'Add the best-loved plugins on WordPress.com' );
+		results = esPlugins.length;
+	} else {
+		plugins = categoryPlugins;
+		isFetching = categoryIsFetching;
+	}
 
 	let resultCount = '';
 	if ( categoryName && pagination ) {
 		resultCount = translate( '%(total)s plugin', '%(total)s plugins', {
-			count: pagination.results,
+			count: results,
 			textOnly: true,
 			args: {
-				total: pagination.results.toLocaleString(),
+				total: results.toLocaleString(),
 			},
 		} );
 	}
@@ -43,6 +66,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				extended
+				size={ 15 }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</>
