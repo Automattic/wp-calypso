@@ -16,7 +16,7 @@ export const useSendZendeskMessage = () => {
 
 	const sendMessage = useCallback(
 		async ( message: Message ) => {
-			const conversation = getZendeskConversation( {
+			const conversation = await getZendeskConversation( {
 				chatId,
 				conversationId: selectedConversationId,
 			} );

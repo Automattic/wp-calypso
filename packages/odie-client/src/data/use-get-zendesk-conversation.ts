@@ -1,5 +1,16 @@
 import Smooch from 'smooch';
 
+const parseResponse = ( conversation: Conversation ) => {
+	const messages = conversation?.messages.map( ( message ) => {
+		return {
+			content: message.text,
+			role: message.role,
+			type: message.type === 'text' ? 'message' : message.type,
+		};
+	} );
+
+	return { ...conversation, messages };
+};
 /**
  * Get the conversation for the Zendesk conversation.
  */
@@ -26,13 +37,8 @@ export const getZendeskConversation = ( {
 		return null;
 	}
 
-	const messages = conversation?.messages.map( ( message ) => {
-		return {
-			content: message.text,
-			role: message.role,
-			type: message.type === 'text' ? 'message' : message.type,
-		};
-	} );
-
-	return { ...conversation, messages };
+	// We need to ensure that more than one message is loaded
+	return Smooch.getConversationById( conversation.id )
+		.then( ( conversation ) => parseResponse( conversation ) )
+		.catch( () => parseResponse( conversation ) );
 };

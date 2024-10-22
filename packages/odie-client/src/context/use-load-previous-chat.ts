@@ -32,17 +32,18 @@ export const useLoadPreviousChat = ( {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
 			let messages = [ initialMessage, ...( existingChat as Chat ).messages ];
 
-			const conversation = getZendeskConversation( {
+			getZendeskConversation( {
 				chatId: existingChat.chat_id,
 				conversationId: selectedConversationId,
-			} );
-			if ( conversation ) {
-				setSupportProvider( 'zendesk' );
-				messages = [ ...messages, ...( conversation.messages as Message[] ) ];
-				existingChat.conversationId = conversation.id;
-			}
+			} )?.then( ( conversation ) => {
+				if ( conversation ) {
+					setSupportProvider( 'zendesk' );
+					messages = [ ...messages, ...( conversation.messages as Message[] ) ];
+					existingChat.conversationId = conversation.id;
+				}
 
-			setChat( { ...existingChat, messages } );
+				setChat( { ...existingChat, messages } );
+			} );
 		} else {
 			setChat( {
 				chat_id: null,
