@@ -366,13 +366,18 @@ export default function getThankYouPageUrl( {
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
 		urlFromCookie &&
-		receiptIdOrPlaceholder &&
-		! urlFromCookie.includes( '/start/setup-site' )
+		receiptIdOrPlaceholder
 	) {
-		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
-		debug( 'new blog created, so returning', newBlogReceiptUrl );
-		return newBlogReceiptUrl;
+		if ( urlFromCookie.includes( '/setup/setup-site' ) ) {
+			debug( 'domain only signup with free site selection' );
+			return urlFromCookie;
+		}
+		if ( ! urlFromCookie.includes( '/start/setup-site' ) ) {
+			clearSignupCompleteFlowName();
+			const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+			debug( 'new blog created, so returning', newBlogReceiptUrl );
+			return newBlogReceiptUrl;
+		}
 	}
 
 	// disable upsell for given tailored signup users
