@@ -35,6 +35,12 @@
 	}
 }
 
+.site-migration-instructions-questions {
+	.external-link {
+		color: var(--studio-wordpress-blue-50);
+	}
+}
+
 .migration-instructions--with-preview {
 	flex-direction: column;
 	height: 100%;
