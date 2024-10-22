@@ -20,6 +20,10 @@ export function isFullSiteEditingTheme(
 		return false;
 	}
 
+	if ( theme.block_theme ) {
+		return true;
+	}
+
 	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
 
 	return themeFeatures.includes( 'full-site-editing' );
