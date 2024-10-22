@@ -40,8 +40,10 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  */
 const GoalsStep: Step = ( { navigation } ) => {
 	const translate = useTranslate();
-	const whatAreYourGoalsText = translate( 'What are your goals?' );
-	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
+	const whatAreYourGoalsText = translate( 'What would you like to do?' );
+	const subHeaderText = translate(
+		'Pick one or more goals and we’ll tailor the setup experience for you.'
+	);
 
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
