@@ -28,7 +28,9 @@ class ReskinSideExplainer extends Component {
 			'domain',
 		].includes( flowName );
 
-		const hideChooseDomainLater = [ 'launch-site', 'onboarding-with-email' ].includes( flowName );
+		const hideChooseDomainLater =
+			[ 'launch-site', 'onboarding-with-email' ].includes( flowName ) ||
+			this.props.hideChooseDomainLater;
 
 		switch ( type ) {
 			case 'free-domain-explainer':

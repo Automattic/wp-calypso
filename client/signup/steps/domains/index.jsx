@@ -1017,6 +1017,7 @@ export class RenderDomainsStep extends Component {
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
+		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		return (
 			<RegisterDomainStep
@@ -1077,6 +1078,13 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
+				cartIsLoading={ cartIsLoading }
+				flowName={ this.props.flowName }
+				removeDomainClickHandler={ this.removeDomainClickHandler }
+				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
+				goToNext={ this.goToNext }
+				handleSkip={ this.handleSkip }
+				freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
 			/>
 		);
 	};
