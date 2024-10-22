@@ -21,6 +21,7 @@ import {
 	isNotAtomicJetpack,
 	isMigrationInProgress,
 	isStagingSite,
+	isDisconnectedJetpackAndNotAtomic,
 } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -72,7 +73,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
-		if ( isAdmin && ! isP2Site && ! isNotAtomicJetpack( site ) ) {
+		if (
+			isAdmin &&
+			! isP2Site &&
+			! isNotAtomicJetpack( site ) &&
+			! isDisconnectedJetpackAndNotAtomic( site )
+		) {
 			openSitePreviewPane && openSitePreviewPane( site );
 		} else {
 			navigate( adminUrl );
