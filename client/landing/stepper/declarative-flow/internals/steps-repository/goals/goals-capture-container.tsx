@@ -3,7 +3,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 type GoalsCaptureContainerProps = {
-	welcomeText: string;
 	whatAreYourGoalsText: string;
 	subHeaderText: string;
 	stepName: string;
@@ -15,7 +14,7 @@ type GoalsCaptureContainerProps = {
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 };
 
-export const GoalsCaptureContainer: React.VFC< GoalsCaptureContainerProps > = ( {
+export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 	whatAreYourGoalsText,
 	subHeaderText,
 	...otherProps

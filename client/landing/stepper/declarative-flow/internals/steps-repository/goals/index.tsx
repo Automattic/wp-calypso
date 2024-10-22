@@ -40,7 +40,6 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  */
 const GoalsStep: Step = ( { navigation } ) => {
 	const translate = useTranslate();
-	const welcomeText = translate( 'Welcome!' );
 	const whatAreYourGoalsText = translate( 'What are your goals?' );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
@@ -127,7 +126,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 			<DocumentHead title={ whatAreYourGoalsText } />
 
 			<GoalsCaptureContainer
-				welcomeText={ welcomeText }
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
