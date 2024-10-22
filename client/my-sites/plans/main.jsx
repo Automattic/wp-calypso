@@ -546,7 +546,7 @@ const ConnectedPlans = connect(
 
 export default function PlansWrapper( props ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const currentPlan = Plans.useCurrentPlan( { siteIdOrSlug: selectedSiteId } );
+	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 
 	return (
 		<CalypsoShoppingCartProvider>
