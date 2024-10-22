@@ -25,15 +25,14 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	let results = pagination.results;
 	const categories = useCategories();
-	let categoryName = categories[ category ]?.title || category;
-	let categoryDescription = categories[ category ]?.description;
+
+	const categoryName = categories[ category ]?.title || category;
+	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
 
 	if ( category === 'wpbeginner' ) {
 		plugins = esPlugins;
 		isFetching = esIsFetching;
-		categoryName = translate( 'Must-have plugins from WPBeginner' );
-		categoryDescription = translate( 'Add the best-loved plugins on WordPress.com' );
 		results = esPlugins.length;
 	} else {
 		plugins = categoryPlugins;
