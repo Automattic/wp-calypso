@@ -29,11 +29,13 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const categoryName = categories[ category ]?.title || category;
 	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
+	let size;
 
 	if ( category === 'wpbeginner' ) {
 		plugins = esPlugins;
 		isFetching = esIsFetching;
 		results = esPlugins.length;
+		size = results;
 	} else {
 		plugins = categoryPlugins;
 		isFetching = categoryIsFetching;
@@ -65,7 +67,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				extended
-				size={ 15 }
+				size={ size }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</>
