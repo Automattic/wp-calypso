@@ -35,6 +35,7 @@ import {
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MediaLibraryExternalHeader from './external-media-header';
+import GooglePhotosPickerButton from './google-photos-picker-button';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
 import './content.scss';
@@ -373,6 +374,10 @@ export class MediaLibraryContent extends Component {
 		return null;
 	}
 
+	renderGooglePhotosPickerBtn() {
+		return <GooglePhotosPickerButton />;
+	}
+
 	getThumbnailType() {
 		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
 	}
@@ -397,6 +402,7 @@ export class MediaLibraryContent extends Component {
 	renderMediaList() {
 		if ( ! this.props.site || ( this.props.isRequesting && ! this.hasRequested ) ) {
 			this.hasRequested = true; // We only want to do this once
+
 			return (
 				<MediaLibraryList
 					key="list-loading"
@@ -408,6 +414,10 @@ export class MediaLibraryContent extends Component {
 
 		if ( this.needsToBeConnected() ) {
 			return this.renderConnectExternalMedia();
+		}
+
+		if ( 'google_photos_picker' === this.props.source ) {
+			return this.renderGooglePhotosPickerBtn();
 		}
 
 		const listKey = [
