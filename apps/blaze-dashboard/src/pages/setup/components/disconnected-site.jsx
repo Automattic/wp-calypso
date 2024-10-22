@@ -1,15 +1,28 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import privateSiteGraphic from 'calypso/assets/images/blaze/site-private-graphic@3x.png';
+import Notice from 'calypso/components/notice';
 
 export default function DisconnectedSite() {
 	const translate = useTranslate();
+	const [ jetpackErrorMessage ] = useState( window.configData.jetpack_error_message );
 	const connectUrl = config( 'connect_url' );
 
 	return (
 		<>
 			<div className="promote-post-i2__inner-container">
+				{ jetpackErrorMessage && (
+					<Notice
+						className="promote-post-notice promote-post-i2__aux-wrapper setup-pages__notice"
+						status="is-error"
+						icon="mention"
+						showDismiss={ false }
+					>
+						{ jetpackErrorMessage }
+					</Notice>
+				) }
 				<div className="promote-post-i2__setup-icon">
 					<img src={ privateSiteGraphic } alt="" />
 				</div>
