@@ -296,6 +296,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				lastMessageInView,
 				odieClientId,
 				selectedSiteId,
+				selectedConversationId,
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,

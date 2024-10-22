@@ -10,13 +10,16 @@ import type { Message } from '../types/';
  * Send a message to the Zendesk conversation.
  */
 export const useSendZendeskMessage = () => {
-	const { setChatStatus } = useOdieAssistantContext();
+	const { setChatStatus, selectedConversationId } = useOdieAssistantContext();
 	const chatId = useGetOdieStorage( 'chat_id' ) ?? '';
 	const newConversation = useCreateZendeskConversation();
 
 	const sendMessage = useCallback(
 		async ( message: Message ) => {
-			const conversation = getZendeskConversation( { chatId } );
+			const conversation = getZendeskConversation( {
+				chatId,
+				conversationId: selectedConversationId,
+			} );
 
 			setChatStatus( 'sending' );
 
