@@ -45,6 +45,13 @@ export const usePreviewingTheme = () => {
 	const previewingThemeSlug = usePreviewingThemeSlug();
 	const { previewingThemeName } = useSelect(
 		( select ) => {
+			// Avoid calling getTheme with null - fetches all site /themes (10s~)
+			if ( ! previewingThemeSlug ) {
+				return {
+					previewingThemeSlug,
+					previewingThemeName: undefined,
+				};
+			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const previewingTheme = ( select( 'core' ) as any ).getTheme( previewingThemeSlug );
 
