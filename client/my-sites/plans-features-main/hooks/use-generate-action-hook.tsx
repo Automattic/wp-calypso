@@ -462,7 +462,7 @@ function getLoggedInPlansAction( {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
 				  } )
-				: translate( 'Upgrade (%(priceString)s)', {
+				: translate( 'Upgrade ⋅ %(priceString)s', {
 						context: 'verb',
 						args: { priceString: priceString ?? '' },
 						comment:
