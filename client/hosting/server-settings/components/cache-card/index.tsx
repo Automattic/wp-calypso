@@ -145,7 +145,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 							: ''
 					}
 				>
-					<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+					<div className="cache-card__button-wrapper">
 						<Button
 							busy={ isClearingAllCaches }
 							disabled={
@@ -216,7 +216,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 											: ''
 									}
 								>
-									<div className="cache-card__button-wrapper cache-card__button-wrapper__clear-all">
+									<div className="cache-card__button-wrapper">
 										<Button
 											busy={ isClearingEdgeCache && ! isClearingAllCaches }
 											disabled={
