@@ -60,6 +60,9 @@ import PluginsList from './plugins-list';
 
 import './style.scss';
 
+// Too many plugins will cause multiple requires to wporg which degrades performance,
+// so this constant disables wporg data for these cases.
+const WPORG_PLUGIN_COUNT_CUTOFF = 20;
 export class PluginsMain extends Component {
 	constructor( props ) {
 		super( props );
@@ -79,12 +82,14 @@ export class PluginsMain extends Component {
 			search,
 		} = this.props;
 
-		currentPlugins.map( ( plugin ) => {
-			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			if ( ! pluginData ) {
-				this.props.wporgFetchPluginData( plugin.slug );
-			}
-		} );
+		if ( currentPlugins.length <= WPORG_PLUGIN_COUNT_CUTOFF ) {
+			currentPlugins.forEach( ( plugin ) => {
+				const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
+				if ( ! pluginData ) {
+					this.props.wporgFetchPluginData( plugin.slug );
+				}
+			} );
+		}
 
 		if (
 			( prevProps.isRequestingSites && ! this.props.isRequestingSites ) ||
@@ -174,7 +179,7 @@ export class PluginsMain extends Component {
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			return Object.assign( {}, plugin, pluginData );
+			return pluginData ? Object.assign( {}, plugin, pluginData ) : plugin;
 		} );
 	}
 
