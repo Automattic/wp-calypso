@@ -115,6 +115,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					args: {
 						discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
 							stripZeros: true,
+							isSmallestUnit: true,
 						} ),
 						originalPrice: formatCurrency( originalFullPrice, currencyCode, {
 							isSmallestUnit: true,
@@ -158,9 +159,10 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					isSmallestUnit
 				/>
 				<PlanPrice
-					className="improt__upgrade-plan-price-discounted"
+					className="import__upgrade-plan-price-discounted"
 					rawPrice={ introOfferMonthlyPrice }
 					currencyCode={ currencyCode }
+					isSmallestUnit
 				/>
 			</div>
 		</UpgradePlanPrice>
