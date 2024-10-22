@@ -29,7 +29,7 @@ import {
 	isDomainEligibleForTitanIntroductoryOffer,
 } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
-import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
+import { EmailPlanHeader } from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import MailPoetUpsell from 'calypso/my-sites/email/email-management/home/mailpoet-upsell';
 import {
