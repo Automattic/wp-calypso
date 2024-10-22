@@ -97,7 +97,7 @@ export default function PluginsListDataViews( {
 			},
 			{
 				id: 'plugins',
-				label: 'Installed Plugins',
+				label: translate( 'Installed Plugins' ),
 				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: Plugin } ) => {
@@ -119,7 +119,7 @@ export default function PluginsListDataViews( {
 			},
 			{
 				id: 'sites',
-				label: 'Sites',
+				label: translate( 'Sites' ),
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
 					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
@@ -127,7 +127,7 @@ export default function PluginsListDataViews( {
 			},
 			{
 				id: 'update',
-				label: 'Update available',
+				label: translate( 'Update available' ),
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
 					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) ) {
@@ -214,7 +214,7 @@ export default function PluginsListDataViews( {
 	// Set initial state for the data views
 	const pluginsPerPage = 10;
 	initialDataViewsState.perPage = pluginsPerPage;
-	initialDataViewsState.search = initialSearch || '';
+	initialDataViewsState.search = initialSearch;
 	initialDataViewsState.fields = [ 'plugins', 'sites', 'update' ];
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
