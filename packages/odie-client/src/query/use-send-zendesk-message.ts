@@ -1,7 +1,6 @@
 import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { useGetOdieStorage } from '../data';
 import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
 import type { Message } from '../types/';
 
@@ -10,7 +9,6 @@ import type { Message } from '../types/';
  */
 export const useSendZendeskMessage = () => {
 	const { setChatStatus, selectedConversationId, chat } = useOdieAssistantContext();
-	const chatId = useGetOdieStorage( 'chat_id' ) ?? '';
 	const conversationId = chat.conversationId || selectedConversationId;
 	const newConversation = useCreateZendeskConversation();
 
@@ -28,6 +26,6 @@ export const useSendZendeskMessage = () => {
 			await Smooch.sendMessage( { type: 'text', text: message.content }, conversationId! );
 			setChatStatus( 'loaded' );
 		},
-		[ newConversation, setChatStatus, chatId, conversationId ]
+		[ newConversation, setChatStatus, conversationId ]
 	);
 };
