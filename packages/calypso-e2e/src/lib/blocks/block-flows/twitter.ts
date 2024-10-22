@@ -11,6 +11,7 @@ const selectors = {
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
 	editorTwitterIframe: `iframe[title="Embedded content from twitter.com"]`,
 	publishedTwitterIframe: `iframe[title="X Post"]`,
+	publishedTwitterBareLink: `figure.wp-block-embed-twitter > div.wp-block-embed__wrapper > a[href^="https://twitter.com/automattic/"]`,
 };
 
 /**
@@ -47,7 +48,7 @@ export class TwitterBlockFlow implements BlockFlow {
 
 		// We should make sure the actual Iframe loads, because it takes a second.
 		const twitterIframeLocator = editorCanvas.locator( selectors.editorTwitterIframe );
-		await twitterIframeLocator.waitFor( { timeout: 20000 } );
+		await twitterIframeLocator.waitFor();
 	}
 
 	/**
@@ -56,10 +57,16 @@ export class TwitterBlockFlow implements BlockFlow {
 	 * @param context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedTweetLocator = context.page
+		// In most cases, the iframe will render, so look for that.
+		const iframeTweetLocator = context.page
 			.frameLocator( selectors.publishedTwitterIframe )
 			.locator( `text=${ this.configurationData.expectedTweetText }` )
 			.first(); // May not be specific enough to match only one (and that's okay).
-		await expectedTweetLocator.waitFor( { timeout: 20000 } );
+
+		// However, sometimes only the bare link renders, so we need to check for that fallback.
+		const bareTweetLinkLocator = context.page.locator( selectors.publishedTwitterBareLink ).first();
+
+		const tweetLocator = iframeTweetLocator.or( bareTweetLinkLocator );
+		await tweetLocator.waitFor();
 	}
 }
