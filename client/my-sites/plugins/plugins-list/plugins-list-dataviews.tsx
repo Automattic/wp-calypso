@@ -1,26 +1,28 @@
 import { FoldableCard, ProgressBar } from '@automattic/components';
 import { Button, Notice } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate, Operator } from '@wordpress/dataviews';
 import { Icon, link, linkOff, plugins, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
+import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { navigate } from 'calypso/lib/navigate';
 import { useSelector } from 'calypso/state';
+import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
 import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';
 
 import './style.scss';
 
 interface Props {
-	currentPlugins: Array;
+	currentPlugins: Array< Plugin >;
 	initialSearch?: string;
-	pluginsWithUpdates: Array;
-	activePlugins: Array;
-	inactivePlugins: Array;
+	pluginsWithUpdates: Array< Plugin >;
+	activePlugins: Array< Plugin >;
+	inactivePlugins: Array< Plugin >;
 	onSearch?: ( search: string ) => void;
-	bulkActionDialog: ( action: string, plugins: Array ) => void;
+	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
 export const PLUGINS_STATUS = {
@@ -41,7 +43,6 @@ export default function PluginsListDataViews( {
 	const allStatuses = useSelector( ( state ) => getPluginActionStatuses( state ) );
 
 	// Add flags for plugins status: active, inactive, updates
-	// TODO: Check the best way of doind this. We can probably move this to the backend
 	currentPlugins.map( ( plugin ) => {
 		plugin.status = [];
 
@@ -67,7 +68,7 @@ export default function PluginsListDataViews( {
 			{
 				id: 'status',
 				label: translate( 'Status' ),
-				getValue: ( { item }: { item } ) => {
+				getValue: ( { item }: { item: Plugin } ) => {
 					return item.status;
 				},
 				render: () => null,
@@ -92,7 +93,7 @@ export default function PluginsListDataViews( {
 					},
 				],
 				filterBy: {
-					operators: [ 'isAny' ],
+					operators: [ 'isAny' as Operator ],
 					isPrimary: true,
 				},
 				enableHiding: false,
@@ -101,9 +102,9 @@ export default function PluginsListDataViews( {
 			{
 				id: 'plugins',
 				label: 'Installed Plugins',
-				getValue: ( { item }: { item } ) => item.name,
+				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
-				render: ( { item } ) => {
+				render: ( { item }: { item: Plugin } ) => {
 					return (
 						<>
 							{ item.icon && <img alt={ item.name } src={ item.icon } /> }
@@ -124,7 +125,7 @@ export default function PluginsListDataViews( {
 				id: 'sites',
 				label: 'Sites',
 				enableHiding: false,
-				render: ( { item } ) => {
+				render: ( { item }: { item: Plugin } ) => {
 					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
 				},
 			},
@@ -132,7 +133,7 @@ export default function PluginsListDataViews( {
 				id: 'update',
 				label: 'Update available',
 				enableHiding: false,
-				render: ( { item } ) => {
+				render: ( { item }: { item: Plugin } ) => {
 					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) ) {
 						return <Button variant="secondary">Update to 1.2.3</Button>;
 					}
@@ -142,26 +143,12 @@ export default function PluginsListDataViews( {
 		[]
 	);
 
-	const pluginsPerPage = 10;
-	const initialDataViewsState = {
-		type: 'table',
-		search: initialSearch || '',
-		filters: [],
-		page: 1,
-		perPage: pluginsPerPage,
-		sort: {
-			field: 'date',
-			direction: 'desc',
-		},
-		fields: [ 'plugins', 'sites', 'update' ],
-		layout: {},
-	};
-
 	const actions = [
 		{
+			id: 'manage-plugin',
 			href: `some-url`,
-			callback: ( data ) => {
-				data.length && navigate( '/plugins/' + data[ 0 ].slug );
+			callback: ( plugins: Array< Plugin > ) => {
+				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
 			},
 			label: translate( 'Manage Plugin' ),
 			isExternalLink: true,
@@ -169,8 +156,9 @@ export default function PluginsListDataViews( {
 			supportsBulk: false,
 		},
 		{
+			id: 'activate-plugin',
 			href: `some-url`,
-			callback: ( plugins ) => {
+			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.ACTIVATE, plugins );
 			},
 			label: translate( 'Activate' ),
@@ -180,8 +168,9 @@ export default function PluginsListDataViews( {
 			icon: <Icon icon={ link } />,
 		},
 		{
+			id: 'deactivate-plugin',
 			href: `some-url`,
-			callback: ( plugins ) => {
+			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.DEACTIVATE, plugins );
 			},
 			label: translate( 'Deactivate' ),
@@ -191,8 +180,9 @@ export default function PluginsListDataViews( {
 			icon: <Icon icon={ linkOff } />,
 		},
 		{
+			id: 'enable-autoupdate',
 			href: `some-url`,
-			callback: ( plugins ) => {
+			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Enable Autoupdate' ),
@@ -201,8 +191,9 @@ export default function PluginsListDataViews( {
 			supportsBulk: true,
 		},
 		{
+			id: 'disable-autoupdate',
 			href: `some-url`,
-			callback: ( plugins ) => {
+			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
 			},
 			label: translate( 'Disable Autoupdate' ),
@@ -211,8 +202,9 @@ export default function PluginsListDataViews( {
 			supportsBulk: true,
 		},
 		{
+			id: 'remove-plugin',
 			href: `some-url`,
-			callback: ( plugins ) => {
+			callback: ( plugins: Array< Plugin > ) => {
 				bulkActionDialog( PluginActions.REMOVE, plugins );
 			},
 			label: translate( 'Remove' ),
@@ -223,11 +215,16 @@ export default function PluginsListDataViews( {
 		},
 	];
 
+	// Set initial state for the data views
+	const pluginsPerPage = 10;
+	initialDataViewsState.perPage = pluginsPerPage;
+	initialDataViewsState.search = initialSearch || '';
+	initialDataViewsState.fields = [ 'plugins', 'sites', 'update' ];
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
 	// When search changes, notify the parent component
 	useEffect( () => {
-		onSearch && onSearch( dataViewsState.search );
+		onSearch && onSearch( dataViewsState.search || '' );
 	}, [ dataViewsState.search, onSearch ] );
 
 	const { data, paginationInfo } = useMemo( () => {

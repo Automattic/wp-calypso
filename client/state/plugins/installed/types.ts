@@ -30,6 +30,7 @@ export type Plugin = {
 	statusRecentlyChanged?: boolean;
 	update?: PluginUpdate;
 	wporg?: boolean;
+	status?: Array< number >;
 };
 
 export type PluginSite = {
