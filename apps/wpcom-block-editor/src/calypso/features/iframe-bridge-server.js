@@ -26,15 +26,15 @@ import {
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
-let addedListener = false;
+let addedClickListener = false;
 // Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
-	if ( ! addedListener ) {
+	if ( ! addedClickListener ) {
 		document
 			.querySelector( 'body.is-iframed' )
 			?.addEventListener( 'click', triggerOverrideHandler );
-		addedListener = true;
+		addedClickListener = true;
 	}
 }
 
