@@ -15,6 +15,7 @@ import 'calypso/state/data-layer/wpcom/auth/send-login-email';
  * @param {boolean} options.showGlobalNotices - if true, displays global notices to user about the email
  * @param {string} options.flow - name of the login flow
  * @param {boolean} options.createAccount - if true, instructs the API to create a WPCOM account associated with email
+ * @param {boolean} options.source - source of the login request (optional)
  * @returns {Object} action object
  */
 export const sendEmailLogin = (
@@ -28,6 +29,7 @@ export const sendEmailLogin = (
 		isMobileAppLogin = false,
 		flow = null,
 		createAccount = false,
+		source = '',
 	}
 ) => {
 	const locale = getLocaleSlug();
@@ -46,5 +48,6 @@ export const sendEmailLogin = (
 		requestLoginEmailFormFlow,
 		flow,
 		createAccount,
+		source,
 	};
 };

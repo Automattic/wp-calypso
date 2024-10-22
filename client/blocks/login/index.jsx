@@ -60,6 +60,7 @@ import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-fr
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
+import isWooPasswordlessJpcFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
@@ -103,6 +104,8 @@ class Login extends Component {
 		isSignupExistingAccount: PropTypes.bool,
 		emailRequested: PropTypes.bool,
 		isSendingEmail: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
+		from: PropTypes.string,
 	};
 
 	state = {
@@ -1132,6 +1135,8 @@ export default connect(
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		isWooPasswordlessJPC: isWooPasswordlessJpcFlow( state ),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		rebootAfterLogin,
@@ -1144,16 +1149,20 @@ export default connect(
 		...ownProps,
 		...stateProps,
 		...dispatchProps,
-		sendEmailLogin: ( options = {} ) =>
+		sendEmailLogin: ( options = {} ) => {
 			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
+				source: stateProps.isWooPasswordlessJPC
+					? 'woo-passwordless-jpc' + '-' + get( getCurrentQueryArguments( stateProps ), 'from' )
+					: '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||
 					null,
 				...options,
-			} ),
+			} );
+		},
 	} )
 )( localize( Login ) );

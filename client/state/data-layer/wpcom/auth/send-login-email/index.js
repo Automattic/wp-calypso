@@ -32,6 +32,7 @@ export const sendLoginEmail = ( action ) => {
 		isMobileAppLogin,
 		flow,
 		createAccount,
+		source,
 	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
@@ -72,6 +73,7 @@ export const sendLoginEmail = ( action ) => {
 					...( flow && { flow } ),
 					create_account: createAccount,
 					tos: getToSAcceptancePayload(),
+					source,
 					calypso_env:
 						window?.location?.host === 'wordpress.com' ? 'production' : config( 'env_id' ),
 				},
