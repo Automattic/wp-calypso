@@ -87,7 +87,6 @@ const HelpCenterRecentConversations: React.FC = () => {
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
 					key={ lastConversation.id }
-					conversation={ lastConversation }
 					badgeCount={ unreadConversationsCount - 1 }
 					avatarSize={ 38 }
 					message={ chatMessage }

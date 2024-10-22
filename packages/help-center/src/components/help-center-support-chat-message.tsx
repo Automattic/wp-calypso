@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
-import { useOdieAssistantContext, useSetOdieStorage } from '@automattic/odie-client';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import type { ZendeskConversation, ZendeskMessage } from '@automattic/odie-client';
+import type { ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 
@@ -20,42 +19,28 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 
 export const HelpCenterSupportChatMessage = ( {
 	message,
-	conversation,
 	badgeCount = 0,
 	avatarSize = 32,
 	isUnread = false,
-	navigateTo = '/odie',
+	navigateTo = '',
 }: {
 	message: ZendeskMessage;
-	conversation: ZendeskConversation;
 	badgeCount?: number;
 	avatarSize?: number;
 	isUnread: boolean;
-	navigateTo?: string;
+	navigateTo: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
-	const { setChat } = useOdieAssistantContext();
 	const { displayName, received, text, avatarUrl } = message;
 	const helpCenterContext = useHelpCenterContext();
-	const storeChatId = useSetOdieStorage( 'chat_id' );
 	const sectionName = helpCenterContext.sectionName;
 
 	return (
 		<Link
 			to={ navigateTo }
-			onClick={ () => {
-				if ( navigateTo === '/odie' && conversation?.metadata?.odieChatId ) {
-					storeChatId( String( conversation?.metadata?.odieChatId ) );
-					setChat( {
-						chat_id: Number( conversation?.metadata?.odieChatId ),
-						// @ts-expect-error This will be fixed up in later iteration
-						messages: [ ...conversation.messages ],
-					} );
-				}
-				trackContactButtonClicked( sectionName );
-			} }
+			onClick={ () => trackContactButtonClicked( sectionName ) }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
 			} ) }
