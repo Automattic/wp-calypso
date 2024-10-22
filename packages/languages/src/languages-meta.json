@@ -157,7 +157,7 @@
 		"name": "\u09ac\u09be\u0982\u09b2\u09be",
 		"wpLocale": "bn_BD",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 5,
+		"calypsoPercentTranslated": 4,
 		"isTranslatedIncompletely": true,
 		"territories": [ "034" ]
 	},
@@ -228,7 +228,7 @@
 		"name": "\u010ce\u0161tina",
 		"wpLocale": "cs_CZ",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 20,
+		"calypsoPercentTranslated": 19,
 		"isTranslatedIncompletely": true,
 		"territories": [ "151" ]
 	},
@@ -248,7 +248,7 @@
 		"name": "\u0447\u04d1\u0432\u0430\u0448 \u0447\u04d7\u043b\u0445\u0438",
 		"wpLocale": "",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 19,
+		"calypsoPercentTranslated": 18,
 		"isTranslatedIncompletely": true,
 		"territories": [ "151" ]
 	},
@@ -340,7 +340,7 @@
 		"name": "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",
 		"wpLocale": "el",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 16,
+		"calypsoPercentTranslated": 15,
 		"isTranslatedIncompletely": true,
 		"territories": [ "039" ]
 	},
@@ -350,7 +350,7 @@
 		"name": "Greek (Polytonic)",
 		"wpLocale": "el",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 41,
+		"calypsoPercentTranslated": 40,
 		"isTranslatedIncompletely": true,
 		"territories": [ "039" ]
 	},
@@ -442,7 +442,7 @@
 		"name": "\u0641\u0627\u0631\u0633\u06cc",
 		"wpLocale": "fa_IR",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 67,
+		"calypsoPercentTranslated": 64,
 		"isTranslatedIncompletely": true,
 		"territories": [ "034" ],
 		"rtl": true
@@ -514,7 +514,7 @@
 		"name": "Friulian",
 		"wpLocale": "fur",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 0,
+		"calypsoPercentTranslated": 1,
 		"isTranslatedIncompletely": true,
 		"territories": [ "039" ]
 	},
@@ -524,7 +524,7 @@
 		"name": "Frysk",
 		"wpLocale": "fy",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 0,
+		"calypsoPercentTranslated": 2,
 		"isTranslatedIncompletely": true,
 		"territories": [ "155" ]
 	},
@@ -554,7 +554,7 @@
 		"name": "Galego",
 		"wpLocale": "gl_ES",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 10,
+		"calypsoPercentTranslated": 9,
 		"isTranslatedIncompletely": true,
 		"territories": [ "039" ]
 	},
@@ -606,7 +606,7 @@
 		"name": "Hrvatski",
 		"wpLocale": "hr",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 11,
+		"calypsoPercentTranslated": 10,
 		"isTranslatedIncompletely": true,
 		"territories": [ "039" ]
 	},
@@ -616,7 +616,7 @@
 		"name": "Magyar",
 		"wpLocale": "hu_HU",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 17,
+		"calypsoPercentTranslated": 16,
 		"isTranslatedIncompletely": true,
 		"territories": [ "151" ]
 	},
@@ -698,7 +698,7 @@
 		"name": "\u65e5\u672c\u8a9e",
 		"wpLocale": "ja",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 98,
+		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "030" ],
 		"popular": 7
@@ -719,9 +719,19 @@
 		"name": "Taqbaylit",
 		"wpLocale": "kab",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 15,
+		"calypsoPercentTranslated": 14,
 		"isTranslatedIncompletely": true,
 		"territories": [ "002" ]
+	},
+	"kal": {
+		"value": 490,
+		"langSlug": "kal",
+		"name": "Kalaallisut",
+		"wpLocale": "kal",
+		"parentLangSlug": null,
+		"calypsoPercentTranslated": 0,
+		"isTranslatedIncompletely": true,
+		"territories": [ "154" ]
 	},
 	"kir": {
 		"value": 479,
@@ -830,7 +840,7 @@
 		"name": "Lietuvi\u0173 kalba",
 		"wpLocale": "lt_LT",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 13,
+		"calypsoPercentTranslated": 12,
 		"isTranslatedIncompletely": true,
 		"territories": [ "154" ]
 	},
@@ -840,7 +850,7 @@
 		"name": "Latvie\u0161u valoda",
 		"wpLocale": "lv",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 21,
+		"calypsoPercentTranslated": 20,
 		"isTranslatedIncompletely": true,
 		"territories": [ "154" ]
 	},
@@ -870,7 +880,7 @@
 		"name": "\u041c\u043e\u043d\u0433\u043e\u043b",
 		"wpLocale": "mn",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 15,
+		"calypsoPercentTranslated": 14,
 		"isTranslatedIncompletely": true,
 		"territories": [ "030" ]
 	},
@@ -890,7 +900,7 @@
 		"name": "Bahasa Melayu",
 		"wpLocale": "ms_MY",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 5,
+		"calypsoPercentTranslated": 4,
 		"isTranslatedIncompletely": true,
 		"territories": [ "035" ]
 	},
@@ -940,7 +950,7 @@
 		"name": "Norsk bokm\u00e5l",
 		"wpLocale": "nb_NO",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 33,
+		"calypsoPercentTranslated": 32,
 		"isTranslatedIncompletely": true,
 		"territories": [ "154" ]
 	},
@@ -1061,7 +1071,7 @@
 		"name": "\u0a2a\u0a70\u0a1c\u0a3e\u0a2c\u0a40",
 		"wpLocale": "pa_IN",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 15,
+		"calypsoPercentTranslated": 14,
 		"isTranslatedIncompletely": true,
 		"territories": [ "034" ]
 	},
@@ -1123,7 +1133,7 @@
 		"name": "Rom\u00e2n\u0103",
 		"wpLocale": "ro_RO",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 99,
+		"calypsoPercentTranslated": 100,
 		"isTranslatedIncompletely": false,
 		"territories": [ "151" ]
 	},
@@ -1164,7 +1174,7 @@
 		"name": "\u0dc3\u0dd2\u0d82\u0dc4\u0dbd",
 		"wpLocale": "si_LK",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 4,
+		"calypsoPercentTranslated": 3,
 		"isTranslatedIncompletely": true,
 		"territories": [ "034" ]
 	},
@@ -1184,7 +1194,7 @@
 		"name": "Saraiki",
 		"wpLocale": "skr",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 37,
+		"calypsoPercentTranslated": 36,
 		"isTranslatedIncompletely": true,
 		"territories": [ "034" ]
 	},
@@ -1224,7 +1234,7 @@
 		"name": "Shqip",
 		"wpLocale": "sq",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 39,
+		"calypsoPercentTranslated": 37,
 		"isTranslatedIncompletely": true,
 		"territories": [ "039" ]
 	},
@@ -1295,7 +1305,7 @@
 		"name": "\u0e44\u0e17\u0e22",
 		"wpLocale": "th",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 7,
+		"calypsoPercentTranslated": 6,
 		"isTranslatedIncompletely": true,
 		"territories": [ "035" ]
 	},
@@ -1366,7 +1376,7 @@
 		"name": "Uy\u01a3urq\u0259",
 		"wpLocale": "ug_CN",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 5,
+		"calypsoPercentTranslated": 4,
 		"isTranslatedIncompletely": true,
 		"territories": [ "030" ]
 	},
@@ -1417,8 +1427,8 @@
 		"name": "Ti\u1ebfng Vi\u1ec7t",
 		"wpLocale": "vi",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 15,
-		"isTranslatedIncompletely": true,
+		"calypsoPercentTranslated": 99,
+		"isTranslatedIncompletely": false,
 		"territories": [ "035" ]
 	},
 	"wa": {
@@ -1488,7 +1498,7 @@
 		"name": "\u9999\u6e2f\u4e2d\u6587\u7248",
 		"wpLocale": "zh_HK",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 39,
+		"calypsoPercentTranslated": 37,
 		"isTranslatedIncompletely": true,
 		"territories": [ "030" ]
 	},
