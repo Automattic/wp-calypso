@@ -13,6 +13,8 @@ import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
 import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';
 
+import 'calypso/a8c-for-agencies/sections/sites/features/jetpack/style.scss';
+import 'calypso/a8c-for-agencies/style.scss';
 import './style.scss';
 
 interface Props {

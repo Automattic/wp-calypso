@@ -1,83 +1,26 @@
-.plugins-list {
-	margin-bottom: 16px;
-}
-
-.plugins-list .plugin-item {
-	@include breakpoint-deprecated( "<1040px" ) {
-		width: 100%;
-
-		&:nth-last-child(n + 2) {
-			border-bottom-width: 1px;
-		}
-	}
-
-	@include breakpoint-deprecated( ">1040px" ) {
-		flex-direction: column;
-		width: 33.33%;
-		border-right-width: 1px;
-
-		&:nth-last-child(n + 4) {
-			border-bottom-width: 1px;
-		}
-
-		// Provider proper bottom borders in the second-last row when the number
-		// of items is not multiple of 3.
-		&:nth-child(3n) {
-			border-right-width: 0;
-			&:nth-last-child(3),
-			&:nth-last-child(2) {
-				border-bottom-width: 1px;
-			}
-		}
-
-		&:nth-child(3n - 1):nth-last-child(3) {
-			border-bottom-width: 1px;
-		}
-
-		.plugin-item__count,
-		.plugin-item__actions {
-			align-self: flex-end;
-			flex-direction: column;
-			margin-top: -6px;
-			padding-top: 0;
-			text-align: right;
-		}
-
-		.plugin-item__count {
-			flex-direction: row;
-		}
-	}
-}
-
-.plugins-list__elements {
-	display: flex;
-	flex-flow: row wrap;
-	padding: 0;
-}
-
-
-
-
 body.is-section-plugins .plugin-management-wrapper {
+
+	.navigation-header {
+		border-block-end: 1px solid var(--color-border-secondary);
+		padding-inline: 48px;
+	}
 
     .dataviews-wrapper {
         .dataviews-view-table {
-            border: 1px solid var(--color-neutral-5);
-            border-radius: 2px;
+			table-layout: auto;
 
             .dataviews-view-table__row {
                 img, svg {
                     max-width: 35px;
-                    margin-right: 15px;
+                    margin-right: 16px;
                 }
 
                 .dataviews-view-table-selection-checkbox{
                     padding-left: 0;
                 }
-            }
-
-            .dataviews-view-table__checkbox-column {
-                padding-left: 18px;
+				.dataviews-view-table__checkbox-column {
+					padding-left: 47px;
+				}
             }
         }
     }

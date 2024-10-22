@@ -514,17 +514,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-body.is-section-plugins .plugin-management-wrapper {
-	@include break-small {
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-	@include break-medium {
-		padding-left: 2rem;
-		padding-right: 2rem;
-	}
-}
-
 .plugins__page-title {
 	color: var(--studio-gray-80);
 	font-weight: 400;
