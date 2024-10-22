@@ -23,10 +23,11 @@ export const ResizableTextarea: React.FC< {
 
 	useEffect( () => {
 		if ( inputRef.current ) {
-			autosize( inputRef.current );
+			const currentInput = inputRef.current;
+			autosize( currentInput );
 
 			return () => {
-				autosize.destroy( inputRef.current! );
+				autosize.destroy( currentInput );
 			};
 		}
 	}, [ inputRef ] );
