@@ -94,6 +94,7 @@ const usePricingMetaForGridPlans = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId ),
 		[]
 	);
+
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs,
 		siteId,
@@ -112,6 +113,7 @@ const usePricingMetaForGridPlans = ( {
 					originalPrice: Plans.PlanPricing[ 'originalPrice' ];
 					discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
 					currencyCode: Plans.PlanPricing[ 'currencyCode' ];
+					introOffer: Plans.PlanPricing[ 'introOffer' ];
 				};
 		  }
 		| null = null;
@@ -136,6 +138,17 @@ const usePricingMetaForGridPlans = ( {
 					: null;
 				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
+
+				const introOffer = introOffers?.[ planSlug ];
+
+				const introOfferPrice = introOffer
+					? ( {
+							monthly: introOffer.rawPrice.monthly + storageAddOnPriceMonthly,
+							full:
+								introOffer.rawPrice.full +
+								( 'year' === introOffer.intervalUnit ? storageAddOnPriceYearly : 0 ),
+					  } as const )
+					: undefined;
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
@@ -228,6 +241,12 @@ const usePricingMetaForGridPlans = ( {
 									full: null,
 								},
 								currencyCode: sitePlan?.pricing?.currencyCode,
+								...( sitePlan?.pricing.introOffer && {
+									introOffer: {
+										...sitePlan?.pricing.introOffer,
+										rawPrice: introOfferPrice,
+									},
+								} ),
 							},
 						];
 					}
@@ -246,6 +265,12 @@ const usePricingMetaForGridPlans = ( {
 							originalPrice,
 							discountedPrice,
 							currencyCode: sitePlan?.pricing?.currencyCode,
+							...( sitePlan?.pricing.introOffer && {
+								introOffer: {
+									...sitePlan?.pricing.introOffer,
+									rawPrice: introOfferPrice,
+								},
+							} ),
 						},
 					];
 				}
@@ -272,6 +297,12 @@ const usePricingMetaForGridPlans = ( {
 							originalPrice,
 							discountedPrice,
 							currencyCode: plan?.pricing?.currencyCode,
+							...( plan?.pricing.introOffer && {
+								introOffer: {
+									...plan?.pricing.introOffer,
+									rawPrice: introOfferPrice,
+								},
+							} ),
 						},
 					];
 				}
@@ -294,6 +325,12 @@ const usePricingMetaForGridPlans = ( {
 							full: null,
 						},
 						currencyCode: plan?.pricing?.currencyCode,
+						...( plan?.pricing.introOffer && {
+							introOffer: {
+								...plan?.pricing.introOffer,
+								rawPrice: introOfferPrice,
+							},
+						} ),
 					},
 				];
 			} )
@@ -314,7 +351,7 @@ const usePricingMetaForGridPlans = ( {
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 					currencyCode: planPrices?.[ planSlug ]?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
-					introOffer: introOffers?.[ planSlug ],
+					introOffer: planPrices?.[ planSlug ]?.introOffer,
 				},
 			} ),
 			{} as { [ planSlug in PlanSlug ]?: Plans.PricingMetaForGridPlan }
