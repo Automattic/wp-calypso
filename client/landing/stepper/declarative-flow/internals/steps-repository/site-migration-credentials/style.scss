@@ -1,4 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
+$blueberry-color: #3858e9;
+$blueberry-hover: #2145e6;
 
 .site-migration-credentials {
 	#site-migration-credentials-header {
@@ -33,8 +35,14 @@
 			background: var(--color-border-subtle);
 		}
 		.action-buttons__next {
+			background-color: $blueberry-color;
 			width: 100%;
 			margin-top: 1em;
+
+			&:hover {
+				background-color: $blueberry-hover;
+				border-color: $blueberry-hover;
+			}
 		}
 		.site-migration-credentials__form-fields-row {
 			display: flex;
@@ -75,6 +83,10 @@
 			}
 			.form-radio {
 				margin: 0;
+
+				&:checked::before {
+					background-color: $blueberry-color;
+				}
 			}
 		}
 		.site-migration-credentials__form-note {
