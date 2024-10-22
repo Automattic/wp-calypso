@@ -1,4 +1,4 @@
-import { isFreePlanProduct } from '@automattic/calypso-products';
+import { canInstallPlugins } from '@automattic/sites';
 import { translate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
@@ -43,8 +43,6 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	if ( getMigrationStatus( site ) === 'pending' ) {
 		const migrationType = getMigrationType( site );
 
-		const isFreePlan = site.plan && isFreePlanProduct( site.plan );
-
 		const baseQueryArgs = {
 			siteId: site.ID,
 			siteSlug: site.slug,
@@ -54,7 +52,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 
 		let continueMigrationUrl;
 
-		if ( isFreePlan ) {
+		if ( ! canInstallPlugins( site ) ) {
 			// For the flows where the checkout is after the choice.
 			switch ( migrationType ) {
 				case 'diy':
