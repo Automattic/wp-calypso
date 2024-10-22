@@ -10,15 +10,15 @@
 	"login_url": "/connect",
 	"logout_url": "https://jetpack.com",
 	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
-	"site_name": "Jetpack: WordPress Security, Backups, Speed, & Growth",
+	"site_name": "Jetpack Pro Dashboard",
 	"meta": [
 		{
 			"name": "description",
-			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+			"content": "Manage all your Jetpack sites from one location"
 		},
 		{
 			"property": "og:description",
-			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+			"content": "Manage all your Jetpack sites from one location"
 		},
 		{
 			"property": "og:image",
