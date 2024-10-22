@@ -1,6 +1,4 @@
 @import "@wordpress/base-styles/breakpoints";
-$blueberry-color: #3858e9;
-$blueberry-hover: #2145e6;
 
 .import__capture-container {
 	max-width: 368px;
@@ -39,12 +37,6 @@ $blueberry-hover: #2145e6;
 
 	button[type="submit"] {
 		width: 100%;
-		background-color: $blueberry-color;
-
-		&:hover {
-			background-color: $blueberry-hover !important;
-			border-color: $blueberry-hover !important;
-		}
 	}
 
 	.form-setting-explanation {
