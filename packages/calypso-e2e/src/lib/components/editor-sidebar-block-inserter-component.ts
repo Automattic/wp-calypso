@@ -4,7 +4,7 @@ import { EditorComponent } from './editor-component';
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
-	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
+	closeBlockInserterButton: 'button[aria-label="Close Block Inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
 	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label="${ name }"]`,
 };
