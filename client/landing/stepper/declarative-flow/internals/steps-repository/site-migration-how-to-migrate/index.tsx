@@ -17,13 +17,16 @@ import type { StepProps } from '../../types';
 
 import './style.scss';
 
+type StepContainerProps = React.ComponentProps< typeof StepContainer >;
+
 interface Props extends StepProps {
 	headerText?: string;
 	subHeaderText?: string;
+	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
 }
 
 const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
-	const { navigation, headerText } = props;
+	const { navigation, headerText, customizedActionButtons } = props;
 
 	const translate = useTranslate();
 	const site = useSite();
@@ -127,6 +130,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 				goBack={ navigation.goBack }
+				customizedActionButtons={ customizedActionButtons }
 			/>
 		</>
 	);
