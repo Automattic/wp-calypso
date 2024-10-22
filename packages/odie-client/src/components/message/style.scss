@@ -22,7 +22,7 @@
 	font-size: $font-body;
 	line-height: 1.4;
 	color: #000;
-	flex-direction: column;
+	flex-direction: row;
 	padding: 16px;
 	gap: 8px;
 	width: 100%;
@@ -74,23 +74,23 @@
 	margin-bottom: 0;
 }
 
+.odie-chatbox-message.odie-chatbox-message-user > :last-child {
+	margin-bottom: 0;
+}
+
 .odie-chatbox-message.odie-chatbox-message-user {
 	background-color: var(--studio-gray-0);
 }
 
-.odie-chatbox-message.odie-chatbox-message-user p {
-	font-size: 1rem;
-}
-
-.odie-chatbox-message.odie-chatbox-message-user > :last-child {
-	margin-bottom: 0;
+.odie-chatbox-message.odie-chatbox-message-business {
+	background-color:#F7F8FE;
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu {
 	background-color: var(--studio-white);
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu p {
+.odie-chatbox-message p {
 	font-size: 1rem;
 }
 
@@ -98,6 +98,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background-color: var(--studio-gray-0);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 8px 0;
+	p {
+		padding: 16px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 14px;
+		color: var(--studio-gray-80);
+		line-height: 20px;
+	}
 }
 
 .odie-chatbox-message-avatar {
@@ -109,9 +119,7 @@
 
 .message-header {
 	display: flex;
-	align-items: center;
-	width: 100%;
-	gap: 8px;
+	align-items: end;
 
 	.user {
 		justify-content: flex-start;
