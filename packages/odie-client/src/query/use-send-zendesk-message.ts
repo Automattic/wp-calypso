@@ -2,7 +2,6 @@ import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useGetOdieStorage } from '../data';
-import { getZendeskConversation } from '../data/use-get-zendesk-conversation';
 import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
 import type { Message } from '../types/';
 
@@ -10,31 +9,25 @@ import type { Message } from '../types/';
  * Send a message to the Zendesk conversation.
  */
 export const useSendZendeskMessage = () => {
-	const { setChatStatus, selectedConversationId } = useOdieAssistantContext();
+	const { setChatStatus, selectedConversationId, chat } = useOdieAssistantContext();
 	const chatId = useGetOdieStorage( 'chat_id' ) ?? '';
+	const conversationId = chat.conversationId || selectedConversationId;
 	const newConversation = useCreateZendeskConversation();
 
-	const sendMessage = useCallback(
+	return useCallback(
 		async ( message: Message ) => {
-			const conversation = await getZendeskConversation( {
-				chatId,
-				conversationId: selectedConversationId,
-			} );
-
 			setChatStatus( 'sending' );
 
-			if ( ! conversation ) {
+			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist
 				await newConversation();
 				setChatStatus( 'loaded' );
 				return;
 			}
 
-			await Smooch.sendMessage( { type: 'text', text: message.content }, conversation.id! );
+			await Smooch.sendMessage( { type: 'text', text: message.content }, conversationId! );
 			setChatStatus( 'loaded' );
 		},
-		[ newConversation, setChatStatus, chatId ]
+		[ newConversation, setChatStatus, chatId, conversationId ]
 	);
-
-	return sendMessage;
 };
