@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
@@ -7,6 +6,7 @@ import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-ackno
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useCategories } from '../categories/use-categories';
 import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
@@ -52,18 +52,21 @@ export const PaidPluginsSection = ( props ) => {
 	);
 };
 export const FeaturedWPBeginnerSection = ( props ) => {
-	const translate = useTranslate();
+	const category = 'wpbeginner';
+	const categories = useCategories();
 
+	const categoryName = categories[ category ]?.title || category;
+	const categoryDescription = categories[ category ]?.description;
 	const { data: plugins = [], isFetching } = useESPlugin( WPBEGINNER_PLUGINS );
 
 	return (
 		<SingleListView
 			{ ...props }
-			category="wpbeginner"
+			category={ category }
 			plugins={ plugins }
 			isFetching={ isFetching }
-			title={ translate( 'Must-have plugins from WPBeginner' ) }
-			subtitle={ translate( 'Add the best-loved plugins on WordPress.com' ) }
+			title={ categoryName }
+			subtitle={ categoryDescription }
 		/>
 	);
 };
