@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, ConfettiAnimation, Dialog } from '@automattic/components';
+import { Button, ConfettiAnimation } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -32,6 +32,7 @@ import {
 	hasUnsavedChanges as hasUnsavedWebsiteContentChanges,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { ContentGuidelinesDialog, ConfirmDialog } from './dialogs';
 import { sectionGenerator } from './section-generator';
 import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import type { WebsiteContentServerState } from 'calypso/state/signup/steps/website-content/types';
@@ -40,25 +41,6 @@ import type { SiteId } from 'calypso/types';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:difm' );
-
-const DialogContent = styled.div`
-	padding: 16px;
-	p {
-		font-size: 1rem;
-		color: var( --studio-gray-50 );
-	}
-`;
-
-const DialogButton = styled( Button )`
-	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
-	border-radius: 5px;
-	padding: ${ ( props ) => ( props.primary ? '10px 64px' : '10px 32px' ) };
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
-	.gridicon {
-		margin-left: 10px;
-	}
-`;
 
 const LinkButton = styled( Button )`
 	text-decoration: underline;
@@ -191,36 +173,14 @@ function WebsiteContentStep( {
 
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
-	const dialogButtons = [
-		<DialogButton onClick={ () => setIsConfirmDialogOpen( false ) }>
-			{ translate( 'Cancel' ) }
-		</DialogButton>,
-		<DialogButton primary onClick={ onSubmit }>
-			{ translate( 'Submit' ) }
-		</DialogButton>,
-	];
-
 	return (
 		<>
 			<ConfettiAnimation trigger={ ! prefersReducedMotion } />
-			<Dialog
-				isVisible={ isConfirmDialogOpen }
-				onClose={ () => setIsConfirmDialogOpen( false ) }
-				buttons={ dialogButtons }
-			>
-				<DialogContent>
-					<h1>{ translate( 'Are you ready to submit your content?' ) }</h1>
-					<p>
-						{ translate(
-							"If you have reviewed our content guidelines and added your final content to the form, click “Submit” to send us your content. We'll then build your new site and email you the details within %d business days.",
-							{
-								args: [ 4 ],
-							}
-						) }
-					</p>
-				</DialogContent>
-			</Dialog>
-
+			<ConfirmDialog
+				isConfirmDialogOpen={ isConfirmDialogOpen }
+				setIsConfirmDialogOpen={ setIsConfirmDialogOpen }
+				onSubmit={ onSubmit }
+			/>
 			<AccordionForm
 				generatedSections={ generatedSections }
 				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
@@ -335,40 +295,10 @@ export default function WrapperWebsiteContent(
 
 	return (
 		<>
-			<Dialog
-				isVisible={ isContentGuidelinesDialogOpen }
-				onClose={ () => setIsContentGuidelinesDialogOpen( false ) }
-				buttons={ [
-					<DialogButton primary onClick={ () => setIsContentGuidelinesDialogOpen( false ) }>
-						{ translate( 'Acknowledge & Continue' ) }
-					</DialogButton>,
-				] }
-			>
-				<DialogContent>
-					<h1>{ translate( 'We look forward to building your site!' ) }</h1>
-					<p>{ translate( 'Please review the following content submission guidelines:' ) }</p>
-					<ul>
-						<li>
-							{ translate(
-								'Do not request content from existing pages, external websites or files, as migrations are not included. '
-							) }
-						</li>
-						<li>
-							{ translate(
-								'Submit the final content within 14 days; otherwise, we will use AI-generated text and stock images to build your site.'
-							) }
-						</li>
-						<li>
-							{ translate( 'Limit page text to under 5000 characters for optimal presentation.' ) }
-						</li>
-						<li>
-							{ translate(
-								'Revisions are not included; however, you can edit all content later using the WordPress editor.'
-							) }
-						</li>
-					</ul>
-				</DialogContent>
-			</Dialog>
+			<ContentGuidelinesDialog
+				isContentGuidelinesDialogOpen={ isContentGuidelinesDialogOpen }
+				setIsContentGuidelinesDialogOpen={ setIsContentGuidelinesDialogOpen }
+			/>
 
 			<StepWrapper
 				headerText={ headerText }
