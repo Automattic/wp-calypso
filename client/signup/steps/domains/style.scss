@@ -224,6 +224,11 @@ body.is-section-stepper .domains__step-content,
 			padding-left: 24px;
 			padding-right: 24px;
 			border-radius: 4px;
+			background-color: var(--studio-wordpress-blue-50);
+
+			&:hover {
+				background-color: var(--studio-wordpress-blue-60);
+			}
 		}
 
 		.domains__domain-cart-choose-later {
@@ -483,14 +488,6 @@ body.is-section-signup.is-white-signup {
 			.search-filters__dropdown-filters-button-text {
 				color: var(--color-neutral-60);
 			}
-		}
-	}
-
-	.search-filters__popover {
-		$accent-blue: #117ac9;
-		.button.is-primary {
-			background: $accent-blue;
-			border-color: $accent-blue;
 		}
 	}
 	.signup__step.is-domain-only,
