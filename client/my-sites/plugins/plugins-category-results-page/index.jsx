@@ -9,10 +9,12 @@ import { WPBEGINNER_PLUGINS } from '../constants';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
-	const { data: esPlugins = [], isFetching: esIsFetching } = useESPlugin( WPBEGINNER_PLUGINS );
-
 	let plugins;
 	let isFetching;
+	const isWPBeginnerSpecial = category === 'wpbeginner';
+	const { data: esPlugins = [], isFetching: esIsFetching } = useESPlugin( WPBEGINNER_PLUGINS, {
+		enabled: isWPBeginnerSpecial,
+	} );
 	const {
 		plugins: categoryPlugins,
 		isFetching: categoryIsFetching,
@@ -21,6 +23,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	} = usePlugins( {
 		category,
 		infinite: true,
+		enabled: ! isWPBeginnerSpecial,
 	} );
 
 	let results = pagination.results;
@@ -31,7 +34,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const translate = useTranslate();
 	let size;
 
-	if ( category === 'wpbeginner' ) {
+	if ( isWPBeginnerSpecial ) {
 		plugins = esPlugins;
 		isFetching = esIsFetching;
 		results = esPlugins.length;
