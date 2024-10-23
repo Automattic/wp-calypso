@@ -300,7 +300,9 @@ export const SitePerformance = () => {
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
-
+				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
+					page: page_id,
+				} );
 				if ( page_id ) {
 					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
 					url.searchParams.set( 'page_id', page_id );
