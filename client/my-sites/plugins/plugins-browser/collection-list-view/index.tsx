@@ -41,7 +41,7 @@ export default function CollectionListView( {
 			subtitle={ categories[ category ].description }
 			site={ siteSlug }
 			currentSites={ sites }
-			variant={ PluginsBrowserListVariant.Fixed }
+			variant={ PluginsBrowserListVariant.Paginated }
 			browseAllLink={ getCategoryUrl( category ) }
 			showPlaceholders={ false }
 			resultCount={ false }
