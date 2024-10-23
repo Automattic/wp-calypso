@@ -42,6 +42,7 @@ import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
+import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -99,6 +100,13 @@ const initializeHotJar = ( flowName: string ) => {
 };
 
 window.AppBoot = async () => {
+	const { pathname, search } = window.location;
+
+	// Before proceeding we redirect the user if necessary.
+	if ( redirectPathIfNecessary( pathname, search ) ) {
+		return null;
+	}
+
 	const flowName = getFlowFromURL();
 
 	if ( ! flowName ) {
