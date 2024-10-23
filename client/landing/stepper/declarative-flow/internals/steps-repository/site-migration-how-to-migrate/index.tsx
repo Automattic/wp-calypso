@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -62,7 +63,9 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
-	const { setPendingMigration } = usePendingMigrationStatus( { onSubmit: navigation.submit } );
+	const { setPendingMigration, isLoading } = usePendingMigrationStatus( {
+		onSubmit: navigation.submit,
+	} );
 
 	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
@@ -72,16 +75,20 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 
 	const stepContent = (
 		<>
-			<div className="how-to-migrate__list">
-				{ options.map( ( option, i ) => (
-					<FlowCard
-						key={ i }
-						title={ option.label }
-						text={ option.description }
-						onClick={ () => setPendingMigration( option.value ) }
-					/>
-				) ) }
-			</div>
+			{ isLoading ? (
+				<LoadingEllipsis className="how-to-migrate__loader" />
+			) : (
+				<div className="how-to-migrate__list">
+					{ options.map( ( option, i ) => (
+						<FlowCard
+							key={ i }
+							title={ option.label }
+							text={ option.description }
+							onClick={ () => setPendingMigration( option.value ) }
+						/>
+					) ) }
+				</div>
+			) }
 		</>
 	);
 
