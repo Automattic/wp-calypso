@@ -73,6 +73,7 @@ export const Bluesky: React.FC< Props > = ( {
 	const handleSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 		e.stopPropagation();
+		setError( '' );
 
 		const formData = new FormData( e.target as HTMLFormElement );
 
