@@ -101,6 +101,8 @@
 		"jetpack-cloud-manage-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-golden-token": true,
+		"jetpack-cloud-post": true,
+		"jetpack-cloud-posts": true,
 		"jetpack-search": true,
 		"jetpack-social": true,
 		"jetpack-subscribers": true,
