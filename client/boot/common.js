@@ -413,6 +413,10 @@ export const getRootNode = () => {
 	return wpcomRootNode;
 };
 
+export const setRootNode = ( rootNode ) => {
+	wpcomRootNode = rootNode;
+};
+
 function renderLayout( reduxStore, reactQueryClient ) {
 	getRootNode().render(
 		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />
