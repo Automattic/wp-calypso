@@ -126,3 +126,26 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 
 	return false;
 };
+
+const MEMBER_TIER_ACCESSIBLE_PATHS: Record< string, string[] > = {
+	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_feature_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_feature_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_feature_partner_directory' ],
+};
+
+export const isPathAllowedForTier = ( pathname: string, agency: Agency | null ) => {
+	if ( ! agency ) {
+		return false;
+	}
+
+	// Check if the user has the required capability to access the current path
+	const features = agency?.tier?.features;
+	if ( features ) {
+		const permissions = MEMBER_TIER_ACCESSIBLE_PATHS?.[ pathname ];
+		if ( permissions ) {
+			return features.some( ( capability: string ) => permissions?.includes( capability ) );
+		}
+	}
+
+	return false;
+};
