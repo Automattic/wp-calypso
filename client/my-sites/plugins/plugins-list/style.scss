@@ -4,10 +4,13 @@ body.is-section-plugins .plugin-management-wrapper {
 		border-block-end: 1px solid var(--color-border-secondary);
 		padding-inline: 48px;
 	}
+}
+
+body.is-section-plugins .plugin-management-wrapper,
+.is-section-jetpack-cloud-plugin-management {
 
     .dataviews-wrapper {
         .dataviews-view-table {
-			table-layout: auto;
 
             .dataviews-view-table__row {
                 img, svg {
@@ -18,9 +21,6 @@ body.is-section-plugins .plugin-management-wrapper {
                 .dataviews-view-table-selection-checkbox{
                     padding-left: 0;
                 }
-				.dataviews-view-table__checkbox-column {
-					padding-left: 47px;
-				}
             }
         }
     }
