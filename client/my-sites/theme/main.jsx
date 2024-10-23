@@ -355,12 +355,8 @@ class ThemeSheet extends Component {
 	isLoaded = () => {
 		// We need to make sure the theme object has been loaded including full details
 		// (and not just without, as would've been stored by the `<QueryThemes />` (plural!)
-		// component used by the theme showcase's list view). However, these extra details
-		// aren't present for non-wpcom themes.
-		if ( ! this.props.isWpcomTheme ) {
-			return !! this.props.name;
-		}
-		return !! this.props.screenshots;
+		// component used by the theme showcase's list view).
+		return !! this.props.name;
 	};
 
 	isLoading = () => {
@@ -501,15 +497,6 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	getFullLengthScreenshot() {
-		if ( this.isLoaded() ) {
-			// Results are being returned with photon params like `?w=…`. This makes the photon
-			// module abort and return null. Strip query string.
-			return this.props.screenshots[ 0 ]?.replace( /\?.*/, '' );
-		}
-		return null;
-	}
-
 	previewAction = ( event, type, source ) => {
 		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
@@ -620,13 +607,14 @@ class ThemeSheet extends Component {
 			demoUrl,
 			translate,
 			isExternallyManagedTheme,
+			screenshot,
 		} = this.props;
-		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
+
 		const width = 735;
 		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
 		// Photon may return null, allow fallbacks
-		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
-		const img = screenshotFull && (
+		const photonSrc = screenshot && photon( screenshot, { width } );
+		const img = screenshot && (
 			<img
 				alt={
 					// translators: %s is the theme name. Eg Twenty Twenty.
@@ -635,8 +623,8 @@ class ThemeSheet extends Component {
 					} )
 				}
 				className="theme__sheet-img"
-				src={ photonSrc || screenshotFull }
-				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
+				src={ photonSrc || screenshot }
+				srcSet={ photonSrc && `${ photon( screenshot, { width, zoom: 2 } ) } 2x` }
 			/>
 		);
 
