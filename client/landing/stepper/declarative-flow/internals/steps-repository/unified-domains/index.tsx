@@ -122,7 +122,11 @@ export default function DomainsStep( props: StepProps ) {
 				saveSignupStep={ updateSignupStepState }
 				submitSignupStep={ updateSignupStepState }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( { ...( mostRecentStateRef.current ?? {} ), ...state } );
+					props.navigation.submit?.( {
+						...( mostRecentStateRef.current ?? {} ),
+						...state,
+						shouldSkipSubmitTracking: state?.navigateToUseMyDomain ? true : false,
+					} );
 				} }
 				step={ stepState }
 				flowName={ props.flow }
