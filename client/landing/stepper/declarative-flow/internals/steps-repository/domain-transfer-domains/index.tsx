@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { WIDE_BREAKPOINT } from '../hundred-year-plan-step-wrapper/constants';
 import TransferDomains from './domains';
 import type { Step } from '../../types';
 
@@ -31,6 +32,7 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 		<Container
 			flowName={ flow }
 			variantSlug={ variantSlug }
+			mobileBreakpoint={ WIDE_BREAKPOINT }
 			stepName="domains"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
