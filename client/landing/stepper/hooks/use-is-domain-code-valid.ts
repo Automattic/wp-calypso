@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
+import { DomainValidationOptions } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/domain-transfer-domains/use-validation-message';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 
 const VERSION = 2;
@@ -39,7 +40,11 @@ type DomainLockResponse = {
 	cannot_transfer_due_to_unsupported_premium_tld?: boolean;
 };
 
-type DomainCodePair = { domain: string; auth: string };
+type DomainCodePair = {
+	domain: string;
+	auth: string;
+	options?: DomainValidationOptions;
+};
 
 export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) {
 	return useQuery( {
@@ -84,6 +89,11 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
 				} ).catch( () => ( { success: false } ) );
 
+				// TODO: Replace hardcoded value/checks by 100-year domain product price when we have it.
+				// We'll also n to pass it to the backend (/is-available) also, so it can return the proper value
+				// and we don't rely on hacks such as this one.
+				const price = pair.options?.is_hundred_year_domain ? 2000 : availability.raw_price;
+
 				return {
 					domain: pair.domain,
 					registered: true,
@@ -91,7 +101,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					auth_code_valid: response.success,
 					status: availability.status,
 					transferrability: availability.transferrability,
-					raw_price: availability.raw_price,
+					raw_price: price,
 					sale_cost: availability.sale_cost,
 					currency_code: availability.currency_code,
 					cannot_transfer_due_to_unsupported_premium_tld:

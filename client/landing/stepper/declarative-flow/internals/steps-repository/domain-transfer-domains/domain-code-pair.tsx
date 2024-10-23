@@ -108,9 +108,11 @@ export function DomainCodePair( {
 }: Props ) {
 	const { __ } = useI18n();
 
-	const validation = useValidationMessage( domain, auth, hasDuplicates );
-	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const isHundredYearDomainsTransferFlow = HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug;
+	const validation = useValidationMessage( domain, auth, hasDuplicates, {
+		is_hundred_year_domain: isHundredYearDomainsTransferFlow,
+	} );
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const {
