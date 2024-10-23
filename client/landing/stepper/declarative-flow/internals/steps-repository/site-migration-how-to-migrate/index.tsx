@@ -1,8 +1,9 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -76,29 +77,41 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		? true
 		: false;
 
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
+	const [ isLoading, setIsLoading ] = useState( false );
+	const { updateMigrationStatusAsync } = useUpdateMigrationStatus();
 
-	const handleClick = ( how: string ) => {
+	const handleClick = async ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
 		if ( site?.ID ) {
 			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
-			updateMigrationStatus( site.ID, `migration-pending-${ parsedHow }` );
+			try {
+				setIsLoading( true );
+				await updateMigrationStatusAsync( site.ID, `migration-pending-${ parsedHow }` );
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_site_migration_how_to_update_status_request_error' );
+			} finally {
+				setIsLoading( false );
+			}
 		}
 		return navigation.submit?.( { how, destination } );
 	};
 
 	const stepContent = (
 		<>
-			<div className="how-to-migrate__list">
-				{ options.map( ( option, i ) => (
-					<FlowCard
-						key={ i }
-						title={ option.label }
-						text={ option.description }
-						onClick={ () => handleClick( option.value ) }
-					/>
-				) ) }
-			</div>
+			{ isLoading ? (
+				<LoadingEllipsis />
+			) : (
+				<div className="how-to-migrate__list">
+					{ options.map( ( option, i ) => (
+						<FlowCard
+							key={ i }
+							title={ option.label }
+							text={ option.description }
+							onClick={ () => handleClick( option.value ) }
+						/>
+					) ) }
+				</div>
+			) }
 		</>
 	);
 
