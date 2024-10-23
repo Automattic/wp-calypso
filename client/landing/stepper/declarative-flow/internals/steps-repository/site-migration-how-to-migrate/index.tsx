@@ -62,7 +62,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
-	const { onOptionClick } = usePendingMigrationStatus( { onSubmit: navigation.submit } );
+	const { setPendingMigration } = usePendingMigrationStatus( { onSubmit: navigation.submit } );
 
 	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
@@ -78,7 +78,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 						key={ i }
 						title={ option.label }
 						text={ option.description }
-						onClick={ () => onOptionClick( option.value ) }
+						onClick={ () => setPendingMigration( option.value ) }
 					/>
 				) ) }
 			</div>

@@ -27,7 +27,7 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
-	const onOptionClick = ( how: string ) => {
+	const setPendingMigration = ( how: string ) => {
 		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
 		if ( siteId ) {
 			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
@@ -39,7 +39,7 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 		}
 	};
 
-	return { onOptionClick };
+	return { setPendingMigration };
 };
 
 export default usePendingMigrationStatus;
