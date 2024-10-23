@@ -132,6 +132,8 @@ const onboarding: Flow = {
 						return navigate( destination );
 					}
 
+					// We trigger the event here, because we skip it in the domains step if
+					// the user chose use-my-domain
 					recordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 						flow: this.name,
