@@ -33,6 +33,15 @@ function isValidBlueskyHandle( handle: string ) {
 	return parts.every( ( part ) => /^[a-z0-9_-]+$/i.test( part ) );
 }
 
+/**
+ * Remove any leading "@" and trim the handle
+ * @param {string} handle - Handle to cleanup
+ * @returns {string} - Cleaned up handle
+ */
+function cleanUpHandle( handle: string ) {
+	return handle.replaceAll( /@/g, '' ).trim();
+}
+
 const isAlreadyConnected = ( connections: Array< Connection >, handle: string ) => {
 	return connections.some( ( { external_name } ) => external_name === handle );
 };
@@ -53,7 +62,7 @@ export const Bluesky: React.FC< Props > = ( {
 	useEffect( () => {
 		const handle = formRef.current?.elements.namedItem( 'handle' ) as HTMLInputElement;
 
-		if ( ! isConnecting && isAlreadyConnected( connections, handle.value ) ) {
+		if ( ! isConnecting && isAlreadyConnected( connections, cleanUpHandle( handle.value ) ) ) {
 			formRef.current?.reset();
 		}
 	}, [ isConnecting, connections ] ); // eslint-disable-line react-hooks/exhaustive-deps
@@ -68,7 +77,7 @@ export const Bluesky: React.FC< Props > = ( {
 		const formData = new FormData( e.target as HTMLFormElement );
 
 		// Let us make the user's life easier by removing the leading "@" if they added it
-		const handle = ( formData.get( 'handle' )?.toString().trim() || '' ).replace( /^@/, '' );
+		const handle = cleanUpHandle( formData.get( 'handle' )?.toString().trim() || '' );
 		const app_password = formData.get( 'app_password' )?.toString().trim() || '';
 
 		if ( isAlreadyConnected( connections, handle ) ) {
