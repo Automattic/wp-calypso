@@ -39,6 +39,7 @@ import {
 	isNotAtomicJetpack,
 	isSimpleSite,
 	isP2Site,
+	isDisconnectedJetpackAndNotAtomic,
 } from '../utils';
 import SitePreviewModal from './site-preview-modal';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -269,6 +270,22 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
 			{ __( 'WP Admin' ) }
+		</MenuItemLink>
+	);
+};
+
+const MigrateToWordPress = ( { recordTracks }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+
+	return (
+		<MenuItemLink
+			href="https://wordpress.com/move/"
+			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' ) }
+			target="_blank"
+			icon={ external }
+			iconPosition="right"
+		>
+			{ __( 'Migrate to WordPress.com' ) }
 		</MenuItemLink>
 	);
 };
@@ -519,6 +536,7 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
+	const isSiteDisconnectedJetpackAndNotAtomic = isDisconnectedJetpackAndNotAtomic( site );
 	const hasHostingFeatures = ! isSiteJetpackNotAtomic && ! isP2Site( site );
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
@@ -534,6 +552,14 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					<WpAdminItem { ...props } />
 					<JetpackSiteItems { ...props } />
+				</SiteMenuGroup>
+			);
+		}
+		if ( isSiteDisconnectedJetpackAndNotAtomic ) {
+			return (
+				<SiteMenuGroup>
+					<WpAdminItem { ...props } />
+					<MigrateToWordPress { ...props } />
 				</SiteMenuGroup>
 			);
 		}

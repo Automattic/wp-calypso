@@ -1,5 +1,8 @@
 import { forwardRef } from 'react';
 import { useOdieAssistantContext } from '../../context';
+import { useZendeskMessageListener } from '../../utils';
+import { DislikeFeedbackMessage } from './dislike-feedback-message';
+import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
 import type { CurrentUser } from '../../types/';
 
@@ -9,7 +12,8 @@ interface ChatMessagesProps {
 
 export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >(
 	( { currentUser }, ref ) => {
-		const { chat } = useOdieAssistantContext();
+		const { chat, chatStatus } = useOdieAssistantContext();
+		useZendeskMessageListener();
 
 		let lastUserMessageIndex = -1;
 		let lastFeedbackMessageIndex = -1;
@@ -42,6 +46,12 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 						isLastMessage={ lastMessageIndex === index }
 					/>
 				) ) }
+				<div className="odie-chatbox__action-message">
+					{ chatStatus === 'sending' && lastUserMessageIndex === lastMessageIndex && (
+						<ThinkingPlaceholder />
+					) }
+					{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }
+				</div>
 			</div>
 		);
 	}

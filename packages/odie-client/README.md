@@ -80,7 +80,6 @@ const defaultContextInterfaceValues = {
 	botNameSlug: 'wpcom-support-chat', // Identifier for the chat bot configuration.
 	chat: { context: { section_name: '', site_id: null }, messages: [] }, // Current chat state, including context and messages.
 	clearChat: noop, // Function to clear the current chat.
-	isLoadingChat: false, // Flag indicating if the chat is loading.
 	isLoading: false, // Flag for general loading state.
 	isMinimized: false, // Flag to check if the chat is minimized.
 	isNudging: false, // Flag to check if a nudge action is occurring.
@@ -88,9 +87,7 @@ const defaultContextInterfaceValues = {
 	lastNudge: null, // Information about the last nudge action.
 	sendNudge: noop, // Function to trigger a nudge action.
 	setChat: noop, // Function to set the current chat.
-	setIsLoadingChat: noop, // Function to set the chat loading state.
 	setMessageLikedStatus: noop, // Function to set the liked status of a message.
-	setContext: noop, // Function to set the chat context.
 	setIsNudging: noop, // Function to set the nudge state.
 	setIsVisible: noop, // Function to set the visibility of the chat.
 	setIsLoading: noop, // Function to set the general loading state.

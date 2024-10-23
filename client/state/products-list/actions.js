@@ -37,23 +37,35 @@ export function receiveProductsList( productsList, type = null ) {
  * 								or undefined, for all products
  * @returns {Function} 			an Action thunk
  */
-export function requestProductsList( query = {} ) {
+export function requestProductsList( query = {}, siteQueryFailed = false ) {
+	const queryParams = new URLSearchParams( window.location.search );
+	const site = siteQueryFailed ? null : queryParams.get( 'site' );
+
 	const requestQuery = { ...query };
 	if ( query.product_slugs && query.product_slugs.length > 0 ) {
 		const product_slugs = query.product_slugs?.join( ',' );
 		requestQuery.product_slugs = product_slugs;
 	}
+
+	const path = site ? `/sites/${ site }/products` : '/products';
+
 	return ( dispatch ) => {
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
 
 		return wpcom.req
-			.get( '/products', requestQuery )
+			.get( path, requestQuery )
 			.then( ( productsList ) => dispatch( receiveProductsList( productsList, query.type ) ) )
-			.catch( ( error ) =>
+			.catch( ( error ) => {
+				// If the query had the site in context and it failed, it means there was either a server error or the site doesn't exist.
+				// In this case, we should retry to fetch the products list without the site in context.
+				if ( site ) {
+					return requestProductsList( query, true )( dispatch );
+				}
+
 				dispatch( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,
 					error,
-				} )
-			);
+				} );
+			} );
 	};
 }
