@@ -243,11 +243,7 @@ class NotificationSubscriptions extends Component {
 
 						{ isAutomattician && (
 							<FormFieldset>
-								<FormLegend>
-									{ this.props.translate(
-										'Auto-follow P2 posts upon commenting (Automatticians only)'
-									) }
-								</FormLegend>
+								<FormLegend>Auto-follow P2 posts upon commenting (Automatticians only)</FormLegend>
 								<FormLabel>
 									<FormCheckbox
 										checked={ this.props.getSetting( 'p2_autofollow_on_comment' ) }
@@ -258,9 +254,8 @@ class NotificationSubscriptions extends Component {
 										onClick={ this.handleCheckboxEvent( 'Auto-follow P2 Upon Comment' ) }
 									/>
 									<span>
-										{ this.props.translate(
-											'Automatically subscribe to notifications for a P2 post whenever you leave a comment on it.'
-										) }
+										Automatically subscribe to notifications for a P2 post whenever you leave a
+										comment on it.
 									</span>
 								</FormLabel>
 							</FormFieldset>
