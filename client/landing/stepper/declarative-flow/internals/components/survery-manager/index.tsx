@@ -28,8 +28,7 @@ const SurveyManager = () => {
 
 	return (
 		<Suspense>
-			{ ' ' }
-			<AsyncMigrationSurvey />{ ' ' }
+			<AsyncMigrationSurvey />
 		</Suspense>
 	);
 };

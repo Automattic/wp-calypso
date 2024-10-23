@@ -58,6 +58,8 @@ const bemElement =
 		return undefined;
 	};
 
+const ONE_YEAR_IN_SECONDS = 1000 * 60 * 60 * 24 * 365;
+const ONE_DAY_IN_SECONDS = 1000 * 60 * 60 * 24;
 /**
  * Generic Survey component
  * @example
@@ -91,9 +93,11 @@ export const Survey = ( {
 	const element = bemElement( className );
 
 	const handleClose = useCallback(
-		( reason: 'skip' | 'accept' ) => {
+		( reason: 'skip' | 'accept' | 'skip_backdrop' ) => {
+			const PERIOD = reason === 'skip_backdrop' ? ONE_DAY_IN_SECONDS : ONE_YEAR_IN_SECONDS;
+
 			document.cookie = cookie.serialize( name, reason, {
-				expires: new Date( Date.now() + 1000 * 60 * 60 * 24 * 365 ),
+				expires: new Date( Date.now() + PERIOD ),
 			} );
 
 			if ( reason === 'accept' ) {
@@ -129,10 +133,22 @@ export const Survey = ( {
 						<button className={ clsx( 'survey-notice__backdrop', element( 'backdrop' ) ) } />
 					</SurveyTriggerSkip>
 					<div className={ clsx( 'survey-notice__popup', element( 'popup' ) ) }>
-						<div className="survey-notice__popup-head">
-							<div className="survey-notice__popup-head-title">{ title }</div>
+						<div className={ clsx( 'survey-notice__popup-head', element( 'popup-head' ) ) }>
+							<div
+								className={ clsx(
+									'survey-notice__popup-head-title',
+									element( 'popup-head-title' )
+								) }
+							>
+								{ title }
+							</div>
 							<SurveyTriggerSkip asChild>
-								<Button className="survey-notice__popup-head-close">
+								<Button
+									className={ clsx(
+										'survey-notice__popup-head-close',
+										element( 'popup-head-close' )
+									) }
+								>
 									<Gridicon icon="cross" size={ 16 } />
 								</Button>
 							</SurveyTriggerSkip>

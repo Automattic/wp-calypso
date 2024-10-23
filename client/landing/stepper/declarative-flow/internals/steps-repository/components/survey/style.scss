@@ -25,30 +25,32 @@
 		max-width: calc(100% - 50px);
 		z-index: 999;
 		border-radius: 2px;
-		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+		box-shadow:
+			0 3px 1px 0 rgba(0, 0, 0, 0.04),
+			0 3px 8px 0 rgba(0, 0, 0, 0.12);
 		overflow: hidden;
 		background-color: var(--studio-white);
+	}
 
-		.survey-notice__popup-head {
-			background: #0675c4;
-			border-bottom: 1px solid #f6f7f7;
-			height: 56px;
-			padding: 0 14px 0 16px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
+	.survey-notice__popup-head {
+		background: #0675c4;
+		border-bottom: 1px solid #f6f7f7;
+		height: 56px;
+		padding: 0 14px 0 16px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 
-			.survey-notice__popup-head-title {
-				color: var(--studio-white);
-				font-size: rem(14px);
-				font-weight: 500;
-				line-height: 20px;
-				letter-spacing: -0.15px;
-			}
+		.survey-notice__popup-head-title {
+			color: var(--studio-white);
+			font-size: rem(14px);
+			font-weight: 500;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+		}
 
-			.survey-notice__popup-head-close svg {
-				fill: var(--studio-white);
-			}
+		.survey-notice__popup-head-close svg {
+			fill: var(--studio-white);
 		}
 	}
 }

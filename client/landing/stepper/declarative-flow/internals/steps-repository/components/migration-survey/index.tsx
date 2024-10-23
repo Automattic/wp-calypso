@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import surveyImage from 'calypso/assets/images/illustrations/developer-survey.svg';
+import surveyImage from 'calypso/assets/images/onboarding/migrations/survey/wordpress-half-logo.png';
 import { Survey, SurveyProps, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
 import './style.scss';
 
@@ -11,17 +11,19 @@ const MigrationSurvey = ( { isOpen }: MigrationSurveyProps ) => {
 		<Survey
 			name="migration-survey"
 			className="migration-survey"
-			title={ translate( 'Hey developer!' ) }
+			title={ translate( 'Migration Survey' ) }
 			isOpen={ isOpen }
 		>
 			<div className="migration-survey__popup-img">
 				<img src={ surveyImage } alt={ translate( 'Code editor' ) } />
 			</div>
 			<div className="migration-survey__popup-content">
-				<h3 className="migration-survey__popup-content-title">{ translate( 'Hey developer!' ) }</h3>
+				<h3 className="migration-survey__popup-content-title">
+					{ translate( 'Shape the Future of WordPress.com' ) }
+				</h3>
 				<div className="migration-survey__popup-content-description">
 					{ translate(
-						"How do you use WordPress.com? Spare a moment? We'd love to hear what you think in a quick survey."
+						'Got a minute? Tell us about your WordPress.com journey in our brief survey and help us serve you better.'
 					) }
 				</div>
 				<div className="migration-survey__popup-content-buttons">
@@ -31,7 +33,13 @@ const MigrationSurvey = ( { isOpen }: MigrationSurveyProps ) => {
 						</Button>
 					</SurveyTriggerSkip>
 					<SurveyTriggerAccept asChild>
-						<Button variant="primary">{ translate( 'Take survey' ) }</Button>
+						<Button
+							variant="primary"
+							target="_blank"
+							href="https://automattic.survey.fm/wp-com-migration-survey"
+						>
+							{ translate( 'Take survey' ) }
+						</Button>
 					</SurveyTriggerAccept>
 				</div>
 			</div>
