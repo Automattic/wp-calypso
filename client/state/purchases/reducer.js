@@ -56,6 +56,7 @@ function mergePurchases( existingPurchases, newPurchases ) {
 }
 
 function updatePurchases( existingPurchases, action ) {
+	existingPurchases = existingPurchases || [];
 	// If the action is to update a user, replace all the data.
 	if ( action.type === PURCHASES_USER_FETCH_COMPLETED ) {
 		return action.purchases;
