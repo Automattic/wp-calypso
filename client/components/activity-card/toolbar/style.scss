@@ -44,6 +44,10 @@
 			display: inline-block;
 			font-size: 0.875rem;
 		}
+
+		&.toolbar__restore-button {
+			margin: 0;
+		}
 	}
 }
 
@@ -88,8 +92,6 @@
 
 .toolbar__restore-button {
 	margin: 0.8rem;
-
-
 }
 
 .toolbar__credentials-warning {
