@@ -120,7 +120,8 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	];
 
 	const numberDays = get( query, 'num', '0' );
-	const selected = find( options, { value: numberDays } );
+	let selected = find( options, { value: numberDays } );
+	selected = selected || options[ 0 ];
 
 	const tabs = (
 		<SegmentedControl
@@ -132,7 +133,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 				<SegmentedControl.Item
 					key={ i.value }
 					path={ i.isGated ? '' : i.path }
-					selected={ i.value === selected?.value }
+					selected={ i.value === selected.value }
 					onClick={ handleClick( i ) }
 				>
 					{ i.label }
