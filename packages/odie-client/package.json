@@ -50,6 +50,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/autosize": "^4.0.3",
 		"@types/react": "^18.2.6",
-		"typescript": "^5.3.3"
+		"typescript": "^5.6.3"
 	}
 }
