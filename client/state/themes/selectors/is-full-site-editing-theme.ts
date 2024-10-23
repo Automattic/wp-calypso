@@ -19,5 +19,5 @@ export function isFullSiteEditingTheme(
 		return false;
 	}
 
-	return theme.block_theme;
+	return !! theme.block_theme;
 }
