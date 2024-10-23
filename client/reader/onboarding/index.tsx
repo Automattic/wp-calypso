@@ -24,24 +24,19 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
 
-	// Don't render anything if the feature flag is disabled.
-	if ( ! config.isEnabled( 'reader/onboarding' ) ) {
+	const shouldShowOnboarding =
+		config.isEnabled( 'reader/onboarding' ) &&
+		preferencesLoaded &&
+		! hasCompletedOnboarding &&
+		userRegistrationDate &&
+		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
+	// Notify the parent component if onboarding will render.
+	onRender?.( shouldShowOnboarding );
+
+	if ( ! shouldShowOnboarding ) {
 		return null;
 	}
-
-	// Don't render anything until preferences are loaded or if onboarding is completed.
-	if ( ! preferencesLoaded || hasCompletedOnboarding ) {
-		return null;
-	}
-
-	// Don't render anything if userRegistrationDate is missing or if user registered before Oct 1, 2024
-	const cutoffDate = new Date( '2024-10-01T00:00:00Z' );
-	if ( ! userRegistrationDate || new Date( userRegistrationDate ) < cutoffDate ) {
-		return null;
-	}
-
-	// Notify the parent component that onboarding will render.
-	onRender?.( true );
 
 	const handleInterestsContinue = () => {
 		setIsInterestsModalOpen( false );
