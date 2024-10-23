@@ -1,6 +1,5 @@
 import colorStudio from '@automattic/color-studio';
 import { useI18n } from '@wordpress/react-i18n';
-import chroma from 'chroma-js';
 import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -232,7 +231,14 @@ export interface HTTPCodeSerie {
 }
 
 function colorToAlpha( color: keyof typeof colorStudio.colors, alpha: number ) {
-	return chroma( colorStudio.colors[ color ] ).alpha( alpha ).hex();
+	const hex = colorStudio.colors[ color ];
+
+	const bigint = parseInt( hex.slice( 1 ), 16 );
+	const r = ( bigint >> 16 ) & 255;
+	const g = ( bigint >> 8 ) & 255;
+	const b = bigint & 255;
+
+	return `rgba(${ r }, ${ g }, ${ b }, ${ alpha })`;
 }
 
 const seriesDefaultProps = {
