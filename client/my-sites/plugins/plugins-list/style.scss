@@ -8,21 +8,18 @@ body.is-section-plugins .plugin-management-wrapper {
 
 body.is-section-plugins .plugin-management-wrapper,
 .is-section-jetpack-cloud-plugin-management {
+    --wp-components-color-accent: var(--studio-automattic-blue-50);
 
-    .dataviews-wrapper {
-        .dataviews-view-table {
+    .dataviews-wrapper .dataviews-view-table {
+        .dataviews-view-table__row {
+            .plugin-icon {
+                max-width: 35px;
+                max-height: 35px;
+            }
 
-            .dataviews-view-table__row {
-                img, svg {
-                    max-width: 35px;
-                    margin-right: 16px;
-                }
-
-                .dataviews-view-table-selection-checkbox{
-                    padding-left: 0;
-                }
+            .dataviews-view-table-selection-checkbox{
+                padding-left: 0;
             }
         }
     }
-
 }

@@ -103,14 +103,8 @@ export default function PluginsListDataViews( {
 				render: ( { item }: { item: Plugin } ) => {
 					return (
 						<>
-							{ item.icon && <img alt={ item.name } src={ item.icon } /> }
-							{ ! item.icon && (
-								<Icon
-									size={ 32 }
-									icon={ plugins }
-									className="plugin-common-card__plugin-icon plugin-default-icon"
-								/>
-							) }
+							{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
+							{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
 							<a href={ '/plugins/' + item.slug }>{ item.name }</a>
 						</>
 					);
@@ -212,7 +206,7 @@ export default function PluginsListDataViews( {
 	];
 
 	// Set initial state for the data views
-	const pluginsPerPage = 10;
+	const pluginsPerPage = 15;
 	initialDataViewsState.perPage = pluginsPerPage;
 	initialDataViewsState.search = initialSearch;
 	initialDataViewsState.fields = [ 'plugins', 'sites', 'update' ];
