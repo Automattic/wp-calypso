@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
@@ -80,7 +81,9 @@ const BackupSuccessful = ( {
 				<div className="status-card__hide-mobile">
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
-				{ isToday && <NextScheduledBackup siteId={ siteId } /> }
+				{ isToday && config.isEnabled( 'jetpack/backup-schedule-setting' ) ? (
+					<NextScheduledBackup siteId={ siteId } />
+				) : null }
 			</div>
 			<div className="status-card__hide-desktop">
 				<div className="status-card__title">{ displayDate }</div>
