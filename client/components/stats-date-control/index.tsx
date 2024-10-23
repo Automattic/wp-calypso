@@ -101,7 +101,7 @@ const StatsDateControl = ( {
 		const period = bestPeriodForDays( rangeInDays );
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
+		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] ?? '' );
 
 		// Update chart via routing.
 		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
@@ -110,7 +110,7 @@ const StatsDateControl = ( {
 	// handler for shortcut clicks
 	const onShortcutClickHandler = ( shortcutId: EventNameKey ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( eventNames[ event_from ][ shortcutId ] );
+		recordTracksEvent( eventNames[ event_from ][ shortcutId ] ?? '' );
 	};
 
 	const getShortcutForRange = () => {
@@ -169,7 +169,7 @@ const StatsDateControl = ( {
 						<Button
 							onClick={ () => {
 								const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-								recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+								recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] ?? '' );
 								onTriggerClick();
 							} }
 							ref={ buttonRef }
