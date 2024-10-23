@@ -1513,18 +1513,20 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
+    "@types/autosize": "npm:^4.0.3"
     "@types/react": "npm:^18.2.6"
     "@wordpress/api-fetch": "npm:7.8.0"
     "@wordpress/data": "npm:^10.8.0"
+    "@wordpress/element": "npm:^6.8.0"
     "@wordpress/i18n": "npm:^5.8.0"
     "@wordpress/icons": "npm:^10.8.0"
+    autosize: "npm:^6.0.1"
     clsx: "npm:^2.1.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^9.0.1"
     react-redux: "npm:^8.1.3"
-    tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     wpcom-proxy-request: "npm:^7.0.5"
   languageName: unknown
@@ -7865,6 +7867,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/autosize@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "@types/autosize@npm:4.0.3"
+  checksum: 3167b4551b408176c2a60e7b0c8ba6cccb89a1486267c47a4c7f2acc78c917a3487be0910eedc5cdd2dc2ef9436781dc95031db1ebbb0f7ccbc6ce46f7064c6b
+  languageName: node
+  linkType: hard
+
 "@types/babel__core@npm:^7.0.0, @types/babel__core@npm:^7.1.14, @types/babel__core@npm:^7.18.0":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
@@ -11922,6 +11931,13 @@ __metadata:
   version: 4.0.4
   resolution: "autosize@npm:4.0.4"
   checksum: 3397348ff385702a4eca49b65b45e27c6e1881414e4eddc9ceaa6dbcda9dda24b5c01d021d2888ea745ebcc6353395dc5f5735ad5e76f076c864dd95e2ffb71d
+  languageName: node
+  linkType: hard
+
+"autosize@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "autosize@npm:6.0.1"
+  checksum: 7d1b9823443c2cc3fc962a7c20ec60d62db6a98c889a39f71495b48decbfda2463e6561fb7a748f069d6778e419f2fa1a7ecd09baa02dc33c4a209f777da9ac8
   languageName: node
   linkType: hard
 
