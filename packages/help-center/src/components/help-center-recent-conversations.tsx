@@ -13,7 +13,7 @@ import './help-center-recent-conversations.scss';
 const GetSectionName = ( unreadCount: number ) => {
 	const { __ } = useI18n();
 	if ( unreadCount > 1 ) {
-		return __( 'Unread Conversation', __i18n_text_domain__ );
+		return __( 'Unread Conversations', __i18n_text_domain__ );
 	}
 
 	return __( 'Recent Conversation', __i18n_text_domain__ );
@@ -45,6 +45,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
+	const sectionName = GetSectionName( unreadConversationsCount );
 
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
@@ -57,8 +58,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 		}
 	}, [ isChatLoaded, getConversations ] );
 
-	if ( ! conversations ) {
-		return [];
+	if ( ! conversations.length ) {
+		return null;
 	}
 
 	const lastUnreadConversation = conversations.find(
@@ -85,7 +86,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 	return (
 		<div className="help-center-homepage-conversations">
 			<h3 className="help-center-search-results__title help-center__section-title">
-				{ GetSectionName( unreadConversationsCount ) }
+				{ sectionName }
 			</h3>
 			{ lastMessage ? (
 				<HelpCenterSupportChatMessage
