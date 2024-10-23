@@ -32,8 +32,10 @@ const useNextBackupSchedule = () => {
 			nextBackupDate = backupTimeUtc.local();
 		}
 
-		// Check if the next backup is for tomorrow or today
-		if ( nextBackupDate.isBefore( currentTime ) ) {
+		const nextBackupDateEnd = nextBackupDate.clone().add( 59, 'minutes' ).add( 59, 'seconds' );
+
+		// Only move to the next day if the current time is after the backup window
+		if ( currentTime.isAfter( nextBackupDateEnd ) ) {
 			nextBackupDate.add( 1, 'day' ); // Move to next day
 		}
 
