@@ -32,6 +32,8 @@ export function plans( context, next ) {
 		return productSelect( '/plans' )( context, next );
 	}
 
+	const withDiscount = context.query.coupon || context.query.discount;
+
 	context.primary = (
 		<Plans
 			context={ context }
@@ -39,7 +41,7 @@ export function plans( context, next ) {
 			customerType={ context.query.customerType }
 			selectedFeature={ context.query.feature }
 			selectedPlan={ context.query.plan }
-			withDiscount={ context.query.discount }
+			withDiscount={ withDiscount }
 			discountEndDate={ context.query.ts }
 			redirectTo={ context.query.redirect_to }
 			redirectToAddDomainFlow={
