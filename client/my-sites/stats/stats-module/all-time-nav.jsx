@@ -132,7 +132,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 				<SegmentedControl.Item
 					key={ i.value }
 					path={ i.isGated ? '' : i.path }
-					selected={ i.value === selected.value }
+					selected={ i.value === selected?.value }
 					onClick={ handleClick( i ) }
 				>
 					{ i.label }
