@@ -123,13 +123,30 @@ const BackupSuccessful = ( {
 					</p>
 				</div>
 			) }
-			<ActionButtons
-				rewindId={ actionableRewindId }
-				isMultiSite={ isMultiSite }
-				hasWarnings={ hasWarnings }
-				availableActions={ availableActions }
-				onClickClone={ onClickClone }
-			/>
+
+			{ isCloneFlow && (
+				<ActionButtons
+					rewindId={ actionableRewindId }
+					isMultiSite={ isMultiSite }
+					hasWarnings={ hasWarnings }
+					availableActions={ availableActions }
+					onClickClone={ onClickClone }
+				/>
+			) }
+
+			{ ! isCloneFlow && (
+				<Toolbar
+					siteId={ siteId }
+					activity={ backup }
+					isContentExpanded={ showContent }
+					onToggleContent={ toggleShowContent }
+					availableActions={ availableActions }
+					onClickClone={ onClickClone }
+					hideExpandedContent
+					useSplitButton
+				/>
+			) }
+
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">
@@ -140,19 +157,6 @@ const BackupSuccessful = ( {
 			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
 
 			{ isToday && lastBackupFailed && <BackupLastFailed siteId={ siteId } /> }
-			{ ! isCloneFlow && (
-				<div className="status-card__toolbar">
-					<Toolbar
-						siteId={ siteId }
-						activity={ backup }
-						isContentExpanded={ showContent }
-						onToggleContent={ toggleShowContent }
-						availableActions={ availableActions }
-						onClickClone={ onClickClone }
-						hideExpandedContent
-					/>
-				</div>
-			) }
 		</>
 	);
 };

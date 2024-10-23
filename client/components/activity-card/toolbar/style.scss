@@ -31,6 +31,13 @@
 			top: 0;
 		}
 	}
+
+	.split-button {
+		a, button {
+			display: inline-block;
+			font-size: 0.875rem;
+		}
+	}
 }
 
 .activity-card__toolbar--reverse {
@@ -74,6 +81,8 @@
 
 .toolbar__restore-button {
 	margin: 0.8rem;
+
+
 }
 
 .toolbar__credentials-warning {
