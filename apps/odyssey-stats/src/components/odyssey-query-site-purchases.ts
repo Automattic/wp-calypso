@@ -164,7 +164,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 			reduxDispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases,
+				purchases: purchases ?? [],
 			} );
 		}
 	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId, purchasesFromMyJetpack ] );
