@@ -34,7 +34,7 @@ describe( 'MigrationOverview', () => {
 		[
 			'diy',
 			true,
-			'/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview',
+			'/setup/migration/site-migration-instructions?siteId=123&siteSlug=example.com&start=true&ref=hosting-migration-overview',
 		],
 		[
 			'difm',
