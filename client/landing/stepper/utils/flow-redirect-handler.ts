@@ -2,11 +2,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
 const redirectRoutes = [
-	{ flow: '/setup/blog', to: '/start:lang?' },
-	{ flow: '/setup/free', to: '/start/free:lang?' },
-	{ flow: '/setup/link-in-bio', to: '/start:lang?' },
-	{ flow: '/setup/videopress', to: '/start:lang?' },
-	{ flow: '/setup/sensei', to: ':lang?/plugins/sensei-pro/' },
+	{ flow: '/setup/blog/', to: '/start:lang?' },
+	{ flow: '/setup/free/', to: '/start/free:lang?' },
+	{ flow: '/setup/link-in-bio/', to: '/start:lang?' },
+	{ flow: '/setup/videopress/', to: '/start:lang?' },
+	{ flow: '/setup/sensei/', to: ':lang?/plugins/sensei-pro/' },
 ];
 
 // Regex pattern for the optional language code in the format xx or xx-yy
@@ -14,6 +14,9 @@ const langPattern = '(?:/([a-z]{2}(?:-[a-z]{2})?))?/?$';
 
 // Test against a location pathname and build a redirect URL
 const redirectPathIfNecessary = ( pathname: string, search: string ) => {
+	// Add trailing slash to pathname if not present
+	pathname = pathname.endsWith( '/' ) ? pathname : pathname + '/';
+
 	// Find the matching redirect route
 	const route = redirectRoutes.find( ( redirect ) => pathname.startsWith( redirect.flow ) );
 
