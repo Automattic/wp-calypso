@@ -21,10 +21,7 @@ const useNextBackupSchedule = () => {
 		}
 
 		const currentTime = moment();
-		const backupTimeUtc = moment
-			.utc()
-			.startOf( 'day' )
-			.hour( data?.scheduledHour || 0 );
+		const backupTimeUtc = moment.utc().startOf( 'day' ).hour( data.scheduledHour );
 
 		let nextBackupDate = backupTimeUtc;
 
