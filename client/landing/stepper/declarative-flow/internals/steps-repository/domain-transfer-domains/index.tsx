@@ -28,6 +28,22 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 
 	const Container = isHundredYearDomainsTransferFlow ? HundredYearPlanStepWrapper : StepContainer;
 
+	const headerText = isHundredYearDomainsTransferFlow
+		? __( 'Transfer your Domain' )
+		: __( 'Add your domains' );
+
+	const regularFlowsSubheaderText = isGoogleDomainsTransferFlow
+		? __( 'Enter your domain names and transfer codes below.' )
+		: __( 'Enter your domain names and authorization codes below.' );
+
+	const hundredYearFlowsSubheaderText = __(
+		'Start building your legacy. Secure your domain for the next 100 years.'
+	);
+
+	const subHeaderText = isHundredYearDomainsTransferFlow
+		? hundredYearFlowsSubheaderText
+		: regularFlowsSubheaderText;
+
 	return (
 		<Container
 			flowName={ flow }
@@ -40,14 +56,10 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={ __( 'Add your domains' ) }
+					headerText={ headerText }
 					subHeaderText={
 						<>
-							<span>
-								{ isGoogleDomainsTransferFlow
-									? __( 'Enter your domain names and transfer codes below.' )
-									: __( 'Enter your domain names and authorization codes below.' ) }
-							</span>
+							<span>{ subHeaderText }</span>
 						</>
 					}
 					align="center"
