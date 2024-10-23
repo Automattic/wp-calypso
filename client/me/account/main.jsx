@@ -370,15 +370,6 @@ class Account extends Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
-	getCheckboxHandler( checkboxName ) {
-		return ( event ) => {
-			const action = 'Clicked ' + checkboxName + ' checkbox';
-			const value = event.target.checked ? 1 : 0;
-
-			this.props.recordGoogleEvent( 'Me', action, 'checked', value );
-		};
-	}
-
 	handleUsernameChangeBlogRadio = ( event ) => {
 		this.props.recordGoogleEvent(
 			'Me',
