@@ -32,6 +32,12 @@ export function plans( context, next ) {
 		return productSelect( '/plans' )( context, next );
 	}
 
+	// Emails rely on the `discount` query param to auto-apply coupons
+	// from the Calypso admin plans page. The `/start` onboarding flow
+	// plans page, however, relies on the `coupon` query param for the
+	// same purpose. We handle both coupon and discount here for the time
+	// being to avoid confusion. We'll probably consolidate to just `coupon`
+	// in the future.
 	const withDiscount = context.query.coupon || context.query.discount;
 
 	context.primary = (
