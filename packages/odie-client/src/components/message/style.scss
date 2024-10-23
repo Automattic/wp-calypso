@@ -2,6 +2,15 @@
 @import "@automattic/components/src/styles/typography";
 $blueberry-color: #3858e9;
 
+.chatbox-message__dislike-thumb {
+	display: flex;
+    width: 96%;
+    justify-content: flex-end;
+	svg {
+		padding: 14px;
+		background-color: $blueberry-color;
+	}
+}
 .odie-chatbox__action-message {
 	display: flex;
 	flex-direction: row;
@@ -112,13 +121,18 @@ $blueberry-color: #3858e9;
 	margin-top: 8px;
 	p {
 		color: var(--studio-white);
+		padding: 0;
 	}
 }
 
 .odie-chatbox-message.odie-chatbox-message-business {
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 8px 8px 8px 0;
-	background-color:#F7F8FE;
+	p {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px 8px 8px 0;
+		background-color:#F7F8FE;
+		
+	}
+	
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu.odie-chatbox-message-message {
@@ -130,7 +144,6 @@ $blueberry-color: #3858e9;
 	p {
 		flex: 0.8;
 		display: flex;
-		padding: 16px;
 		align-items: center;
 		justify-content: center;
 		background-color: var(--studio-gray-0);
@@ -141,6 +154,7 @@ $blueberry-color: #3858e9;
 
 .odie-chatbox-message p {
 	font-size: 0.875rem;
+	padding: 16px;
 }
 
 .odie-introduction-message-content {
@@ -152,9 +166,6 @@ $blueberry-color: #3858e9;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	p {
-		padding: 16px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 14px;
 		color: var(--studio-gray-80);
 		line-height: 20px;
 	}
