@@ -635,7 +635,7 @@ class SignupForm extends Component {
 														login( {
 															redirectTo: this.props.redirectToAfterLoginUrl,
 															locale: this.props.locale,
-															action: this.props.isWooCoreProfilerFlow
+															action: this.props.isWooPasswordlessJPC
 																? 'jetpack/lostpassword'
 																: 'lostpassword',
 															oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
