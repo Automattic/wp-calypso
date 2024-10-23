@@ -87,7 +87,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 				case 'diy':
 					continueMigrationUrl = addQueryArgs(
 						baseQueryArgs,
-						'/setup/migration/migration-how-to-migrate'
+						'/setup/migration/site-migration-instructions'
 					);
 					break;
 				case 'difm':
