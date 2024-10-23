@@ -80,10 +80,14 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		) {
 			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
 			const pluginName = get( currentQuery, 'plugin_name' );
-			const urlObj = new URL( currentQuery.redirect_to );
-			if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
-				urlObj.searchParams.set( 'plugin_name', pluginName );
-				return urlObj.toString();
+			try {
+				const urlObj = new URL( currentQuery.redirect_to );
+				if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
+					urlObj.searchParams.set( 'plugin_name', pluginName );
+					return urlObj.toString();
+				}
+			} catch ( e ) {
+				return '/jetpack/connect';
 			}
 
 			/**
