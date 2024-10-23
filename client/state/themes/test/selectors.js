@@ -111,6 +111,7 @@ const sidekick = {
 
 const appleton = {
 	id: 'appleton',
+	block_theme: true,
 	taxonomies: {
 		theme_feature: [ { slug: 'full-site-editing' } ],
 	},
@@ -118,6 +119,7 @@ const appleton = {
 
 const pendant = {
 	id: 'pendant',
+	block_theme: true,
 	taxonomies: {
 		theme_feature: [ { slug: 'full-site-editing' } ],
 	},
@@ -126,6 +128,7 @@ const pendant = {
 const nokul = {
 	id: 'nokul',
 	theme_type: 'managed-external',
+	block_theme: true,
 	taxonomies: {
 		theme_feature: [ { slug: 'full-site-editing' } ],
 	},
