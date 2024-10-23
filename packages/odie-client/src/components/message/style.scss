@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+$blueberry-color: #3858e9;
 
 .odie-chatbox__action-message {
 	display: flex;
@@ -17,17 +18,14 @@
 
 .odie-chatbox-message {
 	display: flex;
-	justify-content: space-between;
 	word-wrap: break-word;
 	font-size: $font-body;
 	line-height: 1.4;
 	color: #000;
 	flex-direction: row;
 	padding: 16px;
-	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
-	min-height: 64px;
 	text-wrap: pretty;
 
 	ol,
@@ -79,19 +77,30 @@
 }
 
 .odie-chatbox-message.odie-chatbox-message-user {
-	background-color: var(--studio-gray-0);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 0 8px;
+	background-color: $blueberry-color;
+	width: 80%;
+	margin-right: 16px;
+	p {
+		color: var(--studio-white);
+	}
 }
 
 .odie-chatbox-message.odie-chatbox-message-business {
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 8px 0;
 	background-color:#F7F8FE;
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu {
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 8px 0;
 	background-color: var(--studio-white);
 }
 
 .odie-chatbox-message p {
-	font-size: 1rem;
+	font-size: 0.875rem;
 }
 
 .odie-introduction-message-content {
