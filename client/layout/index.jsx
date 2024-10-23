@@ -397,6 +397,9 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
+					{ isJetpackCloud() && (
+						<AsyncLoad require="calypso/jetpack-cloud/sections/golden-token/golden-token-modal" />
+					) }
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
