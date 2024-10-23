@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
@@ -7,12 +8,13 @@ import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/cons
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
 
-const ReaderOnboarding = () => {
+const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void } ) => {
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
 	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
 	const followedTags = useSelector( getReaderFollowedTags );
@@ -20,11 +22,26 @@ const ReaderOnboarding = () => {
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
 	);
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
+	const userRegistrationDate = useSelector( getCurrentUserDate );
+
+	// Don't render anything if the feature flag is disabled.
+	if ( ! config.isEnabled( 'reader/onboarding' ) ) {
+		return null;
+	}
 
 	// Don't render anything until preferences are loaded or if onboarding is completed.
 	if ( ! preferencesLoaded || hasCompletedOnboarding ) {
 		return null;
 	}
+
+	// Don't render anything if userRegistrationDate is missing or if user registered before Oct 1, 2024
+	const cutoffDate = new Date( '2024-10-01T00:00:00Z' );
+	if ( ! userRegistrationDate || new Date( userRegistrationDate ) < cutoffDate ) {
+		return null;
+	}
+
+	// Notify the parent component that onboarding will render.
+	onRender?.( true );
 
 	const handleInterestsContinue = () => {
 		setIsInterestsModalOpen( false );
