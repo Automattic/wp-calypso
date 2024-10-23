@@ -16,20 +16,6 @@ $blueberry-color: #3858e9;
 	}
 }
 
-.odie-chatbox__action-message {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 16px;
-
-	.message-header {
-		display: flex;
-		align-items: center;
-		width: 100%;
-		gap: 8px;
-	}
-}
-
 .odie-chatbox-message {
 	display: flex;
 	word-wrap: break-word;
@@ -38,6 +24,7 @@ $blueberry-color: #3858e9;
 	color: #000;
 	flex-direction: row;
 	padding: 16px;
+	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
 	text-wrap: pretty;
@@ -55,10 +42,18 @@ $blueberry-color: #3858e9;
 		}
 	}
 
+	.chat-feedback-wrapper {
+		padding-top: 24px;
+	}
+
 	.disclaimer {
-		color: var(--studio-gray-50);
+		color: var(--studio-gray-80);
 		font-size: $font-body-extra-small;
-		text-align: right;
+		text-align: start;
+    	margin: 16px 0;
+		.components-external-link {
+			margin-left: 6px;
+		}
 	}
 }
 
@@ -96,6 +91,7 @@ $blueberry-color: #3858e9;
 	background-color: $blueberry-color;
 	width: 80%;
 	margin-right: 16px;
+	margin-top: 8px;
 	p {
 		color: var(--studio-white);
 	}
@@ -107,10 +103,22 @@ $blueberry-color: #3858e9;
 	background-color:#F7F8FE;
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu {
+.odie-chatbox-message.odie-chatbox-message-wapuu.odie-chatbox-message-message {
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	background-color: var(--studio-white);
+	flex-wrap: wrap;
+
+	p {
+		flex: 0.8;
+		display: flex;
+		padding: 16px;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--studio-gray-0);
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px 8px 8px 0;
+	}
 }
 
 .odie-chatbox-message p {
@@ -122,6 +130,7 @@ $blueberry-color: #3858e9;
 	align-items: center;
 	justify-content: center;
 	background-color: var(--studio-gray-0);
+	width: 80%;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	p {
@@ -434,10 +443,11 @@ $custom-border-corner-size: 16px;
 
 .odie-feedback-message {
 	position: relative;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 1rem;
 	width: 100%;
 	height: 100%;
+	color: var(--studio-gray-100);
 
 	.odie-feedback-component-thanks,
 	.odie-feedback-component-question {

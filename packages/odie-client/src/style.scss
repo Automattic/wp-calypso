@@ -42,9 +42,9 @@
 
 	.odie-chatbox-message-sources-container {
 		width: 100%;
-		margin-top: 8px;
 		display: flex;
-		justify-content: end;
+		flex-direction: column;
+		align-items: flex-end;
 		&:last-of-type > .odie-chatbox-message-sources-container {
 			margin-bottom: 64px;
 		}
