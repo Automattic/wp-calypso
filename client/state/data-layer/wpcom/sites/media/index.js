@@ -68,6 +68,10 @@ export const requestMediaSuccess =
 			return;
 		}
 
+		if ( data?.pickerUri ) {
+			window.open( data.pickerUri, '_blank' ).focus();
+		}
+
 		dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 		dispatch( successMediaRequest( siteId, query ) );
 		dispatch( setNextPageHandle( siteId, data.meta ) );

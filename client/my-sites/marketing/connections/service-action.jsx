@@ -80,6 +80,14 @@ const SharingServiceAction = ( {
 		);
 	}
 
+	if ( 'google_photos_picker' === service.ID && ! path?.startsWith( '/marketing/connections/' ) ) {
+		return (
+			<Button primary onClick={ onClick } disabled={ isPending }>
+				{ translate( 'Connect to Google Photos Picker' ) }
+			</Button>
+		);
+	}
+
 	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
 		return (
 			<div>

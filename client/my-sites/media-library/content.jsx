@@ -35,6 +35,7 @@ import {
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MediaLibraryExternalHeader from './external-media-header';
+import GooglePhotosPickerButton from './google-photos-picker-button';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
 import './content.scss';
@@ -114,7 +115,11 @@ export class MediaLibraryContent extends Component {
 	isGoogleConnectedAndVisible( props ) {
 		const { googleConnection, source } = props;
 
-		if ( source === 'google_photos' && googleConnection && googleConnection.status === 'ok' ) {
+		if (
+			source === 'google_photos_picker' &&
+			googleConnection &&
+			googleConnection.status === 'ok'
+		) {
 			return true;
 		}
 
@@ -125,7 +130,7 @@ export class MediaLibraryContent extends Component {
 		const { mediaValidationErrorTypes, source } = props;
 
 		if (
-			source === 'google_photos' &&
+			source === 'google_photos_picker' &&
 			mediaValidationErrorTypes.indexOf( MediaValidationErrors.SERVICE_AUTH_FAILED ) !== -1
 		) {
 			return true;
@@ -260,7 +265,7 @@ export class MediaLibraryContent extends Component {
 	getAuthFailMessageForSource() {
 		const { translate, source } = this.props;
 
-		if ( source === 'google_photos' ) {
+		if ( source === 'google_photos_picker' ) {
 			return translate(
 				'We are moving to a new and faster Photos from Google service. Please reconnect to continue accessing your photos.'
 			);
@@ -354,18 +359,23 @@ export class MediaLibraryContent extends Component {
 				</p>
 				<p>{ connectMessage }</p>
 
-				<InlineConnection serviceName="google_photos" />
+				<InlineConnection serviceName="google_photos_picker" />
 			</div>
 		);
 	}
 
 	renderConnectExternalMedia() {
 		const { source } = this.props;
+
 		switch ( source ) {
-			case 'google_photos':
+			case 'google_photos_picker':
 				return this.renderGooglePhotosConnect();
 		}
 		return null;
+	}
+
+	renderGooglePhotosPickerBtn() {
+		return <GooglePhotosPickerButton />;
 	}
 
 	getThumbnailType() {
@@ -392,6 +402,7 @@ export class MediaLibraryContent extends Component {
 	renderMediaList() {
 		if ( ! this.props.site || ( this.props.isRequesting && ! this.hasRequested ) ) {
 			this.hasRequested = true; // We only want to do this once
+
 			return (
 				<MediaLibraryList
 					key="list-loading"
@@ -403,6 +414,10 @@ export class MediaLibraryContent extends Component {
 
 		if ( this.needsToBeConnected() ) {
 			return this.renderConnectExternalMedia();
+		}
+
+		if ( 'google_photos_picker' === this.props.source ) {
+			return this.renderGooglePhotosPickerBtn();
 		}
 
 		const listKey = [
@@ -505,7 +520,7 @@ export default withMobileBreakpoint(
 			const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( first );
 			const shouldPauseGuidedTour =
 				! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
-			const googleConnection = getKeyringConnectionsByName( state, 'google_photos' );
+			const googleConnection = getKeyringConnectionsByName( state, 'google_photos_picker' );
 
 			return {
 				siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
