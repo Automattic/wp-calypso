@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
+import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import FormattedHeader from '../formatted-header';
 
 import './style.scss';
 
