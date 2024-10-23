@@ -13,6 +13,7 @@ type OwnProps = {
 	onToggleContent?: () => void;
 	availableActions?: Array< string >;
 	onClickClone?: ( period: string ) => void;
+	hideExpandedContent?: boolean;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {
@@ -22,6 +23,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 	onToggleContent,
 	availableActions,
 	onClickClone,
+	hideExpandedContent = false,
 } ) => {
 	const isRewindable = isSuccessfulRealtimeBackup( activity );
 	const { streams } = activity;
@@ -30,12 +32,16 @@ const Toolbar: React.FC< OwnProps > = ( {
 		return null;
 	}
 
+	const showStreams = streams && ! hideExpandedContent;
+
 	return (
 		<div
 			// force the actions to stay in the left if we aren't showing the content link
-			className={ streams ? 'activity-card__toolbar' : 'activity-card__toolbar--reverse' }
+			className={ showStreams ? 'activity-card__toolbar' : 'activity-card__toolbar--reverse' }
 		>
-			{ streams && <ExpandContent isExpanded={ isContentExpanded } onToggle={ onToggleContent } /> }
+			{ showStreams && (
+				<ExpandContent isExpanded={ isContentExpanded } onToggle={ onToggleContent } />
+			) }
 			{ isRewindable && (
 				<ActionsButton
 					siteId={ siteId }
