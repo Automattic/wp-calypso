@@ -46,23 +46,18 @@
 		}
 
 		.agency-tier-download-badges-modal__list {
-			padding-block-start: 16px;
+			padding-block-start: 8px;
 			display: flex;
 			flex-direction: column;
-			gap: 16px;
+			gap: 4px;
 
 			a.components-button {
 				@include a4a-font-body-lg;
 				display: flex;
 				justify-content: flex-start;
-				gap: 10px;
-				padding: 20px 10px;
-			}
-
-			svg, img {
-				width: 32px;
-				min-width: 32px;
-				margin: 0;
+				gap: 8px;
+				padding: 24px 16px;
+				margin-left: -16px;
 			}
 		}
 	}

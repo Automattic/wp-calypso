@@ -1,7 +1,10 @@
-import { JetpackLogo, WooLogo, WordPressLogo } from '@automattic/components';
+import { JetpackLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+// import JetpackLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/jetpack.svg';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
+import WooLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woo.svg';
+import WordPressogo from 'calypso/assets/images/a8c-for-agencies/product-logos/wordpress.svg';
 import type { DirectoryApplicationType } from '../../partner-directory/types';
 import type { AgencyTier } from '../types';
 
@@ -22,48 +25,48 @@ function DownloadLink( {
 			'agency-partner': {
 				name: translate( 'WordPress.com Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_wordpress_partner.zip',
-				icon: <WordPressLogo />,
+				icon: <img src={ WordPressogo } alt="WordPress.com" />,
 			},
 			'pro-agency-partner': {
 				name: translate( 'WordPress.com Pro Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_wordpress_pro_partner.zip',
-				icon: <WordPressLogo />,
+				icon: <img src={ WordPressogo } alt="WordPress.com" />,
 			},
 		},
 		woocommerce: {
 			'agency-partner': {
 				name: translate( 'Woo Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_woo_partner.zip',
-				icon: <WooLogo className="download-badges__woo-logo" />,
+				icon: <img src={ WooLogo } alt="WooCommerce" />,
 			},
 			'pro-agency-partner': {
 				name: translate( 'Woo Pro Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_woo_pro_partner.zip',
-				icon: <WooLogo className="download-badges__woo-logo" />,
+				icon: <img src={ WooLogo } alt="WooCommerce" />,
 			},
 		},
 		jetpack: {
 			'agency-partner': {
 				name: translate( 'Jetpack Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_jetpack_partner.zip',
-				icon: <JetpackLogo />,
+				icon: <JetpackLogo size={ 32 } />,
 			},
 			'pro-agency-partner': {
 				name: translate( 'Jetpack Pro Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_jetpack_pro_partner.zip',
-				icon: <JetpackLogo />,
+				icon: <JetpackLogo size={ 32 } />,
 			},
 		},
 		pressable: {
 			'agency-partner': {
 				name: translate( 'Pressable Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_pressable_partner.zip',
-				icon: <img src={ pressableIcon } alt="Pressable" />,
+				icon: <img src={ PressableLogo } alt="Pressable" />,
 			},
 			'pro-agency-partner': {
 				name: translate( 'Pressable Pro Agency Partner' ),
 				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_pressable_pro_partner.zip',
-				icon: <img src={ pressableIcon } alt="Pressable" />,
+				icon: <img src={ PressableLogo } alt="Pressable" />,
 			},
 		},
 	};
