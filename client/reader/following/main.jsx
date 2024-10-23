@@ -14,7 +14,7 @@ import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const [ readerOnboardingIsRendered, setReaderOnboardingIsRendered ] = useState( false );
-	// config.isEnabled( 'reader/onboarding' )
+
 	return (
 		<>
 			<Stream
