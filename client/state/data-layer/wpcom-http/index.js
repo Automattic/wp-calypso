@@ -20,11 +20,11 @@ const debug = debugModule( 'calypso:data-layer:wpcom-http' );
  */
 const fetcherMap = function ( method, fetcher = 'wpcom' ) {
 	const req = 'wpcomJetpackLicensing' === fetcher ? wpcomJetpackLicensing.req : wpcom.req;
-
 	return get(
 		{
 			GET: req.get.bind( req ),
 			POST: req.post.bind( req ),
+			DELETE: req.del.bind( req ),
 		},
 		method,
 		null
@@ -73,7 +73,7 @@ export const queueRequest =
 			fetcher
 		)(
 			...[
-				{ path, formData, onStreamRecord, responseType },
+				{ path, formData, onStreamRecord, responseType, method },
 				{ ...query }, // wpcom mutates the query so hand it a copy
 				method === 'POST' && body,
 				( error, data, headers ) => {
