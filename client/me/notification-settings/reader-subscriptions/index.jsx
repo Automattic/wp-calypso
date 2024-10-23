@@ -1,8 +1,8 @@
 import { Card, FormLabel } from '@automattic/components';
 import i18n, { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -25,268 +25,257 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
-class NotificationSubscriptions extends Component {
-	handleClickEvent( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	}
+const NotificationSubscriptions = ( props ) => {
+	const dispatch = useDispatch();
+	const teams = useSelector( getReaderTeams );
+	const isAutomattician = isAutomatticTeamMember( teams );
+	const { translate } = props;
 
-	handleFocusEvent( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	}
+	const handleClickEvent = useCallback(
+		( action ) => {
+			return () => dispatch( recordGoogleEvent( 'Me', 'Clicked on ' + action ) );
+		},
+		[ dispatch ]
+	);
 
-	handleCheckboxEvent( action ) {
-		return ( event ) => {
-			const eventAction = 'Clicked ' + action + ' checkbox';
-			const optionValue = event.target.checked ? 1 : 0;
+	const handleFocusEvent = useCallback(
+		( action ) => {
+			return () => dispatch( recordGoogleEvent( 'Me', 'Focused on ' + action ) );
+		},
+		[ dispatch ]
+	);
 
-			this.props.recordGoogleEvent( 'Me', eventAction, 'checked', optionValue );
-		};
-	}
+	const handleCheckboxEvent = useCallback(
+		( action ) => {
+			return ( event ) => {
+				const eventAction = 'Clicked ' + action + ' checkbox';
+				const optionValue = event.target.checked ? 1 : 0;
 
-	getDeliveryHourLabel( hour ) {
-		return this.props.translate( '%(fromHour)s - %(toHour)s', {
-			context: 'Hour range between which subscriptions are delivered',
-			args: {
-				fromHour: this.props.moment().hour( hour ).minute( 0 ).format( 'LT' ),
-				toHour: this.props
-					.moment()
-					.hour( hour + 2 )
-					.minute( 0 )
-					.format( 'LT' ),
-			},
-		} );
-	}
+				dispatch( recordGoogleEvent( 'Me', eventAction, 'checked', optionValue ) );
+			};
+		},
+		[ dispatch ]
+	);
 
-	render() {
-		const { locale, teams } = this.props;
-		const isAutomattician = isAutomatticTeamMember( teams );
+	const getDeliveryHourLabel = useCallback(
+		( hour ) => {
+			return translate( '%(fromHour)s - %(toHour)s', {
+				context: 'Hour range between which subscriptions are delivered',
+				args: {
+					fromHour: props.moment().hour( hour ).minute( 0 ).format( 'LT' ),
+					toHour: props
+						.moment()
+						.hour( hour + 2 )
+						.minute( 0 )
+						.format( 'LT' ),
+				},
+			} );
+		},
+		[ props ]
+	);
 
-		return (
-			<Main wideLayout className="reader-subscriptions__notifications-settings">
-				<QueryReaderTeams />
+	const { locale } = props;
 
-				<PageViewTracker
-					path="/me/notifications/subscriptions"
-					title="Me > Notifications > Subscriptions Delivery"
-				/>
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+	return (
+		<Main wideLayout className="reader-subscriptions__notifications-settings">
+			<QueryReaderTeams />
 
-				<SubscriptionManagementBackButton />
+			<PageViewTracker
+				path="/me/notifications/subscriptions"
+				title="Me > Notifications > Subscriptions Delivery"
+			/>
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ this.props.translate( 'Notification Settings' ) }
-				/>
+			<SubscriptionManagementBackButton />
 
-				<Navigation path={ this.props.path } />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Notification Settings' ) } />
 
-				<Card className="reader-subscriptions__notification-settings">
-					<form
-						id="notification-settings"
-						onChange={ this.props.markChanged }
-						onSubmit={ this.props.submitForm }
-					>
-						<FormSectionHeading>
-							{ this.props.translate( 'Subscriptions delivery' ) }
-						</FormSectionHeading>
-						<p>
-							{ this.props.translate(
-								'{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
-								{
-									components: {
-										readerLink: (
-											<a
-												href="/following/edit"
-												onClick={ this.handleClickEvent( 'Edit Subscriptions in Reader Link' ) }
-											/>
-										),
-									},
-								}
-							) }
-						</p>
+			<Navigation path={ props.path } />
 
-						<FormFieldset>
-							<FormLabel htmlFor="subscription_delivery_email_default">
-								{ this.props.translate( 'Default email delivery' ) }
-							</FormLabel>
-							<FormSelect
-								disabled={ this.props.getDisabledState() }
-								id="subscription_delivery_email_default"
-								name="subscription_delivery_email_default"
-								onChange={ this.props.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
-								value={ this.props.getSetting( 'subscription_delivery_email_default' ) }
-							>
-								<option value="never">{ this.props.translate( 'Never send email' ) }</option>
-								<option value="instantly">
-									{ this.props.translate( 'Send email instantly' ) }
-								</option>
-								<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
-								<option value="weekly">{ this.props.translate( 'Send email every week' ) }</option>
-							</FormSelect>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Jabber subscription delivery' ) }</FormLegend>
-							<FormLabel>
-								<FormCheckbox
-									checked={ this.props.getSetting( 'subscription_delivery_jabber_default' ) }
-									disabled={ this.props.getDisabledState() }
-									id="subscription_delivery_jabber_default"
-									name="subscription_delivery_jabber_default"
-									onChange={ this.props.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Notification delivery by Jabber' ) }
-								/>
-								<span>
-									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
-								</span>
-							</FormLabel>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="subscription_delivery_mail_option">
-								{ this.props.translate( 'Email delivery format' ) }
-							</FormLabel>
-							<FormSelect
-								disabled={ this.props.getDisabledState() }
-								id="subscription_delivery_mail_option"
-								name="subscription_delivery_mail_option"
-								onChange={ this.props.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
-								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
-							>
-								<option value="html">{ this.props.translate( 'HTML' ) }</option>
-								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
-							</FormSelect>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="subscription_delivery_day">
-								{ this.props.translate( 'Email delivery window' ) }
-							</FormLabel>
-							<FormSelect
-								disabled={ this.props.getDisabledState() }
-								className="reader-subscriptions__delivery-window"
-								id="subscription_delivery_day"
-								name="subscription_delivery_day"
-								onChange={ this.props.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
-								value={ this.props.getSetting( 'subscription_delivery_day' ) }
-							>
-								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
-								<option value="1">{ this.props.translate( 'Monday' ) }</option>
-								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
-								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
-								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
-								<option value="5">{ this.props.translate( 'Friday' ) }</option>
-								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
-							</FormSelect>
-
-							<FormSelect
-								disabled={ this.props.getDisabledState() }
-								id="subscription_delivery_hour"
-								name="subscription_delivery_hour"
-								onChange={ this.props.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
-								value={ this.props.getSetting( 'subscription_delivery_hour' ) }
-							>
-								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
-								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
-								<option value="4">{ this.getDeliveryHourLabel( 4 ) }</option>
-								<option value="6">{ this.getDeliveryHourLabel( 6 ) }</option>
-								<option value="8">{ this.getDeliveryHourLabel( 8 ) }</option>
-								<option value="10">{ this.getDeliveryHourLabel( 10 ) }</option>
-								<option value="12">{ this.getDeliveryHourLabel( 12 ) }</option>
-								<option value="14">{ this.getDeliveryHourLabel( 14 ) }</option>
-								<option value="16">{ this.getDeliveryHourLabel( 16 ) }</option>
-								<option value="18">{ this.getDeliveryHourLabel( 18 ) }</option>
-								<option value="20">{ this.getDeliveryHourLabel( 20 ) }</option>
-								<option value="22">{ this.getDeliveryHourLabel( 22 ) }</option>
-							</FormSelect>
-
-							<FormSettingExplanation>
-								{ this.props.translate(
-									'When choosing daily or weekly email delivery, which time of day would you prefer?'
-								) }
-							</FormSettingExplanation>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLegend>
-								{ locale === 'en' || i18n.hasTranslation( 'Pause emails' )
-									? this.props.translate( 'Pause emails' )
-									: this.props.translate( 'Block emails' ) }
-							</FormLegend>
-							<FormLabel>
-								<FormCheckbox
-									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
-									disabled={ this.props.getDisabledState() }
-									id="subscription_delivery_email_blocked"
-									name="subscription_delivery_email_blocked"
-									onChange={ this.props.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
-								/>
-								<span>
-									{ locale === 'en' ||
-									i18n.hasTranslation(
-										'Pause all email updates from sites you’re following on WordPress.com'
-									)
-										? this.props.translate(
-												'Pause all email updates from sites you’re following on WordPress.com'
-										  )
-										: this.props.translate(
-												'Block all email updates from blogs you’re following on WordPress.com'
-										  ) }
-								</span>
-							</FormLabel>
-						</FormFieldset>
-
-						{ isAutomattician && (
-							<FormFieldset>
-								<FormLegend>Auto-follow P2 posts upon commenting (Automatticians only)</FormLegend>
-								<FormLabel>
-									<FormCheckbox
-										checked={ this.props.getSetting( 'p2_autofollow_on_comment' ) }
-										disabled={ this.props.getDisabledState() }
-										id="p2_autofollow_on_comment"
-										name="p2_autofollow_on_comment"
-										onChange={ this.props.toggleSetting }
-										onClick={ this.handleCheckboxEvent( 'Auto-follow P2 Upon Comment' ) }
-									/>
-									<span>
-										Automatically subscribe to notifications for a P2 post whenever you leave a
-										comment on it.
-									</span>
-								</FormLabel>
-							</FormFieldset>
+			<Card className="reader-subscriptions__notification-settings">
+				<form
+					id="notification-settings"
+					onChange={ props.markChanged }
+					onSubmit={ props.submitForm }
+				>
+					<FormSectionHeading>{ translate( 'Subscriptions delivery' ) }</FormSectionHeading>
+					<p>
+						{ translate(
+							'{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
+							{
+								components: {
+									readerLink: (
+										<a
+											href="/following/edit"
+											onClick={ handleClickEvent( 'Edit Subscriptions in Reader Link' ) }
+										/>
+									),
+								},
+							}
 						) }
+					</p>
 
-						<FormButton
-							isSubmitting={ this.props.isUpdatingUserSettings }
-							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
-							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
+					<FormFieldset>
+						<FormLabel htmlFor="subscription_delivery_email_default">
+							{ translate( 'Default email delivery' ) }
+						</FormLabel>
+						<FormSelect
+							disabled={ props.getDisabledState() }
+							id="subscription_delivery_email_default"
+							name="subscription_delivery_email_default"
+							onChange={ props.updateSetting }
+							onFocus={ handleFocusEvent( 'Default Email Delivery' ) }
+							value={ props.getSetting( 'subscription_delivery_email_default' ) }
 						>
-							{ this.props.isUpdatingUserSettings
-								? this.props.translate( 'Saving…' )
-								: this.props.translate( 'Save notification settings' ) }
-						</FormButton>
-					</form>
-				</Card>
-			</Main>
-		);
-	}
-}
+							<option value="never">{ translate( 'Never send email' ) }</option>
+							<option value="instantly">{ translate( 'Send email instantly' ) }</option>
+							<option value="daily">{ translate( 'Send email daily' ) }</option>
+							<option value="weekly">{ translate( 'Send email every week' ) }</option>
+						</FormSelect>
+					</FormFieldset>
 
-const mapStateToProps = ( state ) => ( {
-	teams: getReaderTeams( state ),
-} );
+					<FormFieldset>
+						<FormLegend>{ translate( 'Jabber subscription delivery' ) }</FormLegend>
+						<FormLabel>
+							<FormCheckbox
+								checked={ props.getSetting( 'subscription_delivery_jabber_default' ) }
+								disabled={ props.getDisabledState() }
+								id="subscription_delivery_jabber_default"
+								name="subscription_delivery_jabber_default"
+								onChange={ props.toggleSetting }
+								onClick={ handleCheckboxEvent( 'Notification delivery by Jabber' ) }
+							/>
+							<span>{ translate( 'Default delivery via Jabber instant message' ) }</span>
+						</FormLabel>
+					</FormFieldset>
 
-const mapDispatchToProps = {
-	recordGoogleEvent,
+					<FormFieldset>
+						<FormLabel htmlFor="subscription_delivery_mail_option">
+							{ translate( 'Email delivery format' ) }
+						</FormLabel>
+						<FormSelect
+							disabled={ props.getDisabledState() }
+							id="subscription_delivery_mail_option"
+							name="subscription_delivery_mail_option"
+							onChange={ props.updateSetting }
+							onFocus={ handleFocusEvent( 'Email delivery format' ) }
+							value={ props.getSetting( 'subscription_delivery_mail_option' ) }
+						>
+							<option value="html">{ translate( 'HTML' ) }</option>
+							<option value="text">{ translate( 'Plain Text' ) }</option>
+						</FormSelect>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="subscription_delivery_day">
+							{ translate( 'Email delivery window' ) }
+						</FormLabel>
+						<FormSelect
+							disabled={ props.getDisabledState() }
+							className="reader-subscriptions__delivery-window"
+							id="subscription_delivery_day"
+							name="subscription_delivery_day"
+							onChange={ props.updateSetting }
+							onFocus={ handleFocusEvent( 'Email delivery window day' ) }
+							value={ props.getSetting( 'subscription_delivery_day' ) }
+						>
+							<option value="0">{ translate( 'Sunday' ) }</option>
+							<option value="1">{ translate( 'Monday' ) }</option>
+							<option value="2">{ translate( 'Tuesday' ) }</option>
+							<option value="3">{ translate( 'Wednesday' ) }</option>
+							<option value="4">{ translate( 'Thursday' ) }</option>
+							<option value="5">{ translate( 'Friday' ) }</option>
+							<option value="6">{ translate( 'Saturday' ) }</option>
+						</FormSelect>
+
+						<FormSelect
+							disabled={ props.getDisabledState() }
+							id="subscription_delivery_hour"
+							name="subscription_delivery_hour"
+							onChange={ props.updateSetting }
+							onFocus={ handleFocusEvent( 'Email Delivery Window Time' ) }
+							value={ props.getSetting( 'subscription_delivery_hour' ) }
+						>
+							{ [ ...Array( 12 ).keys() ].map( ( i ) => (
+								<option key={ i * 2 } value={ i * 2 }>
+									{ getDeliveryHourLabel( i * 2 ) }
+								</option>
+							) ) }
+						</FormSelect>
+
+						<FormSettingExplanation>
+							{ translate(
+								'When choosing daily or weekly email delivery, which time of day would you prefer?'
+							) }
+						</FormSettingExplanation>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLegend>
+							{ locale === 'en' || i18n.hasTranslation( 'Pause emails' )
+								? translate( 'Pause emails' )
+								: translate( 'Block emails' ) }
+						</FormLegend>
+						<FormLabel>
+							<FormCheckbox
+								checked={ props.getSetting( 'subscription_delivery_email_blocked' ) }
+								disabled={ props.getDisabledState() }
+								id="subscription_delivery_email_blocked"
+								name="subscription_delivery_email_blocked"
+								onChange={ props.toggleSetting }
+								onClick={ handleCheckboxEvent( 'Block All Notification Emails' ) }
+							/>
+							<span>
+								{ locale === 'en' ||
+								i18n.hasTranslation(
+									'Pause all email updates from sites you’re following on WordPress.com'
+								)
+									? translate(
+											'Pause all email updates from sites you’re following on WordPress.com'
+									  )
+									: translate(
+											'Block all email updates from blogs you’re following on WordPress.com'
+									  ) }
+							</span>
+						</FormLabel>
+					</FormFieldset>
+
+					{ isAutomattician && (
+						<FormFieldset>
+							<FormLegend>Auto-follow P2 posts upon commenting (Automatticians only)</FormLegend>
+							<FormLabel>
+								<FormCheckbox
+									checked={ props.getSetting( 'p2_autofollow_on_comment' ) }
+									disabled={ props.getDisabledState() }
+									id="p2_autofollow_on_comment"
+									name="p2_autofollow_on_comment"
+									onChange={ props.toggleSetting }
+									onClick={ handleCheckboxEvent( 'Auto-follow P2 Upon Comment' ) }
+								/>
+								<span>
+									Automatically subscribe to notifications for a P2 post whenever you leave a
+									comment on it.
+								</span>
+							</FormLabel>
+						</FormFieldset>
+					) }
+
+					<FormButton
+						isSubmitting={ props.isUpdatingUserSettings }
+						disabled={ props.isUpdatingUserSettings || ! props.hasUnsavedUserSettings }
+						onClick={ handleClickEvent( 'Save Notification Settings Button' ) }
+					>
+						{ props.isUpdatingUserSettings
+							? translate( 'Saving…' )
+							: translate( 'Save notification settings' ) }
+					</FormButton>
+				</form>
+			</Card>
+		</Main>
+	);
 };
 
 export default compose(
-	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocalizedMoment,
