@@ -27,6 +27,21 @@
 				}
 			}
 		}
+
+		.bulk-domain-transfer__cta-container {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 32px;
+
+			.bulk-domain-transfer__cta {
+				height: 48px;
+				width: 240px;
+
+				@media (max-width: $break-medium) {
+					width: 100%;
+				}
+			}
+		}
 	}
 
 	button:disabled {

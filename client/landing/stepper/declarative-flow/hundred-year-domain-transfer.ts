@@ -10,13 +10,13 @@ const hundredYearDomainTransfer: Flow = {
 		return translate( '100-Year Domain' );
 	},
 
-	useSideEffect( _currentStep, navigate ) {
-		// Always skip the "intro" step as we don't need it for the 100-year domain transfer flow.
-		// It doesn't make sense to show it as it contains additional cluttering information that
-		// doesn't matter specifically for the 100-year domain context - they'll come from a different entry point also.
-		if ( _currentStep === 'intro' ) {
-			navigate( 'domains' );
-		}
+	// Always start on the "domains" step, as we don't need what comes before it for the 100-year domain transfer flow.
+	// It doesn't make sense to show it as it contains additional cluttering information that doesn't matter
+	// specifically under the 100-year domain context - they'll also come from a different entry point.
+	useSteps() {
+		const transferSteps = domainTransfer.useSteps();
+		const domainsStepIndex = transferSteps.findIndex( ( step ) => step.slug === 'domains' );
+		return transferSteps.slice( domainsStepIndex );
 	},
 };
 
