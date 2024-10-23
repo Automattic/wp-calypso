@@ -12,9 +12,7 @@ import TransitionGroup from 'react-transition-group/TransitionGroup';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -27,7 +25,6 @@ import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -56,6 +53,7 @@ import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
 import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
+import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
 import './style.scss';
 
@@ -302,42 +300,6 @@ class Account extends Component {
 		return true;
 	}
 
-	communityTranslator() {
-		if ( ! this.shouldDisplayCommunityTranslator() ) {
-			return;
-		}
-		const { translate } = this.props;
-		return (
-			<FormFieldset>
-				<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
-				<FormLabel htmlFor={ ENABLE_TRANSLATOR_KEY }>
-					<FormCheckbox
-						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
-						onChange={ this.updateCommunityTranslatorSetting }
-						disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-						id={ ENABLE_TRANSLATOR_KEY }
-						name={ ENABLE_TRANSLATOR_KEY }
-						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
-					/>
-					<span>
-						{ translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
-							components: {
-								a: (
-									<a
-										target="_blank"
-										rel="noopener noreferrer"
-										href="https://translate.wordpress.com/community-translator/"
-										onClick={ this.getClickHandler( 'Community Translator Learn More Link' ) }
-									/>
-								),
-							},
-						} ) }
-					</span>
-				</FormLabel>
-			</FormFieldset>
-		);
-	}
-
 	thankTranslationContributors() {
 		if ( ! this.shouldDisplayCommunityTranslator() ) {
 			return;
@@ -406,15 +368,6 @@ class Account extends Component {
 
 	getFocusHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	}
-
-	getCheckboxHandler( checkboxName ) {
-		return ( event ) => {
-			const action = 'Clicked ' + checkboxName + ' checkbox';
-			const value = event.target.checked ? 1 : 0;
-
-			this.props.recordGoogleEvent( 'Me', action, 'checked', value );
-		};
 	}
 
 	handleUsernameChangeBlogRadio = ( event ) => {
@@ -993,7 +946,14 @@ class Account extends Component {
 							{ this.thankTranslationContributors() }
 						</FormFieldset>
 
-						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
+						{ this.props.canDisplayCommunityTranslator && (
+							<FormFieldset className="account__settings-admin-home">
+								<FormLabel id="account__default_landing_page">
+									{ translate( 'Community Translator' ) }
+								</FormLabel>
+								<ToggleUseCommunityTranslator />
+							</FormFieldset>
+						) }
 
 						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
