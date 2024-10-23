@@ -39,6 +39,9 @@ export const getZendeskConversation = ( {
 
 	// We need to ensure that more than one message is loaded
 	return Smooch.getConversationById( conversation.id )
-		.then( ( conversation ) => parseResponse( conversation ) )
+		.then( ( conversation ) => {
+			Smooch.markAllAsRead( conversation.id );
+			return parseResponse( conversation );
+		} )
 		.catch( () => parseResponse( conversation ) );
 };
