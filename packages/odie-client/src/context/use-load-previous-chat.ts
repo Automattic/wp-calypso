@@ -49,13 +49,20 @@ export const useLoadPreviousChat = ( {
 					messages: [ ...messages, ...( conversation.messages as Message[] ) ],
 				} );
 			} );
+			setChat( { ...existingChat, messages } );
 		} else {
 			setChat( {
 				chat_id: null,
 				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 			} );
 		}
-	}, [ botNameSlug, existingChat, odieInitialPromptText, setSupportProvider, isChatLoaded ] );
+	}, [
+		botNameSlug,
+		existingChat?.chat_id,
+		odieInitialPromptText,
+		setSupportProvider,
+		isChatLoaded,
+	] );
 
 	return { chat };
 };
