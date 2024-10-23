@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
@@ -17,6 +18,12 @@ const MIGRATION_SURVEY_FLOWS = [
 
 const SurveyManager = () => {
 	const { params } = useFlowNavigation();
+	const isEnLocale = useIsEnglishLocale();
+
+	// Skip survey for non-English locales
+	if ( ! isEnLocale ) {
+		return null;
+	}
 
 	if ( ! params.flow ) {
 		return null;
