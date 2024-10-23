@@ -38,7 +38,7 @@ export function SiteIconWithPicker( {
 
 	const handleFileChange = useCallback(
 		( file: File | undefined ) => {
-			if ( file ) {
+			if ( file && file.size ) {
 				setEditingFileName( file.name );
 				setEditingFile( URL.createObjectURL( file ) );
 				setImageEditorOpen( true );
@@ -75,9 +75,13 @@ export function SiteIconWithPicker( {
 					allowedAspectRatios={ [ 'ASPECT_1X1' ] }
 					onDone={ ( _error: Error | null, image: Blob ) => {
 						onSelect( new File( [ image ], editingFileName || 'site-logo.png' ) );
-						setSelectedFileUrl( URL.createObjectURL( image ) );
-						setEditingFile( URL.createObjectURL( image ) );
-						setImageEditorOpen( false );
+						try {
+							const objectURL = URL.createObjectURL( image );
+							setSelectedFileUrl( objectURL );
+							setEditingFile( objectURL );
+						} finally {
+							setImageEditorOpen( false );
+						}
 					} }
 					onCancel={ () => {
 						if ( ! selectedFileUrl ) {
