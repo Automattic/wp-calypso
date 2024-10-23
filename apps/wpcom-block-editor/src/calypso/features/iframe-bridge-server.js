@@ -26,27 +26,45 @@ import {
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
-let addedListener = false;
+let addedClickListener = false;
 // Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
-	if ( ! addedListener ) {
+	if ( ! addedClickListener ) {
 		document
 			.querySelector( 'body.is-iframed' )
 			?.addEventListener( 'click', triggerOverrideHandler );
-		addedListener = true;
+		addedClickListener = true;
 	}
 }
 
+const enterOverrides = {};
+let addedEnterListener = false;
 function addCommandsInputListener( selector, cb ) {
-	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
-		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
-		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+	enterOverrides[ selector ] = cb;
 
-		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
-			cb( e );
-		}
-	} );
+	if ( ! addedEnterListener ) {
+		document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+			const isInputActive = document.activeElement?.matches(
+				'.commands-command-menu__header input'
+			);
+			const selectedCommand = document.querySelector( '[data-selected=true]' );
+
+			if ( e.key === 'Enter' && isInputActive && !! selectedCommand ) {
+				const matchingSelector = Object.keys( enterOverrides ).find( ( _selector ) => {
+					return selectedCommand.matches( _selector );
+				} );
+
+				if ( matchingSelector ) {
+					const callback = enterOverrides[ matchingSelector ];
+
+					callback?.( e );
+				}
+			}
+		} );
+
+		addedEnterListener = true;
+	}
 }
 
 /**
