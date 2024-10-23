@@ -231,6 +231,10 @@ export interface HTTPCodeSerie {
 }
 
 function colorToAlpha( color: keyof typeof colorStudio.colors, alpha: number ) {
+	if ( alpha < 0 || alpha >= 1 ) {
+		return colorStudio.colors[ color ];
+	}
+
 	const hex = colorStudio.colors[ color ];
 
 	const bigint = parseInt( hex.slice( 1 ), 16 );
