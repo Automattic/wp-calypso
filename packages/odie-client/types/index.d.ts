@@ -33,6 +33,19 @@ declare module 'calypso/components/popover-menu' {
 	export default EllipsisMenu;
 }
 
+declare module 'calypso/components/textarea-autosize' {
+	const TextareaAutosize: FC< {
+		placeholder: string;
+		className: string;
+		rows: number;
+		value: string;
+		onChange: ( event: React.ChangeEvent< HTMLTextAreaElement > ) => void;
+		onKeyPress: ( event: KeyboardEvent< HTMLTextAreaElement > ) => Promise< void >;
+	} >;
+
+	export default TextareaAutosize;
+}
+
 declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUser: ( state: unknown ) => { display_name: string };
 }

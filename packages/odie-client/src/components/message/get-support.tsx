@@ -1,14 +1,14 @@
-import { useCreateZendeskConversation } from '../../query/use-create-zendesk-conversation';
+import { useZendeskConversations } from '../../utils/use-zendesk-conversations';
 
 import './get-support.scss';
 
 export const GetSupport = () => {
-	const newConversation = useCreateZendeskConversation();
+	const { startNewConversation } = useZendeskConversations();
 
-	const handleOnClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
+	const handleOnClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
 
-		await newConversation();
+		startNewConversation();
 	};
 
 	return (

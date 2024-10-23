@@ -1,20 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
-.odie-chatbox__action-message {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 16px;
-
-	.message-header {
-		display: flex;
-		align-items: center;
-		width: 100%;
-		gap: 8px;
-	}
-}
-
 .odie-chatbox-message {
 	display: flex;
 	justify-content: space-between;

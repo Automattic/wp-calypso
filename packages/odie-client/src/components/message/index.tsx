@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -10,7 +10,9 @@ import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
 import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatarSquared from '../../assets/wapuu-squared-avatar.svg';
+import WapuuThinking from '../../assets/wapuu-thinking.svg';
 import { useOdieAssistantContext } from '../../context';
+import { uuid } from '../../query';
 import Button from '../button';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types/';
@@ -42,6 +44,7 @@ const MessageAvatarHeader = ( {
 	isFullscreen: boolean;
 	handleFullscreenToggle: () => void;
 } ) => {
+	const { _x } = useI18n();
 	const isMobile = useMobileBreakpoint();
 	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 
@@ -49,14 +52,32 @@ const MessageAvatarHeader = ( {
 		return message.role === 'bot' ? (
 			<>
 				<WapuuAvatar className={ wapuuAvatarClasses } />
-				<strong className="message-header-name"></strong>
+				{ message.type === 'placeholder' ? (
+					<img
+						src={ WapuuThinking }
+						alt={
+							/* translators: %s is bot name, like Wapuu */
+							_x( 'Loading state, awaiting response from AI', 'html alt tag', __i18n_text_domain__ )
+						}
+						className="odie-chatbox-thinking-icon"
+					/>
+				) : (
+					<strong className="message-header-name"></strong>
+				) }
 
 				<div className="message-header-buttons">
 					{ message.content?.length > 600 && ! isMobile && (
 						<Button compact borderless onClick={ handleFullscreenToggle }>
 							<img
 								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+								alt={
+									/* translators: %s is bot name, like Wapuu */
+									_x(
+										'Icon to expand or collapse AI messages',
+										'html alt tag',
+										__i18n_text_domain__
+									)
+								}
 							/>
 						</Button>
 					) }
@@ -72,7 +93,7 @@ const MessageAvatarHeader = ( {
 			<Gravatar
 				user={ currentUser }
 				size={ 32 }
-				alt={ __( 'User profile display picture', __i18n_text_domain__ ) }
+				alt={ _x( 'User profile display picture', 'html alt tag', __i18n_text_domain__ ) }
 			/>
 			<strong className="message-header-name">{ currentUser.display_name }</strong>
 		</>
@@ -80,16 +101,36 @@ const MessageAvatarHeader = ( {
 		<>
 			<img
 				src={ WapuuAvatarSquared }
-				alt={ __( 'AI profile picture', __i18n_text_domain__ ) }
+				alt={
+					/* translators: %s is bot name, like Wapuu */
+					_x( 'AI profile picture', 'html alt tag', __i18n_text_domain__ )
+				}
 				className={ wapuuAvatarClasses }
 			/>
-			<strong className="message-header-name">{ botName }</strong>
+			{ message.type === 'placeholder' ? (
+				<img
+					src={ WapuuThinking }
+					alt={ _x(
+						'Loading state, awaiting response from AI',
+						'html alt tag',
+						__i18n_text_domain__
+					) }
+					className="odie-chatbox-thinking-icon"
+				/>
+			) : (
+				<strong className="message-header-name">{ botName }</strong>
+			) }
+
 			<div className="message-header-buttons">
 				{ message.content?.length > 600 && ! isMobile && (
 					<Button compact borderless onClick={ handleFullscreenToggle }>
 						<img
 							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-							alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+							alt={ _x(
+								'Icon to expand or collapse AI messages',
+								'html alt tag',
+								__i18n_text_domain__
+							) }
 						/>
 					</Button>
 				) }
@@ -104,10 +145,11 @@ const ChatMessage = ( {
 	...messageIndicators
 }: ChatMessageProps & MessageIndicators ) => {
 	const isBot = message.role === 'bot';
-	const { botName } = useOdieAssistantContext();
+	const { botName, addMessage } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
-	const [ isDisliked ] = useState( false );
+	const [ isDisliked, setIsDisliked ] = useState( false );
 
+	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const fullscreenRef = useRef< HTMLDivElement >( null );
 
 	const handleBackdropClick = () => {
@@ -142,12 +184,28 @@ const ChatMessage = ( {
 		</div>
 	);
 
+	const onDislike = () => {
+		setIsDisliked( true );
+		if ( isRequestingHumanSupport || isDisliked ) {
+			return;
+		}
+		setTimeout( () => {
+			addMessage( {
+				internal_message_id: uuid(),
+				content: '...',
+				role: 'bot',
+				type: 'dislike-feedback',
+			} );
+		}, 1200 );
+	};
+
 	const fullscreenContent = (
 		<div className="odie-fullscreen" onClick={ handleBackdropClick }>
 			<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
 				<MessageContent
 					message={ message }
 					messageHeader={ messageHeader }
+					onDislike={ onDislike }
 					ref={ fullscreenRef }
 					isDisliked={ isDisliked }
 					{ ...messageIndicators }
@@ -161,6 +219,7 @@ const ChatMessage = ( {
 			<MessageContent
 				message={ message }
 				messageHeader={ messageHeader }
+				onDislike={ onDislike }
 				ref={ fullscreenRef }
 				isDisliked={ isDisliked }
 				{ ...messageIndicators }

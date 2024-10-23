@@ -1,38 +1,31 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import Markdown from 'react-markdown';
-import WapuuAvatarSquared from '../../assets/wapuu-squared-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
 import { uriTransformer } from './uri-transformer';
 
 export const DislikeFeedbackMessage = () => {
-	const { shouldUseHelpCenterExperience, extraContactOptions, botName } = useOdieAssistantContext();
-
+	const { shouldUseHelpCenterExperience, extraContactOptions } = useOdieAssistantContext();
+	const { _x } = useI18n();
 	return (
 		<>
-			<div className="message-header bot">
-				<img
-					src={ WapuuAvatarSquared }
-					alt={ __( 'AI profile picture', __i18n_text_domain__ ) }
-					className="odie-chatbox-message-avatar"
-				/>
-				<strong className="message-header-name">{ botName }</strong>
-			</div>
-			<div className="odie-chatbox-dislike-feedback-message">
-				<Markdown
-					urlTransform={ uriTransformer }
-					components={ {
-						a: CustomALink,
-					} }
-				>
-					{ __(
+			<Markdown
+				urlTransform={ uriTransformer }
+				components={ {
+					a: CustomALink,
+				} }
+			>
+				{
+					/* translators: Message displayed when the user dislikes a message from the bot */
+					_x(
 						'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+						'Message displayed when the user dislikes a message from the bot',
 						__i18n_text_domain__
-					) }
-				</Markdown>
-				{ shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions }
-			</div>
+					)
+				}
+			</Markdown>
+			{ shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions }
 		</>
 	);
 };
