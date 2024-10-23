@@ -61,7 +61,10 @@ const HelpCenterRecentConversations: React.FC = () => {
 		return [];
 	}
 
-	const lastConversation = conversations[ 0 ];
+	const lastUnreadConversation = conversations.find(
+		( conversation ) => conversation.participants[ 0 ]?.unreadCount > 0
+	);
+	const lastConversation = lastUnreadConversation || conversations[ 0 ];
 	const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
 
 	const chatMessage = {
