@@ -3,9 +3,15 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import React, { cloneElement, useCallback, useContext, useMemo, useState } from 'react';
-import { SurveyContextType, SurveyActionsContextType, TriggerProps, SurveyProps } from './types';
-import './style.scss';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	type SurveyContextType,
+	type SurveyActionsContextType,
+	type TriggerProps,
+	type SurveyProps,
+} from './types';
 export * from './types';
+import './style.scss';
 
 const SurveyContext = React.createContext< SurveyContextType | undefined >( undefined );
 
@@ -101,10 +107,12 @@ export const Survey = ( {
 			} );
 
 			if ( reason === 'accept' ) {
+				recordTracksEvent( 'calypso_survey_accepted', { survey: name, action: reason } );
 				onAccept?.();
 			}
 
 			if ( reason === 'skip' ) {
+				recordTracksEvent( 'calypso_survey_skipped', { survey: name, action: reason } );
 				onSkip?.();
 			}
 
