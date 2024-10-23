@@ -125,7 +125,18 @@ export default function PluginsListDataViews( {
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
 					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) ) {
-						return <Button variant="secondary">Update to 1.2.3</Button>;
+						return (
+							<Button
+								variant="secondary"
+								onClick={ () => bulkActionDialog( PluginActions.UPDATE, [ item ] ) }
+							>
+								{ translate( 'Update to version %(version)s', {
+									args: {
+										version: item?.update?.new_version || '',
+									},
+								} ) }
+							</Button>
+						);
 					}
 				},
 			},
