@@ -25,6 +25,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -166,6 +167,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: { domain_name: string } ) => {
 		setDomain( freeDomainSuggestion );
 	};
+
+	usePresalesChat( 'wpcom' );
 
 	const plansFeaturesList = () => {
 		return (
