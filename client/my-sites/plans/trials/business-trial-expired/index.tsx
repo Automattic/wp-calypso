@@ -18,6 +18,7 @@ import wasMigrationTrialSite from 'calypso/state/selectors/was-migration-trial-s
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { BusinessTrialPlans } from '../business-trial-plans';
+import { TrialExpiredSurveyDialog } from './trial-expired-survey';
 
 const BusinessTrialExpired = (): JSX.Element => {
 	const translate = useTranslate();
@@ -124,6 +125,7 @@ const BusinessTrialExpired = (): JSX.Element => {
 						<span>{ translate( 'Delete your site permanently' ) }</span>
 					</Button>
 				</div>
+				<TrialExpiredSurveyDialog />
 			</Main>
 		</>
 	);
