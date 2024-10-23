@@ -34,4 +34,3 @@ export { useOdieAssistantContext } from './context';
 export { useSetOdieStorage, useGetOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';
 export { isOdieAllowedBot } from './utils/is-odie-allowed-bot';
-export type { ZendeskConversation, ZendeskMessage } from './types/index';
