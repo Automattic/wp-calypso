@@ -35,25 +35,6 @@ $video-green: #0e5837;
 		.agency-tier__current-agency-tier-title {
 			@include a4a-font-heading-lg;
 		}
-
-		&.is-default {
-			margin-inline-start: 14px;
-			padding-block: 36px;
-			gap: 24px;
-
-			.agency-tier__current-agency-tier-icon {
-				display: flex;
-				width: 80px;
-
-				img {
-					transform: scale(1.6);
-				}
-			}
-
-			.agency-tier__current-agency-tier-title {
-				@include a4a-font-body-lg;
-			}
-		}
 	}
 
 	.agency-tier__current-agency-tier-description {
