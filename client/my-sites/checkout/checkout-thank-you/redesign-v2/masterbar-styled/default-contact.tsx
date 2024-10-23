@@ -28,7 +28,7 @@ const ContactContainer = styled.div`
 		font-size: 14px;
 
 		span {
-			color: var( --studio-wordpress-blue-50 );
+			color: var( --color-accent );
 		}
 
 		&:hover {
