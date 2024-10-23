@@ -33,7 +33,7 @@ import type {
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type { RequestTemplate } from '../templates';
-import type { Design, DesignOptions } from '@automattic/design-picker/src/types'; // Import from a specific file directly to avoid the circular dependencies
+import type { Design, DesignOptions, StyleVariation } from '@automattic/design-picker/src/types'; // Import from a specific file directly to avoid the circular dependencies
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -223,7 +223,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* setGlobalStyles(
 		siteIdOrSlug: number | string,
 		stylesheet: string,
-		globalStyles: GlobalStyles,
+		globalStyles: GlobalStyles | StyleVariation,
 		activatedTheme?: ActiveTheme
 	) {
 		// only update if there settings or styles to update
@@ -404,14 +404,13 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariation?.slug
 			);
 
-			if ( currentVariation ) {
-				yield* setGlobalStyles(
-					siteSlug,
-					activatedTheme.stylesheet,
-					currentVariation,
-					activatedTheme
-				);
-			}
+			// the default style is not in variations, so we set it as a fallback here
+			yield* setGlobalStyles(
+				siteSlug,
+				activatedTheme.stylesheet,
+				currentVariation || styleVariation,
+				activatedTheme
+			);
 		}
 
 		if ( globalStyles ) {
