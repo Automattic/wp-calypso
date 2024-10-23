@@ -4,15 +4,33 @@ $blueberry-color: #3858e9;
 
 .odie-chatbox__action-message {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	gap: 8px;
 	padding: 16px;
+	flex-wrap: wrap;
 
 	.message-header {
 		display: flex;
 		align-items: center;
-		width: 100%;
-		gap: 8px;
+	}
+
+	.odie-chatbox-dislike-feedback-message {
+		flex: 1;
+		.message-header {
+			width: auto;
+		}
+		p {
+			width: 80%;
+			display: flex;
+			padding: 16px;
+			align-items: center;
+			justify-content: center;
+			background-color: var(--studio-gray-0);
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px 8px 8px 0;
+			font-size: 0.875rem;
+			margin-bottom: 8px;
+		}
 	}
 }
 

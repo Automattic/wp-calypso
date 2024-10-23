@@ -1,8 +1,7 @@
 .help-center__container-chat .chatbox-messages .odie__transfer-to-human {
 	display: flex;
-	justify-content: left;
-	gap: 8px;
 	width: 100%;
+	margin-left: 11%;
 
 	button {
 		border-radius: 2px;
@@ -14,6 +13,7 @@
 		justify-content: center;
 		align-items: center;
 		gap: 4px;
+		color: var(--studio-gray-70);
 
 		&:hover {
 			border: 1px solid var(--studio-gray-20);

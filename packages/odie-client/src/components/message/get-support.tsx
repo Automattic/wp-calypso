@@ -13,7 +13,7 @@ export const GetSupport = () => {
 
 	return (
 		<div className="odie__transfer-to-human">
-			<button onClick={ handleOnClick }>Get support</button>
+			<button onClick={ handleOnClick }>Get instant support</button>
 		</div>
 	);
 };
