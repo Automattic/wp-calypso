@@ -51,9 +51,19 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 		queryKey: [ 'domain-code-valid', VERSION, pair.domain, hashAuthCode( pair.auth ) ],
 		queryFn: async () => {
 			try {
+				const options = ! pair.options
+					? {}
+					: Object.entries( pair.options ).reduce(
+							( acc, [ key, value ] ) => {
+								acc[ key ] = String( value );
+								return acc;
+							},
+							{} as Record< string, string >
+					  );
 				const availability = await wpcomRequest< DomainLockResponse >( {
 					apiVersion: '1.3',
 					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
+					query: new URLSearchParams( options ).toString(),
 				} );
 
 				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred
@@ -90,8 +100,6 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 				} ).catch( () => ( { success: false } ) );
 
 				// TODO: Replace hardcoded value/checks by 100-year domain product price when we have it.
-				// We'll also n to pass it to the backend (/is-available) also, so it can return the proper value
-				// and we don't rely on hacks such as this one.
 				const price = pair.options?.is_hundred_year_domain ? 2000 : availability.raw_price;
 
 				return {
