@@ -94,12 +94,21 @@ const BackupScheduleSetting: FunctionComponent = () => {
 		const hour = data?.scheduledHour || 0;
 		const range = convertHourToRange( hour, true );
 
-		if ( ! data || ! data.scheduledBy ) {
-			return `${ translate( 'Default time' ) }. UTC: ${ range }`;
-		}
-		return `${ translate( 'Time set by %(scheduledBy)s', {
-			args: { scheduledBy: data.scheduledBy },
-		} ) }. UTC: ${ range }`;
+		const scheduledBy =
+			! data || ! data.scheduledBy
+				? translate( 'Currently using default time.' )
+				: translate( 'Time set by %(scheduledBy)s.', {
+						args: { scheduledBy: data.scheduledBy },
+				  } );
+
+		const utcInfo = translate( 'UTC (%(timeRange)s) is used as the base timezone.', {
+			args: {
+				timeRange: range,
+			},
+			comment: '%(timeRange)s is a time range, such as 10:00-10:59.',
+		} );
+
+		return `${ scheduledBy } ${ utcInfo }`;
 	};
 
 	return (
