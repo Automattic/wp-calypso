@@ -17,6 +17,7 @@ import { useChatStatus, useShouldRenderEmailOption } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
+import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterSearch } from './help-center-search';
@@ -119,6 +120,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							/>
 						}
 					/>
+					<Route
+						path="/odie/:id"
+						element={
+							<HelpCenterChat
+								isLoadingEnvironment={ isLoadingEnvironment }
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								searchTerm={ searchTerm }
+							/>
+						}
+					/>
+					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />
 				</Routes>
 			</Wrapper>
 		</CardBody>
