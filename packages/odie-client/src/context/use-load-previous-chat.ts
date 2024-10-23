@@ -38,7 +38,9 @@ export const useLoadPreviousChat = ( {
 			} )?.then( ( conversation ) => {
 				setSupportProvider( 'zendesk' );
 				setChat( {
-					chat_id: conversation.metadata[ 'odieChatId' ],
+					chat_id: conversation.metadata[ 'odieChatId' ]
+						? Number( conversation.metadata[ 'odieChatId' ] )
+						: null,
 					...existingChat,
 					conversationId: conversation.id,
 					messages: [ ...messages, ...( conversation.messages as Message[] ) ],
