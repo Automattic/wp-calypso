@@ -2,11 +2,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
 const redirectRoutes = [
-	{ flow: '/setup/blog/', to: '/start:lang?' },
-	{ flow: '/setup/free/', to: '/start/free:lang?' },
-	{ flow: '/setup/link-in-bio/', to: '/start:lang?' },
-	{ flow: '/setup/videopress/', to: '/start:lang?' },
-	{ flow: '/setup/sensei/', to: ':lang?/plugins/sensei-pro/' },
+	{ from: '/setup/blog/', to: '/start:lang?' },
+	{ from: '/setup/free/', to: '/start/free:lang?' },
+	{ from: '/setup/link-in-bio/', to: '/start:lang?' },
+	{ from: '/setup/videopress/', to: '/start:lang?' },
+	{ from: '/setup/sensei/', to: ':lang?/plugins/sensei-pro/' },
 ];
 
 // Regex pattern for the optional language code in the format xx or xx-yy
@@ -18,7 +18,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	pathname = pathname.endsWith( '/' ) ? pathname : pathname + '/';
 
 	// Find the matching redirect route
-	const route = redirectRoutes.find( ( redirect ) => pathname.startsWith( redirect.flow ) );
+	const route = redirectRoutes.find( ( redirect ) => pathname.startsWith( redirect.from ) );
 
 	// If no route is found we don't redirect and return false
 	if ( ! route ) {
@@ -37,7 +37,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	// Track the redirect event
 	recordTracksEvent( 'calypso_tailored_flows_redirect', {
 		redirectFromUrl: location.pathname + location.search,
-		redirectTo: finalUrl,
+		redirectToUrl: finalUrl,
 		referrer: document.referrer,
 	} );
 
