@@ -28,21 +28,21 @@ export const useLoadPreviousChat = ( {
 		if ( ! isChatLoaded ) {
 			return;
 		}
-		if ( existingChat ) {
+		if ( existingChat || selectedConversationId ) {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
-			let messages = [ initialMessage, ...( existingChat as Chat ).messages ];
+			const messages = [ initialMessage, ...( existingChat as Chat ).messages ];
 
 			getZendeskConversation( {
-				chatId: existingChat.chat_id,
+				chatId: existingChat?.chat_id,
 				conversationId: selectedConversationId,
 			} )?.then( ( conversation ) => {
-				if ( conversation ) {
-					setSupportProvider( 'zendesk' );
-					messages = [ ...messages, ...( conversation.messages as Message[] ) ];
-					existingChat.conversationId = conversation.id;
-				}
-
-				setChat( { ...existingChat, messages } );
+				setSupportProvider( 'zendesk' );
+				setChat( {
+					chat_id: conversation.metadata[ 'odieChatId' ],
+					...existingChat,
+					conversationId: conversation.id,
+					messages: [ ...messages, ...( conversation.messages as Message[] ) ],
+				} );
 			} );
 		} else {
 			setChat( {
