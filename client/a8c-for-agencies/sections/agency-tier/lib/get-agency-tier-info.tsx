@@ -1,5 +1,8 @@
+import AgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-background.svg';
 import AgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-logo-small.svg';
+import EmergingPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-background.svg';
 import EmergingPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-logo-small.svg';
+import ProAgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-background.svg';
 import ProAgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo-small.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { AgencyTierInfo } from '../types';
@@ -22,6 +25,7 @@ const getAgencyTierInfo = (
 			extraDescription: undefined,
 			benefits: [],
 			video: '',
+			image: '',
 		},
 	};
 	switch ( agencyTier ) {
@@ -69,6 +73,7 @@ const getAgencyTierInfo = (
 					],
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/emerging_partner_tier_celebration.mp4',
+					image: EmergingPartnerBackground,
 				},
 			};
 			break;
@@ -108,6 +113,7 @@ const getAgencyTierInfo = (
 					],
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/agency_partner_tier_celebration-2.mp4',
+					image: AgencyPartnerBackground,
 				},
 			};
 			break;
@@ -146,6 +152,7 @@ const getAgencyTierInfo = (
 					],
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/agency_pro_partner_tier_celebration-2.mp4',
+					image: ProAgencyPartnerBackground,
 				},
 			};
 	}
