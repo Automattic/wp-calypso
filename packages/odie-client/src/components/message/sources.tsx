@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
@@ -9,6 +9,7 @@ import type { Message, Source } from '../../types/';
 export const Sources = ( { message }: { message: Message } ) => {
 	const navigate = useNavigate();
 	const { trackEvent } = useOdieAssistantContext();
+	const { _x } = useI18n();
 	const sources = useMemo( () => {
 		const messageLength = message?.context?.sources?.length ?? 0;
 		if ( messageLength > 0 ) {
@@ -40,7 +41,11 @@ export const Sources = ( { message }: { message: Message } ) => {
 		<FoldableCard
 			className="odie-sources-foldable-card"
 			clickableHeader
-			header={ __( 'Related Guides', __i18n_text_domain__ ) }
+			header={ _x(
+				'Related Guides',
+				'Below this text are links to sources for the current message received from the bot.',
+				__i18n_text_domain__
+			) }
 			onClose={ () =>
 				trackEvent( 'chat_message_action_sources', {
 					action: 'close',

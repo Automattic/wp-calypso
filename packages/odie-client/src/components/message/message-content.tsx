@@ -15,6 +15,7 @@ export const MessageContent = forwardRef<
 	{
 		message: Message;
 		messageHeader: React.ReactNode;
+		onDislike: () => void;
 		isDisliked?: boolean;
 	} & MessageIndicators
 >(
@@ -23,6 +24,7 @@ export const MessageContent = forwardRef<
 			isDisliked = false,
 			message,
 			messageHeader,
+			onDislike,
 			isLastErrorMessage,
 			isLastFeedbackMessage,
 			isLastMessage,
@@ -51,7 +53,7 @@ export const MessageContent = forwardRef<
 					{ messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
 					{ ( message.type === 'message' || ! message.type ) && (
-						<UserMessage message={ message } isDisliked={ isDisliked } />
+						<UserMessage message={ message } onDislike={ onDislike } isDisliked={ isDisliked } />
 					) }
 					{ message.type === 'introduction' && (
 						<div className="odie-introduction-message-content">

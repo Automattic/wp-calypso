@@ -1,8 +1,8 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
-import { useOdieAssistantContext } from '../../context';
-import { useSendOdieFeedback } from '../../query/use-send-odie-feedback';
+import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../';
+import { noop, useOdieAssistantContext } from '../../context';
+import { useOdieSendMessageFeedback } from '../../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
 import type { Message } from '../../types/';
 
@@ -10,13 +10,16 @@ import './style.scss';
 
 const WasThisHelpfulButtons = ( {
 	message,
+	onDislike = noop,
 	isDisliked = false,
 }: {
 	message: Message;
+	onDislike?: () => void;
 	isDisliked?: boolean;
 } ) => {
-	const { setMessageLikedStatus, trackEvent, setChatStatus } = useOdieAssistantContext();
-	const { mutateAsync: sendOdieMessageFeedback } = useSendOdieFeedback();
+	const { _x } = useI18n();
+	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
+	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
 
 	const liked = message.liked === true;
 	const notLiked = message.liked === false;
@@ -24,15 +27,13 @@ const WasThisHelpfulButtons = ( {
 
 	const handleIsHelpful = ( isHelpful: boolean ) => {
 		sendOdieMessageFeedback( {
-			messageId: Number( message.message_id ),
-			ratingValue: isHelpful ? ODIE_THUMBS_UP_RATING_VALUE : ODIE_THUMBS_DOWN_RATING_VALUE,
+			message,
+			rating_value: isHelpful ? ODIE_THUMBS_UP_RATING_VALUE : ODIE_THUMBS_DOWN_RATING_VALUE,
 		} );
 
 		setMessageLikedStatus( message, isHelpful );
 		if ( ! isHelpful ) {
-			setTimeout( () => {
-				setChatStatus( 'dislike' );
-			}, 1000 );
+			onDislike();
 		}
 
 		trackEvent( 'chat_message_action_feedback', {
@@ -80,9 +81,25 @@ const WasThisHelpfulButtons = ( {
 		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
 				<span className={ questionClasses }>
-					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
+					{
+						/* translators: Indicates if a messaged provided by a chatbot was helpful or not */
+						_x(
+							'Was this helpful?',
+							'Indicates if a messaged provided by a chatbot was helpful or not',
+							__i18n_text_domain__
+						)
+					}
 				</span>
-				<span className={ thanksClasses }>{ __( 'Thanks!', __i18n_text_domain__ ) }</span>
+				<span className={ thanksClasses }>
+					{
+						/* translators: Indicates that the user has provided feedback to a chatbot message */
+						_x(
+							'Thanks!',
+							' Indicates that the user has provided feedback to a chatbot message',
+							__i18n_text_domain__
+						)
+					}
+				</span>
 			</div>
 			<span className="odie-feedback-component-button-container">
 				<button

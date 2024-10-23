@@ -98,7 +98,6 @@ export type Message = {
 };
 
 export type Chat = {
-	conversationId?: string;
 	chat_id?: number | null;
 	messages: Message[];
 };
