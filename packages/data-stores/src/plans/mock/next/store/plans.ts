@@ -28,9 +28,12 @@ export const NEXT_STORE_SITE_PLAN_BUSINESS: SitePlan = {
 	productId: 2,
 	pricing: {
 		introOffer: {
-			formattedPrice: '$15.00',
-			rawPrice: 15,
-			intervalUnit: 'month',
+			formattedPrice: '$150.00',
+			rawPrice: {
+				monthly: 1250,
+				full: 15000,
+			},
+			intervalUnit: 'year',
 			intervalCount: 1,
 			isOfferComplete: false,
 		},
@@ -84,9 +87,12 @@ export const NEXT_STORE_PLAN_BUSINESS: PlanNext = {
 		billPeriod: 365,
 		currencyCode: 'USD',
 		introOffer: {
-			formattedPrice: '$25.00',
-			rawPrice: 25,
-			intervalUnit: 'month',
+			formattedPrice: '$300.00',
+			rawPrice: {
+				monthly: 2500,
+				full: 30000,
+			},
+			intervalUnit: 'year',
 			intervalCount: 1,
 			isOfferComplete: false,
 		},

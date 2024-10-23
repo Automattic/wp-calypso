@@ -14,7 +14,7 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI, Plans } from '@automattic/data-stores';
 import { englishLocales } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
@@ -39,6 +39,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -48,7 +49,6 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
@@ -148,7 +148,7 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 	);
 }
 
-class Plans extends Component {
+class PlansComponent extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
 		redirectToAddDomainFlow: PropTypes.bool,
@@ -511,9 +511,8 @@ class Plans extends Component {
 }
 
 const ConnectedPlans = connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const currentPlan = getCurrentPlan( state, selectedSiteId );
+	( state, props ) => {
+		const { currentPlan, selectedSiteId } = props;
 		const currentPlanIntervalType = getIntervalTypeForTerm(
 			getPlan( currentPlan?.productSlug )?.term
 		);
@@ -521,7 +520,7 @@ const ConnectedPlans = connect(
 		return {
 			currentPlan,
 			currentPlanIntervalType,
-			purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
+			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 			isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
@@ -543,12 +542,15 @@ const ConnectedPlans = connect(
 	( dispatch ) => ( {
 		fetchSitePlans: ( siteId ) => dispatch( fetchSitePlans( siteId ) ),
 	} )
-)( withCartKey( withShoppingCart( localize( Plans ) ) ) );
+)( withCartKey( withShoppingCart( localize( PlansComponent ) ) ) );
 
 export default function PlansWrapper( props ) {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
+
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlans { ...props } />
+			<ConnectedPlans { ...props } currentPlan={ currentPlan } selectedSiteId={ selectedSiteId } />
 		</CalypsoShoppingCartProvider>
 	);
 }

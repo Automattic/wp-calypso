@@ -12,5 +12,6 @@ export interface AgencyTierInfo {
 		extraDescription?: string;
 		benefits: string[];
 		video: string;
+		image: string;
 	};
 }

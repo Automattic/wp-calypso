@@ -15,22 +15,31 @@ interface Props {
 
 /**
  * Example valid handles:
+ * - domain.tld
  * - username.bsky.social
  * - user-name.bsky.social
- * - my_domain.com.bsky.social
- * - my-domain.com.my-own-server.com
+ * - my-domain.com
  * @param {string} handle - Handle to validate
  * @returns {boolean} - Whether the handle is valid
  */
 function isValidBlueskyHandle( handle: string ) {
 	const parts = handle.split( '.' ).filter( Boolean );
 
-	// A valid handle should have at least 3 parts - username, domain, and tld
-	if ( parts.length < 3 ) {
+	// A valid handle should have at least 2 parts - domain, and tld
+	if ( parts.length < 2 ) {
 		return false;
 	}
 
 	return parts.every( ( part ) => /^[a-z0-9_-]+$/i.test( part ) );
+}
+
+/**
+ * Remove any leading "@" and trim the handle
+ * @param {string} handle - Handle to cleanup
+ * @returns {string} - Cleaned up handle
+ */
+function cleanUpHandle( handle: string ) {
+	return handle.replaceAll( /@/g, '' ).trim();
 }
 
 const isAlreadyConnected = ( connections: Array< Connection >, handle: string ) => {
@@ -53,7 +62,7 @@ export const Bluesky: React.FC< Props > = ( {
 	useEffect( () => {
 		const handle = formRef.current?.elements.namedItem( 'handle' ) as HTMLInputElement;
 
-		if ( ! isConnecting && isAlreadyConnected( connections, handle.value ) ) {
+		if ( ! isConnecting && isAlreadyConnected( connections, cleanUpHandle( handle.value ) ) ) {
 			formRef.current?.reset();
 		}
 	}, [ isConnecting, connections ] ); // eslint-disable-line react-hooks/exhaustive-deps
@@ -64,11 +73,12 @@ export const Bluesky: React.FC< Props > = ( {
 	const handleSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 		e.stopPropagation();
+		setError( '' );
 
 		const formData = new FormData( e.target as HTMLFormElement );
 
 		// Let us make the user's life easier by removing the leading "@" if they added it
-		const handle = ( formData.get( 'handle' )?.toString().trim() || '' ).replace( /^@/, '' );
+		const handle = cleanUpHandle( formData.get( 'handle' )?.toString().trim() || '' );
 		const app_password = formData.get( 'app_password' )?.toString().trim() || '';
 
 		if ( isAlreadyConnected( connections, handle ) ) {

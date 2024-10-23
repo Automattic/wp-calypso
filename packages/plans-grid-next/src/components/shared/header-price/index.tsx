@@ -50,15 +50,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
-		const introOfferPrice =
-			introOffer.intervalUnit === 'year'
-				? parseFloat( ( introOffer.rawPrice / ( introOffer.intervalCount * 12 ) ).toFixed( 2 ) )
-				: introOffer.rawPrice;
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
 					<div className="plans-grid-next-header-price__badge">
-						{ translate( 'Limited Time Offer' ) }
+						{ translate( 'Special Offer' ) }
 					</div>
 				) }
 				<div
@@ -77,10 +73,10 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ introOfferPrice }
+						rawPrice={ introOffer.rawPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency
-						isSmallestUnit={ false }
+						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						discounted
 					/>

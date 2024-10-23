@@ -6,11 +6,13 @@ import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 
 import { connect, useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
+import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/constants';
+import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { curatedBlogs } from '../curated-blogs';
 
 import './style.scss';
 
@@ -134,7 +136,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		} );
 
 		return finalRec;
-	}, [ followedTagSlugs, apiRecommendedSites ] );
+	}, [ followedTagSlugs, apiRecommendedSites, dispatch ] );
 
 	const displayedRecommendations = useMemo( () => {
 		const startIndex = currentPage * 6;
@@ -181,6 +183,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
 			.replace( /\/$/, '' ); // Remove trailing slash
 	};
+
+	const handleContinue = useCallback( () => {
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		onClose();
+	}, [ dispatch, onClose ] );
 
 	return (
 		isOpen && (
@@ -232,7 +239,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								{ loadMoreText }
 							</Button>
 						) }
-						<Button className="subscribe-modal__continue-button is-primary" onClick={ onClose }>
+						<Button
+							className="subscribe-modal__continue-button is-primary"
+							onClick={ handleContinue }
+						>
 							{ __( 'Continue' ) }
 						</Button>
 					</div>
@@ -265,4 +275,4 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	);
 };
 
-export default connect( null, { requestPage } )( SubscribeModal );
+export default connect( null, { requestPage, savePreference } )( SubscribeModal );
