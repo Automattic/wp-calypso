@@ -37,7 +37,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@electron/notarize": "^2.4.0",
-		"copy-webpack-plugin": "^10.2.4",
+		"copy-webpack-plugin": "^12.0.2",
 		"electron": "26.2.4",
 		"electron-builder": "23.0.3",
 		"electron-rebuild": "^2.3.5",
@@ -48,7 +48,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"webpack": "^5.94.0",
-		"webpack-cli": "^4.10.0"
+		"webpack-cli": "^5.1.4"
 	},
 	"dependencies": {
 		"archiver": "^3.1.1",
