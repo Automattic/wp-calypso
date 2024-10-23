@@ -120,7 +120,8 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	];
 
 	const numberDays = get( query, 'num', '0' );
-	const selected = find( options, { value: numberDays } );
+	let selected = find( options, { value: numberDays } );
+	selected = selected || options[ 0 ];
 
 	const tabs = (
 		<SegmentedControl

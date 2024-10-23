@@ -121,7 +121,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const hasSignificantViews = !! ( views && views >= SIGNIFICANT_VIEWS_AMOUNT );
 
 	const { data } = usePlanUsageQuery( siteId );
-	const currentUsage = data?.current_usage.views_count || 0;
+	const currentUsage = data?.current_usage?.views_count || 0;
 	const tierLimit = data?.views_limit || null;
 	const isNearLimit = tierLimit ? currentUsage / tierLimit >= 0.9 : false;
 	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
