@@ -32,6 +32,11 @@ export const useLoadPreviousChat = ( {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
 			const messages = [ initialMessage, ...( existingChat as Chat ).messages ];
 
+			setChat( {
+				...existingChat,
+				messages,
+			} );
+
 			getZendeskConversation( {
 				chatId: existingChat?.chat_id,
 				conversationId: selectedConversationId,
