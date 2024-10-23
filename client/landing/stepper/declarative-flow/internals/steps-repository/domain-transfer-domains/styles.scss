@@ -11,6 +11,24 @@
 	align-items: center;
 	gap: 30px;
 
+	&.hundred-year-domain-transfer {
+
+		&.step-route {
+			gap: 0;
+			width: 100%;
+			margin: 0;
+			max-width: none;
+		}
+
+		.domains {
+			.step-container__header {
+				@media (max-width: $break-wide) {
+					margin-top: 32px;
+				}
+			}
+		}
+	}
+
 	button:disabled {
 		pointer-events: none;
 	}

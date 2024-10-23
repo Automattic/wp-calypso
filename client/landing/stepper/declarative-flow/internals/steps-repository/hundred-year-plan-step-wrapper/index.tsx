@@ -26,6 +26,7 @@ type Props = {
 	stepName: string;
 	flowName: string;
 	variantSlug?: string;
+	mobileBreakpoint?: number;
 	stepContent: ReactElement;
 	justifyStepContent?: string;
 	formattedHeader?: ReactElement;
@@ -280,9 +281,10 @@ function HundredYearPlanStepWrapper( props: Props ) {
 		justifyStepContent,
 		hideInfoColumn,
 		variantSlug,
+		mobileBreakpoint,
 	} = props;
 
-	const isMobile = useBreakpoint( `<${ SMALL_BREAKPOINT }px` );
+	const isMobile = useBreakpoint( `<${ mobileBreakpoint ?? SMALL_BREAKPOINT }px` );
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
@@ -315,8 +317,10 @@ function HundredYearPlanStepWrapper( props: Props ) {
 							</InfoColumnWrapper>
 						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>
-							<div className="step-container__header">{ formattedHeader }</div>
-							{ stepContent }
+							<div className="hundred-year-plan-step-wrapper__step-container">
+								<div className="step-container__header">{ formattedHeader }</div>
+								{ stepContent }
+							</div>
 						</FlexWrapper>
 					</Container>
 				}
