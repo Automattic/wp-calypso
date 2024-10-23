@@ -1,0 +1,156 @@
+$video-pink: #f4b1ff;
+$video-blue: #002d3e;
+$video-green: #0e5837;
+
+.agency-tier__card {
+	padding: 8px;
+	border-radius: 4px;
+
+	.foldable-card__header {
+		padding-inline: 12px;
+	}
+
+	.sidebar-v2__menu-item {
+		&:hover {
+			svg.sidebar-v2__external-icon {
+				color: var(--color-text-inverted);
+			}
+		}
+	}
+}
+
+.agency-tier__bottom-content {
+	padding-inline: 12px;
+
+	.agency-tier__current-agency-tier-header {
+		margin-inline-start: 8px;
+		padding-block: 16px 12px;
+		display: flex;
+		gap: 16px;
+
+		.agency-tier__current-agency-tier-icon img {
+			transform: scale(1.5);
+		}
+
+		.agency-tier__current-agency-tier-title {
+			@include a4a-font-heading-lg;
+		}
+
+		&.is-default {
+			margin-inline-start: 14px;
+			padding-block: 36px;
+			gap: 24px;
+
+			.agency-tier__current-agency-tier-icon {
+				display: flex;
+				width: 80px;
+
+				img {
+					transform: scale(1.6);
+				}
+			}
+
+			.agency-tier__current-agency-tier-title {
+				@include a4a-font-body-lg;
+			}
+		}
+	}
+
+	.agency-tier__current-agency-tier-description {
+		@include a4a-font-body-md;
+		padding-block-end: 8px;
+	}
+}
+
+.foldable-nav.foldable-card.card .foldable-card__content .agency-tier__bottom-content a.components-button {
+	@include a4a-font-body-md;
+	padding: 0;
+	color: var(--color-gray-40);
+
+	svg {
+		margin-inline-end: 8px;
+	}
+
+	&:hover {
+		background: none;
+		box-shadow: none;
+	}
+}
+
+.agency-tier-celebration-modal {
+	&.emerging-partner {
+
+		&.a4a-themed-modal .components-modal__content.hide-header {
+			background: $video-pink;
+		}
+	}
+
+	&.agency-partner {
+
+		&.a4a-themed-modal .components-modal__content.hide-header {
+			background: $video-blue;
+		}
+	}
+
+	&.pro-agency-partner {
+		&.a4a-themed-modal .components-modal__content.hide-header {
+			background: $video-green;
+		}
+	}
+
+	&.a4a-themed-modal .components-modal__content.hide-header {
+		padding: 0;
+	}
+
+	.a4a-themed-modal__content {
+		margin: 8px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		padding-bottom: 16px;
+		max-height: 450px;
+	}
+
+	.a4a-themed-modal__sidebar-image-container {
+		min-width: 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.agency-tier-celebration-modal__content {
+		display: flex;
+		gap: 16px;
+		flex-direction: column;
+		max-height: 360px;
+		overflow: scroll;
+		margin-block-end: 16px;
+
+		.agency-tier-celebration-modal__title {
+			@include a4a-font-heading-xl;
+		}
+
+		.agency-tier-celebration-modal__description,
+		.agency-tier-celebration-modal__extra-description {
+			@include a4a-font-body-md;
+		}
+
+		.agency-tier-celebration-modal__benefits {
+			display: grid;
+			gap: 4px;
+			margin: 0 0 0 0.8rem;
+			list-style-image: url(calypso/assets/images/a8c-for-agencies/agency-tier/check-icon.svg);
+
+			li {
+				@include a4a-font-body-md;
+				padding-inline-start: 8px;
+				margin-inline-start: 4px;
+			}
+		}
+
+		a.components-button {
+			margin-block-start: 8px;
+			width: fit-content;
+		}
+	}
+}

@@ -56,7 +56,7 @@ export function getPlatformImporterName( platform: ImporterPlatform ): string {
 }
 
 export function convertPlatformName( platform: ImporterPlatform ): string {
-	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
+	return platformMap[ platform ] ?? 'Unknown';
 }
 
 export function convertToFriendlyWebsiteName( website: string ): string {

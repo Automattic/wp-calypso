@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useEffect } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
@@ -42,6 +43,7 @@ export function HelpCenterChat( {
 	return (
 		<OdieAssistantProvider
 			isLoadingEnvironment={ isLoadingEnvironment }
+			shouldUseHelpCenterExperience={ config.isEnabled( 'help-center-experience' ) }
 			currentUser={ currentUser }
 			initialUserMessage={ searchTerm }
 			selectedSiteId={ site?.ID as number }

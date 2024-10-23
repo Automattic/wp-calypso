@@ -24,7 +24,7 @@ import DefensiveModeCard from 'calypso/hosting/server-settings/components/defens
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
 import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
-import SFTPCard from 'calypso/hosting/server-settings/components/sftp-card';
+import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card';
 import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -111,7 +111,7 @@ const AllCards = ( {
 	const allCards: CardEntry[] = [
 		{
 			feature: 'sftp',
-			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			content: <SftpCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
 		},
 		{

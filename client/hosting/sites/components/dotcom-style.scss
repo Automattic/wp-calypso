@@ -73,30 +73,33 @@
 		}
 	}
 
-	.sites-a8c-for-agencies-banner-container {
+	.sites-banner-container {
+		box-sizing: border-box;
 		display: flex;
 		justify-content: center;
+		margin: 0 auto;
+		padding-inline: 48px;
+		width: 100%;
+
+		@media (max-width: 402px) {
+			padding-inline: 24px;
+		}
+
+		@include break-huge {
+			max-width: 1400px;
+		}
 	}
 
-	.sites-a8c-for-agencies-banner {
-		margin-inline: 16px;
+	.sites-banner {
+		width: 100%;
 
 		.banner__action {
 			a {
-				display: flex;
+				display: inline-flex;
 				white-space: nowrap;
 			}
 		}
 
-		@include break-large {
-			margin-inline: 26px;
-		}
-
-		@include break-huge {
-			margin-inline: 64px;
-			width: 100%;
-			max-width: 1400px;
-		}
 	}
 
 	.dataviews-filters__view-actions {
@@ -181,6 +184,10 @@
 	table.dataviews-view-table th:last-child,
 	table.dataviews-view-table td:last-child {
 		display: table-cell; /* ensures these cells are always shown */
+	}
+
+	table.dataviews-view-table td:last-child .dataviews-view-table__cell-content-wrapper {
+		justify-content: flex-end;
 	}
 
 	.sites-overview__content {
@@ -534,9 +541,11 @@
 
 		.dataviews-wrapper {
 			.dataviews-pagination {
+				border: 0;
 				margin: 0;
+				padding-left: 0;
+				padding-right: 0;
 				position: relative;
-				width: 100%;
 			}
 
 			.spinner-wrapper {
@@ -554,7 +563,12 @@
 		margin: 0 auto;
 		max-width: 1400px;
 		box-sizing: border-box;
+
+		.dataviews-pagination {
+			width: auto;
+		}
 	}
+
 	div.a4a-layout__viewport {
 		margin: 0 auto;
 		max-width: 1400px;
@@ -563,19 +577,6 @@
 
 	.a4a-layout-column__container {
 		margin: 0 -14px;
-		.dataviews-wrapper {
-			.dataviews-pagination {
-				@include break-large {
-					padding-left: 26px;
-					padding-right: 26px;
-				}
-
-				@include break-huge {
-					padding-left: 64px;
-					padding-right: 64px;
-				}
-			}
-		}
 	}
 }
 
@@ -601,7 +602,7 @@
 			.a4a-layout__viewport {
 				display: flex;
 				margin: 0;
-				padding: 16px;
+				padding: 16px 24px;
 			}
 
 			.a4a-layout__header {
@@ -634,7 +635,7 @@
 			}
 		}
 
-		.sites-a8c-for-agencies-banner-container {
+		.sites-banner-container {
 			display: none;
 		}
 	}

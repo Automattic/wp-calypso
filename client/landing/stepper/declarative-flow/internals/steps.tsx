@@ -262,6 +262,12 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
 	},
 
+	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT: {
+		slug: 'other-platform-detected',
+		asyncComponent: () =>
+			import( './steps-repository/site-migration-other-platform-detected-import' ),
+	},
+
 	SITE_MIGRATION_HOW_TO_MIGRATE: {
 		slug: 'site-migration-how-to-migrate',
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
@@ -294,6 +300,10 @@ export const STEPS = {
 	SITE_MIGRATION_ALREADY_WPCOM: {
 		slug: 'already-wpcom',
 		asyncComponent: () => import( './steps-repository/site-migration-already-wpcom' ),
+	},
+	SITE_MIGRATION_SUPPORT_INSTRUCTIONS: {
+		slug: 'migration-support-instructions',
+		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
 	},
 
 	PICK_SITE: {

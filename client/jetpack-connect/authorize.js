@@ -1058,23 +1058,34 @@ export class JetpackAuthorize extends Component {
 								{ translate( 'Sign in as a different user' ) }
 							</LoggedOutFormLinkItem>
 						</Card>
-						<div className="jetpack-connect__logged-in-bottom">
-							{ this.renderStateAction() }
-							{ ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
+						{ ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
+							<div className="jetpack-connect__logged-in-bottom">
+								{ this.renderStateAction() }
 								<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
-							) }
-							<Disclaimer
-								siteName={ decodeEntities( authQuery.blogname ) }
-								companyName={ this.getCompanyName() }
-								from={ authQuery.from }
-							/>
-							{ ! config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
+								<Disclaimer
+									siteName={ decodeEntities( authQuery.blogname ) }
+									companyName={ this.getCompanyName() }
+									from={ authQuery.from }
+									isWooCoreProfiler={ this.isWooCoreProfiler() }
+								/>
 								<div className="jetpack-connect__jetpack-logo-wrapper">
 									<JetpackLogo monochrome size={ 18 } />{ ' ' }
 									<span>{ translate( 'Jetpack powered' ) }</span>
 								</div>
-							) }
-						</div>
+							</div>
+						) }
+
+						{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && (
+							<div className="jetpack-connect__logged-in-bottom">
+								<Disclaimer
+									siteName={ decodeEntities( authQuery.blogname ) }
+									companyName={ this.getCompanyName() }
+									from={ authQuery.from }
+									isWooCoreProfiler={ this.isWooCoreProfiler() }
+								/>
+								{ this.renderStateAction() }
+							</div>
+						) }
 					</div>
 					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
 				</Fragment>

@@ -1,10 +1,8 @@
-/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import wpcom from 'calypso/lib/wp'; // Import restricted
 
 interface APIFetchOptions {
 	global: boolean;
@@ -71,21 +69,22 @@ export const fetchLaunchpad = (
 	const slug = encodeURIComponent( siteSlug as string );
 	const checklistSlugEncoded = checklistSlug ? encodeURIComponent( checklistSlug ) : null;
 	const launchpadContextEncoded = launchpadContext ? encodeURIComponent( launchpadContext ) : null;
-
-	const requestUrl = addQueryArgs( `/sites/${ slug }/launchpad?_locale=user`, {
+	const queryArgs = {
+		_locale: 'uesr',
 		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
 		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
-	} );
+	};
 
 	return canAccessWpcomApis()
-		? wpcom.req.get( {
-				path: requestUrl,
+		? wpcomRequest( {
+				path: addQueryArgs( `/sites/${ slug }/launchpad`, queryArgs ),
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
+				method: 'GET',
 		  } )
 		: apiFetch( {
 				global: true,
-				path: `/wpcom/v2${ requestUrl }`,
+				path: addQueryArgs( `/wpcom/v2/launchpad`, queryArgs ),
 		  } as APIFetchOptions );
 };
 
@@ -159,18 +158,17 @@ export const updateLaunchpadSettings = (
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = siteSlug ? encodeURIComponent( siteSlug ) : null;
-	const requestUrl = `/sites/${ slug }/launchpad`;
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
-				path: requestUrl,
+				path: `/sites/${ slug }/launchpad`,
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
 				body: settings,
 		  } )
 		: apiFetch( {
 				global: true,
-				path: `/wpcom/v2${ requestUrl }`,
+				path: `/wpcom/v2/launchpad`,
 				method: 'PUT',
 				data: settings,
 		  } as APIFetchOptions );

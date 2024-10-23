@@ -489,6 +489,70 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
+		it( 'redirects from site-migration-credentials step to site-migration-other-platform-detected-import step when the site platform is not wordpress', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'site-is-not-using-wordpress',
+					platform: 'squarespace',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }?siteSlug=example.wordpress.com&platform=squarespace`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-other-platform-detected-import step to the importer flow', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }?siteSlug=example.wordpress.com&siteId=123&from=oldsite.com`,
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+				dependencies: {
+					action: 'import',
+					platform: 'squarespace',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						from: 'oldsite.com',
+						backToFlow: `site-migration/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
+						siteId: 123,
+						ref: 'site-migration',
+					},
+					'/setup/site-setup/importerSquarespace'
+				)
+			);
+		} );
+
+		it( 'redirects from site-migration-other-platform-detected-import step to the assisted migration step when the user skips the import', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }?siteSlug=example.wordpress.com&siteId=123&from=oldsite.com`,
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+				dependencies: {
+					action: 'skip',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: addQueryArgs(
+					{ siteId: 123, from: 'oldsite.com', siteSlug: 'example.wordpress.com' },
+					`/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`
+				),
+				state: null,
+			} );
+		} );
+
 		it( 'calls triggerGuidesForStep when navigating site migration identify', async () => {
 			const flowName = 'site-migration';
 			const currentStep = STEPS.SITE_MIGRATION_IDENTIFY.slug;
@@ -587,6 +651,19 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the other platform detected import step when going back from the credentials step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );

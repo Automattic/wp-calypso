@@ -22,15 +22,8 @@ interface CredentialsFormProps {
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const {
-		handleSubmit,
-		control,
-		errors,
-		accessMethod,
-		isBusy,
-		submitHandler,
-		getContinueButtonText,
-	} = useCredentialsForm( onSubmit );
+	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
+		useCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
 
@@ -42,8 +35,20 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 			'We ran into a problem submitting your details. Please try again shortly.'
 		);
 	}
+
+	const getContinueButtonText = () => {
+		if ( isEnglishLocale && isBusy && ! canBypassVerification ) {
+			return translate( 'Verifying credentials' );
+		}
+		if ( isEnglishLocale && canBypassVerification ) {
+			return translate( 'Continue anyways' );
+		}
+
+		return translate( 'Continue' );
+	};
+
 	return (
-		<form className="site-migration-credentials__form" onSubmit={ handleSubmit( submitHandler ) }>
+		<form className="site-migration-credentials__form" onSubmit={ submitHandler }>
 			{ errorMessage && (
 				<Notice
 					className="site-migration-credentials__error-notice"

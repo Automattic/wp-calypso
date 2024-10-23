@@ -243,6 +243,7 @@ class StatsSite extends Component {
 			supportUserFeedback,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
+		const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -371,12 +372,19 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				<div id="jp-admin-notices"></div>
 				<StatsNotices
 					siteId={ siteId }
 					isOdysseyStats={ isOdysseyStats }
 					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 				/>
+				{ isNewDateFilteringEnabled && (
+					<div
+						className="stats-new-date-filtering-callout"
+						style={ { background: 'antiquewhite', maring: '24px', padding: '24px' } }
+					>
+						<p>New date filtering enabled.</p>
+					</div>
+				) }
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>

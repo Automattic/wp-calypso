@@ -8,6 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
+import * as oauthToken from '@automattic/oauth-token';
 import debugModule from 'debug';
 import {
 	clone,
@@ -39,7 +40,6 @@ import {
 	recordSignupPlanChange,
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
@@ -527,7 +527,7 @@ class Signup extends Component {
 
 		const { isNewishUser, existingSiteCount } = this.props;
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewUser = !! ( dependencies && dependencies.is_new_account );
 		const siteId = dependencies && dependencies.siteId;
 		const isNew7DUserSite = !! (
 			isNewUser ||
@@ -591,6 +591,8 @@ class Signup extends Component {
 				isMapping: isMapping,
 				isTransfer: isTransfer,
 				signupDomainOrigin: signupDomainOriginValue,
+				framework: 'start',
+				isNewishUser,
 			} );
 		}
 	};
