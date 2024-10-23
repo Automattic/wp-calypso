@@ -5,6 +5,7 @@ import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketpl
 import MarketplaceProductInstall from 'calypso/my-sites/marketplace/pages/marketplace-product-install';
 import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
 import SignupSuccess from 'calypso/my-sites/marketplace/pages/submission-success/signup-success';
+import { MarketplaceHome } from './pages/marketplace-home';
 
 export function renderDomainsPage( context, next ) {
 	context.primary = <MarketplaceDomainUpsell />;
@@ -49,6 +50,11 @@ export function renderMarketplaceSignupSuccess( context, next ) {
 
 export function renderMarketplaceTestPage( context, next ) {
 	context.primary = <MarketplaceTest />;
+	next();
+}
+
+export function renderMarketplaceHomePage( context, next ) {
+	context.primary = <MarketplaceHome />;
 	next();
 }
 
