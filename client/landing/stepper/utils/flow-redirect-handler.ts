@@ -1,12 +1,12 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
-const redirectRoutes = [
-	{ from: '/setup/blog/', to: '/start:lang?' },
-	{ from: '/setup/free/', to: '/start/free:lang?' },
-	{ from: '/setup/link-in-bio/', to: '/start:lang?' },
-	{ from: '/setup/videopress/', to: '/start:lang?' },
-	{ from: '/setup/sensei/', to: ':lang?/plugins/sensei-pro/' },
+export const REMOVED_TAILORED_FLOWS = [
+	{ flow: 'blog', to: '/start:lang?' },
+	{ flow: 'free', to: '/start/free:lang?' },
+	{ flow: 'link-in-bio', to: '/start:lang?' },
+	{ flow: 'videopress', to: '/start:lang?' },
+	{ flow: 'sensei', to: ':lang?/plugins/sensei-pro/' },
 ];
 
 // Regex pattern for the optional language code in the format xx or xx-yy
@@ -18,7 +18,9 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	pathname = pathname.endsWith( '/' ) ? pathname : pathname + '/';
 
 	// Find the matching redirect route
-	const route = redirectRoutes.find( ( redirect ) => pathname.startsWith( redirect.from ) );
+	const route = REMOVED_TAILORED_FLOWS.find( ( { flow } ) =>
+		pathname.startsWith( `/setup/${ flow }/` )
+	);
 
 	// If no route is found we don't redirect and return false
 	if ( ! route ) {
