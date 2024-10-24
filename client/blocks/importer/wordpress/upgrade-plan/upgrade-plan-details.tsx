@@ -11,7 +11,7 @@ import { PricingMetaForGridPlan } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
-import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
+import { Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, type PropsWithChildren } from 'react';
@@ -230,7 +230,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 			<div className="import__upgrade-plan-container">
 				<div className="import__upgrade-plan-features-container">
 					<div className="import__upgrade-plan-header">
-						<Plans2023Tooltip
+						<Tooltip
 							text={ translate(
 								'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 							) }
@@ -239,7 +239,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 							activeTooltipId={ activeTooltipId }
 						>
 							<CloudLogo />
-						</Plans2023Tooltip>
+						</Tooltip>
 						<Title className="plan-title" tagName="h2">
 							{ plan?.getTitle() }
 						</Title>

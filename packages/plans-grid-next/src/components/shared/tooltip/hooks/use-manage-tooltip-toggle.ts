@@ -1,7 +1,7 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { hasTouch } from '../lib/touch-detect';
+import { hasTouch } from '../../../../lib/touch-detect';
 
-export function useManageTooltipToggle(): [ string, Dispatch< SetStateAction< string > > ] {
+const useManageTooltipToggle = (): [ string, Dispatch< SetStateAction< string > > ] => {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const isTouch = hasTouch();
 
@@ -14,7 +14,8 @@ export function useManageTooltipToggle(): [ string, Dispatch< SetStateAction< st
 		// Since the plan logos are an SVG, we are checking the event target's parent classes to determine the tooltip container.
 		const closeAllTooltips = ( event: TouchEvent ) => {
 			const eventTarget = event.target as Element;
-			if ( ! eventTarget.closest( '.plans-2023-tooltip__hover-area-container' ) ) {
+
+			if ( ! eventTarget.closest( '.plans-grid-next-tooltip__hover-area-container' ) ) {
 				setActiveTooltipId( '' );
 			}
 		};
@@ -27,4 +28,6 @@ export function useManageTooltipToggle(): [ string, Dispatch< SetStateAction< st
 	}, [ isTouch ] );
 
 	return [ activeTooltipId, setActiveTooltipId ];
-}
+};
+
+export default useManageTooltipToggle;

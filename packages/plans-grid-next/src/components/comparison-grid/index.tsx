@@ -26,17 +26,16 @@ import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
-import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanTypeSelector from '../plan-type-selector';
-import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import ActionButton from '../shared/action-button';
 import BillingTimeframe from '../shared/billing-timeframe';
 import HeaderPrice from '../shared/header-price';
 import { PlanStorage } from '../shared/storage';
+import Tooltip, { useManageTooltipToggle } from '../shared/tooltip';
 import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,
@@ -609,7 +608,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 						<>
 							{ planPaymentTransactionFees ? (
 								<>
-									<Plans2023Tooltip
+									<Tooltip
 										text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 										setActiveTooltipId={ setActiveTooltipId }
 										activeTooltipId={ activeTooltipId }
@@ -618,7 +617,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 										<span className="plan-comparison-grid__plan-title">
 											{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
 										</span>
-									</Plans2023Tooltip>
+									</Tooltip>
 									<span className="plan-comparison-grid__plan-conditional-title">
 										{ planPaymentTransactionFees?.getAlternativeTitle?.() }
 									</span>
@@ -635,7 +634,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
-							<Plans2023Tooltip
+							<Tooltip
 								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
@@ -644,7 +643,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								<span className="plan-comparison-grid__plan-title">
 									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
 								</span>
-							</Plans2023Tooltip>
+							</Tooltip>
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }
@@ -719,7 +718,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 				isFeatureGroupRowTitleCell
 			>
 				{ isStorageFeature ? (
-					<Plans2023Tooltip
+					<Tooltip
 						text={
 							enableFeatureTooltips
 								? translate( 'Space to store your photos, media, and more.' )
@@ -730,12 +729,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						id={ tooltipId }
 					>
 						{ translate( 'Storage' ) }
-					</Plans2023Tooltip>
+					</Tooltip>
 				) : (
 					<>
 						{ feature && (
 							<>
-								<Plans2023Tooltip
+								<Tooltip
 									text={ enableFeatureTooltips ? feature.getDescription?.() : undefined }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
@@ -747,10 +746,10 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											<sup>{ footnote }</sup>
 										</FeatureFootnote>
 									) }
-								</Plans2023Tooltip>
+								</Tooltip>
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
-										<Plans2023Tooltip
+										<Tooltip
 											text={ translate(
 												'Security, performance, and growth tools—powered by Jetpack.'
 											) }
@@ -759,7 +758,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											id={ `jp-${ tooltipId }` }
 										>
 											<JetpackLogo size={ 16 } />
-										</Plans2023Tooltip>
+										</Tooltip>
 									</JetpackIconContainer>
 								) : null }
 							</>
