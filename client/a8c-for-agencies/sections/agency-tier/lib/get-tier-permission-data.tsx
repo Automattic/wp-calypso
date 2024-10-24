@@ -20,10 +20,10 @@ const getTierPermissionData = (
 			title: translate( 'Partner Directory' ),
 			content: {
 				heading: preventWidows(
-					translate( "Reach the next tier to be showcased in Automattic's partner directories." )
+					translate( 'Access this benefit when you become an Agency Partner.' )
 				),
 				description: translate(
-					"Agency Partners and Pro Agency Partners get to be included in Automatic's directories. Pro Agency Partners also get co-marketing opportunities."
+					"Agency Partners and Pro Agency Partners can apply to be included in Automatic's directory listings."
 				),
 				buttonProps: {
 					text: translate( 'Learn more' ),
