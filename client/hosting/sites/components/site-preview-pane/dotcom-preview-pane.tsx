@@ -5,7 +5,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
+import { SiteStatus } from 'calypso/hosting/sites/components/sites-dataviews/sites-site-status';
 import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
+import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -56,6 +58,7 @@ const DotcomPreviewPane = ( {
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
+	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -141,7 +144,7 @@ const DotcomPreviewPane = ( {
 	] );
 
 	const itemData: ItemData = {
-		title: site.title,
+		title: isMigrationPending ? __( 'Incoming Migration' ) : site.title,
 		subtitle: site.slug,
 		url: site.URL,
 		blogId: site.ID,
@@ -192,12 +195,17 @@ const DotcomPreviewPane = ( {
 			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
-				siteIconFallback: 'first-grapheme',
+				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
-				subtitleExtra: () =>
-					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
-						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
-					),
+				subtitleExtra: () => {
+					if ( isMigrationPending ) {
+						return <SiteStatus site={ site } />;
+					}
+
+					if ( site.is_wpcom_staging_site || isStagingStatusFinished ) {
+						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
+					}
+				},
 			} }
 		/>
 	);

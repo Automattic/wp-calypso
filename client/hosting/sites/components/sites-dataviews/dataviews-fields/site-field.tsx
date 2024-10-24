@@ -19,7 +19,7 @@ import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link
 import {
 	displaySiteUrl,
 	isNotAtomicJetpack,
-	isMigrationInProgress,
+	getMigrationStatus,
 	isStagingSite,
 } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -80,8 +80,8 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 		event.preventDefault();
 	};
 
-	const isMigrating = isMigrationInProgress( site );
-	const siteTitle = isMigrating ? translate( 'Incoming Migration' ) : site.title;
+	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
 		<div className="sites-dataviews__site">
@@ -104,7 +104,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 							<SiteFavicon
 								className="sites-site-favicon"
 								blogId={ site.ID }
-								fallback={ isMigrating ? 'migration' : 'first-grapheme' }
+								fallback={ isMigrationPending ? 'migration' : 'first-grapheme' }
 								size={ 56 }
 							/>
 						</ThumbnailLink>
