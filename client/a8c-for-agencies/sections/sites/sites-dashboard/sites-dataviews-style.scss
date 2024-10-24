@@ -46,6 +46,15 @@
 	}
 }
 
+.sites-dataviews__site-error-popover-list {
+	margin: 16px;
+	margin-inline-start: 32px;
+
+	li {
+		@include a4a-font-body-sm($font-weight: 500);
+	}
+}
+
 .preview-hidden {
 	@media (min-width: 2040px) {
 		.sites-dataviews__site-name {
