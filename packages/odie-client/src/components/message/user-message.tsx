@@ -22,7 +22,7 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
-	const isOnlyMessage = message.context?.flags?.only_message;
+	const hideDisclaimerContent = message.context?.flags?.hide_disclaimer_content;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
@@ -66,7 +66,7 @@ export const UserMessage = ( {
 			>
 				{ isRequestingHumanSupport ? displayMessage : message.content }
 			</Markdown>
-			{ ! isOnlyMessage && (
+			{ ! hideDisclaimerContent && (
 				<div className="chat-feedback-wrapper">
 					{ showExtraContactOptions ? renderExtraContactOptions() : isBot && renderDisclaimers() }
 				</div>
