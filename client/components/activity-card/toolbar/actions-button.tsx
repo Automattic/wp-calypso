@@ -51,9 +51,16 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 
 	if ( useSplitButton ) {
 		const secondaryActions = [
-			needsCredentials && <CredentialsPrompt siteSlug={ siteSlug } />,
-			isSuccessfulBackup && <ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } />,
-			<DownloadButton siteId={ siteId } siteSlug={ siteSlug } rewindId={ rewindId } />,
+			needsCredentials && <CredentialsPrompt key="credentials-prompt" siteSlug={ siteSlug } />,
+			isSuccessfulBackup && (
+				<ViewFilesButton key="view-files-button" siteSlug={ siteSlug } rewindId={ rewindId } />
+			),
+			<DownloadButton
+				key="download-button"
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				rewindId={ rewindId }
+			/>,
 		];
 
 		return (
