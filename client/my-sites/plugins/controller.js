@@ -40,6 +40,7 @@ function renderSinglePlugin( context, siteUrl ) {
 			path: context.path,
 			pluginSlug,
 			siteUrl,
+			isJetpackCloud: context.path?.includes( 'manage=true' ),
 		} );
 	}
 }
