@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
-import { REMOVED_TAILORED_FLOWS } from 'calypso/landing/stepper/utils/flow-redirect-handler';
+import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -68,8 +68,7 @@ export async function maybeRedirect( context, next ) {
 			checklist: launchpadChecklist,
 		} = await fetchLaunchpad( slug );
 
-		const isRemovedFlow = REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === siteIntentOption );
-		const shouldShowLaunchpad = ! isRemovedFlow;
+		const shouldShowLaunchpad = ! isRemovedFlow( siteIntentOption );
 
 		if (
 			shouldShowLaunchpad &&

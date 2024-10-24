@@ -8,13 +8,16 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
-export const REMOVED_TAILORED_FLOWS = [
+const REMOVED_TAILORED_FLOWS = [
 	{ flow: BLOG_FLOW, to: '/start:lang?' },
 	{ flow: FREE_FLOW, to: '/start/free:lang?' },
 	{ flow: LINK_IN_BIO_FLOW, to: '/start:lang?' },
 	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
 	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
+
+export const isRemovedFlow = ( flowToCheck ) =>
+	REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
 
 // Regex pattern for the optional language code in the format xx or xx-yy
 const langPattern = '(?:/([a-z]{2}(?:-[a-z]{2})?))?/?$';
