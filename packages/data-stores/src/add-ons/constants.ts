@@ -1,4 +1,4 @@
-export const STORAGE_LIMIT = 200;
+export const STORAGE_LIMIT = 203;
 
 export const ADD_ON_JETPACK_AI_MONTHLY = 'jetpack_ai_monthly-add-on';
 export const ADD_ON_UNLIMITED_THEMES = 'unlimited_themes-add-on';
