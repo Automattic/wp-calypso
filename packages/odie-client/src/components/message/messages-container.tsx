@@ -41,6 +41,11 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 
 		const lastMessageIndex = chat.messages.length - 1;
 
+		// Used to apply the correct styling on messages
+		const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
+			return currentMessage === nextMessage;
+		};
+
 		return (
 			<div className="chatbox-messages" ref={ ref }>
 				{ chat.messages.map( ( message, index ) => (
@@ -52,6 +57,10 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 						isLastFeedbackMessage={ lastFeedbackMessageIndex === index }
 						isLastErrorMessage={ lastErrorMessageIndex === index }
 						isLastMessage={ lastMessageIndex === index }
+						areLastMessagesFromSameSender={ isNextMessageFromSameSender(
+							message.role,
+							chat.messages[ index + 1 ]?.role
+						) }
 					/>
 				) ) }
 				{ chatStatus === 'dislike' && <DislikeThumb /> }

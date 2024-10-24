@@ -19,11 +19,6 @@ $blueberry-color: #3858e9;
 	padding: 16px;
 	flex-wrap: wrap;
 
-	.message-header {
-		display: flex;
-		align-items: center;
-	}
-
 	.odie-chatbox-dislike-feedback-message {
 		flex: 1;
 		.message-header {
@@ -39,7 +34,7 @@ $blueberry-color: #3858e9;
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px 8px 8px 0;
 			font-size: 0.875rem;
-			margin-bottom: 8px;
+			margin-bottom: 0;
 		}
 	}
 }
@@ -51,7 +46,7 @@ $blueberry-color: #3858e9;
 	line-height: 1.4;
 	color: #000;
 	flex-direction: row;
-	padding: 16px 16px 8px 16px;
+	padding: 0 16px;
 	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
@@ -119,7 +114,7 @@ $blueberry-color: #3858e9;
 	background-color: $blueberry-color;
 	width: 80%;
 	margin-right: 16px;
-	margin-top: 8px;
+	padding: 16px;
 	p {
 		color: var(--studio-white);
 		padding: 0;
@@ -543,6 +538,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
+	padding-bottom: 16px;
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;
@@ -560,5 +556,8 @@ $custom-border-corner-size: 16px;
 		.foldable-card {
 			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
 		}
+	}
+	&.next-chat-message-same-sender {
+		padding-bottom: 8px;
 	}
 }
