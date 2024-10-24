@@ -32,17 +32,6 @@
 				grid-template-columns: repeat(2, 1fr);
 			}
 		}
-
-		.select-goals__actions-container {
-			padding-top: 32px;
-			padding-bottom: 60px + 48px; // height of sticky footer + height of bottom whitespace
-
-			@include break-small {
-				padding-top: 48px;
-				padding-bottom: 48px;
-				justify-content: center;
-			}
-		}
 	}
 
 	.step-container__header {
@@ -87,6 +76,29 @@
 
 	.select-goals__links-container {
 		padding-bottom: 60px; // height of sticky footer
+	}
+
+	.select-goals__alternative-flows-container {
+		padding-top: 52px;
+		padding-bottom: 60px + 48px; // Height of sticky footer + height of bottom whitespace
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: 8px;
+
+		@include break-small {
+			padding-top: 48px;
+			padding-bottom: 48px;
+		}
+	}
+
+	.select-goals__link.is-link { // extra specificity to override default link styles
+		color: var(--studio-gray-100);
+		font-size: $font-body-small;
+	}
+
+	.select-goals__link-separator::before {
+		content: "•";
 	}
 }
 
