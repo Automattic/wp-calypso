@@ -84,11 +84,12 @@ function generateApiQueryString( {
 			case 'updated':
 				params.sort = 'plugin_modified';
 				break;
-			case 'wpbeginner':
-				params.filter = getFilterbySlugs( slugs || [] );
-				break;
 			default:
-				params.filter = getFilterByCategory( category );
+				if ( Array.isArray( slugs ) && slugs.length ) {
+					params.filter = getFilterbySlugs( slugs || [] );
+				} else {
+					params.filter = getFilterByCategory( category );
+				}
 				params.sort = 'active_installs';
 		}
 	}
