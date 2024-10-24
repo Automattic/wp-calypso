@@ -8,6 +8,7 @@ import {
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
@@ -23,7 +24,10 @@ const MetricTabBar = ( props: Props ) => {
 
 	const handleTabClick = ( tab: Metrics ) => {
 		setActiveTab( tab );
-		recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', { tab } );
+		recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
+			tab,
+			version: profilerVersion(),
+		} );
 	};
 
 	return (
