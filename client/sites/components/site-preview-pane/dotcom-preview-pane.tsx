@@ -19,6 +19,8 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
+	DOTCOM_MARKETING_TOOLS,
+	DOTCOM_MARKETING_BUSINESS_TOOLS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -101,6 +103,11 @@ const DotcomPreviewPane = ( {
 				label: __( 'Staging Site' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_STAGING_SITE ],
+			},
+			{
+				label: __( 'Marketing' ),
+				enabled: config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [ DOTCOM_MARKETING_TOOLS, DOTCOM_MARKETING_BUSINESS_TOOLS ],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )
