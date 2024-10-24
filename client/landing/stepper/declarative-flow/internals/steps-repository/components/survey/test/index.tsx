@@ -35,9 +35,7 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerAccept>
-					<Button>Take the survey</Button>
-				</SurveyTriggerAccept>
+				<SurveyTriggerAccept>Take the survey</SurveyTriggerAccept>
 			</Survey>
 		);
 		await userEvent.click( screen.getByText( 'Take the survey' ) );
@@ -66,9 +64,7 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME } onAccept={ onAccept }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerAccept>
-					<Button>Take the survey</Button>
-				</SurveyTriggerAccept>
+				<SurveyTriggerAccept>Take the survey</SurveyTriggerAccept>
 			</Survey>
 		);
 
@@ -83,7 +79,7 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME } onSkip={ onSkip }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerSkip>
+				<SurveyTriggerSkip asChild>
 					<Button>Thanks</Button>
 				</SurveyTriggerSkip>
 			</Survey>
@@ -101,7 +97,7 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerSkip>
+				<SurveyTriggerSkip asChild>
 					<Button>Thanks</Button>
 				</SurveyTriggerSkip>
 			</Survey>

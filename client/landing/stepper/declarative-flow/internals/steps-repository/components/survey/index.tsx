@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import React, { cloneElement, useCallback, useContext, useMemo, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	type SurveyContextType,
@@ -116,7 +117,17 @@ export const Survey = ( {
 				onSkip?.();
 			}
 
-			setShouldShowSurvey( false );
+			if ( document.startViewTransition ) {
+				document.startViewTransition( async () => {
+					//use flushSync to ensure the DOM is updated before the view transition starts
+					//it is essential to use view transition api
+					flushSync( () => {
+						setShouldShowSurvey( false );
+					} );
+				} );
+			} else {
+				setShouldShowSurvey( false );
+			}
 		},
 		[ name, onAccept, onSkip ]
 	);
@@ -161,7 +172,8 @@ export const Survey = ( {
 								</Button>
 							</SurveyTriggerSkip>
 						</div>
-						{ children }
+
+						<div>{ children }</div>
 					</div>
 				</div>
 			</SurveyActionsContext.Provider>

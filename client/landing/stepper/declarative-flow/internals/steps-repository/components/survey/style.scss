@@ -1,4 +1,61 @@
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 0.5;
+	}
+}
+@keyframes fade-out {
+	from {
+		opacity: 0.5;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in {
+	0% {
+		transform: translateY( 100% );
+		opacity: 0;
+	}
+
+	70% {
+		transform: translateY( -5% );
+		opacity: 50;
+	}
+
+	100% {
+		transform: translateY( 0 );
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out {
+	0% {
+		transform: translateY( 0 );
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateY( 30% );
+		opacity: 0;
+	}
+}
+
+@keyframes reduced-motion-slide-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
 .survey-notice {
+	view-transition-name: survey-notice;
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -7,6 +64,7 @@
 	z-index: 1000;
 
 	.survey-notice__backdrop {
+		view-transition-name: survey-notice-backdrop;
 		background: var(--studio-black);
 		opacity: 0.2;
 		position: absolute;
@@ -15,9 +73,18 @@
 		width: 100%;
 		height: 100%;
 		cursor: default;
+		animation: fade-in 0.5s ease-out both;
+		@media (prefers-reduced-motion) {
+			animation: none;
+		}
 	}
 
 	.survey-notice__popup {
+		view-transition-name: survey-notice-popup;
+		animation: slide-in 0.5s ease-in-out both 0.3s;
+		@media (prefers-reduced-motion) {
+			animation: reduced-motion-slide-in 0.5s ease-in-out both 0.7s;
+		}
 		position: absolute;
 		right: 25px;
 		bottom: 25px;
@@ -53,4 +120,14 @@
 			fill: var(--studio-white);
 		}
 	}
+}
+
+
+
+::view-transition-new(survey-notice-backdrop) {
+	opacity: 0;
+}
+
+::view-transition-old(survey-notice-popup) {
+	animation: slide-out 0.2s ease-in both;
 }
