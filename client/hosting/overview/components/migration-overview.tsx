@@ -39,75 +39,69 @@ const cards = [
 	},
 ];
 
+const getContinueMigrationUrl = (
+	site: SiteDetails,
+	migrationType: string | undefined,
+	migrationStatus: string | undefined
+): string | null => {
+	// We only have link for the pending statuses.
+	if ( 'pending' !== migrationStatus ) {
+		return null;
+	}
+
+	const baseQueryArgs = {
+		siteId: site.ID,
+		siteSlug: site.slug,
+		start: 'true',
+		ref: 'hosting-migration-overview',
+	};
+
+	if ( ! canInstallPlugins( site ) ) {
+		// For the flows where the checkout is after the choice.
+		switch ( migrationType ) {
+			case 'diy':
+				return addQueryArgs(
+					{
+						...baseQueryArgs,
+						destination: 'upgrade',
+						how: 'myself',
+					},
+					'/setup/site-migration/site-migration-upgrade-plan'
+				);
+				break;
+			case 'difm':
+				return addQueryArgs(
+					{
+						...baseQueryArgs,
+						destination: 'upgrade',
+						how: 'difm',
+					},
+					'/setup/site-migration/site-migration-upgrade-plan'
+				);
+				break;
+			default:
+				return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-how-to-migrate' );
+		}
+	} else {
+		// For the /setup/migration, where the checkout is before the choice.
+		switch ( migrationType ) {
+			case 'diy':
+				return addQueryArgs( baseQueryArgs, '/setup/migration/site-migration-instructions' );
+				break;
+			case 'difm':
+				return addQueryArgs( baseQueryArgs, '/setup/migration/site-migration-credentials' );
+				break;
+			default:
+				return addQueryArgs( baseQueryArgs, '/setup/migration/migration-how-to-migrate' );
+		}
+	}
+};
+
 const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	const migrationType = getMigrationType( site );
 	const migrationStatus = getMigrationStatus( site );
+	const continueMigrationUrl = getContinueMigrationUrl( site, migrationType, migrationStatus );
 	const isPending = 'pending' === migrationStatus;
-
-	let continueMigrationUrl;
-
-	// Get the link to return to the flow.
-	// We only have link for the pending statuses.
-	if ( isPending ) {
-		const baseQueryArgs = {
-			siteId: site.ID,
-			siteSlug: site.slug,
-			start: 'true',
-			ref: 'hosting-migration-overview',
-		};
-
-		if ( ! canInstallPlugins( site ) ) {
-			// For the flows where the checkout is after the choice.
-			switch ( migrationType ) {
-				case 'diy':
-					continueMigrationUrl = addQueryArgs(
-						{
-							...baseQueryArgs,
-							destination: 'upgrade',
-							how: 'myself',
-						},
-						'/setup/site-migration/site-migration-upgrade-plan'
-					);
-					break;
-				case 'difm':
-					continueMigrationUrl = addQueryArgs(
-						{
-							...baseQueryArgs,
-							destination: 'upgrade',
-							how: 'difm',
-						},
-						'/setup/site-migration/site-migration-upgrade-plan'
-					);
-					break;
-				default:
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/site-migration/site-migration-how-to-migrate'
-					);
-			}
-		} else {
-			// For the /setup/migration, where the checkout is before the choice.
-			switch ( migrationType ) {
-				case 'diy':
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/migration/site-migration-instructions'
-					);
-					break;
-				case 'difm':
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/migration/site-migration-credentials'
-					);
-					break;
-				default:
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/migration/migration-how-to-migrate'
-					);
-			}
-		}
-	}
 
 	const title = isPending
 		? translate( 'Your WordPress site is ready to be migrated' )
