@@ -12,8 +12,6 @@ export const useSupportChatLLMQuery = (
 	is_wpcom: boolean,
 	enable: boolean
 ) => {
-	const question = `I need to fix the following issue to improve the performance of my WordPress site: ${ insight.title }.`;
-
 	return useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey: [ 'support', 'chat', insight.title, is_wpcom ],
@@ -24,10 +22,8 @@ export const useSupportChatLLMQuery = (
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					message: question,
-					is_wpcom,
 					audit_context: insight,
-					audit_id: insight.id,
+					is_wpcom,
 				}
 			),
 		meta: {
