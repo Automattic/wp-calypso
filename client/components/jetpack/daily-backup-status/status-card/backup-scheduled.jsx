@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useNextBackupSchedule } from 'calypso/components/jetpack/backup-schedule-setting/hooks';
@@ -38,7 +39,7 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 
 	const { hasLoaded, date: nextBackupDate } = useNextBackupSchedule();
 
-	let nextBackupHoursText = translate( 'In the next hour' ); // Default fallback
+	let nextBackupHoursText = null;
 
 	if ( hasLoaded && nextBackupDate ) {
 		// Calculate the time difference for hours and minutes
@@ -66,7 +67,11 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 			</div>
 			<div className="status-card__title">
 				<div className="status-card__hide-desktop">{ translate( 'Backup Scheduled' ) }:</div>
-				<div>{ nextBackupHoursText }</div>
+				{ hasLoaded && nextBackupHoursText ? (
+					<div>{ nextBackupHoursText }</div>
+				) : (
+					<LoadingPlaceholder height="52px" />
+				) }
 			</div>
 			<div className="status-card__no-backup-last-backup">
 				{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
