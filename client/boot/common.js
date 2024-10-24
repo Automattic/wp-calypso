@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
-import { ProviderWrappedLayout, getRootDomElement, render } from 'calypso/controller';
+import { ProviderWrappedLayout, render, getRootDomElement } from 'calypso/controller';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
