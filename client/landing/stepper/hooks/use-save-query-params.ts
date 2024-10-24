@@ -11,8 +11,9 @@ import { useQuery } from './use-query';
  */
 export function useSaveQueryParams() {
 	const urlQueryParams = useQuery();
-	const { setCouponCode, setStorageAddonSlug, setEcommerceFlowRecurType } =
+	const { setCouponCode, setStorageAddonSlug, setEcommerceFlowRecurType, setPartnerBundle } =
 		useDispatch( ONBOARD_STORE );
+
 	urlQueryParams.forEach( ( value, key ) => {
 		switch ( key ) {
 			case 'coupon':
@@ -27,6 +28,12 @@ export function useSaveQueryParams() {
 				// This stores a storage addon, supplied as a query param by landing pages when
 				// an addon is selected in the pricing grid.
 				value && setStorageAddonSlug( value );
+				break;
+
+			case 'partnerBundle':
+				// This stores a partner bundle string, supplied as a query param in landing pages
+				// related to a partner partnership.
+				value && setPartnerBundle( value );
 				break;
 
 			case 'recur':
