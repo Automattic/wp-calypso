@@ -6,14 +6,12 @@ import { Button, Spinner } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
-import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -61,31 +59,14 @@ const HostingFeatures = () => {
 
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
-		siteId || undefined
-	);
-	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
-	// we also look at `siteTransferData.status`
-	const isTransferInProgress =
+	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
+		refetchInterval: 3000,
+		refetchIntervalInBackground: true,
+	} );
+
+	const shouldRenderActivatingCopy =
 		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&
 		! isPlanExpired;
-
-	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
-
-		const interval = setInterval( () => {
-			if ( siteTransferData?.status !== transferStates.COMPLETED ) {
-				refetchSiteTransferData();
-			} else {
-				clearInterval( interval );
-				dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
-			}
-		}, 3000 );
-
-		return () => clearInterval( interval );
-	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
 
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
@@ -191,7 +172,7 @@ const HostingFeatures = () => {
 	let title;
 	let description;
 	let buttons;
-	if ( isTransferInProgress ) {
+	if ( shouldRenderActivatingCopy ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
 			"The hosting features will appear here automatically when they're ready!",
@@ -255,7 +236,7 @@ const HostingFeatures = () => {
 	return (
 		<div className="hosting-features">
 			<div className="hosting-features__hero">
-				{ isTransferInProgress && <Spinner className="hosting-features__content-spinner" /> }
+				{ shouldRenderActivatingCopy && <Spinner className="hosting-features__content-spinner" /> }
 				<h1>{ title }</h1>
 				<p>{ description }</p>
 				{ buttons }
