@@ -112,6 +112,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 						auth_code: auth,
 						signup: false,
 						import_dns_records: true,
+						is_hundred_year_domain: isHundredYearTransfer,
 					},
 				} )
 			);
