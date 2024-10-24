@@ -227,6 +227,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			useThemeHeadstart,
 			username,
 			mergedDomainCartItems,
+			partnerBundle,
 			siteUrl,
 			domainItem,
 			sourceSlug,

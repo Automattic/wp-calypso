@@ -28,6 +28,7 @@ interface GetNewSiteParams {
 	useThemeHeadstart: boolean;
 	siteVisibility: Site.Visibility;
 	username: string;
+	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
 }
@@ -108,6 +109,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		siteVisibility,
 		sourceSlug,
 		siteIntent,
+		partnerBundle,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -131,6 +133,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
+			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
 		},
 		validate: false,
 	};
@@ -149,6 +152,7 @@ export const createSiteWithCart = async (
 	useThemeHeadstart: boolean,
 	username: string,
 	domainCartItems: MinimalRequestCartProduct[],
+	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
@@ -169,6 +173,7 @@ export const createSiteWithCart = async (
 		username,
 		sourceSlug,
 		siteIntent,
+		partnerBundle,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
