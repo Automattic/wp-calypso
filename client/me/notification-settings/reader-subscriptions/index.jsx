@@ -242,18 +242,20 @@ const NotificationSubscriptions = ( props ) => {
 
 					{ isAutomattician && (
 						<FormFieldset>
-							<FormLegend>Auto-follow P2 posts upon commenting (Automatticians only)</FormLegend>
+							<FormLegend>
+								Disable auto-follow P2 posts upon commenting (Automatticians only)
+							</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checked={ props.getSetting( 'p2_autofollow_on_comment' ) }
+									checked={ props.getSetting( 'p2_disable_autofollow_on_comment' ) }
 									disabled={ props.getDisabledState() }
-									id="p2_autofollow_on_comment"
-									name="p2_autofollow_on_comment"
+									id="p2_disable_autofollow_on_comment"
+									name="p2_disable_autofollow_on_comment"
 									onChange={ props.toggleSetting }
-									onClick={ handleCheckboxEvent( 'Auto-follow P2 Upon Comment' ) }
+									onClick={ handleCheckboxEvent( 'Disable auto-follow P2 Upon Comment' ) }
 								/>
 								<span>
-									Automatically subscribe to notifications for a P2 post whenever you leave a
+									Don't automatically subscribe to notifications for a P2 post whenever you leave a
 									comment on it.
 								</span>
 							</FormLabel>
