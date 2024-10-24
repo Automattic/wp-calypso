@@ -1,7 +1,6 @@
 import { Card, FoldableCard } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, arrowRight } from '@wordpress/icons';
-import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getAgencyTierInfo from 'calypso/a8c-for-agencies/sections/agency-tier/lib/get-agency-tier-info';
@@ -17,11 +16,12 @@ export default function OverviewSidebarAgencyTier() {
 	const agency = useSelector( getActiveAgency );
 
 	const currentAgencyTier = agency?.tier?.id;
-	const currentAgencyTierInfo = currentAgencyTier
-		? getAgencyTierInfo( currentAgencyTier, translate )
-		: null;
+	const currentAgencyTierInfo =
+		currentAgencyTier && getAgencyTierInfo( currentAgencyTier, translate );
 
-	const defaultAgencyTierInfo = getAgencyTierInfo( 'emerging-partner', translate );
+	if ( ! currentAgencyTierInfo ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -38,30 +38,13 @@ export default function OverviewSidebarAgencyTier() {
 					iconSize={ 18 }
 				>
 					<div className="agency-tier__bottom-content">
-						<div
-							className={ clsx( 'agency-tier__current-agency-tier-header', {
-								'is-default': ! currentAgencyTierInfo,
-							} ) }
-						>
-							{ currentAgencyTierInfo ? (
-								<>
-									<span className="agency-tier__current-agency-tier-icon">
-										<img src={ currentAgencyTierInfo.logo } alt={ currentAgencyTierInfo.id } />
-									</span>
-									<span className="agency-tier__current-agency-tier-title">
-										{ currentAgencyTierInfo.title }
-									</span>
-								</>
-							) : (
-								<>
-									<span className="agency-tier__current-agency-tier-icon">
-										<img src={ defaultAgencyTierInfo.logo } alt={ defaultAgencyTierInfo.id } />
-									</span>
-									<span className="agency-tier__current-agency-tier-title">
-										{ defaultAgencyTierInfo.emptyStateMessage }
-									</span>
-								</>
-							) }
+						<div className="agency-tier__current-agency-tier-header">
+							<span className="agency-tier__current-agency-tier-icon">
+								<img src={ currentAgencyTierInfo.logo } alt={ currentAgencyTierInfo.id } />
+							</span>
+							<span className="agency-tier__current-agency-tier-title">
+								{ currentAgencyTierInfo.title }
+							</span>
 						</div>
 						{ currentAgencyTierInfo && (
 							<div className="agency-tier__current-agency-tier-description">

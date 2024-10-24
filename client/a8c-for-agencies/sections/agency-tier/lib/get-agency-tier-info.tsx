@@ -18,7 +18,6 @@ const getAgencyTierInfo = (
 		description: '',
 		logo: '',
 		includedTiers: [] as string[],
-		emptyStateMessage: '',
 		celebrationModal: {
 			title: '',
 			description: '',
@@ -50,12 +49,6 @@ const getAgencyTierInfo = (
 				),
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
-				emptyStateMessage: translate(
-					'Make your first purchase to get started as an {{b}}Emerging Partner!{{/b}}',
-					{
-						components: { b: <b /> },
-					}
-				),
 				celebrationModal: {
 					title: translate( 'Welcome to Automattic for Agencies!' ),
 					description: translate(
