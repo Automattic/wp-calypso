@@ -24,7 +24,7 @@ import {
 	TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
 } from 'calypso/lib/titan/constants';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
+import { EmailPlanHeader } from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import {
 	getEmailPurchaseByDomain,
 	hasEmailSubscription,
