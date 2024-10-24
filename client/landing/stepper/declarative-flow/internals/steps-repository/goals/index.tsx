@@ -16,16 +16,10 @@ type TracksGoalsSelectEventProperties = {
 	goals: string;
 	combo: string;
 	total: number;
-	write?: number;
-	'paid-subscribers'?: number;
-	'import-subscribers'?: number;
-	promote?: number;
-	sell?: number;
-	difm?: number;
-	import?: number;
-	other?: number;
 	ref?: string;
 	intent: string;
+} & {
+	[ key in Onboard.SiteGoal ]?: number;
 };
 
 const SiteGoal = Onboard.SiteGoal;
