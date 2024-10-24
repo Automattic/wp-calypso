@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getMigrationType } from 'calypso/sites-dashboard/utils';
+import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const cards = [
@@ -109,15 +109,26 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 		}
 	}
 
+	const title = isPending
+		? translate( 'Your WordPress site is ready to be migrated' )
+		: translate( 'Your migration is underway' );
+
+	const paragraph = isPending
+		? translate( 'Start your migration today and get ready for unmatched WordPress hosting.' )
+		: translate(
+				'Sit back as {{strong}}Bold Apps{{/strong}} transfers to its new home. Get ready for unmatched WordPress hosting.',
+				{
+					components: {
+						strong: <strong />,
+					},
+				}
+		  );
+
 	return (
 		<div>
 			<HostingHero>
-				<h1>{ translate( 'Your WordPress site is ready to be migrated' ) }</h1>
-				<p>
-					{ translate(
-						'Start your migration today and get ready for unmatched WordPress hosting.'
-					) }
-				</p>
+				<h1>{ title }</h1>
+				<p>{ paragraph }</p>
 				{ continueMigrationUrl && (
 					<HostingHeroButton href={ continueMigrationUrl }>
 						{ translate( 'Start your migration' ) }
