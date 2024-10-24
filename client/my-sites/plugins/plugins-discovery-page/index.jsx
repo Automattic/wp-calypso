@@ -53,7 +53,7 @@ export const PaidPluginsSection = ( props ) => {
 export const FeaturedWPBeginnerSection = ( props ) => {
 	const category = 'wpbeginner';
 
-	const { data: plugins = [], isFetching } = useESPlugin( WPBEGINNER_PLUGINS );
+	const { data: plugins = [], isFetching } = useESPlugin( WPBEGINNER_PLUGINS.slice( 0, 7 ) );
 
 	return (
 		<SingleListView

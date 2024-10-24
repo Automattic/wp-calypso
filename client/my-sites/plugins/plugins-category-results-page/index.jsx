@@ -12,9 +12,13 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	let plugins;
 	let isFetching;
 	const isWPBeginnerSpecial = category === 'wpbeginner';
-	const { data: esPlugins = [], isFetching: esIsFetching } = useESPlugin( WPBEGINNER_PLUGINS, {
-		enabled: isWPBeginnerSpecial,
-	} );
+	const { data: esPlugins = [], isFetching: esIsFetching } = useESPlugin(
+		WPBEGINNER_PLUGINS.slice( 0, 20 ),
+		undefined,
+		{
+			enabled: isWPBeginnerSpecial,
+		}
+	);
 	const {
 		plugins: categoryPlugins,
 		isFetching: categoryIsFetching,
