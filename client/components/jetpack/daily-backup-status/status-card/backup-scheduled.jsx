@@ -36,23 +36,27 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 
 	const lastBackupTime = lastBackupDate.format( 'LT' );
 
-	const { date: nextBackupDate } = useNextBackupSchedule();
+	const { hasLoaded, date: nextBackupDate } = useNextBackupSchedule();
 
-	// Calculate the time difference for hours and minutes
-	const hoursForNextBackup = nextBackupDate.diff( today, 'hours' );
-	const minutesForNextBackup = nextBackupDate.diff( today, 'minutes' ) % 60;
+	let nextBackupHoursText = translate( 'In the next hour' ); // Default fallback
 
-	// Round up to the next hour if there are remaining minutes
-	const totalHoursForNextBackup =
-		minutesForNextBackup > 0 ? hoursForNextBackup + 1 : hoursForNextBackup;
+	if ( hasLoaded && nextBackupDate ) {
+		// Calculate the time difference for hours and minutes
+		const hoursForNextBackup = nextBackupDate.diff( today, 'hours' );
+		const minutesForNextBackup = nextBackupDate.diff( today, 'minutes' ) % 60;
 
-	const nextBackupHoursText =
-		totalHoursForNextBackup <= 1
-			? translate( 'In the next hour' )
-			: translate( 'In the next %d hour', 'In the next %d hours', {
-					args: [ totalHoursForNextBackup ],
-					count: totalHoursForNextBackup,
-			  } );
+		// Round up to the next hour if there are remaining minutes
+		const totalHoursForNextBackup =
+			minutesForNextBackup > 0 ? hoursForNextBackup + 1 : hoursForNextBackup;
+
+		nextBackupHoursText =
+			totalHoursForNextBackup <= 1
+				? translate( 'In the next hour' )
+				: translate( 'In the next %d hour', 'In the next %d hours', {
+						args: [ totalHoursForNextBackup ],
+						count: totalHoursForNextBackup,
+				  } );
+	}
 
 	return (
 		<>
