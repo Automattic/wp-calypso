@@ -1,7 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { useCallback, useRef, RefObject } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import ArrowUp from '../../assets/arrow-up.svg';
+import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
@@ -70,7 +69,7 @@ export const OdieSendMessageButton = ( {
 						className="odie-send-message-inner-button"
 						disabled={ shouldBeDisabled }
 					>
-						<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+						<SendMessageIcon />
 					</button>
 				</form>
 			</div>
