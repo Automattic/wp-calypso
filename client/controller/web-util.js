@@ -1,10 +1,18 @@
-import { hydrateRoot } from 'react-dom/client';
-import { getRootNode, setRootNode, getRootDomElement } from 'calypso/boot/common';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+
+export function getRootDomElement() {
+	return document.getElementById( 'wpcom' );
+}
+
+let wpcomRootNode;
 
 export function render( context ) {
-	getRootNode().render( context.layout );
+	if ( wpcomRootNode == null ) {
+		wpcomRootNode = createRoot( getRootDomElement() );
+	}
+	wpcomRootNode.render( context.layout );
 }
 
 export function hydrate( context ) {
-	setRootNode( hydrateRoot( getRootDomElement(), context.layout ) );
+	wpcomRootNode = hydrateRoot( getRootDomElement(), context.layout );
 }

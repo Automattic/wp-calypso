@@ -8,11 +8,10 @@ import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
-import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
-import { ProviderWrappedLayout } from 'calypso/controller';
+import { ProviderWrappedLayout, getRootDomElement, render } from 'calypso/controller';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
@@ -201,8 +200,6 @@ const unsavedFormsMiddleware = () => {
 	// warn against navigating from changed, unsaved forms
 	page.exit( '*', checkFormHandler );
 };
-
-export const getRootDomElement = () => document.getElementById( 'wpcom' );
 
 const utils = () => {
 	debug( 'Executing Calypso utils.' );
@@ -404,23 +401,8 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 };
 
-let wpcomRootNode;
-export const getRootNode = () => {
-	if ( wpcomRootNode == null ) {
-		wpcomRootNode = createRoot( getRootDomElement() );
-	}
-
-	return wpcomRootNode;
-};
-
-export const setRootNode = ( rootNode ) => {
-	wpcomRootNode = rootNode;
-};
-
 function renderLayout( reduxStore, reactQueryClient ) {
-	getRootNode().render(
-		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />
-	);
+	render( <ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } /> );
 }
 
 const boot = async ( currentUser, registerRoutes ) => {
