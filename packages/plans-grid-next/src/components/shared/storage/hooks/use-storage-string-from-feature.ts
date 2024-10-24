@@ -36,13 +36,13 @@ const getIntegerVolume = (
 			 * Displayed string is: purchased storage + default 50GB storage + Add-On
 			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
 			 */
-			return 100;
+			return 50;
 		case AddOns.ADD_ON_100GB_STORAGE:
 			/**
 			 * Displayed string is: purchased storage + default 50GB storage + Add-On
 			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
 			 */
-			return 150;
+			return 100;
 		default:
 			return 0;
 	}
@@ -51,15 +51,19 @@ const getIntegerVolume = (
 const useStorageStringFromFeature = ( {
 	storageSlug,
 	siteId,
+	productSlug = null,
 }: {
 	storageSlug?: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	siteId?: null | number | string;
+	productSlug?: null | WPComPlanStorageFeatureSlug;
 } ) => {
 	const translate = useTranslate();
 	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
 		siteId,
 		productSlug: PRODUCT_1GB_SPACE,
 	} );
+	const defaultSpace = productSlug ? getIntegerVolume( productSlug ) : 0;
+
 	const purchasedQuantityTotal = spaceUpgradesPurchased
 		? Object.values( spaceUpgradesPurchased ).reduce( ( total, current ) => {
 				return total + current.purchaseRenewalQuantity;
@@ -68,7 +72,7 @@ const useStorageStringFromFeature = ( {
 
 	return translate( '%(quantity)d GB', {
 		args: {
-			quantity: purchasedQuantityTotal + getIntegerVolume( storageSlug ),
+			quantity: defaultSpace + purchasedQuantityTotal + getIntegerVolume( storageSlug ),
 		},
 	} );
 };

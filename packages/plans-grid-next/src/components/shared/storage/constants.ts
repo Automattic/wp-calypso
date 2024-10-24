@@ -1,3 +1,13 @@
-import { PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+} from '@automattic/calypso-products';
 
-export const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
+export const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+];
