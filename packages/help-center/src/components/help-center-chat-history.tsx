@@ -17,7 +17,6 @@ export const HelpCenterChatHistory = () => {
 		archived: 'archived',
 	};
 
-	const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
 	const { getConversations } = useSmooch();
 	const { isChatLoaded } = useSelect( ( select ) => {
@@ -74,9 +73,6 @@ export const HelpCenterChatHistory = () => {
 						className: 'help-center-chat-history__archived',
 					},
 				] }
-				onSelect={ () => {
-					setActiveTab( activeTab );
-				} }
 			>
 				{ ( tab ) => {
 					switch ( tab.name ) {
