@@ -22,6 +22,7 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
+	const isOnlyMessage = message.context?.flags?.only_message;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
@@ -46,29 +47,31 @@ export const UserMessage = ( {
 			>
 				{ isRequestingHumanSupport ? displayMessage : message.content }
 			</Markdown>
-			<div className="chat-feedback-wrapper">
-				{ showExtraContactOptions &&
-					( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
-				{ ! showExtraContactOptions && isBot && (
-					<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
-				) }
-				{ isBot && (
-					<>
-						{ ! showExtraContactOptions && (
-							<DirectEscalationLink messageId={ message.message_id } />
-						) }
-						<div className="disclaimer">
-							{ __(
-								'Powered by Support AI. Some responses may be inaccurate.',
-								__i18n_text_domain__
+			{ ! isOnlyMessage && (
+				<div className="chat-feedback-wrapper">
+					{ showExtraContactOptions &&
+						( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
+					{ ! showExtraContactOptions && isBot && (
+						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+					) }
+					{ isBot && (
+						<>
+							{ ! showExtraContactOptions && (
+								<DirectEscalationLink messageId={ message.message_id } />
 							) }
-							<ExternalLink href="https://automattic.com/ai-guidelines">
-								{ __( 'Learn more.', __i18n_text_domain__ ) }
-							</ExternalLink>
-						</div>
-					</>
-				) }
-			</div>
+							<div className="disclaimer">
+								{ __(
+									'Powered by Support AI. Some responses may be inaccurate.',
+									__i18n_text_domain__
+								) }
+								<ExternalLink href="https://automattic.com/ai-guidelines">
+									{ __( 'Learn more.', __i18n_text_domain__ ) }
+								</ExternalLink>
+							</div>
+						</>
+					) }
+				</div>
+			) }
 		</>
 	);
 };

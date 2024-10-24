@@ -182,11 +182,6 @@ export function DomainFormControl( {
 			return true;
 		}
 
-		// 'blog' flow, starting with blog themes
-		if ( flow === 'blog' ) {
-			return true;
-		}
-
 		return typeof domainForm?.lastQuery === 'string' && domainForm?.lastQuery.includes( '.blog' );
 	};
 

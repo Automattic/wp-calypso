@@ -1,13 +1,23 @@
+import {
+	BLOG_FLOW,
+	FREE_FLOW,
+	LINK_IN_BIO_FLOW,
+	VIDEOPRESS_FLOW,
+	SENSEI_FLOW,
+} from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
-const redirectRoutes = [
-	{ from: '/setup/blog/', to: '/start:lang?' },
-	{ from: '/setup/free/', to: '/start/free:lang?' },
-	{ from: '/setup/link-in-bio/', to: '/start:lang?' },
-	{ from: '/setup/videopress/', to: '/start:lang?' },
-	{ from: '/setup/sensei/', to: ':lang?/plugins/sensei-pro/' },
+const REMOVED_TAILORED_FLOWS = [
+	{ flow: BLOG_FLOW, to: '/start:lang?' },
+	{ flow: FREE_FLOW, to: '/start/free:lang?' },
+	{ flow: LINK_IN_BIO_FLOW, to: '/start:lang?' },
+	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
+	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
+
+export const isRemovedFlow = ( flowToCheck: string ) =>
+	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
 
 // Regex pattern for the optional language code in the format xx or xx-yy
 const langPattern = '(?:/([a-z]{2}(?:-[a-z]{2})?))?/?$';
@@ -18,7 +28,9 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	pathname = pathname.endsWith( '/' ) ? pathname : pathname + '/';
 
 	// Find the matching redirect route
-	const route = redirectRoutes.find( ( redirect ) => pathname.startsWith( redirect.from ) );
+	const route = REMOVED_TAILORED_FLOWS.find( ( { flow } ) =>
+		pathname.startsWith( `/setup/${ flow }/` )
+	);
 
 	// If no route is found we don't redirect and return false
 	if ( ! route ) {
