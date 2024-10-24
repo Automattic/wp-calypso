@@ -380,7 +380,7 @@ class StatsSite extends Component {
 				{ isNewDateFilteringEnabled && (
 					<div
 						className="stats-new-date-filtering-callout"
-						style={ { background: 'antiquewhite', maring: '24px', padding: '24px' } }
+						style={ { background: 'antiquewhite', padding: '24px' } }
 					>
 						<p>New date filtering enabled.</p>
 					</div>
