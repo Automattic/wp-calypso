@@ -120,7 +120,7 @@
 		"cmdk": "^0.2.0",
 		"component-closest": "^1.0.1",
 		"component-file-picker": "^0.2.1",
-		"cookie": "^0.4.1",
+		"cookie": "^0.7.0",
 		"cookie-parser": "^1.4.6",
 		"core-js-bundle": "^3.6.4",
 		"cpf_cnpj": "^0.2.0",
