@@ -36,7 +36,7 @@ describe( 'Survey', () => {
 				<h1>Survey</h1>
 
 				<SurveyTriggerAccept>
-					<Button>Take the survey</Button>
+					<a href="#testing">Take the survey</a>
 				</SurveyTriggerAccept>
 			</Survey>
 		);
@@ -67,7 +67,7 @@ describe( 'Survey', () => {
 				<h1>Survey</h1>
 
 				<SurveyTriggerAccept>
-					<Button>Take the survey</Button>
+					<a href="#testing">Take the survey</a>
 				</SurveyTriggerAccept>
 			</Survey>
 		);
@@ -83,7 +83,7 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME } onSkip={ onSkip }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerSkip>
+				<SurveyTriggerSkip asChild>
 					<Button>Thanks</Button>
 				</SurveyTriggerSkip>
 			</Survey>
@@ -101,7 +101,7 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerSkip>
+				<SurveyTriggerSkip asChild>
 					<Button>Thanks</Button>
 				</SurveyTriggerSkip>
 			</Survey>

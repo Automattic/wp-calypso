@@ -38,7 +38,6 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
-import SurveyManager from './declarative-flow/internals/components/survery-manager';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
@@ -173,7 +172,6 @@ window.AppBoot = async () => {
 							placeholder={ null }
 							id="notices"
 						/>
-						<SurveyManager />
 					</BrowserRouter>
 					<AsyncHelpCenter />
 

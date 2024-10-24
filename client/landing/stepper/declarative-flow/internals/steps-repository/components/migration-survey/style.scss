@@ -1,6 +1,15 @@
 .migration-survey {
 	.migration-survey__popup-head {
-		background: #3858e9;
+		background: var( --color-accent );
+	}
+
+	.migration-survey__popup-img {
+		background: var( --color-accent );
+		
+		img {
+			width: 100%;
+			display: block;
+		}
 	}
 
 	.migration-survey__popup-content {
@@ -21,15 +30,6 @@
 		.migration-survey__popup-content-buttons {
 			display: flex;
 			justify-content: flex-end;
-		}
-		.migration-survey__popup-img {
-			background: #0675c4;
-			padding-bottom: 57.9%;
-
-			img {
-				width: 100%;
-				display: block;
-			}
 		}
 	}
 }
