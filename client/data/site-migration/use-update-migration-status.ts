@@ -20,7 +20,11 @@ export const useUpdateMigrationStatus = () => {
 			} ),
 	} );
 
-	const { mutate: updateMigrationStatusMutate, ...updateStatusMutationRest } = updateStatusMutation;
+	const {
+		mutate: updateMigrationStatusMutate,
+		mutateAsync: updateMigrationStatusMutateAsync,
+		...updateStatusMutationRest
+	} = updateStatusMutation;
 
 	const updateMigrationStatus = useCallback(
 		( targetBlogId: SiteId, statusSticker: string ) =>
@@ -28,5 +32,11 @@ export const useUpdateMigrationStatus = () => {
 		[ updateMigrationStatusMutate ]
 	);
 
-	return { updateMigrationStatus, updateStatusMutationRest };
+	const updateMigrationStatusAsync = useCallback(
+		( targetBlogId: SiteId, statusSticker: string ) =>
+			updateMigrationStatusMutateAsync( { targetBlogId, statusSticker } ),
+		[ updateMigrationStatusMutateAsync ]
+	);
+
+	return { updateMigrationStatus, updateMigrationStatusAsync, updateStatusMutationRest };
 };
