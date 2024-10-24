@@ -41,7 +41,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 		good: translate( 'Excellent' ),
 	}[ status ];
 
-	const recordRecommendationsClickEvent = ( filter = 'all' ) =>
+	const recordRecommendationsClickEvent = ( filter: string ) =>
 		recordTracksEvent( 'calypso_performance_profiler_recommendations_link_click', {
 			filter,
 			version: profilerVersion(),
@@ -63,7 +63,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 											role="button"
 											tabIndex={ 0 }
 											onClick={ () => {
-												recordRecommendationsClickEvent();
+												recordRecommendationsClickEvent( 'all' );
 												onRecommendationsFilterChange?.( '' );
 												recommendationsRef?.current?.scrollIntoView( {
 													behavior: 'smooth',

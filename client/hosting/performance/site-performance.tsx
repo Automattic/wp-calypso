@@ -9,6 +9,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -303,7 +304,8 @@ export const SitePerformance = () => {
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
 				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
-					page: pages.find( ( page ) => page.value === page_id )?.label ?? '/',
+					is_home: page_id === '0',
+					version: profilerVersion(),
 				} );
 				if ( page_id ) {
 					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
