@@ -22,7 +22,7 @@ export const useSupportChatLLMQuery = (
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					audit_context: insight,
+					insight,
 					is_wpcom,
 				}
 			),
