@@ -5,7 +5,7 @@
 import {
 	BlockFlow,
 	PayWithPaypalBlockFlow,
-	OpenTableFlow,
+	// OpenTableFlow,
 	DonationsFormFlow,
 	AdFlow,
 	envVariables,
@@ -21,9 +21,11 @@ const blockFlows: BlockFlow[] = [
 		price: 900,
 		email: 'test@wordpress.com',
 	} ),
-	new OpenTableFlow( {
-		restaurant: 'Miku Restaurant - Vancouver',
-	} ),
+	// Skip OpenTable block test for now, block is broken due to upstream API changes.
+	// https://github.com/Automattic/jetpack/issues/39410
+	// new OpenTableFlow( {
+	// 	restaurant: 'Miku Restaurant - Vancouver',
+	// } ),
 	new DonationsFormFlow(
 		{
 			frequency: 'Yearly',
