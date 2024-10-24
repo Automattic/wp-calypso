@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { ApiError, CredentialsFormData } from '../types';
@@ -19,10 +20,11 @@ interface AutomatedMigration {
 
 const requestAutomatedMigration = async (
 	siteSlug: string,
-	payload: AutomatedMigration
+	payload: AutomatedMigration,
+	locale: string
 ): Promise< AutomatedMigrationAPIResponse > => {
 	return wpcomRequest( {
-		path: `sites/${ siteSlug }/automated-migration`,
+		path: `sites/${ siteSlug }/automated-migration?_locale=${ locale }`,
 		apiNamespace: 'wpcom/v2/',
 		apiVersion: '2',
 		method: 'POST',
@@ -34,6 +36,7 @@ export const useRequestAutomatedMigration = (
 	siteSlug?: string | null,
 	options: UseMutationOptions< AutomatedMigrationAPIResponse, ApiError, CredentialsFormData > = {}
 ) => {
+	const locale = useLocale();
 	return useMutation< AutomatedMigrationAPIResponse, ApiError, CredentialsFormData >( {
 		mutationFn: ( {
 			from_url,
@@ -70,7 +73,7 @@ export const useRequestAutomatedMigration = (
 				};
 			}
 
-			return requestAutomatedMigration( siteSlug, body );
+			return requestAutomatedMigration( siteSlug, body, locale );
 		},
 		...options,
 	} );
