@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Count, FormLabel, Popover } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
