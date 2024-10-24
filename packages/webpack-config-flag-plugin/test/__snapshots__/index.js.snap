@@ -24,14 +24,14 @@ __webpack_require__.r(named_import_config_namespaceObject);
 var namespace_import_config_namespaceObject = {};
 __webpack_require__.r(namespace_import_config_namespaceObject);
 
-;// CONCATENATED MODULE: ./config.js
+;// ./config.js
 function isEnabled( flag ) {
 	return 'argh';
 }
 
 /* harmony default export */ const config = ({ isEnabled });
 
-;// CONCATENATED MODULE: ./default-import/config/function.js
+;// ./default-import/config/function.js
 
 
 function fn() {
@@ -40,21 +40,21 @@ function fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/config/module.js
+;// ./default-import/config/module.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/config/rename.js
+;// ./default-import/config/rename.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/config/shadowed-by-param.js
+;// ./default-import/config/shadowed-by-param.js
 
 
 function shadowed_by_param_fn( config ) {
@@ -63,7 +63,7 @@ function shadowed_by_param_fn( config ) {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/config/shadowed-by-var.js
+;// ./default-import/config/shadowed-by-var.js
 
 
 function shadowed_by_var_fn() {
@@ -73,21 +73,21 @@ function shadowed_by_var_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/config/wrong-flag.js
+;// ./default-import/config/wrong-flag.js
 
 
 // Should NOT be replaced with true.
 if ( config.isEnabled( 'bar' ) ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/config/wrong-path.js
+;// ./default-import/config/wrong-path.js
 
 
 // Should NOT be replaced with true
 if ( default_import_config_namespaceObject[\\"default\\"].isEnabled( 'foo' ) ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/config/index.js
+;// ./default-import/config/index.js
 
 
 
@@ -96,7 +96,7 @@ if ( default_import_config_namespaceObject[\\"default\\"].isEnabled( 'foo' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/function.js
+;// ./default-import/calypso-config/function.js
 
 
 function function_fn() {
@@ -105,21 +105,21 @@ function function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/module.js
+;// ./default-import/calypso-config/module.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/rename.js
+;// ./default-import/calypso-config/rename.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/shadowed-by-param.js
+;// ./default-import/calypso-config/shadowed-by-param.js
 
 
 function calypso_config_shadowed_by_param_fn( config ) {
@@ -128,7 +128,7 @@ function calypso_config_shadowed_by_param_fn( config ) {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/shadowed-by-var.js
+;// ./default-import/calypso-config/shadowed-by-var.js
 
 
 function calypso_config_shadowed_by_var_fn() {
@@ -138,14 +138,14 @@ function calypso_config_shadowed_by_var_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/wrong-flag.js
+;// ./default-import/calypso-config/wrong-flag.js
 
 
 // Should NOT be replaced with true.
 if ( config.isEnabled( 'bar' ) ) {
 }
 
-;// CONCATENATED MODULE: ./default-import/calypso-config/index.js
+;// ./default-import/calypso-config/index.js
 
 
 
@@ -153,11 +153,11 @@ if ( config.isEnabled( 'bar' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./default-import/index.js
+;// ./default-import/index.js
 
 
 
-;// CONCATENATED MODULE: ./named-import/config/function.js
+;// ./named-import/config/function.js
 
 
 function config_function_fn() {
@@ -166,21 +166,21 @@ function config_function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/config/module.js
+;// ./named-import/config/module.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/config/rename.js
+;// ./named-import/config/rename.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/config/shadowed-by-param.js
+;// ./named-import/config/shadowed-by-param.js
 
 
 function config_shadowed_by_param_fn( isEnabled ) {
@@ -189,7 +189,7 @@ function config_shadowed_by_param_fn( isEnabled ) {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/config/shadowed-by-var.js
+;// ./named-import/config/shadowed-by-var.js
 
 
 function config_shadowed_by_var_fn() {
@@ -199,14 +199,14 @@ function config_shadowed_by_var_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/config/wrong-flag.js
+;// ./named-import/config/wrong-flag.js
 
 
 // Should NOT be replaced with true.
 if ( isEnabled( 'bar' ) ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/config/wrong-path.js
+;// ./named-import/config/wrong-path.js
 // eslint-disable-next-line import/named
 
 
@@ -214,7 +214,7 @@ if ( isEnabled( 'bar' ) ) {
 if ( (0,named_import_config_namespaceObject.isEnabled)( 'foo' ) ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/config/index.js
+;// ./named-import/config/index.js
 
 
 
@@ -223,7 +223,7 @@ if ( (0,named_import_config_namespaceObject.isEnabled)( 'foo' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/function.js
+;// ./named-import/calypso-config/function.js
 
 
 function calypso_config_function_fn() {
@@ -232,21 +232,21 @@ function calypso_config_function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/module.js
+;// ./named-import/calypso-config/module.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/rename.js
+;// ./named-import/calypso-config/rename.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/shadowed-by-param.js
+;// ./named-import/calypso-config/shadowed-by-param.js
 
 
 function named_import_calypso_config_shadowed_by_param_fn( isEnabled ) {
@@ -255,7 +255,7 @@ function named_import_calypso_config_shadowed_by_param_fn( isEnabled ) {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/shadowed-by-var.js
+;// ./named-import/calypso-config/shadowed-by-var.js
 
 
 function named_import_calypso_config_shadowed_by_var_fn() {
@@ -265,14 +265,14 @@ function named_import_calypso_config_shadowed_by_var_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/wrong-flag.js
+;// ./named-import/calypso-config/wrong-flag.js
 
 
 // Should NOT be replaced with true.
 if ( isEnabled( 'bar' ) ) {
 }
 
-;// CONCATENATED MODULE: ./named-import/calypso-config/index.js
+;// ./named-import/calypso-config/index.js
 
 
 
@@ -280,11 +280,11 @@ if ( isEnabled( 'bar' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./named-import/index.js
+;// ./named-import/index.js
 
 
 
-;// CONCATENATED MODULE: ./namespace-import/config/function.js
+;// ./namespace-import/config/function.js
 
 
 function namespace_import_config_function_fn() {
@@ -293,21 +293,21 @@ function namespace_import_config_function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/module.js
+;// ./namespace-import/config/module.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/rename.js
+;// ./namespace-import/config/rename.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/shadowed-by-param.js
+;// ./namespace-import/config/shadowed-by-param.js
 
 
 function namespace_import_config_shadowed_by_param_fn( config ) {
@@ -316,7 +316,7 @@ function namespace_import_config_shadowed_by_param_fn( config ) {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/shadowed-by-var.js
+;// ./namespace-import/config/shadowed-by-var.js
 
 
 function namespace_import_config_shadowed_by_var_fn() {
@@ -326,14 +326,14 @@ function namespace_import_config_shadowed_by_var_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/wrong-flag.js
+;// ./namespace-import/config/wrong-flag.js
 
 
 // Should NOT be replaced with true.
 if ( isEnabled( 'bar' ) ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/wrong-path.js
+;// ./namespace-import/config/wrong-path.js
 /* eslint-disable import/namespace */
 
 
@@ -341,7 +341,7 @@ if ( isEnabled( 'bar' ) ) {
 if ( namespace_import_config_namespaceObject.isEnabled( 'foo' ) ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/index.js
+;// ./namespace-import/config/index.js
 
 
 
@@ -350,7 +350,7 @@ if ( namespace_import_config_namespaceObject.isEnabled( 'foo' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/function.js
+;// ./namespace-import/calypso-config/function.js
 
 
 function namespace_import_calypso_config_function_fn() {
@@ -359,21 +359,21 @@ function namespace_import_calypso_config_function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/module.js
+;// ./namespace-import/calypso-config/module.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/rename.js
+;// ./namespace-import/calypso-config/rename.js
 
 
 // Should be replaced with true
 if ( true ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/shadowed-by-param.js
+;// ./namespace-import/calypso-config/shadowed-by-param.js
 
 
 function namespace_import_calypso_config_shadowed_by_param_fn( config ) {
@@ -382,7 +382,7 @@ function namespace_import_calypso_config_shadowed_by_param_fn( config ) {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/shadowed-by-var.js
+;// ./namespace-import/calypso-config/shadowed-by-var.js
 
 
 function namespace_import_calypso_config_shadowed_by_var_fn() {
@@ -392,14 +392,14 @@ function namespace_import_calypso_config_shadowed_by_var_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/wrong-flag.js
+;// ./namespace-import/calypso-config/wrong-flag.js
 
 
 // Should NOT be replaced with true.
 if ( isEnabled( 'bar' ) ) {
 }
 
-;// CONCATENATED MODULE: ./namespace-import/calypso-config/index.js
+;// ./namespace-import/calypso-config/index.js
 
 
 
@@ -407,11 +407,11 @@ if ( isEnabled( 'bar' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./namespace-import/index.js
+;// ./namespace-import/index.js
 
 
 
-;// CONCATENATED MODULE: ./main.js
+;// ./main.js
 
 
 
