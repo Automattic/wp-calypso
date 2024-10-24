@@ -22,7 +22,7 @@ import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-cu
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
-import isWoopaymentsFlow from 'calypso/state/selectors/is-woopayments-flow';
+import isWooPaymentsFlow from 'calypso/state/selectors/is-woopayments-flow';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
@@ -42,7 +42,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const isExpired = useSelector(
 		( state ) => getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE
 	);
-	const isWooPaymentsFlow = useSelector( isWoopaymentsFlow );
+	const isWooFlow = useSelector( isWooPaymentsFlow );
 	const isFetching = useSelector( isFetchingMagicLoginAuth );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
@@ -96,7 +96,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 	return (
 		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
-			{ ! isWooPaymentsFlow && <JetpackLogo size={ 74 } full /> }
+			{ ! isWooFlow && <JetpackLogo size={ 74 } full /> }
 
 			<h2 className="magic-login__title empty-content__title">
 				{ translate( 'Email confirmed!' ) }
