@@ -61,4 +61,36 @@ describe( 'MigrationOverview', () => {
 			expect( button ).toHaveAttribute( 'href', expectedUrl );
 		}
 	);
+
+	it( 'should not render the button if it is not in the pending status', () => {
+		( getMigrationType as jest.Mock ).mockReturnValue( 'diy' );
+		( getMigrationStatus as jest.Mock ).mockReturnValue( 'started' );
+		( canInstallPlugins as jest.Mock ).mockReturnValue( true );
+
+		const { queryByRole } = render( <MigrationOverview site={ baseSite } /> );
+		expect( queryByRole( 'link', { name: 'Start your migration' } ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		[
+			'pending',
+			'Your WordPress site is ready to be migrated',
+			'Start your migration today and get ready for unmatched WordPress hosting.',
+		],
+		[
+			'started',
+			'Your migration is underway',
+			/transfers to its new home. Get ready for unmatched WordPress hosting./,
+		],
+	] )(
+		'should render the correct title and paragraph for migration status: %s',
+		( migrationStatus, expectedTitle, expectedParagraph ) => {
+			( getMigrationType as jest.Mock ).mockReturnValue( 'diy' );
+			( getMigrationStatus as jest.Mock ).mockReturnValue( migrationStatus );
+
+			const { getByText } = render( <MigrationOverview site={ baseSite } /> );
+			expect( getByText( expectedTitle ) ).toBeInTheDocument();
+			expect( getByText( expectedParagraph ) ).toBeInTheDocument();
+		}
+	);
 } );
