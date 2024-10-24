@@ -20,6 +20,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import SiteActions from '../../site-actions';
+import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Field } from '@wordpress/dataviews';
 import type { MouseEvent, KeyboardEvent } from 'react';
@@ -61,6 +62,8 @@ export const JetpackSitesDataViews = ( {
 		},
 		[]
 	);
+
+	const getSiteErrors = useGetSiteErrors();
 
 	const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
 
@@ -172,6 +175,7 @@ export const JetpackSitesDataViews = ( {
 								isLoading={ isLoading }
 								isDevSite={ item.isDevSite }
 								onSiteTitleClick={ openSitePreviewPane }
+								errors={ getSiteErrors( item.error ) }
 							/>
 						</div>
 					);
@@ -412,6 +416,7 @@ export const JetpackSitesDataViews = ( {
 			isLoading,
 			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
+			getSiteErrors,
 			renderField,
 			isNotProduction,
 			isLargeScreen,
