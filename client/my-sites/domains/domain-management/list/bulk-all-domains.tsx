@@ -88,6 +88,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					font-size: 1.5rem;
 					font-style: normal;
 					font-weight: 500;
+					letter-spacing: -0.5px;
 					line-height: 1.2;
 				}
 				.domain-header__buttons .button {
