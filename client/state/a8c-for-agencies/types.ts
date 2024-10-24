@@ -71,7 +71,10 @@ export interface Agency {
 			is_published?: boolean;
 		};
 	};
-	partner_directory_allowed: boolean;
+	partner_directory: {
+		allowed: boolean;
+		directories: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable'[];
+	};
 	user: {
 		role: 'a4a_administrator' | 'a4a_manager';
 		capabilities: string[];
