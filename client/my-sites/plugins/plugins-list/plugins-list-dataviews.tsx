@@ -123,12 +123,16 @@ export default function PluginsListDataViews( {
 						</>
 					);
 				},
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'sites',
 				label: translate( 'Sites' ),
 				enableHiding: false,
+				getValue: ( { item }: { item: Plugin } ) => {
+					// Used exclusively for sorting
+					return item.sites && Object.keys( item.sites ).length;
+				},
 				render: ( { item }: { item: Plugin } ) => {
 					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
 				},
@@ -136,6 +140,10 @@ export default function PluginsListDataViews( {
 			{
 				id: 'update',
 				label: translate( 'Update available' ),
+				getValue: ( { item }: { item: Plugin } ) => {
+					// Used exclusively for sorting
+					return item.status?.includes( PLUGINS_STATUS.UPDATE ) ? 'a' : 'b';
+				},
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
 					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) ) {

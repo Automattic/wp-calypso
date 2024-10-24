@@ -16,7 +16,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -152,15 +151,11 @@ export class PluginsMain extends Component {
 	}
 
 	getCurrentPlugins() {
-		const { currentPlugins, currentPluginsOnVisibleSites, search, selectedSiteSlug } = this.props;
-		let plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
+		const { currentPlugins, currentPluginsOnVisibleSites, selectedSiteSlug } = this.props;
+		const plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
 
 		if ( ! plugins ) {
 			return plugins;
-		}
-
-		if ( search ) {
-			plugins = plugins.filter( this.matchSearchTerms.bind( this, search ) );
 		}
 
 		return this.addWporgDataToPlugins( plugins );
@@ -310,34 +305,14 @@ export class PluginsMain extends Component {
 	}
 
 	renderPluginsContent() {
-		const { search, isJetpackCloud } = this.props;
-
-		const currentPlugins = this.getCurrentPlugins();
-		const showInstalledPluginList =
-			isJetpackCloud || ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
-
-		if ( ! showInstalledPluginList && ! search && ! this.props.requestPluginsError ) {
-			const emptyContentData = this.getEmptyContentData();
-			if ( emptyContentData ) {
-				return (
-					<EmptyContent
-						title={ emptyContentData.title }
-						illustration={ emptyContentData.illustration }
-						actionURL={ emptyContentData.actionURL }
-						action={ emptyContentData.action }
-					/>
-				);
-			}
-		}
-
-		const installedPluginsList = showInstalledPluginList && (
+		return (
 			<PluginsList
 				header={ this.props.translate( 'Installed Plugins' ) }
-				plugins={ currentPlugins }
+				plugins={ this.getCurrentPlugins() }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
 				isLoading={ this.props.requestingPluginsForSites }
 				isJetpackCloud={ this.props.isJetpackCloud }
-				searchTerm={ search }
+				searchTerm={ this.props.search }
 				filter={ this.props.filter }
 				requestPluginsError={ this.props.requestPluginsError }
 				pluginsWithUpdates={ this.props.pluginsWithUpdates }
@@ -346,8 +321,6 @@ export class PluginsMain extends Component {
 				onSearch={ this.props.doSearch }
 			/>
 		);
-
-		return <div>{ installedPluginsList }</div>;
 	}
 
 	handleAddPluginButtonClick = () => {
