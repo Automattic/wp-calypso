@@ -15,8 +15,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
-import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import {
 	fetchAutomatedTransferStatus,
@@ -49,8 +47,6 @@ import {
 class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
-		showTrialAcknowledgeModal: false,
-		hasRequestedTrial: false,
 	};
 
 	componentDidMount() {
@@ -81,10 +77,8 @@ class PluginUpload extends Component {
 	};
 
 	onProceedClick = () => {
-		const isFreeTrialEligible = this.props.isEligibleForHostingTrial;
 		this.setState( {
-			showEligibility: isFreeTrialEligible,
-			showTrialAcknowledgeModal: isFreeTrialEligible,
+			showEligibility: false,
 			isTransferring: false,
 		} );
 	};
@@ -121,40 +115,21 @@ class PluginUpload extends Component {
 		);
 	}
 
-	setOpenModal = ( isOpen ) => {
-		this.setState( { showTrialAcknowledgeModal: isOpen } );
-	};
-
-	trialRequested = () => {
-		this.setState( { hasRequestedTrial: true, showEligibility: false } );
-	};
-
 	requestUpdatedSiteData = ( isTransferring, wasTransferring, isTransferCompleted ) => {
 		if ( isTransferring ) {
 			this.setState( { isTransferring: true } );
 		}
 		if ( wasTransferring && isTransferCompleted ) {
-			this.props.fetchUpdatedData();
 			this.setState( { isTransferring: false } );
 		}
 	};
 
 	render() {
-		const {
-			translate,
-			isJetpackMultisite,
-			siteId,
-			siteSlug,
-			isEligibleForHostingTrial,
-			isJetpack,
-			isTrialSite,
-			isAtomic,
-		} = this.props;
-		const { showEligibility, showTrialAcknowledgeModal, isTransferring, hasRequestedTrial } =
-			this.state;
+		const { translate, isJetpackMultisite, siteId, siteSlug, isJetpack, isTrialSite, isAtomic } =
+			this.props;
+		const { showEligibility, isTransferring } = this.state;
 
-		const showEligibilityWarnings =
-			showEligibility && ! isTransferring && ! isTrialSite && ! hasRequestedTrial;
+		const showEligibilityWarnings = showEligibility && ! isTransferring && ! isTrialSite;
 
 		return (
 			<Main>
@@ -162,29 +137,18 @@ class PluginUpload extends Component {
 				<QueryEligibility siteId={ siteId } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Plugins' ) } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
-				{ ! showTrialAcknowledgeModal && ! isJetpack && (
-					<HostingActivateStatus
-						context="plugin"
-						onTick={ this.requestUpdatedSiteData }
-						keepAlive={ hasRequestedTrial && ! isJetpack && ! isAtomic }
-					/>
+				{ ! isJetpack && (
+					<HostingActivateStatus context="plugin" onTick={ this.requestUpdatedSiteData } />
 				) }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
 				{ showEligibilityWarnings && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
-						showFreeTrial={ isEligibleForHostingTrial }
 					/>
 				) }
 				{ ( ( ! isJetpackMultisite && ! showEligibility ) || isAtomic || isTrialSite ) &&
 					this.renderUploadCard() }
-				{ isEligibleForHostingTrial && showTrialAcknowledgeModal && (
-					<TrialAcknowledgeModal
-						setOpenModal={ this.setOpenModal }
-						trialRequested={ this.trialRequested }
-					/>
-				) }
 			</Main>
 		);
 	}
@@ -202,9 +166,6 @@ const mapStateToProps = ( state ) => {
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	// This value is hardcoded to 'false' to disable the free trial banner
-	// see https://github.com/Automattic/wp-calypso/pull/89217
-	const isEligibleForHostingTrial = false;
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
@@ -223,7 +184,6 @@ const mapStateToProps = ( state ) => {
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-		isEligibleForHostingTrial,
 		isTrialSite: isHostingTrialSite( site ),
 	};
 };
@@ -240,4 +200,4 @@ const flowRightArgs = [
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( WithOnclickTrialRequest( PluginUpload ) );
+export default flowRight( ...flowRightArgs )( PluginUpload );
