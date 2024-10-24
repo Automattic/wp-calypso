@@ -9,8 +9,10 @@ import {
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
@@ -65,22 +67,18 @@ const onboarding: Flow = {
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
 
-		const { planCartItem } = useSelect(
+		const { planCartItem, signupDomainOrigin } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			} ),
 			[]
 		);
 
-		const { signupDomainOrigin } = useSelect( ( select ) => {
-			return {
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-			};
-		}, [] );
-
 		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
 		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
+		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
@@ -107,6 +105,12 @@ const onboarding: Flow = {
 							currentQueryArgs.initialQuery = lastQueryParam;
 							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
 						}
+
+						setUseMyDomainTracksEventProps( {
+							site_url: providedDependencies.siteUrl,
+							signup_domain_origin: signupDomainOrigin,
+							domain_item: providedDependencies.domainItem,
+						} );
 						return navigate( useMyDomainURL );
 					}
 
@@ -115,6 +119,11 @@ const onboarding: Flow = {
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+						setUseMyDomainTracksEventProps( {
+							...useMyDomainTracksEventProps,
+							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+							site_url: providedDependencies.domain,
+						} );
 						const destination = addQueryArgs( '/use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
@@ -122,6 +131,17 @@ const onboarding: Flow = {
 						} );
 						return navigate( destination );
 					}
+
+					// We trigger the event here, because we skip it in the domains step if
+					// the user chose use-my-domain
+					recordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+						flow: this.name,
+						intent: '',
+						step: 'domains',
+						providedDependencies: useMyDomainTracksEventProps,
+					} );
+
 					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
 				case 'plans': {

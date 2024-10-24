@@ -892,12 +892,6 @@ export class RenderDomainsStep extends Component {
 				domain_name: false,
 			},
 		} );
-		this.props.submitSignupStep(
-			Object.assign( {
-				stepName: this.props.stepName,
-			} ),
-			Object.assign( { siteUrl: false } )
-		);
 	};
 
 	getSideContent = () => {

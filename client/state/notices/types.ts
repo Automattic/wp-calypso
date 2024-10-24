@@ -25,6 +25,8 @@ export interface BaseNoticeOptions {
 	displayOnNextPage?: boolean;
 	duration?: null | number;
 	href?: string;
+	icon?: string;
+	isLoading?: boolean;
 	isPersistent?: boolean;
 	onClick?: () => void;
 	showDismiss?: boolean;

@@ -181,17 +181,6 @@ body.is-section-signup:not(.is-white-signup) {
 }
 
 body.is-section-signup.is-white-signup {
-	$accent-blue: #117ac9;
-
-	.search-filters__popover,
-	.search-filters-extensions__popover {
-		.token-field__suggestion {
-			&.is-selected {
-				background: $accent-blue;
-			}
-		}
-	}
-
 	.search-filters-extensions__popover {
 		@include break-medium {
 			transform: translateX(65px);

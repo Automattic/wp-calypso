@@ -33,8 +33,8 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				const code = transform( 'export default () => <AsyncLoad require="foo" />;' );
 
 				expect( code ).toBe(
-					'var _ref = () => import( /*webpackChunkName: "async-load-foo"*/"foo");\n' +
-						'export default (() => <AsyncLoad require={_ref} />);'
+					'var _ref = () => import(/*webpackChunkName: "async-load-foo"*/"foo");\n' +
+						'export default () => <AsyncLoad require={_ref} />;'
 				);
 			} );
 		} );
@@ -49,7 +49,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 					'var _ref = () => {\n' +
 						'  throw new Error("ignoring load of: async-load-foo");\n' +
 						'};\n' +
-						'export default (() => <AsyncLoad require={_ref} />);'
+						'export default () => <AsyncLoad require={_ref} />;'
 				);
 			} );
 		} );
@@ -72,7 +72,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			test( 'should transform asyncRequire to an import with nice name', () => {
 				const code = transform( 'asyncRequire( "foo/bar" );' );
 
-				expect( code ).toBe( 'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar");' );
+				expect( code ).toBe( 'import(/*webpackChunkName: "async-load-foo-bar"*/"foo/bar");' );
 			} );
 		} );
 
@@ -106,8 +106,8 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 
 		// Check that the transformed code has been further transformed with patchedImport
 		expect( transformResult.code ).toBe(
-			'var _ref = () => patchedImport( /*webpackChunkName: "async-load-foo"*/"foo");\n' +
-				'export default (() => <AsyncLoad require={_ref} />);'
+			'var _ref = () => patchedImport(/*webpackChunkName: "async-load-foo"*/"foo");\n' +
+				'export default () => <AsyncLoad require={_ref} />;'
 		);
 	} );
 } );
