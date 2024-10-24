@@ -17,8 +17,9 @@ export interface SurveyProps extends PropsWithChildren {
 	title?: string;
 }
 
-export interface TriggerProps extends PropsWithChildren {
+export interface TriggerProps {
 	asChild?: boolean;
 	onClick: () => void;
 	as?: React.ElementType;
+	children: React.ReactElement;
 }

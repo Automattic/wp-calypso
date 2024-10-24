@@ -35,7 +35,9 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerAccept>Take the survey</SurveyTriggerAccept>
+				<SurveyTriggerAccept>
+					<a href="#testing">Take the survey</a>
+				</SurveyTriggerAccept>
 			</Survey>
 		);
 		await userEvent.click( screen.getByText( 'Take the survey' ) );
@@ -64,7 +66,9 @@ describe( 'Survey', () => {
 			<Survey name={ SURVEY_NAME } onAccept={ onAccept }>
 				<h1>Survey</h1>
 
-				<SurveyTriggerAccept>Take the survey</SurveyTriggerAccept>
+				<SurveyTriggerAccept>
+					<a href="#testing">Take the survey</a>
+				</SurveyTriggerAccept>
 			</Survey>
 		);
 
