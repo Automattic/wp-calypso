@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -103,7 +104,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	}
 
 	// Check if the Partner Directory is allowed for the agency
-	if ( ! agency?.partner_directory_allowed ) {
+	if ( ! agency?.partner_directory.allowed && ! isEnabled( 'a8c-for-agencies-agency-tier' ) ) {
 		// Redirect user to the Overview page
 		page.redirect( A4A_OVERVIEW_LINK );
 		return;
