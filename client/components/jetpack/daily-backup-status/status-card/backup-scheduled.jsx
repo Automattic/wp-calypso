@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useNextBackupSchedule } from 'calypso/components/jetpack/backup-schedule-setting/hooks';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -35,16 +36,22 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 
 	const lastBackupTime = lastBackupDate.format( 'LT' );
 
-	// Calculates the remaining hours for the next backup + 3 hours of safety margin
-	const DAY_HOURS = 24;
-	const hoursForNextBackup = DAY_HOURS - today.diff( lastBackupDate, 'hours' ) + 3;
+	const { date: nextBackupDate } = useNextBackupSchedule();
+
+	// Calculate the time difference for hours and minutes
+	const hoursForNextBackup = nextBackupDate.diff( today, 'hours' );
+	const minutesForNextBackup = nextBackupDate.diff( today, 'minutes' ) % 60;
+
+	// Round up to the next hour if there are remaining minutes
+	const totalHoursForNextBackup =
+		minutesForNextBackup > 0 ? hoursForNextBackup + 1 : hoursForNextBackup;
 
 	const nextBackupHoursText =
-		hoursForNextBackup <= 1
+		totalHoursForNextBackup <= 1
 			? translate( 'In the next hour' )
 			: translate( 'In the next %d hour', 'In the next %d hours', {
-					args: [ hoursForNextBackup ],
-					count: hoursForNextBackup,
+					args: [ totalHoursForNextBackup ],
+					count: totalHoursForNextBackup,
 			  } );
 
 	return (
