@@ -534,7 +534,7 @@ describe( `${ flow.name }`, () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					step: STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
