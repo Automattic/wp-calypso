@@ -8,12 +8,12 @@ import {
 	redirectIfJetpackNonAtomic,
 } from 'calypso/controller';
 import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
-} from 'calypso/hosting/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/hosting/sites/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+} from 'calypso/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/sites/controller';
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
 
 export default function () {

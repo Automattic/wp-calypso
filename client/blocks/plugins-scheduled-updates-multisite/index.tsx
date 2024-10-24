@@ -10,7 +10,7 @@ import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
 
-import 'calypso/hosting/sites/components/dotcom-style.scss';
+import 'calypso/sites/components/dotcom-style.scss';
 import './styles.scss';
 
 type Props = {
