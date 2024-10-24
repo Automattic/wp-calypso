@@ -514,17 +514,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-body.is-section-plugins .plugin-management-wrapper {
-	@include break-small {
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-	@include break-medium {
-		padding-left: 2rem;
-		padding-right: 2rem;
-	}
-}
-
 .plugins__page-title {
 	color: var(--studio-gray-80);
 	font-weight: 400;
@@ -624,18 +613,6 @@ body.is-section-plugins .plugin-management-wrapper {
 	@media (min-width: $break-small) {
 		padding: 16px 0;
 		background: rgba(255, 255, 255, 0.5);
-		margin-bottom: -32px;
-	}
-}
-
-.plugins__main-content-jc {
-	// We need these negative margin values because we want to make the container full-width,
-	// but our element is inside a limited-width parent.
-	margin: 0 -32px;
-	padding: 0 48px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		padding: 16px 48px;
 		margin-bottom: -32px;
 	}
 }
