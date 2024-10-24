@@ -1,20 +1,22 @@
 /**
  * @jest-environment jsdom
  */
+import { canInstallPlugins } from '@automattic/sites';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
 import MigrationOverview from '../migration-overview';
-import type { SiteDetails, SiteDetailsPlan } from '@automattic/data-stores';
+import type { SiteDetails } from '@automattic/data-stores';
 
+jest.mock( '@automattic/sites' );
 jest.mock( 'calypso/sites-dashboard/utils' );
-jest.mock( '@automattic/calypso-products' );
+
+const baseSite = {
+	ID: 123,
+	slug: 'example.com',
+} as SiteDetails;
 
 describe( 'MigrationOverview', () => {
-	beforeEach( () => {
-		( getMigrationStatus as jest.Mock ).mockReturnValue( 'pending' );
-	} );
-
 	it.each( [
 		[
 			'diy',
@@ -48,19 +50,13 @@ describe( 'MigrationOverview', () => {
 		],
 	] )(
 		'should set continueMigrationUrl correctly for migrationType: %s and isFreePlan: %s',
-		( migrationType, canInstallPlugins, expectedUrl ) => {
+		( migrationType, siteCanInstallPlugins, expectedUrl ) => {
 			( getMigrationType as jest.Mock ).mockReturnValue( migrationType );
+			( getMigrationStatus as jest.Mock ).mockReturnValue( 'pending' );
+			( canInstallPlugins as jest.Mock ).mockReturnValue( siteCanInstallPlugins );
 
-			const site = {
-				ID: 123,
-				slug: 'example.com',
-				plan: {
-					features: { active: canInstallPlugins ? [ 'install-plugins' ] : [] },
-				} as SiteDetailsPlan,
-			} as SiteDetails;
-
-			const { getByText } = render( <MigrationOverview site={ site } /> );
-			const button = getByText( 'Start your migration' );
+			const { getByRole } = render( <MigrationOverview site={ baseSite } /> );
+			const button = getByRole( 'link', { name: 'Start your migration' } );
 
 			expect( button ).toHaveAttribute( 'href', expectedUrl );
 		}
