@@ -21,8 +21,6 @@ import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import SiteActions from '../../site-actions';
 import { AllowedTypes, Site, SiteData } from '../../types';
-import SiteErrorColumn from '../a4a/site-error-column';
-import { A4A_PLUGIN_SLUG } from '../a4a/site-error-preview';
 import type { Field } from '@wordpress/dataviews';
 import type { MouseEvent, KeyboardEvent } from 'react';
 
@@ -59,17 +57,6 @@ export const JetpackSitesDataViews = ( {
 		( acc, item ) => {
 			item.ref = item.site.value.blog_id;
 			acc.push( item );
-			// If this site has an error, we duplicate this row - while changing the duplicate's type to 'error' - to display an error message below it.
-			if ( item.site.error ) {
-				acc.push( {
-					...item,
-					site: {
-						...item.site,
-						type: 'error',
-					},
-					ref: `error-${ item.ref }`,
-				} );
-			}
 			return acc;
 		},
 		[]
@@ -98,14 +85,9 @@ export const JetpackSitesDataViews = ( {
 				return <TextPlaceholder />;
 			}
 
-			if ( item.site.type === 'error' ) {
-				return <div className="sites-dataview__site-error"></div>;
-			}
-
 			if ( column ) {
 				return (
 					<>
-						{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
 						<SiteStatusContent
 							rows={ item }
 							type={ column }
@@ -179,24 +161,12 @@ export const JetpackSitesDataViews = ( {
 					}
 					const site = item.site.value;
 
-					const isA4APluginInstalled = site.enabled_plugin_slugs?.includes( A4A_PLUGIN_SLUG );
-
-					if ( item.site.type === 'error' ) {
-						return (
-							<SiteErrorColumn
-								isA4APluginInstalled={ isA4APluginInstalled }
-								openSitePreviewPane={ () => openSitePreviewPane( item.site.value ) }
-							/>
-						);
-					}
-
 					return (
 						<div
 							className={ clsx( {
 								'is-site-selected': site.blog_id === dataViewsState.selectedItem?.blog_id,
 							} ) }
 						>
-							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
 							<SiteDataField
 								site={ site }
 								isLoading={ isLoading }
@@ -363,13 +333,8 @@ export const JetpackSitesDataViews = ( {
 						return <TextPlaceholder />;
 					}
 
-					if ( item.site.type === 'error' ) {
-						return <div className="sites-dataview__site-error"></div>;
-					}
-
 					return (
 						<>
-							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
 							<span className="sites-dataviews__favorite-btn-wrapper">
 								<SiteSetFavorite
 									isFavorite={ item.isFavorite || false }
@@ -391,15 +356,10 @@ export const JetpackSitesDataViews = ( {
 						return <TextPlaceholder />;
 					}
 
-					if ( item.site.type === 'error' ) {
-						return <div className="sites-dataview__site-error"></div>;
-					}
-
 					const isDevSite = item.isDevSite ?? false;
 
 					return (
 						<>
-							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
 							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 							<div
 								className="sites-dataviews__actions"
