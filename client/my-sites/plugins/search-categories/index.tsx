@@ -96,16 +96,13 @@ const SearchCategories: FC< {
 	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
 
-	const restrictedCategories = [ 'paid', 'popular', 'featured' ];
-	if ( category !== 'wpbeginner' ) {
-		restrictedCategories.push( 'wpbeginner' );
-	}
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
-		( v ) => restrictedCategories.indexOf( v ) < 0
+		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
 	);
-
-	const categories = Object.values( useCategories( displayCategories ) );
+	const categories = Object.values( useCategories( displayCategories ) ).filter(
+		( item ) => ! item.showOnlyActive || item.slug === category
+	);
 
 	// Update the search box with the value from the url everytime it changes
 	// This allows the component to be refilled with a keyword
