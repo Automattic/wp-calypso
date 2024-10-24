@@ -47,9 +47,9 @@ export function toggleReaderSidebarFollowing() {
 }
 
 export function toggleReaderSidebarRecent() {
-	recordAction( 'sidebar_toggle_recent_menu' );
-	recordGaEvent( 'Toggle Recent Menu' );
-	recordTrack( 'calypso_reader_sidebar_recent_toggle' );
+	recordAction( 'toggled_reader_sidebar_followed_sites' );
+	recordGaEvent( 'Toggled Reader Sidebar Followed Sites' );
+	recordTrack( 'calypso_reader_sidebar_followed_sites_toggled' );
 	return {
 		type: READER_SIDEBAR_RECENT_TOGGLE,
 	};
