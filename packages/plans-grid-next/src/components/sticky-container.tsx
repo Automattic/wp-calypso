@@ -72,10 +72,6 @@ export function StickyContainer( props: Props ) {
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
 
-	// To account for any differences in the precision of intersectionRect.bottom between browsers,
-	// use a small tolerance to determine if the element is at the bottom of the screen
-	const bottomTolerance = 1;
-
 	/**
 	 * This effect sets the value of `isStuck` state when it detects that
 	 * the element is sticky.
@@ -95,7 +91,8 @@ export function StickyContainer( props: Props ) {
 					// The element is out of view
 					setIsStuck( false );
 				} else if (
-					Math.abs( entry.intersectionRect.bottom - entry.rootBounds?.bottom ) <= bottomTolerance
+					entry.rootBounds?.bottom !== undefined &&
+					entry.boundingClientRect.bottom >= entry.rootBounds?.bottom
 				) {
 					// The element is intersecting, but it is at the bottom of the screen
 					setIsStuck( false );
