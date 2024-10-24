@@ -249,10 +249,12 @@ export const SitePerformance = () => {
 
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
+			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_click' );
 			page( `/settings/general/${ site.slug }` );
 			return;
 		}
 		dispatch( launchSite( siteId! ) );
+		recordTracksEvent( 'calypso_performance_profiler_launch_site_click' );
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -301,7 +303,7 @@ export const SitePerformance = () => {
 			onChange={ ( page_id ) => {
 				const url = new URL( window.location.href );
 				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
-					page: page_id,
+					page: pages.find( ( page ) => page.value === page_id ).label ?? '/',
 				} );
 				if ( page_id ) {
 					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
