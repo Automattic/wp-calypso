@@ -1,12 +1,19 @@
+import {
+	BLOG_FLOW,
+	FREE_FLOW,
+	LINK_IN_BIO_FLOW,
+	VIDEOPRESS_FLOW,
+	SENSEI_FLOW,
+} from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
 export const REMOVED_TAILORED_FLOWS = [
-	{ flow: 'blog', to: '/start:lang?' },
-	{ flow: 'free', to: '/start/free:lang?' },
-	{ flow: 'link-in-bio', to: '/start:lang?' },
-	{ flow: 'videopress', to: '/start:lang?' },
-	{ flow: 'sensei', to: ':lang?/plugins/sensei-pro/' },
+	{ flow: BLOG_FLOW, to: '/start:lang?' },
+	{ flow: FREE_FLOW, to: '/start/free:lang?' },
+	{ flow: LINK_IN_BIO_FLOW, to: '/start:lang?' },
+	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
+	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
 
 // Regex pattern for the optional language code in the format xx or xx-yy
