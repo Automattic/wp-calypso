@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import { useZendeskMessageListener } from '../../utils';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -9,6 +10,13 @@ import type { CurrentUser } from '../../types/';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
+const DislikeThumb = () => {
+	return (
+		<div className="chatbox-message__dislike-thumb">
+			<ThumbsDown />
+		</div>
+	);
+};
 
 export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >(
 	( { currentUser }, ref ) => {
@@ -33,6 +41,11 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 
 		const lastMessageIndex = chat.messages.length - 1;
 
+		// Used to apply the correct styling on messages
+		const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
+			return currentMessage === nextMessage;
+		};
+
 		return (
 			<div className="chatbox-messages" ref={ ref }>
 				{ chat.messages.map( ( message, index ) => (
@@ -44,8 +57,13 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 						isLastFeedbackMessage={ lastFeedbackMessageIndex === index }
 						isLastErrorMessage={ lastErrorMessageIndex === index }
 						isLastMessage={ lastMessageIndex === index }
+						isNextMessageFromSameSender={ isNextMessageFromSameSender(
+							message.role,
+							chat.messages[ index + 1 ]?.role
+						) }
 					/>
 				) ) }
+				{ chatStatus === 'dislike' && <DislikeThumb /> }
 				<div className="odie-chatbox__action-message">
 					{ chatStatus === 'sending' && <ThinkingPlaceholder /> }
 					{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }

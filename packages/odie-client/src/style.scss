@@ -34,6 +34,7 @@
 	align-items: flex-start;
 	height: 100%;
 	overscroll-behavior: contain;
+	padding-top: 16px;
 
 	.odie-chatbox-bottom-edge {
 		min-height: 8px;
@@ -42,7 +43,9 @@
 
 	.odie-chatbox-message-sources-container {
 		width: 100%;
-
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
 		&:last-of-type > .odie-chatbox-message-sources-container {
 			margin-bottom: 64px;
 		}

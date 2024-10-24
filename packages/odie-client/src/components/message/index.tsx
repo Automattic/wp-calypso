@@ -27,6 +27,7 @@ export type MessageIndicators = {
 	isLastFeedbackMessage: boolean;
 	isLastErrorMessage: boolean;
 	isLastMessage: boolean;
+	isNextMessageFromSameSender: boolean;
 };
 
 const MessageAvatarHeader = ( {

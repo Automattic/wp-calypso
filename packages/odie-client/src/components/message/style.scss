@@ -1,33 +1,55 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+$blueberry-color: #3858e9;
 
+.chatbox-message__dislike-thumb {
+	display: flex;
+    width: 96%;
+    justify-content: flex-end;
+	margin-top: 4px;
+	svg {
+		padding: 14px;
+		background-color: $blueberry-color;
+	}
+}
 .odie-chatbox__action-message {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	gap: 8px;
 	padding: 16px;
+	flex-wrap: wrap;
 
-	.message-header {
-		display: flex;
-		align-items: center;
-		width: 100%;
-		gap: 8px;
+	.odie-chatbox-dislike-feedback-message {
+		flex: 1;
+		.message-header {
+			width: auto;
+		}
+		p {
+			width: 80%;
+			display: flex;
+			padding: 16px;
+			align-items: center;
+			justify-content: center;
+			background-color: var(--studio-gray-0);
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px 8px 8px 0;
+			font-size: 0.875rem;
+			margin-bottom: 0;
+		}
 	}
 }
 
 .odie-chatbox-message {
 	display: flex;
-	justify-content: space-between;
 	word-wrap: break-word;
 	font-size: $font-body;
 	line-height: 1.4;
 	color: #000;
-	flex-direction: column;
-	padding: 16px;
+	flex-direction: row;
+	padding: 0 16px;
 	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
-	min-height: 64px;
 	text-wrap: pretty;
 
 	ol,
@@ -43,10 +65,18 @@
 		}
 	}
 
+	.chat-feedback-wrapper {
+		padding-top: 24px;
+	}
+
 	.disclaimer {
-		color: var(--studio-gray-50);
+		color: var(--studio-gray-80);
 		font-size: $font-body-extra-small;
-		text-align: right;
+		text-align: start;
+    	margin: 16px 0;
+		.components-external-link {
+			margin-left: 6px;
+		}
 	}
 }
 
@@ -74,30 +104,67 @@
 	margin-bottom: 0;
 }
 
-.odie-chatbox-message.odie-chatbox-message-user {
-	background-color: var(--studio-gray-0);
-}
-
-.odie-chatbox-message.odie-chatbox-message-user p {
-	font-size: 1rem;
-}
-
 .odie-chatbox-message.odie-chatbox-message-user > :last-child {
 	margin-bottom: 0;
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu {
-	background-color: var(--studio-white);
+.odie-chatbox-message.odie-chatbox-message-user {
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 0 8px;
+	background-color: $blueberry-color;
+	width: 80%;
+	margin-right: 16px;
+	padding: 16px;
+	p {
+		color: var(--studio-white);
+		padding: 0;
+	}
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu p {
-	font-size: 1rem;
+.odie-chatbox-message.odie-chatbox-message-business {
+	p {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px 8px 8px 0;
+		background-color:#F7F8FE;
+		
+	}
+	
+}
+
+.odie-chatbox-message.odie-chatbox-message-wapuu.odie-chatbox-message-message {
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 8px 0;
+	background-color: var(--studio-white);
+	flex-wrap: wrap;
+
+	p {
+		flex: 0.8;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--studio-gray-0);
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px 8px 8px 0;
+	}
+}
+
+.odie-chatbox-message p {
+	font-size: 0.875rem;
+	padding: 16px;
 }
 
 .odie-introduction-message-content {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background-color: var(--studio-gray-0);
+	width: 80%;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px 8px 8px 0;
+	p {
+		color: var(--studio-gray-80);
+		line-height: 20px;
+	}
 }
 
 .odie-chatbox-message-avatar {
@@ -109,9 +176,7 @@
 
 .message-header {
 	display: flex;
-	align-items: center;
-	width: 100%;
-	gap: 8px;
+	align-items: end;
 
 	.user {
 		justify-content: flex-start;
@@ -403,10 +468,11 @@ $custom-border-corner-size: 16px;
 
 .odie-feedback-message {
 	position: relative;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 1rem;
 	width: 100%;
 	height: 100%;
+	color: var(--studio-gray-100);
 
 	.odie-feedback-component-thanks,
 	.odie-feedback-component-question {
@@ -472,6 +538,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
+	padding-bottom: 16px;
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;
@@ -489,5 +556,8 @@ $custom-border-corner-size: 16px;
 		.foldable-card {
 			box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
 		}
+	}
+	&.next-chat-message-same-sender {
+		padding-bottom: 8px;
 	}
 }
