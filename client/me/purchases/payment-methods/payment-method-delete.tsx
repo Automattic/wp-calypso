@@ -4,8 +4,10 @@ import { FunctionComponent, useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isPaymentAgreement, PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSitePurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
@@ -22,6 +24,9 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const reduxDispatch = useDispatch();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
+	const siteId = useSelector( getSelectedSiteId );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
@@ -77,6 +82,8 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 				isVisible={ isDialogVisible }
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }
+				card={ card }
+				purchases={ userPurchases || sitePurchases }
 			/>
 			{ renderDeleteButton() }
 		</div>
