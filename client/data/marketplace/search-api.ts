@@ -39,6 +39,7 @@ function generateApiQueryString( {
 	pageHandle,
 	pageSize,
 	locale,
+	slugs,
 }: SearchParams ) {
 	const sort = 'score_default';
 
@@ -84,7 +85,11 @@ function generateApiQueryString( {
 				params.sort = 'plugin_modified';
 				break;
 			default:
-				params.filter = getFilterByCategory( category );
+				if ( Array.isArray( slugs ) && slugs.length ) {
+					params.filter = getFilterbySlugs( slugs || [] );
+				} else {
+					params.filter = getFilterByCategory( category );
+				}
 				params.sort = 'active_installs';
 		}
 	}
@@ -152,6 +157,18 @@ function getFilterbySlug( slug: string ): {
 	return {
 		bool: {
 			must: [ { term: { slug } } ],
+		},
+	};
+}
+
+function getFilterbySlugs( slugs: string[] ): {
+	bool: {
+		should: { terms: object }[];
+	};
+} {
+	return {
+		bool: {
+			should: [ { terms: { slug: slugs } } ],
 		},
 	};
 }

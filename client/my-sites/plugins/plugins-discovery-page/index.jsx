@@ -1,9 +1,11 @@
 import { useSelector } from 'react-redux';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
@@ -44,6 +46,24 @@ export const PaidPluginsSection = ( props ) => {
 			category="paid"
 			plugins={ paidPlugins }
 			isFetching={ isFetchingPaidPlugins }
+		/>
+	);
+};
+export const FeaturedWPBeginnerSection = ( props ) => {
+	const category = 'wpbeginner';
+
+	const { plugins, isFetching } = usePlugins( {
+		category,
+		infinite: true,
+		slugs: WPBEGINNER_PLUGINS,
+	} );
+
+	return (
+		<SingleListView
+			{ ...props }
+			category={ category }
+			plugins={ plugins }
+			isFetching={ isFetching }
 		/>
 	);
 };
@@ -89,6 +109,7 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isWPBeginnerSpecial = getQueryArgs()?.ref === 'wpbeginner-special-lp';
 
 	const {
 		isTrialAcknowledgeModalOpen,
@@ -112,15 +133,22 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			) }
 
-			<PaidPluginsSection { ...props } />
-			<CollectionListView category="monetization" { ...props } />
-			<EducationFooter />
-			{ ! isLoggedIn && <InPageCTASection /> }
-			<FeaturedPluginsSection
-				{ ...props }
-				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-			/>
+			{ isWPBeginnerSpecial ? (
+				<FeaturedWPBeginnerSection { ...props } />
+			) : (
+				<>
+					<PaidPluginsSection { ...props } />
+					<CollectionListView category="monetization" { ...props } />
+					<EducationFooter />
+					{ ! isLoggedIn && <InPageCTASection /> }
+					<FeaturedPluginsSection
+						{ ...props }
+						pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+						isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+					/>
+				</>
+			) }
+
 			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
 			<CollectionListView category="ecommerce" { ...props } />

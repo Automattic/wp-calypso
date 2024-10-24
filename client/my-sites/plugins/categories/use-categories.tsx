@@ -74,6 +74,7 @@ export const ALLOWED_CATEGORIES = [
 	'javascript',
 	'community',
 	'captcha',
+	'wpbeginner',
 ];
 
 export const getCategories: () => Record< string, Category > = () => ( {
@@ -750,6 +751,15 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		slug: 'captcha',
 		tags: [ 'captcha', 'invisible captcha', 'nocaptcha', 'CAPTCHA Code', 'anti-spam' ],
 		preview: [],
+	},
+	wpbeginner: {
+		menu: __( 'WPBeginner' ),
+		title: __( 'Must-have plugins from WPBeginner' ),
+		description: __( 'Add the best-loved plugins on WordPress.com' ),
+		slug: 'wpbeginner',
+		tags: [ 'wpbeginner', 'Awesome Motive' ],
+		preview: [],
+		showOnlyActive: true,
 	},
 } );
 

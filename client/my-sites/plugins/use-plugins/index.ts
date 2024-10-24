@@ -33,11 +33,13 @@ const usePlugins = ( {
 	search,
 	infinite = false,
 	locale = '',
+	slugs,
 }: {
 	category: string;
 	search?: string;
 	infinite?: boolean;
 	locale?: string;
+	slugs?: string[];
 } ) => {
 	let plugins = [];
 	let isFetching = false;
@@ -53,6 +55,7 @@ const usePlugins = ( {
 		category,
 		tag,
 		searchTerm: search,
+		slugs,
 	};
 
 	// This is triggered for searches OR any other category than paid, featured

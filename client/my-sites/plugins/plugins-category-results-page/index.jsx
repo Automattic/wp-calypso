@@ -4,12 +4,14 @@ import { useCategories } from 'calypso/my-sites/plugins/categories/use-categorie
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
+import { WPBEGINNER_PLUGINS } from '../constants';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
 		infinite: true,
+		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
 	} );
 
 	const categories = useCategories();
