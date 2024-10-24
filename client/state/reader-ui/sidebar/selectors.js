@@ -40,3 +40,12 @@ export function isListsOpen( state ) {
 export function isTagsOpen( state ) {
 	return state.readerUi.sidebar.isTagsOpen;
 }
+
+/**
+ * Whether or not recent reader sidebar item is open
+ * @param state redux state
+ * @returns {boolean} whether or not the sidebar item is open
+ */
+export function isRecentOpen( state ) {
+	return state.readerUi.sidebar.isRecentOpen;
+}

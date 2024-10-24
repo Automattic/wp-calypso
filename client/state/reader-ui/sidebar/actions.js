@@ -4,6 +4,7 @@ import {
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
+	READER_SIDEBAR_RECENT_TOGGLE,
 } from 'calypso/state/reader-ui/action-types';
 
 import 'calypso/state/reader-ui/init';
@@ -42,5 +43,14 @@ export function toggleReaderSidebarFollowing() {
 	recordTrack( 'calypso_reader_sidebar_following_toggle' );
 	return {
 		type: READER_SIDEBAR_FOLLOWING_TOGGLE,
+	};
+}
+
+export function toggleReaderSidebarRecent() {
+	recordAction( 'sidebar_toggle_recent_menu' );
+	recordGaEvent( 'Toggle Recent Menu' );
+	recordTrack( 'calypso_reader_sidebar_recent_toggle' );
+	return {
+		type: READER_SIDEBAR_RECENT_TOGGLE,
 	};
 }
