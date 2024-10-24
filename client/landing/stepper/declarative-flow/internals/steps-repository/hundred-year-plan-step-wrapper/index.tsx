@@ -5,6 +5,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	StepContainer,
 } from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -21,10 +22,11 @@ import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
 
 import './style.scss';
-
 type Props = {
 	stepName: string;
 	flowName: string;
+	variantSlug?: string;
+	mobileBreakpoint?: number;
 	stepContent: ReactElement;
 	justifyStepContent?: string;
 	formattedHeader?: ReactElement;
@@ -198,10 +200,12 @@ function InfoColumn( {
 	isMobile,
 	openModal,
 	flowName,
+	variantSlug,
 }: {
 	isMobile: boolean;
 	openModal: () => void;
 	flowName: string;
+	variantSlug?: string;
 } ) {
 	const translate = useTranslate();
 
@@ -220,8 +224,8 @@ function InfoColumn( {
 			stripZeros: true,
 		} );
 
-	// TODO: Replace hardcoded value by 100-eyar domain product price when we have it
-	if ( flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
+	// TODO: Replace hardcoded value/checks by 100-year domain product price when we have it
+	if ( variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER || flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
 		displayCost = '$2,000';
 	}
 
@@ -269,10 +273,18 @@ function InfoColumn( {
 }
 
 function HundredYearPlanStepWrapper( props: Props ) {
-	const { stepContent, stepName, flowName, formattedHeader, justifyStepContent, hideInfoColumn } =
-		props;
+	const {
+		stepContent,
+		stepName,
+		flowName,
+		formattedHeader,
+		justifyStepContent,
+		hideInfoColumn,
+		variantSlug,
+		mobileBreakpoint,
+	} = props;
 
-	const isMobile = useBreakpoint( `<${ SMALL_BREAKPOINT }px` );
+	const isMobile = useBreakpoint( `<${ mobileBreakpoint ?? SMALL_BREAKPOINT }px` );
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
@@ -296,12 +308,19 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
 						{ ! hideInfoColumn && (
 							<InfoColumnWrapper isMobile={ isMobile }>
-								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
+								<InfoColumn
+									isMobile={ isMobile }
+									openModal={ openModal }
+									flowName={ flowName }
+									variantSlug={ variantSlug }
+								/>
 							</InfoColumnWrapper>
 						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>
-							<div className="step-container__header">{ formattedHeader }</div>
-							{ stepContent }
+							<div className="hundred-year-plan-step-wrapper__step-container">
+								<div className="step-container__header">{ formattedHeader }</div>
+								{ stepContent }
+							</div>
 						</FlexWrapper>
 					</Container>
 				}

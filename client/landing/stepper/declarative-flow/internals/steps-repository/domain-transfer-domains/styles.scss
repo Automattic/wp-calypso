@@ -11,6 +11,39 @@
 	align-items: center;
 	gap: 30px;
 
+	&.hundred-year-domain-transfer {
+
+		&.step-route {
+			gap: 0;
+			width: 100%;
+			margin: 0;
+			max-width: none;
+		}
+
+		.domains {
+			.step-container__header {
+				@media (max-width: $break-wide) {
+					margin-top: 32px;
+				}
+			}
+		}
+
+		.bulk-domain-transfer__cta-container {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 32px;
+
+			.bulk-domain-transfer__cta {
+				height: 48px;
+				width: 240px;
+
+				@media (max-width: $break-medium) {
+					width: 100%;
+				}
+			}
+		}
+	}
+
 	button:disabled {
 		pointer-events: none;
 	}
