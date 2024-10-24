@@ -32,7 +32,7 @@ export default function OverviewSidebarAgencyTier() {
 			<Card className="agency-tier__card">
 				<FoldableCard
 					className="foldable-nav"
-					header={ translate( 'Your Agency Tier' ) }
+					header={ translate( 'Agency tier and benefits' ) }
 					expanded
 					compact
 					iconSize={ 18 }

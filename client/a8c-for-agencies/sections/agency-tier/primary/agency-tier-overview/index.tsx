@@ -25,7 +25,7 @@ export default function AgencyTierOverview() {
 
 	const agency = useSelector( getActiveAgency );
 
-	const title = translate( 'Your Agency Tier' );
+	const title = translate( 'Agency Tiers' );
 	const benefits = getTierBenefits( translate );
 
 	const currentAgencyTier = agency?.tier?.id;
@@ -133,7 +133,7 @@ export default function AgencyTierOverview() {
 						{ translate( 'Take a closer look' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-heading">
-						{ translate( 'Explore the benefits of the tiers' ) }
+						{ translate( 'Explore the benefits of using Automattic for Agencies' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-cards">
 						{ benefits.map( ( benefit ) => (
