@@ -57,7 +57,7 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 						isLastFeedbackMessage={ lastFeedbackMessageIndex === index }
 						isLastErrorMessage={ lastErrorMessageIndex === index }
 						isLastMessage={ lastMessageIndex === index }
-						areLastMessagesFromSameSender={ isNextMessageFromSameSender(
+						isNextMessageFromSameSender={ isNextMessageFromSameSender(
 							message.role,
 							chat.messages[ index + 1 ]?.role
 						) }

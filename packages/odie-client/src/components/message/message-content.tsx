@@ -27,7 +27,7 @@ export const MessageContent = forwardRef<
 			isLastFeedbackMessage,
 			isLastMessage,
 			isLastUserMessage,
-			areLastMessagesFromSameSender,
+			isNextMessageFromSameSender,
 		},
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
@@ -45,7 +45,7 @@ export const MessageContent = forwardRef<
 		);
 		const containerClasses = clsx(
 			'odie-chatbox-message-sources-container',
-			areLastMessagesFromSameSender && 'next-chat-message-same-sender'
+			isNextMessageFromSameSender && 'next-chat-message-same-sender'
 		);
 
 		return (
