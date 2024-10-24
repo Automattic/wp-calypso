@@ -231,13 +231,13 @@ function getLaunchPageAction( {
 		 * `isStuck` indicates the buttons are fixed/sticky in the grid, and we show the price alongside the plan name.
 		 */
 		return createLaunchPageAction(
-			translate( 'Select %(plan)s – %(priceString)s', {
+			translate( 'Select %(plan)s ⋅ %(priceString)s', {
 				args: {
 					plan: planTitle ?? '',
 					priceString: priceString ?? '',
 				},
 				comment:
-					'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium - $10',
+					'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Select Premium ⋅ $10',
 			} )
 		);
 	}
@@ -300,18 +300,18 @@ function getSignupAction( {
 							priceString: priceString ?? '',
 						},
 						comment:
-							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium ⋅ $10',
 						components: {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
 				  } )
-				: translate( 'Get %(plan)s – %(priceString)s', {
+				: translate( 'Get %(plan)s ⋅ %(priceString)s', {
 						args: {
 							plan: planTitle ?? '',
 							priceString: priceString ?? '',
 						},
 						comment:
-							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium ⋅ $10',
 				  } )
 		);
 	}
@@ -457,16 +457,16 @@ function getLoggedInPlansAction( {
 							priceString: priceString ?? '',
 						},
 						comment:
-							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium - $10',
+							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium ⋅ $10',
 						components: {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
 				  } )
-				: translate( 'Upgrade – %(priceString)s', {
+				: translate( 'Upgrade ⋅ %(priceString)s', {
 						context: 'verb',
 						args: { priceString: priceString ?? '' },
 						comment:
-							'%(priceString)s is the full price including the currency. Eg: Get Upgrade - $10',
+							'%(priceString)s is the full price including the currency. Eg: Get Upgrade ⋅ $10',
 				  } )
 		);
 	}

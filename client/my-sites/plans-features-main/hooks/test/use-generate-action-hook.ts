@@ -147,7 +147,7 @@ describe( 'useGenerateActionHook', () => {
 		} );
 
 		// The assertion is okay since we don't actually run the translate function
-		expect( action.primary.text ).toBe( 'Select %(plan)s – %(priceString)s' );
+		expect( action.primary.text ).toBe( 'Select %(plan)s ⋅ %(priceString)s' );
 	} );
 
 	it( 'should handle signup actions for free trial', () => {
@@ -206,7 +206,7 @@ describe( 'useGenerateActionHook', () => {
 		} );
 
 		// The assertion is okay since we don't actually run the translate function
-		expect( action.primary.text ).toBe( 'Get %(plan)s – %(priceString)s' );
+		expect( action.primary.text ).toBe( 'Get %(plan)s ⋅ %(priceString)s' );
 	} );
 
 	it( 'should handle signup actions for plans with sticky buttons and isLargeCurrency as true', () => {
@@ -252,7 +252,7 @@ describe( 'useGenerateActionHook', () => {
 			priceString: '$300',
 		} );
 
-		expect( action.primary.text ).toBe( 'Upgrade – %(priceString)s' );
+		expect( action.primary.text ).toBe( 'Upgrade ⋅ %(priceString)s' );
 	} );
 
 	it( 'should handle upgrade to longer billing period - annual', () => {
