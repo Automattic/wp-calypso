@@ -14,21 +14,18 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
 	} );
 
-	const results = pagination.results;
 	const categories = useCategories();
-
 	const categoryName = categories[ category ]?.title || category;
 	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
-	let size;
 
 	let resultCount = '';
 	if ( categoryName && pagination ) {
 		resultCount = translate( '%(total)s plugin', '%(total)s plugins', {
-			count: results,
+			count: pagination.results,
 			textOnly: true,
 			args: {
-				total: results.toLocaleString(),
+				total: pagination.results.toLocaleString(),
 			},
 		} );
 	}
@@ -48,7 +45,6 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				extended
-				size={ size }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</>

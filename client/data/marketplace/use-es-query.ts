@@ -82,23 +82,20 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 };
 
 export const getESPluginQueryParams = (
-	slug: string | string[],
+	slug: string,
 	locale: string,
 	fields?: Array< string >
 ): {
 	queryKey: QueryKey;
 	queryFn: QueryFunction< { plugins: Plugin[]; pagination: { page: number } }, QueryKey >;
 } => {
-	if ( ! Array.isArray( slug ) ) {
-		slug = [ slug ];
-	}
 	const queryKey = [ 'es-plugin', slug ];
 	const queryFn = () =>
 		searchBySlug( slug, locale, { fields } )
 			.then( ( { data }: { data: { results: ESHits } } ) =>
 				mapIndexResultsToPluginData( data.results )
 			)
-			.then( ( plugins: Plugin[] ) => plugins?.slice( 0, slug.length ) || null );
+			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
 	return { queryKey, queryFn };
 };
 
