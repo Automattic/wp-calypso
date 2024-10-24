@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
+import { getMigrationType } from 'calypso/sites-dashboard/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const cards = [
@@ -40,93 +40,91 @@ const cards = [
 ];
 
 const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
-	if ( getMigrationStatus( site ) === 'pending' ) {
-		const migrationType = getMigrationType( site );
+	const migrationType = getMigrationType( site );
 
-		const baseQueryArgs = {
-			siteId: site.ID,
-			siteSlug: site.slug,
-			start: 'true',
-			ref: 'hosting-migration-overview',
-		};
+	const baseQueryArgs = {
+		siteId: site.ID,
+		siteSlug: site.slug,
+		start: 'true',
+		ref: 'hosting-migration-overview',
+	};
 
-		let continueMigrationUrl;
+	let continueMigrationUrl;
 
-		if ( ! canInstallPlugins( site ) ) {
-			// For the flows where the checkout is after the choice.
-			switch ( migrationType ) {
-				case 'diy':
-					continueMigrationUrl = addQueryArgs(
-						{
-							...baseQueryArgs,
-							destination: 'upgrade',
-							how: 'myself',
-						},
-						'/setup/site-migration/site-migration-upgrade-plan'
-					);
-					break;
-				case 'difm':
-					continueMigrationUrl = addQueryArgs(
-						{
-							...baseQueryArgs,
-							destination: 'upgrade',
-							how: 'difm',
-						},
-						'/setup/site-migration/site-migration-upgrade-plan'
-					);
-					break;
-				default:
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/site-migration/site-migration-how-to-migrate'
-					);
-			}
-		} else {
-			// For the /setup/migration, where the checkout is before the choice.
-			switch ( migrationType ) {
-				case 'diy':
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/migration/site-migration-instructions'
-					);
-					break;
-				case 'difm':
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/migration/site-migration-credentials'
-					);
-					break;
-				default:
-					continueMigrationUrl = addQueryArgs(
-						baseQueryArgs,
-						'/setup/migration/migration-how-to-migrate'
-					);
-			}
+	if ( ! canInstallPlugins( site ) ) {
+		// For the flows where the checkout is after the choice.
+		switch ( migrationType ) {
+			case 'diy':
+				continueMigrationUrl = addQueryArgs(
+					{
+						...baseQueryArgs,
+						destination: 'upgrade',
+						how: 'myself',
+					},
+					'/setup/site-migration/site-migration-upgrade-plan'
+				);
+				break;
+			case 'difm':
+				continueMigrationUrl = addQueryArgs(
+					{
+						...baseQueryArgs,
+						destination: 'upgrade',
+						how: 'difm',
+					},
+					'/setup/site-migration/site-migration-upgrade-plan'
+				);
+				break;
+			default:
+				continueMigrationUrl = addQueryArgs(
+					baseQueryArgs,
+					'/setup/site-migration/site-migration-how-to-migrate'
+				);
 		}
-
-		return (
-			<div>
-				<HostingHero>
-					<h1>{ translate( 'Your WordPress site is ready to be migrated' ) }</h1>
-					<p>
-						{ translate(
-							'Start your migration today and get ready for unmatched WordPress hosting.'
-						) }
-					</p>
-					<HostingHeroButton href={ continueMigrationUrl }>
-						{ translate( 'Start your migration' ) }
-					</HostingHeroButton>
-				</HostingHero>
-				<HostingCardGrid>
-					{ cards.map( ( { title, text } ) => (
-						<HostingCard inGrid key={ title } title={ title }>
-							<p>{ text }</p>
-						</HostingCard>
-					) ) }
-				</HostingCardGrid>
-			</div>
-		);
+	} else {
+		// For the /setup/migration, where the checkout is before the choice.
+		switch ( migrationType ) {
+			case 'diy':
+				continueMigrationUrl = addQueryArgs(
+					baseQueryArgs,
+					'/setup/migration/site-migration-instructions'
+				);
+				break;
+			case 'difm':
+				continueMigrationUrl = addQueryArgs(
+					baseQueryArgs,
+					'/setup/migration/site-migration-credentials'
+				);
+				break;
+			default:
+				continueMigrationUrl = addQueryArgs(
+					baseQueryArgs,
+					'/setup/migration/migration-how-to-migrate'
+				);
+		}
 	}
+
+	return (
+		<div>
+			<HostingHero>
+				<h1>{ translate( 'Your WordPress site is ready to be migrated' ) }</h1>
+				<p>
+					{ translate(
+						'Start your migration today and get ready for unmatched WordPress hosting.'
+					) }
+				</p>
+				<HostingHeroButton href={ continueMigrationUrl }>
+					{ translate( 'Start your migration' ) }
+				</HostingHeroButton>
+			</HostingHero>
+			<HostingCardGrid>
+				{ cards.map( ( { title, text } ) => (
+					<HostingCard inGrid key={ title } title={ title }>
+						<p>{ text }</p>
+					</HostingCard>
+				) ) }
+			</HostingCardGrid>
+		</div>
+	);
 };
 
 export default MigrationOverview;
