@@ -16,7 +16,7 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
 
-export const isRemovedFlow = ( flowToCheck ) =>
+export const isRemovedFlow = ( flowToCheck: string ) =>
 	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
 
 // Regex pattern for the optional language code in the format xx or xx-yy
