@@ -22,24 +22,18 @@ const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type NounsInStore = 'customerName' | 'customerBank';
+type NounsInStore = 'customerName';
 type IdealStore = PaymentMethodStore< NounsInStore >;
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
 		return { type: 'CUSTOMER_NAME_SET', payload };
 	},
-	changeCustomerBank( payload ) {
-		return { type: 'CUSTOMER_BANK_SET', payload };
-	},
 };
 
 const selectors: StoreSelectorsWithState< NounsInStore > = {
 	getCustomerName( state ) {
 		return state.customerName || '';
-	},
-	getCustomerBank( state ) {
-		return state.customerBank || '';
 	},
 };
 
@@ -49,15 +43,12 @@ export function createIdealPaymentMethodStore(): IdealStore {
 		reducer(
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
-				customerBank: { value: '', isTouched: false },
 			},
 			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
-				case 'CUSTOMER_BANK_SET':
-					return { ...state, customerBank: { value: action.payload, isTouched: true } };
 			}
 			return state;
 		},
@@ -88,25 +79,23 @@ export function createIdealMethod( {
 }
 
 function useCustomerData() {
-	const { customerName, customerBank } = useSelect( ( select ) => {
+	const { customerName } = useSelect( ( select ) => {
 		const store = select( 'ideal' ) as StoreSelectors< NounsInStore >;
 		return {
 			customerName: store.getCustomerName(),
-			customerBank: store.getCustomerBank(),
 		};
 	}, [] );
 
 	return {
 		customerName,
-		customerBank,
 	};
 }
 
 function IdealFields() {
 	const { __ } = useI18n();
 
-	const { customerName, customerBank } = useCustomerData();
-	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ideal' );
+	const { customerName } = useCustomerData();
+	const { changeCustomerName } = useDispatch( 'ideal' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -120,15 +109,6 @@ function IdealFields() {
 				value={ customerName?.value ?? '' }
 				onChange={ changeCustomerName }
 				isError={ customerName?.isTouched && customerName?.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-			<BankSelector
-				id="ideal-bank-selector"
-				value={ customerBank?.value ?? '' }
-				onChange={ changeCustomerBank }
-				label={ __( 'Bank' ) }
-				isError={ customerBank?.isTouched && customerBank?.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -287,7 +267,7 @@ function IdealPayButton( {
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const { customerName, customerBank } = useCustomerData();
+	const { customerName } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -306,7 +286,6 @@ function IdealPayButton( {
 					debug( 'submitting ideal payment' );
 					onClick( {
 						name: customerName?.value,
-						idealBank: customerBank?.value,
 					} );
 				}
 			} }
@@ -320,29 +299,23 @@ function IdealPayButton( {
 }
 
 function IdealSummary() {
-	const { customerName, customerBank } = useCustomerData();
+	const { customerName } = useCustomerData();
 
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ customerName?.value }</SummaryLine>
-			<SummaryLine>{ customerBank?.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
 function isFormValid( store: IdealStore ) {
 	const customerName = selectors.getCustomerName( store.getState() );
-	const customerBank = selectors.getCustomerBank( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( actions.changeCustomerName( '' ) );
 	}
-	if ( ! customerBank?.value.length ) {
-		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerBank( '' ) );
-	}
-	if ( ! customerName?.value.length || ! customerBank?.value.length ) {
+	if ( ! customerName?.value.length ) {
 		return false;
 	}
 	return true;
