@@ -299,6 +299,12 @@ export const SitePerformance = () => {
 				setNoPagesFound( { query: value, found: false } );
 			} }
 			allowReset={ false }
+			onBlur={ () => {
+				// if no pages found, reset so that the previous selected page is shown
+				if ( ! noPagesFound.found ) {
+					setNoPagesFound( { query: '', found: true } );
+				}
+			} }
 			options={ options }
 			disabled={ disableControls }
 			onChange={ ( page_id ) => {
