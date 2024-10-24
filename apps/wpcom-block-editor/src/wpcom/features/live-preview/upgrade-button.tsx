@@ -102,17 +102,21 @@ export const LivePreviewUpgradeButton: FC< {
 			} );
 		};
 
-		if ( canvasMode === 'view' ) {
-			overrideSaveButtonClick( SAVE_HUB_SAVE_BUTTON_SELECTOR );
-			overrideSaveButtonHover( SAVE_HUB_SAVE_BUTTON_SELECTOR );
-		} else if ( canvasMode === 'edit' ) {
-			overrideSaveButtonClick( HEADER_SAVE_BUTTON_SELECTOR );
-			overrideSaveButtonHover( HEADER_SAVE_BUTTON_SELECTOR );
-		}
+		// Delay it to ensure the element is visible.
+		const timeout = window.setTimeout( () => {
+			if ( canvasMode === 'view' ) {
+				overrideSaveButtonClick( SAVE_HUB_SAVE_BUTTON_SELECTOR );
+				overrideSaveButtonHover( SAVE_HUB_SAVE_BUTTON_SELECTOR );
+			} else if ( canvasMode === 'edit' ) {
+				overrideSaveButtonClick( HEADER_SAVE_BUTTON_SELECTOR );
+				overrideSaveButtonHover( HEADER_SAVE_BUTTON_SELECTOR );
+			}
+		}, 0 );
 
 		return () => {
 			resetSaveButton();
 			resetSaveButtonHover();
+			clearTimeout( timeout );
 		};
 	}, [ canvasMode, previewingTheme.id, previewingTheme.type, upgradePlan ] );
 
