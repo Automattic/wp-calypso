@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
-import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
@@ -9,44 +8,19 @@ import { WPBEGINNER_PLUGINS } from '../constants';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
-	let plugins;
-	let isFetching;
-	const isWPBeginnerSpecial = category === 'wpbeginner';
-	const { data: esPlugins = [], isFetching: esIsFetching } = useESPlugin(
-		WPBEGINNER_PLUGINS.slice( 0, 20 ),
-		undefined,
-		{
-			enabled: isWPBeginnerSpecial,
-		}
-	);
-	const {
-		plugins: categoryPlugins,
-		isFetching: categoryIsFetching,
-		fetchNextPage,
-		pagination,
-	} = usePlugins( {
+	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
 		infinite: true,
-		enabled: ! isWPBeginnerSpecial,
+		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
 	} );
 
-	let results = pagination.results;
+	const results = pagination.results;
 	const categories = useCategories();
 
 	const categoryName = categories[ category ]?.title || category;
 	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
 	let size;
-
-	if ( isWPBeginnerSpecial ) {
-		plugins = esPlugins;
-		isFetching = esIsFetching;
-		results = esPlugins.length;
-		size = results;
-	} else {
-		plugins = categoryPlugins;
-		isFetching = categoryIsFetching;
-	}
 
 	let resultCount = '';
 	if ( categoryName && pagination ) {

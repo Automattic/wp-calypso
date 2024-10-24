@@ -39,6 +39,7 @@ function generateApiQueryString( {
 	pageHandle,
 	pageSize,
 	locale,
+	slugs,
 }: SearchParams ) {
 	const sort = 'score_default';
 
@@ -83,6 +84,9 @@ function generateApiQueryString( {
 			case 'updated':
 				params.sort = 'plugin_modified';
 				break;
+			case 'wpbeginner':
+				params.filter = getFilterbySlugs( slugs || [] );
+				break;
 			default:
 				params.filter = getFilterByCategory( category );
 				params.sort = 'active_installs';
@@ -112,16 +116,15 @@ export function search( options: SearchParams ) {
 }
 
 export function searchBySlug(
-	slug: string[],
+	slug: string,
 	locale: string,
 	options?: { fields?: Array< string > | undefined; group_id?: string }
 ) {
 	const params = {
 		lang: locale,
-		filter: getFilterbySlugs( slug ),
+		filter: getFilterbySlug( slug ),
 		fields: options?.fields ?? RETURNABLE_FIELDS,
 		group_id: options?.group_id ?? 'wporg',
-		size: slug.length,
 	};
 	const queryString = params;
 
@@ -141,6 +144,18 @@ function getFilterbyAuthor( author: string ): {
 	return {
 		bool: {
 			must: [ { term: { 'plugin.author.raw': author } } ],
+		},
+	};
+}
+
+function getFilterbySlug( slug: string ): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { slug } } ],
 		},
 	};
 }

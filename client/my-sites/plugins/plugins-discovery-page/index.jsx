@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
@@ -53,7 +52,11 @@ export const PaidPluginsSection = ( props ) => {
 export const FeaturedWPBeginnerSection = ( props ) => {
 	const category = 'wpbeginner';
 
-	const { data: plugins = [], isFetching } = useESPlugin( WPBEGINNER_PLUGINS.slice( 0, 7 ) );
+	const { plugins, isFetching } = usePlugins( {
+		category,
+		infinite: true,
+		slugs: WPBEGINNER_PLUGINS,
+	} );
 
 	return (
 		<SingleListView
