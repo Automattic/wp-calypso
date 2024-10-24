@@ -59,7 +59,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 										/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 										<Button
 											variant="link"
-											style={ { textDecoration: 'none' } }
+											className="button"
 											role="button"
 											tabIndex={ 0 }
 											onClick={ () => {
@@ -85,7 +85,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 											/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 											<Button
 												variant="link"
-												style={ { textDecoration: 'none' } }
+												className="button"
 												role="button"
 												tabIndex={ 0 }
 												onClick={ () => {

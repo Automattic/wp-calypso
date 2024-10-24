@@ -33,9 +33,10 @@ $blueberry-color: #3858e9;
 }
 
 .core-web-vitals-display__description p {
-	margin-top: 15px;
+	margin-top: 0;
+	margin-bottom: 24px;
+	max-width: 496px;
 	line-height: 24px;
-	margin-bottom: 32px;
 }
 
 .core-web-vitals-display__description a {
@@ -124,6 +125,10 @@ $blueberry-color: #3858e9;
 	display: flex;
 	gap: 24px;
 
+	.header {
+		flex: 1;
+	}
+
 	@media (max-width: $break-large) {
 		flex-direction: column;
 		gap: 0;
@@ -162,5 +167,15 @@ $blueberry-color: #3858e9;
 	@media (max-width: $break-mobile) {
 		flex-direction: column;
 		gap: 8px;
+	}
+}
+
+.metric-tab-bar__tab-metric.performance-score {
+	&.tab {
+		margin-top: 16px;
+	}
+
+	&.accordion {
+		margin-top: 6px;
 	}
 }

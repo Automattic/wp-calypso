@@ -24,6 +24,10 @@ const UnavailableScreenshot = styled.div`
 	height: 100%;
 `;
 
+const ScreenShot = styled.img`
+	max-height: 100%;
+`;
+
 export const ScreenshotThumbnail = ( props: {
 	src: string | undefined;
 	alt: string;
@@ -36,7 +40,7 @@ export const ScreenshotThumbnail = ( props: {
 			{ src === undefined ? (
 				<UnavailableScreenshot>{ translate( 'Screenshot unavailable' ) }</UnavailableScreenshot>
 			) : (
-				<img style={ { maxHeight: '100%' } } src={ src } alt={ alt } { ...rest } />
+				<ScreenShot src={ src } alt={ alt } { ...rest } />
 			) }
 		</Container>
 	);
