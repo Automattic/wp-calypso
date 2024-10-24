@@ -62,8 +62,6 @@
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domains/kracken-ui/exact-match-filter": true,
-		"domains/kracken-ui/pagination": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,

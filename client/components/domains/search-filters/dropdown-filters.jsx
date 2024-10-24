@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Count, FormLabel, Popover } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import clsx from 'clsx';
@@ -152,8 +151,6 @@ export class DropdownFilters extends Component {
 			showTldFilter,
 		} = this.props;
 
-		const isExactMatchFilterEnabled = config.isEnabled( 'domains/kracken-ui/exact-match-filter' );
-
 		return (
 			<Popover
 				aria-label="Domain Search Filters"
@@ -184,24 +181,22 @@ export class DropdownFilters extends Component {
 				) }
 
 				<FormFieldset className="search-filters__checkboxes-fieldset">
-					{ isExactMatchFilterEnabled && (
-						<FormLabel
-							className="search-filters__label"
-							htmlFor="search-filters-show-exact-matches-only"
-						>
-							<FormInputCheckbox
-								className="search-filters__checkbox"
-								checked={ exactSldMatchesOnly }
-								id="search-filters-show-exact-matches-only"
-								name="exactSldMatchesOnly"
-								onChange={ this.handleOnChange }
-								value="exactSldMatchesOnly"
-							/>
-							<span className="search-filters__checkbox-label">
-								{ translate( 'Show exact matches only' ) }
-							</span>
-						</FormLabel>
-					) }
+					<FormLabel
+						className="search-filters__label"
+						htmlFor="search-filters-show-exact-matches-only"
+					>
+						<FormInputCheckbox
+							className="search-filters__checkbox"
+							checked={ exactSldMatchesOnly }
+							id="search-filters-show-exact-matches-only"
+							name="exactSldMatchesOnly"
+							onChange={ this.handleOnChange }
+							value="exactSldMatchesOnly"
+						/>
+						<span className="search-filters__checkbox-label">
+							{ translate( 'Show exact matches only' ) }
+						</span>
+					</FormLabel>
 				</FormFieldset>
 
 				<ValidationFieldset className="search-filters__buttons-fieldset">

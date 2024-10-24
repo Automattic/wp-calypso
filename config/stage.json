@@ -43,8 +43,6 @@
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
-		"domains/kracken-ui/exact-match-filter": true,
-		"domains/kracken-ui/pagination": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
