@@ -1,5 +1,4 @@
-import { FoldableCard, ProgressBar } from '@automattic/components';
-import { Button, Notice } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { filterSortAndPaginate, Operator } from '@wordpress/dataviews';
 import { Icon, link, linkOff, plugins, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -11,6 +10,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { useSelector } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
+import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';
 
 import './style.scss';
@@ -42,7 +42,9 @@ export default function PluginsListDataViews( {
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
-	const allStatuses = useSelector( ( state ) => getPluginActionStatuses( state ) );
+	const allStatuses = useSelector( ( state ) => {
+		return getPluginActionStatuses( state );
+	} );
 
 	// Add flags for plugins status: active, inactive, updates
 	currentPlugins.map( ( plugin ) => {
@@ -101,11 +103,23 @@ export default function PluginsListDataViews( {
 				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: Plugin } ) => {
+					let pluginActionStatus = null;
+
+					if ( item.allStatuses?.length ) {
+						pluginActionStatus = (
+							<PluginActionStatus
+								currentSiteStatuses={ item.allStatuses }
+								selectedSite={ undefined }
+							/>
+						);
+					}
+
 					return (
 						<>
 							{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
 							{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
 							<a href={ '/plugins/' + item.slug }>{ item.name }</a>
+							{ pluginActionStatus }
 						</>
 					);
 				},
@@ -229,50 +243,21 @@ export default function PluginsListDataViews( {
 	}, [ dataViewsState.search, onSearch ] );
 
 	const { data, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( currentPlugins, dataViewsState, fields );
-	}, [ currentPlugins, dataViewsState, fields ] );
+		const result = filterSortAndPaginate( currentPlugins, dataViewsState, fields );
 
-	const ApplyingStatus = () => {
-		const completed = allStatuses.filter( ( status ) => status.status === 'completed' );
-		const errors = allStatuses.filter( ( status ) => status.status === 'error' );
+		// Add all statuses to the plugin object so we can display them in the DataViews
+		result.data.forEach( ( plugin ) => {
+			plugin.allStatuses = allStatuses.filter( ( status ) => status.pluginId === plugin.id );
+		} );
 
-		if (
-			allStatuses.length === 0 ||
-			completed.length === allStatuses.length ||
-			completed.length + errors.length === allStatuses.length
-		) {
-			return null;
-		}
-
-		const value = ( completed.length * 100 ) / allStatuses.length;
-
-		return (
-			<>
-				<h2>{ translate( 'Applying modifications' ) }</h2>
-				<ProgressBar value={ value } total={ 100 } color="blue" isPulsing />
-
-				<Notice status="error" isDismissible>
-					{ translate( 'An error occurred while applying modifications' ) }
-				</Notice>
-				<FoldableCard compact header={ translate( 'See more details' ) } highlight="info">
-					{ errors.map( ( error ) => (
-						<>
-							<span className="help-results__footer-text">
-								{ translate( 'Site: ' ) } { error.siteId } { ' - ' }
-								{ translate( 'Error: ' ) }
-								{ error.error.message }
-							</span>
-							<br />
-						</>
-					) ) }
-				</FoldableCard>
-			</>
-		);
-	};
+		return {
+			data: result.data,
+			paginationInfo: result.paginationInfo,
+		};
+	}, [ currentPlugins, dataViewsState, fields, allStatuses ] );
 
 	return (
 		<div className="referrals-details-table__container redesigned-a8c-table">
-			<ApplyingStatus />
 			<ItemsDataViews
 				data={ {
 					items: data,

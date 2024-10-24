@@ -1,3 +1,4 @@
+import { CurrentSiteStatus } from 'calypso/my-sites/plugins/plugin-management-v2/types';
 import type { MomentInput } from 'moment';
 
 // The installed plugins found in the Redux store
@@ -31,6 +32,7 @@ export type Plugin = {
 	update?: PluginUpdate;
 	wporg?: boolean;
 	status?: Array< number >;
+	allStatuses?: Array< CurrentSiteStatus >;
 };
 
 export type PluginSite = {
