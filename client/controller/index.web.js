@@ -40,7 +40,7 @@ import { hydrate, render } from './web-util.js';
  * Re-export
  */
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
-export { hydrate, render } from './web-util.js';
+export { hydrate, render, getRootDomElement } from './web-util.js';
 
 export const ProviderWrappedLayout = ( {
 	store,
