@@ -197,10 +197,15 @@ const DotcomPreviewPane = ( {
 				externalIconSize: 16,
 				siteIconFallback: isMigrationPending ? 'migration' : 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
-				subtitleExtra: () =>
-					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
-						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
-					),
+				subtitleExtra: () => {
+					if ( isMigrationPending ) {
+						return <SiteStatus site={ site } />;
+					}
+
+					if ( site.is_wpcom_staging_site || isStagingStatusFinished ) {
+						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
+					}
+				},
 			} }
 		/>
 	);
