@@ -243,19 +243,21 @@ class NotificationSubscriptions extends Component {
 
 						{ isAutomattician && (
 							<FormFieldset>
-								<FormLegend>Auto-follow P2 posts upon commenting (Automatticians only)</FormLegend>
+								<FormLegend>
+									Disable auto-follow P2 posts upon commenting (Automatticians only)
+								</FormLegend>
 								<FormLabel>
 									<FormCheckbox
-										checked={ this.props.getSetting( 'p2_autofollow_on_comment' ) }
+										checked={ this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
 										disabled={ this.props.getDisabledState() }
-										id="p2_autofollow_on_comment"
-										name="p2_autofollow_on_comment"
+										id="p2_disable_autofollow_on_comment"
+										name="p2_disable_autofollow_on_comment"
 										onChange={ this.props.toggleSetting }
-										onClick={ this.handleCheckboxEvent( 'Auto-follow P2 Upon Comment' ) }
+										onClick={ this.handleCheckboxEvent( 'Disable auto-follow P2 Upon Comment' ) }
 									/>
 									<span>
-										Automatically subscribe to notifications for a P2 post whenever you leave a
-										comment on it.
+										Don't automatically subscribe to notifications for a P2 post whenever you leave
+										a comment on it.
 									</span>
 								</FormLabel>
 							</FormFieldset>
