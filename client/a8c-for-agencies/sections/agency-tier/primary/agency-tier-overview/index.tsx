@@ -33,7 +33,8 @@ export default function AgencyTierOverview() {
 		? getAgencyTierInfo( currentAgencyTier, translate )
 		: null;
 
-	const learnMoreLink = ''; // TODO: Add link
+	const learnMoreLink =
+		'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/';
 
 	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
