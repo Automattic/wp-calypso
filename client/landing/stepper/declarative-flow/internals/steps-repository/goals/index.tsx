@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -23,6 +24,7 @@ type TracksGoalsSelectEventProperties = {
 };
 
 const SiteGoal = Onboard.SiteGoal;
+const SiteIntent = Onboard.SiteIntent;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
@@ -102,9 +104,17 @@ const GoalsStep: Step = ( { navigation } ) => {
 		navigation.submit?.( { intent } );
 	};
 
-	const stepContent = (
-		<SelectGoals selectedGoals={ goals } onChange={ setGoals } onSubmit={ handleSubmit } />
-	);
+	const handleImportClick = () => {
+		setIntent( SiteIntent.Import );
+		recordIntentSelectTracksEvent( [], SiteIntent.Import );
+		navigation.submit?.( { intent: SiteIntent.Import } );
+	};
+
+	const handleDIFMClick = () => {
+		setIntent( SiteIntent.DIFM );
+		recordIntentSelectTracksEvent( [], SiteIntent.DIFM );
+		navigation.submit?.( { intent: SiteIntent.DIFM } );
+	};
 
 	useEffect( () => {
 		const isValidRef = Object.keys( refGoals ).includes( refParameter );
@@ -129,8 +139,21 @@ const GoalsStep: Step = ( { navigation } ) => {
 				skipLabelText={ translate( 'Skip to dashboard' ) }
 				skipButtonAlign="top"
 				hideBack
-				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
+				stepContent={
+					<>
+						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
+						<div className="select-goals__alternative-flows-container">
+							<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
+								{ translate( 'Import or migrate an existing site' ) }
+							</Button>
+							<span className="select-goals__link-separator" />
+							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
+								{ translate( 'Let us build a custom site for you' ) }
+							</Button>
+						</div>
+					</>
+				}
 			/>
 		</>
 	);
