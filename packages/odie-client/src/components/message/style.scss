@@ -6,6 +6,7 @@ $blueberry-color: #3858e9;
 	display: flex;
     width: 96%;
     justify-content: flex-end;
+	margin-top: 4px;
 	svg {
 		padding: 14px;
 		background-color: $blueberry-color;
@@ -50,7 +51,7 @@ $blueberry-color: #3858e9;
 	line-height: 1.4;
 	color: #000;
 	flex-direction: row;
-	padding: 16px;
+	padding: 16px 16px 8px 16px;
 	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
