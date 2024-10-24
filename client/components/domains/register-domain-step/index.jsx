@@ -1,7 +1,6 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
-import { isHundredYearDomainFlow } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
@@ -1049,15 +1048,6 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
-		// Skip availability check for the 100-year domain flow if the domain is not com/net/org
-		if (
-			isHundredYearDomainFlow( this.props.flowName ) &&
-			! [ 'com', 'net', 'org' ].includes( getTld( domain ) )
-		) {
-			this.showSuggestionErrorMessage( domain, 'hundred_year_domain_tld_restriction', {} );
-			return;
-		}
-
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
@@ -1503,7 +1493,6 @@ class RegisterDomainStep extends Component {
 				this.props.onAddDomain( suggestion, position, previousState );
 			}
 
-			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
