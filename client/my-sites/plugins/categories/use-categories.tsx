@@ -759,6 +759,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		slug: 'wpbeginner',
 		tags: [ 'wpbeginner', 'Awesome Motive' ],
 		preview: [],
+		showOnlyActive: true,
 	},
 } );
 
