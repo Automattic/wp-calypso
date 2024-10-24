@@ -1,4 +1,4 @@
-import { Button, PremiumBadge } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -85,14 +85,13 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 								<Placeholder />
 							</div>
 					  ) )
-					: goalOptions.map( ( { key, title, isPremium } ) => (
+					: goalOptions.map( ( { key, title } ) => (
 							<SelectCardCheckbox
 								key={ key }
 								onChange={ ( checked ) => handleChange( checked, key ) }
 								checked={ selectedGoals.includes( key ) }
 							>
 								<span className="select-goals__goal-title">{ title }</span>
-								{ isPremium && <PremiumBadge shouldHideTooltip /> }
 							</SelectCardCheckbox>
 					  ) ) }
 			</div>
