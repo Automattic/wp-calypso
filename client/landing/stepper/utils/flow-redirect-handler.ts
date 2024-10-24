@@ -17,7 +17,7 @@ const REMOVED_TAILORED_FLOWS = [
 ];
 
 export const isRemovedFlow = ( flowToCheck ) =>
-	REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
+	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
 
 // Regex pattern for the optional language code in the format xx or xx-yy
 const langPattern = '(?:/([a-z]{2}(?:-[a-z]{2})?))?/?$';
