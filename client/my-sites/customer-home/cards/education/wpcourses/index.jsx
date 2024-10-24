@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import wpLearnLogo from 'calypso/assets/images/customer-home/illustration--secondary-wp-learn.png';
+import wpLearnLogo from 'calypso/assets/images/customer-home/illustration--secondary-learn.svg';
 import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
 
