@@ -63,7 +63,7 @@ const fillNoteField = async () => {
 };
 
 const requestPayload = {
-	path: 'sites/site-url.wordpress.com/automated-migration',
+	path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
 	apiNamespace: 'wpcom/v2/',
 	apiVersion: '2',
 	method: 'POST',
@@ -120,7 +120,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration',
+			path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
 			apiNamespace: 'wpcom/v2/',
 			apiVersion: '2',
 			method: 'POST',
@@ -164,7 +164,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration',
+			path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
 			apiNamespace: 'wpcom/v2/',
 			apiVersion: '2',
 			method: 'POST',
@@ -199,7 +199,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		//TODO: Ideally we should use nock to mock the request, but it is not working with the current implementation due to wpcomRequest usage that is well captured by nock.
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration',
+			path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
 			apiNamespace: 'wpcom/v2/',
 			apiVersion: '2',
 			method: 'POST',
