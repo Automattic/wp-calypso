@@ -31,9 +31,9 @@ const getAgencyTierInfo = (
 	switch ( agencyTier ) {
 		case 'emerging-partner':
 			tierInfo = {
-				title: translate( 'Emerging Partner' ),
+				title: translate( 'Account activated' ),
 				fullTitle: translate(
-					"{{label}}You're currently an{{/label}} {{title}}Emerging Partner{{/title}}",
+					"{{label}}You're on your way to becoming an Automattic Agency Partner{{/label}} {{title}}Account activated{{/title}}",
 					{
 						components: {
 							label: <div className="agency-tier-overview__current-agency-tier-label"></div>,
@@ -46,12 +46,12 @@ const getAgencyTierInfo = (
 					{ args: { amount: '$1,200' }, comment: 'Amount of revenue' }
 				),
 				description: translate(
-					'Continue moving towards the next tier to unlock benefits by making more purchases and referrals.'
+					'Progress towards the Agency Partner tier and access extra benefits with additional purchases and referrals.'
 				),
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
 				emptyStateMessage: translate(
-					'Make your first purchase to get started as an {{b}}Emerging Partner!{{/b}}',
+					'Make your {{b}}first purchase{{/b}} to {{b}}activate your account{{/b}}',
 					{
 						components: { b: <b /> },
 					}
