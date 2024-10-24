@@ -385,7 +385,10 @@ class StatsSite extends Component {
 						<p>New date filtering enabled.</p>
 					</div>
 				) }
-				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
+				{ ! isNewDateFilteringEnabled && (
+					// @TODO: remove highlight section completely once flag is released
+					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
+				) }
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
