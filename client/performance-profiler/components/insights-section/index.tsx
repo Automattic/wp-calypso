@@ -11,6 +11,7 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
 import { filterRecommendations, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import './style.scss';
 
@@ -139,6 +140,7 @@ export const InsightsSection = forwardRef(
 							recordTracksEvent( 'calypso_performance_profiler_insight_click', {
 								url: props.url,
 								key,
+								version: profilerVersion(),
 							} )
 						}
 					/>

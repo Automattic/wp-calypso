@@ -9,7 +9,7 @@ import {
 	mapThresholdsToStatus,
 	displayValue,
 } from 'calypso/performance-profiler/utils/metrics';
-
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import './styles.scss';
 
 type Props = Record< Metrics, number > & {
@@ -61,6 +61,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 		} else {
 			recordTracksEvent( 'calypso_performance_profiler_metric_tab_click', {
 				tab: key,
+				version: profilerVersion(),
 			} );
 			setActiveTab( key as Metrics );
 		}
