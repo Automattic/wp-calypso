@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useNextBackupSchedule } from 'calypso/components/jetpack/backup-schedule-setting/hooks';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -35,17 +37,27 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 
 	const lastBackupTime = lastBackupDate.format( 'LT' );
 
-	// Calculates the remaining hours for the next backup + 3 hours of safety margin
-	const DAY_HOURS = 24;
-	const hoursForNextBackup = DAY_HOURS - today.diff( lastBackupDate, 'hours' ) + 3;
+	const { hasLoaded, date: nextBackupDate } = useNextBackupSchedule();
 
-	const nextBackupHoursText =
-		hoursForNextBackup <= 1
-			? translate( 'In the next hour' )
-			: translate( 'In the next %d hour', 'In the next %d hours', {
-					args: [ hoursForNextBackup ],
-					count: hoursForNextBackup,
-			  } );
+	let nextBackupHoursText = null;
+
+	if ( hasLoaded && nextBackupDate ) {
+		// Calculate the time difference for hours and minutes
+		const hoursForNextBackup = nextBackupDate.diff( today, 'hours' );
+		const minutesForNextBackup = nextBackupDate.diff( today, 'minutes' ) % 60;
+
+		// Round up to the next hour if there are remaining minutes
+		const totalHoursForNextBackup =
+			minutesForNextBackup > 0 ? hoursForNextBackup + 1 : hoursForNextBackup;
+
+		nextBackupHoursText =
+			totalHoursForNextBackup <= 1
+				? translate( 'In the next hour' )
+				: translate( 'In the next %d hour', 'In the next %d hours', {
+						args: [ totalHoursForNextBackup ],
+						count: totalHoursForNextBackup,
+				  } );
+	}
 
 	return (
 		<>
@@ -55,7 +67,11 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 			</div>
 			<div className="status-card__title">
 				<div className="status-card__hide-desktop">{ translate( 'Backup Scheduled' ) }:</div>
-				<div>{ nextBackupHoursText }</div>
+				{ hasLoaded && nextBackupHoursText ? (
+					<div>{ nextBackupHoursText }</div>
+				) : (
+					<LoadingPlaceholder height="52px" />
+				) }
 			</div>
 			<div className="status-card__no-backup-last-backup">
 				{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
