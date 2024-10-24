@@ -52,15 +52,20 @@ export function getSiteTransferStatusQueryKey( siteId: number ) {
 }
 
 const shouldRefetch = ( status: TransferStates | undefined ) => {
-	if ( ! status || status === transferStates.NONE ) {
+	if ( ! status ) {
 		return false;
+	}
+
+	// This condition ensures that when the status is NONE,
+	// we expect it might change in another tab. This allows the UI to reflect any updates dynamically.
+	if ( transferStates.NONE === status ) {
+		return true;
 	}
 
 	return isTransferring( status );
 };
 
 type Options = Pick< UseQueryOptions, 'retry' > & {
-	refetchInterval?: number;
 	refetchIntervalInBackground?: boolean;
 };
 
@@ -87,9 +92,8 @@ export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?
 		},
 		refetchOnWindowFocus: false,
 		refetchIntervalInBackground: !! options?.refetchIntervalInBackground,
-		refetchInterval:
-			options?.refetchInterval ||
-			( ( { state } ) => ( shouldRefetch( state.data?.status ) ? REFETCH_TIME : false ) ),
+		refetchInterval: ( { state } ) =>
+			shouldRefetch( state.data?.status ) ? REFETCH_TIME : false,
 		enabled: !! siteId,
 	} );
 };

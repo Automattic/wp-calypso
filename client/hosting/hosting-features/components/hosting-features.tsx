@@ -60,7 +60,6 @@ const HostingFeatures = () => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
-		refetchInterval: 3000,
 		refetchIntervalInBackground: true,
 	} );
 
