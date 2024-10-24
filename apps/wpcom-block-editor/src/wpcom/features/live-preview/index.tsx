@@ -5,17 +5,11 @@ import { usePreviewingThemeSlug } from './hooks/use-previewing-theme';
 import LivePreviewNoticePlugin from './live-preview-notice-plugin';
 
 const LivePreviewPlugin = () => {
-	const isReady = useSelect( ( select ) => select( 'core/editor' ).__unstableIsEditorReady() );
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const previewingThemeSlug = usePreviewingThemeSlug();
 
 	// Do nothing outside the Site Editor context.
 	if ( ! siteEditorStore ) {
-		return null;
-	}
-
-	// Don't render until the editor is ready
-	if ( ! isReady ) {
 		return null;
 	}
 
