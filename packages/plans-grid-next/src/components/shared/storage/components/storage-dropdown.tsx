@@ -22,6 +22,7 @@ type StorageDropdownOptionProps = {
 	storageSlug: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	isLargeCurrency?: boolean;
 	priceOnSeparateLine?: boolean;
+	productSlug: WPComPlanStorageFeatureSlug | null;
 };
 
 const getStorageOptionPrice = (
@@ -35,12 +36,13 @@ const getStorageOptionPrice = (
 const StorageDropdownOption = ( {
 	price,
 	storageSlug,
+	productSlug,
 	isLargeCurrency = false,
 	priceOnSeparateLine,
 }: StorageDropdownOptionProps ) => {
 	const translate = useTranslate();
 	const { siteId } = usePlansGridContext();
-	const title = useStorageStringFromFeature( { storageSlug, siteId } ) ?? '';
+	const title = useStorageStringFromFeature( { productSlug, storageSlug, siteId } ) ?? '';
 
 	return (
 		<>
@@ -79,6 +81,7 @@ const StorageDropdown = ( {
 	const { gridPlansIndex, siteId } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
+		features: { storageFeature: productStorageFeature },
 	} = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
@@ -110,11 +113,14 @@ const StorageDropdown = ( {
 		}
 	}, [] );
 
+	const featureProductSlug = productStorageFeature?.getSlug() as WPComPlanStorageFeatureSlug;
+
 	const selectControlOptions = availableStorageOptions?.map( ( slug ) => {
 		return {
 			key: slug,
 			name: (
 				<StorageDropdownOption
+					productSlug={ featureProductSlug !== slug ? featureProductSlug : null }
 					price={ getStorageOptionPrice( storageAddOns, slug ) }
 					storageSlug={ slug }
 				/>
@@ -129,6 +135,9 @@ const StorageDropdown = ( {
 		name: (
 			<StorageDropdownOption
 				price={ selectedOptionPrice }
+				productSlug={
+					productStorageFeature !== selectedStorageOptionForPlan ? featureProductSlug : null
+				}
 				storageSlug={ selectedStorageOptionForPlan }
 				isLargeCurrency={ isLargeCurrency }
 				priceOnSeparateLine={ priceOnSeparateLine }
