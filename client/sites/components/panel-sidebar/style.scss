@@ -1,0 +1,22 @@
+
+@import "~@automattic/color-studio/dist/color-variables";
+
+.panel-with-sidebar {
+	display: flex;
+	gap: 20px;
+}
+
+.panel-sidebar {
+	width: 160px;
+}
+
+.panel-sidebar-tab {
+	width: 100%;
+	color: var(--studio-gray-100);
+
+	&--active {
+		background-color: #f0f0f0;
+		font-weight: 600;
+		border-radius: 4px;
+	}
+}
