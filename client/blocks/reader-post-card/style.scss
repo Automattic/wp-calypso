@@ -17,7 +17,11 @@
 
 	&.is-following {
 		svg {
-			fill: var(--color-success);
+			fill: var(--color-error);
+		}
+
+		.follow-button__label {
+			color: var(--color-error);
 		}
 	}
 
@@ -26,22 +30,8 @@
 		.follow-button__label {
 			color: var(--color-text-inverted);
 		}
-
-		// .reader-following-feed,
-		// .reader-follow-feed {
-
-		// 	.following-icon-background,
-		// 	path {
-		// 		fill: var(--color-text-inverted);
-		// 	}
-
-		// 	.following-icon-tick {
-		// 		stroke: var(--color-text-inverted);
-		// 	}
 	}
 }
-
-// }
 
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-5);
