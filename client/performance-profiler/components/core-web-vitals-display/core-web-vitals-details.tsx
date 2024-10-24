@@ -164,7 +164,11 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 							{ translate( 'See calculator ↗' ) }
 						</a>
 					) : (
-						<a href={ `https://web.dev/articles/${ activeTab }` } target="_blank" rel="noreferrer">
+						<a
+							href={ `https://web.dev/articles/${ encodeURIComponent( activeTab ) }` }
+							target="_blank"
+							rel="noreferrer"
+						>
 							{ translate( 'Learn more ↗' ) }
 						</a>
 					) }
