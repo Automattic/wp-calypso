@@ -73,7 +73,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ introOffer.rawPrice.monthly }
+						rawPrice={ discountedPrice.monthly || introOffer.rawPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency
 						isSmallestUnit
