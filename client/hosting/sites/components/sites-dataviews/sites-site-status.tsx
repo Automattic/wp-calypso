@@ -13,7 +13,7 @@ import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpt
 import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
-import { MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
+import { getMigrationStatus, MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
@@ -120,13 +120,12 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 		);
 	}
 
-	const isMigrationPeding =
-		site.site_migration?.migration_status?.startsWith( 'migration-pending' );
-	const statusElement = isMigrationPeding ? (
-		<span className="sites-dataviews__migration-pending-status">{ translatedStatus }</span>
-	) : (
-		translatedStatus
-	);
+	const statusElement =
+		getMigrationStatus( site ) === 'pending' ? (
+			<span className="sites-dataviews__migration-pending-status">{ translatedStatus }</span>
+		) : (
+			translatedStatus
+		);
 
 	return (
 		<WithAtomicTransfer site={ site }>
