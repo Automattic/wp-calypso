@@ -20,12 +20,6 @@ interface Props {
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
-export const PLUGINS_STATUS = {
-	ACTIVE: 1,
-	INACTIVE: 2,
-	UPDATE: 3,
-};
-
 export default function PluginsListDataViews( {
 	currentPlugins,
 	initialSearch,

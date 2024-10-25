@@ -3,10 +3,10 @@ import { Operator } from '@wordpress/dataviews';
 import { Icon, plugins } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
 import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
-import { PLUGINS_STATUS } from './plugins-list-dataviews';
 
 export function useFields(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void

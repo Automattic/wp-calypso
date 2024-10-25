@@ -1,14 +1,13 @@
 import { createSelector } from '@automattic/state-utils';
 import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
-import { PLUGINS_STATUS } from 'calypso/my-sites/plugins/plugins-list/plugins-list-dataviews';
 import {
 	getSite,
 	getSiteTitle,
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-
 import 'calypso/state/plugins/init';
+import { PLUGINS_STATUS } from './status/constants';
 
 // TODO: Much of the functionality in this file is duplicated with selectors.js
 // which needs to be removed when this file is complete.
