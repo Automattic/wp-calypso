@@ -93,20 +93,20 @@ class ConnectedSubscriptionListItem extends Component {
 	}
 }
 
-export default compose(
-	connect( ( state, ownProps ) => {
-		let url = '';
-		if ( ownProps.url ) {
-			url = ownProps.url.match( /^https?:\/\// ) ? ownProps.url : `http://${ ownProps.url }`;
-		}
+const normalizeUrl = ( url ) => {
+	if ( ! url ) {
+		return '';
+	}
+	return url.match( /^https?:\/\// ) ? url : `http://${ url }`;
+};
 
-		return {
-			isFollowing: isFollowingSelector( state, {
-				feedId: ownProps.feedId,
-				blogId: ownProps.siteId,
-			} ),
-			url: url,
-		};
-	} ),
+export default compose(
+	connect( ( state, ownProps ) => ( {
+		isFollowing: isFollowingSelector( state, {
+			feedId: ownProps.feedId ?? null,
+			blogId: ownProps.siteId ?? null,
+		} ),
+		url: normalizeUrl( ownProps.url ?? '' ),
+	} ) ),
 	connectSite
 )( ConnectedSubscriptionListItem );
