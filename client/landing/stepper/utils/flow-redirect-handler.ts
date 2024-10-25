@@ -2,9 +2,17 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
 const redirectRoutes = [
+	{
+		from: '/setup/free/',
+		excludeSubPaths: [ 'launchpad', 'freePostSetup', 'processing', 'error' ],
+		to: '/start/free:lang?',
+	},
+	{
+		from: '/setup/link-in-bio/',
+		excludeSubPaths: [ 'launchpad', 'processing', 'error' ],
+		to: '/start:lang?',
+	},
 	{ from: '/setup/blog/', to: '/start:lang?' },
-	{ from: '/setup/free/', to: '/start/free:lang?' },
-	{ from: '/setup/link-in-bio/', to: '/start:lang?' },
 	{ from: '/setup/videopress/', to: '/start:lang?' },
 	{ from: '/setup/sensei/', to: ':lang?/plugins/sensei-pro/' },
 ];
@@ -19,9 +27,10 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 
 	// Find the matching redirect route
 	const route = redirectRoutes.find( ( redirect ) => pathname.startsWith( redirect.from ) );
+	const skipRoute = route?.excludeSubPaths?.some( ( subPath ) => pathname.includes( subPath ) );
 
 	// If no route is found we don't redirect and return false
-	if ( ! route ) {
+	if ( ! route || skipRoute ) {
 		return false;
 	}
 
