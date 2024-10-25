@@ -110,10 +110,13 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	const paragraph = isPending
 		? translate( 'Start your migration today and get ready for unmatched WordPress hosting.' )
 		: translate(
-				'Sit back as {{strong}}Bold Apps{{/strong}} transfers to its new home. Get ready for unmatched WordPress hosting.',
+				'Sit back as {{strong}}%(siteName)s{{/strong}} transfers to its new home. Get ready for unmatched WordPress hosting.',
 				{
 					components: {
 						strong: <strong />,
+					},
+					args: {
+						siteName: site.name ?? '',
 					},
 				}
 		  );
