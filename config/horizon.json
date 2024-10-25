@@ -67,7 +67,6 @@
 		"jetpack/offer-complete-after-activation": false,
 		"jitms": true,
 		"lasagna": true,
-		"launchpad-updates": false,
 		"launchpad/navigator": false,
 		"launchpad/new-task-definition-parser": true,
 		"layout/app-banner": true,
