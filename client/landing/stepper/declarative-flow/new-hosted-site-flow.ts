@@ -26,7 +26,17 @@ const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	isSignupFlow: true,
 	useSteps() {
+		const query = useQuery();
+		const isPatnerBundle = query.has( 'partnerBundle' );
 		return [
+			...( isPatnerBundle
+				? [
+						{
+							slug: 'domains',
+							asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
+						},
+				  ]
+				: [] ),
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
