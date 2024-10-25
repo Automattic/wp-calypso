@@ -166,8 +166,6 @@
 		"performance-profiler/logged-in": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
-		"plans/pro-plan": false,
-		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"plugins/multisite-scheduled-updates": true,
