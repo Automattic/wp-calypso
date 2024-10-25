@@ -7,6 +7,7 @@ import A4AThemedModal from 'calypso/a8c-for-agencies/components/a4a-themed-modal
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import type { AgencyTierInfo } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
@@ -57,6 +58,20 @@ export default function AgencyTierCelebrationModal( {
 		};
 	}, [] );
 
+	// Record the event when the modal is shown
+	useEffect( () => {
+		if (
+			agencyTierInfo?.celebrationModal &&
+			celebrationModalShowForCurrentType !== currentAgencyTier
+		) {
+			dispatch(
+				recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_shown', {
+					agency_tier: currentAgencyTier,
+				} )
+			);
+		}
+	}, [ agencyTierInfo, celebrationModalShowForCurrentType, currentAgencyTier, dispatch ] );
+
 	if (
 		! agencyTierInfo?.celebrationModal ||
 		celebrationModalShowForCurrentType === currentAgencyTier
@@ -66,6 +81,21 @@ export default function AgencyTierCelebrationModal( {
 
 	const handleOnClose = () => {
 		dispatch( savePreference( PREFERENCE_NAME, currentAgencyTier ?? '' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_dismiss', {
+				agency_tier: currentAgencyTier,
+			} )
+		);
+	};
+
+	const handleClickExploreBenefits = () => {
+		// Save the preference to prevent the modal from showing again
+		dispatch( savePreference( PREFERENCE_NAME, currentAgencyTier ?? '' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_a8c_agency_tier_celebration_modal_explore_benefits_click', {
+				agency_tier: currentAgencyTier,
+			} )
+		);
 	};
 
 	const { title, description, extraDescription, benefits, video, image } =
@@ -109,7 +139,11 @@ export default function AgencyTierCelebrationModal( {
 				></div>
 			</div>
 			<div className="agency-tier-celebration-modal__footer">
-				<Button variant="primary" onClick={ handleOnClose } href={ A4A_AGENCY_TIER_LINK }>
+				<Button
+					variant="primary"
+					onClick={ handleClickExploreBenefits }
+					href={ A4A_AGENCY_TIER_LINK }
+				>
 					{ translate( 'Explore your benefits' ) }
 				</Button>
 			</div>
