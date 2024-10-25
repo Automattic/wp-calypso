@@ -1,20 +1,15 @@
 import { Spinner } from '@wordpress/components';
-import { useCallback, useRef, RefObject } from '@wordpress/element';
+import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
-import { JumpToRecent } from '../message/jump-to-recent';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
 
-export const OdieSendMessageButton = ( {
-	containerReference,
-}: {
-	containerReference: RefObject< HTMLDivElement >;
-} ) => {
+export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const { trackEvent, chatStatus } = useOdieAssistantContext();
@@ -50,7 +45,6 @@ export const OdieSendMessageButton = ( {
 
 	return (
 		<>
-			<JumpToRecent containerReference={ containerReference } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form
 					onSubmit={ ( event ) => {

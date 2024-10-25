@@ -4,7 +4,7 @@ import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -20,13 +20,6 @@ import './style.scss';
 export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
-};
-
-export type MessageIndicators = {
-	isLastUserMessage: boolean;
-	isLastFeedbackMessage: boolean;
-	isLastErrorMessage: boolean;
-	isLastMessage: boolean;
 };
 
 const MessageAvatarHeader = ( {
@@ -98,17 +91,11 @@ const MessageAvatarHeader = ( {
 	);
 };
 
-const ChatMessage = ( {
-	message,
-	currentUser,
-	...messageIndicators
-}: ChatMessageProps & MessageIndicators ) => {
+const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isDisliked ] = useState( false );
-
-	const fullscreenRef = useRef< HTMLDivElement >( null );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -148,9 +135,7 @@ const ChatMessage = ( {
 				<MessageContent
 					message={ message }
 					messageHeader={ messageHeader }
-					ref={ fullscreenRef }
 					isDisliked={ isDisliked }
-					{ ...messageIndicators }
 				/>
 			</div>
 		</div>
@@ -161,9 +146,7 @@ const ChatMessage = ( {
 			<MessageContent
 				message={ message }
 				messageHeader={ messageHeader }
-				ref={ fullscreenRef }
 				isDisliked={ isDisliked }
-				{ ...messageIndicators }
 			/>
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>
