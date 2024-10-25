@@ -1,17 +1,14 @@
-import { Button } from '@wordpress/components';
-import { filterSortAndPaginate, Operator } from '@wordpress/dataviews';
-import { Icon, link, linkOff, plugins, trash } from '@wordpress/icons';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { navigate } from 'calypso/lib/navigate';
 import { useSelector } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
-import { PluginActions } from '../hooks/types';
-import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 import { getPluginActionStatuses } from '../plugin-management-v2/utils/get-plugin-action-statuses';
+import { useActions } from './use-actions';
+import { useFields } from './use-fields';
 
 import './style.scss';
 
@@ -42,176 +39,8 @@ export default function PluginsListDataViews( {
 
 	const translate = useTranslate();
 
-	const fields = useMemo(
-		() => [
-			{
-				id: 'status',
-				label: translate( 'Status' ),
-				getValue: ( { item }: { item: Plugin } ) => {
-					return item.status;
-				},
-				render: () => null,
-				elements: [
-					{
-						value: PLUGINS_STATUS.ACTIVE,
-						label: translate( 'Active' ),
-					},
-					{
-						value: PLUGINS_STATUS.INACTIVE,
-						label: translate( 'Inactive' ),
-					},
-					{
-						value: PLUGINS_STATUS.UPDATE,
-						label: translate( 'Needs update' ),
-					},
-				],
-				filterBy: {
-					operators: [ 'isAny' as Operator ],
-					isPrimary: true,
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'plugins',
-				label: translate( 'Installed Plugins' ),
-				getValue: ( { item }: { item: Plugin } ) => item.name,
-				enableGlobalSearch: true,
-				render: ( { item }: { item: Plugin } ) => {
-					let pluginActionStatus = null;
-
-					if ( item.allStatuses?.length ) {
-						pluginActionStatus = (
-							<PluginActionStatus
-								currentSiteStatuses={ item.allStatuses }
-								selectedSite={ undefined }
-							/>
-						);
-					}
-
-					return (
-						<>
-							{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-							{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
-							<a href={ '/plugins/' + item.slug }>{ item.name }</a>
-							{ pluginActionStatus }
-						</>
-					);
-				},
-				enableSorting: true,
-			},
-			{
-				id: 'sites',
-				label: translate( 'Sites' ),
-				enableHiding: false,
-				getValue: ( { item }: { item: Plugin } ) => {
-					// Used exclusively for sorting
-					return item.sites && Object.keys( item.sites ).length;
-				},
-				render: ( { item }: { item: Plugin } ) => {
-					return <span>{ item.sites && Object.keys( item.sites ).length }</span>;
-				},
-			},
-			{
-				id: 'update',
-				label: translate( 'Update available' ),
-				getValue: ( { item }: { item: Plugin } ) => {
-					// Used exclusively for sorting
-					return item.status?.includes( PLUGINS_STATUS.UPDATE ) ? 'a' : 'b';
-				},
-				enableHiding: false,
-				render: ( { item }: { item: Plugin } ) => {
-					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) ) {
-						return (
-							<Button
-								variant="secondary"
-								onClick={ () => bulkActionDialog( PluginActions.UPDATE, [ item ] ) }
-							>
-								{ translate( 'Update to version %(version)s', {
-									args: {
-										version: item?.update?.new_version || '',
-									},
-								} ) }
-							</Button>
-						);
-					}
-				},
-			},
-		],
-		[]
-	);
-
-	const actions = [
-		{
-			id: 'manage-plugin',
-			href: `some-url`,
-			callback: ( plugins: Array< Plugin > ) => {
-				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
-			},
-			label: translate( 'Manage Plugin' ),
-			isExternalLink: true,
-			isEnabled: true,
-			supportsBulk: false,
-		},
-		{
-			id: 'activate-plugin',
-			href: `some-url`,
-			callback: ( plugins: Array< Plugin > ) => {
-				bulkActionDialog( PluginActions.ACTIVATE, plugins );
-			},
-			label: translate( 'Activate' ),
-			isExternalLink: true,
-			isEnabled: true,
-			supportsBulk: true,
-			icon: <Icon icon={ link } />,
-		},
-		{
-			id: 'deactivate-plugin',
-			href: `some-url`,
-			callback: ( plugins: Array< Plugin > ) => {
-				bulkActionDialog( PluginActions.DEACTIVATE, plugins );
-			},
-			label: translate( 'Deactivate' ),
-			isExternalLink: true,
-			isEnabled: true,
-			supportsBulk: true,
-			icon: <Icon icon={ linkOff } />,
-		},
-		{
-			id: 'enable-autoupdate',
-			href: `some-url`,
-			callback: ( plugins: Array< Plugin > ) => {
-				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
-			},
-			label: translate( 'Enable Autoupdate' ),
-			isExternalLink: true,
-			isEnabled: true,
-			supportsBulk: true,
-		},
-		{
-			id: 'disable-autoupdate',
-			href: `some-url`,
-			callback: ( plugins: Array< Plugin > ) => {
-				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
-			},
-			label: translate( 'Disable Autoupdate' ),
-			isExternalLink: true,
-			isEnabled: true,
-			supportsBulk: true,
-		},
-		{
-			id: 'remove-plugin',
-			href: `some-url`,
-			callback: ( plugins: Array< Plugin > ) => {
-				bulkActionDialog( PluginActions.REMOVE, plugins );
-			},
-			label: translate( 'Remove' ),
-			isExternalLink: true,
-			isEnabled: true,
-			supportsBulk: true,
-			icon: <Icon icon={ trash } />,
-		},
-	];
+	const fields = useFields( bulkActionDialog );
+	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
