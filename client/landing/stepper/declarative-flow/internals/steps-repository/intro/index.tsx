@@ -79,7 +79,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( isLinkInBioFlow( flowName ) ) {
 			return {
 				title: createInterpolateElement(
-					__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
+					__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready?' ),
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
@@ -116,23 +116,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
-		if ( flowName === VIDEOPRESS_FLOW ) {
-			const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
-			return {
-				title: createInterpolateElement(
-					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
-					{ br: <br /> }
-				),
-				secondaryText: videoPressGetStartedText,
-				buttonText: isTrialEnabled ? __( 'Start a free trial' ) : __( 'Get started' ),
-				modal: {
-					buttonText: __( 'Learn more' ),
-					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),
-					content: VideoPressIntroModalContent,
-				},
-			};
-		}
-
 		if ( isVideoPressTVFlow( flowName ) ) {
 			return {
 				title: createInterpolateElement(
@@ -157,7 +140,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === FREE_FLOW ) {
 			return {
 				title: createInterpolateElement(
-					__( 'You’re 1 minute away from<br />a beautiful, free website.<br />Ready? ' ),
+					__( 'You’re 1 minute away from<br />a beautiful, free website.<br />Ready?' ),
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
@@ -166,7 +149,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		return {
 			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a launch-ready newsletter. ' ),
+				__( 'You’re 3 minutes away from<br />a launch-ready newsletter.' ),
 				{ br: <br /> }
 			),
 			buttonText: __( 'Get started' ),
