@@ -44,11 +44,13 @@ export const EmailPlanSubscription = ( {
 	const hasSubscriptionExpired = todayTimestamp > expiryTimestamp;
 
 	const getDescription = () => {
-		const renewalPrice = getRenewalPrice( purchase );
-		const currencyCode = purchase.currencyCode;
-		const formattedRenewalPrice = formatCurrency( renewalPrice, currencyCode, {
-			stripZeros: true,
-		} );
+		const formattedRenewalPrice = formatCurrency(
+			getRenewalPrice( purchase ),
+			purchase.currencyCode,
+			{
+				stripZeros: true,
+			}
+		);
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
 		if ( hasSubscriptionExpired ) {
