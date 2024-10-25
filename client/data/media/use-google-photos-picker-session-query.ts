@@ -12,17 +12,20 @@ interface SessionData {
 	expireTime: string;
 }
 
-export default function useGooglePhotosPickerSessionQuery( enabled = true ) {
+export default function useGooglePhotosPickerSessionQuery(
+	sessionId: string,
+	enabled = true,
+	options = {}
+) {
 	return useQuery( {
 		queryKey: [ 'google-photos-picker-session' ],
 		queryFn: (): Promise< SessionData > =>
 			wp.req.get( {
-				path: '/meta/external-media/google_photos_picker?path=session',
+				path: `/meta/external-media/google_photos_picker?path=session-get&sessionId=${ encodeURIComponent(
+					sessionId
+				) }`,
 			} ),
-		meta: {
-			persist: false,
-		},
 		enabled,
-		staleTime: 1000 * 60 * 5, // 5 minutes
+		...options,
 	} );
 }
