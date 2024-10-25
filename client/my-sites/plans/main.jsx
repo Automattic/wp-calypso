@@ -273,6 +273,8 @@ class PlansComponent extends Component {
 				selectedFeature={ this.props.selectedFeature }
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
+				// TODO: Consolidate coupon and withDiscount
+				coupon={ this.props.withDiscount }
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }

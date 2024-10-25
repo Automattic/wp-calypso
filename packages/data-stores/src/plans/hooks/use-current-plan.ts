@@ -7,7 +7,8 @@ interface Props {
 }
 
 const useCurrentPlan = ( { siteId }: Props ): SitePlan | undefined => {
-	const sitePlans = useSitePlans( { siteId } );
+	// TODO: Determine if we should pass through a coupon here
+	const sitePlans = useSitePlans( { coupon: undefined, siteId } );
 
 	return useMemo(
 		() =>

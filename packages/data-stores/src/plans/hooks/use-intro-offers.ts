@@ -20,7 +20,8 @@ interface Props {
  * or `undefined` if we haven't observed any metadata yet
  */
 const useIntroOffers = ( { siteId, coupon }: Props ): IntroOffersIndex | undefined => {
-	const sitePlans = useSitePlans( { siteId } );
+	// TODO: Determine if we should pass through a coupon here
+	const sitePlans = useSitePlans( { coupon: undefined, siteId } );
 	const plans = usePlans( { coupon } );
 
 	return useMemo( () => {
