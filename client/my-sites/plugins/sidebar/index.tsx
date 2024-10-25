@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
@@ -13,6 +15,7 @@ interface Props {
 }
 const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 	const translate = useTranslate();
+	const isBulkPluginManagementEnabled = config.isEnabled( 'bulk-plugin-management' ) || false;
 
 	return (
 		<GlobalSidebar
@@ -34,10 +37,23 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					label={ translate( 'Marketplace' ) }
 					tooltip={ isCollapsed && translate( 'Marketplace' ) }
 					selected={
-						path.startsWith( '/plugins' ) && ! path.startsWith( '/plugins/scheduled-updates' )
+						path.startsWith( '/plugins' ) &&
+						! path.startsWith( '/plugins/scheduled-updates' ) &&
+						! path.startsWith( '/plugins/manage' )
 					}
 					customIcon={ <SidebarIconPlugins /> }
 				/>
+
+				{ isBulkPluginManagementEnabled && (
+					<SidebarItem
+						className="sidebar__menu-item--plugins"
+						link="/plugins/manage"
+						label={ translate( 'Manage Plugins' ) }
+						tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
+						selected={ path.startsWith( '/plugins/manage' ) }
+						icon={ settings }
+					/>
+				) }
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins/scheduled-updates"
