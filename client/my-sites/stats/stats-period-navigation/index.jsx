@@ -211,6 +211,35 @@ class StatsPeriodNavigation extends PureComponent {
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
 				{ isWithNewDateFiltering ? (
+					<div className="stats-period-navigation__period-control">
+						{ showArrows && (
+							<NavigationArrows
+								disableNextArrow={ disableNextArrow || isToday }
+								disablePreviousArrow={ disablePreviousArrow }
+								onClickNext={ this.handleArrowNext }
+								onClickPrevious={ this.handleArrowPrevious }
+							/>
+						) }
+
+						<div className="stats-period-navigation__date-control">
+							<StatsDateControl
+								slug={ slug }
+								queryParams={ queryParams }
+								dateRange={ dateRange }
+								shortcutList={ shortcutList }
+								onGatedHandler={ this.onGatedHandler }
+								overlay={
+									gateDateControl && (
+										<StatsCardUpsell
+											className="stats-module__upsell"
+											statType={ STATS_FEATURE_DATE_CONTROL }
+											siteId={ siteId }
+										/>
+									)
+								}
+							/>
+						</div>
+					</div>
 				) : (
 					<div className="stats-period-navigation__date-control">
 						<StatsDateControl
