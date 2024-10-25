@@ -498,7 +498,7 @@ class ThemeSheet extends Component {
 	};
 
 	previewAction = ( event, type, source ) => {
-		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
+		const { demoUrl, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -516,7 +516,7 @@ class ThemeSheet extends Component {
 		} );
 
 		// The embed live demo works only for WP.com themes
-		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
+		if ( this.isWpcomOnlyTheme() ) {
 			const { preview } = this.props.options;
 			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
@@ -554,6 +554,10 @@ class ThemeSheet extends Component {
 			styleVariations.length > 0 &&
 			isNonDefaultStyleVariation
 		);
+	}
+
+	isWpcomOnlyTheme() {
+		return this.props.isWpcomTheme && ! this.props.isExternallyManagedTheme;
 	}
 
 	isThemeCurrentOne() {
@@ -1336,9 +1340,7 @@ class ThemeSheet extends Component {
 			retired,
 			translate,
 			isLoggedIn,
-			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
-			isWpcomTheme,
 			successNotice: showSuccessNotice,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1453,9 +1455,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isWpcomTheme && ! isExternallyManagedTheme
-								? this.renderWebPreview()
-								: this.renderScreenshot() }
+							{ this.isWpcomOnlyTheme() ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>
