@@ -83,7 +83,7 @@ export default function Summary( {
 					<h2>{ __( 'Action required' ) }</h2>
 					{ createInterpolateElement(
 						__(
-							'To prevent any charges from Substack, go to your <substackPaymentsSettingsLink>Substack Payments Settings</substackPaymentsSettingsLink>, select "Pause billing" and click "<strong>Pause indefinitely</strong>".'
+							'To prevent double-charging your subscribers, go to your <substackPaymentsSettingsLink>Substack Payments Settings</substackPaymentsSettingsLink>, click <strong>"Pause"</strong> under "Pause subscription billing". In the pop-up, chosoe "<strong>Pause indefinitely</strong>".'
 						),
 						{
 							strong: <strong />,
@@ -97,11 +97,14 @@ export default function Summary( {
 							),
 						}
 					) }
-					<img
-						src={ pauseSubstackBillingImg }
-						alt={ __( 'Pause Substack billing' ) }
-						className="pause-billing"
-					/>
+					<details>
+						<summary>{ __( 'Show me how' ) }</summary>
+						<img
+							src={ pauseSubstackBillingImg }
+							alt={ __( 'Pause Substack billing' ) }
+							className="pause-billing"
+						/>
+					</details>
 				</Notice>
 			) }
 
