@@ -127,7 +127,7 @@ const StepContainer: React.FC< Props > = ( {
 		}
 
 		return (
-			<div className="step-container__skip-wrapper">
+			<div>
 				{ skipHeadingText && (
 					<div className="step-container__skip-heading">{ skipHeadingText }</div>
 				) }
@@ -184,6 +184,7 @@ const StepContainer: React.FC< Props > = ( {
 					<WordPressLogo className="step-container__navigation-logo" size={ 24 } />
 				) }
 				{ ! hideBack && <BackButton /> }
+				<div className="step-container__left-right-spacer" />
 				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
 				{ ! hideNext && <NextButton /> }
 				{ customizedActionButtons }

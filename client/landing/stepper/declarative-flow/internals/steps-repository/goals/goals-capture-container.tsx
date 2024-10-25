@@ -7,9 +7,7 @@ type GoalsCaptureContainerProps = {
 	subHeaderText: string;
 	stepName: string;
 	goNext: NavigationControls[ 'goNext' ];
-	skipLabelText: string;
-	skipButtonAlign?: 'top' | 'bottom';
-	hideBack: boolean;
+	nextLabelText: string;
 	stepContent: React.ReactElement;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 };
@@ -23,6 +21,9 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 		{ ...otherProps }
 		isHorizontalLayout={ false }
 		className="goals__container two-columns"
+		hideBack
+		hideSkip
+		hideNext={ false }
 		formattedHeader={
 			<FormattedHeader
 				id="goals-header"
