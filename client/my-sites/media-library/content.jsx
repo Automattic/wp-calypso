@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { withGooglePhotosPickerSession } from 'calypso/data/media/with-google-photos-picker-session';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -85,6 +86,12 @@ export class MediaLibraryContent extends Component {
 		onAddMedia: noop,
 		source: '',
 	};
+
+	componentDidMount() {
+		if ( ! this.props.photoPickerSession ) {
+			this.props.createPhotoPickerSession();
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.shouldPauseGuidedTour !== prevProps.shouldPauseGuidedTour ) {
@@ -416,7 +423,10 @@ export class MediaLibraryContent extends Component {
 			return this.renderConnectExternalMedia();
 		}
 
-		if ( 'google_photos_picker' === this.props.source ) {
+		if (
+			'google_photos_picker' === this.props.source &&
+			! this.props.photoPickerSession?.mediaItemsSet
+		) {
 			return this.renderGooglePhotosPickerBtn();
 		}
 
@@ -454,7 +464,7 @@ export class MediaLibraryContent extends Component {
 	}
 
 	renderHeader() {
-		if ( this.needsToBeConnected() ) {
+		if ( this.needsToBeConnected() || this.props.source === 'google_photos_picker' ) {
 			return null;
 		}
 
@@ -542,5 +552,5 @@ export default withMobileBreakpoint(
 			clearMediaErrors,
 			changeMediaSource,
 		}
-	)( localize( MediaLibraryContent ) )
+	)( withGooglePhotosPickerSession( localize( MediaLibraryContent ) ) )
 );

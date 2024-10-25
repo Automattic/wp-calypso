@@ -56,9 +56,10 @@ export class MediaListData extends Component {
 
 		if ( props.source ) {
 			query.source = props.source;
-			query.path = 'session';
+			query.path = 'recent';
 
 			if ( props.source === 'google_photos_picker' ) {
+				query.path = 'media-items';
 				// Add any query params specific to Google Photos
 				return utils.getGoogleQuery( query, props );
 			}
