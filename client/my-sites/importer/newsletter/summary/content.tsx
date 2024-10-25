@@ -1,70 +1,8 @@
 import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, post } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ContentStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
-
-function getSummaryCopy( postsNumber: number, pagesNumber: number, attachmentsNumber: number ) {
-	if ( postsNumber > 0 && pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong>, <strong>{ pagesNumber } pages</strong>{ ' ' }
-				and
-				<strong>{ attachmentsNumber } media</strong>.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 && pagesNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong> and{ ' ' }
-				<strong>{ pagesNumber } pages</strong>.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong> and{ ' ' }
-				<strong>{ attachmentsNumber } media</strong>.
-			</>
-		);
-	}
-
-	if ( pagesNumber > 0 && attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber }</strong> pages and{ ' ' }
-				<strong>{ attachmentsNumber } media</strong>.
-			</>
-		);
-	}
-
-	if ( postsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } posts</strong>.
-			</>
-		);
-	}
-
-	if ( pagesNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } pages</strong>.
-			</>
-		);
-	}
-
-	if ( attachmentsNumber > 0 ) {
-		return (
-			<>
-				We imported <strong>{ postsNumber } media</strong>.
-			</>
-		);
-	}
-}
 
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;
@@ -72,7 +10,7 @@ interface ContentSummaryProps {
 }
 
 export default function ContentSummary( { status, stepContent }: ContentSummaryProps ) {
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
@@ -102,17 +40,44 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 
 	if ( status === 'done' ) {
 		const progress = stepContent.progress;
+		const postsNumber = progress.post.completed;
+		const pagesNumber = progress.page.completed;
+		const attachmentsNumber = progress.attachment.completed;
 
 		return (
 			<div className="summary__content">
-				<p>
-					<Icon icon={ post } />
-					{ getSummaryCopy(
-						progress.post.completed,
-						progress.page.completed,
-						progress.attachment.completed
+				<ul>
+					{ postsNumber > 0 && (
+						<li>
+							<Icon icon={ post } />
+							{ sprintf(
+								// translators: %d is the post count
+								_n( '%d post', '%d posts', postsNumber ),
+								postsNumber
+							) }
+						</li>
 					) }
-				</p>
+					{ pagesNumber > 0 && (
+						<li>
+							<Icon icon={ post } />
+							{ sprintf(
+								// translators: %d is the page count
+								_n( '%d page', '%d pages', pagesNumber ),
+								pagesNumber
+							) }
+						</li>
+					) }
+					{ attachmentsNumber > 0 && (
+						<li>
+							<Icon icon={ post } />
+							{ sprintf(
+								// translators: %d is the media count
+								_n( '%d media', '%d media', attachmentsNumber ),
+								attachmentsNumber
+							) }
+						</li>
+					) }
+				</ul>
 			</div>
 		);
 	}

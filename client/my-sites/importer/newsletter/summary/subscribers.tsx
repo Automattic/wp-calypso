@@ -1,5 +1,7 @@
 import { ProgressBar } from '@wordpress/components';
-import { Icon, people, atSymbol, payment, info, warning } from '@wordpress/icons';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+import { Icon, people, info, payment, atSymbol } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
@@ -9,12 +11,15 @@ interface SubscriberSummaryProps {
 }
 
 export default function SubscriberSummary( { stepContent, status }: SubscriberSummaryProps ) {
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
 			<div className="summary__content">
 				<p>
-					<Icon icon={ atSymbol } /> You <strong>skipped</strong> subscriber importing.
+					<Icon icon={ atSymbol } />
+					{ createInterpolateElement( __( 'You <strong>skipped</strong> subscriber importing.' ), {
+						strong: <strong />,
+					} ) }
 				</p>
 			</div>
 		);
@@ -56,44 +61,127 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			<>
 				<div className="summary__content">
 					<p>
-						<Icon icon={ atSymbol } /> We imported { subscribedCount } subscribers, where:
+						<Icon icon={ atSymbol } />{ ' ' }
+						{ sprintf(
+							// translators: %d is the subscriber count
+							_n( '%d subscriber, where:', '%d subscribers, where:', subscribedCount ),
+							subscribedCount
+						) }
 					</p>
 				</div>
 				<div className="summary__content summary__content-indent">
 					{ !! addedFree && (
 						<p>
 							<Icon icon={ people } />
-							<strong>{ addedFree }</strong> free subscribers.
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %d is the subscriber count
+									_n(
+										'<strong>%d</strong> is free subscriber',
+										'<strong>%d</strong> are free subscribers',
+										addedFree
+									),
+									addedFree
+								),
+								{
+									strong: <strong />,
+								}
+							) }
 						</p>
 					) }
 					{ !! addedPaid && (
 						<p>
 							<Icon icon={ payment } />
-							<strong>{ addedPaid }</strong> paid subscribers added.
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %d is the subscriber count
+									_n(
+										'<strong>%d</strong> is paid subscriber',
+										'<strong>%d</strong> are paid subscribers',
+										addedPaid
+									),
+									addedPaid
+								),
+								{
+									strong: <strong />,
+								}
+							) }
 						</p>
 					) }
 					{ !! existingFree && (
 						<p>
-							<Icon icon={ info } />
-							<strong>{ existingFree }</strong> existing subscribers.
+							<Icon icon={ people } />
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %d is the subscriber count
+									_n(
+										'<strong>%d</strong> is existing free subscriber',
+										'<strong>%d</strong> are existing free subscribers',
+										existingFree
+									),
+									existingFree
+								),
+								{
+									strong: <strong />,
+								}
+							) }
 						</p>
 					) }
 					{ !! existingPaid && (
 						<p>
-							<Icon icon={ info } />
-							<strong>{ existingPaid }</strong> existing paid subscribers.
+							<Icon icon={ payment } />
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %d is the subscriber count
+									_n(
+										'<strong>%d</strong> is existing paid subscriber',
+										'<strong>%d</strong> are existing paid subscribers',
+										existingPaid
+									),
+									existingPaid
+								),
+								{
+									strong: <strong />,
+								}
+							) }
 						</p>
 					) }
 					{ !! failedFree && (
 						<p>
-							<Icon icon={ warning } />
-							<strong>{ failedFree }</strong> error in the email format.
+							<Icon icon={ info } />
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %d is the subscriber count
+									_n(
+										'<strong>%d</strong> free subscriber was not imported because they had error in the email format',
+										'<strong>%d</strong> free subscribers were not imported because they had error in the email format',
+										failedFree
+									),
+									failedFree
+								),
+								{
+									strong: <strong />,
+								}
+							) }
 						</p>
 					) }
 					{ !! failedPaid && (
 						<p>
-							<Icon icon={ warning } />
-							<strong>{ failedPaid }</strong> error in the email format.
+							<Icon icon={ info } />
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %d is the subscriber count
+									_n(
+										'<strong>%d</strong> paid subscriber was not imported because they had error in the email format',
+										'<strong>%d</strong> paid subscribers were not imported because they had error in the email format',
+										failedFree
+									),
+									failedFree
+								),
+								{
+									strong: <strong />,
+								}
+							) }
 						</p>
 					) }
 				</div>

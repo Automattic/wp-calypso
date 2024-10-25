@@ -1,8 +1,9 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ExternalLink, Notice } from '@wordpress/components';
+import { useReducedMotion } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
@@ -46,7 +47,7 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const { resetPaidNewsletter } = useResetMutation();
-	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const prefersReducedMotion = useReducedMotion();
 
 	const onButtonClick = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
 	const paidSubscribersCount = parseInt(
@@ -66,6 +67,16 @@ export default function Summary( {
 		<Card>
 			{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
 			<h2>{ getStepTitle( importerStatus ) }</h2>
+
+			{ importerStatus === 'done' && (
+				<p>
+					{ sprintf(
+						// translators: %s is the site name
+						__( 'This is what you’ve succesfully imported to %s:' ),
+						selectedSite.slug
+					) }
+				</p>
+			) }
 
 			{ steps.content.content && (
 				<ContentSummary stepContent={ steps.content.content } status={ steps.content.status } />
