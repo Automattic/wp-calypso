@@ -94,8 +94,19 @@ class ConnectedSubscriptionListItem extends Component {
 }
 
 export default compose(
-	connect( ( state, ownProps ) => ( {
-		isFollowing: isFollowingSelector( state, { feedId: ownProps.feedId, blogId: ownProps.siteId } ),
-	} ) ),
+	connect( ( state, ownProps ) => {
+		let url = '';
+		if ( ownProps.url ) {
+			url = ownProps.url.match( /^https?:\/\// ) ? ownProps.url : `http://${ ownProps.url }`;
+		}
+
+		return {
+			isFollowing: isFollowingSelector( state, {
+				feedId: ownProps.feedId,
+				blogId: ownProps.siteId,
+			} ),
+			url: url,
+		};
+	} ),
 	connectSite
 )( ConnectedSubscriptionListItem );
