@@ -24,15 +24,16 @@ export const useSendOdieMessage = () => {
 
 	return useMutation< Chat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< Chat > => {
+			const chatIdSegment = chatId ? `/${ chatId }` : '';
 			const response = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'POST',
-						path: `/odie/chat/${ botNameSlug }/${ chatId }`,
+						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
 						body: { message: message.content, version, context: { selectedSiteId } },
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/chat/${ botNameSlug }/${ chatId }`,
+						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
 						data: { message: message.content, version, context: { selectedSiteId } },
 				  } );
