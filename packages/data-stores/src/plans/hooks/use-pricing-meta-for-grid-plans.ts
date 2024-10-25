@@ -83,7 +83,7 @@ const usePricingMetaForGridPlans = ( {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
-	const sitePlans = Plans.useSitePlans( { siteId } );
+	const sitePlans = Plans.useSitePlans( { coupon, siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
