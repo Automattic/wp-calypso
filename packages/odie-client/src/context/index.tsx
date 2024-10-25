@@ -46,14 +46,12 @@ type OdieAssistantContextInterface = {
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
-	lastMessageInView?: boolean;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
 	selectedConversationId?: string | null;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
-	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setScrollToLastMessage: ( scrollToLastMessage: ScrollToLastMessageType ) => void;
@@ -143,14 +141,12 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ supportProvider, setSupportProvider ] = useState< SupportProvider >( 'odie' );
 	const [ chatStatus, setChatStatus ] = useState<
 		'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer'
-	>( 'loaded' );
+	>( 'loading' );
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
-
-	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
 	const { odieInitialPromptText, botNameSlug, isMinimized, isChatLoaded } = useSelect(
 		( select ) => {
@@ -176,6 +172,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setSupportProvider,
 		isChatLoaded,
 		selectedConversationId,
+		setChatStatus,
 	} );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
@@ -293,14 +290,12 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
-				lastMessageInView,
 				odieClientId,
 				selectedSiteId,
 				selectedConversationId,
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,
-				setLastMessageInView,
 				setIsNudging,
 				setIsVisible,
 				setScrollToLastMessage: setScrollToLastMessage ?? noop,
