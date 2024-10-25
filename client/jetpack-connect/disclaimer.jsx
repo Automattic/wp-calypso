@@ -11,7 +11,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 		companyName: PropTypes.string,
 		siteName: PropTypes.string.isRequired,
 		from: PropTypes.string,
-		isWooCoreProfiler: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
 	};
 
 	handleClickDisclaimer = () => {
@@ -21,7 +21,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 	render() {
 		const {
 			companyName = 'WordPress.com',
-			isWooCoreProfiler = false,
+			isWooPasswordlessJPC = false,
 			siteName,
 			from,
 			translate,
@@ -38,7 +38,10 @@ class JetpackConnectDisclaimer extends PureComponent {
 			/>
 		);
 
-		if ( isWooCoreProfiler && config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
+		if (
+			isWooPasswordlessJPC &&
+			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+		) {
 			const termsOfServiceLink = (
 				<a
 					href={ localizeUrl( 'https://wordpress.com/tos/' ) }

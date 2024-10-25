@@ -1,21 +1,6 @@
 import Smooch from 'smooch';
 
-/**
- * Get the conversation for the Zendesk conversation.
- */
-export const getZendeskConversation = ( chatId: number | string | null | undefined ) => {
-	if ( ! chatId ) {
-		return null;
-	}
-
-	const conversation = Smooch.getConversations().find( ( conversation ) => {
-		return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
-	} );
-
-	if ( ! conversation ) {
-		return null;
-	}
-
+const parseResponse = ( conversation: Conversation ) => {
 	const messages = conversation?.messages.map( ( message ) => {
 		return {
 			content: message.text,
@@ -25,4 +10,38 @@ export const getZendeskConversation = ( chatId: number | string | null | undefin
 	} );
 
 	return { ...conversation, messages };
+};
+/**
+ * Get the conversation for the Zendesk conversation.
+ */
+export const getZendeskConversation = ( {
+	chatId,
+	conversationId,
+}: {
+	chatId: number | string | null | undefined;
+	conversationId?: string | null | undefined;
+} ) => {
+	if ( ! chatId ) {
+		return null;
+	}
+
+	const conversation = Smooch.getConversations().find( ( conversation ) => {
+		if ( conversationId ) {
+			return conversation.id === conversationId;
+		}
+
+		return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
+	} );
+
+	if ( ! conversation ) {
+		return null;
+	}
+
+	// We need to ensure that more than one message is loaded
+	return Smooch.getConversationById( conversation.id )
+		.then( ( conversation ) => {
+			Smooch.markAllAsRead( conversation.id );
+			return parseResponse( conversation );
+		} )
+		.catch( () => parseResponse( conversation ) );
 };

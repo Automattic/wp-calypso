@@ -18,6 +18,12 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			content: "We're connecting you to our support team.",
 			role: 'bot',
 			type: 'message',
+			context: {
+				flags: {
+					only_message: true,
+				},
+				site_id: null,
+			},
 		} );
 
 		setChatStatus( 'sending' );

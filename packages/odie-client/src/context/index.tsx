@@ -50,6 +50,7 @@ type OdieAssistantContextInterface = {
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
+	selectedConversationId?: string | null;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
@@ -121,6 +122,7 @@ type OdieAssistantProviderProps = {
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
+	selectedConversationId?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
@@ -133,6 +135,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	extraContactOptions,
 	enabled = true,
 	selectedSiteId,
+	selectedConversationId,
 	version = null,
 	currentUser,
 	children,
@@ -172,6 +175,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		odieInitialPromptText,
 		setSupportProvider,
 		isChatLoaded,
+		selectedConversationId,
 	} );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
@@ -292,6 +296,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				lastMessageInView,
 				odieClientId,
 				selectedSiteId,
+				selectedConversationId,
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,

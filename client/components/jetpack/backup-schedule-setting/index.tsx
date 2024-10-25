@@ -11,6 +11,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { convertHourToRange } from './utils';
 import type { FunctionComponent } from 'react';
 import './style.scss';
 
@@ -23,19 +24,6 @@ const BackupScheduleSetting: FunctionComponent = () => {
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 
-	const convertHourToRange = ( hour: number, isUtc: boolean = false ): string => {
-		const time = isUtc
-			? moment.utc().startOf( 'day' ).hour( hour )
-			: moment().startOf( 'day' ).hour( hour );
-
-		const formatString = isUtc ? 'HH:mm' : 'LT'; // 24-hour format for UTC, 12-hour for local
-
-		const startTime = time.format( formatString );
-		const endTime = time.add( 59, 'minutes' ).format( formatString );
-
-		return `${ startTime } - ${ endTime }`;
-	};
-
 	const generateTimeSlots = (): { label: string; value: string }[] => {
 		const options = [];
 		for ( let hour = 0; hour < 24; hour++ ) {
@@ -45,7 +33,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 					? applySiteOffset( utcTime, { timezone, gmtOffset } )
 					: utcTime.local();
 			const localHour = localTime.hour();
-			const timeRange = convertHourToRange( localHour );
+			const timeRange = convertHourToRange( moment, localHour );
 
 			options.push( {
 				label: timeRange,
@@ -92,14 +80,23 @@ const BackupScheduleSetting: FunctionComponent = () => {
 
 	const getScheduleInfoMessage = (): TranslateResult => {
 		const hour = data?.scheduledHour || 0;
-		const range = convertHourToRange( hour, true );
+		const range = convertHourToRange( moment, hour, true );
 
-		if ( ! data || ! data.scheduledBy ) {
-			return `${ translate( 'Default time' ) }. UTC: ${ range }`;
-		}
-		return `${ translate( 'Time set by %(scheduledBy)s', {
-			args: { scheduledBy: data.scheduledBy },
-		} ) }. UTC: ${ range }`;
+		const scheduledBy =
+			! data || ! data.scheduledBy
+				? translate( 'Currently using default time.' )
+				: translate( 'Time set by %(scheduledBy)s.', {
+						args: { scheduledBy: data.scheduledBy },
+				  } );
+
+		const utcInfo = translate( 'UTC (%(timeRange)s) is used as the base timezone.', {
+			args: {
+				timeRange: range,
+			},
+			comment: '%(timeRange)s is a time range, such as 10:00-10:59.',
+		} );
+
+		return `${ scheduledBy } ${ utcInfo }`;
 	};
 
 	return (

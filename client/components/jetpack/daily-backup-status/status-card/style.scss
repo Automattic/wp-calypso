@@ -44,6 +44,19 @@
 		font-weight: 600;
 	}
 
+	.status-card__scheduled-backup {
+		margin-left: auto;
+
+		a, span {
+			font-size: 0.875rem;
+			font-weight: normal;
+		}
+
+		&.placeholder {
+			min-width: 300px;
+		}
+	}
+
 	.status-card__toolbar {
 		margin-left: auto;
 

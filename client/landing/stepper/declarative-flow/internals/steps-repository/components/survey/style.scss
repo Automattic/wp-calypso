@@ -1,0 +1,133 @@
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 0.5;
+	}
+}
+@keyframes fade-out {
+	from {
+		opacity: 0.5;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in {
+	0% {
+		transform: translateY( 100% );
+		opacity: 0;
+	}
+
+	50% {
+		transform: translateY( -24px );
+		opacity: 50;
+	}
+
+	100% {
+		transform: translateY( 0 );
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out {
+	0% {
+		transform: translateY( 0 );
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateY( 30% );
+		opacity: 0;
+	}
+}
+
+@keyframes reduced-motion-slide-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.survey-notice {
+	view-transition-name: survey-notice;
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 1000;
+
+	.survey-notice__backdrop {
+		view-transition-name: survey-notice-backdrop;
+		background: var(--studio-black);
+		opacity: 0.2;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		cursor: default;
+		animation: fade-in 0.3s ease-out both;
+		@media (prefers-reduced-motion) {
+			animation: none;
+		}
+	}
+
+	.survey-notice__popup {
+		view-transition-name: survey-notice-popup;
+		animation: slide-in 0.3s ease-out both 0.1s;
+		@media (prefers-reduced-motion) {
+			animation: reduced-motion-slide-in 0.5s ease-in-out both 0.7s;
+		}
+		position: absolute;
+		right: 25px;
+		bottom: 25px;
+		width: 416px;
+		max-width: calc(100% - 50px);
+		z-index: 999;
+		border-radius: 2px;
+		box-shadow:
+			0 3px 1px 0 rgba(0, 0, 0, 0.04),
+			0 3px 8px 0 rgba(0, 0, 0, 0.12);
+		overflow: hidden;
+		background-color: var(--studio-white);
+	}
+
+	.survey-notice__popup-head {
+		background: #0675c4;
+		border-bottom: 1px solid #f6f7f7;
+		height: 56px;
+		padding: 0 14px 0 16px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.survey-notice__popup-head-title {
+			color: var(--studio-white);
+			font-size: rem(14px);
+			font-weight: 500;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+		}
+
+		.survey-notice__popup-head-close svg {
+			fill: var(--studio-white);
+		}
+	}
+}
+
+
+
+::view-transition-new(survey-notice-backdrop) {
+	opacity: 0;
+}
+
+::view-transition-old(survey-notice-popup) {
+	animation: slide-out 0.2s ease-in both;
+}

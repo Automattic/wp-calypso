@@ -54,7 +54,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
@@ -126,7 +126,7 @@ export class JetpackAuthorize extends Component {
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
-		isWooCoreProfiler: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteHasJetpackPaidProduct: PropTypes.bool,
 		retryAuth: PropTypes.func.isRequired,
@@ -457,9 +457,9 @@ export class JetpackAuthorize extends Component {
 		return 'woocommerce-onboarding' === from;
 	}
 
-	isWooCoreProfiler( props = this.props ) {
+	isWooPasswordlessJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooCoreProfiler;
+		return 'woocommerce-core-profiler' === from || this.props.isWooPasswordlessJPC;
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -510,7 +510,7 @@ export class JetpackAuthorize extends Component {
 				recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 				window.location.href = e.target.href;
 				break;
-			case this.isWooCoreProfiler():
+			case this.isWooPasswordlessJPC():
 				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
 				window.location.href = e.target.href;
 				break;
@@ -794,7 +794,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Return to your site' );
 		}
 
-		if ( this.isWooCoreProfiler() ) {
+		if ( this.isWooPasswordlessJPC() ) {
 			return translate( 'Connect your account' );
 		}
 
@@ -863,7 +863,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isWooCoreProfiler() ) {
+		if ( this.isWooPasswordlessJPC() ) {
 			return config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ? (
 				<>
 					<strong>{ this.props.user.display_name }</strong>
@@ -1029,7 +1029,7 @@ export class JetpackAuthorize extends Component {
 
 	renderContent() {
 		const { translate, user, authQuery } = this.props;
-		if ( this.isWooCoreProfiler() ) {
+		if ( this.isWooPasswordlessJPC() ) {
 			let col1Features = [];
 			let col2Features = [];
 			if ( authQuery.plugin_name === 'jetpack-boost' ) {
@@ -1084,7 +1084,7 @@ export class JetpackAuthorize extends Component {
 									siteName={ decodeEntities( authQuery.blogname ) }
 									companyName={ this.getCompanyName() }
 									from={ authQuery.from }
-									isWooCoreProfiler={ this.isWooCoreProfiler() }
+									isWooPasswordlessJPC={ this.props.isWooPasswordlessJPC }
 								/>
 								<div className="jetpack-connect__jetpack-logo-wrapper">
 									<JetpackLogo monochrome size={ 18 } />{ ' ' }
@@ -1099,7 +1099,7 @@ export class JetpackAuthorize extends Component {
 									siteName={ decodeEntities( authQuery.blogname ) }
 									companyName={ this.getCompanyName() }
 									from={ authQuery.from }
-									isWooCoreProfiler={ this.isWooCoreProfiler() }
+									isWooPasswordlessJPC={ this.props.isWooPasswordlessJPC }
 								/>
 								{ this.renderStateAction() }
 							</div>
@@ -1138,7 +1138,7 @@ export class JetpackAuthorize extends Component {
 			isAuthorizing ||
 			authorizeSuccess ||
 			this.redirecting ||
-			this.isWooCoreProfiler()
+			this.isWooPasswordlessJPC()
 		) {
 			return null;
 		}
@@ -1227,7 +1227,7 @@ export class JetpackAuthorize extends Component {
 			this.retryingAuth ||
 			authorizeSuccess;
 
-		if ( this.isWooCoreProfiler() ) {
+		if ( this.isWooPasswordlessJPC() ) {
 			return (
 				<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
 					<Button
@@ -1274,7 +1274,7 @@ export class JetpackAuthorize extends Component {
 		const authSiteId = this.props.authQuery.clientId;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 
-		if ( this.isWooCoreProfiler() && ( isAuthorizing || authorizeSuccess ) ) {
+		if ( this.isWooPasswordlessJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
 				// Wrap the loader in a modal to show it in full screen
 				<Modal
@@ -1294,7 +1294,7 @@ export class JetpackAuthorize extends Component {
 		return (
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
-				isWooCoreProfiler={ this.isWooCoreProfiler() }
+				isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
@@ -1319,7 +1319,7 @@ export class JetpackAuthorize extends Component {
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
 							isWooOnboarding={ this.isWooOnboarding() }
-							isWooCoreProfiler={ this.isWooCoreProfiler() }
+							isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
 							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 							wooDnaConfig={ wooDna }
@@ -1357,7 +1357,7 @@ const connectComponent = connect(
 			isRequestingSitePurchases: isFetchingSitePurchases( state ),
 			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
-			isWooCoreProfiler: isWooCommerceCoreProfilerFlow( state ),
+			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),

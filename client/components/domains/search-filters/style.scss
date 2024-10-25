@@ -121,10 +121,6 @@
 	margin-left: 2px;
 }
 
-.search-filters__text-input-fieldset .search-filters__label {
-	margin-bottom: 0.25em;
-}
-
 .search-filters__tld-filters {
 	.token-field__token {
 		margin: 4px 8px 4px 0;
@@ -181,17 +177,6 @@ body.is-section-signup:not(.is-white-signup) {
 }
 
 body.is-section-signup.is-white-signup {
-	$accent-blue: #117ac9;
-
-	.search-filters__popover,
-	.search-filters-extensions__popover {
-		.token-field__suggestion {
-			&.is-selected {
-				background: $accent-blue;
-			}
-		}
-	}
-
 	.search-filters-extensions__popover {
 		@include break-medium {
 			transform: translateX(65px);

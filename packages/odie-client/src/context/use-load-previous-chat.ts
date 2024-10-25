@@ -9,11 +9,13 @@ export const useLoadPreviousChat = ( {
 	odieInitialPromptText,
 	setSupportProvider,
 	isChatLoaded,
+	selectedConversationId,
 }: {
 	botNameSlug: OdieAllowedBots;
 	odieInitialPromptText?: string;
 	setSupportProvider: ( supportProvider: SupportProvider ) => void;
 	isChatLoaded: boolean;
+	selectedConversationId?: string | null;
 } ) => {
 	const { chat: existingChat } = useOdieChat( 1, 30 );
 
@@ -23,15 +25,26 @@ export const useLoadPreviousChat = ( {
 	} );
 
 	useEffect( () => {
-		if ( existingChat ) {
+		if ( existingChat || selectedConversationId ) {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
-			let messages = [ initialMessage, ...( existingChat as Chat ).messages ];
+			const messages = [ initialMessage, ...( existingChat as Chat ).messages ];
 
-			const conversation = isChatLoaded && getZendeskConversation( existingChat.chat_id );
-			if ( conversation ) {
-				setSupportProvider( 'zendesk' );
-				messages = [ ...messages, ...( conversation.messages as Message[] ) ];
-				existingChat.conversationId = conversation.id;
+			if ( isChatLoaded ) {
+				getZendeskConversation( {
+					chatId: existingChat?.chat_id,
+					conversationId: selectedConversationId,
+				} )?.then( ( conversation ) => {
+					setSupportProvider( 'zendesk' );
+					setChat( {
+						chat_id: conversation.metadata[ 'odieChatId' ]
+							? Number( conversation.metadata[ 'odieChatId' ] )
+							: null,
+						...existingChat,
+						conversationId: conversation.id,
+						messages: [ ...messages, ...( conversation.messages as Message[] ) ],
+					} );
+					return;
+				} );
 			}
 
 			setChat( { ...existingChat, messages } );
@@ -41,7 +54,13 @@ export const useLoadPreviousChat = ( {
 				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 			} );
 		}
-	}, [ botNameSlug, existingChat, odieInitialPromptText, setSupportProvider, isChatLoaded ] );
+	}, [
+		botNameSlug,
+		existingChat?.chat_id,
+		odieInitialPromptText,
+		setSupportProvider,
+		isChatLoaded,
+	] );
 
 	return { chat };
 };

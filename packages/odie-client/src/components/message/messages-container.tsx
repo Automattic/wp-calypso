@@ -47,9 +47,7 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 					/>
 				) ) }
 				<div className="odie-chatbox__action-message">
-					{ chatStatus === 'sending' && lastUserMessageIndex === lastMessageIndex && (
-						<ThinkingPlaceholder />
-					) }
+					{ chatStatus === 'sending' && <ThinkingPlaceholder /> }
 					{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }
 				</div>
 			</div>

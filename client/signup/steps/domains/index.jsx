@@ -574,11 +574,6 @@ export class RenderDomainsStep extends Component {
 			return true;
 		}
 
-		// 'blog' flow, starting with blog themes
-		if ( flowName === 'blog' ) {
-			return true;
-		}
-
 		// No .blog subdomains for domain only sites
 		if ( isDomainOnly ) {
 			return false;
@@ -897,12 +892,6 @@ export class RenderDomainsStep extends Component {
 				domain_name: false,
 			},
 		} );
-		this.props.submitSignupStep(
-			Object.assign( {
-				stepName: this.props.stepName,
-			} ),
-			Object.assign( { siteUrl: false } )
-		);
 	};
 
 	getSideContent = () => {

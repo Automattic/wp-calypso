@@ -142,7 +142,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 			expect( await helpCenterLocator.locator( '#odie-messages-container' ).count() ).toBeTruthy();
 		} );
 
-		it( 'get forwarded to a human', async () => {
+		// It's rare that chat is disabled so I'm opting to add a message to the test
+		// description about muting the test instead of working around the failure
+		// mode some other way. If this becomes tedious to maintain, please revisit and fix.
+		it( 'get forwarded to a human. Note: This test fails when chat is disabled. Search "WP.com contact via email" in #dotcom-support to confirm. Mute the test for the duration.', async () => {
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();

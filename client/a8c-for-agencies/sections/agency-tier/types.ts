@@ -1,3 +1,4 @@
+export type AgencyTier = 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
 export interface AgencyTierInfo {
 	title: string;
 	fullTitle: string;

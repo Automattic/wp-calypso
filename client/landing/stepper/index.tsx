@@ -174,6 +174,7 @@ window.AppBoot = async () => {
 						/>
 					</BrowserRouter>
 					<AsyncHelpCenter />
+
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

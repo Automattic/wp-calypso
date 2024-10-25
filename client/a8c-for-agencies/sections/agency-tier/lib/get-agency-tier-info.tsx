@@ -5,10 +5,10 @@ import EmergingPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-t
 import ProAgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-background.svg';
 import ProAgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo-small.svg';
 import { preventWidows } from 'calypso/lib/formatting';
-import type { AgencyTierInfo } from '../types';
+import type { AgencyTierInfo, AgencyTier } from '../types';
 
 const getAgencyTierInfo = (
-	agencyTier: 'emerging-partner' | 'agency-partner' | 'pro-agency-partner',
+	agencyTier: AgencyTier,
 	translate: ( key: string, args?: Record< string, unknown > ) => string
 ) => {
 	let tierInfo: AgencyTierInfo = {

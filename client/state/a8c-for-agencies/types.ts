@@ -1,5 +1,6 @@
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import type { AgencyTier } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 export interface APIError {
 	status: number;
@@ -88,7 +89,7 @@ export interface Agency {
 		number_sites: string;
 	};
 	tier: {
-		id: 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
+		id: AgencyTier;
 		label: string;
 		features: string[];
 	};
