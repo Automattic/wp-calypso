@@ -5,6 +5,8 @@ import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-ackno
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
@@ -14,6 +16,7 @@ import InPageCTASection from './in-page-cta-section';
 import UpgradeNudge from './upgrade-nudge';
 import { useTrialHelpers } from './use-trial-helpers';
 import './style.scss';
+
 /**
  * Module variables
  */
@@ -109,7 +112,12 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isWPBeginnerSpecial = getQueryArgs()?.ref === 'wpbeginner-special-lp';
+	const siteId = useSelector( getSelectedSiteId );
+	const sitePartnerBundle = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'site_partner_bundle' )
+	);
+	const isWPBeginnerSpecial =
+		getQueryArgs()?.ref === 'wpbeginner-special-lp' || sitePartnerBundle === 'wpbeginner-special';
 
 	const {
 		isTrialAcknowledgeModalOpen,
