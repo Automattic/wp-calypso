@@ -46,6 +46,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
+		isWithNewDateFiltering: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,6 +58,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: false,
 		endDate: false,
 		isWithNewDateControl: false,
+		isWithNewDateFiltering: false,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -190,6 +192,7 @@ class StatsPeriodNavigation extends PureComponent {
 			queryParams,
 			slug,
 			isWithNewDateControl,
+			isWithNewDateFiltering,
 			dateRange,
 			shortcutList,
 			gateDateControl,
@@ -206,7 +209,8 @@ class StatsPeriodNavigation extends PureComponent {
 				} ) }
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ isWithNewDateControl ? (
+				{ isWithNewDateFiltering ? (
+				) : (
 					<div className="stats-period-navigation__date-control">
 						<StatsDateControl
 							slug={ slug }
@@ -251,17 +255,6 @@ class StatsPeriodNavigation extends PureComponent {
 							/>
 						</div>
 					</div>
-				) : (
-					<>
-						{ showArrows && (
-							<NavigationArrows
-								disableNextArrow={ disableNextArrow || isToday }
-								disablePreviousArrow={ disablePreviousArrow }
-								onClickNext={ this.handleArrowNext }
-								onClickPrevious={ this.handleArrowPrevious }
-							/>
-						) }
-					</>
 				) }
 			</div>
 		);
