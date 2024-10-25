@@ -1,24 +1,15 @@
-import config from '@automattic/calypso-config';
-import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
-import { useLocale } from '@automattic/i18n-utils';
 import {
 	ECOMMERCE_FLOW,
 	FREE_FLOW,
 	NEWSLETTER_FLOW,
 	SENSEI_FLOW,
-	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
 	isVideoPressTVFlow,
 } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
-import { PlansSelect } from 'calypso/../packages/data-stores/src';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
-import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
-import { PLANS_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
 import VideoPressIntroModalContent from './videopress-intro-modal-content';
@@ -27,53 +18,6 @@ import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
-	const locale = useLocale();
-	const { supportedPlans } = useSupportedPlans( locale, 'ANNUALLY' );
-	const getPlanProduct = useSelect(
-		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
-		[]
-	);
-	// VideoPress: we should always send a non-empty string so the spacing stays the same on the intro page
-	let videoPressGetStartedText: string | ReactElement = createInterpolateElement( '<nbsp />', {
-		nbsp: <>&nbsp;</>,
-	} );
-
-	if ( VIDEOPRESS_FLOW === flowName ) {
-		const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
-		let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
-			return plan.periodAgnosticSlug === TIMELESS_PLAN_PREMIUM;
-		} );
-		if ( ! defaultSupportedPlan ) {
-			defaultSupportedPlan = supportedPlans.find( ( plan ) => {
-				return plan.periodAgnosticSlug === TIMELESS_PLAN_BUSINESS;
-			} );
-		}
-
-		if ( defaultSupportedPlan ) {
-			const planProductObject = getPlanProduct(
-				defaultSupportedPlan.periodAgnosticSlug,
-				'ANNUALLY'
-			);
-
-			if ( planProductObject ) {
-				videoPressGetStartedText = isTrialEnabled
-					? // eslint-disable-next-line @wordpress/valid-sprintf
-					  sprintf(
-							/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
-							__( 'After trial, plans start as low as %s per month, %s billed annually' ),
-							planProductObject.price,
-							planProductObject.annualPrice
-					  )
-					: // eslint-disable-next-line @wordpress/valid-sprintf
-					  sprintf(
-							/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
-							__( 'Starts at %s per month, %s billed annually' ),
-							planProductObject.price,
-							planProductObject.annualPrice
-					  );
-			}
-		}
-	}
 
 	return useMemo( () => {
 		if ( isLinkInBioFlow( flowName ) ) {
@@ -154,7 +98,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, __, videoPressGetStartedText ] );
+	}, [ flowName, __ ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {
