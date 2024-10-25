@@ -4,15 +4,12 @@ import {
 	NEWSLETTER_FLOW,
 	SENSEI_FLOW,
 	isLinkInBioFlow,
-	isVideoPressTVFlow,
 } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
-import VideoPressIntroModalContent from './videopress-intro-modal-content';
 import type { Step } from '../../types';
 import './styles.scss';
 
@@ -60,27 +57,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
-		if ( isVideoPressTVFlow( flowName ) ) {
-			return {
-				title: createInterpolateElement(
-					__( 'An ad-free, home for all your videos.<br />Play. Roll. Share.' ),
-					{ br: <br /> }
-				),
-				secondaryText: sprintf(
-					/* translators: Days of trial displayed on VideoPress intro page. First %s is days of trial. */
-					__( 'Start your %s-day free trial' ),
-					30
-				),
-				buttonText: __( 'Get started' ),
-				modal: {
-					buttonText: __( 'Learn more' ),
-					onClick: () =>
-						recordTracksEvent( 'calypso_videopress_tv_signup_learn_more_button_clicked' ),
-					content: VideoPressIntroModalContent,
-				},
-			};
-		}
-
 		if ( flowName === FREE_FLOW ) {
 			return {
 				title: createInterpolateElement(
@@ -104,7 +80,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const introContent = useIntroContent( flow );
-	const isVideoPressFlow = 'videopress' === flow;
 
 	const handleSubmit = () => {
 		submit?.();
@@ -121,7 +96,6 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
 			showSenseiPowered={ flow === SENSEI_FLOW }
-			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };
