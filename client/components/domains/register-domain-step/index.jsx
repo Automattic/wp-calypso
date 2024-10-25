@@ -370,6 +370,10 @@ class RegisterDomainStep extends Component {
 				),
 			} );
 		}
+
+		if ( this.props.suggestion !== prevProps.suggestion ) {
+			this.state.lastQuery = getDomainSuggestionSearch( this.props.suggestion, MIN_QUERY_LENGTH );
+		}
 	}
 
 	getOtherManagedSubdomainsQuantity() {
