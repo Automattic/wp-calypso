@@ -2,38 +2,42 @@ import AgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agen
 import AgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-logo-small.svg';
 import EmergingPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-background.svg';
 import EmergingPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-logo-small.svg';
+import NoTierLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/no-tier-logo-small.svg';
 import ProAgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-background.svg';
 import ProAgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo-small.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { AgencyTierInfo, AgencyTier } from '../types';
 
 const getAgencyTierInfo = (
-	agencyTier: AgencyTier,
+	agencyTier: AgencyTier | undefined,
 	translate: ( key: string, args?: Record< string, unknown > ) => string
 ) => {
 	let tierInfo: AgencyTierInfo = {
-		title: '',
-		fullTitle: '',
-		subtitle: '',
+		title: translate( 'Make your {{b}}first purchase{{/b}} to {{b}}activate your account{{/b}}', {
+			components: { b: <b /> },
+		} ),
+		fullTitle: translate(
+			'{{label}}Make your first purchase to{{/label}} {{title}}Activate your Account{{/title}}',
+			{
+				components: {
+					label: <div className="agency-tier-overview__current-agency-tier-label"></div>,
+					title: <div className="agency-tier-overview__current-agency-tier-title"></div>,
+				},
+			}
+		),
+		subtitle: translate(
+			"By making your first purchase you'll maintain access to the agency dashboard."
+		),
 		description: '',
-		logo: '',
-		includedTiers: [] as string[],
-		emptyStateMessage: '',
-		celebrationModal: {
-			title: '',
-			description: '',
-			extraDescription: undefined,
-			benefits: [],
-			video: '',
-			image: '',
-		},
+		logo: NoTierLogo,
+		includedTiers: [],
 	};
 	switch ( agencyTier ) {
 		case 'emerging-partner':
 			tierInfo = {
-				title: translate( 'Emerging Partner' ),
+				title: translate( 'Account activated' ),
 				fullTitle: translate(
-					"{{label}}You're currently an{{/label}} {{title}}Emerging Partner{{/title}}",
+					"{{label}}You're on your way to becoming an Automattic Agency Partner{{/label}} {{title}}Account activated{{/title}}",
 					{
 						components: {
 							label: <div className="agency-tier-overview__current-agency-tier-label"></div>,
@@ -46,16 +50,10 @@ const getAgencyTierInfo = (
 					{ args: { amount: '$1,200' }, comment: 'Amount of revenue' }
 				),
 				description: translate(
-					'Continue moving towards the next tier to unlock benefits by making more purchases and referrals.'
+					'Progress towards the Agency Partner tier and access extra benefits with additional purchases and referrals.'
 				),
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
-				emptyStateMessage: translate(
-					'Make your first purchase to get started as an {{b}}Emerging Partner!{{/b}}',
-					{
-						components: { b: <b /> },
-					}
-				),
 				celebrationModal: {
 					title: translate( 'Welcome to Automattic for Agencies!' ),
 					description: translate(

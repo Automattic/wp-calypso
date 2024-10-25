@@ -42,3 +42,8 @@ export interface SitesDashboardContextInterface {
 
 	featurePreview: ReactNode | null;
 }
+
+export type SiteError = {
+	severity: 'high' | 'medium' | 'low';
+	message: string;
+};

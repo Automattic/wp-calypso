@@ -1,7 +1,7 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import useNextBackupSchedule from 'calypso/components/jetpack/backup-schedule-setting/hooks';
+import { useNextBackupSchedule } from 'calypso/components/jetpack/backup-schedule-setting/hooks';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

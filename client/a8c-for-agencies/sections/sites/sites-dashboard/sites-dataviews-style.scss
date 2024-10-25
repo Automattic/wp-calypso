@@ -19,6 +19,7 @@
 	width: 180px;
 	font-weight: 500;
 	font-size: rem(14px);
+	margin-inline-end: 16px;
 
 	.status-badge {
 		/* stylelint-disable-next-line scales/radii */
@@ -33,6 +34,25 @@
 	font-size: rem(12px);
 	color: var(--color-neutral-60);
 	font-weight: 400;
+}
+
+.sites-dataviews__site-error-indicator {
+	&.is-high .gridicon {
+		color: var(--color-error);
+	}
+
+	&.is-medium .gridicon {
+		color: var(--color-warning);
+	}
+}
+
+.sites-dataviews__site-error-popover-list {
+	margin: 16px;
+	margin-inline-start: 32px;
+
+	li {
+		@include a4a-font-body-sm($font-weight: 500);
+	}
 }
 
 .preview-hidden {

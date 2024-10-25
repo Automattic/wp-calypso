@@ -44,9 +44,10 @@ $video-green: #0e5837;
 			.agency-tier__current-agency-tier-icon {
 				display: flex;
 				width: 80px;
+				margin-left: -8px;
 
 				img {
-					transform: scale(1.6);
+					transform: scale(1.2);
 				}
 			}
 
