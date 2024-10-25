@@ -31,7 +31,6 @@
 		"calypso/big-sky": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
-		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"checkout/ebanx-pix": true,
