@@ -35,10 +35,14 @@ import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import {
 	toggleReaderSidebarLists,
-	toggleReaderSidebarRecent,
+	toggleReaderSidebarFollowing,
 	toggleReaderSidebarTags,
 } from 'calypso/state/reader-ui/sidebar/actions';
-import { isListsOpen, isRecentOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import {
+	isListsOpen,
+	isFollowingOpen,
+	isTagsOpen,
+} from 'calypso/state/reader-ui/sidebar/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -193,8 +197,8 @@ export class ReaderSidebar extends Component {
 
 				{ isEnabled( 'reader/recent-feed-overhaul' ) ? (
 					<ReaderSidebarRecent
-						onClick={ this.props.toggleRecentVisibility }
-						isOpen={ this.props.isRecentOpen }
+						onClick={ this.props.toggleFollowingVisibility }
+						isOpen={ this.props.isFollowingOpen }
 						className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
 							'sidebar-streams__following': true,
 						} ) }
@@ -358,7 +362,7 @@ export default withCurrentRoute(
 
 			return {
 				isListsOpen: isListsOpen( state ),
-				isRecentOpen: isRecentOpen( state ),
+				isFollowingOpen: isFollowingOpen( state ),
 				isTagsOpen: isTagsOpen( state ),
 				subscribedLists: getSubscribedLists( state ),
 				teams: getReaderTeams( state ),
@@ -371,7 +375,7 @@ export default withCurrentRoute(
 			recordTracksEvent,
 			setNextLayoutFocus,
 			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleRecentVisibility: toggleReaderSidebarRecent,
+			toggleFollowingVisibility: toggleReaderSidebarFollowing,
 			toggleTagsVisibility: toggleReaderSidebarTags,
 		}
 	)( localize( ReaderSidebar ) )
