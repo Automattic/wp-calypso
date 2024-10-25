@@ -78,7 +78,7 @@ export const HelpCenterChatHistory = () => {
 					<NavItem
 						selected={ selectedTab === TAB_STATES.recent }
 						onClick={ () => setSelectedTab( TAB_STATES.recent ) }
-						count={ unreadCount }
+						count={ unreadCount > 0 ? unreadCount : undefined }
 					>
 						{ __( 'Recent' ) }
 					</NavItem>

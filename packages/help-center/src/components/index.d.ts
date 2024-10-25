@@ -118,7 +118,12 @@ declare module 'calypso/components/section-nav/tabs' {
 }
 
 declare module 'calypso/components/section-nav/item' {
-	const SectionNavItem: FC;
+	const SectionNavItem: FC< {
+		selected: boolean;
+		onClick: () => void;
+		count?: number;
+		children: React.ReactNode;
+	} >;
 	export = SectionNavItem;
 }
 
