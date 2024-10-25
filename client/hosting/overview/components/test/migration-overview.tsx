@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { canInstallPlugins } from '@automattic/sites';
-import { render } from '@testing-library/react';
+import { render, within } from '@testing-library/react';
 import React from 'react';
 import { getMigrationStatus, getMigrationType } from 'calypso/sites-dashboard/utils';
 import MigrationOverview from '../migration-overview';
@@ -93,4 +93,23 @@ describe( 'MigrationOverview', () => {
 			expect( getByText( expectedParagraph ) ).toBeInTheDocument();
 		}
 	);
+
+	it( 'should render the correct paragraph for a site without a name', () => {
+		( getMigrationType as jest.Mock ).mockReturnValue( 'diy' );
+		( getMigrationStatus as jest.Mock ).mockReturnValue( 'started' );
+
+		const { container } = render( <MigrationOverview site={ baseSite } /> );
+		const hostingHero = container.querySelector( '.hosting-hero' ) as HTMLElement;
+		expect( within( hostingHero ).getByText( /your site/i ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render the correct paragraph for a site with a name', () => {
+		( getMigrationType as jest.Mock ).mockReturnValue( 'diy' );
+		( getMigrationStatus as jest.Mock ).mockReturnValue( 'started' );
+
+		const site = { ...baseSite, name: 'My Site' };
+
+		const { getByText } = render( <MigrationOverview site={ site } /> );
+		expect( getByText( /My Site/i ) ).toBeInTheDocument();
+	} );
 } );

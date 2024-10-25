@@ -116,7 +116,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 						strong: <strong />,
 					},
 					args: {
-						siteName: site.name ?? '',
+						siteName: site.name ?? translate( 'your site' ),
 					},
 				}
 		  );
