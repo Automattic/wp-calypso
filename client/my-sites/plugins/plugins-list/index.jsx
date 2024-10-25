@@ -62,7 +62,6 @@ export class PluginsList extends Component {
 		selectedSiteSlug: PropTypes.string,
 		siteIsAtomic: PropTypes.bool,
 		siteIsJetpack: PropTypes.bool,
-		pluginsWithUpdates: PropTypes.array,
 		onSearch: PropTypes.func.isRequired,
 	};
 
@@ -358,13 +357,10 @@ export class PluginsList extends Component {
 			<div className="plugins-list">
 				<PluginsListDataViews
 					currentPlugins={ this.props.plugins }
-					onSearch={ this.props.onSearch }
 					initialSearch={ this.props.searchTerm }
-					pluginsWithUpdates={ this.props.pluginsWithUpdates }
-					activePlugins={ this.props.activePlugins }
-					inactivePlugins={ this.props.inactivePlugins }
-					bulkActionDialog={ this.bulkActionDialog }
 					isLoading={ this.props.isLoading }
+					onSearch={ this.props.onSearch }
+					bulkActionDialog={ this.bulkActionDialog }
 				/>
 			</div>
 		);

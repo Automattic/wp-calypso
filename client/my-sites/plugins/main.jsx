@@ -20,7 +20,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
-import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
@@ -29,6 +29,7 @@ import {
 	isRequestingForSites,
 	isRequestingForAllSites,
 	requestPluginsError,
+	getPluginsWithUpdateStatuses,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -151,14 +152,7 @@ export class PluginsMain extends Component {
 	}
 
 	getCurrentPlugins() {
-		const { currentPlugins, currentPluginsOnVisibleSites, selectedSiteSlug } = this.props;
-		const plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
-
-		if ( ! plugins ) {
-			return plugins;
-		}
-
-		return this.addWporgDataToPlugins( plugins );
+		return this.addWporgDataToPlugins( this.props.currentPlugins );
 	}
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
@@ -315,7 +309,6 @@ export class PluginsMain extends Component {
 				searchTerm={ this.props.search }
 				filter={ this.props.filter }
 				requestPluginsError={ this.props.requestPluginsError }
-				pluginsWithUpdates={ this.props.pluginsWithUpdates }
 				activePlugins={ this.props.activePlugins }
 				inactivePlugins={ this.props.inactivePlugins }
 				onSearch={ this.props.doSearch }
@@ -455,16 +448,22 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		( state, { filter, isJetpackCloud } ) => {
+		( state, { isJetpackCloud } ) => {
 			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
-			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
 			const activePlugins = getPlugins( state, siteIds, 'active' );
 			const inactivePlugins = getPlugins( state, siteIds, 'inactive' );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
+			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses(
+				allPlugins,
+				pluginsWithUpdates,
+				inactivePlugins,
+				activePlugins
+			);
+
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
 			const hasManagePlugins =
@@ -489,10 +488,8 @@ export default flow(
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
-				currentPlugins: getPlugins( state, siteIds, filter ),
-				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
+				currentPlugins: pluginsWithUpdatesAndStatuses,
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
-				pluginsWithUpdates,
 				activePlugins,
 				inactivePlugins,
 				allPluginsCount: allPlugins && allPlugins.length,

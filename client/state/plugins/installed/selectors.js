@@ -1,5 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
+import { PLUGINS_STATUS } from 'calypso/my-sites/plugins/plugins-list/plugins-list-dataviews';
 import {
 	getSite,
 	getSiteTitle,
@@ -118,6 +119,28 @@ export const getPlugins = createSelector(
 	( state, siteIds, pluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
+);
+
+export const getPluginsWithUpdateStatuses = createSelector(
+	( plugins, withUpdate, inactive, active ) => {
+		return plugins.reduce( ( memo, plugin ) => {
+			const status = [];
+
+			if ( find( withUpdate, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.UPDATE );
+			}
+
+			if ( find( inactive, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.INACTIVE );
+			}
+
+			if ( find( active, { slug: plugin.slug } ) ) {
+				status.push( PLUGINS_STATUS.ACTIVE );
+			}
+			return [ ...memo, { ...plugin, status } ];
+		}, [] );
+	},
+	( plugins, pluginsUpdate ) => [ plugins, pluginsUpdate ]
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {

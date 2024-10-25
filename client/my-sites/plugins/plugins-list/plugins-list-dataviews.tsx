@@ -2,7 +2,6 @@ import { Button } from '@wordpress/components';
 import { filterSortAndPaginate, Operator } from '@wordpress/dataviews';
 import { Icon, link, linkOff, plugins, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { find } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -19,9 +18,6 @@ import './style.scss';
 interface Props {
 	currentPlugins: Array< Plugin >;
 	initialSearch?: string;
-	pluginsWithUpdates: Array< Plugin >;
-	activePlugins: Array< Plugin >;
-	inactivePlugins: Array< Plugin >;
 	isLoading: boolean;
 	onSearch?: ( search: string ) => void;
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
@@ -36,34 +32,12 @@ export const PLUGINS_STATUS = {
 export default function PluginsListDataViews( {
 	currentPlugins,
 	initialSearch,
-	pluginsWithUpdates,
-	activePlugins,
-	inactivePlugins,
 	isLoading,
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
 	const allStatuses = useSelector( ( state ) => {
 		return getPluginActionStatuses( state );
-	} );
-
-	// Add flags for plugins status: active, inactive, updates
-	currentPlugins.map( ( plugin ) => {
-		plugin.status = [];
-
-		if ( find( pluginsWithUpdates, { slug: plugin.slug } ) ) {
-			plugin.status.push( PLUGINS_STATUS.UPDATE );
-		}
-
-		if ( find( inactivePlugins, { slug: plugin.slug } ) ) {
-			plugin.status.push( PLUGINS_STATUS.INACTIVE );
-		}
-
-		if ( find( activePlugins, { slug: plugin.slug } ) ) {
-			plugin.status.push( PLUGINS_STATUS.ACTIVE );
-		}
-
-		return plugin;
 	} );
 
 	const translate = useTranslate();
