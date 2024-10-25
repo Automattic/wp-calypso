@@ -265,22 +265,20 @@ export default function PluginsListDataViews( {
 	}, [ currentPlugins, dataViewsState, fields, allStatuses ] );
 
 	return (
-		<div className="referrals-details-table__container redesigned-a8c-table">
-			<ItemsDataViews
-				data={ {
-					items: data,
-					getItemId: ( item ) => `${ item.id }`,
-					fields,
-					pagination: paginationInfo,
-					searchLabel: translate( 'Search for plugins' ),
-					enableSearch: true,
-					actions: actions,
-					dataViewsState: dataViewsState,
-					setDataViewsState: setDataViewsState,
-					defaultLayouts: { table: {} },
-				} }
-				isLoading={ isLoading }
-			/>
-		</div>
+		<ItemsDataViews
+			data={ {
+				items: data,
+				getItemId: ( item ) => `${ item.id }`,
+				fields,
+				pagination: paginationInfo,
+				searchLabel: translate( 'Search for plugins' ),
+				enableSearch: true,
+				actions: actions,
+				dataViewsState: dataViewsState,
+				setDataViewsState: setDataViewsState,
+				defaultLayouts: { table: {} },
+			} }
+			isLoading={ isLoading }
+		/>
 	);
 }
