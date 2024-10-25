@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
@@ -50,7 +51,7 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 						label={ translate( 'Manage Plugins' ) }
 						tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
 						selected={ path.startsWith( '/plugins/manage' ) }
-						customIcon={ <SidebarIconCalendar /> }
+						icon={ settings }
 					/>
 				) }
 				<SidebarItem
