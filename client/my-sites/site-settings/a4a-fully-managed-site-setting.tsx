@@ -6,33 +6,8 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import type { SiteDetails } from '@automattic/data-stores';
 
-type Props = {
-	site: SiteDetails;
-	isFullyManagedAgencySite: boolean;
-	onChange: ( value: boolean ) => void;
-	isSaving?: boolean;
-	onSaveSetting: () => void;
-	disabled: boolean;
-};
-
-export function A4AFullyManagedSiteSetting( {
-	site,
-	isFullyManagedAgencySite,
-	onChange,
-	isSaving,
-	onSaveSetting,
-	disabled,
-}: Props ) {
-	const isDevSite = site.is_a4a_dev_site;
-	const isAtomicSite = site.is_wpcom_atomic;
-
-	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID } );
-
-	const shouldShowToggle = agencySite && isAtomicSite;
-
-	if ( ! shouldShowToggle ) {
-		return null;
-	}
+export function A4AFullyManagedSiteSetting() {
+	const isDevSite = false;
 
 	const translationComponents = {
 		HcLink: (
@@ -57,52 +32,39 @@ export function A4AFullyManagedSiteSetting( {
 
 	return (
 		<div className="site-settings__a4a-fully-managed-container">
-			<SettingsSectionHeader
-				title={ translate( 'Agency settings' ) }
-				id="site-settings__a4a-fully-managed-header"
-				disabled={ disabled }
-				isSaving={ isSaving }
-				onButtonClick={ onSaveSetting }
-				showButton={ ! isDevSite }
-			/>
-			<CompactCard className="site-settings__a4a-fully-managed-content">
-				{ isDevSite ? (
-					<p className="form-setting-explanation">
-						{ translate(
-							"Clients can't access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. You may configure access after the site is launched.",
-							{
-								components: translationComponents,
-							}
-						) }{ ' ' }
-						{ translate( '{{a}}Learn more.{{/a}}', {
-							components: {
-								a: (
-									<a
-										target="_blank"
-										href={ localizeUrl(
-											'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
-										) }
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</p>
-				) : (
-					<ToggleControl
-						disabled={ disabled }
-						className="site-settings__a4a-fully-managed-toggle"
-						label={ translate(
-							'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
-							{
-								components: translationComponents,
-							}
-						) }
-						checked={ ! isFullyManagedAgencySite }
-						onChange={ ( checked ) => onChange( ! checked ) }
-					/>
-				) }
-			</CompactCard>
+			{ isDevSite ? (
+				<p className="form-setting-explanation">
+					{ translate(
+						"Clients can't access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. You may configure access after the site is launched.",
+						{
+							components: translationComponents,
+						}
+					) }{ ' ' }
+					{ translate( '{{a}}Learn more.{{/a}}', {
+						components: {
+							a: (
+								<a
+									target="_blank"
+									href={ localizeUrl(
+										'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+									) }
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</p>
+			) : (
+				<ToggleControl
+					className="site-settings__a4a-fully-managed-toggle"
+					label={ translate(
+						'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+						{
+							components: translationComponents,
+						}
+					) }
+				/>
+			) }
 		</div>
 	);
 }

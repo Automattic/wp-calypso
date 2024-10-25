@@ -162,15 +162,6 @@ export const UpsellNudge = ( {
 		( ! isJetpack && site.jetpack ) ||
 		( isJetpack && ! site.jetpack );
 
-	if ( shouldNotDisplay && ! forceDisplay ) {
-		return null;
-	}
-
-	// No upsells for WP for Teams sites
-	if ( siteIsWPForTeams ) {
-		return null;
-	}
-
 	if ( ! href && siteSlug && canManageSite ) {
 		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
 		if ( customerType ) {
@@ -310,7 +301,7 @@ const ConnectedUpsellNudge = connect( ( state: IAppState, ownProps: OwnProps ) =
 
 export default function Wrapper( props: OwnProps ) {
 	const { isOneClickCheckoutEnabled = true, plan } = props;
-	if ( isOneClickCheckoutEnabled && plan ) {
+	if ( true ) {
 		return (
 			<AsyncLoad
 				require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"

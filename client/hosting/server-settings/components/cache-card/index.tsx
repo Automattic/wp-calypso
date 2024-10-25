@@ -120,14 +120,7 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 		  );
 
 	return (
-		<HostingCard
-			className="cache-card"
-			headingId="cache"
-			title={ translate( 'Performance optimization', {
-				comment: 'Heading text for a card on the Server Settings page',
-				textOnly: true,
-			} ) }
-		>
+		<>
 			<div className="cache-card__all-cache-block">
 				<HostingCardDescription>
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
@@ -311,6 +304,6 @@ export default function CacheCard( { disabled }: CacheCardProps ) {
 					</div>
 				</>
 			) }
-		</HostingCard>
+		</>
 	);
 }

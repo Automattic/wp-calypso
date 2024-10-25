@@ -9,17 +9,11 @@ import type { AppState } from 'calypso/types';
 // Calypso pages not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
 const SITE_DASHBOARD_ROUTES = {
-	'hosting-overview': '/overview/',
-	hosting: '/hosting-config/',
-	'github-deployments': '/github-deployments/',
-	'site-monitoring': '/site-monitoring/',
+	'site-overview': '/sites/overview/',
 	'site-performance': '/sites/performance/',
-	'site-logs': '/site-logs/',
-	'hosting-features': '/hosting-features/',
-	'staging-site': '/staging-site/',
-
-	// New Information Architecture
-	'site-marketing': '/sites/marketing',
+	'site-tools': '/sites/tools/',
+	'site-marketing': '/sites/marketing/',
+	'site-settings': '/sites/settings/',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {

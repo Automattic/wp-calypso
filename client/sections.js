@@ -575,9 +575,33 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'site-overview',
+		paths: [ '/sites/overview' ],
+		module: 'calypso/hosting/overview',
+		group: 'sites',
+	},
+	{
+		name: 'site-performance',
+		paths: [ '/sites/performance' ],
+		module: 'calypso/hosting/performance',
+		group: 'sites',
+	},
+	{
 		name: 'site-marketing',
 		paths: [ '/sites/marketing' ],
 		module: 'calypso/sites/marketing',
+		group: 'sites',
+	},
+	{
+		name: 'site-tools',
+		paths: [ '/sites/tools' ],
+		module: 'calypso/sites/tools',
+		group: 'sites',
+	},
+	{
+		name: 'site-settings',
+		paths: [ '/sites/settings' ],
+		module: 'calypso/sites/settings',
 		group: 'sites',
 	},
 	{
@@ -730,12 +754,6 @@ const sections = [
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring' ],
 		module: 'calypso/hosting/monitoring',
-		group: 'sites',
-	},
-	{
-		name: 'site-performance',
-		paths: [ '/sites/performance' ],
-		module: 'calypso/hosting/performance',
 		group: 'sites',
 	},
 	{

@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import page, { Callback } from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
@@ -11,15 +11,18 @@ import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/cont
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_OVERVIEW,
+	SITE_OVERVIEW,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
 
 export default function () {
-	page( '/overview', siteSelection, sites, makeLayout, clientRender );
+	const redirectSiteOverview: Callback = ( context ) => {
+		context.page.replace( `/sites/overview/${ context.params.site }` );
+	};
+	page( '/overview/:site', redirectSiteOverview );
 	page(
-		'/overview/:site',
+		'/sites/overview/:site',
 		siteSelection,
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
@@ -28,7 +31,7 @@ export default function () {
 		redirectIfJetpackNonAtomic,
 		navigation,
 		hostingOverview,
-		siteDashboard( DOTCOM_OVERVIEW ),
+		siteDashboard( SITE_OVERVIEW ),
 		makeLayout,
 		clientRender
 	);

@@ -117,7 +117,8 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 }
 
 .site-monitoring-metrics-tab {
-	padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
+	padding: 0;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;

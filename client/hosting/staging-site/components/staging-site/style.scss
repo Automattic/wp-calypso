@@ -21,3 +21,12 @@
 		margin-bottom: 4px;
 	}
 }
+
+.staging-site-card {
+	padding-top: 0 !important;
+	padding-left: 0 !important;
+
+	h3 {
+		font-size: 20px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	}
+}

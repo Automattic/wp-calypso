@@ -68,7 +68,7 @@ export default function PhpMyAdminCard( { disabled } ) {
 		<HostingCard
 			className="phpmyadmin-card"
 			headingId="database-access"
-			title={ translate( 'Database access' ) }
+			title={ translate( 'Database' ) }
 		>
 			<HostingCardDescription>
 				{ translate(

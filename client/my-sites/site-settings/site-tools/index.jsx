@@ -40,7 +40,6 @@ class SiteTools extends Component {
 
 	render() {
 		const {
-			shouldShowSiteCopyItem,
 			startSiteCopy,
 			translate,
 			siteSlug,
@@ -56,6 +55,8 @@ class SiteTools extends Component {
 			headerTitle,
 			source,
 		} = this.props;
+
+		const shouldShowSiteCopyItem = true;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }?source=${ source }`;
@@ -91,7 +92,6 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader id="site-tools__header" title={ headerTitle } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
@@ -129,6 +129,12 @@ class SiteTools extends Component {
 						description={ startOverText }
 					/>
 				) }
+				<SiteToolsLink
+					href={ startOverLink }
+					onClick={ this.trackStartOver }
+					title="Restore plugins and themes"
+					description="If your website is missing plugins and themes that come with your plan, you may restore them here."
+				/>
 				{ showDeleteSite && (
 					<SiteToolsLink
 						href={ deleteSiteLink }
@@ -190,10 +196,10 @@ export default compose( [
 				siteSlug,
 				purchasesError: getPurchasesError( state ),
 				cloneUrl,
-				showChangeAddress: ! isJetpack && ! isVip && ! isP2,
-				showClone: 'active' === rewindState.state && ! isAtomic,
-				showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
-				showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
+				showChangeAddress: false,
+				showClone: true,
+				showDeleteContent: true,
+				showDeleteSite: true,
 				showManageConnection: isJetpack && ! isAtomic,
 				showStartSiteTransfer,
 				siteId,

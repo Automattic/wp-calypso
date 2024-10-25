@@ -598,13 +598,13 @@ export class SiteSettingsFormGeneral extends Component {
 			isUnlaunchedSite: propsisUnlaunchedSite,
 			adminInterfaceIsWPAdmin,
 			hasBlockTheme,
-			isMarketingBannerVisible,
 			personalPlanMonthlyCost,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 		const isDevelopmentSite = Boolean( site?.is_a4a_dev_site );
+		const isMarketingBannerVisible = true;
 
 		return (
 			<div className={ clsx( classes ) }>
@@ -641,25 +641,17 @@ export class SiteSettingsFormGeneral extends Component {
 				) : (
 					this.privacySettings()
 				) }
-				<A4AFullyManagedSiteSetting
-					site={ site }
-					isFullyManagedAgencySite={ fields.is_fully_managed_agency_site }
-					onChange={ this.props.handleToggle( 'is_fully_managed_agency_site' ) }
-					isSaving={ isSavingSettings }
-					onSaveSetting={ handleSubmitForm }
-					disabled={ isRequestingSettings || isSavingSettings }
-				/>
+
 				{ this.enhancedOwnershipSettings() }
 				<DIFMUpsell
 					site={ site }
 					isUnlaunchedSite={ propsisUnlaunchedSite }
 					urlRef="unlaunched-settings"
 				/>
-				{ ! isDevelopmentSite && this.renderAdminInterface() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<>
-						{ hasBlockTheme && isMarketingBannerVisible && (
+						{ isMarketingBannerVisible && (
 							<div className="site-settings__marketing-banner-container">
 								<SettingsSectionHeader
 									title={ translate( 'Marketing banner' ) }

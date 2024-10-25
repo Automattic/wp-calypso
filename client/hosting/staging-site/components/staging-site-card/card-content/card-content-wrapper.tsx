@@ -14,7 +14,7 @@ export const CardContentWrapper: FunctionComponent< Props > = ( { children, clas
 		<HostingCard
 			className={ clsx( 'staging-site-card', className ) }
 			headingId="staging-site"
-			title={ translate( 'Staging site' ) }
+			title={ translate( 'Staging Site' ) }
 		>
 			{ children }
 		</HostingCard>

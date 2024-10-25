@@ -4,23 +4,29 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import {
-	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_OVERVIEW,
-	DOTCOM_MONITORING,
-	DOTCOM_SITE_PERFORMANCE,
-	DOTCOM_LOGS_PHP,
-	DOTCOM_LOGS_WEB,
-	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_HOSTING_FEATURES,
-	DOTCOM_STAGING_SITE,
+	SITE_OVERVIEW,
+	SITE_PERFORMANCE,
 	SITE_MARKETING_TOOLS,
 	SITE_MARKETING_BUSINESS_TOOLS,
+	SITE_TOOLS_STAGING_SITE,
+	SITE_TOOLS_DEPLOYMENTS,
+	SITE_TOOLS_MONITORING,
+	SITE_TOOLS_LOGS,
+	SITE_TOOLS_SFTP_SSH,
+	SITE_TOOLS_DATABASE,
+	SITE_MARKETING_CONNECTIONS,
+	SITE_MARKETING_TRAFFIC,
+	SITE_MARKETING_SHARING_BUTTONS,
+	SITE_SETTINGS_SITE,
+	SITE_SETTINGS_ADMINISTRATION,
+	SITE_SETTINGS_AGENCY,
+	SITE_SETTINGS_WEB_SERVER,
+	SITE_SETTINGS_CACHES,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -65,56 +71,47 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Overview' ),
 				enabled: true,
-				featureIds: [ DOTCOM_OVERVIEW ],
+				featureIds: [ SITE_OVERVIEW ],
 			},
-			{
-				label: (
-					<span>
-						{ hasEnTranslation( 'Hosting Features' )
-							? __( 'Hosting Features' )
-							: __( 'Dev Tools' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
-				enabled: isSimpleSite || isPlanExpired,
-				featureIds: [ DOTCOM_HOSTING_FEATURES ],
-			},
-			{
-				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
-			},
-			{
-				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_MONITORING ],
-			},
+
 			{
 				label: __( 'Performance' ),
 				enabled: isActiveAtomicSite && config.isEnabled( 'performance-profiler/logged-in' ),
-				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
-			},
-			{
-				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
-			},
-			{
-				label: __( 'Staging Site' ),
-				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_STAGING_SITE ],
+				featureIds: [ SITE_PERFORMANCE ],
 			},
 			{
 				label: __( 'Marketing' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ SITE_MARKETING_TOOLS, SITE_MARKETING_BUSINESS_TOOLS ],
+				enabled: true,
+				featureIds: [
+					SITE_MARKETING_TOOLS,
+					SITE_MARKETING_BUSINESS_TOOLS,
+					SITE_MARKETING_CONNECTIONS,
+					SITE_MARKETING_TRAFFIC,
+					SITE_MARKETING_SHARING_BUTTONS,
+				],
 			},
 			{
-				label: hasEnTranslation( 'Server Settings' )
-					? __( 'Server Settings' )
-					: __( 'Server Config' ),
-				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_HOSTING_CONFIG ],
+				label: __( 'Advanced Tools' ),
+				enabled: true,
+				featureIds: [
+					SITE_TOOLS_STAGING_SITE,
+					SITE_TOOLS_DEPLOYMENTS,
+					SITE_TOOLS_MONITORING,
+					SITE_TOOLS_LOGS,
+					SITE_TOOLS_SFTP_SSH,
+					SITE_TOOLS_DATABASE,
+				],
+			},
+			{
+				label: __( 'Settings' ),
+				enabled: true,
+				featureIds: [
+					SITE_SETTINGS_SITE,
+					SITE_SETTINGS_ADMINISTRATION,
+					SITE_SETTINGS_AGENCY,
+					SITE_SETTINGS_WEB_SERVER,
+					SITE_SETTINGS_CACHES,
+				],
 			},
 		];
 

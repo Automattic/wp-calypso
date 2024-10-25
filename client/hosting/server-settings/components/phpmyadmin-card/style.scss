@@ -1,3 +1,12 @@
+.phpmyadmin-card {
+	border: none !important;
+	padding: 0 !important;
+
+	h3 {
+		font-size: 20px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	}
+}
+
 .phpmyadmin-card button {
 	&.is-primary svg {
 		fill: var(--color-text-inverted);

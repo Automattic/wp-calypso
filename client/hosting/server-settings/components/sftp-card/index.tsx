@@ -278,9 +278,7 @@ export const SftpCard = ( { disabled }: SftpCardProps ) => {
 		<HostingCard
 			className="sftp-card"
 			headingId="sftp-credentials"
-			title={
-				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
-			}
+			title={ siteHasSshFeature ? translate( 'SFTP/SSH' ) : translate( 'SFTP' ) }
 		>
 			{ ! hasSftpFeatureAndIsLoading && (
 				<HostingCardDescription>

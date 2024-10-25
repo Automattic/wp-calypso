@@ -225,10 +225,6 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 	};
 
 	const getGeoAffinityContent = () => {
-		if ( isGettingGeoAffinity || ! geoAffinity ) {
-			return;
-		}
-
 		const displayValue = dataCenterOptions.hasOwnProperty( geoAffinity )
 			? dataCenterOptions[ geoAffinity ]
 			: geoAffinity;
@@ -411,11 +407,7 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 	};
 
 	return (
-		<HostingCard
-			className="web-server-settings-card"
-			headingId="web-server-settings"
-			title={ translate( 'Web server settings' ) }
-		>
+		<>
 			<QuerySiteGeoAffinity siteId={ siteId } />
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
@@ -425,11 +417,11 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
 			</HostingCardDescription>
-			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getGeoAffinityContent() }
+			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getPhpVersionContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
-		</HostingCard>
+		</>
 	);
 }
