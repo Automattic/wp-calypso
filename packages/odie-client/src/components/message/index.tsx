@@ -43,11 +43,7 @@ const MessageAvatarHeader = ( {
 } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
-	if ( shouldUseHelpCenterExperience ) {
-		import( './style_redesign.scss' );
-	} else {
-		import( './style.scss' );
-	}
+
 	if ( shouldUseHelpCenterExperience ) {
 		return message.role === 'bot' ? (
 			<>
@@ -107,9 +103,14 @@ const ChatMessage = ( {
 	...messageIndicators
 }: ChatMessageProps & MessageIndicators ) => {
 	const isBot = message.role === 'bot';
-	const { botName } = useOdieAssistantContext();
+	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isDisliked ] = useState( false );
+	if ( shouldUseHelpCenterExperience ) {
+		import( './style_redesign.scss' );
+	} else {
+		import( './style.scss' );
+	}
 
 	const fullscreenRef = useRef< HTMLDivElement >( null );
 
