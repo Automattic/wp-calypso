@@ -1,10 +1,4 @@
-import {
-	BLOG_FLOW,
-	FREE_FLOW,
-	LINK_IN_BIO_FLOW,
-	VIDEOPRESS_FLOW,
-	SENSEI_FLOW,
-} from '@automattic/onboarding';
+import { BLOG_FLOW, FREE_FLOW, VIDEOPRESS_FLOW, SENSEI_FLOW } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
@@ -33,7 +27,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	);
 
 	// If no route is found we don't redirect and return false
-	if ( ! route || skipRoute ) {
+	if ( ! route ) {
 		return false;
 	}
 
