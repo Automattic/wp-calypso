@@ -6,39 +6,46 @@ export default function useGetSiteErrors() {
 	const translate = useTranslate();
 
 	return useCallback(
-		( site?: SiteData ): SiteError[] => {
+		( data?: SiteData ): SiteError[] => {
 			const errors: SiteError[] = [];
-			if ( site?.error?.status === 'failed' ) {
+			if ( data?.error?.status === 'failed' ) {
 				errors.push( { severity: 'high', message: translate( 'Connectivity issue' ) } );
 			}
 
-			if ( site?.scan?.status === 'failed' ) {
+			if ( data?.scan?.status === 'failed' ) {
 				errors.push( {
 					severity: 'medium',
 					message: translate( '%(count)s threat found', '%(count)s threats found', {
-						count: site.scan.threats,
+						count: data.scan.threats,
 						args: {
-							count: site.scan.threats,
+							count: data.scan.threats,
 						},
 						comment: '%(count) here is the number of threats found',
 					} ),
 				} );
 			}
 
-			if ( site?.plugin?.status === 'warning' ) {
+			if ( data?.plugin?.status === 'warning' ) {
 				errors.push( {
 					severity: 'medium',
 					message: translate(
 						'%(count)s plugin requires update',
 						'%(count)s plugins require updates',
 						{
-							count: site.plugin.updates,
+							count: data.plugin.updates,
 							args: {
-								count: site.plugin.updates,
+								count: data.plugin.updates,
 							},
 							comment: '%(count) here is the number of plugins that require updates',
 						}
 					),
+				} );
+			}
+
+			if ( data?.site?.value?.is_simple ) {
+				errors.push( {
+					severity: 'medium',
+					message: translate( 'We are provisioning your site' ),
 				} );
 			}
 
