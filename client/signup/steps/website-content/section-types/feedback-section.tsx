@@ -1,4 +1,4 @@
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { TextAreaField, LabelBlock } from 'calypso/signup/accordion-form/form-components';
 import { useDispatch } from 'calypso/state';
@@ -33,9 +33,7 @@ export function FeedbackSection( {
 					'Optional: Is there anything else you would like the site builder to know?'
 				) }
 				characterLimit={ FEEDBACK_SECTION_CHARACTER_LIMIT }
-				characterLimitError={ translate( 'Please shorten your text to under %s characters', {
-					args: [ numberFormat( FEEDBACK_SECTION_CHARACTER_LIMIT, {} ) ],
-				} ) }
+				characterLimitError={ translate( 'Character limit reached.' ) }
 				shouldEnforceCharacterLimit
 			/>
 			<LabelBlock>
