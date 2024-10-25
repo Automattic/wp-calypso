@@ -14,6 +14,12 @@ import type { AgencyTierInfo } from 'calypso/a8c-for-agencies/sections/agency-ti
 
 // Style is imported from the parent component
 
+// Make sure to update the CSS values if you change the block padding or image height
+const BLOCK_PADDING = 98; // 48px * 2
+const IMAGE_HEIGHT = 260;
+const MARGIN_BLOCK_END = 20;
+const DEFAULT_MAX_HEIGHT = 300;
+
 const PREFERENCE_NAME = 'a4a-agency-tier-celebration-modal-dismissed-type';
 
 export default function AgencyTierCelebrationModal( {
@@ -39,9 +45,20 @@ export default function AgencyTierCelebrationModal( {
 
 		const checkVerticalOverflow = () => {
 			if ( currentRef ) {
-				const { scrollTop, scrollHeight, clientHeight } = currentRef;
+				const { scrollTop, scrollHeight } = currentRef;
+
+				const modalHeight =
+					document.querySelector( '.agency-tier-celebration-modal' )?.clientHeight ?? 0;
+
+				const maxHeight = isNarrowView
+					? modalHeight - ( IMAGE_HEIGHT + BLOCK_PADDING + MARGIN_BLOCK_END )
+					: DEFAULT_MAX_HEIGHT;
+
+				currentRef.style.maxHeight = `${ maxHeight }px`;
+				currentRef.style.marginBlockEnd = `${ MARGIN_BLOCK_END }px`;
+
 				// Determine if the user is at the bottom of the list (allow some leeway with a small threshold)
-				if ( scrollHeight > clientHeight && scrollTop < scrollHeight - clientHeight - 1 ) {
+				if ( scrollHeight > maxHeight && scrollTop < scrollHeight - maxHeight - 1 ) {
 					setIsOverflowing( true );
 				} else {
 					setIsOverflowing( false );
@@ -56,7 +73,7 @@ export default function AgencyTierCelebrationModal( {
 		return () => {
 			currentRef?.removeEventListener( 'scroll', checkVerticalOverflow );
 		};
-	}, [] );
+	}, [ isNarrowView ] );
 
 	// Record the event when the modal is shown
 	useEffect( () => {
