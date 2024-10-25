@@ -98,7 +98,6 @@
 		"p2-enabled": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
-		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plugins/ssr-categories": true,
