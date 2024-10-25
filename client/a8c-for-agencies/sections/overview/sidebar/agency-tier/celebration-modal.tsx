@@ -57,7 +57,10 @@ export default function AgencyTierCelebrationModal( {
 		};
 	}, [] );
 
-	if ( ! agencyTierInfo || celebrationModalShowForCurrentType === currentAgencyTier ) {
+	if (
+		! agencyTierInfo?.celebrationModal ||
+		celebrationModalShowForCurrentType === currentAgencyTier
+	) {
 		return null;
 	}
 
