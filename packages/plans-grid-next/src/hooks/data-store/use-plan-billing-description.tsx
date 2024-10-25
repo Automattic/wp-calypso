@@ -109,8 +109,8 @@ export default function usePlanBillingDescription( {
 	 */
 	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
 		const introOfferFullTermText =
-			currencyCode && introOffer.rawPrice
-				? formatCurrency( introOffer.rawPrice.full, currencyCode, {
+			currencyCode && ( discountedPrice?.full || introOffer.rawPrice )
+				? formatCurrency( discountedPrice?.full || introOffer.rawPrice.full, currencyCode, {
 						stripZeros: true,
 						isSmallestUnit: true,
 				  } )
