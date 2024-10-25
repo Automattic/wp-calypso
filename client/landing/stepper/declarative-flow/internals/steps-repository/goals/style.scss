@@ -79,12 +79,18 @@
 	}
 
 	.select-goals__alternative-flows-container {
-		padding-top: 52px;
+		padding-top: 32px;
 		padding-bottom: 60px + 48px; // Height of sticky footer + height of bottom whitespace
+		display: grid;
+		grid-template-columns: max-content;
+		justify-content: center;
+		gap: 20px 8px;
 
 		@include break-small {
-			padding-top: 48px;
+			padding-top: 52px;
 			padding-bottom: 48px;
+			grid-template-columns: repeat(3, max-content);
+			gap: 16px 8px;
 		}
 	}
 
@@ -93,12 +99,26 @@
 		font-size: $font-body-small;
 	}
 
-	.select-goals__link-separator::before {
-		content: "•";
+	.select-goals__link-separator {
+		display: none;
+
+		&::before {
+			content: "•";
+		}
+
+		@include break-small {
+			display: block;
+		}
 	}
 
-	.select-goals__dashboard-button {
+	.select-goals__dashboard-button.select-goals__link { // extra specificity to override default link styles
+		margin-left: auto;
+		margin-right: auto;
 		gap: 8px;
+
+		@include break-small {
+			grid-column: span 3;
+		}
 	}
 }
 
