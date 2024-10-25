@@ -1,9 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import {
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -148,20 +144,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 				stepContent={
 					<>
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
-						<VStack
-							spacing={ 4 }
-							alignment="center"
-							className="select-goals__alternative-flows-container"
-						>
-							<HStack spacing={ 2 } alignment="center">
-								<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
-									{ translate( 'Import or migrate an existing site' ) }
-								</Button>
-								<span className="select-goals__link-separator" />
-								<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
-									{ translate( 'Let us build a custom site for you' ) }
-								</Button>
-							</HStack>
+						<div className="select-goals__alternative-flows-container">
+							<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
+								{ translate( 'Import or migrate an existing site' ) }
+							</Button>
+							<span className="select-goals__link-separator" />
+							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
+								{ translate( 'Let us build a custom site for you' ) }
+							</Button>
 							<Button
 								variant="link"
 								onClick={ handleDashboardClick }
@@ -170,7 +160,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 								<DashboardIcon />
 								{ translate( 'Go to dashboard' ) }
 							</Button>
-						</VStack>
+						</div>
 					</>
 				}
 			/>
