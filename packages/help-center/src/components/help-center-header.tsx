@@ -12,6 +12,7 @@ import {
 	Icon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { DragIcon } from '../icons';
@@ -167,6 +168,7 @@ const ContentMinimized = ( {
 
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
 	const { __ } = useI18n();
+	const location = useLocation();
 
 	const handleClick = useCallback(
 		( event: React.SyntheticEvent ) => {
@@ -177,8 +179,13 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		[ onMaximize ]
 	);
 
+	const classNames = clsx(
+		'help-center__container-header',
+		location?.pathname?.replace( /^\//, '' )
+	);
+
 	return (
-		<CardHeader className="help-center__container-header">
+		<CardHeader className={ classNames }>
 			<Flex onClick={ handleClick }>
 				{ isMinimized ? (
 					<ContentMinimized handleClick={ handleClick } onMaximize={ onMaximize } />

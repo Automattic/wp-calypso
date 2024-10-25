@@ -107,6 +107,21 @@ declare module 'calypso/components/gravatar' {
 	export default Gravatar;
 }
 
+declare module 'calypso/components/section-nav' {
+	const SectionNav: FC;
+	export = SectionNav;
+}
+
+declare module 'calypso/components/section-nav/tabs' {
+	const SectionNavTabs: FC;
+	export = SectionNavTabs;
+}
+
+declare module 'calypso/components/section-nav/item' {
+	const SectionNavItem: FC;
+	export = SectionNavItem;
+}
+
 declare module 'calypso/components/textarea-autosize' {
 	const TextareaAutosize: FC< {
 		placeholder: string;
