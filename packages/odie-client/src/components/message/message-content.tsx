@@ -3,6 +3,7 @@ import { ForwardedRef, forwardRef } from 'react';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
 import { Message } from '../../types/';
+import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';
 import ErrorMessage from './error-message';
@@ -29,6 +30,7 @@ export const MessageContent = forwardRef<
 			isLastMessage,
 			isLastUserMessage,
 			isNextMessageFromSameSender,
+			displayChatWithSupportLabel,
 		},
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
@@ -58,38 +60,41 @@ export const MessageContent = forwardRef<
 		);
 
 		return (
-			<div
-				className={ containerClasses }
-				ref={ ref }
-				data-is-last-user-message={ isLastUserMessage }
-				data-is-last-error-message={ isLastErrorMessage }
-				data-is-last-feedback-message={ isLastFeedbackMessage }
-				data-is-last-message={ isLastMessage }
-			>
-				<div className={ messageClasses }>
-					{ messageHeader }
-					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( message.type === 'message' || ! message.type ) && (
-						<UserMessage message={ message } isDisliked={ isDisliked } />
-					) }
-					{ message.type === 'introduction' && (
-						<div className="odie-introduction-message-content">
-							<div className="odie-chatbox-introduction-message">
-								<Markdown
-									urlTransform={ uriTransformer }
-									components={ {
-										a: CustomALink,
-									} }
-								>
-									{ message.content }
-								</Markdown>
+			<>
+				{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
+				<div
+					className={ containerClasses }
+					ref={ ref }
+					data-is-last-user-message={ isLastUserMessage }
+					data-is-last-error-message={ isLastErrorMessage }
+					data-is-last-feedback-message={ isLastFeedbackMessage }
+					data-is-last-message={ isLastMessage }
+				>
+					<div className={ messageClasses }>
+						{ messageHeader }
+						{ message.type === 'error' && <ErrorMessage message={ message } /> }
+						{ ( message.type === 'message' || ! message.type ) && (
+							<UserMessage message={ message } isDisliked={ isDisliked } />
+						) }
+						{ message.type === 'introduction' && (
+							<div className="odie-introduction-message-content">
+								<div className="odie-chatbox-introduction-message">
+									<Markdown
+										urlTransform={ uriTransformer }
+										components={ {
+											a: CustomALink,
+										} }
+									>
+										{ message.content }
+									</Markdown>
+								</div>
 							</div>
-						</div>
-					) }
-					{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
+						) }
+						{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
+					</div>
+					<Sources message={ message } />
 				</div>
-				<Sources message={ message } />
-			</div>
+			</>
 		);
 	}
 );
