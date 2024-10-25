@@ -124,7 +124,6 @@
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/new-date-filtering": false,
-		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
