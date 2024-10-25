@@ -48,11 +48,14 @@ $blueberry-color: #3858e9;
 
 }
 
+.odie-send-message-inner-button__flag {
+	background-color: $blueberry-color !important;
+}
 .odie-send-message-input-container .odie-send-message-inner-button {
 	background: none;
 	border: none;
 	cursor: pointer;
-	background-color: $blueberry-color;
+	background-color: var(--color-primary);
 	height: 40px;
 	width: 40px;
 

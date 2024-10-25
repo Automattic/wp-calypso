@@ -15,8 +15,6 @@ import Button from '../button';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types/';
 
-import './style.scss';
-
 export type ChatMessageProps = {
 	message: Message;
 	currentUser: CurrentUser;
@@ -45,7 +43,11 @@ const MessageAvatarHeader = ( {
 } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
-
+	if ( shouldUseHelpCenterExperience ) {
+		import( './style_redesign.scss' );
+	} else {
+		import( './style.scss' );
+	}
 	if ( shouldUseHelpCenterExperience ) {
 		return message.role === 'bot' ? (
 			<>

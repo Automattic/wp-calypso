@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { ForwardedRef, forwardRef } from 'react';
 import Markdown from 'react-markdown';
+import { useOdieAssistantContext } from '../../context';
 import { Message } from '../../types/';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';
@@ -31,6 +32,7 @@ export const MessageContent = forwardRef<
 		},
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
+		const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 		const isUser = message.role === 'user';
 		const isWapuu = message.role === 'bot';
 		const isHuman = message.role === 'business';
@@ -38,14 +40,21 @@ export const MessageContent = forwardRef<
 		const messageClasses = clsx(
 			'odie-chatbox-message',
 			isUser && 'odie-chatbox-message-user',
-			isHuman && 'odie-chatbox-message-business',
 			isWapuu && 'odie-chatbox-message-wapuu',
+
+			shouldUseHelpCenterExperience && isUser && 'odie-chatbox-message-user',
+			shouldUseHelpCenterExperience && isHuman && 'odie-chatbox-message-business',
+			shouldUseHelpCenterExperience && isWapuu && 'odie-chatbox-message-wapuu',
+
 			`odie-chatbox-message-${ message.type ?? 'message' }`,
 			isLastMessage && 'odie-chatbox-message-last'
 		);
+
 		const containerClasses = clsx(
 			'odie-chatbox-message-sources-container',
-			isNextMessageFromSameSender && 'next-chat-message-same-sender'
+			shouldUseHelpCenterExperience &&
+				isNextMessageFromSameSender &&
+				'next-chat-message-same-sender'
 		);
 
 		return (

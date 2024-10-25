@@ -20,7 +20,7 @@ const DislikeThumb = () => {
 
 export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >(
 	( { currentUser }, ref ) => {
-		const { chat, chatStatus } = useOdieAssistantContext();
+		const { chat, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 		useZendeskMessageListener();
 
 		let lastUserMessageIndex = -1;
@@ -63,7 +63,7 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 						) }
 					/>
 				) ) }
-				{ chatStatus === 'dislike' && <DislikeThumb /> }
+				{ chatStatus === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }
 				<div className="odie-chatbox__action-message">
 					{ chatStatus === 'sending' && <ThinkingPlaceholder /> }
 					{ chatStatus === 'dislike' && <DislikeFeedbackMessage /> }
