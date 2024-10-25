@@ -125,6 +125,7 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
+		isWooPaymentsOnboarding: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
 		isWooPasswordlessJPC: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -450,6 +451,11 @@ export class JetpackAuthorize extends Component {
 				'woocommerce-core-profiler',
 			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
+	};
+
+	isWooPaymentsOnboarding = ( props = this.props ) => {
+		const { from } = props.authQuery;
+		return 'woocommerce-payments' === from;
 	};
 
 	isWooOnboarding( props = this.props ) {
@@ -850,6 +856,7 @@ export class JetpackAuthorize extends Component {
 		const { authorizeSuccess } = this.props.authorizationData;
 		const isWpcomMigration = this.isFromMigrationPlugin();
 		const isWooOnboarding = this.isWooOnboarding();
+		const isWooPaymentsOnboarding = this.isWooPaymentsOnboarding();
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( isWpcomMigration ) {
@@ -886,42 +893,31 @@ export class JetpackAuthorize extends Component {
 		// so users can start making the connection between the two immediately. Otherwise, users might
 		// not recognize their username since they didn't create it.
 
-		// Note: We make an exception for Woo onboardings, since in these cases the creation of a Jetpack account
+		const connected = authorizeSuccess || this.props.isAlreadyOnSitesList;
+		const connectionStatus = connected ? 'Connected' : 'Connecting';
+
+		// We make an exception for Woo onboardings, since in these cases the creation of a Jetpack account
 		// is an intermediate step and the user will be redirected to the WooCommerce onboarding flow.
 		// Seeing this new username/email address can cause confusion because they have already set up
 		// a Woo account under their own email address.
-
-		let text = '';
-
-		if ( isWooOnboarding && isJetpackMagicLinkSignUpFlow ) {
-			text = translate( 'Connecting your account' );
-
-			if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-				text = translate( 'Account connected successfully' );
-			}
-		} else {
-			// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
-			text = translate(
-				'Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
-				{
-					args: { email: this.props.user.email, user: this.props.user.display_name },
-					components: { strong: <strong /> },
-				}
-			);
-
-			if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-				// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
-				text = translate(
-					'Connected as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
-					{
-						args: { email: this.props.user.email, user: this.props.user.display_name },
-						components: { strong: <strong /> },
-					}
-				);
-			}
+		if ( ( isWooOnboarding || isWooPaymentsOnboarding ) && isJetpackMagicLinkSignUpFlow ) {
+			return connected
+				? translate( 'Account connected successfully' )
+				: translate( 'Connecting your account' );
 		}
 
-		return text;
+		// translators: %(connectionStatus) is the connection status (E.g. Connecting/Connected), %(user) is user's Display Name (Eg John Doe) and %(email) is the user's email address
+		return translate(
+			'%(connectionStatus)s as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+			{
+				args: {
+					connectionStatus,
+					email: this.props.user.email,
+					user: this.props.user.display_name,
+				},
+				components: { strong: <strong /> },
+			}
+		);
 	}
 
 	getProductActivationText() {
