@@ -5,6 +5,7 @@ import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getAgencyTierInfo from 'calypso/a8c-for-agencies/sections/agency-tier/lib/get-agency-tier-info';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AgencyTierCelebrationModal from './celebration-modal';
@@ -49,7 +50,7 @@ export default function OverviewSidebarAgencyTier() {
 								<img src={ currentAgencyTierInfo.logo } alt={ currentAgencyTierInfo.id } />
 							</span>
 							<span className="agency-tier__current-agency-tier-title">
-								{ currentAgencyTierInfo.title }
+								{ preventWidows( currentAgencyTierInfo.title ) }
 							</span>
 						</div>
 						{ currentAgencyTierInfo && (
