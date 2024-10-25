@@ -6,6 +6,7 @@ import { find } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { navigate } from 'calypso/lib/navigate';
 import { useSelector } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
@@ -238,12 +239,12 @@ export default function PluginsListDataViews( {
 		},
 	];
 
-	// Set initial state for the data views
-	const pluginsPerPage = 15;
-	initialDataViewsState.perPage = pluginsPerPage;
-	initialDataViewsState.search = initialSearch;
-	initialDataViewsState.fields = [ 'plugins', 'sites', 'update' ];
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
+		...initialDataViewsState,
+		perPage: 15,
+		search: initialSearch,
+		fields: [ 'plugins', 'sites', 'update' ],
+	} ) );
 
 	// When search changes, notify the parent component
 	useEffect( () => {
