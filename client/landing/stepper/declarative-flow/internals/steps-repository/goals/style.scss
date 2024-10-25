@@ -81,10 +81,6 @@
 	.select-goals__alternative-flows-container {
 		padding-top: 52px;
 		padding-bottom: 60px + 48px; // Height of sticky footer + height of bottom whitespace
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		gap: 8px;
 
 		@include break-small {
 			padding-top: 48px;
@@ -99,6 +95,10 @@
 
 	.select-goals__link-separator::before {
 		content: "•";
+	}
+
+	.select-goals__dashboard-button {
+		gap: 8px;
 	}
 }
 

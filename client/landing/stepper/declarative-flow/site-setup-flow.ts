@@ -364,7 +364,15 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'goals': {
-					const { intent } = providedDependencies;
+					const { intent, skip } = providedDependencies;
+
+					if ( skip ) {
+						// Skip to dashboard must have been pressed
+						setIntent( SiteIntent.Build );
+						return exitFlow( `/home/${ siteId ?? siteSlug }`, {
+							skipLaunchpad: true,
+						} );
+					}
 
 					switch ( intent ) {
 						case SiteIntent.Import:
@@ -626,13 +634,6 @@ const siteSetupFlow: Flow = {
 
 				case 'intent':
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-
-				case 'goals':
-					// Skip to dashboard must have been pressed
-					setIntent( SiteIntent.Build );
-					return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-						skipLaunchpad: true,
-					} );
 
 				case 'import':
 					return navigate( 'importList' );

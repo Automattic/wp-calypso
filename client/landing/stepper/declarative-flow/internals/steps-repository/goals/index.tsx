@@ -1,5 +1,9 @@
 import { Onboard } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -7,6 +11,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
@@ -92,14 +97,12 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
 	};
 
-	const handleSubmit = ( submittedGoals: Onboard.SiteGoal[] ) => {
-		setGoals( submittedGoals );
-
-		const intent = goalsToIntent( submittedGoals );
+	const handleNext = () => {
+		const intent = goalsToIntent( goals );
 		setIntent( intent );
 
-		recordGoalsSelectTracksEvent( submittedGoals, intent );
-		recordIntentSelectTracksEvent( submittedGoals, intent );
+		recordGoalsSelectTracksEvent( goals, intent );
+		recordIntentSelectTracksEvent( goals, intent );
 
 		navigation.submit?.( { intent } );
 	};
@@ -114,6 +117,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 		setIntent( SiteIntent.DIFM );
 		recordIntentSelectTracksEvent( [], SiteIntent.DIFM );
 		navigation.submit?.( { intent: SiteIntent.DIFM } );
+	};
+
+	const handleDashboardClick = () => {
+		navigation.submit?.( { skip: true } );
 	};
 
 	useEffect( () => {
@@ -135,23 +142,35 @@ const GoalsStep: Step = ( { navigation } ) => {
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
-				goNext={ navigation.goNext }
-				skipLabelText={ translate( 'Skip to dashboard' ) }
-				skipButtonAlign="top"
-				hideBack
+				goNext={ handleNext }
+				nextLabelText={ translate( 'Next' ) }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
-						<div className="select-goals__alternative-flows-container">
-							<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
-								{ translate( 'Import or migrate an existing site' ) }
+						<VStack
+							spacing={ 4 }
+							alignment="center"
+							className="select-goals__alternative-flows-container"
+						>
+							<HStack spacing={ 2 } alignment="center">
+								<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
+									{ translate( 'Import or migrate an existing site' ) }
+								</Button>
+								<span className="select-goals__link-separator" />
+								<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
+									{ translate( 'Let us build a custom site for you' ) }
+								</Button>
+							</HStack>
+							<Button
+								variant="link"
+								onClick={ handleDashboardClick }
+								className="select-goals__link select-goals__dashboard-button"
+							>
+								<DashboardIcon />
+								{ translate( 'Go to dashboard' ) }
 							</Button>
-							<span className="select-goals__link-separator" />
-							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
-								{ translate( 'Let us build a custom site for you' ) }
-							</Button>
-						</div>
+						</VStack>
 					</>
 				}
 			/>
