@@ -18,6 +18,7 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
+import ScanNavigation from './navigation';
 
 const ScanMultisiteBody = () => {
 	const translate = useTranslate();
@@ -139,8 +140,12 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
-
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Scan' ) }
+				subtitle={ translate( 'Guard against malware and bad actors 24/7.' ) }
+			/>
+			<ScanNavigation section="scanner" />
 			{ body }
 		</Main>
 	);

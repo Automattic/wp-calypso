@@ -13,6 +13,7 @@ import {
 	showUnavailableForMultisites,
 	scan,
 	scanHistory,
+	firewall,
 } from 'calypso/my-sites/scan/controller';
 import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
@@ -69,6 +70,20 @@ export default function () {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled( { allowOnAtomic: true } ),
+		makeLayout,
+		clientRender
+	);
+
+	page( '/scan/firewall', siteSelection, sites, navigation, makeLayout, clientRender );
+	page(
+		'/scan/firewall/:site',
+		siteSelection,
+		navigation,
+		firewall,
+		wrapInSiteOffsetProvider,
+		showJetpackIsDisconnected,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled(),
 		makeLayout,
 		clientRender
 	);

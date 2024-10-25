@@ -13,6 +13,7 @@ import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-requ
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import FirewallPage from './firewall';
 import ScanHistoryPage from './history';
 import ScanPage from './main';
 import ScanUpsellPage from './scan-upsell';
@@ -99,6 +100,11 @@ export function scan( context, next ) {
 export function scanHistory( context, next ) {
 	const { filter } = context.params;
 	context.primary = <ScanHistoryPage filter={ filter } />;
+	next();
+}
+
+export function firewall( context, next ) {
+	context.primary = <FirewallPage />;
 	next();
 }
 
