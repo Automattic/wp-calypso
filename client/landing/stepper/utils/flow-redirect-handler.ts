@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 const REMOVED_TAILORED_FLOWS = [
 	{ flow: BLOG_FLOW, to: '/start:lang?' },
 	{ flow: FREE_FLOW, to: '/start/free:lang?' },
-	{ flow: LINK_IN_BIO_FLOW, to: '/start:lang?' },
+	{ flow: 'link-in-bio', to: '/start:lang?' },
 	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
 	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
