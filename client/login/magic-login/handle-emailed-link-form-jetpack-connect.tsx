@@ -22,6 +22,7 @@ import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-cu
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import isWoocommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import isWooPaymentsFlow from 'calypso/state/selectors/is-woopayments-flow';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
@@ -42,7 +43,9 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const isExpired = useSelector(
 		( state ) => getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE
 	);
-	const isWooFlow = useSelector( isWooPaymentsFlow );
+	const isWooCoreFlow = useSelector( isWoocommerceCoreProfilerFlow );
+	const isWcpayFlow = useSelector( isWooPaymentsFlow );
+	const isWooFlow = isWooCoreFlow || isWcpayFlow;
 	const isFetching = useSelector( isFetchingMagicLoginAuth );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
