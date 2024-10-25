@@ -26,8 +26,9 @@ const WpCourses = () => {
 			] }
 			illustration={ wpLearnLogo }
 			cardName={ EDUCATION_WPCOURSES }
-			width="400"
-			height="300"
+			width="140"
+			height="40"
+			className="wp-courses-card"
 		/>
 	);
 };
