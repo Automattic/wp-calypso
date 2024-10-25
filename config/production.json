@@ -62,7 +62,6 @@
 		"is_running_in_jetpack_site": false,
 		"is_running_in_woo_site": false,
 		"jetpack/agency-dashboard": true,
-		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/ai-logo-generator": true,
 		"jetpack/api-cache": false,
 		"jetpack/backup-messaging-i3": true,
