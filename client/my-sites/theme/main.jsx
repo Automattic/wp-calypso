@@ -600,18 +600,13 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
+	/**
+	 * Render screenshot for either non-wpcom or externally-managed themes.
+	 */
 	renderScreenshot() {
-		const {
-			isWpcomTheme,
-			name: themeName,
-			demoUrl,
-			translate,
-			isExternallyManagedTheme,
-			screenshot,
-		} = this.props;
+		const { name: themeName, demoUrl, translate, screenshot } = this.props;
 
 		const width = 735;
-		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
 		// Photon may return null, allow fallbacks
 		const photonSrc = screenshot && photon( screenshot, { width } );
 		const img = screenshot && (
@@ -641,7 +636,7 @@ class ThemeSheet extends Component {
 					{ this.shouldRenderPreviewButton() && (
 						<Button className="theme__sheet-preview-demo-site">
 							{ translate( 'Preview demo site' ) }
-							{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+							<Icon icon={ external } size={ 16 } />
 						</Button>
 					) }
 					{ img }
@@ -659,7 +654,7 @@ class ThemeSheet extends Component {
 						} }
 					>
 						{ translate( 'Preview demo site' ) }
-						{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+						<Icon icon={ external } size={ 16 } />
 					</Button>
 				) }
 				{ img }
@@ -667,6 +662,9 @@ class ThemeSheet extends Component {
 		);
 	}
 
+	/**
+	 * Render web preview for wpcom themes.
+	 */
 	renderWebPreview = () => {
 		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
@@ -1342,7 +1340,6 @@ class ThemeSheet extends Component {
 			isThemeActivationSyncStarted,
 			isWpcomTheme,
 			successNotice: showSuccessNotice,
-			styleVariations,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -1456,7 +1453,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isWpcomTheme && ! isExternallyManagedTheme && styleVariations?.length
+							{ isWpcomTheme && ! isExternallyManagedTheme
 								? this.renderWebPreview()
 								: this.renderScreenshot() }
 						</div>
