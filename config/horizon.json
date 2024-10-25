@@ -140,7 +140,6 @@
 		"themes/discovery": true,
 		"themes/display-thank-you-page-for-bundle": true,
 		"themes/premium": true,
-		"themes/subscription-purchases": false,
 		"themes/text-search-lots": true,
 		"themes/assembler-first": true,
 		"two-factor/enhanced-security": true,
