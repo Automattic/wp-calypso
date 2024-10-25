@@ -206,6 +206,7 @@ class StatsPeriodNavigation extends PureComponent {
 			<div
 				className={ clsx( 'stats-period-navigation', {
 					'stats-period-navigation__is-with-new-date-control': isWithNewDateControl,
+					'stats-period-navigation__is-with-new-date-filtering': isWithNewDateFiltering,
 				} ) }
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
