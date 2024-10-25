@@ -464,7 +464,7 @@ class StatsSite extends Component {
 							chartTab={ this.props.chartTab }
 							customQuantity={ customChartQuantity }
 							customRange={ customChartRange }
-							hideLegend
+							hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
 						/>
 					</>
 
