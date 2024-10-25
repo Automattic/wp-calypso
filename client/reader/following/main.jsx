@@ -1,6 +1,6 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -13,7 +13,8 @@ import FollowingIntro from './intro';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const [ readerOnboardingIsRendered, setReaderOnboardingIsRendered ] = useState( false );
+
 	return (
 		<>
 			<Stream
@@ -29,13 +30,13 @@ function FollowingStream( { ...props } ) {
 						'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 					} ) }
 				/>
-				{ ! config.isEnabled( 'reader/onboarding' ) && <FollowingIntro /> }
-				{ config.isEnabled( 'reader/onboarding' ) && <ReaderOnboarding /> }
+
+				<ReaderOnboarding onRender={ setReaderOnboardingIsRendered } />
+				{ ! readerOnboardingIsRendered && <FollowingIntro /> }
 			</Stream>
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default SuggestionProvider( withDimensions( FollowingStream ) );
