@@ -7,20 +7,26 @@
 
 	&.two-columns {
 		.step-container__header {
-			margin-bottom: 64px;
+			margin-bottom: 16px;
+			margin-top: 20px;
 
 			.formatted-header {
-				padding-top: 44px;
-
 				.formatted-header__subtitle,
 				.formatted-header__title {
-					@include break-mobile {
-						text-align: center;
-					}
+					text-align: center;
 				}
 
-				@include break-mobile {
-					padding-top: 72px;
+				.formatted-header__title {
+					text-wrap-style: pretty;
+				}
+
+				.formatted-header__subtitle {
+					text-wrap-style: balance;
+				}
+
+				@include break-small {
+					margin-bottom: 36px;
+					margin-top: 32px;
 				}
 			}
 		}
