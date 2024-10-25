@@ -13,7 +13,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
-		isWooCoreProfiler: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
@@ -24,7 +24,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static defaultProps = {
 		isWide: false,
 		isWooOnboarding: false,
-		isWooCoreProfiler: false,
+		isWooPasswordlessJPC: false,
 		wooDnaConfig: null,
 	};
 
@@ -32,7 +32,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const {
 			isWide,
 			isWooOnboarding,
-			isWooCoreProfiler,
+			isWooPasswordlessJPC,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
 			className,
@@ -47,8 +47,8 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		const wrapperClassName = clsx( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWooOnboarding || isWooDna || isWooCoreProfiler,
-			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
+			'is-woocommerce': isWooOnboarding || isWooDna || isWooPasswordlessJPC,
+			'is-woocommerce-core-profiler-flow': isWooPasswordlessJPC,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
@@ -69,7 +69,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 							partnerSlug={ partnerSlug }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							isWooOnboarding={ isWooOnboarding }
-							isWooCoreProfiler={ isWooCoreProfiler }
+							isWooPasswordlessJPC={ isWooPasswordlessJPC }
 							isWooDna={ isWooDna }
 							width={ width }
 							darkColorScheme={ darkColorScheme }

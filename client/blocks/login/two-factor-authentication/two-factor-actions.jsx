@@ -13,7 +13,7 @@ import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {
@@ -134,7 +134,7 @@ export default connect(
 			isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
 			isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCommerceCoreProfilerFlow( state ),
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooPasswordlessJPCFlow( state ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		};
 	},

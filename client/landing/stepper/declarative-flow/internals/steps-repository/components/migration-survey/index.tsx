@@ -15,7 +15,7 @@ const MigrationSurvey = ( { isOpen }: MigrationSurveyProps ) => {
 			isOpen={ isOpen }
 		>
 			<div className="migration-survey__popup-img">
-				<img src={ surveyImage } alt={ translate( 'Code editor' ) } />
+				<img src={ surveyImage } alt={ translate( 'Code editor' ) } width={ 436 } height={ 249 } />
 			</div>
 			<div className="migration-survey__popup-content">
 				<h3 className="migration-survey__popup-content-title">

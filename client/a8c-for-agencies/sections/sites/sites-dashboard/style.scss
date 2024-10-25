@@ -156,10 +156,6 @@
 			width: 80%;
 		}
 
-		.dataviews-view-table tr td:first-child:has(.sites-dataview__site-error) {
-			padding: 8px 0 8px 8px;
-		}
-
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
 			min-width: 40px;
 		}
@@ -309,16 +305,6 @@
 					border-bottom: 1px solid var(--color-accent-5);
 				}
 
-				li:has(.sites-dataview__site-error-span) {
-					border-bottom: 0;
-				}
-
-				li:has(.sites-dataview__site-error) {
-					.dataviews-view-list__item {
-						padding: 0 24px;
-					}
-				}
-
 				.dataviews-view-list__fields {
 					display: flex;
 					justify-content: space-between;
@@ -345,12 +331,6 @@
 						.sites-dataviews__site {
 							width: 100%;
 							justify-content: flex-start;
-						}
-
-						.sites-dataview__site-error {
-							font-size: rem(13px);
-							border-radius: 4px;
-							padding: 4px 8px;
 						}
 					}
 				}
@@ -398,50 +378,6 @@
 				visibility: visible;
 			}
 		}
-	}
-
-	tr:has(.sites-dataview__site-error):hover {
-		background: unset;
-		background-color: unset;
-	}
-
-	td:has(.sites-dataview__site-error-span) {
-		border-bottom: 0;
-	}
-
-	td:has(.sites-dataview__site-error) {
-		padding: 0 0 16px 0;
-		height: 40px;
-	}
-
-	td:first-child:has(.sites-dataview__site-error) {
-		padding: 0 0 0 64px;
-
-		.sites-dataview__site-error {
-			padding: 5px 10px;
-			border-radius: 4px;
-		}
-	}
-
-	td:last-child:has(.sites-dataview__site-error) {
-		padding: 0 64px 16px 0;
-
-		.sites-dataview__site-error {
-			border-radius: 4px;
-		}
-	}
-
-	.dataviews-view-table__cell-content-wrapper:has(.sites-dataview__site-error) {
-		height: 100%;
-	}
-
-	.sites-dataview__site-error {
-		color: #691c1c;
-		background-color: #facfd2;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		gap: 6px;
 	}
 
 	.sites-overview__content-wrapper {

@@ -1,3 +1,4 @@
+export type AgencyTier = 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
 export interface AgencyTierInfo {
 	title: string;
 	fullTitle: string;
@@ -5,8 +6,7 @@ export interface AgencyTierInfo {
 	description: string;
 	logo: string;
 	includedTiers: string[];
-	emptyStateMessage?: string;
-	celebrationModal: {
+	celebrationModal?: {
 		title: string;
 		description: string;
 		extraDescription?: string;

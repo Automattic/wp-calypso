@@ -60,12 +60,12 @@ export class TwitterBlockFlow implements BlockFlow {
 		// In most cases, the iframe will render, so look for that.
 		const iframeTweetLocator = context.page
 			.frameLocator( selectors.publishedTwitterIframe )
-			.locator( `text=${ this.configurationData.expectedTweetText }` );
+			.locator( `text=${ this.configurationData.expectedTweetText }` )
+			.first();
 
 		// However, sometimes only the bare link renders, so we need to check for that fallback.
-		const bareTweetLinkLocator = context.page.locator( selectors.publishedTwitterBareLink );
+		const bareTweetLinkLocator = context.page.locator( selectors.publishedTwitterBareLink ).first();
 
-		const tweetLocator = iframeTweetLocator.or( bareTweetLinkLocator ).first();
-		await tweetLocator.waitFor();
+		await Promise.any( [ iframeTweetLocator.waitFor(), bareTweetLinkLocator.waitFor() ] );
 	}
 }

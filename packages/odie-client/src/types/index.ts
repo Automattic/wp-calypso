@@ -62,6 +62,7 @@ export type Context = {
 	flags?: {
 		forward_to_human_support?: boolean;
 		canned_response?: boolean;
+		only_message?: boolean;
 	};
 };
 

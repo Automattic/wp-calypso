@@ -13,8 +13,10 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import DownloadBadges from '../../download-badges';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
+import { AgencyTier } from '../../types';
 
 import './style.scss';
 
@@ -23,20 +25,20 @@ export default function AgencyTierOverview() {
 
 	const agency = useSelector( getActiveAgency );
 
-	const title = translate( 'Your Agency Tier' );
+	const title = translate( 'Agency Tiers' );
 	const benefits = getTierBenefits( translate );
 
-	const currentAgencyTierInfo = agency?.tier?.id
-		? getAgencyTierInfo( agency.tier.id, translate )
-		: null;
+	const currentAgencyTier = agency?.tier?.id;
+	const currentAgencyTierInfo = getAgencyTierInfo( currentAgencyTier, translate );
 
-	const learnMoreLink = ''; // TODO: Add link
+	const learnMoreLink =
+		'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/';
 
-	const ALL_TIERS: ( 'emerging-partner' | 'agency-partner' | 'pro-agency-partner' )[] = [
-		'emerging-partner',
-		'agency-partner',
-		'pro-agency-partner',
-	];
+	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
+
+	// Show download badges button for Agency Partner and Pro Agency Partner tiers
+	const showDownloadBadges =
+		currentAgencyTier && [ 'agency-partner', 'pro-agency-partner' ].includes( currentAgencyTier );
 
 	return (
 		<Layout className="agency-tier-overview" title={ title } wide>
@@ -48,10 +50,7 @@ export default function AgencyTierOverview() {
 					</Subtitle>
 					<Actions>
 						<MobileSidebarNavigation />
-						{
-							// TODO: Add actions
-							<></>
-						}
+						{ showDownloadBadges && <DownloadBadges /> }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
@@ -64,7 +63,10 @@ export default function AgencyTierOverview() {
 								<div
 									className={ clsx(
 										'agency-tier-overview__current-tier-badge',
-										currentAgencyTierInfo.id
+										currentAgencyTierInfo.id,
+										{
+											'is-default': ! currentAgencyTier,
+										}
 									) }
 								>
 									<div className="agency-tier-overview__current-agency-tier">
@@ -132,7 +134,7 @@ export default function AgencyTierOverview() {
 						{ translate( 'Take a closer look' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-heading">
-						{ translate( 'Explore the benefits of the tiers' ) }
+						{ translate( 'Explore the benefits of using Automattic for Agencies' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-cards">
 						{ benefits.map( ( benefit ) => (

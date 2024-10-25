@@ -1,11 +1,12 @@
 import { preventWidows } from 'calypso/lib/formatting';
+import type { AgencyTier } from '../types';
 
 interface Benefit {
 	title: string;
 	description: string;
 	features: string[];
 	isComingSoon: boolean;
-	availableTiers: ( 'emerging-partner' | 'agency-partner' | 'pro-agency-partner' )[];
+	availableTiers: AgencyTier[];
 }
 
 const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [

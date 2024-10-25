@@ -112,6 +112,7 @@ export interface Site {
 	hosting_provider_guess: string;
 	has_paid_agency_monitor: boolean;
 	is_atomic: boolean;
+	is_simple?: boolean;
 	has_pending_boost_one_time_score: boolean;
 	has_vulnerable_plugins: boolean;
 	latest_scan_has_threats_found: boolean;
