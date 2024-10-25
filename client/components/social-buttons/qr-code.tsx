@@ -59,7 +59,7 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 		>
 			<JetpackLogo monochrome={ isDisabled } size={ 20 } className="social-icons" />
 			<span className="social-buttons__service-name">
-				{ translate( 'Log in with the Jetpack app' ) }
+				{ translate( 'Log in via Jetpack app' ) }
 			</span>
 		</Button>
 	);
