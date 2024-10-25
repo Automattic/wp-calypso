@@ -23,8 +23,6 @@ export default function SiteDataFieldErrorIndicator( { errors }: Props ) {
 			ref={ popoverContext }
 			onMouseEnter={ () => setIsPopoverVisible( true ) }
 			onMouseLeave={ () => setIsPopoverVisible( false ) }
-			onMouseDown={ () => setIsPopoverVisible( true ) }
-			onMouseUp={ () => setIsPopoverVisible( false ) }
 			onTouchStart={ () => setIsPopoverVisible( true ) }
 			onTouchEnd={ () => setIsPopoverVisible( false ) }
 			role="button"

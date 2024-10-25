@@ -43,9 +43,23 @@ export default function useGetSiteErrors() {
 			}
 
 			if ( data?.site?.value?.is_simple ) {
+				const siteSlug = data?.site?.value?.url?.replace( /(^\w+:|^)\/\//, '' );
+				const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
+
 				errors.push( {
 					severity: 'medium',
-					message: translate( 'We are provisioning your site' ),
+					message: translate( 'We are provisioning your site {{a}}Set up your site{{/a}}', {
+						components: {
+							a: (
+								<a
+									href={ wpOverviewUrl }
+									target="_blank"
+									rel="noreferrer"
+									onClick={ ( e ) => e.stopPropagation() }
+								/>
+							),
+						},
+					} ),
 				} );
 			}
 
