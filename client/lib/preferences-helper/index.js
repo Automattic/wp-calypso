@@ -1,13 +1,14 @@
-import { createRoot } from 'react-dom/client';
+import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import PreferenceList from './preference-list';
 
 import './style.scss';
 
 export default function injectPreferenceHelper( element, store ) {
-	createRoot( element ).render(
+	ReactDom.render(
 		<Provider store={ store }>
 			<PreferenceList />
-		</Provider>
+		</Provider>,
+		element
 	);
 }

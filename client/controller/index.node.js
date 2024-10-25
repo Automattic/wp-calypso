@@ -90,7 +90,6 @@ export const redirectIfJetpackNonAtomic = () => {};
 export const redirectToHostingPromoIfNotAtomic = () => {};
 // eslint-disable-next-line no-unused-vars
 export const render = ( context ) => {};
-export const getRootDomElement = () => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
 export const setSelectedSiteIdByOrigin = () => {};

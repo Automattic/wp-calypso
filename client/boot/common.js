@@ -8,10 +8,11 @@ import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
+import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
-import { ProviderWrappedLayout, render, getRootDomElement } from 'calypso/controller';
+import { ProviderWrappedLayout } from 'calypso/controller';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
@@ -216,7 +217,7 @@ const utils = () => {
 	accessibleFocus();
 
 	// Configure app element that React Modal will aria-hide when modal is open
-	Modal.setAppElement( getRootDomElement() );
+	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
 const configureReduxStore = ( currentUser, reduxStore ) => {
@@ -402,7 +403,10 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 };
 
 function renderLayout( reduxStore, reactQueryClient ) {
-	render( <ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } /> );
+	ReactDom.render(
+		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
+		document.getElementById( 'wpcom' )
+	);
 }
 
 const boot = async ( currentUser, registerRoutes ) => {

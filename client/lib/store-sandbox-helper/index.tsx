@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToggleControl } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDom from 'react-dom';
 import useStoreSandboxStatusQuery from 'calypso/data/store-sandbox/use-store-sandbox-status';
 import wp from 'calypso/lib/wp';
 
@@ -74,8 +74,9 @@ export function StoreSandboxHelper() {
 	);
 }
 export default ( element: HTMLElement ) =>
-	createRoot( element ).render(
+	ReactDom.render(
 		<QueryClientProvider client={ new QueryClient() }>
 			<StoreSandboxHelper />
-		</QueryClientProvider>
+		</QueryClientProvider>,
+		element
 	);

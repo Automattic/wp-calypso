@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import ReactDom from 'react-dom';
 import FeatureList from './feature-list';
 
 import './style.scss';
@@ -7,5 +7,5 @@ import './style.scss';
  * @param element HTML Element
  */
 export default function injectFeatureHelper( element ) {
-	createRoot( element ).render( <FeatureList /> );
+	ReactDom.render( <FeatureList />, element );
 }
