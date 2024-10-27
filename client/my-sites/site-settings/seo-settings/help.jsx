@@ -1,5 +1,6 @@
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -18,7 +19,7 @@ export const SeoSettingsHelpCard = ( {
 	translate,
 } ) => {
 	const seoHelpLink = siteIsJetpack
-		? 'https://jetpack.com/support/seo-tools/'
+		? localizeUrl( 'https://jetpack.com/support/seo-tools/' )
 		: 'https://wpbizseo.wordpress.com/';
 
 	return (
