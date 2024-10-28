@@ -119,7 +119,7 @@ $video-green: #0e5837;
 		.a4a-themed-modal__content {
 			margin: -2px 0;
 			// Make sure to update the BLOCK_PADDING in the index.tsx file when changing the padding
-			padding: 48px 32px;
+			padding: 48px 0 48px 32px;
 			border-radius: 4px 4px 0 0;
 		}
 
@@ -128,6 +128,7 @@ $video-green: #0e5837;
 
 			.components-modal__content.hide-header {
 				border-radius: 0;
+				overflow: hidden;
 			}
 		}
 		.agency-tier-celebration-modal__footer {
@@ -135,6 +136,12 @@ $video-green: #0e5837;
 			inset-block-end: 16px;
 			width: 100%;
 			background: var(--color-text-white);
+			padding-inline: 32px;
+			left: 0;
+
+			.components-button {
+				width: 100%;
+			}
 		}
 
 		&.agency-partner, &.pro-agency-partner {
@@ -149,6 +156,7 @@ $video-green: #0e5837;
 		display: flex;
 		flex-direction: column;
 		padding-block-end: 16px;
+		padding-inline-end: 0;
 	}
 
 	.a4a-themed-modal__sidebar-image-container {
@@ -166,6 +174,7 @@ $video-green: #0e5837;
 			gap: 16px;
 			flex-direction: column;
 			overflow-y: auto;
+			padding-inline-end: 32px;
 
 			.agency-tier-celebration-modal__title {
 				@include a4a-font-heading-xl;
