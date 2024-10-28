@@ -8,7 +8,6 @@ import {
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
 	MIGRATION_FLOW,
@@ -152,17 +151,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 };
 
-const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'videopress-tv'
-)
-	? {
-			[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
-				import(
-					/* webpackChunkName: "videopress-tv-flow" */
-					`../declarative-flow/videopress-tv-purchase`
-				),
-	  }
-	: {};
+const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = {};
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
