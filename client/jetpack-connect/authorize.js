@@ -793,8 +793,15 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Return to your site' );
 		}
 
-		if ( this.isWooPasswordlessJPC() ) {
-			return translate( 'Connect your account' );
+		if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
+			if ( this.isWooPasswordlessJPC() ) {
+				return translate( 'Connect to WordPress.com' );
+			}
+		} else {
+			// eslint-disable-next-line no-lonely-if
+			if ( this.isWooPasswordlessJPC() ) {
+				return translate( 'Connect your account' );
+			}
 		}
 
 		if ( ! this.retryingAuth ) {
