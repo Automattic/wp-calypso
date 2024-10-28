@@ -11,7 +11,6 @@ export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const VIDEOPRESS_FLOW = 'videopress';
 export const VIDEOPRESS_ACCOUNT = 'videopress-account';
-export const VIDEOPRESS_TV_FLOW = 'videopress-tv';
 export const VIDEOPRESS_TV_PURCHASE_FLOW = 'videopress-tv-purchase';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
