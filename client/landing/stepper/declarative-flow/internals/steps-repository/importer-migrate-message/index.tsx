@@ -18,15 +18,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import FlowCard from '../components/flow-card';
-import { redirect } from '../import/util';
 import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
-
-interface ActionsProps {
-	title: string;
-	text: string;
-	onClick: () => void;
-}
 
 interface WhatToExpectProps {
 	icon: JSX.Element;
@@ -86,7 +78,6 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shouldPreventTicketCreation, config, fromUrl, siteSlug ] );
 	let whatToExpect: WhatToExpectProps[] = [];
-	let actions: ActionsProps[] = [];
 
 	if (
 		shouldPreventTicketCreation &&
@@ -102,20 +93,8 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: scheduled,
 				text: __(
-					`You'll get an update on the progress of your migration within 2–3 business days.`
+					`We'll send you an update within 2–3 business days. You can also check the progress of your migration from your Sites dashboard.`
 				),
-			},
-		];
-		actions = [
-			{
-				title: __( 'Explore features' ),
-				text: __( 'Discover the features available on WordPress.com' ),
-				onClick: () => redirect( `/home/${ siteSlug }` ),
-			},
-			{
-				title: __( 'Learn about WordPress.com' ),
-				text: __( 'Access guides and tutorials to better understand how to use WordPress.com.' ),
-				onClick: () => redirect( '/support' ),
 			},
 		];
 	} else {
@@ -133,18 +112,6 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: group,
 				text: __( `We'll create a copy of your live site, allowing you to compare the two.` ),
-			},
-		];
-		actions = [
-			{
-				title: __( 'Let me explore' ),
-				text: __( 'Discover more features and options available on WordPress.com on your own.' ),
-				onClick: () => redirect( `/home/${ siteSlug }` ),
-			},
-			{
-				title: __( 'Help me learn' ),
-				text: __( 'Access guides and tutorials to better understand how to use WordPress.com.' ),
-				onClick: () => redirect( '/support' ),
 			},
 		];
 	}
@@ -210,11 +177,6 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 							{ text }
 						</div>
 					) ) }
-					<div className="migration-message__actions">
-						{ actions.map( ( { title, text, onClick }, index ) => (
-							<FlowCard key={ index } title={ title } text={ text } onClick={ onClick } />
-						) ) }
-					</div>
 					{ sitesDashboardButton }
 				</>
 			}
