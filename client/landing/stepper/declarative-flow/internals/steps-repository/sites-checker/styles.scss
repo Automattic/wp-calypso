@@ -73,21 +73,7 @@
 
 }
 
-.is-videopress-tv-stepper,
-.is-videopress-tv-purchase-stepper {
-	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-
-	.sites-checker-step__progress-step {
-		font-family: inherit;
-		font-size: rem(38px); //typography-exception
-		font-weight: 700;
-		letter-spacing: -0.02em;
-	}
-}
-
-.is-videopress-stepper.is-sites-checker-step,
-.is-videopress-tv-stepper,
-.is-videopress-tv-purchase-stepper {
+.is-videopress-stepper.is-sites-checker-step {
 	padding: 0;
 	color: #fff;
 
