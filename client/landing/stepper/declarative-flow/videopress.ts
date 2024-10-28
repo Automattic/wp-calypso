@@ -8,14 +8,13 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
-import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
+import { PLANS_STORE, SITE_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
@@ -23,7 +22,7 @@ import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import type { Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const videopress: Flow = {
@@ -92,12 +91,7 @@ const videopress: Flow = {
 		);
 		const locale = useFlowLocale();
 
-		const { createVideoPressSite, setSelectedSite, setPendingAction, setProgress } =
-			useDispatch( ONBOARD_STORE );
-		const currentUser = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
-			[]
-		);
+		const { setSelectedSite, setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 		const siteDescription = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription(),
 			[]
@@ -106,7 +100,6 @@ const videopress: Flow = {
 			( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
 			[]
 		);
-		const visibility = useNewSiteVisibility();
 		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { supportedPlans } = useSupportedPlans( locale, 'MONTHLY' );
@@ -196,15 +189,6 @@ const videopress: Flow = {
 
 			setPendingAction( async () => {
 				setProgress( 0 );
-				try {
-					await createVideoPressSite( {
-						username: currentUser ? currentUser?.username : '',
-						languageSlug: locale,
-						visibility,
-					} );
-				} catch ( e ) {
-					return;
-				}
 				setProgress( 0.5 );
 
 				const newSite = getNewSite();
