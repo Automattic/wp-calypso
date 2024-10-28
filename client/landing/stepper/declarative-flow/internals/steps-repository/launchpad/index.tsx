@@ -64,7 +64,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
-		( launchpadScreenOption === false && 'videopress' !== flow && ! newWriterFlow )
+		( launchpadScreenOption === false && ! newWriterFlow )
 	) {
 		redirectToSiteHome( siteSlug, flow );
 	}
