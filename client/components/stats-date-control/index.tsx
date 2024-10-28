@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
 import { Moment } from 'moment';
 import qs from 'qs';
@@ -166,17 +166,19 @@ const StatsDateControl = ( {
 					buttonRef: RefObject< typeof Button >;
 				} ) => {
 					return (
-						<Button
-							onClick={ () => {
-								const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-								recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
-								onTriggerClick();
-							} }
-							ref={ buttonRef }
-						>
-							{ getButtonLabel() }
-							<Icon className="gridicon" icon={ calendar } />
-						</Button>
+						<Tooltip text="Filter all data by date">
+							<Button
+								onClick={ () => {
+									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+									recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+									onTriggerClick();
+								} }
+								ref={ buttonRef }
+							>
+								{ getButtonLabel() }
+								<Icon className="gridicon" icon={ calendar } />
+							</Button>
+						</Tooltip>
 					);
 				} }
 				rootClass="stats-date-control-picker"
