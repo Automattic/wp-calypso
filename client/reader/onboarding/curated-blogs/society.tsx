@@ -312,6 +312,41 @@ export const societyBlogs: CuratedBlogsList = {
 		},
 	],
 	philosophy: [
-		// Add philosophy blogs...
+		{
+			feed_ID: 75755245,
+			site_ID: 62276702,
+			site_URL: 'https://1000wordphilosophy.com/',
+			site_name: '1000-Word Philosophy: An Introductory Anthology ',
+		},
+		{
+			feed_ID: 76484859,
+			site_ID: 83006194,
+			site_URL: 'https://www.lse.ac.uk/philosophy/',
+			site_name: 'Philosophy, Logic and Scientific Method',
+		},
+		{
+			feed_ID: 59963902,
+			site_ID: 44180183,
+			site_URL: 'https://jamesbishopblog.com/',
+			site_name: "Bishop's Encyclopedia of Religion, Society and Philosophy ",
+		},
+		{
+			feed_ID: 45806376,
+			site_ID: 75932265,
+			site_URL: 'https://dailynous.com/',
+			site_name: 'Daily Nous',
+		},
+		{
+			feed_ID: 25217327,
+			site_ID: 0,
+			site_URL: 'https://philosophynow.org/',
+			site_name: 'Philosophy Now',
+		},
+		{
+			feed_ID: 76453290,
+			site_ID: 0,
+			site_URL: 'https://partiallyexaminedlife.com/',
+			site_name: 'The Partially Examined Life Philosophy Podcast',
+		},
 	],
 };
