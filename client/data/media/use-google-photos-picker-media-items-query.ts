@@ -48,9 +48,10 @@ export default function useGooglePhotosPickerMediaItemsQuery( sessionId: string,
 		queryKey: [ 'google-photos-picker-media-items', sessionId ],
 		queryFn: (): Promise< ResponseData > =>
 			wp.req.get( {
-				path:
-					'/meta/external-media/google_photos_picker?path=media-items&session_id=' +
-					encodeURIComponent( sessionId ),
+				apiNamespace: 'wpcom/v2',
+				path: `/meta/external-media/google_photos_picker?session_id=${ encodeURIComponent(
+					sessionId
+				) }`,
 			} ),
 		enabled,
 	} );

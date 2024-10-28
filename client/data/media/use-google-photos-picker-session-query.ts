@@ -18,10 +18,11 @@ export default function useGooglePhotosPickerSessionQuery(
 	options = {}
 ) {
 	return useQuery( {
-		queryKey: [ 'google-photos-picker-session' ],
+		queryKey: [ 'google-photos-picker-session', sessionId ],
 		queryFn: (): Promise< SessionData > =>
 			wp.req.get( {
-				path: `/meta/external-media/google_photos_picker?path=session-get&sessionId=${ encodeURIComponent(
+				apiNamespace: 'wpcom/v2',
+				path: `/meta/external-media/session/google_photos_picker?session_id=${ encodeURIComponent(
 					sessionId
 				) }`,
 			} ),
