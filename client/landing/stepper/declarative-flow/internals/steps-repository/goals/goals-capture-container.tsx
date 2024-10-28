@@ -1,4 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
@@ -16,20 +18,26 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 	whatAreYourGoalsText,
 	subHeaderText,
 	...otherProps
-} ) => (
-	<StepContainer
-		{ ...otherProps }
-		isHorizontalLayout={ false }
-		className="goals__container two-columns"
-		hideBack
-		hideSkip
-		hideNext={ false }
-		formattedHeader={
-			<FormattedHeader
-				id="goals-header"
-				headerText={ whatAreYourGoalsText }
-				subHeaderText={ subHeaderText }
-			/>
-		}
-	/>
-);
+} ) => {
+	const translate = useTranslate();
+	const isSmall = useBreakpoint( '<600px' );
+
+	return (
+		<StepContainer
+			{ ...otherProps }
+			isHorizontalLayout={ false }
+			className="goals__container two-columns"
+			hideBack
+			hideSkip={ false }
+			skipLabelText={ translate( 'Skip to dashboard' ) }
+			hideNext={ ! isSmall }
+			formattedHeader={
+				<FormattedHeader
+					id="goals-header"
+					headerText={ whatAreYourGoalsText }
+					subHeaderText={ subHeaderText }
+				/>
+			}
+		/>
+	);
+};

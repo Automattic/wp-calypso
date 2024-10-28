@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
@@ -115,10 +115,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 		navigation.submit?.( { intent: SiteIntent.DIFM } );
 	};
 
-	const handleDashboardClick = () => {
-		navigation.submit?.( { skip: true } );
-	};
-
 	useEffect( () => {
 		const isValidRef = Object.keys( refGoals ).includes( refParameter );
 
@@ -129,6 +125,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 		// This hook is only meant to be executed when either refParameter, refGoals change in value
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
+
+	const isSmall = useBreakpoint( '<600px' );
 
 	return (
 		<>
@@ -144,6 +142,11 @@ const GoalsStep: Step = ( { navigation } ) => {
 				stepContent={
 					<>
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
+						{ ! isSmall && (
+							<Button className="select-goals__next" variant="primary" onClick={ handleNext }>
+								{ translate( 'Next' ) }
+							</Button>
+						) }
 						<div className="select-goals__alternative-flows-container">
 							<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
 								{ translate( 'Import or migrate an existing site' ) }
@@ -151,14 +154,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 							<span className="select-goals__link-separator" />
 							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
 								{ translate( 'Let us build a custom site for you' ) }
-							</Button>
-							<Button
-								variant="link"
-								onClick={ handleDashboardClick }
-								className="select-goals__link select-goals__dashboard-button"
-							>
-								<DashboardIcon />
-								{ translate( 'Go to dashboard' ) }
 							</Button>
 						</div>
 					</>
