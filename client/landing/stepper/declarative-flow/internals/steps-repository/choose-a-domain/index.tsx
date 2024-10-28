@@ -29,7 +29,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
-	const isVideoPressFlow = 'videopress' === flow;
 	const { siteTitle, domain, productsList } = useSelect(
 		( select ) => ( {
 			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -223,7 +222,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow }
+				shouldHideNavButtons={ false }
 				hideSkip={ isBlogOnboardingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
