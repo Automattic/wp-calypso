@@ -52,8 +52,8 @@ export const PaidPluginsSection = ( props ) => {
 		/>
 	);
 };
-export const FeaturedWPBeginnerSection = ( props ) => {
-	const category = 'wpbeginner';
+export const FeaturePartnerBunblePlugins = ( props ) => {
+	const { category } = props;
 
 	const { plugins, isFetching } = usePlugins( {
 		category,
@@ -61,14 +61,7 @@ export const FeaturedWPBeginnerSection = ( props ) => {
 		slugs: WPBEGINNER_PLUGINS,
 	} );
 
-	return (
-		<SingleListView
-			{ ...props }
-			category={ category }
-			plugins={ plugins }
-			isFetching={ isFetching }
-		/>
-	);
+	return <SingleListView { ...props } plugins={ plugins } isFetching={ isFetching } />;
 };
 
 const FeaturedPluginsSection = ( props ) => {
@@ -141,22 +134,16 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			) }
 
-			{ isWPBeginnerSpecial ? (
-				<FeaturedWPBeginnerSection { ...props } />
-			) : (
-				<>
-					<PaidPluginsSection { ...props } />
-					<CollectionListView category="monetization" { ...props } />
-					<EducationFooter />
-					{ ! isLoggedIn && <InPageCTASection /> }
-					<FeaturedPluginsSection
-						{ ...props }
-						pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-						isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-					/>
-				</>
-			) }
-
+			{ isWPBeginnerSpecial && <FeaturePartnerBunblePlugins { ...props } category="wpbeginner" /> }
+			<PaidPluginsSection { ...props } />
+			<CollectionListView category="monetization" { ...props } />
+			<EducationFooter />
+			{ ! isLoggedIn && <InPageCTASection /> }
+			<FeaturedPluginsSection
+				{ ...props }
+				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+			/>
 			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
 			<CollectionListView category="ecommerce" { ...props } />
