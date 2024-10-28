@@ -194,8 +194,9 @@
 			}
 		}
 
-		.step-container__left-right-spacer {
-			flex: 1;
+		.step-container__navigation-link.forward,
+		.step-container__skip-wrapper {
+			margin-inline-start: auto;
 		}
 
 		.step-container__skip-heading {

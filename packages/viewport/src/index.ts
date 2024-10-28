@@ -9,6 +9,7 @@
 //
 // Valid breakpoints include:
 // - '<480px'
+// - '<600px'
 // - '<660px'
 // - '<800px'
 // - '<960px'
@@ -95,6 +96,7 @@ function createMediaQueryList( args?: QueryOption ): QueryItem {
 // See https://github.com/WordPress/gutenberg/blob/f1d0bd550f85f5fa4279a3fdb9a2b9c28a7544c6/packages/base-styles/_mixins.scss#L27
 const mediaQueryOptions: Record< string, QueryOption > = {
 	'<480px': { max: 480 },
+	'<600px': { max: 600 },
 	'<660px': { max: 660 },
 	'<782px': { max: 782 },
 	'<800px': { max: 800 },
