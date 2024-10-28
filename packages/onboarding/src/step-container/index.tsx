@@ -35,6 +35,7 @@ interface Props {
 	isFullLayout?: boolean;
 	isHorizontalLayout?: boolean;
 	goBack?: () => void;
+	onSkip?: () => void;
 	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
@@ -74,6 +75,7 @@ const StepContainer: React.FC< Props > = ( {
 	customizedActionButtons,
 	backUrl,
 	goBack,
+	onSkip,
 	goNext,
 	flowName,
 	intent,
@@ -122,7 +124,9 @@ const StepContainer: React.FC< Props > = ( {
 	}
 
 	function SkipButton() {
-		if ( shouldHideNavButtons || ! goNext ) {
+		const skipAction = onSkip ?? goNext;
+
+		if ( shouldHideNavButtons || ! skipAction ) {
 			return null;
 		}
 
@@ -133,7 +137,7 @@ const StepContainer: React.FC< Props > = ( {
 				) }
 				<StepNavigationLink
 					direction="forward"
-					handleClick={ goNext }
+					handleClick={ skipAction }
 					label={ skipLabelText }
 					cssClass={ clsx( 'step-container__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
