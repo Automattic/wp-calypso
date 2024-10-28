@@ -9,12 +9,14 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
+export type SiteFaviconFallback = 'color' | 'wordpress-logo' | 'first-grapheme' | 'migration';
+
 interface SiteFaviconProps {
 	blogId?: number;
 	color?: string;
 	size?: number;
 	className?: string;
-	fallback?: 'color' | 'wordpress-logo' | 'first-grapheme' | 'migration';
+	fallback?: SiteFaviconFallback;
 }
 
 const SiteFavicon = ( {

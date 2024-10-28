@@ -355,12 +355,8 @@ class ThemeSheet extends Component {
 	isLoaded = () => {
 		// We need to make sure the theme object has been loaded including full details
 		// (and not just without, as would've been stored by the `<QueryThemes />` (plural!)
-		// component used by the theme showcase's list view). However, these extra details
-		// aren't present for non-wpcom themes.
-		if ( ! this.props.isWpcomTheme ) {
-			return !! this.props.name;
-		}
-		return !! this.props.screenshots;
+		// component used by the theme showcase's list view).
+		return !! this.props.name;
 	};
 
 	isLoading = () => {
@@ -501,17 +497,8 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	getFullLengthScreenshot() {
-		if ( this.isLoaded() ) {
-			// Results are being returned with photon params like `?w=…`. This makes the photon
-			// module abort and return null. Strip query string.
-			return this.props.screenshots[ 0 ]?.replace( /\?.*/, '' );
-		}
-		return null;
-	}
-
 	previewAction = ( event, type, source ) => {
-		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
+		const { demoUrl, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -529,7 +516,7 @@ class ThemeSheet extends Component {
 		} );
 
 		// The embed live demo works only for WP.com themes
-		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
+		if ( this.isWpcomOnlyTheme() ) {
 			const { preview } = this.props.options;
 			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
@@ -567,6 +554,10 @@ class ThemeSheet extends Component {
 			styleVariations.length > 0 &&
 			isNonDefaultStyleVariation
 		);
+	}
+
+	isWpcomOnlyTheme() {
+		return this.props.isWpcomTheme && ! this.props.isExternallyManagedTheme;
 	}
 
 	isThemeCurrentOne() {
@@ -613,20 +604,16 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
+	/**
+	 * Render screenshot for either non-wpcom or externally-managed themes.
+	 */
 	renderScreenshot() {
-		const {
-			isWpcomTheme,
-			name: themeName,
-			demoUrl,
-			translate,
-			isExternallyManagedTheme,
-		} = this.props;
-		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
+		const { name: themeName, demoUrl, translate, screenshot } = this.props;
+
 		const width = 735;
-		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
 		// Photon may return null, allow fallbacks
-		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
-		const img = screenshotFull && (
+		const photonSrc = screenshot && photon( screenshot, { width } );
+		const img = screenshot && (
 			<img
 				alt={
 					// translators: %s is the theme name. Eg Twenty Twenty.
@@ -635,8 +622,8 @@ class ThemeSheet extends Component {
 					} )
 				}
 				className="theme__sheet-img"
-				src={ photonSrc || screenshotFull }
-				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
+				src={ photonSrc || screenshot }
+				srcSet={ photonSrc && `${ photon( screenshot, { width, zoom: 2 } ) } 2x` }
 			/>
 		);
 
@@ -653,7 +640,7 @@ class ThemeSheet extends Component {
 					{ this.shouldRenderPreviewButton() && (
 						<Button className="theme__sheet-preview-demo-site">
 							{ translate( 'Preview demo site' ) }
-							{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+							<Icon icon={ external } size={ 16 } />
 						</Button>
 					) }
 					{ img }
@@ -671,7 +658,7 @@ class ThemeSheet extends Component {
 						} }
 					>
 						{ translate( 'Preview demo site' ) }
-						{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
+						<Icon icon={ external } size={ 16 } />
 					</Button>
 				) }
 				{ img }
@@ -679,6 +666,9 @@ class ThemeSheet extends Component {
 		);
 	}
 
+	/**
+	 * Render web preview for wpcom themes.
+	 */
 	renderWebPreview = () => {
 		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
@@ -1350,11 +1340,8 @@ class ThemeSheet extends Component {
 			retired,
 			translate,
 			isLoggedIn,
-			isExternallyManagedTheme,
 			isThemeActivationSyncStarted,
-			isWpcomTheme,
 			successNotice: showSuccessNotice,
-			styleVariations,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -1468,9 +1455,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isWpcomTheme && ! isExternallyManagedTheme && styleVariations?.length
-								? this.renderWebPreview()
-								: this.renderScreenshot() }
+							{ this.isWpcomOnlyTheme() ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>

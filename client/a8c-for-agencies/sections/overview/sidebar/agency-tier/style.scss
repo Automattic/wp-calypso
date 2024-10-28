@@ -79,6 +79,10 @@ $video-green: #0e5837;
 }
 
 .agency-tier-celebration-modal {
+	&.a4a-themed-modal .components-modal__content.hide-header {
+		padding: 0;
+	}
+
 	&.emerging-partner {
 
 		&.a4a-themed-modal .components-modal__content.hide-header {
@@ -99,10 +103,6 @@ $video-green: #0e5837;
 		}
 	}
 
-	&.a4a-themed-modal .components-modal__content.hide-header {
-		padding: 0;
-	}
-
 	&.is-narrow-view {
 		display: block;
 		border-radius: 0;
@@ -111,20 +111,25 @@ $video-green: #0e5837;
 			flex-direction: column;
 		}
 
+		.a4a-themed-modal__sidebar-image {
+			// Make sure to update the IMAGE_HEIGHT in the index.tsx file when changing the height
+			height: 260px;
+		}
+
 		.a4a-themed-modal__content {
 			margin: -2px 0;
+			// Make sure to update the BLOCK_PADDING in the index.tsx file when changing the padding
 			padding: 48px 32px;
 			border-radius: 4px 4px 0 0;
 		}
 
-		.agency-tier-celebration-modal__content-wrapper .agency-tier-celebration-modal__content {
-			max-height: 250px;
-		}
+		&.a4a-themed-modal {
+			min-height: 100vh;
 
-		&.a4a-themed-modal .components-modal__content.hide-header {
-			border-radius: 0;
+			.components-modal__content.hide-header {
+				border-radius: 0;
+			}
 		}
-
 		.agency-tier-celebration-modal__footer {
 			position: absolute;
 			inset-block-end: 16px;
@@ -144,7 +149,6 @@ $video-green: #0e5837;
 		display: flex;
 		flex-direction: column;
 		padding-block-end: 16px;
-		max-height: 450px;
 	}
 
 	.a4a-themed-modal__sidebar-image-container {
@@ -161,8 +165,6 @@ $video-green: #0e5837;
 			display: flex;
 			gap: 16px;
 			flex-direction: column;
-			max-height: 310px;
-			margin-block-end: 16px;
 			overflow-y: auto;
 
 			.agency-tier-celebration-modal__title {

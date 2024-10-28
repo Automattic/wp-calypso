@@ -144,7 +144,6 @@ const getAgencyTierInfo = (
 							"Advanced sales training sessions at request to sharpen your team's expertise."
 						),
 						translate( "Access to pre-qualified leads provided by Automattic's sales teams." ),
-						translate( "Access to pre-qualified leads provided by Automattic's sales teams." ),
 						translate( 'Co-marketing opportunities.' ),
 						translate( 'Access to the Automattic for Agencies advisory board.' ),
 					],

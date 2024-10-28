@@ -175,7 +175,7 @@ export const JetpackSitesDataViews = ( {
 								isLoading={ isLoading }
 								isDevSite={ item.isDevSite }
 								onSiteTitleClick={ openSitePreviewPane }
-								errors={ getSiteErrors( item.error ) }
+								errors={ getSiteErrors( item ) }
 							/>
 						</div>
 					);

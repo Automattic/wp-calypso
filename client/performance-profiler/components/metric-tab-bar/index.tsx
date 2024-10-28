@@ -40,14 +40,7 @@ const MetricTabBar = ( props: Props ) => {
 					onClick={ () => handleTabClick( 'overall' ) }
 				>
 					<div className="metric-tab-bar__tab-text">
-						<div
-							className="metric-tab-bar__tab-header"
-							css={ {
-								marginBottom: '6px',
-							} }
-						>
-							{ translate( 'Performance Score' ) }
-						</div>
+						<div className="metric-tab-bar__tab-header">{ translate( 'Performance Score' ) }</div>
 						<div className="metric-tab-bar__tab-metric">
 							<CircularPerformanceScore score={ props.overall } size={ 48 } />
 						</div>

@@ -1,3 +1,4 @@
+import { TranslateResult } from 'i18n-calypso';
 import { ReactNode, SetStateAction, Dispatch } from 'react';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -45,5 +46,5 @@ export interface SitesDashboardContextInterface {
 
 export type SiteError = {
 	severity: 'high' | 'medium' | 'low';
-	message: string;
+	message: TranslateResult;
 };

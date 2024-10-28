@@ -52,6 +52,7 @@
 
 	li {
 		@include a4a-font-body-sm($font-weight: 500);
+		text-align: start;
 	}
 }
 

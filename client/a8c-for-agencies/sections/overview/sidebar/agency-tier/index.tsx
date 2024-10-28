@@ -6,14 +6,16 @@ import { useTranslate } from 'i18n-calypso';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getAgencyTierInfo from 'calypso/a8c-for-agencies/sections/agency-tier/lib/get-agency-tier-info';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AgencyTierCelebrationModal from './celebration-modal';
 
 import './style.scss';
 
 export default function OverviewSidebarAgencyTier() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const agency = useSelector( getActiveAgency );
 
@@ -58,7 +60,16 @@ export default function OverviewSidebarAgencyTier() {
 								{ currentAgencyTierInfo.description }
 							</div>
 						) }
-						<Button href={ A4A_AGENCY_TIER_LINK }>
+						<Button
+							href={ A4A_AGENCY_TIER_LINK }
+							onClick={ () =>
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_agency_tier_explore_tiers_and_benefits_click', {
+										agency_tier: currentAgencyTier,
+									} )
+								)
+							}
+						>
 							<Icon icon={ arrowRight } size={ 18 } />
 							{ translate( 'Explore tiers and benefits' ) }
 						</Button>
