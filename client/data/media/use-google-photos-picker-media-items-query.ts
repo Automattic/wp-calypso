@@ -1,46 +1,40 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
-type PhotoMetadata = {
-	focalLength: number;
-	apertureFNumber: number;
-	isoEquivalent: number;
-	exposureTime: string;
-};
+interface Thumbnails {
+	large: string;
+	medium: string;
+	thumbnail: string;
+}
 
-type VideoMetadata = {
-	fps: number;
-	processingStatus: 'PROCESSING' | 'READY' | 'FAILED' | 'UNSPECIFIED';
-};
-
-type CameraMetadata = {
+interface Media {
+	ID: string;
+	name: string;
+	date: string;
+	file: string;
+	URL: string;
+	type: string;
+	mime_type: string;
 	width: number;
 	height: number;
-	cameraMake: string;
-	cameraModel: string;
-};
-
-type MediaFileMetadata =
-	| ( Partial< CameraMetadata > & { photoMetadata: PhotoMetadata } )
-	| ( Partial< CameraMetadata > & { videoMetadata: VideoMetadata } );
-
-type MediaFile = {
-	baseUrl: string;
-	mimeType: string;
-	filename: string;
-	mediaFileMetadata: MediaFileMetadata;
-};
-
-type PickedMediaItem = {
-	id: string;
-	createTime: string;
-	type: 'PHOTO' | 'VIDEO' | 'TYPE_UNSPECIFIED';
-	mediaFile: MediaFile;
-};
+	size: number;
+	extension: string;
+	guid: string;
+	thumbnails:
+		| Thumbnails
+		| {
+				fmt_hd: string;
+				fmt_dvd: string;
+				fmt_sd: string;
+		  };
+}
 
 interface ResponseData {
-	mediaItems: PickedMediaItem[];
-	nextPageToken?: string;
+	found: number;
+	media: Media[];
+	meta?: {
+		next_page: boolean;
+	};
 }
 
 export default function useGooglePhotosPickerMediaItemsQuery( sessionId: string, enabled = true ) {
