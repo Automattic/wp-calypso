@@ -28,7 +28,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
-import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';
+import { isP2Flow } from 'calypso/signup/is-flow';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -38,7 +38,6 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 } from 'calypso/signup/utils';
-import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { loginSocialUser } from 'calypso/state/login/actions';
@@ -571,10 +570,6 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isVideoPressFlow( flowName ) ) {
-			return translate( 'Continue' );
-		}
-
 		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
 			return translate( 'Get started' );
 		}
@@ -643,26 +638,6 @@ export class UserStep extends Component {
 				/>
 				<div id="g-recaptcha"></div>
 			</>
-		);
-	}
-
-	renderVideoPressSignupStep() {
-		return (
-			<VideoPressStepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( 'Let’s get you signed up' ) }
-				subHeaderText={ this.getSubHeaderText() }
-				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
-					args: {
-						currentStep: 1,
-						totalSteps: 1,
-					},
-				} ) }
-			>
-				{ this.renderSignupForm() }
-			</VideoPressStepWrapper>
 		);
 	}
 
@@ -738,10 +713,6 @@ export class UserStep extends Component {
 
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
-		}
-
-		if ( isVideoPressFlow( this.props.flowName ) ) {
-			return this.renderVideoPressSignupStep();
 		}
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {
