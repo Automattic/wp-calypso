@@ -80,7 +80,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const introContent = useIntroContent( flow );
-	const isVideoPressFlow = 'videopress' === flow;
 
 	const handleSubmit = () => {
 		submit?.();
@@ -97,7 +96,6 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
 			showSenseiPowered={ flow === SENSEI_FLOW }
-			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };
