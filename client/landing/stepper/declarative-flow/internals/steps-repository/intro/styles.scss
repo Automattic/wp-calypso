@@ -262,21 +262,6 @@
 		margin-top: 32px;
 	}
 
-	.intro__video {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		border: 0;
-
-		&.loading-frame {
-			background-image: url(calypso/assets/images/onboarding/videopress-onboarding-video-poster.jpeg);
-			background-repeat: no-repeat;
-			background-size: cover;
-		}
-	}
-
 	.intro__button-row {
 		display: flex;
 		justify-content: center;
