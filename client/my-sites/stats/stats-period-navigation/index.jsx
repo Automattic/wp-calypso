@@ -210,17 +210,20 @@ class StatsPeriodNavigation extends PureComponent {
 				} ) }
 			>
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ isWithNewDateFiltering ? (
-					<div className="stats-period-navigation__period-control">
-						{ showArrows && (
-							<NavigationArrows
-								disableNextArrow={ disableNextArrow || isToday }
-								disablePreviousArrow={ disablePreviousArrow }
-								onClickNext={ this.handleArrowNext }
-								onClickPrevious={ this.handleArrowPrevious }
-							/>
-						) }
 
+				{ /* Legacy view: Show only navigation arrows when not using new date control */ }
+				{ ! isWithNewDateControl && showArrows && (
+					<NavigationArrows
+						disableNextArrow={ disableNextArrow || isToday }
+						disablePreviousArrow={ disablePreviousArrow }
+						onClickNext={ this.handleArrowNext }
+						onClickPrevious={ this.handleArrowPrevious }
+					/>
+				) }
+
+				{ /* New filtering view: Shows date control in a simplified layout */ }
+				{ isWithNewDateControl && isWithNewDateFiltering && (
+					<div className="stats-period-navigation__period-control">
 						<div className="stats-period-navigation__date-control">
 							<StatsDateControl
 								slug={ slug }
@@ -240,7 +243,10 @@ class StatsPeriodNavigation extends PureComponent {
 							/>
 						</div>
 					</div>
-				) : (
+				) }
+
+				{ /* Standard date control view: Shows date control with old layout and additional controls (Legend, IntervalDropdown) */ }
+				{ isWithNewDateControl && ! isWithNewDateFiltering && (
 					<div className="stats-period-navigation__date-control">
 						<StatsDateControl
 							slug={ slug }
@@ -266,14 +272,6 @@ class StatsPeriodNavigation extends PureComponent {
 									availableCharts={ this.props.availableLegend }
 									clickHandler={ this.onLegendClick }
 									tabs={ this.props.charts }
-								/>
-							) }
-							{ showArrows && (
-								<NavigationArrows
-									disableNextArrow={ disableNextArrow || isToday }
-									disablePreviousArrow={ disablePreviousArrow }
-									onClickNext={ this.handleArrowNext }
-									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
 							<IntervalDropdown
