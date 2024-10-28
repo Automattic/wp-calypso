@@ -30,7 +30,6 @@ export type TaskId =
 	| 'blog_launched'
 	| 'site_launched'
 	| 'videopress_launched'
-	| 'videopress_upload'
 	| 'design_selected'
 	| 'design_completed'
 	| 'verify_email'
