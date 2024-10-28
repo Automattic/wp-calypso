@@ -8,7 +8,6 @@ import {
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
@@ -157,9 +156,6 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	'videopress-tv'
 )
 	? {
-			[ VIDEOPRESS_TV_FLOW ]: () =>
-				import( /* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv` ),
-
 			[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
 				import(
 					/* webpackChunkName: "videopress-tv-flow" */
