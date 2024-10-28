@@ -47,6 +47,8 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		mockUpdateMigrationStatus = jest.fn();
 		( useUpdateMigrationStatus as jest.Mock ).mockReturnValue( {
 			updateMigrationStatus: mockUpdateMigrationStatus,
+			updateMigrationStatusAsync: mockUpdateMigrationStatus,
+			updateStatusMutationRest: {},
 		} );
 	} );
 
