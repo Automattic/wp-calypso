@@ -405,6 +405,7 @@ class StatsSite extends Component {
 							onChangeLegend={ this.onChangeLegend }
 							isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
 							isWithNewDateControl
+							showArrows
 							slug={ slug }
 							dateRange={ customChartRange }
 						>
@@ -436,6 +437,7 @@ class StatsSite extends Component {
 									activeLegend={ this.state.activeLegend }
 									onChangeLegend={ this.onChangeLegend }
 									isWithNewDateControl
+									showArrows
 									slug={ slug }
 									dateRange={ customChartRange }
 								>

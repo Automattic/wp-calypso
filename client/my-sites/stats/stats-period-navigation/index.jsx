@@ -224,6 +224,14 @@ class StatsPeriodNavigation extends PureComponent {
 				{ /* New filtering view: Shows date control in a simplified layout */ }
 				{ isWithNewDateControl && isWithNewDateFiltering && (
 					<div className="stats-period-navigation__period-control">
+						{ showArrows && (
+							<NavigationArrows
+								disableNextArrow={ disableNextArrow || isToday }
+								disablePreviousArrow={ disablePreviousArrow }
+								onClickNext={ this.handleArrowNext }
+								onClickPrevious={ this.handleArrowPrevious }
+							/>
+						) }
 						<div className="stats-period-navigation__date-control">
 							<StatsDateControl
 								slug={ slug }
@@ -245,7 +253,7 @@ class StatsPeriodNavigation extends PureComponent {
 					</div>
 				) }
 
-				{ /* Standard date control view: Shows date control with old layout and additional controls (Legend, IntervalDropdown) */ }
+				{ /* Standard new date control view: Shows date control with additional controls (Legend, IntervalDropdown) */ }
 				{ isWithNewDateControl && ! isWithNewDateFiltering && (
 					<div className="stats-period-navigation__date-control">
 						<StatsDateControl
@@ -272,6 +280,14 @@ class StatsPeriodNavigation extends PureComponent {
 									availableCharts={ this.props.availableLegend }
 									clickHandler={ this.onLegendClick }
 									tabs={ this.props.charts }
+								/>
+							) }
+							{ showArrows && (
+								<NavigationArrows
+									disableNextArrow={ disableNextArrow || isToday }
+									disablePreviousArrow={ disablePreviousArrow }
+									onClickNext={ this.handleArrowNext }
+									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
 							<IntervalDropdown
