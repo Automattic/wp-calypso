@@ -50,6 +50,7 @@
 		"external-media/openverse": true,
 		"cookie-banner": false,
 		"google-my-business": true,
+		"google-photos-picker": false,
 		"help": true,
 		"help/gpt-response": true,
 		"hosting-server-settings-enhancements": true,

@@ -38,6 +38,7 @@
 		"external-media/openverse": true,
 		"cookie-banner": true,
 		"google-my-business": false,
+		"google-photos-picker": false,
 		"help": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,

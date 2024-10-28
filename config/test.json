@@ -44,6 +44,7 @@
 		"difm/allow-extra-pages": false,
 		"cookie-banner": false,
 		"google-my-business": false,
+		"google-photos-picker": false,
 		"help": true,
 		"hosting-server-settings-enhancements": true,
 		"importers/newsletter": true,
