@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Tooltip } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import qs from 'qs';
 import { RefObject } from 'react';
@@ -166,7 +167,7 @@ const StatsDateControl = ( {
 					buttonRef: RefObject< typeof Button >;
 				} ) => {
 					return (
-						<Tooltip text="Filter all data by date">
+						<Tooltip text={ translate( 'Filter all data by date' ) }>
 							<Button
 								onClick={ () => {
 									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
