@@ -20,7 +20,6 @@ import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { PLANS_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
-import VideoPressIntroModalContent from './videopress-intro-modal-content';
 import type { Step } from '../../types';
 import './styles.scss';
 
@@ -127,7 +126,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				modal: {
 					buttonText: __( 'Learn more' ),
 					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),
-					content: VideoPressIntroModalContent,
 				},
 			};
 		}
