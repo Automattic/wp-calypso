@@ -56,7 +56,7 @@ const SiteMigrationStarted: Step = function () {
 			variant="primary"
 			onClick={ () => recordLinkClick( 'view-sites-dashboard' ) }
 		>
-			{ translate( 'View sites dashboard' ) }
+			{ translate( 'View Sites dashboard' ) }
 		</Button>
 	);
 
