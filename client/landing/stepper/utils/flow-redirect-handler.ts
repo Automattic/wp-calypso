@@ -7,6 +7,8 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: FREE_FLOW, to: '/start/free:lang?' },
 	{ flow: 'link-in-bio', to: '/start:lang?' },
 	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
+	{ flow: 'videopress-tv', to: '/start:lang?' },
+	{ flow: 'videopress-tv-purchase', to: '/start:lang?' },
 	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
 
