@@ -16,6 +16,15 @@
 
 	.stats-period-navigation {
 		@include section-header-with-siblings;
+
+		// this new selectorremoves padding only for the date filtering design
+		&.stats-period-navigation__is-with-new-date-filtering {
+			padding: 0;
+
+			@media (max-width: $break-medium) {
+				padding: 0 16px;
+			}
+		}
 	}
 
 	@include navigation-segment-control-buttons;
@@ -26,10 +35,6 @@
 			margin: 0 0 24px 0;
 			padding: 0;
 		}
-	}
-
-	@media (max-width: $break-medium) {
-		padding: 0 16px;
 	}
 
 	@media (max-width: $break-mobile) {
