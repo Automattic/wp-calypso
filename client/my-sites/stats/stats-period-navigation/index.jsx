@@ -223,7 +223,7 @@ class StatsPeriodNavigation extends PureComponent {
 
 				{ /* New filtering view: Shows date control in a simplified layout */ }
 				{ isWithNewDateControl && isWithNewDateFiltering && (
-					<div className="stats-period-navigation__period-control">
+					<div className="stats-period-navigation__date-range-control">
 						{ showArrows && (
 							<NavigationArrows
 								disableNextArrow={ disableNextArrow || isToday }
@@ -272,7 +272,7 @@ class StatsPeriodNavigation extends PureComponent {
 								)
 							}
 						/>
-						<div className="stats-period-navigation__period-control">
+						<div className="stats-period-navigation__date-range-control">
 							{ this.props.activeTab && (
 								<Legend
 									activeCharts={ this.props.activeLegend }
