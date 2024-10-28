@@ -65,6 +65,7 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isNewDateFilteringEnabled = config.isEnabled( 'stats/new-date-filtering' );
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
@@ -167,7 +168,9 @@ const StatsDateControl = ( {
 					buttonRef: RefObject< typeof Button >;
 				} ) => {
 					return (
-						<Tooltip text={ translate( 'Filter all data by date' ) }>
+						<Tooltip
+							text={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
+						>
 							<Button
 								onClick={ () => {
 									const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
