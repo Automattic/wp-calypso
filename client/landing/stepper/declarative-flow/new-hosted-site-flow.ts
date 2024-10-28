@@ -1,8 +1,8 @@
 import { isFreeHostingTrial } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs, getQueryArgs } from '@wordpress/url';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { addQueryArgs } from '@wordpress/url';
+import { useEffect, useLayoutEffect } from 'react';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
@@ -33,7 +33,7 @@ const hosting: Flow = {
 				? [
 						{
 							slug: 'domains',
-							asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
+							asyncComponent: () => import( './internals/steps-repository/domains' ),
 						},
 				  ]
 				: [] ),
@@ -53,34 +53,15 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const {
-			setDomain,
-			setDomainCartItem,
-			setDomainCartItems,
-			setPlanCartItem,
-			setSiteUrl,
-			setSignupDomainOrigin,
-			resetCouponCode,
-		} = useDispatch( ONBOARD_STORE );
-
-		const { planCartItem, signupDomainOrigin } = useSelect(
-			( select: ( key: string ) => OnboardSelect ) => ( {
-				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-			} ),
+		const { setPlanCartItem, resetCouponCode } = useDispatch( ONBOARD_STORE );
+		const planCartItem = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
 		);
-
 		const couponCode = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
-
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const [ _redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const [ _useMyDomainQueryParams, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		const query = useQuery();
 		const queryParams = Object.fromEntries( query );
@@ -101,38 +82,9 @@ const hosting: Flow = {
 			}
 
 			switch ( _currentStepSlug ) {
-				case 'domains':
-					setSiteUrl( providedDependencies.siteUrl );
-					setDomain( providedDependencies.suggestion );
-					setDomainCartItem( providedDependencies.domainItem );
-					setDomainCartItems( providedDependencies.domainCart );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
-
-					if ( providedDependencies.navigateToUseMyDomain ) {
-						const currentQueryArgs = getQueryArgs( window.location.href );
-						currentQueryArgs.step = 'domain-input';
-
-						setRedirectedToUseMyDomain( true );
-						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
-
-						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
-							?.lastQuery;
-
-						if ( lastQueryParam !== undefined ) {
-							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
-						}
-
-						setUseMyDomainTracksEventProps( {
-							site_url: providedDependencies.siteUrl,
-							signup_domain_origin: signupDomainOrigin,
-							domain_item: providedDependencies.domainItem,
-						} );
-						return navigate( useMyDomainURL );
-					}
-
-					setRedirectedToUseMyDomain( false );
+				case 'domains': {
 					return navigate( 'plans' );
+				}
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
