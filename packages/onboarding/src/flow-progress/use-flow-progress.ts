@@ -1,9 +1,4 @@
-import {
-	ECOMMERCE_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	FREE_FLOW,
-	COPY_SITE_FLOW,
-} from '../utils/flows';
+import { ECOMMERCE_FLOW, LINK_IN_BIO_TLD_FLOW, FREE_FLOW, COPY_SITE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
