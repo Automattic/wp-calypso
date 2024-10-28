@@ -1,9 +1,18 @@
-import ReactDom from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+
+export function getRootDomElement() {
+	return document.getElementById( 'wpcom' );
+}
+
+let wpcomRootNode;
 
 export function render( context ) {
-	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
+	if ( wpcomRootNode == null ) {
+		wpcomRootNode = createRoot( getRootDomElement() );
+	}
+	wpcomRootNode.render( context.layout );
 }
 
 export function hydrate( context ) {
-	ReactDom.hydrate( context.layout, document.getElementById( 'wpcom' ) );
+	wpcomRootNode = hydrateRoot( getRootDomElement(), context.layout );
 }
