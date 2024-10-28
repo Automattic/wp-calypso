@@ -9,7 +9,6 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import './internals/videopress.scss';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import VideoPressTvTrialExists from './internals/steps-repository/videopress-tv-trial-exists';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -26,7 +25,6 @@ const videopressTv: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
 			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'trial', component: VideoPressTvTrialExists },
 		];
 	},
 
