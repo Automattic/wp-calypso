@@ -71,4 +71,13 @@
 			}
 		}
 	}
+
+	.migration-message__cta-wrapper {
+		display: flex;
+		justify-content: center;
+	}
+
+	.migration-message__cta {
+		margin-top: 20px;
+	}
 }

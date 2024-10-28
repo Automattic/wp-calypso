@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons';
@@ -157,6 +158,21 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		? __( "We'll take it from here!" )
 		: __( 'Let us take it from here!' );
 
+	const sitesDashboardButton = (
+		<div className="migration-message__cta-wrapper">
+			<Button
+				className="migration-message__cta"
+				href="/sites"
+				variant="primary"
+				onClick={ () =>
+					recordTracksEvent( 'calypso_migration_message_view_sites_dashboard_click' )
+				}
+			>
+				{ __( 'View sites dashboard' ) }
+			</Button>
+		</div>
+	);
+
 	return (
 		<StepContainer
 			stepName="migration-message"
@@ -199,6 +215,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 							<FlowCard key={ index } title={ title } text={ text } onClick={ onClick } />
 						) ) }
 					</div>
+					{ sitesDashboardButton }
 				</>
 			}
 			recordTracksEvent={ recordTracksEvent }
