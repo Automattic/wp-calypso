@@ -65,6 +65,7 @@ const hosting: Flow = {
 
 		const query = useQuery();
 		const queryParams = Object.fromEntries( query );
+		const plan = queryParams.plan;
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -83,6 +84,9 @@ const hosting: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
+					if ( plan ) {
+						return navigate( 'createSite', { plan } );
+					}
 					return navigate( 'plans' );
 				}
 				case 'plans': {
