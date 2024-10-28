@@ -149,7 +149,7 @@ export const societyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 5055404,
 			site_ID: 0,
-			site_URL: 'https://www.politico.com/',
+			site_URL: 'http://www.politico.com/rss/politicopicks.xml',
 			site_name: 'Politico',
 		},
 		{
@@ -160,7 +160,42 @@ export const societyBlogs: CuratedBlogsList = {
 		},
 	],
 	'climate-change': [
-		// Add climate change blogs...
+		{
+			feed_ID: 154160739,
+			site_ID: 228474941,
+			site_URL: 'https://insideclimatenews.org/',
+			site_name: 'Inside Climate News ',
+		},
+		{
+			feed_ID: 107813600,
+			site_ID: 185804187,
+			site_URL: 'https://yaleclimateconnections.org/',
+			site_name: 'Yale Climate Connections',
+		},
+		{
+			feed_ID: 163683192,
+			site_ID: 0,
+			site_URL: 'https://www.ipcc.ch/',
+			site_name: 'IPCC',
+		},
+		{
+			feed_ID: 48632660,
+			site_ID: 162117108,
+			site_URL: 'https://climatefeedback.org/',
+			site_name: 'Climate Feedback ',
+		},
+		{
+			feed_ID: 40967167,
+			site_ID: 0,
+			site_URL: 'https://www.carbonbrief.org/',
+			site_name: 'Carbon Brief',
+		},
+		{
+			feed_ID: 42326459,
+			site_ID: 0,
+			site_URL: 'https://skepticalscience.com/',
+			site_name: 'Skeptical Science',
+		},
 	],
 	history: [
 		// Add history blogs...
