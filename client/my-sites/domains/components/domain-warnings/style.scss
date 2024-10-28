@@ -9,6 +9,12 @@
 	color: var(--color-text);
 	padding-right: 4px !important;
 	border-radius: 0 !important;
+
+	&.notice.is-compact {
+		margin: 8px !important;
+		padding: 8px !important;
+	}
+
 	.notice__action {
 		background-color: var(--color-error-40) !important;
 		margin-right: 4px;
