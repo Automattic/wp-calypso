@@ -26,7 +26,6 @@ export type TaskId =
 	| 'setup_free'
 	| 'setup_newsletter'
 	| 'setup_blog'
-	| 'videopress_setup'
 	| 'blog_launched'
 	| 'site_launched'
 	| 'design_selected'
