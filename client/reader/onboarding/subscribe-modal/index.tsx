@@ -257,7 +257,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								) ) }
 							</div>
 						) }
-						{ combinedRecommendations.length > 6 && currentPage < maxPages && (
+						{ currentPage < maxPages && (
 							<Button
 								className="subscribe-modal__load-more-button"
 								onClick={ handleLoadMore }
