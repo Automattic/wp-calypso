@@ -27,7 +27,11 @@ export const useLoadPreviousChat = ( {
 	useEffect( () => {
 		if ( existingChat || selectedConversationId ) {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
-			const messages = [ initialMessage, ...( existingChat as Chat ).messages ];
+			const messages = [ initialMessage ];
+
+			if ( existingChat ) {
+				messages.push( ...( existingChat as Chat ).messages );
+			}
 
 			if ( isChatLoaded ) {
 				getZendeskConversation( {
