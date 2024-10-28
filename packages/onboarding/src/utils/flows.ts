@@ -222,10 +222,6 @@ export const isVideoPressFlow = ( flowName: string | null ) => {
 	return !! flowName && [ VIDEOPRESS_FLOW, VIDEOPRESS_ACCOUNT ].includes( flowName );
 };
 
-export const isVideoPressTVFlow = ( flowName: string | null | undefined ) => {
-	return Boolean( flowName && [ VIDEOPRESS_TV_PURCHASE_FLOW ].includes( flowName ) );
-};
-
 export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName ) );
 };
