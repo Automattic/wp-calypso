@@ -239,13 +239,13 @@ export const societyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 48416491,
 			site_ID: 0,
-			site_URL: 'https://www.theatlantic.com/',
+			site_URL: 'http://www.theatlantic.com/feed/all',
 			site_name: 'The Atlantic',
 		},
 		{
 			feed_ID: 163685502,
 			site_ID: 0,
-			site_URL: 'https://www.vox.com/',
+			site_URL: 'http://www.vox.com/rss/index.xml',
 			site_name: 'Vox',
 		},
 		{
@@ -257,25 +257,25 @@ export const societyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 14625,
 			site_ID: 0,
-			site_URL: 'https://www.newyorker.com/',
+			site_URL: 'http://www.newyorker.com/feed/rss',
 			site_name: 'The New Yorker',
 		},
 		{
 			feed_ID: 66598595,
 			site_ID: 0,
-			site_URL: 'https://www.theroot.com/',
+			site_URL: 'http://www.theroot.com/rss',
 			site_name: 'The Root',
 		},
 		{
-			feed_ID: 13683185,
+			feed_ID: 38049686,
 			site_ID: 0,
-			site_URL: 'https://www.theguardian.com/us',
+			site_URL: 'http://www.theguardian.com/us/rss',
 			site_name: 'The Guardian',
 		},
 	],
 	culture: [
 		{
-			feed_ID: 142614162,
+			feed_ID: 55747131,
 			site_ID: 118955609,
 			site_URL: 'https://hyperallergic.com/',
 			site_name: 'Hyperallergic',
@@ -289,7 +289,7 @@ export const societyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 10359,
 			site_ID: 0,
-			site_URL: 'https://pitchfork.com/',
+			site_URL: 'http://pitchfork.com/feed/rss',
 			site_name: 'Pitchfork',
 		},
 		{
@@ -305,10 +305,10 @@ export const societyBlogs: CuratedBlogsList = {
 			site_name: 'Open Culture',
 		},
 		{
-			feed_ID: 19592473,
+			feed_ID: 56317607,
 			site_ID: 0,
-			site_URL: 'https://www.messynessychic.com/',
-			site_name: 'Messy Nessy Chic',
+			site_URL: 'http://www.juxtapoz.com/news/?format=feed&type=rss',
+			site_name: 'Juxtapoz Magazine',
 		},
 	],
 	philosophy: [
@@ -319,10 +319,10 @@ export const societyBlogs: CuratedBlogsList = {
 			site_name: '1000-Word Philosophy: An Introductory Anthology ',
 		},
 		{
-			feed_ID: 76484859,
-			site_ID: 83006194,
-			site_URL: 'https://www.lse.ac.uk/philosophy/',
-			site_name: 'Philosophy, Logic and Scientific Method',
+			feed_ID: 19103724,
+			site_ID: 0,
+			site_URL: 'http://aeon.co/feed.rss',
+			site_name: 'Aeon | a world of ideas',
 		},
 		{
 			feed_ID: 59963902,
@@ -339,7 +339,7 @@ export const societyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 25217327,
 			site_ID: 0,
-			site_URL: 'https://philosophynow.org/',
+			site_URL: 'http://philosophynow.org/rss',
 			site_name: 'Philosophy Now',
 		},
 		{
