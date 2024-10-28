@@ -53,7 +53,7 @@ export const useGoals = (): Goal[] => {
 		},
 		{
 			key: SiteGoal.ContactForm,
-			title: translate( 'Offer a contact form' ),
+			title: translate( 'Create a contact form' ),
 		},
 		{
 			key: SiteGoal.Videos,
