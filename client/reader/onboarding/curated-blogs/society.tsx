@@ -97,12 +97,6 @@ export const societyBlogs: CuratedBlogsList = {
 			site_name: 'NextBigFuture.com',
 		},
 		{
-			feed_ID: 77891657,
-			site_ID: 136066274,
-			site_URL: 'https://www.fanaticalfuturist.com/',
-			site_name: 'Matthew Griffin | Keynote Speaker & Master Futurist',
-		},
-		{
 			feed_ID: 77936565,
 			site_ID: 141327587,
 			site_URL: 'https://bryanalexander.org/',
@@ -128,7 +122,42 @@ export const societyBlogs: CuratedBlogsList = {
 		},
 	],
 	politics: [
-		// Add politics blogs...
+		{
+			feed_ID: 144806355,
+			site_ID: 205851186,
+			site_URL: 'https://www.worldpoliticsreview.com/',
+			site_name: 'World Politics Review',
+		},
+		{
+			feed_ID: 163680501,
+			site_ID: 204171482,
+			site_URL: 'https://arcmag.org',
+			site_name: 'Arc: Religion, Politics, Et Cetera',
+		},
+		{
+			feed_ID: 4860866,
+			site_ID: 0,
+			site_URL: 'https://politicalwire.com/',
+			site_name: 'Political Wire',
+		},
+		{
+			feed_ID: 119663676,
+			site_ID: 0,
+			site_URL: 'https://www.politics.co.uk/',
+			site_name: 'Politics.co.uk',
+		},
+		{
+			feed_ID: 5055404,
+			site_ID: 0,
+			site_URL: 'https://www.politico.com/',
+			site_name: 'Politico',
+		},
+		{
+			feed_ID: 17459859,
+			site_ID: 0,
+			site_URL: 'https://www.factcheck.org/',
+			site_name: 'FactCheck.org',
+		},
 	],
 	'climate-change': [
 		// Add climate change blogs...
