@@ -3,11 +3,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -109,18 +107,8 @@ class PurchasesList extends Component {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
-
 					<CompactCard className="purchases-list__no-content">
-						<EmptyContent
-							title={ translate( 'Looking to upgrade?' ) }
-							line={ translate(
-								'Our plans give your site the power to thrive. ' +
-									'Find the plan that works for you.'
-							) }
-							action={ translate( 'Upgrade now' ) }
-							actionURL="/plans"
-							illustration={ noSitesIllustration }
-						/>
+						{ translate( 'You have made no purchases.' ) }
 					</CompactCard>
 				</>
 			);

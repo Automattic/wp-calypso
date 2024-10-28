@@ -1,7 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
-import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -108,10 +106,16 @@ function NoPurchasesMessage() {
 	const translate = useTranslate();
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 
-	let url;
 	if ( ! isJetpackCloud() ) {
-		url = selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
-	} else if ( hasJetpackPartnerAccess ) {
+		return (
+			<CompactCard className="subscriptions__list">
+				{ translate( 'You have made no purchases for this site.' ) }
+			</CompactCard>
+		);
+	}
+
+	let url;
+	if ( hasJetpackPartnerAccess ) {
 		url = selectedSiteId
 			? `/partner-portal/issue-license?site_id=${ selectedSiteId }`
 			: '/partner-portal/issue-license';
@@ -119,7 +123,7 @@ function NoPurchasesMessage() {
 		url = selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing';
 	}
 
-	return isJetpackCloud() ? (
+	return (
 		<JetpackRnaActionCard
 			headerText={ translate( 'You don’t have any active subscriptions for this site.' ) }
 			subHeaderText={ translate(
@@ -128,15 +132,5 @@ function NoPurchasesMessage() {
 			ctaButtonLabel={ translate( 'View products' ) }
 			ctaButtonURL={ url }
 		/>
-	) : (
-		<CompactCard className="subscriptions__list">
-			<EmptyContent
-				title={ translate( 'Looking to upgrade?' ) }
-				line={ translate( 'You have made no purchases for this site.' ) }
-				action={ translate( 'Upgrade now' ) }
-				actionURL={ url }
-				illustration={ noSitesIllustration }
-			/>
-		</CompactCard>
 	);
 }
