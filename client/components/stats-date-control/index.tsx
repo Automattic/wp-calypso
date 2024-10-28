@@ -170,6 +170,7 @@ const StatsDateControl = ( {
 					return (
 						<Tooltip
 							text={ isNewDateFilteringEnabled ? translate( 'Filter all data by date' ) : '' }
+							placement="bottom-end"
 						>
 							<Button
 								onClick={ () => {
