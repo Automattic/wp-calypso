@@ -187,13 +187,13 @@ export const societyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 40967167,
 			site_ID: 0,
-			site_URL: 'https://www.carbonbrief.org/',
+			site_URL: 'http://www.carbonbrief.org/feed',
 			site_name: 'Carbon Brief',
 		},
 		{
 			feed_ID: 42326459,
 			site_ID: 0,
-			site_URL: 'https://skepticalscience.com/',
+			site_URL: 'http://skepticalscience.com/feed.xml',
 			site_name: 'Skeptical Science',
 		},
 	],
