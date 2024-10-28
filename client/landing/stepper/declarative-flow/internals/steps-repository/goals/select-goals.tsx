@@ -83,7 +83,9 @@ export const SelectGoals = ( { onChange, selectedGoals }: SelectGoalsProps ) => 
 								onChange={ ( checked ) => handleChange( checked, key ) }
 								checked={ selectedGoals.includes( key ) }
 							>
-								<span className="select-goals__goal-title">{ title }</span>
+								<span data-testid="goal-title" className="select-goals__goal-title">
+									{ title }
+								</span>
 							</SelectCardCheckbox>
 					  ) ) }
 			</div>
