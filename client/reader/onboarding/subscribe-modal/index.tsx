@@ -148,20 +148,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		return sortedRecommendations.slice( 0, 18 );
 	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
 
+	const maxPages = Math.ceil( combinedRecommendations.length / 6 ) - 1; // -1 because pages are 0-based.
+
 	const displayedRecommendations = useMemo( () => {
-		const startIndex = currentPage * 6;
-		return combinedRecommendations.slice( startIndex, startIndex + 6 );
+		// Show all items up to the current page.
+		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * 6 );
 	}, [ combinedRecommendations, currentPage ] );
 
 	const handleLoadMore = useCallback( () => {
-		const maxPages = Math.ceil( combinedRecommendations.length / 6 ) - 1; // -1 because pages are 0-based.
-		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : 0 ) );
-	}, [ combinedRecommendations.length ] );
-
-	const loadMoreText =
-		currentPage === Math.ceil( combinedRecommendations.length / 6 ) - 1
-			? __( 'Start over' )
-			: __( 'Load more recommendations' );
+		// Only increment the page if we haven't reached the end.
+		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
+	}, [ maxPages ] );
 
 	const headerActions = (
 		<>
@@ -260,13 +257,13 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								) ) }
 							</div>
 						) }
-						{ combinedRecommendations.length > 6 && (
+						{ combinedRecommendations.length > 6 && currentPage < maxPages && (
 							<Button
 								className="subscribe-modal__load-more-button"
 								onClick={ handleLoadMore }
 								variant="link"
 							>
-								{ loadMoreText }
+								{ __( 'Load more recommendations' ) }
 							</Button>
 						) }
 						<Button
