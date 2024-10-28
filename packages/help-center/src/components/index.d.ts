@@ -109,12 +109,12 @@ declare module 'calypso/components/gravatar' {
 
 declare module 'calypso/components/section-nav' {
 	const SectionNav: FC;
-	export = SectionNav;
+	export default SectionNav;
 }
 
 declare module 'calypso/components/section-nav/tabs' {
 	const SectionNavTabs: FC;
-	export = SectionNavTabs;
+	export default SectionNavTabs;
 }
 
 declare module 'calypso/components/section-nav/item' {
@@ -124,7 +124,7 @@ declare module 'calypso/components/section-nav/item' {
 		count?: number;
 		children: React.ReactNode;
 	} >;
-	export = SectionNavItem;
+	export default SectionNavItem;
 }
 
 declare module 'calypso/components/textarea-autosize' {
