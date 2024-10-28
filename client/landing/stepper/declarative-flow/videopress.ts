@@ -22,7 +22,6 @@ import ChooseADomain from './internals/steps-repository/choose-a-domain';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
-import VideomakerSetup from './internals/steps-repository/videomaker-setup';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -30,7 +29,7 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
 	get title() {
-		return translate( 'Video' );
+		return translate( 'Videodslñfkdslñfkdlñsk' );
 	},
 	isSignupFlow: true,
 	useLoginParams() {
@@ -48,7 +47,6 @@ const videopress: Flow = {
 				slug: 'intro',
 				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
-			{ slug: 'videomakerSetup', component: VideomakerSetup },
 		];
 
 		const privateSteps = stepsWithRequiredLogin( [
