@@ -73,23 +73,19 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		hostingProviderSlug !== 'unknown' &&
 		hostingProviderSlug !== 'automattic';
 
-	const stepContent = (
-		<>
-			{ isLoading ? (
-				<LoadingEllipsis className="how-to-migrate__loader" />
-			) : (
-				<div className="how-to-migrate__list">
-					{ options.map( ( option, i ) => (
-						<FlowCard
-							key={ i }
-							title={ option.label }
-							text={ option.description }
-							onClick={ () => setPendingMigration( option.value ) }
-						/>
-					) ) }
-				</div>
-			) }
-		</>
+	const stepContent = isLoading ? (
+		<LoadingEllipsis className="how-to-migrate__loader" />
+	) : (
+		<div className="how-to-migrate__list">
+			{ options.map( ( option, i ) => (
+				<FlowCard
+					key={ i }
+					title={ option.label }
+					text={ option.description }
+					onClick={ () => setPendingMigration( option.value ) }
+				/>
+			) ) }
+		</div>
 	);
 
 	const platformText = shouldDisplayHostIdentificationMessage
