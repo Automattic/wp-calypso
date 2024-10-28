@@ -21,8 +21,13 @@ const usePendingMigrationStatus = ( { onSubmit }: PendingMigrationStatusProps ) 
 	const {
 		updateMigrationStatus,
 		updateMigrationStatusAsync,
-		updateStatusMutationRest: { isPending: isLoading },
+		updateStatusMutationRest: {
+			isIdle: isMigrationStatusUpdateIdle,
+			isPending: isMigrationStatusUpdatePending,
+		},
 	} = useUpdateMigrationStatus();
+
+	const isLoading = isMigrationStatusUpdateIdle || isMigrationStatusUpdatePending;
 
 	// Register pending migration status when loading the step.
 	useEffect( () => {
