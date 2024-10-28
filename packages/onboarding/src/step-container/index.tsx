@@ -5,7 +5,6 @@ import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
 import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
-import VideoPressLogo from '../videopress-logo';
 import './style.scss';
 
 interface Props {
@@ -46,7 +45,6 @@ interface Props {
 	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
 	showSenseiPowered?: boolean;
-	showVideoPressPowered?: boolean;
 	backUrl?: string;
 }
 
@@ -87,7 +85,6 @@ const StepContainer: React.FC< Props > = ( {
 	showHeaderWooCommercePowered,
 	showJetpackPowered,
 	showSenseiPowered,
-	showVideoPressPowered,
 	showFooterWooCommercePowered,
 } ) => {
 	const translate = useTranslate();
@@ -239,12 +236,6 @@ const StepContainer: React.FC< Props > = ( {
 			{ showSenseiPowered && (
 				<div className="step-container__sensei-powered">
 					<SenseiLogo /> <span>{ translate( 'Powered by Sensei' ) }</span>
-				</div>
-			) }
-
-			{ showVideoPressPowered && (
-				<div className="step-container__videopress-powered">
-					<VideoPressLogo size={ 24 } /> <span>{ translate( 'Powered by VideoPress' ) }</span>
 				</div>
 			) }
 		</div>
