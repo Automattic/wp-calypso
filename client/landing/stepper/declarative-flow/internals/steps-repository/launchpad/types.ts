@@ -29,7 +29,6 @@ export type TaskId =
 	| 'videopress_setup'
 	| 'blog_launched'
 	| 'site_launched'
-	| 'videopress_launched'
 	| 'design_selected'
 	| 'design_completed'
 	| 'verify_email'
