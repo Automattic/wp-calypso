@@ -151,8 +151,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 };
 
-const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = {};
-
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
 		import(
@@ -170,7 +168,6 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 
 export default {
 	...availableFlows,
-	...videoPressTvFlows,
 	...hostedSiteMigrationFlow,
 	...hundredYearDomainFlow,
 };
