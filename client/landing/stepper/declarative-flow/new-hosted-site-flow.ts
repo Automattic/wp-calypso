@@ -84,8 +84,12 @@ const hosting: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
+					// TODO: This needs validation to ensure the plan is valid.
 					if ( plan ) {
-						return navigate( 'createSite', { plan } );
+						setPlanCartItem( {
+							product_slug: plan,
+						} );
+						return navigate( 'createSite' );
 					}
 					return navigate( 'plans' );
 				}
