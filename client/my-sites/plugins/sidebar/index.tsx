@@ -16,6 +16,7 @@ interface Props {
 const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 	const translate = useTranslate();
 	const isBulkPluginManagementEnabled = config.isEnabled( 'bulk-plugin-management' ) || false;
+	const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
 	return (
 		<GlobalSidebar
@@ -39,7 +40,7 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					selected={
 						path.startsWith( '/plugins' ) &&
 						! path.startsWith( '/plugins/scheduled-updates' ) &&
-						! path.startsWith( '/plugins/manage' )
+						! managePluginsPattern.test( path )
 					}
 					customIcon={ <SidebarIconPlugins /> }
 				/>
@@ -50,7 +51,7 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 						link="/plugins/manage"
 						label={ translate( 'Manage Plugins' ) }
 						tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
-						selected={ path.startsWith( '/plugins/manage' ) }
+						selected={ managePluginsPattern.test( path ) }
 						icon={ settings }
 					/>
 				) }
