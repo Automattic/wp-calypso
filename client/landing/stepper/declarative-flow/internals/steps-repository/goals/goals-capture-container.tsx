@@ -8,6 +8,7 @@ type GoalsCaptureContainerProps = {
 	whatAreYourGoalsText: string;
 	subHeaderText: string;
 	stepName: string;
+	onSkip(): void;
 	goNext: NavigationControls[ 'goNext' ];
 	nextLabelText: string;
 	stepContent: React.ReactElement;

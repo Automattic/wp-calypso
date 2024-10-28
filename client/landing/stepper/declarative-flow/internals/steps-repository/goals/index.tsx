@@ -115,6 +115,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 		navigation.submit?.( { intent: SiteIntent.DIFM } );
 	};
 
+	const handleSkipClick = () => {
+		navigation.submit?.( { skip: true } );
+	};
+
 	useEffect( () => {
 		const isValidRef = Object.keys( refGoals ).includes( refParameter );
 
@@ -136,6 +140,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
+				onSkip={ handleSkipClick }
 				goNext={ handleNext }
 				nextLabelText={ translate( 'Next' ) }
 				recordTracksEvent={ recordTracksEvent }
