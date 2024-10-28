@@ -88,7 +88,6 @@ export const WPBEGINNER_PLUGINS = [
 	'coming-soon',
 	'wp-mail-smtp',
 	'custom-facebook-feed',
-	'duplicator',
 	'insert-headers-and-footers',
 	'pushengage',
 	'searchwp-live-ajax-search',
