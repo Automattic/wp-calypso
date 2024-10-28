@@ -236,10 +236,80 @@ export const societyBlogs: CuratedBlogsList = {
 		},
 	],
 	society: [
-		// Add society blogs...
+		{
+			feed_ID: 48416491,
+			site_ID: 0,
+			site_URL: 'https://www.theatlantic.com/',
+			site_name: 'The Atlantic',
+		},
+		{
+			feed_ID: 163685502,
+			site_ID: 0,
+			site_URL: 'https://www.vox.com/',
+			site_name: 'Vox',
+		},
+		{
+			feed_ID: 110082608,
+			site_ID: 177241961,
+			site_URL: 'https://blog.ted.com/',
+			site_name: 'TED Blog',
+		},
+		{
+			feed_ID: 14625,
+			site_ID: 0,
+			site_URL: 'https://www.newyorker.com/',
+			site_name: 'The New Yorker',
+		},
+		{
+			feed_ID: 66598595,
+			site_ID: 0,
+			site_URL: 'https://www.theroot.com/',
+			site_name: 'The Root',
+		},
+		{
+			feed_ID: 13683185,
+			site_ID: 0,
+			site_URL: 'https://www.theguardian.com/us',
+			site_name: 'The Guardian',
+		},
 	],
 	culture: [
-		// Add culture blogs...
+		{
+			feed_ID: 142614162,
+			site_ID: 118955609,
+			site_URL: 'https://hyperallergic.com/',
+			site_name: 'Hyperallergic',
+		},
+		{
+			feed_ID: 5767946,
+			site_ID: 3521287,
+			site_URL: 'https://www.themarginalian.org/',
+			site_name: 'The Marginalian',
+		},
+		{
+			feed_ID: 10359,
+			site_ID: 0,
+			site_URL: 'https://pitchfork.com/',
+			site_name: 'Pitchfork',
+		},
+		{
+			feed_ID: 8949493,
+			site_ID: 0,
+			site_URL: 'https://www.dazeddigital.com/rss',
+			site_name: 'Dazed',
+		},
+		{
+			feed_ID: 6645964,
+			site_ID: 0,
+			site_URL: 'https://www.openculture.com/',
+			site_name: 'Open Culture',
+		},
+		{
+			feed_ID: 19592473,
+			site_ID: 0,
+			site_URL: 'https://www.messynessychic.com/',
+			site_name: 'Messy Nessy Chic',
+		},
 	],
 	philosophy: [
 		// Add philosophy blogs...
