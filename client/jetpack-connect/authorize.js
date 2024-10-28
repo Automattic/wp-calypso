@@ -125,8 +125,6 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
-		isWooPaymentsOnboarding: PropTypes.bool,
-		isWooOnboarding: PropTypes.bool,
 		isWooPasswordlessJPC: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteHasJetpackPaidProduct: PropTypes.bool,
