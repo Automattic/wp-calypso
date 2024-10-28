@@ -199,27 +199,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getFormattedHeader = () => {
-		if ( isVideoPressFlow ) {
-			return (
-				<FormattedHeader
-					id="choose-a-domain-header"
-					headerText={ __( 'Choose a domain' ) }
-					subHeaderText={
-						<>
-							{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }
-							<button
-								className="button navigation-link step-container__navigation-link has-underline is-borderless"
-								onClick={ onSkip }
-							>
-								{ __( 'Decide later.' ) }
-							</button>
-						</>
-					}
-					align="center"
-				/>
-			);
-		}
-
 		if ( isBlogOnboardingFlow( flow ) ) {
 			return (
 				<FormattedHeader
