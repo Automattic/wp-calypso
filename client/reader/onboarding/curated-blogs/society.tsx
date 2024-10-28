@@ -198,7 +198,42 @@ export const societyBlogs: CuratedBlogsList = {
 		},
 	],
 	history: [
-		// Add history blogs...
+		{
+			feed_ID: 144373922,
+			site_ID: 218674381,
+			site_URL: 'https://historyfacts.com/',
+			site_name: 'History Facts',
+		},
+		{
+			feed_ID: 111739841,
+			site_ID: 181957101,
+			site_URL: 'https://livinglondonhistory.com/',
+			site_name: 'History Facts',
+		},
+		{
+			feed_ID: 158014293,
+			site_ID: 190492275,
+			site_URL: 'https://prologue.blogs.archives.gov/',
+			site_name: 'Pieces of History',
+		},
+		{
+			feed_ID: 158014293,
+			site_ID: 190492275,
+			site_URL: 'https://prologue.blogs.archives.gov/',
+			site_name: 'Pieces of History',
+		},
+		{
+			feed_ID: 9002220,
+			site_ID: 9563068,
+			site_URL: 'http://www.thehistoryblog.com/',
+			site_name: 'The History Blog',
+		},
+		{
+			feed_ID: 95253203,
+			site_ID: 161773962,
+			site_URL: 'https://acoup.blog/',
+			site_name: 'A Collection of Unmitigated Pedantry',
+		},
 	],
 	society: [
 		// Add society blogs...
