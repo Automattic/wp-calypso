@@ -168,7 +168,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 					recordTracksEvent( 'calypso_migration_message_view_sites_dashboard_click' )
 				}
 			>
-				{ __( 'View sites dashboard' ) }
+				{ __( 'View Sites dashboard' ) }
 			</Button>
 		</div>
 	);
