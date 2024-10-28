@@ -58,9 +58,11 @@ export default () => {
 				return EMPTY_ASSETS;
 			}
 
-			const allTheFiles = chunk.files.concat(
-				flatten( chunk.siblings.map( ( sibling ) => getChunkById( assets, sibling ).files ) )
-			);
+			const allTheFiles = chunk.chunks
+				? flatten( chunk.chunks.map( ( chunkId ) => getChunkById( assets, chunkId ).files ) )
+				: chunk.files.concat(
+						flatten( chunk.siblings.map( ( sibling ) => getChunkById( assets, sibling ).files ) )
+				  );
 
 			return groupAssetsByType( allTheFiles );
 		};
