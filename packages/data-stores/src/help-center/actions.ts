@@ -72,6 +72,12 @@ export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 		isChatLoaded,
 	} ) as const;
 
+export const setUnreadConversations = ( unreadConversations: number ) =>
+	( {
+		type: 'HELP_CENTER_SET_UNREAD_CONVERSATIONS',
+		unreadConversations,
+	} ) as const;
+
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -158,6 +164,7 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
+			| typeof setUnreadConversations
 			| typeof setIsMinimized
 			| typeof setIsChatLoaded
 			| typeof setNavigateToRoute
