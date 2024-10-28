@@ -20,8 +20,9 @@ export function useCreateGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 	return useMutation( {
 		...queryOptions,
 		mutationFn: () =>
-			wp.req.get( {
-				path: '/meta/external-media/google_photos_picker?path=session',
+			wp.req.post( {
+				apiNamespace: 'wpcom/v2',
+				path: '/meta/external-media/session/google_photos_picker',
 			} ),
 		onSuccess: ( data: PickerSession ) => {
 			dispatch( setPhotoPickerSession( data ) );
@@ -33,8 +34,10 @@ export function useDeleteGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 	return useMutation( {
 		...queryOptions,
 		mutationFn: ( sessionId: string ) =>
-			wp.req.delete( {
-				path: `/meta/external-media/google_photos_picker?path=session-delete&session_id=${ encodeURIComponent(
+			wp.req.post( {
+				method: 'DELETE',
+				apiNamespace: 'wpcom/v2',
+				path: `/meta/external-media/session/google_photos_picker?session_id=${ encodeURIComponent(
 					sessionId
 				) }`,
 			} ),
