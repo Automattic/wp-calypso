@@ -62,6 +62,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
+	const SITES_PER_PAGE = 6;
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -148,11 +149,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		return sortedRecommendations.slice( 0, 18 );
 	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
 
-	const maxPages = Math.ceil( combinedRecommendations.length / 6 ) - 1; // -1 because pages are 0-based.
+	const maxPages = Math.ceil( combinedRecommendations.length / SITES_PER_PAGE ) - 1; // -1 because pages are 0-based.
 
 	const displayedRecommendations = useMemo( () => {
 		// Show all items up to the current page.
-		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * 6 );
+		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE );
 	}, [ combinedRecommendations, currentPage ] );
 
 	const handleLoadMore = useCallback( () => {
