@@ -52,7 +52,7 @@ export const PaidPluginsSection = ( props ) => {
 		/>
 	);
 };
-export const FeaturePartnerBunblePlugins = ( props ) => {
+export const FeaturePartnerBundlePlugins = ( props ) => {
 	const { category } = props;
 
 	const { plugins, isFetching } = usePlugins( {
@@ -134,7 +134,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				/>
 			) }
 
-			{ isWPBeginnerSpecial && <FeaturePartnerBunblePlugins { ...props } category="wpbeginner" /> }
+			{ isWPBeginnerSpecial && <FeaturePartnerBundlePlugins { ...props } category="wpbeginner" /> }
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
