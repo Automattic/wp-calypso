@@ -1,7 +1,6 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { clsx } from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import A4AThemedModal from 'calypso/a8c-for-agencies/components/a4a-themed-modal';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -30,7 +29,6 @@ export default function AgencyTierCelebrationModal( {
 	currentAgencyTier?: string | null;
 } ) {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const isNarrowView = useBreakpoint( '<660px' );
 
 	const celebrationModalShowForCurrentType = useSelector( ( state ) =>
@@ -115,7 +113,7 @@ export default function AgencyTierCelebrationModal( {
 		);
 	};
 
-	const { title, description, extraDescription, benefits, video, image } =
+	const { title, description, extraDescription, benefits, video, image, cta } =
 		agencyTierInfo.celebrationModal;
 
 	return (
@@ -143,11 +141,13 @@ export default function AgencyTierCelebrationModal( {
 							{ preventWidows( extraDescription ) }
 						</div>
 					) }
-					<ul className="agency-tier-celebration-modal__benefits">
-						{ benefits.map( ( benefit ) => (
-							<li key={ benefit }>{ preventWidows( benefit ) }</li>
-						) ) }
-					</ul>
+					{ benefits && (
+						<ul className="agency-tier-celebration-modal__benefits">
+							{ benefits.map( ( benefit ) => (
+								<li key={ benefit }>{ preventWidows( benefit ) }</li>
+							) ) }
+						</ul>
+					) }
 				</div>
 				<div
 					className={ clsx( 'agency-tier-celebration-modal__scroll-indicator', {
@@ -161,7 +161,7 @@ export default function AgencyTierCelebrationModal( {
 					onClick={ handleClickExploreBenefits }
 					href={ A4A_AGENCY_TIER_LINK }
 				>
-					{ translate( 'Explore your benefits' ) }
+					{ cta }
 				</Button>
 			</div>
 		</A4AThemedModal>

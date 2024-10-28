@@ -169,6 +169,7 @@ $video-green: #0e5837;
 
 			.agency-tier-celebration-modal__title {
 				@include a4a-font-heading-xl;
+				text-wrap: balance;
 			}
 
 			.agency-tier-celebration-modal__description,

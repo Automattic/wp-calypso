@@ -55,23 +55,14 @@ const getAgencyTierInfo = (
 				logo: EmergingPartnerLogo,
 				includedTiers: [ 'emerging-partner' ],
 				celebrationModal: {
-					title: translate( 'Welcome to Automattic for Agencies!' ),
+					title: translate( 'You made your first purchase, your account is now activated!' ),
 					description: translate(
-						"You're just starting your journey with us. Your tier and associated benefits will change over time as you invest in or refer clients to Automattic products."
+						'Progress towards the Agency Partner tier and access extra benefits with additional purchases and referrals.'
 					),
-					extraDescription: translate( 'As an Automattic for Agencies member, you can:' ),
-					benefits: [
-						translate( 'Enjoy special bulk discounts on our marketplace curated for partners.' ),
-						translate( 'Boost your income by earning commissions on client referrals.' ),
-						translate( 'Manage all your client sites effortlessly in one convenient location.' ),
-						translate(
-							'Access immediate help from our WordPress experts through our support tools.'
-						),
-						translate( 'Enhance your skills with product training and marketing materials.' ),
-					],
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/emerging_partner_tier_celebration.mp4',
 					image: EmergingPartnerBackground,
+					cta: translate( 'Learn about Tiers' ),
 				},
 			};
 			break;
@@ -112,6 +103,7 @@ const getAgencyTierInfo = (
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/agency_partner_tier_celebration-2.mp4',
 					image: AgencyPartnerBackground,
+					cta: translate( 'Explore your benefits' ),
 				},
 			};
 			break;
@@ -150,6 +142,7 @@ const getAgencyTierInfo = (
 					video:
 						'https://automattic.com/wp-content/uploads/2024/10/agency_pro_partner_tier_celebration-2.mp4',
 					image: ProAgencyPartnerBackground,
+					cta: translate( 'Explore your benefits' ),
 				},
 			};
 	}
