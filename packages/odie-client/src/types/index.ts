@@ -40,6 +40,7 @@ type Feature =
 
 type InquiryType =
 	| 'help'
+	| 'user-is-greeting'
 	| 'suggestion'
 	| 'refund'
 	| 'billing'
@@ -53,7 +54,7 @@ export type Context = {
 	site_id: number | null;
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
-	prompt_tags?: {
+	question_tags?: {
 		feature?: Feature;
 		inquiry_type?: InquiryType;
 		language?: string;

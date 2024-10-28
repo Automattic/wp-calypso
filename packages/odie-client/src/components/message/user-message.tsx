@@ -22,13 +22,14 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
-	const hideDisclaimerContent = message.context?.flags?.hide_disclaimer_content;
+	const hideDisclaimerContent =
+		message.context?.flags?.hide_disclaimer_content ||
+		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
-	const showExtraContactOptions =
-		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+	const showExtraContactOptions = ! isPositiveFeedback || isRequestingHumanSupport;
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
