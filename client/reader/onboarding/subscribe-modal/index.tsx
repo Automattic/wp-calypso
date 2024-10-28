@@ -13,9 +13,10 @@ import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { requestPage } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-
 import './style.scss';
 
 interface SubscribeModalProps {
@@ -206,6 +207,38 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		setSelectedSite( site );
 	}, [] );
 
+	const follows = useSelector( getReaderFollows );
+
+	const handleFollowToggle = useCallback(
+		async ( site: CardData, following: boolean ) => {
+			const isFollowingSite = ( site: CardData ) =>
+				follows.some(
+					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
+				);
+
+			// Exit early if the follow state already matches what we want.
+			if ( following === isFollowingSite( site ) ) {
+				return;
+			}
+
+			// Maximum number of retries
+			const MAX_RETRIES = 3;
+
+			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
+				// Update the subscriptions list behind the modal.
+				await dispatch( requestFollows() );
+
+				// Delay the next attempt.
+				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
+
+				if ( following === isFollowingSite( site ) ) {
+					return;
+				}
+			}
+		},
+		[ follows, dispatch ]
+	);
+
 	const formatUrl = ( url: string ): string => {
 		return url
 			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
@@ -254,6 +287,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										disableSuggestedFollows
 										onItemClick={ () => handleItemClick( site ) }
 										isSelected={ selectedSite?.feed_ID === site.feed_ID }
+										onFollowToggle={ ( following: boolean ) =>
+											handleFollowToggle( site, following )
+										}
 									/>
 								) ) }
 							</div>
