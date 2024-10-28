@@ -453,11 +453,6 @@ export class JetpackAuthorize extends Component {
 		);
 	};
 
-	isWooPaymentsOnboarding = ( props = this.props ) => {
-		const { from } = props.authQuery;
-		return 'woocommerce-payments' === from;
-	};
-
 	isWooOnboarding( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'woocommerce-onboarding' === from;
@@ -855,8 +850,7 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
 		const isWpcomMigration = this.isFromMigrationPlugin();
-		const isWooOnboarding = this.isWooOnboarding();
-		const isWooPaymentsOnboarding = this.isWooPaymentsOnboarding();
+		const isWooDnaFlow = this.getWooDnaConfig().isWooDnaFlow();
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( isWpcomMigration ) {
@@ -900,7 +894,7 @@ export class JetpackAuthorize extends Component {
 		// is an intermediate step and the user will be redirected to the WooCommerce onboarding flow.
 		// Seeing this new username/email address can cause confusion because they have already set up
 		// a Woo account under their own email address.
-		if ( ( isWooOnboarding || isWooPaymentsOnboarding ) && isJetpackMagicLinkSignUpFlow ) {
+		if ( isWooDnaFlow && isJetpackMagicLinkSignUpFlow ) {
 			return connected
 				? translate( 'Account connected successfully' )
 				: translate( 'Connecting your account' );
