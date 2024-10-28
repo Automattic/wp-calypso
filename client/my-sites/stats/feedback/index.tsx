@@ -194,13 +194,13 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		useNoticeVisibilityHooks( siteId );
 
 	useEffect( () => {
-		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
+		if ( ! isPending && ! isError && shouldShowFeedbackPanel && supportCommercialUse ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
 				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ isPending, isError, shouldShowFeedbackPanel ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel, supportCommercialUse ] );
 
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
