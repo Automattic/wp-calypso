@@ -35,17 +35,10 @@ export const MessageContent = forwardRef<
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
 		const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
-		const isWapuu = message.role === 'bot';
-		const isHuman = message.role === 'business';
 
 		const messageClasses = clsx(
 			'odie-chatbox-message',
 			`odie-chatbox-message-${ message.role }`,
-			! shouldUseHelpCenterExperience && isWapuu && 'odie-chatbox-message-bot',
-
-			shouldUseHelpCenterExperience && isHuman && 'odie-chatbox-message-business',
-			shouldUseHelpCenterExperience && ! isHuman && `odie-chatbox-message-${ message.role }`,
-
 			`odie-chatbox-message-${ message.type ?? 'message' }`,
 			isLastMessage && 'odie-chatbox-message-last'
 		);
