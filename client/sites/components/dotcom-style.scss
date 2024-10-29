@@ -186,10 +186,6 @@
 		display: table-cell; /* ensures these cells are always shown */
 	}
 
-	table.dataviews-view-table td:last-child .dataviews-view-table__cell-content-wrapper {
-		justify-content: flex-end;
-	}
-
 	.sites-overview__content {
 		margin-top: 0;
 	}
