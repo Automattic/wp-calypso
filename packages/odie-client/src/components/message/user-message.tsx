@@ -29,7 +29,8 @@ export const UserMessage = ( {
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
-	const showExtraContactOptions = ! isPositiveFeedback || isRequestingHumanSupport;
+	const showExtraContactOptions =
+		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
