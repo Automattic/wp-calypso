@@ -1,4 +1,4 @@
-import { isFreeHostingTrial } from '@automattic/calypso-products';
+import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -84,8 +84,7 @@ const hosting: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					// TODO: This needs validation to ensure the plan is valid.
-					if ( plan ) {
+					if ( plan && isDotComPlan( { product_slug: plan } ) ) {
 						setPlanCartItem( {
 							product_slug: plan,
 						} );
