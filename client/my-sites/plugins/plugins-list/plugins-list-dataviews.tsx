@@ -26,10 +26,7 @@ export default function PluginsListDataViews( {
 	onSearch,
 	bulkActionDialog,
 }: Props ) {
-	const allStatuses = useSelector( ( state ) => {
-		return getPluginActionStatuses( state );
-	} );
-
+	const allStatuses = useSelector( getPluginActionStatuses );
 	const translate = useTranslate();
 
 	const fields = useFields( bulkActionDialog );
