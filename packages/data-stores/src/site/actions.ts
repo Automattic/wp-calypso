@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles/src/constants';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
