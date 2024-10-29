@@ -1,6 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
-import { Icon, closeSmall } from '@wordpress/icons';
+import { Icon, closeSmall, check } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
@@ -14,9 +14,10 @@ interface ProvisioningProps {
 		migrationKey: Status;
 		pluginInstallation?: Status;
 	};
+	preparationCompleted: boolean;
 }
 
-export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
+export const Provisioning: FC< ProvisioningProps > = ( { status, preparationCompleted } ) => {
 	const {
 		siteTransfer: siteTransferStatus,
 		migrationKey: migrationKeyStatus,
@@ -31,15 +32,36 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 
 	const currentActionIndex = actions.findIndex( ( action ) => action.status !== 'success' );
 	const currentAction = actions[ currentActionIndex ];
-	if ( ! currentAction ) {
+	if ( ! currentAction && ! preparationCompleted ) {
 		return;
 	}
 
+	const isCurrentActionStatusError = currentAction?.status === 'error';
+
+	if ( preparationCompleted ) {
+		const text = isCurrentActionStatusError
+			? translate(
+					'Your new site is ready! Retrieve your migration key and enter it into your old site to start your migration.'
+			  )
+			: translate(
+					'Your new site is ready! Enter your migration key into your old site to start your migration.'
+			  );
+		return (
+			<div className="migration-instructions-provisioning">
+				<div className="migration-instructions-provisioning__success">
+					<div className="migration-instructions-provisioning__success-icon">
+						<Icon icon={ check } />
+					</div>
+					<p>{ text }</p>
+				</div>
+			</div>
+		);
+	}
 	let text: ReactNode = translate( "We're preparing everything to ensure your new site is ready." );
 	let icon = <Spinner />;
 
 	// Error handler.
-	if ( currentAction.status === 'error' ) {
+	if ( isCurrentActionStatusError ) {
 		const contactClickHandler = () => {
 			recordMigrationInstructionsLinkClick( 'error-contact-support' );
 		};

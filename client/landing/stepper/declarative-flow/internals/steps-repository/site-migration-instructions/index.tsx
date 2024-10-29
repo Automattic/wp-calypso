@@ -180,7 +180,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 			<div className="site-migration-instructions__steps">
 				<Steps steps={ steps } />
 			</div>
-			<Provisioning status={ detailedStatus } />
+			<Provisioning status={ detailedStatus } preparationCompleted={ preparationCompleted } />
 		</MigrationInstructions>
 	);
 
