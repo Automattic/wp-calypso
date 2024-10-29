@@ -18,7 +18,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
+const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 	const { currentSiteTitle, currentTagline } = useSelect(
 		( select ) => ( {
 			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -174,3 +174,5 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 		</>
 	);
 };
+
+export default SiteOptions;
