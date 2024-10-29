@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
+import { calculateUnread } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-recent-conversations.scss';
@@ -17,22 +18,6 @@ const GetSectionName = ( unreadCount: number ) => {
 	}
 
 	return __( 'Recent Conversation', __i18n_text_domain__ );
-};
-
-const calculateUnread = ( conversations: ZendeskConversation[] ) => {
-	let unreadConversations = 0;
-	let unreadMessages = 0;
-
-	conversations.forEach( ( conversation ) => {
-		const unreadCount = conversation.participants[ 0 ]?.unreadCount ?? 0;
-
-		if ( unreadCount > 0 ) {
-			unreadConversations++;
-			unreadMessages += unreadCount;
-		}
-	} );
-
-	return { unreadConversations, unreadMessages };
 };
 
 const HelpCenterRecentConversations: React.FC = () => {
