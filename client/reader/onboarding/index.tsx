@@ -64,7 +64,6 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		setIsDiscoverModalOpen( false );
 	};
 
-	// Navigation handlers
 	const handleInterestsContinue = () => {
 		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_continue' );
 		closeInterestsModal();
