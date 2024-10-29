@@ -4,7 +4,7 @@ import { SectionBackground } from './backgrounds';
 
 import './style.scss';
 
-export type HostingSectionProps = {
+export type PageSectionProps = {
 	children: ReactNode;
 	heading: string;
 	subheading?: string;
@@ -13,37 +13,35 @@ export type HostingSectionProps = {
 	background?: SectionBackground;
 };
 
-export default function HostingSection( {
+export default function PageSection( {
 	icon,
 	heading,
 	subheading,
 	description,
 	children,
 	background,
-}: HostingSectionProps ) {
+}: PageSectionProps ) {
 	const isNarrowView = useBreakpoint( '<960px' );
 
 	return (
 		<section
-			className="hosting-section-wrapper"
+			className="page-section-wrapper"
 			style={ {
 				backgroundColor: background?.color,
 				backgroundImage: isNarrowView ? undefined : background?.image,
 				backgroundSize: background?.size,
 			} }
 		>
-			<div className="hosting-section">
-				<div className="hosting-section__sub-header">
-					{ icon && <div className="hosting-section__icon">{ icon }</div> }
-					{ subheading && (
-						<span className="hosting-section__sub-header-title">{ subheading }</span>
-					) }
+			<div className="page-section">
+				<div className="page-section__sub-header">
+					{ icon && <div className="page-section__icon">{ icon }</div> }
+					{ subheading && <span className="page-section__sub-header-title">{ subheading }</span> }
 				</div>
 
-				<div className="hosting-section__header">
-					<h2 className="hosting-section__header-title">{ heading }</h2>
+				<div className="page-section__header">
+					<h2 className="page-section__header-title">{ heading }</h2>
 
-					{ description && <p className="hosting-section__header-description">{ description }</p> }
+					{ description && <p className="page-section__header-description">{ description }</p> }
 				</div>
 				{ children }
 			</div>

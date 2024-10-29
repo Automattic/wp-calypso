@@ -1,6 +1,10 @@
 import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import {
+	BackgroundType1,
+	BackgroundType2,
+} from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import useExistingPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-existing-pressable-plan';
@@ -9,7 +13,6 @@ import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premi
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
-import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
 import CommonHostingBenefits from '../common-hosting-benefits';
