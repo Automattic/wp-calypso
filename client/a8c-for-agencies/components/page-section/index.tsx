@@ -1,4 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import { TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { SectionBackground } from './backgrounds';
 
@@ -6,10 +7,10 @@ import './style.scss';
 
 export type PageSectionProps = {
 	children: ReactNode;
-	heading: string;
-	subheading?: string;
+	heading: TranslateResult;
+	subheading?: TranslateResult;
 	icon?: ReactNode;
-	description?: string;
+	description?: TranslateResult;
 	background?: SectionBackground;
 };
 
