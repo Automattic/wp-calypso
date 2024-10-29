@@ -221,7 +221,7 @@ function ReaderSubscriptionListItem( {
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
-					onFollowToggle={ onFollowToggle || openSuggestedFollowsModal }
+					onFollowToggle={ disableSuggestedFollows ? onFollowToggle : openSuggestedFollowsModal }
 				/>
 				{ isFollowing && showNotificationSettings && (
 					<ReaderSiteNotificationSettings siteId={ siteId } />
