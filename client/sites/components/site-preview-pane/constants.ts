@@ -10,6 +10,8 @@ export const DOTCOM_SITE_PERFORMANCE = 'dotcom-site-performance';
 
 export const SITE_MARKETING_TOOLS = 'site-marketing-tools';
 export const SITE_MARKETING_BUSINESS_TOOLS = 'site-marketing-business-tools';
+export const SITE_SETTINGS = 'site-settings';
+export const SITE_ADMINISTRATION = 'site-administration';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_OVERVIEW ]: 'overview/:site',
@@ -25,4 +27,6 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	// New Information Architecture
 	[ SITE_MARKETING_TOOLS ]: 'sites/marketing/tools/:site',
 	[ SITE_MARKETING_BUSINESS_TOOLS ]: 'sites/marketing/business-tools/:site',
+	[ SITE_SETTINGS ]: 'sites/settings/:site',
+	[ SITE_ADMINISTRATION ]: 'sites/administration/:site',
 };
