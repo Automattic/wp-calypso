@@ -22,7 +22,7 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
-	const hideDisclaimerContent =
+	const isMessageWithoutEscalationOption =
 		message.context?.flags?.hide_disclaimer_content ||
 		message.context?.question_tags?.inquiry_type === 'user-is-greeting';
 	const hasFeedback = !! message?.rating_value;
@@ -58,7 +58,7 @@ export const UserMessage = ( {
 
 	const renderRedesignedComponent = () => {
 		return (
-			! hideDisclaimerContent && (
+			! isMessageWithoutEscalationOption && (
 				<div className="chat-feedback-wrapper">
 					{ showExtraContactOptions && renderExtraContactOptions() }
 					{ isBot && renderDisclaimers() }
@@ -69,7 +69,7 @@ export const UserMessage = ( {
 
 	const renderCurrentDesignComponent = () => {
 		return (
-			! hideDisclaimerContent && (
+			! isMessageWithoutEscalationOption && (
 				<>
 					{ showExtraContactOptions &&
 						( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
