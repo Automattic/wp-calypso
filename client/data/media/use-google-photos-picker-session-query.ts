@@ -22,7 +22,7 @@ export default function useGooglePhotosPickerSessionQuery(
 		queryFn: (): Promise< SessionData > =>
 			wp.req.get( {
 				apiNamespace: 'wpcom/v2',
-				path: `/meta/external-media/session/google_photos_picker?session_id=${ encodeURIComponent(
+				path: `/meta/external-media/session/google_photos_picker/${ encodeURIComponent(
 					sessionId
 				) }`,
 			} ),

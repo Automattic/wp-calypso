@@ -37,7 +37,7 @@ export function useDeleteGooglePhotosPickerSessionMutation( queryOptions = {} ) 
 			wp.req.post( {
 				method: 'DELETE',
 				apiNamespace: 'wpcom/v2',
-				path: `/meta/external-media/session/google_photos_picker?session_id=${ encodeURIComponent(
+				path: `/meta/external-media/session/google_photos_picker/${ encodeURIComponent(
 					sessionId
 				) }`,
 			} ),
