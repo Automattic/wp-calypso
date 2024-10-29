@@ -608,12 +608,21 @@ class ThemeSheet extends Component {
 	 * Render screenshot for either non-wpcom or externally-managed themes.
 	 */
 	renderScreenshot() {
-		const { name: themeName, demoUrl, translate, screenshot } = this.props;
+		const {
+			name: themeName,
+			demoUrl,
+			translate,
+			screenshot,
+			screenshots,
+			isExternallyManagedTheme,
+		} = this.props;
 
+		// Partner themes have their fullpage screenshot in the first position of screenshots.
+		const screenshotFull = isExternallyManagedTheme ? screenshots[ 0 ] : screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
-		const photonSrc = screenshot && photon( screenshot, { width } );
-		const img = screenshot && (
+		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
+		const img = screenshotFull && (
 			<img
 				alt={
 					// translators: %s is the theme name. Eg Twenty Twenty.
@@ -622,8 +631,8 @@ class ThemeSheet extends Component {
 					} )
 				}
 				className="theme__sheet-img"
-				src={ photonSrc || screenshot }
-				srcSet={ photonSrc && `${ photon( screenshot, { width, zoom: 2 } ) } 2x` }
+				src={ photonSrc || screenshotFull }
+				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
 			/>
 		);
 
