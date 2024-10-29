@@ -24,8 +24,7 @@ import './internals/new-hosted-site-flow.scss';
 
 function useShowDomainStep(): boolean {
 	const query = useQuery();
-	const showDomainStepValue = query.get( 'showDomainStep' );
-	return showDomainStepValue !== null && showDomainStepValue.toLowerCase() !== 'false';
+	return query.has( 'showDomainStep' );
 }
 
 const hosting: Flow = {
