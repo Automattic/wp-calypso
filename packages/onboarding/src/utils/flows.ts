@@ -80,7 +80,6 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName &&
 			( isNewsletterOrLinkInBioFlow( flowName ) ||
-				VIDEOPRESS_FLOW === flowName ||
 				ECOMMERCE_FLOW === flowName ||
 				FREE_FLOW === flowName )
 	);
@@ -214,10 +213,6 @@ export const ecommerceFlowRecurTypes = {
 	MONTHLY: 'monthly',
 	'2Y': '2Y',
 	'3Y': '3Y',
-};
-
-export const isVideoPressFlow = ( flowName: string | null ) => {
-	return !! flowName && [ VIDEOPRESS_FLOW, VIDEOPRESS_ACCOUNT ].includes( flowName );
 };
 
 export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) => {

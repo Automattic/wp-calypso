@@ -42,7 +42,6 @@ export const MessageContent = forwardRef<
 			`odie-chatbox-message-${ message.type ?? 'message' }`,
 			isLastMessage && 'odie-chatbox-message-last'
 		);
-
 		const containerClasses = clsx(
 			'odie-chatbox-message-sources-container',
 			shouldUseHelpCenterExperience &&
