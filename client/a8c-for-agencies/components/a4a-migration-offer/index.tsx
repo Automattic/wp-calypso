@@ -1,8 +1,8 @@
 import { Button, FoldableCard } from '@automattic/components';
 import { Icon, reusableBlock, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import MigrationOfferIcon from 'calypso/assets/images/a8c-for-agencies/migration-icon.svg';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from '../a4a-contact-support-widget';
-import MigrationOfferIcon from './migration_icon.svg';
 
 import './style.scss';
 type Props = {
