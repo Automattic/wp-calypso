@@ -51,16 +51,18 @@ const MessageAvatarHeader = ( {
 				<WapuuAvatar className={ wapuuAvatarClasses } />
 				<strong className="message-header-name"></strong>
 
-				<div className="message-header-buttons">
-					{ message.content?.length > 600 && ! isMobile && (
-						<Button compact borderless onClick={ handleFullscreenToggle }>
-							<img
-								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
-							/>
-						</Button>
-					) }
-				</div>
+				{ ! shouldUseHelpCenterExperience && (
+					<div className="message-header-buttons">
+						{ message.content?.length > 600 && ! isMobile && (
+							<Button compact borderless onClick={ handleFullscreenToggle }>
+								<img
+									src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+									alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+								/>
+							</Button>
+						) }
+					</div>
+				) }
 			</>
 		) : (
 			<>{ message.role === 'business' && <HumanAvatar /> }</>
@@ -84,16 +86,18 @@ const MessageAvatarHeader = ( {
 				className={ wapuuAvatarClasses }
 			/>
 			<strong className="message-header-name">{ botName }</strong>
-			<div className="message-header-buttons">
-				{ message.content?.length > 600 && ! isMobile && (
-					<Button compact borderless onClick={ handleFullscreenToggle }>
-						<img
-							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
-							alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
-						/>
-					</Button>
-				) }
-			</div>
+			{ ! shouldUseHelpCenterExperience && (
+				<div className="message-header-buttons">
+					{ message.content?.length > 600 && ! isMobile && (
+						<Button compact borderless onClick={ handleFullscreenToggle }>
+							<img
+								src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+								alt={ __( 'Icon to expand or collapse AI messages', __i18n_text_domain__ ) }
+							/>
+						</Button>
+					) }
+				</div>
+			) }
 		</>
 	);
 };
