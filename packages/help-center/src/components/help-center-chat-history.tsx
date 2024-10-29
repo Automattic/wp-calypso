@@ -11,57 +11,10 @@ import type { ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
-const ArchivedConversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
+const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
 	const { __ } = useI18n();
-	if ( ! conversations ) {
-		return [];
-	}
-
-	// A message is considered archived if the conversation.metadata.createdAt value is 365 days ago.
-	const archivedConversations = conversations.filter( ( conversation ) => {
-		if ( ! conversation?.metadata?.createdAt ) {
-			return false;
-		}
-
-		let createdAt = conversation.metadata?.createdAt;
-		createdAt = 1685627844000;
-		const createdAtDate = new Date( createdAt as string | number | Date );
-		const now = new Date();
-		const oneYearAgo = new Date( now.setFullYear( now.getFullYear() - 1 ) );
-
-		return createdAtDate < oneYearAgo;
-	} );
-
-	if ( ! archivedConversations.length ) {
+	if ( ! conversations || ! conversations.length ) {
 		return <div className="help-center-chat-history__no-results">{ __( 'Nothing found…' ) }</div>;
-	}
-
-	return (
-		<>
-			{ archivedConversations.map( ( archivedConversation ) => {
-				const lastMessage =
-					Array.isArray( archivedConversation.messages ) && archivedConversation.messages.length > 0
-						? archivedConversation.messages[ archivedConversation.messages.length - 1 ]
-						: null;
-
-				if ( lastMessage ) {
-					return (
-						<HelpCenterSupportChatMessage
-							navigateTo={ `/odie/${ archivedConversation.id }` }
-							key={ archivedConversation.id }
-							message={ lastMessage }
-							isUnread={ archivedConversation.participants[ 0 ]?.unreadCount > 0 }
-						/>
-					);
-				}
-			} ) }
-		</>
-	);
-};
-
-const RecentConversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
-	if ( ! conversations ) {
-		return [];
 	}
 
 	return (
@@ -134,9 +87,9 @@ export const HelpCenterChatHistory = () => {
 				{ ( tab ) => {
 					switch ( tab.name ) {
 						case TAB_STATES.recent:
-							return <RecentConversations conversations={ recentConversations } />;
+							return <Conversations conversations={ recentConversations } />;
 						case TAB_STATES.archived:
-							return <ArchivedConversations conversations={ archivedConversations } />;
+							return <Conversations conversations={ archivedConversations } />;
 						default:
 							return;
 					}
