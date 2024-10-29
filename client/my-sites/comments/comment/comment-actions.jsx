@@ -257,7 +257,7 @@ export class CommentActions extends Component {
 				{ this.hasAction( 'reply' ) && (
 					<Button
 						borderless
-						className="comment__action -comment__action-reply"
+						className="comment__action comment__action-reply"
 						onClick={ toggleReply }
 						tabIndex="0"
 						disabled={ ! canModerateComment && ! commentIsApproved }
