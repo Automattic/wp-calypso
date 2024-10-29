@@ -5,7 +5,7 @@
 	&__content {
 		padding: 24px;
 
-		@media ( max-width: 768px ) {
+		@media ( max-width: $break-medium ) {
 			padding: 0;
 		}
 	}
