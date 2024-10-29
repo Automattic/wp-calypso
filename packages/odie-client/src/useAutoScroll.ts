@@ -25,7 +25,7 @@ const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement > ) => {
 				const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
 				lastMessage?.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
 			} );
-		}, debounceTimeoutRef.current );
+		}, debounceTimeoutRef.current ) as unknown as number;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ chat.messages.length, chatStatus, messagesContainerRef.current ] );
 };
