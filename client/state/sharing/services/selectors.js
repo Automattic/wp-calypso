@@ -53,6 +53,7 @@ export function getKeyringServiceByName( state, name ) {
  */
 export function getEligibleKeyringServices( state, siteId, type ) {
 	const services = getKeyringServicesByType( state, type );
+	const googlePhotosPickerEnabled = config.isEnabled( 'google-photos-picker' );
 
 	if ( ! siteId ) {
 		return services;
@@ -110,6 +111,16 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		// Omit Eventbrite as the API that is used by Eventbrite plugin was disabled 20/02/2020
 		if ( service.ID === 'eventbrite' ) {
 			return false;
+		}
+
+		// Omit Google Photos if the Google Photos Picker is enabled
+		if ( service.ID === 'google_photos' ) {
+			return ! googlePhotosPickerEnabled;
+		}
+
+		// Omit Google Photos Picker if it's not enabled
+		if ( service.ID === 'google_photos_picker' ) {
+			return googlePhotosPickerEnabled;
 		}
 
 		// Omit the GitHub deployment app so it doesn't appear in the list of "other" services
