@@ -96,6 +96,7 @@ export type Message = {
 	simulateTyping?: boolean;
 	type: MessageType;
 	directEscalationSupport?: boolean;
+	created_at?: string;
 };
 
 export type Chat = {
