@@ -16,7 +16,7 @@ import {
 	WPCOM_DIFM_LITE,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
-import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import {
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
@@ -1628,7 +1628,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
-			[ NEWSLETTER_FLOW, VIDEOPRESS_FLOW ].forEach( ( flowName ) => {
+			[ NEWSLETTER_FLOW ].forEach( ( flowName ) => {
 				const getUrlFromCookie = jest.fn( () => '/cookie' );
 
 				// set a tailored flow name

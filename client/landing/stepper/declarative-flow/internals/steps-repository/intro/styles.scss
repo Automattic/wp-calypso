@@ -159,55 +159,6 @@
 		}
 	}
 
-	&.videopress {
-		padding: 0;
-		color: #fff;
-
-		.step-container.intro .step-container__content {
-			min-height: auto;
-		}
-
-		.signup-header {
-			h1 {
-				color: #fff;
-			}
-
-			svg {
-				fill: #fff;
-				stroke: none;
-			}
-		}
-
-		.button.is-primary {
-			background: #ffe61c;
-			color: #000;
-			transition: box-shadow 0.4s ease-in-out;
-
-			&:hover {
-				box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 2px 24px rgba(255, 230, 28, 0.3), 0 0 8px rgba(255, 230, 28, 0.18), 0 0 4px rgba(255, 230, 28, 0.15), 0 0 2.5px rgba(255, 230, 28, 0.12), 0 0 4px rgba(255, 230, 28, 0.1), 0 0 2px rgba(0, 0, 0, 0.8);
-			}
-		}
-
-		.button.intro__button-more {
-			border-color: rgba(255, 255, 255, 0.5);
-			transition: border 0.2s ease-in-out;
-
-			&:hover {
-				color: #fff;
-				border-color: #fff;
-			}
-		}
-
-		.intro__secondary-text {
-			margin-top: 32px;
-			font-size: 1.25rem;
-		}
-
-		.intro__video.loading-frame {
-			transition: opacity 0.3s ease-in-out;
-		}
-	}
-
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
@@ -253,8 +204,7 @@
 			}
 		}
 
-		.step-container__sensei-powered,
-		.step-container__videopress-powered {
+		.step-container__sensei-powered {
 			position: absolute;
 			bottom: 0;
 			left: 0;
@@ -310,21 +260,6 @@
 
 	.intro__title + .intro__button-row {
 		margin-top: 32px;
-	}
-
-	.intro__video {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		border: 0;
-
-		&.loading-frame {
-			background-image: url(calypso/assets/images/onboarding/videopress-onboarding-video-poster.jpeg);
-			background-repeat: no-repeat;
-			background-size: cover;
-		}
 	}
 
 	.intro__button-row {

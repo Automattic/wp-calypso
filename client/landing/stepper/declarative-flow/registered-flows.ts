@@ -37,9 +37,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ IMPORT_FOCUSED_FLOW ]: () =>
 		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
 
-	videopress: () =>
-		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
-
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
 
@@ -92,8 +89,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
-
-	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),

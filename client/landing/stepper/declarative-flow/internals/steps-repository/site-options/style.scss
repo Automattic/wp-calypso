@@ -112,41 +112,4 @@
 			background-color: var(--studio-gray-5);
 		}
 	}
-
-	.videopress & {
-		max-width: 425px;
-
-		.step-container__header {
-			margin-top: 128px;
-		}
-
-		.site-options__form {
-			padding-left: 24px;
-			padding-right: 24px;
-		}
-
-		/* stylelint-disable-next-line selector-id-pattern */
-		input#siteTitle,
-		textarea#tagline {
-			border: solid 1px #c3c4c7;
-			font-family: $default-font;
-		}
-
-		textarea#tagline {
-			height: 84px;
-			resize: none;
-			border-radius: 4px;
-		}
-
-		.button.site-options__submit-button.is-primary {
-			margin-top: 24px;
-			width: 100%;
-			border: 0 none;
-
-			&:disabled {
-				background-color: #292929;
-				color: #828282;
-			}
-		}
-	}
 }

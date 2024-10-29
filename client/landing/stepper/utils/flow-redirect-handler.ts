@@ -1,4 +1,4 @@
-import { BLOG_FLOW, VIDEOPRESS_FLOW, SENSEI_FLOW } from '@automattic/onboarding';
+import { BLOG_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
@@ -7,9 +7,9 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: 'free', to: '/start/free:lang?' },
 	{ flow: 'link-in-bio', to: '/start:lang?' },
 	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
+	{ flow: 'sensei', to: ':lang?/plugins/sensei-pro/' },
 	{ flow: 'videopress-tv', to: '/start:lang?' },
 	{ flow: 'videopress-tv-purchase', to: '/start:lang?' },
-	{ flow: SENSEI_FLOW, to: ':lang?/plugins/sensei-pro/' },
 ];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>

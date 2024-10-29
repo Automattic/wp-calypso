@@ -125,13 +125,13 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
+		isWooPasswordlessJPC: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteHasJetpackPaidProduct: PropTypes.bool,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
-		isWooPasswordlessJPC: PropTypes.bool,
 	};
 
 	redirecting = false;
@@ -848,6 +848,8 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
 		const isWpcomMigration = this.isFromMigrationPlugin();
+		const isWooDnaFlow = this.getWooDnaConfig().isWooDnaFlow();
+		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( isWpcomMigration ) {
 			const { display_name, email } = this.props.user;
@@ -881,29 +883,33 @@ export class JetpackAuthorize extends Component {
 		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
 		// email address. For this reason, we want to display both the username and the email address
 		// so users can start making the connection between the two immediately. Otherwise, users might
-		// not recognize their username since they didn't created it.
+		// not recognize their username since they didn't create it.
 
-		// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
-		let text = translate(
-			'Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+		const connected = authorizeSuccess || this.props.isAlreadyOnSitesList;
+		const connectionStatus = connected ? 'Connected' : 'Connecting';
+
+		// We make an exception for Woo onboardings, since in these cases the creation of a Jetpack account
+		// is an intermediate step and the user will be redirected to the WooCommerce onboarding flow.
+		// Seeing this new username/email address can cause confusion because they have already set up
+		// a Woo account under their own email address.
+		if ( isWooDnaFlow && isJetpackMagicLinkSignUpFlow ) {
+			return connected
+				? translate( 'Account connected successfully' )
+				: translate( 'Connecting your account' );
+		}
+
+		// translators: %(connectionStatus) is the connection status (E.g. Connecting/Connected), %(user) is user's Display Name (Eg John Doe) and %(email) is the user's email address
+		return translate(
+			'%(connectionStatus)s as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
 			{
-				args: { email: this.props.user.email, user: this.props.user.display_name },
+				args: {
+					connectionStatus,
+					email: this.props.user.email,
+					user: this.props.user.display_name,
+				},
 				components: { strong: <strong /> },
 			}
 		);
-
-		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-			// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
-			text = translate(
-				'Connected as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
-				{
-					args: { email: this.props.user.email, user: this.props.user.display_name },
-					components: { strong: <strong /> },
-				}
-			);
-		}
-
-		return text;
 	}
 
 	getProductActivationText() {

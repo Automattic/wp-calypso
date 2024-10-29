@@ -26,15 +26,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		plans: 4,
 		launchpad: 5,
 	},
-	videopress: {
-		intro: 0,
-		videomakerSetup: 1,
-		user: 2,
-		options: 3,
-		chooseADomain: 4,
-		processing: 5,
-		launchpad: 6,
-	},
 	sensei: {
 		senseiSetup: 1,
 		senseiDomain: 2,
