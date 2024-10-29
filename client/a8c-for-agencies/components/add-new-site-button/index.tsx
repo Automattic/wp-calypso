@@ -133,10 +133,9 @@ export default function AddNewSiteButton( {
 				{ menuItem( {
 					icon: <A4ALogo />,
 					heading: translate( 'Via the Automattic plugin' ),
-					description: translate( 'Connect with the Automattic for Agencies{{nbsp/}}plugin', {
-						components: { nbsp: <>&nbsp;</> },
-						comment: 'nbsp is a non-breaking space character',
-					} ),
+					description: preventWidows(
+						translate( 'Connect with the Automattic for Agencies plugin' )
+					),
 					buttonProps: {
 						onClick: () => {
 							setShowA4AConnectionModal( true );
@@ -147,10 +146,7 @@ export default function AddNewSiteButton( {
 				{ menuItem( {
 					icon: <WordPressLogo />,
 					heading: translate( 'Via WordPress.com' ),
-					description: translate( 'Add sites already connected to{{nbsp/}}WordPress.com', {
-						components: { nbsp: <>&nbsp;</> },
-						comment: 'nbsp is a non-breaking space character',
-					} ),
+					description: preventWidows( translate( 'Add sites already connected to WordPress.com' ) ),
 					buttonProps: {
 						onClick: handleImportFromWPCOM,
 					},
