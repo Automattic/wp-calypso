@@ -9,6 +9,10 @@
 		line-height: 1.2;
 		margin-bottom: 16px;
 		text-wrap: balance;
+
+		@media ( max-width: 768px ) {
+			font-size: 1.5rem;
+		}
 	}
 
 	&__content {
@@ -32,6 +36,12 @@
 
 		@media ( min-width: 1200px ) {
 			max-width: 450px;
+		}
+
+		@media ( max-width: 768px ) {
+			padding: 0;
+			max-width: 700px;
+			text-align: center;
 		}
 
 		.subscribe-modal__continue-button {

@@ -131,7 +131,7 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 1792967,
 			site_ID: 16956016,
-			site_URL: 'blog.lostartpress.com',
+			site_URL: '.subscribe-modal__titleblog.lostartpress.com',
 			site_name: 'Lost Art Press',
 		},
 		{
