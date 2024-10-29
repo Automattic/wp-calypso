@@ -17,7 +17,6 @@ export const SENSEI_FLOW = 'sensei';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
-export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'migration';
 export const SITE_MIGRATION_FLOW = 'site-migration';
@@ -61,7 +60,7 @@ export const isNewsletterFlow = ( flowName: string | null ) => {
 };
 
 export const isFreeFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
+	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
@@ -81,8 +80,7 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 		flowName &&
 			( isNewsletterOrLinkInBioFlow( flowName ) ||
 				VIDEOPRESS_FLOW === flowName ||
-				ECOMMERCE_FLOW === flowName ||
-				FREE_FLOW === flowName )
+				ECOMMERCE_FLOW === flowName )
 	);
 };
 

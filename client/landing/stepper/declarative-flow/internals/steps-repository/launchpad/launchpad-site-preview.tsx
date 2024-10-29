@@ -1,7 +1,6 @@
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { DEVICE_TYPES } from '@automattic/components';
 import {
-	FREE_FLOW,
 	NEWSLETTER_FLOW,
 	BUILD_FLOW,
 	WRITE_FLOW,
@@ -29,7 +28,6 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 	const getSitePreviewDefaultDevice = ( flow: string | null ) => {
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
-			case FREE_FLOW:
 			case BUILD_FLOW:
 			case WRITE_FLOW:
 			case START_WRITING_FLOW:

@@ -3,7 +3,6 @@ import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-
 import { useLocale } from '@automattic/i18n-utils';
 import {
 	ECOMMERCE_FLOW,
-	FREE_FLOW,
 	NEWSLETTER_FLOW,
 	SENSEI_FLOW,
 	VIDEOPRESS_FLOW,
@@ -129,16 +128,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),
 					content: VideoPressIntroModalContent,
 				},
-			};
-		}
-
-		if ( flowName === FREE_FLOW ) {
-			return {
-				title: createInterpolateElement(
-					__( 'You’re 1 minute away from<br />a beautiful, free website.<br />Ready?' ),
-					{ br: <br /> }
-				),
-				buttonText: __( 'Get started' ),
 			};
 		}
 
