@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
@@ -115,7 +116,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 		navigation.submit?.( { intent: SiteIntent.DIFM } );
 	};
 
-	const handleSkipClick = () => {
+	const handleDashboardClick = () => {
+		setIntent( SiteIntent.Build );
 		navigation.submit?.( { skip: true } );
 	};
 
@@ -140,7 +142,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
-				onSkip={ handleSkipClick }
 				goNext={ handleNext }
 				nextLabelText={ translate( 'Next' ) }
 				recordTracksEvent={ recordTracksEvent }
@@ -159,6 +160,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 							<span className="select-goals__link-separator" />
 							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
 								{ translate( 'Let us build a custom site for you' ) }
+							</Button>
+							<Button
+								variant="link"
+								onClick={ handleDashboardClick }
+								className="select-goals__link select-goals__dashboard-button"
+							>
+								<DashboardIcon />
+								{ translate( 'Skip to dashboard' ) }
 							</Button>
 						</div>
 					</>
