@@ -5,7 +5,7 @@ import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -175,7 +175,7 @@ export default function PlanSelectionDetails( {
 						</div>
 						<Button
 							className="pressable-overview-plan-selection__details-card-cta-button"
-							href={ CONTACT_URL_HASH_FRAGMENT }
+							href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 							primary
 						>
 							{ translate( 'Contact support' ) } <Icon icon={ external } size={ 16 } />
@@ -243,8 +243,7 @@ export default function PlanSelectionDetails( {
 							<Button
 								className="pressable-overview-plan-selection__details-card-cta-button"
 								onClick={ onContactUs }
-								href={ PRESSABLE_CONTACT_LINK }
-								target="_blank"
+								href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 								primary
 							>
 								{ translate( 'Contact us' ) } <Icon icon={ external } size={ 16 } />
