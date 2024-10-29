@@ -98,7 +98,7 @@ export function useFields(
 							>
 								{ translate( 'Update to version %(version)s', {
 									args: {
-										version: item?.update?.new_version || '',
+										version: item?.update?.new_version.split( '-' ).slice( 0, 2 ).join( '-' ) || '',
 									},
 								} ) }
 							</Button>
