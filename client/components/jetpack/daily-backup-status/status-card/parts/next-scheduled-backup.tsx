@@ -3,7 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useNextBackupSchedule } from 'calypso/components/jetpack/backup-schedule-setting/hooks';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const NextScheduledBackup: FunctionComponent< Props > = ( { siteId } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -28,6 +30,10 @@ const NextScheduledBackup: FunctionComponent< Props > = ( { siteId } ) => {
 		return null;
 	}
 
+	const onModifyClick = () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_schedule_modify_click' ) );
+	};
+
 	return (
 		<div className="status-card__scheduled-backup">
 			<span className="scheduled-backup__message">
@@ -43,6 +49,7 @@ const NextScheduledBackup: FunctionComponent< Props > = ( { siteId } ) => {
 			<a
 				href={ `${ settingsPath( siteSlug ) }#backup-schedule` }
 				className="scheduled-backup__action"
+				onClick={ onModifyClick }
 			>
 				{ ' ' }
 				{ translate( 'Modify' ) }

@@ -22,7 +22,7 @@ export const OdieSendMessageButton = ( {
 	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
 
 	const sendMessageHandler = useCallback( async () => {
-		if ( inputRef.current?.value.trim() === '' ) {
+		if ( inputRef.current?.value.trim() === '' || shouldBeDisabled ) {
 			return;
 		}
 		const messageString = inputRef.current?.value;

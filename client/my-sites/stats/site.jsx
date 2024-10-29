@@ -389,35 +389,70 @@ class StatsSite extends Component {
 					// @TODO: remove highlight section completely once flag is released
 					<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				) }
+				{ isNewDateFilteringEnabled && (
+					// moves date range block into new location
+					<StatsPeriodHeader>
+						<StatsPeriodNavigation
+							date={ date }
+							period={ period }
+							url={ `/stats/${ period }/${ slug }` }
+							queryParams={ context.query }
+							pathTemplate={ pathTemplate }
+							charts={ CHARTS }
+							availableLegend={ this.getAvailableLegend() }
+							activeTab={ getActiveTab( this.props.chartTab ) }
+							activeLegend={ this.state.activeLegend }
+							onChangeLegend={ this.onChangeLegend }
+							isWithNewDateFiltering // @TODO:remove this prop once we release new date filtering
+							isWithNewDateControl
+							showArrows
+							slug={ slug }
+							dateRange={ customChartRange }
+						>
+							{ ' ' }
+							<DatePicker
+								period={ period }
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+								isShort
+							/>
+						</StatsPeriodNavigation>
+					</StatsPeriodHeader>
+				) }
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
-						<StatsPeriodHeader>
-							<StatsPeriodNavigation
-								date={ date }
-								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-								queryParams={ context.query }
-								pathTemplate={ pathTemplate }
-								charts={ CHARTS }
-								availableLegend={ this.getAvailableLegend() }
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								onChangeLegend={ this.onChangeLegend }
-								isWithNewDateControl
-								slug={ slug }
-								dateRange={ customChartRange }
-							>
-								{ ' ' }
-								<DatePicker
-									period={ period }
+						{ ! isNewDateFilteringEnabled && (
+							<StatsPeriodHeader>
+								<StatsPeriodNavigation
 									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-									isShort
-								/>
-							</StatsPeriodNavigation>
-						</StatsPeriodHeader>
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+									queryParams={ context.query }
+									pathTemplate={ pathTemplate }
+									charts={ CHARTS }
+									availableLegend={ this.getAvailableLegend() }
+									activeTab={ getActiveTab( this.props.chartTab ) }
+									activeLegend={ this.state.activeLegend }
+									onChangeLegend={ this.onChangeLegend }
+									isWithNewDateControl
+									showArrows
+									slug={ slug }
+									dateRange={ customChartRange }
+								>
+									{ ' ' }
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+										isShort
+									/>
+								</StatsPeriodNavigation>
+							</StatsPeriodHeader>
+						) }
 
 						<ChartTabs
 							activeTab={ getActiveTab( this.props.chartTab ) }
@@ -432,7 +467,7 @@ class StatsSite extends Component {
 							chartTab={ this.props.chartTab }
 							customQuantity={ customChartQuantity }
 							customRange={ customChartRange }
-							hideLegend
+							hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
 						/>
 					</>
 

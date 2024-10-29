@@ -1,5 +1,6 @@
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { DirectoryApplicationType } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import type { AgencyTier } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 export interface APIError {
@@ -62,7 +63,7 @@ export interface Agency {
 			status?: 'pending' | 'in-progress' | 'completed';
 			directories: {
 				status: 'pending' | 'approved' | 'rejected' | 'closed';
-				directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
+				directory: DirectoryApplicationType;
 				urls: string[];
 				note: string;
 				is_published?: boolean;
@@ -71,7 +72,10 @@ export interface Agency {
 			is_published?: boolean;
 		};
 	};
-	partner_directory_allowed: boolean;
+	partner_directory: {
+		allowed: boolean;
+		directories: DirectoryApplicationType[];
+	};
 	user: {
 		role: 'a4a_administrator' | 'a4a_manager';
 		capabilities: string[];

@@ -99,8 +99,8 @@ export const technologyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 117374,
 			site_ID: 15451510,
-			site_URL: 'Reflections on Technology',
-			site_name: 'richardcoyne.com',
+			site_URL: 'richardcoyne.com',
+			site_name: 'Reflections on Technology, Media & Culture',
 		},
 		{
 			feed_ID: 68503995,
@@ -119,8 +119,8 @@ export const technologyBlogs: CuratedBlogsList = {
 		{
 			feed_ID: 47166615,
 			site_ID: 0,
-			site_URL: 'Design Milk',
-			site_name: 'design-milk.com',
+			site_URL: 'design-milk.com',
+			site_name: 'Design Milk',
 		},
 		{
 			feed_ID: 143967848,

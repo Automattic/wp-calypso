@@ -3,16 +3,15 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useUpdateMigrationStatus } from 'calypso/data/site-migration/use-update-migration-status';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import FlowCard from '../components/flow-card';
+import usePendingMigrationStatus from './use-pending-migration-status';
 import type { StepProps } from '../../types';
 
 import './style.scss';
@@ -26,7 +25,6 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 	const { navigation, headerText } = props;
 
 	const translate = useTranslate();
-	const site = useSite();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 	usePresalesChat( 'wpcom' );
 
@@ -64,28 +62,13 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		urlData
 	);
 
+	const { setPendingMigration } = usePendingMigrationStatus( { onSubmit: navigation.submit } );
+
 	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
 	const shouldDisplayHostIdentificationMessage =
 		hostingProviderSlug &&
 		hostingProviderSlug !== 'unknown' &&
 		hostingProviderSlug !== 'automattic';
-
-	const canInstallPlugins = site?.plan?.features?.active.find(
-		( feature ) => feature === 'install-plugins'
-	)
-		? true
-		: false;
-
-	const { updateMigrationStatus } = useUpdateMigrationStatus();
-
-	const handleClick = ( how: string ) => {
-		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
-		if ( site?.ID ) {
-			const parsedHow = how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ? 'diy' : how;
-			updateMigrationStatus( site.ID, `migration-pending-${ parsedHow }` );
-		}
-		return navigation.submit?.( { how, destination } );
-	};
 
 	const stepContent = (
 		<>
@@ -95,7 +78,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 						key={ i }
 						title={ option.label }
 						text={ option.description }
-						onClick={ () => handleClick( option.value ) }
+						onClick={ () => setPendingMigration( option.value ) }
 					/>
 				) ) }
 			</div>

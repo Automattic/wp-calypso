@@ -2,30 +2,351 @@ import { CuratedBlogsList } from './index';
 
 export const societyBlogs: CuratedBlogsList = {
 	education: [
-		// Add more education blogs...
+		{
+			feed_ID: 155447430,
+			site_ID: 202092965,
+			site_URL: 'https://world-education-blog.org',
+			site_name: 'World Education Blog',
+		},
+		{
+			feed_ID: 161689814,
+			site_ID: 223822458,
+			site_URL: 'https://www.educatorstechnology.com/',
+			site_name: 'Educators Technology',
+		},
+		{
+			feed_ID: 78449659,
+			site_ID: 102727187,
+			site_URL: 'http://www.shakeuplearning.com/',
+			site_name: 'Educators Technology',
+		},
+		{
+			feed_ID: 69814417,
+			site_ID: 39960713,
+			site_URL: 'https://www.teachertoolkit.co.uk/',
+			site_name: 'TeacherToolkit',
+		},
+		{
+			feed_ID: 19068123,
+			site_ID: 64463434,
+			site_URL: 'https://jenniefitzkee.com/',
+			site_name: "A Teacher's Reflections",
+		},
+		{
+			feed_ID: 22002764,
+			site_ID: 60068710,
+			site_URL: 'https://www.coolcatteacher.com/',
+			site_name: 'Cool Cat Teacher Blog',
+		},
 	],
 	nature: [
-		// Add nature blogs...
+		{
+			feed_ID: 93708735,
+			site_ID: 158320507,
+			site_URL: 'https://scubahanknyc.com/',
+			site_name: 'Scuba Hank NYC',
+		},
+		{
+			feed_ID: 47864083,
+			site_ID: 43646855,
+			site_URL: 'https://stevecreek.com/',
+			site_name: 'Steve Creek Wildlife Photography',
+		},
+		{
+			feed_ID: 136146583,
+			site_ID: 159711569,
+			site_URL: 'https://elpasozoo.home.blog/',
+			site_name: 'Conservation Education',
+		},
+		{
+			feed_ID: 79041338,
+			site_ID: 142325617,
+			site_URL: 'https://nationalparkswitht.com/',
+			site_name: 'National Parks With T',
+		},
+		{
+			feed_ID: 17239565,
+			site_ID: 62426488,
+			site_URL: 'https://backyardbirdnerd.com/',
+			site_name: 'Backyard Bird Nerd',
+		},
+		{
+			feed_ID: 155668618,
+			site_ID: 48819432,
+			site_URL: 'https://scotlandsnature.wordpress.com/',
+			site_name: "Scotland's Nature",
+		},
 	],
 	future: [
-		// Add future-focused blogs...
+		{
+			feed_ID: 66308872,
+			site_ID: 101450901,
+			site_URL: 'https://futurism.com/',
+			site_name: 'Futurism',
+		},
+		{
+			feed_ID: 16857803,
+			site_ID: 4183809,
+			site_URL: 'https://singularityhub.com/',
+			site_name: 'Singularity Hub',
+		},
+		{
+			feed_ID: 64152258,
+			site_ID: 127277856,
+			site_URL: 'http://www.nextbigfuture.com/',
+			site_name: 'NextBigFuture.com',
+		},
+		{
+			feed_ID: 77936565,
+			site_ID: 141327587,
+			site_URL: 'https://bryanalexander.org/',
+			site_name: 'Bryan Alexander',
+		},
+		{
+			feed_ID: 388033,
+			site_ID: 1011537,
+			site_URL: 'https://thenextwavefutures.wordpress.com/',
+			site_name: 'the next wave',
+		},
+		{
+			feed_ID: 46138681,
+			site_ID: 16638040,
+			site_URL: 'https://frankdiana.net/',
+			site_name: 'Reimagining the Future',
+		},
+		{
+			feed_ID: 1430889,
+			site_ID: 8522080,
+			site_URL: 'https://lucept.com/',
+			site_name: 'Lucept',
+		},
 	],
 	politics: [
-		// Add politics blogs...
+		{
+			feed_ID: 144806355,
+			site_ID: 205851186,
+			site_URL: 'https://www.worldpoliticsreview.com/',
+			site_name: 'World Politics Review',
+		},
+		{
+			feed_ID: 163680501,
+			site_ID: 204171482,
+			site_URL: 'https://arcmag.org',
+			site_name: 'Arc: Religion, Politics, Et Cetera',
+		},
+		{
+			feed_ID: 4860866,
+			site_ID: 0,
+			site_URL: 'https://politicalwire.com/',
+			site_name: 'Political Wire',
+		},
+		{
+			feed_ID: 119663676,
+			site_ID: 0,
+			site_URL: 'https://www.politics.co.uk/',
+			site_name: 'Politics.co.uk',
+		},
+		{
+			feed_ID: 5055404,
+			site_ID: 0,
+			site_URL: 'http://www.politico.com/rss/politicopicks.xml',
+			site_name: 'Politico',
+		},
+		{
+			feed_ID: 17459859,
+			site_ID: 0,
+			site_URL: 'https://www.factcheck.org/',
+			site_name: 'FactCheck.org',
+		},
 	],
 	'climate-change': [
-		// Add climate change blogs...
+		{
+			feed_ID: 154160739,
+			site_ID: 228474941,
+			site_URL: 'https://insideclimatenews.org/',
+			site_name: 'Inside Climate News ',
+		},
+		{
+			feed_ID: 107813600,
+			site_ID: 185804187,
+			site_URL: 'https://yaleclimateconnections.org/',
+			site_name: 'Yale Climate Connections',
+		},
+		{
+			feed_ID: 163683192,
+			site_ID: 0,
+			site_URL: 'https://www.ipcc.ch/',
+			site_name: 'IPCC',
+		},
+		{
+			feed_ID: 48632660,
+			site_ID: 162117108,
+			site_URL: 'https://climatefeedback.org/',
+			site_name: 'Climate Feedback ',
+		},
+		{
+			feed_ID: 40967167,
+			site_ID: 0,
+			site_URL: 'http://www.carbonbrief.org/feed',
+			site_name: 'Carbon Brief',
+		},
+		{
+			feed_ID: 42326459,
+			site_ID: 0,
+			site_URL: 'http://skepticalscience.com/feed.xml',
+			site_name: 'Skeptical Science',
+		},
 	],
 	history: [
-		// Add history blogs...
+		{
+			feed_ID: 144373922,
+			site_ID: 218674381,
+			site_URL: 'https://historyfacts.com/',
+			site_name: 'History Facts',
+		},
+		{
+			feed_ID: 111739841,
+			site_ID: 181957101,
+			site_URL: 'https://livinglondonhistory.com/',
+			site_name: 'History Facts',
+		},
+		{
+			feed_ID: 158014293,
+			site_ID: 190492275,
+			site_URL: 'https://prologue.blogs.archives.gov/',
+			site_name: 'Pieces of History',
+		},
+		{
+			feed_ID: 158014293,
+			site_ID: 190492275,
+			site_URL: 'https://prologue.blogs.archives.gov/',
+			site_name: 'Pieces of History',
+		},
+		{
+			feed_ID: 9002220,
+			site_ID: 9563068,
+			site_URL: 'http://www.thehistoryblog.com/',
+			site_name: 'The History Blog',
+		},
+		{
+			feed_ID: 95253203,
+			site_ID: 161773962,
+			site_URL: 'https://acoup.blog/',
+			site_name: 'A Collection of Unmitigated Pedantry',
+		},
 	],
 	society: [
-		// Add society blogs...
+		{
+			feed_ID: 48416491,
+			site_ID: 0,
+			site_URL: 'http://www.theatlantic.com/feed/all',
+			site_name: 'The Atlantic',
+		},
+		{
+			feed_ID: 163685502,
+			site_ID: 0,
+			site_URL: 'http://www.vox.com/rss/index.xml',
+			site_name: 'Vox',
+		},
+		{
+			feed_ID: 110082608,
+			site_ID: 177241961,
+			site_URL: 'https://blog.ted.com/',
+			site_name: 'TED Blog',
+		},
+		{
+			feed_ID: 14625,
+			site_ID: 0,
+			site_URL: 'http://www.newyorker.com/feed/rss',
+			site_name: 'The New Yorker',
+		},
+		{
+			feed_ID: 66598595,
+			site_ID: 0,
+			site_URL: 'http://www.theroot.com/rss',
+			site_name: 'The Root',
+		},
+		{
+			feed_ID: 38049686,
+			site_ID: 0,
+			site_URL: 'http://www.theguardian.com/us/rss',
+			site_name: 'The Guardian',
+		},
 	],
 	culture: [
-		// Add culture blogs...
+		{
+			feed_ID: 55747131,
+			site_ID: 118955609,
+			site_URL: 'https://hyperallergic.com/',
+			site_name: 'Hyperallergic',
+		},
+		{
+			feed_ID: 5767946,
+			site_ID: 3521287,
+			site_URL: 'https://www.themarginalian.org/',
+			site_name: 'The Marginalian',
+		},
+		{
+			feed_ID: 10359,
+			site_ID: 0,
+			site_URL: 'http://pitchfork.com/feed/rss',
+			site_name: 'Pitchfork',
+		},
+		{
+			feed_ID: 8949493,
+			site_ID: 0,
+			site_URL: 'https://www.dazeddigital.com/rss',
+			site_name: 'Dazed',
+		},
+		{
+			feed_ID: 6645964,
+			site_ID: 0,
+			site_URL: 'https://www.openculture.com/',
+			site_name: 'Open Culture',
+		},
+		{
+			feed_ID: 56317607,
+			site_ID: 0,
+			site_URL: 'http://www.juxtapoz.com/news/?format=feed&type=rss',
+			site_name: 'Juxtapoz Magazine',
+		},
 	],
 	philosophy: [
-		// Add philosophy blogs...
+		{
+			feed_ID: 75755245,
+			site_ID: 62276702,
+			site_URL: 'https://1000wordphilosophy.com/',
+			site_name: '1000-Word Philosophy: An Introductory Anthology ',
+		},
+		{
+			feed_ID: 19103724,
+			site_ID: 0,
+			site_URL: 'http://aeon.co/feed.rss',
+			site_name: 'Aeon | a world of ideas',
+		},
+		{
+			feed_ID: 59963902,
+			site_ID: 44180183,
+			site_URL: 'https://jamesbishopblog.com/',
+			site_name: "Bishop's Encyclopedia of Religion, Society and Philosophy ",
+		},
+		{
+			feed_ID: 45806376,
+			site_ID: 75932265,
+			site_URL: 'https://dailynous.com/',
+			site_name: 'Daily Nous',
+		},
+		{
+			feed_ID: 25217327,
+			site_ID: 0,
+			site_URL: 'http://philosophynow.org/rss',
+			site_name: 'Philosophy Now',
+		},
+		{
+			feed_ID: 76453290,
+			site_ID: 0,
+			site_URL: 'https://partiallyexaminedlife.com/',
+			site_name: 'The Partially Examined Life Philosophy Podcast',
+		},
 	],
 };

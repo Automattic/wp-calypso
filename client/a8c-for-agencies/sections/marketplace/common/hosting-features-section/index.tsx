@@ -1,7 +1,7 @@
+import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 import HostingOverviewFeatures from '../hosting-overview-features';
-import HostingSection, { HostingSectionProps } from '../hosting-section';
 
-type Props = Omit< HostingSectionProps, 'children' > & {
+type Props = Omit< PageSectionProps, 'children' > & {
 	items: {
 		icon: JSX.Element;
 		title: string;
@@ -18,7 +18,7 @@ export default function HostingFeaturesSection( {
 	items,
 }: Props ) {
 	return (
-		<HostingSection
+		<PageSection
 			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
@@ -26,6 +26,6 @@ export default function HostingFeaturesSection( {
 			description={ description }
 		>
 			<HostingOverviewFeatures items={ items } />
-		</HostingSection>
+		</PageSection>
 	);
 }

@@ -1,9 +1,4 @@
-import {
-	getSetupBlogTask,
-	getSetupFreeTask,
-	getSetupGeneralTask,
-	getSetupVideoPressTask,
-} from '../';
+import { getSetupBlogTask, getSetupFreeTask, getSetupGeneralTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
 
@@ -36,21 +31,6 @@ describe( 'getSetupBlogTask', () => {
 		const context = buildContext( { siteSlug } );
 
 		expect( getSetupBlogTask( task, 'flowId', context ) ).toMatchObject( {
-			useCalypsoPath: true,
-			calypso_path: `${ calypso_path }?siteSlug=${ siteSlug }`,
-		} );
-	} );
-} );
-
-describe( 'getSetupVideoPressTask', () => {
-	const calypso_path = 'some-path';
-	const task = buildTask( { id: 'task', calypso_path } );
-
-	it( 'returns the link', () => {
-		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
-
-		expect( getSetupVideoPressTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path: `${ calypso_path }?siteSlug=${ siteSlug }`,
 		} );

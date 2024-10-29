@@ -18,7 +18,8 @@ export default function WooProductDownload( { licenseKey, allProducts }: WooProd
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const productSlug = licenseKey.split( '_' )[ 0 ];
-	const product = allProducts && allProducts.find( ( product ) => product.slug === productSlug );
+	const product =
+		allProducts && allProducts.find( ( product ) => product.slug.startsWith( productSlug ) );
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
 
 	const { mutate, status, error, data } = downloadUrl;

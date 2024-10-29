@@ -11,8 +11,9 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import DownloadBadges from '../../download-badges';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
@@ -22,16 +23,15 @@ import './style.scss';
 
 export default function AgencyTierOverview() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const agency = useSelector( getActiveAgency );
 
-	const title = translate( 'Your Agency Tier' );
+	const title = translate( 'Agency Tiers' );
 	const benefits = getTierBenefits( translate );
 
 	const currentAgencyTier = agency?.tier?.id;
-	const currentAgencyTierInfo = currentAgencyTier
-		? getAgencyTierInfo( currentAgencyTier, translate )
-		: null;
+	const currentAgencyTierInfo = getAgencyTierInfo( currentAgencyTier, translate );
 
 	const learnMoreLink =
 		'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/';
@@ -65,7 +65,10 @@ export default function AgencyTierOverview() {
 								<div
 									className={ clsx(
 										'agency-tier-overview__current-tier-badge',
-										currentAgencyTierInfo.id
+										currentAgencyTierInfo.id,
+										{
+											'is-default': ! currentAgencyTier,
+										}
 									) }
 								>
 									<div className="agency-tier-overview__current-agency-tier">
@@ -76,7 +79,20 @@ export default function AgencyTierOverview() {
 									<div>{ currentAgencyTierInfo.subtitle }</div>
 									{ translate( '{{a}}Learn more{{/a}} ↗', {
 										components: {
-											a: <a target="_blank" href={ learnMoreLink } rel="noopener noreferrer" />,
+											a: (
+												<a
+													target="_blank"
+													href={ learnMoreLink }
+													onClick={ () => {
+														dispatch(
+															recordTracksEvent( 'calypso_a4a_agency_tier_badge_learn_more_click', {
+																agency_tier: currentAgencyTier,
+															} )
+														);
+													} }
+													rel="noopener noreferrer"
+												/>
+											),
 										},
 									} ) }
 								</div>
@@ -133,7 +149,7 @@ export default function AgencyTierOverview() {
 						{ translate( 'Take a closer look' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-heading">
-						{ translate( 'Explore the benefits of the tiers' ) }
+						{ translate( 'Explore the benefits of using Automattic for Agencies' ) }
 					</div>
 					<div className="agency-tier-overview__bottom-content-cards">
 						{ benefits.map( ( benefit ) => (

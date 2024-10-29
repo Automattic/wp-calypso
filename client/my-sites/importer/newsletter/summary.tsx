@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, SetStateAction, useEffect } from 'react';
+import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import ImporterActionButton from '../importer-action-buttons/action-button';
@@ -96,6 +97,11 @@ export default function Summary( {
 							),
 						}
 					) }
+					<img
+						src={ pauseSubstackBillingImg }
+						alt={ __( 'Pause Substack billing' ) }
+						className="pause-billing"
+					/>
 				</Notice>
 			) }
 

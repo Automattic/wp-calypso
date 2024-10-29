@@ -6,13 +6,13 @@ export interface AgencyTierInfo {
 	description: string;
 	logo: string;
 	includedTiers: string[];
-	emptyStateMessage?: string;
-	celebrationModal: {
+	celebrationModal?: {
 		title: string;
 		description: string;
 		extraDescription?: string;
-		benefits: string[];
+		benefits?: string[];
 		video: string;
 		image: string;
+		cta: string;
 	};
 }

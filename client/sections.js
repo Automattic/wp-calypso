@@ -17,13 +17,13 @@ const sections = [
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
-		module: 'calypso/hosting/sites',
+		module: 'calypso/sites',
 		group: 'sites-dashboard',
 	},
 	{
 		name: 'sites-dashboard',
 		paths: [ '/p2s' ],
-		module: 'calypso/hosting/sites',
+		module: 'calypso/sites',
 		group: 'sites-dashboard',
 	},
 	{
@@ -572,6 +572,12 @@ const sections = [
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
 		module: 'calypso/hosting/overview',
+		group: 'sites',
+	},
+	{
+		name: 'site-marketing',
+		paths: [ '/sites/marketing' ],
+		module: 'calypso/sites/marketing',
 		group: 'sites',
 	},
 	{
