@@ -181,6 +181,17 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Google Photos when no accounts are connected',
 				} );
 			},
+			google_photos_picker: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Access photos stored in your Google Photos library.', {
+						comment: 'Description for Google Photos when one or more accounts are connected',
+					} );
+				}
+
+				return this.props.translate( 'Access photos stored in your Google Photos library', {
+					comment: 'Description for Google Photos when no accounts are connected',
+				} );
+			},
 			google_drive: function () {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate( 'Create and access files in your Google Drive', {
