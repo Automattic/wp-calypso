@@ -5,7 +5,6 @@ import {
 	ECOMMERCE_FLOW,
 	FREE_FLOW,
 	NEWSLETTER_FLOW,
-	SENSEI_FLOW,
 	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
 	isVideoPressTVFlow,
@@ -105,17 +104,6 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
-		if ( flowName === SENSEI_FLOW ) {
-			return {
-				title: createInterpolateElement(
-					__( 'You are minutes away from<br />being ready to launch your<br />first course.' ),
-					{ br: <br /> }
-				),
-				buttonText: __( 'Get started' ),
-				secondaryButtonText: __( 'Learn more' ),
-			};
-		}
-
 		if ( flowName === VIDEOPRESS_FLOW ) {
 			const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
 			return {
@@ -193,7 +181,6 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			recordTracksEvent={ recordTracksEvent }
 			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
-			showSenseiPowered={ flow === SENSEI_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
