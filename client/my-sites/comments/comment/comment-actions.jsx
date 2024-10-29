@@ -270,7 +270,7 @@ export class CommentActions extends Component {
 				{ this.hasAction( 'view' ) && (
 					<Button
 						borderless
-						className="comment__action -comment__action-view"
+						className="comment__action comment__action-view"
 						href={ commentURL }
 						target="_blank"
 						tabIndex="0"
