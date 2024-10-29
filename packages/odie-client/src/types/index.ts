@@ -63,6 +63,7 @@ export type Context = {
 		forward_to_human_support?: boolean;
 		canned_response?: boolean;
 		hide_disclaimer_content?: boolean;
+		show_contact_support_msg?: boolean;
 	};
 };
 

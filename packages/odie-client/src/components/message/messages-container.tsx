@@ -35,7 +35,6 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 		let lastUserMessageIndex = -1;
 		let lastFeedbackMessageIndex = -1;
 		let lastErrorMessageIndex = -1;
-		let firstBusinessMessageIndex = -1;
 
 		chat.messages.forEach( ( message, index ) => {
 			if ( message.role === 'user' ) {
@@ -47,11 +46,6 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 			if ( message.type === 'error' ) {
 				lastErrorMessageIndex = index;
 			}
-			// Find the first business message
-			// this will be used to notify users that they are talking with a human.
-			if ( firstBusinessMessageIndex === -1 && message.role === 'business' ) {
-				firstBusinessMessageIndex = index + 1;
-			}
 		} );
 
 		const lastMessageIndex = chat.messages.length - 1;
@@ -60,7 +54,6 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 		const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
 			return currentMessage === nextMessage;
 		};
-
 		return (
 			<div className="chatbox-messages" ref={ ref }>
 				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
@@ -77,7 +70,7 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 							message.role,
 							chat.messages[ index + 1 ]?.role
 						) }
-						displayChatWithSupportLabel={ firstBusinessMessageIndex === index }
+						displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
 					/>
 				) ) }
 				{ chatStatus === 'dislike' && shouldUseHelpCenterExperience && <DislikeThumb /> }

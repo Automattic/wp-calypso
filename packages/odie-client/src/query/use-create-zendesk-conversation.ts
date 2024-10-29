@@ -21,6 +21,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 			context: {
 				flags: {
 					hide_disclaimer_content: true,
+					show_contact_support_msg: true,
 				},
 				site_id: null,
 			},

@@ -26,7 +26,7 @@ export type MessageIndicators = {
 	isLastErrorMessage: boolean;
 	isLastMessage: boolean;
 	isNextMessageFromSameSender: boolean;
-	displayChatWithSupportLabel: boolean;
+	displayChatWithSupportLabel?: boolean;
 };
 
 const MessageAvatarHeader = ( {
