@@ -11,7 +11,6 @@ import './style.scss';
 
 interface Props {
 	siteSlug: string | null;
-	isUnsupportedPlan?: boolean;
 	defaultDevice?: Device;
 	showDeviceSwitcher?: boolean;
 	enableInteractions?: boolean;
@@ -19,7 +18,6 @@ interface Props {
 
 const SitePreview = ( {
 	siteSlug = '',
-	isUnsupportedPlan,
 	defaultDevice = DEVICE_TYPES.COMPUTER,
 	showDeviceSwitcher = false,
 	enableInteractions = false,
@@ -33,14 +31,10 @@ const SitePreview = ( {
 		DEVICE_TYPES.PHONE,
 	];
 
-	const previewUrl = ! isUnsupportedPlan && siteSlug ? `https://${ siteSlug }` : null;
-	const loadingMessage = ! isUnsupportedPlan
-		? translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-				components: { strong: <strong /> },
-		  } )
-		: translate( '{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.', {
-				components: { strong: <strong /> },
-		  } );
+	const previewUrl = siteSlug ? `https://${ siteSlug }` : null;
+	const loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+		components: { strong: <strong /> },
+	} );
 
 	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
 		useSitePreviewShareCode();

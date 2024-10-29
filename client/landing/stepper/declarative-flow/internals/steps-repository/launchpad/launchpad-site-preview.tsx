@@ -38,7 +38,6 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 	return (
 		<SitePreview
 			siteSlug={ siteSlug }
-			isUnsupportedPlan={ false }
 			defaultDevice={ getSitePreviewDefaultDevice( flow ) }
 			showDeviceSwitcher
 			enableInteractions={ false }
