@@ -9,6 +9,15 @@
 		padding: 16px;
 		font-size: 0.75rem;
 	}
+	
+	.components-tab-panel__tabs {
+		.components-tab-panel__tabs-item {
+			&:focus {
+				box-shadow: none;
+				outline: none;
+			}
+		}
+	}
 
 	.help-center-chat-history__conversation-card {
 		display: flex;
