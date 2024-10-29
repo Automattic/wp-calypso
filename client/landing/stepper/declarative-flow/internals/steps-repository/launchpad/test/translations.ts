@@ -12,11 +12,6 @@ describe( 'Translations', () => {
 				expect( newsletterTranslations.title ).toEqual( "Your newsletter's ready!" );
 				expect( newsletterTranslations.launchTitle ).toBe( undefined );
 
-				const linkInBioTranslations = getLaunchpadTranslations( 'link-in-bio' );
-				expect( linkInBioTranslations.flowName ).toEqual( 'Link in Bio' );
-				expect( linkInBioTranslations.title ).toEqual( "You're ready to link and launch" );
-				expect( linkInBioTranslations.launchTitle ).toEqual( "You're ready to link and launch" );
-
 				const freeFlowTranslations = getLaunchpadTranslations( 'free' );
 				expect( freeFlowTranslations.flowName ).toEqual( 'Free Website' );
 				expect( freeFlowTranslations.title ).toEqual( "Let's get ready to launch!" );

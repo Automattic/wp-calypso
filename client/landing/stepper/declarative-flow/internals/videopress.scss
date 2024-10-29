@@ -2,18 +2,7 @@
 @import "./videopress-constants";
 
 
-body.is-videopress-tv-stepper,
-body.is-videopress-tv-purchase-stepper {
-	.step-container .step-container__header .formatted-header .formatted-header__title,
-	.signup-header h1 {
-		font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-		font-weight: 700;
-	}
-}
-
-body.is-videopress-stepper,
-body.is-videopress-tv-stepper,
-body.is-videopress-tv-purchase-stepper {
+body.is-videopress-stepper {
 	background-color: #010101;
 	color: $videopress-theme-base-text-color;
 
@@ -21,9 +10,7 @@ body.is-videopress-tv-purchase-stepper {
 		color: #000;
 	}
 
-	.videopress,
-	.videopress-tv,
-	.videopress-tv-purchase {
+	.videopress {
 		input[type="text"]:focus,
 		textarea:focus {
 			box-shadow: none;

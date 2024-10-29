@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	StepContainer,
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
@@ -180,7 +179,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					),
 					decideLaterComponent
 				);
-			case LINK_IN_BIO_FLOW:
 			case LINK_IN_BIO_TLD_FLOW:
 				return createInterpolateElement(
 					__(

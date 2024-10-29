@@ -138,8 +138,24 @@ export const isPathAllowedForTier = ( pathname: string, agency: Agency | null ) 
 		return false;
 	}
 
+	// featureConditions is used to check if the user has access to a specific feature
+	// Add the feature name and the condition to enable it according to MEMBER_TIER_ACCESSIBLE_PATHS
+	const featureConditions = {
+		a4a_feature_partner_directory: agency?.partner_directory.allowed,
+	};
+
+	const featuresSet = new Set( agency?.tier?.features || [] );
+
+	// Check if the user has extra capabilities
+	for ( const [ feature, condition ] of Object.entries( featureConditions ) ) {
+		if ( condition ) {
+			featuresSet.add( feature );
+		}
+	}
+
+	const features = Array.from( featuresSet );
+
 	// Check if the user has the required capability to access the current path
-	const features = agency?.tier?.features;
 	if ( features ) {
 		const permissions = MEMBER_TIER_ACCESSIBLE_PATHS?.[ pathname ];
 		if ( permissions ) {

@@ -274,6 +274,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_partner_bundle?: string;
 	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;

@@ -23,7 +23,7 @@ const getTierPermissionData = (
 					translate( 'Access this benefit when you become an Agency Partner.' )
 				),
 				description: translate(
-					"Agency Partners and Pro Agency Partners can apply to be included in Automatic's directory listings."
+					"Agency Partners and Pro Agency Partners can apply to be included in Automattic's directory listings."
 				),
 				buttonProps: {
 					text: translate( 'Learn more' ),

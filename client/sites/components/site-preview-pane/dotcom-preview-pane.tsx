@@ -5,12 +5,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
-import { SiteStatus } from 'calypso/hosting/sites/components/sites-dataviews/sites-site-status';
 import { useStagingSite } from 'calypso/hosting/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -21,6 +21,8 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
+	SITE_MARKETING_TOOLS,
+	SITE_MARKETING_BUSINESS_TOOLS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -104,6 +106,11 @@ const DotcomPreviewPane = ( {
 				label: __( 'Staging Site' ),
 				enabled: isActiveAtomicSite,
 				featureIds: [ DOTCOM_STAGING_SITE ],
+			},
+			{
+				label: __( 'Marketing' ),
+				enabled: config.isEnabled( 'untangling/hosting-menu' ),
+				featureIds: [ SITE_MARKETING_TOOLS, SITE_MARKETING_BUSINESS_TOOLS ],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )

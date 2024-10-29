@@ -18,10 +18,7 @@ export default function DownloadBadges() {
 
 	const agency = useSelector( getActiveAgency );
 
-	const partnerDirectorties =
-		agency?.profile?.partner_directory_application?.directories.map(
-			( { directory } ) => directory
-		) ?? [];
+	const partnerDirectorties = agency?.partner_directory?.directories ?? [];
 
 	const currentAgencyTier = agency?.tier?.id;
 

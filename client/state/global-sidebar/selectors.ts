@@ -17,6 +17,9 @@ const SITE_DASHBOARD_ROUTES = {
 	'site-logs': '/site-logs/',
 	'hosting-features': '/hosting-features/',
 	'staging-site': '/staging-site/',
+
+	// New Information Architecture
+	'site-marketing': '/sites/marketing',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {
