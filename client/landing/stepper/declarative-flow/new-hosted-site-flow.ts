@@ -22,14 +22,19 @@ import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
+function useShowDomainStep(): boolean {
+	const query = useQuery();
+	const showDomainStepValue = query.get( 'showDomainStep' );
+	return showDomainStepValue !== null && showDomainStepValue.toLowerCase() !== 'false';
+}
+
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	isSignupFlow: true,
 	useSteps() {
-		const query = useQuery();
-		const isPatnerBundle = query.has( 'partnerBundle' );
+		const showDomainStep = useShowDomainStep();
 		return [
-			...( isPatnerBundle
+			...( showDomainStep
 				? [
 						{
 							slug: 'domains',
@@ -67,10 +72,14 @@ const hosting: Flow = {
 		const queryParams = Object.fromEntries( query );
 		const plan = queryParams.plan;
 		const flowName = this.name;
+		const showDomainStep = useShowDomainStep();
 
 		const goBack = () => {
 			if ( _currentStepSlug === 'plans' ) {
-				return window.location.assign( '/sites?hosting-flow=true' );
+				if ( ! showDomainStep ) {
+					return window.location.assign( '/sites?hosting-flow=true' );
+				}
+				return navigate( 'domains' );
 			}
 			if ( _currentStepSlug === 'trialAcknowledge' ) {
 				navigate( 'plans' );
@@ -84,6 +93,7 @@ const hosting: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
+					// If the plan is already supplied as a query param, add it to cart, and skip plans step
 					if ( plan && isDotComPlan( { product_slug: plan } ) ) {
 						setPlanCartItem( {
 							product_slug: plan,
