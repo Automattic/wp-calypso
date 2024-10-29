@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
-import { getQueryArgs } from 'calypso/lib/query-args';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -109,8 +108,7 @@ const PluginsDiscoveryPage = ( props ) => {
 	const sitePartnerBundle = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'site_partner_bundle' )
 	);
-	const isWPBeginnerSpecial =
-		getQueryArgs()?.ref === 'wpbeginner-special-lp' || sitePartnerBundle === 'wpbeginner-special';
+	const isWPBeginnerSpecial = sitePartnerBundle === 'wpbeginner-special';
 
 	const {
 		isTrialAcknowledgeModalOpen,
