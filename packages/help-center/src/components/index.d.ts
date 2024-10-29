@@ -108,12 +108,16 @@ declare module 'calypso/components/gravatar' {
 }
 
 declare module 'calypso/components/section-nav' {
-	const SectionNav: FC;
+	const SectionNav: FC< {
+		children: React.ReactNode;
+	} >;
 	export default SectionNav;
 }
 
 declare module 'calypso/components/section-nav/tabs' {
-	const SectionNavTabs: FC;
+	const SectionNavTabs: FC< {
+		children: React.ReactNode;
+	} >;
 	export default SectionNavTabs;
 }
 
