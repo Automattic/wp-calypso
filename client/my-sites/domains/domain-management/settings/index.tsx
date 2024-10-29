@@ -757,6 +757,7 @@ const Settings = ( {
 		if ( ! domain ) {
 			return null;
 		}
+
 		return (
 			<>
 				{ ! domain.isGravatarDomain && (
