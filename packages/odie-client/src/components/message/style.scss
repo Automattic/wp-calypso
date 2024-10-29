@@ -484,6 +484,19 @@ $custom-border-corner-size: 16px;
 	.odie-chatbox-message-sources {
 		margin: 12px;
 	}
+	
+	.odie-chatbox-message-feedback-response {
+		border-radius: 2px;
+		background: var(--color-primary);
+		width: 46px;
+		height: 40px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		fill: #fff;
+		float: right;
+		margin: 16px;
+	}
 
 	&:nth-last-child(2) {
 		.foldable-card {

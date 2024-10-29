@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
-import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
 
@@ -44,7 +43,6 @@ interface Props {
 	showJetpackPowered?: boolean;
 	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
-	showSenseiPowered?: boolean;
 	backUrl?: string;
 }
 
@@ -84,7 +82,6 @@ const StepContainer: React.FC< Props > = ( {
 	showHeaderJetpackPowered,
 	showHeaderWooCommercePowered,
 	showJetpackPowered,
-	showSenseiPowered,
 	showFooterWooCommercePowered,
 } ) => {
 	const translate = useTranslate();
@@ -230,12 +227,6 @@ const StepContainer: React.FC< Props > = ( {
 			{ showFooterWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
 					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
-				</div>
-			) }
-
-			{ showSenseiPowered && (
-				<div className="step-container__sensei-powered">
-					<SenseiLogo /> <span>{ translate( 'Powered by Sensei' ) }</span>
 				</div>
 			) }
 		</div>
