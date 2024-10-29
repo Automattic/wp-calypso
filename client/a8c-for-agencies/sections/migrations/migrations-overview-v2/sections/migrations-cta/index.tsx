@@ -6,6 +6,8 @@ import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import { BackgroundType8 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+import './style.scss';
+
 export default function MigrationsCTA() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -21,6 +23,7 @@ export default function MigrationsCTA() {
 			background={ BackgroundType8 }
 		>
 			<Button
+				className="migrations-cta__button"
 				variant="primary"
 				onClick={ onMigrateClick }
 				href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
