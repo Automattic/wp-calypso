@@ -38,7 +38,7 @@ const updateDesign: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const flowToReturnTo = useQuery().get( 'flowToReturnTo' );
+		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
