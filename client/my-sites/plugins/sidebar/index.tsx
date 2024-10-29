@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
+import { SyntheticEvent } from '@wordpress/element';
 import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
@@ -13,10 +15,16 @@ interface Props {
 	path: string;
 	isCollapsed: boolean;
 }
+const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
+
 const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 	const translate = useTranslate();
 	const isBulkPluginManagementEnabled = config.isEnabled( 'bulk-plugin-management' ) || false;
-	const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
+
+	const [ previousPath, setPreviousPath ] = useState( path );
+	const isManagedPluginSelected =
+		managePluginsPattern.test( path ) ||
+		( path.startsWith( '/plugins/' ) && managePluginsPattern.test( previousPath ) );
 
 	return (
 		<GlobalSidebar
@@ -37,10 +45,11 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					link="/plugins"
 					label={ translate( 'Marketplace' ) }
 					tooltip={ isCollapsed && translate( 'Marketplace' ) }
+					onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
 					selected={
 						path.startsWith( '/plugins' ) &&
 						! path.startsWith( '/plugins/scheduled-updates' ) &&
-						! managePluginsPattern.test( path )
+						! isManagedPluginSelected
 					}
 					customIcon={ <SidebarIconPlugins /> }
 				/>
@@ -51,8 +60,9 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 						link="/plugins/manage"
 						label={ translate( 'Manage Plugins' ) }
 						tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
-						selected={ managePluginsPattern.test( path ) }
+						selected={ isManagedPluginSelected }
 						icon={ settings }
+						onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
 					/>
 				) }
 				<SidebarItem
