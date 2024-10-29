@@ -10,7 +10,6 @@ export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
-export const getUnreadConversations = ( state: State ) => state.unreadConversations;
 export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
 export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;

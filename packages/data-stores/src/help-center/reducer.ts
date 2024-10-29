@@ -57,14 +57,6 @@ const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, acti
 	return state;
 };
 
-const unreadConversations: Reducer< number, HelpCenterAction > = ( state = 0, action ) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_UNREAD_CONVERSATIONS':
-			return action.unreadConversations;
-	}
-	return state;
-};
-
 const subject: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -148,7 +140,6 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
-	unreadConversations,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,
