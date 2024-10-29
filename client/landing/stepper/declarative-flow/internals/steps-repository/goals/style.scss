@@ -106,6 +106,7 @@
 		padding-bottom: 60px + 48px; // height of sticky footer
 
 		@include break-small {
+			padding-bottom: 60px;
 			grid-template-columns: repeat(3, max-content);
 			gap: 16px 8px;
 		}
@@ -118,6 +119,16 @@
 	.select-goals__link.is-link { // extra specificity to override default link styles
 		color: var(--studio-gray-100);
 		font-size: $font-body-small;
+	}
+
+	.select-goals__dashboard-button.select-goals__link { // extra specificity to override default link styles
+		margin-left: auto;
+		margin-right: auto;
+		gap: 8px;
+
+		@include break-small {
+			grid-column: span 3;
+		}
 	}
 
 	.select-goals__link-separator {

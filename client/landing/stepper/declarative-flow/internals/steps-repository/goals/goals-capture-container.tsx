@@ -8,7 +8,6 @@ type GoalsCaptureContainerProps = {
 	whatAreYourGoalsText: string;
 	subHeaderText: string;
 	stepName: string;
-	onSkip(): void;
 	goNext: NavigationControls[ 'goNext' ];
 	nextLabelText: string;
 	stepContent: React.ReactElement;
@@ -30,7 +29,7 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 			className="goals__container two-columns"
 			hideBack
 			hideSkip={ false }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
+			skipLabelText={ translate( 'Skip' ) }
 			hideNext={ ! isSmall }
 			formattedHeader={
 				<FormattedHeader

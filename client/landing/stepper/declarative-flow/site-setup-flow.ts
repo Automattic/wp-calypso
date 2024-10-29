@@ -157,8 +157,7 @@ const siteSetupFlow: Flow = {
 		const isDesignChoicesStepEnabled =
 			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
 
-		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
-			useDispatch( ONBOARD_STORE );
+		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
@@ -367,8 +366,6 @@ const siteSetupFlow: Flow = {
 					const { intent, skip } = providedDependencies;
 
 					if ( skip ) {
-						// Skip to dashboard must have been pressed
-						setIntent( SiteIntent.Build );
 						return exitFlow( `/home/${ siteId ?? siteSlug }`, {
 							skipLaunchpad: true,
 						} );
