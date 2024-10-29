@@ -1,10 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import HostingBenefitsSection from 'calypso/a8c-for-agencies/sections/marketplace/common/hosting-benefits-section';
 
+import './style.scss';
+
 export default function MigrationsClientRelationship() {
 	const translate = useTranslate();
 	return (
 		<HostingBenefitsSection
+			className="migrations-client-relationship"
 			heading={ translate( 'Improve your client relationships with our hosting' ) }
 			description={ translate( 'Our hosting platform is built exclusively for WordPress.' ) }
 			items={ [
