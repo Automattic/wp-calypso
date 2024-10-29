@@ -43,9 +43,32 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		return null;
 	}
 
-	const handleInterestsContinue = () => {
+	// Modal state handlers with tracking
+	const openInterestsModal = () => {
+		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_open' );
+		setIsInterestsModalOpen( true );
+	};
+
+	const closeInterestsModal = () => {
+		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_close' );
 		setIsInterestsModalOpen( false );
+	};
+
+	const openDiscoverModal = () => {
+		recordTracksEvent( 'calypso_reader_onboarding_discover_modal_open' );
 		setIsDiscoverModalOpen( true );
+	};
+
+	const closeDiscoverModal = () => {
+		recordTracksEvent( 'calypso_reader_onboarding_discover_modal_close' );
+		setIsDiscoverModalOpen( false );
+	};
+
+	// Navigation handlers
+	const handleInterestsContinue = () => {
+		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_continue' );
+		closeInterestsModal();
+		openDiscoverModal();
 	};
 
 	const itemClickHandler = ( task: Task ) => {
@@ -61,14 +84,14 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		{
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
-			actionDispatch: () => setIsInterestsModalOpen( true ),
+			actionDispatch: openInterestsModal,
 			completed: taskOneCompleted,
 			disabled: false,
 		},
 		{
 			id: 'discover-sites',
 			title: translate( "Discover and subscribe to sites you'll love" ),
-			actionDispatch: () => setIsDiscoverModalOpen( true ),
+			actionDispatch: openDiscoverModal,
 			completed: false,
 			disabled: ! taskOneCompleted,
 		},
@@ -102,13 +125,10 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 
 			<InterestsModal
 				isOpen={ isInterestsModalOpen }
-				onClose={ () => setIsInterestsModalOpen( false ) }
+				onClose={ closeInterestsModal }
 				onContinue={ handleInterestsContinue }
 			/>
-			<SubscribeModal
-				isOpen={ isDiscoverModalOpen }
-				onClose={ () => setIsDiscoverModalOpen( false ) }
-			/>
+			<SubscribeModal isOpen={ isDiscoverModalOpen } onClose={ closeDiscoverModal } />
 		</>
 	);
 };

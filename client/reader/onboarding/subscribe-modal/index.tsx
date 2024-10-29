@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
@@ -214,6 +215,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	const handleContinue = useCallback( () => {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( 'calypso_reader_onboarding_completed' );
 		onClose();
 	}, [ dispatch, onClose ] );
 

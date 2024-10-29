@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SelectCardCheckbox } from '@automattic/onboarding';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -46,9 +47,17 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		if ( checked ) {
 			dispatch( requestFollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
+			recordTracksEvent( 'calypso_reader_onboarding_interests_modal_tag_followed', {
+				tag,
+				total_followed: followedTags.length + 1,
+			} );
 		} else {
 			dispatch( requestUnfollowTag( tag ) );
 			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
+			recordTracksEvent( 'calypso_reader_onboarding_interests_modal_tag_unfollowed', {
+				tag,
+				total_followed: followedTags.length - 1,
+			} );
 		}
 	};
 
