@@ -8,7 +8,10 @@ import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/cons
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -23,12 +26,14 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 	);
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const shouldShowOnboarding =
 		config.isEnabled( 'reader/onboarding' ) &&
 		preferencesLoaded &&
 		! hasCompletedOnboarding &&
 		userRegistrationDate &&
+		isEmailVerified &&
 		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
 
 	// Notify the parent component if onboarding will render.

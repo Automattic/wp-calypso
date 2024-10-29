@@ -196,6 +196,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
+		"untangling/hosting-menu": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"videomaker-trial": true,

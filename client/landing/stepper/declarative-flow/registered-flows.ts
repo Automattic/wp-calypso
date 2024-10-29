@@ -42,8 +42,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	videopress: () =>
 		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
 
-	'link-in-bio': () =>
-		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
 
