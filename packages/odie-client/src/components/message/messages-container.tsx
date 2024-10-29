@@ -21,7 +21,8 @@ const DislikeThumb = () => {
 
 const ChatDate = ( { chat }: { chat: Chat } ) => {
 	// chat.messages[ 1 ] contains the first user interaction, therefore the date, otherwise the current date.
-	const chatDate = chat.messages.length > 1 ? chat.messages[ 1 ].created_at : Date.now();
+	const chatDate =
+		chat.messages.length > 1 ? chat.messages[ 1 ]?.created_at || Date.now() : Date.now();
 	const currentDate = getShortDateString( chatDate as number );
 	return <div className="odie-chat__date">{ currentDate }</div>;
 };
