@@ -1,9 +1,22 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart, convertTaxLocationToLocationUpdate } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import useCartKey from '../../use-cart-key';
+const CheckboxWrapper = styled.div`
+	margin-top: 16px;
 
+	#checkout-is-business-checkbox input[type='checkbox']:checked {
+		background: ${ ( props ) => props.theme.colors.primary };
+		border-color: ${ ( props ) => props.theme.colors.primary };
+	}
+
+	a.inline-support-link#checkout-is-business-checkbox__link {
+		color: ${ ( props ) => props.theme.colors.primary };
+	}
+`;
 export function IsForBusinessCheckbox() {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
@@ -35,20 +48,39 @@ export function IsForBusinessCheckbox() {
 	}
 
 	return (
-		<CheckboxControl
-			id="checkout-is-business-checkbox"
-			label={ translate( 'Is this purchase for business?', { textOnly: true } ) }
-			checked={ isChecked }
-			disabled={ isDisabled }
-			onChange={ ( newValue ) => {
-				if ( isDisabled ) {
-					return;
+		<CheckboxWrapper>
+			<CheckboxControl
+				id="checkout-is-business-checkbox"
+				label={
+					translate(
+						'Is this purchase for business? {{link}}Learn more.{{/link}}',
+						{
+							components: {
+								link: (
+									<InlineSupportLink
+										id="checkout-is-business-checkbox"
+										supportContext="tax-exempt-customers"
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+						// As far as I can tell, label will correctly render the
+						// component, so we cast to string to make the types work.
+					) as string
 				}
-				updateLocation( {
-					...convertTaxLocationToLocationUpdate( responseCart.tax.location ),
-					isForBusiness: newValue,
-				} );
-			} }
-		/>
+				checked={ isChecked }
+				disabled={ isDisabled }
+				onChange={ ( newValue ) => {
+					if ( isDisabled ) {
+						return;
+					}
+					updateLocation( {
+						...convertTaxLocationToLocationUpdate( responseCart.tax.location ),
+						isForBusiness: newValue,
+					} );
+				} }
+			/>
+		</CheckboxWrapper>
 	);
 }
