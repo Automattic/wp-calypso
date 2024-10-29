@@ -54,9 +54,18 @@ $blueberry-color: #3858e9;
 
 	ol,
 	ul {
-		margin: 0 0 1.5em 1.5em;
+		margin: 0 0 0 1em;
 		width: calc(100% - 1.5em);
-		padding: 0;
+		padding: 16px;
+		font-size: 0.875rem;
+    	font-style: normal;
+	}
+
+	&.odie-chatbox-message-wapuu {
+		.odie-chatbox-message__content {
+			background-color: var(--studio-gray-0);
+			flex: 1;
+		}
 	}
 
 	.help-center-contact-page {
@@ -139,11 +148,8 @@ $blueberry-color: #3858e9;
 	flex-wrap: wrap;
 
 	p {
-		flex: 0.8;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		background-color: var(--studio-gray-0);
+		margin-bottom: 0;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px 8px 8px 0;
 	}

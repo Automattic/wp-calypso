@@ -97,14 +97,16 @@ export const UserMessage = ( {
 
 	return (
 		<>
-			<Markdown
-				urlTransform={ uriTransformer }
-				components={ {
-					a: CustomALink,
-				} }
-			>
-				{ isRequestingHumanSupport ? displayMessage : message.content }
-			</Markdown>
+			<div className="odie-chatbox-message__content">
+				<Markdown
+					urlTransform={ uriTransformer }
+					components={ {
+						a: CustomALink,
+					} }
+				>
+					{ isRequestingHumanSupport ? displayMessage : message.content }
+				</Markdown>
+			</div>
 			{ shouldUseHelpCenterExperience
 				? renderRedesignedComponent()
 				: renderCurrentDesignComponent() }
