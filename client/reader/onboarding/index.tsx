@@ -4,7 +4,10 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
-import { READER_ONBOARDING_PREFERENCE_KEY } from 'calypso/reader/onboarding/constants';
+import {
+	READER_ONBOARDING_PREFERENCE_KEY,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding/constants';
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useSelector } from 'calypso/state';
@@ -43,35 +46,35 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		return null;
 	}
 
-	// Modal state handlers with tracking
+	// Modal state handlers with tracking.
 	const openInterestsModal = () => {
-		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_open' );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
 		setIsInterestsModalOpen( true );
 	};
 
 	const closeInterestsModal = () => {
-		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_close' );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
 		setIsInterestsModalOpen( false );
 	};
 
 	const openDiscoverModal = () => {
-		recordTracksEvent( 'calypso_reader_onboarding_discover_modal_open' );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
 		setIsDiscoverModalOpen( true );
 	};
 
 	const closeDiscoverModal = () => {
-		recordTracksEvent( 'calypso_reader_onboarding_discover_modal_close' );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
 		setIsDiscoverModalOpen( false );
 	};
 
 	const handleInterestsContinue = () => {
-		recordTracksEvent( 'calypso_reader_onboarding_interests_modal_continue' );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue` );
 		closeInterestsModal();
 		openDiscoverModal();
 	};
 
 	const itemClickHandler = ( task: Task ) => {
-		recordTracksEvent( 'calypso_reader_onboarding_task_click', {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
 			task: task.id,
 		} );
 		task?.actionDispatch?.();
