@@ -72,29 +72,3 @@
 	}
 
 }
-
-.is-videopress-stepper.is-sites-checker-step {
-	padding: 0;
-	color: #fff;
-
-	.sites-checker-step__content {
-		background-color: #fff3;
-		border-radius: 4px;
-		.loading-bar {
-			background-color: #fff3;
-			&::before {
-				background-color: #ffe61c;
-			}
-		}
-	}
-
-	@include break-medium {
-		background-size: auto 50%, auto 50%;
-	}
-
-	@include break-large {
-		background-position-y: 50%, 100%;
-		background-position-x: 0, 100%;
-	}
-}
-

@@ -1,5 +1,5 @@
 import { START_WRITING_FLOW } from '@automattic/onboarding';
-import { getBlogLaunchedTask, getSiteLaunchedTask, getVideopressLaunchedTask } from '../';
+import { getBlogLaunchedTask, getSiteLaunchedTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
 
@@ -49,28 +49,6 @@ describe( 'getBlogLaunchedTask', () => {
 		const context = buildContext( { siteSlug } );
 
 		expect( getBlogLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
-			disabled: true,
-		} );
-	} );
-} );
-
-describe( 'getVideopressLaunchedTask', () => {
-	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
-
-	it( 'doesnt use the calypso path', () => {
-		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
-
-		expect( getVideopressLaunchedTask( task, 'flowId', context ) ).toMatchObject( {
-			useCalypsoPath: false,
-		} );
-	} );
-
-	it( 'returns disabled when is an blog onboarding flow', () => {
-		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
-
-		expect( getVideopressLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
 			disabled: true,
 		} );
 	} );
