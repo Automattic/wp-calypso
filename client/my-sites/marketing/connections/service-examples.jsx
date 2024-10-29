@@ -40,6 +40,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'twitter',
 	'threads',
 	'google_photos',
+	'google_photos_picker',
 	'google-drive',
 	'mailchimp',
 	'p2_slack',
@@ -64,6 +65,28 @@ class SharingServiceExamples extends Component {
 		site: Object.freeze( {} ),
 		hasJetpack: false,
 	};
+
+	getGooglePhotosExample() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/connections-google-photos.png',
+					alt: this.props.translate(
+						'Connect to use photos stored in your Google Photos library directly inside the editor',
+						{ textOnly: true }
+					),
+				},
+				label: this.props.translate(
+					'{{strong}}Connect{{/strong}} to use photos stored in your Google Photos library directly inside the editor.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+		];
+	}
 
 	getSharingButtonsLink() {
 		if ( this.props.site ) {
@@ -99,25 +122,11 @@ class SharingServiceExamples extends Component {
 	}
 
 	google_photos() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-google-photos.png',
-					alt: this.props.translate(
-						'Connect to use photos stored in your Google Photos library directly inside the editor',
-						{ textOnly: true }
-					),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to use photos stored in your Google Photos library directly inside the editor.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-		];
+		return this.getGooglePhotosExample();
+	}
+
+	google_photos_picker() {
+		return this.getGooglePhotosExample();
 	}
 
 	google_drive() {
