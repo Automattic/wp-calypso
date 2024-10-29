@@ -10,8 +10,11 @@ export const DOTCOM_SITE_PERFORMANCE = 'dotcom-site-performance';
 
 export const SITE_MARKETING_TOOLS = 'site-marketing-tools';
 export const SITE_MARKETING_BUSINESS_TOOLS = 'site-marketing-business-tools';
-export const SITE_SETTINGS = 'site-settings';
-export const SITE_ADMINISTRATION = 'site-administration';
+export const SETTINGS_SITE = 'site-settings';
+export const SETTINGS_ADMINISTRATION = 'site-administration';
+export const SETTINGS_AGENCY = 'site-agency';
+export const SETTINGS_CACHES = 'site-caches';
+export const SETTINGS_WEB_SERVER = 'site-web-server';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_OVERVIEW ]: 'overview/:site',
@@ -27,6 +30,9 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	// New Information Architecture
 	[ SITE_MARKETING_TOOLS ]: 'sites/marketing/tools/:site',
 	[ SITE_MARKETING_BUSINESS_TOOLS ]: 'sites/marketing/business-tools/:site',
-	[ SITE_SETTINGS ]: 'sites/settings/:site',
-	[ SITE_ADMINISTRATION ]: 'sites/administration/:site',
+	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
+	[ SETTINGS_ADMINISTRATION ]: 'sites/settings/administration/:site',
+	[ SETTINGS_AGENCY ]: 'sites/settings/agency/:site',
+	[ SETTINGS_CACHES ]: 'sites/settings/caches/:site',
+	[ SETTINGS_WEB_SERVER ]: 'sites/settings/web-server/:site',
 };

@@ -39,3 +39,33 @@ export function administrationSettings( context: PageJSContext, next: () => void
 	);
 	next();
 }
+
+export function agencySettings( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar selectedItemKey="agency" />
+			<WpcomSiteTools />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function cachesSettings( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar selectedItemKey="caches" />
+			<WpcomSiteTools />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function webServerSettings( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<SettingsSidebar selectedItemKey="web-server" />
+			<WpcomSiteTools />
+		</PanelWithSidebar>
+	);
+	next();
+}
