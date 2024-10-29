@@ -13,14 +13,12 @@ interface Props {
 	siteSlug: string | null;
 	defaultDevice?: Device;
 	showDeviceSwitcher?: boolean;
-	enableInteractions?: boolean;
 }
 
 const SitePreview = ( {
 	siteSlug = '',
 	defaultDevice = DEVICE_TYPES.COMPUTER,
 	showDeviceSwitcher = false,
-	enableInteractions = false,
 }: Props ) => {
 	const translate = useTranslate();
 	const site = useSite();
@@ -52,7 +50,7 @@ const SitePreview = ( {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: ! enableInteractions,
+			do_preview_no_interactions: true,
 			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	};

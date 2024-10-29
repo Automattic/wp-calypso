@@ -40,7 +40,6 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 			siteSlug={ siteSlug }
 			defaultDevice={ getSitePreviewDefaultDevice( flow ) }
 			showDeviceSwitcher
-			enableInteractions={ false }
 		/>
 	);
 };
