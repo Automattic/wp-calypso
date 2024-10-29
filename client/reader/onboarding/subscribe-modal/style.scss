@@ -103,6 +103,8 @@
 	}
 
 	&__preview-stream-container {
+		height: 100%;
+		overflow-y: auto;
 		padding-top: 40px;
 	}
 }
