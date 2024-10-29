@@ -29,7 +29,7 @@ const HelpCenterSmooch: React.FC = () => {
 		isHelpCenterShown && isEligibleForChat,
 		isEligibleForChat
 	);
-	const { setIsChatLoaded, setUnreadConversations } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { initSmooch, destroy, getConversations, renderSmooch } = useSmooch();
 
 	// Initialize Smooch which communicates with Zendesk
@@ -67,9 +67,9 @@ const HelpCenterSmooch: React.FC = () => {
 			const { unreadConversations } = calculateUnread(
 				getConversations() as ZendeskConversation[]
 			);
-			setUnreadConversations( unreadConversations );
+			setUnreadCount( unreadConversations );
 		}
-	}, [ isChatLoaded, getConversations, setUnreadConversations ] );
+	}, [ isChatLoaded, getConversations, setUnreadCount ] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
 };

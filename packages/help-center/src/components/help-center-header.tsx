@@ -116,17 +116,15 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 };
 
 const ContentMinimized = ( {
+	unreadCount = 0,
 	handleClick,
 	onMaximize,
 }: {
+	unreadCount: number;
 	handleClick?: ( event: React.SyntheticEvent ) => void;
 	onMaximize?: () => void;
 } ) => {
 	const { __ } = useI18n();
-	const unreadCount = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
-		[]
-	);
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	return (
@@ -170,6 +168,11 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 	const { __ } = useI18n();
 	const location = useLocation();
 
+	const unreadCount = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
+		[]
+	);
+
 	const handleClick = useCallback(
 		( event: React.SyntheticEvent ) => {
 			if ( event.target === event.currentTarget ) {
@@ -181,14 +184,21 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 
 	const classNames = clsx(
 		'help-center__container-header',
-		location?.pathname?.replace( /^\//, '' )
+		location?.pathname?.replace( /^\//, '' ),
+		{
+			'has-unread': unreadCount > 0 && isMinimized,
+		}
 	);
 
 	return (
 		<CardHeader className={ classNames }>
 			<Flex onClick={ handleClick }>
 				{ isMinimized ? (
-					<ContentMinimized handleClick={ handleClick } onMaximize={ onMaximize } />
+					<ContentMinimized
+						unreadCount={ unreadCount }
+						handleClick={ handleClick }
+						onMaximize={ onMaximize }
+					/>
 				) : (
 					<Content onMinimize={ onMinimize } />
 				) }
