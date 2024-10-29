@@ -61,7 +61,7 @@ $blueberry-color: #3858e9;
     	font-style: normal;
 	}
 
-	&.odie-chatbox-message-wapuu {
+	&.odie-chatbox-message-bot {
 		.odie-chatbox-message__content {
 			background-color: var(--studio-gray-0);
 			flex: 1;
@@ -141,7 +141,7 @@ $blueberry-color: #3858e9;
 	
 }
 
-.odie-chatbox-message.odie-chatbox-message-wapuu.odie-chatbox-message-message {
+.odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	background-color: var(--studio-white);
