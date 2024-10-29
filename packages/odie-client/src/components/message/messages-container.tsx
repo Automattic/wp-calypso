@@ -62,7 +62,7 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 
 		return (
 			<div className="chatbox-messages" ref={ ref }>
-				<ChatDate chat={ chat } />
+				{ shouldUseHelpCenterExperience && <ChatDate chat={ chat } /> }
 				{ chat.messages.map( ( message, index ) => (
 					<ChatMessage
 						message={ message }
