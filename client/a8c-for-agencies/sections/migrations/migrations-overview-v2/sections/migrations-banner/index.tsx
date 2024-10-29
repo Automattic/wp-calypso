@@ -2,7 +2,7 @@ import { Button, Card } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
-import { BackgroundType1 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import { BackgroundType5 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import MigrationIcon from 'calypso/assets/images/a8c-for-agencies/migration-icon.svg';
 import { useDispatch } from 'calypso/state';
@@ -28,7 +28,7 @@ export default function MigrationsBanner() {
 					},
 				}
 			) }
-			background={ BackgroundType1 }
+			background={ BackgroundType5 }
 		>
 			<Card className="migrations-banner">
 				<div className="migrations-banner__main">
