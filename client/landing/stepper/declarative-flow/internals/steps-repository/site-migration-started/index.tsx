@@ -73,7 +73,7 @@ const SiteMigrationStarted: Step = function () {
 								"Your migration process has started. We'll email you when the process is finished."
 							) }
 							<br />
-							{ translate( 'You can keep track of the progress from your sites dashboard.' ) }
+							{ translate( 'You can keep track of the progress from your Sites dashboard.' ) }
 							<br />
 							{ sitesDashboardButton }
 						</>
