@@ -10,7 +10,7 @@
 		margin-bottom: 16px;
 		text-wrap: balance;
 
-		@media ( max-width: 768px ) {
+		@media ( max-width: $break-medium ) {
 			font-size: 1.5rem;
 		}
 	}
