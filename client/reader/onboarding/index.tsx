@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
@@ -38,6 +38,13 @@ const ReaderOnboarding = ( { onRender }: { onRender?: ( shown: boolean ) => void
 		userRegistrationDate &&
 		isEmailVerified &&
 		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
+	// Track if user viewed Reader Onboarding.
+	useEffect( () => {
+		if ( shouldShowOnboarding ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }viewed` );
+		}
+	}, [ shouldShowOnboarding ] );
 
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );

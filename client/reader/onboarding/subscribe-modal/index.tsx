@@ -161,9 +161,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	}, [ combinedRecommendations, currentPage ] );
 
 	const handleLoadMore = useCallback( () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }clicked_load_more`, {
+			page: currentPage,
+		} );
 		// Only increment the page if we haven't reached the end.
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
-	}, [ maxPages ] );
+	}, [ maxPages, currentPage ] );
 
 	const headerActions = (
 		<>
