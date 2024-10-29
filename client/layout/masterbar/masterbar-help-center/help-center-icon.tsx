@@ -1,5 +1,9 @@
 import { helpFilled } from '@wordpress/icons';
-export const HelpCenterIcon: React.FC = ( { hasUnread }: { hasUnread: boolean } ) => {
+
+interface HelpCenterIconProps {
+	hasUnread: boolean;
+}
+export const HelpCenterIcon: React.FC< HelpCenterIconProps > = ( { hasUnread } ) => {
 	if ( hasUnread ) {
 		return (
 			<svg
