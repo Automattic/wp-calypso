@@ -1,8 +1,7 @@
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useSelector } from 'calypso/state';
 import { Plugin } from 'calypso/state/plugins/installed/types';
@@ -63,20 +62,18 @@ export default function PluginsListDataViews( {
 	}, [ currentPlugins, dataViewsState, fields, allStatuses ] );
 
 	return (
-		<ItemsDataViews
-			data={ {
-				items: data,
-				getItemId: ( item ) => `${ item.id }`,
-				fields,
-				pagination: paginationInfo,
-				searchLabel: translate( 'Search for plugins' ),
-				enableSearch: true,
-				actions: actions,
-				dataViewsState: dataViewsState,
-				setDataViewsState: setDataViewsState,
-				defaultLayouts: { table: {} },
-			} }
+		<DataViews
+			data={ data ?? [] }
+			view={ dataViewsState }
+			onChangeView={ setDataViewsState }
+			fields={ fields }
+			search
+			searchLabel={ translate( 'Search for plugins' ) }
+			actions={ actions }
+			getItemId={ ( item ) => `${ item.id }` }
 			isLoading={ isLoading }
+			paginationInfo={ paginationInfo }
+			defaultLayouts={ { table: {} } }
 		/>
 	);
 }
