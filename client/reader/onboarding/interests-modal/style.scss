@@ -16,7 +16,7 @@
 		font-weight: 400;
 		text-align: center;
 
-		@media ( max-width: 768px ) {
+		@media ( max-width: $break-medium ) {
 			font-size: 1.5rem;
 		}
 	}
