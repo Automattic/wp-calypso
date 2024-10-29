@@ -73,10 +73,10 @@
 
 	.task__description {
 		margin-bottom: 24px;
-		font-size: $font-body-small;
+		font-size: $font-body;
 		line-height: 24px;
-		color: var(--color-text);
-
+		color: var(--color-text-subtle);
+		
 		@include breakpoint-deprecated( ">800px" ) {
 			line-height: 28px;
 			margin-bottom: 32px;
