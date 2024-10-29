@@ -3,7 +3,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
-import { BackgroundType3 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
+import { BackgroundType7 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -31,7 +31,7 @@ export default function MigrationsProcess() {
 		<PageSection
 			heading={ translate( 'We’ll migrate your sites for you' ) }
 			description={ translate( 'Transfer your WordPress websites hassle-free with our help.' ) }
-			background={ BackgroundType3 }
+			background={ BackgroundType7 }
 		>
 			<div className="migrations-process__cards">
 				<MigrationsProcessCard
