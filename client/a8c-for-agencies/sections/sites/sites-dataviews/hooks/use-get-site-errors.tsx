@@ -49,7 +49,7 @@ export default function useGetSiteErrors() {
 				errors.push( {
 					severity: 'medium',
 					message: translate(
-						'We are still provisioning your site. In the meantime, you can {{a}}set up your site{{/a}}',
+						'We are still provisioning your site. In the meantime, you can {{a}}set up your site{{/a}}.',
 						{
 							components: {
 								a: (
