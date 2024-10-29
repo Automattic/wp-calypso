@@ -56,16 +56,26 @@ $blueberry-color: #3858e9;
 	ol,
 	ul {
 		margin: 0 0 0 1em;
-		width: calc(100% - 1.5em);
 		padding: 16px;
 		font-size: 0.875rem;
     	font-style: normal;
+		li {
+			margin-bottom: 6px;
+			p {
+				padding: 0;
+			}
+		}
+	}
+	h3 {
+		padding: 0 16px;
 	}
 
 	&.odie-chatbox-message-bot {
 		.odie-chatbox-message__content {
 			background-color: var(--studio-gray-0);
 			flex: 1;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px 8px 8px 0;
 		}
 	}
 
@@ -147,13 +157,6 @@ $blueberry-color: #3858e9;
 	border-radius: 8px 8px 8px 0;
 	background-color: var(--studio-white);
 	flex-wrap: wrap;
-
-	p {
-		background-color: var(--studio-gray-0);
-		margin-bottom: 0;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px 8px 8px 0;
-	}
 }
 
 .odie-chatbox-message p {
