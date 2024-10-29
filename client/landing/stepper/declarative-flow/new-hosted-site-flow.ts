@@ -76,10 +76,10 @@ const hosting: Flow = {
 
 		const goBack = () => {
 			if ( _currentStepSlug === 'plans' ) {
-				if ( ! showDomainStep ) {
-					return window.location.assign( '/sites?hosting-flow=true' );
+				if ( showDomainStep ) {
+					return navigate( 'domains' );
 				}
-				return navigate( 'domains' );
+				return window.location.assign( '/sites?hosting-flow=true' );
 			}
 			if ( _currentStepSlug === 'trialAcknowledge' ) {
 				navigate( 'plans' );
