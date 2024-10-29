@@ -4,6 +4,10 @@
 .interests-modal {
 	&__content {
 		padding: 24px;
+
+		@media ( max-width: $break-medium ) {
+			padding: 0;
+		}
 	}
 
 	&__title {
@@ -11,6 +15,10 @@
 		font-size: 2.75rem;
 		font-weight: 400;
 		text-align: center;
+
+		@media ( max-width: $break-medium ) {
+			font-size: 1.5rem;
+		}
 	}
 
 	&__subtitle {

@@ -1,9 +1,12 @@
+/* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useSmooch } from '@automattic/zendesk-client';
-import { TabPanel } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getFilteredConversations } from './utils';
@@ -47,8 +50,8 @@ export const HelpCenterChatHistory = () => {
 		archived: 'archived',
 	};
 
-	const [ activeTab, setActiveTab ] = useState( TAB_STATES.recent );
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
+	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { getConversations } = useSmooch();
 
 	const { isChatLoaded } = useSelect( ( select ) => {
@@ -59,42 +62,48 @@ export const HelpCenterChatHistory = () => {
 	const { recentConversations, archivedConversations } = getFilteredConversations( {
 		conversations,
 	} );
+	const [ unreadCount, setUnreadCount ] = useState( 0 );
+
 	useEffect( () => {
 		if ( isChatLoaded && getConversations ) {
-			setConversations( getConversations() as ZendeskConversation[] );
+			const convos = getConversations() as ZendeskConversation[];
+			setConversations( convos );
+
+			// Calculate number of chats with unread messages
+			const unreadChats = convos.filter(
+				( conversation ) => conversation.participants[ 0 ]?.unreadCount > 0
+			).length;
+			setUnreadCount( unreadChats );
 		}
 	}, [ getConversations, isChatLoaded ] );
 
 	return (
 		<div className="help-center-chat-history">
-			<TabPanel
-				tabs={ [
-					{
-						name: TAB_STATES.recent,
-						title: __( 'Recent' ),
-						className: 'help-center-chat-history__recent',
-					},
-					{
-						name: TAB_STATES.archived,
-						title: __( 'Archived' ),
-						className: 'help-center-chat-history__archived',
-					},
-				] }
-				onSelect={ () => {
-					setActiveTab( activeTab );
-				} }
-			>
-				{ ( tab ) => {
-					switch ( tab.name ) {
-						case TAB_STATES.recent:
-							return <Conversations conversations={ recentConversations } />;
-						case TAB_STATES.archived:
-							return <Conversations conversations={ archivedConversations } />;
-						default:
-							return;
-					}
-				} }
-			</TabPanel>
+			<SectionNav>
+				<NavTabs>
+					<NavItem
+						selected={ selectedTab === TAB_STATES.recent }
+						onClick={ () => setSelectedTab( TAB_STATES.recent ) }
+						count={ unreadCount > 0 ? unreadCount : undefined }
+					>
+						{ __( 'Recent' ) }
+					</NavItem>
+					<NavItem
+						selected={ selectedTab === TAB_STATES.archived }
+						onClick={ () => setSelectedTab( TAB_STATES.archived ) }
+					>
+						{ __( 'Archived' ) }
+					</NavItem>
+				</NavTabs>
+			</SectionNav>
+
+			{ selectedTab === TAB_STATES.recent && (
+				<Conversations conversations={ recentConversations } />
+			) }
+
+			{ selectedTab === TAB_STATES.archived && (
+				<Conversations conversations={ archivedConversations } />
+			) }
 		</div>
 	);
 };
