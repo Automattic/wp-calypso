@@ -8,6 +8,8 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: 'link-in-bio', to: '/start:lang?' },
 	{ flow: VIDEOPRESS_FLOW, to: '/start:lang?' },
 	{ flow: 'sensei', to: ':lang?/plugins/sensei-pro/' },
+	{ flow: 'videopress-tv', to: '/start:lang?' },
+	{ flow: 'videopress-tv-purchase', to: '/start:lang?' },
 ];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>

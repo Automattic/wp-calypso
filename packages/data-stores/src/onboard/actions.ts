@@ -98,45 +98,6 @@ export function* createVideoPressSite( {
 	return success;
 }
 
-export function* createVideoPressTvSite( {
-	languageSlug,
-	visibility = Visibility.PublicNotIndexed,
-}: CreateSiteBaseActionParameters ) {
-	const { selectedDesign, selectedFeatures }: State = yield select( STORE_KEY, 'getState' );
-
-	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const blogTitle = 'VideoPress TV';
-
-	const params: CreateSiteParams = {
-		blog_name: '', // will be replaced on server with random domain
-		blog_title: blogTitle,
-		public: visibility,
-		options: {
-			site_information: {
-				title: blogTitle,
-			},
-			lang_id: lang_id,
-			site_creation_flow: 'videopress-tv',
-			enable_fse: true,
-			theme: 'pub/videopress-hq',
-			timezone_string: guessTimezone(),
-			use_patterns: true,
-			selected_features: selectedFeatures,
-			wpcom_public_coming_soon: 1,
-			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
-			is_videopress_initial_purchase: true,
-		},
-	};
-
-	const success: NewSiteBlogDetails | undefined = yield dispatch(
-		SITE_STORE,
-		'createSite',
-		params
-	);
-
-	return success;
-}
-
 export function* createSenseiSite( {
 	username = '',
 	languageSlug = '',

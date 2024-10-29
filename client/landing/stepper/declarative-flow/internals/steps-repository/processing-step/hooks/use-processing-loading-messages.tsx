@@ -4,8 +4,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isTransferringHostedSiteCreationFlow,
 	VIDEOPRESS_FLOW,
-	VIDEOPRESS_TV_FLOW,
-	VIDEOPRESS_TV_PURCHASE_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -57,7 +55,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( "Woo! We're creating your store" ),
 						subtitle: (
 							<>
-								<strong>{ __( 'Hang tight! ' ) }</strong>
+								<strong>{ __( 'Hang tight!' ) }</strong>
 								{ __( 'Your free trial is currently being set up and may take a few minutes.' ) }
 							</>
 						),
@@ -70,7 +68,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Building the foundations' ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
+								<strong>{ __( '#FunWooFact:' ) }</strong>
 								{ __(
 									'Did you know that Woo was founded by two South Africans and a Norwegian? Here are three alternative ways to say "store" in those countries - Winkel, ivenkile, and butikk.'
 								) }
@@ -82,7 +80,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Organizing the stock room' ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
+								<strong>{ __( '#FunWooFact:' ) }</strong>
 								{ __(
 									"Did you know that Woo powers almost 4 million stores worldwide? You're in good company."
 								) }
@@ -94,7 +92,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Organizing the stock room' ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
+								<strong>{ __( '#FunWooFact:' ) }</strong>
 								{ __( 'Are you Team Cat or Team Dog? The Woo team is split 50/50!' ) }
 							</>
 						),
@@ -104,7 +102,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Applying the finishing touches' ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
+								<strong>{ __( '#FunWooFact:' ) }</strong>
 								{ __(
 									'There are more than 150 Woo meetups held all over the world! A great way to meet fellow store owners.'
 								) }
@@ -116,7 +114,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Turning on the lights' ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
+								<strong>{ __( '#FunWooFact:' ) }</strong>
 								{ __(
 									'The Woo team is made up of over 350 talented individuals, distributed across 30+ countries.'
 								) }
@@ -128,8 +126,8 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Turning on the lights' ),
 						subtitle: (
 							<>
-								<strong>{ __( '#FunWooFact: ' ) }</strong>
-								{ __( 'Our favorite color is purple ' ) }
+								<strong>{ __( '#FunWooFact:' ) }</strong>
+								{ __( 'Our favorite color is purple' ) }
 								<img
 									className="woo-inline-purple-heart"
 									alt="Woo Purple Heart Emoji"
@@ -147,7 +145,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 						title: __( 'Opening the doors' ),
 						subtitle: (
 							<>
-								<strong>{ __( "We're almost there! " ) }</strong>
+								<strong>{ __( "We're almost there!" ) }</strong>
 								{ __( 'Your free trial will be ready in just a moment.' ) }
 							</>
 						),
@@ -162,18 +160,6 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( 'Scouting the locations' ), duration: 5000 },
 			{ title: __( 'Kicking off the casting' ), duration: 5000 },
 			{ title: __( "Let's head to the checkout" ), duration: 5000 },
-		];
-		return videoPressLoadingMessages;
-	} else if ( VIDEOPRESS_TV_FLOW === flow ) {
-		const videoPressLoadingMessages = [
-			{ title: __( 'Starting up your channel' ), duration: 5000 },
-		];
-		return videoPressLoadingMessages;
-	} else if ( VIDEOPRESS_TV_PURCHASE_FLOW === flow ) {
-		const videoPressLoadingMessages = [
-			{ title: __( 'Scouting the locations' ), duration: 5000 },
-			{ title: __( 'Kicking off the casting' ), duration: 5000 },
-			{ title: __( 'Let’s head to the checkout' ), duration: 5000 },
 		];
 		return videoPressLoadingMessages;
 	}
