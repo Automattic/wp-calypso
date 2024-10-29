@@ -4,7 +4,7 @@ import { Gravatar } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HumanAvatar, WapuuAvatar } from '../../assets';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -107,11 +107,14 @@ const ChatMessage = ( {
 	const { botName, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isDisliked ] = useState( false );
-	if ( shouldUseHelpCenterExperience ) {
-		import( './style_redesign.scss' );
-	} else {
-		import( './style.scss' );
-	}
+
+	useEffect( () => {
+		if ( shouldUseHelpCenterExperience ) {
+			import( './style_redesign.scss' );
+		} else {
+			import( './style.scss' );
+		}
+	}, [ shouldUseHelpCenterExperience ] );
 
 	const fullscreenRef = useRef< HTMLDivElement >( null );
 
