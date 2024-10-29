@@ -63,14 +63,14 @@ export default function PluginsListDataViews( {
 
 	return (
 		<DataViews
-			data={ data ?? [] }
+			data={ data }
 			view={ dataViewsState }
 			onChangeView={ setDataViewsState }
 			fields={ fields }
 			search
 			searchLabel={ translate( 'Search for plugins' ) }
 			actions={ actions }
-			getItemId={ ( item ) => `${ item.id }` }
+			getItemId={ ( item ) => item.id }
 			isLoading={ isLoading }
 			paginationInfo={ paginationInfo }
 			defaultLayouts={ { table: {} } }

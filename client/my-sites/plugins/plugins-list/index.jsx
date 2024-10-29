@@ -62,7 +62,7 @@ export class PluginsList extends Component {
 		selectedSiteSlug: PropTypes.string,
 		siteIsAtomic: PropTypes.bool,
 		siteIsJetpack: PropTypes.bool,
-		onSearch: PropTypes.func.isRequired,
+		onSearch: PropTypes.func,
 	};
 
 	static defaultProps = {

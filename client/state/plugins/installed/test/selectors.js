@@ -8,6 +8,7 @@ import {
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import { getSite } from 'calypso/state/sites/selectors';
 import * as selectors from '../selectors';
+import { PLUGINS_STATUS } from '../status/constants';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const createError = function ( error, message, name = false ) {
@@ -433,6 +434,79 @@ describe( 'Installed plugin selectors', () => {
 
 		test( 'Should return an empty array if there are no matching statuses of that type.', () => {
 			expect( selectors.getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'getPluginsWithUpdateStatuses', () => {
+		test( 'Should update plugin status property based on its state from another objects.', () => {
+			const allPlugins = [
+				{
+					slug: 'jetpack/jetpack',
+				},
+				{
+					slug: 'akismet/akismet',
+				},
+				{
+					slug: 'hello-dolly/hello-dolly',
+				},
+				{
+					slug: 'vaultpress/vaultpress',
+				},
+			];
+
+			const pluginsWithUpdates = [
+				{
+					slug: 'jetpack/jetpack',
+				},
+				{
+					slug: 'akismet/akismet',
+				},
+			];
+
+			const activePlugins = [
+				{
+					slug: 'jetpack/jetpack',
+				},
+				{
+					slug: 'hello-dolly/hello-dolly',
+				},
+			];
+
+			const inactivePlugins = [
+				{
+					slug: 'akismet/akismet',
+				},
+				{
+					slug: 'vaultpress/vaultpress',
+				},
+			];
+
+			const pluginsWithUpdatesAndStatuses = selectors.getPluginsWithUpdateStatuses(
+				allPlugins,
+				pluginsWithUpdates,
+				inactivePlugins,
+				activePlugins
+			);
+
+			expect( pluginsWithUpdatesAndStatuses[ 0 ] ).toEqual( {
+				slug: 'jetpack/jetpack',
+				status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ],
+			} );
+
+			expect( pluginsWithUpdatesAndStatuses[ 1 ] ).toEqual( {
+				slug: 'akismet/akismet',
+				status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.INACTIVE ],
+			} );
+
+			expect( pluginsWithUpdatesAndStatuses[ 2 ] ).toEqual( {
+				slug: 'hello-dolly/hello-dolly',
+				status: [ PLUGINS_STATUS.ACTIVE ],
+			} );
+
+			expect( pluginsWithUpdatesAndStatuses[ 3 ] ).toEqual( {
+				slug: 'vaultpress/vaultpress',
+				status: [ PLUGINS_STATUS.INACTIVE ],
+			} );
 		} );
 	} );
 } );
