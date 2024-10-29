@@ -793,21 +793,15 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Return to your site' );
 		}
 
-if (this.isWooPasswordlessJPC()) {
-    if (config.isEnabled('woocommerce/core-profiler-passwordless-auth')) {
-        return translate('Connect to WordPress.com');
-    } else {
-        return translate('Connect your account');
-    }
-}
-			if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooPasswordlessJPC() ) {
+			if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
 				return translate( 'Connect to WordPress.com' );
 			}
-		} else {
-			// eslint-disable-next-line no-lonely-if
-			if ( this.isWooPasswordlessJPC() ) {
-				return translate( 'Connect your account' );
-			}
+			return translate( 'Connect your account' );
+		}
+		// eslint-disable-next-line no-lonely-if
+		if ( this.isWooPasswordlessJPC() ) {
+			return translate( 'Connect your account' );
 		}
 
 		if ( ! this.retryingAuth ) {
