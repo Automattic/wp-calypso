@@ -272,7 +272,7 @@ class StatsPeriodNavigation extends PureComponent {
 								)
 							}
 						/>
-						<div className="stats-period-navigation__date-range-control">
+						<div className="stats-period-navigation__period-control">
 							{ this.props.activeTab && (
 								<Legend
 									activeCharts={ this.props.activeLegend }
