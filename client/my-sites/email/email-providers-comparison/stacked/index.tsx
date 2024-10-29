@@ -5,10 +5,11 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
-import { useEffect, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
@@ -215,20 +216,20 @@ const EmailProvidersStackedComparison = ( {
 		/>,
 	];
 
-	const comparisonComponents = {
-		a: (
-			<a
-				href={ getEmailInDepthComparisonPath(
-					selectedSite?.slug ?? '',
-					selectedDomainName,
-					currentRoute,
-					source,
-					selectedIntervalLength
-				) }
-				onClick={ handleCompareClick }
-			/>
-		),
-	};
+	const comparisonComponents = ( isExternal: boolean ) => ( {
+		a: createElement( isExternal ? ExternalLink : 'a', {
+			href: getEmailInDepthComparisonPath(
+				selectedSite?.slug ?? '',
+				selectedDomainName,
+				currentRoute,
+				source,
+				selectedIntervalLength
+			),
+			onClick: handleCompareClick,
+			// The `children` will be replaced when the element is passed to `translate()`; the empty prop here is only to satisfy the type checker.
+			children: null,
+		} ),
+	} );
 
 	return (
 		<Main
@@ -266,11 +267,11 @@ const EmailProvidersStackedComparison = ( {
 						? translate(
 								'Build an online presence and build your brand with one of these options ({{a}}see how they compare{{/a}}).',
 								{
-									components: comparisonComponents,
+									components: comparisonComponents( true ),
 								}
 						  )
 						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
-								components: comparisonComponents,
+								components: comparisonComponents( false ),
 						  } ) }
 				</div>
 			) }
