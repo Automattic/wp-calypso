@@ -6,7 +6,7 @@ import type { Context as PageJSContext } from '@automattic/calypso-router';
 const SettingsSidebar = makeSidebar( {
 	items: [
 		{
-			key: 'settings',
+			key: 'site',
 			get label() {
 				return __( 'Site' );
 			},
@@ -17,13 +17,31 @@ const SettingsSidebar = makeSidebar( {
 				return __( 'Administration' );
 			},
 		},
+		{
+			key: 'agency',
+			get label() {
+				return __( 'Agency' );
+			},
+		},
+		{
+			key: 'caches',
+			get label() {
+				return __( 'Caches' );
+			},
+		},
+		{
+			key: 'web-server',
+			get label() {
+				return __( 'Web Server' );
+			},
+		},
 	],
 } );
 
 export function siteSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="settings" />
+			<SettingsSidebar selectedItemKey="site" />
 			<WpcomSiteTools />
 		</PanelWithSidebar>
 	);
