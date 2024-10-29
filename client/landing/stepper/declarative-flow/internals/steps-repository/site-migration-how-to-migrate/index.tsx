@@ -33,7 +33,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 			{
 				label: translate( 'Do it for me' ),
 				description: translate(
-					"Share your site with us, and we'll review it and handle the migration if possible."
+					"Share your site with us. We'll review it and handle the migration if possible."
 				),
 				value: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				selected: true,
