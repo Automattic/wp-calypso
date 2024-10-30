@@ -255,7 +255,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	};
 
 	const handleClose = useCallback( () => {
-		// Clear existing stream data and request fresh content
+		// Clear existing stream data and request fresh content.
 		dispatch( {
 			type: READER_STREAMS_CLEAR,
 			payload: { streamKey: 'following' },
@@ -267,7 +267,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	}, [ dispatch, onClose ] );
 
 	const handleContinue = useCallback( () => {
-		// Save preference and track event
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 
