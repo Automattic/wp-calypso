@@ -5,6 +5,7 @@
 .panel-with-sidebar {
 	display: flex;
 	gap: 20px;
+	align-items: flex-start;
 
 	.navigation-header {
 		margin-bottom: 16px;
@@ -12,8 +13,10 @@
 }
 
 .panel-sidebar {
-	margin: 0;
+	position: sticky;
+	top: 0;
 	min-width: 160px;
+	margin: 0;
 	flex-shrink: 0;
 	list-style: none;
 }
