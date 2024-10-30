@@ -1,0 +1,18 @@
+<svg width="88" height="44" viewBox="0 0 88 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 8C0 3.58172 3.58172 0 8 0H80C84.4183 0 88 3.58172 88 8V36C88 40.4183 84.4183 44 80 44H0V8Z" fill="#FFD200"/>
+    <!--Circle 1 with animation-->
+    <circle cx="22" cy="22" r="6" fill="black">
+      <animate id="shrink" attributeName="r" from="6" to="3" dur="320ms" begin="0s;grow.end" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+      <animate id="grow" attributeName="r" from="3" to="6" dur="320ms" begin="shrink3.begin" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+    </circle>
+    <!--Circle 2 with animation-->
+    <circle cx="46" cy="22" r="4" fill="black">
+      <animate id="grow2" attributeName="r" from="3" to="6" dur="320ms" begin="0s;shrink.begin" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+      <animate id="shrink2" attributeName="r" from="6" to="3" dur="320ms" begin="grow2.end" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+    </circle>
+    <!--Circle 3 with animation-->
+    <circle cx="68" cy="22" r="4" fill="black">
+      <animate id="grow3" attributeName="r" from="3" to="6" dur="320ms" begin="shrink2.begin" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+      <animate id="shrink3" attributeName="r" from="6" to="3" dur="320ms" begin="grow3.end" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+    </circle>
+</svg>
