@@ -59,7 +59,10 @@ export class ThemesPage {
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await searchInput.fill( keyword );
 		await Promise.all( [ this.page.waitForNavigation(), searchInput.press( 'Enter' ) ] );
-		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
+		// wait for the loadin placeholders to appear after search is triggered
+		await this.page.waitForSelector( selectors.placeholder, { state: 'attached' } );
+		// wait for an actionable theme to appear, meaning the search results are shown
+		await this.page.locator( selectors.actionableTheme ).first().waitFor();
 	}
 
 	/**
