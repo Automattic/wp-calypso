@@ -107,15 +107,15 @@ class StatModuleChartTabs extends Component {
 		return (
 			<div className={ clsx( ...classes ) }>
 				<ChartHeader
+					title="Title"
+					controls={ <div className="stats-chart-tabs__header-controls-wrapper"></div> }
 					showLegend={ ! hideLegend }
 					activeLegend={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }
 					availableLegend={ this.props.availableLegend }
 					onLegendClick={ this.onLegendClick }
 					charts={ this.props.charts }
-				>
-					{ /* Add any additional header content here */ }
-				</ChartHeader>
+				></ChartHeader>
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
