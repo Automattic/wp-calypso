@@ -77,7 +77,7 @@ export async function payPalJsProcessor(
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,
 		} ),
-		paymentMethodType: 'WPCOM_PayPal_JS', // FIXME: replace this with the new payment method name
+		paymentMethodType: 'WPCOM_Billing_PayPal_PPCP',
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	try {

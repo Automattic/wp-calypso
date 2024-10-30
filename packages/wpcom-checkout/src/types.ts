@@ -353,7 +353,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Ebanx'
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
 	| 'WPCOM_Billing_PayPal_Direct'
-	| 'WPCOM_Billing_PayPal_Express'
+	| 'WPCOM_Billing_PayPal_PPCP'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
 	| 'WPCOM_Billing_Stripe_Alipay'
 	| 'WPCOM_Billing_Stripe_Bancontact'

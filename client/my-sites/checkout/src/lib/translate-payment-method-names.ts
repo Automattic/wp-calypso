@@ -18,7 +18,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'ebanx';
 		case 'WPCOM_Billing_PayPal_Direct':
 			return 'paypal-direct';
-		case 'WPCOM_Billing_PayPal_Express':
+		case 'WPCOM_Billing_PayPal_PPCP':
 			// NOTE: we cannot use the key `paypal` because composite-checkout
 			// ends up using this as an `id`, which overwrites `window.paypal`
 			// which is the namespace used by the PayPal JS SDK.
@@ -67,7 +67,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'paypal-direct':
 			return 'WPCOM_Billing_PayPal_Direct';
 		case 'paypal-js':
-			return 'WPCOM_Billing_PayPal_Express';
+			return 'WPCOM_Billing_PayPal_PPCP';
 		case 'stripe':
 		case 'card':
 			return 'WPCOM_Billing_Stripe_Payment_Method';
@@ -100,7 +100,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 		case 'WPCOM_Billing_PayPal_Direct':
-		case 'WPCOM_Billing_PayPal_Express':
+		case 'WPCOM_Billing_PayPal_PPCP':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
 		case 'WPCOM_Billing_Stripe_Alipay':
 		case 'WPCOM_Billing_Stripe_Bancontact':

@@ -31,7 +31,7 @@ jest.mock( 'calypso/lib/explat' );
 ( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
 export const normalAllowedPaymentMethods = [
-	'WPCOM_Billing_PayPal_Express',
+	'WPCOM_Billing_PayPal_PPCP',
 	'WPCOM_Billing_Stripe_Payment_Method',
 ];
 
