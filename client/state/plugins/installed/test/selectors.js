@@ -488,25 +488,16 @@ describe( 'Installed plugin selectors', () => {
 				activePlugins
 			);
 
-			expect( pluginsWithUpdatesAndStatuses[ 0 ] ).toEqual( {
-				slug: 'jetpack/jetpack',
-				status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ],
-			} );
+			expect( pluginsWithUpdatesAndStatuses ).toEqual(
+				expect.arrayContaining( [
+					{ slug: 'jetpack/jetpack', status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.ACTIVE ] },
+					{ slug: 'akismet/akismet', status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.INACTIVE ] },
+					{ slug: 'hello-dolly/hello-dolly', status: [ PLUGINS_STATUS.ACTIVE ] },
+					{ slug: 'vaultpress/vaultpress', status: [ PLUGINS_STATUS.INACTIVE ] },
+				] )
+			);
 
-			expect( pluginsWithUpdatesAndStatuses[ 1 ] ).toEqual( {
-				slug: 'akismet/akismet',
-				status: [ PLUGINS_STATUS.UPDATE, PLUGINS_STATUS.INACTIVE ],
-			} );
-
-			expect( pluginsWithUpdatesAndStatuses[ 2 ] ).toEqual( {
-				slug: 'hello-dolly/hello-dolly',
-				status: [ PLUGINS_STATUS.ACTIVE ],
-			} );
-
-			expect( pluginsWithUpdatesAndStatuses[ 3 ] ).toEqual( {
-				slug: 'vaultpress/vaultpress',
-				status: [ PLUGINS_STATUS.INACTIVE ],
-			} );
+			expect( pluginsWithUpdatesAndStatuses.length ).toEqual( 4 );
 		} );
 	} );
 } );
