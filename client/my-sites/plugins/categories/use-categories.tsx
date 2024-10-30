@@ -337,6 +337,25 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		description: __( 'Building a money-making blog doesn’t have to be as hard as you might think' ),
 		tags: [ 'affiliate-marketing', 'advertising', 'adwords' ],
 		preview: [
+			// TikTok for Business is only promoted for the first two weeks of November 2024
+			...( () => {
+				const currentDate = new Date();
+				const isNovember2024 = currentDate.getFullYear() === 2024 && currentDate.getMonth() === 10;
+				const isFirstTwoWeeks = currentDate.getDate() <= 14;
+
+				return isNovember2024 && isFirstTwoWeeks
+					? [
+							{
+								slug: 'tiktok-for-business',
+								name: __( 'Find new prospects through TikTok' ),
+								icon: 'https://ps.w.org/tiktok-for-business/assets/icon-256x256.jpg?rev=2721531',
+								short_description: __(
+									'Integrate TikTok directly on WordPress to run Lead Generation Ads to capture leads and improve targeting.'
+								),
+							},
+					  ]
+					: [];
+			} )(),
 			{
 				slug: 'wordpress-seo-premium',
 				name: __( 'Yoast SEO Premium' ),
@@ -390,7 +409,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			},
 			{
 				slug: 'woocommerce-bookings',
-				name: __( 'WooCommerce Bookings ' ),
+				name: __( 'WooCommerce Bookings' ),
 				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce-bookings.png',
 				short_description: __( 'Allow customers to book appointments' ),
 			},
