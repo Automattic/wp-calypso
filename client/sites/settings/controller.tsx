@@ -1,4 +1,9 @@
 import { __ } from '@wordpress/i18n';
+import AdministrationSettings from 'calypso/my-sites/site-settings/administration';
+import AgencySettings from 'calypso/my-sites/site-settings/agency';
+import CachesSettings from 'calypso/my-sites/site-settings/caches';
+import SiteSettings from 'calypso/my-sites/site-settings/site';
+import WebServerSettings from 'calypso/my-sites/site-settings/web-server';
 import makeSidebar, { PanelWithSidebar } from '../components/panel-sidebar';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -41,7 +46,7 @@ export function siteSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar selectedItemKey="site" />
-			<p>Site settings</p>
+			<SiteSettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -51,7 +56,7 @@ export function administrationSettings( context: PageJSContext, next: () => void
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar selectedItemKey="administration" />
-			<p>Administration settings</p>
+			<AdministrationSettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -61,7 +66,7 @@ export function agencySettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar selectedItemKey="agency" />
-			<p>Agency settings</p>
+			<AgencySettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -71,7 +76,7 @@ export function cachesSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar selectedItemKey="caches" />
-			<p>Caches settings</p>
+			<CachesSettings />
 		</PanelWithSidebar>
 	);
 	next();
@@ -81,37 +86,7 @@ export function webServerSettings( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<PanelWithSidebar>
 			<SettingsSidebar selectedItemKey="web-server" />
-			<p>Web server settings</p>
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function agencySettings( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="agency" />
-			<WpcomSiteTools />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function cachesSettings( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="caches" />
-			<WpcomSiteTools />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function webServerSettings( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<SettingsSidebar selectedItemKey="web-server" />
-			<WpcomSiteTools />
+			<WebServerSettings />
 		</PanelWithSidebar>
 	);
 	next();
