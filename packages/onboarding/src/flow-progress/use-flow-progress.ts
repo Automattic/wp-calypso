@@ -1,11 +1,4 @@
-import {
-	ECOMMERCE_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	FREE_FLOW,
-	COPY_SITE_FLOW,
-	VIDEOPRESS_TV_FLOW,
-	VIDEOPRESS_TV_PURCHASE_FLOW,
-} from '../utils/flows';
+import { ECOMMERCE_FLOW, LINK_IN_BIO_TLD_FLOW, FREE_FLOW, COPY_SITE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -38,22 +31,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		freeSetup: 0,
 		designSetup: 1,
 		launchpad: 2,
-	},
-	videopress: {
-		intro: 0,
-		videomakerSetup: 1,
-		user: 2,
-		options: 3,
-		chooseADomain: 4,
-		processing: 5,
-		launchpad: 6,
-	},
-	[ VIDEOPRESS_TV_FLOW ]: {
-		intro: 0,
-		processing: 1,
-	},
-	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: {
-		processing: 0,
 	},
 	sensei: {
 		senseiSetup: 1,

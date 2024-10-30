@@ -48,7 +48,6 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ false }
 			showHeaderWooCommercePowered={ false }
-			showVideoPressPowered={ false }
 			showJetpackPowered={ false }
 			customizedActionButtons={
 				<ChatButton

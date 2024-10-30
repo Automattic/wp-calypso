@@ -102,6 +102,7 @@ export function testDomain(
 		is_dnssec_enabled: false,
 		is_dnssec_supported: true,
 		is_gravatar_domain: false,
+		is_hundred_year_domain: false,
 		is_renewable: false,
 		is_redeemable: false,
 		is_subdomain: false,

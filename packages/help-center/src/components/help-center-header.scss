@@ -13,6 +13,10 @@
 		height: $head-foot-height;
 		padding: 16px;
 
+		&.chat-history {
+			border-bottom: none;
+		}
+
 		>div {
 			display: flex;
 			align-items: center;

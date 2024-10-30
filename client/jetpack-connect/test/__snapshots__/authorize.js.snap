@@ -128,7 +128,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           <p
             class="jetpack-connect__logged-in-form-user-text"
           >
-            Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})
+            %(connectionStatus)s as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})
           </p>
           <div
             class="card logged-out-form__footer jetpack-connect__action-disclaimer"

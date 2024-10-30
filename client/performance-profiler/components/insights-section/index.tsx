@@ -28,7 +28,9 @@ type InsightsSectionProps = {
 const AIBadge = styled.span`
 	padding: 0 8px;
 	margin-left: 8px;
+	margin-top: 2px;
 	width: fit-content;
+	height: fit-content;
 	border-radius: 4px;
 	float: right;
 	font-size: 12px;

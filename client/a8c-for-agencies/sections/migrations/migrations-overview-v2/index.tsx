@@ -11,6 +11,16 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MigrationsBanner from './sections/migrations-banner';
+import MigrationsClientRelationship from './sections/migrations-client-relationship';
+import MigrationsCTA from './sections/migrations-cta';
+import MigrationsFAQs from './sections/migrations-faqs';
+import MigrationsHostingFeatures from './sections/migrations-hosting-features';
+import MigrationsHostingOptions from './sections/migrations-hosting-options';
+import MigrationsProcess from './sections/migrations-process';
+import MigrationsTestimonials from './sections/migrations-testimonials';
+
+import './style.scss';
 
 export default function MigrationsOverviewV2() {
 	const translate = useTranslate();
@@ -39,7 +49,18 @@ export default function MigrationsOverviewV2() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Migrations Overview V2</LayoutBody>
+			<LayoutBody>
+				<div className="migrations-overview-v2__content-wrapper">
+					<MigrationsBanner />
+					<MigrationsHostingFeatures />
+					<MigrationsTestimonials />
+					<MigrationsHostingOptions />
+					<MigrationsProcess />
+					<MigrationsClientRelationship />
+					<MigrationsCTA />
+					<MigrationsFAQs />
+				</div>
+			</LayoutBody>
 		</Layout>
 	);
 }

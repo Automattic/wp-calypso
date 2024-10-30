@@ -581,6 +581,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'site-settings',
+		paths: [ '/sites/settings' ],
+		module: 'calypso/sites/settings',
+		group: 'sites',
+	},
+	{
 		name: 'backup',
 		paths: [ '/backup' ],
 		module: 'calypso/my-sites/backup',
