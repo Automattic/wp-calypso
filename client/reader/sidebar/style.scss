@@ -262,7 +262,8 @@ body.is-section-reader {
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-p2,
-			.sidebar__menu-icon.sidebar_svg-search {
+			.sidebar__menu-icon.sidebar_svg-search,
+			.sidebar__menu-icon.sidebar_svg-discover {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-hover-fill);
@@ -271,8 +272,7 @@ body.is-section-reader {
 			.sidebar__menu-icon.sidebar_svg-a8c,
 			.sidebar__menu-icon.sidebar_svg-a8c-conversations,
 			.sidebar__menu-icon.sidebar_svg-list,
-			.sidebar__menu-icon.sidebar_svg-tag,
-			.sidebar__menu-icon.sidebar_svg-discover {
+			.sidebar__menu-icon.sidebar_svg-tag {
 				fill: var(--color-sidebar-menu-hover-background);
 				g {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
@@ -311,7 +311,8 @@ body.is-section-reader {
 			}
 		}
 		.sidebar__menu-icon.sidebar_svg-p2,
-		.sidebar__menu-icon.sidebar_svg-search {
+		.sidebar__menu-icon.sidebar_svg-search,
+		.sidebar__menu-icon.sidebar_svg-discover {
 			fill: var(--color-sidebar-background);
 			path {
 				fill: var(--color-sidebar-gridicon-fill);
@@ -320,8 +321,7 @@ body.is-section-reader {
 		.sidebar__menu-icon.sidebar_svg-a8c,
 		.sidebar__menu-icon.sidebar_svg-a8c-conversations,
 		.sidebar__menu-icon.sidebar_svg-list,
-		.sidebar__menu-icon.sidebar_svg-tag,
-		.sidebar__menu-icon.sidebar_svg-discover {
+		.sidebar__menu-icon.sidebar_svg-tag {
 			fill: var(--color-sidebar-background);
 			g {
 				stroke: var(--color-sidebar-gridicon-fill);
@@ -363,7 +363,8 @@ body.is-section-reader {
 				}
 			}
 			.sidebar__menu-icon.sidebar_svg-p2,
-			.sidebar__menu-icon.sidebar_svg-search {
+			.sidebar__menu-icon.sidebar_svg-search,
+			.sidebar__menu-icon.sidebar_svg-discover {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-selected-fill);
@@ -372,8 +373,7 @@ body.is-section-reader {
 			.sidebar__menu-icon.sidebar_svg-a8c,
 			.sidebar__menu-icon.sidebar_svg-a8c-conversations,
 			.sidebar__menu-icon.sidebar_svg-list,
-			.sidebar__menu-icon.sidebar_svg-tag,
-			.sidebar__menu-icon.sidebar_svg-discover {
+			.sidebar__menu-icon.sidebar_svg-tag {
 				fill: var(--color-sidebar-menu-hover-background);
 				g {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
