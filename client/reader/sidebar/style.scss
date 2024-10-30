@@ -261,7 +261,8 @@ body.is-section-reader {
 					stroke: var(--color-sidebar-gridicon-hover-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-p2 {
+			.sidebar__menu-icon.sidebar_svg-p2,
+			.sidebar__menu-icon.sidebar_svg-search {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-hover-fill);
@@ -270,7 +271,6 @@ body.is-section-reader {
 			.sidebar__menu-icon.sidebar_svg-a8c,
 			.sidebar__menu-icon.sidebar_svg-a8c-conversations,
 			.sidebar__menu-icon.sidebar_svg-list,
-			.sidebar__menu-icon.sidebar_svg-search,
 			.sidebar__menu-icon.sidebar_svg-tag,
 			.sidebar__menu-icon.sidebar_svg-discover {
 				fill: var(--color-sidebar-menu-hover-background);
@@ -310,7 +310,8 @@ body.is-section-reader {
 				stroke: var(--color-sidebar-gridicon-fill);
 			}
 		}
-		.sidebar__menu-icon.sidebar_svg-p2 {
+		.sidebar__menu-icon.sidebar_svg-p2,
+		.sidebar__menu-icon.sidebar_svg-search {
 			fill: var(--color-sidebar-background);
 			path {
 				fill: var(--color-sidebar-gridicon-fill);
@@ -319,7 +320,6 @@ body.is-section-reader {
 		.sidebar__menu-icon.sidebar_svg-a8c,
 		.sidebar__menu-icon.sidebar_svg-a8c-conversations,
 		.sidebar__menu-icon.sidebar_svg-list,
-		.sidebar__menu-icon.sidebar_svg-search,
 		.sidebar__menu-icon.sidebar_svg-tag,
 		.sidebar__menu-icon.sidebar_svg-discover {
 			fill: var(--color-sidebar-background);
@@ -362,7 +362,8 @@ body.is-section-reader {
 					stroke: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
-			.sidebar__menu-icon.sidebar_svg-p2 {
+			.sidebar__menu-icon.sidebar_svg-p2,
+			.sidebar__menu-icon.sidebar_svg-search {
 				fill: var(--color-sidebar-menu-hover-background);
 				path {
 					fill: var(--color-sidebar-gridicon-selected-fill);
@@ -371,7 +372,6 @@ body.is-section-reader {
 			.sidebar__menu-icon.sidebar_svg-a8c,
 			.sidebar__menu-icon.sidebar_svg-a8c-conversations,
 			.sidebar__menu-icon.sidebar_svg-list,
-			.sidebar__menu-icon.sidebar_svg-search,
 			.sidebar__menu-icon.sidebar_svg-tag,
 			.sidebar__menu-icon.sidebar_svg-discover {
 				fill: var(--color-sidebar-menu-hover-background);
