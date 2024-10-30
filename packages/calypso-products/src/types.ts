@@ -131,7 +131,6 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
@@ -371,7 +370,6 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];

@@ -62,10 +62,6 @@ const useHighlightLabels = ( {
 				if ( isPersonalPlan( planSlug ) ) {
 					label = translate( 'Best for Newsletter' );
 				}
-			} else if ( 'plans-link-in-bio' === intent ) {
-				if ( isPremiumPlan( planSlug ) ) {
-					label = translate( 'Best for Link in Bio' );
-				}
 			} else if ( 'plans-videopress' === intent ) {
 				if ( isBusinessPlan( planSlug ) ) {
 					label = translate( 'Best for Video' );

@@ -407,7 +407,6 @@ PlansStep.propTypes = {
 	intent: PropTypes.oneOf( [
 		'plans-blog-onboarding',
 		'plans-newsletter',
-		'plans-link-in-bio',
 		'plans-new-hosted-site',
 		'plans-plugins',
 		'plans-jetpack-app',

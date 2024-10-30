@@ -18,10 +18,6 @@ const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;
 };
 
-const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isLinkInBioFlow( flowName ) && plan.getLinkInBioSignupFeatures;
-};
-
 const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return isAnyHostingFlow( flowName ) && plan.getHostingSignupFeatures?.( plan.term );
 };
@@ -49,7 +45,6 @@ const getPlanFeatureAccessor = ( {
 } ) => {
 	return [
 		newsletterFeatures( flowName, plan ),
-		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
 		blogOnboardingFeatures( flowName, plan ),
 		senseiFeatures( plan ),
