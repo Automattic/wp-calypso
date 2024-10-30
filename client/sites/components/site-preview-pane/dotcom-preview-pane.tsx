@@ -22,7 +22,6 @@ import {
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
 	SITE_MARKETING_TOOLS,
-	SITE_MARKETING_BUSINESS_TOOLS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -110,7 +109,7 @@ const DotcomPreviewPane = ( {
 			{
 				label: __( 'Marketing' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ SITE_MARKETING_TOOLS, SITE_MARKETING_BUSINESS_TOOLS ],
+				featureIds: [ SITE_MARKETING_TOOLS ],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )
