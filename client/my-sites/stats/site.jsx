@@ -466,21 +466,40 @@ class StatsSite extends Component {
 							</StatsPeriodHeader>
 						) }
 
-						<ChartTabs
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ this.state.activeLegend }
-							availableLegend={ this.getAvailableLegend() }
-							onChangeLegend={ this.onChangeLegend }
-							barClick={ this.barClick }
-							switchTab={ this.switchChart }
-							charts={ CHARTS }
-							queryDate={ queryDate }
-							period={ this.props.period }
-							chartTab={ this.props.chartTab }
-							customQuantity={ customChartQuantity }
-							customRange={ customChartRange }
-							hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
-						/>
+						{ isNewDateFilteringEnabled && ( //adds a new chart instance for the newdatefiltering project
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+								customQuantity={ customChartQuantity }
+								customRange={ customChartRange }
+								hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
+							/>
+						) }
+						{ ! isNewDateFilteringEnabled && ( // legacy/old chart @TODO: remove once NewDateFiltering flag is flipped
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+								customQuantity={ customChartQuantity }
+								customRange={ customChartRange }
+								hideLegend={ ! isNewDateFilteringEnabled } // if isNewDateFilteringEnabled then we want to show the legend down in the chart instead of in the Period Header
+							/>
+						) }
 					</>
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
