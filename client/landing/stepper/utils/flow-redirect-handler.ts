@@ -1,10 +1,10 @@
-import { BLOG_FLOW, FREE_FLOW } from '@automattic/onboarding';
+import { BLOG_FLOW } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // Flows to redirect
 const REMOVED_TAILORED_FLOWS = [
 	{ flow: BLOG_FLOW, to: '/start:lang?' },
-	{ flow: FREE_FLOW, to: '/start/free:lang?' },
+	{ flow: 'free', to: '/start/free:lang?' },
 	{ flow: 'link-in-bio', to: '/start:lang?' },
 	{ flow: 'sensei', to: ':lang?/plugins/sensei-pro/' },
 	{ flow: 'videopress', to: '/start:lang?' },

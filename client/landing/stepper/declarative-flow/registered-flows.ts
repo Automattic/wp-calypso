@@ -63,8 +63,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
 		),
 
-	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
-
 	'with-theme-assembler': () =>
 		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 

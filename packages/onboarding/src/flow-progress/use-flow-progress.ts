@@ -1,4 +1,4 @@
-import { ECOMMERCE_FLOW, LINK_IN_BIO_TLD_FLOW, FREE_FLOW, COPY_SITE_FLOW } from '../utils/flows';
+import { ECOMMERCE_FLOW, LINK_IN_BIO_TLD_FLOW, COPY_SITE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -25,12 +25,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		linkInBioSetup: 3,
 		plans: 4,
 		launchpad: 5,
-	},
-	[ FREE_FLOW ]: {
-		user: 0,
-		freeSetup: 0,
-		designSetup: 1,
-		launchpad: 2,
 	},
 	sensei: {
 		senseiSetup: 1,

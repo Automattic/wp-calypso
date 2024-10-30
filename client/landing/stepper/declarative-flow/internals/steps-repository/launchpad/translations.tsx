@@ -1,7 +1,6 @@
 import {
 	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
-	FREE_FLOW,
 	WRITE_FLOW,
 	BUILD_FLOW,
 	START_WRITING_FLOW,
@@ -33,12 +32,6 @@ export function getLaunchpadTranslations(
 			translatedStrings.subtitle = translate(
 				"All that's left is to add some links and launch your site."
 			);
-			break;
-		case FREE_FLOW:
-			translatedStrings.flowName = translate( 'Free Website' );
-			translatedStrings.title = translate( "Let's get ready to launch!" );
-			translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
-			translatedStrings.subtitle = translate( "Here's what to do next." );
 			break;
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
