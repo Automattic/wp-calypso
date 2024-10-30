@@ -21,16 +21,13 @@ const SelectCardCheckbox = ( {
 
 	return (
 		<div
-			className={ clsx( 'select-card-checkbox__container', className ) }
+			className={ clsx( 'select-card-checkbox__container', className, {
+				'is-checked': checked,
+			} ) }
 			onClick={ () => onChange( ! checked ) }
 			role="presentation"
 		>
-			<CheckboxControl
-				__nextHasNoMarginBottom
-				checked={ checked }
-				id={ id }
-				onChange={ onChange }
-			/>
+			<CheckboxControl checked={ checked } id={ id } onChange={ onChange } />
 			<label className="select-card-checkbox__label" htmlFor={ id }>
 				{ children }
 			</label>
