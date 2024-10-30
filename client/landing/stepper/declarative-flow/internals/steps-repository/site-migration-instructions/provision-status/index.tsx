@@ -8,44 +8,33 @@ import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 
-interface ProvisioningProps {
+interface ProvisionStatusProps {
 	status: {
 		siteTransfer: Status;
 		migrationKey: Status;
 		pluginInstallation?: Status;
 	};
-	preparationCompleted: boolean;
 }
 
-export const Provisioning: FC< ProvisioningProps > = ( { status, preparationCompleted } ) => {
+export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
 	const {
 		siteTransfer: siteTransferStatus,
 		migrationKey: migrationKeyStatus,
 		pluginInstallation: pluginInstallationStatus,
 	} = status;
 
-	const actions = [
-		{ status: siteTransferStatus, text: translate( 'Provisioning your new site' ) },
-		{ status: pluginInstallationStatus, text: translate( 'Installing the required plugins' ) },
-		{ status: migrationKeyStatus, text: translate( 'Getting the migration key' ) },
-	].filter( ( action ) => action.status );
-
-	const currentActionIndex = actions.findIndex( ( action ) => action.status !== 'success' );
-	const currentAction = actions[ currentActionIndex ];
-	if ( ! currentAction && ! preparationCompleted ) {
-		return;
-	}
-
-	const isCurrentActionStatusError = currentAction?.status === 'error';
+	const preparationCompleted =
+		siteTransferStatus === 'success' && pluginInstallationStatus === 'success';
 
 	if ( preparationCompleted ) {
-		const text = isCurrentActionStatusError
-			? translate(
-					'Your new site is ready! Retrieve your migration key and enter it into your old site to start your migration.'
-			  )
-			: translate(
-					'Your new site is ready! Enter your migration key into your old site to start your migration.'
-			  );
+		const text =
+			migrationKeyStatus === 'error'
+				? translate(
+						'Your new site is ready! Retrieve your migration key and enter it into your old site to start your migration.'
+				  )
+				: translate(
+						'Your new site is ready! Enter your migration key into your old site to start your migration.'
+				  );
 		return (
 			<div className="migration-instructions-provisioning">
 				<div className="migration-instructions-provisioning__success">
@@ -57,11 +46,24 @@ export const Provisioning: FC< ProvisioningProps > = ( { status, preparationComp
 			</div>
 		);
 	}
+
+	const actions = [
+		{ status: siteTransferStatus, text: translate( 'Provisioning your new site' ) },
+		{ status: pluginInstallationStatus, text: translate( 'Installing the required plugins' ) },
+		{ status: migrationKeyStatus, text: translate( 'Getting the migration key' ) },
+	].filter( ( action ) => action.status );
+
+	const currentActionIndex = actions.findIndex( ( action ) => action.status !== 'success' );
+	const currentAction = actions[ currentActionIndex ];
+	if ( ! currentAction ) {
+		return;
+	}
+
 	let text: ReactNode = translate( "We're preparing everything to ensure your new site is ready." );
 	let icon = <Spinner />;
 
 	// Error handler.
-	if ( isCurrentActionStatusError ) {
+	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
 			recordMigrationInstructionsLinkClick( 'error-contact-support' );
 		};
