@@ -14,7 +14,6 @@ const ChartHeader = ( {
 	return (
 		<div className="stats-chart-tabs__header">
 			<div className="stats-chart-tabs__header-title">{ title }</div>
-			<div className="stats-chart-tabs__header-controls">{ controls }</div>
 			{ showLegend && (
 				<Legend
 					activeCharts={ activeLegend }
@@ -24,6 +23,7 @@ const ChartHeader = ( {
 					tabs={ charts }
 				/>
 			) }
+			<div className="stats-chart-tabs__header-controls">{ controls }</div>
 		</div>
 	);
 };
