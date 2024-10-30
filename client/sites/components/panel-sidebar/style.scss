@@ -4,10 +4,15 @@
 .panel-with-sidebar {
 	display: flex;
 	gap: 20px;
+
+	.navigation-header {
+		margin-bottom: 16px;
+	}
 }
 
 .panel-sidebar {
 	width: 160px;
+	flex-shrink: 0;
 }
 
 .panel-sidebar-tab {

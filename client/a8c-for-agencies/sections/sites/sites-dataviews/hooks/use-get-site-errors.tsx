@@ -48,18 +48,21 @@ export default function useGetSiteErrors() {
 
 				errors.push( {
 					severity: 'medium',
-					message: translate( 'We are provisioning your site {{a}}Set up your site{{/a}}', {
-						components: {
-							a: (
-								<a
-									href={ wpOverviewUrl }
-									target="_blank"
-									rel="noreferrer"
-									onClick={ ( e ) => e.stopPropagation() }
-								/>
-							),
-						},
-					} ),
+					message: translate(
+						'We are still provisioning your site. In the meantime, you can {{a}}set up your site{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ wpOverviewUrl }
+										target="_blank"
+										rel="noreferrer"
+										onClick={ ( e ) => e.stopPropagation() }
+									/>
+								),
+							},
+						}
+					),
 				} );
 			}
 

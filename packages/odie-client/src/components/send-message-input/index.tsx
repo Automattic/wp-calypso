@@ -1,7 +1,9 @@
 import { Spinner } from '@wordpress/components';
 import { useCallback, useRef, RefObject } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import ArrowUp from '../../assets/arrow-up.svg';
+import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../query/use-send-chat-message';
 import { Message } from '../../types/';
@@ -17,7 +19,7 @@ export const OdieSendMessageButton = ( {
 } ) => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
-	const { trackEvent, chatStatus } = useOdieAssistantContext();
+	const { trackEvent, chatStatus, shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const shouldBeDisabled = chatStatus === 'loading' || chatStatus === 'sending';
 
@@ -47,7 +49,10 @@ export const OdieSendMessageButton = ( {
 			} );
 		}
 	}, [ sendMessage, trackEvent ] );
-
+	const classes = clsx(
+		'odie-send-message-inner-button',
+		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
+	);
 	return (
 		<>
 			<JumpToRecent containerReference={ containerReference } />
@@ -65,12 +70,12 @@ export const OdieSendMessageButton = ( {
 						inputRef={ inputRef }
 					/>
 					{ shouldBeDisabled && <Spinner className="odie-send-message-input-spinner" /> }
-					<button
-						type="submit"
-						className="odie-send-message-inner-button"
-						disabled={ shouldBeDisabled }
-					>
-						<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+					<button type="submit" className={ classes } disabled={ shouldBeDisabled }>
+						{ shouldUseHelpCenterExperience ? (
+							<SendMessageIcon />
+						) : (
+							<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+						) }
 					</button>
 				</form>
 			</div>

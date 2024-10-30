@@ -9,6 +9,7 @@ import {
 	isNotAtomicJetpack,
 	isMigrationInProgress,
 	getMigrationStatus,
+	getMigrationType,
 } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -20,8 +21,19 @@ import './style.scss';
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
 
-	if ( site && isMigrationInProgress( site ) && getMigrationStatus( site ) === 'pending' ) {
-		return <MigrationOverview site={ site } />;
+	if ( site ) {
+		const migrationType = getMigrationType( site );
+		const migrationStatus = getMigrationStatus( site );
+
+		if (
+			isMigrationInProgress( site ) &&
+			// TODO: Remove the following checks when we support all migration types.
+			// It's just missing the started / difm case for now.
+			( 'pending' === migrationStatus ||
+				( 'started' === migrationStatus && migrationType === 'diy' ) )
+		) {
+			return <MigrationOverview site={ site } />;
+		}
 	}
 
 	const isJetpackNotAtomic = site && isNotAtomicJetpack( site );

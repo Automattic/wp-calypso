@@ -58,7 +58,7 @@ export const isNewsletterFlow = ( flowName: string | null ) => {
 };
 
 export const isFreeFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
+	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
@@ -75,10 +75,7 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	return Boolean(
-		flowName &&
-			( isNewsletterOrLinkInBioFlow( flowName ) ||
-				ECOMMERCE_FLOW === flowName ||
-				FREE_FLOW === flowName )
+		flowName && ( isNewsletterOrLinkInBioFlow( flowName ) || ECOMMERCE_FLOW === flowName )
 	);
 };
 

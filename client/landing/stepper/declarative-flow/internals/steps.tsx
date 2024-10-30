@@ -55,11 +55,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
 	},
 
-	FREE_SETUP: {
-		slug: 'freeSetup',
-		asyncComponent: () => import( './steps-repository/free-setup' ),
-	},
-
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
 	GENERATE_CONTENT: {

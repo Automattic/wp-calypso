@@ -22,7 +22,7 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
-	const isOnlyMessage = message.context?.flags?.only_message;
+	const hideDisclaimerContent = message.context?.flags?.hide_disclaimer_content;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isPositiveFeedback =
@@ -37,17 +37,37 @@ export const UserMessage = ( {
 	const displayMessage =
 		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
 
-	return (
+	const renderExtraContactOptions = () => {
+		return shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions;
+	};
+
+	const renderDisclaimers = () => (
 		<>
-			<Markdown
-				urlTransform={ uriTransformer }
-				components={ {
-					a: CustomALink,
-				} }
-			>
-				{ isRequestingHumanSupport ? displayMessage : message.content }
-			</Markdown>
-			{ ! isOnlyMessage && (
+			<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
+			<div className="disclaimer">
+				{ __( 'Powered by Support AI. Some responses may be inaccurate', __i18n_text_domain__ ) }
+				<ExternalLink href="https://automattic.com/ai-guidelines">
+					{ __( 'Learn more.', __i18n_text_domain__ ) }
+				</ExternalLink>
+			</div>
+		</>
+	);
+
+	const renderRedesignedComponent = () => {
+		return (
+			! hideDisclaimerContent && (
+				<div className="chat-feedback-wrapper">
+					{ showExtraContactOptions && renderExtraContactOptions() }
+					{ isBot && renderDisclaimers() }
+				</div>
+			)
+		);
+	};
+
+	const renderCurrentDesignComponent = () => {
+		return (
+			! hideDisclaimerContent && (
 				<>
 					{ showExtraContactOptions &&
 						( shouldUseHelpCenterExperience ? <GetSupport /> : extraContactOptions ) }
@@ -71,7 +91,25 @@ export const UserMessage = ( {
 						</>
 					) }
 				</>
-			) }
+			)
+		);
+	};
+
+	return (
+		<>
+			<div className="odie-chatbox-message__content">
+				<Markdown
+					urlTransform={ uriTransformer }
+					components={ {
+						a: CustomALink,
+					} }
+				>
+					{ isRequestingHumanSupport ? displayMessage : message.content }
+				</Markdown>
+			</div>
+			{ shouldUseHelpCenterExperience
+				? renderRedesignedComponent()
+				: renderCurrentDesignComponent() }
 		</>
 	);
 };
