@@ -1,6 +1,19 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-placeholder {
+	padding: 16px 24px 12px 24px;
+
+	.reader__post-title {
+		margin-top: 0;
+	}
+
+	&::after,
+	.reader__post-footer {
+		display: none;
+	}
+}
+
 .subscribe-modal {
 	&__title {
 		font-family: Recoleta, sans-serif;
