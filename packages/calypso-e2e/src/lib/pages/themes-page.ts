@@ -12,6 +12,7 @@ const selectors = {
 	// Transitions
 	spinner: '.themes__content > .spinner',
 	placeholder: '.themes-list .is-placeholder',
+	actionableTheme: '.theme-card--is-actionable',
 
 	// Search
 	showAllThemesButton: 'text=Show all themes',
@@ -42,7 +43,7 @@ export class ThemesPage {
 	private async pageSettled(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
-			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+			this.page.locator( selectors.actionableTheme ).first().waitFor(),
 		] );
 	}
 
