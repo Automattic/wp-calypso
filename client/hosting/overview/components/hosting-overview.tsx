@@ -5,6 +5,7 @@ import ActiveDomainsCard from 'calypso/hosting/overview/components/active-domain
 import PlanCard from 'calypso/hosting/overview/components/plan-card';
 import QuickActionsCard from 'calypso/hosting/overview/components/quick-actions-card';
 import SiteBackupCard from 'calypso/hosting/overview/components/site-backup-card';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	isNotAtomicJetpack,
 	isMigrationInProgress,
@@ -43,6 +44,7 @@ const HostingOverview: FC = () => {
 
 	return (
 		<div className="hosting-overview">
+			<PageViewTracker path="/overview/:site" title="Site Overview" />
 			<NavigationHeader
 				className="hosting-overview__navigation-header"
 				title={ translate( 'Overview' ) }
