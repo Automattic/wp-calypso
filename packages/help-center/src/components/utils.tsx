@@ -24,13 +24,6 @@ export const getFilteredConversations = ( {
 	const recentConversations: ZendeskConversation[] = [];
 	const archivedConversations: ZendeskConversation[] = [];
 
-	if ( ! conversations ) {
-		return {
-			recentConversations,
-			archivedConversations,
-		};
-	}
-
 	if ( Array.isArray( conversations ) ) {
 		conversations.forEach( ( conversation: ZendeskConversation ) => {
 			if ( ! conversation?.metadata?.createdAt ) {
@@ -48,7 +41,6 @@ export const getFilteredConversations = ( {
 			} else {
 				recentConversations.push( conversation );
 			}
-			return;
 		} );
 	}
 
