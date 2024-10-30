@@ -35,6 +35,7 @@ class StatModuleChartTabs extends Component {
 		activeTab: ChartTabShape,
 		availableLegend: PropTypes.arrayOf( PropTypes.string ),
 		charts: PropTypes.arrayOf( ChartTabShape ),
+		className: PropTypes.string,
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
 				comments: PropTypes.number,
@@ -93,9 +94,10 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const { isActiveTabLoading } = this.props;
+		const { isActiveTabLoading, className } = this.props;
 		const classes = [
 			'is-chart-tabs',
+			className,
 			{
 				'is-loading': isActiveTabLoading,
 				'has-less-than-three-bars': this.props.chartData.length < 3,
