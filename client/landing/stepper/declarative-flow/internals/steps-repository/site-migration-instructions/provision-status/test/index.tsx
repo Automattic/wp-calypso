@@ -6,7 +6,7 @@ import React from 'react';
 import { ProvisionStatus } from '..';
 
 describe( 'ProvisionStatus', () => {
-	it( 'should render the first non-successful action', () => {
+	it( 'renders "in progress" status', () => {
 		const status = {
 			siteTransfer: 'success',
 			pluginInstallation: 'pending',
@@ -18,7 +18,7 @@ describe( 'ProvisionStatus', () => {
 		expect( screen.getByText( 'Installing the required plugins' ) ).toBeVisible();
 	} );
 
-	it( 'should render the correct action progress number', () => {
+	it( 'shows the number of in-progress steps', () => {
 		const status = {
 			siteTransfer: 'success',
 			pluginInstallation: 'pending',
@@ -46,7 +46,7 @@ describe( 'ProvisionStatus', () => {
 		).toBeVisible();
 	} );
 
-	it( 'should render alternative success message when plugins installation is done, but migration key is not available anymore', () => {
+	it( "shows instructions to the user get the key by itself when we can't get the key", () => {
 		const status = {
 			siteTransfer: 'success',
 			pluginInstallation: 'success',
